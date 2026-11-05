@@ -1,0 +1,60 @@
+{
+  "repository": "honojs/hono",
+  "pr": "https://github.com/honojs/hono/pull/2085",
+  "case_id": "2085-seeded-type-error-20261105",
+  "languages": [
+    "typescript"
+  ],
+  "reviewer": "sub-agent rerun2-hono (automated)",
+  "verdict_source": "automated",
+  "commands": [
+    "cwd=/dev/shm/hono-rerun2/rio-eval-g121un2u argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/honojs/hono.git\", \"/dev/shm/hono-rerun2/rio-eval-g121un2u/head\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-g121un2u/head argv=[\"git\", \"fetch\", \"origin\", \"b23cf8d65d851de9726d6388b45dda39e6fdb9ab\", \"94d2dcbf315dd3ac969d321b532fb0049b1a7c36\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-g121un2u/head argv=[\"git\", \"merge-base\", \"b23cf8d65d851de9726d6388b45dda39e6fdb9ab\", \"94d2dcbf315dd3ac969d321b532fb0049b1a7c36\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-g121un2u/head argv=[\"git\", \"checkout\", \"--detach\", \"94d2dcbf315dd3ac969d321b532fb0049b1a7c36\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-g121un2u argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/dev/shm/hono-rerun2/rio-eval-g121un2u/head\", \"/dev/shm/hono-rerun2/rio-eval-g121un2u/base\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-g121un2u/base argv=[\"git\", \"checkout\", \"--detach\", \"b23cf8d65d851de9726d6388b45dda39e6fdb9ab\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-g121un2u/base argv=[\"corepack\", \"yarn@1.22.22\", \"install\", \"--frozen-lockfile\", \"--non-interactive\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-g121un2u/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-g121un2u/head argv=[\"corepack\", \"yarn@1.22.22\", \"install\", \"--frozen-lockfile\", \"--non-interactive\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-g121un2u/head argv=[\"python3\", \"-c\", \"from pathlib import Path; import hashlib; p=Path('node_modules/.bin/vitest'); assert p.is_symlink(); target=p.resolve(); original=target.read_bytes(); p.unlink(); p.write_text(\\\"#!/usr/bin/env python3\\\\n# Vitest 1.1 CLI compatibility only; package files and test selection are unchanged.\\\\nimport os\\\\nfrom pathlib import Path\\\\nimport sys\\\\nargs = []\\\\nfor arg in sys.argv[1:]:\\\\n    if arg == '--coverage':\\\\n        args.append('--coverage.enabled')\\\\n    elif arg.startswith('--maxWorkers='):\\\\n        value = arg.split('=', 1)[1]\\\\n        os.environ['VITEST_MAX_THREADS'] = value\\\\n        os.environ['VITEST_MAX_FORKS'] = value\\\\n    elif arg.startswith('--minWorkers='):\\\\n        value = arg.split('=', 1)[1]\\\\n        os.environ['VITEST_MIN_THREADS'] = value\\\\n        os.environ['VITEST_MIN_FORKS'] = value\\\\n    else:\\\\n        args.append(arg)\\\\nentry = Path(__file__).absolute().parent.parent / 'vitest' / 'vitest.mjs'\\\\nos.execvp('node', ['node', str(entry), *args])\\\\n\\\"); p.chmod(0o755); print('Original entry:',target,'SHA256:',hashlib.sha256(original).hexdigest()); print('CLI compatibility shim SHA256:',hashlib.sha256(p.read_bytes()).hexdigest())\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-g121un2u/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-g121un2u/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-g121un2u/head argv=[\"node\", \"--version\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-g121un2u/head argv=[\"npm\", \"--version\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-g121un2u/head argv=[\"corepack\", \"--version\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-g121un2u/head argv=[\"python3\", \"--version\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-g121un2u/head argv=[\"uv\", \"--version\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-g121un2u/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"/home/ubuntu/.t3/worktrees/rio/eval-rerun2-hono/eval/runs/hono-2085-rerun2/profile.yaml\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-g121un2u/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-g121un2u/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"b23cf8d65d851de9726d6388b45dda39e6fdb9ab\", \"--format\", \"json\", \"--offline\", \"--profile\", \"/home/ubuntu/.t3/worktrees/rio/eval-rerun2-hono/eval/runs/hono-2085-rerun2/profile.yaml\"]"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-rerun2-hono/eval/runs/hono-2085-rerun2/commands.json; Rio binary SHA-256: 3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+    "Rerun2 binary f6e4f87e4c65. Same preregistered base/head, install plan and profile; see ../hono-rerun2-evidence/registration.json for exact runtime, transport, hashes and expectations.",
+    "Pinned Node20.10.0, Corepack0.36.0, Yarn1.22.22; COREPACK_ENABLE_AUTO_PIN=0, NO_COLOR unset, TMPDIR=/dev/shm/hono-rerun2. Unchanged historical Vitest1.1 launcher shim retained; native version-aware Rio invocation is not separately established by this experiment.",
+    "All applicable root typecheck/lint head/base pairs succeeded with verified dependencies; coverage passed and secrets passed. Dependency audit deliberately skipped offline; no vulnerability-detection or secret-positive-control claim. Report incomplete includes no_endpoint agent deferral.",
+    "Initial independent BASE frozen installation timed out (exit124), so runner exit1 despite report-derived baseline_classification_ran=true and eligible=true. Head install succeeded and Rio classified its own base against that verified head installation. Retain this attempt; use a later successful-installer attempt as canonical. This is setup evidence, not a Rio false positive."
+  ],
+  "independently_clean": false,
+  "positive_control": {
+    "kind": "seeded-mutation",
+    "expected": [
+      {
+        "id": "seeded-url-export-type-mismatch",
+        "mechanism": "type-error",
+        "evidence": "../hono-2085-seed-oracle/: original locked TypeScript5.3.3 tsc --noEmit --pretty false, base b23cf8d65d851de9726d6388b45dda39e6fdb9ab exit0; seeded head 94d2dcbf315dd3ac969d321b532fb0049b1a7c36 exit2 with exactly TS2322 src/utils/url.ts:267:14 string not assignable to number. Lint and 15 instrumented URL tests pass both. Exact patch/hash in 2085-seed.patch and 2085-seed-pins.json.",
+        "finding_ids": [
+          "61519345c86a98b40bcf228e8c5bcea888770a6b79ee55a392217a938457659c"
+        ]
+      }
+    ]
+  },
+  "misses": [],
+  "findings": {
+    "61519345c86a98b40bcf228e8c5bcea888770a6b79ee55a392217a938457659c": {
+      "verdict": "true-positive",
+      "reason": "Exact independent oracle match: ../hono-2085-seed-oracle/base-typecheck.stdout.log has no errors and base command exits0; head-typecheck.stdout.log has exactly TS2322 string not assignable to number at src/utils/url.ts267:14 and exits2. The preserved single-change patch adds this mismatched numeric export. Rio correctly labels it new; base/head typecheck and lint are dependency_state verified. This is one underlying seeded type bug. Rechecked rerun2 report: same rule, message, path, line267:14 and new state; independent oracle pins and patch are unchanged."
+    }
+  }
+}

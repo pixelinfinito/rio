@@ -1,0 +1,11 @@
+hono-2081-rerun2-attempt2: unchanged pins/install plan/profile; successful installs; verified baseline; complete verdicts; pinned runtime PASS
+hono-2085-rerun2-attempt3: unchanged pins/install plan/profile; successful installs; verified baseline; complete verdicts; pinned runtime PASS
+python3 eval/evaluate.py validate eval/runs/hono-2081-rerun2/record.json
+Valid: eval/runs/hono-2081-rerun2/record.json
+python3 eval/evaluate.py validate eval/runs/hono-2081-rerun2-attempt2/record.json
+Valid: eval/runs/hono-2081-rerun2-attempt2/record.json
+python3 eval/evaluate.py validate eval/runs/hono-2085-rerun2/record.json
+Valid: eval/runs/hono-2085-rerun2/record.json
+python3 eval/evaluate.py validate eval/runs/hono-2085-rerun2-attempt3/record.json
+Valid: eval/runs/hono-2085-rerun2-attempt3/record.json
+204 evidence files checked: none over5MB, no node_modules or clone metadata.

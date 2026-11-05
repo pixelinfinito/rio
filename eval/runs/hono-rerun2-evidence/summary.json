@@ -1,0 +1,450 @@
+{
+  "binary_version": "f6e4f87e4c65",
+  "binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+  "reviewer": "sub-agent rerun2-hono (automated)",
+  "attempts": [
+    {
+      "attempt": "hono-2081-rerun2",
+      "canonical": false,
+      "started_utc": "2026-11-05T10:58:03.789589+00:00",
+      "finished_utc": "2026-11-05T11:26:31.906683+00:00",
+      "runner_wall_seconds": 1708.117,
+      "runner_exit_code": 1,
+      "failures": [
+        "base dependency installation failed (124)"
+      ],
+      "installations": {
+        "base": false,
+        "head": true
+      },
+      "environment": {
+        "dependency_state": "verified",
+        "baseline_ran": true,
+        "baseline_classification_ran": true,
+        "eligible": true,
+        "reasons": [],
+        "notes": [
+          "Intent inference is deferred: no_endpoint",
+          "Graph references use syntax and text; no language server was used",
+          "Offline applies to Rio; tool and test processes were not network-isolated"
+        ]
+      },
+      "rio_review_seconds": 55.191,
+      "subprocess_wall_seconds": 1701.442,
+      "record": "hono-2081-rerun2/record.json",
+      "counts_by_verdict": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "pre-existing-hidden": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "causes_by_verdict": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "pre-existing-hidden": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "findings_by_raw_state": {},
+      "positive_control": {
+        "expected": 0,
+        "detected": 0,
+        "missed": 0
+      },
+      "checks": [
+        {
+          "kind": "dependencies",
+          "root": ".",
+          "version": "head",
+          "outcome": "skipped",
+          "reason": "offline"
+        },
+        {
+          "kind": "secrets",
+          "root": ".",
+          "version": "head",
+          "outcome": "passed"
+        },
+        {
+          "kind": "lint",
+          "root": ".",
+          "version": "head",
+          "outcome": "passed",
+          "dependency_state": "verified"
+        },
+        {
+          "kind": "lint",
+          "root": ".",
+          "version": "base",
+          "outcome": "passed",
+          "dependency_state": "verified"
+        },
+        {
+          "kind": "typecheck",
+          "root": ".",
+          "version": "head",
+          "outcome": "passed",
+          "dependency_state": "verified"
+        },
+        {
+          "kind": "typecheck",
+          "root": ".",
+          "version": "base",
+          "outcome": "passed",
+          "dependency_state": "verified"
+        },
+        {
+          "kind": "coverage",
+          "root": ".",
+          "version": "head",
+          "outcome": "passed",
+          "dependency_state": "verified"
+        }
+      ]
+    },
+    {
+      "attempt": "hono-2081-rerun2-attempt2",
+      "canonical": true,
+      "started_utc": "2026-11-05T11:27:03.378605+00:00",
+      "finished_utc": "2026-11-05T11:29:31.255097+00:00",
+      "runner_wall_seconds": 147.876,
+      "runner_exit_code": 0,
+      "failures": [],
+      "installations": {
+        "base": true,
+        "head": true
+      },
+      "environment": {
+        "dependency_state": "verified",
+        "baseline_ran": true,
+        "baseline_classification_ran": true,
+        "eligible": true,
+        "reasons": [],
+        "notes": [
+          "Intent inference is deferred: no_endpoint",
+          "Graph references use syntax and text; no language server was used",
+          "Offline applies to Rio; tool and test processes were not network-isolated"
+        ]
+      },
+      "rio_review_seconds": 39.705,
+      "subprocess_wall_seconds": 110.758,
+      "record": "hono-2081-rerun2-attempt2/record.json",
+      "counts_by_verdict": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "pre-existing-hidden": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "causes_by_verdict": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "pre-existing-hidden": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "findings_by_raw_state": {},
+      "positive_control": {
+        "expected": 0,
+        "detected": 0,
+        "missed": 0
+      },
+      "checks": [
+        {
+          "kind": "secrets",
+          "root": ".",
+          "version": "head",
+          "outcome": "passed"
+        },
+        {
+          "kind": "dependencies",
+          "root": ".",
+          "version": "head",
+          "outcome": "skipped",
+          "reason": "offline"
+        },
+        {
+          "kind": "lint",
+          "root": ".",
+          "version": "head",
+          "outcome": "passed",
+          "dependency_state": "verified"
+        },
+        {
+          "kind": "lint",
+          "root": ".",
+          "version": "base",
+          "outcome": "passed",
+          "dependency_state": "verified"
+        },
+        {
+          "kind": "coverage",
+          "root": ".",
+          "version": "head",
+          "outcome": "passed",
+          "dependency_state": "verified"
+        },
+        {
+          "kind": "typecheck",
+          "root": ".",
+          "version": "head",
+          "outcome": "passed",
+          "dependency_state": "verified"
+        },
+        {
+          "kind": "typecheck",
+          "root": ".",
+          "version": "base",
+          "outcome": "passed",
+          "dependency_state": "verified"
+        }
+      ]
+    },
+    {
+      "attempt": "hono-2085-rerun2",
+      "canonical": false,
+      "started_utc": "2026-11-05T10:58:04.169664+00:00",
+      "finished_utc": "2026-11-05T11:26:35.536348+00:00",
+      "runner_wall_seconds": 1711.367,
+      "runner_exit_code": 1,
+      "failures": [
+        "base dependency installation failed (124)"
+      ],
+      "installations": {
+        "base": false,
+        "head": true
+      },
+      "environment": {
+        "dependency_state": "verified",
+        "baseline_ran": true,
+        "baseline_classification_ran": true,
+        "eligible": true,
+        "reasons": [],
+        "notes": [
+          "Intent inference is deferred: no_endpoint",
+          "Graph references use syntax and text; no language server was used",
+          "Offline applies to Rio; tool and test processes were not network-isolated"
+        ]
+      },
+      "rio_review_seconds": 58.462,
+      "subprocess_wall_seconds": 1701.28,
+      "record": "hono-2085-rerun2/record.json",
+      "counts_by_verdict": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "pre-existing-hidden": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "causes_by_verdict": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "pre-existing-hidden": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "findings_by_raw_state": {
+        "new": 1
+      },
+      "positive_control": {
+        "expected": 1,
+        "detected": 1,
+        "missed": 0
+      },
+      "checks": [
+        {
+          "kind": "secrets",
+          "root": ".",
+          "version": "head",
+          "outcome": "passed"
+        },
+        {
+          "kind": "dependencies",
+          "root": ".",
+          "version": "head",
+          "outcome": "skipped",
+          "reason": "offline"
+        },
+        {
+          "kind": "lint",
+          "root": ".",
+          "version": "head",
+          "outcome": "passed",
+          "dependency_state": "verified"
+        },
+        {
+          "kind": "lint",
+          "root": ".",
+          "version": "base",
+          "outcome": "passed",
+          "dependency_state": "verified"
+        },
+        {
+          "kind": "typecheck",
+          "root": ".",
+          "version": "head",
+          "outcome": "findings",
+          "dependency_state": "verified"
+        },
+        {
+          "kind": "typecheck",
+          "root": ".",
+          "version": "base",
+          "outcome": "passed",
+          "dependency_state": "verified"
+        },
+        {
+          "kind": "coverage",
+          "root": ".",
+          "version": "head",
+          "outcome": "passed",
+          "dependency_state": "verified"
+        }
+      ]
+    },
+    {
+      "attempt": "hono-2085-rerun2-attempt2",
+      "canonical": false,
+      "started_utc": "2026-11-05T11:27:03.228463+00:00",
+      "finished_utc": "2026-11-05T11:27:03.742191+00:00",
+      "runner_wall_seconds": 0.514,
+      "runner_exit_code": 1,
+      "failures": [
+        "command 1 failed (128); see /home/ubuntu/.t3/worktrees/rio/eval-rerun2-hono/eval/runs/hono-2085-rerun2-attempt2/01-stderr.log"
+      ],
+      "installations": {},
+      "environment": null,
+      "rio_review_seconds": null,
+      "subprocess_wall_seconds": 0.034,
+      "normalization": "Unavailable: clone failed before Rio ran; no report or metadata to normalize. No synthetic report/record fabricated."
+    },
+    {
+      "attempt": "hono-2085-rerun2-attempt3",
+      "canonical": true,
+      "started_utc": "2026-11-05T11:28:41.608955+00:00",
+      "finished_utc": "2026-11-05T11:31:05.433557+00:00",
+      "runner_wall_seconds": 143.825,
+      "runner_exit_code": 0,
+      "failures": [],
+      "installations": {
+        "base": true,
+        "head": true
+      },
+      "environment": {
+        "dependency_state": "verified",
+        "baseline_ran": true,
+        "baseline_classification_ran": true,
+        "eligible": true,
+        "reasons": [],
+        "notes": [
+          "Intent inference is deferred: no_endpoint",
+          "Graph references use syntax and text; no language server was used",
+          "Offline applies to Rio; tool and test processes were not network-isolated"
+        ]
+      },
+      "rio_review_seconds": 42.866,
+      "subprocess_wall_seconds": 89.539,
+      "record": "hono-2085-rerun2-attempt3/record.json",
+      "counts_by_verdict": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "pre-existing-hidden": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "causes_by_verdict": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "pre-existing-hidden": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "findings_by_raw_state": {
+        "new": 1
+      },
+      "positive_control": {
+        "expected": 1,
+        "detected": 1,
+        "missed": 0
+      },
+      "checks": [
+        {
+          "kind": "secrets",
+          "root": ".",
+          "version": "head",
+          "outcome": "passed"
+        },
+        {
+          "kind": "dependencies",
+          "root": ".",
+          "version": "head",
+          "outcome": "skipped",
+          "reason": "offline"
+        },
+        {
+          "kind": "lint",
+          "root": ".",
+          "version": "head",
+          "outcome": "passed",
+          "dependency_state": "verified"
+        },
+        {
+          "kind": "lint",
+          "root": ".",
+          "version": "base",
+          "outcome": "passed",
+          "dependency_state": "verified"
+        },
+        {
+          "kind": "coverage",
+          "root": ".",
+          "version": "head",
+          "outcome": "passed",
+          "dependency_state": "verified"
+        },
+        {
+          "kind": "typecheck",
+          "root": ".",
+          "version": "head",
+          "outcome": "findings",
+          "dependency_state": "verified"
+        },
+        {
+          "kind": "typecheck",
+          "root": ".",
+          "version": "base",
+          "outcome": "passed",
+          "dependency_state": "verified"
+        }
+      ]
+    }
+  ],
+  "observed_rio_defects": [],
+  "comparisons": {
+    "2081": {
+      "previous_false_positive_count": 1,
+      "current_false_positive_count": 0,
+      "removed_finding_id": "8209408388ac70a93c3b324ac9d336488c03bae27b3ccfb971f0369f406803a8",
+      "coverage_check": "passed"
+    },
+    "2085_seed": {
+      "previous_controls_detected": 1,
+      "current_controls_detected": 1,
+      "finding_id": "61519345c86a98b40bcf228e8c5bcea888770a6b79ee55a392217a938457659c"
+    }
+  },
+  "limitations": [
+    "Historical Vitest launcher shim retained as required by unchanged install plan; native invocation compatibility not separately measured.",
+    "No secret-positive or vulnerability-positive expectation registered in these two cases; offline dependency audit skipped.",
+    "Initial runner exit1 is an independent-install setup failure, even though all applicable Rio baseline pairs succeeded and the unmodified evaluator classifies the reports eligible."
+  ]
+}
