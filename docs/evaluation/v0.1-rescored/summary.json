@@ -1,0 +1,486 @@
+{
+  "schema": "rio-eval-summary-v1",
+  "methodology": "deterministic-v1",
+  "records": [
+    "docs/evaluation/v0.1-rescored/records/typescript-1345.json.gz",
+    "docs/evaluation/v0.1-rescored/records/typescript-1341.json.gz",
+    "docs/evaluation/v0.1-rescored/records/typescript-1334.json.gz",
+    "docs/evaluation/v0.1-rescored/records/typescript-1332.json.gz",
+    "docs/evaluation/v0.1-rescored/records/python-1131.json.gz",
+    "docs/evaluation/v0.1-rescored/records/python-1109.json.gz",
+    "docs/evaluation/v0.1-rescored/records/python-1097.json.gz",
+    "docs/evaluation/v0.1-rescored/records/structlog-811.json.gz",
+    "docs/evaluation/v0.1-rescored/records/structlog-807.json.gz",
+    "docs/evaluation/v0.1-rescored/records/structlog-805.json.gz"
+  ],
+  "attempts": 10,
+  "observed_raw_counts": {
+    "true-positive": 0,
+    "false-positive": 4,
+    "pre-existing-shown": 4430,
+    "environment-failure": 0,
+    "out-of-scope": 0
+  },
+  "observed_occurrence_counts": {
+    "true-positive": 0,
+    "false-positive": 22,
+    "pre-existing-shown": 4959,
+    "environment-failure": 0,
+    "out-of-scope": 0
+  },
+  "observed_cause_counts": {
+    "true-positive": 0,
+    "false-positive": 3,
+    "pre-existing-shown": 188,
+    "environment-failure": 0,
+    "out-of-scope": 0
+  },
+  "observed_unique_cause_counts": {
+    "true-positive": 0,
+    "false-positive": 2,
+    "pre-existing-shown": 64,
+    "environment-failure": 0,
+    "out-of-scope": 0
+  },
+  "eligible": {
+    "eligible_prs": 0,
+    "raw_counts": {
+      "true-positive": 0,
+      "false-positive": 0,
+      "pre-existing-shown": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0
+    },
+    "occurrence_counts": {
+      "true-positive": 0,
+      "false-positive": 0,
+      "pre-existing-shown": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0
+    },
+    "cause_counts": {
+      "true-positive": 0,
+      "false-positive": 0,
+      "pre-existing-shown": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0
+    },
+    "unique_cause_counts": {
+      "true-positive": 0,
+      "false-positive": 0,
+      "pre-existing-shown": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0
+    },
+    "precision": null,
+    "positive_control_cases": 0,
+    "positive_control_expected": 0,
+    "positive_control_detected": 0,
+    "positive_control_recall": null,
+    "false_positive_per_pr": null,
+    "pr_with_false_positive_fraction": null,
+    "useful_prs": 0,
+    "useful_real_prs": 0,
+    "usefulness_fraction": null
+  },
+  "by_repository": {
+    "hynek/structlog": {
+      "eligible_prs": 0,
+      "raw_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "occurrence_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "cause_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "unique_cause_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "precision": null,
+      "positive_control_cases": 0,
+      "positive_control_expected": 0,
+      "positive_control_detected": 0,
+      "positive_control_recall": null,
+      "false_positive_per_pr": null,
+      "pr_with_false_positive_fraction": null,
+      "useful_prs": 0,
+      "useful_real_prs": 0,
+      "usefulness_fraction": null
+    },
+    "immerjs/immer": {
+      "eligible_prs": 0,
+      "raw_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "occurrence_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "cause_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "unique_cause_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "precision": null,
+      "positive_control_cases": 0,
+      "positive_control_expected": 0,
+      "positive_control_detected": 0,
+      "positive_control_recall": null,
+      "false_positive_per_pr": null,
+      "pr_with_false_positive_fraction": null,
+      "useful_prs": 0,
+      "useful_real_prs": 0,
+      "usefulness_fraction": null
+    },
+    "pydantic/pydantic-settings": {
+      "eligible_prs": 0,
+      "raw_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "occurrence_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "cause_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "unique_cause_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "precision": null,
+      "positive_control_cases": 0,
+      "positive_control_expected": 0,
+      "positive_control_detected": 0,
+      "positive_control_recall": null,
+      "false_positive_per_pr": null,
+      "pr_with_false_positive_fraction": null,
+      "useful_prs": 0,
+      "useful_real_prs": 0,
+      "usefulness_fraction": null
+    }
+  },
+  "by_language": {
+    "python": {
+      "eligible_prs": 0,
+      "raw_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "occurrence_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "cause_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "unique_cause_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "precision": null,
+      "positive_control_cases": 0,
+      "positive_control_expected": 0,
+      "positive_control_detected": 0,
+      "positive_control_recall": null,
+      "false_positive_per_pr": null,
+      "pr_with_false_positive_fraction": null,
+      "useful_prs": 0,
+      "useful_real_prs": 0,
+      "usefulness_fraction": null
+    },
+    "typescript": {
+      "eligible_prs": 0,
+      "raw_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "occurrence_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "cause_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "unique_cause_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "precision": null,
+      "positive_control_cases": 0,
+      "positive_control_expected": 0,
+      "positive_control_detected": 0,
+      "positive_control_recall": null,
+      "false_positive_per_pr": null,
+      "pr_with_false_positive_fraction": null,
+      "useful_prs": 0,
+      "useful_real_prs": 0,
+      "usefulness_fraction": null
+    }
+  },
+  "environment_failures": [
+    {
+      "repository": "immerjs/immer",
+      "pr": "https://github.com/immerjs/immer/pull/1345",
+      "case_id": "1345",
+      "record_path": "docs/evaluation/v0.1-rescored/records/typescript-1345.json.gz",
+      "reasons": [
+        "coverage . head: skipped dependency_mismatch yarn.lock: node_modules/npm/node_modules/hosted-git-info: expected hosted-git-info@9.0.3, installed hosted-git-info@9.0.2; reinstall dependencies",
+        "coverage __tests__ head: skipped no_tests The project's test runner found no tests",
+        "lint . head: skipped no_project_config lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+        "lint .: head=skipped, dependency_state=unavailable, base=unavailable",
+        "lint __tests__ head: skipped no_project_config lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+        "lint __tests__: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck . head: skipped dependency_mismatch yarn.lock: node_modules/npm/node_modules/hosted-git-info: expected hosted-git-info@9.0.3, installed hosted-git-info@9.0.2; reinstall dependencies",
+        "typecheck .: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck __tests__: head=findings, dependency_state=trusted, base=unavailable"
+      ]
+    },
+    {
+      "repository": "immerjs/immer",
+      "pr": "https://github.com/immerjs/immer/pull/1341",
+      "case_id": "1341",
+      "record_path": "docs/evaluation/v0.1-rescored/records/typescript-1341.json.gz",
+      "reasons": [
+        "coverage . head: skipped dependency_mismatch yarn.lock: node_modules/npm/node_modules/hosted-git-info: expected hosted-git-info@9.0.3, installed hosted-git-info@9.0.2; reinstall dependencies",
+        "coverage __tests__ head: skipped no_tests The project's test runner found no tests",
+        "lint . head: skipped no_project_config lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+        "lint .: head=skipped, dependency_state=unavailable, base=unavailable",
+        "lint __tests__ head: skipped no_project_config lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+        "lint __tests__: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck . head: skipped dependency_mismatch yarn.lock: node_modules/npm/node_modules/hosted-git-info: expected hosted-git-info@9.0.3, installed hosted-git-info@9.0.2; reinstall dependencies",
+        "typecheck .: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck __tests__: head=findings, dependency_state=trusted, base=unavailable"
+      ]
+    },
+    {
+      "repository": "immerjs/immer",
+      "pr": "https://github.com/immerjs/immer/pull/1334",
+      "case_id": "1334",
+      "record_path": "docs/evaluation/v0.1-rescored/records/typescript-1334.json.gz",
+      "reasons": [
+        "coverage . head: skipped dependency_mismatch yarn.lock: node_modules/npm/node_modules/hosted-git-info: expected hosted-git-info@9.0.3, installed hosted-git-info@9.0.2; reinstall dependencies",
+        "coverage __tests__ head: skipped no_tests The project's test runner found no tests",
+        "lint . head: skipped no_project_config lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+        "lint .: head=skipped, dependency_state=unavailable, base=unavailable",
+        "lint __tests__ head: skipped no_project_config lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+        "lint __tests__: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck . head: skipped dependency_mismatch yarn.lock: node_modules/npm/node_modules/hosted-git-info: expected hosted-git-info@9.0.3, installed hosted-git-info@9.0.2; reinstall dependencies",
+        "typecheck .: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck __tests__: head=findings, dependency_state=trusted, base=unavailable"
+      ]
+    },
+    {
+      "repository": "immerjs/immer",
+      "pr": "https://github.com/immerjs/immer/pull/1332",
+      "case_id": "1332",
+      "record_path": "docs/evaluation/v0.1-rescored/records/typescript-1332.json.gz",
+      "reasons": [
+        "coverage . head: skipped dependency_mismatch yarn.lock: node_modules/npm/node_modules/hosted-git-info: expected hosted-git-info@9.0.3, installed hosted-git-info@9.0.2; reinstall dependencies",
+        "coverage __tests__ head: skipped no_tests The project's test runner found no tests",
+        "lint . head: skipped no_project_config lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+        "lint .: head=skipped, dependency_state=unavailable, base=unavailable",
+        "lint __tests__ head: skipped no_project_config lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+        "lint __tests__: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck . head: skipped dependency_mismatch yarn.lock: node_modules/npm/node_modules/hosted-git-info: expected hosted-git-info@9.0.3, installed hosted-git-info@9.0.2; reinstall dependencies",
+        "typecheck .: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck __tests__: head=findings, dependency_state=trusted, base=unavailable"
+      ]
+    },
+    {
+      "repository": "pydantic/pydantic-settings",
+      "pr": "https://github.com/pydantic/pydantic-settings/pull/1131",
+      "case_id": "1131",
+      "record_path": "docs/evaluation/v0.1-rescored/records/python-1131.json.gz",
+      "reasons": [
+        "lint .: head=passed, dependency_state=trusted, base=unavailable",
+        "typecheck .: head=findings, dependency_state=trusted, base=unavailable"
+      ]
+    },
+    {
+      "repository": "pydantic/pydantic-settings",
+      "pr": "https://github.com/pydantic/pydantic-settings/pull/1109",
+      "case_id": "1109",
+      "record_path": "docs/evaluation/v0.1-rescored/records/python-1109.json.gz",
+      "reasons": [
+        "lint .: head=passed, dependency_state=trusted, base=unavailable",
+        "typecheck .: head=findings, dependency_state=trusted, base=unavailable"
+      ]
+    },
+    {
+      "repository": "pydantic/pydantic-settings",
+      "pr": "https://github.com/pydantic/pydantic-settings/pull/1097",
+      "case_id": "1097",
+      "record_path": "docs/evaluation/v0.1-rescored/records/python-1097.json.gz",
+      "reasons": [
+        "lint .: head=passed, dependency_state=trusted, base=unavailable",
+        "typecheck .: head=findings, dependency_state=trusted, base=unavailable"
+      ]
+    },
+    {
+      "repository": "hynek/structlog",
+      "pr": "https://github.com/hynek/structlog/pull/811",
+      "case_id": "811",
+      "record_path": "docs/evaluation/v0.1-rescored/records/structlog-811.json.gz",
+      "reasons": [
+        "lint .: head=findings, dependency_state=trusted, base=unavailable",
+        "typecheck .: head=findings, dependency_state=trusted, base=unavailable"
+      ]
+    },
+    {
+      "repository": "hynek/structlog",
+      "pr": "https://github.com/hynek/structlog/pull/807",
+      "case_id": "807",
+      "record_path": "docs/evaluation/v0.1-rescored/records/structlog-807.json.gz",
+      "reasons": [
+        "lint .: head=findings, dependency_state=trusted, base=unavailable",
+        "typecheck .: head=findings, dependency_state=trusted, base=unavailable"
+      ]
+    },
+    {
+      "repository": "hynek/structlog",
+      "pr": "https://github.com/hynek/structlog/pull/805",
+      "case_id": "805",
+      "record_path": "docs/evaluation/v0.1-rescored/records/structlog-805.json.gz",
+      "reasons": [
+        "lint .: head=findings, dependency_state=trusted, base=unavailable",
+        "typecheck .: head=findings, dependency_state=trusted, base=unavailable"
+      ]
+    }
+  ],
+  "agent_layer_backlog": [
+    {
+      "repository": "immerjs/immer",
+      "pr": "https://github.com/immerjs/immer/pull/1341",
+      "record_path": "docs/evaluation/v0.1-rescored/records/typescript-1341.json.gz",
+      "miss": {
+        "id": "immer-1341-filter-deleted-elements",
+        "scope_class": "agent-layer",
+        "description": "Capturing the original length without checking whether each index is still present causes callbacks on deleted entries. Native filter snapshots length but skips elements deleted before visitation. A predicate that shrinks an already-copied draft therefore receives undefined and can throw.",
+        "evidence": "agent-typescript.json, PR https://github.com/immerjs/immer/pull/1341, original miss immer-1341-filter-deleted-elements: independent base/head semantic reproduction; no type/lint/coverage/secret/dependency oracle establishes deterministic detectability."
+      }
+    },
+    {
+      "repository": "hynek/structlog",
+      "pr": "https://github.com/hynek/structlog/pull/807",
+      "record_path": "docs/evaluation/v0.1-rescored/records/structlog-807.json.gz",
+      "miss": {
+        "id": "independent/weakref-slotted-file-regression",
+        "scope_class": "agent-layer",
+        "description": "Replacing the dict of file locks with WeakKeyDictionary rejects existing hashable file-like writers that cannot be weakly referenced. WriteLogger raises TypeError before writing.",
+        "evidence": "agent-third.json, PR https://github.com/hynek/structlog/pull/807, original miss independent/weakref-slotted-file-regression: independent base/head semantic reproduction; no type/lint/coverage/secret/dependency oracle establishes deterministic detectability."
+      }
+    }
+  ],
+  "deterministic_misses": 0,
+  "sample": {
+    "eligible_real_prs": 0,
+    "repositories": 0,
+    "languages": [],
+    "positive_control_repositories": 0,
+    "positive_controls_by_language": {
+      "typescript": 0,
+      "python": 0
+    },
+    "clean_negative_controls": 0,
+    "adequate": false,
+    "requirements_missing": [
+      "Need at least 10 eligible real PRs",
+      "Need at least 5 eligible repositories",
+      "Need both languages",
+      "Need at least 10 eligible positive controls",
+      "Need controls across at least 3 repositories",
+      "Need at least 5 controls per language",
+      "Need an independently clean negative control",
+      "Precision denominator is absent",
+      "Recall denominator is absent"
+    ]
+  },
+  "decision": "insufficient-evidence",
+  "decision_reasons": [
+    "Need at least 10 eligible real PRs",
+    "Need at least 5 eligible repositories",
+    "Need both languages",
+    "Need at least 10 eligible positive controls",
+    "Need controls across at least 3 repositories",
+    "Need at least 5 controls per language",
+    "Need an independently clean negative control",
+    "Precision denominator is absent",
+    "Recall denominator is absent",
+    "Need at least 10 useful real PRs"
+  ]
+}

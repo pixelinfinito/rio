@@ -2,7 +2,7 @@
 
 Rio reviews local Git changes with TypeScript and Python type checking, linting, secret scanning, diff coverage, dependency auditing, and a bounded impact graph. It runs on your machine. Rio is licensed under Apache-2.0.
 
-The current [automated acceptance evaluation](docs/evaluation/v0.1.md) concludes **no-go** for a stable v0.1 release. The implementation and release-candidate validation are available; the commands below describe published release installation.
+The original [automated acceptance evaluation](docs/evaluation/v0.1.md) concluded **no-go**. A [methodology-corrected rescoring](docs/evaluation/v0.1-rescored.md) finds **insufficient evidence** because all ten PRs lacked working baseline classification; stable v0.1 release remains blocked. The implementation and release-candidate validation are available; the commands below describe published release installation.
 
 ## Install
 
