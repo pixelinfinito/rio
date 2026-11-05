@@ -1203,7 +1203,11 @@ async fn committed_python_editables_resolve_base_source_without_changing_head() 
     use std::os::unix::fs::PermissionsExt;
     for finder in 0..3 {
         let temp = tempfile::tempdir().unwrap();
-        let root = temp.path();
+        let real_root = temp.path().join("real");
+        fs::create_dir(&real_root).unwrap();
+        let alias = temp.path().join("alias");
+        std::os::unix::fs::symlink(&real_root, &alias).unwrap();
+        let root = alias.as_path();
         init(root);
         let status = std::process::Command::new("python3")
             .args(["-m", "venv", "--without-pip"])

@@ -25,7 +25,11 @@ fn pnpm_virtual_store_nested_links_and_external_targets_are_preserved() {
     let repo = tempfile::tempdir().unwrap();
     let base = tempfile::tempdir().unwrap();
     let external = tempfile::tempdir().unwrap();
-    let root = repo.path();
+    let real_root = repo.path().join("real");
+    fs::create_dir(&real_root).unwrap();
+    let alias = repo.path().join("alias");
+    std::os::unix::fs::symlink(&real_root, &alias).unwrap();
+    let root = alias.as_path();
     write(root, "packages/a/src/value.ts", "head");
     write(base.path(), "packages/a/src/value.ts", "base");
     write(
@@ -84,10 +88,12 @@ fn pnpm_virtual_store_nested_links_and_external_targets_are_preserved() {
             .unwrap(),
         base.path()
             .join("node_modules/.pnpm/consumer@1/node_modules/consumer")
+            .canonicalize()
+            .unwrap()
     );
     assert_eq!(
         fs::read_link(base.path().join("node_modules/external")).unwrap(),
-        external.path()
+        external.path().canonicalize().unwrap()
     );
     assert_eq!(
         fs::read_to_string(root.join("packages/b/node_modules/a/src/value.ts")).unwrap(),
@@ -335,7 +341,12 @@ fn ignored_build_entries_resolve_to_base_source_and_preserve_inherited_paths() {
         );
         assert_eq!(
             config["compilerOptions"]["paths"]["@local/*"][0],
-            base.path().join("config/../local/*").to_str().unwrap()
+            base.path()
+                .canonicalize()
+                .unwrap()
+                .join("config/../local/*")
+                .to_str()
+                .unwrap()
         );
     }
 }

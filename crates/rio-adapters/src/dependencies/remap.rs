@@ -44,11 +44,22 @@ pub fn remap_base_dependencies(
     stop: &dyn Fn() -> bool,
 ) -> Result<BaseDependencyRemap> {
     let worktree = worktree.canonicalize()?;
+    // Symlink targets are canonical below; compare installation roots using
+    // the same spelling so aliases such as /var -> /private/var still match.
+    let links = links
+        .iter()
+        .map(|link| {
+            Ok(DependencyLink {
+                path: link.path.clone(),
+                target: link.target.canonicalize()?,
+            })
+        })
+        .collect::<Result<Vec<_>>>()?;
     let changed = changed_paths(working, base);
     let mut overlay = Overlay {
         worktree: &worktree,
         destination,
-        links,
+        links: &links,
         changed: &changed,
         remapped: BTreeSet::new(),
         prepared: BTreeSet::new(),
@@ -62,7 +73,7 @@ pub fn remap_base_dependencies(
         },
         stop,
     };
-    for link in links {
+    for link in &links {
         let path = destination.join(&link.path);
         // Tracked dependency directories take precedence, as in ToolTree.
         if !fs::symlink_metadata(&path)?.file_type().is_symlink() {
@@ -324,11 +335,24 @@ pub fn configure_base_command(
     tool_name: &str,
 ) -> Result<()> {
     let worktree = worktree.canonicalize()?;
+    let destination = destination.canonicalize()?;
+    let cwd = command.cwd.canonicalize()?;
+    // Resolve the directory, preserving the executable leaf: a venv's Python
+    // may itself link to a global interpreter but still needs its venv path.
+    let program = command
+        .program
+        .parent()
+        .and_then(|parent| parent.canonicalize().ok())
+        .zip(command.program.file_name())
+        .map_or_else(
+            || command.program.clone(),
+            |(parent, name)| parent.join(name),
+        );
     let python_checker = matches!(tool_name, "mypy" | "pyright");
     let environment_link = links
         .iter()
         .filter(|link| !link.path.ends_with("node_modules"))
-        .find(|link| command.program.starts_with(worktree.join(&link.path)))
+        .find(|link| program.starts_with(worktree.join(&link.path)))
         .or_else(|| {
             python_checker
                 .then(|| {
@@ -339,7 +363,7 @@ pub fn configure_base_command(
                             destination
                                 .join(&link.path)
                                 .parent()
-                                .is_some_and(|parent| command.cwd.starts_with(parent))
+                                .is_some_and(|parent| cwd.starts_with(parent))
                         })
                         .max_by_key(|link| link.path.len())
                 })
@@ -375,7 +399,7 @@ pub fn configure_base_command(
                 .env
                 .insert("PYTHONPATH".into(), std::env::join_paths(paths)?);
         }
-        if let Ok(relative) = command.program.strip_prefix(&original) {
+        if let Ok(relative) = program.strip_prefix(&original) {
             let program = environment.join(relative);
             if fs::read(&command.program).is_ok_and(|bytes| bytes.starts_with(b"#!")) {
                 ensure!(

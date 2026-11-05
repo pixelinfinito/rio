@@ -58,11 +58,17 @@ fn explicit_mypy_targets_are_delegated_to_native_configuration() {
         let tree = fixture(name, &["custom/__init__.py"]);
         assert!(targets(&tree, ".").is_empty(), "{name}");
         let (temp, args) = command(&tree, ".", "mypy");
-        assert!(args.windows(2).any(|pair| pair
-            == [
+        assert!(args.windows(2).any(|pair| {
+            pair == [
                 "--config-file",
-                temp.path().join("pyproject.toml").to_str().unwrap()
-            ]));
+                temp.path()
+                    .canonicalize()
+                    .unwrap()
+                    .join("pyproject.toml")
+                    .to_str()
+                    .unwrap(),
+            ]
+        }));
     }
     for name in ["mypy.ini", ".mypy.ini", "setup.cfg"] {
         let tree = Tree::from([
@@ -76,7 +82,17 @@ fn explicit_mypy_targets_are_delegated_to_native_configuration() {
         ]);
         assert!(targets(&tree, ".").is_empty(), "{name}");
         let (temp, args) = command(&tree, ".", "mypy");
-        assert!(args.contains(&temp.path().join(name).to_string_lossy().into_owned()));
+        assert!(
+            args.contains(
+                &temp
+                    .path()
+                    .canonicalize()
+                    .unwrap()
+                    .join(name)
+                    .to_string_lossy()
+                    .into_owned()
+            )
+        );
     }
 }
 
@@ -159,6 +175,8 @@ fn mypy_config_precedence_and_exclude_are_preserved_for_inferred_targets() {
         args.contains(
             &temp
                 .path()
+                .canonicalize()
+                .unwrap()
                 .join("pyproject.toml")
                 .to_string_lossy()
                 .into_owned()
