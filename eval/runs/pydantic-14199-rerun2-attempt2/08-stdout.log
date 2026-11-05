@@ -1,0 +1,3 @@
+Removed unused conditional coverage startup hook; explicit coverage run remains
+Self-package wheel SHA256 8533fecda4f8d8aaa5ca821ebf6f2b35d5ad864169c92fd282c9295ec5534be1
+Own package code byte-identical after wheel-file reinstall; metadata: {"url": "file:///dev/shm/rio-pydantic/tmp/rio-pydantic-wheel-iwoy5mdq/pydantic-2.15.0a0+dev-py3-none-any.whl", "archive_info": {}}

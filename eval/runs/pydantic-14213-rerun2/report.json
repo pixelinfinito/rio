@@ -1,0 +1,1512 @@
+{
+  "checks": [
+    {
+      "findings": [],
+      "kind": "secrets",
+      "language": "common",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 0
+    },
+    {
+      "findings": [],
+      "hint": "Dependency audit needs api.osv.dev",
+      "kind": "dependencies",
+      "language": "common",
+      "outcome": "skipped",
+      "reason": "offline",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 6
+    },
+    {
+      "dependency_state": "verified",
+      "findings": [],
+      "kind": "lint",
+      "language": "python",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 13953
+    },
+    {
+      "dependency_state": "verified",
+      "findings": [],
+      "kind": "lint",
+      "language": "python",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "base",
+      "wall_time_ms": 35794
+    },
+    {
+      "dependency_state": "verified",
+      "findings": [
+        {
+          "category": "defect",
+          "evidence": [
+            "pyright diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "0c708dac1e6dedabbb1b19dcf3ad2415b4836ed5a6906498f63381f00bd3bec0",
+          "location": {
+            "column": 27,
+            "line_end": 558,
+            "line_start": 558,
+            "occurrence_state": "pre-existing",
+            "path": "tests/test_pipeline.py",
+            "symbol_path": "test_pipeline.test_not_eq"
+          },
+          "locations": [
+            {
+              "column": 27,
+              "line_end": 558,
+              "line_start": 558,
+              "occurrence_state": "pre-existing",
+              "path": "tests/test_pipeline.py",
+              "symbol_path": "test_pipeline.test_not_eq"
+            }
+          ],
+          "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[int]\"",
+          "rule_id": "typecheck/pyright/reportArgumentType",
+          "severity": "error",
+          "source": {
+            "tool": "pyright",
+            "version": "pyright 1.1.411"
+          },
+          "state": "pre-existing",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "pyright diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "1a803673bad9618fd43791bc7adc556e8d1e696b7dbd134adfff4f9c21059ac8",
+          "location": {
+            "column": 27,
+            "line_end": 137,
+            "line_start": 137,
+            "occurrence_state": "pre-existing",
+            "path": "tests/test_pipeline.py",
+            "symbol_path": "test_pipeline.test_parse_multipleOf"
+          },
+          "locations": [
+            {
+              "column": 27,
+              "line_end": 137,
+              "line_start": 137,
+              "occurrence_state": "pre-existing",
+              "path": "tests/test_pipeline.py",
+              "symbol_path": "test_pipeline.test_parse_multipleOf"
+            }
+          ],
+          "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[Any]\"",
+          "rule_id": "typecheck/pyright/reportArgumentType",
+          "severity": "error",
+          "source": {
+            "tool": "pyright",
+            "version": "pyright 1.1.411"
+          },
+          "state": "pre-existing",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "pyright diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "48f69a41503d45aea55d0e2a3e2d91130a6c6a34705743c50b72f7d2c3af6918",
+          "location": {
+            "column": 27,
+            "line_end": 109,
+            "line_start": 109,
+            "occurrence_state": "pre-existing",
+            "path": "tests/test_pipeline.py",
+            "symbol_path": "test_pipeline.test_ge_le_gt_lt"
+          },
+          "locations": [
+            {
+              "column": 27,
+              "line_end": 109,
+              "line_start": 109,
+              "occurrence_state": "pre-existing",
+              "path": "tests/test_pipeline.py",
+              "symbol_path": "test_pipeline.test_ge_le_gt_lt"
+            }
+          ],
+          "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[Any]\"",
+          "rule_id": "typecheck/pyright/reportArgumentType",
+          "severity": "error",
+          "source": {
+            "tool": "pyright",
+            "version": "pyright 1.1.411"
+          },
+          "state": "pre-existing",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "pyright diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "49598139263956107b9b2cd14cb2f95aaf69d59bc3bd1125a069815e84dd91fd",
+          "location": {
+            "column": 86,
+            "line_end": 455,
+            "line_start": 455,
+            "occurrence_state": "pre-existing",
+            "path": "tests/test_pipeline.py",
+            "symbol_path": "test_pipeline.test_predicates"
+          },
+          "locations": [
+            {
+              "column": 86,
+              "line_end": 455,
+              "line_start": 455,
+              "occurrence_state": "pre-existing",
+              "path": "tests/test_pipeline.py",
+              "symbol_path": "test_pipeline.test_predicates"
+            }
+          ],
+          "message": "Argument of type \"type[float]\" cannot be assigned to parameter \"func\" of type \"(int) -> bool\" in function \"predicate\"\n  Type \"type[float]\" is not assignable to type \"(int) -> bool\"\n    Function return type \"float\" is incompatible with type \"bool\"\n      \"float\" is not assignable to \"bool\"",
+          "rule_id": "typecheck/pyright/reportArgumentType",
+          "severity": "error",
+          "source": {
+            "tool": "pyright",
+            "version": "pyright 1.1.411"
+          },
+          "state": "pre-existing",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "pyright diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "71b669da4712e3bd059697e56570f5cf832c93a181675985b63dfea46fb9865c",
+          "location": {
+            "column": 31,
+            "line_end": 449,
+            "line_start": 449,
+            "occurrence_state": "pre-existing",
+            "path": "tests/test_pipeline.py",
+            "symbol_path": "test_pipeline.test_predicates"
+          },
+          "locations": [
+            {
+              "column": 31,
+              "line_end": 449,
+              "line_start": 449,
+              "occurrence_state": "pre-existing",
+              "path": "tests/test_pipeline.py",
+              "symbol_path": "test_pipeline.test_predicates"
+            },
+            {
+              "column": 9,
+              "line_end": 455,
+              "line_start": 455,
+              "occurrence_state": "pre-existing",
+              "path": "tests/test_pipeline.py",
+              "symbol_path": "test_pipeline.test_predicates"
+            }
+          ],
+          "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[int]\"",
+          "rule_id": "typecheck/pyright/reportArgumentType",
+          "severity": "error",
+          "source": {
+            "tool": "pyright",
+            "version": "pyright 1.1.411"
+          },
+          "state": "pre-existing",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "pyright diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "7386b2e65818cec7fd89937b5a41e46bfc6e4064d8931e8a5b53df4e3551bad5",
+          "location": {
+            "column": 27,
+            "line_end": 164,
+            "line_start": 164,
+            "occurrence_state": "pre-existing",
+            "path": "tests/test_pipeline.py",
+            "symbol_path": "test_pipeline.test_interval_constraints"
+          },
+          "locations": [
+            {
+              "column": 27,
+              "line_end": 164,
+              "line_start": 164,
+              "occurrence_state": "pre-existing",
+              "path": "tests/test_pipeline.py",
+              "symbol_path": "test_pipeline.test_interval_constraints"
+            }
+          ],
+          "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[Any]\"",
+          "rule_id": "typecheck/pyright/reportArgumentType",
+          "severity": "error",
+          "source": {
+            "tool": "pyright",
+            "version": "pyright 1.1.411"
+          },
+          "state": "pre-existing",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "pyright diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "b11996621272e200847b2bba76a44497a6bc5154e3f96d81c95cac3b5eee3e79",
+          "location": {
+            "column": 27,
+            "line_end": 235,
+            "line_start": 235,
+            "occurrence_state": "pre-existing",
+            "path": "tests/test_pipeline.py",
+            "symbol_path": "test_pipeline.test_len_constraints"
+          },
+          "locations": [
+            {
+              "column": 27,
+              "line_end": 235,
+              "line_start": 235,
+              "occurrence_state": "pre-existing",
+              "path": "tests/test_pipeline.py",
+              "symbol_path": "test_pipeline.test_len_constraints"
+            }
+          ],
+          "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[Any]\"",
+          "rule_id": "typecheck/pyright/reportArgumentType",
+          "severity": "error",
+          "source": {
+            "tool": "pyright",
+            "version": "pyright 1.1.411"
+          },
+          "state": "pre-existing",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "pyright diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "be44da13aa704d8f01f98cbf1ea5fb0aa346406f66d34e95d33cc5cc1e97c2e1",
+          "location": {
+            "column": 27,
+            "line_end": 572,
+            "line_start": 572,
+            "occurrence_state": "pre-existing",
+            "path": "tests/test_pipeline.py",
+            "symbol_path": "test_pipeline.test_not_in"
+          },
+          "locations": [
+            {
+              "column": 27,
+              "line_end": 572,
+              "line_start": 572,
+              "occurrence_state": "pre-existing",
+              "path": "tests/test_pipeline.py",
+              "symbol_path": "test_pipeline.test_not_in"
+            }
+          ],
+          "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[int]\"",
+          "rule_id": "typecheck/pyright/reportArgumentType",
+          "severity": "error",
+          "source": {
+            "tool": "pyright",
+            "version": "pyright 1.1.411"
+          },
+          "state": "pre-existing",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "pyright diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "c42835821e2dc02d633be779782444c12004e13735365ff779955561c1f338f2",
+          "location": {
+            "column": 27,
+            "line_end": 579,
+            "line_start": 579,
+            "occurrence_state": "pre-existing",
+            "path": "tests/test_pipeline.py",
+            "symbol_path": "test_pipeline.test_in"
+          },
+          "locations": [
+            {
+              "column": 27,
+              "line_end": 579,
+              "line_start": 579,
+              "occurrence_state": "pre-existing",
+              "path": "tests/test_pipeline.py",
+              "symbol_path": "test_pipeline.test_in"
+            }
+          ],
+          "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[int]\"",
+          "rule_id": "typecheck/pyright/reportArgumentType",
+          "severity": "error",
+          "source": {
+            "tool": "pyright",
+            "version": "pyright 1.1.411"
+          },
+          "state": "pre-existing",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "pyright diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "c9acdbb504e6af1a7f99ed69fba4d4592136338312bb46e685e9ced5e6c53c6f",
+          "location": {
+            "column": 27,
+            "line_end": 565,
+            "line_start": 565,
+            "occurrence_state": "pre-existing",
+            "path": "tests/test_pipeline.py",
+            "symbol_path": "test_pipeline.test_eq"
+          },
+          "locations": [
+            {
+              "column": 27,
+              "line_end": 565,
+              "line_start": 565,
+              "occurrence_state": "pre-existing",
+              "path": "tests/test_pipeline.py",
+              "symbol_path": "test_pipeline.test_eq"
+            }
+          ],
+          "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[int]\"",
+          "rule_id": "typecheck/pyright/reportArgumentType",
+          "severity": "error",
+          "source": {
+            "tool": "pyright",
+            "version": "pyright 1.1.411"
+          },
+          "state": "pre-existing",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "pyright diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "f25b838ed1947c06e450711653c2c1b51cb7d8fa819b58ccc6712275129c6212",
+          "location": {
+            "column": 27,
+            "line_end": 300,
+            "line_start": 300,
+            "occurrence_state": "pre-existing",
+            "path": "tests/test_pipeline.py",
+            "symbol_path": "test_pipeline.test_constraints_applied_on_core_schema"
+          },
+          "locations": [
+            {
+              "column": 27,
+              "line_end": 300,
+              "line_start": 300,
+              "occurrence_state": "pre-existing",
+              "path": "tests/test_pipeline.py",
+              "symbol_path": "test_pipeline.test_constraints_applied_on_core_schema"
+            }
+          ],
+          "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[Any]\"",
+          "rule_id": "typecheck/pyright/reportArgumentType",
+          "severity": "error",
+          "source": {
+            "tool": "pyright",
+            "version": "pyright 1.1.411"
+          },
+          "state": "pre-existing",
+          "trigger": ""
+        }
+      ],
+      "kind": "typecheck",
+      "language": "python",
+      "outcome": "findings",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 52472
+    },
+    {
+      "dependency_state": "verified",
+      "findings": [
+        {
+          "category": "defect",
+          "evidence": [
+            "pyright diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "48f69a41503d45aea55d0e2a3e2d91130a6c6a34705743c50b72f7d2c3af6918",
+          "location": {
+            "column": 27,
+            "line_end": 109,
+            "line_start": 109,
+            "occurrence_state": "unclassified",
+            "path": "tests/test_pipeline.py",
+            "symbol_path": "test_pipeline.test_ge_le_gt_lt"
+          },
+          "locations": [
+            {
+              "column": 27,
+              "line_end": 109,
+              "line_start": 109,
+              "occurrence_state": "unclassified",
+              "path": "tests/test_pipeline.py",
+              "symbol_path": "test_pipeline.test_ge_le_gt_lt"
+            }
+          ],
+          "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[Any]\"",
+          "rule_id": "typecheck/pyright/reportArgumentType",
+          "severity": "error",
+          "source": {
+            "tool": "pyright",
+            "version": "pyright 1.1.411"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "pyright diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "1a803673bad9618fd43791bc7adc556e8d1e696b7dbd134adfff4f9c21059ac8",
+          "location": {
+            "column": 27,
+            "line_end": 137,
+            "line_start": 137,
+            "occurrence_state": "unclassified",
+            "path": "tests/test_pipeline.py",
+            "symbol_path": "test_pipeline.test_parse_multipleOf"
+          },
+          "locations": [
+            {
+              "column": 27,
+              "line_end": 137,
+              "line_start": 137,
+              "occurrence_state": "unclassified",
+              "path": "tests/test_pipeline.py",
+              "symbol_path": "test_pipeline.test_parse_multipleOf"
+            }
+          ],
+          "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[Any]\"",
+          "rule_id": "typecheck/pyright/reportArgumentType",
+          "severity": "error",
+          "source": {
+            "tool": "pyright",
+            "version": "pyright 1.1.411"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "pyright diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "7386b2e65818cec7fd89937b5a41e46bfc6e4064d8931e8a5b53df4e3551bad5",
+          "location": {
+            "column": 27,
+            "line_end": 164,
+            "line_start": 164,
+            "occurrence_state": "unclassified",
+            "path": "tests/test_pipeline.py",
+            "symbol_path": "test_pipeline.test_interval_constraints"
+          },
+          "locations": [
+            {
+              "column": 27,
+              "line_end": 164,
+              "line_start": 164,
+              "occurrence_state": "unclassified",
+              "path": "tests/test_pipeline.py",
+              "symbol_path": "test_pipeline.test_interval_constraints"
+            }
+          ],
+          "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[Any]\"",
+          "rule_id": "typecheck/pyright/reportArgumentType",
+          "severity": "error",
+          "source": {
+            "tool": "pyright",
+            "version": "pyright 1.1.411"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "pyright diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "b11996621272e200847b2bba76a44497a6bc5154e3f96d81c95cac3b5eee3e79",
+          "location": {
+            "column": 27,
+            "line_end": 235,
+            "line_start": 235,
+            "occurrence_state": "unclassified",
+            "path": "tests/test_pipeline.py",
+            "symbol_path": "test_pipeline.test_len_constraints"
+          },
+          "locations": [
+            {
+              "column": 27,
+              "line_end": 235,
+              "line_start": 235,
+              "occurrence_state": "unclassified",
+              "path": "tests/test_pipeline.py",
+              "symbol_path": "test_pipeline.test_len_constraints"
+            }
+          ],
+          "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[Any]\"",
+          "rule_id": "typecheck/pyright/reportArgumentType",
+          "severity": "error",
+          "source": {
+            "tool": "pyright",
+            "version": "pyright 1.1.411"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "pyright diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "f25b838ed1947c06e450711653c2c1b51cb7d8fa819b58ccc6712275129c6212",
+          "location": {
+            "column": 27,
+            "line_end": 300,
+            "line_start": 300,
+            "occurrence_state": "unclassified",
+            "path": "tests/test_pipeline.py",
+            "symbol_path": "test_pipeline.test_constraints_applied_on_core_schema"
+          },
+          "locations": [
+            {
+              "column": 27,
+              "line_end": 300,
+              "line_start": 300,
+              "occurrence_state": "unclassified",
+              "path": "tests/test_pipeline.py",
+              "symbol_path": "test_pipeline.test_constraints_applied_on_core_schema"
+            }
+          ],
+          "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[Any]\"",
+          "rule_id": "typecheck/pyright/reportArgumentType",
+          "severity": "error",
+          "source": {
+            "tool": "pyright",
+            "version": "pyright 1.1.411"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "pyright diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "71b669da4712e3bd059697e56570f5cf832c93a181675985b63dfea46fb9865c",
+          "location": {
+            "column": 31,
+            "line_end": 449,
+            "line_start": 449,
+            "occurrence_state": "unclassified",
+            "path": "tests/test_pipeline.py",
+            "symbol_path": "test_pipeline.test_predicates"
+          },
+          "locations": [
+            {
+              "column": 31,
+              "line_end": 449,
+              "line_start": 449,
+              "occurrence_state": "unclassified",
+              "path": "tests/test_pipeline.py",
+              "symbol_path": "test_pipeline.test_predicates"
+            }
+          ],
+          "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[int]\"",
+          "rule_id": "typecheck/pyright/reportArgumentType",
+          "severity": "error",
+          "source": {
+            "tool": "pyright",
+            "version": "pyright 1.1.411"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "pyright diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "71b669da4712e3bd059697e56570f5cf832c93a181675985b63dfea46fb9865c",
+          "location": {
+            "column": 9,
+            "line_end": 455,
+            "line_start": 455,
+            "occurrence_state": "unclassified",
+            "path": "tests/test_pipeline.py",
+            "symbol_path": "test_pipeline.test_predicates"
+          },
+          "locations": [
+            {
+              "column": 9,
+              "line_end": 455,
+              "line_start": 455,
+              "occurrence_state": "unclassified",
+              "path": "tests/test_pipeline.py",
+              "symbol_path": "test_pipeline.test_predicates"
+            }
+          ],
+          "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[int]\"",
+          "rule_id": "typecheck/pyright/reportArgumentType",
+          "severity": "error",
+          "source": {
+            "tool": "pyright",
+            "version": "pyright 1.1.411"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "pyright diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "49598139263956107b9b2cd14cb2f95aaf69d59bc3bd1125a069815e84dd91fd",
+          "location": {
+            "column": 86,
+            "line_end": 455,
+            "line_start": 455,
+            "occurrence_state": "unclassified",
+            "path": "tests/test_pipeline.py",
+            "symbol_path": "test_pipeline.test_predicates"
+          },
+          "locations": [
+            {
+              "column": 86,
+              "line_end": 455,
+              "line_start": 455,
+              "occurrence_state": "unclassified",
+              "path": "tests/test_pipeline.py",
+              "symbol_path": "test_pipeline.test_predicates"
+            }
+          ],
+          "message": "Argument of type \"type[float]\" cannot be assigned to parameter \"func\" of type \"(int) -> bool\" in function \"predicate\"\n  Type \"type[float]\" is not assignable to type \"(int) -> bool\"\n    Function return type \"float\" is incompatible with type \"bool\"\n      \"float\" is not assignable to \"bool\"",
+          "rule_id": "typecheck/pyright/reportArgumentType",
+          "severity": "error",
+          "source": {
+            "tool": "pyright",
+            "version": "pyright 1.1.411"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "pyright diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "0c708dac1e6dedabbb1b19dcf3ad2415b4836ed5a6906498f63381f00bd3bec0",
+          "location": {
+            "column": 27,
+            "line_end": 558,
+            "line_start": 558,
+            "occurrence_state": "unclassified",
+            "path": "tests/test_pipeline.py",
+            "symbol_path": "test_pipeline.test_not_eq"
+          },
+          "locations": [
+            {
+              "column": 27,
+              "line_end": 558,
+              "line_start": 558,
+              "occurrence_state": "unclassified",
+              "path": "tests/test_pipeline.py",
+              "symbol_path": "test_pipeline.test_not_eq"
+            }
+          ],
+          "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[int]\"",
+          "rule_id": "typecheck/pyright/reportArgumentType",
+          "severity": "error",
+          "source": {
+            "tool": "pyright",
+            "version": "pyright 1.1.411"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "pyright diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "c9acdbb504e6af1a7f99ed69fba4d4592136338312bb46e685e9ced5e6c53c6f",
+          "location": {
+            "column": 27,
+            "line_end": 565,
+            "line_start": 565,
+            "occurrence_state": "unclassified",
+            "path": "tests/test_pipeline.py",
+            "symbol_path": "test_pipeline.test_eq"
+          },
+          "locations": [
+            {
+              "column": 27,
+              "line_end": 565,
+              "line_start": 565,
+              "occurrence_state": "unclassified",
+              "path": "tests/test_pipeline.py",
+              "symbol_path": "test_pipeline.test_eq"
+            }
+          ],
+          "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[int]\"",
+          "rule_id": "typecheck/pyright/reportArgumentType",
+          "severity": "error",
+          "source": {
+            "tool": "pyright",
+            "version": "pyright 1.1.411"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "pyright diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "be44da13aa704d8f01f98cbf1ea5fb0aa346406f66d34e95d33cc5cc1e97c2e1",
+          "location": {
+            "column": 27,
+            "line_end": 572,
+            "line_start": 572,
+            "occurrence_state": "unclassified",
+            "path": "tests/test_pipeline.py",
+            "symbol_path": "test_pipeline.test_not_in"
+          },
+          "locations": [
+            {
+              "column": 27,
+              "line_end": 572,
+              "line_start": 572,
+              "occurrence_state": "unclassified",
+              "path": "tests/test_pipeline.py",
+              "symbol_path": "test_pipeline.test_not_in"
+            }
+          ],
+          "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[int]\"",
+          "rule_id": "typecheck/pyright/reportArgumentType",
+          "severity": "error",
+          "source": {
+            "tool": "pyright",
+            "version": "pyright 1.1.411"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "pyright diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "c42835821e2dc02d633be779782444c12004e13735365ff779955561c1f338f2",
+          "location": {
+            "column": 27,
+            "line_end": 579,
+            "line_start": 579,
+            "occurrence_state": "unclassified",
+            "path": "tests/test_pipeline.py",
+            "symbol_path": "test_pipeline.test_in"
+          },
+          "locations": [
+            {
+              "column": 27,
+              "line_end": 579,
+              "line_start": 579,
+              "occurrence_state": "unclassified",
+              "path": "tests/test_pipeline.py",
+              "symbol_path": "test_pipeline.test_in"
+            }
+          ],
+          "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[int]\"",
+          "rule_id": "typecheck/pyright/reportArgumentType",
+          "severity": "error",
+          "source": {
+            "tool": "pyright",
+            "version": "pyright 1.1.411"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        }
+      ],
+      "kind": "typecheck",
+      "language": "python",
+      "outcome": "findings",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "base",
+      "wall_time_ms": 49405
+    },
+    {
+      "dependency_state": "verified",
+      "findings": [],
+      "kind": "coverage",
+      "language": "python",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 368923
+    }
+  ],
+  "deferred": [
+    {
+      "reason": "no_endpoint",
+      "step": "triage"
+    },
+    {
+      "reason": "no_endpoint",
+      "step": "agents"
+    },
+    {
+      "reason": "no_endpoint",
+      "step": "verify"
+    }
+  ],
+  "excluded": [],
+  "findings": [
+    {
+      "category": "defect",
+      "evidence": [
+        "pyright diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "0c708dac1e6dedabbb1b19dcf3ad2415b4836ed5a6906498f63381f00bd3bec0",
+      "location": {
+        "column": 27,
+        "line_end": 558,
+        "line_start": 558,
+        "occurrence_state": "pre-existing",
+        "path": "tests/test_pipeline.py",
+        "symbol_path": "test_pipeline.test_not_eq"
+      },
+      "locations": [
+        {
+          "column": 27,
+          "line_end": 558,
+          "line_start": 558,
+          "occurrence_state": "pre-existing",
+          "path": "tests/test_pipeline.py",
+          "symbol_path": "test_pipeline.test_not_eq"
+        }
+      ],
+      "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[int]\"",
+      "rule_id": "typecheck/pyright/reportArgumentType",
+      "severity": "error",
+      "source": {
+        "tool": "pyright",
+        "version": "pyright 1.1.411"
+      },
+      "state": "pre-existing",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "pyright diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "1a803673bad9618fd43791bc7adc556e8d1e696b7dbd134adfff4f9c21059ac8",
+      "location": {
+        "column": 27,
+        "line_end": 137,
+        "line_start": 137,
+        "occurrence_state": "pre-existing",
+        "path": "tests/test_pipeline.py",
+        "symbol_path": "test_pipeline.test_parse_multipleOf"
+      },
+      "locations": [
+        {
+          "column": 27,
+          "line_end": 137,
+          "line_start": 137,
+          "occurrence_state": "pre-existing",
+          "path": "tests/test_pipeline.py",
+          "symbol_path": "test_pipeline.test_parse_multipleOf"
+        }
+      ],
+      "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[Any]\"",
+      "rule_id": "typecheck/pyright/reportArgumentType",
+      "severity": "error",
+      "source": {
+        "tool": "pyright",
+        "version": "pyright 1.1.411"
+      },
+      "state": "pre-existing",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "pyright diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "48f69a41503d45aea55d0e2a3e2d91130a6c6a34705743c50b72f7d2c3af6918",
+      "location": {
+        "column": 27,
+        "line_end": 109,
+        "line_start": 109,
+        "occurrence_state": "pre-existing",
+        "path": "tests/test_pipeline.py",
+        "symbol_path": "test_pipeline.test_ge_le_gt_lt"
+      },
+      "locations": [
+        {
+          "column": 27,
+          "line_end": 109,
+          "line_start": 109,
+          "occurrence_state": "pre-existing",
+          "path": "tests/test_pipeline.py",
+          "symbol_path": "test_pipeline.test_ge_le_gt_lt"
+        }
+      ],
+      "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[Any]\"",
+      "rule_id": "typecheck/pyright/reportArgumentType",
+      "severity": "error",
+      "source": {
+        "tool": "pyright",
+        "version": "pyright 1.1.411"
+      },
+      "state": "pre-existing",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "pyright diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "49598139263956107b9b2cd14cb2f95aaf69d59bc3bd1125a069815e84dd91fd",
+      "location": {
+        "column": 86,
+        "line_end": 455,
+        "line_start": 455,
+        "occurrence_state": "pre-existing",
+        "path": "tests/test_pipeline.py",
+        "symbol_path": "test_pipeline.test_predicates"
+      },
+      "locations": [
+        {
+          "column": 86,
+          "line_end": 455,
+          "line_start": 455,
+          "occurrence_state": "pre-existing",
+          "path": "tests/test_pipeline.py",
+          "symbol_path": "test_pipeline.test_predicates"
+        }
+      ],
+      "message": "Argument of type \"type[float]\" cannot be assigned to parameter \"func\" of type \"(int) -> bool\" in function \"predicate\"\n  Type \"type[float]\" is not assignable to type \"(int) -> bool\"\n    Function return type \"float\" is incompatible with type \"bool\"\n      \"float\" is not assignable to \"bool\"",
+      "rule_id": "typecheck/pyright/reportArgumentType",
+      "severity": "error",
+      "source": {
+        "tool": "pyright",
+        "version": "pyright 1.1.411"
+      },
+      "state": "pre-existing",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "pyright diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "71b669da4712e3bd059697e56570f5cf832c93a181675985b63dfea46fb9865c",
+      "location": {
+        "column": 31,
+        "line_end": 449,
+        "line_start": 449,
+        "occurrence_state": "pre-existing",
+        "path": "tests/test_pipeline.py",
+        "symbol_path": "test_pipeline.test_predicates"
+      },
+      "locations": [
+        {
+          "column": 31,
+          "line_end": 449,
+          "line_start": 449,
+          "occurrence_state": "pre-existing",
+          "path": "tests/test_pipeline.py",
+          "symbol_path": "test_pipeline.test_predicates"
+        },
+        {
+          "column": 9,
+          "line_end": 455,
+          "line_start": 455,
+          "occurrence_state": "pre-existing",
+          "path": "tests/test_pipeline.py",
+          "symbol_path": "test_pipeline.test_predicates"
+        }
+      ],
+      "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[int]\"",
+      "rule_id": "typecheck/pyright/reportArgumentType",
+      "severity": "error",
+      "source": {
+        "tool": "pyright",
+        "version": "pyright 1.1.411"
+      },
+      "state": "pre-existing",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "pyright diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "7386b2e65818cec7fd89937b5a41e46bfc6e4064d8931e8a5b53df4e3551bad5",
+      "location": {
+        "column": 27,
+        "line_end": 164,
+        "line_start": 164,
+        "occurrence_state": "pre-existing",
+        "path": "tests/test_pipeline.py",
+        "symbol_path": "test_pipeline.test_interval_constraints"
+      },
+      "locations": [
+        {
+          "column": 27,
+          "line_end": 164,
+          "line_start": 164,
+          "occurrence_state": "pre-existing",
+          "path": "tests/test_pipeline.py",
+          "symbol_path": "test_pipeline.test_interval_constraints"
+        }
+      ],
+      "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[Any]\"",
+      "rule_id": "typecheck/pyright/reportArgumentType",
+      "severity": "error",
+      "source": {
+        "tool": "pyright",
+        "version": "pyright 1.1.411"
+      },
+      "state": "pre-existing",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "pyright diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "b11996621272e200847b2bba76a44497a6bc5154e3f96d81c95cac3b5eee3e79",
+      "location": {
+        "column": 27,
+        "line_end": 235,
+        "line_start": 235,
+        "occurrence_state": "pre-existing",
+        "path": "tests/test_pipeline.py",
+        "symbol_path": "test_pipeline.test_len_constraints"
+      },
+      "locations": [
+        {
+          "column": 27,
+          "line_end": 235,
+          "line_start": 235,
+          "occurrence_state": "pre-existing",
+          "path": "tests/test_pipeline.py",
+          "symbol_path": "test_pipeline.test_len_constraints"
+        }
+      ],
+      "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[Any]\"",
+      "rule_id": "typecheck/pyright/reportArgumentType",
+      "severity": "error",
+      "source": {
+        "tool": "pyright",
+        "version": "pyright 1.1.411"
+      },
+      "state": "pre-existing",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "pyright diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "be44da13aa704d8f01f98cbf1ea5fb0aa346406f66d34e95d33cc5cc1e97c2e1",
+      "location": {
+        "column": 27,
+        "line_end": 572,
+        "line_start": 572,
+        "occurrence_state": "pre-existing",
+        "path": "tests/test_pipeline.py",
+        "symbol_path": "test_pipeline.test_not_in"
+      },
+      "locations": [
+        {
+          "column": 27,
+          "line_end": 572,
+          "line_start": 572,
+          "occurrence_state": "pre-existing",
+          "path": "tests/test_pipeline.py",
+          "symbol_path": "test_pipeline.test_not_in"
+        }
+      ],
+      "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[int]\"",
+      "rule_id": "typecheck/pyright/reportArgumentType",
+      "severity": "error",
+      "source": {
+        "tool": "pyright",
+        "version": "pyright 1.1.411"
+      },
+      "state": "pre-existing",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "pyright diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "c42835821e2dc02d633be779782444c12004e13735365ff779955561c1f338f2",
+      "location": {
+        "column": 27,
+        "line_end": 579,
+        "line_start": 579,
+        "occurrence_state": "pre-existing",
+        "path": "tests/test_pipeline.py",
+        "symbol_path": "test_pipeline.test_in"
+      },
+      "locations": [
+        {
+          "column": 27,
+          "line_end": 579,
+          "line_start": 579,
+          "occurrence_state": "pre-existing",
+          "path": "tests/test_pipeline.py",
+          "symbol_path": "test_pipeline.test_in"
+        }
+      ],
+      "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[int]\"",
+      "rule_id": "typecheck/pyright/reportArgumentType",
+      "severity": "error",
+      "source": {
+        "tool": "pyright",
+        "version": "pyright 1.1.411"
+      },
+      "state": "pre-existing",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "pyright diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "c9acdbb504e6af1a7f99ed69fba4d4592136338312bb46e685e9ced5e6c53c6f",
+      "location": {
+        "column": 27,
+        "line_end": 565,
+        "line_start": 565,
+        "occurrence_state": "pre-existing",
+        "path": "tests/test_pipeline.py",
+        "symbol_path": "test_pipeline.test_eq"
+      },
+      "locations": [
+        {
+          "column": 27,
+          "line_end": 565,
+          "line_start": 565,
+          "occurrence_state": "pre-existing",
+          "path": "tests/test_pipeline.py",
+          "symbol_path": "test_pipeline.test_eq"
+        }
+      ],
+      "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[int]\"",
+      "rule_id": "typecheck/pyright/reportArgumentType",
+      "severity": "error",
+      "source": {
+        "tool": "pyright",
+        "version": "pyright 1.1.411"
+      },
+      "state": "pre-existing",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "pyright diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "f25b838ed1947c06e450711653c2c1b51cb7d8fa819b58ccc6712275129c6212",
+      "location": {
+        "column": 27,
+        "line_end": 300,
+        "line_start": 300,
+        "occurrence_state": "pre-existing",
+        "path": "tests/test_pipeline.py",
+        "symbol_path": "test_pipeline.test_constraints_applied_on_core_schema"
+      },
+      "locations": [
+        {
+          "column": 27,
+          "line_end": 300,
+          "line_start": 300,
+          "occurrence_state": "pre-existing",
+          "path": "tests/test_pipeline.py",
+          "symbol_path": "test_pipeline.test_constraints_applied_on_core_schema"
+        }
+      ],
+      "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[Any]\"",
+      "rule_id": "typecheck/pyright/reportArgumentType",
+      "severity": "error",
+      "source": {
+        "tool": "pyright",
+        "version": "pyright 1.1.411"
+      },
+      "state": "pre-existing",
+      "trigger": ""
+    }
+  ],
+  "footer": {
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "Graph references use syntax and text; no language server was used",
+      "Impact graph truncated at max_nodes",
+      "Offline applies to Rio; tool and test processes were not network-isolated"
+    ],
+    "suppressions": [],
+    "tool_versions": {
+      "python:.:coverage": "Coverage.py, version 7.13.5 with C extension",
+      "python:.:pyright": "pyright 1.1.411",
+      "python:.:ruff": "ruff 0.17.3"
+    }
+  },
+  "impact": {
+    "symbols": [
+      {
+        "path": "pydantic/plugin/_loader.py",
+        "references_per_hop": [
+          13,
+          19
+        ],
+        "symbol_path": "",
+        "test_referenced": true,
+        "unresolved": 21
+      },
+      {
+        "path": "pydantic/plugin/_loader.py",
+        "references_per_hop": [
+          12,
+          5
+        ],
+        "symbol_path": "_loader.get_plugins",
+        "test_referenced": true,
+        "unresolved": 8
+      },
+      {
+        "path": "tests/test_plugin_loader.py",
+        "references_per_hop": [
+          0,
+          0
+        ],
+        "symbol_path": "",
+        "test_referenced": false,
+        "unresolved": 0
+      },
+      {
+        "path": "tests/test_plugin_loader.py",
+        "references_per_hop": [
+          3,
+          0
+        ],
+        "symbol_path": "test_plugin_loader.Dist",
+        "test_referenced": true,
+        "unresolved": 3
+      },
+      {
+        "path": "tests/test_plugin_loader.py",
+        "references_per_hop": [
+          53,
+          1913
+        ],
+        "symbol_path": "test_plugin_loader.Dist.__init__",
+        "test_referenced": true,
+        "unresolved": 2448
+      },
+      {
+        "path": "tests/test_plugin_loader.py",
+        "references_per_hop": [
+          0,
+          0
+        ],
+        "symbol_path": "test_plugin_loader.mock",
+        "test_referenced": false,
+        "unresolved": 0
+      },
+      {
+        "path": "tests/test_plugin_loader.py",
+        "references_per_hop": [
+          3,
+          0
+        ],
+        "symbol_path": "test_plugin_loader.mock_entry_points",
+        "test_referenced": true,
+        "unresolved": 3
+      },
+      {
+        "path": "tests/test_plugin_loader.py",
+        "references_per_hop": [
+          1,
+          3
+        ],
+        "symbol_path": "test_plugin_loader.mock_entry_points._entry_points",
+        "test_referenced": true,
+        "unresolved": 4
+      },
+      {
+        "path": "tests/test_plugin_loader.py",
+        "references_per_hop": [
+          0,
+          0
+        ],
+        "symbol_path": "test_plugin_loader.test_load_same_plugin_multiple_times",
+        "test_referenced": false,
+        "unresolved": 0
+      },
+      {
+        "path": "tests/test_plugin_loader.py",
+        "references_per_hop": [
+          0,
+          0
+        ],
+        "symbol_path": "test_plugin_loader.test_loader_with_failing_plugin",
+        "test_referenced": false,
+        "unresolved": 0
+      }
+    ],
+    "truncated": true,
+    "unresolved": 2487
+  },
+  "incomplete": [
+    {
+      "findings": [],
+      "hint": "Dependency audit needs api.osv.dev",
+      "kind": "dependencies",
+      "language": "common",
+      "outcome": "skipped",
+      "reason": "offline",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 6
+    }
+  ],
+  "metrics": {
+    "checks": [
+      {
+        "kind": "secrets",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "kind": "dependencies",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 6
+      },
+      {
+        "kind": "lint",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 13953
+      },
+      {
+        "kind": "lint",
+        "root": ".",
+        "version": "base",
+        "wall_time_ms": 35794
+      },
+      {
+        "kind": "typecheck",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 52472
+      },
+      {
+        "kind": "typecheck",
+        "root": ".",
+        "version": "base",
+        "wall_time_ms": 49405
+      },
+      {
+        "kind": "coverage",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 368923
+      }
+    ],
+    "tool_versions": {
+      "python:.:coverage": "Coverage.py, version 7.13.5 with C extension",
+      "python:.:pyright": "pyright 1.1.411",
+      "python:.:ruff": "ruff 0.17.3"
+    },
+    "wall_time_ms": 428916
+  },
+  "review": {
+    "base": "5740091dcd08e4a92940ceae841434a83331cb09",
+    "chain": [
+      "eval/pydantic"
+    ],
+    "head": "ef2cb073d6be2ef360d2aedcd5afca0983af2507",
+    "id": "942fce5293eb6bd4",
+    "mode": "branch",
+    "profile": "eval/pydantic",
+    "rio_version": "0.1.0",
+    "run_id": "01M6NR9JFEK1GN5FX1H5DNBBKJ"
+  },
+  "risks": [],
+  "schema": "rio-report-v1",
+  "status": "incomplete",
+  "summary": {
+    "fixed": 0,
+    "pre_existing": 11,
+    "suppressed": 0
+  }
+}

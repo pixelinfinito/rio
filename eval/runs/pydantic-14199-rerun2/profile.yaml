@@ -1,0 +1,51 @@
+version: 1
+name: eval/pydantic
+budget:
+  fast: { wall_time: 20m }
+models: {}
+steps:
+  - id: prepare
+    uses: rio/prepare@0.1.0
+    with: { exclude: [] }
+  - id: checks
+    uses: rio/checks@0.1.0
+    needs: [prepare]
+    parallel: true
+    with:
+      typecheck: true
+      lint: true
+      secrets: true
+      coverage: true
+      dependencies: true
+      baseline: true
+      trust_installed_dependencies: false
+  - id: graph
+    uses: rio/graph@0.1.0
+    needs: [prepare]
+    parallel: true
+    with: { hops: 2, max_nodes: 2000 }
+  - id: triage
+    uses: rio/triage@0.1.0
+    needs: [checks, graph]
+    rules: []
+  - id: agents
+    uses: rio/agents@0.1.0
+    needs: [triage]
+    agents: []
+  - id: verify
+    uses: rio/verify@0.1.0
+    needs: [agents]
+  - id: report
+    uses: rio/report@0.1.0
+    needs: [checks, graph, verify]
+suppress: []
+publish: never
+fail_on:
+  evidence: static_proven
+  categories: [defect]
+  states: [new, worsened]
+  rules: []
+  incomplete: true
+  required_checks: []
+min_evidence: plausible
+max_lines: 1500

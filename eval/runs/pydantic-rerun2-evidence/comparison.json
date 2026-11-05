@@ -1,0 +1,236 @@
+[
+  {
+    "case": "pydantic-14199-rerun2",
+    "previous": "pydantic-14199-attempt05",
+    "pins": {
+      "install-plan.json": "ee08d3434c2187e7288d497e8121153727054c4c7a423984e43f5c8518f98815",
+      "profile.yaml": "6ece46cdff0eac9d03cf93bdd17b1c0676733bdb32524180d80e381eff35a9e5"
+    },
+    "baseline": {
+      "dependency_state": "verified",
+      "baseline_ran": true,
+      "baseline_classification_ran": true,
+      "eligible": true,
+      "reasons": [],
+      "notes": [
+        "Intent inference is deferred: no_endpoint",
+        "Graph references use syntax and text; no language server was used",
+        "Impact graph truncated at max_nodes",
+        "Offline applies to Rio; tool and test processes were not network-isolated"
+      ]
+    },
+    "runner_failures": [
+      "base dependency installation failed (124)"
+    ],
+    "all_findings_field_equal": true,
+    "prior_states": {
+      "pre-existing": 11,
+      "new": 2
+    },
+    "current_states": {
+      "pre-existing": 11,
+      "new": 2
+    },
+    "finding_ids": [
+      "0c708dac1e6dedabbb1b19dcf3ad2415b4836ed5a6906498f63381f00bd3bec0",
+      "118c18a4b17e4c34b05d5a4a882b58df6e4e1e888c7dca2e28da3d76c95d9001",
+      "1a803673bad9618fd43791bc7adc556e8d1e696b7dbd134adfff4f9c21059ac8",
+      "48f69a41503d45aea55d0e2a3e2d91130a6c6a34705743c50b72f7d2c3af6918",
+      "49598139263956107b9b2cd14cb2f95aaf69d59bc3bd1125a069815e84dd91fd",
+      "71b669da4712e3bd059697e56570f5cf832c93a181675985b63dfea46fb9865c",
+      "7386b2e65818cec7fd89937b5a41e46bfc6e4064d8931e8a5b53df4e3551bad5",
+      "b11996621272e200847b2bba76a44497a6bc5154e3f96d81c95cac3b5eee3e79",
+      "be44da13aa704d8f01f98cbf1ea5fb0aa346406f66d34e95d33cc5cc1e97c2e1",
+      "c42835821e2dc02d633be779782444c12004e13735365ff779955561c1f338f2",
+      "c9acdbb504e6af1a7f99ed69fba4d4592136338312bb46e685e9ced5e6c53c6f",
+      "e7fa463a43044b607c2f933410131203ec164611cc22c7828e682002fefafe89",
+      "f25b838ed1947c06e450711653c2c1b51cb7d8fa819b58ccc6712275129c6212"
+    ],
+    "captured_typecheck_oracle_matches": {
+      "base": {
+        "diagnostic_count": 12,
+        "matches_prior_independent_oracle": true,
+        "oracle": "eval/runs/pydantic-evidence/positive-base-wheel-final/07-stdout.log"
+      },
+      "head": {
+        "diagnostic_count": 12,
+        "matches_prior_independent_oracle": true,
+        "oracle": "eval/runs/pydantic-evidence/positive-head-wheel-final/07-stdout.log"
+      }
+    },
+    "captured_coverage": {
+      "target": "pydantic/_internal/_contextlib.py",
+      "instrumented": 49,
+      "executed": 35,
+      "excluded": [],
+      "missing": [
+        30,
+        38,
+        39,
+        41,
+        47,
+        52,
+        60,
+        61,
+        62,
+        63,
+        68,
+        71,
+        72,
+        74
+      ],
+      "independent_oracle": "eval/runs/pydantic-evidence/wheel-oracle-summary.json"
+    },
+    "coverage_capture_available": true
+  },
+  {
+    "case": "pydantic-14199-rerun2-attempt2",
+    "previous": "pydantic-14199-attempt05",
+    "pins": {
+      "install-plan.json": "ee08d3434c2187e7288d497e8121153727054c4c7a423984e43f5c8518f98815",
+      "profile.yaml": "6ece46cdff0eac9d03cf93bdd17b1c0676733bdb32524180d80e381eff35a9e5"
+    },
+    "baseline": {
+      "dependency_state": "verified",
+      "baseline_ran": true,
+      "baseline_classification_ran": true,
+      "eligible": true,
+      "reasons": [],
+      "notes": [
+        "Intent inference is deferred: no_endpoint",
+        "Graph references use syntax and text; no language server was used",
+        "Impact graph truncated at max_nodes",
+        "Offline applies to Rio; tool and test processes were not network-isolated"
+      ]
+    },
+    "runner_failures": [],
+    "all_findings_field_equal": true,
+    "prior_states": {
+      "pre-existing": 11,
+      "new": 2
+    },
+    "current_states": {
+      "pre-existing": 11,
+      "new": 2
+    },
+    "finding_ids": [
+      "0c708dac1e6dedabbb1b19dcf3ad2415b4836ed5a6906498f63381f00bd3bec0",
+      "118c18a4b17e4c34b05d5a4a882b58df6e4e1e888c7dca2e28da3d76c95d9001",
+      "1a803673bad9618fd43791bc7adc556e8d1e696b7dbd134adfff4f9c21059ac8",
+      "48f69a41503d45aea55d0e2a3e2d91130a6c6a34705743c50b72f7d2c3af6918",
+      "49598139263956107b9b2cd14cb2f95aaf69d59bc3bd1125a069815e84dd91fd",
+      "71b669da4712e3bd059697e56570f5cf832c93a181675985b63dfea46fb9865c",
+      "7386b2e65818cec7fd89937b5a41e46bfc6e4064d8931e8a5b53df4e3551bad5",
+      "b11996621272e200847b2bba76a44497a6bc5154e3f96d81c95cac3b5eee3e79",
+      "be44da13aa704d8f01f98cbf1ea5fb0aa346406f66d34e95d33cc5cc1e97c2e1",
+      "c42835821e2dc02d633be779782444c12004e13735365ff779955561c1f338f2",
+      "c9acdbb504e6af1a7f99ed69fba4d4592136338312bb46e685e9ced5e6c53c6f",
+      "e7fa463a43044b607c2f933410131203ec164611cc22c7828e682002fefafe89",
+      "f25b838ed1947c06e450711653c2c1b51cb7d8fa819b58ccc6712275129c6212"
+    ],
+    "captured_typecheck_oracle_matches": {
+      "base": {
+        "diagnostic_count": 12,
+        "matches_prior_independent_oracle": true,
+        "oracle": "eval/runs/pydantic-evidence/positive-base-wheel-final/07-stdout.log"
+      },
+      "head": {
+        "diagnostic_count": 12,
+        "matches_prior_independent_oracle": true,
+        "oracle": "eval/runs/pydantic-evidence/positive-head-wheel-final/07-stdout.log"
+      }
+    },
+    "captured_coverage": {
+      "target": "pydantic/_internal/_contextlib.py",
+      "instrumented": 49,
+      "executed": 35,
+      "excluded": [],
+      "missing": [
+        30,
+        38,
+        39,
+        41,
+        47,
+        52,
+        60,
+        61,
+        62,
+        63,
+        68,
+        71,
+        72,
+        74
+      ],
+      "independent_oracle": "eval/runs/pydantic-evidence/wheel-oracle-summary.json"
+    },
+    "coverage_capture_available": true
+  },
+  {
+    "case": "pydantic-14213-rerun2",
+    "previous": "pydantic-14213-attempt04",
+    "pins": {
+      "install-plan.json": "ee08d3434c2187e7288d497e8121153727054c4c7a423984e43f5c8518f98815",
+      "profile.yaml": "6ece46cdff0eac9d03cf93bdd17b1c0676733bdb32524180d80e381eff35a9e5"
+    },
+    "baseline": {
+      "dependency_state": "verified",
+      "baseline_ran": true,
+      "baseline_classification_ran": true,
+      "eligible": true,
+      "reasons": [],
+      "notes": [
+        "Intent inference is deferred: no_endpoint",
+        "Graph references use syntax and text; no language server was used",
+        "Impact graph truncated at max_nodes",
+        "Offline applies to Rio; tool and test processes were not network-isolated"
+      ]
+    },
+    "runner_failures": [],
+    "all_findings_field_equal": true,
+    "prior_states": {
+      "pre-existing": 11
+    },
+    "current_states": {
+      "pre-existing": 11
+    },
+    "finding_ids": [
+      "0c708dac1e6dedabbb1b19dcf3ad2415b4836ed5a6906498f63381f00bd3bec0",
+      "1a803673bad9618fd43791bc7adc556e8d1e696b7dbd134adfff4f9c21059ac8",
+      "48f69a41503d45aea55d0e2a3e2d91130a6c6a34705743c50b72f7d2c3af6918",
+      "49598139263956107b9b2cd14cb2f95aaf69d59bc3bd1125a069815e84dd91fd",
+      "71b669da4712e3bd059697e56570f5cf832c93a181675985b63dfea46fb9865c",
+      "7386b2e65818cec7fd89937b5a41e46bfc6e4064d8931e8a5b53df4e3551bad5",
+      "b11996621272e200847b2bba76a44497a6bc5154e3f96d81c95cac3b5eee3e79",
+      "be44da13aa704d8f01f98cbf1ea5fb0aa346406f66d34e95d33cc5cc1e97c2e1",
+      "c42835821e2dc02d633be779782444c12004e13735365ff779955561c1f338f2",
+      "c9acdbb504e6af1a7f99ed69fba4d4592136338312bb46e685e9ced5e6c53c6f",
+      "f25b838ed1947c06e450711653c2c1b51cb7d8fa819b58ccc6712275129c6212"
+    ],
+    "captured_typecheck_oracle_matches": {
+      "base": {
+        "diagnostic_count": 12,
+        "matches_prior_independent_oracle": true,
+        "oracle": "eval/runs/pydantic-evidence/negative-base-wheel-final/07-stdout.log"
+      },
+      "head": {
+        "diagnostic_count": 12,
+        "matches_prior_independent_oracle": true,
+        "oracle": "eval/runs/pydantic-evidence/negative-head-wheel-final/07-stdout.log"
+      }
+    },
+    "captured_coverage": {
+      "target": "pydantic/plugin/_loader.py",
+      "instrumented": 30,
+      "executed": 29,
+      "excluded": [
+        9,
+        10
+      ],
+      "missing": [
+        32
+      ],
+      "independent_oracle": "eval/runs/pydantic-evidence/wheel-oracle-summary.json"
+    },
+    "coverage_capture_available": true
+  }
+]

@@ -1,0 +1,137 @@
+[
+  {
+    "case": "pydantic-14199-rerun2",
+    "record": "eval/runs/pydantic-14199-rerun2/record.json",
+    "baseline_ran": true,
+    "baseline_classification_ran": true,
+    "dependency_state": "verified",
+    "eligible": true,
+    "raw_states": {
+      "pre-existing": 11,
+      "new": 2
+    },
+    "verdict_counts": {
+      "true-positive": 2,
+      "false-positive": 0,
+      "pre-existing-shown": 0,
+      "pre-existing-hidden": 11,
+      "environment-failure": 0,
+      "out-of-scope": 0
+    },
+    "root_cause_counts": {
+      "true-positive": 1,
+      "false-positive": 0,
+      "pre-existing-shown": 0,
+      "pre-existing-hidden": 3,
+      "environment-failure": 0,
+      "out-of-scope": 0
+    },
+    "positive_control": {
+      "kind": "real-pr",
+      "expected": [
+        {
+          "id": "contextmanager-uncovered-error-paths",
+          "mechanism": "uncovered-lines",
+          "evidence": "Preregistered in pydantic-evidence/control-register.json before Rio. Public introducing PR 14199 head 262700f815672fc37ed637a1604234f6c7cc7ee9 vs base a9f3f3fccc180c05190df0478a17487ec9908e4e. Independent positive-base/head-wheel-final commands.json and coverage.json.gz: base file absent; head 49 executable, 35 executed, missing 30,38,39,41,47,52,60,61,62,63,68,71,72,74, zero exclusions, both 6560 tests passed. See wheel-oracle-summary.json. Follow-up 14202 excludes error/suppression paths. One expected testing gap.",
+          "finding_ids": [
+            "118c18a4b17e4c34b05d5a4a882b58df6e4e1e888c7dca2e28da3d76c95d9001",
+            "e7fa463a43044b607c2f933410131203ec164611cc22c7828e682002fefafe89"
+          ]
+        }
+      ]
+    },
+    "misses": [],
+    "usefulness": "useful",
+    "runner_exit": 1,
+    "runner_wall_seconds": 2285.108,
+    "rio_wall_ms": 549833,
+    "runner_failures": [
+      "base dependency installation failed (124)"
+    ]
+  },
+  {
+    "case": "pydantic-14199-rerun2-attempt2",
+    "record": "eval/runs/pydantic-14199-rerun2-attempt2/record.json",
+    "baseline_ran": true,
+    "baseline_classification_ran": true,
+    "dependency_state": "verified",
+    "eligible": true,
+    "raw_states": {
+      "pre-existing": 11,
+      "new": 2
+    },
+    "verdict_counts": {
+      "true-positive": 2,
+      "false-positive": 0,
+      "pre-existing-shown": 0,
+      "pre-existing-hidden": 11,
+      "environment-failure": 0,
+      "out-of-scope": 0
+    },
+    "root_cause_counts": {
+      "true-positive": 1,
+      "false-positive": 0,
+      "pre-existing-shown": 0,
+      "pre-existing-hidden": 3,
+      "environment-failure": 0,
+      "out-of-scope": 0
+    },
+    "positive_control": {
+      "kind": "real-pr",
+      "expected": [
+        {
+          "id": "contextmanager-uncovered-error-paths",
+          "mechanism": "uncovered-lines",
+          "evidence": "Preregistered in pydantic-evidence/control-register.json before Rio. Public introducing PR 14199 head 262700f815672fc37ed637a1604234f6c7cc7ee9 vs base a9f3f3fccc180c05190df0478a17487ec9908e4e. Independent positive-base/head-wheel-final commands.json and coverage.json.gz: base file absent; head 49 executable, 35 executed, missing 30,38,39,41,47,52,60,61,62,63,68,71,72,74, zero exclusions, both 6560 tests passed. See wheel-oracle-summary.json. Follow-up 14202 excludes error/suppression paths. One expected testing gap.",
+          "finding_ids": [
+            "118c18a4b17e4c34b05d5a4a882b58df6e4e1e888c7dca2e28da3d76c95d9001",
+            "e7fa463a43044b607c2f933410131203ec164611cc22c7828e682002fefafe89"
+          ]
+        }
+      ]
+    },
+    "misses": [],
+    "usefulness": "useful",
+    "runner_exit": 0,
+    "runner_wall_seconds": 817.007,
+    "rio_wall_ms": 323325,
+    "runner_failures": []
+  },
+  {
+    "case": "pydantic-14213-rerun2",
+    "record": "eval/runs/pydantic-14213-rerun2/record.json",
+    "baseline_ran": true,
+    "baseline_classification_ran": true,
+    "dependency_state": "verified",
+    "eligible": true,
+    "raw_states": {
+      "pre-existing": 11
+    },
+    "verdict_counts": {
+      "true-positive": 0,
+      "false-positive": 0,
+      "pre-existing-shown": 0,
+      "pre-existing-hidden": 11,
+      "environment-failure": 0,
+      "out-of-scope": 0
+    },
+    "root_cause_counts": {
+      "true-positive": 0,
+      "false-positive": 0,
+      "pre-existing-shown": 0,
+      "pre-existing-hidden": 3,
+      "environment-failure": 0,
+      "out-of-scope": 0
+    },
+    "positive_control": {
+      "kind": "none",
+      "expected": []
+    },
+    "misses": [],
+    "usefulness": "useful",
+    "runner_exit": 0,
+    "runner_wall_seconds": 841.62,
+    "rio_wall_ms": 428916,
+    "runner_failures": []
+  }
+]

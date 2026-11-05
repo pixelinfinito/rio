@@ -1,0 +1,52 @@
+"""Recheck unchanged oracle evidence against the fresh Rio outputs."""
+import collections, hashlib, json, pathlib, sys
+
+root = pathlib.Path.cwd()
+cases = sys.argv[1:]
+results = []
+for case in cases:
+    positive = '14199' in case
+    previous = 'pydantic-14199-attempt05' if positive else 'pydantic-14213-attempt04'
+    prefix = 'positive' if positive else 'negative'
+    out = root/'eval/runs'/case
+    old = root/'eval/runs'/previous
+    report = json.loads((out/'report.json').read_text())
+    prior = json.loads((old/'report.json').read_text())
+    metadata = json.loads((out/'commands.json').read_text())
+    artifacts = root/'eval/runs/pydantic-rerun2-evidence'/case/'check-artifacts'
+    findings = sorted(report['findings']+report['risks'],key=lambda f:f['id'])
+    old_findings = sorted(prior['findings']+prior['risks'],key=lambda f:f['id'])
+    assert findings == old_findings, case
+    assert report['review']['base'] == prior['review']['base']
+    assert report['review']['head'] == prior['review']['head']
+    pins = {}
+    for name in ['install-plan.json','profile.yaml']:
+        assert (out/name).read_bytes() == (old/name).read_bytes(), (case,name)
+        pins[name] = hashlib.sha256((out/name).read_bytes()).hexdigest()
+    def diagnostics(data):
+        return sorted((item['file'].split('/tests/')[-1], item['range']['start']['line'],item['range']['start']['character'],item['range']['end']['line'],item['range']['end']['character'],item['rule'],item['message']) for item in data['generalDiagnostics'])
+    typechecks = {}
+    for version in ['base','head']:
+        path = artifacts/'typecheck/%2E'/version/'stdout.txt'
+        if path.exists():
+            data = json.loads(path.read_text())
+            oracle_path = root/'eval/runs/pydantic-evidence'/f'{prefix}-{version}-wheel-final/07-stdout.log'
+            oracle = json.loads(oracle_path.read_text())
+            assert diagnostics(data) == diagnostics(oracle), (case,version)
+            typechecks[version] = dict(diagnostic_count=len(data['generalDiagnostics']),matches_prior_independent_oracle=True,oracle=str(oracle_path.relative_to(root)))
+    coverage = {}
+    path = artifacts/'coverage/%2E/head/coverage.json'
+    if path.exists():
+        target = 'pydantic/_internal/_contextlib.py' if positive else 'pydantic/plugin/_loader.py'
+        data = json.loads(path.read_text())[target]
+        missing = sorted(set(data['instrumented'])-set(data['executed'])-set(data['excluded']))
+        if positive:
+            assert missing == [30,38,39,41,47,52,60,61,62,63,68,71,72,74], (case,missing)
+        else:
+            assert {6,*range(40,49)} <= set(data['executed']), case
+            assert missing == [32], (case,missing)
+        coverage = dict(target=target,instrumented=len(data['instrumented']),executed=len(data['executed']),excluded=data['excluded'],missing=missing,independent_oracle='eval/runs/pydantic-evidence/wheel-oracle-summary.json')
+    results.append(dict(case=case,previous=previous,pins=pins,baseline=metadata['environment'],runner_failures=metadata['failures'],all_findings_field_equal=True,prior_states=dict(collections.Counter(f['state'] for f in old_findings)),current_states=dict(collections.Counter(f['state'] for f in findings)),finding_ids=[f['id'] for f in findings],captured_typecheck_oracle_matches=typechecks,captured_coverage=coverage,coverage_capture_available=bool(coverage)))
+target = root/'eval/runs/pydantic-rerun2-evidence/comparison.json'
+target.write_text(json.dumps(results,indent=2)+'\n')
+print([(r['case'],r['current_states'],r['baseline']['eligible']) for r in results])

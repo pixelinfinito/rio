@@ -1,0 +1,164 @@
+"""Write the attempt ledger and append factual rerun notes after validation."""
+import collections, datetime, hashlib, json, pathlib
+
+root=pathlib.Path.cwd()
+evidence=root/'eval/runs/pydantic-rerun2-evidence'
+cases=['pydantic-14199-rerun2','pydantic-14199-rerun2-attempt2','pydantic-14213-rerun2']
+rows=[]
+for case in cases:
+    out=root/'eval/runs'/case
+    commands=json.loads((out/'commands.json').read_text())
+    record=json.loads((out/'record.json').read_text())
+    report=json.loads((out/'report.json').read_text())
+    launch=json.loads(pathlib.Path(commands['external_launch_evidence']).read_text())
+    counts=collections.Counter(f['verdict'] for f in record['findings'])
+    causes=collections.Counter(f['verdict'] for f in record['root_causes'])
+    classes=['true-positive','false-positive','pre-existing-shown','pre-existing-hidden','environment-failure','out-of-scope']
+    rows.append(dict(case=case,record=f'eval/runs/{case}/record.json',baseline_ran=record['environment']['baseline_ran'],baseline_classification_ran=record['environment']['baseline_classification_ran'],dependency_state=record['environment']['dependency_state'],eligible=record['environment']['eligible'],raw_states=dict(collections.Counter(f['state'] for f in report['findings']+report['risks'])),verdict_counts={k:counts[k] for k in classes},root_cause_counts={k:causes[k] for k in classes},positive_control=record['positive_control'],misses=record['misses'],usefulness=record['verdict'],runner_exit=launch['exit_code'],runner_wall_seconds=launch['wall_seconds'],rio_wall_ms=record['wall_time_ms'],runner_failures=commands['failures']))
+(evidence/'attempt-ledger.json').write_text(json.dumps(rows,indent=2)+'\n')
+notes=root/'eval/runs/pydantic-NOTES.md'
+assert '## Rerun2 (binary f6e4f87e4c65)' not in notes.read_text()
+text='''
+
+## Rerun2 (binary f6e4f87e4c65)
+
+Date: 2026-11-05. Reviewer: `sub-agent rerun2-pydantic (automated)`;
+`verdict_source=automated`. Re-executed the same preregistered public PRs, full
+base/head SHAs, install-plan bytes and profile bytes from the eligible attempts
+14199-attempt05 and 14213-attempt04. `rio --version` matched
+`rio 0.1.0 x86_64-unknown-linux-gnu f6e4f87e4c65` before each launch. No Rio
+rebuild, `crates/` edit, or `eval/*.py` edit was made. Python 3.12.12 and uv
+0.13.7 were checked before each launch; installed tools remain Pyright 1.1.411,
+mypy 2.3.0, Ruff 0.17.3, pytest 9.1.1 and coverage.py 7.13.5. The exact
+wheel-file reinstall/content-equality assertion and hash-checked unused startup
+hook removal are retained. Relative `.venv/bin` stays first on PATH, both coverage
+startup variables are unset, and the same scoped PYTEST_ADDOPTS/CONTEXT are used.
+Full runtime overrides and binary/profile SHA-256s are in each commands.json.
+
+Disposable sources/build scratch use `/dev/shm/rio-pydantic`; preflight showed
+5.7 GiB free and the minimum observed during initial setup was approximately
+1.2 GiB. Shared-host I/O stalls were substantial; a timestamped sample is in
+`pydantic-rerun2-evidence/host-observation.json`. No performance claim follows
+from these wall times. Installers may use network; Rio review remains offline.
+Dependency auditing without a populated OSV cache remains the declared capability
+limitation. Neither PR changes the lockfile; no vulnerability-safety claim is made.
+
+The canonical case records are:
+
+- Positive #14199: `pydantic-14199-rerun2-attempt2/record.json`.
+- Independently clean negative #14213: `pydantic-14213-rerun2/record.json`.
+
+'''
+text+='| Attempt | Baseline classification | Dependency state | Eligible | TP | FP | Existing shown | Existing hidden | Environment | Out of scope | Runner s | Rio ms | Runner exit |\n'
+text+='| --- | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |\n'
+for row in rows:
+    counts=row['verdict_counts']
+    text+=f"| {row['case']} | {'yes' if row['baseline_classification_ran'] else 'no'} | {row['dependency_state']} | {'yes' if row['eligible'] else 'no'} | {counts['true-positive']} | {counts['false-positive']} | {counts['pre-existing-shown']} | {counts['pre-existing-hidden']} | {counts['environment-failure']} | {counts['out-of-scope']} | {row['runner_wall_seconds']} | {row['rio_wall_ms']} | {row['runner_exit']} |\n"
+text+='''
+Counts above are raw top-level findings/risks after adjudication; nested check
+copies are not counted again. Each positive has one true-positive root cause
+(two coverage findings), three hidden pre-existing causes (11 findings), and
+zero other causes. The negative has three hidden pre-existing causes and zero
+other causes. All three records have baseline_ran=true and successful verified
+head/base lint and typecheck pairs. Head coverage also passed with verified
+dependencies. Both canonical runner ledgers have successful base/head installs
+and no recorded failures. All three records are `useful` under current v2 rules;
+the negative has an independent clean-change assessment, no visible unwanted
+diagnostics and no deterministic misses. The two positive attempts represent
+one case; this rerun contains two independent PR cases.
+
+First positive attempt: base `uv sync` exceeded the default 1200-second harness
+command limit, exit 124, recorded wall 1,295,391 ms; see
+`pydantic-14199-rerun2/07-stderr.log` and commands.json command 7. Head sync
+succeeded and Rio subsequently classified its baseline successfully using the
+head installation. Runner exit 1 therefore did **not** imply absent baseline
+classification in this attempt: its sole failure is the timed-out separate base
+installation. This is setup/host contention, with no finding ID. It is preserved
+with full verdicts and a validated report-derived eligible record, but is not the
+canonical positive measurement. The retry changes only the harness command
+timeout to 3600 seconds; the selected Rio profile still has the original
+20-minute fast budget. Negative setup also uses --timeout 3600.
+
+Comparison with previous attempts and independent evidence:
+
+- Every top-level finding object is field-for-field identical to the previous
+  raw report for its case, including IDs, messages, locations and raw states.
+  No finding was added or removed. The hidden pre-existing count remains 11
+  in **both** controls; all are native configured Pyright reportArgumentType
+  diagnostics in unchanged tests/test_pipeline.py, representing 12 diagnostic
+  occurrences. Captured head/base native outputs are checked against the prior
+  independent wheel-file oracle by path/range/rule/exact message.
+- The earlier notes, verdict labels and stored records called those diagnostics
+  `pre-existing-shown` and called the negative `not-useful`. Those historical
+  scoring claims contradict the original raw `pre-existing` states. Current
+  METHODOLOGY.md and record-v2 correctly override such labels to
+  `pre-existing-hidden`; this is an evaluation correction, not a change in Rio's
+  findings or their visibility. Prior artifacts are preserved unchanged.
+- Positive expectation `contextmanager-uncovered-error-paths` remains detected
+  (1 expected bug detected, 0 missed). Matching true-positive finding IDs are
+  `118c18a4b17e4c34b05d5a4a882b58df6e4e1e888c7dca2e28da3d76c95d9001`
+  and `e7fa463a43044b607c2f933410131203ec164611cc22c7828e682002fefafe89`.
+  Their union is precisely missing executable lines
+  30,38,39,41,47,52,60,61,62,63,68,71,72,74 in the new contextlib module.
+  Captured current coverage retains 49 instrumented, 35 executed, zero excluded
+  lines; selected tests pass 6,560 / 247 skipped / 28 xfailed. The unchanged-SHA
+  independent wheel-file base/head oracle remains the oracle, not a Rio output
+  substituted for independent evidence.
+- Negative #14213 has no expected positive bug and no deterministic or
+  agent-layer miss established. The prior independent clean assessment is
+  retained: entry-point compatibility and loader semantics inspected, source
+  Ruff clean, native Pyright unchanged, nine focused loader tests passing, and
+  every changed executable loader line (6,40-48) executed. Current coverage is
+  compared with that evidence; unchanged missing loader line 32 is not a miss.
+
+Remaining Rio defects / capability observations:
+
+- No new incorrect finding, visible pre-existing finding, control miss or
+  review-baseline defect was observed with the frozen workaround plan. Exact
+  unchanged finding IDs and comparison assertions are in
+  `pydantic-rerun2-evidence/comparison.json` and each verdicts.json.
+- Mypy target-resolution changes are **not exercised** here: strace confirms
+  Rio still invokes venv `pyright --outputjson` without positional `.` for both
+  head and base. Secret scans pass on both unchanged credential-free diffs;
+  this is not a credential positive-control claim. The executable-line
+  diff-coverage control remains detected, with no negative-control coverage
+  false alarm.
+- Doctor/review planning discrepancy from the earlier notes no longer occurs
+  for the selected change. Harness `rio doctor --format json` and supplemental
+  `rio doctor --base FULL_BASE_SHA --format json` return 0, blocking_problems=[],
+  with a plan for root checks and verified baseline planning in the explicit
+  --base probe. Reproduce using each supplemental commands.json's argv/cwd and
+  environment at that pinned head with the same installation.
+- `rio doctor --all-roots --format json` also returns 0 and a non-null plan;
+  it lists unrelated root skips rather than aborting the whole plan. In
+  particular tests/typechecking's metadata-only uv.lock still yields per-check
+  dependency_mismatch with exact hint `cannot parse tests/typechecking/uv.lock:
+  uv.lock has no package entries; installed dependencies cannot be verified
+  (set trust_installed_dependencies to run anyway)`. Other unrelated roots
+  include missing tool/config/install skips. This is a planning/capability
+  observation with no finding ID, not proof those roots' checks passed and
+  not an eligibility failure for the selected-root review.
+- Historical partial-group inference, own-editable/direct-directory baseline
+  guards and executable startup-hook constraints are masked by the explicitly
+  required unchanged install plan and were not independently retested. Their
+  earlier repros remain in this notes file; no claim of resolution is made.
+  Reports retain the declared offline audit skip and local no_endpoint/graph
+  limitations. No new product defect is inferred from those expected notes.
+
+Evidence: `pydantic-rerun2-evidence/{launch.py.txt,supplement.py.txt,compare.py.txt,
+extract-trace.py.txt,adjudicate.py.txt,attempt-ledger.json,comparison.json}`;
+per-attempt launch ledgers, compressed execve/chdir traces, and supplemental
+doctor/config/diff/check-artifact manifests. Runtime/child evidence is an
+explicit post-run addition to the unmodified harness command ledger. Artifact
+capture is read-only and supplementary; the final raw reports establish outcomes.
+Every finding has an evidence-backed verdict; all misses lists are complete
+and empty. Positive expectations include matching finding IDs. All record
+builders and validators pass; exact validation output is retained in
+`pydantic-rerun2-evidence/validation.log`. The unmodified evaluation harness
+suite passes all 30 tests (`harness-tests.log`). No source clone, venv, wheel or
+build output is committed. Large raw exec logs are gzipped; no committed file
+exceeds 5 MB. No push or PR was performed.
+'''
+with notes.open('a') as stream:
+    stream.write(text)
+print('Appended rerun notes; ledger:',evidence/'attempt-ledger.json')

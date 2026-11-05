@@ -1,0 +1,22 @@
+import json, pathlib, re, sys
+root=pathlib.Path.cwd()
+case=sys.argv[1]
+trace=root/'eval/runs/pydantic-rerun2-evidence'/sys.argv[2]
+out=root/'eval/runs'/case
+items=[]; cwd={}
+for number,line in enumerate(trace.read_text().splitlines(),1):
+ m=re.match(r'(\d+)\s+chdir\((".*")\)\s+= 0',line)
+ if m:
+  try: cwd[m[1]]=json.loads(m[2])
+  except json.JSONDecodeError: pass
+ m=re.match(r'(\d+)\s+execve\(("[^"]+"), (\[.*\]),',line)
+ if not m: continue
+ try: exe=json.loads(m[2]); argv=json.loads(m[3])
+ except json.JSONDecodeError: continue
+ name=pathlib.Path(exe).name
+ kind='typecheck' if name in ['pyright','mypy'] and '--version' not in argv else 'lint' if name=='ruff' and 'check' in argv and '--output-format' in argv else 'coverage' if name=='coverage' and len(argv)>1 and argv[1] in ['run','json'] else None
+ if kind: items.append(dict(kind=kind,pid=int(m[1]),argv=argv,cwd=cwd.get(m[1]),trace_path=str(trace.relative_to(root))+'.gz',trace_line=number,raw_execve=line))
+d=json.loads((out/'commands.json').read_text());d['observed_child_invocations']=items;d['child_command_capture']='Post-run annotation from strace execve/chdir observer; original runner ledger retained. Trace gzip lines preserve exact argv; no checker wrappers or binary changes.'
+(out/'commands.json').write_text(json.dumps(d,indent=2)+'\n')
+(out/'observed-tool-invocations.json').write_text(json.dumps(items,indent=2)+'\n')
+print(case,[(i['kind'],i['argv'][:2]) for i in items])

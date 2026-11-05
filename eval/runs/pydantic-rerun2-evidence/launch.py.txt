@@ -1,0 +1,42 @@
+"""Launch the unmodified harness; retain external environment and process evidence."""
+import datetime, hashlib, json, os, pathlib, subprocess, sys, time
+root = pathlib.Path.cwd()
+pr = int(sys.argv[1])
+suffix = sys.argv[2] if len(sys.argv)>2 else 'rerun2'
+previous = root / 'eval/runs' / {14199:'pydantic-14199-attempt05',14213:'pydantic-14213-attempt04'}[pr]
+old = json.loads((previous/'commands.json').read_text())
+out = root / 'eval/runs' / f'pydantic-{pr}-{suffix}'
+evidence = root / 'eval/runs/pydantic-rerun2-evidence'
+assert not out.exists()
+env = dict(os.environ)
+env.update(old['runtime_environment_overrides'])
+# Preserve interpreter/tool selection and the relative venv Python binding.
+pinned_python = '/home/ubuntu/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin'
+env['PATH'] = '.venv/bin:/home/ubuntu/.cargo/bin:' + pinned_python + ':/tmp/rio-acceptance-tools:' + os.environ['PATH']
+for name in ['COVERAGE_PROCESS_START','COVERAGE_CORE']:
+    env.pop(name,None)
+argv = ['python3','eval/runner.py','--repository','pydantic/pydantic','--pr',str(pr),
+        '--base',old['base_sha'],'--head',old['head_sha'],'--languages','python',
+        '--rio','/home/ubuntu/rio/target/release/rio','--out',str(out),
+        '--install-plan',str(previous/'install-plan.json'),'--profile',str(previous/'profile.yaml'), '--timeout', '3600']
+version = subprocess.check_output(['/home/ubuntu/rio/target/release/rio','--version'],text=True).strip()
+assert version.endswith(' f6e4f87e4c65'),version
+assert subprocess.check_output(['uv','--version'],env=env,text=True).startswith('uv 0.13.7 ')
+assert subprocess.check_output(['python3','--version'],env=env,text=True).strip() == 'Python 3.12.12'
+meta = dict(argv=argv, runtime_environment_overrides={k:env[k] for k in [*old['runtime_environment_overrides']]},
+            unset_environment=['COVERAGE_PROCESS_START','COVERAGE_CORE'],binary_version=version,
+            started_utc=datetime.datetime.now(datetime.timezone.utc).isoformat())
+start = time.monotonic()
+tag = str(pr) if suffix=='rerun2' else f'{pr}-{suffix}'
+with (evidence/f'{tag}-runner.stdout.log').open('w') as stdout, (evidence/f'{tag}-runner.stderr.log').open('w') as stderr:
+    proc = subprocess.run(['strace','-f','-e','trace=execve,chdir','-s','16384','-o',str(evidence/f'{tag}-exec.log'),*argv], env=env, stdout=stdout, stderr=stderr)
+meta.update(exit_code=proc.returncode,wall_seconds=round(time.monotonic()-start,3),finished_utc=datetime.datetime.now(datetime.timezone.utc).isoformat())
+(evidence/f'{tag}-launch.json').write_text(json.dumps(meta,indent=2)+'\n')
+if (out/'commands.json').exists():
+    commands=json.loads((out/'commands.json').read_text())
+    commands['runtime_environment_overrides']=meta['runtime_environment_overrides']
+    commands['runtime_unset_environment']=meta['unset_environment']
+    commands['external_launch_evidence']=str(evidence/f'{tag}-launch.json')
+    (out/'commands.json').write_text(json.dumps(commands,indent=2)+'\n')
+print(json.dumps(meta,indent=2))
+sys.exit(proc.returncode)

@@ -1,0 +1,15 @@
+{
+  "compared_utc": "2026-11-05T11:37:40.287760+00:00",
+  "case": "14199",
+  "previous": "pydantic-14199-attempt05",
+  "rerun": "pydantic-14199-rerun2",
+  "same_finding_objects": true,
+  "old_states": {
+    "pre-existing": 11,
+    "new": 2
+  },
+  "new_states": {
+    "pre-existing": 11,
+    "new": 2
+  }
+}
