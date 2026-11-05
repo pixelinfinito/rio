@@ -609,3 +609,114 @@ fn multiline_type_changes_do_not_hide_runtime_string_or_statement_changes() {
         );
     }
 }
+
+#[cfg(unix)]
+async fn recorded_runner(name: &str, script: &str) -> CoverageRun {
+    use std::os::unix::fs::PermissionsExt;
+    let temporary = tempfile::tempdir().unwrap();
+    let path = temporary.path().join("runner");
+    std::fs::write(&path, format!("#!/bin/sh\n{script}\n")).unwrap();
+    std::fs::set_permissions(&path, std::fs::Permissions::from_mode(0o755)).unwrap();
+    let tool = ResolvedTool {
+        name: name.into(),
+        path,
+        version: "2.1.9".into(),
+        version_hint: None,
+    };
+    let settings = CoverageSettings {
+        root: ".".into(),
+        ..Default::default()
+    };
+    run_coverage(
+        CoverageRequest {
+            tool: &tool,
+            settings: &settings,
+            tool_tree: temporary.path(),
+            worktree_root: None,
+            timeout: Duration::from_secs(5),
+            output_limit: 1024 * 1024,
+        },
+        &ProcessSupervisor::default(),
+        CancellationToken::new(),
+    )
+    .await
+}
+
+#[cfg(unix)]
+#[tokio::test]
+async fn runner_startup_errors_include_first_nonempty_stderr_without_retention_claim() {
+    for tool in ["vitest", "jest", "coverage"] {
+        for code in [1, 2] {
+            let run = recorded_runner(tool, &format!("printf '\\n  \\nUnknown option: --unsupported\\nsecond error line\\n' >&2\nexit {code}")).await;
+            assert!(
+                matches!(run.outcome, CheckOutcome::Failed { .. }),
+                "{tool}: {:?}",
+                run.outcome
+            );
+            assert!(run.data.is_empty());
+            let hint = run.outcome.details().hint.as_deref().unwrap();
+            assert!(
+                hint.contains("Unknown option: --unsupported"),
+                "{tool}: {hint}"
+            );
+            assert!(!hint.contains("second error line"), "{hint}");
+            assert!(!hint.contains("retained"), "{hint}");
+        }
+    }
+}
+
+#[cfg(unix)]
+#[tokio::test]
+async fn runner_error_hints_are_redacted_and_empty_reports_are_not_usable() {
+    let secret = "aB3dE5gH7jK9mN1pQ4sT6vW8xY0zR2";
+    let script = format!(
+        r#"cat > .rio-coverage/lcov.info <<'EOF'
+SF:value.ts
+end_of_record
+EOF
+cat >&2 <<'EOF'
+
+Unknown option; token = '{secret}'
+EOF
+exit 1"#
+    );
+    let run = recorded_runner("vitest", &script).await;
+    assert!(!run.data.is_empty());
+    let hint = run.outcome.details().hint.as_deref().unwrap();
+    assert!(hint.contains("Unknown option"));
+    assert!(hint.contains("[REDACTED]"));
+    assert!(!hint.contains(secret));
+    assert!(!hint.contains("retained"));
+    let run = recorded_runner("vitest", "exit 1").await;
+    let hint = run.outcome.details().hint.as_deref().unwrap();
+    assert!(hint.contains("without producing usable coverage"));
+    assert!(!hint.contains("retained"));
+}
+
+#[cfg(unix)]
+#[tokio::test]
+async fn failed_runner_retains_partial_coverage_with_accurate_hint() {
+    let run = recorded_runner(
+        "vitest",
+        r#"cat > .rio-coverage/lcov.info <<'EOF'
+SF:value.ts
+DA:1,1
+DA:2,0
+end_of_record
+EOF
+printf '3 failed\n'
+exit 1"#,
+    )
+    .await;
+    assert!(matches!(
+        run.outcome,
+        CheckOutcome::Failed {
+            reason: FailureReason::TestsFailed,
+            ..
+        }
+    ));
+    assert_eq!(run.data["value.ts"].executed.len(), 1);
+    let hint = run.outcome.details().hint.as_deref().unwrap();
+    assert!(hint.starts_with("3 tests failed"), "{hint}");
+    assert!(hint.contains("usable coverage from the incomplete run is retained"));
+}

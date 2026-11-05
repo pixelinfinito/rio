@@ -640,13 +640,29 @@ pub async fn run_coverage(
         }
         Err(_) => CoverageData::new(),
     };
-    if matches!(
-        outcome,
-        CheckOutcome::Failed {
-            reason: FailureReason::TestsFailed,
-            ..
-        }
-    ) {
+    let has_coverage = data.values().any(|file| !file.instrumented.is_empty());
+    let runner_exit = processes
+        .first()
+        .and_then(|process| match process.termination {
+            Termination::Exited { code: Some(code) } if code != 0 => Some(code),
+            _ => None,
+        });
+    if !has_coverage && let Some(code) = runner_exit {
+        let stderr = String::from_utf8_lossy(&processes[0].stderr);
+        let first_line = stderr.lines().map(str::trim).find(|line| !line.is_empty());
+        outcome.details_mut().hint = Some(crate::redact(&format!(
+            "Test runner exited with code {code} without producing usable coverage{}",
+            first_line.map_or_else(String::new, |line| format!(": {line}"))
+        )));
+    } else if has_coverage
+        && matches!(
+            outcome,
+            CheckOutcome::Failed {
+                reason: FailureReason::TestsFailed,
+                ..
+            }
+        )
+    {
         let count = processes.first().and_then(|process| {
             let text = String::from_utf8_lossy(&process.stdout);
             regex::Regex::new(r"(\d+) failed")
