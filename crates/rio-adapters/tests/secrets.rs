@@ -153,3 +153,24 @@ fn output_stopped_mid_credential_is_still_redacted() {
     let retained = String::from_utf8(retained_raw(token.as_bytes(), 100000)).unwrap();
     assert_eq!(retained, "ghp_[REDACTED]");
 }
+
+#[test]
+fn structlog_contextvar_identifiers_are_not_credentials() {
+    // The expression guards landed in 8ea5d63. Keep the annotated ContextVar
+    // shape from the acceptance evaluation covered in scanning and redaction.
+    let source = r#"from contextvars import ContextVar
+_CONTEXT_TOKEN: ContextVar[dict[str, Token[Any]]] = ContextVar("structlog_context_tokens")
+_ASYNC_CALLING_STACK: ContextVar[tuple[FrameType, ...]] = ContextVar("structlog_async_calling_stack")
+structlog_context_token = ContextVar("structlog_context_tokens")
+"#;
+    assert_eq!(redact(source), source);
+    let changes = changes("", source);
+    assert!(
+        scan_secrets(&diff(&changes, &[]).unwrap(), &changes.head)
+            .unwrap()
+            .is_empty()
+    );
+    let secret = "aB3dE5gH7jK9mN1pQ4sT6vW8xY0zR2";
+    let literal = format!("_CONTEXT_TOKEN = '{secret}'");
+    assert!(!redact(&literal).contains(secret));
+}
