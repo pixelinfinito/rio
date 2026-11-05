@@ -121,7 +121,14 @@ Use at least **10 eligible real PRs, 5 independent repositories, both TypeScript
 and Python**, and **N = 10 eligible positive-control changes**, at least 5 per
 language across at least 3 repositories. Controls can be real introducing PRs or
 seeded mutations; mutations are additional cases and do not replace the 10 real
-PRs. Include independently confirmed clean changes as negative controls. Record
+PRs. Seeded cases are capped at **50% of positive-control cases** for go/no-go:
+count `real + min(seeded, real)` toward the required ten, and require
+`seeded <= real` before the sample can be adequate. Do not cherry-pick successful
+seeds to enforce the cap. All observed recall remains reported; exceeding the cap
+makes the decision insufficient-evidence, even with perfect pooled recall.
+Report real-PR and seeded recall separately (expected underlying bugs remain each
+recall denominator), alongside pooled recall in both dependency views.
+Include independently confirmed clean changes as negative controls. Record
 all attempts, seeds, parent PRs, and repeated environments; report by repository
 and language as well as pooled totals. Do not imply that ten mutations in one
 repository are ten independent repositories. See [control selection](positive-controls.md).
@@ -147,3 +154,22 @@ must be repaired before counting their PRs; publish them even if the remaining
 sample suffices. Report uncertainty and correlated cases rather than treating
 these minimum sample sizes as statistical confidence guarantees. Performance
 acceptance (cold/warm p50/p95 over ten runs each) remains a separate gate.
+
+
+## Cohort selection and provenance
+
+Different profiles (including budgets, trust choices, and scopes) may be pooled
+under one binary hash; retain the resolved profile hashes and each record's
+profile. Missing captured hashes are explicitly unavailable, never inferred from
+a profile name or a release version. Mixed version/hash identities require
+`--allow-mixed-versions` and a prominent mixed label, including excluded attempts.
+The all-eligible view drives the decision; verified-only is a stricter sensitivity
+view with the same metric formulas.
+
+Default duplicate detection lists every conflicting record. `--select latest`
+chooses the greatest Rio run ULID, with record path breaking ties;
+`--select eligible-only` drops excluded attempts but still rejects multiple
+eligible attempts. `--select MANIFEST.json` explicitly lists one path per case,
+relative to the manifest. A real case is a repository/PR URL; synthetic controls
+use repository/case ID. Keep an attempt ledger and explain canonical selections
+in the cohort narrative instead of treating retries as independent PRs.

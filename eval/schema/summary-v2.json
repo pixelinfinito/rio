@@ -203,6 +203,18 @@
             "type": "string",
             "minLength": 1
           }
+        },
+        "real_positive_controls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "seeded_positive_controls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "counted_positive_controls": {
+          "type": "integer",
+          "minimum": 0
         }
       },
       "required": [
@@ -213,7 +225,10 @@
         "positive_controls_by_language",
         "clean_negative_controls",
         "adequate",
-        "requirements_missing"
+        "requirements_missing",
+        "real_positive_controls",
+        "seeded_positive_controls",
+        "counted_positive_controls"
       ],
       "additionalProperties": false
     },
@@ -240,6 +255,102 @@
         "type": "integer",
         "minimum": 0
       }
+    },
+    "rio_versions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "mixed_versions": {
+      "type": "boolean"
+    },
+    "binary_identity_complete": {
+      "type": "boolean"
+    },
+    "profile_hashes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "selection": {
+      "type": "object",
+      "properties": {
+        "policy": {
+          "type": "string"
+        },
+        "omitted_records": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "policy",
+        "omitted_records"
+      ],
+      "additionalProperties": false
+    },
+    "record_profiles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "record_path": {
+            "type": "string"
+          },
+          "repository": {
+            "type": "string"
+          },
+          "case_id": {
+            "type": "string"
+          },
+          "profile": {
+            "type": "string"
+          },
+          "profile_sha256": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "rio_binary_sha256": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "dependency_state": {
+            "enum": [
+              "verified",
+              "trusted",
+              "mixed",
+              "unavailable"
+            ]
+          },
+          "eligible": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "record_path",
+          "repository",
+          "case_id",
+          "profile",
+          "profile_sha256",
+          "rio_binary_sha256",
+          "dependency_state",
+          "eligible"
+        ],
+        "additionalProperties": false
+      }
     }
   },
   "required": [
@@ -261,7 +372,13 @@
     "decision",
     "decision_reasons",
     "verified_only",
-    "dependency_states"
+    "dependency_states",
+    "rio_versions",
+    "mixed_versions",
+    "binary_identity_complete",
+    "profile_hashes",
+    "selection",
+    "record_profiles"
   ],
   "additionalProperties": false,
   "$defs": {
@@ -380,6 +497,80 @@
           ],
           "minimum": 0,
           "maximum": 1
+        },
+        "positive_control_by_kind": {
+          "type": "object",
+          "properties": {
+            "real-pr": {
+              "type": "object",
+              "properties": {
+                "cases": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "expected": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "detected": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "recall": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "minimum": 0,
+                  "maximum": 1
+                }
+              },
+              "required": [
+                "cases",
+                "expected",
+                "detected",
+                "recall"
+              ],
+              "additionalProperties": false
+            },
+            "seeded-mutation": {
+              "type": "object",
+              "properties": {
+                "cases": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "expected": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "detected": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "recall": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "minimum": 0,
+                  "maximum": 1
+                }
+              },
+              "required": [
+                "cases",
+                "expected",
+                "detected",
+                "recall"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "real-pr",
+            "seeded-mutation"
+          ],
+          "additionalProperties": false
         }
       },
       "required": [
@@ -397,7 +588,8 @@
         "pr_with_false_positive_fraction",
         "useful_prs",
         "useful_real_prs",
-        "usefulness_fraction"
+        "usefulness_fraction",
+        "positive_control_by_kind"
       ],
       "additionalProperties": false
     }

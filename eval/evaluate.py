@@ -234,6 +234,14 @@ def environment(report, legacy=False):
             'notes': list(report['footer']['notes'])}
 
 
+def provenance(report_path):
+    """Use captured hashes, never mistake a profile name/version string for a hash."""
+    ledger = Path(report_path).with_name('commands.json')
+    metadata = read_json(ledger) if ledger.exists() else {}
+    return {'rio_binary_sha256': metadata.get('rio_binary_sha256'),
+            'profile_sha256': metadata.get('resolved_profile_sha256')}
+
+
 def build_record(report, verdicts, report_path):
     validate(report, ROOT / 'schemas/report-v1.json')
     allowed = {'repository', 'pr', 'case_id', 'languages', 'reviewer', 'verdict_source',
@@ -251,7 +259,8 @@ def build_record(report, verdicts, report_path):
               'head_sha': review['head'], 'mode': review['mode'], 'review_id': review['id'],
               'run_id': review['run_id'], 'rio_version': review['rio_version'], 'profile': review['profile'],
               'wall_time_ms': report['metrics']['wall_time_ms'], 'status': report['status'],
-              'report_path': str(report_path), 'environment': env, 'findings': findings,
+              'report_path': str(report_path), **provenance(report_path),
+              'environment': env, 'findings': findings,
               'root_causes': causes, 'misses': verdicts.get('misses', [])}
     record['misses'] = copy.deepcopy(record['misses'])
     for expected in record['positive_control']['expected']:
@@ -343,7 +352,8 @@ def current_record(record):
     if record['schema'] == 'rio-eval-record-v2':
         return record
     updated = copy.deepcopy(record)
-    updated.update(schema='rio-eval-record-v2', methodology='deterministic-v2')
+    updated.update(schema='rio-eval-record-v2', methodology='deterministic-v2',
+                   **provenance(record['report_path']))
     updated['findings'], updated['root_causes'] = dedupe(
         [f['finding'] for f in record['findings']],
         {f['finding']['id']: {k: f[k] for k in
@@ -380,11 +390,19 @@ def metrics(records):
     causes = class_counts(records, 'causes')
     expected = [e for r in records for e in r['positive_control']['expected']]
     useful = sum(r['verdict'] == 'useful' for r in records)
+    control_kinds = {}
+    for kind in ('real-pr', 'seeded-mutation'):
+        subset = [r for r in records if r['positive_control']['kind'] == kind]
+        bugs = [e for r in subset for e in r['positive_control']['expected']]
+        detected = sum(bool(e['finding_ids']) for e in bugs)
+        control_kinds[kind] = {'cases': len(subset), 'expected': len(bugs),
+                               'detected': detected, 'recall': ratio(detected, len(bugs))}
     return {'eligible_prs': len(records), 'raw_counts': class_counts(records, 'raw'),
             'occurrence_counts': class_counts(records, 'occurrences'), 'cause_counts': causes,
             'unique_cause_counts': unique_counts(records),
             'precision': ratio(causes['true-positive'], causes['true-positive'] + causes['false-positive']),
             'positive_control_cases': sum(bool(r['positive_control']['expected']) for r in records),
+            'positive_control_by_kind': control_kinds,
             'positive_control_expected': len(expected),
             'positive_control_detected': sum(bool(e['finding_ids']) for e in expected),
             'positive_control_recall': ratio(sum(bool(e['finding_ids']) for e in expected), len(expected)),
@@ -396,25 +414,67 @@ def metrics(records):
             'usefulness_fraction': ratio(useful, len(records))}
 
 
-def aggregate(records, paths):
+def case_identity(record):
+    # Attempts sometimes encode a retry suffix in case_id. Real PR URLs still
+    # identify the same case; synthetic controls retain their own declared ID.
+    return (record['repository'], record['case_id'] if
+            record['positive_control']['kind'] == 'seeded-mutation' else record['pr'])
+
+
+def select_records(records, paths, select=None):
     if len(records) != len(paths):
         raise ValueError('record/path length mismatch')
+    pairs = list(zip(records, paths))
+    if select and select not in {'latest', 'eligible-only'}:
+        manifest = Path(select)
+        entries = read_json(manifest)
+        if not isinstance(entries, list) or any(not isinstance(p, str) for p in entries):
+            raise ValueError('selection manifest must be a JSON array of record paths relative to the manifest')
+        resolved = [(manifest.parent / p).resolve() for p in entries]
+        if len(set(resolved)) != len(resolved):
+            raise ValueError('duplicate record paths in selection manifest')
+        available = {Path(p).resolve(): (r, p) for r, p in pairs}
+        missing = [str(p) for p in resolved if p not in available]
+        if missing:
+            raise ValueError(f'selection manifest paths are not inputs: {missing}')
+        pairs = [available[p] for p in resolved]
+    if select == 'eligible-only':
+        pairs = [(r, p) for r, p in pairs if r['environment']['eligible']]
+    groups = defaultdict(list)
+    for r, p in pairs:
+        groups[case_identity(r)].append((r, p))
+    duplicates = {key: group for key, group in groups.items() if len(group) > 1}
+    if duplicates and select != 'latest':
+        detail = '; '.join(f'{repo} / {case}: ' + ', '.join(str(p) for _, p in group)
+                           for (repo, case), group in sorted(duplicates.items()))
+        raise ValueError('duplicate case: ' + detail +
+                         '. Use --select latest, --select eligible-only (when only one attempt is eligible), '
+                         'or --select MANIFEST.json listing one record per case.')
+    if select == 'latest':
+        # Rio run IDs are time-ordered ULIDs; paths break ties deterministically.
+        pairs = [max(group, key=lambda pair: (pair[0]['run_id'], str(pair[1])))
+                 for group in groups.values()]
+    return [r for r, _ in pairs], [p for _, p in pairs]
+
+
+def version_identity(record):
+    return record['rio_version'] + '@sha256:' + (record['rio_binary_sha256'] or 'unavailable')
+
+
+def aggregate(records, paths, select=None, allow_mixed_versions=False):
     records = [current_record(r) for r in records]
-    seen = set()
-    for r in records:
-        validate_record(r)
-        identity = (r['repository'], r['case_id'])
-        if identity in seen:
-            raise ValueError('duplicate case: choose one preregistered run per cohort')
-        seen.add(identity)
+    input_paths = list(map(str, paths))
+    records, paths = select_records(records, paths, select)
     eligible = [r for r in records if r['environment']['eligible']]
     # Prevent duplicate real PRs from inflating sample sizes under different case IDs.
     real_ids = [(r['repository'], r['pr']) for r in eligible
                 if r['positive_control']['kind'] != 'seeded-mutation']
     if len(set(real_ids)) != len(real_ids):
         raise ValueError('duplicate real PR in scored cohort')
-    if len({(r['rio_version'], r['profile']) for r in eligible}) > 1:
-        raise ValueError('different Rio versions/profiles require separate cohorts')
+    versions = sorted({version_identity(r) for r in records})
+    if len(versions) > 1 and not allow_mixed_versions:
+        raise ValueError('different Rio versions require separate cohorts; '
+                         'use --allow-mixed-versions for an explicitly mixed summary: ' + ', '.join(versions))
     m = metrics(eligible)
     controls = [r for r in eligible if r['positive_control']['expected']]
     languages = sorted({lang for r in eligible for lang in r['languages']})
@@ -424,12 +484,18 @@ def aggregate(records, paths):
     sample = {'eligible_real_prs': len(real_ids), 'repositories': len({r['repository'] for r in eligible}),
               'languages': languages, 'positive_control_repositories': len({r['repository'] for r in controls}),
               'positive_controls_by_language': control_languages, 'clean_negative_controls': clean}
+    real_controls = sum(r['positive_control']['kind'] == 'real-pr' for r in controls)
+    seeded_controls = len(controls) - real_controls
+    counted_controls = real_controls + min(seeded_controls, real_controls)
+    sample.update(real_positive_controls=real_controls, seeded_positive_controls=seeded_controls,
+                  counted_positive_controls=counted_controls)
     requirements = []
     for ok, reason in [
         (len(real_ids) >= 10, 'Need at least 10 eligible real PRs'),
         (sample['repositories'] >= 5, 'Need at least 5 eligible repositories'),
         (set(languages) == {'typescript', 'python'}, 'Need both languages'),
-        (len(controls) >= 10, 'Need at least 10 eligible positive controls'),
+        (counted_controls >= 10, 'Need at least 10 eligible positive controls after the seeded cap'),
+        (seeded_controls <= real_controls, 'Seeded controls must be at most 50% of positive-control cases'),
         (sample['positive_control_repositories'] >= 3, 'Need controls across at least 3 repositories'),
         (all(n >= 5 for n in control_languages.values()), 'Need at least 5 controls per language'),
         (clean > 0, 'Need an independently clean negative control'),
@@ -448,6 +514,16 @@ def aggregate(records, paths):
             failures.append(reason)
     result = {'schema': 'rio-eval-summary-v2', 'methodology': 'deterministic-v2',
               'records': list(map(str, paths)), 'attempts': len(records),
+              'selection': {'policy': str(select) if select else 'error-on-duplicates',
+                            'omitted_records': [p for p in input_paths if p not in set(map(str, paths))]},
+              'rio_versions': versions, 'mixed_versions': len(versions) > 1,
+              'binary_identity_complete': all(r['rio_binary_sha256'] is not None for r in records),
+              'profile_hashes': sorted({r['profile_sha256'] for r in records if r['profile_sha256']}),
+              'record_profiles': [{'record_path': str(p), 'repository': r['repository'],
+                  'case_id': r['case_id'], 'profile': r['profile'],
+                  'profile_sha256': r['profile_sha256'], 'rio_binary_sha256': r['rio_binary_sha256'],
+                  'dependency_state': r['environment']['dependency_state'],
+                  'eligible': r['environment']['eligible']} for r, p in zip(records, paths)],
               'observed_raw_counts': class_counts(records, 'raw'),
               'observed_occurrence_counts': class_counts(records, 'occurrences'),
               'observed_cause_counts': class_counts(records, 'causes'),
@@ -488,13 +564,20 @@ def link(path, output):
 
 
 def render(records, paths, summary, version, output, narrative=None):
-    records = [current_record(r) for r in records]
+    available = {str(p): current_record(r) for r, p in zip(records, paths)}
+    paths = summary['records']
+    records = [available[p] for p in paths]
     m = summary['eligible']
     fmt = lambda x: 'undefined' if x is None else f'{x:.3f}'
     lines = [f'# Rio {version} evaluation', '',
              f'**Decision: {summary["decision"]}.** Release is allowed only by a go decision.', '',
              'Method: [deterministic-v2](' + link(ROOT / 'eval/METHODOLOGY.md', output) + '). '
              'Reviewer identities and human/automated provenance are in each raw record.', '']
+    lines += [('**MIXED RIO VERSIONS**' if summary['mixed_versions'] else 'Rio versions')
+              + ': ' + ', '.join(f'`{v}`' for v in summary['rio_versions']) + '.', '',
+              'Binary hashes complete: ' + str(summary['binary_identity_complete']).lower() + '.', '',
+              'Distinct resolved profile hashes: ' +
+              (', '.join(f'`{h}`' for h in summary['profile_hashes']) or 'unavailable') + '.', '']
     if narrative:
         lines += [narrative.rstrip(), '']
     strict = summary['verified_only']
@@ -505,7 +588,18 @@ def render(records, paths, summary, version, output, narrative=None):
                      f'{view["cause_counts"]["false-positive"]} | {fmt(view["precision"])} | '
                      f'{view["positive_control_detected"]} / {view["positive_control_expected"]} | '
                      f'{view["useful_prs"]} |')
-    lines += ['', f'{len(records)} attempts; {m["eligible_prs"]} eligible; '
+    lines += ['', '| Recall view | Real detected / expected | Real recall | Seeded detected / expected | Seeded recall |',
+              '| --- | ---: | ---: | ---: | ---: |']
+    for name, view in [('All eligible', m), ('Verified only', strict)]:
+        real = view['positive_control_by_kind']['real-pr']
+        seeded = view['positive_control_by_kind']['seeded-mutation']
+        lines.append(f'| {name} | {real["detected"]} / {real["expected"]} | {fmt(real["recall"])} | '
+                     f'{seeded["detected"]} / {seeded["expected"]} | {fmt(seeded["recall"])} |')
+    sample = summary['sample']
+    lines += ['', f'Control cases counted toward the decision after the 50% seeded cap: '
+              f'{sample["counted_positive_controls"]} '
+              f'(real: {sample["real_positive_controls"]}; seeded: {sample["seeded_positive_controls"]}).', '',
+              f'{len(records)} attempts; {m["eligible_prs"]} eligible; '
               f'{len(summary["environment_failures"])} environment failures. '
               f'Precision: {fmt(m["precision"])}; positive-control recall: '
               f'{fmt(m["positive_control_recall"])}; FP causes/PR: {fmt(m["false_positive_per_pr"])}. '
@@ -530,6 +624,7 @@ def render(records, paths, summary, version, output, narrative=None):
                   f'[PR]({r["pr"]}) · [raw record]({link(path, output)}) · '
                   f'[Rio report]({link(r["report_path"], output)}) · review `{r["review_id"]}` · '
                   f'{r["wall_time_ms"] / 1000:.3f}s · {r["verdict_source"]} ({cell(r["reviewer"])}).', '',
+                  f'Profile: `{cell(r["profile"])}`; SHA-256: `{r["profile_sha256"] or "unavailable"}`.', '',
                   f'Dependencies: `{r["environment"]["dependency_state"]}`; '
                   f'eligible: `{str(r["environment"]["eligible"]).lower()}`; '
                   f'baseline classification: `{str(r["environment"]["baseline_classification_ran"]).lower()}`.', '',
@@ -582,6 +677,9 @@ def main():
     p = sub.add_parser('render')
     p.add_argument('records', nargs='+'); p.add_argument('--version', required=True)
     p.add_argument('--out', required=True); p.add_argument('--narrative')
+    for name in ('aggregate', 'render'):
+        sub.choices[name].add_argument('--select', help='latest, eligible-only, or JSON selection manifest')
+        sub.choices[name].add_argument('--allow-mixed-versions', action='store_true')
     p = sub.add_parser('validate')
     p.add_argument('path')
     args = parser.parse_args()
@@ -592,7 +690,7 @@ def main():
                                      args.languages, args.case_id))
     elif args.command in ('aggregate', 'render'):
         records = [read_json(p) for p in args.records]
-        summary = aggregate(records, args.records)
+        summary = aggregate(records, args.records, args.select, args.allow_mixed_versions)
         if args.command == 'aggregate':
             write_json(args.out, summary)
         else:

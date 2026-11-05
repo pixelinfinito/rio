@@ -396,6 +396,20 @@
     "reason": {
       "type": "string",
       "minLength": 1
+    },
+    "rio_binary_sha256": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "profile_sha256": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[a-f0-9]{64}$"
     }
   },
   "required": [
@@ -426,7 +440,9 @@
     "root_causes",
     "misses",
     "verdict",
-    "reason"
+    "reason",
+    "rio_binary_sha256",
+    "profile_sha256"
   ],
   "additionalProperties": false
 }

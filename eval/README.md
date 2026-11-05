@@ -31,7 +31,7 @@ interpretation before the generated statistics. It recomputes the summary from
 validated records rather than trusting a hand-edited aggregate. Rendering has one
 row per distinct cause, occurrence counts, and links to raw records.
 
-[Per-PR schema](schema/record-v1.json) and [summary schema](schema/summary-v1.json)
+[Per-PR schema](schema/record-v2.json) and [summary schema](schema/summary-v2.json)
 are JSON Schema 2020-12. Findings embed the exact fields in
 [Rio's finding schema](../schemas/finding-v1.json) and `rio-core::Finding`, including
 `state`, `location`, `locations`, `source`, and optional `advisory`; adjudications
@@ -81,8 +81,27 @@ one has not already been supplied for that expectation. Finding annotations can 
 `message_template`, `file_set`, and explanatory `family`; document any merges in
 `reason`. Default normalization only collapses whitespace and ignores line/symbol
 positions. Conflicting verdicts within a key, missing or extra finding verdicts,
-and duplicate cases are errors. Same-cause repetitions within a PR do not weight
-precision. The aggregate reports per-PR cause totals and globally unique
+and duplicate cases are errors by default. Same-cause repetitions within a PR do not weight
+precision. Aggregate and render accept `--select latest`, `--select eligible-only`, or
+`--select PATH.json`. Latest uses Rio's time-ordered run ID (path breaks ties),
+including failed attempts. Eligible-only drops excluded attempts and requires a
+single eligible attempt per case. A manifest is a JSON array of record paths
+relative to the manifest, selecting exactly the runs you intend to publish; it
+may select a subset. Real PR URLs identify duplicate cases even when an attempt
+has a different case ID; seeded mutations use their declared case IDs. Errors
+list conflicting paths. The summary preserves selected and omitted paths.
+
+Profiles may differ within a cohort. V2 records capture binary and resolved
+profile SHA-256 from the report's sibling `commands.json`; absent hashes stay
+`null` and the summary marks incomplete binary identity. Different version/hash
+identities require `--allow-mixed-versions` on aggregate/render and are prominently
+labelled mixed. This compares every selected record, including exclusions.
+Both metric views and real/seeded recall are rendered. Original v1 records remain
+valid historical artifacts; aggregate/render rescore their raw finding/check
+copies under v2 without overwriting them. Rebuild with `record` from the raw
+report and verdicts to persist a v2 record.
+
+The aggregate reports per-PR cause totals and globally unique
 `(repository, key)` counts separately. Language breakdowns overlap for mixed PRs.
 
 Miss entries require `id`, `scope_class` (`deterministic` or `agent-layer`),

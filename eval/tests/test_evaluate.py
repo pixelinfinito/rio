@@ -259,6 +259,87 @@ class AggregationTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             e.validate(f, e.ROOT / 'schemas/finding-v1.json')
 
+    def test_profiles_can_mix_but_binary_versions_need_explicit_override(self):
+        a, b = record(1, clean=True), record(2, clean=True)
+        a.update(rio_binary_sha256='a' * 64, profile_sha256='1' * 64)
+        b.update(rio_binary_sha256='a' * 64, profile_sha256='2' * 64, profile='custom')
+        s = e.aggregate([a, b], ['a', 'b'])
+        self.assertEqual(s['profile_hashes'], ['1' * 64, '2' * 64])
+        self.assertFalse(s['mixed_versions'])
+        self.assertEqual(s['record_profiles'][1]['profile'], 'custom')
+        b['rio_binary_sha256'] = 'b' * 64
+        with self.assertRaisesRegex(ValueError, 'different Rio versions'):
+            e.aggregate([a, b], ['a', 'b'])
+        s = e.aggregate([a, b], ['a', 'b'], allow_mixed_versions=True)
+        self.assertTrue(s['mixed_versions'])
+        with tempfile.TemporaryDirectory() as tmp:
+            output = Path(tmp) / 'result.md'
+            e.render([a, b], ['a', 'b'], s, 'test', output)
+            self.assertIn('MIXED RIO VERSIONS', output.read_text())
+            self.assertIn('Profile: `custom`; SHA-256: `' + '2' * 64, output.read_text())
+
+    def test_selection_latest_eligible_manifest_and_helpful_duplicates(self):
+        a = record(1, baseline=False)
+        b = record(1, clean=True)
+        # Same real PR with a retry suffix must still be a duplicate.
+        a['case_id'] += '-attempt1'
+        a['run_id'], b['run_id'] = '01-old', '02-new'
+        with self.assertRaisesRegex(ValueError, 'a.json, b.json.*--select'):
+            e.aggregate([a, b], ['a.json', 'b.json'])
+        for policy in ('latest', 'eligible-only'):
+            s = e.aggregate([a, b], ['a.json', 'b.json'], select=policy)
+            self.assertEqual(s['records'], ['b.json'])
+            self.assertEqual(s['selection']['omitted_records'], ['a.json'])
+        with self.assertRaisesRegex(ValueError, 'duplicate case'):
+            e.aggregate([b, b], ['a.json', 'b.json'], select='eligible-only')
+        with tempfile.TemporaryDirectory() as tmp:
+            manifest = Path(tmp) / 'selection.json'
+            paths = [str(Path(tmp) / p) for p in ('a.json', 'b.json')]
+            e.write_json(manifest, ['b.json'])
+            s = e.aggregate([a, b], paths, select=str(manifest))
+            self.assertEqual(s['records'], paths[1:])
+            output = Path(tmp) / 'result.md'
+            e.render([a, b], paths, s, 'test', output)
+            self.assertNotIn('attempt1', output.read_text())
+            e.write_json(manifest, ['missing.json'])
+            with self.assertRaisesRegex(ValueError, 'not inputs'):
+                e.aggregate([a, b], paths, select=str(manifest))
+            e.write_json(manifest, ['b.json', 'b.json'])
+            with self.assertRaisesRegex(ValueError, 'duplicate record paths'):
+                e.aggregate([a, b], paths, select=str(manifest))
+
+    def test_captured_provenance_is_used_without_inventing_hashes(self):
+        r = report()
+        v = e.skeleton(r, 'o/r', 'https://github.com/o/r/pull/1', ['typescript'])
+        v['reviewer'] = 'oracle'
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / 'report.json'
+            self.assertIsNone(e.build_record(r, v, path)['rio_binary_sha256'])
+            e.write_json(path.with_name('commands.json'), {'rio_binary_sha256': 'a' * 64,
+                         'resolved_profile_sha256': 'b' * 64})
+            built = e.build_record(r, v, path)
+            self.assertEqual(built['rio_binary_sha256'], 'a' * 64)
+            self.assertEqual(built['profile_sha256'], 'b' * 64)
+
+    def test_seeded_controls_cannot_supply_more_than_half_of_decision_sample(self):
+        records = [record(i, ['true-positive'], control=True,
+                          lang='typescript' if i <= 5 else 'python') for i in range(1, 11)]
+        records.append(record(11, clean=True))
+        for r in records[:6]:
+            r['positive_control']['kind'] = 'seeded-mutation'
+        summary = e.aggregate(records, [str(i) for i in range(len(records))])
+        self.assertEqual(summary['eligible']['positive_control_by_kind']['real-pr']['recall'], 1)
+        self.assertEqual(summary['eligible']['positive_control_by_kind']['seeded-mutation']['recall'], 1)
+        self.assertEqual(summary['sample']['counted_positive_controls'], 8)
+        self.assertEqual(summary['decision'], 'insufficient-evidence')
+        self.assertTrue(any('50%' in r for r in summary['decision_reasons']))
+        records[5]['positive_control']['kind'] = 'real-pr'
+        # Restore sufficient real PRs as mutations do not count as public PRs.
+        records += [record(i, clean=True) for i in range(12, 17)]
+        summary = e.aggregate(records, [str(i) for i in range(len(records))])
+        self.assertEqual(summary['sample']['counted_positive_controls'], 10)
+        self.assertEqual(summary['decision'], 'go')
+
     def test_renderer_compacts_root_causes_and_links_records(self):
         r = record(1, ['true-positive'] * 100)
         with tempfile.TemporaryDirectory() as tmp:
