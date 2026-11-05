@@ -1,0 +1,47 @@
+{
+  "repository": "honojs/hono",
+  "pr": "https://github.com/honojs/hono/pull/2081",
+  "case_id": "2081",
+  "languages": [
+    "typescript"
+  ],
+  "reviewer": "sub-agent rerun2-hono (automated)",
+  "verdict_source": "automated",
+  "commands": [
+    "cwd=/dev/shm/hono-rerun2/rio-eval-hooyw_zi argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/honojs/hono.git\", \"/dev/shm/hono-rerun2/rio-eval-hooyw_zi/head\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-hooyw_zi/head argv=[\"git\", \"fetch\", \"origin\", \"4ec3a9bf41ec3de004836e84757c07ec2b7b4156\", \"310c8733dbde15f6b279863798e740953a4341dd\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-hooyw_zi/head argv=[\"git\", \"merge-base\", \"4ec3a9bf41ec3de004836e84757c07ec2b7b4156\", \"310c8733dbde15f6b279863798e740953a4341dd\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-hooyw_zi/head argv=[\"git\", \"checkout\", \"--detach\", \"310c8733dbde15f6b279863798e740953a4341dd\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-hooyw_zi argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/dev/shm/hono-rerun2/rio-eval-hooyw_zi/head\", \"/dev/shm/hono-rerun2/rio-eval-hooyw_zi/base\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-hooyw_zi/base argv=[\"git\", \"checkout\", \"--detach\", \"4ec3a9bf41ec3de004836e84757c07ec2b7b4156\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-hooyw_zi/base argv=[\"corepack\", \"yarn@1.22.22\", \"install\", \"--frozen-lockfile\", \"--non-interactive\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-hooyw_zi/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-hooyw_zi/head argv=[\"corepack\", \"yarn@1.22.22\", \"install\", \"--frozen-lockfile\", \"--non-interactive\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-hooyw_zi/head argv=[\"python3\", \"-c\", \"from pathlib import Path; import hashlib; p=Path('node_modules/.bin/vitest'); assert p.is_symlink(); target=p.resolve(); original=target.read_bytes(); p.unlink(); p.write_text(\\\"#!/usr/bin/env python3\\\\n# Vitest 1.1 CLI compatibility only; package files and test selection are unchanged.\\\\nimport os\\\\nfrom pathlib import Path\\\\nimport sys\\\\nargs = []\\\\nfor arg in sys.argv[1:]:\\\\n    if arg == '--coverage':\\\\n        args.append('--coverage.enabled')\\\\n    elif arg.startswith('--maxWorkers='):\\\\n        value = arg.split('=', 1)[1]\\\\n        os.environ['VITEST_MAX_THREADS'] = value\\\\n        os.environ['VITEST_MAX_FORKS'] = value\\\\n    elif arg.startswith('--minWorkers='):\\\\n        value = arg.split('=', 1)[1]\\\\n        os.environ['VITEST_MIN_THREADS'] = value\\\\n        os.environ['VITEST_MIN_FORKS'] = value\\\\n    else:\\\\n        args.append(arg)\\\\nentry = Path(__file__).absolute().parent.parent / 'vitest' / 'vitest.mjs'\\\\nos.execvp('node', ['node', str(entry), *args])\\\\n\\\"); p.chmod(0o755); print('Original entry:',target,'SHA256:',hashlib.sha256(original).hexdigest()); print('CLI compatibility shim SHA256:',hashlib.sha256(p.read_bytes()).hexdigest())\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-hooyw_zi/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-hooyw_zi/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-hooyw_zi/head argv=[\"node\", \"--version\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-hooyw_zi/head argv=[\"npm\", \"--version\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-hooyw_zi/head argv=[\"corepack\", \"--version\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-hooyw_zi/head argv=[\"python3\", \"--version\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-hooyw_zi/head argv=[\"uv\", \"--version\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-hooyw_zi/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"/home/ubuntu/.t3/worktrees/rio/eval-rerun2-hono/eval/runs/hono-2081-rerun2/profile.yaml\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-hooyw_zi/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-hooyw_zi/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"4ec3a9bf41ec3de004836e84757c07ec2b7b4156\", \"--format\", \"json\", \"--offline\", \"--profile\", \"/home/ubuntu/.t3/worktrees/rio/eval-rerun2-hono/eval/runs/hono-2081-rerun2/profile.yaml\"]"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-rerun2-hono/eval/runs/hono-2081-rerun2/commands.json; Rio binary SHA-256: 3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+    "Rerun2 binary f6e4f87e4c65. Same preregistered base/head, install plan and profile; see ../hono-rerun2-evidence/registration.json for exact runtime, transport, hashes and expectations.",
+    "Pinned Node20.10.0, Corepack0.36.0, Yarn1.22.22; COREPACK_ENABLE_AUTO_PIN=0, NO_COLOR unset, TMPDIR=/dev/shm/hono-rerun2. Unchanged historical Vitest1.1 launcher shim retained; native version-aware Rio invocation is not separately established by this experiment.",
+    "All applicable root typecheck/lint head/base pairs succeeded with verified dependencies; coverage passed and secrets passed. Dependency audit deliberately skipped offline; no vulnerability-detection or secret-positive-control claim. Report incomplete includes no_endpoint agent deferral.",
+    "Initial independent BASE frozen installation timed out (exit124), so runner exit1 despite report-derived baseline_classification_ran=true and eligible=true. Head install succeeded and Rio classified its own base against that verified head installation. Retain this attempt; use a later successful-installer attempt as canonical. This is setup evidence, not a Rio false positive.",
+    "Independent clean assessment reused because pins are unchanged: ../hono-2081-oracle/commands.json records passing tsc/lint at both revisions and all1009 Vitest tests passing with1 skipped each; emitted-javascript-equivalence.json proves byte-identical runtime JS for source and generated Deno factory modules. Prior false-positive ID 8209408388ac70a93c3b324ac9d336488c03bae27b3ccfb971f0369f406803a8 is absent; the coverage check executed and passed. No established in-scope deterministic miss."
+  ],
+  "independently_clean": true,
+  "positive_control": {
+    "kind": "none",
+    "expected": []
+  },
+  "misses": [],
+  "findings": {}
+}

@@ -1,0 +1,38 @@
+{
+  "schema": "rio-eval-runner-v2",
+  "repository": "honojs/hono",
+  "pr": "https://github.com/honojs/hono/pull/2085",
+  "started_utc": "2026-11-05T11:27:03.228463+00:00",
+  "rio_binary": "/home/ubuntu/rio/target/release/rio",
+  "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-checkout",
+        "https://github.com/honojs/hono.git",
+        "/dev/shm/hono-rerun2/rio-eval-xmium120/head"
+      ],
+      "cwd": "/dev/shm/hono-rerun2/rio-eval-xmium120",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-hono/eval/runs/hono-2085-rerun2-attempt2/01-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-hono/eval/runs/hono-2085-rerun2-attempt2/01-stderr.log",
+      "exit_code": 128,
+      "wall_time_ms": 34
+    }
+  ],
+  "installations": {},
+  "failures": [
+    "command 1 failed (128); see /home/ubuntu/.t3/worktrees/rio/eval-rerun2-hono/eval/runs/hono-2085-rerun2-attempt2/01-stderr.log"
+  ],
+  "network": "Installers may use network; Rio review uses --offline. Subprocesses are not isolated.",
+  "profile_sha256": "6fc8403032b9ed8c47cbe10b8c4e8140350c4a92367eb7db34086daf4925a7d4",
+  "resolution": {
+    "base_sha": "b23cf8d65d851de9726d6388b45dda39e6fdb9ab",
+    "head_sha": "94d2dcbf315dd3ac969d321b532fb0049b1a7c36",
+    "source": "pinned argv"
+  },
+  "disposable_directory": "/dev/shm/hono-rerun2/rio-eval-xmium120",
+  "finished_utc": "2026-11-05T11:27:03.742191+00:00"
+}
