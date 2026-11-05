@@ -504,13 +504,17 @@ async fn run_doctor(args: DoctorArgs) -> u8 {
                     document["repository"] = json!(repo.root());
                     document["head"] = json!(repo.head_id().ok().flatten());
                     let result = async {
-                        let mut changes = select(repo, args.selection.selection())?;
+                        let changes = select(repo, args.selection.selection())?;
                         // Full-repository readiness probes are explicitly opt-in.
-                        let mut delta = diff(&changes, &profile_excludes(&profile))?;
-                        if args.all_roots {
-                            changes.base = rio_git::Tree::new();
-                            delta = diff(&changes, &profile_excludes(&profile))?;
-                        }
+                        let delta = if args.all_roots {
+                            // Use an empty base only to discover every head root.
+                            // Dependency planning must retain the selected real base.
+                            let mut discovery = changes.clone();
+                            discovery.base = rio_git::Tree::new();
+                            diff(&discovery, &profile_excludes(&profile))?
+                        } else {
+                            diff(&changes, &profile_excludes(&profile))?
+                        };
                         let working = repo.working_tree()?;
                         let resolver = ToolResolver::from_environment(repo.root().into());
                         plan_review_with_progress(
