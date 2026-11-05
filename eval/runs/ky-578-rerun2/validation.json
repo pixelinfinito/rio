@@ -1,0 +1,26 @@
+{
+  "record": {
+    "argv": [
+      "python3",
+      "eval/evaluate.py",
+      "record",
+      "--report",
+      "eval/runs/ky-578-rerun2/report.json",
+      "--verdicts",
+      "eval/runs/ky-578-rerun2/verdicts.json",
+      "--out",
+      "eval/runs/ky-578-rerun2/record.json"
+    ],
+    "exit_code": 0
+  },
+  "validate": {
+    "argv": [
+      "python3",
+      "eval/evaluate.py",
+      "validate",
+      "eval/runs/ky-578-rerun2/record.json"
+    ],
+    "exit_code": 0,
+    "stdout": "Valid: eval/runs/ky-578-rerun2/record.json\n"
+  }
+}
