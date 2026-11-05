@@ -114,6 +114,8 @@ pub struct CoverageSettings {
     pub invocation_root: Option<String>,
     #[serde(default)]
     pub runner_args: Vec<String>,
+    #[serde(default)]
+    pub vitest_browser_mode: bool,
     pub include: Option<Vec<String>>,
     pub exclude: Vec<String>,
     /// False when configuration uses computed expressions we cannot evaluate.
@@ -483,6 +485,41 @@ pub async fn run_coverage(
         .unwrap_or(&request.settings.root);
     let root = request.tool_tree.join(execution_root);
     let output = root.join(".rio-coverage");
+    let mut provider = None;
+    if tool.name == "vitest" {
+        let unavailable = if request.settings.vitest_browser_mode {
+            Some((
+                rio_core::SkipReason::NotSupportedByAdapter,
+                "coverage_unavailable: browser mode requires a browser environment",
+            ))
+        } else {
+            let providers = vitest_coverage_providers(&root, &tool.version);
+            match providers.as_slice() {
+                [] => Some((
+                    rio_core::SkipReason::ToolMissing,
+                    "coverage_unavailable: no installed Vitest coverage provider is resolvable from the execution root",
+                )),
+                [installed] => {
+                    provider = Some(*installed);
+                    None
+                }
+                _ => None, // Preserve the project's choice when both are available.
+            }
+        };
+        if let Some((reason, hint)) = unavailable {
+            return CoverageRun {
+                data: CoverageData::new(),
+                outcome: CheckOutcome::Skipped {
+                    reason,
+                    details: CheckDetails {
+                        hint: Some(hint.into()),
+                        ..Default::default()
+                    },
+                },
+                processes: Vec::new(),
+            };
+        }
+    }
     let failure = |message: String, processes| CoverageRun {
         data: CoverageData::new(),
         outcome: CheckOutcome::Failed {
@@ -518,6 +555,11 @@ pub async fn run_coverage(
             command
                 .args
                 .extend(request.settings.runner_args.iter().map(Into::into));
+            if let Some(provider) = provider {
+                command
+                    .args
+                    .push(format!("--coverage.provider={provider}").into());
+            }
             ("rio/adapter-typescript", output.join("lcov.info"))
         }
         "jest" => {
@@ -715,6 +757,34 @@ pub fn vitest_supports_all(version: &str) -> bool {
         .next()
         .and_then(|part| part.parse::<u64>().ok())
         .is_some_and(|major| major < 4)
+}
+
+/// Follow Node's ancestor node_modules lookup, including workspace symlinks.
+/// Do not infer availability from declarations or unrelated pnpm store entries.
+fn vitest_coverage_providers(root: &std::path::Path, version: &str) -> Vec<&'static str> {
+    let mut parts = version.trim_start_matches("vitest/").split('.');
+    let legacy = parts.next() == Some("0")
+        && parts
+            .next()
+            .and_then(|minor| minor.parse::<u64>().ok())
+            .is_some_and(|minor| minor < 32);
+    let default = if legacy { "c8" } else { "v8" };
+    [default, "istanbul"]
+        .into_iter()
+        .filter(|provider| {
+            let name = format!("@vitest/coverage-{provider}");
+            root.ancestors().any(|directory| {
+                let manifest = directory
+                    .join("node_modules")
+                    .join(&name)
+                    .join("package.json");
+                std::fs::read(manifest)
+                    .ok()
+                    .and_then(|bytes| serde_json::from_slice::<serde_json::Value>(&bytes).ok())
+                    .is_some_and(|value| value["name"].as_str() == Some(&name))
+            })
+        })
+        .collect()
 }
 
 /// Version-specific argv is kept together so unsupported flags never reach CAC.

@@ -811,3 +811,73 @@ fn pnpm_installed_lock_and_modules_resolve_recorded_store_names() {
         assert!(installation.nodes.contains_key(key), "missing {key}");
     }
 }
+
+#[test]
+fn pnpm_quoted_store_length_and_project_settings_resolve_long_peer_paths() {
+    // TanStack/query rerun2: pnpm 11 writes "250" in .modules.yaml.
+    let key = "@testing-library/react@16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)";
+    let directory = "@testing-library+react@16.3.2_@testing-library+dom@10.4.1_@types+react-dom@19.2.3_@types+react@19.2.14__@types+react@19.2.14_react-dom@19.2.4_react@19.2.4__react@19.2.4";
+    let lock = format!(
+        "lockfileVersion: '9.0'\npackages: {{'@testing-library/react@16.3.2': {{}}}}\nsnapshots: {{'{key}': {{}}}}\n"
+    );
+    let graph = rio_adapters::parse_lockfile("pnpm-lock.yaml", &lock).unwrap();
+    for (modules, npmrc, workspace, found) in [
+        ("virtualStoreDirMaxLength: \"250\"", "", "", true),
+        ("virtualStoreDirMaxLength: 250", "", "", true),
+        ("", "virtual-store-dir-max-length=250", "", true),
+        (
+            "",
+            "virtual-store-dir-max-length=\"250\" # length",
+            "",
+            true,
+        ),
+        ("", "virtualStoreDirMaxLength='250'", "", true),
+        ("", "", "virtualStoreDirMaxLength: \"250\"", true),
+        ("", "", "virtualStoreDirMaxLength: 250", true),
+        // Installed metadata wins; .npmrc wins over workspace configuration.
+        (
+            "virtualStoreDirMaxLength: '250'",
+            "virtual-store-dir-max-length=120",
+            "virtualStoreDirMaxLength: 120",
+            true,
+        ),
+        (
+            "",
+            "virtual-store-dir-max-length=250",
+            "virtualStoreDirMaxLength: 120",
+            true,
+        ),
+        ("", "", "", false),
+        (
+            "virtualStoreDirMaxLength: invalid",
+            "virtual-store-dir-max-length=-1",
+            "virtualStoreDirMaxLength: 0",
+            false,
+        ),
+    ] {
+        let root = tempfile::tempdir().unwrap();
+        write(root.path(), "project/node_modules/.pnpm/lock.yaml", &lock);
+        for (path, text) in [
+            ("node_modules/.modules.yaml", modules),
+            (".npmrc", npmrc),
+            ("pnpm-workspace.yaml", workspace),
+        ] {
+            if !text.is_empty() {
+                write(root.path(), &format!("project/{path}"), text);
+            }
+        }
+        package(
+            root.path(),
+            &format!("project/node_modules/.pnpm/{directory}/node_modules/@testing-library/react"),
+            "@testing-library/react",
+            "16.3.2",
+        );
+        let installed = read_installation(root.path(), "project", &graph);
+        assert!(installed.complete, "{:?}", installed.notes);
+        assert_eq!(
+            installed.nodes.contains_key(key),
+            found,
+            "{modules}; {npmrc}; {workspace}"
+        );
+    }
+}

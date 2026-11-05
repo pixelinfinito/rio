@@ -443,3 +443,63 @@ fn biome_1_and_2_json_warnings_become_lint_findings() {
     assert_eq!(typescript_linter(&tree, "pkg"), "biome");
     assert!(diagnostic_config_skip(CheckKind::Lint, "typescript", &tree, "pkg").is_none());
 }
+
+#[test]
+fn biome_ignored_targets_skip_only_on_a_cleaned_up_no_files_exit() {
+    let empty = br#"{"summary":{"changed":0,"unchanged":0,"errors":0,"warnings":0},"diagnostics":[],"command":"lint"}"#;
+    let diagnostic = br#"{"summary":{"changed":0,"unchanged":0},"diagnostics":[{"severity":"error","category":"internalError/io","description":"No files were processed in the specified paths."}]}"#;
+    let message = b"internalError/io\nNo files were processed in the specified paths.";
+    let spec = tool_contract("rio/adapter-typescript", "lint", "biome").unwrap();
+    for (stdout, stderr, code, cleaned_up, skip) in [
+        (empty.as_slice(), message.as_slice(), 1, true, true),
+        (b"".as_slice(), message.as_slice(), 1, true, true),
+        (diagnostic.as_slice(), b"".as_slice(), 1, true, true),
+        (empty.as_slice(), b"".as_slice(), 1, true, false),
+        (
+            b"malformed JSON".as_slice(),
+            message.as_slice(),
+            1,
+            true,
+            false,
+        ),
+        (empty.as_slice(), message.as_slice(), 2, true, false),
+        (empty.as_slice(), message.as_slice(), 1, false, false),
+        (
+            include_bytes!("fixtures/diagnostics/biome1.stdout").as_slice(),
+            message.as_slice(),
+            1,
+            true,
+            false,
+        ),
+    ] {
+        let result = ProcessResult {
+            termination: Termination::Exited { code: Some(code) },
+            stdout: stdout.into(),
+            stderr: stderr.into(),
+            raw_stdout: Vec::new(),
+            raw_stderr: Vec::new(),
+            wall_time: Duration::ZERO,
+            cleanup_confirmed: cleaned_up,
+            survivors: Vec::new(),
+        };
+        let parsed = TypeScriptAdapter.parse_output("biome", stdout, stderr, &context());
+        let outcome = evaluate_exit(&result, &spec.exit_codes, parsed);
+        assert_eq!(
+            matches!(outcome, CheckOutcome::Skipped { .. }),
+            skip,
+            "{outcome:?}"
+        );
+        if skip {
+            assert!(
+                outcome
+                    .details()
+                    .hint
+                    .as_deref()
+                    .unwrap()
+                    .contains("No files were processed")
+            );
+        } else {
+            assert!(!matches!(outcome, CheckOutcome::Passed { .. }));
+        }
+    }
+}
