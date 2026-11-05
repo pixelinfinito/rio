@@ -1,0 +1,7 @@
+{"argv": ["python3", "eval/evaluate.py", "validate", "eval/runs/trpc-5819-rerun2/record.json"], "exit_code": 0, "stdout": "Valid: eval/runs/trpc-5819-rerun2/record.json\n", "stderr": ""}
+{"argv": ["python3", "eval/evaluate.py", "validate", "eval/runs/trpc-5819-rerun2-attempt2/record.json"], "exit_code": 0, "stdout": "Valid: eval/runs/trpc-5819-rerun2-attempt2/record.json\n", "stderr": ""}
+{"argv": ["python3", "eval/evaluate.py", "validate", "eval/runs/trpc-7903-rerun2/record.json"], "exit_code": 0, "stdout": "Valid: eval/runs/trpc-7903-rerun2/record.json\n", "stderr": ""}
+{"argv": ["python3", "eval/evaluate.py", "validate", "eval/runs/trpc-7903-rerun2-attempt2/record.json"], "exit_code": 0, "stdout": "Valid: eval/runs/trpc-7903-rerun2-attempt2/record.json\n", "stderr": ""}
+{"argv": ["python3", "eval/evaluate.py", "validate", "eval/runs/trpc-7903-rerun2-attempt3/record.json"], "exit_code": 0, "stdout": "Valid: eval/runs/trpc-7903-rerun2-attempt3/record.json\n", "stderr": ""}
+{"argv": ["python3", "eval/evaluate.py", "validate", "eval/runs/trpc-7903-rerun2-attempt4/record.json"], "exit_code": 0, "stdout": "Valid: eval/runs/trpc-7903-rerun2-attempt4/record.json\n", "stderr": ""}
+{"check": "git diff --cached --check", "result": "Raw captured .diff context lines and tool logs contain trailing whitespace/blank EOF lines; evidence preserved unchanged. Normal check passes for notes, JSON and launcher text."}

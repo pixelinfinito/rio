@@ -1,0 +1,155 @@
+Scope: all 37 workspace projects
+Lockfile is up to date, resolution step is skipped
+Progress: resolved 1, reused 0, downloaded 0, added 0
+Packages: +2632
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Progress: resolved 2632, reused 0, downloaded 0, added 0
+Progress: resolved 2632, reused 1, downloaded 0, added 0
+Progress: resolved 2632, reused 3, downloaded 0, added 0
+Progress: resolved 2632, reused 7, downloaded 0, added 0
+Progress: resolved 2632, reused 12, downloaded 0, added 0
+Progress: resolved 2632, reused 15, downloaded 0, added 0
+Progress: resolved 2632, reused 19, downloaded 0, added 0
+Progress: resolved 2632, reused 34, downloaded 0, added 0
+Progress: resolved 2632, reused 46, downloaded 0, added 0
+Progress: resolved 2632, reused 60, downloaded 0, added 0
+Progress: resolved 2632, reused 72, downloaded 0, added 0
+Progress: resolved 2632, reused 82, downloaded 0, added 0
+Progress: resolved 2632, reused 89, downloaded 0, added 0
+Progress: resolved 2632, reused 103, downloaded 0, added 0
+Progress: resolved 2632, reused 138, downloaded 0, added 0
+Progress: resolved 2632, reused 186, downloaded 0, added 0
+Progress: resolved 2632, reused 254, downloaded 0, added 0
+Progress: resolved 2632, reused 314, downloaded 0, added 0
+Progress: resolved 2632, reused 397, downloaded 0, added 0
+Progress: resolved 2632, reused 478, downloaded 0, added 0
+Progress: resolved 2632, reused 577, downloaded 0, added 0
+Progress: resolved 2632, reused 646, downloaded 0, added 0
+Progress: resolved 2632, reused 745, downloaded 0, added 0
+Progress: resolved 2632, reused 840, downloaded 0, added 0
+Progress: resolved 2632, reused 951, downloaded 0, added 0
+Progress: resolved 2632, reused 1042, downloaded 1, added 66
+Progress: resolved 2632, reused 1050, downloaded 8, added 176
+Progress: resolved 2632, reused 1050, downloaded 10, added 207
+Progress: resolved 2632, reused 1050, downloaded 18, added 428
+Progress: resolved 2632, reused 1050, downloaded 20, added 671
+Progress: resolved 2632, reused 1050, downloaded 20, added 836
+Progress: resolved 2632, reused 1050, downloaded 20, added 972
+Progress: resolved 2632, reused 1050, downloaded 25, added 1042
+Progress: resolved 2632, reused 1050, downloaded 31, added 1053
+Progress: resolved 2632, reused 1050, downloaded 46, added 1068
+Progress: resolved 2632, reused 1050, downloaded 58, added 1096
+Progress: resolved 2632, reused 1050, downloaded 66, added 1106
+Progress: resolved 2632, reused 1050, downloaded 72, added 1117
+Progress: resolved 2632, reused 1050, downloaded 85, added 1131
+Progress: resolved 2632, reused 1050, downloaded 143, added 1188
+Progress: resolved 2632, reused 1050, downloaded 143, added 1190
+Progress: resolved 2632, reused 1050, downloaded 206, added 1257
+Progress: resolved 2632, reused 1050, downloaded 241, added 1291
+Progress: resolved 2632, reused 1050, downloaded 259, added 1300
+Progress: resolved 2632, reused 1050, downloaded 295, added 1345
+Progress: resolved 2632, reused 1050, downloaded 311, added 1358
+Progress: resolved 2632, reused 1050, downloaded 358, added 1409
+Progress: resolved 2632, reused 1050, downloaded 371, added 1419
+Progress: resolved 2632, reused 1050, downloaded 385, added 1432
+Progress: resolved 2632, reused 1050, downloaded 394, added 1439
+Progress: resolved 2632, reused 1050, downloaded 416, added 1464
+Progress: resolved 2632, reused 1050, downloaded 435, added 1487
+Progress: resolved 2632, reused 1050, downloaded 472, added 1525
+Progress: resolved 2632, reused 1050, downloaded 488, added 1536
+Progress: resolved 2632, reused 1050, downloaded 542, added 1594
+Progress: resolved 2632, reused 1050, downloaded 603, added 1646
+Progress: resolved 2632, reused 1050, downloaded 634, added 1668
+Progress: resolved 2632, reused 1050, downloaded 670, added 1710
+Progress: resolved 2632, reused 1050, downloaded 691, added 1723
+Progress: resolved 2632, reused 1050, downloaded 724, added 1763
+Progress: resolved 2632, reused 1050, downloaded 756, added 1794
+Progress: resolved 2632, reused 1050, downloaded 806, added 1853
+Progress: resolved 2632, reused 1050, downloaded 821, added 1871
+Progress: resolved 2632, reused 1050, downloaded 849, added 1901
+Progress: resolved 2632, reused 1050, downloaded 869, added 1923
+Progress: resolved 2632, reused 1050, downloaded 883, added 1935
+Progress: resolved 2632, reused 1050, downloaded 924, added 1979
+Progress: resolved 2632, reused 1050, downloaded 954, added 2009
+Progress: resolved 2632, reused 1050, downloaded 970, added 2025
+Progress: resolved 2632, reused 1050, downloaded 1011, added 2065
+Progress: resolved 2632, reused 1050, downloaded 1100, added 2155
+Progress: resolved 2632, reused 1050, downloaded 1129, added 2168
+Progress: resolved 2632, reused 1050, downloaded 1153, added 2207
+Progress: resolved 2632, reused 1050, downloaded 1258, added 2313
+Progress: resolved 2632, reused 1050, downloaded 1327, added 2374
+Progress: resolved 2632, reused 1050, downloaded 1337, added 2391
+Progress: resolved 2632, reused 1050, downloaded 1373, added 2422
+Progress: resolved 2632, reused 1050, downloaded 1396, added 2450
+Progress: resolved 2632, reused 1050, downloaded 1407, added 2463
+Progress: resolved 2632, reused 1050, downloaded 1415, added 2471
+Progress: resolved 2632, reused 1050, downloaded 1440, added 2486
+Progress: resolved 2632, reused 1050, downloaded 1444, added 2496
+Progress: resolved 2632, reused 1050, downloaded 1457, added 2510
+Progress: resolved 2632, reused 1050, downloaded 1476, added 2532
+Progress: resolved 2632, reused 1050, downloaded 1482, added 2537
+Progress: resolved 2632, reused 1050, downloaded 1492, added 2548
+Progress: resolved 2632, reused 1050, downloaded 1511, added 2564
+Progress: resolved 2632, reused 1050, downloaded 1543, added 2597
+Progress: resolved 2632, reused 1050, downloaded 1568, added 2624
+Progress: resolved 2632, reused 1050, downloaded 1571, added 2627
+Progress: resolved 2632, reused 1050, downloaded 1571, added 2628
+Progress: resolved 2632, reused 1050, downloaded 1572, added 2628
+Progress: resolved 2632, reused 1050, downloaded 1573, added 2628
+Progress: resolved 2632, reused 1050, downloaded 1573, added 2629
+Progress: resolved 2632, reused 1050, downloaded 1573, added 2630
+Progress: resolved 2632, reused 1050, downloaded 1573, added 2631
+Progress: resolved 2632, reused 1050, downloaded 1573, added 2632
+Progress: resolved 2632, reused 1050, downloaded 1573, added 2632, done
+
+dependencies:
++ @actions/core 1.10.1
++ @actions/github 6.0.0
++ @ianvs/prettier-plugin-sort-imports 4.0.0
++ @manypkg/cli 0.21.2
++ @rollup/plugin-node-resolve 15.2.3
++ @swc/core 1.3.3
++ @testing-library/dom 10.0.0
++ @testing-library/jest-dom 6.0.0
++ @testing-library/react 16.0.0
++ @testing-library/user-event 14.4.3
++ @types/event-source-polyfill 1.0.5
++ @types/node 20.10.4
++ @types/prettier 2.7.2
++ @typescript-eslint/eslint-plugin 7.7.1
++ @typescript-eslint/parser 7.7.1
++ @vitest/coverage-istanbul 1.5.2
++ @vitest/ui 1.5.2
++ concurrently 8.0.0
++ eslint 8.56.0
++ eslint-config-prettier 8.10.0
++ eslint-plugin-no-only-tests 3.1.0
++ eslint-plugin-react 7.32.2
++ eslint-plugin-react-hooks 4.6.0
++ eslint-plugin-turbo 2.0.3
++ eslint-plugin-unicorn 54.0.0
++ event-source-polyfill 1.0.31
++ express 4.19.2
++ fast-glob 3.2.12
++ hash-sum 2.0.0
++ lerna 8.1.2
++ npm-run-all2 6.1.1
++ prettier 2.8.8
++ prettier-plugin-tailwindcss 0.4.0
++ rollup 4.9.5
++ rollup-plugin-analyzer 4.0.0
++ rollup-plugin-delete 2.0.0
++ rollup-plugin-node-externals 7.0.0
++ rollup-plugin-swc3 0.11.0
++ rollup-plugin-typescript2 0.36.0
++ superjson 1.12.4
++ ts-prune 0.10.3
++ tsx 4.6.2
++ turbo 2.0.3
++ typescript 5.5.2
++ vite 5.1.7
++ vitest 1.5.2
++ vitest-environment-miniflare 2.14.2
++ zod 3.23.8
+
+Done in 11m 37.1s

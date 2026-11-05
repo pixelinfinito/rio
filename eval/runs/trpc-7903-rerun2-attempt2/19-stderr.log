@@ -1,0 +1,17 @@
+Warning: /home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-7903-rerun2-attempt2/profile.yaml:$.steps[3]: rio/triage is deferred locally: no_endpoint
+Warning: /home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-7903-rerun2-attempt2/profile.yaml:$.steps[4]: rio/agents is deferred locally: no_endpoint
+Warning: /home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-7903-rerun2-attempt2/profile.yaml:$.steps[5]: rio/verify is deferred locally: no_endpoint
+Running prepare…
+Finished prepare
+Running checks…
+secrets .: passed
+dependencies .: skipped (offline)
+lint tooling/release: skipped (no_project_config)
+coverage tooling/release: failed (tests_failed)
+typecheck tooling/release: passed
+typecheck tooling/release: passed
+Finished checks
+Running graph…
+Finished graph
+Running report…
+Finished report

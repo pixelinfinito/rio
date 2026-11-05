@@ -1,0 +1,854 @@
+[
+  {
+    "finding_id": "383f71f6994d0f22869f84c85d8c26cd8890ddcef754e51b6aac34e7e0d27d26",
+    "path": "tooling/release/src/notes.ts",
+    "reported_lines": [
+      328
+    ],
+    "source_lines": {
+      "328": "  author == null"
+    },
+    "zero_statement_counters": [
+      {
+        "statement_id": "86",
+        "span": {
+          "start": {
+            "line": 328,
+            "column": 2
+          },
+          "end": {
+            "line": 332,
+            "column": null
+          }
+        },
+        "count": 0
+      }
+    ],
+    "base_file_exists": false,
+    "reason": "New executable statements and callbacks, not erased types. Both independent suites passed (base26/head42); immutable change diff shows additions. Not preregistered as positive controls."
+  },
+  {
+    "finding_id": "a059c35a8da757b52c38d1a1a6d28746a3abe82d115756fe26630d2a8553558a",
+    "path": "tooling/release/src/notes.ts",
+    "reported_lines": [
+      308,
+      340,
+      341,
+      342,
+      343,
+      344,
+      345,
+      347,
+      349,
+      350,
+      352,
+      353,
+      356,
+      360,
+      363,
+      364,
+      375,
+      380,
+      381,
+      382,
+      391,
+      392,
+      400,
+      401,
+      402,
+      406,
+      407,
+      408,
+      411,
+      427,
+      441,
+      457,
+      459,
+      468,
+      469,
+      471,
+      473,
+      474
+    ],
+    "source_lines": {
+      "308": "      Effect.orElseSucceed(() => undefined),",
+      "340": "  const numbers = new Set<number>();",
+      "341": "  const shas: Array<string> = [];",
+      "342": "  for (const change of changes) {",
+      "343": "    const number = pullRequestNumber(change.subject);",
+      "344": "    if (number !== undefined) {",
+      "345": "      numbers.add(number);",
+      "347": "    shas.push(change.sha);",
+      "349": "  if (numbers.size === 0 && shas.length === 0) {",
+      "350": "    return { pullRequests: new Map(), commitAuthors: new Map() };",
+      "352": "  const author = 'author { __typename login }';",
+      "353": "  const fields = [",
+      "356": "        `pr${number}: issueOrPullRequest(number: ${number}) { ... on PullRequest { number title url ${author} } }`,",
+      "360": "        `c${sha}: object(oid: \"${sha}\") { ... on Commit { author { user { login } } } }`,",
+      "363": "  const [owner, name] = repo.split('/');",
+      "364": "  const response = yield* output(root, 'gh', [",
+      "375": "    JSON.parse(response) as {",
+      "380": "  const pullRequests = new Map<number, PullRequest>();",
+      "381": "  for (const number of numbers) {",
+      "382": "    const pr = data[`pr${number}`] as",
+      "391": "    if (pr?.number !== undefined) {",
+      "392": "      pullRequests.set(number, {",
+      "400": "  const commitAuthors = new Map<string, string>();",
+      "401": "  for (const sha of shas) {",
+      "402": "    const commit = data[`c${sha}`] as",
+      "406": "    const user = commit?.author?.user?.login;",
+      "407": "    if (user !== undefined) {",
+      "408": "      commitAuthors.set(sha, user);",
+      "411": "  return { pullRequests, commitAuthors };",
+      "427": "  const generated = yield* output(root, 'gh', [",
+      "441": "  return parseNewContributors(generated);",
+      "457": "  const to = opts.to ?? 'HEAD';",
+      "459": "    opts.repo ??",
+      "468": "  const packages = yield* notesPackages(root, to);",
+      "469": "  const changes = (yield* changesBetween(root, opts.previousTag, to)).filter(",
+      "471": "      !isReleaseCommit(subject) && changedPackages(files, packages).length > 0,",
+      "473": "  const github = yield* gitHubInfo(root, repo, changes);",
+      "474": "  return renderNotes({"
+    },
+    "zero_statement_counters": [
+      {
+        "statement_id": "77",
+        "span": {
+          "start": {
+            "line": 308,
+            "column": 33
+          },
+          "end": {
+            "line": 308,
+            "column": 42
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "88",
+        "span": {
+          "start": {
+            "line": 340,
+            "column": 18
+          },
+          "end": {
+            "line": 340,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "89",
+        "span": {
+          "start": {
+            "line": 341,
+            "column": 30
+          },
+          "end": {
+            "line": 341,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "90",
+        "span": {
+          "start": {
+            "line": 342,
+            "column": 2
+          },
+          "end": {
+            "line": 348,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "91",
+        "span": {
+          "start": {
+            "line": 343,
+            "column": 19
+          },
+          "end": {
+            "line": 343,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "92",
+        "span": {
+          "start": {
+            "line": 344,
+            "column": 4
+          },
+          "end": {
+            "line": 346,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "93",
+        "span": {
+          "start": {
+            "line": 345,
+            "column": 6
+          },
+          "end": {
+            "line": 345,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "94",
+        "span": {
+          "start": {
+            "line": 347,
+            "column": 4
+          },
+          "end": {
+            "line": 347,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "95",
+        "span": {
+          "start": {
+            "line": 349,
+            "column": 2
+          },
+          "end": {
+            "line": 351,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "96",
+        "span": {
+          "start": {
+            "line": 350,
+            "column": 4
+          },
+          "end": {
+            "line": 350,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "97",
+        "span": {
+          "start": {
+            "line": 352,
+            "column": 17
+          },
+          "end": {
+            "line": 352,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "98",
+        "span": {
+          "start": {
+            "line": 353,
+            "column": 17
+          },
+          "end": {
+            "line": 362,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "99",
+        "span": {
+          "start": {
+            "line": 356,
+            "column": 8
+          },
+          "end": {
+            "line": 356,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "100",
+        "span": {
+          "start": {
+            "line": 360,
+            "column": 8
+          },
+          "end": {
+            "line": 360,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "101",
+        "span": {
+          "start": {
+            "line": 363,
+            "column": 24
+          },
+          "end": {
+            "line": 363,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "102",
+        "span": {
+          "start": {
+            "line": 364,
+            "column": 19
+          },
+          "end": {
+            "line": 373,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "103",
+        "span": {
+          "start": {
+            "line": 375,
+            "column": 4
+          },
+          "end": {
+            "line": 378,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "104",
+        "span": {
+          "start": {
+            "line": 380,
+            "column": 23
+          },
+          "end": {
+            "line": 380,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "105",
+        "span": {
+          "start": {
+            "line": 381,
+            "column": 2
+          },
+          "end": {
+            "line": 399,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "106",
+        "span": {
+          "start": {
+            "line": 382,
+            "column": 15
+          },
+          "end": {
+            "line": 382,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "107",
+        "span": {
+          "start": {
+            "line": 391,
+            "column": 4
+          },
+          "end": {
+            "line": 398,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "108",
+        "span": {
+          "start": {
+            "line": 392,
+            "column": 6
+          },
+          "end": {
+            "line": 397,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "109",
+        "span": {
+          "start": {
+            "line": 400,
+            "column": 24
+          },
+          "end": {
+            "line": 400,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "110",
+        "span": {
+          "start": {
+            "line": 401,
+            "column": 2
+          },
+          "end": {
+            "line": 410,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "111",
+        "span": {
+          "start": {
+            "line": 402,
+            "column": 19
+          },
+          "end": {
+            "line": 402,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "112",
+        "span": {
+          "start": {
+            "line": 406,
+            "column": 17
+          },
+          "end": {
+            "line": 406,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "113",
+        "span": {
+          "start": {
+            "line": 407,
+            "column": 4
+          },
+          "end": {
+            "line": 409,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "114",
+        "span": {
+          "start": {
+            "line": 408,
+            "column": 6
+          },
+          "end": {
+            "line": 408,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "115",
+        "span": {
+          "start": {
+            "line": 411,
+            "column": 2
+          },
+          "end": {
+            "line": 411,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "117",
+        "span": {
+          "start": {
+            "line": 427,
+            "column": 20
+          },
+          "end": {
+            "line": 440,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "118",
+        "span": {
+          "start": {
+            "line": 441,
+            "column": 2
+          },
+          "end": {
+            "line": 441,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "120",
+        "span": {
+          "start": {
+            "line": 457,
+            "column": 13
+          },
+          "end": {
+            "line": 457,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "121",
+        "span": {
+          "start": {
+            "line": 459,
+            "column": 4
+          },
+          "end": {
+            "line": 467,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "122",
+        "span": {
+          "start": {
+            "line": 468,
+            "column": 19
+          },
+          "end": {
+            "line": 468,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "123",
+        "span": {
+          "start": {
+            "line": 469,
+            "column": 8
+          },
+          "end": {
+            "line": 472,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "124",
+        "span": {
+          "start": {
+            "line": 471,
+            "column": 6
+          },
+          "end": {
+            "line": 471,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "125",
+        "span": {
+          "start": {
+            "line": 473,
+            "column": 17
+          },
+          "end": {
+            "line": 473,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "126",
+        "span": {
+          "start": {
+            "line": 474,
+            "column": 2
+          },
+          "end": {
+            "line": 481,
+            "column": null
+          }
+        },
+        "count": 0
+      }
+    ],
+    "base_file_exists": false,
+    "reason": "New executable statements and callbacks, not erased types. Both independent suites passed (base26/head42); immutable change diff shows additions. Not preregistered as positive controls."
+  },
+  {
+    "finding_id": "daaea2d9954fac313f287bfc6a964e4e1d746cc7efc8e916fa2b896bf3f5759b",
+    "path": "tooling/release/src/release.ts",
+    "reported_lines": [
+      265,
+      266,
+      267,
+      354,
+      514,
+      523,
+      525,
+      526,
+      527,
+      528,
+      529,
+      530
+    ],
+    "source_lines": {
+      "265": "  const fs = yield* FileSystem.FileSystem;",
+      "266": "  const notesFile = yield* fs.makeTempFileScoped({ suffix: '.md' });",
+      "267": "  yield* fs.writeFileString(",
+      "354": "    const notes = yield* releaseNotes(root, { previousTag, tag });",
+      "514": "    opts.tag !== undefined &&",
+      "523": "      Effect.orElseSucceed(() => false),",
+      "525": "  const to = tagged ? opts.tag : (opts.to ?? 'HEAD');",
+      "526": "  const previousTag = yield* latestTag(root, tagged ? `${opts.tag}^` : to);",
+      "527": "  const tag = opts.tag ?? `v${bumpVersion(previousTag.slice(1), 'patch')}`;",
+      "528": "  const notes = yield* releaseNotes(root, { previousTag, tag, to });",
+      "529": "  yield* Console.log(notes);",
+      "530": "  return notes;"
+    },
+    "zero_statement_counters": [
+      {
+        "statement_id": "73",
+        "span": {
+          "start": {
+            "line": 265,
+            "column": 13
+          },
+          "end": {
+            "line": 265,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "74",
+        "span": {
+          "start": {
+            "line": 266,
+            "column": 20
+          },
+          "end": {
+            "line": 266,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "75",
+        "span": {
+          "start": {
+            "line": 267,
+            "column": 2
+          },
+          "end": {
+            "line": 270,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "102",
+        "span": {
+          "start": {
+            "line": 354,
+            "column": 18
+          },
+          "end": {
+            "line": 354,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "155",
+        "span": {
+          "start": {
+            "line": 514,
+            "column": 4
+          },
+          "end": {
+            "line": 524,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "156",
+        "span": {
+          "start": {
+            "line": 523,
+            "column": 33
+          },
+          "end": {
+            "line": 523,
+            "column": 38
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "157",
+        "span": {
+          "start": {
+            "line": 525,
+            "column": 13
+          },
+          "end": {
+            "line": 525,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "158",
+        "span": {
+          "start": {
+            "line": 526,
+            "column": 22
+          },
+          "end": {
+            "line": 526,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "159",
+        "span": {
+          "start": {
+            "line": 527,
+            "column": 14
+          },
+          "end": {
+            "line": 527,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "160",
+        "span": {
+          "start": {
+            "line": 528,
+            "column": 16
+          },
+          "end": {
+            "line": 528,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "161",
+        "span": {
+          "start": {
+            "line": 529,
+            "column": 2
+          },
+          "end": {
+            "line": 529,
+            "column": null
+          }
+        },
+        "count": 0
+      },
+      {
+        "statement_id": "162",
+        "span": {
+          "start": {
+            "line": 530,
+            "column": 2
+          },
+          "end": {
+            "line": 530,
+            "column": null
+          }
+        },
+        "count": 0
+      }
+    ],
+    "base_file_exists": true,
+    "reason": "New executable statements and callbacks, not erased types. Both independent suites passed (base26/head42); immutable change diff shows additions. Not preregistered as positive controls."
+  }
+]

@@ -1,0 +1,278 @@
+{
+  "binary": "f6e4f87e4c65",
+  "reviewer": "sub-agent rerun2-trpc (automated)",
+  "verdict_source": "automated",
+  "canonical_records": [
+    "trpc-5819-rerun2-attempt2/record.json",
+    "trpc-7903-rerun2-attempt4/record.json"
+  ],
+  "attempts": [
+    {
+      "directory": "trpc-5819-rerun2",
+      "record": "trpc-5819-rerun2/record.json",
+      "started_utc": "2026-11-05T10:56:53.896516+00:00",
+      "finished_utc": "2026-11-05T11:44:21.258282+00:00",
+      "runner_wall_seconds": 2847.362,
+      "rio_review_seconds": 599.103,
+      "summed_subprocess_seconds": 2583.4,
+      "report_wall_seconds": 598.113,
+      "eligible": false,
+      "baseline_ran": false,
+      "baseline_classification_ran": false,
+      "dependency_state": "verified",
+      "raw_states": {
+        "pre-existing": 240,
+        "unclassified": 3,
+        "new": 1
+      },
+      "raw_finding_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "pre-existing-hidden": 240,
+        "environment-failure": 3,
+        "out-of-scope": 0
+      },
+      "distinct_cause_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "pre-existing-hidden": 232,
+        "environment-failure": 3,
+        "out-of-scope": 0
+      },
+      "expected": 2,
+      "detected": 1,
+      "missed": 1,
+      "installations": {
+        "base": false,
+        "head": true
+      },
+      "failures": [
+        "base dependency installation failed (1)",
+        "Baseline/setup ineligible; fix before scoring"
+      ],
+      "binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+      "profile_sha256": "2da58908af111c67533c7c16376410ce8fd687d0f12a65f30b32171683de6ecd"
+    },
+    {
+      "directory": "trpc-5819-rerun2-attempt2",
+      "record": "trpc-5819-rerun2-attempt2/record.json",
+      "started_utc": "2026-11-05T11:26:41.607870+00:00",
+      "finished_utc": "2026-11-05T11:46:57.232973+00:00",
+      "runner_wall_seconds": 1215.625,
+      "rio_review_seconds": 415.891,
+      "summed_subprocess_seconds": 1089.249,
+      "report_wall_seconds": 415.038,
+      "eligible": false,
+      "baseline_ran": false,
+      "baseline_classification_ran": false,
+      "dependency_state": "verified",
+      "raw_states": {
+        "pre-existing": 240,
+        "unclassified": 3,
+        "new": 1
+      },
+      "raw_finding_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "pre-existing-hidden": 240,
+        "environment-failure": 3,
+        "out-of-scope": 0
+      },
+      "distinct_cause_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "pre-existing-hidden": 232,
+        "environment-failure": 3,
+        "out-of-scope": 0
+      },
+      "expected": 2,
+      "detected": 1,
+      "missed": 1,
+      "installations": {
+        "base": true,
+        "head": true
+      },
+      "failures": [
+        "Baseline/setup ineligible; fix before scoring"
+      ],
+      "binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+      "profile_sha256": "9e5d7a38e169ccac9ebd79b1ca406d46006031d6492f371699cfac0385d18830"
+    },
+    {
+      "directory": "trpc-7903-rerun2",
+      "record": "trpc-7903-rerun2/record.json",
+      "started_utc": "2026-11-05T10:57:06.108172+00:00",
+      "finished_utc": "2026-11-05T11:37:36.905560+00:00",
+      "runner_wall_seconds": 2430.797,
+      "rio_review_seconds": 607.967,
+      "summed_subprocess_seconds": 2395.588,
+      "report_wall_seconds": 605.722,
+      "eligible": false,
+      "baseline_ran": false,
+      "baseline_classification_ran": false,
+      "dependency_state": "unavailable",
+      "raw_states": {},
+      "raw_finding_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "pre-existing-hidden": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "distinct_cause_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "pre-existing-hidden": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "expected": 0,
+      "detected": 0,
+      "missed": 0,
+      "installations": {
+        "base": true,
+        "head": true
+      },
+      "failures": [
+        "Baseline/setup ineligible; fix before scoring"
+      ],
+      "binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+      "profile_sha256": "4528fc02deb105fc56e72eab0e4d058739e87a8075e38ed080837abd78a51bfe"
+    },
+    {
+      "directory": "trpc-7903-rerun2-attempt2",
+      "record": "trpc-7903-rerun2-attempt2/record.json",
+      "started_utc": "2026-11-05T11:32:53.013955+00:00",
+      "finished_utc": "2026-11-05T11:37:38.586954+00:00",
+      "runner_wall_seconds": 285.573,
+      "rio_review_seconds": 48.739,
+      "summed_subprocess_seconds": 262.432,
+      "report_wall_seconds": 46.042,
+      "eligible": false,
+      "baseline_ran": true,
+      "baseline_classification_ran": true,
+      "dependency_state": "verified",
+      "raw_states": {},
+      "raw_finding_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "pre-existing-hidden": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "distinct_cause_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "pre-existing-hidden": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "expected": 0,
+      "detected": 0,
+      "missed": 0,
+      "installations": {
+        "base": true,
+        "head": true
+      },
+      "failures": [
+        "Baseline/setup ineligible; fix before scoring"
+      ],
+      "binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+      "profile_sha256": "fe471e5cd007da091cb4d0eea896bc9f3ddf859263d34a016926e0aad3c30312"
+    },
+    {
+      "directory": "trpc-7903-rerun2-attempt3",
+      "record": "trpc-7903-rerun2-attempt3/record.json",
+      "started_utc": "2026-11-05T11:39:18.506635+00:00",
+      "finished_utc": "2026-11-05T11:40:48.441439+00:00",
+      "runner_wall_seconds": 89.935,
+      "rio_review_seconds": 51.859,
+      "summed_subprocess_seconds": 86.681,
+      "report_wall_seconds": 51.026,
+      "eligible": false,
+      "baseline_ran": true,
+      "baseline_classification_ran": true,
+      "dependency_state": "verified",
+      "raw_states": {},
+      "raw_finding_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "pre-existing-hidden": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "distinct_cause_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "pre-existing-hidden": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "expected": 0,
+      "detected": 0,
+      "missed": 0,
+      "installations": {
+        "base": true,
+        "head": true
+      },
+      "failures": [
+        "Baseline/setup ineligible; fix before scoring"
+      ],
+      "binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+      "profile_sha256": "99ccfe402e9fd500eebfcf172b02a974b01a7d62783f0ab721344df88e427bc8"
+    },
+    {
+      "directory": "trpc-7903-rerun2-attempt4",
+      "record": "trpc-7903-rerun2-attempt4/record.json",
+      "started_utc": "2026-11-05T11:41:09.460970+00:00",
+      "finished_utc": "2026-11-05T11:42:30.790604+00:00",
+      "runner_wall_seconds": 81.33,
+      "rio_review_seconds": 45.108,
+      "summed_subprocess_seconds": 79.365,
+      "report_wall_seconds": 43.92,
+      "eligible": true,
+      "baseline_ran": true,
+      "baseline_classification_ran": true,
+      "dependency_state": "verified",
+      "raw_states": {
+        "new": 3
+      },
+      "raw_finding_counts": {
+        "true-positive": 3,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "pre-existing-hidden": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "distinct_cause_counts": {
+        "true-positive": 3,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "pre-existing-hidden": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "expected": 0,
+      "detected": 0,
+      "missed": 0,
+      "installations": {
+        "base": true,
+        "head": true
+      },
+      "failures": [],
+      "binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+      "profile_sha256": "8beb612ab7385770f6dccc32fd71e598e8a98e62ac1db23cac2ce018f2d15f2c"
+    }
+  ]
+}

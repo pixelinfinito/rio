@@ -1,0 +1,20 @@
+
+ RUN  v5.0.0 /dev/shm/trpc-eval/source/tooling/release
+      Coverage enabled with istanbul
+
+package: @trpc/client@11.23.0
+Tarball Contents
+package.json
+Tarball Details
+/dev/shm/7yqSXm/trpc-client-11.23.0.tgz
+package: @trpc/server@11.23.0
+Tarball Contents
+package.json
+Tarball Details
+/dev/shm/7yqSXm/trpc-server-11.23.0.tgz
+
+ Test Files  4 passed (4)
+      Tests  42 passed (42)
+   Start at  11:41:23
+   Duration  11.88s (tests 47%, import 36%, transform 17%, worker 1%)
+

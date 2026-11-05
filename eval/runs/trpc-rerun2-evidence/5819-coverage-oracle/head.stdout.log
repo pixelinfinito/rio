@@ -1,0 +1,5 @@
+
+ RUN  v1.5.2 /tmp/rio-rerun2-trpc/rio-eval-etvw3zcb/head/packages/server
+      Coverage enabled with istanbul
+
+ ✓ src/unstable-core-do-not-import/procedureBuilder.test.ts  (4 tests) 26ms
