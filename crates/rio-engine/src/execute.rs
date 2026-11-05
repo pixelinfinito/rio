@@ -296,11 +296,16 @@ impl Execution {
     }
 
     async fn baseline(&self, check: &PlannedCheck) -> Result<(CheckEntry, bool)> {
+        // Unverified installation metadata cannot prove that a prior run used
+        // this environment. Compare trusted head/base results within this run.
+        if check.dependency_state == Some(DependencyState::Trusted) {
+            return self.diagnostic(check, Version::Base).await;
+        }
         let tool = check.tool.as_ref().context("no baseline tool")?;
         let mut targets = check.targets.clone();
         targets.sort();
         let input = serde_json::to_vec(
-            &serde_json::json!({"version":1,"root":check.root,"kind":check.kind,"tool":tool.name,"tool_version":tool.version,"targets":targets,"dependencies":check.dependency_hash,"invocation":"rio-diagnostic-v2"}),
+            &serde_json::json!({"version":1,"root":check.root,"kind":check.kind,"tool":tool.name,"tool_version":tool.version,"targets":targets,"dependencies":check.dependency_hash,"dependency_state":check.dependency_state,"invocation":"rio-diagnostic-v2"}),
         )?;
         let hash = blake3::hash(&input).to_hex().to_string();
         let relative = format!(

@@ -645,7 +645,7 @@ exit 2
         .unwrap();
         fs::write(root.join("b.ts"), "const regression = true;\n").unwrap();
         let report = review(
-            request(root, profile),
+            request(root, profile.clone()),
             ProcessSupervisor::default(),
             CancellationToken::new(),
             None,
@@ -668,6 +668,21 @@ exit 2
                 .notes
                 .iter()
                 .any(|n| n.contains("dependencies_trusted: results use unverified dependencies"))
+        );
+        let repeated = review(
+            request(root, profile),
+            ProcessSupervisor::default(),
+            CancellationToken::new(),
+            None,
+        )
+        .await
+        .unwrap();
+        assert!(
+            repeated
+                .checks
+                .iter()
+                .filter(|c| c.version == Version::Base)
+                .all(|c| !c.cached)
         );
     }
 }
@@ -744,6 +759,8 @@ exit 2
         assert!(changed.evidence.iter().any(|e| e.contains("a.ts:14")));
         let default = render_markdown(&report, &RenderOptions::default());
         assert!(!default.contains("Unchanged file."));
+        assert!(!default.contains("a.ts:6"));
+        assert!(!default.contains("a.ts:14"));
         let expanded = render_markdown(
             &report,
             &RenderOptions {
@@ -752,6 +769,8 @@ exit 2
             },
         );
         assert!(expanded.contains("Unchanged file."));
+        assert!(expanded.contains("a.ts:6"));
+        assert!(expanded.contains("a.ts:14"));
         assert!(
             report
                 .footer
