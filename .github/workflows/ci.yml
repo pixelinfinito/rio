@@ -64,6 +64,8 @@ jobs:
           python3 -m unittest discover -s tests/release -v
       - name: Acceptance record is complete
         run: python3 scripts/check-acceptance.py --record-only
+      - name: Evaluation harness
+        run: python3 -m unittest discover -s eval/tests -v
       - name: Profile reference is current
         run: |
           python3 scripts/generate-profile-reference.py

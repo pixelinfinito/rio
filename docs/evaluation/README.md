@@ -1,31 +1,26 @@
-# Automated acceptance evaluation
+# Evaluation records
 
-The stable v0.1 release requires ten real pull requests from at least three repositories covering TypeScript and Python. Fixture results do not satisfy this gate. The user approved independent sub-agent verdicts in place of the original human gate. Every verdict is labelled automated; agent assessments are not represented as human.
+New runs follow [the reusable harness](../../eval/README.md) and
+[deterministic-v1 methodology](../../eval/METHODOLOGY.md): verified baseline
+classification, distinct-cause verdicts, independent clean controls, and registered
+positive controls across at least five repositories and both languages.
 
-Record reviews in `v0.1.md` and the machine-checked `v0.1.json`. The latter has this structure:
+The original automated [v0.1 evaluation](v0.1.md) and [JSON](v0.1.json) are
+historical evidence. Their per-finding `noise` rubric is superseded. The
+[v0.1 rescoring](v0.1-rescored.md) preserves that evidence, records all ten PRs as
+environment failures, and separates the two semantic misses from deterministic
+recall. Its conclusion is insufficient evidence; stable release remains blocked.
+The original automated reviewer identities are preserved; no human verdicts are
+claimed.
 
-```json
-{
-  "pull_requests": [
-    {
-      "repository": "owner/repo",
-      "pr": "https://github.com/owner/repo/pull/123",
-      "languages": ["typescript"],
-      "mode": "base",
-      "review_id": "actual review id",
-      "wall_time_ms": 1234,
-      "findings": [{"id": "finding id", "verdict": "true-positive", "reviewer": "sub-agent name", "reason": "independent reviewer observation"}],
-      "misses": [],
-      "verdict": "useful",
-      "reason": "independent reviewer explanation",
-      "reviewer": "sub-agent name",
-      "verdict_source": "automated"
-    }
-  ],
-  "conclusion": "go",
-  "conclusion_reviewer": "sub-agent name",
-  "conclusion_reason": "independent reviewer assessment"
-}
-```
+Normalized records and their aggregate live in [v0.1-rescored/](v0.1-rescored/).
+Rebuild them with `python3 eval/rescore_v01.py`. Raw artifacts are documented in
+[evidence/README.md](evidence/README.md). Compressed JSON uses deterministic gzip;
+`eval/evaluate.py` accepts it directly.
 
-An empty findings/misses list means an independent reviewer checked and found none. Use `false-positive` or `noise` for other finding verdicts and `not-useful` when appropriate. Preserve report artifacts and per-check timing evidence alongside each entry. Do not represent an automated verdict as a human assessment. `python3 scripts/check-acceptance.py --record-only` validates completeness and accepts an honest no-go. Without that flag, the checker also requires go; stable release CI runs it before publishing.
+The existing `scripts/check-acceptance.py` and stable-release CI still read the
+original v0.1 acceptance format. `--record-only` verifies historical completeness;
+the stable gate remains blocked by its no-go conclusion. Migrating release CI to
+a new scored cohort is separate work: do not change the old conclusion to go or
+present the rescoring as passing acceptance. New quality measurements must be
+generated with `eval/evaluate.py`, not the old `scripts/aggregate-evaluation.py`.
