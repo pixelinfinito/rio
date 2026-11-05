@@ -281,7 +281,7 @@ pub fn discover_dependency_links(worktree: &Path, roots: &[String]) -> Result<Ve
         if !root.is_empty() && root != "." {
             validate_tree_path(root)?;
         }
-        for name in ["node_modules", ".venv", "venv"] {
+        for name in ["node_modules", ".venv", "venv", "target"] {
             let path = if root.is_empty() || root == "." {
                 name.to_owned()
             } else {

@@ -1,0 +1,837 @@
+{
+  "schema": "rio-acceptance-agent-v1",
+  "reviewer": "sub-agent rust_acceptance",
+  "verdict_source": "automated",
+  "date": "2026-11-05",
+  "human_verdicts": false,
+  "pull_requests": [
+    {
+      "repository": "pixelinfinito/rio",
+      "pr": "https://github.com/pixelinfinito/rio/pull/1",
+      "title": "Implement Rio v0.1 local review CLI",
+      "base": "ce0eb38256752158a375955031915e3a1931e3ee",
+      "head": "d3c1509392ab56de9da64d0f667fa6ec401fa3b5",
+      "languages": [
+        "rust"
+      ],
+      "mode": "base",
+      "review_id": "b7f046a42b45dcf7",
+      "wall_time_ms": 480685,
+      "status": "incomplete",
+      "exit_code": 4,
+      "profile": "acceptance-rust-rio",
+      "binary_sha256": "bb444d5076c6b44d03dc760b3e5fe451964d33d5abc732decbe649f1d617c3be",
+      "findings": [],
+      "misses": [],
+      "reviewer": "sub-agent rust_acceptance",
+      "verdict_source": "automated",
+      "checks": [
+        {
+          "findings": [],
+          "kind": "typecheck",
+          "language": "rust",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "lint",
+          "language": "rust",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "typecheck",
+          "language": "python",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "coverage",
+          "language": "rust",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "lint",
+          "language": "python",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "lint",
+          "language": "typescript",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "coverage",
+          "language": "python",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "coverage",
+          "language": "typescript",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "typecheck",
+          "language": "python",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": "eval/runs/pydantic-rerun2-evidence/pydantic-14199-rerun2",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "lint",
+          "language": "python",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": "eval/runs/pydantic-rerun2-evidence/pydantic-14199-rerun2",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "coverage",
+          "language": "python",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": "eval/runs/pydantic-rerun2-evidence/pydantic-14199-rerun2",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "lint",
+          "language": "typescript",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": "tests/fixtures/monorepo-sample",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "typecheck",
+          "language": "python",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": "eval/runs/pydantic-rerun2-evidence/pydantic-14199-rerun2-attempt2",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "coverage",
+          "language": "typescript",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": "tests/fixtures/monorepo-sample",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "lint",
+          "language": "python",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": "eval/runs/pydantic-rerun2-evidence/pydantic-14199-rerun2-attempt2",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": "tests/fixtures/monorepo-sample/packages/api",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "coverage",
+          "language": "python",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": "eval/runs/pydantic-rerun2-evidence/pydantic-14199-rerun2-attempt2",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "lint",
+          "language": "typescript",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": "tests/fixtures/monorepo-sample/packages/api",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "coverage",
+          "language": "typescript",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": "tests/fixtures/monorepo-sample/packages/api",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "typecheck",
+          "language": "python",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": "eval/runs/pydantic-rerun2-evidence/pydantic-14213-rerun2",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": "tests/fixtures/monorepo-sample/packages/shared",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "lint",
+          "language": "typescript",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": "tests/fixtures/monorepo-sample/packages/shared",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "lint",
+          "language": "python",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": "eval/runs/pydantic-rerun2-evidence/pydantic-14213-rerun2",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "coverage",
+          "language": "typescript",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": "tests/fixtures/monorepo-sample/packages/shared",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "coverage",
+          "language": "python",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": "eval/runs/pydantic-rerun2-evidence/pydantic-14213-rerun2",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": "tests/fixtures/monorepo-sample/packages/web",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "lint",
+          "language": "typescript",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": "tests/fixtures/monorepo-sample/packages/web",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "typecheck",
+          "language": "python",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": "eval/runs/structlog-setup",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "coverage",
+          "language": "typescript",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": "tests/fixtures/monorepo-sample/packages/web",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "lint",
+          "language": "python",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": "eval/runs/structlog-setup",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "typecheck",
+          "language": "python",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": "tests/fixtures/py-sample",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "coverage",
+          "language": "python",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": "eval/runs/structlog-setup",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "lint",
+          "language": "python",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": "tests/fixtures/py-sample",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": "tests/fixtures/build-output-workspace",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "lint",
+          "language": "typescript",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": "tests/fixtures/build-output-workspace",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "coverage",
+          "language": "python",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": "tests/fixtures/py-sample",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "coverage",
+          "language": "typescript",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": "tests/fixtures/build-output-workspace",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": "tests/fixtures/ts-sample",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "lint",
+          "language": "typescript",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": "tests/fixtures/ts-sample",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": "tests/fixtures/build-output-workspace/packages/consumer",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "coverage",
+          "language": "typescript",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": "tests/fixtures/ts-sample",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "lint",
+          "language": "typescript",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": "tests/fixtures/build-output-workspace/packages/consumer",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "secrets",
+          "language": "common",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "coverage",
+          "language": "typescript",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": "tests/fixtures/build-output-workspace/packages/consumer",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "dependencies",
+          "language": "common",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": "tests/fixtures/build-output-workspace/packages/shared",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "lint",
+          "language": "typescript",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": "tests/fixtures/build-output-workspace/packages/shared",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "coverage",
+          "language": "typescript",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": "tests/fixtures/build-output-workspace/packages/shared",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "cancelled",
+          "reason": "timeout",
+          "root": "tests/fixtures/monorepo-sample",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        }
+      ],
+      "report": "rust/rio-report.json",
+      "invocation": "rust/rio-invocation.json",
+      "independent_tests": [
+        {
+          "command": [
+            "cargo",
+            "test",
+            "--locked",
+            "-p",
+            "rio-core",
+            "-p",
+            "rio-profile",
+            "-p",
+            "rio-git",
+            "-p",
+            "rio-graph",
+            "--",
+            "--test-threads=1"
+          ],
+          "cwd": "/tmp/rio-rust-acceptance-self",
+          "exit_code": 101,
+          "wall_time_ms": 8103,
+          "evidence_path": "rust/rio-independent-tests.txt"
+        },
+        {
+          "command": [
+            "cargo",
+            "test",
+            "--locked",
+            "-p",
+            "rio-git",
+            "--test",
+            "materialization",
+            "concurrent_materializers_publish_one_complete_entry",
+            "--",
+            "--exact",
+            "--test-threads=1"
+          ],
+          "cwd": "/tmp/rio-rust-acceptance-self",
+          "exit_code": 0,
+          "wall_time_ms": 1356,
+          "evidence_path": "rust/rio-independent-concurrency-isolated.txt"
+        },
+        {
+          "command": [
+            "cargo",
+            "test",
+            "--locked",
+            "-p",
+            "rio-profile",
+            "-p",
+            "rio-graph",
+            "--",
+            "--test-threads=1"
+          ],
+          "cwd": "/tmp/rio-rust-acceptance-self",
+          "exit_code": 0,
+          "wall_time_ms": 8890,
+          "evidence_path": "rust/rio-independent-profile-graph.txt"
+        }
+      ],
+      "limitations": [
+        "Automated independent assessment only; no human verdict is claimed.",
+        "No independently established missed production defect; this is not proof of absence.",
+        "Offline disables OSV, while tool/test subprocesses retain network access. Model-backed steps are deferred.",
+        "The profile reviews the full real PR with a 240-second fast budget and no exclusion overrides.",
+        "The PR contains approximately 100MB of tracked prior evaluation/release evidence and many nested manifests. This is substantially larger than a typical feature PR.",
+        "The independent multi-crate tests initially hit short materialization-test deadlines under load; the isolated concurrency test and separate profile/graph suites pass. No production defect is inferred from those timing failures.",
+        "The independent tests reuse compiled dependencies through an ignored target symlink; selected tracked source is unchanged.",
+        "The final full-PR invocation took 480.685s in total despite its 240s fast budget; the process spent prolonged time in kernel page I/O during preparation/planning, then emitted an incomplete report with all 50 checks cancelled. No head tool execution is claimed for this PR."
+      ],
+      "verdict": "not-useful",
+      "reason": "The full initial implementation PR adds over 1.37 million lines including tracked evaluation evidence. This run exhausts its four-minute budget without an actionable finding; the explicit cancelled checks do not establish Rust correctness. Independent component tests provide evidence beyond this incomplete review."
+    },
+    {
+      "repository": "BurntSushi/ripgrep",
+      "pr": "https://github.com/BurntSushi/ripgrep/pull/3564",
+      "title": "ignore: treat dotfiles ending in a dot as hidden",
+      "base": "4c2362d359d9913c7a5e391ccd79cb4da22bc89b",
+      "head": "e1b91d0b988c47360279a8a2dce1a9cac50ab5a9",
+      "languages": [
+        "rust"
+      ],
+      "mode": "base",
+      "review_id": "c54ad6ae2dea33b1",
+      "wall_time_ms": 248169,
+      "status": "incomplete",
+      "exit_code": 0,
+      "profile": "acceptance-rust-ripgrep",
+      "binary_sha256": "bb444d5076c6b44d03dc760b3e5fe451964d33d5abc732decbe649f1d617c3be",
+      "findings": [],
+      "misses": [],
+      "reviewer": "sub-agent rust_acceptance",
+      "verdict_source": "automated",
+      "checks": [
+        {
+          "findings": [],
+          "kind": "secrets",
+          "language": "common",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 37
+        },
+        {
+          "findings": [],
+          "hint": "Dependency audit needs api.osv.dev",
+          "kind": "dependencies",
+          "language": "common",
+          "outcome": "skipped",
+          "reason": "offline",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 441
+        },
+        {
+          "findings": [],
+          "hint": "Install cargo-fmt in the project environment",
+          "kind": "lint",
+          "language": "rust",
+          "outcome": "skipped",
+          "reason": "tool_missing",
+          "root": "crates/ignore",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "coverage",
+          "language": "rust",
+          "outcome": "passed",
+          "root": "crates/ignore",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 25333
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "typecheck",
+          "language": "rust",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "dependent",
+          "version": "head",
+          "wall_time_ms": 22424
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "typecheck",
+          "language": "rust",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "dependent",
+          "version": "base",
+          "wall_time_ms": 17306
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "typecheck",
+          "language": "rust",
+          "outcome": "passed",
+          "root": "crates/ignore",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 18869
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "typecheck",
+          "language": "rust",
+          "outcome": "passed",
+          "root": "crates/ignore",
+          "scheduled_as": "changed",
+          "version": "base",
+          "wall_time_ms": 16094
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "coverage",
+          "language": "rust",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "dependent",
+          "version": "head",
+          "wall_time_ms": 37379
+        }
+      ],
+      "report": "rust/ripgrep-report.json",
+      "invocation": "rust/ripgrep-invocation.json",
+      "independent_tests": [
+        {
+          "command": [
+            "cargo",
+            "test",
+            "--locked",
+            "-p",
+            "ignore"
+          ],
+          "cwd": "/tmp/rio-rust-acceptance-ripgrep",
+          "exit_code": 0,
+          "wall_time_ms": 1017,
+          "evidence_path": "rust/ripgrep-independent-tests.txt"
+        },
+        {
+          "command": [
+            "cargo",
+            "test",
+            "--locked",
+            "-p",
+            "ignore",
+            "hidden_with_trailing_dot",
+            "--",
+            "--exact",
+            "walk::tests::hidden_with_trailing_dot"
+          ],
+          "variant": "PR head regression test with base pathutil.rs implementation",
+          "exit_code": 101,
+          "expected_failure": true,
+          "evidence_path": "rust/ripgrep-independent-base-reproduction.txt"
+        }
+      ],
+      "limitations": [
+        "Automated independent assessment only; no human verdict is claimed.",
+        "No independently established missed production defect; this is not proof of absence.",
+        "Offline disables OSV, while tool/test subprocesses retain network access. Model-backed steps are deferred.",
+        "The profile reviews the full real PR with a 240-second fast budget and no exclusion overrides.",
+        "The unpinned default stable toolchain lacks rustfmt, so formatting is explicitly skipped as tool_missing; clippy is not configured by the project.",
+        "The impact graph reaches the four-minute deadline and is truncated. Its false test_referenced value is not interpreted as proof that the changed helper lacks tests.",
+        "The earlier irrelevant nightly-only globset benchmark error disappears after package-scoped dependent scheduling."
+      ],
+      "verdict": "useful",
+      "reason": "The changed ignore crate and dependent ripgrep package pass head and baseline typechecks, and both coverage runs complete with no untested changed executable lines. This provides useful compile and coverage assurance for a clean bug-fix PR, consistent with 201 independent upstream tests and the new walker regression failing on the base implementation. No introduced defect was established."
+    }
+  ],
+  "review_tool_observations": {
+    "prior_binary": "4c9fe91d1c265eb99651d7b7607228789b4b4b62e8dc4c7f501d112f3dd8adf3",
+    "remediated": [
+      "Root package dependents in a Cargo workspace were selected with --workspace, unnecessarily compiling nightly-only unrelated benchmarks. The current rerun uses scheduled -p selections.",
+      "cargo-llvm-cov 0.9.1 ignores CARGO_LLVM_COV_NO_AUTO_INSTALL and auto-installed stable llvm-tools-preview during the first pass. The parent added explicit component preflight and CARGO_LLVM_COV_SETUP=no before these final reports."
+    ],
+    "prior_reports": [
+      "rust/rio-prior-report.json",
+      "rust/ripgrep-prior-report.json"
+    ],
+    "prior_finding_assessment": "rust/prior-findings-assessment.json"
+  },
+  "aggregate_recommendation": "no-go",
+  "aggregate_reason": "Across the preserved ten records and these two Rust records, only two of twelve reviews were independently judged useful. The prior record also reproduced missed regressions. This does not establish standalone usefulness in ten real PRs; preserve the stable-release block."
+}

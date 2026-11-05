@@ -1,0 +1,5 @@
+version: 1
+name: acceptance-rust-ripgrep
+extends: rio/base
+budget:
+  fast: {wall_time: 240s}

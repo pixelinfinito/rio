@@ -1,0 +1,8 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.24s
+     Running tests/materialization.rs (target/debug/deps/materialization-829e7fe1ec43ca9d)
+
+running 1 test
+test concurrent_materializers_publish_one_complete_entry ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.68s
+

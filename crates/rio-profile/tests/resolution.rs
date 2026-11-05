@@ -88,7 +88,7 @@ fn resolved_base_has_pinned_modules_stable_hash_and_writes_exact_document() {
     let root = tempfile::tempdir().unwrap();
     let loader = loader(root.path());
     let resolved = loader.load(Some("rio/base")).unwrap();
-    assert_eq!(resolved.warnings.len(), 3);
+    assert_eq!(resolved.warnings.len(), 4);
     assert_eq!(resolved.modules.len(), 7);
     assert!(
         resolved
@@ -192,6 +192,8 @@ fn every_validation_rule_rejects_its_failing_fixture() {
         ("rule", "unknown predicate"),
         ("action", "unknown action"),
         ("glob", "$.steps[0].with.exclude[0]"),
+        ("rounds", "diff_only_after must be below rounds.cap"),
+        ("always-human", "$.always_human[0]"),
     ] {
         let error = loader
             .load(Some(&format!("{fixture}.yaml")))
@@ -202,6 +204,82 @@ fn every_validation_rule_rejects_its_failing_fixture() {
             "{fixture}: expected {expected:?} in {error}"
         );
     }
+}
+
+#[test]
+fn posture_derives_reserved_policy_and_explicit_resolved_values_win() {
+    use rio_core::{EvidenceLevel, Severity};
+    let root = tempfile::tempdir().unwrap();
+    for (posture, evidence, maximum, severity, render, limit) in [
+        (
+            "critical-only",
+            EvidenceLevel::Reproduced,
+            3,
+            Severity::Error,
+            false,
+            Some(0),
+        ),
+        (
+            "balanced",
+            EvidenceLevel::StaticProven,
+            5,
+            Severity::Warning,
+            true,
+            Some(5),
+        ),
+        (
+            "thorough",
+            EvidenceLevel::Plausible,
+            15,
+            Severity::Info,
+            true,
+            None,
+        ),
+    ] {
+        write(
+            root.path(),
+            "profile.yaml",
+            &format!("version: 1\nname: test\nposture: {posture}\n"),
+        );
+        let resolved = loader(root.path()).load(Some("profile.yaml")).unwrap();
+        assert_eq!(resolved.profile.min_evidence, evidence);
+        assert_eq!(resolved.profile.max_defects, maximum);
+        assert_eq!(resolved.posture_policy.defect_severity_floor, severity);
+        assert_eq!(resolved.posture_policy.render_plausible_risks, render);
+        assert_eq!(resolved.posture_policy.plausible_risk_limit, limit);
+        assert_eq!(resolved.profile.rounds.cap, 3);
+        assert_eq!(resolved.profile.rounds.diff_only_after, 1);
+        let yaml = resolved.to_yaml().unwrap();
+        assert!(yaml.contains("posture_policy:"));
+        assert!(yaml.contains("max_defects:"));
+    }
+    write(
+        root.path(),
+        "parent.yaml",
+        "version: 1\nname: parent\nmin_evidence: plausible\nmax_defects: 8\n",
+    );
+    write(
+        root.path(),
+        "child.yaml",
+        "version: 1\nname: child\nextends: parent.yaml\nposture: critical-only\n",
+    );
+    let resolved = loader(root.path()).load(Some("child.yaml")).unwrap();
+    assert_eq!(resolved.profile.min_evidence, EvidenceLevel::Plausible);
+    assert_eq!(resolved.profile.max_defects, 8);
+    let before = resolved.hash().unwrap();
+    write(
+        root.path(),
+        "child.yaml",
+        "version: 1\nname: child\nextends: parent.yaml\nposture: thorough\n",
+    );
+    assert_ne!(
+        before,
+        loader(root.path())
+            .load(Some("child.yaml"))
+            .unwrap()
+            .hash()
+            .unwrap()
+    );
 }
 
 #[test]

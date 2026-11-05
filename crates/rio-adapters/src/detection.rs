@@ -29,6 +29,8 @@ pub struct ScheduledRoot {
     pub project: ProjectRoot,
     pub scheduled_as: ScheduledAs,
     pub changed_files: Vec<String>,
+    #[serde(default)]
+    pub workspace_wide: bool,
 }
 
 impl ScheduledRoot {
@@ -45,6 +47,7 @@ pub fn language_for_path(path: &str) -> Option<&'static str> {
     match path.rsplit('.').next()? {
         "ts" | "tsx" | "mts" | "cts" | "js" | "jsx" | "mjs" | "cjs" => Some("typescript"),
         "py" | "pyi" => Some("python"),
+        "rs" => Some("rust"),
         _ => None,
     }
 }
@@ -152,6 +155,7 @@ pub fn detect_repository(tree: &Tree, diff: &Diff) -> Result<RepositoryLayout> {
         let name = path.rsplit('/').next().unwrap();
         let language = match name {
             "package.json" | "tsconfig.json" => "typescript",
+            "Cargo.toml" => "rust",
             "pyproject.toml" | "setup.py" | "setup.cfg" | "Pipfile" => "python",
             name if name.starts_with("requirements") && name.ends_with(".txt") => "python",
             _ => continue,
@@ -168,6 +172,10 @@ pub fn detect_repository(tree: &Tree, diff: &Diff) -> Result<RepositoryLayout> {
         if name == "package.json" {
             let value = json(tree, path)?.unwrap();
             project.name = value["name"].as_str().map(str::to_owned);
+            project.manifest = Some(path.clone());
+        } else if name == "Cargo.toml" {
+            let value = toml_json(tree, path)?.unwrap();
+            project.name = value["package"]["name"].as_str().map(str::to_owned);
             project.manifest = Some(path.clone());
         } else if name == "pyproject.toml" {
             let value = toml_json(tree, path)?.unwrap();
@@ -200,6 +208,16 @@ pub fn detect_repository(tree: &Tree, diff: &Diff) -> Result<RepositoryLayout> {
                 strings(&value["packages"]),
                 Vec::new(),
             ));
+        } else if path.ends_with("Cargo.toml") {
+            let value = toml_json(tree, path)?.unwrap();
+            if value["workspace"].is_object() {
+                workspaces.push((
+                    directory.into(),
+                    "rust".into(),
+                    strings(&value["workspace"]["members"]),
+                    strings(&value["workspace"]["exclude"]),
+                ));
+            }
         } else if path.ends_with("pyproject.toml") {
             let value = toml_json(tree, path)?.unwrap();
             let workspace = &value["tool"]["uv"]["workspace"];
@@ -303,6 +321,41 @@ pub fn detect_repository(tree: &Tree, diff: &Diff) -> Result<RepositoryLayout> {
                         } else {
                             path
                         });
+                    }
+                }
+            }
+        } else if project.language == "rust" {
+            if let Some(value) = toml_json(tree, &join(&project.path, "Cargo.toml"))? {
+                let workspace = project.workspace.as_deref().unwrap_or(&project.path);
+                let workspace_value =
+                    toml_json(tree, &join(workspace, "Cargo.toml"))?.unwrap_or(Value::Null);
+                let mut declarations = vec![&value];
+                declarations.extend(
+                    value["target"]
+                        .as_object()
+                        .into_iter()
+                        .flat_map(|targets| targets.values()),
+                );
+                for declaration in declarations {
+                    for key in ["dependencies", "dev-dependencies", "build-dependencies"] {
+                        for (name, dependency) in declaration[key].as_object().into_iter().flatten()
+                        {
+                            let (declaration_root, dependency) = if dependency["workspace"] == true
+                            {
+                                (
+                                    workspace,
+                                    &workspace_value["workspace"]["dependencies"][name],
+                                )
+                            } else {
+                                (project.path.as_str(), dependency)
+                            };
+                            if let Some(path) = dependency["path"]
+                                .as_str()
+                                .and_then(|path| relative(declaration_root, path))
+                            {
+                                dependency_paths.insert(path);
+                            }
+                        }
                     }
                 }
             }
@@ -411,8 +464,43 @@ impl RepositoryLayout {
     pub fn schedule(&self, diff: &Diff) -> Vec<ScheduledRoot> {
         let mut scheduled = BTreeMap::new();
         for file in &diff.files {
-            if file.excluded.is_some() || file.binary {
+            if file.binary {
                 continue;
+            }
+            let name = file.path.rsplit('/').next().unwrap_or(&file.path);
+            if name == "Cargo.lock" {
+                let governing = parent(&file.path);
+                for project in self.roots.iter().filter(|project| {
+                    project.language == "rust"
+                        && project.name.is_some()
+                        && (project.path == governing
+                            || project.workspace.as_deref() == Some(governing))
+                }) {
+                    scheduled
+                        .entry((project.path.clone(), project.language.clone()))
+                        .or_insert_with(|| ScheduledRoot {
+                            project: project.clone(),
+                            scheduled_as: ScheduledAs::Changed,
+                            changed_files: Vec::new(),
+                            workspace_wide: false,
+                        });
+                }
+                continue;
+            }
+            if file.excluded.is_some() {
+                continue;
+            }
+            if matches!(name, "rust-toolchain.toml" | "rust-toolchain")
+                && let Some(project) = self.root_for(&file.path, "rust")
+            {
+                scheduled
+                    .entry((project.path.clone(), project.language.clone()))
+                    .or_insert_with(|| ScheduledRoot {
+                        project: project.clone(),
+                        scheduled_as: ScheduledAs::Changed,
+                        changed_files: Vec::new(),
+                        workspace_wide: false,
+                    });
             }
             let languages: Vec<_> = language_for_path(&file.path)
                 .map(|language| vec![language])
@@ -431,6 +519,7 @@ impl RepositoryLayout {
                             project: project.clone(),
                             scheduled_as: ScheduledAs::Changed,
                             changed_files: Vec::new(),
+                            workspace_wide: false,
                         });
                     root.changed_files.push(file.path.clone());
                 }
@@ -453,12 +542,47 @@ impl RepositoryLayout {
                             project: project.clone(),
                             scheduled_as: ScheduledAs::Dependent,
                             changed_files: Vec::new(),
+                            workspace_wide: false,
                         });
                         queue.push_back(key);
                     }
                 }
             }
         }
-        scheduled.into_values().collect()
+        for root in scheduled
+            .values_mut()
+            .filter(|root| root.project.language == "rust")
+        {
+            let has_members = self
+                .roots
+                .iter()
+                .any(|member| member.workspace.as_deref() == Some(&root.project.path));
+            root.workspace_wide = has_members
+                && (root.project.name.is_none()
+                    || diff.files.iter().any(|file| {
+                        root.project.manifest.as_deref() == Some(&file.path)
+                            || (parent(&file.path) == root.project.path
+                                && matches!(
+                                    file.path.rsplit('/').next(),
+                                    Some("rust-toolchain.toml" | "rust-toolchain")
+                                ))
+                    }));
+        }
+        let workspace_runs: BTreeSet<_> = scheduled
+            .values()
+            .filter(|root| root.project.language == "rust" && root.workspace_wide)
+            .map(|root| root.project.path.clone())
+            .collect();
+        scheduled
+            .into_values()
+            .filter(|root| {
+                root.project.language != "rust"
+                    || !root
+                        .project
+                        .workspace
+                        .as_ref()
+                        .is_some_and(|workspace| workspace_runs.contains(workspace))
+            })
+            .collect()
     }
 }

@@ -1,0 +1,368 @@
+{
+  "checks": [
+    {
+      "findings": [],
+      "hint": "Dependency audit needs api.osv.dev",
+      "kind": "dependencies",
+      "language": "common",
+      "outcome": "skipped",
+      "reason": "offline",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 384
+    },
+    {
+      "findings": [],
+      "kind": "secrets",
+      "language": "common",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 22
+    },
+    {
+      "dependency_state": "verified",
+      "findings": [
+        {
+          "category": "defect",
+          "evidence": [
+            "rustc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "1f4ab2e37599ba3260b907b55316c2d99663beb1c1494b632bc07bc2fc6ea3ce",
+          "location": {
+            "column": 1,
+            "line_end": 5,
+            "line_start": 5,
+            "occurrence_state": "pre-existing",
+            "path": "crates/globset/benches/bench.rs",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 1,
+              "line_end": 5,
+              "line_start": 5,
+              "occurrence_state": "pre-existing",
+              "path": "crates/globset/benches/bench.rs",
+              "symbol_path": ""
+            }
+          ],
+          "message": "error[E0554]: `#![feature]` may not be used on the stable release channel\n --> crates/globset/benches/bench.rs:5:1\n  |\n5 | #![feature(test)]\n  | ^^^^^^^^^^^^^^^^^\n\n",
+          "rule_id": "typecheck/rustc/E0554",
+          "severity": "error",
+          "source": {
+            "tool": "rustc",
+            "version": "cargo 1.99.1 (5f94df478 2026-08-27)"
+          },
+          "state": "pre-existing",
+          "trigger": ""
+        }
+      ],
+      "kind": "typecheck",
+      "language": "rust",
+      "outcome": "findings",
+      "root": ".",
+      "scheduled_as": "dependent",
+      "version": "head",
+      "wall_time_ms": 28002
+    },
+    {
+      "dependency_state": "verified",
+      "findings": [
+        {
+          "category": "defect",
+          "evidence": [
+            "rustc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "1f4ab2e37599ba3260b907b55316c2d99663beb1c1494b632bc07bc2fc6ea3ce",
+          "location": {
+            "column": 1,
+            "line_end": 5,
+            "line_start": 5,
+            "occurrence_state": "unclassified",
+            "path": "crates/globset/benches/bench.rs",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 1,
+              "line_end": 5,
+              "line_start": 5,
+              "occurrence_state": "unclassified",
+              "path": "crates/globset/benches/bench.rs",
+              "symbol_path": ""
+            }
+          ],
+          "message": "error[E0554]: `#![feature]` may not be used on the stable release channel\n --> crates/globset/benches/bench.rs:5:1\n  |\n5 | #![feature(test)]\n  | ^^^^^^^^^^^^^^^^^\n\n",
+          "rule_id": "typecheck/rustc/E0554",
+          "severity": "error",
+          "source": {
+            "tool": "rustc",
+            "version": "cargo 1.99.1 (5f94df478 2026-08-27)"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        }
+      ],
+      "kind": "typecheck",
+      "language": "rust",
+      "outcome": "findings",
+      "root": ".",
+      "scheduled_as": "dependent",
+      "version": "base",
+      "wall_time_ms": 15402
+    },
+    {
+      "dependency_state": "verified",
+      "findings": [],
+      "kind": "coverage",
+      "language": "rust",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "dependent",
+      "version": "head",
+      "wall_time_ms": 64600
+    }
+  ],
+  "deferred": [
+    {
+      "reason": "no_endpoint",
+      "step": "triage"
+    },
+    {
+      "reason": "no_endpoint",
+      "step": "agents"
+    },
+    {
+      "reason": "no_endpoint",
+      "step": "verify"
+    }
+  ],
+  "excluded": [],
+  "findings": [
+    {
+      "category": "defect",
+      "evidence": [
+        "rustc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "1f4ab2e37599ba3260b907b55316c2d99663beb1c1494b632bc07bc2fc6ea3ce",
+      "location": {
+        "column": 1,
+        "line_end": 5,
+        "line_start": 5,
+        "occurrence_state": "pre-existing",
+        "path": "crates/globset/benches/bench.rs",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 1,
+          "line_end": 5,
+          "line_start": 5,
+          "occurrence_state": "pre-existing",
+          "path": "crates/globset/benches/bench.rs",
+          "symbol_path": ""
+        }
+      ],
+      "message": "error[E0554]: `#![feature]` may not be used on the stable release channel\n --> crates/globset/benches/bench.rs:5:1\n  |\n5 | #![feature(test)]\n  | ^^^^^^^^^^^^^^^^^\n\n",
+      "rule_id": "typecheck/rustc/E0554",
+      "severity": "error",
+      "source": {
+        "tool": "rustc",
+        "version": "cargo 1.99.1 (5f94df478 2026-08-27)"
+      },
+      "state": "pre-existing",
+      "trigger": ""
+    }
+  ],
+  "footer": {
+    "notes": [
+      "posture, max_defects and rounds are recorded for deferred agent steps; deterministic findings are never capped",
+      "Intent inference is deferred: no_endpoint",
+      "Graph references use syntax and text; no language server was used",
+      "Impact graph truncated at the review deadline",
+      "Offline applies to Rio; tool and test processes were not network-isolated"
+    ],
+    "suppressions": [],
+    "tool_versions": {
+      "rust:.:cargo-check": "cargo 1.99.1 (5f94df478 2026-08-27)",
+      "rust:.:cargo-llvm-cov": "cargo-llvm-cov 0.9.1"
+    }
+  },
+  "impact": {
+    "symbols": [
+      {
+        "path": "crates/ignore/src/pathutil.rs",
+        "references_per_hop": [
+          10,
+          0
+        ],
+        "symbol_path": "",
+        "test_referenced": false,
+        "unresolved": 0
+      },
+      {
+        "path": "crates/ignore/src/pathutil.rs",
+        "references_per_hop": [
+          1,
+          0
+        ],
+        "symbol_path": "pathutil.file_name.imp",
+        "test_referenced": false,
+        "unresolved": 0
+      },
+      {
+        "path": "crates/ignore/src/pathutil.rs",
+        "references_per_hop": [
+          0,
+          0
+        ],
+        "symbol_path": "pathutil.tests",
+        "test_referenced": false,
+        "unresolved": 0
+      },
+      {
+        "path": "crates/ignore/src/pathutil.rs",
+        "references_per_hop": [
+          0,
+          0
+        ],
+        "symbol_path": "pathutil.tests.file_name_basic",
+        "test_referenced": false,
+        "unresolved": 0
+      },
+      {
+        "path": "crates/ignore/src/pathutil.rs",
+        "references_per_hop": [
+          0,
+          0
+        ],
+        "symbol_path": "pathutil.tests.file_name_dot_components",
+        "test_referenced": false,
+        "unresolved": 0
+      },
+      {
+        "path": "crates/ignore/src/pathutil.rs",
+        "references_per_hop": [
+          0,
+          0
+        ],
+        "symbol_path": "pathutil.tests.file_name_trailing_dot",
+        "test_referenced": false,
+        "unresolved": 0
+      },
+      {
+        "path": "crates/ignore/src/pathutil.rs",
+        "references_per_hop": [
+          0,
+          0
+        ],
+        "symbol_path": "pathutil.tests.hidden_trailing_dot",
+        "test_referenced": false,
+        "unresolved": 0
+      },
+      {
+        "path": "crates/ignore/src/walk.rs",
+        "references_per_hop": [
+          0,
+          0
+        ],
+        "symbol_path": "walk.tests",
+        "test_referenced": false,
+        "unresolved": 0
+      },
+      {
+        "path": "crates/ignore/src/walk.rs",
+        "references_per_hop": [
+          0,
+          0
+        ],
+        "symbol_path": "walk.tests.hidden_with_trailing_dot",
+        "test_referenced": false,
+        "unresolved": 0
+      }
+    ],
+    "truncated": true,
+    "unresolved": 0
+  },
+  "incomplete": [
+    {
+      "findings": [],
+      "hint": "Dependency audit needs api.osv.dev",
+      "kind": "dependencies",
+      "language": "common",
+      "outcome": "skipped",
+      "reason": "offline",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 384
+    }
+  ],
+  "metrics": {
+    "checks": [
+      {
+        "kind": "dependencies",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 384
+      },
+      {
+        "kind": "secrets",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 22
+      },
+      {
+        "kind": "typecheck",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 28002
+      },
+      {
+        "kind": "typecheck",
+        "root": ".",
+        "version": "base",
+        "wall_time_ms": 15402
+      },
+      {
+        "kind": "coverage",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 64600
+      }
+    ],
+    "tool_versions": {
+      "rust:.:cargo-check": "cargo 1.99.1 (5f94df478 2026-08-27)",
+      "rust:.:cargo-llvm-cov": "cargo-llvm-cov 0.9.1"
+    },
+    "wall_time_ms": 242174
+  },
+  "review": {
+    "base": "4c2362d359d9913c7a5e391ccd79cb4da22bc89b",
+    "chain": [
+      "acceptance-rust-ripgrep",
+      "rio/base"
+    ],
+    "head": "e1b91d0b988c47360279a8a2dce1a9cac50ab5a9",
+    "id": "c54ad6ae2dea33b1",
+    "mode": "branch",
+    "profile": "acceptance-rust-ripgrep",
+    "rio_version": "0.1.0",
+    "run_id": "01M6P1SFDSQJAHT5QEB9P83QPE"
+  },
+  "risk_tier": null,
+  "risks": [],
+  "schema": "rio-report-v1",
+  "status": "incomplete",
+  "summary": {
+    "fixed": 0,
+    "pre_existing": 1,
+    "suppressed": 0
+  }
+}

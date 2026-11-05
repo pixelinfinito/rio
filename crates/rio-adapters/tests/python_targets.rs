@@ -12,6 +12,7 @@ fn command(tree: &Tree, root: &str, name: &str) -> (tempfile::TempDir, Vec<Strin
         path: name.into(),
         version: "1.14.0".into(),
         version_hint: None,
+        rustup_toolchain: None,
     };
     let command = diagnostic_command(&tool, tree, temp.path(), root, &[]).unwrap();
     let args = command
@@ -58,11 +59,17 @@ fn explicit_mypy_targets_are_delegated_to_native_configuration() {
         let tree = fixture(name, &["custom/__init__.py"]);
         assert!(targets(&tree, ".").is_empty(), "{name}");
         let (temp, args) = command(&tree, ".", "mypy");
-        assert!(args.windows(2).any(|pair| pair
-            == [
+        assert!(args.windows(2).any(|pair| {
+            pair == [
                 "--config-file",
-                temp.path().join("pyproject.toml").to_str().unwrap()
-            ]));
+                temp.path()
+                    .canonicalize()
+                    .unwrap()
+                    .join("pyproject.toml")
+                    .to_str()
+                    .unwrap(),
+            ]
+        }));
     }
     for name in ["mypy.ini", ".mypy.ini", "setup.cfg"] {
         let tree = Tree::from([
@@ -76,7 +83,17 @@ fn explicit_mypy_targets_are_delegated_to_native_configuration() {
         ]);
         assert!(targets(&tree, ".").is_empty(), "{name}");
         let (temp, args) = command(&tree, ".", "mypy");
-        assert!(args.contains(&temp.path().join(name).to_string_lossy().into_owned()));
+        assert!(
+            args.contains(
+                &temp
+                    .path()
+                    .canonicalize()
+                    .unwrap()
+                    .join(name)
+                    .to_string_lossy()
+                    .into_owned()
+            )
+        );
     }
 }
 
@@ -159,6 +176,8 @@ fn mypy_config_precedence_and_exclude_are_preserved_for_inferred_targets() {
         args.contains(
             &temp
                 .path()
+                .canonicalize()
+                .unwrap()
                 .join("pyproject.toml")
                 .to_string_lossy()
                 .into_owned()
@@ -243,6 +262,7 @@ async fn real_mypy_respects_explicit_targets_inference_and_exclusions() {
             path: tool_path.clone(),
             version: "1.14.1".into(),
             version_hint: None,
+            rustup_toolchain: None,
         };
         let mut cmd = diagnostic_command(&tool, &tree, temp.path(), ".", &[]).unwrap();
         cmd.args.push("--no-incremental".into());

@@ -1,4 +1,7 @@
 # Preserve upstream diffs/logs byte-for-byte as acceptance evidence.
 docs/evaluation/evidence/** -whitespace
+docs/evaluation/rust/** -whitespace
+# Preserve rustfmt's recorded diff context verbatim.
+crates/rio-adapters/tests/fixtures/diagnostics/cargo-fmt.stdout -whitespace
 # Two spaces intentionally encode Markdown hard line breaks in renderer snapshots.
 crates/rio-core/tests/snapshots/*markdown.snap whitespace=-blank-at-eol

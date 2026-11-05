@@ -123,6 +123,9 @@ pub fn diagnostic_config_skip(
     tree: &Tree,
     root: &str,
 ) -> Option<CheckOutcome> {
+    if language == "rust" {
+        return (kind == CheckKind::Lint && crate::rust_lint_tools(tree, root).is_empty()).then(|| CheckOutcome::Skipped { reason: SkipReason::NoProjectConfig, details: CheckDetails { hint: Some("Rust lint needs clippy configuration or a lints table; formatting needs rustfmt.toml or .rustfmt.toml".into()), ..Default::default() } });
+    }
     if kind == CheckKind::Lint
         && if language == "typescript" {
             eslint_config(tree, root).is_none() && biome_config(tree, root).is_none()

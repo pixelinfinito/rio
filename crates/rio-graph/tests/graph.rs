@@ -218,3 +218,108 @@ fn unrelated_unresolved_default_and_namespace_imports_do_not_connect_every_symbo
             .any(|node| node.path == "src/external.ts")
     );
 }
+
+#[test]
+fn rust_module_imports_workspace_crates_macros_and_inline_tests_resolve() {
+    let mut base = read_tree(&fixture("rs-sample"));
+    base.get_mut("core/src/lib.rs")
+        .unwrap()
+        .content
+        .extend_from_slice(b"\npub mod util;\n");
+    base.insert("core/src/util.rs".into(),entry("pub fn helper() -> u32 {\n    1\n}\n\n#[cfg(test)]\nmod tests {\n    use super::helper;\n    #[test]\n    fn calls_helper() { assert_eq!(helper(), 1); }\n}\n"));
+    base.insert(
+        "core/src/nested/mod.rs".into(),
+        entry("use super::util::helper;\npub fn nested_call() { helper(); }\n"),
+    );
+    base.get_mut("core/src/lib.rs").unwrap().content.extend_from_slice(b"pub mod nested;\nmacro_rules! greeting { () => { println!(\"hi\"); } }\npub fn invokes_macro() { greeting!(); }\n");
+    base.insert(
+        "cli/src/main.rs".into(),
+        entry(
+            "use sample_core::util::helper as render;\nfn main() { println!(\"{}\", render()); }\n",
+        ),
+    );
+    let mut head = base.clone();
+    head.insert("core/src/util.rs".into(),entry("pub fn helper() -> u32 {\n    2\n}\n\n#[cfg(test)]\nmod tests {\n    use super::helper;\n    #[test]\n    fn calls_helper() { assert_eq!(helper(), 1); }\n}\n"));
+    let slices = graph(base, head, GraphOptions::default());
+    let seed = slices
+        .head
+        .nodes
+        .iter()
+        .find(|node| node.name == "helper" && node.seed)
+        .unwrap();
+    let incoming: Vec<_> = slices
+        .head
+        .edges
+        .iter()
+        .filter(|edge| edge.to == seed.id)
+        .collect();
+    assert!(
+        incoming
+            .iter()
+            .any(|edge| edge.kind == EdgeKind::Tests && edge.confidence == Confidence::Resolved),
+        "{incoming:?}"
+    );
+    assert!(incoming.iter().any(|edge| {
+        edge.confidence == Confidence::Resolved
+            && slices
+                .head
+                .nodes
+                .iter()
+                .find(|node| node.id == edge.from)
+                .unwrap()
+                .path
+                == "cli/src/main.rs"
+    }));
+    insta::assert_json_snapshot!("rust_impact", slices.head);
+}
+
+#[test]
+fn rust_macro_invocations_are_references_and_grouped_imports_resolve() {
+    let base: Tree = [
+        ("Cargo.toml".into(), entry("[package]\nname = 'macro-sample'\nversion = '0.1.0'\n")),
+        ("src/lib.rs".into(), entry("pub mod util;\nmacro_rules! greeting { () => { 1 } }\npub fn invoke() {\n    let _ = greeting!();\n}\nuse crate::{util::{helper as render}};\npub fn grouped() { render(); }\nuse crate::missing::greeting as unknown;\npub fn unresolved() { unknown!(); }\n")),
+        ("src/util.rs".into(), entry("pub fn helper() {\n    println!(\"hello\");\n}\n")),
+    ].into();
+    let mut head = base.clone();
+    head.insert(
+        "src/lib.rs".into(),
+        entry(
+            &String::from_utf8(base["src/lib.rs"].content.clone())
+                .unwrap()
+                .replace("() => { 1 }", "() => { 2 }"),
+        ),
+    );
+    head.insert(
+        "src/util.rs".into(),
+        entry("pub fn helper() {\n    println!(\"new\");\n}\n"),
+    );
+    let slices = graph(base, head, GraphOptions::default());
+    for (from, to) in [("invoke", "greeting"), ("grouped", "helper")] {
+        let from = slices
+            .head
+            .nodes
+            .iter()
+            .find(|node| node.name == from)
+            .unwrap();
+        let to = slices
+            .head
+            .nodes
+            .iter()
+            .find(|node| node.name == to)
+            .unwrap();
+        assert!(
+            slices.head.edges.iter().any(|edge| edge.from == from.id
+                && edge.to == to.id
+                && edge.confidence == Confidence::Resolved),
+            "{slices:#?}"
+        );
+    }
+    assert!(!slices.head.edges.iter().any(|edge| {
+        edge.confidence == Confidence::Resolved
+            && slices
+                .head
+                .nodes
+                .iter()
+                .any(|node| node.id == edge.from && node.name == "unresolved")
+    }));
+}

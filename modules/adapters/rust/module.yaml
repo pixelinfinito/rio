@@ -1,0 +1,147 @@
+{
+  "kind": "adapter",
+  "name": "rio/adapter-rust",
+  "version": "0.1.0",
+  "description": "Built-in Rust adapter",
+  "languages": [
+    "rust"
+  ],
+  "files": [
+    "*.rs"
+  ],
+  "capabilities": [
+    "parse",
+    "typecheck",
+    "lint",
+    "test",
+    "coverage",
+    "scan"
+  ],
+  "schema": {
+    "type": "object",
+    "additionalProperties": false
+  },
+  "tools": {
+    "parse": [],
+    "scan": [],
+    "typecheck": [
+      {
+        "name": "cargo-check",
+        "command": [
+          "cargo",
+          "check",
+          "--message-format=json",
+          "--all-targets"
+        ],
+        "network": [
+          "index.crates.io",
+          "static.crates.io"
+        ],
+        "exit_codes": {
+          "clean": [
+            0
+          ],
+          "diagnostics": [
+            101
+          ],
+          "failed": {}
+        }
+      }
+    ],
+    "lint": [
+      {
+        "name": "cargo-clippy",
+        "command": [
+          "cargo",
+          "clippy",
+          "--message-format=json",
+          "--all-targets"
+        ],
+        "network": [
+          "index.crates.io",
+          "static.crates.io"
+        ],
+        "exit_codes": {
+          "clean": [
+            0
+          ],
+          "diagnostics": [
+            101
+          ],
+          "failed": {}
+        }
+      },
+      {
+        "name": "cargo-fmt",
+        "command": [
+          "cargo",
+          "fmt",
+          "--check"
+        ],
+        "network": [
+          "index.crates.io",
+          "static.crates.io"
+        ],
+        "exit_codes": {
+          "clean": [
+            0
+          ],
+          "diagnostics": [
+            1
+          ],
+          "failed": {}
+        }
+      }
+    ],
+    "test": [
+      {
+        "name": "cargo-llvm-cov",
+        "command": [
+          "cargo",
+          "llvm-cov",
+          "--lcov",
+          "--output-path",
+          "{cache}/lcov.info"
+        ],
+        "network": [
+          "index.crates.io",
+          "static.crates.io"
+        ],
+        "exit_codes": {
+          "clean": [
+            0
+          ],
+          "diagnostics": [],
+          "failed": {
+            "101": "tests_failed"
+          }
+        }
+      }
+    ],
+    "coverage": [
+      {
+        "name": "cargo-llvm-cov",
+        "command": [
+          "cargo",
+          "llvm-cov",
+          "--lcov",
+          "--output-path",
+          "{cache}/lcov.info"
+        ],
+        "network": [
+          "index.crates.io",
+          "static.crates.io"
+        ],
+        "exit_codes": {
+          "clean": [
+            0
+          ],
+          "diagnostics": [],
+          "failed": {
+            "101": "tests_failed"
+          }
+        }
+      }
+    ]
+  }
+}

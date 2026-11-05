@@ -2,6 +2,7 @@
 """Normalize independent automated PR records without changing their verdicts."""
 import argparse
 from collections import Counter
+from datetime import date
 import json
 from pathlib import Path
 
@@ -13,7 +14,7 @@ args = parser.parse_args()
 root = Path(__file__).resolve().parents[1]
 directory = root / 'docs/evaluation'
 records = []
-for name in ['agent-typescript.json', 'agent-python.json', 'agent-third.json']:
+for name in ['agent-typescript.json', 'agent-python.json', 'agent-third.json', 'agent-rust.json']:
     source = json.loads((directory / name).read_text())
     for original in source['pull_requests']:
         pr = dict(original)
@@ -29,7 +30,7 @@ for name in ['agent-typescript.json', 'agent-python.json', 'agent-third.json']:
         ] if key in pr})
 record = {
     'schema': 'rio-automated-acceptance-v1', 'verdict_source': 'automated',
-    'date': '2026-11-04', 'human_verdicts': False, 'pull_requests': records,
+    'date': date.today().isoformat(), 'human_verdicts': False, 'pull_requests': records,
     'conclusion': args.conclusion, 'conclusion_reviewer': args.reviewer,
     'conclusion_verdict_source': 'automated', 'conclusion_reason': args.reason,
 }

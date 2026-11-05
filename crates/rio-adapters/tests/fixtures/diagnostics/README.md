@@ -12,3 +12,11 @@ examples in `tests/diagnostics.rs`.
 
 - Biome 1.9.4 and 2.0.0: `biome lint --reporter=json sample.ts`, with `correctness.noUnusedVariables` enabled at warning severity. Paths and durations normalized; warning exit 0 retained.
 - `tsc-trace-global.stdout`: reduced traceResolution and file-less TS6504 formats from `eval/runs/zod-6085-evidence/` plus a location diagnostic to verify traces do not suppress findings.
+
+- Cargo/rustc/clippy/rustfmt 1.99.1: `cargo-{check,clippy,fmt}.*` recorded
+  against the Rust sample in disposable trees, with paths normalized to
+  `/recorded/workspace`. Check used `cases/head-errors.rs` and `cases/format.rs`;
+  fmt used `--check -p sample-core`; check/clippy used
+  `--locked --all-targets --message-format=json -p sample-core`.
+  `cargo-internal.*` records exit 101 for an unavailable workspace member,
+  with no compiler diagnostics, and must produce `tool_crashed`.

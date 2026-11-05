@@ -1,0 +1,6 @@
+version: 1
+name: reserved
+posture: critical-only
+max_defects: 8
+rounds: {cap: 4, diff_only_after: 2}
+always_human: [".github/workflows/**"]

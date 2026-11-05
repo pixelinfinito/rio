@@ -12,17 +12,31 @@ fn live_references_survive_pruning_then_unreferenced_entries_are_removed() {
     fs::create_dir_all(options.dir.join("heads/shared/tree")).unwrap();
     fs::write(options.dir.join("heads/shared/tree/source"), "keep").unwrap();
     fs::create_dir_all(options.dir.join("heads/unused/tree")).unwrap();
-    prune_cache(&options, None).unwrap();
+    // Pruning is best effort and can skip a contended lock. In particular,
+    // concurrently spawned children can briefly inherit locks before exec.
+    let prune_until = |options: &CacheOptions, done: &dyn Fn() -> bool| {
+        let deadline = std::time::Instant::now() + Duration::from_secs(5);
+        loop {
+            prune_cache(options, None).unwrap();
+            if done() {
+                break;
+            }
+            assert!(
+                std::time::Instant::now() < deadline,
+                "cache pruning did not converge"
+            );
+            std::thread::sleep(Duration::from_millis(10));
+        }
+    };
+    prune_until(&options, &|| !options.dir.join("heads/unused").exists());
     assert!(options.dir.join("heads/shared/tree/source").exists());
-    assert!(!options.dir.join("heads/unused").exists());
     drop(run);
     prune_cache(&options, None).unwrap();
     // Retained run records still reference this source.
     assert!(options.dir.join("heads/shared/tree/source").exists());
     let mut expired = options.clone();
     expired.max_age = Duration::ZERO;
-    prune_cache(&expired, None).unwrap();
-    assert!(!options.dir.join("heads/shared").exists());
+    prune_until(&expired, &|| !options.dir.join("heads/shared").exists());
 }
 #[test]
 fn dead_temporary_writes_are_never_read_and_live_entry_writes_are_protected() {

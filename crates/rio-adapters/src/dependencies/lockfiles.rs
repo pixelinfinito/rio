@@ -10,6 +10,8 @@ pub enum Ecosystem {
     Npm,
     #[serde(rename = "PyPI")]
     PyPi,
+    #[serde(rename = "crates.io")]
+    CratesIo,
 }
 
 #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
@@ -194,6 +196,7 @@ pub fn parse_lockfile(filename: &str, content: &str) -> Result<DependencyGraph> 
         }
         "pnpm-lock.yaml" => super::pnpm::parse(content),
         "yarn.lock" => super::yarn::parse(content),
+        "Cargo.lock" => super::cargo::parse(content),
         "uv.lock" | "poetry.lock" | "Pipfile.lock" => super::python::parse(name, content),
         name if name.starts_with("requirements") && name.ends_with(".txt") => {
             super::python::requirements(content)

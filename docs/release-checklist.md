@@ -5,7 +5,7 @@ A checked box records actual evidence. Source code or a workflow definition alon
 - [x] Corrected CI passes, including a negative check with Ruff removed under `RIO_REQUIRE_TOOLS=1`; the first-push failures remain recorded below (user-accepted exception, 2026-11-05).
 - [x] Unix installer checks pass on Ubuntu and macOS; PowerShell checks pass on Windows with 5.1 and 7.
 - [x] Cold/warm benchmark has ten runs of each, p50/p95 and per-check breakdown, with cold p50 at most four minutes or a linked performance issue.
-- [x] Ten real PRs across at least three repositories and both languages have complete independent automated verdicts and a go/no-go conclusion in `docs/evaluation/v0.1.md`.
+- [x] Twelve real PRs across five repositories and TypeScript, Python and Rust (including Rio itself) have complete independent automated verdicts and a go/no-go conclusion in `docs/evaluation/v0.1.md`.
 - [x] A fork release of `v0.1.0-rc.1` has six archives, LICENSE/README per archive, matching SHA256SUMS, tagged installers and verified provenance.
 - [x] The RC is marked pre-release and `releases/latest` is unchanged.
 - [x] Forced asset-upload failure leaves only a draft; rerun replaces that draft, while published releases cannot be modified.
@@ -75,3 +75,13 @@ Local validation completed during implementation is recorded in the OpenSpec tas
 | Windows 2025 | x86_64 | install.ps1, PowerShell 7 | Install, exact version/target/commit, JSON doctor, uninstall passed |
 
 Downloaded doctor artifacts from all four runner jobs parse as JSON with no blocking problems. Ubuntu's separate Alpine step also passed. [Installer evidence](release-evidence/published-installers.json) records job URLs, observed binary versions and successful steps. All versions report `0.1.0-rc.1` and source commit `abb02751de7cd95dac021da3f21b02bb89425eef`.
+
+## Rust adapter continuation (2026-11-05)
+
+- Local Linux x86_64, Rust 1.99.1: `RIO_REQUIRE_TOOLS=1 cargo test --workspace --locked --no-fail-fast -- --test-threads=2` passed 253 tests with zero failures and zero ignored tests after rebuilding workspace artifacts without concurrent acceptance-checkout builds. An earlier overlapping run used conflicting shared-target artifacts; its failures are not claimed as a successful validation.
+- The final focused Rust adapter suite passed 13 tests, including the subsequent trusted/no-lock regression; the Rust-focused engine suite passed three tests. `cargo clippy --workspace --all-targets --locked`, `cargo fmt --all --check`, and `git diff --check` passed.
+- The pinned Rust fixture's own tests passed. Its CLI integration covers working-tree, staged and branch selections in JSON, terminal and Markdown. Cargo/Clippy/rustfmt recorded-output cases, failed-test coverage retention, zero-test handling, type-only coverage, workspace-root package scheduling, target isolation, and the recorded chrono OSV advisory are exercised locally.
+- With an isolated PATH and Cargo home hiding cargo-llvm-cov, the required-tool coverage integration failed with `required fixture tool missing: cargo-llvm-cov`, as intended. The checked-in CI workflow installs cargo-llvm-cov 0.9.1 and llvm-tools-preview and runs the corresponding negative check. These new workflow changes have not been pushed or run on hosted CI during this continuation; earlier platform results above describe their recorded revisions.
+- OpenSpec validation and the generated profile reference checks passed. OpenSpec retains requirement-length warnings.
+- Acceptance now records 12 real PRs from five repositories across TypeScript, Python and Rust, including Rio #1. Independent automated verdicts are two useful and ten not-useful. The record-only gate passes; the stable-release gate rejects the preserved **no-go** conclusion. See [the acceptance record](evaluation/v0.1.md) and [Rust evidence](evaluation/rust/README.md).
+- CodeRabbit authentication status succeeded, but the review request failed before analysis with a session/Git-provider authentication error. No CodeRabbit validation is claimed. No commits, pushes or releases were made in this continuation.

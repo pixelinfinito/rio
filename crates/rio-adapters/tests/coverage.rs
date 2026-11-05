@@ -628,6 +628,7 @@ async fn recorded_runner(name: &str, script: &str) -> CoverageRun {
         path,
         version: "2.1.9".into(),
         version_hint: None,
+        rustup_toolchain: None,
     };
     let settings = CoverageSettings {
         root: ".".into(),
@@ -761,6 +762,7 @@ fn vitest_worker_and_coverage_flags_match_installed_major() {
             path: "/bin/vitest".into(),
             version: version.into(),
             version_hint: None,
+            rustup_toolchain: None,
         };
         let command =
             vitest_coverage_command(&tool, Path::new("/repo"), Path::new("/repo/coverage"));
@@ -869,6 +871,7 @@ pathlib.Path(output, 'lcov.info').write_text('SF:packages/a/index.ts\nDA:1,1\nen
         path: executable,
         version: "4.1.5".into(),
         version_hint: None,
+        rustup_toolchain: None,
     };
     let run = run_coverage(
         CoverageRequest {
@@ -955,6 +958,7 @@ pathlib.Path(output, 'lcov.info').write_text('SF:packages/a/index.ts\nDA:1,1\nen
             path,
             version: version.into(),
             version_hint: None,
+            rustup_toolchain: None,
         };
         let settings = CoverageSettings {
             root: "workspace/packages/a".into(),
@@ -1034,6 +1038,7 @@ async fn vitest_static_browser_mode_skips_without_starting_the_runner() {
                 path: temporary.path().join("does-not-exist"),
                 version: "4.1.5".into(),
                 version_hint: None,
+                rustup_toolchain: None,
             };
             let run = run_coverage(
                 CoverageRequest {

@@ -268,6 +268,46 @@
     "max_lines": {
       "type": "integer",
       "minimum": 1
+    },
+    "posture": {
+      "enum": [
+        "critical-only",
+        "balanced",
+        "thorough"
+      ],
+      "default": "balanced"
+    },
+    "max_defects": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 5
+    },
+    "rounds": {
+      "type": "object",
+      "properties": {
+        "cap": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 3
+        },
+        "diff_only_after": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 1
+        }
+      },
+      "additionalProperties": false,
+      "default": {
+        "cap": 3,
+        "diff_only_after": 1
+      }
+    },
+    "always_human": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
     }
   },
   "required": [

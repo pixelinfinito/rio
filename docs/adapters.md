@@ -1,6 +1,6 @@
 # Adapter contract
 
-Adapters connect repository detection and syntax to deterministic tool output. Rio embeds TypeScript/JavaScript and Python adapters; third-party module loading is rejected in v0.1. To add a language, extend the embedded adapter registry, detection/root scheduling, syntax tables, tool invocation and parsers, then add recorded-output and real-tool fixtures before enabling it in a profile.
+Adapters connect repository detection and syntax to deterministic tool output. Rio embeds TypeScript/JavaScript, Python and Rust adapters; third-party module loading is rejected in v0.1. To add a language, extend the embedded adapter registry, detection/root scheduling, syntax tables, tool invocation and parsers, then add recorded-output and real-tool fixtures before enabling it in a profile.
 
 An adapter supplies file matching, project roots, source parsing, enclosing symbols, identifiers/imports, executable-line decisions and the capabilities `parse`, `typecheck`, `lint`, `test`, `coverage`, `scan`. Native tools run through `ProcessSupervisor`, which applies working-directory isolation, deadlines, output bounds and process-tree cleanup. Every tool executes in a disposable source tree. Shared cached trees remain pure; ignored dependency installations are linked into each tool tree from the current worktree. Tests may execute arbitrary project code.
 
@@ -43,6 +43,23 @@ tools:
 | Python | Typecheck | Pyright JSON when configured/available, otherwise mypy without pretty output and with error codes; 0 clean; 1 diagnostics; mypy 2 is configuration failure |
 | Python | Lint | Ruff JSON over changed files; 0 clean; 1 diagnostics; 2 configuration failure |
 | Python | Coverage | `coverage run -m pytest`, then JSON export; pytest 5 is `no_tests`, failed tests retain usable coverage |
+| Rust | Typecheck | `cargo check --locked --all-targets --message-format=json -p <member>`; workspace-wide changes use `--workspace`. 0 clean; 101 with parsed compiler errors is findings, otherwise `tool_crashed` |
+| Rust | Lint | `cargo clippy --locked --all-targets --message-format=json` with the same package selection, only with `clippy.toml`, `.clippy.toml` or a manifest `[lints]`/`[workspace.lints]` table; same 0/101 contract |
+| Rust | Format | `cargo fmt --check -p <member>` (workspace-wide: `--all`), only with `rustfmt.toml` or `.rustfmt.toml`; 0 clean; 1 with parsed diffs yields `lint/rustfmt/format` |
+| Rust | Test/coverage | `cargo llvm-cov --locked --lcov --output-path <run>/lcov.info` with member/workspace selection; 101 with parsed test failures is `tests_failed`, retaining usable LCOV; all targets running zero tests is `no_tests` |
+
+Rust discovery reads Cargo manifests and supervised `cargo metadata --no-deps --format-version=1 --offline` from the selected source tree. A changed member schedules itself and its reverse dependents with `-p`; a workspace manifest or toolchain change schedules one `--workspace` run. Lint stays scoped to changed files. Compiler JSON diagnostics retain primary spans, diagnostic codes, levels and rendered explanations; duplicate target diagnostics are merged and spans outside the repository are dropped with a note.
+
+Rio resolves the installed Cargo selected by rustup for `rust-toolchain.toml`/`rust-toolchain`. Without a selected-tree toolchain file, it resolves the active toolchain from the repository directory, preserving directory overrides and environment selection. It carries that selection into isolated probes, compiler checks, metadata, and coverage commands. When rustup is absent, it resolves an installed Cargo from PATH and checks its version. It uses only installed toolchains and components, disabling rustup and cargo-llvm-cov automatic component installation. Missing cargo-llvm-cov is a visible `tool_missing` skip with `cargo install cargo-llvm-cov` as the install hint. To use coverage, install the selected toolchain's `llvm-tools-preview` component too. Available lint tools still run if another configured component is missing.
+
+An existing ignored workspace `target/` is linked only into disposable trees, like `node_modules`; cached source trees contain no target link. A cold or absent target can make baseline compilation slow; long baseline runs include a timing note. Cargo-llvm-cov runs sharing a target serialize cleanup, test execution and report export to avoid deleting one another's profile data. Rio never runs `cargo build` for the user. Cargo check/clippy/tests may compile dependencies and execute build scripts; `--offline` disables Rio's OSV calls, not network access by these subprocesses.
+
+For coverage, Rio explicitly sets Cargo's output directories to match the locked directory. `CARGO_TARGET_DIR` selects the target root (default: the disposable workspace's `target/`); `CARGO_LLVM_COV_TARGET_DIR` selects the coverage build/profile directory (default: `llvm-cov-target/` under that root). Relative environment paths resolve from the coverage invocation root. Coverage build intermediates use that same locked directory, overriding Cargo output-directory configuration.
+
+The coverage lock file records an unfinished run while subprocesses are active. If process cleanup cannot be confirmed, later coverage checks fail before spawning against that directory. After confirming that all remaining writers have stopped, remove `.rio-llvm-cov.lock` from the coverage build/profile directory to allow reuse; the failure hint gives its full path.
+
+`Cargo.lock` versions 3 and 4 establish Rust dependency resolution. Head checks require a parseable lockfile and an installed selected toolchain unless dependency trust is explicitly enabled. Cargo validates the selected manifests against a present lock using `--locked`. A trusted root without a lock runs without that flag in its disposable tree and is marked `dependencies_trusted`. A changed dependency in a member's resolved closure allows head checks and disables only its baseline classification: findings stay `unclassified`, and `baseline_failed` names the changed crate. An unrelated dependency change preserves that member's baseline. Lockfile-only changes schedule member checks individually so compatibility remains scoped to each closure. Registry dependencies use the OSV ecosystem `crates.io`; git, path and custom registry packages are listed as unauditable. Manifest dependency declarations supply optional and dev flags, including inherited workspace dependency aliases.
+
 
 Mypy preserves explicit `files`, `packages` and `modules` from its project configuration, including INI `files` and `exclude` rules. Otherwise Rio targets build-backend packages (setuptools, Hatch, Poetry or Flit), then a package matching `project.name`, then top-level Python packages excluding tests, docs, examples, scripts, benchmarks and build directories. Only projects with no inferred package fall back to `.`. Pyright retains its native `include`/`exclude` selection.
 
@@ -83,7 +100,7 @@ diagnostic cache whose key cannot attest untracked artifact contents.
 
 ## Coverage and syntax
 
-Tree-sitter grammars and embedded queries produce symbols, imports, identifiers and executable-line tables. Comments, strings and imports do not become reference edges; type-only TypeScript declarations, Python annotations and stubs do not become uncovered executable lines. Syntax does not imply language-server resolution; graph edges retain `resolved`, `probable` or `unresolved` confidence.
+Tree-sitter grammars and embedded queries produce symbols, imports, identifiers and executable-line tables. Comments, strings and imports do not become reference edges; type-only TypeScript declarations, Rust type definitions, Python annotations and stubs do not become uncovered executable lines. Syntax does not imply language-server resolution; graph edges retain `resolved`, `probable` or `unresolved` confidence.
 
 Coverage settings come from static Vitest/Jest configuration or coverage.py configuration. Rio does not execute JavaScript configuration to inspect it. Computed instrumentation settings yield `coverage_not_instrumented`. Coverage exclusions are shown explicitly. Usable line data from all scheduled roots is merged by repository path before diff coverage is computed, so consumer tests may cover shared workspace code. Failed test runs can contribute partial data while the check remains failed. When a runner exits nonzero without usable coverage, its check hint includes the first nonempty stderr line (redacted); retention is claimed only when executable-line data actually exists.
 
@@ -97,7 +114,7 @@ For TypeScript, Rio compares each changed hunk in the immutable base and head af
 
 ## Dependencies and secrets
 
-npm, pnpm, yarn classic/node-modules and Python uv/Poetry/exact requirements lockfiles feed the effective dependency graph. Installation metadata, location/version resolution, platform markers, omitted groups and in-repository links control compatibility. This graph is shared by planner, baseline identity and changed-version OSV auditing. A known mismatch is never bypassed by trust.
+Cargo, npm, pnpm, yarn classic/node-modules and Python uv/Poetry/exact requirements lockfiles feed the effective dependency graph. Installation metadata, location/version resolution, platform markers, omitted groups and in-repository links control compatibility. This graph is shared by planner, baseline identity and changed-version OSV auditing. A known mismatch is never bypassed by trust.
 
 pnpm virtual-store path verification accepts positive integer or quoted-string `virtualStoreDirMaxLength` values. The installed `node_modules/.modules.yaml` value takes precedence, followed by the installation root's `.npmrc` (`virtual-store-dir-max-length` or `virtualStoreDirMaxLength`), then `pnpm-workspace.yaml`, then the 120-character default. Configuration files used for this fallback are included in installation fingerprints.
 

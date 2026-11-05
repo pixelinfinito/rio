@@ -1,0 +1,24 @@
+{
+  "stable": {
+    "exit_code": 0,
+    "installed": [
+      "cargo-x86_64-unknown-linux-gnu",
+      "llvm-tools-x86_64-unknown-linux-gnu",
+      "rust-std-x86_64-unknown-linux-gnu",
+      "rustc-x86_64-unknown-linux-gnu"
+    ]
+  },
+  "1.99.1": {
+    "exit_code": 0,
+    "installed": [
+      "cargo-x86_64-unknown-linux-gnu",
+      "clippy-x86_64-unknown-linux-gnu",
+      "llvm-tools-x86_64-unknown-linux-gnu",
+      "rust-src",
+      "rust-std-x86_64-unknown-linux-gnu",
+      "rust-std-x86_64-unknown-linux-musl",
+      "rustc-x86_64-unknown-linux-gnu",
+      "rustfmt-x86_64-unknown-linux-gnu"
+    ]
+  }
+}

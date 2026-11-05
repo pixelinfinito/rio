@@ -40,6 +40,12 @@ Profiles describe a review. Machine settings such as the cache path and parallel
 | `fail_on.required_checks` | `array` | no |
 | `min_evidence` | `one of the schema alternatives` | no |
 | `max_lines` | `integer` | no |
+| `posture` | `one of the schema alternatives` | no |
+| `max_defects` | `integer` | no |
+| `rounds` | `object` | no |
+| `rounds.cap` | `integer` | no |
+| `rounds.diff_only_after` | `integer` | no |
+| `always_human` | `array` | no |
 
 <!-- schema:end -->
 
@@ -66,6 +72,24 @@ Steps need unique `id` values. `needs` names existing steps and must form a DAG.
 Disabled checks have outcome `skipped`, reason `disabled`. Trust allows an unverifiable installation, never a known mismatch, and disables baseline classification. Trusted diagnostics remain unclassified. `baseline: false` also leaves diagnostic state unclassified.
 
 `budget.fast.wall_time` is a positive duration such as `30s`, `4m` or `1h`. Check budgets are bounded by the remaining run budget: 40% for typecheck/lint, 60% for coverage and 10% for secrets/audit. `budget.deep` and token/agent limits are reserved for endpoint execution. `max_lines` triggers a size note. `min_evidence` cannot be below the supported floor. A verifier model must differ from the default model, and enabled agents require a verifier step.
+
+## Reserved agent policy and human review
+
+`posture` accepts `critical-only`, `balanced` (default), or `thorough`. When the merged document does not explicitly set `min_evidence` or `max_defects`, posture supplies their values:
+
+| Posture | Evidence floor | Maximum agent defects | Agent defect severity floor | Plausible agent risks |
+| --- | --- | --- | --- | --- |
+| `critical-only` | `reproduced` | 3 | `error` | Hidden |
+| `balanced` | `static_proven` | 5 | `warning` | Up to `max_defects` |
+| `thorough` | `plausible` | 15 | `info` | Uncapped |
+
+Explicit values in the merged document, including inherited values, win over posture defaults. For example, `rio/base` explicitly sets `min_evidence: plausible`. `max_defects` must be positive. `rounds` defaults to `{cap: 3, diff_only_after: 1}`; `cap` must be positive and `diff_only_after` must be nonnegative and less than `cap`. Resolved profiles store these values and `posture_policy` (the derived `defect_severity_floor`, `render_plausible_risks`, and nullable `plausible_risk_limit`), so policy changes affect the review id.
+
+These limits are reserved for deferred agent steps in v0.1. Deterministic findings and risks remain uncapped, and profile validation and the report footer explain the deferral.
+
+`always_human` is a list of repository-relative globs, default `[]`. A matching changed path sets `risk_tier` to `{tier: high, reasons: ["always_human: <glob>"], source: always_human}`. Otherwise it is `null`. This tier flags a need for human review; it grants no approval.
+
+The prepare step records `REVIEW.md`, `CLAUDE.md`, and `AGENTS.md` from the repository root through each changed file's directory in `owner_guidance.json`. Entries are sorted by path and include `path`, `scope_dir` (empty for the repository root), a BLAKE3 `content_hash`, and `lines`. Content comes from the selected head, including in staged and branch modes. v0.1 stores it as data without interpreting it.
 
 ## Failure policy
 

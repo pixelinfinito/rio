@@ -41,6 +41,10 @@ Each adapter SHALL declare, per tool, which exit codes mean "completed without d
 - **WHEN** `pytest` exits 5 because the project has no tests
 - **THEN** the coverage outcome is `skipped` with reason `no_tests`
 
+#### Scenario: Cargo test failures keep usable coverage
+- **WHEN** `cargo llvm-cov` writes `lcov.info` and exits 101 because one test fails
+- **THEN** the coverage outcome is `failed` with reason `tests_failed` and the failing-test count, and the `untested_change` findings computed from the LCOV data are kept and marked as computed from a run with failing tests
+
 #### Scenario: One root fails, another succeeds
 - **WHEN** the type check fails with `tool_crashed` in `packages/api` and passes in `packages/web`
 - **THEN** the report records `failed` for `packages/api` and `passed` for `packages/web`, and the `packages/web` result is used
@@ -89,7 +93,9 @@ Compatibility is defined against the effective dependency graph, not against the
 
 Packages that the lockfile lists but that are legitimately absent (optional dependencies skipped for the platform, `npm ci --omit=dev`, `uv sync --no-dev`, unselected extras) SHALL NOT cause a mismatch. When compatibility fails, those checks SHALL be skipped for that root with reason `dependency_mismatch` and a hint naming the differing file, package or location.
 
-When the installed state cannot be established (no lockfile, no exact pins, missing or unsupported installation metadata such as yarn Plug'n'Play), the checks SHALL be skipped with reason `dependency_mismatch` and a hint that names why. The exception is when the `rio/checks` option `trust_installed_dependencies` is `true` (default `false`). Then the checks run, their outcomes carry `dependency_state: trusted`, baseline classification for the root is disabled as defined above, and the footer states that results were computed against unverified dependencies. Trust never overrides a mismatch that was established: a stale or conflicting installation is always skipped.
+Rust has no installed tree, so for a Rust root compatibility SHALL be defined as: the governing `Cargo.lock` is present and parseable, and the toolchain named in `rust-toolchain.toml` or `rust-toolchain` (or the default toolchain when neither exists) is installed. A Rust root without a `Cargo.lock`, or whose toolchain is not installed, is `unverified`. Changes to affected members' resolved dependency closures allow head checks and disable only baseline classification, with `baseline_failed` naming the changed crate. Unrelated members' dependency changes do not disable classification.
+
+When the installed state cannot be established (no lockfile, no exact pins, missing or unsupported installation metadata such as yarn Plug'n'Play, a Rust root without `Cargo.lock` or with an uninstalled toolchain), the checks SHALL be skipped with reason `dependency_mismatch` and a hint that names why. The exception is when the `rio/checks` option `trust_installed_dependencies` is `true` (default `false`). Then the checks run, their outcomes carry `dependency_state: trusted`, baseline classification for the root is disabled as defined above, and the footer states that results were computed against unverified dependencies. Trust never overrides a mismatch that was established: a stale or conflicting installation is always skipped.
 
 #### Scenario: Unstaged dependency upgrade during a staged review
 - **WHEN** `rio review --staged` runs while `package.json` and `package-lock.json` have an unstaged upgrade that is installed in `node_modules`
@@ -122,6 +128,14 @@ When the installed state cannot be established (no lockfile, no exact pins, miss
 #### Scenario: Trusted unverifiable installation
 - **WHEN** the same root is reviewed with `rio/checks` `with: { trust_installed_dependencies: true }`
 - **THEN** the checks run, their outcomes carry `dependency_state: trusted`, the root's `typecheck` and `lint` findings are `unclassified`, and the footer states that results used unverified dependencies
+
+#### Scenario: Rust lockfile changed for an affected member
+- **WHEN** a change bumps a dependency of `crates/core` in `Cargo.lock` and `cargo check` reports a new error in an unchanged file of `crates/core`
+- **THEN** that member's `typecheck` findings are classified `unclassified` and the footer records `baseline_failed` with a hint naming the crate whose resolved version changed
+
+#### Scenario: Rust toolchain not installed
+- **WHEN** `rust-toolchain.toml` names a channel that `rustup` has not installed and `trust_installed_dependencies` is not set
+- **THEN** the Rust root's `typecheck`, `lint` and `coverage` are skipped with reason `dependency_mismatch` and the hint names the channel and `rustup toolchain install`
 
 #### Scenario: Trust does not override a known mismatch
 - **WHEN** `trust_installed_dependencies` is `true` and the installation records `react@18.2.0` while the head lockfile resolves `react@18.3.1`
@@ -179,7 +193,7 @@ For each enclosing function (or per file when no enclosing symbol exists) with e
 - **THEN** its process tree is terminated, the coverage outcome is `cancelled` with reason `timeout`, and other checks' results are unaffected
 
 ### Requirement: Dependency audit
-The dependency audit SHALL parse the manifests and lockfiles of both versions (npm `package-lock.json` v2 and v3, `pnpm-lock.yaml`, `yarn.lock`; Python `uv.lock`, `poetry.lock`, `Pipfile.lock`, and `requirements*.txt` with exact pins). It SHALL compute added, upgraded and downgraded packages, and query OSV for the head versions of the changed packages only. Retrieval SHALL be complete. The audit follows every `next_page_token` returned by the batch query. It fetches the full record of each returned advisory id with `GET /v1/vulns/{id}`, because the batch endpoint returns only ids and modification times. It caches advisory records under the cache's `osv/` directory, keyed by id and reused while the batch response reports the same `modified` time.
+The dependency audit SHALL parse the manifests and lockfiles of both versions (npm `package-lock.json` v2 and v3, `pnpm-lock.yaml`, `yarn.lock`; Python `uv.lock`, `poetry.lock`, `Pipfile.lock`, and `requirements*.txt` with exact pins; Rust `Cargo.lock` v3 and v4, with `crates.io` as the OSV ecosystem for registry packages). Git and path dependencies in `Cargo.lock` cannot be audited and SHALL be listed in the footer as unauditable; optional dependencies pulled in through `[features]` SHALL carry the `optional` flag in the dependency graph. It SHALL compute added, upgraded and downgraded packages, and query OSV for the head versions of the changed packages only. Retrieval SHALL be complete. The audit follows every `next_page_token` returned by the batch query. It fetches the full record of each returned advisory id with `GET /v1/vulns/{id}`, because the batch endpoint returns only ids and modification times. It caches advisory records under the cache's `osv/` directory, keyed by id and reused while the batch response reports the same `modified` time.
 
 Advisories for the same package version whose ids or `aliases` intersect SHALL be merged into one finding. That finding's advisory id is the lexicographically smallest OSV id in the group, and the other ids are listed as aliases. The audit SHALL produce one `dependency/vulnerable_dependency` finding per package, version and merged advisory. Each finding carries the advisory id, aliases, the advisory severity (`critical`, `high`, `moderate` or `low` from the record's severity data, otherwise `unknown`), and the first fixed version for the installed version's range when the record lists one, otherwise `unknown`.
 
@@ -200,6 +214,14 @@ When some detail requests fail after retries, the audit SHALL still emit finding
 #### Scenario: Detail retrieval fails
 - **WHEN** the batch query succeeds but fetching one advisory's record fails after retries
 - **THEN** a finding for that advisory id is still produced with severity `unknown` and fixed version `unknown`, and the audit outcome is `failed` with reason `partial_data`
+
+#### Scenario: Cargo registry package with an advisory
+- **WHEN** `Cargo.lock` upgrades a `registry+https://github.com/rust-lang/crates.io-index` package to a version with an OSV advisory in the `crates.io` ecosystem
+- **THEN** a `dependency/vulnerable_dependency` finding names the crate, the version, the advisory id, its severity and the first fixed version
+
+#### Scenario: Git dependency is unauditable
+- **WHEN** `Cargo.lock` adds a package whose `source` starts with `git+`
+- **THEN** no OSV query is made for it and the footer lists it as unauditable with reason `git_source`
 
 #### Scenario: Unchanged dependencies not queried
 - **WHEN** the change does not modify any manifest or lockfile

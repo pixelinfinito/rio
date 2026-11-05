@@ -1,5 +1,5 @@
 #![cfg(unix)]
-use rio_adapters::remap_base_dependencies;
+use rio_adapters::{ToolCommand, configure_base_command, remap_base_dependencies};
 use rio_git::{DependencyLink, Tree, TreeEntry};
 use std::{fs, path::Path};
 
@@ -21,11 +21,62 @@ fn tree(path: &str, text: &str) -> Tree {
 }
 
 #[test]
+fn global_python_checkers_select_the_nearest_venv_among_mixed_language_links() {
+    for name in [".venv", "venv"] {
+        for checker in ["mypy", "pyright"] {
+            let repo = tempfile::tempdir().unwrap();
+            let base = tempfile::tempdir().unwrap();
+            let global = tempfile::tempdir().unwrap();
+            let environment = format!("packages/api/{name}");
+            let paths = [
+                ".venv",
+                "target",
+                "node_modules",
+                environment.as_str(),
+                "packages/api/target",
+                "packages/api/node_modules",
+            ];
+            let links: Vec<_> = paths
+                .iter()
+                .map(|path| {
+                    fs::create_dir_all(repo.path().join(path)).unwrap();
+                    fs::create_dir_all(base.path().join(path)).unwrap();
+                    DependencyLink {
+                        path: (*path).into(),
+                        target: repo.path().join(path).canonicalize().unwrap(),
+                    }
+                })
+                .collect();
+            write(base.path(), &format!("{environment}/bin/python"), "");
+            write(global.path(), checker, "");
+            let program = global.path().join(checker);
+            let mut command = ToolCommand::new(program.clone(), base.path().join("packages/api"));
+            configure_base_command(&mut command, repo.path(), base.path(), &links, checker)
+                .unwrap();
+            let private_environment = base.path().canonicalize().unwrap().join(environment);
+            assert_eq!(
+                command.env[std::ffi::OsStr::new("VIRTUAL_ENV")],
+                private_environment.as_os_str()
+            );
+            assert_eq!(
+                command.args.last().unwrap(),
+                private_environment.join("bin/python").as_os_str()
+            );
+            assert_eq!(command.program, program);
+        }
+    }
+}
+
+#[test]
 fn pnpm_virtual_store_nested_links_and_external_targets_are_preserved() {
     let repo = tempfile::tempdir().unwrap();
     let base = tempfile::tempdir().unwrap();
     let external = tempfile::tempdir().unwrap();
-    let root = repo.path();
+    let real_root = repo.path().join("real");
+    fs::create_dir(&real_root).unwrap();
+    let alias = repo.path().join("alias");
+    std::os::unix::fs::symlink(&real_root, &alias).unwrap();
+    let root = alias.as_path();
     write(root, "packages/a/src/value.ts", "head");
     write(base.path(), "packages/a/src/value.ts", "base");
     write(
@@ -84,10 +135,12 @@ fn pnpm_virtual_store_nested_links_and_external_targets_are_preserved() {
             .unwrap(),
         base.path()
             .join("node_modules/.pnpm/consumer@1/node_modules/consumer")
+            .canonicalize()
+            .unwrap()
     );
     assert_eq!(
         fs::read_link(base.path().join("node_modules/external")).unwrap(),
-        external.path()
+        external.path().canonicalize().unwrap()
     );
     assert_eq!(
         fs::read_to_string(root.join("packages/b/node_modules/a/src/value.ts")).unwrap(),
@@ -335,7 +388,12 @@ fn ignored_build_entries_resolve_to_base_source_and_preserve_inherited_paths() {
         );
         assert_eq!(
             config["compilerOptions"]["paths"]["@local/*"][0],
-            base.path().join("config/../local/*").to_str().unwrap()
+            base.path()
+                .canonicalize()
+                .unwrap()
+                .join("config/../local/*")
+                .to_str()
+                .unwrap()
         );
     }
 }

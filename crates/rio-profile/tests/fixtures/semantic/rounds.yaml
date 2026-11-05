@@ -1,0 +1,3 @@
+version: 1
+name: invalid
+rounds: {cap: 2, diff_only_after: 2}

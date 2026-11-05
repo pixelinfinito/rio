@@ -1,0 +1,11 @@
+(function_item name: (identifier) @name) @symbol
+(function_signature_item name: (identifier) @name) @symbol
+(struct_item name: (type_identifier) @name) @symbol
+(enum_item name: (type_identifier) @name) @symbol
+(enum_variant name: (identifier) @name) @symbol
+(trait_item name: (type_identifier) @name) @symbol
+(type_item name: (type_identifier) @name) @symbol
+(const_item name: (identifier) @name) @symbol
+(static_item name: (identifier) @name) @symbol
+(macro_definition name: (identifier) @name) @symbol
+(mod_item name: (identifier) @name) @symbol

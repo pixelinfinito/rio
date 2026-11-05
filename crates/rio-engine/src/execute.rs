@@ -192,6 +192,9 @@ impl Execution {
         check: &PlannedCheck,
         version: Version,
     ) -> Result<(CheckEntry, bool)> {
+        if check.language == "rust" {
+            return self.rust_diagnostic(check, version).await;
+        }
         let started = Instant::now();
         if let Some(outcome) = self.before() {
             return Ok((
@@ -330,6 +333,125 @@ impl Execution {
         ))
     }
 
+    async fn rust_diagnostic(
+        &self,
+        check: &PlannedCheck,
+        version: Version,
+    ) -> Result<(CheckEntry, bool)> {
+        let started = Instant::now();
+        if let Some(outcome) = self.before() {
+            return Ok((
+                entry(check, version, outcome, started.elapsed(), false),
+                false,
+            ));
+        }
+        let materials = self
+            .materials
+            .as_ref()
+            .context("materialization unavailable")?;
+        let (cached, tree) = if version == Version::Head {
+            (&materials.head, &self.request.changes.head)
+        } else {
+            (&materials.base, &self.request.changes.base)
+        };
+        let disposable =
+            ToolTree::create_until(cached, &self.cache.path.join("tools"), &self.links, &|| {
+                self.before().is_some()
+            })?;
+        let mut outcomes = check.tool_skips.clone();
+        let mut cleanup_confirmed = true;
+        let mut ran = false;
+        for tool in check.tool.iter().chain(&check.additional_tools) {
+            if let Some(outcome) = self.before() {
+                outcomes.push(outcome);
+                break;
+            }
+            let mut command = rust_diagnostic_command(
+                tool,
+                tree,
+                disposable.path(),
+                &check.root,
+                check.workspace_wide,
+            )?;
+            command.timeout = self.available(check.kind).saturating_sub(started.elapsed());
+            command.output_limit = self.request.output_limit;
+            let result = self
+                .supervisor
+                .run(command, self.cancellation.clone())
+                .await;
+            ran = true;
+            let context = DiagnosticContext {
+                repository_root: disposable.path(),
+                project_root: &rust_workspace_root(tree, &check.root),
+                tool_version: &tool.version,
+                worktree_root: Some(&self.request.worktree),
+                sources: Some(tree),
+            };
+            let mut outcome = if tool.name == "cargo-fmt" {
+                let parsed = parse_rustfmt(&result.stdout, &context);
+                evaluate_exit(
+                    &result,
+                    &tool_contract("rio/adapter-rust", "lint", "cargo-fmt")?.exit_codes,
+                    parsed,
+                )
+            } else {
+                let parsed = parse_cargo(&result.stdout, &context);
+                let dropped = parsed
+                    .as_ref()
+                    .map_or(0, |parsed| parsed.outside_repository);
+                let mut outcome =
+                    evaluate_cargo_exit(&result, check.kind, parsed.map(|parsed| parsed.findings));
+                if dropped > 0 {
+                    outcome.details_mut().hint = Some(format!(
+                        "{dropped} Rust diagnostics outside the repository were dropped"
+                    ));
+                }
+                outcome
+            };
+            if check.kind == CheckKind::Lint {
+                outcome.details_mut().findings.retain(|finding| {
+                    check
+                        .targets
+                        .iter()
+                        .any(|path| path == &finding.location.path)
+                });
+            }
+            if self.request.cache.retain_raw_output {
+                let path = format!("{}/{}", check_path(check, version), tool.name);
+                self.cache
+                    .write(&format!("{path}/stdout.txt"), &result.raw_stdout)?;
+                self.cache
+                    .write(&format!("{path}/stderr.txt"), &result.raw_stderr)?;
+            }
+            if version == Version::Base && started.elapsed() > self.available(check.kind) / 2 {
+                let hint = outcome.details_mut().hint.get_or_insert_default();
+                hint.push_str("; Rust baseline compilation exceeded half the check timeout; cold target/ artifacts may be the cost");
+            }
+            cleanup_confirmed &= result.cleanup_confirmed;
+            outcomes.push(outcome);
+            if !cleanup_confirmed {
+                break;
+            }
+        }
+        let mut outcome = aggregate_rust_outcomes(outcomes);
+        outcome.details_mut().dependency_state = check.dependency_state;
+        if !cleanup_confirmed {
+            let retained = disposable.preserve();
+            outcome.details_mut().hint = Some(format!(
+                "Rust process cleanup unconfirmed; tree retained at {}",
+                retained.display()
+            ));
+        }
+        self.cache.write(
+            &format!("{}/findings.json", check_path(check, version)),
+            &serde_json::to_vec(&outcome.details().findings)?,
+        )?;
+        Ok((
+            entry(check, version, outcome, started.elapsed(), false),
+            ran,
+        ))
+    }
+
     async fn baseline(&self, check: &PlannedCheck) -> Result<(CheckEntry, bool)> {
         // Unverified installation metadata cannot prove that a prior run used
         // this environment. Compare trusted head/base results within this run.
@@ -342,7 +464,7 @@ impl Execution {
         let mut targets = check.targets.clone();
         targets.sort();
         let input = serde_json::to_vec(
-            &serde_json::json!({"version":1,"root":check.root,"kind":check.kind,"tool":tool.name,"tool_version":tool.version,"targets":targets,"dependencies":check.dependency_hash,"dependency_state":check.dependency_state,"invocation":"rio-diagnostic-v4-source-overlay"}),
+            &serde_json::json!({"version":1,"root":check.root,"kind":check.kind,"tool":tool.name,"tool_version":tool.version,"additional_tools":check.additional_tools,"workspace_wide":check.workspace_wide,"targets":targets,"dependencies":check.dependency_hash,"dependency_state":check.dependency_state,"invocation":"rio-diagnostic-v4-source-overlay"}),
         )?;
         let hash = blake3::hash(&input).to_hex().to_string();
         let relative = format!(
@@ -481,9 +603,21 @@ impl Execution {
                         &tool.name,
                         &tool.version,
                     )?
+                } else if check.language == "rust" {
+                    rust_coverage_settings(&self.request.changes.head, &check.root)?
                 } else {
                     python_coverage_settings(&self.request.changes.head, &check.root)?
                 };
+                if check.language == "rust" {
+                    settings.runner_args = rust_selection_scoped(
+                        &self.request.changes.head,
+                        &check.root,
+                        check.workspace_wide,
+                    )?;
+                    if rust_has_lockfile(&self.request.changes.head, &check.root) {
+                        settings.runner_args.push("--locked".into());
+                    }
+                }
                 let disposable = ToolTree::create_until(
                     &self.materials.as_ref().unwrap().head,
                     &self.cache.path.join("tools"),
@@ -737,6 +871,18 @@ pub async fn review(
         );
         match module.name.as_str() {
             "rio/prepare" => {
+                cache.write(
+                    "owner_guidance.json",
+                    &serde_json::to_vec_pretty(&crate::guidance::owner_guidance(
+                        &execution.request.changes.head,
+                        &execution.diff,
+                    ))?,
+                )?;
+                report.risk_tier =
+                    crate::guidance::risk_tier(&profile.profile.always_human, &execution.diff)?;
+                report.footer.notes.push(
+                    "posture, max_defects and rounds are recorded for deferred agent steps; deterministic findings are never capped".into(),
+                );
                 report.excluded = execution
                     .diff
                     .files
@@ -906,7 +1052,7 @@ pub async fn review(
                 }
                 report.excluded.extend(findings.excluded);
                 for check in &planned.checks {
-                    if let Some(tool) = &check.tool {
+                    for tool in check.tool.iter().chain(&check.additional_tools) {
                         report.footer.tool_versions.insert(
                             format!("{}:{}:{}", check.language, check.root, tool.name),
                             tool.version.clone(),

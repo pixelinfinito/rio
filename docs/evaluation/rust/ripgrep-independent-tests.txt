@@ -1,0 +1,227 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.06s
+     Running unittests src/lib.rs (target/debug/deps/ignore-7ca98cadb321f6cc)
+
+running 188 tests
+test default_types::tests::default_types_are_sorted ... ok
+test default_types::tests::default_types_aliases_are_sorted ... ok
+test dir::tests::custom_ignore ... ok
+test dir::tests::errored ... ok
+test dir::tests::custom_ignore_over_ignore ... ok
+test dir::tests::custom_ignore_precedence ... ok
+test dir::tests::errored_both ... ok
+test dir::tests::explicit_ignore ... ok
+test dir::tests::errored_partial ... ok
+test dir::tests::errored_partial_and_ignore ... ok
+test dir::tests::absolute_parent ... ok
+test dir::tests::absolute_parent_anchored ... ok
+test dir::tests::exclude_lowest ... ok
+test dir::tests::git_exclude ... ok
+test dir::tests::gitignore_allowed_no_git ... ok
+test dir::tests::gitignore ... ok
+test dir::tests::gitignore_no_git ... ok
+test dir::tests::ignore ... ok
+test dir::tests::not_present_empty ... ok
+test dir::tests::gitignore_with_jj ... ok
+test gitignore::tests::cs2 ... ok
+test dir::tests::ignore_over_gitignore ... ok
+test gitignore::tests::cs3 ... ok
+test dir::tests::absolute_parent_matchers_are_cached_across_roots ... ok
+test gitignore::tests::cs4 ... ok
+test dir::tests::stops_at_git_dir ... ok
+test gitignore::tests::cs1 ... ok
+test gitignore::tests::case_insensitive ... ok
+test dir::tests::multi_root_custom_ignore_order_independent ... ok
+test dir::tests::multi_root_gitignore_order_independent ... ok
+test gitignore::tests::ig2 ... ok
+test gitignore::tests::ig11 ... ok
+test gitignore::tests::ig14 ... ok
+test gitignore::tests::ig13 ... ok
+test gitignore::tests::ig12 ... ok
+test gitignore::tests::ig16 ... ok
+test gitignore::tests::ig17 ... ok
+test gitignore::tests::ig10 ... ok
+test gitignore::tests::ig19 ... ok
+test gitignore::tests::ig1 ... ok
+test gitignore::tests::ig21 ... ok
+test gitignore::tests::ig22 ... ok
+test gitignore::tests::ig15 ... ok
+test gitignore::tests::ig18 ... ok
+test gitignore::tests::ig23 ... ok
+test gitignore::tests::ig25 ... ok
+test gitignore::tests::ig24 ... ok
+test gitignore::tests::ig20 ... ok
+test gitignore::tests::ig27 ... ok
+test gitignore::tests::ig29 ... ok
+test gitignore::tests::ig26 ... ok
+test gitignore::tests::ig28 ... ok
+test gitignore::tests::ig3 ... ok
+test gitignore::tests::ig32 ... ok
+test gitignore::tests::ig33 ... ok
+test gitignore::tests::ig34 ... ok
+test gitignore::tests::ig35 ... ok
+test gitignore::tests::ig36 ... ok
+test gitignore::tests::ig30 ... ok
+test gitignore::tests::ig37 ... ok
+test gitignore::tests::ig38 ... ok
+test gitignore::tests::ig31 ... ok
+test gitignore::tests::ig40 ... ok
+test gitignore::tests::ig41 ... ok
+test gitignore::tests::ig7 ... ok
+test gitignore::tests::ig8 ... ok
+test gitignore::tests::ig4 ... ok
+test gitignore::tests::ig9 ... ok
+test gitignore::tests::ig43 ... ok
+test gitignore::tests::ig42 ... ok
+test gitignore::tests::ignot11 ... ok
+test gitignore::tests::ignot12 ... ok
+test gitignore::tests::ig44 ... ok
+test gitignore::tests::ig39 ... ok
+test gitignore::tests::ig6 ... ok
+test gitignore::tests::ig5 ... ok
+test gitignore::tests::ignot1 ... ok
+test gitignore::tests::ignot13 ... ok
+test gitignore::tests::ignot10 ... ok
+test gitignore::tests::ignot14 ... ok
+test gitignore::tests::ignot15 ... ok
+test gitignore::tests::ignot2 ... ok
+test gitignore::tests::ignot16 ... ok
+test gitignore::tests::ignot6 ... ok
+test gitignore::tests::ignot17 ... ok
+test gitignore::tests::ignot3 ... ok
+test gitignore::tests::ignot7 ... ok
+test gitignore::tests::ignot19 ... ok
+test gitignore::tests::ignot18 ... ok
+test gitignore::tests::ignot4 ... ok
+test gitignore::tests::ignot5 ... ok
+test gitignore::tests::regression_106 ... ok
+test incremental::tests::cached_ignored_parent_matches_children ... ok
+test incremental::tests::anchored_child_rule_uses_child_root ... ok
+test gitignore::tests::ignot8 ... ok
+test incremental::tests::dot_dash_root_is_not_stdin ... ok
+test gitignore::tests::ignot9 ... ok
+test incremental::tests::cached_allowed_parent_matches_children ... ok
+test incremental::tests::cached_parent_matcher_is_used_for_directory ... ok
+test incremental::tests::depth_limits_apply_to_root ... ok
+test incremental::tests::glob_overrides_apply_to_ancestors ... ok
+test incremental::tests::depth_limits ... ok
+test incremental::tests::gitignore_whitelist_overrides_hidden_filter ... ok
+test incremental::tests::glob_overrides_are_applied ... ok
+test incremental::tests::hidden_directories_outside_depth_limits ... ok
+test incremental::tests::directly_ignored_directory_is_not_descended ... ok
+test gitignore::tests::parse_excludes_file3 ... ok
+test incremental::tests::ignored_ancestor_wins ... ok
+test incremental::tests::file_types_are_applied ... ok
+test gitignore::tests::parse_excludes_file1 ... ok
+test incremental::tests::max_filesize ... ok
+test incremental::tests::descendants_of_hidden_directories_are_ignored ... ok
+test gitignore::tests::parse_excludes_file2 ... ok
+test incremental::tests::hidden_files_and_directories ... ok
+test gitignore::tests::parse_excludes_file4 ... ok
+test incremental::tests::max_filesize_respects_follow_links ... ok
+test gitignore::tests::parse_excludes_file5 ... ok
+test incremental::tests::leading_dot_slash_impacts_matching ... ok
+test incremental::tests::max_filesize_does_not_stat_ignored_file ... ok
+test incremental::tests::nested_parent_gitignores ... ok
+test incremental::tests::parent_loading_can_be_disabled ... ok
+test incremental::tests::parent_ignore_and_custom_ignore ... ok
+test incremental::tests::stdin_is_inert_with_depth_limits ... ok
+test incremental::tests::partial_errors_keep_valid_rules ... ok
+test overrides::tests::absolute_path ... ok
+test overrides::tests::allow_directories ... ok
+test overrides::tests::default_case_sensitive ... ok
+test overrides::tests::empty ... ok
+test overrides::tests::only_ignores ... ok
+test incremental::tests::paths_are_relative_to_the_root ... ok
+test overrides::tests::simple ... ok
+test pathutil::tests::file_name_dot_components ... ok
+test pathutil::tests::file_name_basic ... ok
+test pathutil::tests::file_name_trailing_dot ... ok
+test incremental::tests::whitelisted_hidden_directory_allows_descendants ... ok
+test overrides::tests::case_insensitive ... ok
+test incremental::tests::symlink_path_stays_under_lexical_root ... ok
+test incremental::tests::multiple_roots_keep_their_own_context ... ok
+test overrides::tests::precedence ... ok
+test types::tests::match1 ... ok
+test types::tests::match5 ... ok
+test incremental::tests::respects_git_repository_boundaries ... ok
+test types::tests::match10 ... ok
+test types::tests::match11 ... ok
+test overrides::tests::gitignore ... ok
+test types::tests::match3 ... ok
+test types::tests::matchnot1 ... ok
+test types::tests::match4 ... ok
+test types::tests::matchnot2 ... ok
+test types::tests::match2 ... ok
+test pathutil::tests::hidden_trailing_dot ... ok
+test types::tests::match6 ... ok
+test types::tests::matchnot3 ... ok
+test types::tests::match7 ... ok
+test types::tests::matchnot4 ... ok
+test types::tests::matchnot5 ... ok
+test types::tests::match9 ... ok
+test types::tests::test_invalid_defs ... ok
+test types::tests::matchnot7 ... ok
+test types::tests::matchnot8 ... ok
+test types::tests::matchnot6 ... ok
+test types::tests::match8 ... ok
+test walk::tests::empty ... ok
+test walk::tests::gitignore ... ok
+test walk::tests::explicit_ignore_exclusive_use ... ok
+test walk::tests::first_path_not_symlink ... ok
+test walk::tests::custom_ignore_exclusive_use ... ok
+test walk::tests::from_iter ... ok
+test walk::tests::custom_ignore ... ok
+test walk::tests::no_ignores ... ok
+test walk::tests::panic_in_parallel_builder - should panic ... ok
+test walk::tests::gitignore_parent ... ok
+test walk::tests::explicit_ignore ... ok
+test walk::tests::no_read_permissions ... ok
+test walk::tests::max_depth_does_not_load_unreachable_ignore_files ... ok
+test walk::tests::filter ... ok
+test walk::tests::same_file_system ... ok
+test walk::tests::hidden_with_trailing_dot ... ok
+test incremental::tests::compiled_matchers_are_reused ... ok
+test incremental::tests::compiled_multi_matchers_are_reused ... ok
+test walk::tests::panic_in_parallel - should panic ... ok
+test incremental::tests::compiled_multi_child_matchers_are_not_reused ... ok
+test dir::tests::git_info_exclude_in_linked_worktree ... ok
+test walk::tests::symlinks ... ok
+test walk::tests::symlink_loop ... ok
+test walk::tests::max_depth ... ok
+test walk::tests::max_filesize ... ok
+test walk::tests::min_depth ... ok
+
+test result: ok. 188 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.14s
+
+     Running tests/gitignore_matched_path_or_any_parents_tests.rs (target/debug/deps/gitignore_matched_path_or_any_parents_tests-9b8c142e9d19c126)
+
+running 5 tests
+test test_path_should_be_under_root - should panic ... ok
+test test_files_in_deep ... ok
+test test_files_in_root ... ok
+test test_dirs_in_deep ... ok
+test test_dirs_in_root ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/gitignore_skip_bom.rs (target/debug/deps/gitignore_skip_bom-e260d2cb4e2c0f82)
+
+running 1 test
+test gitignore_skip_bom ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests ignore
+
+running 7 tests
+test crates/ignore/src/incremental.rs - incremental::IncrementalIgnore (line 44) - compile ... ok
+test crates/ignore/src/lib.rs - (line 35) - compile ... ok
+test crates/ignore/src/lib.rs - (line 17) - compile ... ok
+test crates/ignore/src/types.rs - types (line 16) ... ok
+test crates/ignore/src/types.rs - types (line 51) ... ok
+test crates/ignore/src/types.rs - types (line 34) ... ok
+test crates/ignore/src/types.rs - types (line 71) ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+all doctests ran in 0.62s; merged doctests compilation took 0.59s

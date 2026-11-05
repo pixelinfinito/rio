@@ -101,3 +101,63 @@ fn reports_and_events_round_trip() {
         );
     }
 }
+
+#[test]
+fn reserved_finding_feedback_is_optional_and_validated_in_reports_too() {
+    let finding_schema = schema("finding");
+    let validator = jsonschema::validator_for(&finding_schema).unwrap();
+    let report_validator = jsonschema::validator_for(&schema("report")).unwrap();
+    let mut finding: Value = serde_json::from_str(include_str!("fixtures/finding.json")).unwrap();
+    assert!(validator.is_valid(&finding));
+    finding["round"] = json!(2);
+    finding["first_posted_in"] = json!("3f2a");
+    for reason in ["fixed", "wrong", "intentional", "irrelevant", "style"] {
+        finding["author_response"] =
+            json!({"reason": reason, "actor": "octocat", "at": "2026-11-05T10:00:00Z"});
+        assert!(validator.is_valid(&finding));
+        let mut report: Value =
+            serde_json::from_str(include_str!("fixtures/complete.json")).unwrap();
+        report["findings"] = json!([finding.clone()]);
+        assert!(report_validator.is_valid(&report));
+    }
+    for (key, invalid) in [
+        ("round", json!(0)),
+        ("first_posted_in", json!(false)),
+        (
+            "author_response",
+            json!({"reason":"known","actor":"octocat","at":"2026-11-05T10:00:00Z"}),
+        ),
+    ] {
+        let mut invalid_finding = finding.clone();
+        invalid_finding[key] = invalid;
+        assert!(!validator.is_valid(&invalid_finding), "{key}");
+        let mut report: Value =
+            serde_json::from_str(include_str!("fixtures/complete.json")).unwrap();
+        report["findings"] = json!([invalid_finding]);
+        assert!(!report_validator.is_valid(&report), "embedded {key}");
+    }
+}
+
+#[test]
+fn report_risk_tier_is_nullable_and_has_a_strict_contract() {
+    let validator = jsonschema::validator_for(&schema("report")).unwrap();
+    let mut report: Value = serde_json::from_str(include_str!("fixtures/complete.json")).unwrap();
+    assert!(validator.is_valid(&report));
+    for tier in ["low", "medium", "high"] {
+        for source in ["always_human", "triage"] {
+            report["risk_tier"] =
+                json!({"tier":tier,"reasons":["always_human: scripts/**"],"source":source});
+            assert!(validator.is_valid(&report));
+            let typed: rio_core::Report = serde_json::from_value(report.clone()).unwrap();
+            assert_eq!(serde_json::to_value(typed).unwrap(), report);
+        }
+    }
+    for invalid in [
+        json!({"tier":"critical","reasons":[],"source":"triage"}),
+        json!({"tier":"high","source":"always_human"}),
+        json!({"tier":"high","reasons":[],"source":"approval"}),
+    ] {
+        report["risk_tier"] = invalid;
+        assert!(!validator.is_valid(&report));
+    }
+}

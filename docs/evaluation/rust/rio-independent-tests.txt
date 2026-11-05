@@ -1,0 +1,98 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.54s
+     Running unittests src/lib.rs (target/debug/deps/rio_core-96c5363e75d497ac)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/contracts.rs (target/debug/deps/contracts-920870ab881063c1)
+
+running 4 tests
+test example_findings_and_reports_validate ... ok
+test malformed_reports_and_dependency_findings_are_rejected ... ok
+test reports_and_events_round_trip ... ok
+test typed_finding_and_check_round_trip_against_the_schemas ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.66s
+
+     Running tests/identity.rs (target/debug/deps/identity-b2f6e897f308ac4b)
+
+running 6 tests
+test absent_baseline_is_unclassified_empty_baseline_is_new_and_removed_is_fixed ... ok
+test an_extra_occurrence_is_worsened_and_losing_one_is_pre_existing ... ok
+test identity_survives_insertions_and_function_reordering ... ok
+test missing_baseline_annotates_scope_without_hiding_any_occurrence ... ok
+test moved_occurrences_pair_in_order_after_exact_mapping ... ok
+test normalization_preserves_semantics ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/policy.rs (target/debug/deps/policy-d4112808affcec88)
+
+running 4 tests
+test all_suppression_types_remove_every_copy_and_attribute_counts ... ok
+test default_policy_distinguishes_regressions_from_risks_and_existing_findings ... ok
+test failed_and_required_skipped_checks_affect_exit_independently_of_report_status ... ok
+test precedence_and_partial_status_are_preserved ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/render.rs (target/debug/deps/render-cc29183a46ebd87d)
+
+running 6 tests
+test dependency_and_baseline_headers_count_unclassified_findings_and_name_a_remedy ... ok
+test every_renderer_redacts_credentials_and_uses_stable_headings ... ok
+test json_validates_all_statuses_and_rejects_invalid_reports_before_output ... ok
+test progress_reports_completed_outcomes ... ok
+test terminal_and_markdown_snapshots ... ok
+test trusted_results_with_a_baseline_do_not_claim_to_be_unclassified ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.40s
+
+     Running unittests src/lib.rs (target/debug/deps/rio_git-8dd4ac52461364ff)
+
+running 4 tests
+test safe_tree::tests::disk_full_removes_the_partial_file ... ok
+test safe_tree::tests::failed_tree_never_publishes_a_partial_entry ... ok
+test safe_tree::tests::never_writes_through_a_symlink_parent_but_recreates_leaf_links ... ok
+test safe_tree::tests::rejects_escaping_paths_and_case_collisions ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/diff.rs (target/debug/deps/diff-8d551ff83285fccd)
+
+running 2 tests
+test diff_snapshot_covers_git_file_kinds_and_exclusions ... ok
+test exclusion_attributes_follow_git_scoping_and_override_rules ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.11s
+
+     Running tests/materialization.rs (target/debug/deps/materialization-1a3d502651ddda9b)
+
+running 7 tests
+test canonical_dependency_hash_includes_metadata_graph_platform_and_linked_sources ... ok
+test concurrent_materializers_publish_one_complete_entry ... FAILED
+test dependency_links_are_ignored_only_and_never_replace_tracked_content ... ok
+test disposable_tree_preserves_leaf_links_and_refuses_dependency_symlink_parents ... ok
+test staged_materialization_is_exact_and_tool_writes_cannot_mutate_cached_sources ... ok
+test stopped_preparation_never_publishes_or_leaves_a_disposable_copy ... ok
+test worktrees_share_pure_sources_and_get_separate_dependency_links ... ok
+
+failures:
+
+---- concurrent_materializers_publish_one_complete_entry stdout ----
+
+thread '<unnamed>' (1192518) panicked at crates/rio-git/tests/materialization.rs:200:50:
+called `Result::unwrap()` on an `Err` value: timeout: waiting for materialization lock
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'concurrent_materializers_publish_one_complete_entry' (1192509) panicked at crates/rio-git/tests/materialization.rs:204:66:
+called `Result::unwrap()` on an `Err` value: Any { .. }
+
+
+failures:
+    concurrent_materializers_publish_one_complete_entry
+
+test result: FAILED. 6 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.14s
+
+error: test failed, to rerun pass `-p rio-git --test materialization`

@@ -476,6 +476,9 @@ pub async fn run_coverage(
     supervisor: &ProcessSupervisor,
     cancellation: CancellationToken,
 ) -> CoverageRun {
+    if request.tool.name == "cargo-llvm-cov" {
+        return crate::rust_coverage::run(request, supervisor, cancellation).await;
+    }
     let started = Instant::now();
     let tool = request.tool;
     let execution_root = request
