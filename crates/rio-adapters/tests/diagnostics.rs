@@ -356,6 +356,7 @@ fn typescript_uses_ancestor_and_referenced_configs_for_ts5_and_ts6() {
             path: "tsc".into(),
             version: version.into(),
             version_hint: None,
+            rustup_toolchain: None,
         };
         let command = diagnostic_command(&tool, &tree, root.path(), "packages/a", &[]).unwrap();
         assert_eq!(command.args.len(), 5);
@@ -392,6 +393,7 @@ fn typescript_file_fallback_writes_disposable_config_with_inherited_options() {
         path: "tsc".into(),
         version: "Version 6.0.3".into(),
         version_hint: None,
+        rustup_toolchain: None,
     };
     for inherited in [false, true] {
         if inherited {

@@ -86,6 +86,9 @@ pub struct ResolvedTool {
     pub version: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub version_hint: Option<String>,
+    /// Rustup selection carried into isolated Cargo and compiler invocations.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub rustup_toolchain: Option<String>,
 }
 
 pub struct ToolResolver {
@@ -164,6 +167,7 @@ impl ToolResolver {
                     name: name.into(),
                     path,
                     version: "unknown".into(),
+                    rustup_toolchain: None,
                     version_hint: Some(format!(
                         "could not create disposable version-probe directory: {error}"
                     )),
@@ -220,6 +224,7 @@ impl ToolResolver {
             path,
             version,
             version_hint,
+            rustup_toolchain: None,
         })
     }
 }

@@ -88,6 +88,138 @@ async fn cargo_discovery_supports_path_installations_and_preserves_rustup_select
     }
 }
 
+#[cfg(unix)]
+#[tokio::test]
+async fn directory_toolchain_selection_survives_isolated_probes_and_checks() {
+    use std::os::unix::fs::PermissionsExt;
+    for explicit in [false, true] {
+        let temp = tempfile::tempdir().unwrap();
+        let canonical = temp.path().canonicalize().unwrap();
+        let bin = canonical.join("bin");
+        let repository = canonical.join("repository");
+        let member = repository.join("member");
+        fs::create_dir(&bin).unwrap();
+        fs::create_dir_all(&member).unwrap();
+        if explicit {
+            fs::write(canonical.join("explicit"), "").unwrap();
+        }
+        let executable = |name: &str, body: &str| {
+            let path = bin.join(name);
+            fs::write(&path, format!("#!/bin/sh\n{body}\n")).unwrap();
+            fs::set_permissions(&path, fs::Permissions::from_mode(0o755)).unwrap();
+            path
+        };
+        executable(
+            "rustup",
+            r#"
+[ "$RUSTUP_AUTO_INSTALL" = 0 ] || exit 90
+if [ "$*" = 'show active-toolchain' ]; then
+    [ ! -f "${0%/bin/*}/explicit" ] || exit 98
+    [ "$PWD" = "${0%/bin/*}/repository/member" ] || exit 91
+    echo 'directory-override (directory override for repository)'
+else
+    [ "$PWD" != "${0%/bin/*}/repository/member" ] || exit 92
+    case "$*" in
+        'which cargo --toolchain directory-override'|'which cargo --toolchain selected-tree') ;;
+        *) exit 93 ;;
+    esac
+    printf '%s/cargo\n' "${0%/*}"
+fi
+"#,
+        );
+        executable(
+            "cargo",
+            &format!(
+                r#"
+[ "$RUSTUP_AUTO_INSTALL" = 0 ] || exit 94
+[ "$RUSTUP_TOOLCHAIN" = '{}' ] || exit 95
+[ "$PWD" != "${{0%/bin/*}}/repository/member" ] || exit 96
+case "$*" in
+    --version|'fmt --version') echo cargo-test ;;
+    'check --message-format=json --all-targets -p member') ;;
+    'metadata --no-deps --format-version=1 --offline') echo '{{}}' ;;
+    *) exit 97 ;;
+esac
+"#,
+                if explicit {
+                    "selected-tree"
+                } else {
+                    "directory-override"
+                }
+            ),
+        );
+        let resolver = ToolResolver {
+            repository_root: repository,
+            search_path: vec![bin],
+            virtual_env: None,
+        };
+        let mut tree = rio_git::Tree::from([(
+            "member/Cargo.toml".into(),
+            entry("[package]\nname = 'member'\nversion = '0.1.0'\n"),
+        )]);
+        if explicit {
+            tree.insert(
+                "rust-toolchain.toml".into(),
+                entry("[toolchain]\nchannel = 'selected-tree'\n"),
+            );
+        }
+        let supervisor = ProcessSupervisor::default();
+        let cargo = rust_cargo(
+            &resolver,
+            &tree,
+            "member",
+            &supervisor,
+            CancellationToken::new(),
+        )
+        .await
+        .unwrap()
+        .expect("repository toolchain must be available in isolation");
+        assert!(
+            rust_subcommand(
+                &cargo,
+                "cargo-fmt",
+                &tree,
+                "member",
+                &supervisor,
+                CancellationToken::new()
+            )
+            .await
+            .unwrap()
+            .is_some()
+        );
+        let isolated = tempfile::tempdir().unwrap();
+        fs::create_dir(isolated.path().join("member")).unwrap();
+        let command =
+            rust_diagnostic_command(&cargo, &tree, isolated.path(), "member", false).unwrap();
+        let result = supervisor.run(command, CancellationToken::new()).await;
+        assert!(
+            matches!(result.termination, Termination::Exited { code: Some(0) }),
+            "{:?}: {}",
+            result.termination,
+            String::from_utf8_lossy(&result.stderr)
+        );
+        assert!(result.cleanup_confirmed);
+        rust_metadata(
+            &tree,
+            "member",
+            &cargo,
+            &supervisor,
+            CancellationToken::new(),
+        )
+        .await
+        .unwrap();
+        // A baseline tree's explicit toolchain still overrides the discovered fallback.
+        tree.insert("rust-toolchain".into(), entry("baseline-toolchain\n"));
+        tree.remove("rust-toolchain.toml");
+        let command =
+            rust_diagnostic_command(&cargo, &tree, isolated.path(), "member", false).unwrap();
+        assert_eq!(
+            command.env.get(std::ffi::OsStr::new("RUSTUP_TOOLCHAIN")),
+            Some(&"baseline-toolchain".into())
+        );
+    }
+}
+
 #[test]
 fn rust_workspace_roots_schedule_members_consumers_and_workspace_changes() {
     let base = read_tree(&fixture("rs-sample"));
@@ -759,6 +891,7 @@ async fn missing_llvm_component_skips_coverage_before_the_runner_can_install_it(
         path: cargo_path,
         version: "test".into(),
         version_hint: None,
+        rustup_toolchain: None,
     };
     let tree = read_tree(&fixture("rs-sample"));
     let available = rust_subcommand(

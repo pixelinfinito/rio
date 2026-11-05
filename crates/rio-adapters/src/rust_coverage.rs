@@ -122,7 +122,12 @@ pub(crate) async fn run(
             }
         }
     }
-    let _ = configure_cargo(&mut command, &tree, &request.settings.root);
+    let _ = configure_cargo(
+        &mut command,
+        &tree,
+        &request.settings.root,
+        request.tool.rustup_toolchain.as_deref(),
+    );
     configure_output(&mut command, &cargo_target, &target);
     command
         .env
@@ -196,7 +201,12 @@ pub(crate) async fn run(
         export
             .args
             .extend(request.settings.runner_args.iter().map(Into::into));
-        let _ = configure_cargo(&mut export, &tree, &request.settings.root);
+        let _ = configure_cargo(
+            &mut export,
+            &tree,
+            &request.settings.root,
+            request.tool.rustup_toolchain.as_deref(),
+        );
         configure_output(&mut export, &cargo_target, &target);
         export
             .env

@@ -27,12 +27,20 @@ pub fn rust_toolchain(tree: &Tree, root: &str) -> Result<Option<String>> {
     }
 }
 
-pub fn configure_cargo(command: &mut ToolCommand, tree: &Tree, root: &str) -> Result<()> {
+pub fn configure_cargo(
+    command: &mut ToolCommand,
+    tree: &Tree,
+    root: &str,
+    selected_toolchain: Option<&str>,
+) -> Result<()> {
     command.env.insert("RUSTUP_AUTO_INSTALL".into(), "0".into());
     command
         .env
         .insert("CARGO_TERM_COLOR".into(), "never".into());
-    if let Some(channel) = rust_toolchain(tree, root)? {
+    if let Some(channel) = rust_toolchain(tree, root)?
+        .as_deref()
+        .or(selected_toolchain)
+    {
         command
             .env
             .insert("RUSTUP_TOOLCHAIN".into(), channel.into());
@@ -48,10 +56,37 @@ pub async fn rust_cargo(
     cancellation: CancellationToken,
 ) -> Result<Option<ResolvedTool>> {
     let temp = tempfile::tempdir()?;
+    let mut toolchain = rust_toolchain(tree, root)?;
     let path = if let Some(rustup) = resolver.locate("rustup", root, "rust") {
+        if toolchain.is_none() {
+            // Only this read-only selection query needs the original directory:
+            // rustup directory overrides do not follow us into disposable trees.
+            let mut command = ToolCommand::new(rustup.clone(), resolver.repository_root.join(root));
+            command.args = vec!["show".into(), "active-toolchain".into()];
+            command.env.insert("RUSTUP_AUTO_INSTALL".into(), "0".into());
+            command.timeout = Duration::from_secs(10);
+            command.output_limit = 65536;
+            let result = supervisor.run(command, cancellation.clone()).await;
+            if !result.cleanup_confirmed {
+                let _ = temp.keep();
+                return Ok(None);
+            }
+            if !matches!(result.termination, Termination::Exited { code: Some(0) }) {
+                return Ok(None);
+            }
+            toolchain = std::str::from_utf8(&result.stdout)?
+                .lines()
+                .next()
+                .map(|line| line.rsplit_once(" (").map_or(line, |(name, _)| name).trim())
+                .filter(|name| !name.is_empty())
+                .map(str::to_owned);
+            if toolchain.is_none() {
+                return Ok(None);
+            }
+        }
         let mut command = ToolCommand::new(rustup, temp.path().into());
         command.args = vec!["which".into(), "cargo".into()];
-        if let Some(channel) = rust_toolchain(tree, root)? {
+        if let Some(channel) = &toolchain {
             command.args.extend(["--toolchain".into(), channel.into()]);
         }
         command.env.insert("RUSTUP_AUTO_INSTALL".into(), "0".into());
@@ -73,7 +108,7 @@ pub async fn rust_cargo(
     };
     let mut command = ToolCommand::new(path.clone(), temp.path().into());
     command.args = vec!["--version".into()];
-    configure_cargo(&mut command, tree, root)?;
+    configure_cargo(&mut command, tree, root, toolchain.as_deref())?;
     let result = supervisor.run(command, cancellation.clone()).await;
     if !result.cleanup_confirmed {
         let _ = temp.keep();
@@ -85,6 +120,7 @@ pub async fn rust_cargo(
             path,
             version: String::from_utf8_lossy(&result.stdout).trim().into(),
             version_hint: None,
+            rustup_toolchain: toolchain,
         }),
     )
 }
@@ -103,7 +139,7 @@ pub async fn rust_subcommand(
     let temp = tempfile::tempdir()?;
     let mut command = ToolCommand::new(cargo.path.clone(), temp.path().into());
     command.args = vec![name.trim_start_matches("cargo-").into(), "--version".into()];
-    configure_cargo(&mut command, tree, root)?;
+    configure_cargo(&mut command, tree, root, cargo.rustup_toolchain.as_deref())?;
     command.timeout = Duration::from_secs(10);
     let result = supervisor.run(command, cancellation.clone()).await;
     if !result.cleanup_confirmed {
@@ -122,7 +158,7 @@ pub async fn rust_subcommand(
             probe.args = vec!["--print".into(), "target-libdir".into()];
             probe.timeout = Duration::from_secs(10);
             probe.output_limit = 65536;
-            configure_cargo(&mut probe, tree, root)?;
+            configure_cargo(&mut probe, tree, root, cargo.rustup_toolchain.as_deref())?;
             let probe = supervisor.run(probe, cancellation).await;
             if !probe.cleanup_confirmed {
                 let _ = temp.keep();
@@ -150,6 +186,7 @@ pub async fn rust_subcommand(
             path: cargo.path.clone(),
             version: String::from_utf8_lossy(&result.stdout).trim().into(),
             version_hint: None,
+            rustup_toolchain: cargo.rustup_toolchain.clone(),
         }),
     )
 }
@@ -241,7 +278,7 @@ pub fn rust_diagnostic_command(
     }
     args.extend(selection);
     command.args = args.into_iter().map(Into::into).collect();
-    configure_cargo(&mut command, tree, root)?;
+    configure_cargo(&mut command, tree, root, tool.rustup_toolchain.as_deref())?;
     Ok(command)
 }
 
@@ -293,7 +330,7 @@ pub async fn rust_metadata(
         "--format-version=1".into(),
         "--offline".into(),
     ];
-    configure_cargo(&mut command, tree, root)?;
+    configure_cargo(&mut command, tree, root, cargo.rustup_toolchain.as_deref())?;
     command.timeout = Duration::from_secs(20);
     command.output_limit = 16 * 1024 * 1024;
     let result = supervisor.run(command, cancellation.clone()).await;

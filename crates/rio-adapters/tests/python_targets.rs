@@ -12,6 +12,7 @@ fn command(tree: &Tree, root: &str, name: &str) -> (tempfile::TempDir, Vec<Strin
         path: name.into(),
         version: "1.14.0".into(),
         version_hint: None,
+        rustup_toolchain: None,
     };
     let command = diagnostic_command(&tool, tree, temp.path(), root, &[]).unwrap();
     let args = command
@@ -261,6 +262,7 @@ async fn real_mypy_respects_explicit_targets_inference_and_exclusions() {
             path: tool_path.clone(),
             version: "1.14.1".into(),
             version_hint: None,
+            rustup_toolchain: None,
         };
         let mut cmd = diagnostic_command(&tool, &tree, temp.path(), ".", &[]).unwrap();
         cmd.args.push("--no-incremental".into());
