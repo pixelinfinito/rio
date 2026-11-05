@@ -22,783 +22,30 @@
       "minimum": 0
     },
     "observed_raw_counts": {
-      "type": "object",
-      "properties": {
-        "true-positive": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "false-positive": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "pre-existing-shown": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "environment-failure": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "out-of-scope": {
-          "type": "integer",
-          "minimum": 0
-        }
-      },
-      "required": [
-        "true-positive",
-        "false-positive",
-        "pre-existing-shown",
-        "environment-failure",
-        "out-of-scope"
-      ],
-      "additionalProperties": false
+      "$ref": "#/$defs/counts"
     },
     "observed_occurrence_counts": {
-      "type": "object",
-      "properties": {
-        "true-positive": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "false-positive": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "pre-existing-shown": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "environment-failure": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "out-of-scope": {
-          "type": "integer",
-          "minimum": 0
-        }
-      },
-      "required": [
-        "true-positive",
-        "false-positive",
-        "pre-existing-shown",
-        "environment-failure",
-        "out-of-scope"
-      ],
-      "additionalProperties": false
+      "$ref": "#/$defs/counts"
     },
     "observed_cause_counts": {
-      "type": "object",
-      "properties": {
-        "true-positive": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "false-positive": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "pre-existing-shown": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "environment-failure": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "out-of-scope": {
-          "type": "integer",
-          "minimum": 0
-        }
-      },
-      "required": [
-        "true-positive",
-        "false-positive",
-        "pre-existing-shown",
-        "environment-failure",
-        "out-of-scope"
-      ],
-      "additionalProperties": false
+      "$ref": "#/$defs/counts"
     },
     "observed_unique_cause_counts": {
-      "type": "object",
-      "properties": {
-        "true-positive": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "false-positive": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "pre-existing-shown": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "environment-failure": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "out-of-scope": {
-          "type": "integer",
-          "minimum": 0
-        }
-      },
-      "required": [
-        "true-positive",
-        "false-positive",
-        "pre-existing-shown",
-        "environment-failure",
-        "out-of-scope"
-      ],
-      "additionalProperties": false
+      "$ref": "#/$defs/counts"
     },
     "eligible": {
-      "type": "object",
-      "properties": {
-        "eligible_prs": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "raw_counts": {
-          "type": "object",
-          "properties": {
-            "true-positive": {
-              "type": "integer",
-              "minimum": 0
-            },
-            "false-positive": {
-              "type": "integer",
-              "minimum": 0
-            },
-            "pre-existing-shown": {
-              "type": "integer",
-              "minimum": 0
-            },
-            "environment-failure": {
-              "type": "integer",
-              "minimum": 0
-            },
-            "out-of-scope": {
-              "type": "integer",
-              "minimum": 0
-            }
-          },
-          "required": [
-            "true-positive",
-            "false-positive",
-            "pre-existing-shown",
-            "environment-failure",
-            "out-of-scope"
-          ],
-          "additionalProperties": false
-        },
-        "occurrence_counts": {
-          "type": "object",
-          "properties": {
-            "true-positive": {
-              "type": "integer",
-              "minimum": 0
-            },
-            "false-positive": {
-              "type": "integer",
-              "minimum": 0
-            },
-            "pre-existing-shown": {
-              "type": "integer",
-              "minimum": 0
-            },
-            "environment-failure": {
-              "type": "integer",
-              "minimum": 0
-            },
-            "out-of-scope": {
-              "type": "integer",
-              "minimum": 0
-            }
-          },
-          "required": [
-            "true-positive",
-            "false-positive",
-            "pre-existing-shown",
-            "environment-failure",
-            "out-of-scope"
-          ],
-          "additionalProperties": false
-        },
-        "cause_counts": {
-          "type": "object",
-          "properties": {
-            "true-positive": {
-              "type": "integer",
-              "minimum": 0
-            },
-            "false-positive": {
-              "type": "integer",
-              "minimum": 0
-            },
-            "pre-existing-shown": {
-              "type": "integer",
-              "minimum": 0
-            },
-            "environment-failure": {
-              "type": "integer",
-              "minimum": 0
-            },
-            "out-of-scope": {
-              "type": "integer",
-              "minimum": 0
-            }
-          },
-          "required": [
-            "true-positive",
-            "false-positive",
-            "pre-existing-shown",
-            "environment-failure",
-            "out-of-scope"
-          ],
-          "additionalProperties": false
-        },
-        "unique_cause_counts": {
-          "type": "object",
-          "properties": {
-            "true-positive": {
-              "type": "integer",
-              "minimum": 0
-            },
-            "false-positive": {
-              "type": "integer",
-              "minimum": 0
-            },
-            "pre-existing-shown": {
-              "type": "integer",
-              "minimum": 0
-            },
-            "environment-failure": {
-              "type": "integer",
-              "minimum": 0
-            },
-            "out-of-scope": {
-              "type": "integer",
-              "minimum": 0
-            }
-          },
-          "required": [
-            "true-positive",
-            "false-positive",
-            "pre-existing-shown",
-            "environment-failure",
-            "out-of-scope"
-          ],
-          "additionalProperties": false
-        },
-        "precision": {
-          "type": [
-            "number",
-            "null"
-          ],
-          "minimum": 0
-        },
-        "positive_control_cases": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "positive_control_expected": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "positive_control_detected": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "positive_control_recall": {
-          "type": [
-            "number",
-            "null"
-          ],
-          "minimum": 0
-        },
-        "false_positive_per_pr": {
-          "type": [
-            "number",
-            "null"
-          ],
-          "minimum": 0
-        },
-        "pr_with_false_positive_fraction": {
-          "type": [
-            "number",
-            "null"
-          ],
-          "minimum": 0
-        },
-        "useful_prs": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "useful_real_prs": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "usefulness_fraction": {
-          "type": [
-            "number",
-            "null"
-          ],
-          "minimum": 0
-        }
-      },
-      "required": [
-        "eligible_prs",
-        "raw_counts",
-        "occurrence_counts",
-        "cause_counts",
-        "unique_cause_counts",
-        "precision",
-        "positive_control_cases",
-        "positive_control_expected",
-        "positive_control_detected",
-        "positive_control_recall",
-        "false_positive_per_pr",
-        "pr_with_false_positive_fraction",
-        "useful_prs",
-        "useful_real_prs",
-        "usefulness_fraction"
-      ],
-      "additionalProperties": false
+      "$ref": "#/$defs/metrics"
     },
     "by_repository": {
       "type": "object",
       "additionalProperties": {
-        "type": "object",
-        "properties": {
-          "eligible_prs": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "raw_counts": {
-            "type": "object",
-            "properties": {
-              "true-positive": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "false-positive": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "pre-existing-shown": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "environment-failure": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "out-of-scope": {
-                "type": "integer",
-                "minimum": 0
-              }
-            },
-            "required": [
-              "true-positive",
-              "false-positive",
-              "pre-existing-shown",
-              "environment-failure",
-              "out-of-scope"
-            ],
-            "additionalProperties": false
-          },
-          "occurrence_counts": {
-            "type": "object",
-            "properties": {
-              "true-positive": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "false-positive": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "pre-existing-shown": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "environment-failure": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "out-of-scope": {
-                "type": "integer",
-                "minimum": 0
-              }
-            },
-            "required": [
-              "true-positive",
-              "false-positive",
-              "pre-existing-shown",
-              "environment-failure",
-              "out-of-scope"
-            ],
-            "additionalProperties": false
-          },
-          "cause_counts": {
-            "type": "object",
-            "properties": {
-              "true-positive": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "false-positive": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "pre-existing-shown": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "environment-failure": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "out-of-scope": {
-                "type": "integer",
-                "minimum": 0
-              }
-            },
-            "required": [
-              "true-positive",
-              "false-positive",
-              "pre-existing-shown",
-              "environment-failure",
-              "out-of-scope"
-            ],
-            "additionalProperties": false
-          },
-          "unique_cause_counts": {
-            "type": "object",
-            "properties": {
-              "true-positive": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "false-positive": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "pre-existing-shown": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "environment-failure": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "out-of-scope": {
-                "type": "integer",
-                "minimum": 0
-              }
-            },
-            "required": [
-              "true-positive",
-              "false-positive",
-              "pre-existing-shown",
-              "environment-failure",
-              "out-of-scope"
-            ],
-            "additionalProperties": false
-          },
-          "precision": {
-            "type": [
-              "number",
-              "null"
-            ],
-            "minimum": 0
-          },
-          "positive_control_cases": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "positive_control_expected": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "positive_control_detected": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "positive_control_recall": {
-            "type": [
-              "number",
-              "null"
-            ],
-            "minimum": 0
-          },
-          "false_positive_per_pr": {
-            "type": [
-              "number",
-              "null"
-            ],
-            "minimum": 0
-          },
-          "pr_with_false_positive_fraction": {
-            "type": [
-              "number",
-              "null"
-            ],
-            "minimum": 0
-          },
-          "useful_prs": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "useful_real_prs": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "usefulness_fraction": {
-            "type": [
-              "number",
-              "null"
-            ],
-            "minimum": 0
-          }
-        },
-        "required": [
-          "eligible_prs",
-          "raw_counts",
-          "occurrence_counts",
-          "cause_counts",
-          "unique_cause_counts",
-          "precision",
-          "positive_control_cases",
-          "positive_control_expected",
-          "positive_control_detected",
-          "positive_control_recall",
-          "false_positive_per_pr",
-          "pr_with_false_positive_fraction",
-          "useful_prs",
-          "useful_real_prs",
-          "usefulness_fraction"
-        ],
-        "additionalProperties": false
+        "$ref": "#/$defs/metrics"
       }
     },
     "by_language": {
       "type": "object",
       "additionalProperties": {
-        "type": "object",
-        "properties": {
-          "eligible_prs": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "raw_counts": {
-            "type": "object",
-            "properties": {
-              "true-positive": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "false-positive": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "pre-existing-shown": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "environment-failure": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "out-of-scope": {
-                "type": "integer",
-                "minimum": 0
-              }
-            },
-            "required": [
-              "true-positive",
-              "false-positive",
-              "pre-existing-shown",
-              "environment-failure",
-              "out-of-scope"
-            ],
-            "additionalProperties": false
-          },
-          "occurrence_counts": {
-            "type": "object",
-            "properties": {
-              "true-positive": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "false-positive": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "pre-existing-shown": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "environment-failure": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "out-of-scope": {
-                "type": "integer",
-                "minimum": 0
-              }
-            },
-            "required": [
-              "true-positive",
-              "false-positive",
-              "pre-existing-shown",
-              "environment-failure",
-              "out-of-scope"
-            ],
-            "additionalProperties": false
-          },
-          "cause_counts": {
-            "type": "object",
-            "properties": {
-              "true-positive": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "false-positive": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "pre-existing-shown": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "environment-failure": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "out-of-scope": {
-                "type": "integer",
-                "minimum": 0
-              }
-            },
-            "required": [
-              "true-positive",
-              "false-positive",
-              "pre-existing-shown",
-              "environment-failure",
-              "out-of-scope"
-            ],
-            "additionalProperties": false
-          },
-          "unique_cause_counts": {
-            "type": "object",
-            "properties": {
-              "true-positive": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "false-positive": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "pre-existing-shown": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "environment-failure": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "out-of-scope": {
-                "type": "integer",
-                "minimum": 0
-              }
-            },
-            "required": [
-              "true-positive",
-              "false-positive",
-              "pre-existing-shown",
-              "environment-failure",
-              "out-of-scope"
-            ],
-            "additionalProperties": false
-          },
-          "precision": {
-            "type": [
-              "number",
-              "null"
-            ],
-            "minimum": 0
-          },
-          "positive_control_cases": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "positive_control_expected": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "positive_control_detected": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "positive_control_recall": {
-            "type": [
-              "number",
-              "null"
-            ],
-            "minimum": 0
-          },
-          "false_positive_per_pr": {
-            "type": [
-              "number",
-              "null"
-            ],
-            "minimum": 0
-          },
-          "pr_with_false_positive_fraction": {
-            "type": [
-              "number",
-              "null"
-            ],
-            "minimum": 0
-          },
-          "useful_prs": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "useful_real_prs": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "usefulness_fraction": {
-            "type": [
-              "number",
-              "null"
-            ],
-            "minimum": 0
-          }
-        },
-        "required": [
-          "eligible_prs",
-          "raw_counts",
-          "occurrence_counts",
-          "cause_counts",
-          "unique_cause_counts",
-          "precision",
-          "positive_control_cases",
-          "positive_control_expected",
-          "positive_control_detected",
-          "positive_control_recall",
-          "false_positive_per_pr",
-          "pr_with_false_positive_fraction",
-          "useful_prs",
-          "useful_real_prs",
-          "usefulness_fraction"
-        ],
-        "additionalProperties": false
+        "$ref": "#/$defs/metrics"
       }
     },
     "environment_failures": {
@@ -1004,5 +251,138 @@
     "decision",
     "decision_reasons"
   ],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "$defs": {
+    "counts": {
+      "type": "object",
+      "properties": {
+        "true-positive": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "false-positive": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "pre-existing-shown": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "environment-failure": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "out-of-scope": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "true-positive",
+        "false-positive",
+        "pre-existing-shown",
+        "environment-failure",
+        "out-of-scope"
+      ],
+      "additionalProperties": false
+    },
+    "metrics": {
+      "type": "object",
+      "properties": {
+        "eligible_prs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "raw_counts": {
+          "$ref": "#/$defs/counts"
+        },
+        "occurrence_counts": {
+          "$ref": "#/$defs/counts"
+        },
+        "cause_counts": {
+          "$ref": "#/$defs/counts"
+        },
+        "unique_cause_counts": {
+          "$ref": "#/$defs/counts"
+        },
+        "precision": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "positive_control_cases": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "positive_control_expected": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "positive_control_detected": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "positive_control_recall": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "false_positive_per_pr": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "pr_with_false_positive_fraction": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "useful_prs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "useful_real_prs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "usefulness_fraction": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "required": [
+        "eligible_prs",
+        "raw_counts",
+        "occurrence_counts",
+        "cause_counts",
+        "unique_cause_counts",
+        "precision",
+        "positive_control_cases",
+        "positive_control_expected",
+        "positive_control_detected",
+        "positive_control_recall",
+        "false_positive_per_pr",
+        "pr_with_false_positive_fraction",
+        "useful_prs",
+        "useful_real_prs",
+        "usefulness_fraction"
+      ],
+      "additionalProperties": false
+    }
+  }
 }

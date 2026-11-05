@@ -76,7 +76,8 @@ Verdicts format (one entry for **each** top-level finding/risk ID):
 
 Use control `kind: none` and `expected: []` for negative/ordinary PRs, or
 `kind: seeded-mutation` with a unique case ID for a mutation. Empty expected
-`finding_ids` means missed. Finding annotations can optionally specify
+`finding_ids` means missed; the record builder adds a deterministic miss when
+one has not already been supplied for that expectation. Finding annotations can optionally specify
 `message_template`, `file_set`, and explanatory `family`; document any merges in
 `reason`. Default normalization only collapses whitespace and ignores line/symbol
 positions. Conflicting verdicts within a key, missing or extra finding verdicts,

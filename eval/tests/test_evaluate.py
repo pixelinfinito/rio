@@ -97,7 +97,7 @@ class AggregationTests(unittest.TestCase):
         self.assertEqual(summary['observed_raw_counts']['false-positive'], 1)
         self.assertEqual(summary['eligible']['cause_counts']['false-positive'], 0)
         self.assertEqual(len(summary['agent_layer_backlog']), 1)
-        self.assertEqual(summary['deterministic_misses'], 0)
+        self.assertEqual(summary['deterministic_misses'], 1)
         self.assertEqual(len(summary['environment_failures']), 1)
         self.assertEqual(summary['decision'], 'insufficient-evidence')
 

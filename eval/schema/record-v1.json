@@ -426,40 +426,5 @@
     "verdict",
     "reason"
   ],
-  "additionalProperties": false,
-  "$defs": {
-    "counts": {
-      "type": "object",
-      "properties": {
-        "true-positive": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "false-positive": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "pre-existing-shown": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "environment-failure": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "out-of-scope": {
-          "type": "integer",
-          "minimum": 0
-        }
-      },
-      "required": [
-        "true-positive",
-        "false-positive",
-        "pre-existing-shown",
-        "environment-failure",
-        "out-of-scope"
-      ],
-      "additionalProperties": false
-    }
-  }
+  "additionalProperties": false
 }

@@ -28,7 +28,8 @@ def read_json(path):
 def write_json(path, value):
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(value, indent=2, ensure_ascii=False) + '\n')
+    data = (json.dumps(value, indent=2, ensure_ascii=False) + '\n').encode()
+    path.write_bytes(gzip.compress(data, mtime=0) if path.suffix == '.gz' else data)
 
 
 def validate(value, schema_path, fragment='', label='$'):
@@ -49,7 +50,7 @@ def validate(value, schema_path, fragment='', label='$'):
 def _validate(value, schema, path, label):
     supported = {'$schema', '$id', '$ref', '$defs', 'title', 'description', 'type',
                  'properties', 'required', 'additionalProperties', 'items', 'enum',
-                 'const', 'pattern', 'minLength', 'minimum', 'minItems', 'uniqueItems',
+                 'const', 'pattern', 'minLength', 'minimum', 'maximum', 'minItems', 'uniqueItems',
                  'oneOf', 'allOf', 'if', 'then', 'else', 'not'}
     if isinstance(schema, bool):
         if not schema:
@@ -94,6 +95,8 @@ def _validate(value, schema, path, label):
             raise ValueError(f'{label}: pattern mismatch')
     if type(value) in (int, float) and value < schema.get('minimum', float('-inf')):
         raise ValueError(f'{label}: below minimum')
+    if type(value) in (int, float) and value > schema.get('maximum', float('inf')):
+        raise ValueError(f'{label}: above maximum')
     for sub in schema.get('allOf', []):
         _validate(value, sub, path, label)
     if 'not' in schema:
@@ -137,12 +140,23 @@ def dedupe(findings, annotations):
     adjudicated, groups = [], {}
     for finding in findings:
         a = annotations[finding['id']]
+        if not isinstance(a, dict):
+            raise ValueError('finding annotation must be an object')
         allowed = {'verdict', 'reason', 'message_template', 'file_set', 'family'}
         if set(a) - allowed:
             raise ValueError(f'unknown annotation fields: {set(a) - allowed}')
+        if a.get('verdict') not in CLASSES or not isinstance(a.get('reason'), str) or not a['reason'].strip():
+            raise ValueError('every finding needs a verdict class and nonempty evidence reason')
+        actual_files = {p['path'] for p in [finding['location'], *finding.get('locations', [])]}
+        declared_files = a.get('file_set', sorted(actual_files))
+        if (not isinstance(declared_files, list) or not declared_files
+                or any(not isinstance(p, str) or not p for p in declared_files)
+                or not actual_files <= set(declared_files)):
+            raise ValueError('declared file_set must include every finding path')
+        if not isinstance(a.get('message_template', finding['message']), str):
+            raise ValueError('message_template must be a string')
         template = ' '.join(a.get('message_template', finding['message']).split())
-        files = sorted(set(a.get('file_set', [p['path'] for p in
-                           [finding['location'], *finding.get('locations', [])]])))
+        files = sorted(set(declared_files))
         if not files or not template:
             raise ValueError('root cause needs a message template and file set')
         identity = [finding['rule_id'], template, files]
@@ -222,6 +236,14 @@ def build_record(report, verdicts, report_path):
               'wall_time_ms': report['metrics']['wall_time_ms'], 'status': report['status'],
               'report_path': str(report_path), 'environment': env, 'findings': findings,
               'root_causes': causes, 'misses': verdicts.get('misses', [])}
+    record['misses'] = copy.deepcopy(record['misses'])
+    for expected in record['positive_control']['expected']:
+        if not expected['finding_ids'] and not any(
+                m.get('expectation_id') == expected['id'] for m in record['misses']):
+            record['misses'].append({'id': f'control/{expected["id"]}',
+                'scope_class': 'deterministic', 'description': f'Positive control {expected["id"]} was not detected.',
+                'evidence': expected['evidence'], 'mechanism': expected['mechanism'],
+                'expectation_id': expected['id']})
     record['verdict'], record['reason'] = usefulness(record)
     validate_record(record)
     return record
@@ -270,6 +292,8 @@ def validate_record(record):
             raise ValueError('duplicate expected finding IDs')
         if any(verdict_by_id.get(i) != 'true-positive' for i in e['finding_ids']):
             raise ValueError('only adjudicated true-positive findings can satisfy a control')
+        if not e['finding_ids'] and not any(m.get('expectation_id') == e['id'] for m in record['misses']):
+            raise ValueError('undetected control must be recorded as a deterministic miss')
         if e['mechanism'] == 'vulnerable-dependency':
             if not any(c['kind'] == 'dependencies' and c['outcome'] in SUCCESS
                        for c in record['environment']['checks']):
@@ -288,6 +312,8 @@ def validate_record(record):
             e = next((e for e in control['expected'] if e['id'] == m['expectation_id']), None)
             if not e or e['finding_ids'] or m['scope_class'] != 'deterministic':
                 raise ValueError('miss references absent, detected, or out-of-scope expectation')
+            if m['mechanism'] != e['mechanism']:
+                raise ValueError('control miss mechanism differs from expected bug')
 
 
 def class_counts(records, unit):
