@@ -1,0 +1,20 @@
+Warning: /home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-8641-rerun2/profile.yaml:$.steps[3]: rio/triage is deferred locally: no_endpoint
+Warning: /home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-8641-rerun2/profile.yaml:$.steps[4]: rio/agents is deferred locally: no_endpoint
+Warning: /home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-8641-rerun2/profile.yaml:$.steps[5]: rio/verify is deferred locally: no_endpoint
+Running prepare…
+Finished prepare
+Running checks…
+typecheck pydantic_evals: skipped (dependency_mismatch)
+typecheck examples: skipped (dependency_mismatch)
+coverage examples: skipped (disabled)
+typecheck pydantic_ai_slim: skipped (dependency_mismatch)
+lint pydantic_ai_slim: skipped (dependency_mismatch)
+coverage pydantic_evals: skipped (disabled)
+coverage pydantic_ai_slim: skipped (disabled)
+dependencies .: skipped (disabled)
+secrets .: passed
+Finished checks
+Running graph…
+Finished graph
+Running report…
+Finished report

@@ -1,0 +1,56 @@
+{
+  "repository": "pydantic/pydantic-ai",
+  "pr": "https://github.com/pydantic/pydantic-ai/pull/12540",
+  "case_id": "12540",
+  "languages": [
+    "python"
+  ],
+  "reviewer": "sub-agent rerun2-pydantic-ai (automated)",
+  "verdict_source": "automated",
+  "commands": [
+    "cwd=/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142 argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/pydantic/pydantic-ai.git\", \"/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/head\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/head argv=[\"git\", \"fetch\", \"origin\", \"2f0e98cbb7b60e12dcd0edc397f6df11c5cc1c56\", \"17c4ab5539f8a38aa86b2af69a783cb595269d27\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/head argv=[\"git\", \"merge-base\", \"2f0e98cbb7b60e12dcd0edc397f6df11c5cc1c56\", \"17c4ab5539f8a38aa86b2af69a783cb595269d27\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/head argv=[\"git\", \"checkout\", \"--detach\", \"17c4ab5539f8a38aa86b2af69a783cb595269d27\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142 argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/head\", \"/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/base\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/base argv=[\"git\", \"checkout\", \"--detach\", \"2f0e98cbb7b60e12dcd0edc397f6df11c5cc1c56\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/base argv=[\"uv\", \"sync\", \"--locked\", \"--python\", \"3.13.9\", \"--group\", \"lint\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/base argv=[\"python3\", \"-c\", \"from pathlib import Path; files=list(Path('.venv/lib').glob('python*/site-packages/a1_coverage.pth')); [(p.unlink(),print('Removed coverage subprocess bootstrap:',p)) for p in files]\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/base argv=[\"python3\", \"-c\", \"from pathlib import Path; p=Path('.venv/bin/mypy'); p.write_text('#!/usr/bin/env python3\\\\n\\\"\\\"\\\"Evaluation setup workaround: anchor inherited mypy targets to their config directory.\\\"\\\"\\\"\\\\nimport os\\\\nfrom pathlib import Path\\\\nimport sys\\\\nargs = sys.argv[1:]\\\\nif \\\\'--config-file\\\\' in args:\\\\n    config = Path(args[args.index(\\\\'--config-file\\\\') + 1]).resolve()\\\\n    os.chdir(config.parent)\\\\npython = str(Path(__file__).resolve().parent / \\\\'python\\\\')\\\\nos.execv(python, [python, \\\\'-m\\\\', \\\\'mypy\\\\', *args])\\\\n'); p.chmod(0o755); print('Installed evaluation mypy config-directory wrapper')\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/head argv=[\"uv\", \"sync\", \"--locked\", \"--python\", \"3.13.9\", \"--group\", \"lint\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/head argv=[\"python3\", \"-c\", \"from pathlib import Path; files=list(Path('.venv/lib').glob('python*/site-packages/a1_coverage.pth')); [(p.unlink(),print('Removed coverage subprocess bootstrap:',p)) for p in files]\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/head argv=[\"python3\", \"-c\", \"from pathlib import Path; p=Path('.venv/bin/mypy'); p.write_text('#!/usr/bin/env python3\\\\n\\\"\\\"\\\"Evaluation setup workaround: anchor inherited mypy targets to their config directory.\\\"\\\"\\\"\\\\nimport os\\\\nfrom pathlib import Path\\\\nimport sys\\\\nargs = sys.argv[1:]\\\\nif \\\\'--config-file\\\\' in args:\\\\n    config = Path(args[args.index(\\\\'--config-file\\\\') + 1]).resolve()\\\\n    os.chdir(config.parent)\\\\npython = str(Path(__file__).resolve().parent / \\\\'python\\\\')\\\\nos.execv(python, [python, \\\\'-m\\\\', \\\\'mypy\\\\', *args])\\\\n'); p.chmod(0o755); print('Installed evaluation mypy config-directory wrapper')\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/head argv=[\"node\", \"--version\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/head argv=[\"npm\", \"--version\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/head argv=[\"python3\", \"--version\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/head argv=[\"uv\", \"--version\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/profile.yaml\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"2f0e98cbb7b60e12dcd0edc397f6df11c5cc1c56\", \"--format\", \"json\", \"--offline\", \"--profile\", \"/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/profile.yaml\"]"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/commands.json; Rio binary SHA-256: 3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+    "Same pinned base/head, install-plan.json and profile.yaml as pydantic-ai-12540-attempt3. Python3.13.9 and uv0.13.7 pinned. Original rerun2 timed out in severe shared disk I/O; attempt2 lacked uv on PATH; both retained. This corrected attempt copies the identical Python runtime to executable tmpfs and explicitly includes pinned uv on PATH. Overrides and executable hash in ../pydantic-ai-rerun2-evidence/runtime-and-seed.json.",
+    "Baseline did execute successfully for pydantic_graph: lint and typecheck head/base all passed, all dependency_state=verified, both base hints exactly baseline: 4 linked packages remapped to base. No baseline_failed or opaque editable rejection note. The old changed-linked-source guard is resolved on this exercised root.",
+    "EXCLUDED: baseline_classification_ran=false despite baseline_ran=true. Combined diagnostic dependency_state=mixed includes verified graph checks and unavailable skipped roots. Nine other roots/check pairs lack successful baselines: fastmcp-slim incompatible universal-lock variant expectations or genuinely uninstalled examples/clai2 dependencies. See exact notes/roots in commands.json environment and report.json checks. No trust override; do not infer all-root baseline success from graph.",
+    "Mypy target-resolution scope: retained preregistered wrapper anchors cwd at config parent; passing graph mypy uses inherited root files=tests/typed_agent.py, not an independent graph-source check. The adapter fix cannot be isolated while retaining the required wrapper. A live /proc process snapshot in ../pydantic-ai-rerun2-evidence/12540-live-mypy-processes.json independently records argv/cwd during head execution; runner itself still does not capture child argv.",
+    "Independent scoped clean assessment reused at identical pins: configured mypy and full Ruff pass base/head, focused Pyright passes three changed utils files, instrumented targeted tests pass124 base/127 head, and all instrumented changed executable lines are covered. Evidence: ../pydantic-ai-evidence/12540-*-commands.json and 12540-independent-diff-coverage.json.gz. Coverage and audit remain disabled in Rio; no general coverage or vulnerability claim.",
+    "One identical dummy AWS fixture false credential claim, state pre-existing. Raw adjudication false-positive is retained with independent AST/source evidence, but deterministic-v2 correctly scores it pre-existing-hidden. No visible FP, no introduced TP, no registered positive expectations and no deterministic misses in this negative case.",
+    "Disabled coverage/audit no longer create harness eligibility reasons; previous scope-handling defect is not reproduced. Graph remains truncated at max_nodes=2000; preserved as a declared scope limitation."
+  ],
+  "independently_clean": true,
+  "positive_control": {
+    "kind": "none",
+    "expected": []
+  },
+  "misses": [],
+  "findings": {
+    "e6161a78e91e93a541f261f3c38ca2945416fd5a54ede6acf8e3fbbb6b78516e": {
+      "verdict": "false-positive",
+      "reason": "Independent AST/source inspection at both pins identifies an unchanged os.getenv AWS_ACCESS_KEY_ID test-fixture fallback, shaped as AKIA plus sixteen repeated digit 6 characters, with a sibling dummy secret of forty repeated 6 characters. It is an inert placeholder, not a committed credential. See eval/runs/pydantic-ai-evidence/secret-false-positive-evidence.json (base line 1574, head line 1593). Rio honestly labels it pre-existing, but the credential claim and rotate recommendation are incorrect."
+    }
+  }
+}

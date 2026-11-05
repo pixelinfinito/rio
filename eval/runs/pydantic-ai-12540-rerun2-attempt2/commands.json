@@ -1,0 +1,613 @@
+{
+  "schema": "rio-eval-runner-v2",
+  "repository": "pydantic/pydantic-ai",
+  "pr": "https://github.com/pydantic/pydantic-ai/pull/12540",
+  "started_utc": "2026-11-05T11:27:40.005601+00:00",
+  "rio_binary": "/home/ubuntu/rio/target/release/rio",
+  "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-checkout",
+        "https://github.com/pydantic/pydantic-ai.git",
+        "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/head"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt2/01-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt2/01-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 626
+    },
+    {
+      "argv": [
+        "git",
+        "fetch",
+        "origin",
+        "2f0e98cbb7b60e12dcd0edc397f6df11c5cc1c56",
+        "17c4ab5539f8a38aa86b2af69a783cb595269d27"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt2/02-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt2/02-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 2817
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "2f0e98cbb7b60e12dcd0edc397f6df11c5cc1c56",
+        "17c4ab5539f8a38aa86b2af69a783cb595269d27"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt2/03-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt2/03-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 10
+    },
+    {
+      "argv": [
+        "git",
+        "checkout",
+        "--detach",
+        "17c4ab5539f8a38aa86b2af69a783cb595269d27"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt2/04-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt2/04-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 8920
+    },
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-hardlinks",
+        "--no-checkout",
+        "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/head",
+        "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/base"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt2/05-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt2/05-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 6255
+    },
+    {
+      "argv": [
+        "git",
+        "checkout",
+        "--detach",
+        "2f0e98cbb7b60e12dcd0edc397f6df11c5cc1c56"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt2/06-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt2/06-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 4050
+    },
+    {
+      "argv": [
+        "uv",
+        "sync",
+        "--locked",
+        "--python",
+        "3.13.9",
+        "--group",
+        "lint"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt2/07-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt2/07-stderr.log",
+      "exit_code": 127,
+      "wall_time_ms": 38
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt2/08-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt2/08-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 622
+    },
+    {
+      "argv": [
+        "uv",
+        "sync",
+        "--locked",
+        "--python",
+        "3.13.9",
+        "--group",
+        "lint"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt2/09-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt2/09-stderr.log",
+      "exit_code": 127,
+      "wall_time_ms": 175
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt2/10-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt2/10-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 266
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/config",
+        "RIO_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt2/rio-version.txt",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt2/11-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 19
+    },
+    {
+      "argv": [
+        "node",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/config",
+        "RIO_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt2/12-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt2/12-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 21
+    },
+    {
+      "argv": [
+        "npm",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/config",
+        "RIO_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt2/13-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt2/13-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 6038
+    },
+    {
+      "argv": [
+        "python3",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/config",
+        "RIO_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt2/14-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt2/14-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 6
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "profile",
+        "show",
+        "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt2/profile.yaml"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/config",
+        "RIO_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt2/resolved-profile.txt",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt2/15-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 6054
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "doctor",
+        "--format",
+        "json"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/config",
+        "RIO_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt2/doctor.json",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt2/16-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 8565
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "review",
+        "--base",
+        "2f0e98cbb7b60e12dcd0edc397f6df11c5cc1c56",
+        "--format",
+        "json",
+        "--offline",
+        "--profile",
+        "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt2/profile.yaml"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/config",
+        "RIO_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt2/report.json",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt2/17-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 101658
+    }
+  ],
+  "installations": {
+    "base": {
+      "commands": [
+        [
+          "uv",
+          "sync",
+          "--locked",
+          "--python",
+          "3.13.9",
+          "--group",
+          "lint"
+        ],
+        [
+          "python3",
+          "-c",
+          "from pathlib import Path; files=list(Path('.venv/lib').glob('python*/site-packages/a1_coverage.pth')); [(p.unlink(),print('Removed coverage subprocess bootstrap:',p)) for p in files]"
+        ],
+        [
+          "python3",
+          "-c",
+          "from pathlib import Path; p=Path('.venv/bin/mypy'); p.write_text('#!/usr/bin/env python3\\n\"\"\"Evaluation setup workaround: anchor inherited mypy targets to their config directory.\"\"\"\\nimport os\\nfrom pathlib import Path\\nimport sys\\nargs = sys.argv[1:]\\nif \\'--config-file\\' in args:\\n    config = Path(args[args.index(\\'--config-file\\') + 1]).resolve()\\n    os.chdir(config.parent)\\npython = str(Path(__file__).resolve().parent / \\'python\\')\\nos.execv(python, [python, \\'-m\\', \\'mypy\\', *args])\\n'); p.chmod(0o755); print('Installed evaluation mypy config-directory wrapper')"
+        ]
+      ],
+      "succeeded": false,
+      "lockfiles": {
+        "uv.lock": "0734a1df1693c74e84c14715fa880070a89a204f233fc325d169716611dc15f2"
+      }
+    },
+    "head": {
+      "commands": [
+        [
+          "uv",
+          "sync",
+          "--locked",
+          "--python",
+          "3.13.9",
+          "--group",
+          "lint"
+        ],
+        [
+          "python3",
+          "-c",
+          "from pathlib import Path; files=list(Path('.venv/lib').glob('python*/site-packages/a1_coverage.pth')); [(p.unlink(),print('Removed coverage subprocess bootstrap:',p)) for p in files]"
+        ],
+        [
+          "python3",
+          "-c",
+          "from pathlib import Path; p=Path('.venv/bin/mypy'); p.write_text('#!/usr/bin/env python3\\n\"\"\"Evaluation setup workaround: anchor inherited mypy targets to their config directory.\"\"\"\\nimport os\\nfrom pathlib import Path\\nimport sys\\nargs = sys.argv[1:]\\nif \\'--config-file\\' in args:\\n    config = Path(args[args.index(\\'--config-file\\') + 1]).resolve()\\n    os.chdir(config.parent)\\npython = str(Path(__file__).resolve().parent / \\'python\\')\\nos.execv(python, [python, \\'-m\\', \\'mypy\\', *args])\\n'); p.chmod(0o755); print('Installed evaluation mypy config-directory wrapper')"
+        ]
+      ],
+      "succeeded": false,
+      "lockfiles": {
+        "uv.lock": "0734a1df1693c74e84c14715fa880070a89a204f233fc325d169716611dc15f2"
+      }
+    }
+  },
+  "failures": [
+    "base dependency installation failed (127)",
+    "head dependency installation failed (127)",
+    "Baseline/setup ineligible; fix before scoring"
+  ],
+  "network": "Installers may use network; Rio review uses --offline. Subprocesses are not isolated.",
+  "profile_sha256": "5cf706f6a702198395e3d4f0d188fa339102c201e509f8d1dda2be9e7373299a",
+  "resolution": {
+    "base_sha": "2f0e98cbb7b60e12dcd0edc397f6df11c5cc1c56",
+    "head_sha": "17c4ab5539f8a38aa86b2af69a783cb595269d27",
+    "source": "pinned argv"
+  },
+  "disposable_directory": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h",
+  "base_sha": "2f0e98cbb7b60e12dcd0edc397f6df11c5cc1c56",
+  "head_sha": "17c4ab5539f8a38aa86b2af69a783cb595269d27",
+  "removed_environment_keys": [],
+  "resolved_profile_sha256": "6bca6e417acf49338d40e65b5b0bb8c39f1466abea27ae8fa69814682a85c212",
+  "review_exit_code": 0,
+  "rio_checks": {
+    "source": "report.json#/checks",
+    "child_argv_available": false,
+    "limitation": "Rio report-v1 checks contain no child executable, argv, cwd, or tool version. The v0.1 CLI has no child-argv trace flag or environment hook; runner commands and Rio stderr are retained separately.",
+    "entries": [
+      {
+        "hint": "Install pyright or mypy in the project environment",
+        "kind": "typecheck",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "tool_missing",
+        "root": "pydantic_evals",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "hint": "Install pyright or mypy in the project environment",
+        "kind": "typecheck",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "tool_missing",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "hint": "Install ruff in the project environment",
+        "kind": "lint",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "tool_missing",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "hint": "Install ruff in the project environment",
+        "kind": "lint",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "tool_missing",
+        "root": "pydantic_evals",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "hint": "Disabled in the profile",
+        "kind": "coverage",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "disabled",
+        "root": "pydantic_evals",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "hint": "Disabled in the profile",
+        "kind": "coverage",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "disabled",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "hint": "Install pyright or mypy in the project environment",
+        "kind": "typecheck",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "tool_missing",
+        "root": "pydantic_graph",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "hint": "Install pyright or mypy in the project environment",
+        "kind": "typecheck",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "tool_missing",
+        "root": "examples",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "hint": "Install ruff in the project environment",
+        "kind": "lint",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "tool_missing",
+        "root": "pydantic_graph",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "hint": "Disabled in the profile",
+        "kind": "coverage",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "disabled",
+        "root": "examples",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "hint": "Disabled in the profile",
+        "kind": "coverage",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "disabled",
+        "root": "pydantic_graph",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "hint": "Install pyright or mypy in the project environment",
+        "kind": "typecheck",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "tool_missing",
+        "root": "src/pydantic_ai_harness",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "hint": "Disabled in the profile",
+        "kind": "coverage",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "disabled",
+        "root": "src/pydantic_ai_harness",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "hint": "Install pyright or mypy in the project environment",
+        "kind": "typecheck",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "tool_missing",
+        "root": "pydantic_ai_slim",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "hint": "Install ruff in the project environment",
+        "kind": "lint",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "tool_missing",
+        "root": "pydantic_ai_slim",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "hint": "Install pyright or mypy in the project environment",
+        "kind": "typecheck",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "tool_missing",
+        "root": "src/pydantic_clai2",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "hint": "Disabled in the profile",
+        "kind": "coverage",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "disabled",
+        "root": "pydantic_ai_slim",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "hint": "Disabled in the profile",
+        "kind": "coverage",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "disabled",
+        "root": "src/pydantic_clai2",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "hint": "Disabled in the profile",
+        "kind": "dependencies",
+        "language": "common",
+        "outcome": "skipped",
+        "reason": "disabled",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "kind": "secrets",
+        "language": "common",
+        "outcome": "findings",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 9
+      }
+    ]
+  },
+  "rio_review_stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt2/17-stderr.log",
+  "environment": {
+    "dependency_state": "unavailable",
+    "baseline_ran": false,
+    "baseline_classification_ran": false,
+    "eligible": false,
+    "reasons": [
+      "lint . head: skipped tool_missing Install ruff in the project environment",
+      "lint .: head=skipped, dependency_state=unavailable, base=unavailable",
+      "lint pydantic_ai_slim head: skipped tool_missing Install ruff in the project environment",
+      "lint pydantic_ai_slim: head=skipped, dependency_state=unavailable, base=unavailable",
+      "lint pydantic_evals head: skipped tool_missing Install ruff in the project environment",
+      "lint pydantic_evals: head=skipped, dependency_state=unavailable, base=unavailable",
+      "lint pydantic_graph head: skipped tool_missing Install ruff in the project environment",
+      "lint pydantic_graph: head=skipped, dependency_state=unavailable, base=unavailable",
+      "typecheck . head: skipped tool_missing Install pyright or mypy in the project environment",
+      "typecheck .: head=skipped, dependency_state=unavailable, base=unavailable",
+      "typecheck examples head: skipped tool_missing Install pyright or mypy in the project environment",
+      "typecheck examples: head=skipped, dependency_state=unavailable, base=unavailable",
+      "typecheck pydantic_ai_slim head: skipped tool_missing Install pyright or mypy in the project environment",
+      "typecheck pydantic_ai_slim: head=skipped, dependency_state=unavailable, base=unavailable",
+      "typecheck pydantic_evals head: skipped tool_missing Install pyright or mypy in the project environment",
+      "typecheck pydantic_evals: head=skipped, dependency_state=unavailable, base=unavailable",
+      "typecheck pydantic_graph head: skipped tool_missing Install pyright or mypy in the project environment",
+      "typecheck pydantic_graph: head=skipped, dependency_state=unavailable, base=unavailable",
+      "typecheck src/pydantic_ai_harness head: skipped tool_missing Install pyright or mypy in the project environment",
+      "typecheck src/pydantic_ai_harness: head=skipped, dependency_state=unavailable, base=unavailable",
+      "typecheck src/pydantic_clai2 head: skipped tool_missing Install pyright or mypy in the project environment",
+      "typecheck src/pydantic_clai2: head=skipped, dependency_state=unavailable, base=unavailable"
+    ],
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "Graph references use syntax and text; no language server was used",
+      "Impact graph truncated at max_nodes",
+      "Offline applies to Rio; tool and test processes were not network-isolated"
+    ]
+  },
+  "finished_utc": "2026-11-05T11:30:42.633519+00:00"
+}

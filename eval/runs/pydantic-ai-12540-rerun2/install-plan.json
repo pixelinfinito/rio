@@ -1,0 +1,44 @@
+{
+  "base": [
+    [
+      "uv",
+      "sync",
+      "--locked",
+      "--python",
+      "3.13.9",
+      "--group",
+      "lint"
+    ],
+    [
+      "python3",
+      "-c",
+      "from pathlib import Path; files=list(Path('.venv/lib').glob('python*/site-packages/a1_coverage.pth')); [(p.unlink(),print('Removed coverage subprocess bootstrap:',p)) for p in files]"
+    ],
+    [
+      "python3",
+      "-c",
+      "from pathlib import Path; p=Path('.venv/bin/mypy'); p.write_text('#!/usr/bin/env python3\\n\"\"\"Evaluation setup workaround: anchor inherited mypy targets to their config directory.\"\"\"\\nimport os\\nfrom pathlib import Path\\nimport sys\\nargs = sys.argv[1:]\\nif \\'--config-file\\' in args:\\n    config = Path(args[args.index(\\'--config-file\\') + 1]).resolve()\\n    os.chdir(config.parent)\\npython = str(Path(__file__).resolve().parent / \\'python\\')\\nos.execv(python, [python, \\'-m\\', \\'mypy\\', *args])\\n'); p.chmod(0o755); print('Installed evaluation mypy config-directory wrapper')"
+    ]
+  ],
+  "head": [
+    [
+      "uv",
+      "sync",
+      "--locked",
+      "--python",
+      "3.13.9",
+      "--group",
+      "lint"
+    ],
+    [
+      "python3",
+      "-c",
+      "from pathlib import Path; files=list(Path('.venv/lib').glob('python*/site-packages/a1_coverage.pth')); [(p.unlink(),print('Removed coverage subprocess bootstrap:',p)) for p in files]"
+    ],
+    [
+      "python3",
+      "-c",
+      "from pathlib import Path; p=Path('.venv/bin/mypy'); p.write_text('#!/usr/bin/env python3\\n\"\"\"Evaluation setup workaround: anchor inherited mypy targets to their config directory.\"\"\"\\nimport os\\nfrom pathlib import Path\\nimport sys\\nargs = sys.argv[1:]\\nif \\'--config-file\\' in args:\\n    config = Path(args[args.index(\\'--config-file\\') + 1]).resolve()\\n    os.chdir(config.parent)\\npython = str(Path(__file__).resolve().parent / \\'python\\')\\nos.execv(python, [python, \\'-m\\', \\'mypy\\', *args])\\n'); p.chmod(0o755); print('Installed evaluation mypy config-directory wrapper')"
+    ]
+  ]
+}

@@ -1,0 +1,694 @@
+{
+  "schema": "rio-eval-runner-v2",
+  "repository": "pydantic/pydantic-ai",
+  "pr": "https://github.com/pydantic/pydantic-ai/pull/12540",
+  "started_utc": "2026-11-05T11:30:18.251322+00:00",
+  "rio_binary": "/home/ubuntu/rio/target/release/rio",
+  "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-checkout",
+        "https://github.com/pydantic/pydantic-ai.git",
+        "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/head"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/01-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/01-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 67
+    },
+    {
+      "argv": [
+        "git",
+        "fetch",
+        "origin",
+        "2f0e98cbb7b60e12dcd0edc397f6df11c5cc1c56",
+        "17c4ab5539f8a38aa86b2af69a783cb595269d27"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/02-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/02-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 115
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "2f0e98cbb7b60e12dcd0edc397f6df11c5cc1c56",
+        "17c4ab5539f8a38aa86b2af69a783cb595269d27"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/03-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/03-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 106
+    },
+    {
+      "argv": [
+        "git",
+        "checkout",
+        "--detach",
+        "17c4ab5539f8a38aa86b2af69a783cb595269d27"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/04-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/04-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 2850
+    },
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-hardlinks",
+        "--no-checkout",
+        "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/head",
+        "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/base"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/05-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/05-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 120
+    },
+    {
+      "argv": [
+        "git",
+        "checkout",
+        "--detach",
+        "2f0e98cbb7b60e12dcd0edc397f6df11c5cc1c56"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/06-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/06-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 6081
+    },
+    {
+      "argv": [
+        "uv",
+        "sync",
+        "--locked",
+        "--python",
+        "3.13.9",
+        "--group",
+        "lint"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/07-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/07-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 24669
+    },
+    {
+      "argv": [
+        "python3",
+        "-c",
+        "from pathlib import Path; files=list(Path('.venv/lib').glob('python*/site-packages/a1_coverage.pth')); [(p.unlink(),print('Removed coverage subprocess bootstrap:',p)) for p in files]"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/08-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/08-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 519
+    },
+    {
+      "argv": [
+        "python3",
+        "-c",
+        "from pathlib import Path; p=Path('.venv/bin/mypy'); p.write_text('#!/usr/bin/env python3\\n\"\"\"Evaluation setup workaround: anchor inherited mypy targets to their config directory.\"\"\"\\nimport os\\nfrom pathlib import Path\\nimport sys\\nargs = sys.argv[1:]\\nif \\'--config-file\\' in args:\\n    config = Path(args[args.index(\\'--config-file\\') + 1]).resolve()\\n    os.chdir(config.parent)\\npython = str(Path(__file__).resolve().parent / \\'python\\')\\nos.execv(python, [python, \\'-m\\', \\'mypy\\', *args])\\n'); p.chmod(0o755); print('Installed evaluation mypy config-directory wrapper')"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/09-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/09-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 216
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/10-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/10-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 33
+    },
+    {
+      "argv": [
+        "uv",
+        "sync",
+        "--locked",
+        "--python",
+        "3.13.9",
+        "--group",
+        "lint"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/11-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/11-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 18528
+    },
+    {
+      "argv": [
+        "python3",
+        "-c",
+        "from pathlib import Path; files=list(Path('.venv/lib').glob('python*/site-packages/a1_coverage.pth')); [(p.unlink(),print('Removed coverage subprocess bootstrap:',p)) for p in files]"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/12-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/12-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 64
+    },
+    {
+      "argv": [
+        "python3",
+        "-c",
+        "from pathlib import Path; p=Path('.venv/bin/mypy'); p.write_text('#!/usr/bin/env python3\\n\"\"\"Evaluation setup workaround: anchor inherited mypy targets to their config directory.\"\"\"\\nimport os\\nfrom pathlib import Path\\nimport sys\\nargs = sys.argv[1:]\\nif \\'--config-file\\' in args:\\n    config = Path(args[args.index(\\'--config-file\\') + 1]).resolve()\\n    os.chdir(config.parent)\\npython = str(Path(__file__).resolve().parent / \\'python\\')\\nos.execv(python, [python, \\'-m\\', \\'mypy\\', *args])\\n'); p.chmod(0o755); print('Installed evaluation mypy config-directory wrapper')"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/13-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/13-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 67
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/14-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/14-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 16
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/config",
+        "RIO_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/rio-version.txt",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/15-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 9
+    },
+    {
+      "argv": [
+        "node",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/config",
+        "RIO_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/16-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/16-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 316
+    },
+    {
+      "argv": [
+        "npm",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/config",
+        "RIO_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/17-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/17-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 370
+    },
+    {
+      "argv": [
+        "python3",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/config",
+        "RIO_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/18-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/18-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 402
+    },
+    {
+      "argv": [
+        "uv",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/config",
+        "RIO_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/19-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/19-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 16
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "profile",
+        "show",
+        "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/profile.yaml"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/config",
+        "RIO_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/resolved-profile.txt",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/20-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 467
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "doctor",
+        "--format",
+        "json"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/config",
+        "RIO_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/doctor.json",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/21-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 8845
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "review",
+        "--base",
+        "2f0e98cbb7b60e12dcd0edc397f6df11c5cc1c56",
+        "--format",
+        "json",
+        "--offline",
+        "--profile",
+        "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/profile.yaml"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/config",
+        "RIO_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/report.json",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/22-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 278873
+    }
+  ],
+  "installations": {
+    "base": {
+      "commands": [
+        [
+          "uv",
+          "sync",
+          "--locked",
+          "--python",
+          "3.13.9",
+          "--group",
+          "lint"
+        ],
+        [
+          "python3",
+          "-c",
+          "from pathlib import Path; files=list(Path('.venv/lib').glob('python*/site-packages/a1_coverage.pth')); [(p.unlink(),print('Removed coverage subprocess bootstrap:',p)) for p in files]"
+        ],
+        [
+          "python3",
+          "-c",
+          "from pathlib import Path; p=Path('.venv/bin/mypy'); p.write_text('#!/usr/bin/env python3\\n\"\"\"Evaluation setup workaround: anchor inherited mypy targets to their config directory.\"\"\"\\nimport os\\nfrom pathlib import Path\\nimport sys\\nargs = sys.argv[1:]\\nif \\'--config-file\\' in args:\\n    config = Path(args[args.index(\\'--config-file\\') + 1]).resolve()\\n    os.chdir(config.parent)\\npython = str(Path(__file__).resolve().parent / \\'python\\')\\nos.execv(python, [python, \\'-m\\', \\'mypy\\', *args])\\n'); p.chmod(0o755); print('Installed evaluation mypy config-directory wrapper')"
+        ]
+      ],
+      "succeeded": true,
+      "lockfiles": {
+        "uv.lock": "0734a1df1693c74e84c14715fa880070a89a204f233fc325d169716611dc15f2"
+      }
+    },
+    "head": {
+      "commands": [
+        [
+          "uv",
+          "sync",
+          "--locked",
+          "--python",
+          "3.13.9",
+          "--group",
+          "lint"
+        ],
+        [
+          "python3",
+          "-c",
+          "from pathlib import Path; files=list(Path('.venv/lib').glob('python*/site-packages/a1_coverage.pth')); [(p.unlink(),print('Removed coverage subprocess bootstrap:',p)) for p in files]"
+        ],
+        [
+          "python3",
+          "-c",
+          "from pathlib import Path; p=Path('.venv/bin/mypy'); p.write_text('#!/usr/bin/env python3\\n\"\"\"Evaluation setup workaround: anchor inherited mypy targets to their config directory.\"\"\"\\nimport os\\nfrom pathlib import Path\\nimport sys\\nargs = sys.argv[1:]\\nif \\'--config-file\\' in args:\\n    config = Path(args[args.index(\\'--config-file\\') + 1]).resolve()\\n    os.chdir(config.parent)\\npython = str(Path(__file__).resolve().parent / \\'python\\')\\nos.execv(python, [python, \\'-m\\', \\'mypy\\', *args])\\n'); p.chmod(0o755); print('Installed evaluation mypy config-directory wrapper')"
+        ]
+      ],
+      "succeeded": true,
+      "lockfiles": {
+        "uv.lock": "0734a1df1693c74e84c14715fa880070a89a204f233fc325d169716611dc15f2"
+      }
+    }
+  },
+  "failures": [
+    "Baseline/setup ineligible; fix before scoring"
+  ],
+  "network": "Installers may use network; Rio review uses --offline. Subprocesses are not isolated.",
+  "profile_sha256": "5cf706f6a702198395e3d4f0d188fa339102c201e509f8d1dda2be9e7373299a",
+  "resolution": {
+    "base_sha": "2f0e98cbb7b60e12dcd0edc397f6df11c5cc1c56",
+    "head_sha": "17c4ab5539f8a38aa86b2af69a783cb595269d27",
+    "source": "pinned argv"
+  },
+  "disposable_directory": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142",
+  "base_sha": "2f0e98cbb7b60e12dcd0edc397f6df11c5cc1c56",
+  "head_sha": "17c4ab5539f8a38aa86b2af69a783cb595269d27",
+  "removed_environment_keys": [],
+  "resolved_profile_sha256": "1380ff496ec527d37d98dfb492af75979bb334918a887ca02fb2b9b7b3234850",
+  "review_exit_code": 0,
+  "rio_checks": {
+    "source": "report.json#/checks",
+    "child_argv_available": false,
+    "limitation": "Rio report-v1 checks contain no child executable, argv, cwd, or tool version. The v0.1 CLI has no child-argv trace flag or environment hook; runner commands and Rio stderr are retained separately.",
+    "entries": [
+      {
+        "hint": "uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "kind": "typecheck",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "dependency_mismatch",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "hint": "uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "kind": "lint",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "dependency_mismatch",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "hint": "Disabled in the profile",
+        "kind": "coverage",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "disabled",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "hint": "uv.lock: missing ag-ui-protocol at ag-ui-protocol; reinstall dependencies",
+        "kind": "typecheck",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "dependency_mismatch",
+        "root": "examples",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "hint": "Disabled in the profile",
+        "kind": "coverage",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "disabled",
+        "root": "src/pydantic_clai2",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "hint": "Disabled in the profile",
+        "kind": "coverage",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "disabled",
+        "root": "examples",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "hint": "uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "kind": "typecheck",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "dependency_mismatch",
+        "root": "pydantic_ai_slim",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "kind": "secrets",
+        "language": "common",
+        "outcome": "findings",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 8
+      },
+      {
+        "hint": "uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "kind": "lint",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "dependency_mismatch",
+        "root": "pydantic_ai_slim",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "hint": "Disabled in the profile",
+        "kind": "coverage",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "disabled",
+        "root": "pydantic_ai_slim",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "hint": "Disabled in the profile",
+        "kind": "dependencies",
+        "language": "common",
+        "outcome": "skipped",
+        "reason": "disabled",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "hint": "uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "kind": "typecheck",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "dependency_mismatch",
+        "root": "pydantic_evals",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "hint": "uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "kind": "lint",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "dependency_mismatch",
+        "root": "pydantic_evals",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "hint": "Disabled in the profile",
+        "kind": "coverage",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "disabled",
+        "root": "pydantic_evals",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "hint": "Disabled in the profile",
+        "kind": "coverage",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "disabled",
+        "root": "pydantic_graph",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "hint": "uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "kind": "typecheck",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "dependency_mismatch",
+        "root": "src/pydantic_ai_harness",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "hint": "Disabled in the profile",
+        "kind": "coverage",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "disabled",
+        "root": "src/pydantic_ai_harness",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "hint": "uv.lock: missing fastapi at fastapi; reinstall dependencies",
+        "kind": "typecheck",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "dependency_mismatch",
+        "root": "src/pydantic_clai2",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "lint",
+        "language": "python",
+        "outcome": "passed",
+        "root": "pydantic_graph",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 2300
+      },
+      {
+        "dependency_state": "verified",
+        "hint": "baseline: 4 linked packages remapped to base",
+        "kind": "lint",
+        "language": "python",
+        "outcome": "passed",
+        "root": "pydantic_graph",
+        "scheduled_as": "changed",
+        "version": "base",
+        "wall_time_ms": 1596
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "python",
+        "outcome": "passed",
+        "root": "pydantic_graph",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 91286
+      },
+      {
+        "dependency_state": "verified",
+        "hint": "baseline: 4 linked packages remapped to base",
+        "kind": "typecheck",
+        "language": "python",
+        "outcome": "passed",
+        "root": "pydantic_graph",
+        "scheduled_as": "changed",
+        "version": "base",
+        "wall_time_ms": 84297
+      }
+    ]
+  },
+  "rio_review_stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt3/22-stderr.log",
+  "environment": {
+    "dependency_state": "mixed",
+    "baseline_ran": true,
+    "baseline_classification_ran": false,
+    "eligible": false,
+    "reasons": [
+      "lint . head: skipped dependency_mismatch uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+      "lint .: head=skipped, dependency_state=unavailable, base=unavailable",
+      "lint pydantic_ai_slim head: skipped dependency_mismatch uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+      "lint pydantic_ai_slim: head=skipped, dependency_state=unavailable, base=unavailable",
+      "lint pydantic_evals head: skipped dependency_mismatch uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+      "lint pydantic_evals: head=skipped, dependency_state=unavailable, base=unavailable",
+      "typecheck . head: skipped dependency_mismatch uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+      "typecheck .: head=skipped, dependency_state=unavailable, base=unavailable",
+      "typecheck examples head: skipped dependency_mismatch uv.lock: missing ag-ui-protocol at ag-ui-protocol; reinstall dependencies",
+      "typecheck examples: head=skipped, dependency_state=unavailable, base=unavailable",
+      "typecheck pydantic_ai_slim head: skipped dependency_mismatch uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+      "typecheck pydantic_ai_slim: head=skipped, dependency_state=unavailable, base=unavailable",
+      "typecheck pydantic_evals head: skipped dependency_mismatch uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+      "typecheck pydantic_evals: head=skipped, dependency_state=unavailable, base=unavailable",
+      "typecheck src/pydantic_ai_harness head: skipped dependency_mismatch uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+      "typecheck src/pydantic_ai_harness: head=skipped, dependency_state=unavailable, base=unavailable",
+      "typecheck src/pydantic_clai2 head: skipped dependency_mismatch uv.lock: missing fastapi at fastapi; reinstall dependencies",
+      "typecheck src/pydantic_clai2: head=skipped, dependency_state=unavailable, base=unavailable"
+    ],
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "Graph references use syntax and text; no language server was used",
+      "Impact graph truncated at max_nodes",
+      "Offline applies to Rio; tool and test processes were not network-isolated"
+    ]
+  },
+  "finished_utc": "2026-11-05T11:36:08.126089+00:00"
+}

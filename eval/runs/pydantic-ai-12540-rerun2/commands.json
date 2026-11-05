@@ -1,0 +1,416 @@
+{
+  "schema": "rio-eval-runner-v2",
+  "repository": "pydantic/pydantic-ai",
+  "pr": "https://github.com/pydantic/pydantic-ai/pull/12540",
+  "started_utc": "2026-11-05T10:56:15.969071+00:00",
+  "rio_binary": "/home/ubuntu/rio/target/release/rio",
+  "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-checkout",
+        "https://github.com/pydantic/pydantic-ai.git",
+        "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-t2oakzaq/head"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-t2oakzaq",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/01-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/01-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 973
+    },
+    {
+      "argv": [
+        "git",
+        "fetch",
+        "origin",
+        "2f0e98cbb7b60e12dcd0edc397f6df11c5cc1c56",
+        "17c4ab5539f8a38aa86b2af69a783cb595269d27"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-t2oakzaq/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/02-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/02-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 219
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "2f0e98cbb7b60e12dcd0edc397f6df11c5cc1c56",
+        "17c4ab5539f8a38aa86b2af69a783cb595269d27"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-t2oakzaq/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/03-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/03-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 52
+    },
+    {
+      "argv": [
+        "git",
+        "checkout",
+        "--detach",
+        "17c4ab5539f8a38aa86b2af69a783cb595269d27"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-t2oakzaq/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/04-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/04-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 11166
+    },
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-hardlinks",
+        "--no-checkout",
+        "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-t2oakzaq/head",
+        "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-t2oakzaq/base"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-t2oakzaq",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/05-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/05-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 216
+    },
+    {
+      "argv": [
+        "git",
+        "checkout",
+        "--detach",
+        "2f0e98cbb7b60e12dcd0edc397f6df11c5cc1c56"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-t2oakzaq/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/06-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/06-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 3731
+    },
+    {
+      "argv": [
+        "uv",
+        "sync",
+        "--locked",
+        "--python",
+        "3.13.9",
+        "--group",
+        "lint"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-t2oakzaq/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/07-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/07-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 24903
+    },
+    {
+      "argv": [
+        "python3",
+        "-c",
+        "from pathlib import Path; files=list(Path('.venv/lib').glob('python*/site-packages/a1_coverage.pth')); [(p.unlink(),print('Removed coverage subprocess bootstrap:',p)) for p in files]"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-t2oakzaq/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/08-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/08-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 125
+    },
+    {
+      "argv": [
+        "python3",
+        "-c",
+        "from pathlib import Path; p=Path('.venv/bin/mypy'); p.write_text('#!/usr/bin/env python3\\n\"\"\"Evaluation setup workaround: anchor inherited mypy targets to their config directory.\"\"\"\\nimport os\\nfrom pathlib import Path\\nimport sys\\nargs = sys.argv[1:]\\nif \\'--config-file\\' in args:\\n    config = Path(args[args.index(\\'--config-file\\') + 1]).resolve()\\n    os.chdir(config.parent)\\npython = str(Path(__file__).resolve().parent / \\'python\\')\\nos.execv(python, [python, \\'-m\\', \\'mypy\\', *args])\\n'); p.chmod(0o755); print('Installed evaluation mypy config-directory wrapper')"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-t2oakzaq/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/09-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/09-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 76
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-t2oakzaq/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/10-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/10-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 35
+    },
+    {
+      "argv": [
+        "uv",
+        "sync",
+        "--locked",
+        "--python",
+        "3.13.9",
+        "--group",
+        "lint"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-t2oakzaq/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/11-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/11-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 24829
+    },
+    {
+      "argv": [
+        "python3",
+        "-c",
+        "from pathlib import Path; files=list(Path('.venv/lib').glob('python*/site-packages/a1_coverage.pth')); [(p.unlink(),print('Removed coverage subprocess bootstrap:',p)) for p in files]"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-t2oakzaq/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/12-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/12-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 115
+    },
+    {
+      "argv": [
+        "python3",
+        "-c",
+        "from pathlib import Path; p=Path('.venv/bin/mypy'); p.write_text('#!/usr/bin/env python3\\n\"\"\"Evaluation setup workaround: anchor inherited mypy targets to their config directory.\"\"\"\\nimport os\\nfrom pathlib import Path\\nimport sys\\nargs = sys.argv[1:]\\nif \\'--config-file\\' in args:\\n    config = Path(args[args.index(\\'--config-file\\') + 1]).resolve()\\n    os.chdir(config.parent)\\npython = str(Path(__file__).resolve().parent / \\'python\\')\\nos.execv(python, [python, \\'-m\\', \\'mypy\\', *args])\\n'); p.chmod(0o755); print('Installed evaluation mypy config-directory wrapper')"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-t2oakzaq/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/13-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/13-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 67
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-t2oakzaq/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/14-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/14-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 69
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-t2oakzaq/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-t2oakzaq/config",
+        "RIO_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-t2oakzaq/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/rio-version.txt",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/15-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 19
+    },
+    {
+      "argv": [
+        "node",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-t2oakzaq/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-t2oakzaq/config",
+        "RIO_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-t2oakzaq/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/16-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/16-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 22
+    },
+    {
+      "argv": [
+        "npm",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-t2oakzaq/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-t2oakzaq/config",
+        "RIO_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-t2oakzaq/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/17-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/17-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 529
+    },
+    {
+      "argv": [
+        "python3",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-t2oakzaq/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-t2oakzaq/config",
+        "RIO_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-t2oakzaq/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/18-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/18-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 6
+    },
+    {
+      "argv": [
+        "uv",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-t2oakzaq/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-t2oakzaq/config",
+        "RIO_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-t2oakzaq/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/19-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/19-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 34
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "profile",
+        "show",
+        "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/profile.yaml"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-t2oakzaq/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-t2oakzaq/config",
+        "RIO_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-t2oakzaq/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/resolved-profile.txt",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/20-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 271
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "doctor",
+        "--format",
+        "json"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-t2oakzaq/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-t2oakzaq/config",
+        "RIO_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-t2oakzaq/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/doctor.json",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/21-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 12414
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "review",
+        "--base",
+        "2f0e98cbb7b60e12dcd0edc397f6df11c5cc1c56",
+        "--format",
+        "json",
+        "--offline",
+        "--profile",
+        "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/profile.yaml"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-t2oakzaq/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-t2oakzaq/config",
+        "RIO_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-t2oakzaq/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/report.json",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/22-stderr.log",
+      "exit_code": 124,
+      "wall_time_ms": 1393212
+    }
+  ],
+  "installations": {
+    "base": {
+      "commands": [
+        [
+          "uv",
+          "sync",
+          "--locked",
+          "--python",
+          "3.13.9",
+          "--group",
+          "lint"
+        ],
+        [
+          "python3",
+          "-c",
+          "from pathlib import Path; files=list(Path('.venv/lib').glob('python*/site-packages/a1_coverage.pth')); [(p.unlink(),print('Removed coverage subprocess bootstrap:',p)) for p in files]"
+        ],
+        [
+          "python3",
+          "-c",
+          "from pathlib import Path; p=Path('.venv/bin/mypy'); p.write_text('#!/usr/bin/env python3\\n\"\"\"Evaluation setup workaround: anchor inherited mypy targets to their config directory.\"\"\"\\nimport os\\nfrom pathlib import Path\\nimport sys\\nargs = sys.argv[1:]\\nif \\'--config-file\\' in args:\\n    config = Path(args[args.index(\\'--config-file\\') + 1]).resolve()\\n    os.chdir(config.parent)\\npython = str(Path(__file__).resolve().parent / \\'python\\')\\nos.execv(python, [python, \\'-m\\', \\'mypy\\', *args])\\n'); p.chmod(0o755); print('Installed evaluation mypy config-directory wrapper')"
+        ]
+      ],
+      "succeeded": true,
+      "lockfiles": {
+        "uv.lock": "0734a1df1693c74e84c14715fa880070a89a204f233fc325d169716611dc15f2"
+      }
+    },
+    "head": {
+      "commands": [
+        [
+          "uv",
+          "sync",
+          "--locked",
+          "--python",
+          "3.13.9",
+          "--group",
+          "lint"
+        ],
+        [
+          "python3",
+          "-c",
+          "from pathlib import Path; files=list(Path('.venv/lib').glob('python*/site-packages/a1_coverage.pth')); [(p.unlink(),print('Removed coverage subprocess bootstrap:',p)) for p in files]"
+        ],
+        [
+          "python3",
+          "-c",
+          "from pathlib import Path; p=Path('.venv/bin/mypy'); p.write_text('#!/usr/bin/env python3\\n\"\"\"Evaluation setup workaround: anchor inherited mypy targets to their config directory.\"\"\"\\nimport os\\nfrom pathlib import Path\\nimport sys\\nargs = sys.argv[1:]\\nif \\'--config-file\\' in args:\\n    config = Path(args[args.index(\\'--config-file\\') + 1]).resolve()\\n    os.chdir(config.parent)\\npython = str(Path(__file__).resolve().parent / \\'python\\')\\nos.execv(python, [python, \\'-m\\', \\'mypy\\', *args])\\n'); p.chmod(0o755); print('Installed evaluation mypy config-directory wrapper')"
+        ]
+      ],
+      "succeeded": true,
+      "lockfiles": {
+        "uv.lock": "0734a1df1693c74e84c14715fa880070a89a204f233fc325d169716611dc15f2"
+      }
+    }
+  },
+  "failures": [
+    "Expecting value: line 1 column 1 (char 0)"
+  ],
+  "network": "Installers may use network; Rio review uses --offline. Subprocesses are not isolated.",
+  "profile_sha256": "5cf706f6a702198395e3d4f0d188fa339102c201e509f8d1dda2be9e7373299a",
+  "resolution": {
+    "base_sha": "2f0e98cbb7b60e12dcd0edc397f6df11c5cc1c56",
+    "head_sha": "17c4ab5539f8a38aa86b2af69a783cb595269d27",
+    "source": "pinned argv"
+  },
+  "disposable_directory": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-t2oakzaq",
+  "base_sha": "2f0e98cbb7b60e12dcd0edc397f6df11c5cc1c56",
+  "head_sha": "17c4ab5539f8a38aa86b2af69a783cb595269d27",
+  "removed_environment_keys": [],
+  "resolved_profile_sha256": "b848ca49ed882b2ad5ae0e3503bfdfeec455937656eec53ca8e05e4cd209a35b",
+  "review_exit_code": 124,
+  "finished_utc": "2026-11-05T11:20:58.349060+00:00"
+}
