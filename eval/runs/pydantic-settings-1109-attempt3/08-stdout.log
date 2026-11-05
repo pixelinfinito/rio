@@ -1,0 +1,3 @@
+/dev/shm/pydantic-settings-eval/rio-eval-p94crem1/base/.venv/lib/python3.13/site-packages/a1_coverage.pth
+import sys; exec('import os\n\nif os.getenv("COVERAGE_PROCESS_START") or os.getenv("COVERAGE_PROCESS_CONFIG"):\n try:\n  import coverage\n except:\n  pass\n else:\n  coverage.process_startup(slug="pth")')
+

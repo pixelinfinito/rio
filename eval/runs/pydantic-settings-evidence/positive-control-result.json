@@ -1,0 +1,10 @@
+{
+  "expectation_id": "aws-version-id-uncovered",
+  "finding_ids": [
+    "9fef2a2d9e8b5202043d7425de33cae2f3aa38091bad992b3086e7ab3ed1c489"
+  ],
+  "detected": true,
+  "misses": [],
+  "report": "eval/runs/pydantic-settings-708/report.json",
+  "notes": "Preregistered register unchanged; detection filled in this separate result after run."
+}

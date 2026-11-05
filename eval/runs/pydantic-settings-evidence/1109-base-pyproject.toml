@@ -1,0 +1,214 @@
+[build-system]
+requires = ['hatchling']
+build-backend = 'hatchling.build'
+
+[tool.hatch.version]
+path = 'pydantic_settings/version.py'
+
+[project]
+name = 'pydantic-settings'
+description = 'Settings management using Pydantic'
+authors = [
+    {name = 'Samuel Colvin', email = 's@muelcolvin.com'},
+    {name = 'Eric Jolibois', email = 'em.jolibois@gmail.com'},
+    {name = 'Hasan Ramezani', email = 'hasan.r67@gmail.com'},
+]
+license = 'MIT'
+readme = 'README.md'
+classifiers = [
+    'Development Status :: 5 - Production/Stable',
+    'Programming Language :: Python',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3 :: Only',
+    'Programming Language :: Python :: 3.11',
+    'Programming Language :: Python :: 3.12',
+    'Programming Language :: Python :: 3.13',
+    'Programming Language :: Python :: 3.14',
+    'Programming Language :: Python :: 3.15',
+    'Intended Audience :: Developers',
+    'Intended Audience :: Information Technology',
+    'Intended Audience :: System Administrators',
+    'License :: OSI Approved :: MIT License',
+    'Framework :: Pydantic',
+    'Framework :: Pydantic :: 2',
+    'Operating System :: Unix',
+    'Operating System :: POSIX :: Linux',
+    'Environment :: Console',
+    'Environment :: MacOS X',
+    'Topic :: Software Development :: Libraries :: Python Modules',
+    'Topic :: Internet',
+]
+requires-python = '>=3.11'
+dependencies = [
+    'pydantic>=2.7.0',
+    'python-dotenv>=1.2.2',
+    'typing-extensions>=4.0.0',
+    'typing-inspection>=0.4.0',
+]
+dynamic = ['version']
+
+[project.optional-dependencies]
+yaml = ["pyyaml>=6.0.1"]
+# kept for backwards compatibility, `tomllib` is part of the standard library since Python 3.11
+toml = []
+azure-key-vault = ["azure-keyvault-secrets>=4.8.0", "azure-identity>=1.16.0"]
+aws-secrets-manager = ["boto3>=1.35.0"]
+aws-systems-manager = ["boto3>=1.35.0"]
+gcp-secret-manager = [
+    "google-cloud-secret-manager>=2.23.1",
+]
+
+[project.urls]
+Homepage = 'https://github.com/pydantic/pydantic-settings'
+Funding = 'https://github.com/sponsors/samuelcolvin'
+Source = 'https://github.com/pydantic/pydantic-settings'
+Changelog = 'https://github.com/pydantic/pydantic-settings/releases'
+Documentation = 'https://docs.pydantic.dev/dev-v2/concepts/pydantic_settings/'
+
+[dependency-groups]
+linting = [
+    "black",
+    "mypy",
+    "pre-commit",
+    "pyyaml",
+    "ruff",
+    "types-pyyaml",
+    "types-boto3[secretsmanager,ssm]",
+]
+testing = [
+    "coverage[toml]",
+    "pytest",
+    "pytest-examples",
+    "pytest-mock",
+    "pytest-pretty",
+    "moto[secretsmanager,ssm]",
+    "diff-cover>=9.2.0",
+    "chardet<6",
+]
+build = [
+    "build>=1.6",
+]
+
+[tool.pytest.ini_options]
+testpaths = 'tests'
+filterwarnings = [
+    'error',
+    'ignore:This is a placeholder until pydantic-settings.*:UserWarning',
+    'ignore::DeprecationWarning:botocore.*:',
+]
+
+# https://coverage.readthedocs.io/en/latest/config.html#run
+[tool.coverage.run]
+# `source` rather than `include`: `include` only filters files that were imported during
+# the run, so a new module that nothing imports yet would be missing from the report
+# entirely and the 100% library gate in CI would still pass. `source` makes coverage
+# discover the packages, reporting such a module at 0%.
+source = [
+    "pydantic_settings",
+    "tests",
+]
+branch = true
+
+# https://coverage.readthedocs.io/en/latest/config.html#report
+[tool.coverage.report]
+skip_covered = true
+show_missing = true
+ignore_errors = true
+precision = 2
+exclude_lines = [
+    'pragma: no cover',
+    'raise NotImplementedError',
+    'if TYPE_CHECKING:',
+    'if typing.TYPE_CHECKING:',
+    '@overload',
+    '@deprecated',
+    '@typing.overload',
+    '@abstractmethod',
+    '\(Protocol\):$',
+    'typing.assert_never',
+    '$\s*assert_never\(',
+    'if __name__ == .__main__.:',
+    'except ImportError as _import_error:',
+    '$\s*pass$',
+]
+
+[tool.coverage.paths]
+source = [
+    'pydantic_settings/',
+]
+
+[tool.ruff]
+line-length = 120
+target-version = 'py311'
+
+[tool.ruff.lint.pyupgrade]
+keep-runtime-typing = true
+
+[tool.ruff.lint]
+extend-select = [
+    'Q', 'RUF100', 'C90', 'UP', 'I', 'B', 'RUF036',
+    # Rule sets the codebase already satisfies; selected to keep it that way.
+    'C4', 'PIE', 'PERF', 'ISC', 'ICN', 'LOG', 'G', 'INT', 'DTZ', 'YTT', 'ASYNC', 'FLY',
+    'FURB110', 'PTH201', 'RSE102', 'RUF043', 'RET',
+]
+ignore = [
+    # Selecting `B` also matches the `BLE` prefix. Defensive/fallback code in the
+    # settings sources intentionally catches broad exceptions (thread boundaries,
+    # best-effort docstring and secret lookups).
+    'BLE001',
+    'S110',
+    # `pytest-examples` lints the docs snippets with its own (broader) rule set, which
+    # selects `FA`. We target 3.11+ and use PEP 604/585 syntax without `from __future__
+    # import annotations`, so these would fail every example in docs/index.md.
+    'FA100',
+    'FA102',
+]
+flake8-quotes = {inline-quotes = 'single', multiline-quotes = 'double'}
+isort = { known-first-party = ['pydantic_settings', 'tests'] }
+mccabe = { max-complexity = 14 }
+pydocstyle = { convention = 'google' }
+
+[tool.ruff.lint.per-file-ignores]
+# Tests deliberately use patterns the linter flags: raising bare exceptions in
+# fixtures, `exec`, mutable class attrs, and warns()/expression-only helpers.
+'tests/**' = ['TRY002', 'S101', 'S102', 'RUF012', 'B018', 'PT031']
+
+[tool.ruff.format]
+quote-style = 'single'
+
+[tool.mypy]
+python_version = '3.11'
+show_error_codes = true
+follow_imports = 'silent'
+strict_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+disallow_any_generics = true
+check_untyped_defs = true
+no_implicit_reexport = true
+warn_unused_configs = true
+disallow_subclassing_any = true
+disallow_incomplete_defs = true
+disallow_untyped_decorators = true
+disallow_untyped_calls = true
+
+# for strict mypy: (this is the tricky one :-))
+disallow_untyped_defs = true
+
+# remaining arguments from `mypy --strict` which cause errors
+# no_implicit_optional = true
+# warn_return_any = true
+
+# ansi2html and devtools are required to avoid the need to install these packages when running linting,
+# they're used in the docs build script
+[[tool.mypy.overrides]]
+module = [
+    'dotenv.*',
+]
+ignore_missing_imports = true
+
+# configuring https://github.com/pydantic/hooky
+[tool.hooky]
+assignees = ['samuelcolvin', 'dmontagu', 'hramezani']
+reviewers = ['samuelcolvin', 'dmontagu', 'hramezani']
+require_change_file = false

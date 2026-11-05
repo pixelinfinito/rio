@@ -1,0 +1,404 @@
+{
+  "schema": "rio-eval-runner-v1",
+  "repository": "pydantic/pydantic-settings",
+  "pr": "https://github.com/pydantic/pydantic-settings/pull/1109",
+  "started_utc": "2026-11-05T02:22:53.423421+00:00",
+  "rio_binary": "/home/ubuntu/rio/target/release/rio",
+  "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-checkout",
+        "https://github.com/pydantic/pydantic-settings.git",
+        "/tmp/rio-eval-9jfvmcho/head"
+      ],
+      "cwd": "/tmp/rio-eval-9jfvmcho",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1109-attempt2/01-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1109-attempt2/01-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 16241
+    },
+    {
+      "argv": [
+        "git",
+        "fetch",
+        "origin",
+        "7e2dacb6db07b41abb0c80d0608e46e197265554",
+        "74c01ae3e84f9c8f2b04ec269e67813abd96cf9a"
+      ],
+      "cwd": "/tmp/rio-eval-9jfvmcho/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1109-attempt2/02-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1109-attempt2/02-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 3830
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "7e2dacb6db07b41abb0c80d0608e46e197265554",
+        "74c01ae3e84f9c8f2b04ec269e67813abd96cf9a"
+      ],
+      "cwd": "/tmp/rio-eval-9jfvmcho/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1109-attempt2/03-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1109-attempt2/03-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 3316
+    },
+    {
+      "argv": [
+        "git",
+        "checkout",
+        "--detach",
+        "74c01ae3e84f9c8f2b04ec269e67813abd96cf9a"
+      ],
+      "cwd": "/tmp/rio-eval-9jfvmcho/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1109-attempt2/04-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1109-attempt2/04-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 13424
+    },
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-hardlinks",
+        "--no-checkout",
+        "/tmp/rio-eval-9jfvmcho/head",
+        "/tmp/rio-eval-9jfvmcho/base"
+      ],
+      "cwd": "/tmp/rio-eval-9jfvmcho",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1109-attempt2/05-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1109-attempt2/05-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 28698
+    },
+    {
+      "argv": [
+        "git",
+        "checkout",
+        "--detach",
+        "7e2dacb6db07b41abb0c80d0608e46e197265554"
+      ],
+      "cwd": "/tmp/rio-eval-9jfvmcho/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1109-attempt2/06-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1109-attempt2/06-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 8515
+    },
+    {
+      "argv": [
+        "uv",
+        "sync",
+        "--locked",
+        "--all-groups",
+        "--all-extras"
+      ],
+      "cwd": "/tmp/rio-eval-9jfvmcho/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1109-attempt2/07-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1109-attempt2/07-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 38085
+    },
+    {
+      "argv": [
+        "uv",
+        "run",
+        "--no-sync",
+        "python",
+        "-c",
+        "import pathlib, sysconfig; p = pathlib.Path(sysconfig.get_path('purelib')) / 'a1_coverage.pth'; print(str(p)); print(p.read_text()); p.unlink()"
+      ],
+      "cwd": "/tmp/rio-eval-9jfvmcho/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1109-attempt2/08-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1109-attempt2/08-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 2929
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "cwd": "/tmp/rio-eval-9jfvmcho/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1109-attempt2/09-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1109-attempt2/09-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 416
+    },
+    {
+      "argv": [
+        "uv",
+        "sync",
+        "--locked",
+        "--all-groups",
+        "--all-extras"
+      ],
+      "cwd": "/tmp/rio-eval-9jfvmcho/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1109-attempt2/10-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1109-attempt2/10-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 34070
+    },
+    {
+      "argv": [
+        "uv",
+        "run",
+        "--no-sync",
+        "python",
+        "-c",
+        "import pathlib, sysconfig; p = pathlib.Path(sysconfig.get_path('purelib')) / 'a1_coverage.pth'; print(str(p)); print(p.read_text()); p.unlink()"
+      ],
+      "cwd": "/tmp/rio-eval-9jfvmcho/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1109-attempt2/11-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1109-attempt2/11-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 266
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "cwd": "/tmp/rio-eval-9jfvmcho/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1109-attempt2/12-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1109-attempt2/12-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 119
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-eval-9jfvmcho/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-eval-9jfvmcho/config",
+        "RIO_CACHE_DIR": "/tmp/rio-eval-9jfvmcho/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1109-attempt2/rio-version.txt",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1109-attempt2/13-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 8
+    },
+    {
+      "argv": [
+        "node",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-eval-9jfvmcho/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-eval-9jfvmcho/config",
+        "RIO_CACHE_DIR": "/tmp/rio-eval-9jfvmcho/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1109-attempt2/14-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1109-attempt2/14-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 17
+    },
+    {
+      "argv": [
+        "npm",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-eval-9jfvmcho/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-eval-9jfvmcho/config",
+        "RIO_CACHE_DIR": "/tmp/rio-eval-9jfvmcho/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1109-attempt2/15-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1109-attempt2/15-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 265
+    },
+    {
+      "argv": [
+        "python3",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-eval-9jfvmcho/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-eval-9jfvmcho/config",
+        "RIO_CACHE_DIR": "/tmp/rio-eval-9jfvmcho/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1109-attempt2/16-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1109-attempt2/16-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 16
+    },
+    {
+      "argv": [
+        "uv",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-eval-9jfvmcho/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-eval-9jfvmcho/config",
+        "RIO_CACHE_DIR": "/tmp/rio-eval-9jfvmcho/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1109-attempt2/17-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1109-attempt2/17-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 18
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "profile",
+        "show",
+        "rio/base"
+      ],
+      "cwd": "/tmp/rio-eval-9jfvmcho/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-eval-9jfvmcho/config",
+        "RIO_CACHE_DIR": "/tmp/rio-eval-9jfvmcho/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1109-attempt2/resolved-profile.txt",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1109-attempt2/18-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 968
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "doctor",
+        "--format",
+        "json"
+      ],
+      "cwd": "/tmp/rio-eval-9jfvmcho/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-eval-9jfvmcho/config",
+        "RIO_CACHE_DIR": "/tmp/rio-eval-9jfvmcho/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1109-attempt2/doctor.json",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1109-attempt2/19-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 9914
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "review",
+        "--base",
+        "7e2dacb6db07b41abb0c80d0608e46e197265554",
+        "--format",
+        "json",
+        "--offline",
+        "--profile",
+        "rio/base"
+      ],
+      "cwd": "/tmp/rio-eval-9jfvmcho/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-eval-9jfvmcho/config",
+        "RIO_CACHE_DIR": "/tmp/rio-eval-9jfvmcho/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1109-attempt2/report.json",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1109-attempt2/20-stderr.log",
+      "exit_code": 4,
+      "wall_time_ms": 248608
+    }
+  ],
+  "installations": {
+    "base": {
+      "commands": [
+        [
+          "uv",
+          "sync",
+          "--locked",
+          "--all-groups",
+          "--all-extras"
+        ],
+        [
+          "uv",
+          "run",
+          "--no-sync",
+          "python",
+          "-c",
+          "import pathlib, sysconfig; p = pathlib.Path(sysconfig.get_path('purelib')) / 'a1_coverage.pth'; print(str(p)); print(p.read_text()); p.unlink()"
+        ]
+      ],
+      "succeeded": true,
+      "lockfiles": {
+        "uv.lock": "a6c5b41872992fbdd21621bed21c3d3ca592bc02ab0765530d35697708136534"
+      }
+    },
+    "head": {
+      "commands": [
+        [
+          "uv",
+          "sync",
+          "--locked",
+          "--all-groups",
+          "--all-extras"
+        ],
+        [
+          "uv",
+          "run",
+          "--no-sync",
+          "python",
+          "-c",
+          "import pathlib, sysconfig; p = pathlib.Path(sysconfig.get_path('purelib')) / 'a1_coverage.pth'; print(str(p)); print(p.read_text()); p.unlink()"
+        ]
+      ],
+      "succeeded": true,
+      "lockfiles": {
+        "uv.lock": "a6c5b41872992fbdd21621bed21c3d3ca592bc02ab0765530d35697708136534"
+      }
+    }
+  },
+  "failures": [
+    "Baseline/setup ineligible; fix before scoring"
+  ],
+  "network": "Installers may use network; Rio review uses --offline. Subprocesses are not isolated.",
+  "resolution": {
+    "base_sha": "7e2dacb6db07b41abb0c80d0608e46e197265554",
+    "head_sha": "74c01ae3e84f9c8f2b04ec269e67813abd96cf9a",
+    "source": "pinned argv"
+  },
+  "disposable_directory": "/tmp/rio-eval-9jfvmcho",
+  "base_sha": "7e2dacb6db07b41abb0c80d0608e46e197265554",
+  "head_sha": "74c01ae3e84f9c8f2b04ec269e67813abd96cf9a",
+  "removed_environment_keys": [],
+  "resolved_profile_sha256": "1049df8bb35d7f36f2982fdce1565c2c50336ce9e898e605f3cac96b7b16b636",
+  "review_exit_code": 4,
+  "environment": {
+    "dependency_state": "unavailable",
+    "baseline_ran": false,
+    "baseline_classification_ran": false,
+    "eligible": false,
+    "reasons": [
+      "coverage . head: cancelled timeout",
+      "dependencies . head: cancelled timeout",
+      "lint . head: cancelled timeout",
+      "lint .: head=cancelled, dependency_state=unavailable, base=unavailable",
+      "secrets . head: cancelled timeout",
+      "typecheck . head: cancelled timeout",
+      "typecheck .: head=cancelled, dependency_state=unavailable, base=unavailable"
+    ],
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "Graph references use syntax and text; no language server was used",
+      "Impact graph truncated at the review deadline",
+      "Offline applies to Rio; tool and test processes were not network-isolated"
+    ]
+  },
+  "finished_utc": "2026-11-05T02:30:05.824687+00:00"
+}

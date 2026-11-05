@@ -1,0 +1,60 @@
+{
+  "repository": "pydantic/pydantic-settings",
+  "pr": "https://github.com/pydantic/pydantic-settings/pull/1097",
+  "case_id": "1097",
+  "languages": [
+    "python"
+  ],
+  "reviewer": "sub-agent eval-pydantic-settings (automated)",
+  "verdict_source": "automated",
+  "commands": [
+    "cwd=/dev/shm/pydantic-settings-eval/rio-eval-z710x703 argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/pydantic/pydantic-settings.git\", \"/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head\"]",
+    "cwd=/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head argv=[\"git\", \"fetch\", \"origin\", \"e71a53e6a0094da671d66eebd806904695722482\", \"83dc3337b627d6d701f63e69cb77375226651947\"]",
+    "cwd=/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head argv=[\"git\", \"merge-base\", \"e71a53e6a0094da671d66eebd806904695722482\", \"83dc3337b627d6d701f63e69cb77375226651947\"]",
+    "cwd=/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head argv=[\"git\", \"checkout\", \"--detach\", \"83dc3337b627d6d701f63e69cb77375226651947\"]",
+    "cwd=/dev/shm/pydantic-settings-eval/rio-eval-z710x703 argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head\", \"/dev/shm/pydantic-settings-eval/rio-eval-z710x703/base\"]",
+    "cwd=/dev/shm/pydantic-settings-eval/rio-eval-z710x703/base argv=[\"git\", \"checkout\", \"--detach\", \"e71a53e6a0094da671d66eebd806904695722482\"]",
+    "cwd=/dev/shm/pydantic-settings-eval/rio-eval-z710x703/base argv=[\"uv\", \"sync\", \"--locked\", \"--all-groups\", \"--all-extras\", \"--no-install-project\"]",
+    "cwd=/dev/shm/pydantic-settings-eval/rio-eval-z710x703/base argv=[\"uv\", \"run\", \"--no-sync\", \"python\", \"-c\", \"import pathlib, sysconfig; p = pathlib.Path(sysconfig.get_path('purelib')) / 'a1_coverage.pth'; print(str(p)); print(p.read_text() if p.exists() else 'absent'); p.unlink(missing_ok=True)\"]",
+    "cwd=/dev/shm/pydantic-settings-eval/rio-eval-z710x703/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head argv=[\"uv\", \"sync\", \"--locked\", \"--all-groups\", \"--all-extras\", \"--no-install-project\"]",
+    "cwd=/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head argv=[\"uv\", \"run\", \"--no-sync\", \"python\", \"-c\", \"import pathlib, sysconfig; p = pathlib.Path(sysconfig.get_path('purelib')) / 'a1_coverage.pth'; print(str(p)); print(p.read_text() if p.exists() else 'absent'); p.unlink(missing_ok=True)\"]",
+    "cwd=/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head argv=[\"node\", \"--version\"]",
+    "cwd=/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head argv=[\"npm\", \"--version\"]",
+    "cwd=/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head argv=[\"python3\", \"--version\"]",
+    "cwd=/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head argv=[\"uv\", \"--version\"]",
+    "cwd=/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1097-attempt2/profile.yaml\"]",
+    "cwd=/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"e71a53e6a0094da671d66eebd806904695722482\", \"--format\", \"json\", \"--offline\", \"--profile\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1097-attempt2/profile.yaml\"]",
+    "observed execve: [\"/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/./.venv/bin/mypy\", \"--output\", \"json\", \"--config-file\", \"/dev/shm/pydantic-settings-eval/rio-eval-z710x703/cache/c52ea3bc2353d064/runs/01M6MS35EARPPKGPR2FMKJ85KN/tools/tool.tmp-wPa1zp/pyproject.toml\", \"pydantic_settings\"]",
+    "observed execve: [\"/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/./.venv/bin/coverage\", \"run\", \"-m\", \"pytest\", \"-q\"]",
+    "observed execve: [\"/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/./.venv/bin/ruff\", \"check\", \"--output-format\", \"json\", \"--\", \"/dev/shm/pydantic-settings-eval/rio-eval-z710x703/cache/c52ea3bc2353d064/runs/01M6MS35EARPPKGPR2FMKJ85KN/tools/tool.tmp-Dr2DvR/pydantic_settings/sources/base.py\", \"/dev/shm/pydantic-settings-eval/rio-eval-z710x703/cache/c52ea3bc2353d064/runs/01M6MS35EARPPKGPR2FMKJ85KN/tools/tool.tmp-Dr2DvR/pydantic_settings/sources/providers/env.py\", \"/dev/shm/pydantic-settings-eval/rio-eval-z710x703/cache/c52ea3bc2353d064/runs/01M6MS35EARPPKGPR2FMKJ85KN/tools/tool.tmp-Dr2DvR/tests/test_settings.py\"]",
+    "observed execve: [\"/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/./.venv/bin/ruff\", \"check\", \"--output-format\", \"json\", \"--\", \"/dev/shm/pydantic-settings-eval/rio-eval-z710x703/cache/c52ea3bc2353d064/runs/01M6MS35EARPPKGPR2FMKJ85KN/tools/tool.tmp-P7Sp0c/pydantic_settings/sources/base.py\", \"/dev/shm/pydantic-settings-eval/rio-eval-z710x703/cache/c52ea3bc2353d064/runs/01M6MS35EARPPKGPR2FMKJ85KN/tools/tool.tmp-P7Sp0c/pydantic_settings/sources/providers/env.py\", \"/dev/shm/pydantic-settings-eval/rio-eval-z710x703/cache/c52ea3bc2353d064/runs/01M6MS35EARPPKGPR2FMKJ85KN/tools/tool.tmp-P7Sp0c/tests/test_settings.py\"]",
+    "observed execve: [\"/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/./.venv/bin/mypy\", \"--output\", \"json\", \"--config-file\", \"/dev/shm/pydantic-settings-eval/rio-eval-z710x703/cache/c52ea3bc2353d064/runs/01M6MS35EARPPKGPR2FMKJ85KN/tools/tool.tmp-Cj6a4B/pyproject.toml\", \"pydantic_settings\"]",
+    "observed execve: [\"/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/./.venv/bin/coverage\", \"json\", \"-o\", \"/dev/shm/pydantic-settings-eval/rio-eval-z710x703/cache/c52ea3bc2353d064/runs/01M6MS35EARPPKGPR2FMKJ85KN/tools/tool.tmp-1MZEfj/./.rio-coverage/coverage.json\"]"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1097-attempt2/commands.json; Rio binary SHA-256: 512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+    "Binary verified: rio 0.1.0 x86_64-unknown-linux-gnu b15dc8ff5001; no rebuild or product/harness edits.",
+    "Offline cohort: typecheck, lint, instrumented coverage and secret scanning applicable; network dependency audit is explicitly excluded (no advisory-cache claim). No semantic agent endpoint. Automated assessment, no human confirmation claimed.",
+    "CPython 3.13.9 and uv 0.13.7 explicitly selected; Linux shared VM. Check commands use repository-locked tool versions.",
+    "Independent clean assessment in eval/runs/pydantic-settings-evidence/1097-base and 1097-head: uv run --no-sync mypy pydantic_settings, uv run --no-sync ruff check, ruff format --check, and coverage run -m pytest all exit 0 at base and head. 1097-independent-diff-coverage.json establishes every changed executable library line is covered. Source changes inspected; no new credential or deterministic defect independently established. This is a scoped assessment, not exhaustive semantic correctness.",
+    "Install plan v3 uses uv sync --locked --all-groups --all-extras --no-install-project and removes only the optional a1_coverage.pth startup hook. No tracked file or locked package version changed; trust_installed_dependencies remains false. TMPDIR and UV_CACHE_DIR under /dev/shm/pydantic-settings-eval avoid shared disk stalls. Profile extends rio/base with a 20-minute budget.",
+    "Exact nested mypy/Ruff/coverage argv captured by strace in observed/commands.json and observed/execve.log.gz; the original runner ledger omits nested tool commands. Both typecheck and lint baseline pairs passed with dependency_state verified.",
+    "Maintainer PR by hramezani: inspected union alias unwrapping, preservation of scalar union values, and parent NoDecode/ForceDecode metadata; 26 additional tests pass."
+  ],
+  "independently_clean": true,
+  "positive_control": {
+    "kind": "none",
+    "expected": []
+  },
+  "misses": [],
+  "findings": {
+    "f59b1964321361d6f49fa60104f8329ceb09f12e8748ffa4f82f26b48026e658": {
+      "verdict": "false-positive",
+      "reason": "The six occurrences are intentional dummy PostgresDsn test inputs and assertions (postgres://user:password@localhost/dbname or /other), not exposed credentials. Independent source inspection is retained in eval/runs/pydantic-settings-evidence/1097-base-connection-fixtures.txt and 1097-head-connection-fixtures.txt. Base and head contain these fixtures unchanged; location.state pre-existing is correct but the credential claim and remove/rotate advice are incorrect. No live service or secret is involved."
+    }
+  }
+}

@@ -1,0 +1,210 @@
+[
+  {
+    "pr": "https://github.com/pydantic/pydantic-settings/pull/1131",
+    "base": "d90133c7d6304c0ae3821c3fd9e30793ebd2815f",
+    "head": "5c1669a08071996f3897321c7d706dbba6819028",
+    "status": "incomplete",
+    "checks": [
+      {
+        "kind": "secrets",
+        "version": "head",
+        "outcome": "passed",
+        "reason": null,
+        "wall_time_ms": 82,
+        "findings": 0
+      },
+      {
+        "kind": "dependencies",
+        "version": "head",
+        "outcome": "skipped",
+        "reason": "offline",
+        "wall_time_ms": 333,
+        "findings": 0
+      },
+      {
+        "kind": "lint",
+        "version": "head",
+        "outcome": "passed",
+        "reason": null,
+        "wall_time_ms": 2988,
+        "findings": 0
+      },
+      {
+        "kind": "typecheck",
+        "version": "head",
+        "outcome": "findings",
+        "reason": null,
+        "wall_time_ms": 30886,
+        "findings": 1437
+      },
+      {
+        "kind": "coverage",
+        "version": "head",
+        "outcome": "passed",
+        "reason": null,
+        "wall_time_ms": 76898,
+        "findings": 0
+      }
+    ],
+    "wall_time_ms": 93351,
+    "setup": {
+      "dependencies": "uv sync --frozen --all-groups --all-extras --no-install-project",
+      "uv": "0.13.7",
+      "profile": "automated-python-acceptance extends rio/base, 4 minute fast budget, graph defaults hops=2/max_nodes=2000, trust_installed_dependencies=true",
+      "compatibility": "Default verification conservatively marks coverage executable a1_coverage.pth unverified and skips dependency-bound checks. Explicit trust enables checks and intentionally leaves findings unclassified; it does not establish dependency equivalence."
+    },
+    "limitations": [
+      "Dependency vulnerability audit skipped explicitly offline.",
+      "Intent inference, agent review and verification deferred because no endpoint is configured.",
+      "Typecheck uses mypy . while this repository Makefile runs mypy pydantic_settings; findings in tests are noise for this review.",
+      "No human verdict is claimed."
+    ],
+    "finding_verdict_counts": {
+      "noise": 1437
+    },
+    "visible_findings": 1437,
+    "states": {
+      "unclassified": 1437
+    }
+  },
+  {
+    "pr": "https://github.com/pydantic/pydantic-settings/pull/1109",
+    "base": "7e2dacb6db07b41abb0c80d0608e46e197265554",
+    "head": "74c01ae3e84f9c8f2b04ec269e67813abd96cf9a",
+    "status": "incomplete",
+    "checks": [
+      {
+        "kind": "secrets",
+        "version": "head",
+        "outcome": "findings",
+        "reason": null,
+        "wall_time_ms": 114,
+        "findings": 1
+      },
+      {
+        "kind": "dependencies",
+        "version": "head",
+        "outcome": "skipped",
+        "reason": "offline",
+        "wall_time_ms": 270,
+        "findings": 0
+      },
+      {
+        "kind": "lint",
+        "version": "head",
+        "outcome": "passed",
+        "reason": null,
+        "wall_time_ms": 3805,
+        "findings": 0
+      },
+      {
+        "kind": "typecheck",
+        "version": "head",
+        "outcome": "findings",
+        "reason": null,
+        "wall_time_ms": 27665,
+        "findings": 1407
+      },
+      {
+        "kind": "coverage",
+        "version": "head",
+        "outcome": "passed",
+        "reason": null,
+        "wall_time_ms": 70835,
+        "findings": 0
+      }
+    ],
+    "wall_time_ms": 91076,
+    "setup": {
+      "dependencies": "uv sync --frozen --all-groups --all-extras --no-install-project",
+      "uv": "0.13.7",
+      "profile": "automated-python-acceptance extends rio/base, 4 minute fast budget, graph defaults hops=2/max_nodes=2000, trust_installed_dependencies=true",
+      "compatibility": "Default verification conservatively marks coverage executable a1_coverage.pth unverified and skips dependency-bound checks. Explicit trust enables checks and intentionally leaves findings unclassified; it does not establish dependency equivalence."
+    },
+    "limitations": [
+      "Dependency vulnerability audit skipped explicitly offline.",
+      "Intent inference, agent review and verification deferred because no endpoint is configured.",
+      "Typecheck uses mypy . while this repository Makefile runs mypy pydantic_settings; findings in tests are noise for this review.",
+      "No human verdict is claimed."
+    ],
+    "finding_verdict_counts": {
+      "noise": 1407,
+      "false-positive": 1
+    },
+    "visible_findings": 1408,
+    "states": {
+      "unclassified": 1407,
+      "pre-existing": 1
+    }
+  },
+  {
+    "pr": "https://github.com/pydantic/pydantic-settings/pull/1097",
+    "base": "e71a53e6a0094da671d66eebd806904695722482",
+    "head": "83dc3337b627d6d701f63e69cb77375226651947",
+    "status": "incomplete",
+    "checks": [
+      {
+        "kind": "secrets",
+        "version": "head",
+        "outcome": "findings",
+        "reason": null,
+        "wall_time_ms": 119,
+        "findings": 1
+      },
+      {
+        "kind": "dependencies",
+        "version": "head",
+        "outcome": "skipped",
+        "reason": "offline",
+        "wall_time_ms": 204,
+        "findings": 0
+      },
+      {
+        "kind": "lint",
+        "version": "head",
+        "outcome": "passed",
+        "reason": null,
+        "wall_time_ms": 2110,
+        "findings": 0
+      },
+      {
+        "kind": "typecheck",
+        "version": "head",
+        "outcome": "findings",
+        "reason": null,
+        "wall_time_ms": 39303,
+        "findings": 1361
+      },
+      {
+        "kind": "coverage",
+        "version": "head",
+        "outcome": "passed",
+        "reason": null,
+        "wall_time_ms": 110446,
+        "findings": 0
+      }
+    ],
+    "wall_time_ms": 142553,
+    "setup": {
+      "dependencies": "uv sync --frozen --all-groups --all-extras --no-install-project",
+      "uv": "0.13.7",
+      "profile": "automated-python-acceptance extends rio/base, 4 minute fast budget, graph defaults hops=2/max_nodes=2000, trust_installed_dependencies=true",
+      "compatibility": "Default verification conservatively marks coverage executable a1_coverage.pth unverified and skips dependency-bound checks. Explicit trust enables checks and intentionally leaves findings unclassified; it does not establish dependency equivalence."
+    },
+    "limitations": [
+      "Dependency vulnerability audit skipped explicitly offline.",
+      "Intent inference, agent review and verification deferred because no endpoint is configured.",
+      "Typecheck uses mypy . while this repository Makefile runs mypy pydantic_settings; findings in tests are noise for this review.",
+      "No human verdict is claimed."
+    ],
+    "finding_verdict_counts": {
+      "noise": 1361,
+      "false-positive": 1
+    },
+    "visible_findings": 1362,
+    "states": {
+      "unclassified": 1361,
+      "pre-existing": 1
+    }
+  }
+]

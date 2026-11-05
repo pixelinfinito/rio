@@ -1,0 +1,7 @@
+Name                                          Stmts   Miss Branch BrPart   Cover   Missing
+------------------------------------------------------------------------------------------
+pydantic_settings/sources/providers/yaml.py      55      2     18      0  97.26%   32-33
+------------------------------------------------------------------------------------------
+TOTAL                                          2879      2   1222      0  99.95%
+
+21 files skipped due to complete coverage.

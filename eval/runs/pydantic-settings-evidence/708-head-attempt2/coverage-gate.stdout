@@ -1,0 +1,24 @@
+{
+  "file": "pydantic_settings/sources/providers/aws.py",
+  "summary": {
+    "covered_lines": 29,
+    "num_statements": 30,
+    "percent_covered": 93.75,
+    "percent_covered_display": "93.75",
+    "missing_lines": 1,
+    "excluded_lines": 4,
+    "num_branches": 2,
+    "num_partial_branches": 1,
+    "covered_branches": 1,
+    "missing_branches": 1
+  },
+  "missing_lines": [
+    66
+  ],
+  "missing_branches": [
+    [
+      65,
+      66
+    ]
+  ]
+}

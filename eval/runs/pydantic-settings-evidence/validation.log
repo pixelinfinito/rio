@@ -1,0 +1,27 @@
+$ python3 eval/evaluate.py record --report eval/runs/pydantic-settings-708/report.json --verdicts eval/runs/pydantic-settings-708/verdicts.json --out eval/runs/pydantic-settings-708/record.json
+exit_code=0
+
+$ python3 eval/evaluate.py validate eval/runs/pydantic-settings-708/record.json
+Valid: eval/runs/pydantic-settings-708/record.json
+exit_code=0
+
+$ python3 eval/evaluate.py record --report eval/runs/pydantic-settings-1097-attempt2/report.json --verdicts eval/runs/pydantic-settings-1097-attempt2/verdicts.json --out eval/runs/pydantic-settings-1097-attempt2/record.json
+exit_code=0
+
+$ python3 eval/evaluate.py validate eval/runs/pydantic-settings-1097-attempt2/record.json
+Valid: eval/runs/pydantic-settings-1097-attempt2/record.json
+exit_code=0
+
+$ python3 eval/evaluate.py record --report eval/runs/pydantic-settings-1109-attempt4/report.json --verdicts eval/runs/pydantic-settings-1109-attempt4/verdicts.json --out eval/runs/pydantic-settings-1109-attempt4/record.json
+exit_code=0
+
+$ python3 eval/evaluate.py validate eval/runs/pydantic-settings-1109-attempt4/record.json
+Valid: eval/runs/pydantic-settings-1109-attempt4/record.json
+exit_code=0
+
+$ python3 eval/evaluate.py aggregate eval/runs/pydantic-settings-708/record.json eval/runs/pydantic-settings-1097-attempt2/record.json eval/runs/pydantic-settings-1109-attempt4/record.json --out eval/runs/pydantic-settings-SUMMARY.json
+exit_code=0
+
+$ python3 eval/evaluate.py validate eval/runs/pydantic-settings-SUMMARY.json
+Valid: eval/runs/pydantic-settings-SUMMARY.json
+exit_code=0

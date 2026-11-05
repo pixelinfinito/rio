@@ -1,0 +1,20 @@
+git show 61e0b46eb96e2f67f390b0371c4297f2d6b24573:tests/test_settings.py
+3118: 
+3119: def test_parsing_secret_field(env):
+3120:     class Settings(BaseSettings):
+3121:         foo: Secret[int]
+3122:         bar: Secret[PostgresDsn]
+3123: 
+3124:     env.set('foo', '123')
+3125:     env.set('bar', 'postgres://user:password@localhost/dbname')
+3126: 
+3127:     s = Settings()
+3128:     assert s.foo.get_secret_value() == 123
+3129:     assert s.bar.get_secret_value() == PostgresDsn('postgres://user:password@localhost/dbname')
+3130: 
+3131: 
+3132: def test_field_annotated_no_decode(env):
+3133:     class Settings(BaseSettings):
+3134:         a: list[str]  # this field will be decoded because of default `enable_decoding=True`
+3135:         b: Annotated[list[str], NoDecode]
+3136: 

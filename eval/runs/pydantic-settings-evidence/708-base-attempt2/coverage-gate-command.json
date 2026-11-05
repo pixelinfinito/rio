@@ -1,0 +1,9 @@
+{
+  "argv": [
+    "python3",
+    "eval/runs/pydantic-settings-evidence/coverage_gate.py",
+    "eval/runs/pydantic-settings-evidence/708-base-attempt2/coverage.json.gz",
+    "pydantic_settings/sources/providers/aws.py"
+  ],
+  "exit_code": 0
+}

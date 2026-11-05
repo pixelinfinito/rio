@@ -1,0 +1,258 @@
+{
+  "checks": [
+    {
+      "findings": [],
+      "kind": "secrets",
+      "language": "common",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 0
+    },
+    {
+      "findings": [],
+      "hint": "Dependency audit needs api.osv.dev",
+      "kind": "dependencies",
+      "language": "common",
+      "outcome": "skipped",
+      "reason": "offline",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 3
+    },
+    {
+      "dependency_state": "verified",
+      "findings": [],
+      "kind": "lint",
+      "language": "python",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 782
+    },
+    {
+      "dependency_state": "verified",
+      "findings": [],
+      "kind": "lint",
+      "language": "python",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "base",
+      "wall_time_ms": 1839
+    },
+    {
+      "dependency_state": "verified",
+      "findings": [],
+      "kind": "typecheck",
+      "language": "python",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 19803
+    },
+    {
+      "dependency_state": "verified",
+      "findings": [],
+      "kind": "typecheck",
+      "language": "python",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "base",
+      "wall_time_ms": 20420
+    },
+    {
+      "dependency_state": "verified",
+      "findings": [],
+      "kind": "coverage",
+      "language": "python",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 43893
+    }
+  ],
+  "deferred": [
+    {
+      "reason": "no_endpoint",
+      "step": "triage"
+    },
+    {
+      "reason": "no_endpoint",
+      "step": "agents"
+    },
+    {
+      "reason": "no_endpoint",
+      "step": "verify"
+    }
+  ],
+  "excluded": [],
+  "findings": [],
+  "footer": {
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "Graph references use syntax and text; no language server was used",
+      "Offline applies to Rio; tool and test processes were not network-isolated"
+    ],
+    "suppressions": [],
+    "tool_versions": {
+      "python:.:coverage": "Coverage.py, version 7.10.7 with C extension",
+      "python:.:mypy": "mypy 1.18.2 (compiled: yes)",
+      "python:.:ruff": "ruff 0.13.1"
+    }
+  },
+  "impact": {
+    "symbols": [
+      {
+        "path": "pydantic_settings/sources/providers/aws.py",
+        "references_per_hop": [
+          13,
+          0
+        ],
+        "symbol_path": "aws.AWSSecretsManagerSettingsSource.__init__",
+        "test_referenced": true,
+        "unresolved": 130
+      },
+      {
+        "path": "pydantic_settings/sources/providers/aws.py",
+        "references_per_hop": [
+          2,
+          12
+        ],
+        "symbol_path": "aws.AWSSecretsManagerSettingsSource._load_env_vars",
+        "test_referenced": true,
+        "unresolved": 11
+      }
+    ],
+    "truncated": false,
+    "unresolved": 141
+  },
+  "incomplete": [
+    {
+      "findings": [],
+      "hint": "Dependency audit needs api.osv.dev",
+      "kind": "dependencies",
+      "language": "common",
+      "outcome": "skipped",
+      "reason": "offline",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 3
+    }
+  ],
+  "metrics": {
+    "checks": [
+      {
+        "kind": "secrets",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "kind": "dependencies",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 3
+      },
+      {
+        "kind": "lint",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 782
+      },
+      {
+        "kind": "lint",
+        "root": ".",
+        "version": "base",
+        "wall_time_ms": 1839
+      },
+      {
+        "kind": "typecheck",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 19803
+      },
+      {
+        "kind": "typecheck",
+        "root": ".",
+        "version": "base",
+        "wall_time_ms": 20420
+      },
+      {
+        "kind": "coverage",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 43893
+      }
+    ],
+    "tool_versions": {
+      "python:.:coverage": "Coverage.py, version 7.10.7 with C extension",
+      "python:.:mypy": "mypy 1.18.2 (compiled: yes)",
+      "python:.:ruff": "ruff 0.13.1"
+    },
+    "wall_time_ms": 49370
+  },
+  "review": {
+    "base": "61e0b46eb96e2f67f390b0371c4297f2d6b24573",
+    "chain": [
+      "eval-pydantic-settings",
+      "rio/base"
+    ],
+    "head": "7d60367d8cc83fb49fb7d93568ff4f10fea9a904",
+    "id": "1b9ac648fd6992f7",
+    "mode": "branch",
+    "profile": "eval-pydantic-settings",
+    "rio_version": "0.1.0",
+    "run_id": "01M6MSK3FNGQWGVJGYAX7H5Z5X"
+  },
+  "risks": [
+    {
+      "category": "risk",
+      "evidence": [
+        "merged coverage"
+      ],
+      "evidence_level": "static_proven",
+      "id": "9fef2a2d9e8b5202043d7425de33cae2f3aa38091bad992b3086e7ab3ed1c489",
+      "location": {
+        "line_end": 66,
+        "line_start": 66,
+        "occurrence_state": "new",
+        "path": "pydantic_settings/sources/providers/aws.py",
+        "symbol_path": "aws.AWSSecretsManagerSettingsSource._load_env_vars"
+      },
+      "locations": [
+        {
+          "line_end": 66,
+          "line_start": 66,
+          "occurrence_state": "new",
+          "path": "pydantic_settings/sources/providers/aws.py",
+          "symbol_path": "aws.AWSSecretsManagerSettingsSource._load_env_vars"
+        }
+      ],
+      "message": "Changed executable lines are not covered by tests: 66",
+      "rule_id": "coverage/untested_change",
+      "severity": "warning",
+      "source": {
+        "tool": "coverage",
+        "version": "merged"
+      },
+      "state": "new",
+      "suggested_fix": "Add a test that executes the changed behavior",
+      "trigger": "execution reaches the changed lines"
+    }
+  ],
+  "schema": "rio-report-v1",
+  "status": "incomplete",
+  "summary": {
+    "fixed": 0,
+    "pre_existing": 0,
+    "suppressed": 0
+  }
+}

@@ -1,0 +1,237 @@
+{
+  "sha": "74c01ae3e84f9c8f2b04ec269e67813abd96cf9a",
+  "environment": {
+    "UV_PYTHON": "3.13.9"
+  },
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-checkout",
+        "/tmp/pydantic-settings-eval/repo",
+        "/tmp/pydantic-oracle-htud0oly/repo"
+      ],
+      "cwd": "/tmp/pydantic-oracle-htud0oly",
+      "exit_code": 0,
+      "wall_time_seconds": 1.823,
+      "stdout": "clone.stdout",
+      "stderr": "clone.stderr"
+    },
+    {
+      "argv": [
+        "git",
+        "checkout",
+        "--detach",
+        "74c01ae3e84f9c8f2b04ec269e67813abd96cf9a"
+      ],
+      "cwd": "/tmp/pydantic-oracle-htud0oly/repo",
+      "exit_code": 0,
+      "wall_time_seconds": 10.331,
+      "stdout": "checkout.stdout",
+      "stderr": "checkout.stderr"
+    },
+    {
+      "argv": [
+        "uv",
+        "sync",
+        "--locked",
+        "--all-groups",
+        "--all-extras"
+      ],
+      "cwd": "/tmp/pydantic-oracle-htud0oly/repo",
+      "exit_code": 0,
+      "wall_time_seconds": 27.64,
+      "stdout": "install.stdout",
+      "stderr": "install.stderr"
+    },
+    {
+      "argv": [
+        "uv",
+        "--version"
+      ],
+      "cwd": "/tmp/pydantic-oracle-htud0oly/repo",
+      "exit_code": 0,
+      "wall_time_seconds": 0.035,
+      "stdout": "uv-version.stdout",
+      "stderr": "uv-version.stderr"
+    },
+    {
+      "argv": [
+        "uv",
+        "run",
+        "--no-sync",
+        "python",
+        "--version"
+      ],
+      "cwd": "/tmp/pydantic-oracle-htud0oly/repo",
+      "exit_code": 0,
+      "wall_time_seconds": 1.019,
+      "stdout": "python-version.stdout",
+      "stderr": "python-version.stderr"
+    },
+    {
+      "argv": [
+        "uv",
+        "run",
+        "--no-sync",
+        "mypy",
+        "--version"
+      ],
+      "cwd": "/tmp/pydantic-oracle-htud0oly/repo",
+      "exit_code": 0,
+      "wall_time_seconds": 3.631,
+      "stdout": "mypy-version.stdout",
+      "stderr": "mypy-version.stderr"
+    },
+    {
+      "argv": [
+        "uv",
+        "run",
+        "--no-sync",
+        "ruff",
+        "--version"
+      ],
+      "cwd": "/tmp/pydantic-oracle-htud0oly/repo",
+      "exit_code": 0,
+      "wall_time_seconds": 0.042,
+      "stdout": "ruff-version.stdout",
+      "stderr": "ruff-version.stderr"
+    },
+    {
+      "argv": [
+        "uv",
+        "run",
+        "--no-sync",
+        "coverage",
+        "--version"
+      ],
+      "cwd": "/tmp/pydantic-oracle-htud0oly/repo",
+      "exit_code": 0,
+      "wall_time_seconds": 10.311,
+      "stdout": "coverage-version.stdout",
+      "stderr": "coverage-version.stderr"
+    },
+    {
+      "argv": [
+        "uv",
+        "run",
+        "--no-sync",
+        "pytest",
+        "--version"
+      ],
+      "cwd": "/tmp/pydantic-oracle-htud0oly/repo",
+      "exit_code": 0,
+      "wall_time_seconds": 7.454,
+      "stdout": "pytest-version.stdout",
+      "stderr": "pytest-version.stderr"
+    },
+    {
+      "argv": [
+        "uv",
+        "run",
+        "--no-sync",
+        "mypy",
+        "pydantic_settings"
+      ],
+      "cwd": "/tmp/pydantic-oracle-htud0oly/repo",
+      "exit_code": 0,
+      "wall_time_seconds": 441.104,
+      "stdout": "mypy.stdout",
+      "stderr": "mypy.stderr"
+    },
+    {
+      "argv": [
+        "uv",
+        "run",
+        "--no-sync",
+        "ruff",
+        "check"
+      ],
+      "cwd": "/tmp/pydantic-oracle-htud0oly/repo",
+      "exit_code": 0,
+      "wall_time_seconds": 1.078,
+      "stdout": "ruff.stdout",
+      "stderr": "ruff.stderr"
+    },
+    {
+      "argv": [
+        "uv",
+        "run",
+        "--no-sync",
+        "ruff",
+        "format",
+        "--check",
+        "pydantic_settings",
+        "tests"
+      ],
+      "cwd": "/tmp/pydantic-oracle-htud0oly/repo",
+      "exit_code": 0,
+      "wall_time_seconds": 0.579,
+      "stdout": "format.stdout",
+      "stderr": "format.stderr"
+    },
+    {
+      "argv": [
+        "uv",
+        "run",
+        "--no-sync",
+        "coverage",
+        "run",
+        "-m",
+        "pytest"
+      ],
+      "cwd": "/tmp/pydantic-oracle-htud0oly/repo",
+      "exit_code": 0,
+      "wall_time_seconds": 739.425,
+      "stdout": "pytest-coverage.stdout",
+      "stderr": "pytest-coverage.stderr"
+    },
+    {
+      "argv": [
+        "uv",
+        "run",
+        "--no-sync",
+        "coverage",
+        "report",
+        "--include=pydantic_settings/*"
+      ],
+      "cwd": "/tmp/pydantic-oracle-htud0oly/repo",
+      "exit_code": 0,
+      "wall_time_seconds": 4.822,
+      "stdout": "coverage-report.stdout",
+      "stderr": "coverage-report.stderr"
+    },
+    {
+      "argv": [
+        "uv",
+        "run",
+        "--no-sync",
+        "coverage",
+        "json",
+        "-o",
+        "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-evidence/1109-head/coverage.json"
+      ],
+      "cwd": "/tmp/pydantic-oracle-htud0oly/repo",
+      "exit_code": 0,
+      "wall_time_seconds": 7.541,
+      "stdout": "coverage-json.stdout",
+      "stderr": "coverage-json.stderr"
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "cwd": "/tmp/pydantic-oracle-htud0oly/repo",
+      "exit_code": 0,
+      "wall_time_seconds": 0.528,
+      "stdout": "tracked-status.stdout",
+      "stderr": "tracked-status.stderr"
+    }
+  ],
+  "lockfile_sha256": "a6c5b41872992fbdd21621bed21c3d3ca592bc02ab0765530d35697708136534",
+  "wall_time_seconds": 1286.965
+}
