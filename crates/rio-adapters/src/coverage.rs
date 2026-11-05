@@ -8,7 +8,7 @@ use rio_core::{
     Category, CheckDetails, CheckOutcome, EvidenceLevel, ExcludedFile, FailureReason, Finding,
     Location, OccurrenceState, Severity, Source, State, finding_id,
 };
-use rio_git::{Diff, Tree};
+use rio_git::{Diff, FileDiff, LineRange, Tree};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::{
@@ -170,9 +170,114 @@ pub struct CoverageFindings {
     pub excluded: Vec<ExcludedFile>,
 }
 
+// Compare parsed tokens rather than deleting `: ...` or `<...>` with a regex:
+// object properties, comparisons and string contents must remain runtime code.
+struct RuntimeTokens<'a> {
+    tokens: Vec<(LineRange, &'a str)>,
+    types: Vec<LineRange>,
+}
+
+fn typescript_runtime_tokens<'a>(
+    path: &str,
+    source: &'a [u8],
+) -> Result<Option<RuntimeTokens<'a>>> {
+    let parsed = crate::parse_source(path, source)?;
+    if parsed.root_node().has_error() {
+        return Ok(None);
+    }
+    fn collect<'a>(node: tree_sitter::Node<'_>, source: &'a [u8], result: &mut RuntimeTokens<'a>) {
+        let range = LineRange {
+            start: node.start_position().row as u32 + 1,
+            count: (node.end_position().row - node.start_position().row) as u32 + 1,
+        };
+        let mut cursor = node.walk();
+        let erased = matches!(
+            node.kind(),
+            "type_annotation"
+                | "type_arguments"
+                | "type_parameters"
+                | "interface_declaration"
+                | "type_alias_declaration"
+                | "ambient_declaration"
+        ) || matches!(node.kind(), "import_statement" | "export_statement")
+            && node.children(&mut cursor).any(|child| {
+                child.kind() == "type"
+                    || matches!(
+                        child.kind(),
+                        "interface_declaration" | "type_alias_declaration"
+                    )
+            });
+        if erased {
+            result.types.push(range);
+        } else if node.kind().contains("comment") {
+            // Comments do not change runtime behavior.
+        } else if node.child_count() == 0 {
+            result.tokens.push((
+                range,
+                std::str::from_utf8(&source[node.byte_range()]).unwrap_or_default(),
+            ));
+        } else {
+            for child in node.children(&mut cursor) {
+                collect(child, source, result);
+            }
+        }
+    }
+    let mut result = RuntimeTokens {
+        tokens: Vec::new(),
+        types: Vec::new(),
+    };
+    collect(parsed.root_node(), source, &mut result);
+    Ok(Some(result))
+}
+
+fn overlaps(left: LineRange, right: LineRange) -> bool {
+    left.count > 0
+        && right.count > 0
+        && left.start < right.start + right.count
+        && right.start < left.start + left.count
+}
+
+fn type_only_changes(base: &Tree, tree: &Tree, file: &FileDiff) -> Result<BTreeSet<u32>> {
+    let mut ignored = BTreeSet::new();
+    if !matches!(
+        file.path.rsplit('.').next(),
+        Some("ts" | "tsx" | "mts" | "cts")
+    ) {
+        return Ok(ignored);
+    }
+    let old_path = file.old_path.as_deref().unwrap_or(&file.path);
+    let before = base
+        .get(old_path)
+        .map_or(&[][..], |entry| entry.content.as_slice());
+    let after = &tree[&file.path].content;
+    let (Some(before), Some(after)) = (
+        typescript_runtime_tokens(old_path, before)?,
+        typescript_runtime_tokens(&file.path, after)?,
+    ) else {
+        return Ok(ignored);
+    };
+    for hunk in &file.hunks {
+        let has_types = before.types.iter().any(|range| overlaps(*range, hunk.base))
+            || after.types.iter().any(|range| overlaps(*range, hunk.head));
+        fn tokens<'a>(tokens: &RuntimeTokens<'a>, range: LineRange) -> Vec<&'a str> {
+            tokens
+                .tokens
+                .iter()
+                .filter(|(lines, _)| overlaps(*lines, range))
+                .map(|(_, text)| *text)
+                .collect::<Vec<_>>()
+        }
+        if has_types && tokens(&before, hunk.base) == tokens(&after, hunk.head) {
+            ignored.extend(hunk.head.start..hunk.head.start + hunk.head.count);
+        }
+    }
+    Ok(ignored)
+}
+
 /// Merge every root's data before calling this function. Otherwise a shared
 /// package covered by its consumer can be incorrectly reported as untested.
 pub fn diff_coverage(
+    base: &Tree,
     tree: &Tree,
     diff: &Diff,
     data: &CoverageData,
@@ -196,10 +301,12 @@ pub fn diff_coverage(
             .iter()
             .flat_map(|hunk| hunk.head.start..hunk.head.start + hunk.head.count)
             .collect();
+        let type_only = type_only_changes(base, tree, file)?;
         let instrumented = if let Some(coverage) = data.get(&file.path) {
             coverage
                 .instrumented
                 .difference(&coverage.executed)
+                .filter(|line| !coverage.excluded.contains(line))
                 .copied()
                 .collect::<BTreeSet<_>>()
         } else {
@@ -225,23 +332,19 @@ pub fn diff_coverage(
                 });
                 continue;
             }
-            if syntax.parse_errors
-                || !relevant.iter().any(|settings| {
-                    settings.static_known
-                        && settings.reports_unloaded
-                        && !settings.excludes(&file.path).unwrap_or(true)
-                })
-            {
-                result.excluded.push(ExcludedFile {
-                    path: file.path.clone(),
-                    reason: "coverage_not_instrumented".into(),
-                });
-                continue;
-            }
-            syntax.executable_lines.clone()
+            // A source heuristic cannot prove that a line was instrumented.
+            // Only report entries establish executable lines for diff coverage.
+            result.excluded.push(ExcludedFile {
+                path: file.path.clone(),
+                reason: "coverage_not_instrumented".into(),
+            });
+            continue;
         };
         let mut groups = BTreeMap::<String, BTreeSet<u32>>::new();
         for line in instrumented.intersection(&added) {
+            if type_only.contains(line) {
+                continue;
+            }
             let symbol = syntax
                 .symbols
                 .iter()

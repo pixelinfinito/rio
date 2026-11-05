@@ -56,6 +56,10 @@ Tree-sitter grammars and embedded queries produce symbols, imports, identifiers 
 
 Coverage settings come from static Vitest/Jest configuration or coverage.py configuration. Rio does not execute JavaScript configuration to inspect it. Computed instrumentation settings yield `coverage_not_instrumented`. Coverage exclusions are shown explicitly. Usable line data from all scheduled roots is merged by repository path before diff coverage is computed, so consumer tests may cover shared workspace code. Failed test runs can contribute partial data while the check remains failed.
 
+Only changed lines explicitly listed as executable by a coverage report can produce `coverage/untested_change`: LCOV `DA` entries or coverage.py's executed/missing line arrays. A missing line is not an uncovered line, and a missing file is reported as `coverage_not_instrumented` (or `coverage_excluded` when configured); syntax never invents zero-hit counters.
+
+For TypeScript, Rio compares each changed hunk in the immutable base and head after removing parsed type annotations, type arguments/parameters, interfaces, aliases, ambient declarations and type-only imports/exports. Identical remaining runtime tokens establish a type-only change even when instrumentation maps a synthetic counter to the line (including zero hits in both versions). This syntactic proof does not require running baseline tests or assuming coverage hit counts imply equivalent behavior. Parse errors prevent this exemption; object properties, comparison operators, runtime imports, enums and string contents remain runtime tokens.
+
 ## Dependencies and secrets
 
 npm, pnpm, yarn classic/node-modules and Python uv/Poetry/exact requirements lockfiles feed the effective dependency graph. Installation metadata, location/version resolution, platform markers, omitted groups and in-repository links control compatibility. This graph is shared by planner, baseline identity and changed-version OSV auditing. A known mismatch is never bypassed by trust.

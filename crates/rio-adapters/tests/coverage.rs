@@ -83,7 +83,7 @@ fn types_comments_and_static_exclusions_are_distinct_from_unknown_instrumentatio
     let ts = typescript_coverage_settings(&tree, ".", "vitest", "vitest/2.1.9 linux-x64 node-v26")
         .unwrap();
     assert!(!ts.static_known);
-    let result = diff_coverage(&tree, &diff, &CoverageData::new(), &[ts]).unwrap();
+    let result = diff_coverage(&Tree::new(), &tree, &diff, &CoverageData::new(), &[ts]).unwrap();
     assert!(result.findings.is_empty());
     assert!(
         !result
@@ -99,7 +99,7 @@ fn types_comments_and_static_exclusions_are_distinct_from_unknown_instrumentatio
     );
     let py = python_coverage_settings(&tree, ".").unwrap();
     assert!(py.add_python_source);
-    let result = diff_coverage(&tree, &diff, &CoverageData::new(), &[py]).unwrap();
+    let result = diff_coverage(&Tree::new(), &tree, &diff, &CoverageData::new(), &[py]).unwrap();
     assert!(
         result
             .excluded
@@ -126,7 +126,7 @@ fn types_comments_and_static_exclusions_are_distinct_from_unknown_instrumentatio
     let diff = rio_git::diff(&change, &[]).unwrap();
     let data = parse_lcov(b"SF:math.ts\nDA:3,0\nend_of_record\n", &context()).unwrap();
     assert!(
-        diff_coverage(&change.head, &diff, &data, &[])
+        diff_coverage(&change.base, &change.head, &diff, &data, &[])
             .unwrap()
             .findings
             .is_empty()
@@ -191,7 +191,7 @@ fn coverage_from_a_consumer_covers_a_changed_shared_package() {
     merge_coverage(&mut data, shared);
     merge_coverage(&mut data, consumer);
     assert!(
-        diff_coverage(&change.head, &diff, &data, &[])
+        diff_coverage(&change.base, &change.head, &diff, &data, &[])
             .unwrap()
             .findings
             .is_empty()
@@ -302,7 +302,8 @@ async fn installed_vitest_and_python_coverage_report_untested_functions_and_omit
             );
             assert!(!run.data.is_empty());
             let (tree, diff) = all_diff(tree);
-            let findings = diff_coverage(&tree, &diff, &run.data, &[settings]).unwrap();
+            let findings =
+                diff_coverage(&Tree::new(), &tree, &diff, &run.data, &[settings]).unwrap();
             assert!(
                 findings
                     .findings
@@ -398,5 +399,213 @@ async fn python_parallel_coverage_data_is_combined_before_export() {
         );
         assert!(!run.data.is_empty());
         assert_eq!(run.processes.len(), 3);
+    }
+}
+
+#[test]
+fn hono_annotation_only_change_ignores_synthetic_zero_hit_counter() {
+    let path = "deno_dist/helper/factory/index.ts";
+    let base: Tree = [(
+        path.into(),
+        entry(include_str!(
+            "fixtures/coverage-regressions/hono-type-only.base.ts"
+        )),
+    )]
+    .into();
+    let head: Tree = [(
+        path.into(),
+        entry(include_str!(
+            "fixtures/coverage-regressions/hono-type-only.head.ts"
+        )),
+    )]
+    .into();
+    let change = changes(base, head);
+    let diff = rio_git::diff(&change, &[]).unwrap();
+    assert_eq!(diff.files[0].hunks[0].head.start, 2);
+    let data = parse_lcov(
+        include_bytes!("fixtures/coverage-regressions/hono-type-only.lcov"),
+        &context(),
+    )
+    .unwrap();
+    assert!(data[path].instrumented.contains(&2));
+    assert!(!data[path].executed.contains(&2));
+    assert!(
+        diff_coverage(&change.base, &change.head, &diff, &data, &[])
+            .unwrap()
+            .findings
+            .is_empty()
+    );
+}
+
+#[test]
+fn typescript_type_positions_are_erased_but_runtime_changes_remain() {
+    for (before, after, expected) in [
+        (
+            "function f(value: string) { return value; }",
+            "function f(value: number) { return value; }",
+            0,
+        ),
+        (
+            "function f<T>(value: T) { return value; }",
+            "function f<T extends string>(value: T) { return value; }",
+            0,
+        ),
+        (
+            "export interface User { name: string }",
+            "export interface User { name: number }",
+            0,
+        ),
+        (
+            "export type Id = string;",
+            "export type Id = string | number;",
+            0,
+        ),
+        (
+            "import type { Id } from './old';",
+            "import type { Id } from './new';",
+            0,
+        ),
+        (
+            "export type { Id } from './old';",
+            "export type { Id } from './new';",
+            0,
+        ),
+        ("", "export interface User { name: string }", 0),
+        (
+            "const value: string = oldValue;",
+            "const value: number = newValue;",
+            1,
+        ),
+        (
+            "const value = {password: oldValue};",
+            "const value = {password: newValue};",
+            1,
+        ),
+        (
+            "const value = a < b && c > d;",
+            "const value = a < b && c > e;",
+            1,
+        ),
+        (
+            "const value: string = 'old';",
+            "const value: string = 'new';",
+            1,
+        ),
+        (
+            "import type { Id } from './types';",
+            "import { Id } from './types';",
+            1,
+        ),
+        ("enum Value { One = 1 }", "enum Value { One = 2 }", 1),
+        ("", "const value: number = compute();", 1),
+        // Invalid syntax must not qualify for type erasure.
+        ("const value: = oldValue;", "const value: = newValue;", 1),
+    ] {
+        let before = format!("{before}\n");
+        let after = format!("{after}\n");
+        let change = changes(
+            [("value.ts".into(), entry(&before))].into(),
+            [("value.ts".into(), entry(&after))].into(),
+        );
+        let diff = rio_git::diff(&change, &[]).unwrap();
+        let data = parse_lcov(b"SF:value.ts\nDA:1,0\nend_of_record\n", &context()).unwrap();
+        let findings = diff_coverage(&change.base, &change.head, &diff, &data, &[]).unwrap();
+        assert_eq!(findings.findings.len(), expected, "{before} -> {after}");
+    }
+}
+
+#[test]
+fn diff_coverage_requires_reported_executable_lines_for_each_format() {
+    for (path, source, bytes, python) in [
+        (
+            "math.ts",
+            "export const first = 1;\nexport const second = compute();\n",
+            "SF:math.ts\nDA:1,1\nend_of_record\n",
+            false,
+        ),
+        (
+            "math.py",
+            "first = 1\nsecond = compute()\n",
+            r#"{"files":{"math.py":{"executed_lines":[1],"missing_lines":[],"excluded_lines":[]}}}"#,
+            true,
+        ),
+    ] {
+        let (tree, diff) = all_diff([(path.into(), entry(source))].into());
+        let data = if python {
+            parse_python_coverage(bytes.as_bytes(), &context()).unwrap()
+        } else {
+            parse_lcov(bytes.as_bytes(), &context()).unwrap()
+        };
+        assert!(
+            diff_coverage(&Tree::new(), &tree, &diff, &data, &[])
+                .unwrap()
+                .findings
+                .is_empty()
+        );
+        // Report the new statement as executable with zero hits: it now warrants a finding.
+        let mut uncovered = data;
+        uncovered.get_mut(path).unwrap().instrumented.insert(2);
+        let result = diff_coverage(&Tree::new(), &tree, &diff, &uncovered, &[]).unwrap();
+        assert_eq!(result.findings.len(), 1);
+        assert_eq!(result.findings[0].location.line_start, 2);
+        // Even all-files settings cannot establish counters for an absent file.
+        let settings = CoverageSettings {
+            language: if python { "python" } else { "typescript" }.into(),
+            root: ".".into(),
+            static_known: true,
+            reports_unloaded: true,
+            ..Default::default()
+        };
+        let result = diff_coverage(
+            &Tree::new(),
+            &tree,
+            &diff,
+            &CoverageData::new(),
+            &[settings],
+        )
+        .unwrap();
+        assert!(result.findings.is_empty());
+        assert_eq!(result.excluded[0].reason, "coverage_not_instrumented");
+    }
+}
+
+#[test]
+fn multiline_type_changes_do_not_hide_runtime_string_or_statement_changes() {
+    for (before, after, expected) in [
+        (
+            "interface User {\nname: string;\n}",
+            "interface User {\nname: string;\nid: number;\n}",
+            0,
+        ),
+        ("type Id =\n string;", "type Id =\n string | number;", 0),
+        (
+            "const value: string = `first\nold\nlast`;",
+            "const value: string = `first\nnew\nlast`;",
+            1,
+        ),
+        (
+            "function f(value: string) {\n return 'old';\n}",
+            "function f(value: number) {\n return 'new';\n}",
+            1,
+        ),
+    ] {
+        let change = changes(
+            [("value.ts".into(), entry(before))].into(),
+            [("value.ts".into(), entry(after))].into(),
+        );
+        let diff = rio_git::diff(&change, &[]).unwrap();
+        let data = parse_lcov(
+            b"SF:value.ts\nDA:1,0\nDA:2,0\nDA:3,0\nDA:4,0\nend_of_record\n",
+            &context(),
+        )
+        .unwrap();
+        assert_eq!(
+            diff_coverage(&change.base, &change.head, &diff, &data, &[])
+                .unwrap()
+                .findings
+                .len(),
+            expected,
+            "{before} -> {after}"
+        );
     }
 }
