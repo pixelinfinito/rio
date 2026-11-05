@@ -1,0 +1,61 @@
+[
+  {
+    "argv": [
+      "corepack",
+      "pnpm",
+      "exec",
+      "tsc",
+      "--noEmit",
+      "--pretty",
+      "false",
+      "-p",
+      "packages/zod/tsconfig.test.json"
+    ],
+    "cwd": "/tmp/rio-zod-eval/negative-base",
+    "exit_code": 0,
+    "wall_time_seconds": 49.921,
+    "log": "base-repair-01.log"
+  },
+  {
+    "argv": [
+      "corepack",
+      "pnpm",
+      "exec",
+      "zshy",
+      "--project",
+      "tsconfig.build.json"
+    ],
+    "cwd": "/tmp/rio-zod-eval/negative-base/packages/zod",
+    "exit_code": 0,
+    "wall_time_seconds": 138.96,
+    "log": "base-repair-02.log"
+  },
+  {
+    "argv": [
+      "git",
+      "diff",
+      "--exit-code"
+    ],
+    "cwd": "/tmp/rio-zod-eval/negative-base",
+    "exit_code": 0,
+    "wall_time_seconds": 3.608,
+    "log": "base-repair-03.log"
+  },
+  {
+    "argv": [
+      "corepack",
+      "pnpm",
+      "exec",
+      "vitest",
+      "run",
+      "packages/treeshake",
+      "--maxWorkers=2",
+      "--testTimeout=60000",
+      "--hookTimeout=60000"
+    ],
+    "cwd": "/tmp/rio-zod-eval/negative-base",
+    "exit_code": 0,
+    "wall_time_seconds": 29.521,
+    "log": "base-repair-04.log"
+  }
+]

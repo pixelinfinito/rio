@@ -1,0 +1,78 @@
+[
+  {
+    "revision": "base",
+    "project": ".",
+    "argv": [
+      "corepack",
+      "pnpm",
+      "exec",
+      "tsc",
+      "--noEmit",
+      "--pretty",
+      "false",
+      "-p",
+      "."
+    ],
+    "cwd": "/tmp/rio-zod-eval/negative-base",
+    "exit_code": 2,
+    "wall_time_seconds": 40.818,
+    "log": "adjudication-base-root.log"
+  },
+  {
+    "revision": "base",
+    "project": "packages/zod",
+    "argv": [
+      "corepack",
+      "pnpm",
+      "exec",
+      "tsc",
+      "--noEmit",
+      "--pretty",
+      "false",
+      "-p",
+      "packages/zod"
+    ],
+    "cwd": "/tmp/rio-zod-eval/negative-base",
+    "exit_code": 2,
+    "wall_time_seconds": 30.017,
+    "log": "adjudication-base-packages-zod.log"
+  },
+  {
+    "revision": "head",
+    "project": ".",
+    "argv": [
+      "corepack",
+      "pnpm",
+      "exec",
+      "tsc",
+      "--noEmit",
+      "--pretty",
+      "false",
+      "-p",
+      "."
+    ],
+    "cwd": "/tmp/rio-zod-eval/zod",
+    "exit_code": 2,
+    "wall_time_seconds": 40.002,
+    "log": "adjudication-head-root.log"
+  },
+  {
+    "revision": "head",
+    "project": "packages/zod",
+    "argv": [
+      "corepack",
+      "pnpm",
+      "exec",
+      "tsc",
+      "--noEmit",
+      "--pretty",
+      "false",
+      "-p",
+      "packages/zod"
+    ],
+    "cwd": "/tmp/rio-zod-eval/zod",
+    "exit_code": 2,
+    "wall_time_seconds": 30.578,
+    "log": "adjudication-head-packages-zod.log"
+  }
+]

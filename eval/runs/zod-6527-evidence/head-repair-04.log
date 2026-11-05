@@ -1,0 +1,65 @@
+Testing types with tsc and vue-tsc is an experimental feature.
+Breaking changes might not follow SemVer, please pin Vitest's version when using it.
+Testing types with tsc and vue-tsc is an experimental feature.
+Breaking changes might not follow SemVer, please pin Vitest's version when using it.
+Testing types with tsc and vue-tsc is an experimental feature.
+Breaking changes might not follow SemVer, please pin Vitest's version when using it.
+Testing types with tsc and vue-tsc is an experimental feature.
+Breaking changes might not follow SemVer, please pin Vitest's version when using it.
+
+ RUN  v4.1.5 /tmp/rio-zod-eval/zod
+
+ ❯ |@zod/treeshaking| bundle-size.test.ts (4 tests | 1 failed) 5391ms
+   × zod-mini-boolean stays under 3002 gzipped bytes 5013ms
+ ❯ |@zod/treeshaking| default-locale.test.ts (2 tests | 2 failed) 14165ms
+   × a tree-shaken bundle keeps the default English locale 8477ms
+   × an explicitly configured locale still wins in a tree-shaken bundle 5004ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |@zod/treeshaking| bundle-size.test.ts > zod-mini-boolean stays under 3002 gzipped bytes
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ bundle-size.test.ts:80:3
+     78|
+     79| for (const [fixture, ceiling] of Object.entries(CEILINGS)) {
+     80|   test(`${fixture} stays under ${ceiling} gzipped bytes`, async () => {
+       |   ^
+     81|     const code = await bundle(fixture);
+     82|     const size = gzipSync(Buffer.from(code), { level: 9 }).length;
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  |@zod/treeshaking| default-locale.test.ts > a tree-shaken bundle keeps the default English locale
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ default-locale.test.ts:67:1
+     65| }
+     66|
+     67| test("a tree-shaken bundle keeps the default English locale", async ()…
+       | ^
+     68|   const { message } = await bundleAndRun(
+     69|     `import * as z from "zod/v4";
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  |@zod/treeshaking| default-locale.test.ts > an explicitly configured locale still wins in a tree-shaken bundle
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ default-locale.test.ts:75:1
+     73| });
+     74|
+     75| test("an explicitly configured locale still wins in a tree-shaken bund…
+       | ^
+     76|   const { message } = await bundleAndRun(
+     77|     `import * as z from "zod/v4";
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  2 failed | 1 passed (3)
+      Tests  3 failed | 9 passed (12)
+Type Errors  no errors
+   Start at  02:30:59
+   Duration  36.39s (transform 26.13s, setup 0ms, import 1.38s, tests 26.05s, environment 1ms)
+

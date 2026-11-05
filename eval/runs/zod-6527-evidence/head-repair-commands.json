@@ -1,0 +1,59 @@
+[
+  {
+    "argv": [
+      "corepack",
+      "pnpm",
+      "exec",
+      "tsc",
+      "--noEmit",
+      "--pretty",
+      "false",
+      "-p",
+      "packages/zod/tsconfig.test.json"
+    ],
+    "cwd": "/tmp/rio-zod-eval/zod",
+    "exit_code": 0,
+    "wall_time_seconds": 30.416,
+    "log": "head-repair-01.log"
+  },
+  {
+    "argv": [
+      "corepack",
+      "pnpm",
+      "exec",
+      "zshy",
+      "--project",
+      "tsconfig.build.json"
+    ],
+    "cwd": "/tmp/rio-zod-eval/zod/packages/zod",
+    "exit_code": 0,
+    "wall_time_seconds": 168.529,
+    "log": "head-repair-02.log"
+  },
+  {
+    "argv": [
+      "git",
+      "diff",
+      "--exit-code"
+    ],
+    "cwd": "/tmp/rio-zod-eval/zod",
+    "exit_code": 0,
+    "wall_time_seconds": 8.003,
+    "log": "head-repair-03.log"
+  },
+  {
+    "argv": [
+      "corepack",
+      "pnpm",
+      "exec",
+      "vitest",
+      "run",
+      "packages/treeshake",
+      "--maxWorkers=2"
+    ],
+    "cwd": "/tmp/rio-zod-eval/zod",
+    "exit_code": 1,
+    "wall_time_seconds": 45.529,
+    "log": "head-repair-04.log"
+  }
+]

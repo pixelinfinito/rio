@@ -1,0 +1,113 @@
+{
+  "repository": "colinhacks/zod",
+  "pr": "https://github.com/colinhacks/zod/pull/6527",
+  "case_id": "6527-attempt1-excluded",
+  "languages": [
+    "typescript"
+  ],
+  "reviewer": "sub-agent eval-zod (automated)",
+  "verdict_source": "automated",
+  "commands": [
+    "cwd=/tmp/rio-eval-2azesekp argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/colinhacks/zod.git\", \"/tmp/rio-eval-2azesekp/head\"]",
+    "cwd=/tmp/rio-eval-2azesekp/head argv=[\"git\", \"fetch\", \"origin\", \"b801439b5fb160d651084ff7d7c27a61e24a7334\", \"cbeac9415dc218eae98eaebc35971c0b6743528b\"]",
+    "cwd=/tmp/rio-eval-2azesekp/head argv=[\"git\", \"merge-base\", \"b801439b5fb160d651084ff7d7c27a61e24a7334\", \"cbeac9415dc218eae98eaebc35971c0b6743528b\"]",
+    "cwd=/tmp/rio-eval-2azesekp/head argv=[\"git\", \"checkout\", \"--detach\", \"cbeac9415dc218eae98eaebc35971c0b6743528b\"]",
+    "cwd=/tmp/rio-eval-2azesekp argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/tmp/rio-eval-2azesekp/head\", \"/tmp/rio-eval-2azesekp/base\"]",
+    "cwd=/tmp/rio-eval-2azesekp/base argv=[\"git\", \"checkout\", \"--detach\", \"b801439b5fb160d651084ff7d7c27a61e24a7334\"]",
+    "cwd=/tmp/rio-eval-2azesekp/base argv=[\"corepack\", \"pnpm\", \"install\", \"--frozen-lockfile\"]",
+    "cwd=/tmp/rio-eval-2azesekp/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/tmp/rio-eval-2azesekp/head argv=[\"corepack\", \"pnpm\", \"install\", \"--frozen-lockfile\"]",
+    "cwd=/tmp/rio-eval-2azesekp/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/tmp/rio-eval-2azesekp/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/tmp/rio-eval-2azesekp/head argv=[\"node\", \"--version\"]",
+    "cwd=/tmp/rio-eval-2azesekp/head argv=[\"npm\", \"--version\"]",
+    "cwd=/tmp/rio-eval-2azesekp/head argv=[\"corepack\", \"--version\"]",
+    "cwd=/tmp/rio-eval-2azesekp/head argv=[\"python3\", \"--version\"]",
+    "cwd=/tmp/rio-eval-2azesekp/head argv=[\"uv\", \"--version\"]",
+    "cwd=/tmp/rio-eval-2azesekp/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6527/profile.yaml\"]",
+    "cwd=/tmp/rio-eval-2azesekp/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/tmp/rio-eval-2azesekp/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"b801439b5fb160d651084ff7d7c27a61e24a7334\", \"--format\", \"json\", \"--offline\", \"--profile\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6527/profile.yaml\"]",
+    "Independent oracle ledger: eval/runs/zod-6527-evidence/adjudication-commands.json",
+    "Independent oracle ledger: eval/runs/zod-6527-evidence/base-commands.json",
+    "Independent oracle ledger: eval/runs/zod-6527-evidence/base-repair-commands.json",
+    "Independent oracle ledger: eval/runs/zod-6527-evidence/base-setup1-commands.json",
+    "Independent oracle ledger: eval/runs/zod-6527-evidence/head-commands.json",
+    "Independent oracle ledger: eval/runs/zod-6527-evidence/head-repair-commands.json"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6527/commands.json; Rio binary SHA-256: 512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+    "Excluded evidence only: no base check ran and baseline_classification_ran=false. No precision, recall, usefulness, or release credit is claimed from this run.",
+    "Independent evidence: ../zod-6527-evidence/selection.json and oracle command ledgers; detailed exclusions and reproduction in ../zod-NOTES.md.",
+    "No raw finding/check has been edited or removed. No trust override, source change, lockfile update, or binary rebuild was used.",
+    "Independent negative-control assessment: upstream test tsconfig and Biome lint pass both revisions; source + repaired build-dependent tests total base 7855/head 7858 with no type errors. See ../zod-6527-evidence/independent-assessment.json. Raw default root tsc includes unrelated pre-existing tests/benchmarks and build-dependent consumer fixtures.",
+    "Original disk-backed attempt was interrupted after prolonged filesystem journal waits and replaced by a same-input RAM-backed corrective retry. See ../zod-original-capture-cancellation.json; original report is partial and excluded."
+  ],
+  "independently_clean": true,
+  "positive_control": {
+    "kind": "none",
+    "expected": []
+  },
+  "misses": [],
+  "findings": {
+    "034ba9bebadec8dfecdc1eae53168590bd4868a51aec4bc5916051e7e46aeb94": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base tsc output ../zod-6527-evidence/adjudication-base-packages-zod.log:5 contains the same file, diagnostic TS6133, and message. This is an existing diagnostic from the raw default config (including test-only unused declarations or unrelated fixtures/benchmarks), not introduced by this PR. Upstream test-config/typecheck evidence is separately retained. Rio labels it pre-existing but has no executed baseline; base status here comes from the independent oracle. Run excluded."
+    },
+    "0512d38c397f9a7ac2bd92325b848e3dc36a542a91501293c6d6ec4fd4f45da7": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base tsc output ../zod-6527-evidence/adjudication-base-packages-zod.log:7 contains the same file, diagnostic TS6133, and message. This is an existing diagnostic from the raw default config (including test-only unused declarations or unrelated fixtures/benchmarks), not introduced by this PR. Upstream test-config/typecheck evidence is separately retained. Rio labels it pre-existing but has no executed baseline; base status here comes from the independent oracle. Run excluded."
+    },
+    "1757c2281fc7cf018d2d2e72b5711caff1dcd539eb2b51966b396344c8683f85": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base tsc output ../zod-6527-evidence/adjudication-base-packages-zod.log:3 contains the same file, diagnostic TS6196, and message. This is an existing diagnostic from the raw default config (including test-only unused declarations or unrelated fixtures/benchmarks), not introduced by this PR. Upstream test-config/typecheck evidence is separately retained. Rio labels it pre-existing but has no executed baseline; base status here comes from the independent oracle. Run excluded."
+    },
+    "256fddabddd1bb52ff96f4656d0ad66f590c3fd9752d036a020d9476bc0290b2": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base tsc output ../zod-6527-evidence/adjudication-base-packages-zod.log:1 contains the same file, diagnostic TS6196, and message. This is an existing diagnostic from the raw default config (including test-only unused declarations or unrelated fixtures/benchmarks), not introduced by this PR. Upstream test-config/typecheck evidence is separately retained. Rio labels it pre-existing but has no executed baseline; base status here comes from the independent oracle. Run excluded."
+    },
+    "56357190303cc4a1945aa5385668fa0e4314c03e8e21dd3a743669b2810f6b7c": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base tsc output ../zod-6527-evidence/adjudication-base-packages-zod.log:13 contains the same file, diagnostic TS6133, and message. This is an existing diagnostic from the raw default config (including test-only unused declarations or unrelated fixtures/benchmarks), not introduced by this PR. Upstream test-config/typecheck evidence is separately retained. Rio labels it pre-existing but has no executed baseline; base status here comes from the independent oracle. Run excluded."
+    },
+    "67c341e462a628fd2b4f1f0429fdef0c904666c638034d0f3790a9dfe2189c14": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base tsc output ../zod-6527-evidence/adjudication-base-packages-zod.log:11 contains the same file, diagnostic TS6196, and message. This is an existing diagnostic from the raw default config (including test-only unused declarations or unrelated fixtures/benchmarks), not introduced by this PR. Upstream test-config/typecheck evidence is separately retained. Rio labels it pre-existing but has no executed baseline; base status here comes from the independent oracle. Run excluded."
+    },
+    "72f77d40f485bfde39b4009b1ca92349f7621c264dbf06595dc29539dc263cdf": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base tsc output ../zod-6527-evidence/adjudication-base-packages-zod.log:2 contains the same file, diagnostic TS6196, and message. This is an existing diagnostic from the raw default config (including test-only unused declarations or unrelated fixtures/benchmarks), not introduced by this PR. Upstream test-config/typecheck evidence is separately retained. Rio labels it pre-existing but has no executed baseline; base status here comes from the independent oracle. Run excluded."
+    },
+    "7fd4d42818f12b4eca74614ac7ad1fd61688407474d442b743a440cfbf56a26b": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base tsc output ../zod-6527-evidence/adjudication-base-packages-zod.log:15 contains the same file, diagnostic TS6196, and message. This is an existing diagnostic from the raw default config (including test-only unused declarations or unrelated fixtures/benchmarks), not introduced by this PR. Upstream test-config/typecheck evidence is separately retained. Rio labels it pre-existing but has no executed baseline; base status here comes from the independent oracle. Run excluded."
+    },
+    "92d1ab1c8d7b3161d7fd213f726903e12a428ffe017b003444968e1be41521ec": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base tsc output ../zod-6527-evidence/adjudication-base-packages-zod.log:6 contains the same file, diagnostic TS6133, and message. This is an existing diagnostic from the raw default config (including test-only unused declarations or unrelated fixtures/benchmarks), not introduced by this PR. Upstream test-config/typecheck evidence is separately retained. Rio labels it pre-existing but has no executed baseline; base status here comes from the independent oracle. Run excluded."
+    },
+    "93298bec4bd1703d3907c6a11293a1cb6bdd0fb0318d4319c32f4ca52b404837": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base tsc output ../zod-6527-evidence/adjudication-base-packages-zod.log:9 contains the same file, diagnostic TS6196, and message. This is an existing diagnostic from the raw default config (including test-only unused declarations or unrelated fixtures/benchmarks), not introduced by this PR. Upstream test-config/typecheck evidence is separately retained. Rio labels it pre-existing but has no executed baseline; base status here comes from the independent oracle. Run excluded."
+    },
+    "98e7bead498a71fbc361f462ec2ff2bfa096ea87adf65f918cdbebe30bb9a015": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base tsc output ../zod-6527-evidence/adjudication-base-packages-zod.log:14 contains the same file, diagnostic TS6133, and message. This is an existing diagnostic from the raw default config (including test-only unused declarations or unrelated fixtures/benchmarks), not introduced by this PR. Upstream test-config/typecheck evidence is separately retained. Rio labels it pre-existing but has no executed baseline; base status here comes from the independent oracle. Run excluded."
+    },
+    "b6b83f6da96e5751a8b5109efc011111fab2ea0e8642557b4a7bc4502924c44c": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base tsc output ../zod-6527-evidence/adjudication-base-packages-zod.log:12 contains the same file, diagnostic TS6196, and message. This is an existing diagnostic from the raw default config (including test-only unused declarations or unrelated fixtures/benchmarks), not introduced by this PR. Upstream test-config/typecheck evidence is separately retained. Rio labels it pre-existing but has no executed baseline; base status here comes from the independent oracle. Run excluded."
+    },
+    "c93752c7f0e523cd5af4704f15977e17e436ec3d4f14ff7fa4ea0510ffbb556f": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base tsc output ../zod-6527-evidence/adjudication-base-packages-zod.log:8 contains the same file, diagnostic TS6133, and message. This is an existing diagnostic from the raw default config (including test-only unused declarations or unrelated fixtures/benchmarks), not introduced by this PR. Upstream test-config/typecheck evidence is separately retained. Rio labels it pre-existing but has no executed baseline; base status here comes from the independent oracle. Run excluded."
+    },
+    "e6aefef7f9baf2ed91c34c655757b37506e51b8f70cff3339a25e56bee4ec76b": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base tsc output ../zod-6527-evidence/adjudication-base-packages-zod.log:10 contains the same file, diagnostic TS6196, and message. This is an existing diagnostic from the raw default config (including test-only unused declarations or unrelated fixtures/benchmarks), not introduced by this PR. Upstream test-config/typecheck evidence is separately retained. Rio labels it pre-existing but has no executed baseline; base status here comes from the independent oracle. Run excluded."
+    },
+    "f56b2867266ccc2d68d7d61a5ee5a99f53f0fadfaeaa359b1a1f3de06e6de55c": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base tsc output ../zod-6527-evidence/adjudication-base-packages-zod.log:4 contains the same file, diagnostic TS6133, and message. This is an existing diagnostic from the raw default config (including test-only unused declarations or unrelated fixtures/benchmarks), not introduced by this PR. Upstream test-config/typecheck evidence is separately retained. Rio labels it pre-existing but has no executed baseline; base status here comes from the independent oracle. Run excluded."
+    }
+  }
+}

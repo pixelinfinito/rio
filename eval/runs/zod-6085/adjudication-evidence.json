@@ -1,0 +1,392 @@
+[
+  {
+    "finding_id": "034ba9bebadec8dfecdc1eae53168590bd4868a51aec4bc5916051e7e46aeb94",
+    "rule_id": "typecheck/tsc/TS6133",
+    "path": "packages/zod/src/v4/classic/tests/assignability.test.ts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-zod.log",
+        "line": 5
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 26
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-zod.log",
+        "line": 5
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 42
+      }
+    ]
+  },
+  {
+    "finding_id": "0512d38c397f9a7ac2bd92325b848e3dc36a542a91501293c6d6ec4fd4f45da7",
+    "rule_id": "typecheck/tsc/TS6133",
+    "path": "packages/zod/src/v4/classic/tests/assignability.test.ts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-zod.log",
+        "line": 7
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 28
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-zod.log",
+        "line": 7
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 44
+      }
+    ]
+  },
+  {
+    "finding_id": "1757c2281fc7cf018d2d2e72b5711caff1dcd539eb2b51966b396344c8683f85",
+    "rule_id": "typecheck/tsc/TS6196",
+    "path": "packages/zod/src/v3/tests/nativeEnum.test.ts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-zod.log",
+        "line": 3
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 24
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-zod.log",
+        "line": 3
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 40
+      }
+    ]
+  },
+  {
+    "finding_id": "256fddabddd1bb52ff96f4656d0ad66f590c3fd9752d036a020d9476bc0290b2",
+    "rule_id": "typecheck/tsc/TS6196",
+    "path": "packages/zod/src/v3/tests/intersection.test.ts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-zod.log",
+        "line": 1
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 22
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-zod.log",
+        "line": 1
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 38
+      }
+    ]
+  },
+  {
+    "finding_id": "56357190303cc4a1945aa5385668fa0e4314c03e8e21dd3a743669b2810f6b7c",
+    "rule_id": "typecheck/tsc/TS6133",
+    "path": "packages/zod/src/v4/classic/tests/preprocess-types.test.ts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-zod.log",
+        "line": 13
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 34
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-zod.log",
+        "line": 13
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 50
+      }
+    ]
+  },
+  {
+    "finding_id": "67c341e462a628fd2b4f1f0429fdef0c904666c638034d0f3790a9dfe2189c14",
+    "rule_id": "typecheck/tsc/TS6196",
+    "path": "packages/zod/src/v4/classic/tests/enum.test.ts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-zod.log",
+        "line": 11
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 32
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-zod.log",
+        "line": 11
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 48
+      }
+    ]
+  },
+  {
+    "finding_id": "72f77d40f485bfde39b4009b1ca92349f7621c264dbf06595dc29539dc263cdf",
+    "rule_id": "typecheck/tsc/TS6196",
+    "path": "packages/zod/src/v3/tests/nativeEnum.test.ts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-zod.log",
+        "line": 2
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 23
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-zod.log",
+        "line": 2
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 39
+      }
+    ]
+  },
+  {
+    "finding_id": "7fd4d42818f12b4eca74614ac7ad1fd61688407474d442b743a440cfbf56a26b",
+    "rule_id": "typecheck/tsc/TS6196",
+    "path": "packages/zod/src/v4/mini/tests/assignability.test.ts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-zod.log",
+        "line": 15
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 36
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-zod.log",
+        "line": 15
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 52
+      }
+    ]
+  },
+  {
+    "finding_id": "92d1ab1c8d7b3161d7fd213f726903e12a428ffe017b003444968e1be41521ec",
+    "rule_id": "typecheck/tsc/TS6133",
+    "path": "packages/zod/src/v4/classic/tests/assignability.test.ts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-zod.log",
+        "line": 6
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 27
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-zod.log",
+        "line": 6
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 43
+      }
+    ]
+  },
+  {
+    "finding_id": "93298bec4bd1703d3907c6a11293a1cb6bdd0fb0318d4319c32f4ca52b404837",
+    "rule_id": "typecheck/tsc/TS6196",
+    "path": "packages/zod/src/v4/classic/tests/assignability.test.ts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-zod.log",
+        "line": 9
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 30
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-zod.log",
+        "line": 9
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 46
+      }
+    ]
+  },
+  {
+    "finding_id": "98e7bead498a71fbc361f462ec2ff2bfa096ea87adf65f918cdbebe30bb9a015",
+    "rule_id": "typecheck/tsc/TS6133",
+    "path": "packages/zod/src/v4/classic/tests/preprocess-types.test.ts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-zod.log",
+        "line": 14
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 35
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-zod.log",
+        "line": 14
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 51
+      }
+    ]
+  },
+  {
+    "finding_id": "b6b83f6da96e5751a8b5109efc011111fab2ea0e8642557b4a7bc4502924c44c",
+    "rule_id": "typecheck/tsc/TS6196",
+    "path": "packages/zod/src/v4/classic/tests/lazy.test.ts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-zod.log",
+        "line": 12
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 33
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-zod.log",
+        "line": 12
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 49
+      }
+    ]
+  },
+  {
+    "finding_id": "c93752c7f0e523cd5af4704f15977e17e436ec3d4f14ff7fa4ea0510ffbb556f",
+    "rule_id": "typecheck/tsc/TS6133",
+    "path": "packages/zod/src/v4/classic/tests/assignability.test.ts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-zod.log",
+        "line": 8
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 29
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-zod.log",
+        "line": 8
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 45
+      }
+    ]
+  },
+  {
+    "finding_id": "e6aefef7f9baf2ed91c34c655757b37506e51b8f70cff3339a25e56bee4ec76b",
+    "rule_id": "typecheck/tsc/TS6196",
+    "path": "packages/zod/src/v4/classic/tests/enum.test.ts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-zod.log",
+        "line": 10
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 31
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-zod.log",
+        "line": 10
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 47
+      }
+    ]
+  },
+  {
+    "finding_id": "f56b2867266ccc2d68d7d61a5ee5a99f53f0fadfaeaa359b1a1f3de06e6de55c",
+    "rule_id": "typecheck/tsc/TS6133",
+    "path": "packages/zod/src/v3/tests/object.test.ts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-zod.log",
+        "line": 4
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 25
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-zod.log",
+        "line": 4
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 41
+      }
+    ]
+  }
+]

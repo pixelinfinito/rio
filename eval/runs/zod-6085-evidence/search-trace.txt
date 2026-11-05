@@ -1,0 +1,161 @@
+$ ["git", "log", "-1000", "--oneline", "--regexp-ignore-case", "--grep=fix.*\\(type error\\|typecheck\\|lint\\|build\\)"]
+badf0b78 fix(v4): build the catch context from the input that failed (#6192)
+decef9c4 Fix lint
+456af1ea Support metadata in `z.fromJSONSchema()` (#5586)
+0b3093de Fix lint
+f7910528 chore: upgrade vitest to v4 (#5028)
+8de8bad0 Fix windows build
+39f8c45b faster initialization (#5352)
+af447384 Fix lint
+ef95a73b feat(locales): Add Lithuanian (lt) locale (#5210)
+60a93724 Implement `llms-full.txt` (#5004)
+35e6a6f6 Add llms.txt (#4915)
+9a34a3a6 Zod 4.0.11 (#4981)
+7dd74848 v4.0.6 (#4941)
+79d4d80e v4.0.0 (#4844)
+91c9ca63 fix: cleanup _idmap of $ZodRegistry (#4837)
+90fa0cdc Switch to `zshy` (#4777)
+d5e23683 Add `z.stringFormat()` (#4737)
+bd1bddad Fix build
+de3517ee fix(docs): prevent FOUC on website homepage logo (#4716)
+6176dcb5 Improve ISO second handling (#4680)
+4a3baf76 Fix lint
+02f2389f Fix lint
+e0fe7ae9 Fix lint
+30d841d5 Fix build.mts
+b4f38113 Fix build
+85928549 Zod 4 (#4074)
+964d622f Fix lint
+963386df Fix lint
+4641f434 Fix lint
+96510ab3 Fix lint
+fce504fa Fix lint
+18a0c288 Fix lint
+e5e86195 Fix lint
+481c9ba1 Fix lint
+13d9e6bd Fix lint
+bc43ad18 Fix rollup build
+39cbb697 Fix emoji validation, fix lint
+e71c7be1 Fix extract/exclude type error
+767ab1b0 test: additional unit-tests for object (#1729)
+37d83e81 feat: Add `extract`/`exclude` methods to `ZodEnum` (#1652)
+a57fc2da test: add benchmark tests for date and symbol (#1796)
+6e6efc24 Fix lint
+6ce18f3d Fix lint
+4e42ee31 Simplify ZodSymbol, fix build error
+1d16205a feat(enum): return enum from object keys (#1216)
+78369001 Instanceof issue fatal (#1131)
+5cd8d7bd Fix invalid_type errors produced by ZodLiteral to match types and docs
+aa92c712 Fixes for Deno build/test scripts.
+9eaa4b3c Add GitHub Actions workflow to automatically run fixers (formatting/lint) if they weren't run locally.
+787109c5 fixed potential build issue relating to tojson
+
+$ ["git", "show", "decef9c4", "--stat"]
+commit decef9c418d9a598c3f1bada06891ba5d922c5cd
+Author: Colin McDonnell <colinmcd94@gmail.com>
+Date:   Wed Dec 31 14:40:29 2025 -0800
+
+    Fix lint
+
+ packages/integration/fixtures/ai-sdk/index.ts      |  2 +-
+ packages/integration/fixtures/drizzle-zod/index.ts |  2 +-
+ .../integration/fixtures/internal-types/index.ts   |  8 ++---
+ play.ts                                            | 36 +++-------------------
+ 4 files changed, 11 insertions(+), 37 deletions(-)
+
+$ ["git", "show", "0b3093de", "--stat"]
+commit 0b3093dead737f808483e17ed000efd196754f45
+Author: Colin McDonnell <colinmcd94@gmail.com>
+Date:   Mon Dec 29 12:17:38 2025 -0800
+
+    Fix lint
+
+ packages/resolution/attw.test.ts  | 2 +-
+ packages/zod/src/v4/locales/nl.ts | 8 ++------
+ play.ts                           | 2 +-
+ 3 files changed, 4 insertions(+), 8 deletions(-)
+
+$ ["git", "show", "af447384", "--stat"]
+commit af447384379faef28aa857fb53ef1da702c6d408
+Author: Colin McDonnell <colinmcd94@gmail.com>
+Date:   Sun Oct 5 21:20:33 2025 -0700
+
+    Fix lint
+
+ packages/docs/loaders/stars.ts | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
+
+$ ["git", "show", "02f2389f", "--stat"]
+commit 02f2389feeba7f3ab6715b11123865be5a508677
+Author: Colin McDonnell <colinmcd94@gmail.com>
+Date:   Wed May 28 17:17:08 2025 -0700
+
+    Fix lint
+
+ play.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+$ ["git", "show", "937f73c9", "--", "packages/bench/tsconfig.json"]
+commit 937f73c90cac90bd3b99b12c792c289b50416510
+Author: Colin McDonnell <colinmcd94@gmail.com>
+Date:   Wed Sep 10 16:51:58 2025 -0700
+
+    Fix tsconfig issue in bench
+
+diff --git a/packages/bench/tsconfig.json b/packages/bench/tsconfig.json
+index 787210e1..23b7a9bb 100644
+--- a/packages/bench/tsconfig.json
++++ b/packages/bench/tsconfig.json
+@@ -1,5 +1,5 @@
+ {
+-  "extends": "../.configs/tsconfig.base.json",
++  "extends": "../../.configs/tsconfig.base.json",
+   "compilerOptions": {
+     "noEmit": true,
+     "extendedDiagnostics": true,
+
+$ ["git", "blame", "-L", "1,5", "937f73c9^", "--", "packages/bench/tsconfig.json"]
+980e14cdb (Colin McDonnell 2025-08-23 00:09:16 -0700 1) {
+980e14cdb (Colin McDonnell 2025-08-23 00:09:16 -0700 2)   "extends": "../.configs/tsconfig.base.json",
+980e14cdb (Colin McDonnell 2025-08-23 00:09:16 -0700 3)   "compilerOptions": {
+980e14cdb (Colin McDonnell 2025-08-23 00:09:16 -0700 4)     "noEmit": true,
+980e14cdb (Colin McDonnell 2025-08-23 00:09:16 -0700 5)     "extendedDiagnostics": true,
+
+$ ["git", "show", "c46eeff0", "--", "scripts/compile-fuzz.ts"]
+commit c46eeff050f2a6a2ba8db1d14c2c8247bd7623f2
+Author: pullfrog[bot] <226033991+pullfrog[bot]@users.noreply.github.com>
+Date:   Sat Aug 29 12:52:46 2026 -0700
+
+    chore: narrow blanket biome-ignore comments (#6504)
+    
+    * chore: narrow blanket biome-ignore comments
+    
+    Every `// biome-ignore lint:` and `<explanation>` placeholder in the repo now names the rule it suppresses and why. Two suppressions were unnecessary and are gone: `DATA` in the object bench is never reassigned, and the `noInnerDeclarations` ignore next to it never fired at all. Also drops an unused catch binding in the compile fuzzer that was tripping `noUnusedVariables`.
+    
+    * chore: drop the redundant continue and tighten the suppression reasons
+    
+    The trailing continue in extractDefs was the last statement of the loop body, so deleting it is behavior-identical and removes the need for a suppression at all. The remaining reasons are trimmed to one clause each.
+    
+    ---------
+    
+    Co-authored-by: pullfrog[bot] <226033991+pullfrog[bot]@users.noreply.github.com>
+    Co-authored-by: Colin McDonnell <3084745+colinhacks@users.noreply.github.com>
+
+diff --git a/scripts/compile-fuzz.ts b/scripts/compile-fuzz.ts
+index 5a52aa4e..674184bc 100644
+--- a/scripts/compile-fuzz.ts
++++ b/scripts/compile-fuzz.ts
+@@ -353,7 +353,7 @@ for (let r = 0; r < ROUNDS && failures.length < 5; r++) {
+     let got: any;
+     try {
+       expected = built.schema.safeParse(input);
+-    } catch (e) {
++    } catch {
+       continue; // runtime itself throws (e.g. cyclic); not a compiled-path question
+     }
+     try {
+
+$ ["git", "diff", "--stat", "9f0a3d81221e3ab7c09ca4911ef35b54817869a4", "60496a098ae81beb32f705897f960cf99089d243", "--", "package.json", "pnpm-lock.yaml"]
+ package.json | 1 +
+ 1 file changed, 1 insertion(+)
+

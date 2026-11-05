@@ -1,0 +1,91 @@
+[
+  {
+    "argv": [
+      "node",
+      "--version"
+    ],
+    "cwd": "/tmp/rio-zod-eval/zod",
+    "exit_code": 0,
+    "wall_time_seconds": 0.008,
+    "log": "head-01.log"
+  },
+  {
+    "argv": [
+      "corepack",
+      "pnpm",
+      "--version"
+    ],
+    "cwd": "/tmp/rio-zod-eval/zod",
+    "exit_code": 0,
+    "wall_time_seconds": 0.819,
+    "log": "head-02.log"
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "/tmp/rio-zod-eval/zod",
+    "exit_code": 0,
+    "wall_time_seconds": 0.009,
+    "log": "head-03.log"
+  },
+  {
+    "argv": [
+      "corepack",
+      "pnpm",
+      "install",
+      "--frozen-lockfile"
+    ],
+    "cwd": "/tmp/rio-zod-eval/zod",
+    "exit_code": 0,
+    "wall_time_seconds": 4.384,
+    "log": "head-04.log"
+  },
+  {
+    "argv": [
+      "corepack",
+      "pnpm",
+      "exec",
+      "tsc",
+      "--noEmit",
+      "--pretty",
+      "false",
+      "-p",
+      "packages/zod/tsconfig.json"
+    ],
+    "cwd": "/tmp/rio-zod-eval/zod",
+    "exit_code": 2,
+    "wall_time_seconds": 27.901,
+    "log": "head-05.log"
+  },
+  {
+    "argv": [
+      "corepack",
+      "pnpm",
+      "exec",
+      "biome",
+      "lint",
+      "."
+    ],
+    "cwd": "/tmp/rio-zod-eval/zod",
+    "exit_code": 0,
+    "wall_time_seconds": 3.479,
+    "log": "head-06.log"
+  },
+  {
+    "argv": [
+      "corepack",
+      "pnpm",
+      "exec",
+      "vitest",
+      "run",
+      "--maxWorkers=2"
+    ],
+    "cwd": "/tmp/rio-zod-eval/zod",
+    "exit_code": 1,
+    "wall_time_seconds": 350.029,
+    "log": "head-07.log"
+  }
+]

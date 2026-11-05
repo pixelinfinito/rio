@@ -1,0 +1,238 @@
+{
+  "registered_utc": "2026-11-05T02:25:55.062220+00:00",
+  "repository": "colinhacks/zod",
+  "pr": "https://github.com/colinhacks/zod/pull/6085",
+  "kind": "real-pr",
+  "base_sha": "9f0a3d81221e3ab7c09ca4911ef35b54817869a4",
+  "head_sha": "60496a098ae81beb32f705897f960cf99089d243",
+  "expected": [
+    {
+      "id": "unused-compile-fuzz-catch-binding",
+      "mechanism": "lint-rule",
+      "description": "scripts/compile-fuzz.ts introduces unused catch(e); enabled Biome lint/correctness/noUnusedVariables; subsequently removed by PR6504 c46eeff050f2a6a2ba8db1d14c2c8247bd7623f2.",
+      "finding_ids": [],
+      "evidence": "Independent oracle before Rio: base-05.log exit 0, Checked 0 files (new file absent); head-05.log exit 1, exactly one lint/correctness/noUnusedVariables warning at scripts/compile-fuzz.ts:353:14 for catch(e). Full project biome lint at base/head is preserved in base-06.log/head-06.log; warning is repo-enabled (warn level), escalated only for oracle exit signaling by --error-on-warnings. Later PR6504 removes this exact binding; see fix.patch and follow-up-pr.json."
+    }
+  ],
+  "oracle_plan": "corepack pnpm exec biome lint --error-on-warnings --no-errors-on-unmatched scripts/compile-fuzz.ts at base and head; base file absent, head warning; run complete lint as context.",
+  "capability_predeclaration": "Rio supports ESLint, not Biome. An independently confirmed Biome rule violation will therefore test this capability gap. Typecheck applicable; ESLint lint not applicable (no ESLint config); coverage and offline audit retained with explicit skip limitations.",
+  "reviewer": "sub-agent eval-zod (automated)",
+  "verdict_source": "automated",
+  "profile": "../zod-profile.yaml",
+  "profile_sha256": "c583e519d93df6c88c6cff76b79e44cdc12ed50720b0797618c22524f60d2dc6",
+  "binary": "/home/ubuntu/rio/target/release/rio",
+  "binary_version": "rio 0.1.0 x86_64-unknown-linux-gnu b15dc8ff5001",
+  "binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+  "reason_for_budget": "20m wall budget predeclared before Rio for shared-host IO and CPU contention; all rio/base checks and dependency verification remain enabled; no trust override.",
+  "independent_oracle_completed_before_rio": true,
+  "base_oracle_results": [
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/tmp/rio-zod-eval/positive-base",
+      "exit_code": 0,
+      "wall_time_seconds": 0.004,
+      "log": "base-01.log"
+    },
+    {
+      "argv": [
+        "node",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-zod-eval/positive-base",
+      "exit_code": 0,
+      "wall_time_seconds": 0.016,
+      "log": "base-02.log"
+    },
+    {
+      "argv": [
+        "corepack",
+        "pnpm",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-zod-eval/positive-base",
+      "exit_code": 0,
+      "wall_time_seconds": 2.729,
+      "log": "base-03.log"
+    },
+    {
+      "argv": [
+        "corepack",
+        "pnpm",
+        "install",
+        "--frozen-lockfile"
+      ],
+      "cwd": "/tmp/rio-zod-eval/positive-base",
+      "exit_code": 0,
+      "wall_time_seconds": 107.847,
+      "log": "base-04.log"
+    },
+    {
+      "argv": [
+        "corepack",
+        "pnpm",
+        "exec",
+        "biome",
+        "lint",
+        "--error-on-warnings",
+        "--no-errors-on-unmatched",
+        "scripts/compile-fuzz.ts"
+      ],
+      "cwd": "/tmp/rio-zod-eval/positive-base",
+      "exit_code": 0,
+      "wall_time_seconds": 5.499,
+      "log": "base-05.log"
+    },
+    {
+      "argv": [
+        "corepack",
+        "pnpm",
+        "exec",
+        "biome",
+        "lint",
+        "."
+      ],
+      "cwd": "/tmp/rio-zod-eval/positive-base",
+      "exit_code": 0,
+      "wall_time_seconds": 16.498,
+      "log": "base-06.log"
+    },
+    {
+      "argv": [
+        "corepack",
+        "pnpm",
+        "exec",
+        "tsc",
+        "--noEmit",
+        "--pretty",
+        "false",
+        "-p",
+        "packages/zod/tsconfig.test.json"
+      ],
+      "cwd": "/tmp/rio-zod-eval/positive-base",
+      "exit_code": 0,
+      "wall_time_seconds": 46.114,
+      "log": "base-07.log"
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "cwd": "/tmp/rio-zod-eval/positive-base",
+      "exit_code": 0,
+      "wall_time_seconds": 3.507,
+      "log": "base-08.log"
+    }
+  ],
+  "head_oracle_results": [
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/tmp/rio-zod-eval/positive-head",
+      "exit_code": 0,
+      "wall_time_seconds": 0.005,
+      "log": "head-01.log"
+    },
+    {
+      "argv": [
+        "node",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-zod-eval/positive-head",
+      "exit_code": 0,
+      "wall_time_seconds": 0.033,
+      "log": "head-02.log"
+    },
+    {
+      "argv": [
+        "corepack",
+        "pnpm",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-zod-eval/positive-head",
+      "exit_code": 0,
+      "wall_time_seconds": 3.437,
+      "log": "head-03.log"
+    },
+    {
+      "argv": [
+        "corepack",
+        "pnpm",
+        "install",
+        "--frozen-lockfile"
+      ],
+      "cwd": "/tmp/rio-zod-eval/positive-head",
+      "exit_code": 0,
+      "wall_time_seconds": 110.669,
+      "log": "head-04.log"
+    },
+    {
+      "argv": [
+        "corepack",
+        "pnpm",
+        "exec",
+        "biome",
+        "lint",
+        "--error-on-warnings",
+        "--no-errors-on-unmatched",
+        "scripts/compile-fuzz.ts"
+      ],
+      "cwd": "/tmp/rio-zod-eval/positive-head",
+      "exit_code": 1,
+      "wall_time_seconds": 11.225,
+      "log": "head-05.log"
+    },
+    {
+      "argv": [
+        "corepack",
+        "pnpm",
+        "exec",
+        "biome",
+        "lint",
+        "."
+      ],
+      "cwd": "/tmp/rio-zod-eval/positive-head",
+      "exit_code": 0,
+      "wall_time_seconds": 10.833,
+      "log": "head-06.log"
+    },
+    {
+      "argv": [
+        "corepack",
+        "pnpm",
+        "exec",
+        "tsc",
+        "--noEmit",
+        "--pretty",
+        "false",
+        "-p",
+        "packages/zod/tsconfig.test.json"
+      ],
+      "cwd": "/tmp/rio-zod-eval/positive-head",
+      "exit_code": 0,
+      "wall_time_seconds": 48.716,
+      "log": "head-07.log"
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "cwd": "/tmp/rio-zod-eval/positive-head",
+      "exit_code": 0,
+      "wall_time_seconds": 3.518,
+      "log": "head-08.log"
+    }
+  ]
+}

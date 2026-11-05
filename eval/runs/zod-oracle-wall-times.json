@@ -1,0 +1,125 @@
+{
+  "notes": "Per-command oracle elapsed times. Independent commands ran concurrently; totals are not end-to-end task latency. Capture runner times are in each commands.json. Ad hoc diagnostics without a measured duration are explicitly identified in their command metadata.",
+  "oracle_ledgers": [
+    {
+      "case": "6085",
+      "ledger": "eval/runs/zod-6085-evidence/adjudication-commands.json",
+      "total_wall_time_seconds": 178.617,
+      "command_exit_codes": [
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "case": "6085",
+      "ledger": "eval/runs/zod-6085-evidence/base-commands.json",
+      "total_wall_time_seconds": 182.214,
+      "command_exit_codes": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "6085",
+      "ledger": "eval/runs/zod-6085-evidence/head-commands.json",
+      "total_wall_time_seconds": 188.436,
+      "command_exit_codes": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "6527",
+      "ledger": "eval/runs/zod-6527-evidence/adjudication-commands.json",
+      "total_wall_time_seconds": 141.415,
+      "command_exit_codes": [
+        2,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "case": "6527",
+      "ledger": "eval/runs/zod-6527-evidence/base-commands.json",
+      "total_wall_time_seconds": 787.953,
+      "command_exit_codes": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "case": "6527",
+      "ledger": "eval/runs/zod-6527-evidence/base-repair-commands.json",
+      "total_wall_time_seconds": 222.01,
+      "command_exit_codes": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "6527",
+      "ledger": "eval/runs/zod-6527-evidence/base-setup1-commands.json",
+      "total_wall_time_seconds": 92.389,
+      "command_exit_codes": [
+        0,
+        -15,
+        0,
+        1,
+        254,
+        254,
+        254
+      ]
+    },
+    {
+      "case": "6527",
+      "ledger": "eval/runs/zod-6527-evidence/head-commands.json",
+      "total_wall_time_seconds": 386.629,
+      "command_exit_codes": [
+        0,
+        0,
+        0,
+        0,
+        2,
+        0,
+        1
+      ]
+    },
+    {
+      "case": "6527",
+      "ledger": "eval/runs/zod-6527-evidence/head-repair-commands.json",
+      "total_wall_time_seconds": 252.477,
+      "command_exit_codes": [
+        0,
+        0,
+        0,
+        1
+      ]
+    }
+  ]
+}

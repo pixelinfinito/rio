@@ -1,0 +1,80 @@
+diff --git a/packages/zod/src/v4/classic/tests/string.test.ts b/packages/zod/src/v4/classic/tests/string.test.ts
+index aa96d8c9..2a251436 100644
+--- a/packages/zod/src/v4/classic/tests/string.test.ts
++++ b/packages/zod/src/v4/classic/tests/string.test.ts
+@@ -264,6 +264,7 @@ test("base64url validations", () => {
+ 
+   const invalidBase64URLStrings = [
+     "w7/Dv8O+w74K", // Has + and / characters (is base64)
++    "A", // Invalid length (1 mod 4 carries no whole byte)
+     "12345", // Invalid length (not a multiple of 4 characters when adding allowed number of padding characters)
+     "12345===", // Not padded correctly
+     "!UGF0aWVuY2UgaXMgdGhlIGtleSB0byBzdWNjZXNz", // Invalid character '!'
+diff --git a/packages/zod/src/v4/classic/tests/to-json-schema.test.ts b/packages/zod/src/v4/classic/tests/to-json-schema.test.ts
+index 8281e091..3f524723 100644
+--- a/packages/zod/src/v4/classic/tests/to-json-schema.test.ts
++++ b/packages/zod/src/v4/classic/tests/to-json-schema.test.ts
+@@ -218,6 +218,15 @@ describe("toJSONSchema", () => {
+         "type": "string",
+       }
+     `);
++    expect(z.toJSONSchema(z.base64url())).toMatchInlineSnapshot(`
++      {
++        "$schema": "https://json-schema.org/draft/2020-12/schema",
++        "contentEncoding": "base64url",
++        "format": "base64url",
++        "pattern": "^(?:[A-Za-z0-9_-]{4})*(?:[A-Za-z0-9_-]{2,3})?$",
++        "type": "string",
++      }
++    `);
+     expect(z.toJSONSchema(z.cuid())).toMatchInlineSnapshot(`
+       {
+         "$schema": "https://json-schema.org/draft/2020-12/schema",
+@@ -482,6 +491,15 @@ describe("toJSONSchema", () => {
+     `);
+   });
+ 
++  test("base64url pattern agrees with parse", () => {
++    const schema = z.base64url();
++    const pattern = new RegExp(z.toJSONSchema(schema).pattern!);
++    // lengths 1 (mod 4) carry no whole byte; the emitted pattern must reject them like parse does
++    for (const s of ["", "A", "AA", "AAA", "AAAA", "AAAAA"]) {
++      expect(pattern.test(s)).toBe(schema.safeParse(s).success);
++    }
++  });
++
+   test("string patterns", () => {
+     expect(
+       z.toJSONSchema(
+diff --git a/packages/zod/src/v4/core/regexes.ts b/packages/zod/src/v4/core/regexes.ts
+index 4713681d..7707fba8 100644
+--- a/packages/zod/src/v4/core/regexes.ts
++++ b/packages/zod/src/v4/core/regexes.ts
+@@ -81,7 +81,7 @@ export const cidrv6: RegExp =
+ 
+ // https://stackoverflow.com/questions/7860392/determine-if-string-is-in-base64-using-javascript
+ export const base64: RegExp = /^$|^(?:[0-9a-zA-Z+/]{4})*(?:(?:[0-9a-zA-Z+/]{2}==)|(?:[0-9a-zA-Z+/]{3}=))?$/;
+-export const base64url: RegExp = /^[A-Za-z0-9_-]*$/;
++export const base64url: RegExp = /^(?:[A-Za-z0-9_-]{4})*(?:[A-Za-z0-9_-]{2,3})?$/;
+ 
+ // based on https://stackoverflow.com/questions/106179/regular-expression-to-match-dns-hostname-or-ip-address
+ // export const hostname: RegExp = /^([a-zA-Z0-9-]+\.)*[a-zA-Z0-9-]+$/;
+diff --git a/packages/zod/src/v4/core/schemas.ts b/packages/zod/src/v4/core/schemas.ts
+index c852f7ee..519dfd61 100644
+--- a/packages/zod/src/v4/core/schemas.ts
++++ b/packages/zod/src/v4/core/schemas.ts
+@@ -1050,9 +1050,12 @@ export const $ZodBase64: core.$constructor<$ZodBase64> = /*@__PURE__*/ core.$con
+   }
+ );
+ 
+-//////////////////////////////   ZodBase64   //////////////////////////////
++//////////////////////////////   ZodBase64URL   //////////////////////////////
++// charset only — the quantified regexes.base64url overflows the regex stack on multi-MB input; isValidBase64 enforces length on the padded string
++const base64urlCharset = /^[A-Za-z0-9_-]*$/;
++
+ export function isValidBase64URL(data: string): boolean {
+-  if (!regexes.base64url.test(data)) return false;
++  if (!base64urlCharset.test(data)) return false;
+   const base64 = data.replace(/[-_]/g, (c) => (c === "-" ? "+" : "/"));
+   const padded = base64.padEnd(Math.ceil(base64.length / 4) * 4, "=");
+   return isValidBase64(padded);

@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "corepack",
+    "pnpm",
+    "exec",
+    "vitest",
+    "run",
+    "packages/treeshake",
+    "--maxWorkers=2",
+    "--testTimeout=60000",
+    "--hookTimeout=60000"
+  ],
+  "cwd": "/tmp/rio-zod-eval/zod",
+  "exit_code": 0,
+  "wall_time_seconds": 44.36118028894998
+}

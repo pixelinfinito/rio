@@ -1,0 +1,13 @@
+{
+  "repository": "colinhacks/zod",
+  "pr": 6527,
+  "base": "b801439b5fb160d651084ff7d7c27a61e24a7334",
+  "head": "cbeac9415dc218eae98eaebc35971c0b6743528b",
+  "source_test_assessment": "Both full upstream Vitest runs have no type errors: base 7843 and head 7846 passing source tests. Their only initial failures were three build-dependent tree-shaking suites for absent built artifacts. After building the exact source, base and head each pass all 3 tree-shaking files / 12 tests with 60-second timeouts; source + repaired build-dependent groups total base 7855 and head 7858 tests. All failing attempts are retained. Build did not change tracked files (git diff --exit-code=0).",
+  "typecheck": "Both revisions independently pass tsc --noEmit --pretty false -p packages/zod/tsconfig.test.json; no typecheck config mutation. Raw package config flags unused test declarations excluded by upstream test config.",
+  "lint": "corepack pnpm exec biome lint . exits 0 with no fixes at base and head.",
+  "limitations": "Tests do not prove absence of semantic bugs. No advisory safety or executed diff-coverage claim is made.",
+  "reviewer": "sub-agent eval-zod (automated)",
+  "verdict_source": "automated",
+  "independently_clean": true
+}

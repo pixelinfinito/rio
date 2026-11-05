@@ -1,0 +1,105 @@
+[
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "/tmp/rio-zod-eval/positive-base",
+    "exit_code": 0,
+    "wall_time_seconds": 0.004,
+    "log": "base-01.log"
+  },
+  {
+    "argv": [
+      "node",
+      "--version"
+    ],
+    "cwd": "/tmp/rio-zod-eval/positive-base",
+    "exit_code": 0,
+    "wall_time_seconds": 0.016,
+    "log": "base-02.log"
+  },
+  {
+    "argv": [
+      "corepack",
+      "pnpm",
+      "--version"
+    ],
+    "cwd": "/tmp/rio-zod-eval/positive-base",
+    "exit_code": 0,
+    "wall_time_seconds": 2.729,
+    "log": "base-03.log"
+  },
+  {
+    "argv": [
+      "corepack",
+      "pnpm",
+      "install",
+      "--frozen-lockfile"
+    ],
+    "cwd": "/tmp/rio-zod-eval/positive-base",
+    "exit_code": 0,
+    "wall_time_seconds": 107.847,
+    "log": "base-04.log"
+  },
+  {
+    "argv": [
+      "corepack",
+      "pnpm",
+      "exec",
+      "biome",
+      "lint",
+      "--error-on-warnings",
+      "--no-errors-on-unmatched",
+      "scripts/compile-fuzz.ts"
+    ],
+    "cwd": "/tmp/rio-zod-eval/positive-base",
+    "exit_code": 0,
+    "wall_time_seconds": 5.499,
+    "log": "base-05.log"
+  },
+  {
+    "argv": [
+      "corepack",
+      "pnpm",
+      "exec",
+      "biome",
+      "lint",
+      "."
+    ],
+    "cwd": "/tmp/rio-zod-eval/positive-base",
+    "exit_code": 0,
+    "wall_time_seconds": 16.498,
+    "log": "base-06.log"
+  },
+  {
+    "argv": [
+      "corepack",
+      "pnpm",
+      "exec",
+      "tsc",
+      "--noEmit",
+      "--pretty",
+      "false",
+      "-p",
+      "packages/zod/tsconfig.test.json"
+    ],
+    "cwd": "/tmp/rio-zod-eval/positive-base",
+    "exit_code": 0,
+    "wall_time_seconds": 46.114,
+    "log": "base-07.log"
+  },
+  {
+    "argv": [
+      "git",
+      "status",
+      "--porcelain",
+      "--untracked-files=no"
+    ],
+    "cwd": "/tmp/rio-zod-eval/positive-base",
+    "exit_code": 0,
+    "wall_time_seconds": 3.507,
+    "log": "base-08.log"
+  }
+]

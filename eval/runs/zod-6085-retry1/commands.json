@@ -1,0 +1,427 @@
+{
+  "schema": "rio-eval-runner-v1",
+  "repository": "colinhacks/zod",
+  "pr": "https://github.com/colinhacks/zod/pull/6085",
+  "started_utc": "2026-11-05T02:53:40.381586+00:00",
+  "rio_binary": "/home/ubuntu/rio/target/release/rio",
+  "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-checkout",
+        "https://github.com/colinhacks/zod.git",
+        "/dev/shm/rio-eval-tbwag872/head"
+      ],
+      "cwd": "/dev/shm/rio-eval-tbwag872",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-retry1/01-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-retry1/01-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 472
+    },
+    {
+      "argv": [
+        "git",
+        "fetch",
+        "origin",
+        "9f0a3d81221e3ab7c09ca4911ef35b54817869a4",
+        "60496a098ae81beb32f705897f960cf99089d243"
+      ],
+      "cwd": "/dev/shm/rio-eval-tbwag872/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-retry1/02-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-retry1/02-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 69
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "9f0a3d81221e3ab7c09ca4911ef35b54817869a4",
+        "60496a098ae81beb32f705897f960cf99089d243"
+      ],
+      "cwd": "/dev/shm/rio-eval-tbwag872/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-retry1/03-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-retry1/03-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 16
+    },
+    {
+      "argv": [
+        "git",
+        "checkout",
+        "--detach",
+        "60496a098ae81beb32f705897f960cf99089d243"
+      ],
+      "cwd": "/dev/shm/rio-eval-tbwag872/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-retry1/04-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-retry1/04-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 321
+    },
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-hardlinks",
+        "--no-checkout",
+        "/dev/shm/rio-eval-tbwag872/head",
+        "/dev/shm/rio-eval-tbwag872/base"
+      ],
+      "cwd": "/dev/shm/rio-eval-tbwag872",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-retry1/05-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-retry1/05-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 270
+    },
+    {
+      "argv": [
+        "git",
+        "checkout",
+        "--detach",
+        "9f0a3d81221e3ab7c09ca4911ef35b54817869a4"
+      ],
+      "cwd": "/dev/shm/rio-eval-tbwag872/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-retry1/06-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-retry1/06-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 316
+    },
+    {
+      "argv": [
+        "corepack",
+        "pnpm",
+        "install",
+        "--frozen-lockfile"
+      ],
+      "cwd": "/dev/shm/rio-eval-tbwag872/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-retry1/07-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-retry1/07-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 16454
+    },
+    {
+      "argv": [
+        "python3",
+        "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-pnpm-directory-aliases.txt"
+      ],
+      "cwd": "/dev/shm/rio-eval-tbwag872/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-retry1/08-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-retry1/08-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 116
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "cwd": "/dev/shm/rio-eval-tbwag872/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-retry1/09-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-retry1/09-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 129
+    },
+    {
+      "argv": [
+        "corepack",
+        "pnpm",
+        "install",
+        "--frozen-lockfile"
+      ],
+      "cwd": "/dev/shm/rio-eval-tbwag872/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-retry1/10-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-retry1/10-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 6076
+    },
+    {
+      "argv": [
+        "python3",
+        "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-pnpm-directory-aliases.txt"
+      ],
+      "cwd": "/dev/shm/rio-eval-tbwag872/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-retry1/11-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-retry1/11-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 115
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "cwd": "/dev/shm/rio-eval-tbwag872/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-retry1/12-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-retry1/12-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 165
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "--version"
+      ],
+      "cwd": "/dev/shm/rio-eval-tbwag872/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-eval-tbwag872/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-eval-tbwag872/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-retry1/rio-version.txt",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-retry1/13-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 8
+    },
+    {
+      "argv": [
+        "node",
+        "--version"
+      ],
+      "cwd": "/dev/shm/rio-eval-tbwag872/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-eval-tbwag872/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-eval-tbwag872/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-retry1/14-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-retry1/14-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 16
+    },
+    {
+      "argv": [
+        "npm",
+        "--version"
+      ],
+      "cwd": "/dev/shm/rio-eval-tbwag872/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-eval-tbwag872/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-eval-tbwag872/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-retry1/15-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-retry1/15-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 215
+    },
+    {
+      "argv": [
+        "corepack",
+        "--version"
+      ],
+      "cwd": "/dev/shm/rio-eval-tbwag872/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-eval-tbwag872/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-eval-tbwag872/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-retry1/16-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-retry1/16-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 166
+    },
+    {
+      "argv": [
+        "python3",
+        "--version"
+      ],
+      "cwd": "/dev/shm/rio-eval-tbwag872/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-eval-tbwag872/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-eval-tbwag872/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-retry1/17-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-retry1/17-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 5
+    },
+    {
+      "argv": [
+        "uv",
+        "--version"
+      ],
+      "cwd": "/dev/shm/rio-eval-tbwag872/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-eval-tbwag872/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-eval-tbwag872/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-retry1/18-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-retry1/18-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 16
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "profile",
+        "show",
+        "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-retry1/profile.yaml"
+      ],
+      "cwd": "/dev/shm/rio-eval-tbwag872/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-eval-tbwag872/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-eval-tbwag872/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-retry1/resolved-profile.txt",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-retry1/19-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 220
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "doctor",
+        "--format",
+        "json"
+      ],
+      "cwd": "/dev/shm/rio-eval-tbwag872/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-eval-tbwag872/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-eval-tbwag872/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-retry1/doctor.json",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-retry1/20-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 7394
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "review",
+        "--base",
+        "9f0a3d81221e3ab7c09ca4911ef35b54817869a4",
+        "--format",
+        "json",
+        "--offline",
+        "--profile",
+        "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-retry1/profile.yaml"
+      ],
+      "cwd": "/dev/shm/rio-eval-tbwag872/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-eval-tbwag872/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-eval-tbwag872/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-retry1/report.json",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-retry1/21-stderr.log",
+      "exit_code": 4,
+      "wall_time_ms": 83038
+    }
+  ],
+  "installations": {
+    "base": {
+      "commands": [
+        [
+          "corepack",
+          "pnpm",
+          "install",
+          "--frozen-lockfile"
+        ],
+        [
+          "python3",
+          "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-pnpm-directory-aliases.txt"
+        ]
+      ],
+      "succeeded": true,
+      "lockfiles": {
+        "pnpm-lock.yaml": "03627f8232469285ad0ae0199f749bf5471f71e4d78f709cb74ad63bbf87bbc3"
+      }
+    },
+    "head": {
+      "commands": [
+        [
+          "corepack",
+          "pnpm",
+          "install",
+          "--frozen-lockfile"
+        ],
+        [
+          "python3",
+          "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-pnpm-directory-aliases.txt"
+        ]
+      ],
+      "succeeded": true,
+      "lockfiles": {
+        "pnpm-lock.yaml": "03627f8232469285ad0ae0199f749bf5471f71e4d78f709cb74ad63bbf87bbc3"
+      }
+    }
+  },
+  "failures": [
+    "Baseline/setup ineligible; fix before scoring"
+  ],
+  "network": "Installers may use network; Rio review uses --offline. Subprocesses are not isolated.",
+  "profile_sha256": "c583e519d93df6c88c6cff76b79e44cdc12ed50720b0797618c22524f60d2dc6",
+  "resolution": {
+    "base_sha": "9f0a3d81221e3ab7c09ca4911ef35b54817869a4",
+    "head_sha": "60496a098ae81beb32f705897f960cf99089d243",
+    "source": "pinned argv"
+  },
+  "disposable_directory": "/dev/shm/rio-eval-tbwag872",
+  "base_sha": "9f0a3d81221e3ab7c09ca4911ef35b54817869a4",
+  "head_sha": "60496a098ae81beb32f705897f960cf99089d243",
+  "removed_environment_keys": [],
+  "resolved_profile_sha256": "8f4b84ce0c90dae64f84e20425a549a4f70b145fb176cd2bafd5b90cf9b90866",
+  "review_exit_code": 4,
+  "environment": {
+    "dependency_state": "verified",
+    "baseline_ran": false,
+    "baseline_classification_ran": false,
+    "eligible": false,
+    "reasons": [
+      "coverage . head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+      "coverage packages/bench head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+      "coverage packages/integration head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+      "coverage packages/resolution head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+      "coverage packages/treeshake head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+      "coverage packages/tsc head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+      "coverage packages/zod head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+      "lint . head: skipped no_project_config lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+      "lint .: head=skipped, dependency_state=unavailable, base=unavailable",
+      "lint packages/bench head: skipped no_project_config lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+      "lint packages/bench: head=skipped, dependency_state=unavailable, base=unavailable",
+      "lint packages/resolution head: skipped no_project_config lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+      "lint packages/resolution: head=skipped, dependency_state=unavailable, base=unavailable",
+      "lint packages/treeshake head: skipped no_project_config lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+      "lint packages/treeshake: head=skipped, dependency_state=unavailable, base=unavailable",
+      "lint packages/zod head: skipped no_project_config lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+      "lint packages/zod: head=skipped, dependency_state=unavailable, base=unavailable",
+      "typecheck .: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck packages/bench head: failed unparseable_output unrecognized tsc output: Found 'package.json' at '/dev/shm/rio-eval-tbwag872/cache/053b354deab1a6e4/runs/01M6MT1Q5EAH4J7X1MKR7BH62H/tools/tool.tmp-ZkzS2D/packages/bench/package.json'.",
+      "typecheck packages/bench: head=failed, dependency_state=verified, base=unavailable",
+      "typecheck packages/integration: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck packages/resolution: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck packages/treeshake head: failed unparseable_output unrecognized tsc output: error TS6504: File '/dev/shm/rio-eval-tbwag872/cache/053b354deab1a6e4/runs/01M6MT1Q5EAH4J7X1MKR7BH62H/tools/tool.tmp-uTmyrV/packages/treeshake/rollup.config.js' is a JavaScript file. Did you mean to enable the 'allowJs' option?",
+      "typecheck packages/treeshake: head=failed, dependency_state=verified, base=unavailable",
+      "typecheck packages/tsc: head=passed, dependency_state=verified, base=unavailable",
+      "typecheck packages/zod: head=findings, dependency_state=verified, base=unavailable"
+    ],
+    "notes": [
+      "Change has 8832 lines, exceeding max_lines 1500; consider splitting it",
+      "Intent inference is deferred: no_endpoint",
+      "typecheck packages/tsc: baseline_failed: linked dependency packages/tsc::zod points at changed source packages/zod: packages/zod/README.md; commit or stash the linked package's changes",
+      "typecheck packages/integration: baseline_failed: linked dependency .::zod points at changed source packages/zod: packages/zod/README.md; commit or stash the linked package's changes",
+      "typecheck packages/treeshake: baseline_failed: linked dependency packages/treeshake::zod points at changed source packages/zod: packages/zod/README.md; commit or stash the linked package's changes",
+      "typecheck packages/resolution: baseline_failed: linked dependency packages/resolution::zod points at changed source packages/zod: packages/zod/README.md; commit or stash the linked package's changes",
+      "typecheck packages/bench: baseline_failed: linked dependency packages/bench::zod points at changed source packages/zod: packages/zod/README.md; commit or stash the linked package's changes",
+      "typecheck packages/zod: baseline_failed: linked dependency .::zod points at changed source packages/zod: packages/zod/README.md; commit or stash the linked package's changes",
+      "typecheck .: baseline_failed: linked dependency .::zod points at changed source packages/zod: packages/zod/README.md; commit or stash the linked package's changes",
+      "Graph references use syntax and text; no language server was used",
+      "Impact graph truncated at max_nodes",
+      "Offline applies to Rio; tool and test processes were not network-isolated"
+    ]
+  },
+  "finished_utc": "2026-11-05T02:55:38.786016+00:00"
+}

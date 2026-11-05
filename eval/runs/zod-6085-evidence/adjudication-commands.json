@@ -1,0 +1,154 @@
+[
+  {
+    "revision": "base",
+    "project": ".",
+    "argv": [
+      "corepack",
+      "pnpm",
+      "exec",
+      "tsc",
+      "--noEmit",
+      "--pretty",
+      "false",
+      "-p",
+      "."
+    ],
+    "cwd": "/tmp/rio-zod-eval/positive-base",
+    "exit_code": 2,
+    "wall_time_seconds": 45.204,
+    "log": "adjudication-base-root.log"
+  },
+  {
+    "revision": "base",
+    "project": "packages/zod",
+    "argv": [
+      "corepack",
+      "pnpm",
+      "exec",
+      "tsc",
+      "--noEmit",
+      "--pretty",
+      "false",
+      "-p",
+      "packages/zod"
+    ],
+    "cwd": "/tmp/rio-zod-eval/positive-base",
+    "exit_code": 2,
+    "wall_time_seconds": 34.812,
+    "log": "adjudication-base-packages-zod.log"
+  },
+  {
+    "revision": "base",
+    "project": "packages/resolution",
+    "argv": [
+      "corepack",
+      "pnpm",
+      "exec",
+      "tsc",
+      "--noEmit",
+      "--pretty",
+      "false",
+      "-p",
+      "packages/resolution"
+    ],
+    "cwd": "/tmp/rio-zod-eval/positive-base",
+    "exit_code": 2,
+    "wall_time_seconds": 5.161,
+    "log": "adjudication-base-packages-resolution.log"
+  },
+  {
+    "revision": "base",
+    "project": "packages/integration",
+    "argv": [
+      "corepack",
+      "pnpm",
+      "exec",
+      "tsc",
+      "--noEmit",
+      "--pretty",
+      "false",
+      "-p",
+      "packages/integration"
+    ],
+    "cwd": "/tmp/rio-zod-eval/positive-base",
+    "exit_code": 2,
+    "wall_time_seconds": 3.698,
+    "log": "adjudication-base-packages-integration.log"
+  },
+  {
+    "revision": "head",
+    "project": ".",
+    "argv": [
+      "corepack",
+      "pnpm",
+      "exec",
+      "tsc",
+      "--noEmit",
+      "--pretty",
+      "false",
+      "-p",
+      "."
+    ],
+    "cwd": "/tmp/rio-zod-eval/positive-head",
+    "exit_code": 2,
+    "wall_time_seconds": 44.761,
+    "log": "adjudication-head-root.log"
+  },
+  {
+    "revision": "head",
+    "project": "packages/zod",
+    "argv": [
+      "corepack",
+      "pnpm",
+      "exec",
+      "tsc",
+      "--noEmit",
+      "--pretty",
+      "false",
+      "-p",
+      "packages/zod"
+    ],
+    "cwd": "/tmp/rio-zod-eval/positive-head",
+    "exit_code": 2,
+    "wall_time_seconds": 33.042,
+    "log": "adjudication-head-packages-zod.log"
+  },
+  {
+    "revision": "head",
+    "project": "packages/resolution",
+    "argv": [
+      "corepack",
+      "pnpm",
+      "exec",
+      "tsc",
+      "--noEmit",
+      "--pretty",
+      "false",
+      "-p",
+      "packages/resolution"
+    ],
+    "cwd": "/tmp/rio-zod-eval/positive-head",
+    "exit_code": 2,
+    "wall_time_seconds": 6.31,
+    "log": "adjudication-head-packages-resolution.log"
+  },
+  {
+    "revision": "head",
+    "project": "packages/integration",
+    "argv": [
+      "corepack",
+      "pnpm",
+      "exec",
+      "tsc",
+      "--noEmit",
+      "--pretty",
+      "false",
+      "-p",
+      "packages/integration"
+    ],
+    "cwd": "/tmp/rio-zod-eval/positive-head",
+    "exit_code": 2,
+    "wall_time_seconds": 5.629,
+    "log": "adjudication-head-packages-integration.log"
+  }
+]
