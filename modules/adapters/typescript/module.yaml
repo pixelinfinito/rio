@@ -35,6 +35,12 @@ tools:
     ],
     "lint": [
       {
+        "name": "biome",
+        "command": ["biome", "lint", "--reporter=json", "--max-diagnostics=none", "{files}"],
+        "network": [],
+        "exit_codes": {"clean": [0], "diagnostics": [1]}
+      },
+      {
         "name": "eslint",
         "command": [
           "eslint",

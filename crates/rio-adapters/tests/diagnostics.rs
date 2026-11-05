@@ -420,3 +420,26 @@ fn typescript_file_fallback_writes_disposable_config_with_inherited_options() {
         );
     }
 }
+
+#[test]
+fn biome_1_and_2_json_warnings_become_lint_findings() {
+    for output in [
+        include_bytes!("fixtures/diagnostics/biome1.stdout").as_slice(),
+        include_bytes!("fixtures/diagnostics/biome2.stdout").as_slice(),
+    ] {
+        let findings = parse_biome(output, &context()).unwrap();
+        assert_eq!(findings.len(), 1);
+        assert_eq!(
+            findings[0].rule_id,
+            "lint/biome/correctness/noUnusedVariables"
+        );
+        assert_eq!(findings[0].location.path, "src/biome.ts");
+        assert_eq!(findings[0].location.line_start, 2);
+        assert_eq!(findings[0].location.column, Some(9));
+        assert_eq!(findings[0].severity, rio_core::Severity::Warning);
+    }
+    assert!(parse_biome(b"{}", &context()).is_err());
+    let tree: Tree = [("biome.jsonc".into(), entry("{}"))].into();
+    assert_eq!(typescript_linter(&tree, "pkg"), "biome");
+    assert!(diagnostic_config_skip(CheckKind::Lint, "typescript", &tree, "pkg").is_none());
+}

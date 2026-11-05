@@ -404,3 +404,73 @@ pub fn parse_ruff(stdout: &[u8], context: &DiagnosticContext<'_>) -> Result<Vec<
         })
         .collect()
 }
+
+/// Biome 1.x and 2.x JSON reporters serialize diagnostics with byte spans
+/// and sourceCode, rather than ESLint's line/column coordinates.
+pub fn parse_biome(stdout: &[u8], context: &DiagnosticContext<'_>) -> Result<Vec<Finding>> {
+    let value: Value = serde_json::from_slice(stdout)?;
+    ensure!(
+        value["summary"]["diagnosticsNotPrinted"]
+            .as_u64()
+            .unwrap_or(0)
+            == 0,
+        "Biome truncated diagnostics; use --max-diagnostics=none"
+    );
+    let diagnostics = value["diagnostics"]
+        .as_array()
+        .context("Biome output has no diagnostics array")?;
+    let mut syntax = BTreeMap::new();
+    let mut findings = Vec::new();
+    for diagnostic in diagnostics {
+        let severity = match diagnostic["severity"].as_str() {
+            Some("error" | "fatal") => Severity::Error,
+            Some("warning") => Severity::Warning,
+            Some("information" | "hint") => continue,
+            _ => bail!("Biome diagnostic has no supported severity"),
+        };
+        let category = diagnostic["category"].as_str().unwrap_or("diagnostic");
+        let path = diagnostic["location"]["path"]["file"]
+            .as_str()
+            .unwrap_or("biome.json");
+        let normalized = normalized_path(path, context)?;
+        let source = diagnostic["location"]["sourceCode"]
+            .as_str()
+            .or_else(|| {
+                context
+                    .sources
+                    .and_then(|tree| tree.get(&normalized))
+                    .and_then(|entry| std::str::from_utf8(&entry.content).ok())
+            })
+            .unwrap_or("");
+        let coordinate = |offset: &Value| -> Result<(u32, u32)> {
+            let offset = offset.as_u64().unwrap_or(0) as usize;
+            let prefix = source
+                .get(..offset)
+                .context("Biome span is outside source text")?;
+            Ok((
+                prefix.bytes().filter(|byte| *byte == b'\n').count() as u32 + 1,
+                prefix.rsplit('\n').next().unwrap_or("").chars().count() as u32 + 1,
+            ))
+        };
+        let (line, column) = coordinate(&diagnostic["location"]["span"][0])?;
+        let (end, _) = coordinate(&diagnostic["location"]["span"][1])?;
+        findings.push(finding(
+            Diagnostic {
+                tool: "biome",
+                kind: "lint",
+                code: category.strip_prefix("lint/").unwrap_or(category),
+                path,
+                line,
+                end,
+                column: Some(column),
+                message: diagnostic["description"]
+                    .as_str()
+                    .context("Biome diagnostic has no description")?,
+                severity,
+            },
+            context,
+            &mut syntax,
+        )?);
+    }
+    Ok(findings)
+}

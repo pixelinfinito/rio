@@ -227,7 +227,7 @@ pub async fn plan_review(
                     resolver.locate(name, root, language).is_some()
                 }),
                 CheckKind::Lint => Some(if language == "typescript" {
-                    "eslint"
+                    typescript_linter(&changes.head, root)
                 } else {
                     "ruff"
                 }),

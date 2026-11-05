@@ -784,3 +784,67 @@ exit 2
         );
     }
 }
+
+#[cfg(unix)]
+#[tokio::test]
+async fn biome_lint_classifies_new_and_existing_warnings_against_baseline() {
+    use std::os::unix::fs::PermissionsExt;
+    let temp = tempfile::tempdir().unwrap();
+    let root = temp.path();
+    let profile = diagnostic_fixture(root, true);
+    fs::remove_file(root.join("eslint.config.js")).unwrap();
+    fs::write(root.join("biome.json"), "{}").unwrap();
+    let executable = root.join("node_modules/.bin/biome");
+    fs::write(&executable, r#"#!/usr/bin/python3
+import sys,json
+if '--version' in sys.argv: print('Version: 2.0.0'); sys.exit(0)
+assert sys.argv[1:4] == ['lint', '--reporter=json', '--max-diagnostics=none']
+assert '--write' not in sys.argv
+results=[]
+for path in sys.argv[sys.argv.index('--')+1:]:
+    source=open(path).read()
+    offset=0
+    for line in source.splitlines(True):
+        if 'unused' in line:
+            name=line.split()[1]
+            start=offset+line.index(name)
+            results.append(dict(category='lint/correctness/noUnusedVariables', severity='warning', description='Unused '+name, location=dict(path=dict(file=path), span=[start,start+len(name)], sourceCode=source)))
+        offset+=len(line)
+print(json.dumps(dict(diagnostics=results)))
+"#).unwrap();
+    fs::set_permissions(&executable, fs::Permissions::from_mode(0o755)).unwrap();
+    fs::write(root.join("a.ts"), "const unusedExisting = 1;\n").unwrap();
+    git(root, &["add", "."]);
+    git(root, &["commit", "-m", "biome fixture"]);
+    fs::write(
+        root.join("a.ts"),
+        "const unusedExisting = 1;\nconst unusedNew = 2;\n",
+    )
+    .unwrap();
+    let report = review(
+        request(root, profile),
+        ProcessSupervisor::default(),
+        CancellationToken::new(),
+        None,
+    )
+    .await
+    .unwrap();
+    let findings: Vec<_> = report
+        .findings
+        .iter()
+        .filter(|finding| finding.rule_id == "lint/biome/correctness/noUnusedVariables")
+        .collect();
+    assert_eq!(findings.len(), 2);
+    assert!(findings.iter().any(|finding| finding.state == State::New));
+    assert!(
+        findings
+            .iter()
+            .any(|finding| finding.state == State::PreExisting)
+    );
+    assert!(
+        report
+            .checks
+            .iter()
+            .any(|check| check.kind == CheckKind::Lint && check.version == Version::Base)
+    );
+}
