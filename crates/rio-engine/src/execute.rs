@@ -305,7 +305,7 @@ impl Execution {
         let mut targets = check.targets.clone();
         targets.sort();
         let input = serde_json::to_vec(
-            &serde_json::json!({"version":1,"root":check.root,"kind":check.kind,"tool":tool.name,"tool_version":tool.version,"targets":targets,"dependencies":check.dependency_hash,"dependency_state":check.dependency_state,"invocation":"rio-diagnostic-v2"}),
+            &serde_json::json!({"version":1,"root":check.root,"kind":check.kind,"tool":tool.name,"tool_version":tool.version,"targets":targets,"dependencies":check.dependency_hash,"dependency_state":check.dependency_state,"invocation":"rio-diagnostic-v3"}),
         )?;
         let hash = blake3::hash(&input).to_hex().to_string();
         let relative = format!(

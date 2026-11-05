@@ -476,3 +476,63 @@ fn vitest_discovers_scripts_vite_configs_and_root_workspaces() {
     tree.insert("packages/a/package.json".into(), entry("{}"));
     assert_eq!(typescript_test_runner(&tree, "packages/a"), Some("vitest"));
 }
+
+#[cfg(unix)]
+#[tokio::test]
+async fn vitest_workspace_coverage_runs_at_workspace_cwd_and_normalizes_lcov() {
+    use std::os::unix::fs::PermissionsExt;
+    let root = tempfile::tempdir().unwrap();
+    std::fs::create_dir_all(root.path().join("packages/a")).unwrap();
+    std::fs::write(
+        root.path().join("vitest.unit.config.ts"),
+        "export default {};",
+    )
+    .unwrap();
+    let executable = root.path().join("vitest");
+    std::fs::write(&executable, r#"#!/usr/bin/python3
+import sys,pathlib
+assert pathlib.Path('vitest.unit.config.ts').is_file(), 'workspace import resolved from wrong cwd'
+assert 'packages/a' in sys.argv
+assert '--minWorkers=1' not in sys.argv
+output=next(arg.split('=',1)[1] for arg in sys.argv if arg.startswith('--coverage.reportsDirectory='))
+pathlib.Path(output, 'lcov.info').write_text('SF:packages/a/index.ts\nDA:1,1\nend_of_record\n')
+"#).unwrap();
+    std::fs::set_permissions(&executable, std::fs::Permissions::from_mode(0o755)).unwrap();
+    let tree: Tree = [
+        (
+            "vitest.workspace.ts".into(),
+            entry("export default ['vitest.unit.config.ts']"),
+        ),
+        (
+            "packages/a/index.ts".into(),
+            entry("export const value = 1;"),
+        ),
+    ]
+    .into();
+    let settings = typescript_coverage_settings(&tree, "packages/a", "vitest", "4.1.5").unwrap();
+    let tool = ResolvedTool {
+        name: "vitest".into(),
+        path: executable,
+        version: "4.1.5".into(),
+        version_hint: None,
+    };
+    let run = run_coverage(
+        CoverageRequest {
+            tool: &tool,
+            settings: &settings,
+            tool_tree: root.path(),
+            worktree_root: None,
+            timeout: Duration::from_secs(10),
+            output_limit: 1024 * 1024,
+        },
+        &ProcessSupervisor::default(),
+        CancellationToken::new(),
+    )
+    .await;
+    assert!(
+        matches!(run.outcome, CheckOutcome::Passed { .. }),
+        "{:?}",
+        run.outcome
+    );
+    assert!(run.data["packages/a/index.ts"].executed.contains(&1));
+}

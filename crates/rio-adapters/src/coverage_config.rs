@@ -413,28 +413,24 @@ pub fn vitest_execution(tree: &Tree, root: &str) -> (String, Vec<String>) {
     );
     let mut directory = root.to_owned();
     let mut projects = None;
-    loop {
-        if let Some(config) = ancestor_config(tree, &directory, VITEST_CONFIGS) {
-            let entry = &tree[&config];
-            if let Ok(syntax) = parse_source(&config, &entry.content)
-                && let Some(object) = exported_object(syntax.root_node(), &entry.content)
-                && property(object, "test", &entry.content)
-                    .is_some_and(|test| property(test, "projects", &entry.content).is_some())
-            {
-                projects = Some(config.clone());
-                break;
-            }
-            let parent = config.rsplit_once('/').map_or("", |(dir, _)| dir);
-            if parent.is_empty() {
-                break;
-            }
-            directory = parent
-                .rsplit_once('/')
-                .map_or(".", |(dir, _)| dir)
-                .to_owned();
-        } else {
+    while let Some(config) = ancestor_config(tree, &directory, VITEST_CONFIGS) {
+        let entry = &tree[&config];
+        if let Ok(syntax) = parse_source(&config, &entry.content)
+            && let Some(object) = exported_object(syntax.root_node(), &entry.content)
+            && property(object, "test", &entry.content)
+                .is_some_and(|test| property(test, "projects", &entry.content).is_some())
+        {
+            projects = Some(config.clone());
             break;
         }
+        let parent = config.rsplit_once('/').map_or("", |(dir, _)| dir);
+        if parent.is_empty() {
+            break;
+        }
+        directory = parent
+            .rsplit_once('/')
+            .map_or(".", |(dir, _)| dir)
+            .to_owned();
     }
     let config = projects
         .or(workspace)

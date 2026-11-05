@@ -296,6 +296,21 @@ pub async fn plan_review_with_progress(
                     head.hint().unwrap_or("Installed dependencies do not match"),
                 ));
             }
+            // Preserve source-lock parse failures even when an earlier readiness
+            // check (such as a missing tool) also prevents execution.
+            if let Some(outcome) = &mut skipped
+                && let Some(problem) = lock.as_ref().and_then(|lock| {
+                    lock.graph
+                        .notes
+                        .iter()
+                        .find(|note| note.starts_with("cannot parse "))
+                })
+            {
+                let hint = outcome.details_mut().hint.get_or_insert_default();
+                if !hint.contains(problem) {
+                    *hint = format!("{hint}; {problem}");
+                }
+            }
             let (can_baseline, baseline_hint) = baseline_readiness(baseline, &head, &base);
             let dependency_hash = match (&head, &base) {
                 (Compatibility::Trusted { hash, .. }, _)
