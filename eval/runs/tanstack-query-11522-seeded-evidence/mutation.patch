@@ -1,0 +1,13 @@
+diff --git a/packages/query-broadcast-client-experimental/src/index.ts b/packages/query-broadcast-client-experimental/src/index.ts
+index b1f16fb41..95a50f4e9 100644
+--- a/packages/query-broadcast-client-experimental/src/index.ts
++++ b/packages/query-broadcast-client-experimental/src/index.ts
+@@ -52,7 +52,7 @@ export function broadcastQueryClient({
+   options,
+   onBroadcastError,
+ }: BroadcastQueryClientOptions): () => void {
+-  let transaction = false
++  let transaction: string = false
+   const tx = (cb: () => void) => {
+     transaction = true
+     try {

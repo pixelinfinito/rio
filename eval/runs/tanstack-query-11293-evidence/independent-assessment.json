@@ -1,0 +1,37 @@
+{
+  "pr": "https://github.com/TanStack/query/pull/11293",
+  "kind": "negative-control",
+  "author": "TkDodo",
+  "author_association": "COLLABORATOR",
+  "merged_at": "2026-08-25T21:17:25Z",
+  "base_sha": "d09cf1d605c81238934f6f91a4982f5629065732",
+  "head_sha": "370ed5845530a928fcb5374162de67326724a7d1",
+  "assessment": "Only query-core source changes: the private shouldScheduleTimer helper rejects disabled observers, server environments, and invalid timeouts; stale/refetch scheduling both use it. The new disabled-observer test covers the stale-timeout regression; the existing query observer and wider core suites pass with Istanbul instrumentation.",
+  "independently_clean": true,
+  "changed_instrumented_lines": {
+    "373": 623,
+    "387": 532
+  },
+  "limitations": [
+    "Checks confirm this changed package; they do not assert every reverse dependent has a clean independent suite.",
+    "Offline dependency audit is excluded; no vulnerability-free claim."
+  ],
+  "base_commands_exit_codes": {
+    "install-0": 0,
+    "install-1": 0,
+    "install-2": 0,
+    "types": 0,
+    "eslint": 0,
+    "coverage": 0
+  },
+  "base_tests_passed": 643,
+  "head_commands_exit_codes": {
+    "install-0": 0,
+    "install-1": 0,
+    "install-2": 0,
+    "types": 0,
+    "eslint": 0,
+    "coverage": 0
+  },
+  "head_tests_passed": 644
+}

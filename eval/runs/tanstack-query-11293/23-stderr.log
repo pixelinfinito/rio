@@ -1,0 +1,210 @@
+Warning: rio/base:$.steps[3]: rio/triage is deferred locally: no_endpoint
+Warning: rio/base:$.steps[4]: rio/agents is deferred locally: no_endpoint
+Warning: rio/base:$.steps[5]: rio/verify is deferred locally: no_endpoint
+Running prepare…
+Finished prepare
+Running checks…
+typecheck examples/angular/auto-refetching: skipped (dependency_mismatch)
+typecheck examples/angular/basic-persister: skipped (dependency_mismatch)
+coverage examples/angular/auto-refetching: skipped (tool_missing)
+typecheck examples/angular/basic: skipped (dependency_mismatch)
+coverage examples/angular/basic-persister: skipped (tool_missing)
+coverage examples/angular/basic: skipped (tool_missing)
+typecheck examples/angular/devtools-panel: skipped (dependency_mismatch)
+coverage examples/lit/ssr: skipped (tool_missing)
+coverage examples/angular/devtools-panel: skipped (tool_missing)
+typecheck examples/angular/infinite-query-with-max-pages: skipped (dependency_mismatch)
+coverage examples/vue/basic: skipped (tool_missing)
+coverage examples/angular/infinite-query-with-max-pages: skipped (tool_missing)
+typecheck examples/angular/optimistic-updates: skipped (dependency_mismatch)
+coverage examples/preact/simple: skipped (tool_missing)
+typecheck examples/preact/simple: findings
+coverage examples/angular/optimistic-updates: skipped (tool_missing)
+typecheck examples/angular/pagination: skipped (dependency_mismatch)
+coverage examples/vue/dependent-queries: skipped (tool_missing)
+coverage examples/angular/pagination: skipped (tool_missing)
+typecheck examples/angular/query-options-from-a-service: skipped (dependency_mismatch)
+typecheck examples/lit/ssr: findings
+coverage examples/angular/query-options-from-a-service: skipped (tool_missing)
+typecheck examples/angular/router: skipped (dependency_mismatch)
+coverage examples/vue/persister: skipped (tool_missing)
+coverage examples/angular/router: skipped (tool_missing)
+typecheck examples/angular/rxjs: skipped (dependency_mismatch)
+typecheck examples/react/algolia: findings
+coverage examples/angular/rxjs: skipped (tool_missing)
+typecheck examples/angular/simple: skipped (dependency_mismatch)
+coverage examples/vue/simple: skipped (tool_missing)
+coverage examples/angular/simple: skipped (tool_missing)
+typecheck examples/vue/persister: findings
+typecheck integrations/angular-cli-20: skipped (dependency_mismatch)
+coverage examples/react/algolia: skipped (tool_missing)
+coverage integrations/angular-cli-20: skipped (tool_missing)
+typecheck examples/lit/basic: findings
+coverage examples/react/auto-refetching: skipped (tool_missing)
+typecheck examples/vue/dependent-queries: findings
+coverage examples/react/basic: skipped (tool_missing)
+typecheck examples/react/basic: findings
+typecheck examples/react/auto-refetching: findings
+coverage examples/react/basic-graphql-request: skipped (tool_missing)
+typecheck integrations/lit-vite: findings
+coverage examples/react/batching: skipped (tool_missing)
+coverage integrations/lit-vite: skipped (tool_missing)
+typecheck examples/vue/simple: findings
+coverage examples/react/chat: skipped (tool_missing)
+typecheck examples/react/basic-graphql-request: findings
+coverage examples/react/default-query-function: skipped (tool_missing)
+typecheck examples/react/batching: findings
+typecheck examples/react/chat: findings
+coverage examples/react/devtools-panel: skipped (tool_missing)
+typecheck examples/react/default-query-function: findings
+coverage examples/react/eslint-legacy: skipped (tool_missing)
+coverage integrations/react-next-14: skipped (tool_missing)
+typecheck integrations/react-next-14: findings
+coverage examples/react/eslint-plugin-demo: skipped (tool_missing)
+typecheck examples/react/devtools-panel: findings
+coverage examples/react/infinite-query-with-max-pages: skipped (tool_missing)
+typecheck examples/react/eslint-plugin-demo: findings
+typecheck examples/react/eslint-legacy: findings
+coverage examples/react/load-more-infinite-scroll: skipped (tool_missing)
+typecheck examples/react/infinite-query-with-max-pages: findings
+coverage examples/react/nextjs: skipped (tool_missing)
+coverage integrations/react-next-15: skipped (tool_missing)
+typecheck integrations/react-next-15: findings
+coverage examples/react/nextjs-app-optimistic-updates: skipped (tool_missing)
+typecheck examples/react/nextjs: findings
+coverage examples/react/nextjs-app-prefetching: skipped (tool_missing)
+typecheck examples/react/load-more-infinite-scroll: findings
+typecheck examples/react/nextjs-app-prefetching: findings
+coverage examples/react/nextjs-suspense-streaming: skipped (tool_missing)
+typecheck examples/react/nextjs-app-optimistic-updates: findings
+coverage examples/react/offline: skipped (tool_missing)
+coverage integrations/react-next-16: skipped (tool_missing)
+typecheck integrations/react-next-16: findings
+coverage examples/react/pagination: skipped (tool_missing)
+typecheck examples/react/nextjs-suspense-streaming: findings
+coverage examples/react/playground: skipped (tool_missing)
+typecheck examples/react/offline: findings
+typecheck examples/react/playground: findings
+coverage examples/react/prefetching: skipped (tool_missing)
+typecheck examples/react/react-native: skipped (dependency_mismatch)
+coverage examples/react/react-native: skipped (tool_missing)
+coverage integrations/react-nodenext: skipped (tool_missing)
+typecheck examples/react/pagination: findings
+coverage examples/react/react-router: skipped (tool_missing)
+typecheck integrations/react-nodenext: findings
+coverage examples/react/rick-morty: skipped (tool_missing)
+typecheck integrations/react-vite: passed
+typecheck examples/react/prefetching: findings
+coverage examples/react/shadow-dom: skipped (tool_missing)
+typecheck examples/react/react-router: findings
+coverage integrations/react-vite: skipped (tool_missing)
+typecheck examples/react/rick-morty: findings
+coverage examples/react/simple: skipped (tool_missing)
+coverage integrations/react-webpack-4: skipped (tool_missing)
+typecheck integrations/react-webpack-4: failed (unparseable_output)
+typecheck integrations/react-webpack-5: failed (unparseable_output)
+coverage examples/react/star-wars: skipped (tool_missing)
+coverage integrations/react-webpack-5: skipped (tool_missing)
+typecheck examples/react/shadow-dom: findings
+typecheck examples/react/simple: findings
+coverage examples/react/suspense: skipped (tool_missing)
+coverage integrations/solid-vite: skipped (tool_missing)
+typecheck examples/solid/astro: skipped (dependency_mismatch)
+typecheck integrations/svelte-vite: skipped (dependency_mismatch)
+coverage examples/solid/astro: skipped (tool_missing)
+coverage integrations/svelte-vite: skipped (tool_missing)
+typecheck integrations/solid-vite: failed (unparseable_output)
+typecheck examples/react/star-wars: findings
+coverage examples/solid/basic: skipped (tool_missing)
+coverage integrations/vue-declaration-emit: skipped (tool_missing)
+typecheck examples/react/suspense: findings
+typecheck examples/solid/basic: findings
+coverage examples/solid/basic-graphql-request: skipped (tool_missing)
+coverage integrations/vue-vite: skipped (tool_missing)
+typecheck examples/solid/basic-graphql-request: findings
+typecheck packages/angular-query-experimental: skipped (dependency_mismatch)
+coverage examples/solid/default-query-function: skipped (tool_missing)
+coverage packages/angular-query-experimental: skipped (tool_missing)
+typecheck integrations/vue-vite: findings
+typecheck packages/angular-query-persist-client: skipped (dependency_mismatch)
+coverage examples/solid/offline: skipped (tool_missing)
+coverage packages/angular-query-persist-client: skipped (tool_missing)
+typecheck examples/solid/default-query-function: findings
+typecheck integrations/vue-declaration-emit: findings
+coverage examples/solid/simple: skipped (tool_missing)
+coverage packages/lit-query: skipped (tool_missing)
+typecheck examples/solid/solid-start-streaming: skipped (dependency_mismatch)
+typecheck examples/solid/simple: findings
+coverage examples/solid/solid-start-streaming: skipped (tool_missing)
+coverage packages/preact-query: skipped (tool_missing)
+typecheck examples/svelte/auto-refetching: skipped (dependency_mismatch)
+typecheck examples/solid/offline: findings
+coverage examples/svelte/auto-refetching: skipped (tool_missing)
+coverage packages/preact-query-devtools: skipped (tool_missing)
+typecheck examples/svelte/basic: skipped (dependency_mismatch)
+typecheck packages/lit-query: passed
+coverage examples/svelte/basic: skipped (tool_missing)
+coverage packages/preact-query-persist-client: skipped (tool_missing)
+typecheck examples/svelte/load-more-infinite-scroll: skipped (dependency_mismatch)
+typecheck packages/preact-query-persist-client: findings
+coverage examples/svelte/load-more-infinite-scroll: skipped (tool_missing)
+coverage packages/query-async-storage-persister: skipped (tool_missing)
+typecheck examples/svelte/optimistic-updates: skipped (dependency_mismatch)
+typecheck packages/preact-query-devtools: findings
+coverage examples/svelte/optimistic-updates: skipped (tool_missing)
+coverage packages/query-broadcast-client-experimental: skipped (tool_missing)
+typecheck examples/svelte/playground: skipped (dependency_mismatch)
+typecheck packages/query-async-storage-persister: passed
+coverage examples/svelte/playground: skipped (tool_missing)
+typecheck packages/query-broadcast-client-experimental: passed
+typecheck examples/svelte/simple: skipped (dependency_mismatch)
+coverage packages/query-core: skipped (tool_missing)
+coverage examples/svelte/simple: skipped (tool_missing)
+typecheck packages/preact-query: passed
+typecheck examples/svelte/ssr: skipped (dependency_mismatch)
+coverage packages/query-devtools: skipped (tool_missing)
+coverage examples/svelte/ssr: skipped (tool_missing)
+typecheck packages/query-core: passed
+typecheck examples/svelte/star-wars: skipped (dependency_mismatch)
+coverage packages/query-persist-client-core: skipped (tool_missing)
+coverage examples/svelte/star-wars: skipped (tool_missing)
+typecheck packages/query-persist-client-core: passed
+typecheck examples/vue/basic: findings
+coverage packages/query-sync-storage-persister: skipped (tool_missing)
+typecheck packages/query-devtools: passed
+coverage packages/react-query: skipped (tool_missing)
+coverage examples/lit/basic: skipped (tool_missing)
+lint packages/query-core: passed
+typecheck packages/query-sync-storage-persister: passed
+coverage examples/lit/pagination: skipped (tool_missing)
+coverage packages/react-query-devtools: skipped (tool_missing)
+typecheck examples/lit/pagination: findings
+coverage packages/react-query-next-experimental: skipped (tool_missing)
+typecheck packages/react-query-next-experimental: passed
+coverage packages/svelte-query-devtools: skipped (tool_missing)
+coverage packages/react-query-persist-client: skipped (tool_missing)
+typecheck packages/svelte-query-persist-client: skipped (dependency_mismatch)
+typecheck packages/react-query-persist-client: passed
+coverage packages/svelte-query-persist-client: skipped (tool_missing)
+coverage packages/solid-query: skipped (tool_missing)
+typecheck packages/react-query-devtools: findings
+typecheck packages/react-query: passed
+coverage packages/vue-query: skipped (tool_missing)
+coverage packages/solid-query-devtools: skipped (tool_missing)
+typecheck packages/solid-query: passed
+typecheck packages/solid-query-devtools: passed
+coverage packages/vue-query-devtools: skipped (tool_missing)
+coverage packages/solid-query-persist-client: skipped (tool_missing)
+secrets .: passed
+typecheck packages/svelte-query: skipped (dependency_mismatch)
+dependencies .: skipped (offline)
+coverage packages/svelte-query: skipped (tool_missing)
+typecheck packages/svelte-query-devtools: skipped (dependency_mismatch)
+typecheck packages/vue-query: passed
+typecheck packages/vue-query-devtools: findings
+typecheck packages/solid-query-persist-client: passed
+Finished checks
+Running graph…
+Finished graph
+Running report…
+Finished report

@@ -1,0 +1,252 @@
+[
+  {
+    "snapshot": "@angular/build@20.3.22(@angular/compiler-cli@20.3.18(@angular/compiler@20.3.18)(typescript@5.8.3))(@angular/compiler@20.3.18)(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@20.3.18(@angular/animations@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@types/node@22.19.15)(chokidar@5.0.0)(jiti@2.7.0)(lightningcss@1.32.0)(postcss@8.5.8)(tailwindcss@4.2.2)(terser@5.46.1)(tslib@2.8.1)(tsx@4.21.0)(typescript@5.8.3)(vitest@4.1.2(@types/node@22.19.15)(jsdom@27.4.0)(msw@2.12.14(@types/node@22.19.15)(typescript@6.0.3))(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(yaml@2.9.0)",
+    "rio_component": "@angular+build@20.3.22_@angular+compiler-cli@20.3.18_@angular+compiler@20.3.18_typescript@5.8.3_@angular+compiler@20.3.18_@angular+core@20.3.18_@angular+compiler@20.3.18_rxjs@7.8.2_zone.js@0.15.0_@angular+platform-browser@20.3.18_@angular+animations@20.3.18_@angular+core@20.3.18_@angular+compiler@20.3.18_rxjs@7.8.2_zone.js@0.15.0_@angular+common@20.3.18_@angular+core@20.3.18_@angular+compiler@20.3.18_rxjs@7.8.2_zone.js@0.15.0_rxjs@7.8.2_@angular+core@20.3.18_@angular+compiler@20.3.18_rxjs@7.8.2_zone.js@0.15.0_@types+node@22.19.15_chokidar@5.0.0_jiti@2.7.0_lightningcss@1.32.0_postcss@8.5.8_tailwindcss@4.2.2_terser@5.46.1_tslib@2.8.1_tsx@4.21.0_typescript@5.8.3_vitest@4.1.2_@types+node@22.19.15_jsdom@27.4.0_msw@2.12.14_@types+node@22.19.15_typescript@6.0.3_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_yaml@2.9.0",
+    "rio_component_bytes": 886,
+    "filesystem_name_max": 255,
+    "installed_directory": "@angular+build@20.3.22_@angular+compiler-cli@20.3.18_@angular+compiler@20.3.18_typescript@5.8.3__@angular+compiler@20.3.18_@angular+core@20.3.18_@angular+compiler@20.3.18_rxjs@7.8.2_zone.js@0.15.0__@angular+platform-b_533847c24a3680b7c09e45849f3e2e47",
+    "installed_manifest": "/dev/shm/rio-tanstack-work/maintainer-head/node_modules/.pnpm/@angular+build@20.3.22_@angular+compiler-cli@20.3.18_@angular+compiler@20.3.18_typescript@5.8.3__@angular+compiler@20.3.18_@angular+core@20.3.18_@angular+compiler@20.3.18_rxjs@7.8.2_zone.js@0.15.0__@angular+platform-b_533847c24a3680b7c09e45849f3e2e47/node_modules/@angular/build/package.json",
+    "name": "@angular/build",
+    "version": "20.3.22"
+  },
+  {
+    "snapshot": "@angular/forms@20.3.18(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@20.3.18(@angular/animations@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(rxjs@7.8.2)",
+    "rio_component": "@angular+forms@20.3.18_@angular+common@20.3.18_@angular+core@20.3.18_@angular+compiler@20.3.18_rxjs@7.8.2_zone.js@0.15.0_rxjs@7.8.2_@angular+core@20.3.18_@angular+compiler@20.3.18_rxjs@7.8.2_zone.js@0.15.0_@angular+platform-browser@20.3.18_@angular+animations@20.3.18_@angular+core@20.3.18_@angular+compiler@20.3.18_rxjs@7.8.2_zone.js@0.15.0_@angular+common@20.3.18_@angular+core@20.3.18_@angular+compiler@20.3.18_rxjs@7.8.2_zone.js@0.15.0_rxjs@7.8.2_@angular+core@20.3.18_@angular+compiler@20.3.18_rxjs@7.8.2_zone.js@0.15.0_rxjs@7.8.2",
+    "rio_component_bytes": 535,
+    "filesystem_name_max": 255,
+    "installed_directory": "@angular+forms@20.3.18_@angular+common@20.3.18_@angular+core@20.3.18_@angular+compiler@20.3.18_rxjs@7.8.2_zone.js@0.15.0__rxjs@7.8.2__@angular+core@20.3.18_@angular+compiler@20.3.18_rxjs@7.8.2_zone.js@0.15.0__@angular_217b64f8f99aba3fe2e90ae9d64f5102",
+    "installed_manifest": "/dev/shm/rio-tanstack-work/maintainer-head/node_modules/.pnpm/@angular+forms@20.3.18_@angular+common@20.3.18_@angular+core@20.3.18_@angular+compiler@20.3.18_rxjs@7.8.2_zone.js@0.15.0__rxjs@7.8.2__@angular+core@20.3.18_@angular+compiler@20.3.18_rxjs@7.8.2_zone.js@0.15.0__@angular_217b64f8f99aba3fe2e90ae9d64f5102/node_modules/@angular/forms/package.json",
+    "name": "@angular/forms",
+    "version": "20.3.18"
+  },
+  {
+    "snapshot": "@angular/platform-browser@20.3.18(@angular/animations@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))",
+    "rio_component": "@angular+platform-browser@20.3.18_@angular+animations@20.3.18_@angular+core@20.3.18_@angular+compiler@20.3.18_rxjs@7.8.2_zone.js@0.15.0_@angular+common@20.3.18_@angular+core@20.3.18_@angular+compiler@20.3.18_rxjs@7.8.2_zone.js@0.15.0_rxjs@7.8.2_@angular+core@20.3.18_@angular+compiler@20.3.18_rxjs@7.8.2_zone.js@0.15.0",
+    "rio_component_bytes": 318,
+    "filesystem_name_max": 255,
+    "installed_directory": "@angular+platform-browser@20.3.18_@angular+animations@20.3.18_@angular+core@20.3.18_@angular+compiler@20.3.18_rxjs@7.8.2_zone.js@0.15.0___@angular+common@20.3.18_@angular+core@20.3.18_@angular+compiler@20.3.18_rxjs@7._7b1bea1505eb3f43adb427881dd5867b",
+    "installed_manifest": "/dev/shm/rio-tanstack-work/maintainer-head/node_modules/.pnpm/@angular+platform-browser@20.3.18_@angular+animations@20.3.18_@angular+core@20.3.18_@angular+compiler@20.3.18_rxjs@7.8.2_zone.js@0.15.0___@angular+common@20.3.18_@angular+core@20.3.18_@angular+compiler@20.3.18_rxjs@7._7b1bea1505eb3f43adb427881dd5867b/node_modules/@angular/platform-browser/package.json",
+    "name": "@angular/platform-browser",
+    "version": "20.3.18"
+  },
+  {
+    "snapshot": "@angular/router@20.3.18(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@20.3.18(@angular/animations@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(rxjs@7.8.2)",
+    "rio_component": "@angular+router@20.3.18_@angular+common@20.3.18_@angular+core@20.3.18_@angular+compiler@20.3.18_rxjs@7.8.2_zone.js@0.15.0_rxjs@7.8.2_@angular+core@20.3.18_@angular+compiler@20.3.18_rxjs@7.8.2_zone.js@0.15.0_@angular+platform-browser@20.3.18_@angular+animations@20.3.18_@angular+core@20.3.18_@angular+compiler@20.3.18_rxjs@7.8.2_zone.js@0.15.0_@angular+common@20.3.18_@angular+core@20.3.18_@angular+compiler@20.3.18_rxjs@7.8.2_zone.js@0.15.0_rxjs@7.8.2_@angular+core@20.3.18_@angular+compiler@20.3.18_rxjs@7.8.2_zone.js@0.15.0_rxjs@7.8.2",
+    "rio_component_bytes": 536,
+    "filesystem_name_max": 255,
+    "installed_directory": "@angular+router@20.3.18_@angular+common@20.3.18_@angular+core@20.3.18_@angular+compiler@20.3.18_rxjs@7.8.2_zone.js@0.15.0__rxjs@7.8.2__@angular+core@20.3.18_@angular+compiler@20.3.18_rxjs@7.8.2_zone.js@0.15.0__@angula_5dcbbf5f46f4cd6d3a6acf9272c38132",
+    "installed_manifest": "/dev/shm/rio-tanstack-work/maintainer-head/node_modules/.pnpm/@angular+router@20.3.18_@angular+common@20.3.18_@angular+core@20.3.18_@angular+compiler@20.3.18_rxjs@7.8.2_zone.js@0.15.0__rxjs@7.8.2__@angular+core@20.3.18_@angular+compiler@20.3.18_rxjs@7.8.2_zone.js@0.15.0__@angula_5dcbbf5f46f4cd6d3a6acf9272c38132/node_modules/@angular/router/package.json",
+    "name": "@angular/router",
+    "version": "20.3.18"
+  },
+  {
+    "snapshot": "@astrojs/tailwind@6.0.2(astro@5.18.1(@types/node@22.19.15)(@vercel/functions@2.2.13)(db0@0.3.4)(idb-keyval@6.2.2)(ioredis@5.10.1)(jiti@1.21.7)(lightningcss@1.32.0)(rollup@4.60.1)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(typescript@5.8.3)(yaml@2.9.0))(tailwindcss@3.4.19(tsx@4.21.0)(yaml@2.9.0))",
+    "rio_component": "@astrojs+tailwind@6.0.2_astro@5.18.1_@types+node@22.19.15_@vercel+functions@2.2.13_db0@0.3.4_idb-keyval@6.2.2_ioredis@5.10.1_jiti@1.21.7_lightningcss@1.32.0_rollup@4.60.1_sass@1.90.0_terser@5.46.1_tsx@4.21.0_typescript@5.8.3_yaml@2.9.0_tailwindcss@3.4.19_tsx@4.21.0_yaml@2.9.0",
+    "rio_component_bytes": 276,
+    "filesystem_name_max": 255,
+    "installed_directory": "@astrojs+tailwind@6.0.2_astro@5.18.1_@types+node@22.19.15_@vercel+functions@2.2.13_db0@0.3.4_idb-keyval@6.2.2_ioredis@5.10.1_jiti@1.21.7_lightningcss@1.32.0_rollup@4.60.1_sass@1.90.0_terser@5.46.1_tsx@4.21.0_typescrip_ddb80552a791b81f389cd5b45c46bb8b",
+    "installed_manifest": "/dev/shm/rio-tanstack-work/maintainer-head/node_modules/.pnpm/@astrojs+tailwind@6.0.2_astro@5.18.1_@types+node@22.19.15_@vercel+functions@2.2.13_db0@0.3.4_idb-keyval@6.2.2_ioredis@5.10.1_jiti@1.21.7_lightningcss@1.32.0_rollup@4.60.1_sass@1.90.0_terser@5.46.1_tsx@4.21.0_typescrip_ddb80552a791b81f389cd5b45c46bb8b/node_modules/@astrojs/tailwind/package.json",
+    "name": "@astrojs/tailwind",
+    "version": "6.0.2"
+  },
+  {
+    "snapshot": "@astrojs/vercel@8.2.11(@sveltejs/kit@2.57.1(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.55.1)(vite@6.4.1(@types/node@22.19.15)(jiti@1.21.7)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(svelte@5.55.1)(typescript@5.8.3)(vite@6.4.1(@types/node@22.19.15)(jiti@1.21.7)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(astro@5.18.1(@types/node@22.19.15)(@vercel/functions@2.2.13)(db0@0.3.4)(idb-keyval@6.2.2)(ioredis@5.10.1)(jiti@1.21.7)(lightningcss@1.32.0)(rollup@4.60.1)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(typescript@5.8.3)(yaml@2.9.0))(next@16.2.2(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(sass@1.90.0))(react@19.2.4)(rollup@4.60.1)(svelte@5.55.1)(vue@3.5.31(typescript@5.8.3))",
+    "rio_component": "@astrojs+vercel@8.2.11_@sveltejs+kit@2.57.1_@sveltejs+vite-plugin-svelte@5.1.1_svelte@5.55.1_vite@6.4.1_@types+node@22.19.15_jiti@1.21.7_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_svelte@5.55.1_typescript@5.8.3_vite@6.4.1_@types+node@22.19.15_jiti@1.21.7_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_astro@5.18.1_@types+node@22.19.15_@vercel+functions@2.2.13_db0@0.3.4_idb-keyval@6.2.2_ioredis@5.10.1_jiti@1.21.7_lightningcss@1.32.0_rollup@4.60.1_sass@1.90.0_terser@5.46.1_tsx@4.21.0_typescript@5.8.3_yaml@2.9.0_next@16.2.2_react-dom@19.2.4_react@19.2.4_react@19.2.4_sass@1.90.0_react@19.2.4_rollup@4.60.1_svelte@5.55.1_vue@3.5.31_typescript@5.8.3",
+    "rio_component_bytes": 695,
+    "filesystem_name_max": 255,
+    "installed_directory": "@astrojs+vercel@8.2.11_@sveltejs+kit@2.57.1_@sveltejs+vite-plugin-svelte@5.1.1_svelte@5.55.1_vite@6.4.1_@types+node@22.19.15_jiti@1.21.7_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0___svelte@5.5_57c81affff563ad6182e592d06398507",
+    "installed_manifest": "/dev/shm/rio-tanstack-work/maintainer-head/node_modules/.pnpm/@astrojs+vercel@8.2.11_@sveltejs+kit@2.57.1_@sveltejs+vite-plugin-svelte@5.1.1_svelte@5.55.1_vite@6.4.1_@types+node@22.19.15_jiti@1.21.7_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0___svelte@5.5_57c81affff563ad6182e592d06398507/node_modules/@astrojs/vercel/package.json",
+    "name": "@astrojs/vercel",
+    "version": "8.2.11"
+  },
+  {
+    "snapshot": "@react-navigation/elements@1.3.31(@react-navigation/native@6.1.18(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native-safe-area-context@4.14.1(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(@types/react@19.2.14)(react@19.2.4))(react@19.2.4)",
+    "rio_component": "@react-navigation+elements@1.3.31_@react-navigation+native@6.1.18_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7_@types+react@19.2.14_react@19.2.4_react@19.2.4_react-native-safe-area-context@4.14.1_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7_@types+react@19.2.14_react@19.2.4_react@19.2.4_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7_@types+react@19.2.14_react@19.2.4_react@19.2.4",
+    "rio_component_bytes": 493,
+    "filesystem_name_max": 255,
+    "installed_directory": "@react-navigation+elements@1.3.31_@react-navigation+native@6.1.18_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7__@types+react@19.2.14_react@19.2.4__react@19.2.4__react-native-safe-_4640e2cc491f753fe6701bb28afbed79",
+    "installed_manifest": "/dev/shm/rio-tanstack-work/maintainer-head/node_modules/.pnpm/@react-navigation+elements@1.3.31_@react-navigation+native@6.1.18_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7__@types+react@19.2.14_react@19.2.4__react@19.2.4__react-native-safe-_4640e2cc491f753fe6701bb28afbed79/node_modules/@react-navigation/elements/package.json",
+    "name": "@react-navigation/elements",
+    "version": "1.3.31"
+  },
+  {
+    "snapshot": "@react-navigation/stack@6.4.1(@react-navigation/native@6.1.18(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native-gesture-handler@2.30.1(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native-safe-area-context@4.14.1(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native-screens@4.24.0(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(@types/react@19.2.14)(react@19.2.4))(react@19.2.4)",
+    "rio_component": "@react-navigation+stack@6.4.1_@react-navigation+native@6.1.18_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7_@types+react@19.2.14_react@19.2.4_react@19.2.4_react-native-gesture-handler@2.30.1_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7_@types+react@19.2.14_react@19.2.4_react@19.2.4_react-native-safe-area-context@4.14.1_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7_@types+react@19.2.14_react@19.2.4_react@19.2.4_react-native-screens@4.24.0_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7_@types+react@19.2.14_react@19.2.4_react@19.2.4_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7_@types+react@19.2.14_react@19.2.4_react@19.2.4",
+    "rio_component_bytes": 813,
+    "filesystem_name_max": 255,
+    "installed_directory": "@react-navigation+stack@6.4.1_@react-navigation+native@6.1.18_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7__@types+react@19.2.14_react@19.2.4__react@19.2.4__react-native-gesture-h_216321eaa6af61227c2b78a802a5aa2e",
+    "installed_manifest": "/dev/shm/rio-tanstack-work/maintainer-head/node_modules/.pnpm/@react-navigation+stack@6.4.1_@react-navigation+native@6.1.18_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7__@types+react@19.2.14_react@19.2.4__react@19.2.4__react-native-gesture-h_216321eaa6af61227c2b78a802a5aa2e/node_modules/@react-navigation/stack/package.json",
+    "name": "@react-navigation/stack",
+    "version": "6.4.1"
+  },
+  {
+    "snapshot": "@solidjs/start@1.3.2(@testing-library/jest-dom@6.9.1)(solid-js@1.9.12)(vinxi@0.5.11(@types/node@22.19.15)(@vercel/functions@2.2.13)(db0@0.3.4)(idb-keyval@6.2.2)(ioredis@5.10.1)(jiti@2.7.0)(lightningcss@1.32.0)(rolldown@1.2.4)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(webpack@5.105.4(esbuild@0.27.4))(yaml@2.9.0))(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))",
+    "rio_component": "@solidjs+start@1.3.2_@testing-library+jest-dom@6.9.1_solid-js@1.9.12_vinxi@0.5.11_@types+node@22.19.15_@vercel+functions@2.2.13_db0@0.3.4_idb-keyval@6.2.2_ioredis@5.10.1_jiti@2.7.0_lightningcss@1.32.0_rolldown@1.2.4_sass@1.90.0_terser@5.46.1_tsx@4.21.0_webpack@5.105.4_esbuild@0.27.4_yaml@2.9.0_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0",
+    "rio_component_bytes": 405,
+    "filesystem_name_max": 255,
+    "installed_directory": "@solidjs+start@1.3.2_@testing-library+jest-dom@6.9.1_solid-js@1.9.12_vinxi@0.5.11_@types+node@22.19.15_@vercel+functions@2.2.13_db0@0.3.4_idb-keyval@6.2.2_ioredis@5.10.1_jiti@2.7.0_lightningcss@1.32.0_rolldown@1.2.4_s_530f39a1238348f101a110c9b39ee678",
+    "installed_manifest": "/dev/shm/rio-tanstack-work/maintainer-head/node_modules/.pnpm/@solidjs+start@1.3.2_@testing-library+jest-dom@6.9.1_solid-js@1.9.12_vinxi@0.5.11_@types+node@22.19.15_@vercel+functions@2.2.13_db0@0.3.4_idb-keyval@6.2.2_ioredis@5.10.1_jiti@2.7.0_lightningcss@1.32.0_rolldown@1.2.4_s_530f39a1238348f101a110c9b39ee678/node_modules/@solidjs/start/package.json",
+    "name": "@solidjs/start",
+    "version": "1.3.2"
+  },
+  {
+    "snapshot": "@sveltejs/adapter-auto@6.1.1(@sveltejs/kit@2.57.1(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.55.1)(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(svelte@5.55.1)(typescript@5.8.3)(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))",
+    "rio_component": "@sveltejs+adapter-auto@6.1.1_@sveltejs+kit@2.57.1_@sveltejs+vite-plugin-svelte@5.1.1_svelte@5.55.1_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_svelte@5.55.1_typescript@5.8.3_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0",
+    "rio_component_bytes": 351,
+    "filesystem_name_max": 255,
+    "installed_directory": "@sveltejs+adapter-auto@6.1.1_@sveltejs+kit@2.57.1_@sveltejs+vite-plugin-svelte@5.1.1_svelte@5.55.1_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0___svelt_51ee1abf90ef62f15c4e98eabfd60526",
+    "installed_manifest": "/dev/shm/rio-tanstack-work/maintainer-head/node_modules/.pnpm/@sveltejs+adapter-auto@6.1.1_@sveltejs+kit@2.57.1_@sveltejs+vite-plugin-svelte@5.1.1_svelte@5.55.1_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0___svelt_51ee1abf90ef62f15c4e98eabfd60526/node_modules/@sveltejs/adapter-auto/package.json",
+    "name": "@sveltejs/adapter-auto",
+    "version": "6.1.1"
+  },
+  {
+    "snapshot": "@sveltejs/kit@2.57.1(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.55.1)(vite@6.4.1(@types/node@22.19.15)(jiti@1.21.7)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(svelte@5.55.1)(typescript@5.8.3)(vite@6.4.1(@types/node@22.19.15)(jiti@1.21.7)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))",
+    "rio_component": "@sveltejs+kit@2.57.1_@sveltejs+vite-plugin-svelte@5.1.1_svelte@5.55.1_vite@6.4.1_@types+node@22.19.15_jiti@1.21.7_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_svelte@5.55.1_typescript@5.8.3_vite@6.4.1_@types+node@22.19.15_jiti@1.21.7_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0",
+    "rio_component_bytes": 324,
+    "filesystem_name_max": 255,
+    "installed_directory": "@sveltejs+kit@2.57.1_@sveltejs+vite-plugin-svelte@5.1.1_svelte@5.55.1_vite@6.4.1_@types+node@22.19.15_jiti@1.21.7_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0___svelte@5.55.1_typescript@5.8.3_vi_4ce826a74138839462e714f776d4c8ce",
+    "installed_manifest": "/dev/shm/rio-tanstack-work/maintainer-head/node_modules/.pnpm/@sveltejs+kit@2.57.1_@sveltejs+vite-plugin-svelte@5.1.1_svelte@5.55.1_vite@6.4.1_@types+node@22.19.15_jiti@1.21.7_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0___svelte@5.55.1_typescript@5.8.3_vi_4ce826a74138839462e714f776d4c8ce/node_modules/@sveltejs/kit/package.json",
+    "name": "@sveltejs/kit",
+    "version": "2.57.1"
+  },
+  {
+    "snapshot": "@sveltejs/kit@2.57.1(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.55.1)(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(svelte@5.55.1)(typescript@5.8.3)(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))",
+    "rio_component": "@sveltejs+kit@2.57.1_@sveltejs+vite-plugin-svelte@5.1.1_svelte@5.55.1_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_svelte@5.55.1_typescript@5.8.3_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0",
+    "rio_component_bytes": 322,
+    "filesystem_name_max": 255,
+    "installed_directory": "@sveltejs+kit@2.57.1_@sveltejs+vite-plugin-svelte@5.1.1_svelte@5.55.1_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0___svelte@5.55.1_typescript@5.8.3_vit_d5703240680dd5d0006e14b139217686",
+    "installed_manifest": "/dev/shm/rio-tanstack-work/maintainer-head/node_modules/.pnpm/@sveltejs+kit@2.57.1_@sveltejs+vite-plugin-svelte@5.1.1_svelte@5.55.1_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0___svelte@5.55.1_typescript@5.8.3_vit_d5703240680dd5d0006e14b139217686/node_modules/@sveltejs/kit/package.json",
+    "name": "@sveltejs/kit",
+    "version": "2.57.1"
+  },
+  {
+    "snapshot": "@sveltejs/vite-plugin-svelte-inspector@4.0.1(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.55.1)(vite@6.4.1(@types/node@22.19.15)(jiti@1.21.7)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(svelte@5.55.1)(vite@6.4.1(@types/node@22.19.15)(jiti@1.21.7)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))",
+    "rio_component": "@sveltejs+vite-plugin-svelte-inspector@4.0.1_@sveltejs+vite-plugin-svelte@5.1.1_svelte@5.55.1_vite@6.4.1_@types+node@22.19.15_jiti@1.21.7_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_svelte@5.55.1_vite@6.4.1_@types+node@22.19.15_jiti@1.21.7_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0",
+    "rio_component_bytes": 331,
+    "filesystem_name_max": 255,
+    "installed_directory": "@sveltejs+vite-plugin-svelte-inspector@4.0.1_@sveltejs+vite-plugin-svelte@5.1.1_svelte@5.55.1_vite@6.4.1_@types+node@22.19.15_jiti@1.21.7_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0___svelte@5._ecc1a6595cc45cc9bb7e46e6d68877a2",
+    "installed_manifest": "/dev/shm/rio-tanstack-work/maintainer-head/node_modules/.pnpm/@sveltejs+vite-plugin-svelte-inspector@4.0.1_@sveltejs+vite-plugin-svelte@5.1.1_svelte@5.55.1_vite@6.4.1_@types+node@22.19.15_jiti@1.21.7_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0___svelte@5._ecc1a6595cc45cc9bb7e46e6d68877a2/node_modules/@sveltejs/vite-plugin-svelte-inspector/package.json",
+    "name": "@sveltejs/vite-plugin-svelte-inspector",
+    "version": "4.0.1"
+  },
+  {
+    "snapshot": "@sveltejs/vite-plugin-svelte-inspector@4.0.1(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.55.1)(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(svelte@5.55.1)(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))",
+    "rio_component": "@sveltejs+vite-plugin-svelte-inspector@4.0.1_@sveltejs+vite-plugin-svelte@5.1.1_svelte@5.55.1_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_svelte@5.55.1_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0",
+    "rio_component_bytes": 329,
+    "filesystem_name_max": 255,
+    "installed_directory": "@sveltejs+vite-plugin-svelte-inspector@4.0.1_@sveltejs+vite-plugin-svelte@5.1.1_svelte@5.55.1_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0___svelte@5.5_9b440fea8cc53c3d6703bf5bb287c19e",
+    "installed_manifest": "/dev/shm/rio-tanstack-work/maintainer-head/node_modules/.pnpm/@sveltejs+vite-plugin-svelte-inspector@4.0.1_@sveltejs+vite-plugin-svelte@5.1.1_svelte@5.55.1_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0___svelte@5.5_9b440fea8cc53c3d6703bf5bb287c19e/node_modules/@sveltejs/vite-plugin-svelte-inspector/package.json",
+    "name": "@sveltejs/vite-plugin-svelte-inspector",
+    "version": "4.0.1"
+  },
+  {
+    "snapshot": "@testing-library/svelte@5.3.1(svelte@5.55.1)(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))(vitest@4.1.2(@types/node@22.19.15)(jsdom@27.4.0)(msw@2.12.14(@types/node@22.19.15)(typescript@5.9.3))(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))",
+    "rio_component": "@testing-library+svelte@5.3.1_svelte@5.55.1_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_vitest@4.1.2_@types+node@22.19.15_jsdom@27.4.0_msw@2.12.14_@types+node@22.19.15_typescript@5.9.3_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0",
+    "rio_component_bytes": 362,
+    "filesystem_name_max": 255,
+    "installed_directory": "@testing-library+svelte@5.3.1_svelte@5.55.1_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0__vitest@4.1.2_@types+node@22.19.15_jsdom@27.4.0_msw@2.12.14_@t_dbb13012a906f20ca0c7f4ee236446f3",
+    "installed_manifest": "/dev/shm/rio-tanstack-work/maintainer-head/node_modules/.pnpm/@testing-library+svelte@5.3.1_svelte@5.55.1_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0__vitest@4.1.2_@types+node@22.19.15_jsdom@27.4.0_msw@2.12.14_@t_dbb13012a906f20ca0c7f4ee236446f3/node_modules/@testing-library/svelte/package.json",
+    "name": "@testing-library/svelte",
+    "version": "5.3.1"
+  },
+  {
+    "snapshot": "@vercel/analytics@1.6.1(@sveltejs/kit@2.57.1(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.55.1)(vite@6.4.1(@types/node@22.19.15)(jiti@1.21.7)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(svelte@5.55.1)(typescript@5.8.3)(vite@6.4.1(@types/node@22.19.15)(jiti@1.21.7)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(next@16.2.2(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(sass@1.90.0))(react@19.2.4)(svelte@5.55.1)(vue@3.5.31(typescript@5.8.3))",
+    "rio_component": "@vercel+analytics@1.6.1_@sveltejs+kit@2.57.1_@sveltejs+vite-plugin-svelte@5.1.1_svelte@5.55.1_vite@6.4.1_@types+node@22.19.15_jiti@1.21.7_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_svelte@5.55.1_typescript@5.8.3_vite@6.4.1_@types+node@22.19.15_jiti@1.21.7_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_next@16.2.2_react-dom@19.2.4_react@19.2.4_react@19.2.4_sass@1.90.0_react@19.2.4_svelte@5.55.1_vue@3.5.31_typescript@5.8.3",
+    "rio_component_bytes": 470,
+    "filesystem_name_max": 255,
+    "installed_directory": "@vercel+analytics@1.6.1_@sveltejs+kit@2.57.1_@sveltejs+vite-plugin-svelte@5.1.1_svelte@5.55.1_vite@6.4.1_@types+node@22.19.15_jiti@1.21.7_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0___svelte@5._9fe415983ecc17813c53b4f2411768ab",
+    "installed_manifest": "/dev/shm/rio-tanstack-work/maintainer-head/node_modules/.pnpm/@vercel+analytics@1.6.1_@sveltejs+kit@2.57.1_@sveltejs+vite-plugin-svelte@5.1.1_svelte@5.55.1_vite@6.4.1_@types+node@22.19.15_jiti@1.21.7_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0___svelte@5._9fe415983ecc17813c53b4f2411768ab/node_modules/@vercel/analytics/package.json",
+    "name": "@vercel/analytics",
+    "version": "1.6.1"
+  },
+  {
+    "snapshot": "@vinxi/plugin-directives@0.5.1(vinxi@0.5.11(@types/node@22.19.15)(@vercel/functions@2.2.13)(db0@0.3.4)(idb-keyval@6.2.2)(ioredis@5.10.1)(jiti@2.7.0)(lightningcss@1.32.0)(rolldown@1.2.4)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(webpack@5.105.4(esbuild@0.27.4))(yaml@2.9.0))",
+    "rio_component": "@vinxi+plugin-directives@0.5.1_vinxi@0.5.11_@types+node@22.19.15_@vercel+functions@2.2.13_db0@0.3.4_idb-keyval@6.2.2_ioredis@5.10.1_jiti@2.7.0_lightningcss@1.32.0_rolldown@1.2.4_sass@1.90.0_terser@5.46.1_tsx@4.21.0_webpack@5.105.4_esbuild@0.27.4_yaml@2.9.0",
+    "rio_component_bytes": 256,
+    "filesystem_name_max": 255,
+    "installed_directory": "@vinxi+plugin-directives@0.5.1_vinxi@0.5.11_@types+node@22.19.15_@vercel+functions@2.2.13_db0@0.3.4_idb-keyval@6.2.2_ioredis@5.10.1_jiti@2.7.0_lightningcss@1.32.0_rolldown@1.2.4_sass@1.90.0_terser@5.46.1_tsx@4.21.0_we_9c6af791a84660888efb227116291932",
+    "installed_manifest": "/dev/shm/rio-tanstack-work/maintainer-head/node_modules/.pnpm/@vinxi+plugin-directives@0.5.1_vinxi@0.5.11_@types+node@22.19.15_@vercel+functions@2.2.13_db0@0.3.4_idb-keyval@6.2.2_ioredis@5.10.1_jiti@2.7.0_lightningcss@1.32.0_rolldown@1.2.4_sass@1.90.0_terser@5.46.1_tsx@4.21.0_we_9c6af791a84660888efb227116291932/node_modules/@vinxi/plugin-directives/package.json",
+    "name": "@vinxi/plugin-directives",
+    "version": "0.5.1"
+  },
+  {
+    "snapshot": "@vinxi/server-components@0.5.1(vinxi@0.5.11(@types/node@22.19.15)(@vercel/functions@2.2.13)(db0@0.3.4)(idb-keyval@6.2.2)(ioredis@5.10.1)(jiti@2.7.0)(lightningcss@1.32.0)(rolldown@1.2.4)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(webpack@5.105.4(esbuild@0.27.4))(yaml@2.9.0))",
+    "rio_component": "@vinxi+server-components@0.5.1_vinxi@0.5.11_@types+node@22.19.15_@vercel+functions@2.2.13_db0@0.3.4_idb-keyval@6.2.2_ioredis@5.10.1_jiti@2.7.0_lightningcss@1.32.0_rolldown@1.2.4_sass@1.90.0_terser@5.46.1_tsx@4.21.0_webpack@5.105.4_esbuild@0.27.4_yaml@2.9.0",
+    "rio_component_bytes": 256,
+    "filesystem_name_max": 255,
+    "installed_directory": "@vinxi+server-components@0.5.1_vinxi@0.5.11_@types+node@22.19.15_@vercel+functions@2.2.13_db0@0.3.4_idb-keyval@6.2.2_ioredis@5.10.1_jiti@2.7.0_lightningcss@1.32.0_rolldown@1.2.4_sass@1.90.0_terser@5.46.1_tsx@4.21.0_we_65811ee3edf507a96a77d9b668fbc321",
+    "installed_manifest": "/dev/shm/rio-tanstack-work/maintainer-head/node_modules/.pnpm/@vinxi+server-components@0.5.1_vinxi@0.5.11_@types+node@22.19.15_@vercel+functions@2.2.13_db0@0.3.4_idb-keyval@6.2.2_ioredis@5.10.1_jiti@2.7.0_lightningcss@1.32.0_rolldown@1.2.4_sass@1.90.0_terser@5.46.1_tsx@4.21.0_we_65811ee3edf507a96a77d9b668fbc321/node_modules/@vinxi/server-components/package.json",
+    "name": "@vinxi/server-components",
+    "version": "0.5.1"
+  },
+  {
+    "snapshot": "@vitest/eslint-plugin@1.6.14(@typescript-eslint/eslint-plugin@8.58.1(@typescript-eslint/parser@8.58.1(eslint@9.39.4(jiti@2.7.0))(typescript@6.0.3))(eslint@9.39.4(jiti@2.7.0))(typescript@6.0.3))(eslint@9.39.4(jiti@2.7.0))(typescript@6.0.3)(vitest@4.1.2(@types/node@22.19.15)(jsdom@27.4.0)(msw@2.12.14(@types/node@22.19.15)(typescript@6.0.3))(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))",
+    "rio_component": "@vitest+eslint-plugin@1.6.14_@typescript-eslint+eslint-plugin@8.58.1_@typescript-eslint+parser@8.58.1_eslint@9.39.4_jiti@2.7.0_typescript@6.0.3_eslint@9.39.4_jiti@2.7.0_typescript@6.0.3_eslint@9.39.4_jiti@2.7.0_typescript@6.0.3_vitest@4.1.2_@types+node@22.19.15_jsdom@27.4.0_msw@2.12.14_@types+node@22.19.15_typescript@6.0.3_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0",
+    "rio_component_bytes": 435,
+    "filesystem_name_max": 255,
+    "installed_directory": "@vitest+eslint-plugin@1.6.14_@typescript-eslint+eslint-plugin@8.58.1_@typescript-eslint+parser@8.58.1_eslint@9.39.4_jiti@2.7.0__typescript@6.0.3__eslint@9.39.4_jiti@2.7.0__typescript@6.0.3__eslint@9.39.4_jiti@2.7.0__t_a51aca86cc96cb549c9f48ff9fda64ca",
+    "installed_manifest": "/dev/shm/rio-tanstack-work/maintainer-head/node_modules/.pnpm/@vitest+eslint-plugin@1.6.14_@typescript-eslint+eslint-plugin@8.58.1_@typescript-eslint+parser@8.58.1_eslint@9.39.4_jiti@2.7.0__typescript@6.0.3__eslint@9.39.4_jiti@2.7.0__typescript@6.0.3__eslint@9.39.4_jiti@2.7.0__t_a51aca86cc96cb549c9f48ff9fda64ca/node_modules/@vitest/eslint-plugin/package.json",
+    "name": "@vitest/eslint-plugin",
+    "version": "1.6.14"
+  },
+  {
+    "snapshot": "expo-asset@11.0.5(expo@52.0.49(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(graphql@16.13.2)(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(@types/react@19.2.14)(react@19.2.4))(react@19.2.4)",
+    "rio_component": "expo-asset@11.0.5_expo@52.0.49_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7_graphql@16.13.2_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7_@types+react@19.2.14_react@19.2.4_react@19.2.4_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7_@types+react@19.2.14_react@19.2.4_react@19.2.4",
+    "rio_component_bytes": 369,
+    "filesystem_name_max": 255,
+    "installed_directory": "expo-asset@11.0.5_expo@52.0.49_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7__graphql@16.13.2_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7__@types+react@19.2.14_r_8848b87574f2b59c25777498652701a8",
+    "installed_manifest": "/dev/shm/rio-tanstack-work/maintainer-head/node_modules/.pnpm/expo-asset@11.0.5_expo@52.0.49_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7__graphql@16.13.2_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7__@types+react@19.2.14_r_8848b87574f2b59c25777498652701a8/node_modules/expo-asset/package.json",
+    "name": "expo-asset",
+    "version": "11.0.5"
+  },
+  {
+    "snapshot": "expo-constants@17.0.8(expo@52.0.49(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(graphql@16.13.2)(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(@types/react@19.2.14)(react@19.2.4))",
+    "rio_component": "expo-constants@17.0.8_expo@52.0.49_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7_graphql@16.13.2_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7_@types+react@19.2.14_react@19.2.4_react@19.2.4_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7_@types+react@19.2.14_react@19.2.4",
+    "rio_component_bytes": 360,
+    "filesystem_name_max": 255,
+    "installed_directory": "expo-constants@17.0.8_expo@52.0.49_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7__graphql@16.13.2_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7__@types+react@19.2._1ef6a8cd735ceffe3d068542e7c4322f",
+    "installed_manifest": "/dev/shm/rio-tanstack-work/maintainer-head/node_modules/.pnpm/expo-constants@17.0.8_expo@52.0.49_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7__graphql@16.13.2_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7__@types+react@19.2._1ef6a8cd735ceffe3d068542e7c4322f/node_modules/expo-constants/package.json",
+    "name": "expo-constants",
+    "version": "17.0.8"
+  },
+  {
+    "snapshot": "expo-constants@17.1.8(expo@52.0.49(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(graphql@16.13.2)(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(@types/react@19.2.14)(react@19.2.4))",
+    "rio_component": "expo-constants@17.1.8_expo@52.0.49_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7_graphql@16.13.2_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7_@types+react@19.2.14_react@19.2.4_react@19.2.4_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7_@types+react@19.2.14_react@19.2.4",
+    "rio_component_bytes": 360,
+    "filesystem_name_max": 255,
+    "installed_directory": "expo-constants@17.1.8_expo@52.0.49_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7__graphql@16.13.2_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7__@types+react@19.2._73446f2403f0430f7fb96baac1ca4be4",
+    "installed_manifest": "/dev/shm/rio-tanstack-work/maintainer-head/node_modules/.pnpm/expo-constants@17.1.8_expo@52.0.49_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7__graphql@16.13.2_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7__@types+react@19.2._73446f2403f0430f7fb96baac1ca4be4/node_modules/expo-constants/package.json",
+    "name": "expo-constants",
+    "version": "17.1.8"
+  },
+  {
+    "snapshot": "expo-file-system@18.0.12(expo@52.0.49(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(graphql@16.13.2)(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(@types/react@19.2.14)(react@19.2.4))",
+    "rio_component": "expo-file-system@18.0.12_expo@52.0.49_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7_graphql@16.13.2_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7_@types+react@19.2.14_react@19.2.4_react@19.2.4_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7_@types+react@19.2.14_react@19.2.4",
+    "rio_component_bytes": 363,
+    "filesystem_name_max": 255,
+    "installed_directory": "expo-file-system@18.0.12_expo@52.0.49_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7__graphql@16.13.2_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7__@types+react@19_349779f711338faf816b3f467b65d1b8",
+    "installed_manifest": "/dev/shm/rio-tanstack-work/maintainer-head/node_modules/.pnpm/expo-file-system@18.0.12_expo@52.0.49_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7__graphql@16.13.2_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7__@types+react@19_349779f711338faf816b3f467b65d1b8/node_modules/expo-file-system/package.json",
+    "name": "expo-file-system",
+    "version": "18.0.12"
+  },
+  {
+    "snapshot": "expo-keep-awake@14.0.3(expo@52.0.49(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(graphql@16.13.2)(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react@19.2.4)",
+    "rio_component": "expo-keep-awake@14.0.3_expo@52.0.49_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7_graphql@16.13.2_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7_@types+react@19.2.14_react@19.2.4_react@19.2.4_react@19.2.4",
+    "rio_component_bytes": 257,
+    "filesystem_name_max": 255,
+    "installed_directory": "expo-keep-awake@14.0.3_expo@52.0.49_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7__graphql@16.13.2_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7__@types+react@19.2_af9b14b76422f2be7399bef9d11affb9",
+    "installed_manifest": "/dev/shm/rio-tanstack-work/maintainer-head/node_modules/.pnpm/expo-keep-awake@14.0.3_expo@52.0.49_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7__graphql@16.13.2_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7__@types+react@19.2_af9b14b76422f2be7399bef9d11affb9/node_modules/expo-keep-awake/package.json",
+    "name": "expo-keep-awake",
+    "version": "14.0.3"
+  },
+  {
+    "snapshot": "react-native-paper@5.15.0(react-native-safe-area-context@4.14.1(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(@types/react@19.2.14)(react@19.2.4))(react@19.2.4)",
+    "rio_component": "react-native-paper@5.15.0_react-native-safe-area-context@4.14.1_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7_@types+react@19.2.14_react@19.2.4_react@19.2.4_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7_@types+react@19.2.14_react@19.2.4_react@19.2.4",
+    "rio_component_bytes": 323,
+    "filesystem_name_max": 255,
+    "installed_directory": "react-native-paper@5.15.0_react-native-safe-area-context@4.14.1_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7__@types+react@19.2.14_react@19.2.4__react@19.2.4__react-native@0.76.9__4ca1501241bbd044c7b48e5bb293efd4",
+    "installed_manifest": "/dev/shm/rio-tanstack-work/maintainer-head/node_modules/.pnpm/react-native-paper@5.15.0_react-native-safe-area-context@4.14.1_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7__@types+react@19.2.14_react@19.2.4__react@19.2.4__react-native@0.76.9__4ca1501241bbd044c7b48e5bb293efd4/node_modules/react-native-paper/package.json",
+    "name": "react-native-paper",
+    "version": "5.15.0"
+  }
+]

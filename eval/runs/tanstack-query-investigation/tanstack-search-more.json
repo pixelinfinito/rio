@@ -1,0 +1,422 @@
+[
+  [
+    "repo:TanStack/query is:pr is:merged \"fix build\"",
+    [
+      [
+        12506,
+        "chore(*): update Angular to v22 and TypeScript to v6 in Angular examples and integration",
+        "2026-11-03T05:01:52Z"
+      ],
+      [
+        12491,
+        "chore({examples,integrations}): fix configs that break with the installed tool versions",
+        "2026-11-02T07:47:09Z"
+      ],
+      [
+        12423,
+        "docs(examples/solid): add 'devtools-panel', 'shadow-dom', 'playground', 'algolia' and 'chat' examples",
+        "2026-10-28T01:11:57Z"
+      ],
+      [
+        12414,
+        "chore(deps): update 'react', 'react-dom' and their types across examples and integrations",
+        "2026-10-27T03:09:54Z"
+      ],
+      [
+        12223,
+        "test(query-core/infiniteQueryObserver): add a test for 'fetchOptimistic' using the supplied infinite options after the query is recreated",
+        "2026-10-21T03:22:40Z"
+      ],
+      [
+        12060,
+        "ci: Version Packages (rc)",
+        "2026-10-17T15:31:22Z"
+      ],
+      [
+        11181,
+        "fix(scripts): make the docs link check work on Windows",
+        "2026-10-17T15:12:22Z"
+      ],
+      [
+        12015,
+        "chore(examples/angular): add 'test:types' to type-check the examples in CI",
+        "2026-10-15T00:51:36Z"
+      ],
+      [
+        12002,
+        "chore(examples/svelte): add a flat config and run 'test:eslint'",
+        "2026-10-13T02:59:50Z"
+      ],
+      [
+        11969,
+        "chore(examples/react): raise 'target' from 'ES5' to 'ES2017' in the Next app examples",
+        "2026-10-11T16:53:43Z"
+      ],
+      [
+        11959,
+        "chore(examples/solid): replace the legacy '.eslintrc.cjs' with a flat config and run 'test:eslint'",
+        "2026-10-10T17:18:09Z"
+      ],
+      [
+        11701,
+        "chore(lit-query): remove unused package-specific scripts and 'scripts' directory",
+        "2026-09-28T15:34:21Z"
+      ],
+      [
+        11700,
+        "chore(lit-query): enable 'no-unnecessary-condition' by removing unnecessary optional chains and disabling it for runtime client checks",
+        "2026-09-27T14:16:02Z"
+      ],
+      [
+        11647,
+        "fix(codemods): update codemods build script",
+        "2026-09-25T21:47:51Z"
+      ],
+      [
+        11543,
+        "fix(solid-query): follow Solid 2.0.0-rc.9",
+        "2026-09-21T22:36:33Z"
+      ],
+      [
+        11528,
+        "ci(.github/workflows/autofix): match only the subject in the autofix commit guard",
+        "2026-09-18T00:41:28Z"
+      ],
+      [
+        11522,
+        "ci(*): generate reference docs in autofix and fail on TypeDoc conversion errors",
+        "2026-09-17T16:47:52Z"
+      ],
+      [
+        11285,
+        "docs(preact-query): document type parameters with '@template' and add 'useQueryClient' throws note",
+        "2026-08-25T12:28:17Z"
+      ],
+      [
+        11206,
+        "ci: Version Packages",
+        "2026-08-22T18:53:22Z"
+      ],
+      [
+        11008,
+        "docs(example): batching",
+        "2026-08-20T09:25:34Z"
+      ]
+    ]
+  ],
+  [
+    "repo:TanStack/query is:pr is:merged \"fix lint\"",
+    [
+      [
+        12491,
+        "chore({examples,integrations}): fix configs that break with the installed tool versions",
+        "2026-11-02T07:47:09Z"
+      ],
+      [
+        12432,
+        "docs(examples/svelte): add 'pagination', 'prefetching' and 'infinite-query-with-max-pages' examples",
+        "2026-10-28T06:35:49Z"
+      ],
+      [
+        12431,
+        "docs(examples/svelte): add 'batching' and 'offline' examples",
+        "2026-10-28T05:51:51Z"
+      ],
+      [
+        12390,
+        "fix(query-core): exclude fetchStatus from fetching filters",
+        "2026-10-26T10:23:07Z"
+      ],
+      [
+        12334,
+        "test(react-query/useMutation): wait for the mutation to settle after unmount and assert that no error is logged",
+        "2026-10-25T04:39:52Z"
+      ],
+      [
+        12285,
+        "chore(scripts/create-github-release): use the 'node:' protocol for 'fs' and sort the imported members",
+        "2026-10-22T12:03:49Z"
+      ],
+      [
+        12260,
+        "chore(oxlint.config): enable 'vitest-js/padding-around-before-each-blocks' and separate 'beforeEach' with a blank line",
+        "2026-10-22T00:56:36Z"
+      ],
+      [
+        12044,
+        "refactor(eslint-plugin-query/exhaustive-deps): remove the unused 'fixable' from the rule metadata",
+        "2026-10-17T16:02:57Z"
+      ],
+      [
+        12039,
+        "chore(examples/react/react-native): add a flat config and run 'test:eslint'",
+        "2026-10-16T16:09:25Z"
+      ],
+      [
+        12029,
+        "chore(examples/svelte/playground): add a flat config and run 'test:eslint'",
+        "2026-10-15T06:22:18Z"
+      ],
+      [
+        12011,
+        "chore(examples/react/playground): replace the legacy '.eslintrc' with a flat config and run 'test:eslint'",
+        "2026-10-14T02:07:57Z"
+      ],
+      [
+        12003,
+        "chore(examples/vue): add a flat config and run 'test:eslint'",
+        "2026-10-14T00:45:39Z"
+      ],
+      [
+        12002,
+        "chore(examples/svelte): add a flat config and run 'test:eslint'",
+        "2026-10-13T02:59:50Z"
+      ],
+      [
+        11995,
+        "chore(examples/react): replace the legacy '.eslintrc' with a flat config and run 'test:eslint'",
+        "2026-10-13T00:54:28Z"
+      ],
+      [
+        11952,
+        "chore(examples/angular): replace the legacy '.eslintrc.cjs' with a flat config and run 'test:eslint'",
+        "2026-10-10T16:32:55Z"
+      ],
+      [
+        11949,
+        "chore(examples/solid/simple): replace the legacy '.eslintrc.cjs' with a flat config and run 'test:eslint'",
+        "2026-10-10T15:29:27Z"
+      ],
+      [
+        11929,
+        "chore(solid-query*): add 'eslint-plugin-solid'",
+        "2026-10-08T09:59:09Z"
+      ],
+      [
+        10510,
+        "fix(query-core): stop wrapping persister generics in NoInfer",
+        "2026-10-03T18:05:35Z"
+      ],
+      [
+        11701,
+        "chore(lit-query): remove unused package-specific scripts and 'scripts' directory",
+        "2026-09-28T15:34:21Z"
+      ],
+      [
+        11700,
+        "chore(lit-query): enable 'no-unnecessary-condition' by removing unnecessary optional chains and disabling it for runtime client checks",
+        "2026-09-27T14:16:02Z"
+      ]
+    ]
+  ],
+  [
+    "repo:TanStack/query is:pr is:merged \"typecheck\"",
+    [
+      [
+        12516,
+        "chore(integrations): convert to TypeScript and add 'test:types' so each integration type checks against the published types",
+        "2026-11-04T02:37:45Z"
+      ],
+      [
+        10777,
+        "fix(query-core): shallowEqualObjects ignores key-set differences when counts match",
+        "2026-11-01T11:31:11Z"
+      ],
+      [
+        12317,
+        "chore(deps): upgrade vitest to v5",
+        "2026-10-24T18:26:06Z"
+      ],
+      [
+        12251,
+        "chore(oxlint.config): enable 'vitest/require-mock-type-parameters' and type the mock functions",
+        "2026-10-21T12:00:29Z"
+      ],
+      [
+        12011,
+        "chore(examples/react/playground): replace the legacy '.eslintrc' with a flat config and run 'test:eslint'",
+        "2026-10-14T02:07:57Z"
+      ],
+      [
+        11941,
+        "chore(*): pass the root 'settings' to the package oxlint configs, which 'extends' does not inherit",
+        "2026-10-09T16:45:02Z"
+      ],
+      [
+        11650,
+        "chore(deps): update Vite from v6 to v8",
+        "2026-10-08T21:10:02Z"
+      ],
+      [
+        11912,
+        "chore(tsconfig): enable 'noImplicitOverride'",
+        "2026-10-04T18:58:30Z"
+      ],
+      [
+        11809,
+        "test(angular): add missing skip token test",
+        "2026-10-03T20:22:21Z"
+      ],
+      [
+        10584,
+        "fix(vue-query): preserve TQueryKey inference with generic params (#8199)",
+        "2026-10-03T18:06:02Z"
+      ],
+      [
+        11816,
+        "test(*): start test titles with 'should'",
+        "2026-10-03T11:58:12Z"
+      ],
+      [
+        11751,
+        "refactor(solid-query): move off sharedConfig onto Solid's public hydration API",
+        "2026-09-30T19:14:17Z"
+      ],
+      [
+        11427,
+        "test(vue-query): add tests for a 'computed' 'queryFn' resolving to 'skipToken' and a whole-'queryKey' getter",
+        "2026-09-24T03:49:52Z"
+      ],
+      [
+        11488,
+        "test(query-core/retryer): add type tests for 'createRetryer', its config and retry value types",
+        "2026-09-13T05:56:57Z"
+      ],
+      [
+        11484,
+        "test(query-core/timeoutManager): add type tests for 'TimeoutManager' and its provider types",
+        "2026-09-13T05:55:35Z"
+      ],
+      [
+        11462,
+        "test(angular-query/inject-query): move type assertions from the runtime test to 'test-d'",
+        "2026-09-09T15:25:07Z"
+      ],
+      [
+        11448,
+        "test({react,preact,solid,svelte}-query,angular-query-experimental): rename 'mutationFn' param to '_variables' in 'MutationFunctionContext' tests",
+        "2026-09-08T12:22:33Z"
+      ],
+      [
+        11301,
+        "docs(preact-query): improve JSDoc examples across hooks and options factories",
+        "2026-08-30T04:15:49Z"
+      ],
+      [
+        11308,
+        "feat(solid-query): rewrite the adapter onto Solid 2.0's native async model",
+        "2026-08-28T23:26:05Z"
+      ],
+      [
+        10943,
+        "fix(lit-query): migrate to standard tsdown build so 'build' output is cached by nx and 'test:build' passes",
+        "2026-08-20T00:34:16Z"
+      ]
+    ]
+  ],
+  [
+    "repo:TanStack/query is:pr is:merged author:TkDodo",
+    [
+      [
+        12525,
+        "fix(vue-query): accept shared options in imperative queries",
+        "2026-11-04T19:38:19Z"
+      ],
+      [
+        12522,
+        "feat(devtools): add nested data search",
+        "2026-11-04T13:50:34Z"
+      ],
+      [
+        12509,
+        "chore(deps): update security dependencies in examples and integrations",
+        "2026-11-03T12:48:07Z"
+      ],
+      [
+        12502,
+        "perf(query-devtools): virtualize query and mutation lists",
+        "2026-11-03T10:59:04Z"
+      ],
+      [
+        12499,
+        "fix(devtools): let inline panels fill their container height",
+        "2026-11-02T21:08:15Z"
+      ],
+      [
+        12497,
+        "fix(query-core): exclude queries without data from isStatic",
+        "2026-11-02T20:30:44Z"
+      ],
+      [
+        12489,
+        "fix(query-core): share fetch results across silent cancellations",
+        "2026-11-02T12:21:07Z"
+      ],
+      [
+        12481,
+        "fix(query-core): stop cancelled streamed queries from updating the cache",
+        "2026-11-02T12:20:09Z"
+      ],
+      [
+        12480,
+        "fix(query-core): exclude status from mutation count filters",
+        "2026-11-01T15:45:46Z"
+      ],
+      [
+        12409,
+        "fix(eslint-plugin-query): detect unstable clients in arrow functions and JSX",
+        "2026-10-27T09:01:40Z"
+      ],
+      [
+        12406,
+        "ref(query-core): compare tracked result fields directly",
+        "2026-10-26T16:27:26Z"
+      ],
+      [
+        12400,
+        "ref(query-core): reduce bundle size and temporary allocations",
+        "2026-10-26T14:21:30Z"
+      ],
+      [
+        12390,
+        "fix(query-core): exclude fetchStatus from fetching filters",
+        "2026-10-26T10:23:07Z"
+      ],
+      [
+        12389,
+        "Update CONTRIBUTING.md with documentation warning",
+        "2026-10-26T10:13:32Z"
+      ],
+      [
+        12131,
+        "fix(query-core): use supplied options for optimistic fetches",
+        "2026-10-19T16:42:09Z"
+      ],
+      [
+        12117,
+        "fix(react, preact): recompute mutation state snapshots",
+        "2026-10-19T10:57:19Z"
+      ],
+      [
+        11947,
+        "chore: test TypeScript 7.1 preview and drop 5.6",
+        "2026-10-10T14:27:02Z"
+      ],
+      [
+        11503,
+        "fix: isolate TypeScript test output",
+        "2026-09-15T18:56:44Z"
+      ],
+      [
+        11501,
+        "fix: declare devtools dependencies and enforce strict workspace checks",
+        "2026-09-15T18:03:13Z"
+      ],
+      [
+        11436,
+        "ref(hydration): remove outdated dehydratedAt fallback",
+        "2026-09-06T16:09:12Z"
+      ]
+    ]
+  ]
+]

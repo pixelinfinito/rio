@@ -1,0 +1,48 @@
+{
+  "base": [
+    [
+      "corepack",
+      "pnpm",
+      "--filter",
+      "root",
+      "--filter",
+      "@tanstack/query-broadcast-client-experimental...",
+      "install",
+      "--frozen-lockfile",
+      "--trust-lockfile",
+      "--ignore-scripts",
+      "--store-dir",
+      "/dev/shm/rio-tanstack-tools/pnpm-store"
+    ],
+    [
+      "node",
+      "node_modules/typescript/lib/tsc.js",
+      "-b",
+      "packages/query-core",
+      "packages/query-test-utils"
+    ]
+  ],
+  "head": [
+    [
+      "corepack",
+      "pnpm",
+      "--filter",
+      "root",
+      "--filter",
+      "@tanstack/query-broadcast-client-experimental...",
+      "install",
+      "--frozen-lockfile",
+      "--trust-lockfile",
+      "--ignore-scripts",
+      "--store-dir",
+      "/dev/shm/rio-tanstack-tools/pnpm-store"
+    ],
+    [
+      "node",
+      "node_modules/typescript/lib/tsc.js",
+      "-b",
+      "packages/query-core",
+      "packages/query-test-utils"
+    ]
+  ]
+}

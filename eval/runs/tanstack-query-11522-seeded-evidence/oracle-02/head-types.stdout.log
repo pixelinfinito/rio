@@ -1,0 +1,3 @@
+packages/query-broadcast-client-experimental/src/index.ts(55,7): error TS2322: Type 'boolean' is not assignable to type 'string'.
+packages/query-broadcast-client-experimental/src/index.ts(57,5): error TS2322: Type 'boolean' is not assignable to type 'string'.
+packages/query-broadcast-client-experimental/src/index.ts(66,7): error TS2322: Type 'boolean' is not assignable to type 'string'.

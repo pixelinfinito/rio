@@ -1,0 +1,6 @@
+Testing types with tsc and vue-tsc is an experimental feature.
+Breaking changes might not follow SemVer, please pin Vitest's version when using it.
+Importing from "vitest/coverage" is deprecated since Vitest 4.1. Please use "vitest/node" instead.
+Loaded  vitest@4.1.2  and  @vitest/coverage-istanbul@4.0.6 .
+Running mixed versions is not supported and may lead into bugs
+Update your dependencies and make sure the versions match.

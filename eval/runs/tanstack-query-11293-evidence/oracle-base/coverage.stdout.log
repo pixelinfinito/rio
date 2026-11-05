@@ -1,0 +1,11 @@
+
+ RUN  v4.1.2 /dev/shm/rio-tanstack-work/maintainer-base/packages/query-core
+      Coverage enabled with istanbul
+
+
+ Test Files  24 passed (24)
+      Tests  643 passed (643)
+Type Errors  no errors
+   Start at  03:12:46
+   Duration  25.50s (transform 5.09s, setup 0ms, import 7.83s, tests 1.70s, environment 17.31s, typecheck 8.72s)
+

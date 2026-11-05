@@ -1,0 +1,55 @@
+[
+  {
+    "label": "compile-dependencies",
+    "argv": [
+      "/dev/shm/rio-tanstack-tools/node-v24.16.0-linux-x64/bin/node",
+      "node_modules/typescript/lib/tsc.js",
+      "-b",
+      "packages/query-core",
+      "packages/query-test-utils"
+    ],
+    "cwd": "/dev/shm/rio-tanstack-work/negative-head",
+    "exit_code": 0,
+    "wall_time_seconds": 9.983016347046942
+  },
+  {
+    "label": "types",
+    "argv": [
+      "/dev/shm/rio-tanstack-tools/node-v24.16.0-linux-x64/bin/node",
+      "node_modules/typescript/lib/tsc.js",
+      "-b",
+      "packages/query-broadcast-client-experimental"
+    ],
+    "cwd": "/dev/shm/rio-tanstack-work/negative-head",
+    "exit_code": 0,
+    "wall_time_seconds": 5.007010177941993
+  },
+  {
+    "label": "eslint",
+    "argv": [
+      "/dev/shm/rio-tanstack-tools/node-v24.16.0-linux-x64/bin/node",
+      "/dev/shm/rio-tanstack-work/negative-head/node_modules/eslint/bin/eslint.js",
+      "--format",
+      "json",
+      "./src"
+    ],
+    "cwd": "/dev/shm/rio-tanstack-work/negative-head/packages/query-broadcast-client-experimental",
+    "exit_code": 0,
+    "wall_time_seconds": 9.144313237979077
+  },
+  {
+    "label": "coverage",
+    "argv": [
+      "/dev/shm/rio-tanstack-tools/node-v24.16.0-linux-x64/bin/node",
+      "/dev/shm/rio-tanstack-work/negative-head/node_modules/vitest/vitest.mjs",
+      "run",
+      "--coverage",
+      "--coverage.reporter=lcov",
+      "--coverage.reportsDirectory=/dev/shm/rio-tanstack-work/oracle-head/coverage",
+      "--maxWorkers=2"
+    ],
+    "cwd": "/dev/shm/rio-tanstack-work/negative-head/packages/query-broadcast-client-experimental",
+    "exit_code": 0,
+    "wall_time_seconds": 20.446338062989525
+  }
+]

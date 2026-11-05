@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "/home/ubuntu/rio/target/release/rio",
+    "review",
+    "--base",
+    "HEAD^",
+    "--format",
+    "json",
+    "--offline",
+    "--profile",
+    "rio/base"
+  ],
+  "exit_code": 3,
+  "wall_time_seconds": 2.188337347935885
+}

@@ -1,0 +1,11 @@
+Warning: you are leaving 1 commit behind, not connected to
+any of your branches:
+
+  b32480cc9 Seed 20261105: invalid broadcast transaction string annotation
+
+If you want to keep it by creating a new branch, this may be a good time
+to do so with:
+
+ git branch <new-branch-name> b32480cc9
+
+HEAD is now at 8a28904aa fix(query-core): ignore stale query removals (#11524)

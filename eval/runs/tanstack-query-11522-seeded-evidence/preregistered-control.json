@@ -1,0 +1,22 @@
+{
+  "kind": "seeded-mutation",
+  "case_id": "11522-seeded-transaction-type-20261105",
+  "parent_pr": "https://github.com/TanStack/query/pull/11522",
+  "base_sha": "8a28904aaccb6bc26398b751400a181c0f6d7f0e",
+  "head_sha": "b32480cc923994ee2c859203a47b78a173e6bf20",
+  "seed": 20261105,
+  "patch_sha256": "2765417edba59265b5a80ba4a4c2d4ae9513939b59bafdbb751cc1796709dc4f",
+  "expected": [
+    {
+      "id": "broadcast-transaction-string-type",
+      "mechanism": "type-error",
+      "description": "The existing boolean transaction flag is incorrectly annotated string; tsc must reject its boolean initializer and assignments."
+    }
+  ],
+  "registered_utc": "2026-11-05T02:51:30Z",
+  "binary": "b15dc8ff5001",
+  "profile": "rio/base",
+  "archive_sha256": "28d34e3027140ed6809ee458a858c25dbe6c42b3b70c74b37be938f1d783d9bc",
+  "archive_url": "https://codeload.github.com/TanStack/query/tar.gz/8a28904aaccb6bc26398b751400a181c0f6d7f0e",
+  "oracle_required": "Base passes TypeScript; head emits TS2322 on the sole changed annotation, independently verified before Rio execution."
+}

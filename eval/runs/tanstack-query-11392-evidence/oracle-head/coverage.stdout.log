@@ -1,0 +1,11 @@
+
+ RUN  v4.1.2 /dev/shm/rio-tanstack-work/negative-head/packages/query-broadcast-client-experimental
+      Coverage enabled with istanbul
+
+
+ Test Files  1 passed (1)
+      Tests  13 passed (13)
+Type Errors  no errors
+   Start at  02:44:04
+   Duration  18.78s (transform 13.97s, setup 14.50s, import 2.96s, tests 90ms, environment 959ms)
+

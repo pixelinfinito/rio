@@ -1,0 +1,361 @@
+Scope: 4 of 102 workspace projects
+? Verifying lockfile against supply-chain policies (3111 entries)...
+Lockfile is up to date, resolution step is skipped
+Progress: resolved 1, reused 0, downloaded 0, added 0
+.                                        | +879 ++++++++++++++++++++++++++++++++
+Progress: resolved 879, reused 0, downloaded 0, added 0
+Progress: resolved 879, reused 0, downloaded 1, added 0
+Progress: resolved 879, reused 0, downloaded 112, added 26
+Progress: resolved 879, reused 0, downloaded 247, added 119
+Progress: resolved 879, reused 0, downloaded 321, added 222
+Progress: resolved 879, reused 0, downloaded 448, added 447
+Progress: resolved 879, reused 0, downloaded 542, added 539
+Progress: resolved 879, reused 0, downloaded 700, added 698
+[WARN] Request took 14195ms: https://registry.npmjs.org/@astrojs%2Fmarkdown-remark
+Progress: resolved 879, reused 0, downloaded 767, added 730
+[WARN] Request took 15046ms: https://registry.npmjs.org/@algolia%2Frecommend
+[WARN] Request took 15344ms: https://registry.npmjs.org/@astrojs%2Flanguage-server
+Progress: resolved 879, reused 0, downloaded 842, added 766
+[WARN] Request took 13452ms: https://registry.npmjs.org/@astrojs%2Fsolid-js
+Progress: resolved 879, reused 0, downloaded 872, added 872
+Progress: resolved 879, reused 0, downloaded 879, added 879, done
+[WARN] Request took 20495ms: https://registry.npmjs.org/@algolia%2Fclient-personalization
+[WARN] Request took 20475ms: https://registry.npmjs.org/@algolia%2Frequester-node-http
+[WARN] Request took 21083ms: https://registry.npmjs.org/@algolia%2Fclient-analytics
+[WARN] Request took 22955ms: https://registry.npmjs.org/@astrojs%2Fvercel
+[WARN] Request took 23078ms: https://registry.npmjs.org/@algolia%2Frequester-browser-xhr
+[WARN] Request took 10402ms: https://registry.npmjs.org/@babel%2Fplugin-proposal-decorators
+[WARN] Request took 24347ms: https://registry.npmjs.org/@algolia%2Fclient-search
+[WARN] Request took 12478ms: https://registry.npmjs.org/@babel%2Fhelper-module-transforms
+[WARN] Request took 24443ms: https://registry.npmjs.org/@algolia%2Fclient-common
+[WARN] Request took 24408ms: https://registry.npmjs.org/@angular%2Fbuild
+[WARN] Request took 24390ms: https://registry.npmjs.org/@babel%2Fcore
+[WARN] Request took 18853ms: https://registry.npmjs.org/@asamuzakjp%2Fdom-selector
+[WARN] Request took 23081ms: https://registry.npmjs.org/@astrojs%2Fnode
+[WARN] Request took 10405ms: https://registry.npmjs.org/@babel%2Fplugin-syntax-unicode-sets-regex
+[WARN] Request took 15563ms: https://registry.npmjs.org/@babel%2Fplugin-syntax-logical-assignment-operators
+[WARN] Request took 13553ms: https://registry.npmjs.org/@babel%2Fplugin-transform-async-generator-functions
+[WARN] Request took 16433ms: https://registry.npmjs.org/@babel%2Fplugin-syntax-numeric-separator
+[WARN] Request took 16686ms: https://registry.npmjs.org/@babel%2Fplugin-syntax-nullish-coalescing-operator
+[WARN] Request took 20278ms: https://registry.npmjs.org/@babel%2Fplugin-proposal-export-default-from
+[WARN] Request took 11498ms: https://registry.npmjs.org/@babel%2Fplugin-transform-class-properties
+[WARN] Request took 17663ms: https://registry.npmjs.org/@babel%2Fplugin-syntax-typescript
+[WARN] Request took 17817ms: https://registry.npmjs.org/@babel%2Fplugin-syntax-object-rest-spread
+[WARN] Request took 41119ms: https://registry.npmjs.org/@algolia%2Fclient-insights
+[WARN] Request took 22928ms: https://registry.npmjs.org/@babel%2Fplugin-proposal-optional-chaining
+[WARN] Request took 13351ms: https://registry.npmjs.org/@babel%2Fplugin-transform-class-static-block
+[WARN] Request took 22327ms: https://registry.npmjs.org/@babel%2Fplugin-syntax-export-default-from
+[WARN] Request took 46122ms: https://registry.npmjs.org/@astrojs%2Fcompiler
+[WARN] Request took 17077ms: https://registry.npmjs.org/@babel%2Fplugin-syntax-optional-catch-binding
+[WARN] Request took 20549ms: https://registry.npmjs.org/@babel%2Fplugin-transform-arrow-functions
+[WARN] Request took 22302ms: https://registry.npmjs.org/@babel%2Fplugin-syntax-optional-chaining
+[WARN] Request took 33291ms: https://registry.npmjs.org/@babel%2Fplugin-proposal-class-properties
+[WARN] Request took 12025ms: https://registry.npmjs.org/@babel%2Fplugin-transform-dynamic-import
+[WARN] Request took 25345ms: https://registry.npmjs.org/@babel%2Fplugin-transform-block-scoped-functions
+[WARN] Request took 35308ms: https://registry.npmjs.org/@babel%2Fplugin-syntax-flow
+[WARN] GET https://registry.npmjs.org/@angular-devkit%2Farchitect error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@angular-devkit%2Fcore error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@angular-devkit%2Fschematics error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@angular%2Fanimations error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@angular%2Fcli error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@angular%2Fcommon error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@angular%2Fcompiler-cli error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@angular%2Fcompiler error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@angular%2Fcore error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@angular%2Fforms error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@angular%2Fplatform-browser error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@angular%2Frouter error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 34114ms: https://registry.npmjs.org/@babel%2Fplugin-transform-async-to-generator
+[WARN] Request took 16130ms: https://registry.npmjs.org/@babel%2Fplugin-transform-explicit-resource-management
+[WARN] Request took 39251ms: https://registry.npmjs.org/@babel%2Fplugin-syntax-decorators
+[WARN] GET https://registry.npmjs.org/@algolia%2Fclient-query-suggestions error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@algolia%2Fingestion error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@algolia%2Frequester-fetch error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@algolia%2Fclient-abtesting error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@algolia%2Fmonitoring error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 51646ms: https://registry.npmjs.org/@babel%2Fhelper-create-class-features-plugin
+[WARN] Request took 23079ms: https://registry.npmjs.org/@babel%2Fplugin-transform-export-namespace-from
+[WARN] Request took 31084ms: https://registry.npmjs.org/@babel%2Fplugin-transform-computed-properties
+[WARN] Request took 44230ms: https://registry.npmjs.org/@babel%2Fplugin-syntax-jsx
+[WARN] Request took 30632ms: https://registry.npmjs.org/@babel%2Fplugin-transform-dotall-regex
+[WARN] Request took 10330ms: https://registry.npmjs.org/@babel%2Fplugin-transform-json-strings
+[WARN] Request took 26541ms: https://registry.npmjs.org/@babel%2Fplugin-transform-class-properties
+[WARN] Request took 57570ms: https://registry.npmjs.org/@babel%2Fhelpers
+[WARN] Request took 20986ms: https://registry.npmjs.org/@babel%2Fplugin-transform-duplicate-named-capturing-groups-regex
+[WARN] GET https://registry.npmjs.org/@babel%2Fparser error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 33030ms: https://registry.npmjs.org/@babel%2Fplugin-transform-duplicate-keys
+[WARN] GET https://registry.npmjs.org/@astrojs%2Fmarkdown-remark error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 33366ms: https://registry.npmjs.org/@babel%2Fplugin-transform-async-generator-functions
+[WARN] GET https://registry.npmjs.org/@algolia%2Frecommend error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@astrojs%2Flanguage-server error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 32468ms: https://registry.npmjs.org/@babel%2Fplugin-transform-class-static-block
+[WARN] Request took 48415ms: https://registry.npmjs.org/@babel%2Fplugin-transform-block-scoping
+[WARN] Request took 17738ms: https://registry.npmjs.org/@babel%2Fplugin-transform-dynamic-import
+[WARN] Request took 39288ms: https://registry.npmjs.org/@babel%2Fplugin-transform-destructuring
+[WARN] Request took 48844ms: https://registry.npmjs.org/@babel%2Fplugin-transform-classes
+[WARN] GET https://registry.npmjs.org/@algolia%2Fclient-personalization error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@algolia%2Frequester-node-http error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 35536ms: https://registry.npmjs.org/@babel%2Fplugin-transform-exponentiation-operator
+[WARN] GET https://registry.npmjs.org/@algolia%2Fclient-analytics error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 35526ms: https://registry.npmjs.org/@babel%2Fplugin-transform-flow-strip-types
+[WARN] Request took 35469ms: https://registry.npmjs.org/@babel%2Fplugin-transform-for-of
+[WARN] Request took 19618ms: https://registry.npmjs.org/@babel%2Fplugin-transform-literals
+[WARN] Request took 22113ms: https://registry.npmjs.org/@babel%2Fplugin-transform-function-name
+[WARN] GET https://registry.npmjs.org/@astrojs%2Fvercel error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 38624ms: https://registry.npmjs.org/@babel%2Fplugin-syntax-typescript
+[WARN] Request took 59190ms: https://registry.npmjs.org/@babel%2Fplugin-proposal-decorators
+[WARN] Request took 29884ms: https://registry.npmjs.org/@babel%2Fplugin-transform-arrow-functions
+[WARN] Request took 21400ms: https://registry.npmjs.org/@babel%2Fplugin-transform-block-scoped-functions
+[WARN] Request took 19200ms: https://registry.npmjs.org/@babel%2Fplugin-transform-async-to-generator
+[WARN] GET https://registry.npmjs.org/@algolia%2Frequester-browser-xhr error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@algolia%2Fclient-search error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@algolia%2Fclient-common error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 10782ms: https://registry.npmjs.org/@babel%2Fplugin-transform-json-strings
+[WARN] Request took 15743ms: https://registry.npmjs.org/@babel%2Fplugin-transform-export-namespace-from
+[WARN] GET https://registry.npmjs.org/@angular%2Fbuild error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@babel%2Fcore error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@babel%2Fcore error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 19870ms: https://registry.npmjs.org/@babel%2Fplugin-transform-member-expression-literals
+[WARN] Request took 11295ms: https://registry.npmjs.org/@babel%2Fplugin-transform-destructuring
+[WARN] Request took 18597ms: https://registry.npmjs.org/@babel%2Fplugin-transform-modules-umd
+[WARN] Request took 19748ms: https://registry.npmjs.org/@babel%2Fplugin-transform-modules-amd
+[WARN] Request took 20418ms: https://registry.npmjs.org/@babel%2Fplugin-transform-dotall-regex
+[WARN] Request took 13360ms: https://registry.npmjs.org/@babel%2Fplugin-transform-literals
+[WARN] Request took 13701ms: https://registry.npmjs.org/@babel%2Fplugin-transform-classes
+[WARN] Request took 20653ms: https://registry.npmjs.org/@babel%2Fplugin-transform-computed-properties
+[WARN] Request took 21904ms: https://registry.npmjs.org/@babel%2Fplugin-transform-modules-systemjs
+[WARN] Request took 21913ms: https://registry.npmjs.org/@babel%2Fplugin-transform-modules-commonjs
+[WARN] Request took 14452ms: https://registry.npmjs.org/@astrojs%2Flanguage-server
+[WARN] Request took 16079ms: https://registry.npmjs.org/@astrojs%2Fmarkdown-remark
+[WARN] Request took 55458ms: https://registry.npmjs.org/@astrojs%2Fcompiler
+[WARN] Request took 10335ms: https://registry.npmjs.org/@babel%2Fplugin-transform-regenerator
+[WARN] Request took 21019ms: https://registry.npmjs.org/@babel%2Fparser
+[WARN] Request took 21415ms: https://registry.npmjs.org/@algolia%2Frecommend
+[WARN] Failed to create bin at /dev/shm/rio-tanstack-work/negative-head/node_modules/.pnpm/vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0/node_modules/vite/node_modules/.bin/esbuild. ENOENT: no such file or directory, mkdir '/dev/shm/rio-tanstack-work/negative-head/node_modules/.pnpm/vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0/node_modules/vite/node_modules/.bin'
+[WARN] Failed to create bin at /dev/shm/rio-tanstack-work/negative-head/node_modules/.pnpm/vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0/node_modules/vite/node_modules/.bin/jiti. ENOENT: no such file or directory, mkdir '/dev/shm/rio-tanstack-work/negative-head/node_modules/.pnpm/vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0/node_modules/vite/node_modules/.bin'
+[WARN] Failed to create bin at /dev/shm/rio-tanstack-work/negative-head/node_modules/.pnpm/vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0/node_modules/vite/node_modules/.bin/terser. ENOENT: no such file or directory, mkdir '/dev/shm/rio-tanstack-work/negative-head/node_modules/.pnpm/vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0/node_modules/vite/node_modules/.bin'
+[WARN] Failed to create bin at /dev/shm/rio-tanstack-work/negative-head/node_modules/.pnpm/vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0/node_modules/vite/node_modules/.bin/sass. ENOENT: no such file or directory, mkdir '/dev/shm/rio-tanstack-work/negative-head/node_modules/.pnpm/vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0/node_modules/vite/node_modules/.bin'
+[WARN] Failed to create bin at /dev/shm/rio-tanstack-work/negative-head/node_modules/.pnpm/vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0/node_modules/vite/node_modules/.bin/yaml. ENOENT: no such file or directory, mkdir '/dev/shm/rio-tanstack-work/negative-head/node_modules/.pnpm/vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0/node_modules/vite/node_modules/.bin'
+[WARN] Failed to create bin at /dev/shm/rio-tanstack-work/negative-head/node_modules/.pnpm/vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0/node_modules/vite/node_modules/.bin/rollup. ENOENT: no such file or directory, mkdir '/dev/shm/rio-tanstack-work/negative-head/node_modules/.pnpm/vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0/node_modules/vite/node_modules/.bin'
+[WARN] Failed to create bin at /dev/shm/rio-tanstack-work/negative-head/node_modules/.pnpm/vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0/node_modules/vite/node_modules/.bin/tsx. ENOENT: no such file or directory, mkdir '/dev/shm/rio-tanstack-work/negative-head/node_modules/.pnpm/vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0/node_modules/vite/node_modules/.bin'
+[WARN] Request took 31672ms: https://registry.npmjs.org/@algolia%2Fmonitoring
+[WARN] Failed to create bin at /dev/shm/rio-tanstack-work/negative-head/node_modules/.pnpm/terser@5.46.1/node_modules/terser/node_modules/.bin/acorn. ENOENT: no such file or directory, open '/dev/shm/rio-tanstack-work/negative-head/node_modules/.pnpm/terser@5.46.1/node_modules/terser/node_modules/.bin/acorn'
+[WARN] Failed to create bin at /dev/shm/rio-tanstack-work/negative-head/node_modules/.pnpm/tsx@4.21.0/node_modules/tsx/node_modules/.bin/esbuild. ENOENT: no such file or directory, open '/dev/shm/rio-tanstack-work/negative-head/node_modules/.pnpm/tsx@4.21.0/node_modules/tsx/node_modules/.bin/esbuild'
+[WARN] Failed to create bin at /dev/shm/rio-tanstack-work/negative-head/node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/node_modules/.bin/parser. ENOENT: no such file or directory, chmod '/dev/shm/rio-tanstack-work/negative-head/node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/node_modules/.bin/parser'
+[WARN] Failed to create bin at /dev/shm/rio-tanstack-work/negative-head/node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/node_modules/.bin/semver. ENOENT: no such file or directory, chmod '/dev/shm/rio-tanstack-work/negative-head/node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/node_modules/.bin/semver'
+[WARN] Failed to create bin at /dev/shm/rio-tanstack-work/negative-head/node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/node_modules/.bin/json5. ENOENT: no such file or directory, chmod '/dev/shm/rio-tanstack-work/negative-head/node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/node_modules/.bin/json5'
+[WARN] Failed to create bin at /dev/shm/rio-tanstack-work/negative-head/node_modules/.pnpm/@babel+generator@7.29.8/node_modules/@babel/generator/node_modules/.bin/jsesc. ENOENT: no such file or directory, chmod '/dev/shm/rio-tanstack-work/negative-head/node_modules/.pnpm/@babel+generator@7.29.8/node_modules/@babel/generator/node_modules/.bin/jsesc'
+[WARN] Failed to create bin at /dev/shm/rio-tanstack-work/negative-head/node_modules/.pnpm/@babel+generator@7.29.8/node_modules/@babel/generator/node_modules/.bin/parser. ENOENT: no such file or directory, chmod '/dev/shm/rio-tanstack-work/negative-head/node_modules/.pnpm/@babel+generator@7.29.8/node_modules/@babel/generator/node_modules/.bin/parser'
+[WARN] Failed to create bin at /dev/shm/rio-tanstack-work/negative-head/node_modules/.pnpm/@babel+helper-compilation-targets@7.29.7/node_modules/@babel/helper-compilation-targets/node_modules/.bin/browserslist. ENOENT: no such file or directory, chmod '/dev/shm/rio-tanstack-work/negative-head/node_modules/.pnpm/@babel+helper-compilation-targets@7.29.7/node_modules/@babel/helper-compilation-targets/node_modules/.bin/browserslist'
+[WARN] Failed to create bin at /dev/shm/rio-tanstack-work/negative-head/node_modules/.pnpm/@babel+helper-compilation-targets@7.29.7/node_modules/@babel/helper-compilation-targets/node_modules/.bin/semver. ENOENT: no such file or directory, chmod '/dev/shm/rio-tanstack-work/negative-head/node_modules/.pnpm/@babel+helper-compilation-targets@7.29.7/node_modules/@babel/helper-compilation-targets/node_modules/.bin/semver'
+[WARN] Failed to create bin at /dev/shm/rio-tanstack-work/negative-head/node_modules/.pnpm/browserslist@4.28.2/node_modules/browserslist/node_modules/.bin/update-browserslist-db. ENOENT: no such file or directory, chmod '/dev/shm/rio-tanstack-work/negative-head/node_modules/.pnpm/browserslist@4.28.2/node_modules/browserslist/node_modules/.bin/update-browserslist-db'
+[WARN] Failed to create bin at /dev/shm/rio-tanstack-work/negative-head/node_modules/.pnpm/browserslist@4.28.2/node_modules/browserslist/node_modules/.bin/baseline-browser-mapping. ENOENT: no such file or directory, chmod '/dev/shm/rio-tanstack-work/negative-head/node_modules/.pnpm/browserslist@4.28.2/node_modules/browserslist/node_modules/.bin/baseline-browser-mapping'
+[WARN] Failed to create bin at /dev/shm/rio-tanstack-work/negative-head/node_modules/.pnpm/@babel+traverse@7.29.8/node_modules/@babel/traverse/node_modules/.bin/parser. ENOENT: no such file or directory, chmod '/dev/shm/rio-tanstack-work/negative-head/node_modules/.pnpm/@babel+traverse@7.29.8/node_modules/@babel/traverse/node_modules/.bin/parser'
+[WARN] Failed to create bin at /dev/shm/rio-tanstack-work/negative-head/node_modules/.pnpm/update-browserslist-db@1.2.3_browserslist@4.28.2/node_modules/update-browserslist-db/node_modules/.bin/browserslist. ENOENT: no such file or directory, chmod '/dev/shm/rio-tanstack-work/negative-head/node_modules/.pnpm/update-browserslist-db@1.2.3_browserslist@4.28.2/node_modules/update-browserslist-db/node_modules/.bin/browserslist'
+[WARN] Failed to create bin at /dev/shm/rio-tanstack-work/negative-head/node_modules/.pnpm/@babel+template@7.29.7/node_modules/@babel/template/node_modules/.bin/parser. ENOENT: no such file or directory, chmod '/dev/shm/rio-tanstack-work/negative-head/node_modules/.pnpm/@babel+template@7.29.7/node_modules/@babel/template/node_modules/.bin/parser'
+[WARN] Request took 12722ms: https://registry.npmjs.org/@babel%2Fplugin-transform-unicode-escapes
+[WARN] Request took 10811ms: https://registry.npmjs.org/@babel%2Ftraverse
+[WARN] Request took 14977ms: https://registry.npmjs.org/@babel%2Fplugin-transform-modules-systemjs
+[WARN] Request took 15061ms: https://registry.npmjs.org/@babel%2Fplugin-transform-modules-commonjs
+[WARN] Request took 10502ms: https://registry.npmjs.org/@babel%2Fpreset-typescript
+[WARN] Request took 10645ms: https://registry.npmjs.org/@changesets%2Fcli
+[WARN] Request took 13209ms: https://registry.npmjs.org/@babel%2Fplugin-transform-runtime
+[WARN] Request took 43498ms: https://registry.npmjs.org/@angular-devkit%2Farchitect
+[WARN] Request took 11629ms: https://registry.npmjs.org/@babel%2Fpreset-react
+[WARN] Request took 20515ms: https://registry.npmjs.org/@babel%2Fruntime
+[WARN] Request took 27285ms: https://registry.npmjs.org/@algolia%2Frequester-node-http
+[WARN] Request took 15920ms: https://registry.npmjs.org/@babel%2Fplugin-transform-typescript
+[WARN] Request took 49526ms: https://registry.npmjs.org/@angular-devkit%2Fschematics
+[WARN] Request took 50442ms: https://registry.npmjs.org/@angular-devkit%2Fcore
+[WARN] Request took 28346ms: https://registry.npmjs.org/@astrojs%2Fvercel
+[WARN] Request took 32506ms: https://registry.npmjs.org/@algolia%2Fclient-analytics
+[WARN] Request took 12764ms: https://registry.npmjs.org/@cspell%2Fcspell-service-bus
+[WARN] Request took 11239ms: https://registry.npmjs.org/@cspell%2Fdict-css
+[WARN] Request took 21052ms: https://registry.npmjs.org/@babel%2Ftypes
+[WARN] Request took 16062ms: https://registry.npmjs.org/@changesets%2Fget-release-plan
+[WARN] Request took 53303ms: https://registry.npmjs.org/@algolia%2Fingestion
+[WARN] Request took 31230ms: https://registry.npmjs.org/@babel%2Fcore
+[WARN] Request took 19002ms: https://registry.npmjs.org/@cspell%2Fcspell-pipe
+[WARN] Request took 35163ms: https://registry.npmjs.org/@algolia%2Frequester-browser-xhr
+[WARN] Request took 12069ms: https://registry.npmjs.org/@cspell%2Fdict-cpp
+[WARN] GET https://registry.npmjs.org/@angular%2Fanimations error (23). Will retry in 1 minute. 1 retries left.
+[WARN] GET https://registry.npmjs.org/@angular%2Fcli error (23). Will retry in 1 minute. 1 retries left.
+[WARN] GET https://registry.npmjs.org/@angular%2Fcommon error (23). Will retry in 1 minute. 1 retries left.
+[WARN] GET https://registry.npmjs.org/@angular%2Fcompiler-cli error (23). Will retry in 1 minute. 1 retries left.
+[WARN] GET https://registry.npmjs.org/@angular%2Fcompiler error (23). Will retry in 1 minute. 1 retries left.
+[WARN] GET https://registry.npmjs.org/@angular%2Fcore error (23). Will retry in 1 minute. 1 retries left.
+[WARN] GET https://registry.npmjs.org/@angular%2Fforms error (23). Will retry in 1 minute. 1 retries left.
+[WARN] GET https://registry.npmjs.org/@angular%2Fplatform-browser error (23). Will retry in 1 minute. 1 retries left.
+[WARN] GET https://registry.npmjs.org/@angular%2Frouter error (23). Will retry in 1 minute. 1 retries left.
+[WARN] Request took 36631ms: https://registry.npmjs.org/@babel%2Fpreset-env
+[WARN] Request took 35994ms: https://registry.npmjs.org/@babel%2Fcore
+[WARN] Request took 12127ms: https://registry.npmjs.org/@cspell%2Fdict-en-common-misspellings
+[WARN] Request took 13066ms: https://registry.npmjs.org/@cspell%2Fdict-companies
+[WARN] Request took 39013ms: https://registry.npmjs.org/@algolia%2Fclient-search
+[WARN] Request took 15821ms: https://registry.npmjs.org/@cspell%2Fcspell-resolver
+[WARN] GET https://registry.npmjs.org/@algolia%2Fclient-query-suggestions error (23). Will retry in 1 minute. 1 retries left.
+[WARN] GET https://registry.npmjs.org/@algolia%2Frequester-fetch error (23). Will retry in 1 minute. 1 retries left.
+[WARN] GET https://registry.npmjs.org/@algolia%2Fclient-abtesting error (23). Will retry in 1 minute. 1 retries left.
+[WARN] Request took 10429ms: https://registry.npmjs.org/@cspell%2Fdict-python
+[WARN] Request took 12459ms: https://registry.npmjs.org/@cspell%2Fdict-npm
+[WARN] Request took 45827ms: https://registry.npmjs.org/@algolia%2Fclient-common
+[WARN] Request took 26838ms: https://registry.npmjs.org/@cspell%2Fdict-en-gb-mit
+[WARN] Request took 20361ms: https://registry.npmjs.org/@cspell%2Fdict-html
+[WARN] Request took 30898ms: https://registry.npmjs.org/@changesets%2Fcli
+[WARN] Request took 10120ms: https://registry.npmjs.org/@cspell%2Fdict-sql
+[WARN] Request took 10180ms: https://registry.npmjs.org/@cspell%2Ffiletypes
+[WARN] Request took 10625ms: https://registry.npmjs.org/@cspell%2Fdict-public-licenses
+[WARN] Request took 11734ms: https://registry.npmjs.org/@cspell%2Fdict-ruby
+[WARN] Request took 10998ms: https://registry.npmjs.org/@cspell%2Fdict-scala
+[WARN] GET https://registry.npmjs.org/@algolia%2Fclient-personalization error (23). Will retry in 1 minute. 1 retries left.
+[WARN] Request took 19400ms: https://registry.npmjs.org/@cspell%2Furl
+[WARN] Request took 57136ms: https://registry.npmjs.org/@angular%2Fbuild
+[WARN] Request took 42528ms: https://registry.npmjs.org/@babel%2Ftraverse
+[WARN] Request took 42619ms: https://registry.npmjs.org/@cspell%2Fcspell-types
+[WARN] Request took 21480ms: https://registry.npmjs.org/@cspell%2Fdynamic-import
+[WARN] Request took 11557ms: https://registry.npmjs.org/@emmetio%2Fcss-abbreviation
+[WARN] Request took 12923ms: https://registry.npmjs.org/@deno%2Fshim-deno
+[WARN] Request took 15765ms: https://registry.npmjs.org/@cspell%2Frpc
+[WARN] Request took 12155ms: https://registry.npmjs.org/@csstools%2Fcolor-helpers
+[WARN] Request took 14344ms: https://registry.npmjs.org/@cspell%2Fdict-html
+[WARN] Request took 17355ms: https://registry.npmjs.org/@cspell%2Fdict-typescript
+[WARN] Request took 28190ms: https://registry.npmjs.org/@cspell%2Fdict-rust
+[WARN] Request took 29799ms: https://registry.npmjs.org/@cspell%2Fdict-software-terms
+[WARN] Request took 28316ms: https://registry.npmjs.org/@cspell%2Fstrong-weak-map
+[WARN] Request took 11839ms: https://registry.npmjs.org/@egjs%2Fhammerjs
+[WARN] Request took 31465ms: https://registry.npmjs.org/@cspell%2Fdict-node
+[WARN] Request took 21700ms: https://registry.npmjs.org/@emmetio%2Fabbreviation
+[WARN] Request took 12122ms: https://registry.npmjs.org/@discoveryjs%2Fjson-ext
+[WARN] Request took 12480ms: https://registry.npmjs.org/@csstools%2Fcss-calc
+[WARN] Request took 25085ms: https://registry.npmjs.org/@cspell%2Fdict-python
+[WARN] Request took 10852ms: https://registry.npmjs.org/@emmetio%2Fcss-abbreviation
+[WARN] Request took 23096ms: https://registry.npmjs.org/@cspell%2Ffiletypes
+[WARN] Request took 15781ms: https://registry.npmjs.org/@csstools%2Fcss-color-parser
+[WARN] Request took 25399ms: https://registry.npmjs.org/@cspell%2Fdict-en-gb-mit
+[WARN] Request took 55265ms: https://registry.npmjs.org/@babel%2Fregister
+[WARN] Request took 59091ms: https://registry.npmjs.org/@cspell%2Fcspell-bundled-dicts
+[WARN] Request took 14253ms: https://registry.npmjs.org/@deno%2Fshim-deno
+[WARN] Request took 15937ms: https://registry.npmjs.org/@csstools%2Fcss-syntax-patches-for-csstree
+[WARN] Request took 58648ms: https://registry.npmjs.org/@cspell%2Fdict-en_us
+[WARN] GET https://registry.npmjs.org/@angular-devkit%2Farchitect error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 25203ms: https://registry.npmjs.org/@cspell%2Furl
+[WARN] GET https://registry.npmjs.org/@babel%2Fruntime error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@angular-devkit%2Fschematics error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 22715ms: https://registry.npmjs.org/@cspell%2Fdynamic-import
+[WARN] Request took 10838ms: https://registry.npmjs.org/@esbuild%2Fandroid-x64
+[WARN] Request took 10864ms: https://registry.npmjs.org/@esbuild%2Fdarwin-x64
+[WARN] Request took 10881ms: https://registry.npmjs.org/@esbuild%2Ffreebsd-x64
+[WARN] Request took 11705ms: https://registry.npmjs.org/@esbuild%2Flinux-arm
+[WARN] Request took 11712ms: https://registry.npmjs.org/@esbuild%2Fdarwin-arm64
+[WARN] Request took 11714ms: https://registry.npmjs.org/@esbuild%2Flinux-arm64
+[WARN] Request took 11710ms: https://registry.npmjs.org/@esbuild%2Flinux-mips64el
+[WARN] Request took 50489ms: https://registry.npmjs.org/@cspell%2Feslint-plugin
+[WARN] Request took 11742ms: https://registry.npmjs.org/@esbuild%2Ffreebsd-arm64
+[WARN] GET https://registry.npmjs.org/@cspell%2Fcspell-service-bus error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 12300ms: https://registry.npmjs.org/@esbuild%2Fandroid-arm
+[WARN] Request took 11751ms: https://registry.npmjs.org/@esbuild%2Fopenharmony-arm64
+[WARN] GET https://registry.npmjs.org/@angular-devkit%2Fcore error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 18752ms: https://registry.npmjs.org/@esbuild%2Fandroid-arm64
+[WARN] GET https://registry.npmjs.org/@cspell%2Fcspell-pipe error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 16883ms: https://registry.npmjs.org/@esbuild%2Fopenbsd-arm64
+[WARN] Request took 16894ms: https://registry.npmjs.org/@esbuild%2Fnetbsd-arm64
+[WARN] Request took 24842ms: https://registry.npmjs.org/@cspell%2Fstrong-weak-map
+[WARN] GET https://registry.npmjs.org/@babel%2Fpreset-env error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 34459ms: https://registry.npmjs.org/@es-joy%2Fjsdoccomment
+[WARN] Request took 51933ms: https://registry.npmjs.org/@cspell%2Fdict-npm
+[WARN] Request took 26895ms: https://registry.npmjs.org/@emnapi%2Fruntime
+[WARN] Request took 10518ms: https://registry.npmjs.org/@eslint%2Fjs
+[WARN] Request took 16545ms: https://registry.npmjs.org/@esbuild%2Fwin32-ia32
+[WARN] Request took 16574ms: https://registry.npmjs.org/@esbuild%2Fwin32-arm64
+[WARN] Request took 16604ms: https://registry.npmjs.org/@esbuild%2Fwin32-x64
+[WARN] Request took 12188ms: https://registry.npmjs.org/@eslint%2Feslintrc
+[WARN] Request took 15037ms: https://registry.npmjs.org/@expo%2Fbunyan
+[WARN] Request took 10188ms: https://registry.npmjs.org/@eslint%2Fobject-schema
+[WARN] Request took 12506ms: https://registry.npmjs.org/@eslint%2Fconfig-array
+[WARN] Request took 10305ms: https://registry.npmjs.org/@eslint%2Fcore
+[WARN] Request took 10307ms: https://registry.npmjs.org/@eslint%2Fconfig-helpers
+[WARN] Request took 39842ms: https://registry.npmjs.org/@cspell%2Fdict-software-terms
+[WARN] Request took 12560ms: https://registry.npmjs.org/@expo%2Fcode-signing-certificates
+[WARN] Request took 10363ms: https://registry.npmjs.org/@eslint%2Fplugin-kit
+[WARN] Request took 21253ms: https://registry.npmjs.org/@expo%2Fconfig-types
+[WARN] Request took 10589ms: https://registry.npmjs.org/@eslint%2Feslintrc
+[WARN] Request took 14432ms: https://registry.npmjs.org/@eslint%2Fjs
+[WARN] Request took 14867ms: https://registry.npmjs.org/@exodus%2Fbytes
+[WARN] Request took 12421ms: https://registry.npmjs.org/@expo%2Ffingerprint
+[WARN] Request took 55779ms: https://registry.npmjs.org/@cspell%2Fcspell-types
+[WARN] Request took 37757ms: https://registry.npmjs.org/@esbuild%2Flinux-riscv64
+[WARN] Request took 13371ms: https://registry.npmjs.org/@expo%2Fjson-file
+[WARN] Request took 23543ms: https://registry.npmjs.org/@expo%2Fconfig-plugins
+[WARN] Request took 38640ms: https://registry.npmjs.org/@esbuild%2Fnetbsd-x64
+[WARN] Request took 40654ms: https://registry.npmjs.org/@esbuild%2Flinux-s390x
+[WARN] Request took 40638ms: https://registry.npmjs.org/@esbuild%2Flinux-ia32
+[WARN] Request took 40667ms: https://registry.npmjs.org/@esbuild%2Flinux-x64
+[WARN] Request took 40812ms: https://registry.npmjs.org/@esbuild%2Flinux-ppc64
+[WARN] Request took 40708ms: https://registry.npmjs.org/@esbuild%2Fsunos-x64
+[WARN] Request took 40814ms: https://registry.npmjs.org/@esbuild%2Fopenbsd-x64
+[WARN] Request took 21388ms: https://registry.npmjs.org/@expo%2Fenv
+[WARN] Request took 16850ms: https://registry.npmjs.org/@expo%2Fimage-utils
+[WARN] Request took 41884ms: https://registry.npmjs.org/@esbuild%2Flinux-loong64
+[WARN] Request took 23048ms: https://registry.npmjs.org/@expo%2Fconfig
+[WARN] Request took 24154ms: https://registry.npmjs.org/@cspell%2Fcspell-service-bus
+[WARN] Request took 34016ms: https://registry.npmjs.org/@cspell%2Feslint-plugin
+[WARN] Request took 21119ms: https://registry.npmjs.org/@cspell%2Fcspell-pipe
+[WARN] Request took 15848ms: https://registry.npmjs.org/@expo%2Fmetro-config
+[WARN] Request took 28447ms: https://registry.npmjs.org/@es-joy%2Fjsdoccomment
+[WARN] Request took 16462ms: https://registry.npmjs.org/@expo%2Fprebuild-config
+[WARN] Request took 13653ms: https://registry.npmjs.org/@expo%2Fconfig-types
+[WARN] Request took 12761ms: https://registry.npmjs.org/@expo%2Fplist
+[WARN] Request took 13045ms: https://registry.npmjs.org/@expo%2Fosascript
+[WARN] Request took 14391ms: https://registry.npmjs.org/@expo%2Ffingerprint
+[WARN] Request took 22444ms: https://registry.npmjs.org/@babel%2Fpreset-env
+[WARN] Request took 14303ms: https://registry.npmjs.org/@expo%2Fjson-file
+[WARN] Request took 33841ms: https://registry.npmjs.org/@angular%2Fcompiler
+[WARN] Request took 54170ms: https://registry.npmjs.org/@cspell%2Fcspell-bundled-dicts
+[WARN] Request took 35151ms: https://registry.npmjs.org/@angular%2Fcommon
+[WARN] Request took 35222ms: https://registry.npmjs.org/@angular%2Fforms
+[WARN] Request took 14663ms: https://registry.npmjs.org/@expo%2Fpackage-manager
+[WARN] Request took 13918ms: https://registry.npmjs.org/@expo%2Fimage-utils
+[WARN] GET https://registry.npmjs.org/@eslint-react%2Fast error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 37976ms: https://registry.npmjs.org/@algolia%2Fclient-abtesting
+[WARN] GET https://registry.npmjs.org/@eslint-react%2Fcore error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 49462ms: https://registry.npmjs.org/@expo%2Fcli
+[WARN] Request took 39644ms: https://registry.npmjs.org/@algolia%2Frequester-fetch
+[WARN] Request took 23610ms: https://registry.npmjs.org/@expo%2Fconfig-plugins
+[WARN] Request took 58911ms: https://registry.npmjs.org/@eslint-react%2Feff
+[WARN] Request took 41415ms: https://registry.npmjs.org/@algolia%2Fclient-query-suggestions
+[WARN] Request took 42906ms: https://registry.npmjs.org/@angular%2Fcli
+[WARN] GET https://registry.npmjs.org/@eslint-react%2Feslint-plugin error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 10930ms: https://registry.npmjs.org/@jest%2Fenvironment
+[WARN] Request took 45059ms: https://registry.npmjs.org/@angular%2Fplatform-browser
+[WARN] GET https://registry.npmjs.org/@eslint-react%2Fshared error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 48311ms: https://registry.npmjs.org/@angular%2Fanimations
+[WARN] Request took 29949ms: https://registry.npmjs.org/@algolia%2Fclient-personalization
+[WARN] Request took 56468ms: https://registry.npmjs.org/@angular-devkit%2Farchitect
+[WARN] GET https://registry.npmjs.org/@eslint-react%2Fvar error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 49003ms: https://registry.npmjs.org/@angular%2Fcore
+[WARN] Request took 20028ms: https://registry.npmjs.org/@expo%2Fprebuild-config
+[WARN] Request took 15292ms: https://registry.npmjs.org/@jest%2Ffake-timers
+[WARN] Request took 50737ms: https://registry.npmjs.org/@angular%2Frouter
+[WARN] Request took 18415ms: https://registry.npmjs.org/@internationalized%2Fdate
+[WARN] Request took 51831ms: https://registry.npmjs.org/@angular-devkit%2Fschematics
+[WARN] Request took 49955ms: https://registry.npmjs.org/@angular-devkit%2Fcore
+[WARN] Request took 20689ms: https://registry.npmjs.org/@internationalized%2Fnumber
+[WARN] Request took 53221ms: https://registry.npmjs.org/@angular%2Fcompiler-cli
+[WARN] Request took 24922ms: https://registry.npmjs.org/@expo%2Fmetro-config
+[WARN] Request took 28920ms: https://registry.npmjs.org/@expo%2Fconfig
+[WARN] Request took 57753ms: https://registry.npmjs.org/@babel%2Fruntime
+[WARN] Request took 19127ms: https://registry.npmjs.org/@microsoft%2Fapi-extractor
+[WARN] Request took 32615ms: https://registry.npmjs.org/@angular%2Fcompiler
+[WARN] Request took 11154ms: https://registry.npmjs.org/@oxc-parser%2Fbinding-linux-arm64-musl
+[WARN] Request took 25711ms: https://registry.npmjs.org/@next%2Fswc-win32-ia32-msvc
+[WARN] Request took 27969ms: https://registry.npmjs.org/@nx%2Fnx-darwin-arm64
+[WARN] Request took 29759ms: https://registry.npmjs.org/@nx%2Fnx-linux-arm-gnueabihf
+[WARN] Request took 12959ms: https://registry.npmjs.org/@oxc-parser%2Fbinding-linux-s390x-gnu
+[WARN] Request took 20643ms: https://registry.npmjs.org/@oxc-parser%2Fbinding-linux-arm64-gnu
+[WARN] Request took 38244ms: https://registry.npmjs.org/@nx%2Fnx-linux-arm64-gnu
+[WARN] Request took 38291ms: https://registry.npmjs.org/@nx%2Fnx-linux-x64-gnu
+[WARN] Request took 10930ms: https://registry.npmjs.org/@oxc-parser%2Fbinding-win32-arm64-msvc
+[WARN] Request took 15086ms: https://registry.npmjs.org/@oxc-parser%2Fbinding-linux-arm64-musl
+[WARN] Request took 41798ms: https://registry.npmjs.org/@nx%2Fnx-win32-x64-msvc
+[WARN] GET https://registry.npmjs.org/@angular%2Fcommon error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@angular%2Fforms error (23). Will retry in 10 seconds. 2 retries left.

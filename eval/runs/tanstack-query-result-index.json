@@ -1,0 +1,40 @@
+[
+  {
+    "path": "eval/runs/tanstack-query-11293/record.json",
+    "baseline_classification_ran": false,
+    "overall": "environment-failure",
+    "raw_counts": {
+      "environment-failure": 482
+    },
+    "cause_counts": {
+      "environment-failure": 399
+    },
+    "expected": 0,
+    "detected": 0,
+    "misses": 0
+  },
+  {
+    "path": "eval/runs/tanstack-query-11392-attempt3/record.json",
+    "baseline_classification_ran": true,
+    "overall": "environment-failure",
+    "raw_counts": {},
+    "cause_counts": {},
+    "expected": 0,
+    "detected": 0,
+    "misses": 0
+  },
+  {
+    "path": "eval/runs/tanstack-query-11522-seeded-attempt2/record.json",
+    "baseline_classification_ran": true,
+    "overall": "environment-failure",
+    "raw_counts": {
+      "true-positive": 2
+    },
+    "cause_counts": {
+      "true-positive": 1
+    },
+    "expected": 1,
+    "detected": 1,
+    "misses": 0
+  }
+]
