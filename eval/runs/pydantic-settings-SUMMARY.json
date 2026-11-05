@@ -1,0 +1,202 @@
+{
+  "schema": "rio-eval-summary-v1",
+  "methodology": "deterministic-v1",
+  "records": [
+    "eval/runs/pydantic-settings-708/record.json",
+    "eval/runs/pydantic-settings-1097-attempt2/record.json",
+    "eval/runs/pydantic-settings-1109-attempt4/record.json"
+  ],
+  "attempts": 3,
+  "observed_raw_counts": {
+    "true-positive": 1,
+    "false-positive": 2,
+    "pre-existing-shown": 0,
+    "environment-failure": 0,
+    "out-of-scope": 0
+  },
+  "observed_occurrence_counts": {
+    "true-positive": 1,
+    "false-positive": 12,
+    "pre-existing-shown": 0,
+    "environment-failure": 0,
+    "out-of-scope": 0
+  },
+  "observed_cause_counts": {
+    "true-positive": 1,
+    "false-positive": 2,
+    "pre-existing-shown": 0,
+    "environment-failure": 0,
+    "out-of-scope": 0
+  },
+  "observed_unique_cause_counts": {
+    "true-positive": 1,
+    "false-positive": 1,
+    "pre-existing-shown": 0,
+    "environment-failure": 0,
+    "out-of-scope": 0
+  },
+  "eligible": {
+    "eligible_prs": 3,
+    "raw_counts": {
+      "true-positive": 1,
+      "false-positive": 2,
+      "pre-existing-shown": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0
+    },
+    "occurrence_counts": {
+      "true-positive": 1,
+      "false-positive": 12,
+      "pre-existing-shown": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0
+    },
+    "cause_counts": {
+      "true-positive": 1,
+      "false-positive": 2,
+      "pre-existing-shown": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0
+    },
+    "unique_cause_counts": {
+      "true-positive": 1,
+      "false-positive": 1,
+      "pre-existing-shown": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0
+    },
+    "precision": 0.3333333333333333,
+    "positive_control_cases": 1,
+    "positive_control_expected": 1,
+    "positive_control_detected": 1,
+    "positive_control_recall": 1.0,
+    "false_positive_per_pr": 0.6666666666666666,
+    "pr_with_false_positive_fraction": 0.6666666666666666,
+    "useful_prs": 1,
+    "useful_real_prs": 1,
+    "usefulness_fraction": 0.3333333333333333
+  },
+  "by_repository": {
+    "pydantic/pydantic-settings": {
+      "eligible_prs": 3,
+      "raw_counts": {
+        "true-positive": 1,
+        "false-positive": 2,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "occurrence_counts": {
+        "true-positive": 1,
+        "false-positive": 12,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "cause_counts": {
+        "true-positive": 1,
+        "false-positive": 2,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "unique_cause_counts": {
+        "true-positive": 1,
+        "false-positive": 1,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "precision": 0.3333333333333333,
+      "positive_control_cases": 1,
+      "positive_control_expected": 1,
+      "positive_control_detected": 1,
+      "positive_control_recall": 1.0,
+      "false_positive_per_pr": 0.6666666666666666,
+      "pr_with_false_positive_fraction": 0.6666666666666666,
+      "useful_prs": 1,
+      "useful_real_prs": 1,
+      "usefulness_fraction": 0.3333333333333333
+    }
+  },
+  "by_language": {
+    "python": {
+      "eligible_prs": 3,
+      "raw_counts": {
+        "true-positive": 1,
+        "false-positive": 2,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "occurrence_counts": {
+        "true-positive": 1,
+        "false-positive": 12,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "cause_counts": {
+        "true-positive": 1,
+        "false-positive": 2,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "unique_cause_counts": {
+        "true-positive": 1,
+        "false-positive": 1,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "precision": 0.3333333333333333,
+      "positive_control_cases": 1,
+      "positive_control_expected": 1,
+      "positive_control_detected": 1,
+      "positive_control_recall": 1.0,
+      "false_positive_per_pr": 0.6666666666666666,
+      "pr_with_false_positive_fraction": 0.6666666666666666,
+      "useful_prs": 1,
+      "useful_real_prs": 1,
+      "usefulness_fraction": 0.3333333333333333
+    }
+  },
+  "environment_failures": [],
+  "agent_layer_backlog": [],
+  "deterministic_misses": 0,
+  "sample": {
+    "eligible_real_prs": 3,
+    "repositories": 1,
+    "languages": [
+      "python"
+    ],
+    "positive_control_repositories": 1,
+    "positive_controls_by_language": {
+      "typescript": 0,
+      "python": 1
+    },
+    "clean_negative_controls": 2,
+    "adequate": false,
+    "requirements_missing": [
+      "Need at least 10 eligible real PRs",
+      "Need at least 5 eligible repositories",
+      "Need both languages",
+      "Need at least 10 eligible positive controls",
+      "Need controls across at least 3 repositories",
+      "Need at least 5 controls per language"
+    ]
+  },
+  "decision": "insufficient-evidence",
+  "decision_reasons": [
+    "Need at least 10 eligible real PRs",
+    "Need at least 5 eligible repositories",
+    "Need both languages",
+    "Need at least 10 eligible positive controls",
+    "Need controls across at least 3 repositories",
+    "Need at least 5 controls per language",
+    "Precision below 0.80",
+    "False-positive causes per PR must be < 0.15",
+    "Need at least 10 useful real PRs"
+  ]
+}

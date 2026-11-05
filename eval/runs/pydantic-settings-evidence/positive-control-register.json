@@ -1,0 +1,41 @@
+{
+  "registered_utc": "2026-11-05T02:45:24.076733+00:00",
+  "control_id": "pydantic-settings-708-aws-version-id",
+  "repository": "pydantic/pydantic-settings",
+  "pr": "https://github.com/pydantic/pydantic-settings/pull/708",
+  "kind": "real-pr",
+  "base": "61e0b46eb96e2f67f390b0371c4297f2d6b24573",
+  "head": "7d60367d8cc83fb49fb7d93568ff4f10fea9a904",
+  "languages": [
+    "python"
+  ],
+  "selection_rationale": "Introducing PR adds version_id branch with no tests. Later merged PR #963 adds test_version_id. Independent full suites pass (495 passed, 4 skipped each); package mypy and Ruff pass both sides; AWS file has no missing statements at base and missing introduced line 66 at head. Coverage gate exits 0 at base and 1 at head. Registered before any Rio run of #708.",
+  "expected": [
+    {
+      "id": "aws-version-id-uncovered",
+      "mechanism": "uncovered-lines",
+      "description": "AWS VersionId request assignment at aws.py:66 is not executed by the full test suite.",
+      "evidence": "708-base-attempt2 and 708-head-attempt2: pytest-coverage.stdout, coverage.json.gz, coverage-gate.stdout, coverage-gate-command.json; 708-independent-diff-coverage.json; pr-708.patch; pr-963-followup.json.",
+      "finding_ids": []
+    }
+  ],
+  "lockfile_sha256": "9fe62976be64c14874fcbadab63896828076ef7b44c22130d5c608b52006293d",
+  "runtime": "CPython 3.13.9; uv 0.13.7; mypy 1.18.2; Ruff 0.13.1; exact coverage/pytest versions in oracle logs",
+  "profile": "profile.yaml",
+  "profile_sha256": "64e6ce34ac0cf189c92e8aac8e336f4d83a91f6aa456126c420214d9976c1dde",
+  "install_plan": "install-plan-v3.json",
+  "applicable_checks": [
+    "typecheck",
+    "lint",
+    "secrets",
+    "coverage"
+  ],
+  "capability_limitations": [
+    "Dependency auditing explicitly offline without a populated advisory cache; no dependency-audit recall claim.",
+    "No model endpoint: semantic agent steps deferred."
+  ],
+  "reviewer": "sub-agent eval-pydantic-settings (automated)",
+  "verdict_source": "automated",
+  "mutation": null,
+  "rio_output": "eval/runs/pydantic-settings-708"
+}

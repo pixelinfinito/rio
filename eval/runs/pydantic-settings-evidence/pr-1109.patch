@@ -1,0 +1,108 @@
+diff --git a/pydantic_settings/sources/providers/env.py b/pydantic_settings/sources/providers/env.py
+index a3c9644..c88e498 100644
+--- a/pydantic_settings/sources/providers/env.py
++++ b/pydantic_settings/sources/providers/env.py
+@@ -274,14 +274,14 @@ class EnvSettingsSource(PydanticBaseEnvSettingsSource):
+             return None
+ 
+         annotation = field.annotation if isinstance(field, FieldInfo) else field
+-        for type_ in get_args(annotation):
+-            type_has_key = self.next_field(type_, key, case_sensitive)
+-            if type_has_key:
+-                return type_has_key
+         if _lenient_issubclass(get_origin(annotation), dict):
+             # get value type if it's a dict
+             args = get_args(annotation)
+             return args[-1] if args else None
++        for type_ in get_args(annotation):
++            type_has_key = self.next_field(type_, key, case_sensitive)
++            if type_has_key:
++                return type_has_key
+         if is_model_class(annotation) or is_pydantic_dataclass(annotation):  # type: ignore[arg-type]
+             fields = _get_model_fields(annotation)
+             model_config = _get_model_config(annotation)
+diff --git a/tests/test_settings.py b/tests/test_settings.py
+index b9e0d4e..78cb87a 100644
+--- a/tests/test_settings.py
++++ b/tests/test_settings.py
+@@ -4437,6 +4437,80 @@ def test_env_nested_dict_complex_value_type(env):
+     assert s.model_dump() == {'nested_field': {'key': ['a', 'b']}}
+ 
+ 
++@pytest.mark.parametrize(
++    'value_type,value',
++    [
++        (list[dict[str, str]], [{'k': 'v'}]),
++        (dict[str, list[str]], {'k': ['v']}),
++        (dict[str, dict[str, int]], {'k': {'nested': 1}}),
++        (list[list[dict[str, str]]], [[{'k': 'v'}]]),
++        (Annotated[list[dict[str, str]], Field(min_length=1)], [{'k': 'v'}]),
++    ],
++)
++def test_env_nested_dict_nested_container_value_type(env, value_type, value):
++    """Regression test for https://github.com/pydantic/pydantic-settings/issues/1107"""
++
++    class Settings(BaseSettings):
++        nested_field: dict[str, value_type]
++
++        model_config = SettingsConfigDict(env_nested_delimiter='__')
++
++    env.set('nested_field__key', json.dumps(value))
++    s = Settings()
++    assert s.model_dump() == {'nested_field': {'key': value}}
++
++
++class _DictOfListOfDicts(BaseModel):
++    d: dict[str, list[dict[str, str]]] = {}
++
++
++@pytest.mark.parametrize(
++    'annotation,env_name,expected',
++    [
++        (typing.Optional[dict[str, list[dict[str, str]]]], 'field__key', {'key': [{'k': 'v'}]}),  # noqa: UP045
++        (dict[str, list[dict[str, str]]] | None, 'field__key', {'key': [{'k': 'v'}]}),
++        (_DictOfListOfDicts, 'field__d__key', {'d': {'key': [{'k': 'v'}]}}),
++        (dict[str, _DictOfListOfDicts], 'field__a__d__key', {'a': {'d': {'key': [{'k': 'v'}]}}}),
++    ],
++)
++def test_env_nested_dict_nested_container_value_type_in_wrapper(env, annotation, env_name, expected):
++    """Regression test for https://github.com/pydantic/pydantic-settings/issues/1107"""
++
++    class Settings(BaseSettings):
++        field: annotation
++
++        model_config = SettingsConfigDict(env_nested_delimiter='__')
++
++    env.set(env_name, '[{"k": "v"}]')
++    s = Settings()
++    assert s.model_dump() == {'field': expected}
++
++
++def test_env_nested_dict_model_value_key_matching_model_field(env):
++    """A dict key that matches a field name of the dict's value model is still a dict key."""
++
++    class Value(BaseModel):
++        name: str
++        count: int = 0
++
++    class Settings(BaseSettings):
++        values: dict[str, Value]
++
++        model_config = SettingsConfigDict(env_nested_delimiter='__')
++
++    env.set('values__name', '{"name": "a", "count": 1}')
++    env.set('values__count', '{"name": "b", "count": 2}')
++    env.set('values__other__name', 'c')
++    s = Settings()
++    assert s.model_dump() == {
++        'values': {
++            'name': {'name': 'a', 'count': 1},
++            'count': {'name': 'b', 'count': 2},
++            'other': {'name': 'c', 'count': 0},
++        }
++    }
++
++
+ ListOrStr = TypeAliasType('ListOrStr', list[str] | str)
+ 
+ 

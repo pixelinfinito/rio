@@ -1,0 +1,102 @@
+{
+  "source": "Observed /proc cmdline and cwd; short-lived processes may be absent",
+  "runner_pid": 622010,
+  "commands": [
+    {
+      "pid": 624328,
+      "parent_pid": 622010,
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "review",
+        "--base",
+        "7e2dacb6db07b41abb0c80d0608e46e197265554",
+        "--format",
+        "json",
+        "--offline",
+        "--profile",
+        "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1109-attempt3/profile.yaml"
+      ],
+      "cwd": "/dev/shm/pydantic-settings-eval/rio-eval-p94crem1/head"
+    },
+    {
+      "pid": 622010,
+      "parent_pid": 555615,
+      "argv": [
+        "python3",
+        "eval/runner.py",
+        "--repository",
+        "pydantic/pydantic-settings",
+        "--pr",
+        "1109",
+        "--base",
+        "7e2dacb6db07b41abb0c80d0608e46e197265554",
+        "--head",
+        "74c01ae3e84f9c8f2b04ec269e67813abd96cf9a",
+        "--languages",
+        "python",
+        "--rio",
+        "/home/ubuntu/rio/target/release/rio",
+        "--install-plan",
+        "eval/runs/pydantic-settings-evidence/install-plan-v2.json",
+        "--profile",
+        "eval/runs/pydantic-settings-evidence/profile.yaml",
+        "--out",
+        "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1109-attempt3",
+        "--timeout",
+        "1800"
+      ],
+      "cwd": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings"
+    },
+    {
+      "pid": 624399,
+      "parent_pid": 624328,
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-p94crem1/head/.venv/bin/python",
+        "/dev/shm/pydantic-settings-eval/rio-eval-p94crem1/head/./.venv/bin/coverage",
+        "run",
+        "-m",
+        "pytest",
+        "-q"
+      ],
+      "cwd": "/dev/shm/pydantic-settings-eval/rio-eval-p94crem1/cache/d1c8882c886b285a/runs/01M6MRVKQSNED4PH9XS4DNWQD2/tools/tool.tmp-ZvUt1N"
+    },
+    {
+      "pid": 624399,
+      "parent_pid": 624328,
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-p94crem1/head/.venv/bin/python",
+        "/dev/shm/pydantic-settings-eval/rio-eval-p94crem1/head/./.venv/bin/coverage",
+        "run",
+        "-m",
+        "pytest",
+        "-q"
+      ],
+      "cwd": "/dev/shm/pydantic-settings-eval/pytest-of-ubuntu/pytest-0/test_read_dotenv_vars_with_dep0/a/b"
+    },
+    {
+      "pid": 624399,
+      "parent_pid": 624328,
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-p94crem1/head/.venv/bin/python",
+        "/dev/shm/pydantic-settings-eval/rio-eval-p94crem1/head/./.venv/bin/coverage",
+        "run",
+        "-m",
+        "pytest",
+        "-q"
+      ],
+      "cwd": "/dev/shm/pydantic-settings-eval/pytest-of-ubuntu/pytest-0/test_pyproject_toml_file0"
+    },
+    {
+      "pid": 626376,
+      "parent_pid": 624328,
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-p94crem1/head/.venv/bin/python",
+        "/dev/shm/pydantic-settings-eval/rio-eval-p94crem1/head/./.venv/bin/coverage",
+        "json",
+        "-o",
+        "/dev/shm/pydantic-settings-eval/rio-eval-p94crem1/cache/d1c8882c886b285a/runs/01M6MRVKQSNED4PH9XS4DNWQD2/tools/tool.tmp-ZvUt1N/./.rio-coverage/coverage.json"
+      ],
+      "cwd": "/dev/shm/pydantic-settings-eval/rio-eval-p94crem1/cache/d1c8882c886b285a/runs/01M6MRVKQSNED4PH9XS4DNWQD2/tools/tool.tmp-ZvUt1N"
+    }
+  ]
+}

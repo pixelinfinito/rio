@@ -1,0 +1,11 @@
+Warning: you are leaving 1 commit behind, not connected to
+any of your branches:
+
+  83dc333 Keep existing dict value decoding and handle aliased union value types
+
+If you want to keep it by creating a new branch, this may be a good time
+to do so with:
+
+ git branch <new-branch-name> 83dc333
+
+HEAD is now at e71a53e Decode nested dictionary values with complex union types (#1089)

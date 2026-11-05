@@ -1,0 +1,282 @@
+{
+  "blocking_problems": [],
+  "cache": {
+    "free_space": 13062410240,
+    "path": "/dev/shm/pydantic-settings-eval/rio-eval-e8dagj6_/cache",
+    "writable": true
+  },
+  "configuration": {
+    "cache": {
+      "dir": "/dev/shm/pydantic-settings-eval/rio-eval-e8dagj6_/cache",
+      "max_age": {
+        "nanos": 0,
+        "secs": 2592000
+      },
+      "max_size": 5368709120,
+      "retain_raw_output": true
+    },
+    "config_dir": "/dev/shm/pydantic-settings-eval/rio-eval-e8dagj6_/config",
+    "endpoint_url": null,
+    "notices": [],
+    "output_limit": 268435456,
+    "parallelism": 4,
+    "sources": {
+      "cache.dir": "RIO_CACHE_DIR",
+      "cache.max_age": "default",
+      "cache.max_size": "default",
+      "cache.retain_raw_output": "default",
+      "endpoint.url": "default",
+      "run.output_limit": "default",
+      "run.parallelism": "default"
+    }
+  },
+  "endpoint": "No endpoint is available in this version",
+  "head": "74c01ae3e84f9c8f2b04ec269e67813abd96cf9a",
+  "plan": {
+    "checks": [
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "python",
+        "root": ".",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "pydantic_settings/__init__.py",
+          "pydantic_settings/exceptions.py",
+          "pydantic_settings/main.py",
+          "pydantic_settings/sources/__init__.py",
+          "pydantic_settings/sources/base.py",
+          "pydantic_settings/sources/providers/__init__.py",
+          "pydantic_settings/sources/providers/aws.py",
+          "pydantic_settings/sources/providers/azure.py",
+          "pydantic_settings/sources/providers/cli.py",
+          "pydantic_settings/sources/providers/dotenv.py",
+          "pydantic_settings/sources/providers/env.py",
+          "pydantic_settings/sources/providers/gcp.py",
+          "pydantic_settings/sources/providers/json.py",
+          "pydantic_settings/sources/providers/nested_secrets.py",
+          "pydantic_settings/sources/providers/pyproject.py",
+          "pydantic_settings/sources/providers/secrets.py",
+          "pydantic_settings/sources/providers/toml.py",
+          "pydantic_settings/sources/providers/yaml.py",
+          "pydantic_settings/sources/types.py",
+          "pydantic_settings/sources/utils.py",
+          "pydantic_settings/utils.py",
+          "pydantic_settings/version.py",
+          "tests/conftest.py",
+          "tests/test_docs.py",
+          "tests/test_precedence_and_merging.py",
+          "tests/test_settings.py",
+          "tests/test_source_aws_secrets_manager.py",
+          "tests/test_source_aws_systems_manager.py",
+          "tests/test_source_azure_key_vault.py",
+          "tests/test_source_cli.py",
+          "tests/test_source_gcp_secret_manager.py",
+          "tests/test_source_json.py",
+          "tests/test_source_nested_secrets.py",
+          "tests/test_source_pyproject_toml.py",
+          "tests/test_source_toml.py",
+          "tests/test_source_yaml.py",
+          "tests/test_utils.py"
+        ],
+        "tool": {
+          "name": "mypy",
+          "path": "/dev/shm/pydantic-settings-eval/rio-eval-e8dagj6_/head/./.venv/bin/mypy",
+          "version": "mypy 2.4.0 (compiled: yes)"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "lint",
+        "language": "python",
+        "root": ".",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "pydantic_settings/__init__.py",
+          "pydantic_settings/exceptions.py",
+          "pydantic_settings/main.py",
+          "pydantic_settings/sources/__init__.py",
+          "pydantic_settings/sources/base.py",
+          "pydantic_settings/sources/providers/__init__.py",
+          "pydantic_settings/sources/providers/aws.py",
+          "pydantic_settings/sources/providers/azure.py",
+          "pydantic_settings/sources/providers/cli.py",
+          "pydantic_settings/sources/providers/dotenv.py",
+          "pydantic_settings/sources/providers/env.py",
+          "pydantic_settings/sources/providers/gcp.py",
+          "pydantic_settings/sources/providers/json.py",
+          "pydantic_settings/sources/providers/nested_secrets.py",
+          "pydantic_settings/sources/providers/pyproject.py",
+          "pydantic_settings/sources/providers/secrets.py",
+          "pydantic_settings/sources/providers/toml.py",
+          "pydantic_settings/sources/providers/yaml.py",
+          "pydantic_settings/sources/types.py",
+          "pydantic_settings/sources/utils.py",
+          "pydantic_settings/utils.py",
+          "pydantic_settings/version.py",
+          "tests/conftest.py",
+          "tests/test_docs.py",
+          "tests/test_precedence_and_merging.py",
+          "tests/test_settings.py",
+          "tests/test_source_aws_secrets_manager.py",
+          "tests/test_source_aws_systems_manager.py",
+          "tests/test_source_azure_key_vault.py",
+          "tests/test_source_cli.py",
+          "tests/test_source_gcp_secret_manager.py",
+          "tests/test_source_json.py",
+          "tests/test_source_nested_secrets.py",
+          "tests/test_source_pyproject_toml.py",
+          "tests/test_source_toml.py",
+          "tests/test_source_yaml.py",
+          "tests/test_utils.py"
+        ],
+        "tool": {
+          "name": "ruff",
+          "path": "/dev/shm/pydantic-settings-eval/rio-eval-e8dagj6_/head/./.venv/bin/ruff",
+          "version": "ruff 0.16.10"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "coverage",
+        "language": "python",
+        "root": ".",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "pydantic_settings/__init__.py",
+          "pydantic_settings/exceptions.py",
+          "pydantic_settings/main.py",
+          "pydantic_settings/sources/__init__.py",
+          "pydantic_settings/sources/base.py",
+          "pydantic_settings/sources/providers/__init__.py",
+          "pydantic_settings/sources/providers/aws.py",
+          "pydantic_settings/sources/providers/azure.py",
+          "pydantic_settings/sources/providers/cli.py",
+          "pydantic_settings/sources/providers/dotenv.py",
+          "pydantic_settings/sources/providers/env.py",
+          "pydantic_settings/sources/providers/gcp.py",
+          "pydantic_settings/sources/providers/json.py",
+          "pydantic_settings/sources/providers/nested_secrets.py",
+          "pydantic_settings/sources/providers/pyproject.py",
+          "pydantic_settings/sources/providers/secrets.py",
+          "pydantic_settings/sources/providers/toml.py",
+          "pydantic_settings/sources/providers/yaml.py",
+          "pydantic_settings/sources/types.py",
+          "pydantic_settings/sources/utils.py",
+          "pydantic_settings/utils.py",
+          "pydantic_settings/version.py",
+          "tests/conftest.py",
+          "tests/test_docs.py",
+          "tests/test_precedence_and_merging.py",
+          "tests/test_settings.py",
+          "tests/test_source_aws_secrets_manager.py",
+          "tests/test_source_aws_systems_manager.py",
+          "tests/test_source_azure_key_vault.py",
+          "tests/test_source_cli.py",
+          "tests/test_source_gcp_secret_manager.py",
+          "tests/test_source_json.py",
+          "tests/test_source_nested_secrets.py",
+          "tests/test_source_pyproject_toml.py",
+          "tests/test_source_toml.py",
+          "tests/test_source_yaml.py",
+          "tests/test_utils.py"
+        ],
+        "tool": {
+          "name": "coverage",
+          "path": "/dev/shm/pydantic-settings-eval/rio-eval-e8dagj6_/head/./.venv/bin/coverage",
+          "version": "Coverage.py, version 7.13.4 with C extension"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": null,
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "secrets",
+        "language": "common",
+        "root": ".",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [],
+        "tool": null
+      },
+      {
+        "baseline": false,
+        "baseline_hint": null,
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "dependencies",
+        "language": "common",
+        "root": ".",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [],
+        "tool": null
+      }
+    ],
+    "layout": {
+      "dependencies": {
+        ".": []
+      },
+      "notes": [],
+      "roots": [
+        {
+          "language": "python",
+          "manifest": "pyproject.toml",
+          "name": "pydantic-settings",
+          "path": ".",
+          "workspace": null
+        }
+      ]
+    },
+    "notes": [],
+    "probes_ran": true,
+    "roots": [
+      {
+        "base": {
+          "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+          "state": "unverified"
+        },
+        "environment": "/dev/shm/pydantic-settings-eval/rio-eval-e8dagj6_/head/./.venv",
+        "head": {
+          "hash": "251c3a0dcf55feb786f600353a39f069ebddfb828f14842d4f831f0145f63032",
+          "state": "verified"
+        },
+        "installation_root": ".",
+        "lockfile": "uv.lock",
+        "project": {
+          "language": "python",
+          "manifest": "pyproject.toml",
+          "name": "pydantic-settings",
+          "path": ".",
+          "workspace": null
+        }
+      }
+    ]
+  },
+  "profile": {
+    "chain": [
+      "rio/base"
+    ],
+    "name": "rio/base",
+    "valid": true
+  },
+  "repository": "/dev/shm/pydantic-settings-eval/rio-eval-e8dagj6_/head",
+  "warnings": [
+    "rio/base:$.steps[3]: rio/triage is deferred locally: no_endpoint",
+    "rio/base:$.steps[4]: rio/agents is deferred locally: no_endpoint",
+    "rio/base:$.steps[5]: rio/verify is deferred locally: no_endpoint"
+  ]
+}
