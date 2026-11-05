@@ -266,6 +266,7 @@ impl Execution {
                 &self.request.worktree,
                 disposable.path(),
                 &self.links,
+                &tool.name,
             )?;
         }
         command.timeout = self.available(check.kind);

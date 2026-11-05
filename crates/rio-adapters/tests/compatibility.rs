@@ -624,13 +624,18 @@ fn baseline_remaps_source_but_rejects_untracked_build_entry_points() {
             .graph,
     );
     for field in ["types", "main", "exports"] {
-        for compiled in [false, true] {
+        for (entry, compiled) in [
+            ("./src/index.ts", false),
+            ("./dist/index.js", true),
+            ("./index.cjs", true),
+        ] {
             let mut selected = base.clone();
-            let entry = if compiled {
-                "./dist/index.js"
-            } else {
-                "./src/index.ts"
-            };
+            // A tracked placeholder does not make ignored build output usable.
+            put(
+                &mut selected,
+                "packages/shared/dist/README.md",
+                "build output goes here",
+            );
             let mut manifest = serde_json::json!({"name":"shared","version":"1.0.0"});
             manifest[field] = if field == "exports" {
                 serde_json::json!({".":{"types":entry,"default":entry}})
@@ -664,7 +669,11 @@ fn baseline_remaps_source_but_rejects_untracked_build_entry_points() {
                     result
                         .hint()
                         .unwrap()
-                        .contains("consumed through build output dist/ that is not in the tree")
+                        .contains(if entry.starts_with("./dist/") {
+                            "consumed through build output dist/ that is not in the tree"
+                        } else {
+                            "consumed through build output index.cjs that is not in the tree"
+                        })
                 );
                 assert!(!result.hint().unwrap().contains("commit or stash"));
             } else {

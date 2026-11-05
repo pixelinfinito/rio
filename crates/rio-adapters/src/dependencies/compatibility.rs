@@ -566,13 +566,32 @@ pub(super) fn missing_build_output(tree: &Tree, root: &str, name: &str) -> Optio
     for entry in entries {
         let entry = entry.trim_start_matches("./");
         let directory = entry.split('/').next()?;
-        if !entry.contains('/') || directory == "src" || directory == ".." {
+        if entry.is_empty() || directory == ".." {
             continue;
         }
-        let prefix = format!("{}/", join(root, directory));
-        if !tree.keys().any(|path| path.starts_with(&prefix)) {
+        let path = join(root, entry);
+        let prefix = format!("{path}/");
+        let present = if path.contains('*') {
+            globset::Glob::new(&path).ok().is_some_and(|glob| {
+                let matcher = glob.compile_matcher();
+                tree.keys().any(|path| matcher.is_match(path))
+            })
+        } else {
+            tree.contains_key(&path) || tree.keys().any(|path| path.starts_with(&prefix))
+        };
+        if !present {
+            if directory == "src" {
+                return Some(format!(
+                    "linked package {name} source entry point {entry} is absent from the base tree; cannot remap"
+                ));
+            }
+            let output = if entry.contains('/') {
+                format!("{directory}/")
+            } else {
+                entry.to_owned()
+            };
             return Some(format!(
-                "linked package {name} is consumed through build output {directory}/ that is not in the tree; run the build in the base or configure source entry points"
+                "linked package {name} is consumed through build output {output} that is not in the tree; run the build in the base or configure source entry points"
             ));
         }
     }

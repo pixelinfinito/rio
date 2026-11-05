@@ -83,8 +83,15 @@ impl Overlay<'_> {
         let Ok(relative) = target.strip_prefix(self.worktree) else {
             return Ok(target.into());
         };
-        self.mapped_sources.insert(relative.into());
-        let prefix = relative.to_string_lossy().replace('\\', "/");
+        // editables.map_module can name __init__.py rather than its
+        // package directory. Any sibling module change affects that package.
+        let scope = if target.is_file() {
+            relative.parent().unwrap_or(relative)
+        } else {
+            relative
+        };
+        self.mapped_sources.insert(scope.into());
+        let prefix = scope.to_string_lossy().replace('\\', "/");
         let prefix = if prefix.is_empty() {
             prefix
         } else {
@@ -103,7 +110,7 @@ impl Overlay<'_> {
             ) {
                 bail!("{hint}");
             }
-            self.remapped.insert(relative.into());
+            self.remapped.insert(scope.into());
         }
         Ok(self.destination.join(relative))
     }
@@ -260,56 +267,93 @@ pub fn configure_base_command(
     worktree: &Path,
     destination: &Path,
     links: &[DependencyLink],
+    tool_name: &str,
 ) -> Result<()> {
     let worktree = worktree.canonicalize()?;
-    for link in links
+    let python_checker = matches!(tool_name, "mypy" | "pyright");
+    let environment_link = links
         .iter()
         .filter(|link| !link.path.ends_with("node_modules"))
-    {
+        .find(|link| command.program.starts_with(worktree.join(&link.path)))
+        .or_else(|| {
+            python_checker
+                .then(|| {
+                    links
+                        .iter()
+                        .filter(|link| !link.path.ends_with("node_modules"))
+                        .filter(|link| {
+                            destination
+                                .join(&link.path)
+                                .parent()
+                                .is_some_and(|parent| command.cwd.starts_with(parent))
+                        })
+                        .max_by_key(|link| link.path.len())
+                })
+                .flatten()
+        });
+    if let Some(link) = environment_link {
         let original = worktree.join(&link.path);
+        let environment = destination.join(&link.path);
+        let interpreter = environment.join(if cfg!(windows) {
+            "Scripts/python.exe"
+        } else {
+            "bin/python"
+        });
+        command
+            .env
+            .insert("VIRTUAL_ENV".into(), environment.clone().into_os_string());
+        let paths =
+            std::iter::once(environment.join(if cfg!(windows) { "Scripts" } else { "bin" })).chain(
+                std::env::split_paths(&std::env::var_os("PATH").unwrap_or_default())
+                    .collect::<Vec<_>>(),
+            );
+        command
+            .env
+            .insert("PATH".into(), std::env::join_paths(paths)?);
+        if let Some(paths) = std::env::var_os("PYTHONPATH") {
+            let paths = std::env::split_paths(&paths).map(|path| {
+                let resolved = path.canonicalize().unwrap_or_else(|_| path.clone());
+                resolved
+                    .strip_prefix(&worktree)
+                    .map_or(path, |relative| destination.join(relative))
+            });
+            command
+                .env
+                .insert("PYTHONPATH".into(), std::env::join_paths(paths)?);
+        }
         if let Ok(relative) = command.program.strip_prefix(&original) {
-            let environment = destination.join(&link.path);
-            command
-                .env
-                .insert("VIRTUAL_ENV".into(), environment.clone().into_os_string());
-            let paths =
-                std::iter::once(environment.join(if cfg!(windows) { "Scripts" } else { "bin" }))
-                    .chain(
-                        std::env::split_paths(&std::env::var_os("PATH").unwrap_or_default())
-                            .collect::<Vec<_>>(),
-                    );
-            command
-                .env
-                .insert("PATH".into(), std::env::join_paths(paths)?);
-            if let Some(paths) = std::env::var_os("PYTHONPATH") {
-                let paths = std::env::split_paths(&paths).map(|path| {
-                    let resolved = path.canonicalize().unwrap_or_else(|_| path.clone());
-                    resolved
-                        .strip_prefix(&worktree)
-                        .map_or(path, |relative| destination.join(relative))
-                });
-                command
-                    .env
-                    .insert("PYTHONPATH".into(), std::env::join_paths(paths)?);
-            }
             let program = environment.join(relative);
             if fs::read(&command.program).is_ok_and(|bytes| bytes.starts_with(b"#!")) {
-                let interpreter = destination.join(&link.path).join(if cfg!(windows) {
-                    "Scripts/python.exe"
-                } else {
-                    "bin/python"
-                });
                 ensure!(
                     interpreter.exists(),
                     "editable installation interpreter cannot be remapped"
                 );
                 command.args.insert(0, program.into_os_string());
-                command.program = interpreter;
+                command.program = interpreter.clone();
             } else {
                 command.program = program;
             }
-            return Ok(());
         }
+        if python_checker {
+            ensure!(
+                interpreter.exists(),
+                "editable installation interpreter cannot be remapped"
+            );
+            command.args.extend([
+                if tool_name == "mypy" {
+                    "--python-executable"
+                } else {
+                    "--pythonpath"
+                }
+                .into(),
+                interpreter.into_os_string(),
+            ]);
+        }
+    } else {
+        ensure!(
+            !python_checker,
+            "linked dependency points at changed source; Python checker has no private environment for editable remapping"
+        );
     }
     let options = std::env::var("NODE_OPTIONS").unwrap_or_default();
     command.env.insert(

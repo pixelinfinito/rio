@@ -928,7 +928,7 @@ async fn committed_workspace_change_classifies_errors_in_dependent_package() {
 #[tokio::test]
 async fn committed_python_editables_resolve_base_source_without_changing_head() {
     use std::os::unix::fs::PermissionsExt;
-    for finder in [false, true] {
+    for finder in 0..3 {
         let temp = tempfile::tempdir().unwrap();
         let root = temp.path();
         init(root);
@@ -946,7 +946,18 @@ async fn committed_python_editables_resolve_base_source_without_changing_head() 
             .path()
             .join("site-packages");
         fs::create_dir_all(root.join("src/shared")).unwrap();
-        fs::write(root.join("src/shared/__init__.py"), "value = 1\n").unwrap();
+        fs::write(
+            root.join("src/shared/__init__.py"),
+            if finder == 2 {
+                "from ._utils import value\n"
+            } else {
+                "value = 1\n"
+            },
+        )
+        .unwrap();
+        if finder == 2 {
+            fs::write(root.join("src/shared/_utils.py"), "value = 1\n").unwrap();
+        }
         fs::write(
             root.join("caller.py"),
             "from shared import value\nresult: int = value\n",
@@ -967,7 +978,7 @@ async fn committed_python_editables_resolve_base_source_without_changing_head() 
         )
         .unwrap();
         fs::write(site.join("shared-1.0.0.dist-info/direct_url.json"), serde_json::json!({"url":format!("file://{}",root.display()),"dir_info":{"editable":true}}).to_string()).unwrap();
-        if finder {
+        if finder > 0 {
             fs::write(
                 site.join("shared.pth"),
                 "import __editable__shared; __editable__shared.install()\n",
@@ -979,10 +990,11 @@ class Finder(importlib.abc.MetaPathFinder):
     @classmethod
     def find_spec(cls, fullname, path=None, target=None):
         if fullname in MAPPING:
-            return importlib.util.spec_from_file_location(fullname, MAPPING[fullname] + '/__init__.py')
+            source = MAPPING[fullname]
+            return importlib.util.spec_from_file_location(fullname, source if source.endswith('.py') else source + '/__init__.py')
 def install():
     sys.meta_path.append(Finder)
-"#, root.join("src/shared").to_str().unwrap())).unwrap();
+"#, root.join(if finder == 2 { "src/shared/__init__.py" } else { "src/shared" }).to_str().unwrap())).unwrap();
         } else {
             fs::write(
                 site.join("shared.pth"),
@@ -1009,7 +1021,15 @@ sys.exit(1)
         let profile = profile(root, "60s", true);
         git(root, &["add", "."]);
         git(root, &["commit", "-m", "base editable"]);
-        fs::write(root.join("src/shared/__init__.py"), "value = 'new'\n").unwrap();
+        fs::write(
+            root.join(if finder == 2 {
+                "src/shared/_utils.py"
+            } else {
+                "src/shared/__init__.py"
+            }),
+            "value = 'new'\n",
+        )
+        .unwrap();
         git(root, &["add", "."]);
         git(root, &["commit", "-m", "change editable API"]);
         let original = fs::read(site.join("shared.pth")).unwrap();
