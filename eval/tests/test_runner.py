@@ -28,6 +28,23 @@ class RunnerTests(unittest.TestCase):
             (p / 'package.json').write_text('{"packageManager":"yarn@1.22.22"}')
             self.assertEqual(runner.default_install(p)[0][-1], '--frozen-lockfile')
 
+    def test_check_evidence_preserves_real_fields_without_invented_argv(self):
+        checks = [{'kind': 'lint', 'language': 'python', 'root': 'src',
+                   'version': 'base', 'scheduled_as': 'dependent', 'outcome': 'passed',
+                   'wall_time_ms': 0, 'cached': True, 'dependency_state': 'trusted',
+                   'findings': [{'id': 'nested-copy'}]},
+                  {'kind': 'typecheck', 'language': 'python', 'root': '.',
+                   'version': 'head', 'scheduled_as': 'changed', 'outcome': 'failed',
+                   'reason': 'tool_crashed', 'hint': 'tool exited', 'wall_time_ms': 7,
+                   'findings': []}]
+        evidence = runner.check_evidence({'checks': checks})
+        self.assertFalse(evidence['child_argv_available'])
+        self.assertIn('no child executable, argv', evidence['limitation'])
+        self.assertEqual(evidence['entries'], [{k: v for k, v in c.items() if k != 'findings'}
+                                               for c in checks])
+        self.assertNotIn('argv', evidence['entries'][0])
+        self.assertEqual(checks[0]['findings'], [{'id': 'nested-copy'}])
+
     def test_end_to_end_pinned_run_preserves_evidence_and_removes_clones(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp); source = root / 'source'; source.mkdir()
@@ -63,6 +80,9 @@ class RunnerTests(unittest.TestCase):
                 code = runner.run(args)
             self.assertEqual(code, 1)
             metadata = e.read_json(out / 'commands.json')
+            self.assertEqual(metadata['schema'], 'rio-eval-runner-v2')
+            self.assertEqual(metadata['rio_checks'], runner.check_evidence(report))
+            self.assertTrue(Path(metadata['rio_review_stderr']).exists())
             self.assertFalse(metadata['environment']['eligible'])
             self.assertIn('Baseline/setup ineligible; fix before scoring', metadata['failures'])
             self.assertFalse(Path(metadata['disposable_directory']).exists())

@@ -33,7 +33,7 @@ rio review --base FULL_MERGE_BASE_SHA --format json --offline --profile rio/base
 `--profile PATH` pins a custom profile. The default explicitly selects `rio/base`
 to avoid a cloned repository silently changing the cohort profile. The input
 profile (when supplied), resolved profile output/hash, binary hash/version,
-runtime version outputs, exact subprocess argv/cwd/environment overrides,
+runtime version outputs, exact runner subprocess argv/cwd/environment overrides,
 wall times, exit codes, lockfile hashes, and full stdout/stderr paths are retained
 in the output directory. `RIO_*` machine overrides are removed and named in the
 manifest; config/cache directories are fresh and disposable. Record any other
@@ -70,7 +70,7 @@ tracked files abort the run. Set `--timeout SECONDS` for per-command limits;
 
 Outputs:
 
-- `commands.json`: exact command ledger, install results, pins, environment
+- `commands.json`: exact runner command ledger, report check metadata, install results, pins, environment
   dependency state, baseline execution/classification evidence, and failures.
 - `report.json`, `doctor.json`, `rio-version.txt`, `resolved-profile.txt`, logs:
   raw evidence, including nonzero Rio exit statuses.
@@ -84,9 +84,37 @@ Fatal setup/invalid JSON failures retain the ledger and logs even when no report
 or skeleton could be created. Eligibility always comes from the report, not the
 install command's exit status. Both installations succeeding does not establish
 Rio can classify its base: it currently uses the head's dependency installation
-for its own base snapshot. Trusted dependencies, differing lockfiles, executable
+for its own base snapshot. Differing lockfiles, executable
 `.pth` files, or unsupported installation metadata may still block it. Fix the
 setup or product compatibility issue and rerun; do not score an unclassified run.
 
 Fill all verdicts, reviewer identity, independent clean assessment, expected bugs,
 misses, and evidence reasons, then follow [the main workflow](../README.md).
+
+
+## Child-tool evidence limitation
+
+`commands.json` v2 includes `rio_checks.entries`, copied from `report.json#/checks`
+without nested finding copies, plus `rio_review_stderr`, the preserved review
+stderr log path. The available fields in `schemas/report-v1.json` and
+`crates/rio-core/src/model.rs::CheckEntry` / `CheckDetails` are `kind`, `language`,
+`root`, `version` (base/head), `scheduled_as`, `outcome`, `wall_time_ms`, and optional
+`reason`, `hint`, `dependency_state`, `cached`. These identify check roots and
+outcomes; `version` is not the tool's version. A cached base may involve no child
+execution. Full diagnostics remain in the raw report.
+
+The report contains **no executable or argv**, child cwd, or child tool version.
+`rio_checks.child_argv_available` is false and its `limitation` explains this gap.
+The v0.1 CLI source exposes no `--verbose`, `RUST_LOG`, or `RIO_TRACE` hook for
+logging child argv; `crates/rio-runner` is a reserved placeholder. The actual
+process supervisor is in `crates/rio-adapters/src/process`; its request argv is
+not serialized into the report or traced. Setting an unsupported environment
+variable would not establish invocation evidence, so the runner does not do so.
+The ordinary Rio progress stderr is always retained, but it is not an argv log.
+Independent oracle invocations in verdict notes must be labelled as independent;
+do not substitute them for proof of Rio's exact child invocations.
+
+Trusted runs qualify when every applicable baseline pair completes successfully;
+the cohort also reports verified-only metrics. A deliberate `disabled` or
+`no_project_config` skip declares a capability limit; a missing tool or failed
+configured check still excludes the run. No skipped capability implies safety.

@@ -2,7 +2,8 @@
 """Evaluate one pinned public GitHub PR in disposable base/head checkouts.
 
 Raw reports and an editable verdict skeleton go in --out. No verdicts are inferred.
-All subprocess argv, cwd, environment overrides, exit codes and durations are logged.
+Runner subprocess argv, cwd, environment overrides, exit codes and durations are logged.
+Rio child argv is unavailable; report check metadata and stderr are retained.
 """
 import argparse
 from datetime import datetime, timezone
@@ -41,6 +42,16 @@ def file_hash(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
+def check_evidence(report):
+    """Preserve only fields actually serialized by Rio's CheckEntry model."""
+    return {'source': 'report.json#/checks', 'child_argv_available': False,
+            'limitation': 'Rio report-v1 checks contain no child executable, argv, cwd, '
+                          'or tool version. The v0.1 CLI has no child-argv trace flag or environment hook; '
+                          'runner commands and Rio stderr are retained separately.',
+            'entries': [{k: v for k, v in check.items() if k != 'findings'}
+                        for check in report['checks']]}
+
+
 def run(args):
     if not re.fullmatch(r'[\w.-]+/[\w.-]+', args.repository) or args.pr <= 0:
         raise ValueError('expected public GitHub owner/repo and positive PR number')
@@ -55,7 +66,7 @@ def run(args):
     if rio is None:
         raise ValueError(f'Rio executable not found: {args.rio}')
     rio = str(Path(rio).resolve())
-    metadata = {'schema': 'rio-eval-runner-v1', 'repository': args.repository,
+    metadata = {'schema': 'rio-eval-runner-v2', 'repository': args.repository,
                 'pr': f'https://github.com/{args.repository}/pull/{args.pr}',
                 'started_utc': datetime.now(timezone.utc).isoformat(),
                 'rio_binary': rio, 'rio_binary_sha256': file_hash(rio), 'commands': [],
@@ -167,6 +178,9 @@ def run(args):
             e.validate(raw, e.ROOT / 'schemas/report-v1.json')
             if raw['review'].get('base') != base or raw['review'].get('head') != head:
                 raise ValueError('Rio reviewed different commits than the pinned change')
+            metadata['rio_checks'] = check_evidence(raw)
+            review_command = metadata['commands'][-1]
+            metadata['rio_review_stderr'] = review_command['stderr']
             env = e.environment(raw)
             metadata['environment'] = {k: v for k, v in env.items() if k != 'checks'}
             if not env['eligible']:

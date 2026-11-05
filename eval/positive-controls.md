@@ -76,7 +76,7 @@ not substitute positive heads.
   Adds AWS `version_id` branch without tests; instrumented line 66 and branch
   65→66 are unexecuted at head, base has no missing statements in that file.
   Later #963 adds `test_version_id`. **Detected**, verified baseline.
-  [Oracle and pins](runs/pydantic-settings-NOTES.md#independent-oracles-and-control),
+  [Oracle and pins](runs/pydantic-settings-NOTES.md#independent-oracles-and-selection),
   [register](runs/pydantic-settings-evidence/positive-control-register.json).
 - [x] **Accepted: [pydantic #14199](https://github.com/pydantic/pydantic/pull/14199), uncovered-lines.**
   New `_contextlib.py` context manager error/suppression paths are instrumented
