@@ -1,0 +1,47 @@
+Scope: 2 of 59 workspace projects
+Packages are hard linked from the content-addressable store to the virtual store.
+  Content-addressable store is at: /dev/shm/trpc-eval/pnpm-store/v11
+  Virtual store is at:             node_modules/.pnpm
+Packages: +479
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Progress: resolved 479, reused 479, downloaded 0, added 479, done
+Lockfile is up to date, resolution step is skipped
+
+dependencies:
++ @actions/core 3.0.0
++ @actions/github 9.0.0
++ @effect/platform-node 4.1.1
++ @manypkg/cli 0.22.0
++ @tanstack/intent 0.5.6
++ @testing-library/dom 10.0.0
++ @testing-library/jest-dom 6.9.1
++ @testing-library/react 16.1.0
++ @testing-library/user-event 14.4.3
++ @types/event-source-polyfill 1.0.5
++ @types/node 24.13.4
++ @vitest/coverage-istanbul 5.0.0
++ @vitest/ui 5.0.0
++ concurrently 9.0.0
++ effect 4.1.1
++ event-source-polyfill 1.0.31
++ express 5.2.1
++ fast-glob 3.3.3
++ hash-sum 2.0.0
++ konn 0.7.0
++ npm-run-all2 8.0.4
++ oxfmt 0.75.0
++ oxlint 1.90.0
++ oxlint-tsgolint 7.0.2005
++ react 19.1.0
++ react-dom 19.1.0
++ superjson 1.12.4
++ tailwindcss 4.3.3
++ ts-prune 0.10.3
++ tsx 4.21.0
++ turbo 2.10.12
++ typescript 6.0.3
++ vite 8.3.0
++ vitest 5.0.0
++ zod 4.2.1
+
+Done in 3.7s using pnpm v12.4.1

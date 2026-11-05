@@ -1,0 +1,12 @@
+{
+  "number": 2081,
+  "title": "fix(factory): correct types inside of `createMiddleware()`",
+  "html_url": "https://github.com/honojs/hono/pull/2081",
+  "author_association": "MEMBER",
+  "merged_at": "2024-01-25T12:38:21Z",
+  "changed_files": 3,
+  "merge_commit_sha": "b23cf8d65d851de9726d6388b45dda39e6fdb9ab",
+  "user": "yusukebe",
+  "base": "4ec3a9bf41ec3de004836e84757c07ec2b7b4156",
+  "head": "310c8733dbde15f6b279863798e740953a4341dd"
+}

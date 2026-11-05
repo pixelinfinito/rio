@@ -1,0 +1,12 @@
+{
+  "number": 2085,
+  "title": "fix: enable to return Response like object ",
+  "html_url": "https://github.com/honojs/hono/pull/2085",
+  "author_association": "MEMBER",
+  "merged_at": "2024-01-27T12:28:54Z",
+  "changed_files": 3,
+  "merge_commit_sha": "8c62c64631c6620a2ecf261ea7ee389e08f2d0ea",
+  "user": "usualoma",
+  "base": "b23cf8d65d851de9726d6388b45dda39e6fdb9ab",
+  "head": "96afc32a3fca57c6e2dd6f81fc8178a52c31b479"
+}

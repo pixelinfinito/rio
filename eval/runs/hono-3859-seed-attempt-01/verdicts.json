@@ -1,0 +1,50 @@
+{
+  "repository": "honojs/hono",
+  "pr": "https://github.com/honojs/hono/pull/3859",
+  "case_id": "3859-seeded-type-error-20261105",
+  "languages": [
+    "typescript"
+  ],
+  "reviewer": "sub-agent eval-trpc (automated)",
+  "verdict_source": "automated",
+  "commands": [
+    "cwd=/dev/shm/trpc-eval/rio-eval-w0gwgkty argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/honojs/hono.git\", \"/dev/shm/trpc-eval/rio-eval-w0gwgkty/head\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-w0gwgkty/head argv=[\"git\", \"fetch\", \"origin\", \"d40fffbec624bae50f8fc3b619125dda9a8c50e2\", \"584ec1d27768144b5e7eff7cd735416727f9ade4\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-w0gwgkty/head argv=[\"git\", \"merge-base\", \"d40fffbec624bae50f8fc3b619125dda9a8c50e2\", \"584ec1d27768144b5e7eff7cd735416727f9ade4\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-w0gwgkty/head argv=[\"git\", \"checkout\", \"--detach\", \"584ec1d27768144b5e7eff7cd735416727f9ade4\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-w0gwgkty argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/dev/shm/trpc-eval/rio-eval-w0gwgkty/head\", \"/dev/shm/trpc-eval/rio-eval-w0gwgkty/base\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-w0gwgkty/base argv=[\"git\", \"checkout\", \"--detach\", \"d40fffbec624bae50f8fc3b619125dda9a8c50e2\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-w0gwgkty/base argv=[\"corepack\", \"yarn@1.22.22\", \"install\", \"--frozen-lockfile\", \"--non-interactive\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-w0gwgkty/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-w0gwgkty/head argv=[\"corepack\", \"yarn@1.22.22\", \"install\", \"--frozen-lockfile\", \"--non-interactive\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-w0gwgkty/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-w0gwgkty/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-w0gwgkty/head argv=[\"node\", \"--version\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-w0gwgkty/head argv=[\"npm\", \"--version\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-w0gwgkty/head argv=[\"corepack\", \"--version\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-w0gwgkty/head argv=[\"python3\", \"--version\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-w0gwgkty/head argv=[\"uv\", \"--version\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-w0gwgkty/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-3859-seed-attempt-01/profile.yaml\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-w0gwgkty/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-w0gwgkty/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"d40fffbec624bae50f8fc3b619125dda9a8c50e2\", \"--format\", \"json\", \"--offline\", \"--profile\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-3859-seed-attempt-01/profile.yaml\"]"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-3859-seed-attempt-01/commands.json; Rio binary SHA-256: 512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+    "EXCLUDED: every typecheck/lint/coverage head check skipped dependency_mismatch. No base classification, no scored recall/precision/usefulness. All required Yarn selectors listed in commands.json; do not enable dependency trust.",
+    "Oracle corrections and NO_COLOR environment removal recorded in ../hono-evidence/setup-corrections.json."
+  ],
+  "independently_clean": false,
+  "positive_control": {
+    "kind": "seeded-mutation",
+    "expected": [
+      {
+        "id": "seeded-url-export-type-mismatch",
+        "mechanism": "type-error",
+        "evidence": "Independent oracle ../hono-3859-seed-oracle/: base tsc --noEmit --pretty false exit0; seeded head exit2 with exactly TS2322 at src/utils/url.ts:314:14 string not assignable to number. Single mutation patch c7a26ee8c1e198b95d47a8dd67c6ff222d1a072bee5fffa85d51716d7e622fba. ESLint and 15 URL tests pass both; JSON coverage retains execution counts.",
+        "finding_ids": []
+      }
+    ]
+  },
+  "misses": [],
+  "findings": {}
+}

@@ -1,0 +1,14 @@
+{
+  "typescript": "5.6.2",
+  "eslint": "9.11.1",
+  "vitest": "2.1.1",
+  "@vitest/coverage-v8": "2.1.1",
+  "@hono/eslint-config": "1.0.2",
+  "lockfile_sha256": "a89d2d600641ea61d445c8ea2c2358acfbe047d6114dcd45fd49613fad69e5b0",
+  "node": "20.10.0",
+  "yarn": "1.22.22",
+  "corepack": "0.36.0",
+  "profile_sha256": "6fc8403032b9ed8c47cbe10b8c4e8140350c4a92367eb7db34086daf4925a7d4",
+  "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+  "rio_version": "rio 0.1.0 x86_64-unknown-linux-gnu b15dc8ff5001"
+}

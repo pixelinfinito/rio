@@ -1,0 +1,106 @@
+
+ RUN  v1.1.0 /dev/shm/trpc-eval/hono-2085-oracle
+      Coverage enabled with v8
+
+ ✓ src/types.test.ts  (33 tests) 76ms
+stdout | src/hono.test.ts > Middleware > Basic > logging and custom header
+GET : http://localhost/hello
+
+stdout | src/hono.test.ts > Middleware > Basic > logging and custom header with named param
+GET : http://localhost/hello/message
+
+stdout | src/hono.test.ts > Middleware > Basic > should return correct the content-type header
+GET : http://localhost/json
+
+stdout | src/hono.test.ts > Middleware > Basic > not found
+GET : http://localhost/foo
+
+stdout | src/hono.test.ts > Middleware > Basic > internal server error
+GET : http://localhost/error
+Internal Server Error
+
+stdout | src/hono.test.ts > Show routes > Should call `console.log()` with `app.showRoutes()`
+[32mGET[0m       /
+[32mGET[0m       /foo
+
+ ✓ src/hono.test.ts  (173 tests) 379ms
+ ✓ src/router/trie-router/node.test.ts  (76 tests) 45ms
+ ✓ src/router/reg-exp-router/router.test.ts  (60 tests) 58ms
+stdout | src/validator/validator.test.ts > Validator middleware with Zod validates queries params - with `queries` will be obsolete in v4 > Should validate queries params and return 200 response
+Warnings: Validate type `queries` is deprecated. Use `query` instead.
+
+stdout | src/validator/validator.test.ts > Validator middleware with Zod validates queries params - with `queries` will be obsolete in v4 > Should validate queries params and return 400 response
+Warnings: Validate type `queries` is deprecated. Use `query` instead.
+
+ ✓ src/validator/validator.test.ts  (31 tests) 188ms
+ ✓ src/compose.test.ts  (31 tests) 35ms
+ ✓ src/router/pattern-router/router.test.ts  (51 tests) 41ms
+ ✓ src/client/client.test.ts  (29 tests) 203ms
+ ✓ src/jsx/index.test.tsx  (51 tests) 117ms
+ ✓ src/helper/css/index.test.tsx  (27 tests) 185ms
+ ✓ src/jsx/streaming.test.tsx  (15 tests) 539ms
+ ✓ src/jsx/components.test.tsx  (18 tests) 383ms
+ ✓ src/context.test.ts  (33 tests) 66ms
+ ✓ src/router/linear-router/router.test.ts  (33 tests) 35ms
+ ✓ src/helper/cookie/index.test.ts  (17 tests) 108ms
+ ✓ src/utils/url.test.ts  (15 tests) 70ms
+ ✓ src/middleware/secure-headers/index.test.ts  (10 tests) 105ms
+ ✓ src/utils/cookie.test.ts  (22 tests) 57ms
+ ✓ src/middleware/csrf/index.test.ts  (14 tests) 129ms
+ ✓ src/router/trie-router/router.test.ts  (24 tests) 31ms
+ ✓ src/middleware/jwt/index.test.ts  (12 tests) 100ms
+ ✓ src/middleware/jsx-renderer/index.test.tsx  (7 tests) 81ms
+ ✓ src/utils/jwt/jwt.test.ts  (10 tests) 46ms
+ ✓ src/request.test.ts  (14 tests) 50ms
+ ✓ src/adapter/cloudflare-workers/serve-static.test.ts  (12 tests) 86ms
+ ✓ src/middleware/basic-auth/index.test.ts  (7 tests) 107ms
+ ✓ src/helper/dev/index.test.ts  (8 tests) 12ms
+ ✓ src/middleware/cors/index.test.ts  (7 tests) 62ms
+ ✓ src/middleware/bearer-auth/index.test.ts  (9 tests) 86ms
+ ✓ src/middleware/etag/index.test.ts  (8 tests) 117ms
+ ✓ src/helper/factory/index.test.ts  (7 tests) 49ms
+ ✓ src/utils/stream.test.ts  (8 tests) 45ms
+ ✓ src/router/smart-router/router.test.ts  (6 tests) 25ms
+ ✓ src/middleware/cache/index.test.ts  (6 tests) 75ms
+ ✓ src/utils/buffer.test.ts  (5 tests) 76ms
+ ✓ src/client/utils.test.ts  (6 tests) 12ms
+ ✓ src/utils/body.test.ts  (6 tests) 108ms
+ ✓ src/utils/filepath.test.ts  (1 test) 7ms
+ ✓ src/helper/streaming/sse.test.ts  (2 tests) 424ms
+ ✓ src/middleware/logger/index.test.ts  (5 tests) 1078ms
+ ✓ src/utils/encode.test.ts  (44 tests) 28ms
+ ✓ src/helper/html/index.test.ts  (10 tests) 10ms
+ ✓ src/adapter/cloudflare-pages/handler.test.ts  (3 tests) 62ms
+ ✓ src/middleware/timing/index.test.ts  (3 tests) 89ms
+ ✓ src/middleware/compress/index.test.ts  (4 tests) 60ms
+ ✓ src/utils/crypto.test.ts  (5 tests | 1 skipped) 27ms
+ ✓ src/utils/types.test.ts  (4 tests) 6ms
+ ✓ src/adapter/aws-lambda/handler.test.ts  (2 tests) 8ms
+ ✓ src/adapter/vercel/handler.test.ts  (2 tests) 71ms
+ ✓ src/helper/streaming/stream.test.ts  (2 tests) 19ms
+ ✓ src/adapter/nextjs/handler.test.ts  (3 tests) 49ms
+ ✓ src/helper/streaming/text.test.ts  (1 test) 19ms
+ ✓ src/jsx/jsx-runtime.test.tsx  (6 tests) 77ms
+ ✓ src/adapter/cloudflare-workers/utils.test.ts  (1 test) 6ms
+ ✓ src/middleware/pretty-json/index.test.ts  (2 tests) 50ms
+ ✓ src/adapter/lambda-edge/handler.test.ts  (1 test) 6ms
+ ✓ src/middleware/powered-by/index.test.ts  (2 tests) 46ms
+ ✓ src/helper/testing/index.test.ts  (2 tests) 49ms
+ ✓ src/utils/mime.test.ts  (1 test) 6ms
+ ✓ src/utils/html.test.ts  (1 test) 6ms
+ ✓ src/utils/jwt/types.test.ts  (1 test) 8ms
+ ✓ src/http-exception.test.ts  (1 test) 43ms
+
+ Test Files  62 passed (62)
+      Tests  1009 passed | 1 skipped (1010)
+   Start at  03:28:09
+   Duration  20.03s (transform 1.92s, setup 1.21s, collect 6.15s, tests 6.24s, environment 26ms, prepare 8.09s)
+
+ % Coverage report from v8
+
+=============================== Coverage summary ===============================
+Statements   : 31.89% ( 6621/20757 )
+Branches     : 84.13% ( 1458/1733 )
+Functions    : 61.04% ( 304/498 )
+Lines        : 31.89% ( 6621/20757 )
+================================================================================

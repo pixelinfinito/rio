@@ -1,0 +1,19 @@
+
+ RUN  v5.0.0 /dev/shm/trpc-eval/source/tooling/release
+
+package: @trpc/client@11.23.0
+Tarball Contents
+package.json
+Tarball Details
+/dev/shm/trpc-eval/test-tmp/cHz4Hn/trpc-client-11.23.0.tgz
+package: @trpc/server@11.23.0
+Tarball Contents
+package.json
+Tarball Details
+/dev/shm/trpc-eval/test-tmp/cHz4Hn/trpc-server-11.23.0.tgz
+
+ Test Files  3 passed (3)
+      Tests  26 passed (26)
+   Start at  02:40:04
+   Duration  10.25s (tests 73%, import 24%, transform 3%)
+

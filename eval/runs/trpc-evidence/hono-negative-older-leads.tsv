@@ -1,0 +1,12 @@
+5288	fix(request): serialize cached JSON body in cloneRawRequest	2026-08-23T07:14:07Z
+5280	fix(client): skip an undefined entry inside a form array	2026-08-22T05:30:36Z
+5252	fix(pattern-router/linear-router): prevent prefix overmatch on wildcard routes	2026-08-17T00:56:48Z
+5154	v4.13	2026-07-22T09:23:36Z
+5186	perf(context): restore the `env` field initializer	2026-08-03T20:44:33Z
+5184	perf(hono-base): restore the rest parameter in `fetch`	2026-08-03T20:36:08Z
+5183	chore(benchmarks): stabilize measurements by forcing mitata batching	2026-08-03T20:28:47Z
+5182	chore: update `bun.lock`	2026-08-03T02:24:55Z
+5167	chore: bump `@hono/node-server`	2026-07-26T05:05:50Z
+5164	fix(cookie): relax name validation when parsing Cookie header	2026-07-25T04:32:22Z
+5161	fix: use `Object.create(null)` when parsing query, headers, and params	2026-07-24T01:12:42Z
+5158	perf(urls): refactor `tryDecodeURIComponent`	2026-07-23T12:40:30Z

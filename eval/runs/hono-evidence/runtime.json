@@ -1,0 +1,10 @@
+{
+  "recorded_utc": "2026-11-05T03:09:10.499344+00:00",
+  "node": "20.10.0",
+  "node_ci_constraint": "20.x; exact downloaded Node20.10.0 used",
+  "package_manager": "Yarn1.22.22 via Corepack0.36.0; no upstream packageManager field",
+  "environment": {
+    "COREPACK_ENABLE_AUTO_PIN": "0"
+  },
+  "note": "New profile explicitly disables dependency trust. Prior tRPC attempts with trust=true remain excluded."
+}

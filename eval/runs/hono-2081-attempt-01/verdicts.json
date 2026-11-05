@@ -1,0 +1,52 @@
+{
+  "repository": "honojs/hono",
+  "pr": "https://github.com/honojs/hono/pull/2081",
+  "case_id": "2081",
+  "languages": [
+    "typescript"
+  ],
+  "reviewer": "sub-agent eval-trpc (automated)",
+  "verdict_source": "automated",
+  "commands": [
+    "cwd=/dev/shm/trpc-eval/rio-eval-e3480gk0 argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/honojs/hono.git\", \"/dev/shm/trpc-eval/rio-eval-e3480gk0/head\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-e3480gk0/head argv=[\"git\", \"fetch\", \"origin\", \"4ec3a9bf41ec3de004836e84757c07ec2b7b4156\", \"310c8733dbde15f6b279863798e740953a4341dd\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-e3480gk0/head argv=[\"git\", \"merge-base\", \"4ec3a9bf41ec3de004836e84757c07ec2b7b4156\", \"310c8733dbde15f6b279863798e740953a4341dd\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-e3480gk0/head argv=[\"git\", \"checkout\", \"--detach\", \"310c8733dbde15f6b279863798e740953a4341dd\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-e3480gk0 argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/dev/shm/trpc-eval/rio-eval-e3480gk0/head\", \"/dev/shm/trpc-eval/rio-eval-e3480gk0/base\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-e3480gk0/base argv=[\"git\", \"checkout\", \"--detach\", \"4ec3a9bf41ec3de004836e84757c07ec2b7b4156\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-e3480gk0/base argv=[\"corepack\", \"yarn@1.22.22\", \"install\", \"--frozen-lockfile\", \"--non-interactive\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-e3480gk0/base argv=[\"python3\", \"-c\", \"from pathlib import Path; import hashlib; p=Path('node_modules/.bin/vitest'); assert p.is_symlink(); target=p.resolve(); original=target.read_bytes(); p.unlink(); p.write_text(\\\"#!/usr/bin/env python3\\\\n# Vitest 1.1 CLI compatibility only; package files and test selection are unchanged.\\\\nimport os\\\\nfrom pathlib import Path\\\\nimport sys\\\\nargs = []\\\\nfor arg in sys.argv[1:]:\\\\n    if arg == '--coverage':\\\\n        args.append('--coverage.enabled')\\\\n    elif arg.startswith('--maxWorkers='):\\\\n        value = arg.split('=', 1)[1]\\\\n        os.environ['VITEST_MAX_THREADS'] = value\\\\n        os.environ['VITEST_MAX_FORKS'] = value\\\\n    elif arg.startswith('--minWorkers='):\\\\n        value = arg.split('=', 1)[1]\\\\n        os.environ['VITEST_MIN_THREADS'] = value\\\\n        os.environ['VITEST_MIN_FORKS'] = value\\\\n    else:\\\\n        args.append(arg)\\\\nentry = Path(__file__).absolute().parent.parent / 'vitest' / 'vitest.mjs'\\\\nos.execvp('node', ['node', str(entry), *args])\\\\n\\\"); p.chmod(0o755); print('Original entry:',target,'SHA256:',hashlib.sha256(original).hexdigest()); print('CLI compatibility shim SHA256:',hashlib.sha256(p.read_bytes()).hexdigest())\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-e3480gk0/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-e3480gk0/head argv=[\"corepack\", \"yarn@1.22.22\", \"install\", \"--frozen-lockfile\", \"--non-interactive\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-e3480gk0/head argv=[\"python3\", \"-c\", \"from pathlib import Path; import hashlib; p=Path('node_modules/.bin/vitest'); assert p.is_symlink(); target=p.resolve(); original=target.read_bytes(); p.unlink(); p.write_text(\\\"#!/usr/bin/env python3\\\\n# Vitest 1.1 CLI compatibility only; package files and test selection are unchanged.\\\\nimport os\\\\nfrom pathlib import Path\\\\nimport sys\\\\nargs = []\\\\nfor arg in sys.argv[1:]:\\\\n    if arg == '--coverage':\\\\n        args.append('--coverage.enabled')\\\\n    elif arg.startswith('--maxWorkers='):\\\\n        value = arg.split('=', 1)[1]\\\\n        os.environ['VITEST_MAX_THREADS'] = value\\\\n        os.environ['VITEST_MAX_FORKS'] = value\\\\n    elif arg.startswith('--minWorkers='):\\\\n        value = arg.split('=', 1)[1]\\\\n        os.environ['VITEST_MIN_THREADS'] = value\\\\n        os.environ['VITEST_MIN_FORKS'] = value\\\\n    else:\\\\n        args.append(arg)\\\\nentry = Path(__file__).absolute().parent.parent / 'vitest' / 'vitest.mjs'\\\\nos.execvp('node', ['node', str(entry), *args])\\\\n\\\"); p.chmod(0o755); print('Original entry:',target,'SHA256:',hashlib.sha256(original).hexdigest()); print('CLI compatibility shim SHA256:',hashlib.sha256(p.read_bytes()).hexdigest())\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-e3480gk0/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-e3480gk0/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-e3480gk0/head argv=[\"node\", \"--version\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-e3480gk0/head argv=[\"npm\", \"--version\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-e3480gk0/head argv=[\"corepack\", \"--version\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-e3480gk0/head argv=[\"python3\", \"--version\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-e3480gk0/head argv=[\"uv\", \"--version\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-e3480gk0/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/profile.yaml\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-e3480gk0/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-e3480gk0/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"4ec3a9bf41ec3de004836e84757c07ec2b7b4156\", \"--format\", \"json\", \"--offline\", \"--profile\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/profile.yaml\"]"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/commands.json; Rio binary SHA-256: 512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+    "Negative control is merged MEMBER/yusukebe public API typing fix #2081, January2024. It is substantive in type/API behavior but a one-line production type annotation change, mirrored to generated Deno code. This is older than requested recent control; compatibility/selection deviations in ../trpc-NOTES.md.",
+    "Independent tsc noEmit and full repository ESLint exit0 base/head; same26 unrelated warning diagnostics in full lint output. All62 Vitest files pass1009 tests/1skip each. Original locked Vitest is invoked directly with supported CLI syntax and equivalent worker env; no shim used in independent oracle.",
+    "Runner install plan applies documented .bin Vitest1.1 CLI compatibility shim (SHA256 b2ebab9622ac05f2c944f95bc305e7017dde151141efe6b071b368838f759b19). Source/packages/locks and original Vitest entry unchanged; dependency trust false. NO_COLOR unset. Offline dependency audit is capability limitation, not proof of safety.",
+    "Baseline classification succeeded for every applicable root: head/base typecheck and lint passed with verified dependencies. Coverage executed successfully; report incomplete reflects deferred endpoint steps/offline audit, not failed deterministic classification."
+  ],
+  "independently_clean": true,
+  "positive_control": {
+    "kind": "none",
+    "expected": []
+  },
+  "misses": [],
+  "findings": {
+    "8209408388ac70a93c3b324ac9d336488c03bae27b3ccfb971f0369f406803a8": {
+      "verdict": "false-positive",
+      "reason": "Rio calls deno_dist/helper/factory/index.ts273 a changed executable line, but the independent zero-context diff changes only the parameter TYPE annotation MiddlewareHandler -> MiddlewareHandler<E,P,I>. It adds no runtime expression or statement. ../hono-2081-oracle/emitted-javascript-equivalence.json proves byte-identical production JavaScript base/head for src and Deno mirror. coverage-false-positive-proof.json retains exact source lines and the V8 coverage.all synthetic zero counter associated with the erased annotation; such a counter does not make a type annotation executable. Full tsc/lint pass at both pins and all1009 default tests pass both. Requesting a new execution test for erased generic type arguments is incorrect. This is a type-only coverage false positive, not an unverified baseline/setup failure."
+    }
+  }
+}

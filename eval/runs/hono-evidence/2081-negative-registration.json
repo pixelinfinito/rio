@@ -1,0 +1,36 @@
+{
+  "registered_utc": "2026-11-05T03:29:41.767453+00:00",
+  "repository": "honojs/hono",
+  "pr": "https://github.com/honojs/hono/pull/2081",
+  "kind": "none",
+  "base": "4ec3a9bf41ec3de004836e84757c07ec2b7b4156",
+  "head": "310c8733dbde15f6b279863798e740953a4341dd",
+  "independently_clean": true,
+  "rationale": "MEMBER/yusukebe merged public API generic typing fix: thread Env,Path,Input through createMiddleware handler, with a compile-time regression test. Substantive API typing behavior despite one-line production-source change; generated Deno mirror has the same type change. Old compatible control, not recent.",
+  "evidence": "../hono-2081-oracle/: direct locked tsc noEmit and full ESLint both exit0 at base/head; same26 pre-existing warnings away from changed production lines. All62 default Vitest files pass,1009 passed/1skipped each, with coverage.all and per-factory instrumentation retained. emitted-javascript-equivalence.json proves production JS byte-identical base/head in src and Deno mirror. No new runtime statements require coverage.",
+  "toolchain": {
+    "typescript": "5.3.3",
+    "eslint": "8.55.0",
+    "vitest": "1.1.0",
+    "@vitest/coverage-v8": "1.1.0",
+    "@hono/eslint-config": "0.0.3",
+    "yarn.lock_sha256": "29d39f128d5c33a6fc4689564006456e4c86febe2653849c18f3e49baa19f086",
+    "node": "20.10.0",
+    "yarn": "1.22.22",
+    "corepack": "0.36.0",
+    "shim_sha256": "b2ebab9622ac05f2c944f95bc305e7017dde151141efe6b071b368838f759b19",
+    "vitest_entry_sha256": "22ae43dd49da05e4daad5b4cc4e175703866deb99dcd8e20b7a4f4935b3786e7",
+    "profile_sha256": "6fc8403032b9ed8c47cbe10b8c4e8140350c4a92367eb7db34086daf4925a7d4"
+  },
+  "install_plan": "install-plan-vitest11-shim.json",
+  "profile": "profile.yaml; dependency trust false",
+  "independent_oracle_environment": {
+    "NO_COLOR": "UNSET",
+    "VITEST_MAX_THREADS": "2",
+    "VITEST_MIN_THREADS": "1",
+    "VITEST_MAX_FORKS": "2",
+    "VITEST_MIN_FORKS": "1"
+  },
+  "reviewer": "sub-agent eval-trpc (automated)",
+  "verdict_source": "automated"
+}

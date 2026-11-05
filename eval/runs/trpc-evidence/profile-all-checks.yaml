@@ -1,0 +1,27 @@
+version: 1
+name: trpc-typescript-all-checks
+extends: rio/base
+budget:
+  fast: { wall_time: 10m }
+steps:
+  - id: prepare
+    uses: rio/prepare
+  - id: checks
+    uses: rio/checks
+    needs: [prepare]
+    with: { typecheck: true, lint: true, coverage: true, secrets: true, dependencies: true, baseline: true, trust_installed_dependencies: true }
+  - id: graph
+    uses: rio/graph
+    needs: [prepare]
+  - id: triage
+    uses: rio/triage
+    needs: [checks, graph]
+  - id: agents
+    uses: rio/agents
+    needs: [triage]
+  - id: verify
+    uses: rio/verify
+    needs: [agents]
+  - id: report
+    uses: rio/report
+    needs: [verify]

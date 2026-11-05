@@ -1,0 +1,90 @@
+[
+  {
+    "label": "base",
+    "sha": "b23cf8d65d851de9726d6388b45dda39e6fdb9ab",
+    "argv": [
+      "/dev/shm/trpc-eval/hono-2085-oracle/node_modules/.bin/tsc",
+      "--noEmit",
+      "--pretty",
+      "false"
+    ],
+    "cwd": "/dev/shm/trpc-eval/hono-2085-oracle",
+    "exit_code": 0,
+    "wall_time_ms": 12526
+  },
+  {
+    "label": "base",
+    "sha": "b23cf8d65d851de9726d6388b45dda39e6fdb9ab",
+    "argv": [
+      "/dev/shm/trpc-eval/hono-2085-oracle/node_modules/.bin/eslint",
+      "--ext",
+      "js,ts,tsx",
+      "src",
+      "runtime_tests"
+    ],
+    "cwd": "/dev/shm/trpc-eval/hono-2085-oracle",
+    "exit_code": 0,
+    "wall_time_ms": 8276
+  },
+  {
+    "label": "base",
+    "sha": "b23cf8d65d851de9726d6388b45dda39e6fdb9ab",
+    "argv": [
+      "/dev/shm/trpc-eval/hono-2085-oracle/node_modules/.bin/vitest",
+      "run",
+      "--coverage.enabled",
+      "--coverage.all",
+      "--coverage.reporter=json",
+      "--coverage.reporter=text-summary",
+      "--maxWorkers=2",
+      "--minWorkers=1"
+    ],
+    "cwd": "/dev/shm/trpc-eval/hono-2085-oracle",
+    "exit_code": 1,
+    "wall_time_ms": 566
+  },
+  {
+    "label": "head",
+    "sha": "96afc32a3fca57c6e2dd6f81fc8178a52c31b479",
+    "argv": [
+      "/dev/shm/trpc-eval/hono-2085-oracle/node_modules/.bin/tsc",
+      "--noEmit",
+      "--pretty",
+      "false"
+    ],
+    "cwd": "/dev/shm/trpc-eval/hono-2085-oracle",
+    "exit_code": 0,
+    "wall_time_ms": 13916
+  },
+  {
+    "label": "head",
+    "sha": "96afc32a3fca57c6e2dd6f81fc8178a52c31b479",
+    "argv": [
+      "/dev/shm/trpc-eval/hono-2085-oracle/node_modules/.bin/eslint",
+      "--ext",
+      "js,ts,tsx",
+      "src",
+      "runtime_tests"
+    ],
+    "cwd": "/dev/shm/trpc-eval/hono-2085-oracle",
+    "exit_code": 0,
+    "wall_time_ms": 9675
+  },
+  {
+    "label": "head",
+    "sha": "96afc32a3fca57c6e2dd6f81fc8178a52c31b479",
+    "argv": [
+      "/dev/shm/trpc-eval/hono-2085-oracle/node_modules/.bin/vitest",
+      "run",
+      "--coverage.enabled",
+      "--coverage.all",
+      "--coverage.reporter=json",
+      "--coverage.reporter=text-summary",
+      "--maxWorkers=2",
+      "--minWorkers=1"
+    ],
+    "cwd": "/dev/shm/trpc-eval/hono-2085-oracle",
+    "exit_code": 1,
+    "wall_time_ms": 528
+  }
+]

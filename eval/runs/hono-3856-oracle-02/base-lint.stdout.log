@@ -1,0 +1,6 @@
+
+/dev/shm/trpc-eval/hono-oracle/perf-measures/type-check/client.ts
+  4:7  warning  'client' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+✖ 1 problem (0 errors, 1 warning)
+

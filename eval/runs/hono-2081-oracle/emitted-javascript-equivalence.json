@@ -1,0 +1,17 @@
+{
+  "typescript": "5.3.3",
+  "base": "4ec3a9bf41ec3de004836e84757c07ec2b7b4156",
+  "head": "310c8733dbde15f6b279863798e740953a4341dd",
+  "files": {
+    "src/helper/factory/index.ts": {
+      "runtime_javascript_identical": true,
+      "base_js_sha256": "9ab5166c740f3e69a5a232ee6c34d20c79c1496b200b5f7f3392b6dd50aa89d8",
+      "head_js_sha256": "9ab5166c740f3e69a5a232ee6c34d20c79c1496b200b5f7f3392b6dd50aa89d8"
+    },
+    "deno_dist/helper/factory/index.ts": {
+      "runtime_javascript_identical": true,
+      "base_js_sha256": "9ab5166c740f3e69a5a232ee6c34d20c79c1496b200b5f7f3392b6dd50aa89d8",
+      "head_js_sha256": "9ab5166c740f3e69a5a232ee6c34d20c79c1496b200b5f7f3392b6dd50aa89d8"
+    }
+  }
+}

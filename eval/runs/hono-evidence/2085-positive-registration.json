@@ -1,0 +1,51 @@
+{
+  "kind": "seeded-mutation",
+  "repository": "honojs/hono",
+  "parent_pr": "https://github.com/honojs/hono/pull/2085",
+  "case_id": "2085-seeded-type-error-20261105",
+  "base": "b23cf8d65d851de9726d6388b45dda39e6fdb9ab",
+  "head": "94d2dcbf315dd3ac969d321b532fb0049b1a7c36",
+  "seed": "rio-eval-trpc-20261105",
+  "patch": "2085-seed.patch",
+  "patch_sha256": "8f8a2a9bf2defa96158c9b3102ce8b35f64a9996428174e73d5ba367dd4d7b6b",
+  "created_utc": "2026-11-05T03:27:47.878966+00:00",
+  "transport": "GIT_CONFIG_COUNT=1; GIT_CONFIG_KEY_0=url.file:///dev/shm/trpc-eval/hono-2081-seed.insteadOf; GIT_CONFIG_VALUE_0=https://github.com/honojs/hono.git",
+  "oracle": "../hono-2085-seed-oracle/commands.json: base typecheck0/head2 exactlyTS2322 src/utils/url.ts267:14; changed-file lint0/0; URL coverage15/15tests both.",
+  "profile_sha256": "6fc8403032b9ed8c47cbe10b8c4e8140350c4a92367eb7db34086daf4925a7d4",
+  "registered_utc": "2026-11-05T03:29:04.001339+00:00",
+  "expected": [
+    {
+      "id": "seeded-url-export-type-mismatch",
+      "mechanism": "type-error",
+      "evidence": "../hono-2085-seed-oracle/: original locked TypeScript5.3.3 tsc --noEmit --pretty false, base b23cf8d65d851de9726d6388b45dda39e6fdb9ab exit0; seeded head 94d2dcbf315dd3ac969d321b532fb0049b1a7c36 exit2 with exactly TS2322 src/utils/url.ts:267:14 string not assignable to number. Lint and 15 instrumented URL tests pass both. Exact patch/hash in 2085-seed.patch and 2085-seed-pins.json.",
+      "finding_ids": []
+    }
+  ],
+  "toolchain": {
+    "typescript": "5.3.3",
+    "eslint": "8.55.0",
+    "vitest": "1.1.0",
+    "@vitest/coverage-v8": "1.1.0",
+    "@hono/eslint-config": "0.0.3",
+    "yarn.lock_sha256": "29d39f128d5c33a6fc4689564006456e4c86febe2653849c18f3e49baa19f086",
+    "node": "20.10.0",
+    "yarn": "1.22.22",
+    "corepack": "0.36.0",
+    "shim_sha256": "b2ebab9622ac05f2c944f95bc305e7017dde151141efe6b071b368838f759b19",
+    "vitest_entry_sha256": "22ae43dd49da05e4daad5b4cc4e175703866deb99dcd8e20b7a4f4935b3786e7",
+    "profile_sha256": "6fc8403032b9ed8c47cbe10b8c4e8140350c4a92367eb7db34086daf4925a7d4"
+  },
+  "install_plan": "install-plan-vitest11-shim.json",
+  "workaround": "Only installed .bin/vitest launcher rewritten; locked Vitest entry and all source/package/lock files unchanged. Translate --coverage to --coverage.enabled and workers flags to equivalent documented VITEST_* pool env limits.",
+  "independent_oracle_environment": {
+    "NO_COLOR": "UNSET",
+    "VITEST_MAX_THREADS": "2",
+    "VITEST_MIN_THREADS": "1",
+    "VITEST_MAX_FORKS": "2",
+    "VITEST_MIN_FORKS": "1",
+    "COREPACK_ENABLE_AUTO_PIN": "0"
+  },
+  "reviewer": "sub-agent eval-trpc (automated)",
+  "verdict_source": "automated",
+  "recency_deviation": "Jan2024 parent; not recent. All newer excluded evidence preserved."
+}

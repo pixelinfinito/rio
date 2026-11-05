@@ -1,0 +1,12 @@
+{
+  "number": 2093,
+  "title": "refactor: \"if\" on one line and deletion of unneeded variables",
+  "html_url": "https://github.com/honojs/hono/pull/2093",
+  "author_association": "CONTRIBUTOR",
+  "merged_at": "2024-01-27T12:53:24Z",
+  "changed_files": 2,
+  "merge_commit_sha": "0e8f26ad2fc20169865dbd2dca7bc592e6910d6b",
+  "user": "EdamAme-x",
+  "base": "b98e85092474ebc11884fc76ddf27fb29365cea1",
+  "head": "bc24bd33bb3edf167c046e101f19dec0a6de4580"
+}

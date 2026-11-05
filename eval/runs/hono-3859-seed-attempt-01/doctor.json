@@ -1,0 +1,51 @@
+{
+  "blocking_problems": [
+    "cannot parse benchmarks/routers/yarn.lock: yarn dependency selector must be a string"
+  ],
+  "cache": {
+    "free_space": 1274564608,
+    "path": "/dev/shm/trpc-eval/rio-eval-w0gwgkty/cache",
+    "writable": true
+  },
+  "configuration": {
+    "cache": {
+      "dir": "/dev/shm/trpc-eval/rio-eval-w0gwgkty/cache",
+      "max_age": {
+        "nanos": 0,
+        "secs": 2592000
+      },
+      "max_size": 5368709120,
+      "retain_raw_output": true
+    },
+    "config_dir": "/dev/shm/trpc-eval/rio-eval-w0gwgkty/config",
+    "endpoint_url": null,
+    "notices": [],
+    "output_limit": 268435456,
+    "parallelism": 4,
+    "sources": {
+      "cache.dir": "RIO_CACHE_DIR",
+      "cache.max_age": "default",
+      "cache.max_size": "default",
+      "cache.retain_raw_output": "default",
+      "endpoint.url": "default",
+      "run.output_limit": "default",
+      "run.parallelism": "default"
+    }
+  },
+  "endpoint": "No endpoint is available in this version",
+  "head": "584ec1d27768144b5e7eff7cd735416727f9ade4",
+  "plan": null,
+  "profile": {
+    "chain": [
+      "rio/base"
+    ],
+    "name": "rio/base",
+    "valid": true
+  },
+  "repository": "/dev/shm/trpc-eval/rio-eval-w0gwgkty/head",
+  "warnings": [
+    "rio/base:$.steps[3]: rio/triage is deferred locally: no_endpoint",
+    "rio/base:$.steps[4]: rio/agents is deferred locally: no_endpoint",
+    "rio/base:$.steps[5]: rio/verify is deferred locally: no_endpoint"
+  ]
+}

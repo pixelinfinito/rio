@@ -1,0 +1,386 @@
+diff --git a/examples/next-sse-chat/.env.example b/examples/next-sse-chat/.env.example
+index e070c209c..f1825d379 100644
+--- a/examples/next-sse-chat/.env.example
++++ b/examples/next-sse-chat/.env.example
+@@ -1 +1,3 @@
+-POSTGRES_URL=postgres://postgres:adminadmin@0.0.0.0:5432/db
+\ No newline at end of file
++POSTGRES_URL=postgres://postgres:@0.0.0.0:5432/sse-chat
++NEXTAUTH_URL=http://localhost:3000
++NEXTAUTH_SECRET=secret
+diff --git a/examples/next-sse-chat/src/app/channels/[channelId]/hooks.ts b/examples/next-sse-chat/src/app/channels/[channelId]/hooks.ts
+index e815d2299..091a62794 100644
+--- a/examples/next-sse-chat/src/app/channels/[channelId]/hooks.ts
++++ b/examples/next-sse-chat/src/app/channels/[channelId]/hooks.ts
+@@ -7,8 +7,8 @@ export function useWhoIsTyping(channelId: string) {
+   trpc.channel.whoIsTyping.useSubscription(
+     { channelId },
+     {
+-      onData(event) {
+-        setCurrentlyTyping(event.data);
++      onData(list) {
++        setCurrentlyTyping(list);
+       },
+     },
+   );
+diff --git a/examples/next-sse-chat/src/app/page.tsx b/examples/next-sse-chat/src/app/page.tsx
+index 41e4a8dd7..b550d0010 100644
+--- a/examples/next-sse-chat/src/app/page.tsx
++++ b/examples/next-sse-chat/src/app/page.tsx
+@@ -21,7 +21,7 @@ export default async function Home() {
+             <br />
+             <a
+               className="text-gray-700 underline dark:text-gray-400"
+-              href="https://github.com/trpc/trpc/tree/05-10-subscriptions-sse/examples/next-sse-chat"
++              href="https://github.com/trpc/examples-next-sse-chat"
+               target="_blank"
+               rel="noreferrer"
+             >
+diff --git a/examples/next-sse-chat/src/server/routers/channel.ts b/examples/next-sse-chat/src/server/routers/channel.ts
+index 1932b982e..a49255d00 100644
+--- a/examples/next-sse-chat/src/server/routers/channel.ts
++++ b/examples/next-sse-chat/src/server/routers/channel.ts
+@@ -96,38 +96,18 @@ export const channelRouter = {
+     .input(
+       z.object({
+         channelId: z.string().uuid(),
+-        lastEventId: z.string().optional(),
+       }),
+     )
+     .subscription(async function* (opts) {
+       const { channelId } = opts.input;
+-      let lastEventId = opts?.input?.lastEventId ?? '';
+-
+-      if (!currentlyTyping[channelId]) {
+-        currentlyTyping[channelId] = {};
++      // emit who is currently typing
++      if (currentlyTyping[channelId]) {
++        yield Object.keys(currentlyTyping[channelId]);
+       }
+ 
+-      const maybeYield = function* (who: WhoIsTyping) {
+-        const id = Object.keys(who).sort().toString();
+-        if (lastEventId === id) {
+-          return;
+-        }
+-        yield sse({
+-          id,
+-          data: Object.keys(who).filter(
+-            (user) => user !== opts.ctx.session?.user?.name,
+-          ),
+-        });
+-
+-        lastEventId = id;
+-      };
+-
+-      // if someone is typing, emit event immediately
+-      yield* maybeYield(currentlyTyping[channelId]);
+-
+       for await (const [channelId, who] of ee.toIterable('isTypingUpdate')) {
+         if (channelId === opts.input.channelId) {
+-          yield* maybeYield(who);
++          yield Object.keys(who);
+         }
+       }
+     }),
+diff --git a/packages/client/src/links/httpSubscriptionLink.ts b/packages/client/src/links/httpSubscriptionLink.ts
+index 5bda7300f..e75634cb2 100644
+--- a/packages/client/src/links/httpSubscriptionLink.ts
++++ b/packages/client/src/links/httpSubscriptionLink.ts
+@@ -4,7 +4,7 @@ import type {
+   inferClientTypes,
+   InferrableClientTypes,
+   MaybePromise,
+-  SSEvent,
++  SSEMessage,
+ } from '@trpc/server/unstable-core-do-not-import';
+ import {
+   run,
+@@ -85,7 +85,7 @@ export function unstable_httpSubscriptionLink<
+           };
+           // console.log('starting', new Date());
+           eventSource.addEventListener('open', onStarted);
+-          const iterable = sseStreamConsumer<SSEvent>({
++          const iterable = sseStreamConsumer<Partial<SSEMessage>>({
+             from: eventSource,
+             deserialize: transformer.input.deserialize,
+           });
+diff --git a/packages/server/src/unstable-core-do-not-import/stream/sse.test.ts b/packages/server/src/unstable-core-do-not-import/stream/sse.test.ts
+index c54b7e569..e624b7c51 100644
+--- a/packages/server/src/unstable-core-do-not-import/stream/sse.test.ts
++++ b/packages/server/src/unstable-core-do-not-import/stream/sse.test.ts
+@@ -2,7 +2,7 @@ import { EventSourcePolyfill, NativeEventSource } from 'event-source-polyfill';
+ import SuperJSON from 'superjson';
+ import type { Maybe } from '../types';
+ import {
+-  isServerSentEventEnvelope,
++  isSSEMessageEnvelope,
+   sse,
+   sseHeaders,
+   sseStreamConsumer,
+@@ -258,6 +258,8 @@ test('SSE on serverless - emit and disconnect early', async () => {
+       Object {
+         "lastEventId": null,
+         "written": Array [
++          ": connected
++    ",
+           "
+ 
+     ",
+@@ -280,6 +282,8 @@ test('SSE on serverless - emit and disconnect early', async () => {
+       Object {
+         "lastEventId": "2",
+         "written": Array [
++          ": connected
++    ",
+           "
+ 
+     ",
+@@ -311,5 +315,5 @@ test('sse()', () => {
+     id: 1,
+     data: { json: 1 },
+   });
+-  expect(isServerSentEventEnvelope(event)).toBe(true);
++  expect(isSSEMessageEnvelope(event)).toBe(true);
+ });
+diff --git a/packages/server/src/unstable-core-do-not-import/stream/sse.ts b/packages/server/src/unstable-core-do-not-import/stream/sse.ts
+index 17a5501d9..69341e4ff 100644
+--- a/packages/server/src/unstable-core-do-not-import/stream/sse.ts
++++ b/packages/server/src/unstable-core-do-not-import/stream/sse.ts
+@@ -8,7 +8,12 @@ import { createReadableStream } from './utils/createReadableStream';
+ type Serialize = (value: any) => any;
+ type Deserialize = (value: any) => any;
+ 
+-interface SSEventWithId {
++/**
++ * Server-sent Event Message
++ * @see https://html.spec.whatwg.org/multipage/server-sent-events.html
++ * @public
++ */
++export interface SSEMessage {
+   /**
+    * The data field of the message - this can be anything
+    */
+@@ -18,43 +23,34 @@ interface SSEventWithId {
+    * Passing this id will allow the client to resume the connection from this point if the connection is lost
+    * @see https://html.spec.whatwg.org/multipage/server-sent-events.html#the-last-event-id-header
+    */
+-  id: string | number;
+-  /**
+-   * Event name for the message
+-   */
+-  event?: string;
+-  /**
+-   * A comment for the event
+-   */
+-  comment?: string;
++  id: string;
+ }
+ 
+-/**
+- * Server-sent Event
+- * @see https://html.spec.whatwg.org/multipage/server-sent-events.html
+- * @public
+- */
+-export type SSEvent = Partial<SSEventWithId>;
+-
+-const sseSymbol = Symbol('SSEventEnvelope');
+-export type ServerSentEventEnvelope<TData> = [typeof sseSymbol, TData];
++const sseSymbol = Symbol('SSEMessageEnvelope');
++export type SSEMessageEnvelope<TData> = [typeof sseSymbol, TData];
+ 
+ /**
+- * Produce a typed server-sent event
++ * Produce a typed server-sent event message
+  */
+-export function sse<TData extends SSEvent>(
+-  event: ValidateShape<TData, SSEvent>,
+-): ServerSentEventEnvelope<TData> {
++export function sse<TData extends SSEMessage>(
++  event: ValidateShape<TData, SSEMessage>,
++): SSEMessageEnvelope<TData> {
++  if (event.id === '') {
++    // This could be removed by using different event names for `yield sse(x)`-emitted events and `yield y`-emitted events
++    throw new Error(
++      '`id` must not be an empty string as empty string is the same as not setting the id at all',
++    );
++  }
+   return [sseSymbol, event as TData];
+ }
+ 
+-export function isServerSentEventEnvelope<TData extends SSEvent>(
++export function isSSEMessageEnvelope<TData extends SSEMessage>(
+   value: unknown,
+-): value is ServerSentEventEnvelope<TData> {
++): value is SSEMessageEnvelope<TData> {
+   return Array.isArray(value) && value[0] === sseSymbol;
+ }
+ 
+-export type SerializedSSEvent = Omit<SSEvent, 'data'> & {
++export type SerializedSSEvent = Omit<SSEMessage, 'data'> & {
+   data?: string;
+ };
+ 
+@@ -92,12 +88,19 @@ export interface SSEStreamProducerOptions {
+    */
+   emitAndEndImmediately?: boolean;
+ }
++
++type SSEvent = Partial<
++  SSEMessage & {
++    comment: string;
++    event: string;
++  }
++>;
+ /**
+  *
+  * @see https://html.spec.whatwg.org/multipage/server-sent-events.html
+  */
+ export function sseStreamProducer(opts: SSEStreamProducerOptions) {
+-  const stream = createReadableStream<SerializedSSEvent>();
++  const stream = createReadableStream<SSEvent>();
+   stream.controller.enqueue({
+     comment: 'connected',
+   });
+@@ -157,13 +160,11 @@ export function sseStreamProducer(opts: SSEStreamProducerOptions) {
+ 
+       const value = next.value;
+ 
+-      const data: SSEvent = isServerSentEventEnvelope(value)
+-        ? value[1]
++      const chunk: SSEvent = isSSEMessageEnvelope(value)
++        ? { ...value[1] }
+         : {
+             data: value,
+           };
+-      const chunk: SerializedSSEvent = {};
+-      Object.assign(chunk, data);
+       if ('data' in chunk) {
+         chunk.data = JSON.stringify(serialize(chunk.data));
+       }
+@@ -187,7 +188,7 @@ export function sseStreamProducer(opts: SSEStreamProducerOptions) {
+   });
+ 
+   return stream.readable.pipeThrough(
+-    new TransformStream<SerializedSSEvent, string>({
++    new TransformStream<SSEvent, string>({
+       transform(chunk, controller) {
+         if ('event' in chunk) {
+           controller.enqueue(`event: ${chunk.event}\n`);
+@@ -198,12 +199,15 @@ export function sseStreamProducer(opts: SSEStreamProducerOptions) {
+         if ('id' in chunk) {
+           controller.enqueue(`id: ${chunk.id}\n`);
+         }
++        if ('comment' in chunk) {
++          controller.enqueue(`: ${chunk.comment}\n`);
++        }
+         controller.enqueue('\n\n');
+       },
+     }),
+   );
+ }
+-export type inferSSEOutput<TData> = TData extends ServerSentEventEnvelope<
++export type inferSSEOutput<TData> = TData extends SSEMessageEnvelope<
+   infer $Data
+ >
+   ? $Data
+@@ -220,25 +224,18 @@ export function sseStreamConsumer<TData>(opts: {
+   const { deserialize = (v) => v } = opts;
+   const eventSource = opts.from;
+ 
+-  const stream = createReadableStream<SerializedSSEvent>();
++  const stream = createReadableStream<MessageEvent>();
+ 
+-  const transform = new TransformStream<
+-    SerializedSSEvent,
+-    inferSSEOutput<TData>
+-  >({
++  const transform = new TransformStream<MessageEvent, inferSSEOutput<TData>>({
+     async transform(chunk, controller) {
+-      if (chunk.data) {
+-        const def: SSEvent = {};
+-        def.data = deserialize(JSON.parse(chunk.data));
+-        if ('id' in chunk) {
+-          def.id = chunk.id;
+-        }
+-        if ('event' in chunk) {
+-          def.event = chunk.event;
+-        }
++      const def: Partial<SSEMessage> = {
++        data: deserialize(JSON.parse(chunk.data)),
++      };
+ 
+-        controller.enqueue(def as inferSSEOutput<TData>);
++      if (chunk.lastEventId) {
++        def.id = chunk.lastEventId;
+       }
++      controller.enqueue(def as inferSSEOutput<TData>);
+     },
+   });
+ 
+diff --git a/packages/tests/server/httpSubscriptionLink.test.ts b/packages/tests/server/httpSubscriptionLink.test.ts
+index a7dec5107..8341d003b 100644
+--- a/packages/tests/server/httpSubscriptionLink.test.ts
++++ b/packages/tests/server/httpSubscriptionLink.test.ts
+@@ -60,7 +60,7 @@ const ctx = konn()
+             let idx = opts.input.lastEventId ?? 0;
+             while (true) {
+               yield sse({
+-                id: idx,
++                id: String(idx),
+                 data: idx,
+               });
+               idx++;
+@@ -179,12 +179,12 @@ test('disconnect and reconnect with an event id', async () => {
+       },
+     ]
+   >();
+-  const onData = vi.fn<{ data: number }[]>();
++  const onData = vi.fn<{ data: number; id: string }[]>();
+   const subscription = client.sub.iterableInfinite.subscribe(
+     {},
+     {
+       onStarted: onStarted,
+-      onData: onData,
++      onData,
+     },
+   );
+ 
+@@ -200,6 +200,11 @@ test('disconnect and reconnect with an event id', async () => {
+     expect(onData.mock.calls.length).toBeGreaterThan(5);
+   });
+ 
++  expect(onData.mock.calls[0]![0]).toEqual({
++    data: 0,
++    id: '0',
++  });
++
+   expect(ctx.onIterableInfiniteSpy).toHaveBeenCalledTimes(1);
+ 
+   expect(es.readyState).toBe(EventSource.OPEN);
+diff --git a/www/docs/client/links/httpSubscriptionLink.md b/www/docs/client/links/httpSubscriptionLink.md
+index 8aa60e26b..882bfb6e5 100644
+--- a/www/docs/client/links/httpSubscriptionLink.md
++++ b/www/docs/client/links/httpSubscriptionLink.md
+@@ -50,7 +50,7 @@ const trpcClient = createTRPCClient<AppRouter>({
+ ## Usage
+ 
+ :::tip
+-For a full example, see [our full-stack SSE example](https://github.com/trpc/next-sse-chat).
++For a full example, see [our full-stack SSE example](https://github.com/trpc/examples-next-sse-chat).
+ :::
+ 
+ ### Basic example
+diff --git a/www/docs/community/awesome-trpc.mdx b/www/docs/community/awesome-trpc.mdx
+index 132bfc08e..6ca355636 100644
+--- a/www/docs/community/awesome-trpc.mdx
++++ b/www/docs/community/awesome-trpc.mdx
+@@ -76,7 +76,7 @@ A collection of resources on tRPC.
+ | **Recommended:** Starter project with Prisma, Next.js, tRPC, E2E-testing                                | https://github.com/trpc/examples-next-prisma-starter            |
+ | **create-t3-turbo** - Clean and simple starter repo using the T3 Stack along with Expo React Native     | http://github.com/t3-oss/create-t3-turbo                        |
+ | **create-t3-app** - Scaffold a starter project using the T3 Stack (Next.js, tRPC, Tailwind CSS, Prisma) | https://create.t3.gg                                            |
+-| Subscriptions Starter Project using SSE                                                                 | https://github.com/trpc/next-sse-chat                           |
++| Subscriptions Starter Project using SSE                                                                 | https://github.com/trpc/examples-next-sse-chat                  |
+ | WebSockets Starter Project                                                                              | https://github.com/trpc/examples-next-prisma-starter-websockets |
+ | tRPC Kitchen Sink - A collection of tRPC usage patterns.                                                | https://github.com/trpc/examples-kitchen-sink                   |
+ | Turborepo + Expo + tRPC Starter                                                                         | https://github.com/gunnnnii/turbo-expo-trpc-starter             |

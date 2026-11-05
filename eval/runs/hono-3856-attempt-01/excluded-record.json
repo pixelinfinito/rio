@@ -1,0 +1,136 @@
+{
+  "schema": "rio-eval-record-v1",
+  "methodology": "deterministic-v1",
+  "repository": "honojs/hono",
+  "pr": "https://github.com/honojs/hono/pull/3856",
+  "case_id": "3856",
+  "languages": [
+    "typescript"
+  ],
+  "reviewer": "sub-agent eval-trpc (automated)",
+  "verdict_source": "automated",
+  "independently_clean": true,
+  "commands": [
+    "cwd=/dev/shm/trpc-eval/rio-eval-31lh7r2g argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/honojs/hono.git\", \"/dev/shm/trpc-eval/rio-eval-31lh7r2g/head\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-31lh7r2g/head argv=[\"git\", \"fetch\", \"origin\", \"ecf5a0b2aeaf29c26ffe1eaf41520f867510cb17\", \"a682b1b55e37f104a3d6593a91b8d59d018cfc20\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-31lh7r2g/head argv=[\"git\", \"merge-base\", \"ecf5a0b2aeaf29c26ffe1eaf41520f867510cb17\", \"a682b1b55e37f104a3d6593a91b8d59d018cfc20\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-31lh7r2g/head argv=[\"git\", \"checkout\", \"--detach\", \"a682b1b55e37f104a3d6593a91b8d59d018cfc20\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-31lh7r2g argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/dev/shm/trpc-eval/rio-eval-31lh7r2g/head\", \"/dev/shm/trpc-eval/rio-eval-31lh7r2g/base\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-31lh7r2g/base argv=[\"git\", \"checkout\", \"--detach\", \"ecf5a0b2aeaf29c26ffe1eaf41520f867510cb17\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-31lh7r2g/base argv=[\"corepack\", \"yarn@1.22.22\", \"install\", \"--frozen-lockfile\", \"--non-interactive\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-31lh7r2g/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-31lh7r2g/head argv=[\"corepack\", \"yarn@1.22.22\", \"install\", \"--frozen-lockfile\", \"--non-interactive\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-31lh7r2g/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-31lh7r2g/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-31lh7r2g/head argv=[\"node\", \"--version\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-31lh7r2g/head argv=[\"npm\", \"--version\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-31lh7r2g/head argv=[\"corepack\", \"--version\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-31lh7r2g/head argv=[\"python3\", \"--version\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-31lh7r2g/head argv=[\"uv\", \"--version\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-31lh7r2g/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-3856-attempt-01/profile.yaml\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-31lh7r2g/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-31lh7r2g/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"ecf5a0b2aeaf29c26ffe1eaf41520f867510cb17\", \"--format\", \"json\", \"--offline\", \"--profile\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-3856-attempt-01/profile.yaml\"]"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-3856-attempt-01/commands.json; Rio binary SHA-256: 512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+    "EXCLUDED: every typecheck/lint/coverage head check skipped dependency_mismatch. No base classification, no scored recall/precision/usefulness. All required Yarn selectors listed in commands.json; do not enable dependency trust.",
+    "Oracle corrections and NO_COLOR environment removal recorded in ../hono-evidence/setup-corrections.json."
+  ],
+  "positive_control": {
+    "kind": "none",
+    "expected": []
+  },
+  "base_sha": "ecf5a0b2aeaf29c26ffe1eaf41520f867510cb17",
+  "head_sha": "a682b1b55e37f104a3d6593a91b8d59d018cfc20",
+  "mode": "branch",
+  "review_id": "b7a623cdd4cf99f9",
+  "run_id": "01M6MVCD31JTEFDVVTRGDXVBNH",
+  "rio_version": "0.1.0",
+  "profile": "hono-typescript-verified-all-checks",
+  "wall_time_ms": 13999,
+  "status": "incomplete",
+  "report_path": "eval/runs/hono-3856-attempt-01/report.json",
+  "environment": {
+    "dependency_state": "unavailable",
+    "baseline_ran": false,
+    "baseline_classification_ran": false,
+    "eligible": false,
+    "reasons": [
+      "coverage . head: skipped dependency_mismatch unresolved yarn selector: string-width-cjs@npm:string-width@^4.2.0; unresolved yarn selector: strip-ansi-cjs@npm:strip-ansi@^6.0.1; unresolved yarn selector: wrap-ansi-cjs@npm:wrap-ansi@^7.0.0; unresolved yarn selector: safer-buffer@>= 2.1.2 < 3.0.0; unresolved yarn selector: type-check@~0.4.0; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+      "lint . head: skipped dependency_mismatch unresolved yarn selector: string-width-cjs@npm:string-width@^4.2.0; unresolved yarn selector: strip-ansi-cjs@npm:strip-ansi@^6.0.1; unresolved yarn selector: wrap-ansi-cjs@npm:wrap-ansi@^7.0.0; unresolved yarn selector: safer-buffer@>= 2.1.2 < 3.0.0; unresolved yarn selector: type-check@~0.4.0; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+      "lint .: head=skipped, dependency_state=unavailable, base=unavailable",
+      "typecheck . head: skipped dependency_mismatch unresolved yarn selector: string-width-cjs@npm:string-width@^4.2.0; unresolved yarn selector: strip-ansi-cjs@npm:strip-ansi@^6.0.1; unresolved yarn selector: wrap-ansi-cjs@npm:wrap-ansi@^7.0.0; unresolved yarn selector: safer-buffer@>= 2.1.2 < 3.0.0; unresolved yarn selector: type-check@~0.4.0; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+      "typecheck .: head=skipped, dependency_state=unavailable, base=unavailable"
+    ],
+    "checks": [
+      {
+        "findings": [],
+        "hint": "unresolved yarn selector: string-width-cjs@npm:string-width@^4.2.0; unresolved yarn selector: strip-ansi-cjs@npm:strip-ansi@^6.0.1; unresolved yarn selector: wrap-ansi-cjs@npm:wrap-ansi@^7.0.0; unresolved yarn selector: safer-buffer@>= 2.1.2 < 3.0.0; unresolved yarn selector: type-check@~0.4.0; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "dependency_mismatch",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "findings": [],
+        "hint": "unresolved yarn selector: string-width-cjs@npm:string-width@^4.2.0; unresolved yarn selector: strip-ansi-cjs@npm:strip-ansi@^6.0.1; unresolved yarn selector: wrap-ansi-cjs@npm:wrap-ansi@^7.0.0; unresolved yarn selector: safer-buffer@>= 2.1.2 < 3.0.0; unresolved yarn selector: type-check@~0.4.0; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "kind": "lint",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "dependency_mismatch",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "findings": [],
+        "hint": "unresolved yarn selector: string-width-cjs@npm:string-width@^4.2.0; unresolved yarn selector: strip-ansi-cjs@npm:strip-ansi@^6.0.1; unresolved yarn selector: wrap-ansi-cjs@npm:wrap-ansi@^7.0.0; unresolved yarn selector: safer-buffer@>= 2.1.2 < 3.0.0; unresolved yarn selector: type-check@~0.4.0; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "dependency_mismatch",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "findings": [],
+        "kind": "secrets",
+        "language": "common",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "findings": [],
+        "hint": "Dependency audit needs api.osv.dev",
+        "kind": "dependencies",
+        "language": "common",
+        "outcome": "skipped",
+        "reason": "offline",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      }
+    ],
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "Graph references use syntax and text; no language server was used",
+      "Offline applies to Rio; tool and test processes were not network-isolated"
+    ]
+  },
+  "findings": [],
+  "root_causes": [],
+  "misses": [],
+  "verdict": "environment-failure",
+  "reason": "Baseline/setup must be repaired before this PR can be scored."
+}

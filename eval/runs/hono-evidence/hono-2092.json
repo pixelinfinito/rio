@@ -1,0 +1,12 @@
+{
+  "number": 2092,
+  "title": "refactor: faster for loop in jsx/dom",
+  "html_url": "https://github.com/honojs/hono/pull/2092",
+  "author_association": "CONTRIBUTOR",
+  "merged_at": "2024-01-27T12:50:57Z",
+  "changed_files": 2,
+  "merge_commit_sha": "763c0dab37a37944ad40596e9d8c5f6ba232c3f8",
+  "user": "EdamAme-x",
+  "base": "b98e85092474ebc11884fc76ddf27fb29365cea1",
+  "head": "ef94f3370452dec90d842df3d45f177a9903e209"
+}

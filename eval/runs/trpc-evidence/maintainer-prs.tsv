@@ -1,0 +1,70 @@
+7939	chore: add pr-agent-callout skill for agents working on PRs
+7931	fix(server): keep the Node adapters running when a streamed body fails or errorFormatter throws
+7855	docs(server): document the request body size limit for Node.js adapters
+7856	fix(server): respect maxBodySize in the Fastify adapter
+7857	feat(server): default maxBatchSize to 100
+7858	fix(server): enforce maxBatchSize for WebSocket batches
+7862	revert: default maxBatchSize to 100 (#7857)
+7861	docs: reject cross-origin WebSocket upgrades in docs and examples
+7867	fix(server): settle pending next() on abort and ignore teardown emissions in observableToAsyncIterable
+7915	fix(server): keep a throwing onError, errorFormatter or encoder from crashing the ws server
+7926	fix(client): keep a wsLink socket working when a handler throws
+7916	chore(monorepo): replace .cursor/rules with a tool-agnostic AGENTS.md
+7904	fix(server): ship the root LICENSE in the @trpc/server tarball again
+7898	feat(www): a sponsor's tooltip links to them too
+7897	fix(www): sponsor confetti no longer widens the page on mobile
+7892	fix(client): give each wsLink attempt its own wire id so a late stopped frame can't end the retry
+7885	feat(www): a "You?" bubble in the sponsor cloud
+7881	feat(www): a springy heart-shaped sponsor cloud that celebrates new sponsors and shows tooltips on tap
+7876	feat(www): render the demos on the server
+7872	feat(www): show the sponsor cloud as a PNG in every README
+7871	feat(www): weigh sponsors on a compressed scale so every sponsor stays visible
+7866	feat(www): pull Open Collective backers into the sponsors sync
+7832	chore(monorepo): replace lerna-lite with a pnpm publish script, and create GitHub releases
+7913	chore(monorepo): keep PR bodies short
+7865	feat(client): make subscribe() without callbacks return an async iterable
+7912	ci: don't cancel in-progress main push runs
+7911	fix(client): don't flush a later WebSocket request onto a connecting socket
+7852	fix(v12): port the v11 WebSocket fixes (#7704, #7888, #7889, #7891, #7892, #7861) to v12 sockets and wsLink
+7846	feat(v12): experimental path separator for RPC URLs (#5752)
+7843	docs(www): correct what httpBatchLink batches and what it saves
+7838	docs: read unawaited RSC prefetches with `useSuspenseQuery`
+7845	feat: opt-in `pathSeparator` for procedure paths in HTTP URLs
+7848	fix(tanstack-react-query): omit `input` from handles when it is undefined
+7849	docs: tips that point to query handles, and real types in the App Router setup samples
+7853	docs(server): add Next.js App Router section to response caching
+7851	docs(www): give each demo query its own time, clickable article cards, and more by the author
+7854	fix(server): don't leak unhandled rejections from unread jsonl promise chunks
+7903	chore(monorepo): group GitHub release notes by package, and preview them with `pnpm release notes`
+7900	fix(server): deliver to every behaviorSubject subscriber when one throws
+7899	fix(client): start the wsLink subscription when onConnectionStateChange throws on the first state
+7896	fix(client): keep wsClient reconnecting when onConnectionStateChange throws
+7891	fix(client): surface wsClient reconnect errors, and keep reconnecting when onClose or onError throws
+7704	fix(server): keep websocket subscriptions owned through setup and cleanup
+7888	fix(server): report a ws subscription's cleanup error after the client stops it
+7889	fix(client): send a wsLink request that retryLink retries with the same id
+7883	fix(www): calmer sponsor cloud hover, subtler "new/latest" sponsors
+7884	fix(server): don't crash when a subscription's teardown throws on abort
+7841	feat(www): a line of partners under the header of docs and blog pages on phones
+7842	docs(tanstack-react-query): handles work with `useQuery` too, and every reader needs a loading state
+7844	feat(examples): move next-minimal-starter to the App Router
+7868	fix(www): land heading links below the demos
+7831	fix: restore lockfile resolution broken by the v11.23.0 release
+7836	chore(monorepo): ask which AI model was used in the PR template
+7829	revert(www): un-deprecate @trpc/next for now
+7812	docs(next): document the public API and deprecate it in favor of @trpc/tanstack-react-query
+7814	docs(client): document the public API with JSDoc and docs links
+7810	docs(server): document the public API with JSDoc and docs links
+7811	docs(openapi, upgrade): document the public API with JSDoc and docs links
+7815	docs(tanstack-react-query): document the public API with JSDoc and docs links
+7813	docs(react-query): document the public API and deprecate it in favor of @trpc/tanstack-react-query
+7809	fix(client): transformer error typo, and check docs links in package sources
+7826	fix(www): leave out small sponsors whose avatars don't load
+7834	fix(monorepo): keep pnpm-lock.yaml out of release commits and typecheck before pushing
+7827	feat(www): name the partners along the foot of every social card
+7830	docs(next): use TanStack React Query in Next.js docs, deprecate react-query-based helpers
+7817	docs: query handles and `localLink` docs, live demos, and the SSE chat example on handles
+7835	feat(www): the social cards' foot names every partner, gold first, and shows more sponsors' faces
+7790	chore: restore agent skills for TanStack Intent, generated from the docs
+7808	chore(www): drop the skip for trpc-v12, which is gone
+7801	chore(www): delete the old docs copy, and keep the header inside the window from md to lg

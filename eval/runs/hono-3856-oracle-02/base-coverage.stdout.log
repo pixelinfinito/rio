@@ -1,0 +1,189 @@
+
+ RUN  v2.1.1 /dev/shm/trpc-eval/hono-oracle
+      Coverage enabled with v8
+
+stdout | src/hono.test.ts > Middleware > Basic > logging and custom header
+GET : http://localhost/hello
+
+stdout | src/hono.test.ts > Middleware > Basic > logging and custom header with named param
+GET : http://localhost/hello/message
+
+stdout | src/hono.test.ts > Middleware > Basic > should return correct the content-type header
+GET : http://localhost/json
+
+stdout | src/hono.test.ts > Middleware > Basic > not found
+GET : http://localhost/foo
+
+stdout | src/hono.test.ts > Middleware > Basic > internal server error
+GET : http://localhost/error
+Internal Server Error
+
+ ✓ src/hono.test.ts  (195 tests) 451ms
+ ✓ src/types.test.ts  (61 tests) 69ms
+ ✓ src/jsx/dom/intrinsic-element/components.test.tsx  (46 tests) 1013ms
+ ✓ src/jsx/dom/index.test.tsx  (258 tests) 3235ms
+ ✓ src/client/client.test.ts  (69 tests) 217ms
+ ✓ src/jsx/index.test.tsx  (217 tests) 235ms
+ ✓ src/validator/validator.test.ts  (50 tests) 175ms
+stdout | src/helper/ssg/ssg.test.tsx > toSSG function > should execute additional processing using afterGenerateHook
+static/index.html
+static/about.html
+static/about/some.txt
+static/bravo.html
+static/Charlie.html
+static/post/1.html
+static/post/2.html
+static/user/1.html
+static/user/2.html
+static/user/3.html
+
+stdout | src/helper/ssg/ssg.test.tsx > toSSG function > should handle asynchronous afterGenerateHook correctly
+Generated 10 files.
+
+stdout | src/helper/ssg/ssg.test.tsx > Combined Generate hooks - AfterGenerateHook > should execute combined AfterGenerateHooks affecting the result
+Generation completed with status: true
+
+ ✓ src/router/trie-router/node.test.ts  (79 tests) 61ms
+ ✓ src/helper/ssg/ssg.test.tsx  (34 tests) 256ms
+stdout | src/jsx/streaming.test.tsx > Streaming > reject()
+undefined
+
+ ✓ src/jsx/hooks/dom.test.tsx  (23 tests) 615ms
+ ✓ src/jsx/streaming.test.tsx  (22 tests) 671ms
+ ✓ src/compose.test.ts  (31 tests) 44ms
+ ✓ src/middleware/bearer-auth/index.test.ts  (27 tests) 238ms
+ ✓ src/middleware/secure-headers/index.test.ts  (22 tests) 113ms
+ ✓ src/context.test.ts  (46 tests) 72ms
+ ✓ src/helper/cookie/index.test.ts  (24 tests) 96ms
+ ✓ src/jsx/components.test.tsx  (21 tests) 452ms
+ ✓ src/middleware/jwt/index.test.ts  (21 tests) 116ms
+ ✓ src/middleware/jsx-renderer/index.test.tsx  (13 tests) 88ms
+ ✓ src/jsx/intrinsic-element/components.test.tsx  (24 tests) 32ms
+ ✓ src/utils/cookie.test.ts  (27 tests) 30ms
+ ✓ src/utils/jwt/jwt.test.ts  (35 tests) 6554ms
+ ✓ src/utils/url.test.ts  (15 tests) 51ms
+ ✓ src/jsx/dom/components.test.tsx  (22 tests) 504ms
+ ✓ src/helper/factory/index.test.ts  (12 tests) 57ms
+ ✓ src/utils/body.test.ts  (31 tests) 118ms
+ ✓ src/middleware/basic-auth/index.test.ts  (13 tests) 87ms
+stdout | src/middleware/cache/index.test.ts > Cache Middleware > Should not be enabled if caches is not defined
+Cache Middleware is not enabled because caches is not defined.
+
+ ✓ src/middleware/cache/index.test.ts  (18 tests) 93ms
+ ✓ src/middleware/csrf/index.test.ts  (16 tests) 87ms
+ ✓ src/middleware/serve-static/index.test.ts  (18 tests) 87ms
+ ✓ src/adapter/cloudflare-pages/handler.test.ts  (15 tests) 84ms
+ ✓ src/helper/css/index.test.tsx  (38 tests) 103ms
+ ✓ src/request.test.ts  (20 tests) 86ms
+ ✓ src/middleware/combine/index.test.ts  (13 tests) 77ms
+ ✓ src/middleware/etag/index.test.ts  (13 tests) 136ms
+ ✓ src/adapter/cloudflare-workers/serve-static.test.ts  (16 tests) 74ms
+ ✓ src/helper/streaming/sse.test.tsx  (9 tests) 190ms
+ ✓ src/utils/types.test.ts  (29 tests) 12ms
+ ✓ src/helper/accepts/accepts.test.ts  (8 tests) 68ms
+ ✓ src/middleware/compress/index.test.ts  (17 tests) 882ms
+ ✓ src/middleware/cors/index.test.ts  (9 tests) 69ms
+ ✓ src/middleware/method-override/index.test.ts  (10 tests) 142ms
+ ✓ src/adapter/aws-lambda/handler.test.ts  (4 tests) 45ms
+ ✓ src/middleware/request-id/index.test.ts  (10 tests) 61ms
+ ✓ src/middleware/logger/index.test.ts  (14 tests) 2071ms
+ ✓ src/jsx/dom/context.test.tsx  (12 tests) 345ms
+ ✓ src/jsx/dom/hooks/index.test.tsx  (5 tests) 242ms
+ ✓ src/helper/dev/index.test.ts  (8 tests) 14ms
+ ✓ src/middleware/timing/index.test.ts  (8 tests) 96ms
+ ✓ src/utils/buffer.test.ts  (10 tests) 74ms
+ ✓ src/client/utils.test.ts  (13 tests) 17ms
+ ✓ src/utils/stream.test.ts  (9 tests) 39ms
+stdout | src/router/reg-exp-router/router.test.ts > RegExpRouter > Common > Duplicate param name > parent
+Skip: UnsupportedPath
+
+stdout | src/router/reg-exp-router/router.test.ts > RegExpRouter > Common > Duplicate param name > child
+Skip: UnsupportedPath
+
+stdout | src/router/reg-exp-router/router.test.ts > RegExpRouter > Common > Including slashes > GET /js/main.js
+Skip: This route can not be added with `:label` to RegExpRouter. This is ambiguous
+
+stdout | src/router/reg-exp-router/router.test.ts > RegExpRouter > Common > Capture Group > Complex capturing group > GET request
+Skip: UnsupportedPath
+
+ ✓ src/router/reg-exp-router/router.test.ts  (76 tests | 4 skipped) 82ms
+ ✓ src/middleware/ip-restriction/index.test.ts  (6 tests) 60ms
+ ✓ src/jsx/dom/server.test.tsx  (16 tests) 58ms
+ ✓ src/middleware/body-limit/index.test.ts  (6 tests) 100ms
+ ✓ src/jsx/dom/client.test.tsx  (8 tests) 232ms
+ ✓ src/adapter/bun/websocket.test.ts  (5 tests) 42ms
+ ✓ src/helper/websocket/index.test.ts  (9 tests) 48ms
+ ✓ src/helper/streaming/stream.test.ts  (5 tests) 45ms
+ ✓ src/utils/filepath.test.ts  (2 tests) 7ms
+ ✓ src/utils/ipaddr.test.ts  (14 tests) 12ms
+ ✓ src/jsx/dom/css.test.tsx  (28 tests | 3 skipped) 440ms
+ ✓ src/jsx/utils.test.ts  (72 tests) 44ms
+ ✓ src/helper/html/index.test.ts  (11 tests) 11ms
+ ✓ src/adapter/service-worker/handler.test.ts  (4 tests) 53ms
+ ✓ src/middleware/trailing-slash/index.test.ts  (2 tests) 54ms
+ ✓ src/utils/concurrent.test.ts  (6 tests) 154ms
+ ✓ src/adapter/bun/conninfo.test.ts  (5 tests) 38ms
+ ✓ src/adapter/deno/websocket.test.ts  (3 tests) 49ms
+ ✓ src/utils/encode.test.ts  (44 tests) 31ms
+ ✓ src/helper/ssg/utils.test.ts  (3 tests) 7ms
+ ✓ src/client/types.test.ts  (8 tests) 7ms
+stdout | src/router/linear-router/router.test.ts > LinearRouter > Common > Multi match > `params` per a handler > GET /entry/123/show
+Skip: UnsupportedPath
+
+stdout | src/router/linear-router/router.test.ts > LinearRouter > Common > Trailing slash > GET /book/
+Skip: LinearRouter allows trailing slashes
+
+ ✓ src/router/linear-router/router.test.ts  (69 tests | 2 skipped) 73ms
+ ✓ src/utils/mime.test.ts  (3 tests) 7ms
+ ✓ src/utils/basic-auth.test.ts  (6 tests) 41ms
+ ✓ src/adapter/lambda-edge/handler.test.ts  (2 tests) 8ms
+ ✓ src/middleware/timeout/index.test.ts  (4 tests) 4255ms
+ ✓ src/utils/crypto.test.ts  (5 tests | 1 skipped) 17ms
+ ✓ src/http-exception.test.ts  (3 tests) 45ms
+ ✓ src/jsx/children.test.ts  (6 tests) 10ms
+ ✓ src/middleware/pretty-json/index.test.ts  (3 tests) 55ms
+ ✓ src/adapter/cloudflare-workers/websocket.test.ts  (2 tests) 62ms
+ ✓ src/jsx/hooks/string.test.tsx  (3 tests) 12ms
+ ✓ src/helper/testing/index.test.ts  (4 tests) 57ms
+ ✓ src/middleware/powered-by/index.test.ts  (3 tests) 45ms
+stdout | src/router/pattern-router/router.test.ts > Pattern > Common > Duplicate param name > self
+Skip: UnsupportedPath
+
+stdout | src/router/pattern-router/router.test.ts > Pattern > Common > Trailing slash > GET /book/
+Skip: PatternRouter allows trailing slashes
+
+ ✓ src/router/pattern-router/router.test.ts  (68 tests | 2 skipped) 64ms
+ ✓ src/adapter/vercel/handler.test.ts  (2 tests) 51ms
+ ✓ src/preset/quick.test.ts  (2 tests) 10ms
+ ✓ src/adapter/cloudflare-workers/utils.test.ts  (1 test) 5ms
+ ✓ src/helper/streaming/text.test.ts  (1 test) 20ms
+ ✓ src/preset/tiny.test.ts  (2 tests) 7ms
+ ✓ build/validate-exports.test.ts  (1 test) 7ms
+ ✓ src/jsx/jsx-runtime.test.tsx  (6 tests) 66ms
+ ✓ src/adapter/deno/conninfo.test.ts  (1 test) 33ms
+ ✓ src/utils/jwt/jwa.test.ts  (1 test) 7ms
+ ✓ src/adapter/lambda-edge/conninfo.test.ts  (1 test) 33ms
+ ✓ src/middleware/context-storage/index.test.ts  (1 test) 56ms
+ ✓ src/utils/html.test.ts  (1 test) 6ms
+ ✓ src/adapter/cloudflare-workers/conninfo.test.ts  (1 test) 35ms
+ ✓ src/adapter/bun/server.test.ts  (1 test) 39ms
+ ✓ src/utils/color.test.ts  (2 tests) 5ms
+ ✓ src/adapter/vercel/conninfo.test.ts  (1 test) 40ms
+ ✓ src/router/smart-router/router.test.ts  (66 tests) 78ms
+ ✓ src/helper/adapter/index.test.ts  (1 test) 4ms
+ ✓ build/remove-private-fields-worker.test.ts  (2 tests) 3103ms
+ ✓ src/router/trie-router/router.test.ts  (66 tests) 65ms
+
+ Test Files  107 passed (107)
+      Tests  2442 passed | 12 skipped (2454)
+   Start at  03:13:25
+   Duration  52.39s (transform 9.99s, setup 2.06s, collect 22.43s, tests 30.84s, environment 46ms, prepare 13.78s)
+
+ % Coverage report from v8
+
+=============================== Coverage summary ===============================
+Statements   : 92% ( 8791/9555 )
+Branches     : 94.15% ( 3141/3336 )
+Functions    : 91.73% ( 599/653 )
+Lines        : 92% ( 8791/9555 )
+================================================================================

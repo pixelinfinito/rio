@@ -1,0 +1,9 @@
+{
+  "argv": [
+    "/dev/shm/trpc-eval/old-tools/node-v20.10.0-linux-x64/bin/node",
+    "-e",
+    "const ts=require('./node_modules/typescript'); const cp=require('node:child_process'); const crypto=require('node:crypto');const result={};for(const file of ['src/helper/factory/index.ts','deno_dist/helper/factory/index.ts']){const outputs=['4ec3a9bf41ec3de004836e84757c07ec2b7b4156','310c8733dbde15f6b279863798e740953a4341dd'].map(sha=>ts.transpileModule(cp.execFileSync('git',['show',sha+':'+file],{encoding:'utf8'}),{compilerOptions:{target:ts.ScriptTarget.ES2020,module:ts.ModuleKind.ESNext}}).outputText);result[file]={runtime_javascript_identical:outputs[0]===outputs[1],base_js_sha256:crypto.createHash('sha256').update(outputs[0]).digest('hex'),head_js_sha256:crypto.createHash('sha256').update(outputs[1]).digest('hex')};}console.log(JSON.stringify({typescript:ts.version,base:'4ec3a9bf41ec3de004836e84757c07ec2b7b4156',head:'310c8733dbde15f6b279863798e740953a4341dd',files:result},null,2))"
+  ],
+  "cwd": "/dev/shm/trpc-eval/hono-2085-oracle",
+  "exit_code": 0
+}

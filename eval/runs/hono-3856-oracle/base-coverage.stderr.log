@@ -1,0 +1,328 @@
+stderr | src/hono.test.ts > Middleware > Basic > internal server error
+Error: Error!
+    at /dev/shm/trpc-eval/hono-oracle/src/hono.test.ts:1036:13
+    at dispatch (/dev/shm/trpc-eval/hono-oracle/src/compose.ts:75:23)
+    at /dev/shm/trpc-eval/hono-oracle/src/compose.ts:76:20
+    at /dev/shm/trpc-eval/hono-oracle/src/hono.test.ts:993:13
+    at dispatch (/dev/shm/trpc-eval/hono-oracle/src/compose.ts:75:23)
+    at /dev/shm/trpc-eval/hono-oracle/src/compose.ts:76:20
+    at /dev/shm/trpc-eval/hono-oracle/src/hono.test.ts:988:13
+    at dispatch (/dev/shm/trpc-eval/hono-oracle/src/compose.ts:75:23)
+    at /dev/shm/trpc-eval/hono-oracle/src/compose.ts:41:12
+    at /dev/shm/trpc-eval/hono-oracle/src/hono-base.ts:435:31
+
+stderr | src/hono.test.ts > Error handling in middleware > Should handle the error in middleware
+Error: Error message
+    at /dev/shm/trpc-eval/hono-oracle/src/hono.test.ts:1511:11
+    at dispatch (/dev/shm/trpc-eval/hono-oracle/src/compose.ts:75:23)
+    at /dev/shm/trpc-eval/hono-oracle/src/compose.ts:76:20
+    at /dev/shm/trpc-eval/hono-oracle/src/hono.test.ts:1492:11
+    at dispatch (/dev/shm/trpc-eval/hono-oracle/src/compose.ts:75:23)
+    at /dev/shm/trpc-eval/hono-oracle/src/compose.ts:41:12
+    at /dev/shm/trpc-eval/hono-oracle/src/hono-base.ts:435:31
+    at Hono.#dispatch (/dev/shm/trpc-eval/hono-oracle/src/hono-base.ts:446:5)
+    at Hono.fetch (/dev/shm/trpc-eval/hono-oracle/src/hono-base.ts:465:17)
+    at Hono.request (/dev/shm/trpc-eval/hono-oracle/src/hono-base.ts:490:17)
+
+stderr | src/hono.test.ts > Error handling in middleware > Should handle the error in middleware - async
+Error: Error message
+    at /dev/shm/trpc-eval/hono-oracle/src/hono.test.ts:1515:11
+    at dispatch (/dev/shm/trpc-eval/hono-oracle/src/compose.ts:75:23)
+    at /dev/shm/trpc-eval/hono-oracle/src/compose.ts:76:20
+    at /dev/shm/trpc-eval/hono-oracle/src/hono.test.ts:1500:11
+    at dispatch (/dev/shm/trpc-eval/hono-oracle/src/compose.ts:75:23)
+    at /dev/shm/trpc-eval/hono-oracle/src/compose.ts:41:12
+    at /dev/shm/trpc-eval/hono-oracle/src/hono-base.ts:435:31
+    at Hono.#dispatch (/dev/shm/trpc-eval/hono-oracle/src/hono-base.ts:446:5)
+    at Hono.fetch (/dev/shm/trpc-eval/hono-oracle/src/hono-base.ts:465:17)
+    at Hono.request (/dev/shm/trpc-eval/hono-oracle/src/hono-base.ts:490:17)
+
+stderr | src/jsx/dom/intrinsic-element/components.test.tsx > intrinsic element > document metadata > script element > should be fired onError event
+Error: Could not load script: "http://localhost/invalid.js"
+    at QueueItem.onErrorWrapped [as onError] (/dev/shm/trpc-eval/hono-oracle/node_modules/jsdom/lib/jsdom/browser/resources/per-document-resource-loader.js:38:19)
+    at AsyncResourceQueue._check (/dev/shm/trpc-eval/hono-oracle/node_modules/jsdom/lib/jsdom/browser/resources/async-resource-queue.js:37:22)
+    at /dev/shm/trpc-eval/hono-oracle/node_modules/jsdom/lib/jsdom/browser/resources/async-resource-queue.js:94:20 Invalid URL
+
+stderr | src/jsx/dom/intrinsic-element/components.test.tsx > intrinsic element > document metadata > script element > should be inserted into body if has no props
+Error: Not implemented: window.alert
+    at module.exports (/dev/shm/trpc-eval/hono-oracle/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at /dev/shm/trpc-eval/hono-oracle/node_modules/jsdom/lib/jsdom/browser/Window.js:897:7
+    at about:blank:1:1
+    at Script.runInContext (node:vm:133:12)
+    at Object.runInContext (node:vm:279:6)
+    at processJavaScript (/dev/shm/trpc-eval/hono-oracle/node_modules/jsdom/lib/jsdom/living/nodes/HTMLScriptElement-impl.js:238:10)
+    at HTMLScriptElementImpl._innerEval (/dev/shm/trpc-eval/hono-oracle/node_modules/jsdom/lib/jsdom/living/nodes/HTMLScriptElement-impl.js:173:5)
+    at /dev/shm/trpc-eval/hono-oracle/node_modules/jsdom/lib/jsdom/living/nodes/HTMLScriptElement-impl.js:114:12
+    at ResourceQueue.push (/dev/shm/trpc-eval/hono-oracle/node_modules/jsdom/lib/jsdom/browser/resources/resource-queue.js:53:16)
+    at HTMLScriptElementImpl._fetchInternalScript (/dev/shm/trpc-eval/hono-oracle/node_modules/jsdom/lib/jsdom/living/nodes/HTMLScriptElement-impl.js:113:21) undefined
+
+stderr | src/jsx/dom/server.test.tsx > renderToString > Should omit options
+options are not supported yet
+
+stderr | src/jsx/dom/server.test.tsx > renderToReadableStream > Should omit options, except onError
+options are not supported yet, except onError
+
+stderr | src/middleware/body-limit/index.test.ts > Body Limit Middleware > POST request > ReadableStream body > should return 413 response
+BodyLimitError: Payload Too Large
+    at Object.start (/dev/shm/trpc-eval/hono-oracle/src/middleware/body-limit/index.ts:94:32)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+
+stderr | src/adapter/cloudflare-workers/websocket.test.ts > upgradeWebSocket middleware > Should receive message and readyState is valid
+RangeError: init["status"] must be in the range of 200 to 599, inclusive.
+    at initializeResponse (node:internal/deps/undici/undici:5063:15)
+    at new Response (node:internal/deps/undici/undici:4875:9)
+    at /dev/shm/trpc-eval/hono-oracle/src/adapter/cloudflare-workers/websocket.ts:48:10
+    at Array.UpgradeWebSocket (/dev/shm/trpc-eval/hono-oracle/src/helper/websocket/index.ts:109:28)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at /dev/shm/trpc-eval/hono-oracle/src/adapter/cloudflare-workers/websocket.test.ts:32:5
+    at file:///dev/shm/trpc-eval/hono-oracle/node_modules/@vitest/runner/dist/index.js:529:5
+    at runTest (file:///dev/shm/trpc-eval/hono-oracle/node_modules/@vitest/runner/dist/index.js:982:11)
+    at runSuite (file:///dev/shm/trpc-eval/hono-oracle/node_modules/@vitest/runner/dist/index.js:1131:15)
+    at runSuite (file:///dev/shm/trpc-eval/hono-oracle/node_modules/@vitest/runner/dist/index.js:1131:15)
+
+(node:705831) ExperimentalWarning: The Ed25519 Web Crypto API algorithm is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+⎯⎯⎯⎯⎯⎯ Failed Tests 10 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/utils/color.test.ts > getColorEnabled() - With colors enabled > should return true
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/utils/color.test.ts:5:31
+      3| describe('getColorEnabled() - With colors enabled', () => {
+      4|   it('should return true', async () => {
+      5|     expect(getColorEnabled()).toBe(true)
+       |                               ^
+      6|   })
+      7| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/10]⎯
+
+ FAIL  src/helper/dev/index.test.ts > showRoutes() > should render simple output
+AssertionError: expected [ 'GET      /', …(7) ] to deeply equal [ …(8) ]
+
+- Expected
++ Received
+
+  Array [
+-   "[32mGET[0m      /",
+-   "[32mGET[0m      /named",
+-   "[32mPOST[0m     /",
+-   "[32mPUT[0m      /",
+-   "[32mPATCH[0m    /",
+-   "[32mDELETE[0m   /",
+-   "[32mOPTIONS[0m  /",
+-   "[32mGET[0m      /static",
++   "GET      /",
++   "GET      /named",
++   "POST     /",
++   "PUT      /",
++   "PATCH    /",
++   "DELETE   /",
++   "OPTIONS  /",
++   "GET      /static",
+  ]
+
+ ❯ src/helper/dev/index.test.ts:76:18
+     74|   it('should render simple output', async () => {
+     75|     showRoutes(app)
+     76|     expect(logs).toEqual([
+       |                  ^
+     77|       '\x1b[32mGET\x1b[0m      /',
+     78|       '\x1b[32mGET\x1b[0m      /named',
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/10]⎯
+
+ FAIL  src/helper/dev/index.test.ts > showRoutes() > should render output includes handlers and middlewares
+AssertionError: expected [ 'ALL      /*', …(19) ] to deeply equal [ …(20) ]
+
+- Expected
++ Received
+
+  Array [
+-   "[32mALL[0m      /*",
++   "ALL      /*",
+    "           [middleware]",
+-   "[32mGET[0m      /",
++   "GET      /",
+    "           [middleware]",
+    "           [handler]",
+-   "[32mGET[0m      /named",
++   "GET      /named",
+    "           namedMiddleware",
+    "           namedHandler",
+-   "[32mPOST[0m     /",
++   "POST     /",
+    "           [handler]",
+-   "[32mPUT[0m      /",
++   "PUT      /",
+    "           [handler]",
+-   "[32mPATCH[0m    /",
++   "PATCH    /",
+    "           [handler]",
+-   "[32mDELETE[0m   /",
++   "DELETE   /",
+    "           [handler]",
+-   "[32mOPTIONS[0m  /",
++   "OPTIONS  /",
+    "           [handler]",
+-   "[32mGET[0m      /static",
++   "GET      /static",
+    "           [handler]",
+  ]
+
+ ❯ src/helper/dev/index.test.ts:90:18
+     88|   it('should render output includes handlers and middlewares', async (…
+     89|     showRoutes(app, { verbose: true })
+     90|     expect(logs).toEqual([
+       |                  ^
+     91|       '\x1b[32mALL\x1b[0m      /*',
+     92|       '           [middleware]',
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/10]⎯
+
+ FAIL  src/middleware/logger/index.test.ts > Logger by Middleware > Log status 200 with empty body
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/middleware/logger/index.test.ts:48:65
+     46|     expect(res).not.toBeNull()
+     47|     expect(res.status).toBe(200)
+     48|     expect(log.startsWith('--> GET /empty \x1b[32m200\x1b[0m')).toBe(t…
+       |                                                                 ^
+     49|     expect(log).toMatch(/m?s$/)
+     50|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/10]⎯
+
+ FAIL  src/middleware/logger/index.test.ts > Logger by Middleware > Log status 200 with small body
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/middleware/logger/index.test.ts:56:65
+     54|     expect(res).not.toBeNull()
+     55|     expect(res.status).toBe(200)
+     56|     expect(log.startsWith('--> GET /short \x1b[32m200\x1b[0m')).toBe(t…
+       |                                                                 ^
+     57|     expect(log).toMatch(/m?s$/)
+     58|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/10]⎯
+
+ FAIL  src/middleware/logger/index.test.ts > Logger by Middleware > Log status 200 with big body
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/middleware/logger/index.test.ts:64:64
+     62|     expect(res).not.toBeNull()
+     63|     expect(res.status).toBe(200)
+     64|     expect(log.startsWith('--> GET /long \x1b[32m200\x1b[0m')).toBe(tr…
+       |                                                                ^
+     65|     expect(log).toMatch(/m?s$/)
+     66|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/10]⎯
+
+ FAIL  src/middleware/logger/index.test.ts > Logger by Middleware > Time in seconds
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/middleware/logger/index.test.ts:72:67
+     70|     expect(res).not.toBeNull()
+     71|     expect(res.status).toBe(200)
+     72|     expect(log.startsWith('--> GET /seconds \x1b[32m200\x1b[0m')).toBe…
+       |                                                                   ^
+     73|     expect(log).toMatch(/1s/)
+     74|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/10]⎯
+
+ FAIL  src/middleware/logger/index.test.ts > Logger by Middleware > Log status 301 with empty body
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/middleware/logger/index.test.ts:80:68
+     78|     expect(res).not.toBeNull()
+     79|     expect(res.status).toBe(301)
+     80|     expect(log.startsWith('--> GET /redirect \x1b[36m301\x1b[0m')).toB…
+       |                                                                    ^
+     81|     expect(log).toMatch(/m?s$/)
+     82|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/10]⎯
+
+ FAIL  src/middleware/logger/index.test.ts > Logger by Middleware > Log status 404
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/middleware/logger/index.test.ts:92:68
+     90|     expect(res).not.toBeNull()
+     91|     expect(res.status).toBe(404)
+     92|     expect(log.startsWith('--> GET /notfound \x1b[33m404\x1b[0m')).toB…
+       |                                                                    ^
+     93|     expect(log).toMatch(/m?s$/)
+     94|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/10]⎯
+
+ FAIL  src/middleware/logger/index.test.ts > Logger by Middleware > Log status 511 with empty body
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/middleware/logger/index.test.ts:100:72
+     98|     expect(res).not.toBeNull()
+     99|     expect(res.status).toBe(511)
+    100|     expect(log.startsWith('--> GET /server-error \x1b[31m511\x1b[0m'))…
+       |                                                                        ^
+    101|     expect(log).toMatch(/m?s$/)
+    102|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/10]⎯
+
+error Command failed.
+Exit code: 1
+Command: vitest
+Arguments: run
+Directory: /dev/shm/trpc-eval/hono-oracle
+Output:
+
