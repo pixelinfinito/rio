@@ -1,0 +1,1853 @@
+{
+  "schema": "rio-eval-summary-v2",
+  "methodology": "deterministic-v2",
+  "records": [
+    "eval/runs/hono-2081-attempt-01/record-v2.json",
+    "eval/runs/hono-2085-seed-attempt-01/record-v2.json",
+    "eval/runs/ky-578/record-v2.json",
+    "eval/runs/ky-881/record-v2.json",
+    "eval/runs/litestar-5164-seed-f841-scored/record-v2.json",
+    "eval/runs/litestar-5178-scored/record-v2.json",
+    "eval/runs/mitmproxy-8473-attempt2/record-v2.json",
+    "eval/runs/mitmproxy-8521-seeded/record-v2.json",
+    "eval/runs/pydantic-14199-attempt05/record-v2.json",
+    "eval/runs/pydantic-14213-attempt04/record-v2.json",
+    "eval/runs/pydantic-settings-1097-attempt2/record-v2.json",
+    "eval/runs/pydantic-settings-1109-attempt4/record-v2.json",
+    "eval/runs/pydantic-settings-708/record-v2.json",
+    "eval/runs/structlog-805-attempt2/record-v2.json",
+    "eval/runs/structlog-811-attempt2/record-v2.json",
+    "eval/runs/structlog-811-seeded-assignment/record-v2.json",
+    "eval/runs/pydantic-ai-12540-attempt3/record-v2.json",
+    "eval/runs/pydantic-ai-8641-seeded-attempt1/record-v2.json",
+    "eval/runs/tanstack-query-11293/record-v2.json.gz",
+    "eval/runs/tanstack-query-11392-attempt3/record-v2.json",
+    "eval/runs/tanstack-query-11522-seeded-attempt2/record-v2.json",
+    "eval/runs/trpc-5819-attempt-02/record-v2.json.gz",
+    "eval/runs/vue-core-12701-attempt-02/record-v2.json.gz",
+    "eval/runs/vue-core-15328-attempt-02/record-v2.json",
+    "eval/runs/zod-6085-retry1/record-v2.json",
+    "eval/runs/zod-6527-retry1/record-v2.json"
+  ],
+  "attempts": 26,
+  "selection": {
+    "policy": "eval/runs/v0.1-rerun-selection.json",
+    "omitted_records": []
+  },
+  "rio_versions": [
+    "0.1.0@sha256:512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2"
+  ],
+  "mixed_versions": false,
+  "binary_identity_complete": true,
+  "profile_hashes": [
+    "00714f175b0ede5b16f6a5efa958055d4aa74b1ac88fdf7450c7d7e16e21e475",
+    "1049df8bb35d7f36f2982fdce1565c2c50336ce9e898e605f3cac96b7b16b636",
+    "17f79f8e2e7d33e4e7f5ca914df0ab4c2d1c0dd73294283ca6401c76493d43a8",
+    "19825838ce2242eda0c7a5ad6b5f19e11cb7b6283ed90b65b1ec2cdc922cf2b4",
+    "1d410f8d0bc8a1c795ae6548c9e21ff4522c8fc5c8f165ea9ccee898fc1e946e",
+    "256308d97a3c9920838f800b258e3f3a18bb44e6305909fd910521dc44c7ab02",
+    "2738687986ffa501f42949f9aaaec78a56e3120c2c802265b84a687889d72a2d",
+    "2af7e0e0e785812a0ed542b95a536486883a26bc269a2c085ded7f3e438717a4",
+    "2ecec8977dd1938c4e63a69362d12307b86af0b89ff856cb1b2ca129f6fe3eef",
+    "44c4ddeddfc18b505991148ff2ef3d1c4223211b43fe264184915280922ee82c",
+    "6179e1dc1b79c335e5d5d5cf506364ca98ce65e3d09fcba7555cff566d1f5f5f",
+    "619289e7d8dbb511fb63d6f7c1f4ac6795871b9f6da196763a508603fcdf9276",
+    "68f9269b81ceb71ff20bfda61d125fd629188ed6765e76d19c100be47421fa9d",
+    "693e00f75c3c74d7d637e03673327e2926c1d26ff028fc1f0cec98d218703338",
+    "751a94d1916b4b88d74218ad68407822f78fb3ae69d2b29db0a3cab7399a5654",
+    "765b6dc03231ef87e7ea761d4c97d58a095a82fe3c8310a3c0a7ef56259511c0",
+    "7ddb6f7ba624d9f9201b8562f5c2a3a3ad9b4662ec7ba5e36085df398b05bcb8",
+    "8d9b6351286c08484e049f0d5c9009f3cd4a0c0b37a61aaaecc11b2e1807fba7",
+    "8f4b84ce0c90dae64f84e20425a549a4f70b145fb176cd2bafd5b90cf9b90866",
+    "9206000554b4c5db8bf0be2f8baabefb4cdcbb0b0a325be235632493368966a7",
+    "ab1812ca1f81bfd767994a9ad457324355a4690506e7d2718ab808594d05d59e",
+    "b5732544385e1ad2e12a3254cfecb9e99af8fe42943f0b6f20ff7dbf95aa97eb",
+    "c8e1b058167cf6977fa47b052abc809dc4789c3b8343c4ecf9c02f401f6e8c6a",
+    "eaca167be2da69b2c37bc21dff8489804967020a92f485bb9b068236b2d88508"
+  ],
+  "record_profiles": [
+    {
+      "record_path": "eval/runs/hono-2081-attempt-01/record-v2.json",
+      "repository": "honojs/hono",
+      "case_id": "2081",
+      "profile": "hono-typescript-verified-all-checks",
+      "profile_sha256": "00714f175b0ede5b16f6a5efa958055d4aa74b1ac88fdf7450c7d7e16e21e475",
+      "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+      "dependency_state": "verified",
+      "eligible": true
+    },
+    {
+      "record_path": "eval/runs/hono-2085-seed-attempt-01/record-v2.json",
+      "repository": "honojs/hono",
+      "case_id": "2085-seeded-type-error-20261105",
+      "profile": "hono-typescript-verified-all-checks",
+      "profile_sha256": "7ddb6f7ba624d9f9201b8562f5c2a3a3ad9b4662ec7ba5e36085df398b05bcb8",
+      "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+      "dependency_state": "verified",
+      "eligible": true
+    },
+    {
+      "record_path": "eval/runs/ky-578/record-v2.json",
+      "repository": "sindresorhus/ky",
+      "case_id": "578",
+      "profile": "eval-ky-trusted",
+      "profile_sha256": "1d410f8d0bc8a1c795ae6548c9e21ff4522c8fc5c8f165ea9ccee898fc1e946e",
+      "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+      "dependency_state": "trusted",
+      "eligible": true
+    },
+    {
+      "record_path": "eval/runs/ky-881/record-v2.json",
+      "repository": "sindresorhus/ky",
+      "case_id": "881",
+      "profile": "eval-ky-trusted",
+      "profile_sha256": "765b6dc03231ef87e7ea761d4c97d58a095a82fe3c8310a3c0a7ef56259511c0",
+      "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+      "dependency_state": "trusted",
+      "eligible": true
+    },
+    {
+      "record_path": "eval/runs/litestar-5164-seed-f841-scored/record-v2.json",
+      "repository": "litestar-org/litestar",
+      "case_id": "5164-seed-f841",
+      "profile": "eval-litestar-b15dc8ff5001",
+      "profile_sha256": "44c4ddeddfc18b505991148ff2ef3d1c4223211b43fe264184915280922ee82c",
+      "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+      "dependency_state": "verified",
+      "eligible": true
+    },
+    {
+      "record_path": "eval/runs/litestar-5178-scored/record-v2.json",
+      "repository": "litestar-org/litestar",
+      "case_id": "5178",
+      "profile": "eval-litestar-b15dc8ff5001",
+      "profile_sha256": "2ecec8977dd1938c4e63a69362d12307b86af0b89ff856cb1b2ca129f6fe3eef",
+      "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+      "dependency_state": "verified",
+      "eligible": true
+    },
+    {
+      "record_path": "eval/runs/mitmproxy-8473-attempt2/record-v2.json",
+      "repository": "mitmproxy/mitmproxy",
+      "case_id": "8473",
+      "profile": "eval-mitmproxy",
+      "profile_sha256": "68f9269b81ceb71ff20bfda61d125fd629188ed6765e76d19c100be47421fa9d",
+      "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+      "dependency_state": "verified",
+      "eligible": true
+    },
+    {
+      "record_path": "eval/runs/mitmproxy-8521-seeded/record-v2.json",
+      "repository": "mitmproxy/mitmproxy",
+      "case_id": "8521-seeded-unused-import",
+      "profile": "eval-mitmproxy",
+      "profile_sha256": "17f79f8e2e7d33e4e7f5ca914df0ab4c2d1c0dd73294283ca6401c76493d43a8",
+      "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+      "dependency_state": "verified",
+      "eligible": true
+    },
+    {
+      "record_path": "eval/runs/pydantic-14199-attempt05/record-v2.json",
+      "repository": "pydantic/pydantic",
+      "case_id": "14199",
+      "profile": "eval/pydantic",
+      "profile_sha256": "c8e1b058167cf6977fa47b052abc809dc4789c3b8343c4ecf9c02f401f6e8c6a",
+      "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+      "dependency_state": "verified",
+      "eligible": true
+    },
+    {
+      "record_path": "eval/runs/pydantic-14213-attempt04/record-v2.json",
+      "repository": "pydantic/pydantic",
+      "case_id": "14213",
+      "profile": "eval/pydantic",
+      "profile_sha256": "2738687986ffa501f42949f9aaaec78a56e3120c2c802265b84a687889d72a2d",
+      "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+      "dependency_state": "verified",
+      "eligible": true
+    },
+    {
+      "record_path": "eval/runs/pydantic-settings-1097-attempt2/record-v2.json",
+      "repository": "pydantic/pydantic-settings",
+      "case_id": "1097",
+      "profile": "eval-pydantic-settings",
+      "profile_sha256": "693e00f75c3c74d7d637e03673327e2926c1d26ff028fc1f0cec98d218703338",
+      "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+      "dependency_state": "verified",
+      "eligible": true
+    },
+    {
+      "record_path": "eval/runs/pydantic-settings-1109-attempt4/record-v2.json",
+      "repository": "pydantic/pydantic-settings",
+      "case_id": "1109",
+      "profile": "eval-pydantic-settings",
+      "profile_sha256": "b5732544385e1ad2e12a3254cfecb9e99af8fe42943f0b6f20ff7dbf95aa97eb",
+      "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+      "dependency_state": "verified",
+      "eligible": true
+    },
+    {
+      "record_path": "eval/runs/pydantic-settings-708/record-v2.json",
+      "repository": "pydantic/pydantic-settings",
+      "case_id": "708",
+      "profile": "eval-pydantic-settings",
+      "profile_sha256": "ab1812ca1f81bfd767994a9ad457324355a4690506e7d2718ab808594d05d59e",
+      "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+      "dependency_state": "verified",
+      "eligible": true
+    },
+    {
+      "record_path": "eval/runs/structlog-805-attempt2/record-v2.json",
+      "repository": "hynek/structlog",
+      "case_id": "805",
+      "profile": "eval-structlog-trusted",
+      "profile_sha256": "eaca167be2da69b2c37bc21dff8489804967020a92f485bb9b068236b2d88508",
+      "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+      "dependency_state": "trusted",
+      "eligible": true
+    },
+    {
+      "record_path": "eval/runs/structlog-811-attempt2/record-v2.json",
+      "repository": "hynek/structlog",
+      "case_id": "811",
+      "profile": "eval-structlog-trusted",
+      "profile_sha256": "619289e7d8dbb511fb63d6f7c1f4ac6795871b9f6da196763a508603fcdf9276",
+      "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+      "dependency_state": "trusted",
+      "eligible": true
+    },
+    {
+      "record_path": "eval/runs/structlog-811-seeded-assignment/record-v2.json",
+      "repository": "hynek/structlog",
+      "case_id": "811-seeded-assignment",
+      "profile": "eval-structlog-trusted",
+      "profile_sha256": "2af7e0e0e785812a0ed542b95a536486883a26bc269a2c085ded7f3e438717a4",
+      "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+      "dependency_state": "trusted",
+      "eligible": true
+    },
+    {
+      "record_path": "eval/runs/pydantic-ai-12540-attempt3/record-v2.json",
+      "repository": "pydantic/pydantic-ai",
+      "case_id": "12540",
+      "profile": "eval-pydantic-ai-static",
+      "profile_sha256": "6179e1dc1b79c335e5d5d5cf506364ca98ce65e3d09fcba7555cff566d1f5f5f",
+      "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+      "dependency_state": "mixed",
+      "eligible": false
+    },
+    {
+      "record_path": "eval/runs/pydantic-ai-8641-seeded-attempt1/record-v2.json",
+      "repository": "pydantic/pydantic-ai",
+      "case_id": "8641-seeded-unused-import",
+      "profile": "eval-pydantic-ai-static",
+      "profile_sha256": "9206000554b4c5db8bf0be2f8baabefb4cdcbb0b0a325be235632493368966a7",
+      "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+      "dependency_state": "unavailable",
+      "eligible": false
+    },
+    {
+      "record_path": "eval/runs/tanstack-query-11293/record-v2.json.gz",
+      "repository": "TanStack/query",
+      "case_id": "11293",
+      "profile": "rio/base",
+      "profile_sha256": "1049df8bb35d7f36f2982fdce1565c2c50336ce9e898e605f3cac96b7b16b636",
+      "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+      "dependency_state": "mixed",
+      "eligible": false
+    },
+    {
+      "record_path": "eval/runs/tanstack-query-11392-attempt3/record-v2.json",
+      "repository": "TanStack/query",
+      "case_id": "11392",
+      "profile": "rio/base",
+      "profile_sha256": "1049df8bb35d7f36f2982fdce1565c2c50336ce9e898e605f3cac96b7b16b636",
+      "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+      "dependency_state": "verified",
+      "eligible": false
+    },
+    {
+      "record_path": "eval/runs/tanstack-query-11522-seeded-attempt2/record-v2.json",
+      "repository": "TanStack/query",
+      "case_id": "11522-seeded-transaction-type-20261105",
+      "profile": "rio/base",
+      "profile_sha256": "1049df8bb35d7f36f2982fdce1565c2c50336ce9e898e605f3cac96b7b16b636",
+      "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+      "dependency_state": "verified",
+      "eligible": false
+    },
+    {
+      "record_path": "eval/runs/trpc-5819-attempt-02/record-v2.json.gz",
+      "repository": "trpc/trpc",
+      "case_id": "5819",
+      "profile": "trpc-typescript-all-checks",
+      "profile_sha256": "751a94d1916b4b88d74218ad68407822f78fb3ae69d2b29db0a3cab7399a5654",
+      "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+      "dependency_state": "mixed",
+      "eligible": false
+    },
+    {
+      "record_path": "eval/runs/vue-core-12701-attempt-02/record-v2.json.gz",
+      "repository": "vuejs/core",
+      "case_id": "12701",
+      "profile": "eval-vue-workspace",
+      "profile_sha256": "256308d97a3c9920838f800b258e3f3a18bb44e6305909fd910521dc44c7ab02",
+      "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+      "dependency_state": "mixed",
+      "eligible": false
+    },
+    {
+      "record_path": "eval/runs/vue-core-15328-attempt-02/record-v2.json",
+      "repository": "vuejs/core",
+      "case_id": "15328",
+      "profile": "eval-vue-workspace",
+      "profile_sha256": "8d9b6351286c08484e049f0d5c9009f3cd4a0c0b37a61aaaecc11b2e1807fba7",
+      "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+      "dependency_state": "verified",
+      "eligible": false
+    },
+    {
+      "record_path": "eval/runs/zod-6085-retry1/record-v2.json",
+      "repository": "colinhacks/zod",
+      "case_id": "6085",
+      "profile": "zod-eval-b15dc8ff5001",
+      "profile_sha256": "8f4b84ce0c90dae64f84e20425a549a4f70b145fb176cd2bafd5b90cf9b90866",
+      "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+      "dependency_state": "verified",
+      "eligible": false
+    },
+    {
+      "record_path": "eval/runs/zod-6527-retry1/record-v2.json",
+      "repository": "colinhacks/zod",
+      "case_id": "6527",
+      "profile": "zod-eval-b15dc8ff5001",
+      "profile_sha256": "19825838ce2242eda0c7a5ad6b5f19e11cb7b6283ed90b65b1ec2cdc922cf2b4",
+      "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+      "dependency_state": "verified",
+      "eligible": false
+    }
+  ],
+  "observed_raw_counts": {
+    "true-positive": 16,
+    "false-positive": 1,
+    "pre-existing-shown": 0,
+    "environment-failure": 11,
+    "out-of-scope": 0,
+    "pre-existing-hidden": 1321
+  },
+  "observed_occurrence_counts": {
+    "true-positive": 26,
+    "false-positive": 1,
+    "pre-existing-shown": 0,
+    "environment-failure": 263,
+    "out-of-scope": 0,
+    "pre-existing-hidden": 3558
+  },
+  "observed_cause_counts": {
+    "true-positive": 12,
+    "false-positive": 1,
+    "pre-existing-shown": 0,
+    "environment-failure": 11,
+    "out-of-scope": 0,
+    "pre-existing-hidden": 1084
+  },
+  "observed_unique_cause_counts": {
+    "true-positive": 12,
+    "false-positive": 1,
+    "pre-existing-shown": 0,
+    "environment-failure": 11,
+    "out-of-scope": 0,
+    "pre-existing-hidden": 1023
+  },
+  "eligible": {
+    "eligible_prs": 16,
+    "raw_counts": {
+      "true-positive": 7,
+      "false-positive": 1,
+      "pre-existing-shown": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0,
+      "pre-existing-hidden": 25
+    },
+    "occurrence_counts": {
+      "true-positive": 14,
+      "false-positive": 1,
+      "pre-existing-shown": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0,
+      "pre-existing-hidden": 37
+    },
+    "cause_counts": {
+      "true-positive": 6,
+      "false-positive": 1,
+      "pre-existing-shown": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0,
+      "pre-existing-hidden": 9
+    },
+    "unique_cause_counts": {
+      "true-positive": 6,
+      "false-positive": 1,
+      "pre-existing-shown": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0,
+      "pre-existing-hidden": 5
+    },
+    "precision": 0.8571428571428571,
+    "positive_control_cases": 7,
+    "positive_control_by_kind": {
+      "real-pr": {
+        "cases": 3,
+        "expected": 3,
+        "detected": 2,
+        "recall": 0.6666666666666666
+      },
+      "seeded-mutation": {
+        "cases": 4,
+        "expected": 4,
+        "detected": 4,
+        "recall": 1.0
+      }
+    },
+    "positive_control_expected": 7,
+    "positive_control_detected": 6,
+    "positive_control_recall": 0.8571428571428571,
+    "false_positive_per_pr": 0.0625,
+    "pr_with_false_positive_fraction": 0.0625,
+    "useful_prs": 14,
+    "useful_real_prs": 10,
+    "usefulness_fraction": 0.875
+  },
+  "verified_only": {
+    "eligible_prs": 11,
+    "raw_counts": {
+      "true-positive": 6,
+      "false-positive": 1,
+      "pre-existing-shown": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0,
+      "pre-existing-hidden": 25
+    },
+    "occurrence_counts": {
+      "true-positive": 13,
+      "false-positive": 1,
+      "pre-existing-shown": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0,
+      "pre-existing-hidden": 37
+    },
+    "cause_counts": {
+      "true-positive": 5,
+      "false-positive": 1,
+      "pre-existing-shown": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0,
+      "pre-existing-hidden": 9
+    },
+    "unique_cause_counts": {
+      "true-positive": 5,
+      "false-positive": 1,
+      "pre-existing-shown": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0,
+      "pre-existing-hidden": 5
+    },
+    "precision": 0.8333333333333334,
+    "positive_control_cases": 5,
+    "positive_control_by_kind": {
+      "real-pr": {
+        "cases": 2,
+        "expected": 2,
+        "detected": 2,
+        "recall": 1.0
+      },
+      "seeded-mutation": {
+        "cases": 3,
+        "expected": 3,
+        "detected": 3,
+        "recall": 1.0
+      }
+    },
+    "positive_control_expected": 5,
+    "positive_control_detected": 5,
+    "positive_control_recall": 1.0,
+    "false_positive_per_pr": 0.09090909090909091,
+    "pr_with_false_positive_fraction": 0.09090909090909091,
+    "useful_prs": 10,
+    "useful_real_prs": 7,
+    "usefulness_fraction": 0.9090909090909091
+  },
+  "dependency_states": {
+    "mixed": 4,
+    "trusted": 5,
+    "unavailable": 1,
+    "verified": 16
+  },
+  "by_repository": {
+    "TanStack/query": {
+      "eligible_prs": 0,
+      "raw_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "occurrence_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "cause_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "unique_cause_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "precision": null,
+      "positive_control_cases": 0,
+      "positive_control_by_kind": {
+        "real-pr": {
+          "cases": 0,
+          "expected": 0,
+          "detected": 0,
+          "recall": null
+        },
+        "seeded-mutation": {
+          "cases": 0,
+          "expected": 0,
+          "detected": 0,
+          "recall": null
+        }
+      },
+      "positive_control_expected": 0,
+      "positive_control_detected": 0,
+      "positive_control_recall": null,
+      "false_positive_per_pr": null,
+      "pr_with_false_positive_fraction": null,
+      "useful_prs": 0,
+      "useful_real_prs": 0,
+      "usefulness_fraction": null
+    },
+    "colinhacks/zod": {
+      "eligible_prs": 0,
+      "raw_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "occurrence_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "cause_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "unique_cause_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "precision": null,
+      "positive_control_cases": 0,
+      "positive_control_by_kind": {
+        "real-pr": {
+          "cases": 0,
+          "expected": 0,
+          "detected": 0,
+          "recall": null
+        },
+        "seeded-mutation": {
+          "cases": 0,
+          "expected": 0,
+          "detected": 0,
+          "recall": null
+        }
+      },
+      "positive_control_expected": 0,
+      "positive_control_detected": 0,
+      "positive_control_recall": null,
+      "false_positive_per_pr": null,
+      "pr_with_false_positive_fraction": null,
+      "useful_prs": 0,
+      "useful_real_prs": 0,
+      "usefulness_fraction": null
+    },
+    "honojs/hono": {
+      "eligible_prs": 2,
+      "raw_counts": {
+        "true-positive": 1,
+        "false-positive": 1,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "occurrence_counts": {
+        "true-positive": 1,
+        "false-positive": 1,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "cause_counts": {
+        "true-positive": 1,
+        "false-positive": 1,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "unique_cause_counts": {
+        "true-positive": 1,
+        "false-positive": 1,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "precision": 0.5,
+      "positive_control_cases": 1,
+      "positive_control_by_kind": {
+        "real-pr": {
+          "cases": 0,
+          "expected": 0,
+          "detected": 0,
+          "recall": null
+        },
+        "seeded-mutation": {
+          "cases": 1,
+          "expected": 1,
+          "detected": 1,
+          "recall": 1.0
+        }
+      },
+      "positive_control_expected": 1,
+      "positive_control_detected": 1,
+      "positive_control_recall": 1.0,
+      "false_positive_per_pr": 0.5,
+      "pr_with_false_positive_fraction": 0.5,
+      "useful_prs": 1,
+      "useful_real_prs": 0,
+      "usefulness_fraction": 0.5
+    },
+    "hynek/structlog": {
+      "eligible_prs": 3,
+      "raw_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "occurrence_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "cause_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "unique_cause_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "precision": 1.0,
+      "positive_control_cases": 1,
+      "positive_control_by_kind": {
+        "real-pr": {
+          "cases": 0,
+          "expected": 0,
+          "detected": 0,
+          "recall": null
+        },
+        "seeded-mutation": {
+          "cases": 1,
+          "expected": 1,
+          "detected": 1,
+          "recall": 1.0
+        }
+      },
+      "positive_control_expected": 1,
+      "positive_control_detected": 1,
+      "positive_control_recall": 1.0,
+      "false_positive_per_pr": 0.0,
+      "pr_with_false_positive_fraction": 0.0,
+      "useful_prs": 3,
+      "useful_real_prs": 2,
+      "usefulness_fraction": 1.0
+    },
+    "litestar-org/litestar": {
+      "eligible_prs": 2,
+      "raw_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "occurrence_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "cause_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "unique_cause_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "precision": 1.0,
+      "positive_control_cases": 1,
+      "positive_control_by_kind": {
+        "real-pr": {
+          "cases": 0,
+          "expected": 0,
+          "detected": 0,
+          "recall": null
+        },
+        "seeded-mutation": {
+          "cases": 1,
+          "expected": 1,
+          "detected": 1,
+          "recall": 1.0
+        }
+      },
+      "positive_control_expected": 1,
+      "positive_control_detected": 1,
+      "positive_control_recall": 1.0,
+      "false_positive_per_pr": 0.0,
+      "pr_with_false_positive_fraction": 0.0,
+      "useful_prs": 2,
+      "useful_real_prs": 1,
+      "usefulness_fraction": 1.0
+    },
+    "mitmproxy/mitmproxy": {
+      "eligible_prs": 2,
+      "raw_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 1
+      },
+      "occurrence_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 1
+      },
+      "cause_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 1
+      },
+      "unique_cause_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 1
+      },
+      "precision": 1.0,
+      "positive_control_cases": 1,
+      "positive_control_by_kind": {
+        "real-pr": {
+          "cases": 0,
+          "expected": 0,
+          "detected": 0,
+          "recall": null
+        },
+        "seeded-mutation": {
+          "cases": 1,
+          "expected": 1,
+          "detected": 1,
+          "recall": 1.0
+        }
+      },
+      "positive_control_expected": 1,
+      "positive_control_detected": 1,
+      "positive_control_recall": 1.0,
+      "false_positive_per_pr": 0.0,
+      "pr_with_false_positive_fraction": 0.0,
+      "useful_prs": 2,
+      "useful_real_prs": 1,
+      "usefulness_fraction": 1.0
+    },
+    "pydantic/pydantic": {
+      "eligible_prs": 2,
+      "raw_counts": {
+        "true-positive": 2,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 22
+      },
+      "occurrence_counts": {
+        "true-positive": 9,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 24
+      },
+      "cause_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 6
+      },
+      "unique_cause_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 3
+      },
+      "precision": 1.0,
+      "positive_control_cases": 1,
+      "positive_control_by_kind": {
+        "real-pr": {
+          "cases": 1,
+          "expected": 1,
+          "detected": 1,
+          "recall": 1.0
+        },
+        "seeded-mutation": {
+          "cases": 0,
+          "expected": 0,
+          "detected": 0,
+          "recall": null
+        }
+      },
+      "positive_control_expected": 1,
+      "positive_control_detected": 1,
+      "positive_control_recall": 1.0,
+      "false_positive_per_pr": 0.0,
+      "pr_with_false_positive_fraction": 0.0,
+      "useful_prs": 2,
+      "useful_real_prs": 2,
+      "usefulness_fraction": 1.0
+    },
+    "pydantic/pydantic-ai": {
+      "eligible_prs": 0,
+      "raw_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "occurrence_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "cause_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "unique_cause_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "precision": null,
+      "positive_control_cases": 0,
+      "positive_control_by_kind": {
+        "real-pr": {
+          "cases": 0,
+          "expected": 0,
+          "detected": 0,
+          "recall": null
+        },
+        "seeded-mutation": {
+          "cases": 0,
+          "expected": 0,
+          "detected": 0,
+          "recall": null
+        }
+      },
+      "positive_control_expected": 0,
+      "positive_control_detected": 0,
+      "positive_control_recall": null,
+      "false_positive_per_pr": null,
+      "pr_with_false_positive_fraction": null,
+      "useful_prs": 0,
+      "useful_real_prs": 0,
+      "usefulness_fraction": null
+    },
+    "pydantic/pydantic-settings": {
+      "eligible_prs": 3,
+      "raw_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 2
+      },
+      "occurrence_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 12
+      },
+      "cause_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 2
+      },
+      "unique_cause_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 1
+      },
+      "precision": 1.0,
+      "positive_control_cases": 1,
+      "positive_control_by_kind": {
+        "real-pr": {
+          "cases": 1,
+          "expected": 1,
+          "detected": 1,
+          "recall": 1.0
+        },
+        "seeded-mutation": {
+          "cases": 0,
+          "expected": 0,
+          "detected": 0,
+          "recall": null
+        }
+      },
+      "positive_control_expected": 1,
+      "positive_control_detected": 1,
+      "positive_control_recall": 1.0,
+      "false_positive_per_pr": 0.0,
+      "pr_with_false_positive_fraction": 0.0,
+      "useful_prs": 3,
+      "useful_real_prs": 3,
+      "usefulness_fraction": 1.0
+    },
+    "sindresorhus/ky": {
+      "eligible_prs": 2,
+      "raw_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "occurrence_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "cause_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "unique_cause_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "precision": null,
+      "positive_control_cases": 1,
+      "positive_control_by_kind": {
+        "real-pr": {
+          "cases": 1,
+          "expected": 1,
+          "detected": 0,
+          "recall": 0.0
+        },
+        "seeded-mutation": {
+          "cases": 0,
+          "expected": 0,
+          "detected": 0,
+          "recall": null
+        }
+      },
+      "positive_control_expected": 1,
+      "positive_control_detected": 0,
+      "positive_control_recall": 0.0,
+      "false_positive_per_pr": 0.0,
+      "pr_with_false_positive_fraction": 0.0,
+      "useful_prs": 1,
+      "useful_real_prs": 1,
+      "usefulness_fraction": 0.5
+    },
+    "trpc/trpc": {
+      "eligible_prs": 0,
+      "raw_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "occurrence_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "cause_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "unique_cause_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "precision": null,
+      "positive_control_cases": 0,
+      "positive_control_by_kind": {
+        "real-pr": {
+          "cases": 0,
+          "expected": 0,
+          "detected": 0,
+          "recall": null
+        },
+        "seeded-mutation": {
+          "cases": 0,
+          "expected": 0,
+          "detected": 0,
+          "recall": null
+        }
+      },
+      "positive_control_expected": 0,
+      "positive_control_detected": 0,
+      "positive_control_recall": null,
+      "false_positive_per_pr": null,
+      "pr_with_false_positive_fraction": null,
+      "useful_prs": 0,
+      "useful_real_prs": 0,
+      "usefulness_fraction": null
+    },
+    "vuejs/core": {
+      "eligible_prs": 0,
+      "raw_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "occurrence_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "cause_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "unique_cause_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "precision": null,
+      "positive_control_cases": 0,
+      "positive_control_by_kind": {
+        "real-pr": {
+          "cases": 0,
+          "expected": 0,
+          "detected": 0,
+          "recall": null
+        },
+        "seeded-mutation": {
+          "cases": 0,
+          "expected": 0,
+          "detected": 0,
+          "recall": null
+        }
+      },
+      "positive_control_expected": 0,
+      "positive_control_detected": 0,
+      "positive_control_recall": null,
+      "false_positive_per_pr": null,
+      "pr_with_false_positive_fraction": null,
+      "useful_prs": 0,
+      "useful_real_prs": 0,
+      "usefulness_fraction": null
+    }
+  },
+  "by_language": {
+    "python": {
+      "eligible_prs": 12,
+      "raw_counts": {
+        "true-positive": 6,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 25
+      },
+      "occurrence_counts": {
+        "true-positive": 13,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 37
+      },
+      "cause_counts": {
+        "true-positive": 5,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 9
+      },
+      "unique_cause_counts": {
+        "true-positive": 5,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 5
+      },
+      "precision": 1.0,
+      "positive_control_cases": 5,
+      "positive_control_by_kind": {
+        "real-pr": {
+          "cases": 2,
+          "expected": 2,
+          "detected": 2,
+          "recall": 1.0
+        },
+        "seeded-mutation": {
+          "cases": 3,
+          "expected": 3,
+          "detected": 3,
+          "recall": 1.0
+        }
+      },
+      "positive_control_expected": 5,
+      "positive_control_detected": 5,
+      "positive_control_recall": 1.0,
+      "false_positive_per_pr": 0.0,
+      "pr_with_false_positive_fraction": 0.0,
+      "useful_prs": 12,
+      "useful_real_prs": 9,
+      "usefulness_fraction": 1.0
+    },
+    "typescript": {
+      "eligible_prs": 4,
+      "raw_counts": {
+        "true-positive": 1,
+        "false-positive": 1,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "occurrence_counts": {
+        "true-positive": 1,
+        "false-positive": 1,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "cause_counts": {
+        "true-positive": 1,
+        "false-positive": 1,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "unique_cause_counts": {
+        "true-positive": 1,
+        "false-positive": 1,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "precision": 0.5,
+      "positive_control_cases": 2,
+      "positive_control_by_kind": {
+        "real-pr": {
+          "cases": 1,
+          "expected": 1,
+          "detected": 0,
+          "recall": 0.0
+        },
+        "seeded-mutation": {
+          "cases": 1,
+          "expected": 1,
+          "detected": 1,
+          "recall": 1.0
+        }
+      },
+      "positive_control_expected": 2,
+      "positive_control_detected": 1,
+      "positive_control_recall": 0.5,
+      "false_positive_per_pr": 0.25,
+      "pr_with_false_positive_fraction": 0.25,
+      "useful_prs": 2,
+      "useful_real_prs": 1,
+      "usefulness_fraction": 0.5
+    }
+  },
+  "environment_failures": [
+    {
+      "repository": "pydantic/pydantic-ai",
+      "pr": "https://github.com/pydantic/pydantic-ai/pull/12540",
+      "case_id": "12540",
+      "record_path": "eval/runs/pydantic-ai-12540-attempt3/record-v2.json",
+      "reasons": [
+        "lint . head: skipped dependency_mismatch uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "lint .: head=skipped, dependency_state=unavailable, base=unavailable",
+        "lint pydantic_ai_slim head: skipped dependency_mismatch uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "lint pydantic_ai_slim: head=skipped, dependency_state=unavailable, base=unavailable",
+        "lint pydantic_evals head: skipped dependency_mismatch uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "lint pydantic_evals: head=skipped, dependency_state=unavailable, base=unavailable",
+        "lint pydantic_graph: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck . head: skipped dependency_mismatch uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "typecheck .: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck examples head: skipped dependency_mismatch uv.lock: missing ag-ui-protocol at ag-ui-protocol; reinstall dependencies",
+        "typecheck examples: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck pydantic_ai_slim head: skipped dependency_mismatch uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "typecheck pydantic_ai_slim: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck pydantic_evals head: skipped dependency_mismatch uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "typecheck pydantic_evals: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck pydantic_graph: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck src/pydantic_ai_harness head: skipped dependency_mismatch uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "typecheck src/pydantic_ai_harness: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck src/pydantic_clai2 head: skipped dependency_mismatch uv.lock: missing fastapi at fastapi; reinstall dependencies",
+        "typecheck src/pydantic_clai2: head=skipped, dependency_state=unavailable, base=unavailable"
+      ]
+    },
+    {
+      "repository": "pydantic/pydantic-ai",
+      "pr": "https://github.com/pydantic/pydantic-ai/pull/8641",
+      "case_id": "8641-seeded-unused-import",
+      "record_path": "eval/runs/pydantic-ai-8641-seeded-attempt1/record-v2.json",
+      "reasons": [
+        "lint pydantic_ai_slim head: skipped dependency_mismatch uv.lock: burner-redis: expected burner-redis@0.1.6, installed burner-redis@0.1.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "lint pydantic_ai_slim: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck examples head: skipped dependency_mismatch uv.lock: missing ag-ui-protocol at ag-ui-protocol; reinstall dependencies",
+        "typecheck examples: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck pydantic_ai_slim head: skipped dependency_mismatch uv.lock: burner-redis: expected burner-redis@0.1.6, installed burner-redis@0.1.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "typecheck pydantic_ai_slim: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck pydantic_evals head: skipped dependency_mismatch uv.lock: burner-redis: expected burner-redis@0.1.6, installed burner-redis@0.1.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "typecheck pydantic_evals: head=skipped, dependency_state=unavailable, base=unavailable"
+      ]
+    },
+    {
+      "repository": "TanStack/query",
+      "pr": "https://github.com/TanStack/query/pull/11293",
+      "case_id": "11293",
+      "record_path": "eval/runs/tanstack-query-11293/record-v2.json.gz",
+      "reasons": [
+        "coverage examples/angular/auto-refetching head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/angular/basic head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/angular/basic-persister head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/angular/devtools-panel head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/angular/infinite-query-with-max-pages head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/angular/optimistic-updates head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/angular/pagination head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/angular/query-options-from-a-service head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/angular/router head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/angular/rxjs head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/angular/simple head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/lit/basic head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/lit/pagination head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/lit/ssr head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/preact/simple head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/react/algolia head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/react/auto-refetching head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/react/basic head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/react/basic-graphql-request head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/react/batching head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/react/chat head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/react/default-query-function head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/react/devtools-panel head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/react/eslint-legacy head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/react/eslint-plugin-demo head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/react/infinite-query-with-max-pages head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/react/load-more-infinite-scroll head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/react/nextjs head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/react/nextjs-app-optimistic-updates head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/react/nextjs-app-prefetching head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/react/nextjs-suspense-streaming head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/react/offline head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/react/pagination head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/react/playground head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/react/prefetching head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/react/react-native head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/react/react-router head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/react/rick-morty head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/react/shadow-dom head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/react/simple head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/react/star-wars head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/react/suspense head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/solid/astro head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/solid/basic head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/solid/basic-graphql-request head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/solid/default-query-function head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/solid/offline head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/solid/simple head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/solid/solid-start-streaming head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/svelte/auto-refetching head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/svelte/basic head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/svelte/load-more-infinite-scroll head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/svelte/optimistic-updates head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/svelte/playground head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/svelte/simple head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/svelte/ssr head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/svelte/star-wars head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/vue/basic head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/vue/dependent-queries head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/vue/persister head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage examples/vue/simple head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage integrations/angular-cli-20 head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage integrations/lit-vite head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage integrations/react-next-14 head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage integrations/react-next-15 head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage integrations/react-next-16 head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage integrations/react-nodenext head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage integrations/react-vite head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage integrations/react-webpack-4 head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage integrations/react-webpack-5 head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage integrations/solid-vite head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage integrations/svelte-vite head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage integrations/vue-declaration-emit head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage integrations/vue-vite head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage packages/angular-query-experimental head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage packages/angular-query-persist-client head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage packages/lit-query head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage packages/preact-query head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage packages/preact-query-devtools head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage packages/preact-query-persist-client head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage packages/query-async-storage-persister head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage packages/query-broadcast-client-experimental head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage packages/query-core head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage packages/query-devtools head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage packages/query-persist-client-core head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage packages/query-sync-storage-persister head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage packages/react-query head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage packages/react-query-devtools head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage packages/react-query-next-experimental head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage packages/react-query-persist-client head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage packages/solid-query head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage packages/solid-query-devtools head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage packages/solid-query-persist-client head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage packages/svelte-query head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage packages/svelte-query-devtools head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage packages/svelte-query-persist-client head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage packages/vue-query head: skipped tool_missing Install vitest or jest in the project environment",
+        "coverage packages/vue-query-devtools head: skipped tool_missing Install vitest or jest in the project environment",
+        "lint packages/query-core: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck examples/angular/auto-refetching head: skipped dependency_mismatch pnpm-lock.yaml: missing @angular/build at @angular/build@20.3.22(@angular/compiler-cli@20.3.18(@angular/compiler@20.3.18)(typescript@5.8.3))(@angular/compiler@20.3.18)(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@20.3.18(@angular/animations@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@types/node@22.19.15)(chokidar@5.0.0)(jiti@2.7.0)(lightningcss@1.32.0)(postcss@8.5.8)(tailwindcss@4.2.2)(terser@5.46.1)(tslib@2.8.1)(tsx@4.21.0)(typescript@5.8.3)(vitest@4.1.2(@types/node@22.19.15)(jsdom@27.4.0)(msw@2.12.14(@types/node@22.19.15)(typescript@6.0.3))(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(yaml@2.9.0); reinstall dependencies",
+        "typecheck examples/angular/auto-refetching: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck examples/angular/basic head: skipped dependency_mismatch pnpm-lock.yaml: missing @angular/build at @angular/build@20.3.22(@angular/compiler-cli@20.3.18(@angular/compiler@20.3.18)(typescript@5.8.3))(@angular/compiler@20.3.18)(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@20.3.18(@angular/animations@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@types/node@22.19.15)(chokidar@5.0.0)(jiti@2.7.0)(lightningcss@1.32.0)(postcss@8.5.8)(tailwindcss@4.2.2)(terser@5.46.1)(tslib@2.8.1)(tsx@4.21.0)(typescript@5.8.3)(vitest@4.1.2(@types/node@22.19.15)(jsdom@27.4.0)(msw@2.12.14(@types/node@22.19.15)(typescript@6.0.3))(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(yaml@2.9.0); reinstall dependencies",
+        "typecheck examples/angular/basic-persister head: skipped dependency_mismatch pnpm-lock.yaml: missing @angular/build at @angular/build@20.3.22(@angular/compiler-cli@20.3.18(@angular/compiler@20.3.18)(typescript@5.8.3))(@angular/compiler@20.3.18)(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@20.3.18(@angular/animations@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@types/node@22.19.15)(chokidar@5.0.0)(jiti@2.7.0)(lightningcss@1.32.0)(postcss@8.5.8)(tailwindcss@4.2.2)(terser@5.46.1)(tslib@2.8.1)(tsx@4.21.0)(typescript@5.8.3)(vitest@4.1.2(@types/node@22.19.15)(jsdom@27.4.0)(msw@2.12.14(@types/node@22.19.15)(typescript@6.0.3))(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(yaml@2.9.0); reinstall dependencies",
+        "typecheck examples/angular/basic-persister: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck examples/angular/basic: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck examples/angular/devtools-panel head: skipped dependency_mismatch pnpm-lock.yaml: missing @angular/build at @angular/build@20.3.22(@angular/compiler-cli@20.3.18(@angular/compiler@20.3.18)(typescript@5.8.3))(@angular/compiler@20.3.18)(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@20.3.18(@angular/animations@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@types/node@22.19.15)(chokidar@5.0.0)(jiti@2.7.0)(lightningcss@1.32.0)(postcss@8.5.8)(tailwindcss@4.2.2)(terser@5.46.1)(tslib@2.8.1)(tsx@4.21.0)(typescript@5.8.3)(vitest@4.1.2(@types/node@22.19.15)(jsdom@27.4.0)(msw@2.12.14(@types/node@22.19.15)(typescript@6.0.3))(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(yaml@2.9.0); reinstall dependencies",
+        "typecheck examples/angular/devtools-panel: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck examples/angular/infinite-query-with-max-pages head: skipped dependency_mismatch pnpm-lock.yaml: missing @angular/build at @angular/build@20.3.22(@angular/compiler-cli@20.3.18(@angular/compiler@20.3.18)(typescript@5.8.3))(@angular/compiler@20.3.18)(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@20.3.18(@angular/animations@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@types/node@22.19.15)(chokidar@5.0.0)(jiti@2.7.0)(lightningcss@1.32.0)(postcss@8.5.8)(tailwindcss@4.2.2)(terser@5.46.1)(tslib@2.8.1)(tsx@4.21.0)(typescript@5.8.3)(vitest@4.1.2(@types/node@22.19.15)(jsdom@27.4.0)(msw@2.12.14(@types/node@22.19.15)(typescript@6.0.3))(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(yaml@2.9.0); reinstall dependencies",
+        "typecheck examples/angular/infinite-query-with-max-pages: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck examples/angular/optimistic-updates head: skipped dependency_mismatch pnpm-lock.yaml: missing @angular/build at @angular/build@20.3.22(@angular/compiler-cli@20.3.18(@angular/compiler@20.3.18)(typescript@5.8.3))(@angular/compiler@20.3.18)(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@20.3.18(@angular/animations@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@types/node@22.19.15)(chokidar@5.0.0)(jiti@2.7.0)(lightningcss@1.32.0)(postcss@8.5.8)(tailwindcss@4.2.2)(terser@5.46.1)(tslib@2.8.1)(tsx@4.21.0)(typescript@5.8.3)(vitest@4.1.2(@types/node@22.19.15)(jsdom@27.4.0)(msw@2.12.14(@types/node@22.19.15)(typescript@6.0.3))(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(yaml@2.9.0); reinstall dependencies",
+        "typecheck examples/angular/optimistic-updates: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck examples/angular/pagination head: skipped dependency_mismatch pnpm-lock.yaml: missing @angular/build at @angular/build@20.3.22(@angular/compiler-cli@20.3.18(@angular/compiler@20.3.18)(typescript@5.8.3))(@angular/compiler@20.3.18)(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@20.3.18(@angular/animations@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@types/node@22.19.15)(chokidar@5.0.0)(jiti@2.7.0)(lightningcss@1.32.0)(postcss@8.5.8)(tailwindcss@4.2.2)(terser@5.46.1)(tslib@2.8.1)(tsx@4.21.0)(typescript@5.8.3)(vitest@4.1.2(@types/node@22.19.15)(jsdom@27.4.0)(msw@2.12.14(@types/node@22.19.15)(typescript@6.0.3))(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(yaml@2.9.0); reinstall dependencies",
+        "typecheck examples/angular/pagination: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck examples/angular/query-options-from-a-service head: skipped dependency_mismatch pnpm-lock.yaml: missing @angular/build at @angular/build@20.3.22(@angular/compiler-cli@20.3.18(@angular/compiler@20.3.18)(typescript@5.8.3))(@angular/compiler@20.3.18)(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@20.3.18(@angular/animations@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@types/node@22.19.15)(chokidar@5.0.0)(jiti@2.7.0)(lightningcss@1.32.0)(postcss@8.5.8)(tailwindcss@4.2.2)(terser@5.46.1)(tslib@2.8.1)(tsx@4.21.0)(typescript@5.8.3)(vitest@4.1.2(@types/node@22.19.15)(jsdom@27.4.0)(msw@2.12.14(@types/node@22.19.15)(typescript@6.0.3))(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(yaml@2.9.0); reinstall dependencies",
+        "typecheck examples/angular/query-options-from-a-service: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck examples/angular/router head: skipped dependency_mismatch pnpm-lock.yaml: missing @angular/build at @angular/build@20.3.22(@angular/compiler-cli@20.3.18(@angular/compiler@20.3.18)(typescript@5.8.3))(@angular/compiler@20.3.18)(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@20.3.18(@angular/animations@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@types/node@22.19.15)(chokidar@5.0.0)(jiti@2.7.0)(lightningcss@1.32.0)(postcss@8.5.8)(tailwindcss@4.2.2)(terser@5.46.1)(tslib@2.8.1)(tsx@4.21.0)(typescript@5.8.3)(vitest@4.1.2(@types/node@22.19.15)(jsdom@27.4.0)(msw@2.12.14(@types/node@22.19.15)(typescript@6.0.3))(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(yaml@2.9.0); reinstall dependencies",
+        "typecheck examples/angular/router: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck examples/angular/rxjs head: skipped dependency_mismatch pnpm-lock.yaml: missing @angular/build at @angular/build@20.3.22(@angular/compiler-cli@20.3.18(@angular/compiler@20.3.18)(typescript@5.8.3))(@angular/compiler@20.3.18)(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@20.3.18(@angular/animations@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@types/node@22.19.15)(chokidar@5.0.0)(jiti@2.7.0)(lightningcss@1.32.0)(postcss@8.5.8)(tailwindcss@4.2.2)(terser@5.46.1)(tslib@2.8.1)(tsx@4.21.0)(typescript@5.8.3)(vitest@4.1.2(@types/node@22.19.15)(jsdom@27.4.0)(msw@2.12.14(@types/node@22.19.15)(typescript@6.0.3))(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(yaml@2.9.0); reinstall dependencies",
+        "typecheck examples/angular/rxjs: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck examples/angular/simple head: skipped dependency_mismatch pnpm-lock.yaml: missing @angular/build at @angular/build@20.3.22(@angular/compiler-cli@20.3.18(@angular/compiler@20.3.18)(typescript@5.8.3))(@angular/compiler@20.3.18)(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@20.3.18(@angular/animations@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@types/node@22.19.15)(chokidar@5.0.0)(jiti@2.7.0)(lightningcss@1.32.0)(postcss@8.5.8)(tailwindcss@4.2.2)(terser@5.46.1)(tslib@2.8.1)(tsx@4.21.0)(typescript@5.8.3)(vitest@4.1.2(@types/node@22.19.15)(jsdom@27.4.0)(msw@2.12.14(@types/node@22.19.15)(typescript@6.0.3))(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(yaml@2.9.0); reinstall dependencies",
+        "typecheck examples/angular/simple: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck examples/lit/basic: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/lit/pagination: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/lit/ssr: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/preact/simple: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/algolia: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/auto-refetching: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/basic-graphql-request: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/basic: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/batching: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/chat: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/default-query-function: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/devtools-panel: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/eslint-legacy: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/eslint-plugin-demo: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/infinite-query-with-max-pages: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/load-more-infinite-scroll: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/nextjs-app-optimistic-updates: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/nextjs-app-prefetching: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/nextjs-suspense-streaming: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/nextjs: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/offline: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/pagination: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/playground: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/prefetching: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/react-native head: skipped dependency_mismatch pnpm-lock.yaml: missing @react-navigation/elements at @react-navigation/elements@1.3.31(@react-navigation/native@6.1.18(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native-safe-area-context@4.14.1(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(@types/react@19.2.14)(react@19.2.4))(react@19.2.4); reinstall dependencies",
+        "typecheck examples/react/react-native: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck examples/react/react-router: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/rick-morty: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/shadow-dom: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/simple: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/star-wars: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/suspense: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/solid/astro head: skipped dependency_mismatch pnpm-lock.yaml: missing @astrojs/tailwind at @astrojs/tailwind@6.0.2(astro@5.18.1(@types/node@22.19.15)(@vercel/functions@2.2.13)(db0@0.3.4)(idb-keyval@6.2.2)(ioredis@5.10.1)(jiti@1.21.7)(lightningcss@1.32.0)(rollup@4.60.1)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(typescript@5.8.3)(yaml@2.9.0))(tailwindcss@3.4.19(tsx@4.21.0)(yaml@2.9.0)); reinstall dependencies",
+        "typecheck examples/solid/astro: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck examples/solid/basic-graphql-request: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/solid/basic: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/solid/default-query-function: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/solid/offline: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/solid/simple: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/solid/solid-start-streaming head: skipped dependency_mismatch pnpm-lock.yaml: missing @solidjs/start at @solidjs/start@1.3.2(@testing-library/jest-dom@6.9.1)(solid-js@1.9.12)(vinxi@0.5.11(@types/node@22.19.15)(@vercel/functions@2.2.13)(db0@0.3.4)(idb-keyval@6.2.2)(ioredis@5.10.1)(jiti@2.7.0)(lightningcss@1.32.0)(rolldown@1.2.4)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(webpack@5.105.4(esbuild@0.27.4))(yaml@2.9.0))(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)); reinstall dependencies",
+        "typecheck examples/solid/solid-start-streaming: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck examples/svelte/auto-refetching head: skipped dependency_mismatch pnpm-lock.yaml: missing @sveltejs/adapter-auto at @sveltejs/adapter-auto@6.1.1(@sveltejs/kit@2.57.1(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.55.1)(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(svelte@5.55.1)(typescript@5.8.3)(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))); reinstall dependencies",
+        "typecheck examples/svelte/auto-refetching: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck examples/svelte/basic head: skipped dependency_mismatch pnpm-lock.yaml: missing @sveltejs/adapter-auto at @sveltejs/adapter-auto@6.1.1(@sveltejs/kit@2.57.1(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.55.1)(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(svelte@5.55.1)(typescript@5.8.3)(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))); reinstall dependencies",
+        "typecheck examples/svelte/basic: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck examples/svelte/load-more-infinite-scroll head: skipped dependency_mismatch pnpm-lock.yaml: missing @sveltejs/adapter-auto at @sveltejs/adapter-auto@6.1.1(@sveltejs/kit@2.57.1(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.55.1)(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(svelte@5.55.1)(typescript@5.8.3)(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))); reinstall dependencies",
+        "typecheck examples/svelte/load-more-infinite-scroll: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck examples/svelte/optimistic-updates head: skipped dependency_mismatch pnpm-lock.yaml: missing @sveltejs/adapter-auto at @sveltejs/adapter-auto@6.1.1(@sveltejs/kit@2.57.1(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.55.1)(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(svelte@5.55.1)(typescript@5.8.3)(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))); reinstall dependencies",
+        "typecheck examples/svelte/optimistic-updates: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck examples/svelte/playground head: skipped dependency_mismatch pnpm-lock.yaml: missing @sveltejs/adapter-auto at @sveltejs/adapter-auto@6.1.1(@sveltejs/kit@2.57.1(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.55.1)(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(svelte@5.55.1)(typescript@5.8.3)(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))); reinstall dependencies",
+        "typecheck examples/svelte/playground: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck examples/svelte/simple head: skipped dependency_mismatch pnpm-lock.yaml: missing @sveltejs/vite-plugin-svelte-inspector at @sveltejs/vite-plugin-svelte-inspector@4.0.1(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.55.1)(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(svelte@5.55.1)(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)); reinstall dependencies",
+        "typecheck examples/svelte/simple: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck examples/svelte/ssr head: skipped dependency_mismatch pnpm-lock.yaml: missing @sveltejs/adapter-auto at @sveltejs/adapter-auto@6.1.1(@sveltejs/kit@2.57.1(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.55.1)(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(svelte@5.55.1)(typescript@5.8.3)(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))); reinstall dependencies",
+        "typecheck examples/svelte/ssr: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck examples/svelte/star-wars head: skipped dependency_mismatch pnpm-lock.yaml: missing @sveltejs/adapter-auto at @sveltejs/adapter-auto@6.1.1(@sveltejs/kit@2.57.1(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.55.1)(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(svelte@5.55.1)(typescript@5.8.3)(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))); reinstall dependencies",
+        "typecheck examples/svelte/star-wars: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck examples/vue/basic: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/vue/dependent-queries: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/vue/persister: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/vue/simple: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck integrations/angular-cli-20 head: skipped dependency_mismatch pnpm-lock.yaml: missing @angular/build at @angular/build@20.3.22(@angular/compiler-cli@20.3.18(@angular/compiler@20.3.18)(typescript@5.8.3))(@angular/compiler@20.3.18)(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@20.3.18(@angular/animations@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@types/node@22.19.15)(chokidar@5.0.0)(jiti@2.7.0)(lightningcss@1.32.0)(postcss@8.5.8)(tailwindcss@4.2.2)(terser@5.46.1)(tslib@2.8.1)(tsx@4.21.0)(typescript@5.8.3)(vitest@4.1.2(@types/node@22.19.15)(jsdom@27.4.0)(msw@2.12.14(@types/node@22.19.15)(typescript@6.0.3))(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(yaml@2.9.0); reinstall dependencies",
+        "typecheck integrations/angular-cli-20: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck integrations/lit-vite: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck integrations/react-next-14: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck integrations/react-next-15: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck integrations/react-next-16: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck integrations/react-nodenext: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck integrations/react-vite: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck integrations/react-webpack-4 head: failed unparseable_output unrecognized tsc output: error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.",
+        "typecheck integrations/react-webpack-4: head=failed, dependency_state=verified, base=unavailable",
+        "typecheck integrations/react-webpack-5 head: failed unparseable_output unrecognized tsc output: error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.",
+        "typecheck integrations/react-webpack-5: head=failed, dependency_state=verified, base=unavailable",
+        "typecheck integrations/solid-vite head: failed unparseable_output unrecognized tsc output: error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.",
+        "typecheck integrations/solid-vite: head=failed, dependency_state=verified, base=unavailable",
+        "typecheck integrations/svelte-vite head: skipped dependency_mismatch pnpm-lock.yaml: missing @sveltejs/vite-plugin-svelte-inspector at @sveltejs/vite-plugin-svelte-inspector@4.0.1(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.55.1)(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(svelte@5.55.1)(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)); reinstall dependencies",
+        "typecheck integrations/svelte-vite: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck integrations/vue-declaration-emit: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck integrations/vue-vite: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages/angular-query-experimental head: skipped dependency_mismatch pnpm-lock.yaml: missing @angular/platform-browser at @angular/platform-browser@20.3.18(@angular/animations@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)); reinstall dependencies",
+        "typecheck packages/angular-query-experimental: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck packages/angular-query-persist-client head: skipped dependency_mismatch pnpm-lock.yaml: missing @angular/platform-browser at @angular/platform-browser@20.3.18(@angular/animations@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)); reinstall dependencies",
+        "typecheck packages/angular-query-persist-client: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck packages/lit-query: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages/preact-query-devtools: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages/preact-query-persist-client: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages/preact-query: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages/query-async-storage-persister: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages/query-broadcast-client-experimental: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages/query-core: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages/query-devtools: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages/query-persist-client-core: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages/query-sync-storage-persister: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages/react-query-devtools: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages/react-query-next-experimental: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages/react-query-persist-client: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages/react-query: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages/solid-query-devtools: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages/solid-query-persist-client: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages/solid-query: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages/svelte-query head: skipped dependency_mismatch pnpm-lock.yaml: missing @sveltejs/vite-plugin-svelte-inspector at @sveltejs/vite-plugin-svelte-inspector@4.0.1(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.55.1)(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(svelte@5.55.1)(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)); reinstall dependencies",
+        "typecheck packages/svelte-query-devtools head: skipped dependency_mismatch pnpm-lock.yaml: missing @sveltejs/vite-plugin-svelte-inspector at @sveltejs/vite-plugin-svelte-inspector@4.0.1(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.55.1)(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(svelte@5.55.1)(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)); reinstall dependencies",
+        "typecheck packages/svelte-query-devtools: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck packages/svelte-query-persist-client head: skipped dependency_mismatch pnpm-lock.yaml: missing @sveltejs/vite-plugin-svelte-inspector at @sveltejs/vite-plugin-svelte-inspector@4.0.1(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.55.1)(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(svelte@5.55.1)(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)); reinstall dependencies",
+        "typecheck packages/svelte-query-persist-client: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck packages/svelte-query: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck packages/vue-query-devtools: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages/vue-query: head=passed, dependency_state=verified, base=unavailable"
+      ]
+    },
+    {
+      "repository": "TanStack/query",
+      "pr": "https://github.com/TanStack/query/pull/11392",
+      "case_id": "11392",
+      "record_path": "eval/runs/tanstack-query-11392-attempt3/record-v2.json",
+      "reasons": [
+        "coverage packages/query-broadcast-client-experimental head: skipped tool_missing Install vitest or jest in the project environment"
+      ]
+    },
+    {
+      "repository": "TanStack/query",
+      "pr": "https://github.com/TanStack/query/pull/11522",
+      "case_id": "11522-seeded-transaction-type-20261105",
+      "record_path": "eval/runs/tanstack-query-11522-seeded-attempt2/record-v2.json",
+      "reasons": [
+        "coverage packages/query-broadcast-client-experimental head: skipped tool_missing Install vitest or jest in the project environment"
+      ]
+    },
+    {
+      "repository": "trpc/trpc",
+      "pr": "https://github.com/trpc/trpc/pull/5819",
+      "case_id": "5819",
+      "record_path": "eval/runs/trpc-5819-attempt-02/record-v2.json.gz",
+      "reasons": [
+        "coverage examples/.experimental/next-app-dir head: failed tests_failed 3 tests failed; usable coverage from the incomplete run is retained",
+        "coverage examples/.test/diagnostics-big-router head: skipped no_tests The project's test runner found no tests",
+        "coverage examples/.test/internal-types-export head: skipped no_tests The project's test runner found no tests",
+        "coverage examples/.test/ssg head: failed tests_failed 1 tests failed; usable coverage from the incomplete run is retained",
+        "coverage examples/.test/ssg-infinite-serialization head: failed tests_failed 1 tests failed; usable coverage from the incomplete run is retained",
+        "coverage examples/bun head: skipped no_tests The project's test runner found no tests",
+        "coverage examples/cloudflare-workers head: skipped no_tests The project's test runner found no tests",
+        "coverage examples/express-minimal head: skipped no_tests The project's test runner found no tests",
+        "coverage examples/express-server head: skipped no_tests The project's test runner found no tests",
+        "coverage examples/fastify-server head: skipped no_tests The project's test runner found no tests",
+        "coverage examples/lambda-api-gateway head: skipped no_tests The project's test runner found no tests",
+        "coverage examples/minimal head: skipped no_tests The project's test runner found no tests",
+        "coverage examples/next-big-router head: skipped no_tests The project's test runner found no tests",
+        "coverage examples/next-edge-runtime head: skipped no_tests The project's test runner found no tests",
+        "coverage examples/next-formdata head: skipped no_tests The project's test runner found no tests",
+        "coverage examples/next-minimal-starter head: skipped no_tests The project's test runner found no tests",
+        "coverage examples/next-prisma-starter head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage examples/next-prisma-todomvc head: failed tests_failed 1 tests failed; usable coverage from the incomplete run is retained",
+        "coverage examples/next-prisma-websockets-starter head: failed tests_failed 1 tests failed; usable coverage from the incomplete run is retained",
+        "coverage examples/next-sse-chat head: skipped no_tests The project's test runner found no tests",
+        "coverage examples/soa head: skipped no_tests The project's test runner found no tests",
+        "coverage examples/standalone-server head: skipped no_tests The project's test runner found no tests",
+        "coverage examples/vercel-edge-runtime head: skipped no_tests The project's test runner found no tests",
+        "coverage packages/tests head: skipped dependency_mismatch pnpm-lock.yaml: /scale-codec@0.13.0: expected scale-codec@0.13.0, installed scale-codec@v0.13.0; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "coverage www head: skipped dependency_mismatch pnpm-lock.yaml: missing @docusaurus/core at /@docusaurus/core@2.4.1(@docusaurus/types@2.4.1)(@swc/core@1.3.3)(eslint@8.56.0)(react-dom@18.3.1)(react@18.3.1)(typescript@5.1.3); reinstall dependencies",
+        "lint examples/next-sse-chat: head=passed, dependency_state=verified, base=unavailable",
+        "lint packages/client: head=passed, dependency_state=verified, base=unavailable",
+        "lint packages/server: head=passed, dependency_state=verified, base=unavailable",
+        "lint packages/tests head: skipped dependency_mismatch pnpm-lock.yaml: /scale-codec@0.13.0: expected scale-codec@0.13.0, installed scale-codec@v0.13.0; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "lint packages/tests: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck examples/.experimental/next-app-dir: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/.test/diagnostics-big-router: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/.test/internal-types-export: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/.test/ssg-infinite-serialization: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/.test/ssg: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/bun: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/cloudflare-workers: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/express-minimal: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/express-server: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/fastify-server: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/lambda-api-gateway: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/minimal: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/next-big-router: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/next-edge-runtime: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/next-formdata: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/next-minimal-starter: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/next-prisma-starter: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/next-prisma-todomvc: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/next-prisma-websockets-starter: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/next-sse-chat: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/soa: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/standalone-server: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/vercel-edge-runtime: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages/client: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages/next: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages/react-query: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages/server: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages/tests head: skipped dependency_mismatch pnpm-lock.yaml: /scale-codec@0.13.0: expected scale-codec@0.13.0, installed scale-codec@v0.13.0; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "typecheck packages/tests: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck www head: skipped dependency_mismatch pnpm-lock.yaml: missing @docusaurus/core at /@docusaurus/core@2.4.1(@docusaurus/types@2.4.1)(@swc/core@1.3.3)(eslint@8.56.0)(react-dom@18.3.1)(react@18.3.1)(typescript@5.1.3); reinstall dependencies",
+        "typecheck www: head=skipped, dependency_state=unavailable, base=unavailable"
+      ]
+    },
+    {
+      "repository": "vuejs/core",
+      "pr": "https://github.com/vuejs/core/pull/12701",
+      "case_id": "12701",
+      "record_path": "eval/runs/vue-core-12701-attempt-02/record-v2.json.gz",
+      "reasons": [
+        "coverage packages-private/dts-built-test head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages-private/dts-test head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages-private/sfc-playground head: skipped dependency_mismatch pnpm-lock.yaml: missing @vitejs/plugin-vue at @vitejs/plugin-vue@5.2.4(vite@5.4.15(@types/node@22.14.1)(sass@1.87.0))(vue@packages+vue); reinstall dependencies",
+        "coverage packages-private/vite-debug head: skipped dependency_mismatch pnpm-lock.yaml: missing @vitejs/plugin-vue at @vitejs/plugin-vue@5.2.4(vite@5.4.15(@types/node@22.14.1)(sass@1.87.0))(vue@packages+vue); reinstall dependencies",
+        "coverage packages/compiler-sfc head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/server-renderer head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/vue head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/vue-compat head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "lint packages/compiler-sfc: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages-private/dts-built-test: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages-private/dts-test: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages-private/sfc-playground head: skipped dependency_mismatch pnpm-lock.yaml: missing @vitejs/plugin-vue at @vitejs/plugin-vue@5.2.4(vite@5.4.15(@types/node@22.14.1)(sass@1.87.0))(vue@packages+vue); reinstall dependencies",
+        "typecheck packages-private/sfc-playground: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck packages-private/vite-debug head: skipped dependency_mismatch pnpm-lock.yaml: missing @vitejs/plugin-vue at @vitejs/plugin-vue@5.2.4(vite@5.4.15(@types/node@22.14.1)(sass@1.87.0))(vue@packages+vue); reinstall dependencies",
+        "typecheck packages-private/vite-debug: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck packages/compiler-sfc: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages/server-renderer head: failed unparseable_output unrecognized tsc output: error TS6504: File '/dev/shm/vue-core-runner/rio-eval-flonz1ma/cache/b57e1cb3323cf4e6/runs/01M6MSKX7SC27M26516W76V6HF/tools/tool.tmp-CQbps6/packages/server-renderer/index.js' is a JavaScript file. Did you mean to enable the 'allowJs' option?",
+        "typecheck packages/server-renderer: head=failed, dependency_state=verified, base=unavailable",
+        "typecheck packages/vue head: failed unparseable_output unrecognized tsc output: error TS6504: File '/dev/shm/vue-core-runner/rio-eval-flonz1ma/cache/b57e1cb3323cf4e6/runs/01M6MSKX7SC27M26516W76V6HF/tools/tool.tmp-FsuiJp/packages/vue/compiler-sfc/index.browser.js' is a JavaScript file. Did you mean to enable the 'allowJs' option?",
+        "typecheck packages/vue-compat head: failed unparseable_output unrecognized tsc output: error TS6504: File '/dev/shm/vue-core-runner/rio-eval-flonz1ma/cache/b57e1cb3323cf4e6/runs/01M6MSKX7SC27M26516W76V6HF/tools/tool.tmp-B9Q8Xp/packages/vue-compat/index.js' is a JavaScript file. Did you mean to enable the 'allowJs' option?",
+        "typecheck packages/vue-compat: head=failed, dependency_state=verified, base=unavailable",
+        "typecheck packages/vue: head=failed, dependency_state=verified, base=unavailable"
+      ]
+    },
+    {
+      "repository": "vuejs/core",
+      "pr": "https://github.com/vuejs/core/pull/15328",
+      "case_id": "15328",
+      "record_path": "eval/runs/vue-core-15328-attempt-02/record-v2.json",
+      "reasons": [
+        "coverage packages-private/dts-built-test head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages-private/dts-test head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages-private/sfc-playground head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages-private/vite-debug head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/compiler-core head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/compiler-dom head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/compiler-sfc head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/compiler-ssr head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/reactivity head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/runtime-core head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/runtime-dom head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/runtime-test head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/server-renderer head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/shared head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/vue head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/vue-compat head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "lint packages/runtime-dom: head=passed, dependency_state=verified, base=unavailable",
+        "lint packages/shared: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages-private/dts-built-test: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages-private/dts-test head: failed unparseable_output unrecognized tsc output: error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.",
+        "typecheck packages-private/dts-test: head=failed, dependency_state=verified, base=unavailable",
+        "typecheck packages-private/sfc-playground head: failed unparseable_output unrecognized tsc output: error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.",
+        "typecheck packages-private/sfc-playground: head=failed, dependency_state=verified, base=unavailable",
+        "typecheck packages-private/vite-debug: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages/compiler-core head: failed unparseable_output unrecognized tsc output: error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.",
+        "typecheck packages/compiler-core: head=failed, dependency_state=verified, base=unavailable",
+        "typecheck packages/compiler-dom head: failed unparseable_output unrecognized tsc output: error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.",
+        "typecheck packages/compiler-dom: head=failed, dependency_state=verified, base=unavailable",
+        "typecheck packages/compiler-sfc head: failed unparseable_output unrecognized tsc output: error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.",
+        "typecheck packages/compiler-sfc: head=failed, dependency_state=verified, base=unavailable",
+        "typecheck packages/compiler-ssr head: failed unparseable_output unrecognized tsc output: error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.",
+        "typecheck packages/compiler-ssr: head=failed, dependency_state=verified, base=unavailable",
+        "typecheck packages/reactivity head: failed unparseable_output unrecognized tsc output: error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.",
+        "typecheck packages/reactivity: head=failed, dependency_state=verified, base=unavailable",
+        "typecheck packages/runtime-core head: failed unparseable_output unrecognized tsc output: error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.",
+        "typecheck packages/runtime-core: head=failed, dependency_state=verified, base=unavailable",
+        "typecheck packages/runtime-dom head: failed unparseable_output unrecognized tsc output: error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.",
+        "typecheck packages/runtime-dom: head=failed, dependency_state=verified, base=unavailable",
+        "typecheck packages/runtime-test head: failed unparseable_output unrecognized tsc output: error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.",
+        "typecheck packages/runtime-test: head=failed, dependency_state=verified, base=unavailable",
+        "typecheck packages/server-renderer head: failed unparseable_output unrecognized tsc output: error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.",
+        "typecheck packages/server-renderer: head=failed, dependency_state=verified, base=unavailable",
+        "typecheck packages/shared head: failed unparseable_output unrecognized tsc output: error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.",
+        "typecheck packages/shared: head=failed, dependency_state=verified, base=unavailable",
+        "typecheck packages/vue head: failed unparseable_output unrecognized tsc output: error TS6504: File '/dev/shm/vue-core-runner/rio-eval-thrqlfkp/cache/91aac16a4bdab747/runs/01M6MSKXBW1WP1P75Q0F4SGT33/tools/tool.tmp-PuqnBc/packages/vue/compiler-sfc/index.browser.js' is a JavaScript file. Did you mean to enable the 'allowJs' option?",
+        "typecheck packages/vue-compat head: failed unparseable_output unrecognized tsc output: error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.",
+        "typecheck packages/vue-compat: head=failed, dependency_state=verified, base=unavailable",
+        "typecheck packages/vue: head=failed, dependency_state=verified, base=unavailable"
+      ]
+    },
+    {
+      "repository": "colinhacks/zod",
+      "pr": "https://github.com/colinhacks/zod/pull/6085",
+      "case_id": "6085",
+      "record_path": "eval/runs/zod-6085-retry1/record-v2.json",
+      "reasons": [
+        "coverage . head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/bench head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/integration head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/resolution head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/treeshake head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/tsc head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/zod head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "typecheck .: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages/bench head: failed unparseable_output unrecognized tsc output: Found 'package.json' at '/dev/shm/rio-eval-tbwag872/cache/053b354deab1a6e4/runs/01M6MT1Q5EAH4J7X1MKR7BH62H/tools/tool.tmp-ZkzS2D/packages/bench/package.json'.",
+        "typecheck packages/bench: head=failed, dependency_state=verified, base=unavailable",
+        "typecheck packages/integration: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages/resolution: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages/treeshake head: failed unparseable_output unrecognized tsc output: error TS6504: File '/dev/shm/rio-eval-tbwag872/cache/053b354deab1a6e4/runs/01M6MT1Q5EAH4J7X1MKR7BH62H/tools/tool.tmp-uTmyrV/packages/treeshake/rollup.config.js' is a JavaScript file. Did you mean to enable the 'allowJs' option?",
+        "typecheck packages/treeshake: head=failed, dependency_state=verified, base=unavailable",
+        "typecheck packages/tsc: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages/zod: head=findings, dependency_state=verified, base=unavailable"
+      ]
+    },
+    {
+      "repository": "colinhacks/zod",
+      "pr": "https://github.com/colinhacks/zod/pull/6527",
+      "case_id": "6527",
+      "record_path": "eval/runs/zod-6527-retry1/record-v2.json",
+      "reasons": [
+        "coverage . head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/bench head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/integration head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/mini head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/resolution head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/treeshake head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/tsc head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/zod head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "typecheck .: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages/bench head: failed unparseable_output unrecognized tsc output: Found 'package.json' at '/dev/shm/rio-eval-etjh1urj/cache/30311a6b88e34df5/runs/01M6MT63ZFXFQ2T2SMNN4W18WK/tools/tool.tmp-3GDXAP/packages/bench/package.json'.",
+        "typecheck packages/bench: head=failed, dependency_state=verified, base=unavailable",
+        "typecheck packages/integration: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages/mini: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages/resolution: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages/treeshake head: failed unparseable_output unrecognized tsc output: error TS6504: File '/dev/shm/rio-eval-etjh1urj/cache/30311a6b88e34df5/runs/01M6MT63ZFXFQ2T2SMNN4W18WK/tools/tool.tmp-WtIVi5/packages/treeshake/rollup.config.js' is a JavaScript file. Did you mean to enable the 'allowJs' option?",
+        "typecheck packages/treeshake: head=failed, dependency_state=verified, base=unavailable",
+        "typecheck packages/tsc: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages/zod: head=findings, dependency_state=verified, base=unavailable"
+      ]
+    }
+  ],
+  "agent_layer_backlog": [],
+  "deterministic_misses": 6,
+  "sample": {
+    "eligible_real_prs": 12,
+    "repositories": 7,
+    "languages": [
+      "python",
+      "typescript"
+    ],
+    "positive_control_repositories": 7,
+    "positive_controls_by_language": {
+      "typescript": 2,
+      "python": 5
+    },
+    "clean_negative_controls": 9,
+    "real_positive_controls": 3,
+    "seeded_positive_controls": 4,
+    "counted_positive_controls": 6,
+    "adequate": false,
+    "requirements_missing": [
+      "Need at least 10 eligible positive controls after the seeded cap",
+      "Seeded controls must be at most 50% of positive-control cases",
+      "Need at least 5 controls per language"
+    ]
+  },
+  "decision": "insufficient-evidence",
+  "decision_reasons": [
+    "Need at least 10 eligible positive controls after the seeded cap",
+    "Seeded controls must be at most 50% of positive-control cases",
+    "Need at least 5 controls per language"
+  ]
+}

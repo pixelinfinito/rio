@@ -1,0 +1,34 @@
+{
+  "base": [
+    [
+      "corepack",
+      "pnpm",
+      "--filter",
+      "@tooling/release",
+      "--filter",
+      "@tooling/oxlint-plugin",
+      "install",
+      "--frozen-lockfile",
+      "--ignore-scripts",
+      "--store-dir",
+      "/dev/shm/trpc-eval/pnpm-store",
+      "--trust-lockfile"
+    ]
+  ],
+  "head": [
+    [
+      "corepack",
+      "pnpm",
+      "--filter",
+      "@tooling/release",
+      "--filter",
+      "@tooling/oxlint-plugin",
+      "install",
+      "--frozen-lockfile",
+      "--ignore-scripts",
+      "--store-dir",
+      "/dev/shm/trpc-eval/pnpm-store",
+      "--trust-lockfile"
+    ]
+  ]
+}

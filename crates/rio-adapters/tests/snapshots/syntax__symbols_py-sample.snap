@@ -1,0 +1,15 @@
+---
+source: crates/rio-adapters/tests/syntax.rs
+expression: table.symbols
+---
+[
+  {
+    "name": "format_value",
+    "symbol_path": "math.format_value",
+    "kind": "function",
+    "line_start": 1,
+    "line_end": 2,
+    "byte_start": 0,
+    "byte_end": 62
+  }
+]

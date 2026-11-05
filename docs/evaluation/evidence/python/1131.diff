@@ -1,0 +1,96 @@
+diff --git a/pydantic_settings/main.py b/pydantic_settings/main.py
+index 4e2a3c6c..ce610d78 100644
+--- a/pydantic_settings/main.py
++++ b/pydantic_settings/main.py
+@@ -13,7 +13,7 @@
+ 
+ from pydantic import AliasChoices, AliasPath, ConfigDict
+ from pydantic._internal._config import config_keys
+-from pydantic._internal._utils import deep_update, is_model_class
++from pydantic._internal._utils import is_model_class
+ from pydantic.dataclasses import is_pydantic_dataclass
+ from pydantic.fields import FieldInfo
+ from pydantic.main import BaseModel
+@@ -51,7 +51,7 @@
+     _validate_by_name_enabled,
+     _warn_if_field_info_incomplete,
+ )
+-from .utils import _debug_logging_enabled, logger
++from .utils import _debug_logging_enabled, deep_update, logger
+ 
+ T = TypeVar('T')
+ 
+diff --git a/pydantic_settings/sources/base.py b/pydantic_settings/sources/base.py
+index afec5cec..a91fc44d 100644
+--- a/pydantic_settings/sources/base.py
++++ b/pydantic_settings/sources/base.py
+@@ -14,11 +14,12 @@
+ from pydantic._internal._typing_extra import (  # type: ignore[attr-defined]
+     get_origin,
+ )
+-from pydantic._internal._utils import deep_update, is_model_class
++from pydantic._internal._utils import is_model_class
+ from pydantic.fields import FieldInfo
+ from typing_inspection.introspection import is_union_origin
+ 
+ from ..exceptions import SettingsError
++from ..utils import deep_update
+ from .types import (
+     ConfigFileSourceType,
+     EnvNoneType,
+diff --git a/pydantic_settings/sources/providers/env.py b/pydantic_settings/sources/providers/env.py
+index 20e529eb..8fabaa45 100644
+--- a/pydantic_settings/sources/providers/env.py
++++ b/pydantic_settings/sources/providers/env.py
+@@ -12,11 +12,10 @@
+ )
+ 
+ from pydantic import AliasChoices, AliasPath, Json, TypeAdapter, ValidationError
+-from pydantic._internal._utils import deep_update
+ from pydantic.fields import FieldInfo
+ from typing_inspection.introspection import is_union_origin
+ 
+-from ...utils import _lenient_issubclass
++from ...utils import _lenient_issubclass, deep_update
+ from ..base import PydanticBaseEnvSettingsSource
+ from ..types import EnvNoneType, EnvPrefixTarget
+ from ..utils import (
+diff --git a/pydantic_settings/utils.py b/pydantic_settings/utils.py
+index 1c8ed78a..51ce7f7d 100644
+--- a/pydantic_settings/utils.py
++++ b/pydantic_settings/utils.py
+@@ -2,12 +2,14 @@
+ import os
+ import types
+ from pathlib import Path
+-from typing import Any, _Final, _GenericAlias  # type: ignore [attr-defined]
++from typing import Any, TypeVar, _Final, _GenericAlias  # type: ignore [attr-defined]
+ 
+ logger = logging.getLogger('pydantic_settings')
+ 
+ _DEBUG_ENV_VAR = 'PYDANTIC_SETTINGS_DEBUG'
+ 
++KeyType = TypeVar('KeyType')
++
+ 
+ def _settings_debug_enabled() -> bool:
+     """Whether settings source debugging is enabled via the `PYDANTIC_SETTINGS_DEBUG` env var."""
+@@ -49,3 +51,18 @@ def _lenient_issubclass(cls: Any, class_or_tuple: Any) -> bool:
+ 
+ _WithArgsTypes = (_GenericAlias, types.GenericAlias, types.UnionType)
+ _typing_base: Any = _Final  # pyright: ignore[reportAttributeAccessIssue]
++
++
++def deep_update(mapping: dict[KeyType, Any], *updating_mappings: dict[KeyType, Any]) -> dict[KeyType, Any]:
++    """Recursively merge `updating_mappings` into a shallow copy of `mapping`.
++
++    Nested dictionaries are merged; any other value from a later mapping replaces the existing one.
++    """
++    updated_mapping = mapping.copy()
++    for updating_mapping in updating_mappings:
++        for k, v in updating_mapping.items():
++            if k in updated_mapping and isinstance(updated_mapping[k], dict) and isinstance(v, dict):
++                updated_mapping[k] = deep_update(updated_mapping[k], v)
++            else:
++                updated_mapping[k] = v
++    return updated_mapping

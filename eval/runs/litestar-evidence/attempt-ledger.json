@@ -1,0 +1,177 @@
+{
+  "attempts": [
+    {
+      "case": "5164-seed-f841-ext4-interrupted",
+      "directory": "litestar-5164-seed-f841",
+      "kind": "seeded-mutation",
+      "baseline_classification_ran": false,
+      "eligible": false,
+      "rio_wall_seconds": 485.257,
+      "runner_wall_seconds": 590.362562,
+      "verdict_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "expected": 1,
+      "observed_detected_expectations": 1,
+      "misses": 0
+    },
+    {
+      "case": "5164-seed-f841-zero-threshold",
+      "directory": "litestar-5164-seed-f841-final",
+      "kind": "seeded-mutation",
+      "baseline_classification_ran": true,
+      "eligible": false,
+      "rio_wall_seconds": 166.522,
+      "runner_wall_seconds": 202.087665,
+      "verdict_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "expected": 1,
+      "observed_detected_expectations": 1,
+      "misses": 0
+    },
+    {
+      "case": "5164-seed-f841",
+      "directory": "litestar-5164-seed-f841-scored",
+      "kind": "seeded-mutation",
+      "baseline_classification_ran": true,
+      "eligible": true,
+      "rio_wall_seconds": 139.47,
+      "runner_wall_seconds": 210.169561,
+      "verdict_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "expected": 1,
+      "observed_detected_expectations": 1,
+      "misses": 0
+    },
+    {
+      "case": "5164-seed-f841-tmpfs-provenance",
+      "directory": "litestar-5164-seed-f841-tmpfs",
+      "kind": "seeded-mutation",
+      "baseline_classification_ran": false,
+      "eligible": false,
+      "rio_wall_seconds": 84.198,
+      "runner_wall_seconds": 143.650877,
+      "verdict_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "expected": 1,
+      "observed_detected_expectations": 1,
+      "misses": 0
+    },
+    {
+      "case": "5178-ext4-interrupted",
+      "directory": "litestar-5178",
+      "kind": "none",
+      "baseline_classification_ran": false,
+      "eligible": false,
+      "rio_wall_seconds": 578.404,
+      "runner_wall_seconds": 679.351815,
+      "verdict_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "expected": 0,
+      "observed_detected_expectations": 0,
+      "misses": 0
+    },
+    {
+      "case": "5178-attempt1",
+      "directory": "litestar-5178-attempt1",
+      "kind": "none",
+      "baseline_classification_ran": false,
+      "eligible": false,
+      "rio_wall_seconds": 76.774,
+      "runner_wall_seconds": 429.074627,
+      "verdict_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "expected": 0,
+      "observed_detected_expectations": 0,
+      "misses": 0
+    },
+    {
+      "case": "5178-zero-threshold",
+      "directory": "litestar-5178-final",
+      "kind": "none",
+      "baseline_classification_ran": true,
+      "eligible": false,
+      "rio_wall_seconds": 174.318,
+      "runner_wall_seconds": 193.307537,
+      "verdict_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "expected": 0,
+      "observed_detected_expectations": 0,
+      "misses": 0
+    },
+    {
+      "case": "5178",
+      "directory": "litestar-5178-scored",
+      "kind": "none",
+      "baseline_classification_ran": true,
+      "eligible": true,
+      "rio_wall_seconds": 152.531,
+      "runner_wall_seconds": 223.870688,
+      "verdict_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "expected": 0,
+      "observed_detected_expectations": 0,
+      "misses": 0
+    },
+    {
+      "case": "5178-tmpfs-provenance",
+      "directory": "litestar-5178-tmpfs",
+      "kind": "none",
+      "baseline_classification_ran": false,
+      "eligible": false,
+      "rio_wall_seconds": 95.871,
+      "runner_wall_seconds": 156.402972,
+      "verdict_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "expected": 0,
+      "observed_detected_expectations": 0,
+      "misses": 0
+    }
+  ],
+  "runner_uv_command_wall_seconds_sum": 524.377,
+  "note": "Only eligible records enter quality metrics. Detection in excluded attempts is observational, never scored."
+}

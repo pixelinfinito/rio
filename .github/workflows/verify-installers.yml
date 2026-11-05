@@ -1,0 +1,100 @@
+name: Verify published installers
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Published release tag to verify'
+        type: string
+        required: true
+        default: v0.1.0-rc.1
+permissions:
+  contents: read
+jobs:
+  unix:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-26]
+    runs-on: ${{ matrix.os }}
+    env:
+      RIO_VERSION: ${{ inputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install published binary, version, doctor and uninstall
+        shell: bash
+        run: |
+          export RIO_DOWNLOAD_BASE="https://github.com/$GITHUB_REPOSITORY/releases/download/$RIO_VERSION"
+          curl --proto '=https' --proto-redir '=https' -fsSL "$RIO_DOWNLOAD_BASE/install.sh" -o "$RUNNER_TEMP/install.sh"
+          sh "$RUNNER_TEMP/install.sh" --install-dir "$RUNNER_TEMP/rio/bin"
+          "$RUNNER_TEMP/rio/bin/rio" --version
+          cp -R tests/fixtures/ts-sample "$RUNNER_TEMP/fixture"
+          git -C "$RUNNER_TEMP/fixture" init -b main
+          git -C "$RUNNER_TEMP/fixture" -c user.name=Rio -c user.email=rio@example.invalid add .
+          git -C "$RUNNER_TEMP/fixture" -c user.name=Rio -c user.email=rio@example.invalid commit -m fixture
+          echo '// published installer doctor check' >> "$RUNNER_TEMP/fixture/src/math.ts"
+          (cd "$RUNNER_TEMP/fixture" && "$RUNNER_TEMP/rio/bin/rio" doctor --format json > "$RUNNER_TEMP/doctor.json")
+          sh "$RUNNER_TEMP/install.sh" --install-dir "$RUNNER_TEMP/rio/bin" --uninstall
+          test ! -e "$RUNNER_TEMP/rio/bin/rio"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: published-installer-${{ matrix.os }}
+          path: ${{ runner.temp }}/doctor.json
+      - name: Alpine published installer
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          docker run --rm -v "$PWD:/work:ro" -e RIO_VERSION -e GITHUB_REPOSITORY alpine:3.21 sh -ec '
+            apk add --no-cache curl git
+            export RIO_DOWNLOAD_BASE="https://github.com/$GITHUB_REPOSITORY/releases/download/$RIO_VERSION"
+            curl --proto =https --proto-redir =https -fsSL "$RIO_DOWNLOAD_BASE/install.sh" -o /tmp/install.sh
+            sh /tmp/install.sh --install-dir /tmp/rio
+            /tmp/rio/rio --version
+            cp -R /work/tests/fixtures/ts-sample /tmp/fixture
+            git -C /tmp/fixture init -b main
+            git -C /tmp/fixture add .
+            git -C /tmp/fixture -c user.name=Rio -c user.email=rio@example.invalid commit -m fixture
+            echo "// doctor" >> /tmp/fixture/src/math.ts
+            (cd /tmp/fixture && /tmp/rio/rio doctor --format json)
+            sh /tmp/install.sh --install-dir /tmp/rio --uninstall
+            test ! -e /tmp/rio/rio'
+  windows:
+    runs-on: windows-2025
+    strategy:
+      fail-fast: false
+      matrix:
+        shell: [powershell, pwsh]
+    defaults:
+      run:
+        shell: ${{ matrix.shell }}
+    env:
+      RIO_VERSION: ${{ inputs.tag }}
+      RIO_NO_MODIFY_PATH: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install published binary, version, doctor and uninstall
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $env:RIO_DOWNLOAD_BASE = "https://github.com/$env:GITHUB_REPOSITORY/releases/download/$env:RIO_VERSION"
+          $rioInstaller = Join-Path $env:RUNNER_TEMP 'install.ps1'
+          Invoke-WebRequest "$env:RIO_DOWNLOAD_BASE/install.ps1" -OutFile $rioInstaller -UseBasicParsing
+          $rioInstall = Join-Path $env:RUNNER_TEMP 'rio-bin'
+          & $rioInstaller -InstallDir $rioInstall -NoModifyPath
+          & (Join-Path $rioInstall 'rio.exe') --version
+          if ($LASTEXITCODE -ne 0) { throw 'Version check failed' }
+          $rioFixture = Join-Path $env:RUNNER_TEMP 'fixture'
+          Copy-Item tests/fixtures/ts-sample $rioFixture -Recurse
+          git -C $rioFixture init -b main
+          git -C $rioFixture add .
+          git -C $rioFixture -c user.name=Rio -c user.email=rio@example.invalid commit -m fixture
+          Add-Content (Join-Path $rioFixture 'src/math.ts') '// doctor'
+          Push-Location $rioFixture
+          try {
+            & (Join-Path $rioInstall 'rio.exe') doctor --format json | Out-File (Join-Path $env:RUNNER_TEMP 'doctor.json') -Encoding utf8
+            if ($LASTEXITCODE -ne 0) { throw 'Doctor check failed' }
+          } finally { Pop-Location }
+          & $rioInstaller -InstallDir $rioInstall -Uninstall
+          if (Test-Path (Join-Path $rioInstall 'rio.exe')) { throw 'Uninstall kept binary' }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: published-installer-windows-${{ matrix.shell }}
+          path: ${{ runner.temp }}/doctor.json

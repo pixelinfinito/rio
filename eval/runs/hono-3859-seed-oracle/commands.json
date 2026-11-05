@@ -1,0 +1,84 @@
+[
+  {
+    "label": "base",
+    "sha": "d40fffbec624bae50f8fc3b619125dda9a8c50e2",
+    "argv": [
+      "/dev/shm/trpc-eval/hono-seed/node_modules/.bin/tsc",
+      "--noEmit",
+      "--pretty",
+      "false"
+    ],
+    "cwd": "/dev/shm/trpc-eval/hono-seed",
+    "exit_code": 0,
+    "wall_time_ms": 23416
+  },
+  {
+    "label": "base",
+    "sha": "d40fffbec624bae50f8fc3b619125dda9a8c50e2",
+    "argv": [
+      "/dev/shm/trpc-eval/hono-seed/node_modules/.bin/eslint",
+      "src/utils/url.ts"
+    ],
+    "cwd": "/dev/shm/trpc-eval/hono-seed",
+    "exit_code": 0,
+    "wall_time_ms": 2338
+  },
+  {
+    "label": "base",
+    "sha": "d40fffbec624bae50f8fc3b619125dda9a8c50e2",
+    "argv": [
+      "/dev/shm/trpc-eval/hono-seed/node_modules/.bin/vitest",
+      "run",
+      "src/utils/url.test.ts",
+      "--coverage",
+      "--coverage.reporter=json",
+      "--coverage.reporter=text-summary",
+      "--maxWorkers=2",
+      "--minWorkers=1"
+    ],
+    "cwd": "/dev/shm/trpc-eval/hono-seed",
+    "exit_code": 0,
+    "wall_time_ms": 4060
+  },
+  {
+    "label": "head",
+    "sha": "584ec1d27768144b5e7eff7cd735416727f9ade4",
+    "argv": [
+      "/dev/shm/trpc-eval/hono-seed/node_modules/.bin/tsc",
+      "--noEmit",
+      "--pretty",
+      "false"
+    ],
+    "cwd": "/dev/shm/trpc-eval/hono-seed",
+    "exit_code": 2,
+    "wall_time_ms": 22823
+  },
+  {
+    "label": "head",
+    "sha": "584ec1d27768144b5e7eff7cd735416727f9ade4",
+    "argv": [
+      "/dev/shm/trpc-eval/hono-seed/node_modules/.bin/eslint",
+      "src/utils/url.ts"
+    ],
+    "cwd": "/dev/shm/trpc-eval/hono-seed",
+    "exit_code": 0,
+    "wall_time_ms": 2333
+  },
+  {
+    "label": "head",
+    "sha": "584ec1d27768144b5e7eff7cd735416727f9ade4",
+    "argv": [
+      "/dev/shm/trpc-eval/hono-seed/node_modules/.bin/vitest",
+      "run",
+      "src/utils/url.test.ts",
+      "--coverage",
+      "--coverage.reporter=json",
+      "--coverage.reporter=text-summary",
+      "--maxWorkers=2",
+      "--minWorkers=1"
+    ],
+    "cwd": "/dev/shm/trpc-eval/hono-seed",
+    "exit_code": 0,
+    "wall_time_ms": 3997
+  }
+]

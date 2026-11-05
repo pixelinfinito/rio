@@ -1,0 +1,15 @@
+Name                                                    Stmts   Miss Branch BrPart   Cover   Missing
+----------------------------------------------------------------------------------------------------
+pydantic_settings/main.py                                 219      4     54      2  97.80%   454, 603-604, 611
+pydantic_settings/sources/base.py                         221      2    100      2  98.75%   247, 307, 433->440, 434->433
+pydantic_settings/sources/providers/azure.py               68      3     16      2  94.05%   66, 75->78, 87, 142
+pydantic_settings/sources/providers/env.py                127      2     70      2  97.97%   279, 280->285, 282
+pydantic_settings/sources/providers/gcp.py                 77      1     22      2  96.97%   68->80, 107
+pydantic_settings/sources/providers/nested_secrets.py      63      1     22      1  97.65%   145
+pydantic_settings/sources/providers/toml.py                30      5      8      2  76.32%   32-35, 63
+pydantic_settings/sources/providers/yaml.py                32      2      4      0  94.44%   28-29
+pydantic_settings/sources/utils.py                        114      2     68      2  97.80%   104, 111
+----------------------------------------------------------------------------------------------------
+TOTAL                                                    1898     22    772     15  98.54%
+
+13 files skipped due to complete coverage.

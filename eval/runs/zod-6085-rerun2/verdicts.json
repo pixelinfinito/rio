@@ -1,0 +1,326 @@
+{
+  "repository": "colinhacks/zod",
+  "pr": "https://github.com/colinhacks/zod/pull/6085",
+  "case_id": "6085",
+  "languages": [
+    "typescript"
+  ],
+  "reviewer": "sub-agent rerun2-zod (automated)",
+  "verdict_source": "automated",
+  "commands": [
+    "cwd=/dev/shm/rio-eval-lscsrphe argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/colinhacks/zod.git\", \"/dev/shm/rio-eval-lscsrphe/head\"]",
+    "cwd=/dev/shm/rio-eval-lscsrphe/head argv=[\"git\", \"fetch\", \"origin\", \"9f0a3d81221e3ab7c09ca4911ef35b54817869a4\", \"60496a098ae81beb32f705897f960cf99089d243\"]",
+    "cwd=/dev/shm/rio-eval-lscsrphe/head argv=[\"git\", \"merge-base\", \"9f0a3d81221e3ab7c09ca4911ef35b54817869a4\", \"60496a098ae81beb32f705897f960cf99089d243\"]",
+    "cwd=/dev/shm/rio-eval-lscsrphe/head argv=[\"git\", \"checkout\", \"--detach\", \"60496a098ae81beb32f705897f960cf99089d243\"]",
+    "cwd=/dev/shm/rio-eval-lscsrphe argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/dev/shm/rio-eval-lscsrphe/head\", \"/dev/shm/rio-eval-lscsrphe/base\"]",
+    "cwd=/dev/shm/rio-eval-lscsrphe/base argv=[\"git\", \"checkout\", \"--detach\", \"9f0a3d81221e3ab7c09ca4911ef35b54817869a4\"]",
+    "cwd=/dev/shm/rio-eval-lscsrphe/base argv=[\"corepack\", \"pnpm\", \"install\", \"--frozen-lockfile\"]",
+    "cwd=/dev/shm/rio-eval-lscsrphe/base argv=[\"python3\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-pnpm-directory-aliases.txt\"]",
+    "cwd=/dev/shm/rio-eval-lscsrphe/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/rio-eval-lscsrphe/head argv=[\"corepack\", \"pnpm\", \"install\", \"--frozen-lockfile\"]",
+    "cwd=/dev/shm/rio-eval-lscsrphe/head argv=[\"python3\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-pnpm-directory-aliases.txt\"]",
+    "cwd=/dev/shm/rio-eval-lscsrphe/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/rio-eval-lscsrphe/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/dev/shm/rio-eval-lscsrphe/head argv=[\"node\", \"--version\"]",
+    "cwd=/dev/shm/rio-eval-lscsrphe/head argv=[\"npm\", \"--version\"]",
+    "cwd=/dev/shm/rio-eval-lscsrphe/head argv=[\"corepack\", \"--version\"]",
+    "cwd=/dev/shm/rio-eval-lscsrphe/head argv=[\"python3\", \"--version\"]",
+    "cwd=/dev/shm/rio-eval-lscsrphe/head argv=[\"uv\", \"--version\"]",
+    "cwd=/dev/shm/rio-eval-lscsrphe/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/profile.yaml\"]",
+    "cwd=/dev/shm/rio-eval-lscsrphe/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/dev/shm/rio-eval-lscsrphe/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"9f0a3d81221e3ab7c09ca4911ef35b54817869a4\", \"--format\", \"json\", \"--offline\", \"--profile\", \"/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/profile.yaml\"]"
+  ],
+  "notes": [
+    "Pinned PR/base/head, install plan and input profile match retry1 exactly; no seeded mutation applies. Independent oracle evidence is reused for unchanged source objects; current Rio output was rechecked.",
+    "No source/lockfile changes, dependency trust override, or Rio rebuild. Corepack 0.36.0 launches the pinned pnpm 10.12.1; Node is 22.23.4 (#6085) or 24.22.2 (#6527). See ../zod-rerun2-tooling.json.",
+    "TMPDIR=/dev/shm and --temp-root /dev/shm. Process-only Git transport rewrite: GIT_CONFIG_COUNT=1, GIT_CONFIG_KEY_0=url./tmp/rio-zod-eval/zod.insteadOf, GIT_CONFIG_VALUE_0=https://github.com/colinhacks/zod.git. PATH prepends the matching /tmp/rio-zod-eval/node-vVERSION-linux-x64/bin. Public cached Git objects are unchanged.",
+    "Combined diagnostic dependency state: verified. No base check ran. The new missing-build-entry guard rejects packages/zod/index.cjs in the selected Git tree. An external base build does not enter that tree. See commands.json environment.notes and ../zod-rerun2-base-tree-evidence.json. Excluded from release metrics.",
+    "Raw states pre-existing/fixed are informational pre-existing-hidden in record.json under methodology v2, regardless of the independent annotation. Base attribution in annotations comes from preserved independent oracle logs, not a Rio baseline.",
+    "raw-check-output.json.gz contains child output copied during this run before runner cleanup; it is a partial snapshot, not an argv trace or a complete replacement for report.json."
+  ],
+  "independently_clean": false,
+  "positive_control": {
+    "kind": "real-pr",
+    "expected": [
+      {
+        "id": "unused-compile-fuzz-catch-binding",
+        "mechanism": "lint-rule",
+        "evidence": "Preregistered independent Biome oracle ../zod-6085-evidence/{selection.json,base-05.log,head-05.log,fix.patch}; unused catch(e) at scripts/compile-fuzz.ts:353:14 is absent at base and warned at head. Current Rio lint/biome/correctness/noUnusedVariables finding matches exactly; see report.json. Detection is observed; the run remains ineligible because no baseline ran.",
+        "finding_ids": [
+          "592fff9986d42f4d6c8ef6b8c9fcd84e8187d6942a9996fc73f35ea3beecaed1"
+        ]
+      }
+    ]
+  },
+  "misses": [],
+  "findings": {
+    "034ba9bebadec8dfecdc1eae53168590bd4868a51aec4bc5916051e7e46aeb94": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base oracle ../zod-6085-evidence/adjudication-base-packages-zod.log:5, ../zod-6085-evidence/adjudication-base-root.log:26 reproduces this file/TS6133/message. Current Rio state is pre-existing; its baseline never ran. Methodology v2 hides raw pre-existing/fixed states. The source diagnostic was not introduced by this PR."
+    },
+    "045fc3f5a5717d84457bc42948c0d38a2568e1c44b7239ad19fec76a5f483d4a": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base oracle ../zod-6085-evidence/adjudication-base-root.log:17, ../zod-6085-evidence/adjudication-base-packages-resolution.log:28 reproduces this file/TS7016/message. Current Rio state is pre-existing; its baseline never ran. Methodology v2 hides raw pre-existing/fixed states. The source diagnostic was not introduced by this PR."
+    },
+    "0512d38c397f9a7ac2bd92325b848e3dc36a542a91501293c6d6ec4fd4f45da7": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base oracle ../zod-6085-evidence/adjudication-base-packages-zod.log:7, ../zod-6085-evidence/adjudication-base-root.log:28 reproduces this file/TS6133/message. Current Rio state is pre-existing; its baseline never ran. Methodology v2 hides raw pre-existing/fixed states. The source diagnostic was not introduced by this PR."
+    },
+    "06953f3fbba2aef7c9889906082d497d94e5a0d8ee4d1af57538ca737c140ebd": {
+      "verdict": "environment-failure",
+      "reason": "Unbuilt consumer fixture packages/resolution/src/index.mts: TS2307 depends on absent published Zod artifacts or resulting unresolved types. The unchanged install plan does not build packages/zod. Independent setup/build evidence is in ../zod-6085-evidence/ and prior adjudication-evidence.json; Rio baseline remains unavailable under the missing-build-entry guard. No introduced source defect is established."
+    },
+    "151de4fadf3f80773a7ea49e695ae41ce86ec53ee052554269ef227c140207ae": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base oracle ../zod-6085-evidence/adjudication-base-root.log:16 reproduces this file/TS1479/message. Current Rio state is pre-existing; its baseline never ran. Methodology v2 hides raw pre-existing/fixed states. The source diagnostic was not introduced by this PR."
+    },
+    "1757c2281fc7cf018d2d2e72b5711caff1dcd539eb2b51966b396344c8683f85": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base oracle ../zod-6085-evidence/adjudication-base-packages-zod.log:3, ../zod-6085-evidence/adjudication-base-root.log:24 reproduces this file/TS6196/message. Current Rio state is pre-existing; its baseline never ran. Methodology v2 hides raw pre-existing/fixed states. The source diagnostic was not introduced by this PR."
+    },
+    "1f21e23f8328641af8ed9ef11794c7470af1a3356fee2cb0c6f1c197dc202203": {
+      "verdict": "environment-failure",
+      "reason": "Unbuilt consumer fixture packages/integration/fixtures/internal-types/cjs-test.cts: TS2307 depends on absent published Zod artifacts or resulting unresolved types. The unchanged install plan does not build packages/zod. Independent setup/build evidence is in ../zod-6085-evidence/ and prior adjudication-evidence.json; Rio baseline remains unavailable under the missing-build-entry guard. No introduced source defect is established."
+    },
+    "219898f89a7708de260002d9873cb36cef05a82df1d55f7dcf3baf0d4a22e791": {
+      "verdict": "environment-failure",
+      "reason": "Unbuilt consumer fixture packages/integration/fixtures/internal-types/index.ts: TS7006 depends on absent published Zod artifacts or resulting unresolved types. The unchanged install plan does not build packages/zod. Independent setup/build evidence is in ../zod-6085-evidence/ and prior adjudication-evidence.json; Rio baseline remains unavailable under the missing-build-entry guard. No introduced source defect is established."
+    },
+    "224c5ab03b1ab000b991ad125c0525db68bf649c7d33fbe221864b0b10d98c8c": {
+      "verdict": "environment-failure",
+      "reason": "Unbuilt consumer fixture packages/resolution/src/index.ts: TS2307 depends on absent published Zod artifacts or resulting unresolved types. The unchanged install plan does not build packages/zod. Independent setup/build evidence is in ../zod-6085-evidence/ and prior adjudication-evidence.json; Rio baseline remains unavailable under the missing-build-entry guard. No introduced source defect is established."
+    },
+    "243b09670d05a3752d4ad895e7c2e0a9bd21377b239ef5708941b45e5f3ed8ea": {
+      "verdict": "environment-failure",
+      "reason": "Unbuilt consumer fixture packages/resolution/src/index.cts: TS2307 depends on absent published Zod artifacts or resulting unresolved types. The unchanged install plan does not build packages/zod. Independent setup/build evidence is in ../zod-6085-evidence/ and prior adjudication-evidence.json; Rio baseline remains unavailable under the missing-build-entry guard. No introduced source defect is established."
+    },
+    "256fddabddd1bb52ff96f4656d0ad66f590c3fd9752d036a020d9476bc0290b2": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base oracle ../zod-6085-evidence/adjudication-base-packages-zod.log:1, ../zod-6085-evidence/adjudication-base-root.log:22 reproduces this file/TS6196/message. Current Rio state is pre-existing; its baseline never ran. Methodology v2 hides raw pre-existing/fixed states. The source diagnostic was not introduced by this PR."
+    },
+    "26229ff83ee01a66a3b8f10808a98137d83335586e468d6234211e8394c9a75f": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base oracle ../zod-6085-evidence/adjudication-base-root.log:8, ../zod-6085-evidence/adjudication-base-root.log:9, ../zod-6085-evidence/adjudication-base-root.log:10 reproduces this file/TS1479/message. Current Rio state is pre-existing; its baseline never ran. Methodology v2 hides raw pre-existing/fixed states. The source diagnostic was not introduced by this PR."
+    },
+    "285dd3c2266e2e81690cc88aacb70f40ad91f5df93a680df765e225828568913": {
+      "verdict": "environment-failure",
+      "reason": "Unbuilt consumer fixture packages/integration/fixtures/internal-types/index.ts: TS2307 depends on absent published Zod artifacts or resulting unresolved types. The unchanged install plan does not build packages/zod. Independent setup/build evidence is in ../zod-6085-evidence/ and prior adjudication-evidence.json; Rio baseline remains unavailable under the missing-build-entry guard. No introduced source defect is established."
+    },
+    "2a0528eb480250cb5cf11a86f4b297b421f57d2c928d2dec48d59183e750bb43": {
+      "verdict": "environment-failure",
+      "reason": "Unbuilt consumer fixture packages/resolution/src/index.mts: TS2307 depends on absent published Zod artifacts or resulting unresolved types. The unchanged install plan does not build packages/zod. Independent setup/build evidence is in ../zod-6085-evidence/ and prior adjudication-evidence.json; Rio baseline remains unavailable under the missing-build-entry guard. No introduced source defect is established."
+    },
+    "2e4d56fdef3186234e841a535fef434491de2b2f5b5e930bb22c878072e0064d": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base oracle ../zod-6085-evidence/adjudication-base-root.log:11 reproduces this file/TS1479/message. Current Rio state is pre-existing; its baseline never ran. Methodology v2 hides raw pre-existing/fixed states. The source diagnostic was not introduced by this PR."
+    },
+    "34eb1f9954e0048cc5696fd22897c29dc9d0a9930ca22efc81462e2f4720bde2": {
+      "verdict": "environment-failure",
+      "reason": "Unbuilt consumer fixture packages/resolution/src/index.mts: TS2307 depends on absent published Zod artifacts or resulting unresolved types. The unchanged install plan does not build packages/zod. Independent setup/build evidence is in ../zod-6085-evidence/ and prior adjudication-evidence.json; Rio baseline remains unavailable under the missing-build-entry guard. No introduced source defect is established."
+    },
+    "35b705babb83baa6e474a95715dcd82f638f2a75fc4e0006209711ddafa4a2de": {
+      "verdict": "environment-failure",
+      "reason": "Unbuilt consumer fixture packages/resolution/src/index.ts: TS2307 depends on absent published Zod artifacts or resulting unresolved types. The unchanged install plan does not build packages/zod. Independent setup/build evidence is in ../zod-6085-evidence/ and prior adjudication-evidence.json; Rio baseline remains unavailable under the missing-build-entry guard. No introduced source defect is established."
+    },
+    "454e26523ab03910c77d5cb4f23f57788acb0f8dcfeafa9baa8248cde150f968": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base oracle ../zod-6085-evidence/adjudication-base-root.log:37 reproduces this file/TS2412/message. Current Rio state is pre-existing; its baseline never ran. Methodology v2 hides raw pre-existing/fixed states. The source diagnostic was not introduced by this PR."
+    },
+    "45fd9b99f62099c1e5a571afd08967932ad31ae1c8ce135734886658cf258980": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base oracle ../zod-6085-evidence/adjudication-base-root.log:12 reproduces this file/TS1479/message. Current Rio state is pre-existing; its baseline never ran. Methodology v2 hides raw pre-existing/fixed states. The source diagnostic was not introduced by this PR."
+    },
+    "52076a1d43d8f6d0f02d213b8f82f2267dacca82e90f32acb9e139358abe1b35": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base oracle ../zod-6085-evidence/adjudication-base-root.log:20 reproduces this file/TS2349/message. Current Rio state is pre-existing; its baseline never ran. Methodology v2 hides raw pre-existing/fixed states. The source diagnostic was not introduced by this PR."
+    },
+    "5435b332fbbfeff148a95acdf49752cfbc851db18065116a982ac60c10cbf2e8": {
+      "verdict": "environment-failure",
+      "reason": "Unbuilt consumer fixture packages/resolution/src/index.ts: TS2307 depends on absent published Zod artifacts or resulting unresolved types. The unchanged install plan does not build packages/zod. Independent setup/build evidence is in ../zod-6085-evidence/ and prior adjudication-evidence.json; Rio baseline remains unavailable under the missing-build-entry guard. No introduced source defect is established."
+    },
+    "56357190303cc4a1945aa5385668fa0e4314c03e8e21dd3a743669b2810f6b7c": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base oracle ../zod-6085-evidence/adjudication-base-packages-zod.log:13, ../zod-6085-evidence/adjudication-base-root.log:34 reproduces this file/TS6133/message. Current Rio state is pre-existing; its baseline never ran. Methodology v2 hides raw pre-existing/fixed states. The source diagnostic was not introduced by this PR."
+    },
+    "592fff9986d42f4d6c8ef6b8c9fcd84e8187d6942a9996fc73f35ea3beecaed1": {
+      "verdict": "true-positive",
+      "reason": "Preregistered independent oracle ../zod-6085-evidence/head-05.log identifies unused catch(e) at scripts/compile-fuzz.ts:353:14 under enabled Biome correctness/noUnusedVariables; base-05.log has no file/warning. introducing.patch adds it and fix.patch removes that exact binding. Rio now reports the same rule/location/message. Detection observed, but baseline ineligibility excludes scored recall."
+    },
+    "5e1598a8b953de387dbab20ad2826f3bc2dda61fbb14e4b678b9bf2221ea7c21": {
+      "verdict": "environment-failure",
+      "reason": "Unbuilt consumer fixture packages/resolution/src/index.mts: TS2307 depends on absent published Zod artifacts or resulting unresolved types. The unchanged install plan does not build packages/zod. Independent setup/build evidence is in ../zod-6085-evidence/ and prior adjudication-evidence.json; Rio baseline remains unavailable under the missing-build-entry guard. No introduced source defect is established."
+    },
+    "6460bfa091439696628a9f433827531d6f806aa49ff779272dc02f47be801e5c": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base oracle ../zod-6085-evidence/adjudication-base-root.log:14 reproduces this file/TS1479/message. Current Rio state is pre-existing; its baseline never ran. Methodology v2 hides raw pre-existing/fixed states. The source diagnostic was not introduced by this PR."
+    },
+    "67c341e462a628fd2b4f1f0429fdef0c904666c638034d0f3790a9dfe2189c14": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base oracle ../zod-6085-evidence/adjudication-base-packages-zod.log:11, ../zod-6085-evidence/adjudication-base-root.log:32 reproduces this file/TS6196/message. Current Rio state is pre-existing; its baseline never ran. Methodology v2 hides raw pre-existing/fixed states. The source diagnostic was not introduced by this PR."
+    },
+    "699c0e2120d51bdec0499b6edb31dd975e7c4350dc562fcc76eb81d5fcb784aa": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base oracle ../zod-6085-evidence/adjudication-base-root.log:2 reproduces this file/TS6133/message. Current Rio state is pre-existing; its baseline never ran. Methodology v2 hides raw pre-existing/fixed states. The source diagnostic was not introduced by this PR."
+    },
+    "6c5320df1d927afa0ee36410314b44f8063c941dca9a7ebaf5c0414e24a57571": {
+      "verdict": "true-positive",
+      "reason": "Independent unchanged-head oracle ../zod-6085-evidence/adjudication-head-root.log:3, ../zod-6085-evidence/adjudication-head-root.log:5, ../zod-6085-evidence/adjudication-head-root.log:7, ../zod-6085-evidence/adjudication-head-root.log:9, ../zod-6085-evidence/adjudication-head-root.log:13, ../zod-6085-evidence/adjudication-head-root.log:15 reproduces TS2349; the new benchmark file is absent at base (prior adjudication and introducing.patch). This change-specific diagnostic remains valid. No working Rio baseline or scored release credit is claimed."
+    },
+    "70f963b92c76804d2b5eaf9a6a123093cf859fe9f463fb96c927a04f70e0f341": {
+      "verdict": "environment-failure",
+      "reason": "Unbuilt consumer fixture packages/resolution/src/index.cts: TS2307 depends on absent published Zod artifacts or resulting unresolved types. The unchanged install plan does not build packages/zod. Independent setup/build evidence is in ../zod-6085-evidence/ and prior adjudication-evidence.json; Rio baseline remains unavailable under the missing-build-entry guard. No introduced source defect is established."
+    },
+    "72f77d40f485bfde39b4009b1ca92349f7621c264dbf06595dc29539dc263cdf": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base oracle ../zod-6085-evidence/adjudication-base-packages-zod.log:2, ../zod-6085-evidence/adjudication-base-root.log:23 reproduces this file/TS6196/message. Current Rio state is pre-existing; its baseline never ran. Methodology v2 hides raw pre-existing/fixed states. The source diagnostic was not introduced by this PR."
+    },
+    "73199bbc15e20eb760c048eb790ea0cb37ec0c91859e860be0dd88625ccae424": {
+      "verdict": "environment-failure",
+      "reason": "Unbuilt consumer fixture packages/integration/fixtures/ai-sdk/index.ts: TS2307 depends on absent published Zod artifacts or resulting unresolved types. The unchanged install plan does not build packages/zod. Independent setup/build evidence is in ../zod-6085-evidence/ and prior adjudication-evidence.json; Rio baseline remains unavailable under the missing-build-entry guard. No introduced source defect is established."
+    },
+    "7a11f2e398955da49ffb26c5b308845984db6fa7001e7e7430432341b57c2861": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base oracle ../zod-6085-evidence/adjudication-base-root.log:18 reproduces this file/TS2349/message. Current Rio state is pre-existing; its baseline never ran. Methodology v2 hides raw pre-existing/fixed states. The source diagnostic was not introduced by this PR."
+    },
+    "7fd4d42818f12b4eca74614ac7ad1fd61688407474d442b743a440cfbf56a26b": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base oracle ../zod-6085-evidence/adjudication-base-packages-zod.log:15, ../zod-6085-evidence/adjudication-base-root.log:36 reproduces this file/TS6196/message. Current Rio state is pre-existing; its baseline never ran. Methodology v2 hides raw pre-existing/fixed states. The source diagnostic was not introduced by this PR."
+    },
+    "92d1ab1c8d7b3161d7fd213f726903e12a428ffe017b003444968e1be41521ec": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base oracle ../zod-6085-evidence/adjudication-base-packages-zod.log:6, ../zod-6085-evidence/adjudication-base-root.log:27 reproduces this file/TS6133/message. Current Rio state is pre-existing; its baseline never ran. Methodology v2 hides raw pre-existing/fixed states. The source diagnostic was not introduced by this PR."
+    },
+    "93298bec4bd1703d3907c6a11293a1cb6bdd0fb0318d4319c32f4ca52b404837": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base oracle ../zod-6085-evidence/adjudication-base-packages-zod.log:9, ../zod-6085-evidence/adjudication-base-root.log:30 reproduces this file/TS6196/message. Current Rio state is pre-existing; its baseline never ran. Methodology v2 hides raw pre-existing/fixed states. The source diagnostic was not introduced by this PR."
+    },
+    "965da11f56129190b55e950d5968ef74fc30cefa41d7dc79b16b34b834ffd60b": {
+      "verdict": "environment-failure",
+      "reason": "Unbuilt consumer fixture packages/resolution/src/index.cts: TS2307 depends on absent published Zod artifacts or resulting unresolved types. The unchanged install plan does not build packages/zod. Independent setup/build evidence is in ../zod-6085-evidence/ and prior adjudication-evidence.json; Rio baseline remains unavailable under the missing-build-entry guard. No introduced source defect is established."
+    },
+    "976d87f99006663c1a139e92e96e5b0cff2ee2729e1e92db5b3932b12dc38ade": {
+      "verdict": "environment-failure",
+      "reason": "Unbuilt consumer fixture packages/resolution/src/index.cts: TS2307 depends on absent published Zod artifacts or resulting unresolved types. The unchanged install plan does not build packages/zod. Independent setup/build evidence is in ../zod-6085-evidence/ and prior adjudication-evidence.json; Rio baseline remains unavailable under the missing-build-entry guard. No introduced source defect is established."
+    },
+    "98e7bead498a71fbc361f462ec2ff2bfa096ea87adf65f918cdbebe30bb9a015": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base oracle ../zod-6085-evidence/adjudication-base-packages-zod.log:14, ../zod-6085-evidence/adjudication-base-root.log:35 reproduces this file/TS6133/message. Current Rio state is pre-existing; its baseline never ran. Methodology v2 hides raw pre-existing/fixed states. The source diagnostic was not introduced by this PR."
+    },
+    "9f56030f19a55a830024f57e582d339e9657cc5eee5ae0d314210f59e474d71e": {
+      "verdict": "environment-failure",
+      "reason": "Unbuilt consumer fixture packages/resolution/src/index.ts: TS2307 depends on absent published Zod artifacts or resulting unresolved types. The unchanged install plan does not build packages/zod. Independent setup/build evidence is in ../zod-6085-evidence/ and prior adjudication-evidence.json; Rio baseline remains unavailable under the missing-build-entry guard. No introduced source defect is established."
+    },
+    "a3e37aa5f3f22a8ad65d225012046f9addcd56640f9fc2d99c42b46784f9e246": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base oracle ../zod-6085-evidence/adjudication-base-root.log:3 reproduces this file/TS1479/message. Current Rio state is pre-existing; its baseline never ran. Methodology v2 hides raw pre-existing/fixed states. The source diagnostic was not introduced by this PR."
+    },
+    "aaa68cd784c22ef381a0c179b9ee498e0292b47c7c6363c125881025e27a853d": {
+      "verdict": "environment-failure",
+      "reason": "Unbuilt consumer fixture packages/resolution/src/index.cts: TS2307 depends on absent published Zod artifacts or resulting unresolved types. The unchanged install plan does not build packages/zod. Independent setup/build evidence is in ../zod-6085-evidence/ and prior adjudication-evidence.json; Rio baseline remains unavailable under the missing-build-entry guard. No introduced source defect is established."
+    },
+    "b1024b31b3282122318169c54b8c0be471e5875485bf55221914987e2e07f9ed": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base oracle ../zod-6085-evidence/adjudication-base-root.log:6 reproduces this file/TS6133/message. Current Rio state is pre-existing; its baseline never ran. Methodology v2 hides raw pre-existing/fixed states. The source diagnostic was not introduced by this PR."
+    },
+    "b6b83f6da96e5751a8b5109efc011111fab2ea0e8642557b4a7bc4502924c44c": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base oracle ../zod-6085-evidence/adjudication-base-packages-zod.log:12, ../zod-6085-evidence/adjudication-base-root.log:33 reproduces this file/TS6196/message. Current Rio state is pre-existing; its baseline never ran. Methodology v2 hides raw pre-existing/fixed states. The source diagnostic was not introduced by this PR."
+    },
+    "b8aa1bdea476f0da82a46623a072c55bee35e6ecdd5dbd5b3ee389179ddfd1c0": {
+      "verdict": "environment-failure",
+      "reason": "Unbuilt consumer fixture packages/resolution/src/index.cts: TS2307 depends on absent published Zod artifacts or resulting unresolved types. The unchanged install plan does not build packages/zod. Independent setup/build evidence is in ../zod-6085-evidence/ and prior adjudication-evidence.json; Rio baseline remains unavailable under the missing-build-entry guard. No introduced source defect is established."
+    },
+    "b952a59666651eab02e74dd17bdc0b219e78b667918bf6a6f87d9a72b1a496b0": {
+      "verdict": "true-positive",
+      "reason": "Independent unchanged-head oracle ../zod-6085-evidence/adjudication-head-root.log:3, ../zod-6085-evidence/adjudication-head-root.log:5, ../zod-6085-evidence/adjudication-head-root.log:7, ../zod-6085-evidence/adjudication-head-root.log:9, ../zod-6085-evidence/adjudication-head-root.log:13, ../zod-6085-evidence/adjudication-head-root.log:15 reproduces TS2349; the new benchmark file is absent at base (prior adjudication and introducing.patch). This change-specific diagnostic remains valid. No working Rio baseline or scored release credit is claimed."
+    },
+    "b9da1706283a71a8467bb137e01cfbb51882aaacca89b6adbfce4a504110cd81": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base oracle ../zod-6085-evidence/adjudication-base-root.log:5 reproduces this file/TS6133/message. Current Rio state is pre-existing; its baseline never ran. Methodology v2 hides raw pre-existing/fixed states. The source diagnostic was not introduced by this PR."
+    },
+    "be8a630817cb400bb4bfface7da065b230849c3457fc0f521a3d82ac766c2ceb": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base oracle ../zod-6085-evidence/adjudication-base-root.log:1 reproduces this file/TS6133/message. Current Rio state is pre-existing; its baseline never ran. Methodology v2 hides raw pre-existing/fixed states. The source diagnostic was not introduced by this PR."
+    },
+    "bfe54568f684c715c1d98e1af403796896aa4a773552246370fc257f648e4b96": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base oracle ../zod-6085-evidence/adjudication-base-root.log:7 reproduces this file/TS6133/message. Current Rio state is pre-existing; its baseline never ran. Methodology v2 hides raw pre-existing/fixed states. The source diagnostic was not introduced by this PR."
+    },
+    "c93752c7f0e523cd5af4704f15977e17e436ec3d4f14ff7fa4ea0510ffbb556f": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base oracle ../zod-6085-evidence/adjudication-base-packages-zod.log:8, ../zod-6085-evidence/adjudication-base-root.log:29 reproduces this file/TS6133/message. Current Rio state is pre-existing; its baseline never ran. Methodology v2 hides raw pre-existing/fixed states. The source diagnostic was not introduced by this PR."
+    },
+    "cbf2d71284871493aa8c5fe20083b2957fb890d97752f0a43912b8e5fc7c6105": {
+      "verdict": "environment-failure",
+      "reason": "Unbuilt consumer fixture packages/resolution/src/index.ts: TS2307 depends on absent published Zod artifacts or resulting unresolved types. The unchanged install plan does not build packages/zod. Independent setup/build evidence is in ../zod-6085-evidence/ and prior adjudication-evidence.json; Rio baseline remains unavailable under the missing-build-entry guard. No introduced source defect is established."
+    },
+    "cede339a11f16211635cc7e0a6440939a4b8f699bf19e532f8eef9831a5b0cc7": {
+      "verdict": "true-positive",
+      "reason": "Independent unchanged-head oracle ../zod-6085-evidence/adjudication-head-root.log:3, ../zod-6085-evidence/adjudication-head-root.log:5, ../zod-6085-evidence/adjudication-head-root.log:7, ../zod-6085-evidence/adjudication-head-root.log:9, ../zod-6085-evidence/adjudication-head-root.log:13, ../zod-6085-evidence/adjudication-head-root.log:15 reproduces TS2349; the new benchmark file is absent at base (prior adjudication and introducing.patch). This change-specific diagnostic remains valid. No working Rio baseline or scored release credit is claimed."
+    },
+    "d1120b2a31084874a6bbe4f0b982050a91334a908667e9642d978a05f3b569de": {
+      "verdict": "true-positive",
+      "reason": "Independent unchanged-head oracle ../zod-6085-evidence/adjudication-head-root.log:3, ../zod-6085-evidence/adjudication-head-root.log:5, ../zod-6085-evidence/adjudication-head-root.log:7, ../zod-6085-evidence/adjudication-head-root.log:9, ../zod-6085-evidence/adjudication-head-root.log:13, ../zod-6085-evidence/adjudication-head-root.log:15 reproduces TS2349; the new benchmark file is absent at base (prior adjudication and introducing.patch). This change-specific diagnostic remains valid. No working Rio baseline or scored release credit is claimed."
+    },
+    "d1ffbf21588804667448e9910403800bb297e9c4457177764bd9591aae4b17ef": {
+      "verdict": "environment-failure",
+      "reason": "Unbuilt consumer fixture packages/resolution/src/index.mts: TS2307 depends on absent published Zod artifacts or resulting unresolved types. The unchanged install plan does not build packages/zod. Independent setup/build evidence is in ../zod-6085-evidence/ and prior adjudication-evidence.json; Rio baseline remains unavailable under the missing-build-entry guard. No introduced source defect is established."
+    },
+    "d7fa1794f35cff1fad54a5480b3a9218c44cd3c4d7e11a2356372c003106e1b2": {
+      "verdict": "environment-failure",
+      "reason": "Unbuilt consumer fixture packages/integration/fixtures/drizzle-zod/index.ts: TS2307 depends on absent published Zod artifacts or resulting unresolved types. The unchanged install plan does not build packages/zod. Independent setup/build evidence is in ../zod-6085-evidence/ and prior adjudication-evidence.json; Rio baseline remains unavailable under the missing-build-entry guard. No introduced source defect is established."
+    },
+    "dffab234c36273326bcbe43b5f6dab9021338eedbf2e92af747579f7a4c7ccbc": {
+      "verdict": "true-positive",
+      "reason": "Independent unchanged-head oracle ../zod-6085-evidence/adjudication-head-root.log:11 reproduces TS2339; the new benchmark file is absent at base (prior adjudication and introducing.patch). This change-specific diagnostic remains valid. No working Rio baseline or scored release credit is claimed."
+    },
+    "e1a0aac6402054e2f1538d1c3e98f34b02a2337ee08dc916ca3d242295732d65": {
+      "verdict": "true-positive",
+      "reason": "Independent unchanged-head oracle ../zod-6085-evidence/adjudication-head-root.log:12 reproduces TS2339; the new benchmark file is absent at base (prior adjudication and introducing.patch). This change-specific diagnostic remains valid. No working Rio baseline or scored release credit is claimed."
+    },
+    "e2964f42832383e39c9453de581ef4865ad6c8a5c58aa8db27ad194e8d44dbb8": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base oracle ../zod-6085-evidence/adjudication-base-root.log:13 reproduces this file/TS1479/message. Current Rio state is pre-existing; its baseline never ran. Methodology v2 hides raw pre-existing/fixed states. The source diagnostic was not introduced by this PR."
+    },
+    "e6aefef7f9baf2ed91c34c655757b37506e51b8f70cff3339a25e56bee4ec76b": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base oracle ../zod-6085-evidence/adjudication-base-packages-zod.log:10, ../zod-6085-evidence/adjudication-base-root.log:31 reproduces this file/TS6196/message. Current Rio state is pre-existing; its baseline never ran. Methodology v2 hides raw pre-existing/fixed states. The source diagnostic was not introduced by this PR."
+    },
+    "eb9555fd7d859266dac780d3aac29bfaca4a12e3043f1a1055804e2371b02775": {
+      "verdict": "environment-failure",
+      "reason": "Unbuilt consumer fixture packages/resolution/src/index.cts: TS2307 depends on absent published Zod artifacts or resulting unresolved types. The unchanged install plan does not build packages/zod. Independent setup/build evidence is in ../zod-6085-evidence/ and prior adjudication-evidence.json; Rio baseline remains unavailable under the missing-build-entry guard. No introduced source defect is established."
+    },
+    "ee727930520b5297cf0d1589eb1da7b48281cc79e70feac2fe0092c830f8d311": {
+      "verdict": "true-positive",
+      "reason": "Independent unchanged-head oracle ../zod-6085-evidence/adjudication-head-root.log:1 reproduces TS2345; the new benchmark file is absent at base (prior adjudication and introducing.patch). This change-specific diagnostic remains valid. No working Rio baseline or scored release credit is claimed."
+    },
+    "f1346d02e7b3a7e67dd84729e7e3da0187df691ad06075a9f76109ea76a7d78f": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base oracle ../zod-6085-evidence/adjudication-base-root.log:4 reproduces this file/TS6133/message. Current Rio state is pre-existing; its baseline never ran. Methodology v2 hides raw pre-existing/fixed states. The source diagnostic was not introduced by this PR."
+    },
+    "f1ebc60629a47287a0152960b7474f3d5be4e2b7e0e864766586c949a96dcb2b": {
+      "verdict": "environment-failure",
+      "reason": "Unbuilt consumer fixture packages/resolution/src/index.ts: TS2307 depends on absent published Zod artifacts or resulting unresolved types. The unchanged install plan does not build packages/zod. Independent setup/build evidence is in ../zod-6085-evidence/ and prior adjudication-evidence.json; Rio baseline remains unavailable under the missing-build-entry guard. No introduced source defect is established."
+    },
+    "f4e92af952aadd903463bb1c1a6db720bda720ede118fdc615031e0c43ae94c3": {
+      "verdict": "environment-failure",
+      "reason": "Unbuilt consumer fixture packages/resolution/src/index.mts: TS2307 depends on absent published Zod artifacts or resulting unresolved types. The unchanged install plan does not build packages/zod. Independent setup/build evidence is in ../zod-6085-evidence/ and prior adjudication-evidence.json; Rio baseline remains unavailable under the missing-build-entry guard. No introduced source defect is established."
+    },
+    "f56b2867266ccc2d68d7d61a5ee5a99f53f0fadfaeaa359b1a1f3de06e6de55c": {
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base oracle ../zod-6085-evidence/adjudication-base-packages-zod.log:4, ../zod-6085-evidence/adjudication-base-root.log:25 reproduces this file/TS6133/message. Current Rio state is pre-existing; its baseline never ran. Methodology v2 hides raw pre-existing/fixed states. The source diagnostic was not introduced by this PR."
+    },
+    "f84ba8c2dbb2a196cc2851ef03cc422cb09c705594351702a048639929605dac": {
+      "verdict": "environment-failure",
+      "reason": "Unbuilt consumer fixture packages/resolution/src/index.mts: TS2307 depends on absent published Zod artifacts or resulting unresolved types. The unchanged install plan does not build packages/zod. Independent setup/build evidence is in ../zod-6085-evidence/ and prior adjudication-evidence.json; Rio baseline remains unavailable under the missing-build-entry guard. No introduced source defect is established."
+    },
+    "fe97a1d5f223bb2ef1de7b47e1a65d9749a1e19759a25108b9e0f5ac5fce39bd": {
+      "verdict": "environment-failure",
+      "reason": "Unbuilt consumer fixture packages/integration/fixtures/internal-types/cjs-test.cts: TS7006 depends on absent published Zod artifacts or resulting unresolved types. The unchanged install plan does not build packages/zod. Independent setup/build evidence is in ../zod-6085-evidence/ and prior adjudication-evidence.json; Rio baseline remains unavailable under the missing-build-entry guard. No introduced source defect is established."
+    },
+    "ff939034149a12f3c465df1e26bb90c53ed67ae18ce5902674b70510833b289b": {
+      "verdict": "environment-failure",
+      "reason": "Unbuilt consumer fixture packages/resolution/src/index.ts: TS2307 depends on absent published Zod artifacts or resulting unresolved types. The unchanged install plan does not build packages/zod. Independent setup/build evidence is in ../zod-6085-evidence/ and prior adjudication-evidence.json; Rio baseline remains unavailable under the missing-build-entry guard. No introduced source defect is established."
+    }
+  }
+}

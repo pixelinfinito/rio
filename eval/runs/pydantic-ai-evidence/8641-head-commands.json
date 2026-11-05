@@ -1,0 +1,42 @@
+[
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "mypy",
+      "--strict",
+      "--follow-imports=silent",
+      "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-evidence/output_spec_oracle.py"
+    ],
+    "cwd": "/tmp/rio-pydantic-ai-ram/oracle",
+    "exit_code": 1,
+    "wall_time_s": 50.401,
+    "output": "8641-head-oracle.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "mypy"
+    ],
+    "cwd": "/tmp/rio-pydantic-ai-ram/oracle",
+    "exit_code": 0,
+    "wall_time_s": 53.731,
+    "output": "8641-head-mypy-configured.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "ruff",
+      "check"
+    ],
+    "cwd": "/tmp/rio-pydantic-ai-ram/oracle",
+    "exit_code": 0,
+    "wall_time_s": 0.113,
+    "output": "8641-head-ruff.log"
+  }
+]

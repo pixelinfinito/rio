@@ -1,0 +1,16 @@
+Warning: /tmp/rio-acceptance-python-profile.yaml:$.steps[3]: rio/triage is deferred locally: no_endpoint
+Warning: /tmp/rio-acceptance-python-profile.yaml:$.steps[4]: rio/agents is deferred locally: no_endpoint
+Warning: /tmp/rio-acceptance-python-profile.yaml:$.steps[5]: rio/verify is deferred locally: no_endpoint
+Running prepare…
+Finished prepare
+Running checks…
+secrets .: passed
+dependencies .: skipped (offline)
+lint .: passed
+typecheck .: findings
+coverage .: passed
+Finished checks
+Running graph…
+Finished graph
+Running report…
+Finished report

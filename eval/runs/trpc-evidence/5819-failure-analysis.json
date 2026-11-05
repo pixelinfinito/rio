@@ -1,0 +1,166 @@
+{
+  "raw_findings": 280,
+  "baseline_ran": false,
+  "baseline_classification_ran": false,
+  "selected_hints": [
+    "typecheck examples/.test/diagnostics-big-router: baseline_failed: linked dependency examples/.test/diagnostics-big-router::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+    "typecheck examples/.test/ssg: baseline_failed: linked dependency examples/.test/ssg::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+    "typecheck examples/.test/ssg-infinite-serialization: baseline_failed: linked dependency examples/.test/ssg-infinite-serialization::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+    "typecheck examples/.test/internal-types-export: baseline_failed: linked dependency examples/.test/internal-types-export::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+    "typecheck examples/.experimental/next-app-dir: baseline_failed: linked dependency examples/.experimental/next-app-dir::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+    "typecheck examples/standalone-server: baseline_failed: linked dependency examples/standalone-server::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+    "typecheck examples/vercel-edge-runtime: baseline_failed: linked dependency examples/vercel-edge-runtime::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+    "typecheck examples/soa: baseline_failed: linked dependency examples/soa::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+    "typecheck examples/next-sse-chat: baseline_failed: linked dependency examples/next-sse-chat::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+    "typecheck packages/react-query: baseline_failed: linked dependency packages/react-query::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+    "typecheck examples/bun: baseline_failed: linked dependency examples/bun::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+    "typecheck examples/cloudflare-workers: baseline_failed: linked dependency examples/cloudflare-workers::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+    "typecheck packages/client: baseline_failed: linked dependency examples/.experimental/next-app-dir::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+    "typecheck examples/express-minimal: baseline_failed: linked dependency examples/express-minimal::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+    "typecheck examples/express-server: baseline_failed: linked dependency examples/express-server::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+    "typecheck examples/fastify-server: baseline_failed: linked dependency examples/fastify-server::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+    "typecheck packages/server: baseline_failed: linked dependency examples/.experimental/next-app-dir::@trpc/server points at changed source packages/server: packages/server/src/unstable-core-do-not-import/stream/sse.test.ts; commit or stash the linked package's changes",
+    "typecheck examples/minimal: baseline_failed: linked dependency examples/minimal::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+    "typecheck examples/next-big-router: baseline_failed: linked dependency examples/next-big-router::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+    "typecheck examples/next-edge-runtime: baseline_failed: linked dependency examples/next-edge-runtime::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+    "typecheck examples/lambda-api-gateway: baseline_failed: linked dependency examples/lambda-api-gateway::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+    "typecheck examples/next-formdata: baseline_failed: linked dependency examples/next-formdata::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+    "typecheck examples/next-minimal-starter: baseline_failed: linked dependency examples/next-minimal-starter::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+    "typecheck examples/next-prisma-starter: baseline_failed: linked dependency examples/next-prisma-starter::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+    "typecheck examples/next-prisma-todomvc: baseline_failed: linked dependency examples/next-prisma-todomvc::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+    "typecheck examples/next-prisma-websockets-starter: baseline_failed: linked dependency examples/next-prisma-websockets-starter::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+    "typecheck packages/next: baseline_failed: linked dependency packages/next::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes"
+  ],
+  "false_preexisting_labels": [
+    {
+      "id": "2c21182fa4208fffef85c3e0765f39e153e5159ba3ec2d5b091144f8c885e8c1",
+      "rule_id": "typecheck/tsc/TS2345",
+      "state": "pre-existing",
+      "message": "Argument of type 'unknown' is not assignable to parameter of type 'number'.",
+      "location": {
+        "column": 17,
+        "line_end": 106,
+        "line_start": 106,
+        "occurrence_state": "pre-existing",
+        "path": "packages/server/src/unstable-core-do-not-import/stream/sse.test.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 17,
+          "line_end": 106,
+          "line_start": 106,
+          "occurrence_state": "pre-existing",
+          "path": "packages/server/src/unstable-core-do-not-import/stream/sse.test.ts",
+          "symbol_path": ""
+        },
+        {
+          "column": 17,
+          "line_end": 139,
+          "line_start": 139,
+          "occurrence_state": "pre-existing",
+          "path": "packages/server/src/unstable-core-do-not-import/stream/sse.test.ts",
+          "symbol_path": ""
+        },
+        {
+          "column": 17,
+          "line_end": 248,
+          "line_start": 248,
+          "occurrence_state": "pre-existing",
+          "path": "packages/server/src/unstable-core-do-not-import/stream/sse.test.ts",
+          "symbol_path": ""
+        }
+      ],
+      "evidence": [
+        "tsc diagnostic",
+        "unclassified: outside changed hunks, baseline unavailable (packages/server/src/unstable-core-do-not-import/stream/sse.test.ts:106)",
+        "unclassified: outside changed hunks, baseline unavailable (packages/server/src/unstable-core-do-not-import/stream/sse.test.ts:139)",
+        "unclassified: outside changed hunks, baseline unavailable (packages/server/src/unstable-core-do-not-import/stream/sse.test.ts:248)"
+      ]
+    },
+    {
+      "id": "777a6f6fd3734eb47878306c24e62c79036380c30cfc07ee111ab5acfc873ee4",
+      "rule_id": "typecheck/tsc/TS2322",
+      "state": "unclassified",
+      "message": "Type 'number' is not assignable to type 'string'.",
+      "location": {
+        "column": 5,
+        "line_end": 315,
+        "line_start": 315,
+        "occurrence_state": "unclassified",
+        "path": "packages/server/src/unstable-core-do-not-import/stream/sse.test.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 5,
+          "line_end": 315,
+          "line_start": 315,
+          "occurrence_state": "unclassified",
+          "path": "packages/server/src/unstable-core-do-not-import/stream/sse.test.ts",
+          "symbol_path": ""
+        }
+      ],
+      "evidence": [
+        "tsc diagnostic"
+      ]
+    },
+    {
+      "id": "c061787288ce81869622f0af0b32782828fd7eed7e3c9cdbd5aa4baa7aa89569",
+      "rule_id": "typecheck/tsc/TS2322",
+      "state": "pre-existing",
+      "message": "Type 'number' is not assignable to type 'string'.",
+      "location": {
+        "column": 9,
+        "line_end": 157,
+        "line_start": 157,
+        "occurrence_state": "pre-existing",
+        "path": "packages/server/src/unstable-core-do-not-import/stream/sse.test.ts",
+        "symbol_path": "sse.test.data.yieldEvent"
+      },
+      "locations": [
+        {
+          "column": 9,
+          "line_end": 157,
+          "line_start": 157,
+          "occurrence_state": "pre-existing",
+          "path": "packages/server/src/unstable-core-do-not-import/stream/sse.test.ts",
+          "symbol_path": "sse.test.data.yieldEvent"
+        }
+      ],
+      "evidence": [
+        "tsc diagnostic",
+        "unclassified: outside changed hunks, baseline unavailable (packages/server/src/unstable-core-do-not-import/stream/sse.test.ts:157)"
+      ]
+    },
+    {
+      "id": "e19aec0a983f533cde998b26848c0603c5d5f18e11004e78e8b7244ff5b8b5b2",
+      "rule_id": "typecheck/tsc/TS2322",
+      "state": "pre-existing",
+      "message": "Type 'number' is not assignable to type 'string'.",
+      "location": {
+        "column": 9,
+        "line_end": 33,
+        "line_start": 33,
+        "occurrence_state": "pre-existing",
+        "path": "packages/server/src/unstable-core-do-not-import/stream/sse.test.ts",
+        "symbol_path": "sse.test.data"
+      },
+      "locations": [
+        {
+          "column": 9,
+          "line_end": 33,
+          "line_start": 33,
+          "occurrence_state": "pre-existing",
+          "path": "packages/server/src/unstable-core-do-not-import/stream/sse.test.ts",
+          "symbol_path": "sse.test.data"
+        }
+      ],
+      "evidence": [
+        "tsc diagnostic",
+        "unclassified: outside changed hunks, baseline unavailable (packages/server/src/unstable-core-do-not-import/stream/sse.test.ts:33)"
+      ]
+    }
+  ],
+  "warning": "Observations only, not scored; independent base tsc is clean and head has the six diagnostics in ../trpc-5819-oracle/head-typecheck.stdout.log."
+}

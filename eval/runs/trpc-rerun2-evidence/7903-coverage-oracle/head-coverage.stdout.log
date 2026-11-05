@@ -1,0 +1,17 @@
+
+ RUN  v5.0.0 /dev/shm/trpc-eval/source/tooling/release
+      Coverage enabled with istanbul
+
+ ❯ |release| src/tarballs.test.ts (10 tests | 1 failed) 5160ms
+   ❯ packTarballs (1)
+     × packs the given packages, which readTarballs accepts 266ms
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  1 failed | 41 passed (42)
+   Start at  11:39:32
+   Duration  13.18s (tests 38%, import 36%, transform 25%, worker 1%)
+
+  Transform  |release| transforming modules took 5.70s · 25% of tracked time, re-done on every run
+             persist transforms across runs with fsModuleCache: true
+             learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+

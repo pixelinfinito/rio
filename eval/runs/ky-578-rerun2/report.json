@@ -1,0 +1,289 @@
+{
+  "checks": [
+    {
+      "findings": [],
+      "kind": "secrets",
+      "language": "common",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 0
+    },
+    {
+      "findings": [],
+      "hint": "Dependency audit needs api.osv.dev",
+      "kind": "dependencies",
+      "language": "common",
+      "outcome": "skipped",
+      "reason": "offline",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 0
+    },
+    {
+      "findings": [],
+      "hint": "Disabled in the profile",
+      "kind": "lint",
+      "language": "typescript",
+      "outcome": "skipped",
+      "reason": "disabled",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 0
+    },
+    {
+      "findings": [],
+      "hint": "Disabled in the profile",
+      "kind": "coverage",
+      "language": "typescript",
+      "outcome": "skipped",
+      "reason": "disabled",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 0
+    },
+    {
+      "dependency_state": "trusted",
+      "findings": [],
+      "kind": "typecheck",
+      "language": "typescript",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 5779
+    },
+    {
+      "dependency_state": "trusted",
+      "findings": [],
+      "kind": "typecheck",
+      "language": "typescript",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "base",
+      "wall_time_ms": 22776
+    }
+  ],
+  "deferred": [
+    {
+      "reason": "no_endpoint",
+      "step": "triage"
+    },
+    {
+      "reason": "no_endpoint",
+      "step": "agents"
+    },
+    {
+      "reason": "no_endpoint",
+      "step": "verify"
+    }
+  ],
+  "excluded": [],
+  "findings": [],
+  "footer": {
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "typecheck .: dependencies_trusted: results use unverified dependencies",
+      "Graph references use syntax and text; no language server was used",
+      "Offline applies to Rio; tool and test processes were not network-isolated",
+      "dependencies_trusted: results were computed against unverified dependencies"
+    ],
+    "suppressions": [],
+    "tool_versions": {
+      "typescript:.:tsc": "Version 5.4.5"
+    }
+  },
+  "impact": {
+    "symbols": [
+      {
+        "path": "source/types/request.ts",
+        "references_per_hop": [
+          1,
+          1
+        ],
+        "symbol_path": "",
+        "test_referenced": false,
+        "unresolved": 0
+      },
+      {
+        "path": "source/types/request.ts",
+        "references_per_hop": [
+          1,
+          1
+        ],
+        "symbol_path": "request.UndiciBodyInit",
+        "test_referenced": false,
+        "unresolved": 0
+      },
+      {
+        "path": "source/types/request.ts",
+        "references_per_hop": [
+          1,
+          1
+        ],
+        "symbol_path": "request.UndiciHeadersInit",
+        "test_referenced": false,
+        "unresolved": 0
+      },
+      {
+        "path": "source/types/request.ts",
+        "references_per_hop": [
+          1,
+          1
+        ],
+        "symbol_path": "request.UndiciReferrerPolicy",
+        "test_referenced": false,
+        "unresolved": 0
+      },
+      {
+        "path": "source/types/request.ts",
+        "references_per_hop": [
+          1,
+          1
+        ],
+        "symbol_path": "request.UndiciRequestCredentials",
+        "test_referenced": false,
+        "unresolved": 0
+      },
+      {
+        "path": "source/types/request.ts",
+        "references_per_hop": [
+          1,
+          1
+        ],
+        "symbol_path": "request.UndiciRequestInit",
+        "test_referenced": false,
+        "unresolved": 0
+      },
+      {
+        "path": "source/types/request.ts",
+        "references_per_hop": [
+          1,
+          1
+        ],
+        "symbol_path": "request.UndiciRequestMode",
+        "test_referenced": false,
+        "unresolved": 0
+      },
+      {
+        "path": "source/types/request.ts",
+        "references_per_hop": [
+          1,
+          1
+        ],
+        "symbol_path": "request.UndiciRequestRedirect",
+        "test_referenced": false,
+        "unresolved": 0
+      }
+    ],
+    "truncated": false,
+    "unresolved": 0
+  },
+  "incomplete": [
+    {
+      "findings": [],
+      "hint": "Dependency audit needs api.osv.dev",
+      "kind": "dependencies",
+      "language": "common",
+      "outcome": "skipped",
+      "reason": "offline",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 0
+    },
+    {
+      "findings": [],
+      "hint": "Disabled in the profile",
+      "kind": "lint",
+      "language": "typescript",
+      "outcome": "skipped",
+      "reason": "disabled",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 0
+    },
+    {
+      "findings": [],
+      "hint": "Disabled in the profile",
+      "kind": "coverage",
+      "language": "typescript",
+      "outcome": "skipped",
+      "reason": "disabled",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 0
+    }
+  ],
+  "metrics": {
+    "checks": [
+      {
+        "kind": "secrets",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "kind": "dependencies",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "kind": "lint",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "kind": "coverage",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "kind": "typecheck",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 5779
+      },
+      {
+        "kind": "typecheck",
+        "root": ".",
+        "version": "base",
+        "wall_time_ms": 22776
+      }
+    ],
+    "tool_versions": {
+      "typescript:.:tsc": "Version 5.4.5"
+    },
+    "wall_time_ms": 35345
+  },
+  "review": {
+    "base": "2d56baf6739a49655cbbe74b5083c0350511bbed",
+    "chain": [
+      "eval-ky-trusted"
+    ],
+    "head": "ebfc6f4dad3764086ab4be39ec48f7b83058b7dd",
+    "id": "3b3940a8307a6bf6",
+    "mode": "branch",
+    "profile": "eval-ky-trusted",
+    "rio_version": "0.1.0",
+    "run_id": "01M6NNMX9RD6QQJJG52B5BGYWZ"
+  },
+  "risks": [],
+  "schema": "rio-report-v1",
+  "status": "incomplete",
+  "summary": {
+    "fixed": 0,
+    "pre_existing": 0,
+    "suppressed": 0
+  }
+}

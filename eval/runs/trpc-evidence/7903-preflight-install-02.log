@@ -1,0 +1,56 @@
+Progress: resolved 1, reused 0, downloaded 0, added 0
+Packages are hard linked from the content-addressable store to the virtual store.
+  Content-addressable store is at: /dev/shm/trpc-eval/pnpm-store/v11
+  Virtual store is at:             node_modules/.pnpm
+Downloading @turbo/linux-64@2.10.12: 0.00 B/19.40 MB
+Downloading effect@4.1.1: 0.00 B/10.35 MB
+Downloading @oxlint-tsgolint/linux-x64@7.0.2005: 0.00 B/7.83 MB
+Downloading @rolldown/binding-linux-x64-gnu@1.2.8: 0.00 B/7.96 MB
+[WARN] Tarball download average speed 19 KiB/s (size 34 KiB) is below 50 KiB/s: https://registry.npmjs.org/source-map-js/-/source-map-js-1.2.1.tgz (GET)
+Downloading @rolldown/binding-linux-x64-gnu@1.2.16: 0.00 B/8.82 MB
+Downloading @oxlint/binding-linux-x64-gnu@1.90.0: 0.00 B/6.40 MB
+Downloading @typescript/typescript-linux-x64@7.0.2: 0.00 B/9.66 MB
+Downloading @rolldown/binding-linux-x64-gnu@1.2.8: 4.88 MB/7.96 MB
+Packages: +477
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Progress: resolved 477, reused 0, downloaded 475, added 477, done
+Lockfile is up to date, resolution step is skipped
+
+dependencies:
++ @actions/core 3.0.0
++ @actions/github 9.0.0
++ @effect/platform-node 4.1.1
++ @manypkg/cli 0.22.0
++ @tanstack/intent 0.5.6
++ @testing-library/dom 10.0.0
++ @testing-library/jest-dom 6.9.1
++ @testing-library/react 16.1.0
++ @testing-library/user-event 14.4.3
++ @types/event-source-polyfill 1.0.5
++ @types/node 24.13.4
++ @vitest/coverage-istanbul 5.0.0
++ @vitest/ui 5.0.0
++ concurrently 9.0.0
++ effect 4.1.1
++ event-source-polyfill 1.0.31
++ express 5.2.1
++ fast-glob 3.3.3
++ hash-sum 2.0.0
++ konn 0.7.0
++ npm-run-all2 8.0.4
++ oxfmt 0.75.0
++ oxlint 1.90.0
++ oxlint-tsgolint 7.0.2005
++ react 19.1.0
++ react-dom 19.1.0
++ superjson 1.12.4
++ tailwindcss 4.3.3
++ ts-prune 0.10.3
++ tsx 4.21.0
++ turbo 2.10.12
++ typescript 6.0.3
++ vite 8.3.0
++ vitest 5.0.0
++ zod 4.2.1
+
+Done in 8.9s using pnpm v12.4.1

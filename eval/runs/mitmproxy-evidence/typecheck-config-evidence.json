@@ -1,0 +1,33 @@
+{
+  "provenance": "Extracted from pinned negative head pyproject.toml; see corresponding PR record for SHA.",
+  "mypy": {
+    "check_untyped_defs": true,
+    "ignore_missing_imports": true,
+    "files": [
+      "mitmproxy",
+      "examples/addons",
+      "release/*.py"
+    ],
+    "exclude": [
+      "^docs/",
+      "^release/build/",
+      "^examples/contrib/"
+    ],
+    "overrides": [
+      {
+        "module": "mitmproxy.contrib.*",
+        "ignore_errors": true
+      },
+      {
+        "module": "tornado.*",
+        "ignore_errors": true
+      },
+      {
+        "module": "test.*",
+        "ignore_errors": true
+      }
+    ]
+  },
+  "pyright": null,
+  "adapter_source": "crates/rio-adapters/src/languages.rs:53-74; explicit mypy targets suppress inferred package targets; internal argv not captured"
+}

@@ -1,0 +1,1477 @@
+{
+  "source": "Successful execve calls observed with strace -f -e trace=execve -s 8192 around the unmodified eval/runner.py; original runner commands.json is unchanged.",
+  "commands": [
+    {
+      "pid": 632459,
+      "program": "/usr/bin/python3",
+      "argv": [
+        "python3",
+        "eval/runner.py",
+        "--repository",
+        "pydantic/pydantic-settings",
+        "--pr",
+        "1097",
+        "--base",
+        "e71a53e6a0094da671d66eebd806904695722482",
+        "--head",
+        "83dc3337b627d6d701f63e69cb77375226651947",
+        "--languages",
+        "python",
+        "--rio",
+        "/home/ubuntu/rio/target/release/rio",
+        "--install-plan",
+        "eval/runs/pydantic-settings-evidence/install-plan-v3.json",
+        "--profile",
+        "eval/runs/pydantic-settings-evidence/profile.yaml",
+        "--out",
+        "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1097-attempt2",
+        "--timeout",
+        "1800"
+      ]
+    },
+    {
+      "pid": 632530,
+      "program": "/usr/bin/git",
+      "argv": [
+        "git",
+        "clone",
+        "--no-checkout",
+        "https://github.com/pydantic/pydantic-settings.git",
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head"
+      ]
+    },
+    {
+      "pid": 632543,
+      "program": "/usr/lib/git-core/git",
+      "argv": [
+        "/usr/lib/git-core/git",
+        "remote-https",
+        "origin",
+        "https://github.com/pydantic/pydantic-settings.git"
+      ]
+    },
+    {
+      "pid": 632545,
+      "program": "/usr/lib/git-core/git-remote-https",
+      "argv": [
+        "/usr/lib/git-core/git-remote-https",
+        "origin",
+        "https://github.com/pydantic/pydantic-settings.git"
+      ]
+    },
+    {
+      "pid": 632711,
+      "program": "/usr/lib/git-core/git",
+      "argv": [
+        "/usr/lib/git-core/git",
+        "index-pack",
+        "--stdin",
+        "--fix-thin",
+        "--keep=fetch-pack 632530 on vm-team-t3-dev-01",
+        "--check-self-contained-and-connected"
+      ]
+    },
+    {
+      "pid": 632944,
+      "program": "/usr/lib/git-core/git",
+      "argv": [
+        "/usr/lib/git-core/git",
+        "rev-list",
+        "--objects",
+        "--stdin",
+        "--not",
+        "--all",
+        "--quiet",
+        "--alternate-refs"
+      ]
+    },
+    {
+      "pid": 632957,
+      "program": "/usr/bin/git",
+      "argv": [
+        "git",
+        "fetch",
+        "origin",
+        "e71a53e6a0094da671d66eebd806904695722482",
+        "83dc3337b627d6d701f63e69cb77375226651947"
+      ]
+    },
+    {
+      "pid": 632966,
+      "program": "/usr/lib/git-core/git",
+      "argv": [
+        "/usr/lib/git-core/git",
+        "remote-https",
+        "origin",
+        "https://github.com/pydantic/pydantic-settings.git"
+      ]
+    },
+    {
+      "pid": 632970,
+      "program": "/usr/lib/git-core/git-remote-https",
+      "argv": [
+        "/usr/lib/git-core/git-remote-https",
+        "origin",
+        "https://github.com/pydantic/pydantic-settings.git"
+      ]
+    },
+    {
+      "pid": 633225,
+      "program": "/usr/lib/git-core/git",
+      "argv": [
+        "/usr/lib/git-core/git",
+        "unpack-objects",
+        "-q",
+        "--pack_header=2,1"
+      ]
+    },
+    {
+      "pid": 633229,
+      "program": "/usr/lib/git-core/git",
+      "argv": [
+        "/usr/lib/git-core/git",
+        "rev-list",
+        "--objects",
+        "--stdin",
+        "--not",
+        "--exclude-hidden=fetch",
+        "--all",
+        "--quiet",
+        "--alternate-refs"
+      ]
+    },
+    {
+      "pid": 633233,
+      "program": "/usr/lib/git-core/git",
+      "argv": [
+        "/usr/lib/git-core/git",
+        "maintenance",
+        "run",
+        "--auto",
+        "--no-quiet"
+      ]
+    },
+    {
+      "pid": 633299,
+      "program": "/usr/bin/git",
+      "argv": [
+        "git",
+        "merge-base",
+        "e71a53e6a0094da671d66eebd806904695722482",
+        "83dc3337b627d6d701f63e69cb77375226651947"
+      ]
+    },
+    {
+      "pid": 633419,
+      "program": "/usr/bin/git",
+      "argv": [
+        "git",
+        "checkout",
+        "--detach",
+        "83dc3337b627d6d701f63e69cb77375226651947"
+      ]
+    },
+    {
+      "pid": 633512,
+      "program": "/usr/bin/git",
+      "argv": [
+        "git",
+        "clone",
+        "--no-hardlinks",
+        "--no-checkout",
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head",
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/base"
+      ]
+    },
+    {
+      "pid": 633554,
+      "program": "/bin/sh",
+      "argv": [
+        "/bin/sh",
+        "-c",
+        "git-upload-pack '/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.git'",
+        "git-upload-pack '/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.git'"
+      ]
+    },
+    {
+      "pid": 633572,
+      "program": "/usr/lib/git-core/git-upload-pack",
+      "argv": [
+        "git-upload-pack",
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.git"
+      ]
+    },
+    {
+      "pid": 633740,
+      "program": "/usr/bin/git",
+      "argv": [
+        "git",
+        "checkout",
+        "--detach",
+        "e71a53e6a0094da671d66eebd806904695722482"
+      ]
+    },
+    {
+      "pid": 633785,
+      "program": "/tmp/rio-acceptance-tools/uv",
+      "argv": [
+        "uv",
+        "sync",
+        "--locked",
+        "--all-groups",
+        "--all-extras",
+        "--no-install-project"
+      ]
+    },
+    {
+      "pid": 633801,
+      "program": "/lib64/ld-linux-x86-64.so.2",
+      "argv": [
+        "/lib64/ld-linux-x86-64.so.2"
+      ]
+    },
+    {
+      "pid": 633802,
+      "program": "/lib64/ld-linux-x86-64.so.2",
+      "argv": [
+        "/lib64/ld-linux-x86-64.so.2",
+        "--version"
+      ]
+    },
+    {
+      "pid": 634209,
+      "program": "/tmp/rio-acceptance-tools/uv",
+      "argv": [
+        "uv",
+        "run",
+        "--no-sync",
+        "python",
+        "-c",
+        "import pathlib, sysconfig; p = pathlib.Path(sysconfig.get_path('purelib')) / 'a1_coverage.pth'; print(str(p)); print(p.read_text() if p.exists() else 'absent'); p.unlink(missing_ok=True)"
+      ]
+    },
+    {
+      "pid": 634223,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/base/.venv/bin/python",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/base/.venv/bin/python",
+        "-I",
+        "-B",
+        "-c",
+        "import sys; sys.path = [__import__(\"os\").fsdecode(b\"/dev/shm/pydantic-settings-eval/uv-cache/.tmpnPEHI5\")] + sys.path; from python.get_interpreter_info import main; main()"
+      ]
+    },
+    {
+      "pid": 634279,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/base/.venv/bin/python",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/base/.venv/bin/python",
+        "-c",
+        "import pathlib, sysconfig; p = pathlib.Path(sysconfig.get_path('purelib')) / 'a1_coverage.pth'; print(str(p)); print(p.read_text() if p.exists() else 'absent'); p.unlink(missing_ok=True)"
+      ]
+    },
+    {
+      "pid": 634358,
+      "program": "/usr/bin/git",
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ]
+    },
+    {
+      "pid": 634434,
+      "program": "/tmp/rio-acceptance-tools/uv",
+      "argv": [
+        "uv",
+        "sync",
+        "--locked",
+        "--all-groups",
+        "--all-extras",
+        "--no-install-project"
+      ]
+    },
+    {
+      "pid": 634451,
+      "program": "/lib64/ld-linux-x86-64.so.2",
+      "argv": [
+        "/lib64/ld-linux-x86-64.so.2"
+      ]
+    },
+    {
+      "pid": 634454,
+      "program": "/lib64/ld-linux-x86-64.so.2",
+      "argv": [
+        "/lib64/ld-linux-x86-64.so.2",
+        "--version"
+      ]
+    },
+    {
+      "pid": 634765,
+      "program": "/tmp/rio-acceptance-tools/uv",
+      "argv": [
+        "uv",
+        "run",
+        "--no-sync",
+        "python",
+        "-c",
+        "import pathlib, sysconfig; p = pathlib.Path(sysconfig.get_path('purelib')) / 'a1_coverage.pth'; print(str(p)); print(p.read_text() if p.exists() else 'absent'); p.unlink(missing_ok=True)"
+      ]
+    },
+    {
+      "pid": 634796,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/python",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/python",
+        "-I",
+        "-B",
+        "-c",
+        "import sys; sys.path = [__import__(\"os\").fsdecode(b\"/dev/shm/pydantic-settings-eval/uv-cache/.tmpV0GjWu\")] + sys.path; from python.get_interpreter_info import main; main()"
+      ]
+    },
+    {
+      "pid": 634844,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/python",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/python",
+        "-c",
+        "import pathlib, sysconfig; p = pathlib.Path(sysconfig.get_path('purelib')) / 'a1_coverage.pth'; print(str(p)); print(p.read_text() if p.exists() else 'absent'); p.unlink(missing_ok=True)"
+      ]
+    },
+    {
+      "pid": 634987,
+      "program": "/usr/bin/git",
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ]
+    },
+    {
+      "pid": 635079,
+      "program": "/home/ubuntu/rio/target/release/rio",
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "--version"
+      ]
+    },
+    {
+      "pid": 635252,
+      "program": "/usr/local/bin/node",
+      "argv": [
+        "node",
+        "--version"
+      ]
+    },
+    {
+      "pid": 635457,
+      "program": "/usr/local/bin/npm",
+      "argv": [
+        "npm",
+        "--version"
+      ]
+    },
+    {
+      "pid": 635457,
+      "program": "/usr/local/bin/node",
+      "argv": [
+        "node",
+        "/usr/local/bin/npm",
+        "--version"
+      ]
+    },
+    {
+      "pid": 635625,
+      "program": "/usr/bin/python3",
+      "argv": [
+        "python3",
+        "--version"
+      ]
+    },
+    {
+      "pid": 635733,
+      "program": "/tmp/rio-acceptance-tools/uv",
+      "argv": [
+        "uv",
+        "--version"
+      ]
+    },
+    {
+      "pid": 635763,
+      "program": "/home/ubuntu/rio/target/release/rio",
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "profile",
+        "show",
+        "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1097-attempt2/profile.yaml"
+      ]
+    },
+    {
+      "pid": 635937,
+      "program": "/home/ubuntu/rio/target/release/rio",
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "doctor",
+        "--format",
+        "json"
+      ]
+    },
+    {
+      "pid": 636054,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/./.venv/bin/python",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/./.venv/bin/python",
+        "-I",
+        "-c",
+        "import json,os,platform,sys; v=sys.version_info; print(json.dumps(dict(implementation_name=sys.implementation.name,implementation_version='.'.join(map(str,sys.implementation.version[:3])),os_name=os.name,platform_machine=platform.machine(),platform_python_implementation=platform.python_implementation(),platform_release=platform.release(),platform_system=platform.system(),platform_version=platform.version(),python_full_version=platform.python_version(),python_version=f'{v.major}.{v.minor}',sys_platform=sys.platform)))"
+      ]
+    },
+    {
+      "pid": 636198,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/./.venv/bin/mypy",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/./.venv/bin/mypy",
+        "--version"
+      ]
+    },
+    {
+      "pid": 636441,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/./.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/./.venv/bin/ruff",
+        "--version"
+      ]
+    },
+    {
+      "pid": 636534,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/./.venv/bin/coverage",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/./.venv/bin/coverage",
+        "--version"
+      ]
+    },
+    {
+      "pid": 636974,
+      "program": "/home/ubuntu/rio/target/release/rio",
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "review",
+        "--base",
+        "e71a53e6a0094da671d66eebd806904695722482",
+        "--format",
+        "json",
+        "--offline",
+        "--profile",
+        "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1097-attempt2/profile.yaml"
+      ]
+    },
+    {
+      "pid": 637159,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/./.venv/bin/python",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/./.venv/bin/python",
+        "-I",
+        "-c",
+        "import json,os,platform,sys; v=sys.version_info; print(json.dumps(dict(implementation_name=sys.implementation.name,implementation_version='.'.join(map(str,sys.implementation.version[:3])),os_name=os.name,platform_machine=platform.machine(),platform_python_implementation=platform.python_implementation(),platform_release=platform.release(),platform_system=platform.system(),platform_version=platform.version(),python_full_version=platform.python_version(),python_version=f'{v.major}.{v.minor}',sys_platform=sys.platform)))"
+      ]
+    },
+    {
+      "pid": 637194,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/./.venv/bin/mypy",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/./.venv/bin/mypy",
+        "--version"
+      ]
+    },
+    {
+      "pid": 637221,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/./.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/./.venv/bin/ruff",
+        "--version"
+      ]
+    },
+    {
+      "pid": 637222,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/./.venv/bin/coverage",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/./.venv/bin/coverage",
+        "--version"
+      ]
+    },
+    {
+      "pid": 637280,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/./.venv/bin/mypy",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/./.venv/bin/mypy",
+        "--output",
+        "json",
+        "--config-file",
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/cache/c52ea3bc2353d064/runs/01M6MS35EARPPKGPR2FMKJ85KN/tools/tool.tmp-wPa1zp/pyproject.toml",
+        "pydantic_settings"
+      ]
+    },
+    {
+      "pid": 637317,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/./.venv/bin/coverage",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/./.venv/bin/coverage",
+        "run",
+        "-m",
+        "pytest",
+        "-q"
+      ]
+    },
+    {
+      "pid": 637318,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/./.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/./.venv/bin/ruff",
+        "check",
+        "--output-format",
+        "json",
+        "--",
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/cache/c52ea3bc2353d064/runs/01M6MS35EARPPKGPR2FMKJ85KN/tools/tool.tmp-Dr2DvR/pydantic_settings/sources/base.py",
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/cache/c52ea3bc2353d064/runs/01M6MS35EARPPKGPR2FMKJ85KN/tools/tool.tmp-Dr2DvR/pydantic_settings/sources/providers/env.py",
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/cache/c52ea3bc2353d064/runs/01M6MS35EARPPKGPR2FMKJ85KN/tools/tool.tmp-Dr2DvR/tests/test_settings.py"
+      ]
+    },
+    {
+      "pid": 637422,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/./.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/./.venv/bin/ruff",
+        "check",
+        "--output-format",
+        "json",
+        "--",
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/cache/c52ea3bc2353d064/runs/01M6MS35EARPPKGPR2FMKJ85KN/tools/tool.tmp-P7Sp0c/pydantic_settings/sources/base.py",
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/cache/c52ea3bc2353d064/runs/01M6MS35EARPPKGPR2FMKJ85KN/tools/tool.tmp-P7Sp0c/pydantic_settings/sources/providers/env.py",
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/cache/c52ea3bc2353d064/runs/01M6MS35EARPPKGPR2FMKJ85KN/tools/tool.tmp-P7Sp0c/tests/test_settings.py"
+      ]
+    },
+    {
+      "pid": 638598,
+      "program": "/usr/bin/uname",
+      "argv": [
+        "uname",
+        "-p"
+      ]
+    },
+    {
+      "pid": 639643,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 639777,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/./.venv/bin/mypy",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/./.venv/bin/mypy",
+        "--output",
+        "json",
+        "--config-file",
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/cache/c52ea3bc2353d064/runs/01M6MS35EARPPKGPR2FMKJ85KN/tools/tool.tmp-Cj6a4B/pyproject.toml",
+        "pydantic_settings"
+      ]
+    },
+    {
+      "pid": 639917,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 639920,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 639922,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 639923,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 639924,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 639925,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 639934,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 639937,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 639946,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 639947,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 639957,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 639958,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 639959,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 639961,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 639962,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 639963,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 639972,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640045,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640063,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640081,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640083,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640084,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640085,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640090,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640095,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640097,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640115,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640124,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640146,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640164,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640181,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640196,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640203,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640235,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640242,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640247,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640265,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640300,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640326,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640370,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640375,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640384,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640387,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640388,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640391,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640420,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640430,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640431,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640436,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640448,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640481,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640487,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640492,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640493,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640514,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640531,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640532,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640549,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640550,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640551,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640552,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640561,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640563,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640571,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640601,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640603,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640604,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640613,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640625,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640627,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640636,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640643,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640652,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640653,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640654,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640655,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640664,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640693,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640711,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 640737,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/.venv/bin/ruff",
+        "check",
+        "-",
+        "--target-version=py37",
+        "--ignore=E501"
+      ]
+    },
+    {
+      "pid": 641949,
+      "program": "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/./.venv/bin/coverage",
+      "argv": [
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/head/./.venv/bin/coverage",
+        "json",
+        "-o",
+        "/dev/shm/pydantic-settings-eval/rio-eval-z710x703/cache/c52ea3bc2353d064/runs/01M6MS35EARPPKGPR2FMKJ85KN/tools/tool.tmp-1MZEfj/./.rio-coverage/coverage.json"
+      ]
+    }
+  ]
+}

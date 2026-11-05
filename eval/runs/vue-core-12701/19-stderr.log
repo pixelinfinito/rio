@@ -1,0 +1,30 @@
+Warning: rio/base:$.steps[3]: rio/triage is deferred locally: no_endpoint
+Warning: rio/base:$.steps[4]: rio/agents is deferred locally: no_endpoint
+Warning: rio/base:$.steps[5]: rio/verify is deferred locally: no_endpoint
+Running prepare…
+Finished prepare
+Running checks…
+coverage packages-private/sfc-playground: skipped (dependency_mismatch)
+typecheck packages-private/sfc-playground: skipped (dependency_mismatch)
+typecheck packages-private/vite-debug: skipped (dependency_mismatch)
+coverage packages-private/vite-debug: skipped (dependency_mismatch)
+coverage packages-private/dts-built-test: failed (tests_failed)
+coverage packages-private/dts-test: failed (tests_failed)
+coverage packages/compiler-sfc: failed (tests_failed)
+coverage packages/vue: failed (tests_failed)
+lint packages/compiler-sfc: passed
+typecheck packages-private/dts-built-test: findings
+coverage packages/server-renderer: failed (tests_failed)
+typecheck packages/server-renderer: failed (unparseable_output)
+coverage packages/vue-compat: failed (tests_failed)
+secrets .: passed
+dependencies .: skipped (offline)
+typecheck packages/vue-compat: failed (unparseable_output)
+typecheck packages/vue: failed (unparseable_output)
+typecheck packages-private/dts-test: findings
+typecheck packages/compiler-sfc: findings
+Finished checks
+Running graph…
+Finished graph
+Running report…
+Finished report

@@ -1,0 +1,1149 @@
+diff --git a/tooling/release/src/bin/release.ts b/tooling/release/src/bin/release.ts
+index f84a7bcb3..97e925e63 100644
+--- a/tooling/release/src/bin/release.ts
++++ b/tooling/release/src/bin/release.ts
+@@ -9,6 +9,7 @@
+  *   pnpm release stable <patch|minor|major> [--dist-tag latest] [--provenance] [--dry-run] [--pack <dir> | --from <dir>]
+  *   pnpm release canary [--preid canary] [--dist-tag canary] [--provenance] [--dry-run] [--pack <dir> | --from <dir>]
+  *   pnpm release github-release <tag>
++ *   pnpm release notes [<tag>] [--to <ref>]
+  */
+ import { parseArgs } from 'node:util';
+ import { NodeRuntime, NodeServices } from '@effect/platform-node';
+@@ -18,6 +19,7 @@ import {
+   defaultWait,
+   githubReleaseForTag,
+   packCanary,
++  printNotes,
+   packStable,
+   publishCanary,
+   publishStable,
+@@ -29,7 +31,8 @@ import { bumps, isBump } from '../version.ts';
+ const usage = `Usage:
+   pnpm release stable <${bumps.join('|')}> [--dist-tag latest] [--provenance] [--dry-run] [--pack <dir> | --from <dir>]
+   pnpm release canary [--preid canary] [--dist-tag canary] [--provenance] [--dry-run] [--pack <dir> | --from <dir>]
+-  pnpm release github-release <tag>`;
++  pnpm release github-release <tag>
++  pnpm release notes [<tag>] [--to <ref>]`;
+ 
+ const { positionals, values } = parseArgs({
+   allowPositionals: true,
+@@ -40,6 +43,7 @@ const { positionals, values } = parseArgs({
+     pack: { type: 'string' },
+     preid: { type: 'string', default: 'canary' },
+     provenance: { type: 'boolean', default: false },
++    to: { type: 'string' },
+   },
+ });
+ 
+@@ -55,7 +59,11 @@ Effect.gen(function* () {
+     values.pack === undefined ? undefined : path.resolve(values.pack);
+   const from =
+     values.from === undefined ? undefined : path.resolve(values.from);
+-  if (pack !== undefined && from !== undefined) {
++  if (
++    (pack !== undefined && from !== undefined) ||
++    (values.to !== undefined && command !== 'notes') ||
++    (command === 'notes' && (pack !== undefined || from !== undefined))
++  ) {
+     return yield* new ReleaseError({ message: usage });
+   }
+   switch (command) {
+@@ -104,6 +112,9 @@ Effect.gen(function* () {
+       }
+       yield* githubReleaseForTag(root, arg, defaultWait);
+       return;
++    case 'notes':
++      yield* printNotes(root, { tag: arg, to: values.to });
++      return;
+     case undefined:
+     default:
+       break;
+diff --git a/tooling/release/src/notes.test.ts b/tooling/release/src/notes.test.ts
+new file mode 100644
+index 000000000..590b8bb6c
+--- /dev/null
++++ b/tooling/release/src/notes.test.ts
+@@ -0,0 +1,488 @@
++import { NodeServices } from '@effect/platform-node';
++import { Effect, FileSystem, Path } from 'effect';
++import { describe, expect, it } from 'vitest';
++import { git } from './command.ts';
++import {
++  changedPackages,
++  changesBetween,
++  noteSection,
++  notesPackages,
++  notesEntries,
++  parseNewContributors,
++  pullRequestNumber,
++  renderNotes,
++  type Change,
++  type GitHubInfo,
++  type NotesPackage,
++  type PullRequest,
++} from './notes.ts';
++
++const repo = 'trpc/trpc';
++
++const packages: ReadonlyArray<NotesPackage> = [
++  { dir: 'packages/server', name: '@trpc/server' },
++  { dir: 'packages/client', name: '@trpc/client' },
++  { dir: 'packages/react-query', name: '@trpc/react-query' },
++];
++
++const prUrl = (number: number) => `https://github.com/${repo}/pull/${number}`;
++
++const pr = (number: number, title: string, author = 'KATT'): PullRequest => ({
++  number,
++  title,
++  url: prUrl(number),
++  author,
++});
++
++const change = (
++  sha: string,
++  subject: string,
++  files: ReadonlyArray<string>,
++): Change => ({ sha, subject, files });
++
++const github = (
++  prs: ReadonlyArray<PullRequest>,
++  commitAuthors: Record<string, string> = {},
++): GitHubInfo => ({
++  pullRequests: new Map(prs.map((it) => [it.number, it])),
++  commitAuthors: new Map(Object.entries(commitAuthors)),
++});
++
++const notes = (
++  changes: ReadonlyArray<Change>,
++  info: GitHubInfo,
++  newContributors: ReadonlyArray<{ login: string; url: string }> = [],
++) =>
++  renderNotes({
++    entries: notesEntries({ changes, packages, github: info, repo }),
++    packages,
++    newContributors,
++    repo,
++    previousTag: 'v11.24.0',
++    tag: 'v11.24.1',
++  });
++
++describe('pullRequestNumber', () => {
++  it('reads the number a squash merge appends', () => {
++    expect(pullRequestNumber('fix(server): a (#7867)')).toBe(7867);
++    expect(pullRequestNumber('fix: refs #12 in the middle')).toBeUndefined();
++    expect(pullRequestNumber('chore: release v11.24.0')).toBeUndefined();
++  });
++
++  it("reads a merge commit's", () => {
++    expect(
++      pullRequestNumber('Merge pull request #7867 from someone/branch'),
++    ).toBe(7867);
++    expect(pullRequestNumber('  Merge pull request #7 from a/b')).toBe(7);
++    expect(pullRequestNumber('Merge branch main into feature')).toBeUndefined();
++  });
++});
++
++describe('changedPackages', () => {
++  it('counts files in a package directory other than Markdown', () => {
++    expect(
++      changedPackages(
++        [
++          'packages/client/src/links/wsLink.ts',
++          'packages/server/README.md',
++          'packages/server/NOTES.MD',
++          'packages/react-query/docs/skills/a.md',
++          'packages/tests/server/a.test.ts',
++          'www/docs/a.md',
++          'packages/serverless/src/index.ts',
++        ],
++        packages,
++      ),
++    ).toEqual(['@trpc/client']);
++  });
++
++  it('lists the packages in the given order', () => {
++    expect(
++      changedPackages(
++        ['packages/react-query/src/a.ts', 'packages/server/package.json'],
++        packages,
++      ),
++    ).toEqual(['@trpc/server', '@trpc/react-query']);
++  });
++});
++
++describe('noteSection', () => {
++  it('sorts conventional commits by type', () => {
++    expect(noteSection('feat(server): a')).toBe('feat');
++    expect(noteSection('fix: a')).toBe('fix');
++    expect(noteSection('perf(client): a')).toBe('perf');
++    expect(noteSection('feat(server)!: a')).toBe('breaking');
++    expect(noteSection('fix!: a')).toBe('breaking');
++    expect(noteSection('Fix(client): a')).toBe('fix');
++    expect(noteSection('wip(server): a')).toBe('other');
++    expect(noteSection('Update the wsLink')).toBe('other');
++  });
++});
++
++describe('renderNotes', () => {
++  it('groups by package, then by type, and skips what changes no package', () => {
++    expect(
++      notes(
++        [
++          change('a1', 'fix(server): a (#1)', ['packages/server/src/a.ts']),
++          change('a2', 'feat(www): sponsors (#2)', [
++            'www/src/sponsors.tsx',
++            'packages/server/README.md',
++            'packages/client/README.md',
++          ]),
++          change('a3', 'feat(client): b (#3)', ['packages/client/src/b.ts']),
++          change('a4', 'perf(server): c (#4)', ['packages/server/src/c.ts']),
++          change('a5', 'chore: bump the examples (#5)', [
++            'examples/next/package.json',
++          ]),
++          change('a6', 'fix(client): d (#6)', ['packages/client/src/d.ts']),
++        ],
++        github([
++          pr(1, 'fix(server): a'),
++          pr(2, 'feat(www): sponsors'),
++          pr(3, 'feat(client): b', 'someone'),
++          pr(4, 'perf(server): c'),
++          pr(5, 'chore: bump the examples'),
++          pr(6, 'fix(client): d'),
++        ]),
++      ),
++    ).toBe(`## @trpc/server
++
++### Fixes
++
++* fix(server): a by @KATT in ${prUrl(1)}
++
++### Performance
++
++* perf(server): c by @KATT in ${prUrl(4)}
++
++## @trpc/client
++
++### Features
++
++* feat(client): b by @someone in ${prUrl(3)}
++
++### Fixes
++
++* fix(client): d by @KATT in ${prUrl(6)}
++
++**Full Changelog**: https://github.com/trpc/trpc/compare/v11.24.0...v11.24.1
++`);
++  });
++
++  it('lists a pull request under each package it changes', () => {
++    const rendered = notes(
++      [
++        change('a1', 'fix: shared (#1)', [
++          'packages/client/src/a.ts',
++          'packages/react-query/src/a.ts',
++        ]),
++      ],
++      github([pr(1, 'fix: shared')]),
++    );
++    expect(rendered).toContain(
++      `## @trpc/client\n\n### Fixes\n\n* fix: shared by @KATT in ${prUrl(1)}`,
++    );
++    expect(rendered).toContain(
++      `## @trpc/react-query\n\n### Fixes\n\n* fix: shared by @KATT in ${prUrl(1)}`,
++    );
++    expect(rendered).not.toContain('## @trpc/server');
++  });
++
++  it('puts breaking changes first and unconventional titles last', () => {
++    expect(
++      notes(
++        [
++          change('a1', 'Tidy things (#1)', ['packages/server/src/a.ts']),
++          change('a2', 'fix(server): a (#2)', ['packages/server/src/a.ts']),
++          change('a3', 'feat(server)!: drop node 18 (#3)', [
++            'packages/server/src/a.ts',
++          ]),
++        ],
++        github([
++          pr(1, 'Tidy things'),
++          pr(2, 'fix(server): a'),
++          pr(3, 'feat(server)!: drop node 18'),
++        ]),
++      ).match(/^###? .*$/gm),
++    ).toEqual([
++      '## @trpc/server',
++      '### Breaking Changes',
++      '### Fixes',
++      '### Other Changes',
++    ]);
++  });
++
++  it("uses GitHub's title, and the commit when there's no pull request", () => {
++    expect(
++      notes(
++        [
++          change('a1', 'fix(client): old title (#1)', [
++            'packages/client/src/a.ts',
++          ]),
++          change('a2', 'fix(client): pushed directly', [
++            'packages/client/src/b.ts',
++          ]),
++          change('a3', 'fix(client): a ghost (#3)', [
++            'packages/client/src/c.ts',
++          ]),
++        ],
++        github(
++          [
++            pr(1, 'fix(client): new title'),
++            { ...pr(3, 'fix(client): a ghost'), author: undefined },
++          ],
++          { a2: 'someone' },
++        ),
++      ),
++    ).toContain(
++      [
++        `* fix(client): new title by @KATT in ${prUrl(1)}`,
++        `* fix(client): pushed directly by @someone in https://github.com/trpc/trpc/commit/a2`,
++        `* fix(client): a ghost in ${prUrl(3)}`,
++      ].join('\n'),
++    );
++  });
++
++  it('skips release commits', () => {
++    const bump = [
++      'packages/server/package.json',
++      'packages/client/package.json',
++    ];
++    expect(
++      notes(
++        [
++          change('a1', 'chore: release v11.24.1', bump),
++          change('a2', 'v11.24.0', bump),
++          change('a3', 'v11.24.0-canary.1', bump),
++        ],
++        github([]),
++      ),
++    ).toMatch(/^No changes to the published packages\./);
++  });
++
++  it('merges commits of the same pull request', () => {
++    const rendered = notes(
++      [
++        change('a1', 'fix: a (#1)', ['packages/client/src/a.ts']),
++        change('a2', 'fix: a (#1)', ['packages/server/src/a.ts']),
++      ],
++      github([pr(1, 'fix: a')]),
++    );
++    expect(rendered.match(/fix: a by/g)).toHaveLength(2);
++    expect(rendered.indexOf('@trpc/server')).toBeLessThan(
++      rendered.indexOf('@trpc/client'),
++    );
++  });
++
++  it('credits new contributors whose first pull request is listed', () => {
++    expect(
++      notes(
++        [
++          change('a1', 'fix(server): a (#1)', ['packages/server/src/a.ts']),
++          change('a2', 'fix(www): b (#2)', ['www/src/b.tsx']),
++        ],
++        github([
++          pr(1, 'fix(server): a', 'newbie'),
++          pr(2, 'fix(www): b', 'other'),
++        ]),
++        [
++          { login: 'newbie', url: prUrl(1) },
++          { login: 'other', url: prUrl(2) },
++        ],
++      ),
++    ).toContain(
++      `## New Contributors\n\n* @newbie made their first contribution in ${prUrl(1)}\n\n**Full Changelog**`,
++    );
++  });
++
++  it('says so when no package changed', () => {
++    expect(
++      notes(
++        [change('a1', 'feat(www): a (#1)', ['www/src/a.tsx'])],
++        github([pr(1, 'feat(www): a')]),
++      ),
++    ).toBe(
++      'No changes to the published packages.\n\n**Full Changelog**: https://github.com/trpc/trpc/compare/v11.24.0...v11.24.1\n',
++    );
++  });
++});
++
++describe('parseNewContributors', () => {
++  it("reads GitHub's generated notes", () => {
++    expect(
++      parseNewContributors(`## What's Changed
++* fix: a by @a in https://github.com/trpc/trpc/pull/1
++
++## New Contributors
++* @a made their first contribution in https://github.com/trpc/trpc/pull/1
++* @b-c made their first contribution in https://github.com/trpc/trpc/pull/2
++
++**Full Changelog**: https://github.com/trpc/trpc/compare/v1.0.0...v1.0.1`),
++    ).toEqual([
++      { login: 'a', url: 'https://github.com/trpc/trpc/pull/1' },
++      { login: 'b-c', url: 'https://github.com/trpc/trpc/pull/2' },
++    ]);
++  });
++});
++
++describe('changesBetween', () => {
++  it('lists first-parent commits with their files, oldest first', () =>
++    Effect.runPromise(
++      Effect.gen(function* () {
++        const fs = yield* FileSystem.FileSystem;
++        const path = yield* Path.Path;
++        const root = yield* fs.makeTempDirectoryScoped();
++        const commit = (message: string, files: ReadonlyArray<string>) =>
++          Effect.gen(function* () {
++            for (const file of files) {
++              yield* fs.makeDirectory(path.dirname(path.join(root, file)), {
++                recursive: true,
++              });
++              yield* fs.writeFileString(path.join(root, file), message);
++            }
++            yield* git(root, 'add', '--all');
++            yield* git(
++              root,
++              '-c',
++              'user.name=Test',
++              '-c',
++              'user.email=test@example.com',
++              '-c',
++              'commit.gpgsign=false',
++              'commit',
++              '--quiet',
++              '--allow-empty',
++              '--message',
++              message,
++            );
++            return yield* git(root, 'rev-parse', 'HEAD');
++          });
++        yield* git(root, 'init', '--quiet', '--initial-branch', 'main');
++        yield* commit('initial', ['packages/server/src/a.ts']);
++        yield* git(root, 'tag', '--no-sign', 'v1.0.0');
++        const a = yield* commit('fix(server): a (#1)', [
++          'packages/server/src/a.ts',
++          'packages/server/README.md',
++        ]);
++        const b = yield* commit('feat(www): b (#2)', ['www/b.tsx']);
++        const c = yield* commit('chore: empty', []);
++        yield* git(root, 'checkout', '--quiet', '-b', 'feature');
++        yield* commit('feat(server): feature', [
++          'packages/server/src/feature.ts',
++          'packages/server/src/café.ts',
++          'packages/server/src/a\x1eb.ts',
++        ]);
++        yield* git(root, 'checkout', '--quiet', 'main');
++        yield* git(
++          root,
++          '-c',
++          'user.name=Test',
++          '-c',
++          'user.email=test@example.com',
++          'merge',
++          '--quiet',
++          '--no-ff',
++          '--message',
++          'Merge pull request #3 from someone/feature',
++          'feature',
++        );
++        const d = yield* git(root, 'rev-parse', 'HEAD');
++
++        expect(yield* changesBetween(root, 'v1.0.0', 'HEAD')).toEqual([
++          {
++            sha: a,
++            subject: 'fix(server): a (#1)',
++            files: ['packages/server/README.md', 'packages/server/src/a.ts'],
++          },
++          { sha: b, subject: 'feat(www): b (#2)', files: ['www/b.tsx'] },
++          { sha: c, subject: 'chore: empty', files: [] },
++          {
++            sha: d,
++            subject: 'Merge pull request #3 from someone/feature',
++            files: [
++              'packages/server/src/a\x1eb.ts',
++              'packages/server/src/café.ts',
++              'packages/server/src/feature.ts',
++            ],
++          },
++        ]);
++        expect(yield* changesBetween(root, 'HEAD', 'HEAD')).toEqual([]);
++      }).pipe(Effect.scoped, Effect.provide(NodeServices.layer)),
++    ));
++});
++
++describe('notesPackages', () => {
++  it('reads the public packages at a revision, not the working tree', () =>
++    Effect.runPromise(
++      Effect.gen(function* () {
++        const fs = yield* FileSystem.FileSystem;
++        const path = yield* Path.Path;
++        const root = yield* fs.makeTempDirectoryScoped();
++        const write = (dir: string, pkg: object) =>
++          Effect.gen(function* () {
++            yield* fs.makeDirectory(path.join(root, 'packages', dir), {
++              recursive: true,
++            });
++            yield* fs.writeFileString(
++              path.join(root, 'packages', dir, 'package.json'),
++              JSON.stringify(pkg),
++            );
++          });
++        const commit = git(
++          root,
++          '-c',
++          'user.name=Test',
++          '-c',
++          'user.email=test@example.com',
++          '-c',
++          'commit.gpgsign=false',
++          'commit',
++          '--quiet',
++          '--all',
++          '--message',
++          'packages',
++        );
++        yield* git(root, 'init', '--quiet', '--initial-branch', 'main');
++        yield* git(
++          root,
++          '-c',
++          'user.name=Test',
++          '-c',
++          'user.email=test@example.com',
++          '-c',
++          'commit.gpgsign=false',
++          'commit',
++          '--quiet',
++          '--allow-empty',
++          '--message',
++          'initial',
++        );
++        yield* git(root, 'tag', '--no-sign', 'v0.0.0');
++        yield* write('café', { name: '@trpc/cafe' });
++        yield* write('client', {
++          name: '@trpc/client',
++          dependencies: { '@trpc/server': 'workspace:*' },
++        });
++        yield* write('server', { name: '@trpc/server' });
++        yield* write('tests', { name: '@trpc/tests', private: true });
++        yield* git(root, 'add', '--all');
++        yield* commit;
++        yield* git(root, 'tag', '--no-sign', 'v1.0.0');
++        yield* write('client', { name: '@trpc/client', private: true });
++        yield* commit;
++        yield* write('server', { name: '@trpc/renamed' });
++
++        expect(yield* notesPackages(root, 'v0.0.0')).toEqual([]);
++        expect(yield* notesPackages(root, 'v1.0.0')).toEqual([
++          { name: '@trpc/cafe', dir: 'packages/café' },
++          { name: '@trpc/server', dir: 'packages/server' },
++          { name: '@trpc/client', dir: 'packages/client' },
++        ]);
++        expect(yield* notesPackages(root, 'HEAD')).toEqual([
++          { name: '@trpc/cafe', dir: 'packages/café' },
++          { name: '@trpc/server', dir: 'packages/server' },
++        ]);
++      }).pipe(Effect.scoped, Effect.provide(NodeServices.layer)),
++    ));
++});
+diff --git a/tooling/release/src/notes.ts b/tooling/release/src/notes.ts
+new file mode 100644
+index 000000000..96263e20e
+--- /dev/null
++++ b/tooling/release/src/notes.ts
+@@ -0,0 +1,482 @@
++/**
++ * The notes of a stable release's GitHub release: the pull requests since the
++ * previous tag, under each public package they change, then by their
++ * conventional-commit type.
++ *
++ * A pull request changes a package when its commit changes a file in the
++ * package's directory other than Markdown: READMEs change with every
++ * sponsor update. Pull requests that change no public package, like the
++ * website, tooling or examples, aren't listed. GitHub works out who
++ * contributed for the first time.
++ */
++import { Effect } from 'effect';
++import { git, output } from './command.ts';
++import type { PackageJson } from './version.ts';
++import { publishedVersions, type WorkspacePackage } from './workspace.ts';
++
++/** A commit on the released branch's first-parent history. */
++export interface Change {
++  readonly sha: string;
++  readonly subject: string;
++  readonly files: ReadonlyArray<string>;
++}
++
++/** A public package, in the order its section appears. */
++export interface NotesPackage {
++  /** Relative to the repo root, e.g. `packages/server`. */
++  readonly dir: string;
++  readonly name: string;
++}
++
++export interface PullRequest {
++  readonly number: number;
++  readonly title: string;
++  readonly url: string;
++  /** `undefined` when the author's account is gone. */
++  readonly author: string | undefined;
++}
++
++/** What GitHub knows about the commits of a release. */
++export interface GitHubInfo {
++  readonly pullRequests: ReadonlyMap<number, PullRequest>;
++  /** Logins of the commits' authors, for entries GitHub has no pull request for. */
++  readonly commitAuthors: ReadonlyMap<string, string>;
++}
++
++export interface NotesEntry {
++  readonly title: string;
++  /** The pull request, or the commit when there's none. */
++  readonly url: string;
++  readonly author: string | undefined;
++  readonly packages: ReadonlyArray<string>;
++}
++
++export interface NewContributor {
++  readonly login: string;
++  /** Their first pull request. */
++  readonly url: string;
++}
++
++/**
++ * The pull request a commit's subject names: a squash merge's `fix: a
++ * (#123)`, or a merge commit's `Merge pull request #123 from owner/branch`.
++ */
++export function pullRequestNumber(subject: string): number | undefined {
++  const trimmed = subject.trim();
++  const match =
++    /\(#(\d+)\)$/.exec(trimmed) ??
++    /^Merge pull request #(\d+) from /.exec(trimmed);
++  return match === null ? undefined : Number(match[1]);
++}
++
++/**
++ * Whether `subject` is a release commit's, which only bumps versions:
++ * `chore: release v11.24.1`, or `v11.24.0` from before `pnpm release`.
++ */
++export function isReleaseCommit(subject: string) {
++  return /^(chore: release )?v\d+\.\d+\.\d+(-\S+)?$/.test(subject.trim());
++}
++
++/** The names of the packages `files` change, in `packages` order. */
++export function changedPackages(
++  files: ReadonlyArray<string>,
++  packages: ReadonlyArray<NotesPackage>,
++): ReadonlyArray<string> {
++  return packages
++    .filter(({ dir }) =>
++      files.some(
++        (file) =>
++          file.startsWith(`${dir}/`) && !file.toLowerCase().endsWith('.md'),
++      ),
++    )
++    .map(({ name }) => name);
++}
++
++const sections = [
++  ['breaking', 'Breaking Changes'],
++  ['feat', 'Features'],
++  ['fix', 'Fixes'],
++  ['perf', 'Performance'],
++  ['revert', 'Reverts'],
++  ['refactor', 'Refactors'],
++  ['docs', 'Documentation'],
++  ['types', 'Types'],
++  ['test', 'Tests'],
++  ['build', 'Build'],
++  ['ci', 'CI'],
++  ['chore', 'Chores'],
++  ['style', 'Style'],
++  ['other', 'Other Changes'],
++] as const;
++
++type Section = (typeof sections)[number][0];
++
++/**
++ * The section of a conventional-commit title: `!` before the colon is a
++ * breaking change, and a type not in `sections`, or no type, is another
++ * change.
++ */
++export function noteSection(title: string): Section {
++  const match = /^(\w+)(?:\([^)]*\))?(!)?:/.exec(title);
++  if (match === null) {
++    return 'other';
++  }
++  if (match[2] === '!') {
++    return 'breaking';
++  }
++  const type = match[1]?.toLowerCase();
++  return sections.find(([key]) => key === type)?.[0] ?? 'other';
++}
++
++/**
++ * The entries of the notes, oldest first: the changes that change a public
++ * package, one per pull request, titled and credited the way GitHub has
++ * them.
++ */
++export function notesEntries(opts: {
++  readonly changes: ReadonlyArray<Change>;
++  readonly packages: ReadonlyArray<NotesPackage>;
++  readonly github: GitHubInfo;
++  readonly repo: string;
++}): ReadonlyArray<NotesEntry> {
++  const entries = new Map<string, NotesEntry>();
++  for (const change of opts.changes) {
++    const packages = changedPackages(change.files, opts.packages);
++    if (packages.length === 0 || isReleaseCommit(change.subject)) {
++      continue;
++    }
++    const number = pullRequestNumber(change.subject);
++    const pr =
++      number === undefined ? undefined : opts.github.pullRequests.get(number);
++    const entry: NotesEntry =
++      pr === undefined
++        ? {
++            title: change.subject,
++            url: `https://github.com/${opts.repo}/commit/${change.sha}`,
++            author: opts.github.commitAuthors.get(change.sha),
++            packages,
++          }
++        : { title: pr.title, url: pr.url, author: pr.author, packages };
++    const earlier = entries.get(entry.url);
++    entries.set(
++      entry.url,
++      earlier === undefined
++        ? entry
++        : {
++            ...earlier,
++            packages: opts.packages
++              .map(({ name }) => name)
++              .filter(
++                (name) =>
++                  earlier.packages.includes(name) || packages.includes(name),
++              ),
++          },
++    );
++  }
++  return [...entries.values()];
++}
++
++/** The `## New Contributors` of notes GitHub generated. */
++export function parseNewContributors(
++  generated: string,
++): ReadonlyArray<NewContributor> {
++  return [
++    ...generated.matchAll(
++      /^\* @(\S+) made their first contribution in (\S+)$/gm,
++    ),
++  ].map(([, login = '', url = '']) => ({ login, url }));
++}
++
++const bullet = ({ title, url, author }: NotesEntry) =>
++  `* ${title}${author === undefined ? '' : ` by @${author}`} in ${url}`;
++
++/**
++ * The notes' Markdown: a `## <package>` for each package `entries` change, in
++ * `packages` order, with a `### <type>` for each type; then the new
++ * contributors whose first pull request is listed, and the full changelog.
++ */
++export function renderNotes(opts: {
++  readonly entries: ReadonlyArray<NotesEntry>;
++  readonly packages: ReadonlyArray<NotesPackage>;
++  readonly newContributors: ReadonlyArray<NewContributor>;
++  readonly repo: string;
++  readonly previousTag: string;
++  readonly tag: string;
++}): string {
++  const blocks: Array<string> = [];
++  for (const { name } of opts.packages) {
++    const entries = opts.entries.filter(({ packages }) =>
++      packages.includes(name),
++    );
++    if (entries.length === 0) {
++      continue;
++    }
++    blocks.push(`## ${name}`);
++    for (const [section, heading] of sections) {
++      const listed = entries.filter(
++        ({ title }) => noteSection(title) === section,
++      );
++      if (listed.length > 0) {
++        blocks.push(`### ${heading}\n\n${listed.map(bullet).join('\n')}`);
++      }
++    }
++  }
++  if (blocks.length === 0) {
++    blocks.push('No changes to the published packages.');
++  }
++
++  const listed = new Set(opts.entries.map(({ url }) => url));
++  const newContributors = opts.newContributors.filter(({ url }) =>
++    listed.has(url),
++  );
++  if (newContributors.length > 0) {
++    blocks.push(
++      `## New Contributors\n\n${newContributors
++        .map(
++          ({ login, url }) =>
++            `* @${login} made their first contribution in ${url}`,
++        )
++        .join('\n')}`,
++    );
++  }
++
++  blocks.push(
++    `**Full Changelog**: https://github.com/${opts.repo}/compare/${opts.previousTag}...${opts.tag}`,
++  );
++  return `${blocks.join('\n\n')}\n`;
++}
++
++/** The commits in `from..to` on `to`'s first-parent history, oldest first. */
++export const changesBetween = Effect.fn('changesBetween')(function* (
++  root: string,
++  from: string,
++  to: string,
++) {
++  const log = yield* git(
++    root,
++    'log',
++    '--first-parent',
++    '--diff-merges=first-parent',
++    '--no-renames',
++    '--name-only',
++    '--reverse',
++    '-z',
++    '--format=%x00%H%x00%s',
++    `${from}..${to}`,
++  );
++  // With -z, every field ends with a NUL and paths aren't quoted. Each commit
++  // starts with an empty field, which no path is, then its sha and subject; a
++  // newline comes before its first path.
++  const fields = log.split('\0');
++  const changes: Array<Change & { files: Array<string> }> = [];
++  for (let i = 0; i < fields.length; i++) {
++    const field = fields[i] ?? '';
++    const current = changes.at(-1);
++    if (field === '' && i + 2 < fields.length) {
++      changes.push({
++        sha: fields[i + 1] ?? '',
++        subject: fields[i + 2] ?? '',
++        files: [],
++      });
++      i += 2;
++    } else if (field !== '' && current !== undefined) {
++      current.files.push(
++        current.files.length === 0 ? field.replace(/^\n/, '') : field,
++      );
++    }
++  }
++  return changes;
++});
++
++/** The public packages at `rev`, each after the packages it depends on. */
++export const notesPackages = Effect.fn('notesPackages')(function* (
++  root: string,
++  rev: string,
++) {
++  const packages: Array<WorkspacePackage> = [];
++  // Lists nothing when `rev` has no packages/ directory.
++  const listed = yield* git(
++    root,
++    'ls-tree',
++    '-z',
++    '--name-only',
++    rev,
++    'packages/',
++  );
++  for (const dir of listed.split('\0').filter((entry) => entry !== '')) {
++    const raw = yield* git(root, 'show', `${rev}:${dir}/package.json`).pipe(
++      Effect.orElseSucceed(() => undefined),
++    );
++    const pkg =
++      raw === undefined ? undefined : (JSON.parse(raw) as PackageJson);
++    if (pkg?.name !== undefined) {
++      packages.push({ dir, name: pkg.name, pkg });
++    }
++  }
++  const dirs = new Map(packages.map(({ name, dir }) => [name, dir]));
++  return [...publishedVersions(packages, '0.0.0').keys()].map(
++    (name): NotesPackage => ({ name, dir: dirs.get(name) ?? '' }),
++  );
++});
++
++interface GraphQLAuthor {
++  readonly __typename: string;
++  readonly login: string;
++}
++
++const login = (author: GraphQLAuthor | null | undefined) =>
++  author == null
++    ? undefined
++    : author.__typename === 'Bot'
++      ? `${author.login}[bot]`
++      : author.login;
++
++/** Looks the pull requests and commits of `changes` up on GitHub, in one query. */
++const gitHubInfo = Effect.fn('gitHubInfo')(function* (
++  root: string,
++  repo: string,
++  changes: ReadonlyArray<Change>,
++) {
++  const numbers = new Set<number>();
++  const shas: Array<string> = [];
++  for (const change of changes) {
++    const number = pullRequestNumber(change.subject);
++    if (number !== undefined) {
++      numbers.add(number);
++    }
++    shas.push(change.sha);
++  }
++  if (numbers.size === 0 && shas.length === 0) {
++    return { pullRequests: new Map(), commitAuthors: new Map() };
++  }
++  const author = 'author { __typename login }';
++  const fields = [
++    ...[...numbers].map(
++      (number) =>
++        `pr${number}: issueOrPullRequest(number: ${number}) { ... on PullRequest { number title url ${author} } }`,
++    ),
++    ...shas.map(
++      (sha) =>
++        `c${sha}: object(oid: "${sha}") { ... on Commit { author { user { login } } } }`,
++    ),
++  ];
++  const [owner, name] = repo.split('/');
++  const response = yield* output(root, 'gh', [
++    'api',
++    'graphql',
++    '-f',
++    `query=query($owner: String!, $name: String!) { repository(owner: $owner, name: $name) { ${fields.join(' ')} } }`,
++    '-f',
++    `owner=${owner}`,
++    '-f',
++    `name=${name}`,
++  ]);
++  const data = (
++    JSON.parse(response) as {
++      data: { repository: Record<string, Record<string, unknown> | null> };
++    }
++  ).data.repository;
++
++  const pullRequests = new Map<number, PullRequest>();
++  for (const number of numbers) {
++    const pr = data[`pr${number}`] as
++      | {
++          number?: number;
++          title: string;
++          url: string;
++          author: GraphQLAuthor | null;
++        }
++      | null
++      | undefined;
++    if (pr?.number !== undefined) {
++      pullRequests.set(number, {
++        number,
++        title: pr.title,
++        url: pr.url,
++        author: login(pr.author),
++      });
++    }
++  }
++  const commitAuthors = new Map<string, string>();
++  for (const sha of shas) {
++    const commit = data[`c${sha}`] as
++      | { author?: { user: { login: string } | null } }
++      | null
++      | undefined;
++    const user = commit?.author?.user?.login;
++    if (user !== undefined) {
++      commitAuthors.set(sha, user);
++    }
++  }
++  return { pullRequests, commitAuthors };
++});
++
++/**
++ * The new contributors GitHub finds between `previousTag` and `tag`. Before
++ * `tag` exists, GitHub reads up to `to`, which must be on GitHub.
++ */
++const newContributors = Effect.fn('newContributors')(function* (
++  root: string,
++  opts: {
++    readonly repo: string;
++    readonly previousTag: string;
++    readonly tag: string;
++    readonly to: string;
++  },
++) {
++  const generated = yield* output(root, 'gh', [
++    'api',
++    '--method',
++    'POST',
++    `repos/${opts.repo}/releases/generate-notes`,
++    '-f',
++    `tag_name=${opts.tag}`,
++    '-f',
++    `previous_tag_name=${opts.previousTag}`,
++    '-f',
++    `target_commitish=${yield* git(root, 'rev-parse', `${opts.to}^{commit}`)}`,
++    '--jq',
++    '.body',
++  ]);
++  return parseNewContributors(generated);
++});
++
++/**
++ * The notes of the release `tag` of `to`, from the commits since
++ * `previousTag`. `repo` defaults to the one `gh` finds for `root`.
++ */
++export const releaseNotes = Effect.fn('releaseNotes')(function* (
++  root: string,
++  opts: {
++    readonly previousTag: string;
++    readonly tag: string;
++    readonly to?: string;
++    readonly repo?: string;
++  },
++) {
++  const to = opts.to ?? 'HEAD';
++  const repo =
++    opts.repo ??
++    (yield* output(root, 'gh', [
++      'repo',
++      'view',
++      '--json',
++      'nameWithOwner',
++      '--jq',
++      '.nameWithOwner',
++    ]));
++  const packages = yield* notesPackages(root, to);
++  const changes = (yield* changesBetween(root, opts.previousTag, to)).filter(
++    ({ subject, files }) =>
++      !isReleaseCommit(subject) && changedPackages(files, packages).length > 0,
++  );
++  const github = yield* gitHubInfo(root, repo, changes);
++  return renderNotes({
++    entries: notesEntries({ changes, packages, github, repo }),
++    packages,
++    newContributors: yield* newContributors(root, { ...opts, repo, to }),
++    repo,
++    previousTag: opts.previousTag,
++    tag: opts.tag,
++  });
++});
+diff --git a/tooling/release/src/release.ts b/tooling/release/src/release.ts
+index 0a6677094..0a9758335 100644
+--- a/tooling/release/src/release.ts
++++ b/tooling/release/src/release.ts
+@@ -2,7 +2,7 @@
+  * Releases the packages in `packages/*`, the way KATT/raf-query does: the
+  * latest `vX.Y.Z` tag is the version, packages are published before anything
+  * is pushed, and a stable release ends with a GitHub release whose notes
+- * GitHub generates.
++ * group the pull requests since the last one by package (`notes.ts`).
+  *
+  * Each release has two halves (`tarballs.ts`): one builds and packs the
+  * packages without credentials, the other publishes the tarballs with them.
+@@ -11,6 +11,7 @@
+  */
+ import { Console, Data, Duration, Effect, FileSystem } from 'effect';
+ import { git, output, run } from './command.ts';
++import { releaseNotes } from './notes.ts';
+ import {
+   onRegistry,
+   packTarballs,
+@@ -254,13 +255,19 @@ export const waitForVersions = Effect.fn('waitForVersions')(function* (
+ });
+ 
+ /**
+- * Creates the GitHub release for `tag` once npm serves `versions`, with notes
+- * GitHub generates from the pull requests since `previousTag`.
++ * Creates the GitHub release for `tag`, with the notes `releaseNotes` makes
++ * from the pull requests since `previousTag`.
+  */
+ export const githubRelease = Effect.fn('githubRelease')(function* (
+   root: string,
+   opts: { readonly tag: string; readonly previousTag: string },
+ ) {
++  const fs = yield* FileSystem.FileSystem;
++  const notesFile = yield* fs.makeTempFileScoped({ suffix: '.md' });
++  yield* fs.writeFileString(
++    notesFile,
++    yield* releaseNotes(root, { ...opts, to: opts.tag }),
++  );
+   yield* run(root, 'gh', [
+     'release',
+     'create',
+@@ -268,11 +275,10 @@ export const githubRelease = Effect.fn('githubRelease')(function* (
+     '--verify-tag',
+     '--title',
+     opts.tag,
+-    '--generate-notes',
+-    '--notes-start-tag',
+-    opts.previousTag,
++    '--notes-file',
++    notesFile,
+   ]);
+-});
++}, Effect.scoped);
+ 
+ export interface StableOptions extends PublishOptions {
+   readonly bump: Bump;
+@@ -345,8 +351,9 @@ export const publishStable = Effect.fn('publishStable')(function* (
+ 
+   if (opts.dryRun) {
+     yield* publishTarballs(root, tarballs, { ...opts, registry });
++    const notes = yield* releaseNotes(root, { previousTag, tag });
+     yield* Console.log(
+-      `Dry run: would push "${releaseCommitMessage(tag)}" to ${opts.remote} ${opts.branch}, publish, then tag ${tag}, push the tag and create the GitHub release. The version bump is left in the working tree.`,
++      `Dry run: would push "${releaseCommitMessage(tag)}" to ${opts.remote} ${opts.branch}, publish, then tag ${tag}, push the tag and create the GitHub release with these notes. The version bump is left in the working tree.\n\n${notes}`,
+     );
+     return tag;
+   }
+@@ -493,6 +500,36 @@ export const canary = Effect.fn('canary')(function* (
+   return yield* publishCanary(root, { ...opts, dir });
+ }, Effect.scoped);
+ 
++/**
++ * `pnpm release notes [tag] [--to <ref>]`: prints the GitHub release notes
++ * of `tag` without releasing anything. An existing tag gets its own notes;
++ * otherwise `tag`, by default the patch after the latest tag, is a release
++ * of `to`, by default HEAD.
++ */
++export const printNotes = Effect.fn('printNotes')(function* (
++  root: string,
++  opts: { readonly tag?: string; readonly to?: string },
++) {
++  const tagged =
++    opts.tag !== undefined &&
++    (yield* git(
++      root,
++      'rev-parse',
++      '--verify',
++      '--quiet',
++      `refs/tags/${opts.tag}`,
++    ).pipe(
++      Effect.as(true),
++      Effect.orElseSucceed(() => false),
++    ));
++  const to = tagged ? opts.tag : (opts.to ?? 'HEAD');
++  const previousTag = yield* latestTag(root, tagged ? `${opts.tag}^` : to);
++  const tag = opts.tag ?? `v${bumpVersion(previousTag.slice(1), 'patch')}`;
++  const notes = yield* releaseNotes(root, { previousTag, tag, to });
++  yield* Console.log(notes);
++  return notes;
++});
++
+ /**
+  * `pnpm release github-release v11.23.0`, for a stable release whose GitHub
+  * release wasn't created: waits for its packages, then creates it.

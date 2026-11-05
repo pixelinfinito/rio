@@ -1,0 +1,2175 @@
+{
+  "scope": "Snapshots of available child outputs copied during execution before unmodified runner cleanup; not a complete child-argv trace or complete final cache. Final report.json is authoritative.",
+  "files": [
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Fauto-refetching/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Fauto-refetching/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Fauto-refetching/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Fauto-refetching/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Fauto-refetching/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Fbasic/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Fbasic/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Fbasic/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Fbasic/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Fbasic/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Fbasic-persister/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Fbasic-persister/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Fbasic-persister/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Fbasic-persister/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Fbasic-persister/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Fdevtools-panel/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Fdevtools-panel/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Fdevtools-panel/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Fdevtools-panel/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Fdevtools-panel/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Finfinite-query-with-max-pages/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Finfinite-query-with-max-pages/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Finfinite-query-with-max-pages/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Finfinite-query-with-max-pages/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Finfinite-query-with-max-pages/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Foptimistic-updates/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Foptimistic-updates/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Foptimistic-updates/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Foptimistic-updates/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Foptimistic-updates/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Fpagination/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Fpagination/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Fpagination/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Fpagination/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Fpagination/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Fquery-options-from-a-service/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Fquery-options-from-a-service/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Fquery-options-from-a-service/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Fquery-options-from-a-service/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Fquery-options-from-a-service/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Frouter/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Frouter/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Frouter/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Frouter/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Frouter/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Frxjs/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Frxjs/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Frxjs/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Frxjs/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Frxjs/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Fsimple/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Fsimple/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Fsimple/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Fsimple/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fangular%2Fsimple/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Flit%2Fbasic/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Flit%2Fbasic/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Flit%2Fbasic/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Flit%2Fbasic/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Flit%2Fbasic/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Flit%2Fpagination/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Flit%2Fpagination/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Flit%2Fpagination/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Flit%2Fpagination/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Flit%2Fpagination/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Flit%2Fssr/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Flit%2Fssr/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Flit%2Fssr/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Flit%2Fssr/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Flit%2Fssr/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fpreact%2Fsimple/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fpreact%2Fsimple/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fpreact%2Fsimple/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fpreact%2Fsimple/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fpreact%2Fsimple/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Falgolia/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Falgolia/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Falgolia/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Falgolia/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Falgolia/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fauto-refetching/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fauto-refetching/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fauto-refetching/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fauto-refetching/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fauto-refetching/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fbasic/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fbasic/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fbasic/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fbasic/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fbasic/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fbasic-graphql-request/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fbasic-graphql-request/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fbasic-graphql-request/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fbasic-graphql-request/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fbasic-graphql-request/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fbatching/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fbatching/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fbatching/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fbatching/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fbatching/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fchat/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fchat/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fchat/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fchat/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fchat/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fdefault-query-function/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fdefault-query-function/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fdefault-query-function/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fdefault-query-function/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fdefault-query-function/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fdevtools-panel/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fdevtools-panel/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fdevtools-panel/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fdevtools-panel/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fdevtools-panel/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Feslint-legacy/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Feslint-legacy/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Feslint-legacy/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Feslint-legacy/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Feslint-legacy/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Feslint-plugin-demo/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Feslint-plugin-demo/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Feslint-plugin-demo/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Feslint-plugin-demo/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Feslint-plugin-demo/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Finfinite-query-with-max-pages/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Finfinite-query-with-max-pages/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Finfinite-query-with-max-pages/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Finfinite-query-with-max-pages/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Finfinite-query-with-max-pages/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fload-more-infinite-scroll/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fload-more-infinite-scroll/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fload-more-infinite-scroll/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fload-more-infinite-scroll/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fload-more-infinite-scroll/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fnextjs/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fnextjs/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fnextjs/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fnextjs/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fnextjs/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fnextjs-app-optimistic-updates/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fnextjs-app-optimistic-updates/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fnextjs-app-optimistic-updates/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fnextjs-app-optimistic-updates/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fnextjs-app-optimistic-updates/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fnextjs-app-prefetching/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fnextjs-app-prefetching/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fnextjs-app-prefetching/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fnextjs-app-prefetching/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fnextjs-app-prefetching/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fnextjs-suspense-streaming/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fnextjs-suspense-streaming/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fnextjs-suspense-streaming/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fnextjs-suspense-streaming/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Freact%2Fnextjs-suspense-streaming/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fsvelte%2Fbasic/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fsvelte%2Fbasic/head/process-0.stderr.txt",
+      "bytes": 293,
+      "sha256": "88fa0c6069947b9d4c60f548c97fdbedb8721fdda1b384bcf17f2220ea3b33e3"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fsvelte%2Fbasic/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fsvelte%2Fbasic/head/stderr.txt",
+      "bytes": 293,
+      "sha256": "88fa0c6069947b9d4c60f548c97fdbedb8721fdda1b384bcf17f2220ea3b33e3"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fsvelte%2Fbasic/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fsvelte%2Fload-more-infinite-scroll/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fsvelte%2Fload-more-infinite-scroll/head/process-0.stderr.txt",
+      "bytes": 293,
+      "sha256": "88fa0c6069947b9d4c60f548c97fdbedb8721fdda1b384bcf17f2220ea3b33e3"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fsvelte%2Fload-more-infinite-scroll/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fsvelte%2Fload-more-infinite-scroll/head/stderr.txt",
+      "bytes": 293,
+      "sha256": "88fa0c6069947b9d4c60f548c97fdbedb8721fdda1b384bcf17f2220ea3b33e3"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fsvelte%2Fload-more-infinite-scroll/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fsvelte%2Foptimistic-updates/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fsvelte%2Foptimistic-updates/head/process-0.stderr.txt",
+      "bytes": 293,
+      "sha256": "88fa0c6069947b9d4c60f548c97fdbedb8721fdda1b384bcf17f2220ea3b33e3"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fsvelte%2Foptimistic-updates/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fsvelte%2Foptimistic-updates/head/stderr.txt",
+      "bytes": 293,
+      "sha256": "88fa0c6069947b9d4c60f548c97fdbedb8721fdda1b384bcf17f2220ea3b33e3"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fsvelte%2Foptimistic-updates/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fsvelte%2Fplayground/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fsvelte%2Fplayground/head/process-0.stderr.txt",
+      "bytes": 293,
+      "sha256": "88fa0c6069947b9d4c60f548c97fdbedb8721fdda1b384bcf17f2220ea3b33e3"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fsvelte%2Fplayground/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fsvelte%2Fplayground/head/stderr.txt",
+      "bytes": 293,
+      "sha256": "88fa0c6069947b9d4c60f548c97fdbedb8721fdda1b384bcf17f2220ea3b33e3"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fsvelte%2Fplayground/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fsvelte%2Fsimple/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fsvelte%2Fsimple/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fsvelte%2Fsimple/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fsvelte%2Fsimple/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fsvelte%2Fsimple/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fsvelte%2Fssr/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fsvelte%2Fssr/head/process-0.stderr.txt",
+      "bytes": 293,
+      "sha256": "88fa0c6069947b9d4c60f548c97fdbedb8721fdda1b384bcf17f2220ea3b33e3"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fsvelte%2Fssr/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fsvelte%2Fssr/head/stderr.txt",
+      "bytes": 293,
+      "sha256": "88fa0c6069947b9d4c60f548c97fdbedb8721fdda1b384bcf17f2220ea3b33e3"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fsvelte%2Fssr/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fsvelte%2Fstar-wars/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fsvelte%2Fstar-wars/head/process-0.stderr.txt",
+      "bytes": 293,
+      "sha256": "88fa0c6069947b9d4c60f548c97fdbedb8721fdda1b384bcf17f2220ea3b33e3"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fsvelte%2Fstar-wars/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fsvelte%2Fstar-wars/head/stderr.txt",
+      "bytes": 293,
+      "sha256": "88fa0c6069947b9d4c60f548c97fdbedb8721fdda1b384bcf17f2220ea3b33e3"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fsvelte%2Fstar-wars/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fvue%2Fbasic/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fvue%2Fbasic/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fvue%2Fbasic/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fvue%2Fbasic/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fvue%2Fbasic/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fvue%2Fdependent-queries/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fvue%2Fdependent-queries/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fvue%2Fdependent-queries/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fvue%2Fdependent-queries/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fvue%2Fdependent-queries/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fvue%2Fpersister/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fvue%2Fpersister/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fvue%2Fpersister/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fvue%2Fpersister/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fvue%2Fpersister/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fvue%2Fsimple/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fvue%2Fsimple/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fvue%2Fsimple/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fvue%2Fsimple/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/examples%2Fvue%2Fsimple/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Fangular-cli-20/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Fangular-cli-20/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Fangular-cli-20/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Fangular-cli-20/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Fangular-cli-20/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Flit-vite/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Flit-vite/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Flit-vite/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Flit-vite/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Flit-vite/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Freact-next-14/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Freact-next-14/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Freact-next-14/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Freact-next-14/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Freact-next-14/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Freact-next-15/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Freact-next-15/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Freact-next-15/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Freact-next-15/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Freact-next-15/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Freact-next-16/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Freact-next-16/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Freact-next-16/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Freact-next-16/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Freact-next-16/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Freact-nodenext/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Freact-nodenext/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Freact-nodenext/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Freact-nodenext/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Freact-nodenext/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Freact-vite/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Freact-vite/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Freact-vite/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Freact-vite/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Freact-vite/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Freact-webpack-4/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Freact-webpack-4/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Freact-webpack-4/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Freact-webpack-4/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Freact-webpack-4/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Freact-webpack-5/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Freact-webpack-5/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Freact-webpack-5/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Freact-webpack-5/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Freact-webpack-5/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Fsolid-vite/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Fsolid-vite/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Fsolid-vite/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Fsolid-vite/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Fsolid-vite/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Fsvelte-vite/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Fsvelte-vite/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Fsvelte-vite/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Fsvelte-vite/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Fsvelte-vite/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Fvue-declaration-emit/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Fvue-declaration-emit/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Fvue-declaration-emit/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Fvue-declaration-emit/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Fvue-declaration-emit/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Fvue-vite/head/coverage.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Fvue-vite/head/process-0.stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Fvue-vite/head/process-0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Fvue-vite/head/stderr.txt",
+      "bytes": 67,
+      "sha256": "763c779c94a113851c261be2618d08037176b7e53e589dbc66366150daa10d46"
+    },
+    {
+      "path": "11293-child-output/coverage/integrations%2Fvue-vite/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fangular%2Fauto-refetching/head/findings.json",
+      "bytes": 4614,
+      "sha256": "c344f7e6fb68a986bb54f31bbb8d0e0ffd981524c0541cc2ba8745ac63417981"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fangular%2Fauto-refetching/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fangular%2Fauto-refetching/head/stdout.txt",
+      "bytes": 778,
+      "sha256": "88f3c3336f1dcfa41d6809e81c37a5414e051de2fd10e0c4bb6c9990ffc287c3"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fangular%2Fbasic/head/findings.json",
+      "bytes": 3732,
+      "sha256": "1e9ef951ab0efebff56b30c75b825287974f2531496785a836efc6a5ec4d6899"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fangular%2Fbasic/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fangular%2Fbasic/head/stdout.txt",
+      "bytes": 712,
+      "sha256": "0bd19c65b2c5869d0fae332d04de5bd252c4a4938a3679c570c3490f7870b5bb"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fangular%2Fbasic-persister/head/findings.json",
+      "bytes": 5325,
+      "sha256": "9385cdad2f5eb913985e1a9503a4a8f89655eefe470b6ab20250401a52fbb9c4"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fangular%2Fbasic-persister/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fangular%2Fbasic-persister/head/stdout.txt",
+      "bytes": 999,
+      "sha256": "5f63cd3a142818772fd89c4074db386037796e806f7528727243d83676f76783"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fangular%2Fdevtools-panel/head/findings.json",
+      "bytes": 4220,
+      "sha256": "c23e4fd6cac4ba2996329da107b129998eb9254d6dc74a02e6a6edcb3502d12e"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fangular%2Fdevtools-panel/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fangular%2Fdevtools-panel/head/stdout.txt",
+      "bytes": 900,
+      "sha256": "c18cbadc7cb1325f49304eab57b07c4454543f7e149f84d537aec8805e408bb3"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fangular%2Finfinite-query-with-max-pages/head/findings.json",
+      "bytes": 4871,
+      "sha256": "e1be9542df38f447fc607b27bc58dd9c0898b96883a099f1537ad34b48dfc96b"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fangular%2Finfinite-query-with-max-pages/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fangular%2Finfinite-query-with-max-pages/head/stdout.txt",
+      "bytes": 797,
+      "sha256": "ba8d05144c9b97b19c3bc658a6577f0320963dc97d570e395d20a850b332d8a9"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fangular%2Foptimistic-updates/head/findings.json",
+      "bytes": 10941,
+      "sha256": "f1127dde0830a45a0be3c0ebfaba3ca455f33c8db5521ba92eef6e263076f140"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fangular%2Foptimistic-updates/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fangular%2Foptimistic-updates/head/stdout.txt",
+      "bytes": 1545,
+      "sha256": "c514c741a0608430d8c258a7526b1f4bb594ee958c128c3d31ca3aea47bfe960"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fangular%2Fpagination/head/findings.json",
+      "bytes": 3025,
+      "sha256": "31fab26126a5c228790f06723e7b6e3e3e56edfa9eef5776ecfa0dcadc8a47bc"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fangular%2Fpagination/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fangular%2Fpagination/head/stdout.txt",
+      "bytes": 541,
+      "sha256": "8cc1e1114dd96a9f3a4228fb84a5fc5a0306c16357bfae3f9396ef7b30cd053c"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fangular%2Fquery-options-from-a-service/head/findings.json",
+      "bytes": 3948,
+      "sha256": "111fc0005c9de546a3f6b2699f987cabc2f8ae52e08dc0457defcc115daf1d6a"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fangular%2Fquery-options-from-a-service/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fangular%2Fquery-options-from-a-service/head/stdout.txt",
+      "bytes": 758,
+      "sha256": "9a3b929921bce3b96ae5ff1056247bf89db4eeace3405ab6537020ed41a68414"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fangular%2Frouter/head/findings.json",
+      "bytes": 2974,
+      "sha256": "2aaad758e6df655cfc3f40b701dd338a40abc28c6076602b47fe1cf9d13285ef"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fangular%2Frouter/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fangular%2Frouter/head/stdout.txt",
+      "bytes": 603,
+      "sha256": "a48a473e7e893705a45b4b716a1db839cec0175308b94bff4738fe59e820e456"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fangular%2Frxjs/head/findings.json",
+      "bytes": 2212,
+      "sha256": "82a7213ca956345282d69d720e885ebe3e8201a89d06b8e499c8135093066c8f"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fangular%2Frxjs/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fangular%2Frxjs/head/stdout.txt",
+      "bytes": 449,
+      "sha256": "dfe99750b7a39759c26f1251415f26162f60a1fec78d212c2240e2ad35ff10e9"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fangular%2Fsimple/head/findings.json",
+      "bytes": 2236,
+      "sha256": "f25b71f44df7320b5d052257f084c6b0e100b3ef0dbebf09fef222e604205169"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fangular%2Fsimple/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fangular%2Fsimple/head/stdout.txt",
+      "bytes": 456,
+      "sha256": "9bc636c5894b7dbb332e379ffa4538a567db2e8f71b09262ce34a8008a49f416"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Flit%2Fbasic/head/findings.json",
+      "bytes": 26398,
+      "sha256": "40ea99865977d72aff6168a009acef8167a165b2cc3207fc6f8385c44a020e4d"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Flit%2Fbasic/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Flit%2Fbasic/head/stdout.txt",
+      "bytes": 6207,
+      "sha256": "b8e66f10d14e601fcd35fcafada4fd73f76ed81b16dbdc13d890735bd3d736c5"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Flit%2Fpagination/head/findings.json",
+      "bytes": 10758,
+      "sha256": "b87a42a8612bc75e7a2e9f05fc5dd3cdb24a8ee0116484ea23e8e171a10eb967"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Flit%2Fpagination/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Flit%2Fpagination/head/stdout.txt",
+      "bytes": 1911,
+      "sha256": "a30db5312f62051ca5c24d5b672c11f2b091a180bcccecb2ba982fc4d2f61e89"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Flit%2Fssr/head/findings.json",
+      "bytes": 2723,
+      "sha256": "3fdf911bc05e962b5b522163c5bb8abe8afe49691a22c8443b6da94b01493bcc"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Flit%2Fssr/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Flit%2Fssr/head/stdout.txt",
+      "bytes": 427,
+      "sha256": "05e284283c7bbf51c99423400dbe1209fba8116e1051e1fb82de5ca8dea1ee2e"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fpreact%2Fsimple/head/findings.json",
+      "bytes": 693,
+      "sha256": "5844d8632acd03c6efc886635c801719abf939e126b9c4bbaa6e18bcdb7a8f2d"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fpreact%2Fsimple/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fpreact%2Fsimple/head/stdout.txt",
+      "bytes": 118,
+      "sha256": "0535d94932866992ffefe2bfc487e564f7d7e182e506b85734e24b764d4fd5c4"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Falgolia/head/findings.json",
+      "bytes": 4273,
+      "sha256": "25d2cfd618c156516ea1ecc4ba6196e7876c128a0e8f2a71c9191ca61748ed5b"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Falgolia/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Falgolia/head/stdout.txt",
+      "bytes": 608,
+      "sha256": "8efa9b670605558c75413e40c76c248d47787a4917571d96c8be8a1fcf8e3426"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Fauto-refetching/head/findings.json",
+      "bytes": 3739,
+      "sha256": "b7a9b61d196fe042f7cbbc12e81de665f95efc035502efa23a297f95f6c8f3b8"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Fauto-refetching/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Fauto-refetching/head/stdout.txt",
+      "bytes": 714,
+      "sha256": "14623b1252044d22a53a7c9cd9fe38c50433fc39afa03cd02197fd4536723984"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Fbasic/head/findings.json",
+      "bytes": 3478,
+      "sha256": "0ed7cdc609832249f2862ae27687feee681975c9892eea8386690dfbe5a5f692"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Fbasic/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Fbasic/head/stdout.txt",
+      "bytes": 597,
+      "sha256": "3deef7f08154a6ab5fd44956a422c0c5183608de6b78de07645a39a5ea826a9f"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Fbasic-graphql-request/head/findings.json",
+      "bytes": 2161,
+      "sha256": "dfcff92ad9d00468f6bf1a203c3cc11958bc6abf9d6e12f72b33b7e136da799e"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Fbasic-graphql-request/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Fbasic-graphql-request/head/stdout.txt",
+      "bytes": 327,
+      "sha256": "8f7545933d869aee39ce23f0b40bc466c43e5cc25ab3eb9eaac711b031b0a81f"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Fbatching/head/findings.json",
+      "bytes": 2794,
+      "sha256": "1abc857c822f65926762d0afafc8252ba35dc8d98b5139299375924a6e663612"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Fbatching/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Fbatching/head/stdout.txt",
+      "bytes": 416,
+      "sha256": "3389d969889cc511f80782a53860bb5825d1eebd578c77648e9293251a082dc4"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Fchat/head/findings.json",
+      "bytes": 2063,
+      "sha256": "0a41dad94db2e862a82607c4032c996678540965c6453aded55abb21766d9772"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Fchat/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Fchat/head/stdout.txt",
+      "bytes": 359,
+      "sha256": "f09cee58718c0269ed65c26a375cc3c0f2715a5fbca90b15c2a75d7cbfb46d93"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Fdefault-query-function/head/findings.json",
+      "bytes": 2894,
+      "sha256": "78c6015c724f8a5d99fad2a52541b7dbdd490dec1a482d34210e497d5fb33c36"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Fdefault-query-function/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Fdefault-query-function/head/stdout.txt",
+      "bytes": 446,
+      "sha256": "41d612ff453ee9aee91cd9c7f13181ae2cba0bf866afb7fd802735e2522f466d"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Fdevtools-panel/head/findings.json",
+      "bytes": 1422,
+      "sha256": "45066e6599135a5a751cc7745a445b2542c4834d5395a43897ffb644c540682d"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Fdevtools-panel/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Fdevtools-panel/head/stdout.txt",
+      "bytes": 244,
+      "sha256": "e08b5281c48fb0bbcc3f17aa7f4a64f89fcbe43585352269dba5111f5729d2cf"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Feslint-legacy/head/findings.json",
+      "bytes": 3558,
+      "sha256": "7fd68eee2c41e33e78023c9bb9887cdb5b1e4f98017cb1ed2b9fe039caa26530"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Feslint-legacy/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Feslint-legacy/head/stdout.txt",
+      "bytes": 597,
+      "sha256": "3deef7f08154a6ab5fd44956a422c0c5183608de6b78de07645a39a5ea826a9f"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Feslint-plugin-demo/head/findings.json",
+      "bytes": 2991,
+      "sha256": "8602f29c326780a252615150d0b227c011af6ea61ff1c2024c96d09ddd128791"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Feslint-plugin-demo/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Feslint-plugin-demo/head/stdout.txt",
+      "bytes": 488,
+      "sha256": "522eb139667e454534e5268edbba77666ed658415b20ef8f1822ebcd01acb711"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Finfinite-query-with-max-pages/head/findings.json",
+      "bytes": 6074,
+      "sha256": "37c402004407edce39a35f67dd2e02e8fffd02cf5795e27cec548d63957ed261"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Finfinite-query-with-max-pages/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Finfinite-query-with-max-pages/head/stdout.txt",
+      "bytes": 924,
+      "sha256": "a3ced3bef4d4fc989d69e62e588a91ab4dbcc1300d28c8824bc2273da5dd76ae"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Fload-more-infinite-scroll/head/findings.json",
+      "bytes": 6008,
+      "sha256": "ef2eb2eb3f21203977357bb044db382bfc70b14d5ed5065698b554d3b84eab61"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Fload-more-infinite-scroll/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Fload-more-infinite-scroll/head/stdout.txt",
+      "bytes": 923,
+      "sha256": "4e5f127397d2a27aa61651b9cdd5664988f1438ac976cd1894614e6872dbacf8"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Fnextjs/head/findings.json",
+      "bytes": 7979,
+      "sha256": "3b6c1ab035174e4f7afb1a23989cc74195002bee4e0dfc77a95e199e9d61f895"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Fnextjs/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Fnextjs/head/stdout.txt",
+      "bytes": 1954,
+      "sha256": "8e8707afbf64dacec5e2aa8cbbb0480dafc8e9f17e4a1e628fd6630abf51f218"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Fnextjs-app-optimistic-updates/head/findings.json",
+      "bytes": 10820,
+      "sha256": "49efa74b28285ca5650b61ba727341238c41b6b6dbd94ce84124f7eb72979a62"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Fnextjs-app-optimistic-updates/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Fnextjs-app-optimistic-updates/head/stdout.txt",
+      "bytes": 1541,
+      "sha256": "a5825753166159f2e27f78943de80a21e01cbd5538507cf58074ac7ddfe289e4"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Fnextjs-app-prefetching/head/findings.json",
+      "bytes": 5172,
+      "sha256": "fe6cf02ef3894dc7215f9862bf7b491f8a16306f84a2c1958a8617b487dbfecd"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Fnextjs-app-prefetching/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Freact%2Fnextjs-app-prefetching/head/stdout.txt",
+      "bytes": 835,
+      "sha256": "fc8a437c40c2baf2984356518d6e1f1d76c4fc318f5fb21508ec97becbec7980"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fsvelte%2Fload-more-infinite-scroll/head/findings.json",
+      "bytes": 857,
+      "sha256": "0d97c6a0ca16082c2bcd2f8d33dba4df13abdfa609f5c824de01d7672c8f21e6"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fsvelte%2Fload-more-infinite-scroll/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fsvelte%2Fload-more-infinite-scroll/head/stdout.txt",
+      "bytes": 224,
+      "sha256": "14450b97175811a6dbb18e517c67ba205ac2febb4462a7dafe93f422c9c06825"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fsvelte%2Foptimistic-updates/head/findings.json",
+      "bytes": 836,
+      "sha256": "6f34543739c308bdfbc51c729d8f20091a0b4fbfceed85f8e89f22e8814ef961"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fsvelte%2Foptimistic-updates/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fsvelte%2Foptimistic-updates/head/stdout.txt",
+      "bytes": 217,
+      "sha256": "9e46626a7511fdada15ad562715cc553ad15865505e9e78f78fe3fbb91eb136a"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fsvelte%2Fplayground/head/findings.json",
+      "bytes": 812,
+      "sha256": "727d3bc64c05dac71af6a25d2461ea402d2910d6aefe94aed7982cd734c438dc"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fsvelte%2Fplayground/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fsvelte%2Fplayground/head/stdout.txt",
+      "bytes": 209,
+      "sha256": "0447d8bf9ecf359e79a6a3aaa47d25d9847517414c652b9f1faf6808922854b8"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fsvelte%2Fsimple/head/findings.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fsvelte%2Fsimple/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fsvelte%2Fsimple/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fsvelte%2Fssr/head/findings.json",
+      "bytes": 9890,
+      "sha256": "91f2392c33708404094fdd7d4043560b852bc4f2b2e26133949bff1175b717fb"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fsvelte%2Fssr/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fsvelte%2Fssr/head/stdout.txt",
+      "bytes": 1668,
+      "sha256": "20e8839f8fc36ac1673fc6768c1de2bc5d988f69d3567f36e4102cb8856f6238"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fsvelte%2Fstar-wars/head/findings.json",
+      "bytes": 1867,
+      "sha256": "69174630965b3e3783400fdfefd78a7ed29014782b6e7f25cb65f3dccc8c6fa4"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fsvelte%2Fstar-wars/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fsvelte%2Fstar-wars/head/stdout.txt",
+      "bytes": 685,
+      "sha256": "e50990897ce657b9bbcf61057c8e08989c79ad809273d649a1a8f094a871c5d8"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fvue%2Fbasic/head/findings.json",
+      "bytes": 680,
+      "sha256": "1e16ced044a94673db63ae973405f43df3092fc910258946b4bb4fa055114f56"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fvue%2Fbasic/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fvue%2Fbasic/head/stdout.txt",
+      "bytes": 114,
+      "sha256": "2877395c7cec08bc819cb84e77db8bba19a5e957a43c0698d22ed91751652f87"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fvue%2Fdependent-queries/head/findings.json",
+      "bytes": 704,
+      "sha256": "4d91c623ff141cc160e4a0640ec15429ef19ea4a8030788d1fc53b071841c6a4"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fvue%2Fdependent-queries/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fvue%2Fdependent-queries/head/stdout.txt",
+      "bytes": 114,
+      "sha256": "2877395c7cec08bc819cb84e77db8bba19a5e957a43c0698d22ed91751652f87"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fvue%2Fpersister/head/findings.json",
+      "bytes": 1375,
+      "sha256": "febc4c727de6bf29287387ea8baf5359cc507b2b3b0faa42865928cc70491bd1"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fvue%2Fpersister/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fvue%2Fpersister/head/stdout.txt",
+      "bytes": 228,
+      "sha256": "cda0078881ce1278beeaefebf6ed083bc728a782bae4bb528f7592996a5f25c1"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fvue%2Fsimple/head/findings.json",
+      "bytes": 682,
+      "sha256": "5c619a6f3f5e505ae35a2c0ca37d93e0d4558653fb20fdcae1bc3b1245b8b59a"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fvue%2Fsimple/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/examples%2Fvue%2Fsimple/head/stdout.txt",
+      "bytes": 114,
+      "sha256": "2877395c7cec08bc819cb84e77db8bba19a5e957a43c0698d22ed91751652f87"
+    },
+    {
+      "path": "11293-child-output/typecheck/integrations%2Fangular-cli-20/head/findings.json",
+      "bytes": 1453,
+      "sha256": "ca0b25a0c5a4ea42d42310dce70362775aabdca2b4813e7dd362e50962b2b4eb"
+    },
+    {
+      "path": "11293-child-output/typecheck/integrations%2Fangular-cli-20/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/integrations%2Fangular-cli-20/head/stdout.txt",
+      "bytes": 274,
+      "sha256": "f2b532cb9a32c6c0cc064948f6f6c4e4c5460d87f9c80a1323fab22abea2ead9"
+    },
+    {
+      "path": "11293-child-output/typecheck/integrations%2Flit-vite/head/findings.json",
+      "bytes": 4149,
+      "sha256": "04395f115c56156fbf2d9052b6480f137742a1fed72e6f2dbabf0fe2efe83b23"
+    },
+    {
+      "path": "11293-child-output/typecheck/integrations%2Flit-vite/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/integrations%2Flit-vite/head/stdout.txt",
+      "bytes": 1075,
+      "sha256": "6c43c9095b10ed4b8230f7c95769d8c65049283db63a2cab6f127c670ea9bf65"
+    },
+    {
+      "path": "11293-child-output/typecheck/integrations%2Freact-next-14/head/findings.json",
+      "bytes": 778,
+      "sha256": "d1c827a34d0c28e9bc7f6a6862c63882a41affe71e11ffba5dbf79cec2d4c557"
+    },
+    {
+      "path": "11293-child-output/typecheck/integrations%2Freact-next-14/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/integrations%2Freact-next-14/head/stdout.txt",
+      "bytes": 190,
+      "sha256": "36145995d6fba1318d321c1088bcd1dbe3a1b455181db8ac5782bef123c7a4f7"
+    },
+    {
+      "path": "11293-child-output/typecheck/integrations%2Freact-next-15/head/findings.json",
+      "bytes": 778,
+      "sha256": "f0628e2c9c070687d2031a2e8a3233eb49db124c01b15725d73b14ca13a4b90a"
+    },
+    {
+      "path": "11293-child-output/typecheck/integrations%2Freact-next-15/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/integrations%2Freact-next-15/head/stdout.txt",
+      "bytes": 190,
+      "sha256": "36145995d6fba1318d321c1088bcd1dbe3a1b455181db8ac5782bef123c7a4f7"
+    },
+    {
+      "path": "11293-child-output/typecheck/integrations%2Freact-next-16/head/findings.json",
+      "bytes": 778,
+      "sha256": "6fae417d0dd7d7c481aece36dda8925bc3dda4b4ffbfa50867a50cd19f4a93fe"
+    },
+    {
+      "path": "11293-child-output/typecheck/integrations%2Freact-next-16/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/integrations%2Freact-next-16/head/stdout.txt",
+      "bytes": 190,
+      "sha256": "36145995d6fba1318d321c1088bcd1dbe3a1b455181db8ac5782bef123c7a4f7"
+    },
+    {
+      "path": "11293-child-output/typecheck/integrations%2Freact-nodenext/head/findings.json",
+      "bytes": 1405,
+      "sha256": "e0694c445009c7b4f56ded2356d321d2a9c7d4dfd393f13cecb1ab7432a6fed3"
+    },
+    {
+      "path": "11293-child-output/typecheck/integrations%2Freact-nodenext/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/integrations%2Freact-nodenext/head/stdout.txt",
+      "bytes": 235,
+      "sha256": "1fb53f86262068fc9737b8d96ce87868cc653e689964295490706ab0fd8a1819"
+    },
+    {
+      "path": "11293-child-output/typecheck/integrations%2Freact-vite/head/findings.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "11293-child-output/typecheck/integrations%2Freact-vite/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/integrations%2Freact-vite/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/integrations%2Freact-webpack-4/head/findings.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "11293-child-output/typecheck/integrations%2Freact-webpack-4/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/integrations%2Freact-webpack-4/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/integrations%2Freact-webpack-5/head/findings.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "11293-child-output/typecheck/integrations%2Freact-webpack-5/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/integrations%2Freact-webpack-5/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/integrations%2Fsolid-vite/head/findings.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "11293-child-output/typecheck/integrations%2Fsolid-vite/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/integrations%2Fsolid-vite/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/integrations%2Fsvelte-vite/head/findings.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "11293-child-output/typecheck/integrations%2Fsvelte-vite/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/integrations%2Fsvelte-vite/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/integrations%2Fvue-declaration-emit/head/findings.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "11293-child-output/typecheck/integrations%2Fvue-declaration-emit/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/integrations%2Fvue-declaration-emit/head/stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/integrations%2Fvue-vite/head/findings.json",
+      "bytes": 1361,
+      "sha256": "ed5f18866990c7d9bd0cc59ccb2a144ab38c3bcb7d270e0af20b027b872ee714"
+    },
+    {
+      "path": "11293-child-output/typecheck/integrations%2Fvue-vite/head/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11293-child-output/typecheck/integrations%2Fvue-vite/head/stdout.txt",
+      "bytes": 218,
+      "sha256": "30b22f58b9005c46d3d3755cebcf5c29a6875925006921b6c6dca26e969b630d"
+    }
+  ]
+}

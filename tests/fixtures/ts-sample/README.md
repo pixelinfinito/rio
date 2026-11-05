@@ -1,0 +1,1 @@
+Intentional type, lint, coverage and fake-secret diagnostics. `npm ci && npm test` passes. Fixture review tests create a base commit, then modify the signature or add a duplicate occurrence; no network or credentials are needed for those tests. lodash 4.17.20 is deliberately vulnerable for the mocked OSV audit.

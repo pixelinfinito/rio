@@ -1,0 +1,48 @@
+{
+  "repository": "pydantic/pydantic-ai",
+  "pr": "https://github.com/pydantic/pydantic-ai/pull/12540",
+  "case_id": "12540",
+  "languages": [
+    "python"
+  ],
+  "reviewer": "sub-agent rerun2-pydantic-ai (automated)",
+  "verdict_source": "automated",
+  "commands": [
+    "cwd=/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/pydantic/pydantic-ai.git\", \"/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/head\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/head argv=[\"git\", \"fetch\", \"origin\", \"2f0e98cbb7b60e12dcd0edc397f6df11c5cc1c56\", \"17c4ab5539f8a38aa86b2af69a783cb595269d27\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/head argv=[\"git\", \"merge-base\", \"2f0e98cbb7b60e12dcd0edc397f6df11c5cc1c56\", \"17c4ab5539f8a38aa86b2af69a783cb595269d27\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/head argv=[\"git\", \"checkout\", \"--detach\", \"17c4ab5539f8a38aa86b2af69a783cb595269d27\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/head\", \"/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/base\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/base argv=[\"git\", \"checkout\", \"--detach\", \"2f0e98cbb7b60e12dcd0edc397f6df11c5cc1c56\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/base argv=[\"uv\", \"sync\", \"--locked\", \"--python\", \"3.13.9\", \"--group\", \"lint\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/head argv=[\"uv\", \"sync\", \"--locked\", \"--python\", \"3.13.9\", \"--group\", \"lint\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/head argv=[\"node\", \"--version\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/head argv=[\"npm\", \"--version\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/head argv=[\"python3\", \"--version\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt2/profile.yaml\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/tmp/rio-eval-q4x5ch7h/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"2f0e98cbb7b60e12dcd0edc397f6df11c5cc1c56\", \"--format\", \"json\", \"--offline\", \"--profile\", \"/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt2/profile.yaml\"]"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2-attempt2/commands.json; Rio binary SHA-256: 3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+    "Preserved setup-failed retry: login=false omitted /tmp/rio-acceptance-tools from PATH. Both uv sync invocations returned127 with [Errno 2] No such file or directory: uv. No dependencies installed, all typecheck/lint checks skipped tool_missing, no baseline. Corrected in rerun2-attempt3; this failure is evaluator setup, not a Rio dependency-remapping defect.",
+    "Same pinned SHAs/profile/install plan; attempted I/O workaround copied Python3.13.9 into private tmpfs. Its executable hash matches original; see ../pydantic-ai-rerun2-evidence/runtime-and-seed.json.",
+    "Independent clean assessment reused from unchanged SHAs: configured mypy and full Ruff pass base/head, focused Pyright passes three changed utils files, targeted tests pass124 base/127 head, and instrumented changed executable lines are covered. See ../pydantic-ai-evidence/12540-*-commands.json and 12540-independent-diff-coverage.json.gz. Disabled coverage/audit scope makes no general coverage or dependency safety claim.",
+    "Only emitted finding is identical to prior AWS dummy fixture alert. The finding is factually false but raw state pre-existing, so v2 scores it pre-existing-hidden; it does not add visible false-positive weight. Independent source/AST evidence ../pydantic-ai-evidence/secret-false-positive-evidence.json remains applicable at identical pins."
+  ],
+  "independently_clean": true,
+  "positive_control": {
+    "kind": "none",
+    "expected": []
+  },
+  "misses": [],
+  "findings": {
+    "e6161a78e91e93a541f261f3c38ca2945416fd5a54ede6acf8e3fbbb6b78516e": {
+      "verdict": "false-positive",
+      "reason": "Independent AST/source inspection at both pins identifies an unchanged os.getenv AWS_ACCESS_KEY_ID test-fixture fallback, shaped as AKIA plus sixteen repeated digit 6 characters, with a sibling dummy secret of forty repeated 6 characters. It is an inert placeholder, not a committed credential. See eval/runs/pydantic-ai-evidence/secret-false-positive-evidence.json (base line 1574, head line 1593). Rio honestly labels it pre-existing, but the credential claim and rotate recommendation are incorrect."
+    }
+  }
+}

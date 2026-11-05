@@ -1,0 +1,50 @@
+{
+  "repository": "pydantic/pydantic-settings",
+  "pr": "https://github.com/pydantic/pydantic-settings/pull/1109",
+  "case_id": "1109",
+  "languages": [
+    "python"
+  ],
+  "reviewer": "sub-agent eval-pydantic-settings (automated)",
+  "verdict_source": "automated",
+  "commands": [
+    "cwd=/tmp/rio-eval-x3kcsp_i argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/pydantic/pydantic-settings.git\", \"/tmp/rio-eval-x3kcsp_i/head\"]",
+    "cwd=/tmp/rio-eval-x3kcsp_i/head argv=[\"git\", \"fetch\", \"origin\", \"7e2dacb6db07b41abb0c80d0608e46e197265554\", \"74c01ae3e84f9c8f2b04ec269e67813abd96cf9a\"]",
+    "cwd=/tmp/rio-eval-x3kcsp_i/head argv=[\"git\", \"merge-base\", \"7e2dacb6db07b41abb0c80d0608e46e197265554\", \"74c01ae3e84f9c8f2b04ec269e67813abd96cf9a\"]",
+    "cwd=/tmp/rio-eval-x3kcsp_i/head argv=[\"git\", \"checkout\", \"--detach\", \"74c01ae3e84f9c8f2b04ec269e67813abd96cf9a\"]",
+    "cwd=/tmp/rio-eval-x3kcsp_i argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/tmp/rio-eval-x3kcsp_i/head\", \"/tmp/rio-eval-x3kcsp_i/base\"]",
+    "cwd=/tmp/rio-eval-x3kcsp_i/base argv=[\"git\", \"checkout\", \"--detach\", \"7e2dacb6db07b41abb0c80d0608e46e197265554\"]",
+    "cwd=/tmp/rio-eval-x3kcsp_i/base argv=[\"uv\", \"sync\", \"--locked\", \"--all-groups\", \"--all-extras\"]",
+    "cwd=/tmp/rio-eval-x3kcsp_i/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/tmp/rio-eval-x3kcsp_i/head argv=[\"uv\", \"sync\", \"--locked\", \"--all-groups\", \"--all-extras\"]",
+    "cwd=/tmp/rio-eval-x3kcsp_i/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/tmp/rio-eval-x3kcsp_i/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/tmp/rio-eval-x3kcsp_i/head argv=[\"node\", \"--version\"]",
+    "cwd=/tmp/rio-eval-x3kcsp_i/head argv=[\"npm\", \"--version\"]",
+    "cwd=/tmp/rio-eval-x3kcsp_i/head argv=[\"python3\", \"--version\"]",
+    "cwd=/tmp/rio-eval-x3kcsp_i/head argv=[\"uv\", \"--version\"]",
+    "cwd=/tmp/rio-eval-x3kcsp_i/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"rio/base\"]",
+    "cwd=/tmp/rio-eval-x3kcsp_i/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/tmp/rio-eval-x3kcsp_i/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"7e2dacb6db07b41abb0c80d0608e46e197265554\", \"--format\", \"json\", \"--offline\", \"--profile\", \"rio/base\"]"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1109/commands.json; Rio binary SHA-256: 512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+    "Binary verified: rio 0.1.0 x86_64-unknown-linux-gnu b15dc8ff5001; no rebuild or product/harness edits.",
+    "Offline cohort: typecheck, lint, instrumented coverage and secret scanning applicable; network dependency audit is explicitly excluded (no advisory-cache claim). No semantic agent endpoint. Automated assessment, no human confirmation claimed.",
+    "CPython 3.13.9 and uv 0.13.7 explicitly selected; Linux shared VM. Check commands use repository-locked tool versions.",
+    "EXCLUDED attempt: baseline classification did not run; no record.json produced and this attempt is not scored. Failure reasons: [\"coverage . head: skipped dependency_mismatch executable .pth cannot be verified: /tmp/rio-eval-x3kcsp_i/head/./.venv/lib/python3.13/site-packages/a1_coverage.pth; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)\", \"lint . head: skipped dependency_mismatch executable .pth cannot be verified: /tmp/rio-eval-x3kcsp_i/head/./.venv/lib/python3.13/site-packages/a1_coverage.pth; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)\", \"lint .: head=skipped, dependency_state=unavailable, base=unavailable\", \"typecheck . head: skipped dependency_mismatch executable .pth cannot be verified: /tmp/rio-eval-x3kcsp_i/head/./.venv/lib/python3.13/site-packages/a1_coverage.pth; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)\", \"typecheck .: head=skipped, dependency_state=unavailable, base=unavailable\"]",
+    "Preserved unchanged raw reports/command ledger; setup repaired in pydantic-settings-1109-attempt4 or pydantic-settings-1097-attempt2. Independently clean is false here because an ineligible attempt cannot establish a clean report."
+  ],
+  "independently_clean": false,
+  "positive_control": {
+    "kind": "none",
+    "expected": []
+  },
+  "misses": [],
+  "findings": {
+    "f59b1964321361d6f49fa60104f8329ceb09f12e8748ffa4f82f26b48026e658": {
+      "verdict": "false-positive",
+      "reason": "The six occurrences are intentional dummy PostgresDsn test inputs and assertions (postgres://user:password@localhost/dbname or /other), not exposed credentials. Independent source inspection is retained in eval/runs/pydantic-settings-evidence/1109-base-connection-fixtures.txt and 1109-head-connection-fixtures.txt. Base and head contain these fixtures unchanged; location.state pre-existing is correct but the credential claim and remove/rotate advice are incorrect. No live service or secret is involved."
+    }
+  }
+}

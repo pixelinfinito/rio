@@ -1,0 +1,72 @@
+{
+  "repository": "TanStack/query",
+  "pr": "https://github.com/TanStack/query/pull/11522",
+  "case_id": "11522-seeded-transaction-type-20261105",
+  "languages": [
+    "typescript"
+  ],
+  "reviewer": "sub-agent eval-tanstack-query (automated)",
+  "verdict_source": "automated",
+  "commands": [
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-mmckb84k argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/TanStack/query.git\", \"/dev/shm/rio-tanstack-work/rio-eval-mmckb84k/head\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-mmckb84k/head argv=[\"git\", \"fetch\", \"origin\", \"8a28904aaccb6bc26398b751400a181c0f6d7f0e\", \"b32480cc923994ee2c859203a47b78a173e6bf20\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-mmckb84k/head argv=[\"git\", \"merge-base\", \"8a28904aaccb6bc26398b751400a181c0f6d7f0e\", \"b32480cc923994ee2c859203a47b78a173e6bf20\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-mmckb84k/head argv=[\"git\", \"checkout\", \"--detach\", \"b32480cc923994ee2c859203a47b78a173e6bf20\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-mmckb84k argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/dev/shm/rio-tanstack-work/rio-eval-mmckb84k/head\", \"/dev/shm/rio-tanstack-work/rio-eval-mmckb84k/base\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-mmckb84k/base argv=[\"git\", \"checkout\", \"--detach\", \"8a28904aaccb6bc26398b751400a181c0f6d7f0e\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-mmckb84k/base argv=[\"corepack\", \"pnpm\", \"--filter\", \"root\", \"--filter\", \"@tanstack/query-broadcast-client-experimental...\", \"install\", \"--frozen-lockfile\", \"--trust-lockfile\", \"--ignore-scripts\", \"--config.virtual-store-dir-max-length=250\", \"--config.confirmModulesPurge=false\", \"--store-dir\", \"/dev/shm/rio-tanstack-tools/pnpm-store\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-mmckb84k/base argv=[\"python3\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-tanstack-query/eval/runs/tanstack-query-11392-evidence/prepare-installation.py\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-mmckb84k/base argv=[\"node\", \"node_modules/typescript/lib/tsc.js\", \"-b\", \"packages/query-core\", \"packages/query-test-utils\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-mmckb84k/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-mmckb84k/head argv=[\"corepack\", \"pnpm\", \"--filter\", \"root\", \"--filter\", \"@tanstack/query-broadcast-client-experimental...\", \"install\", \"--frozen-lockfile\", \"--trust-lockfile\", \"--ignore-scripts\", \"--config.virtual-store-dir-max-length=250\", \"--config.confirmModulesPurge=false\", \"--store-dir\", \"/dev/shm/rio-tanstack-tools/pnpm-store\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-mmckb84k/head argv=[\"python3\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-tanstack-query/eval/runs/tanstack-query-11392-evidence/prepare-installation.py\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-mmckb84k/head argv=[\"node\", \"node_modules/typescript/lib/tsc.js\", \"-b\", \"packages/query-core\", \"packages/query-test-utils\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-mmckb84k/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-mmckb84k/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-mmckb84k/head argv=[\"node\", \"--version\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-mmckb84k/head argv=[\"npm\", \"--version\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-mmckb84k/head argv=[\"corepack\", \"--version\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-mmckb84k/head argv=[\"python3\", \"--version\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-mmckb84k/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"rio/base\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-mmckb84k/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-mmckb84k/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"8a28904aaccb6bc26398b751400a181c0f6d7f0e\", \"--format\", \"json\", \"--offline\", \"--profile\", \"rio/base\"]",
+    "Independent oracle: cwd=/dev/shm/rio-tanstack-work/seed-base argv=[\"corepack\", \"pnpm\", \"--filter\", \"root\", \"--filter\", \"@tanstack/query-broadcast-client-experimental...\", \"install\", \"--frozen-lockfile\", \"--trust-lockfile\", \"--offline\", \"--ignore-scripts\", \"--store-dir\", \"/dev/shm/rio-tanstack-tools/pnpm-store\"] exit=0",
+    "Independent oracle: cwd=/dev/shm/rio-tanstack-work/seed-base argv=[\"/dev/shm/rio-tanstack-tools/node-v24.16.0-linux-x64/bin/node\", \"node_modules/typescript/lib/tsc.js\", \"-b\", \"--force\", \"packages/query-core\", \"packages/query-test-utils\"] exit=0",
+    "Independent oracle: cwd=/dev/shm/rio-tanstack-work/seed-base argv=[\"/dev/shm/rio-tanstack-tools/node-v24.16.0-linux-x64/bin/node\", \"node_modules/typescript/lib/tsc.js\", \"--noEmit\", \"--pretty\", \"false\", \"-p\", \"packages/query-broadcast-client-experimental\"] exit=0",
+    "Independent oracle: cwd=/dev/shm/rio-tanstack-work/seed-head argv=[\"corepack\", \"pnpm\", \"--filter\", \"root\", \"--filter\", \"@tanstack/query-broadcast-client-experimental...\", \"install\", \"--frozen-lockfile\", \"--trust-lockfile\", \"--offline\", \"--ignore-scripts\", \"--store-dir\", \"/dev/shm/rio-tanstack-tools/pnpm-store\"] exit=0",
+    "Independent oracle: cwd=/dev/shm/rio-tanstack-work/seed-head argv=[\"/dev/shm/rio-tanstack-tools/node-v24.16.0-linux-x64/bin/node\", \"node_modules/typescript/lib/tsc.js\", \"-b\", \"--force\", \"packages/query-core\", \"packages/query-test-utils\"] exit=0",
+    "Independent oracle: cwd=/dev/shm/rio-tanstack-work/seed-head argv=[\"/dev/shm/rio-tanstack-tools/node-v24.16.0-linux-x64/bin/node\", \"node_modules/typescript/lib/tsc.js\", \"--noEmit\", \"--pretty\", \"false\", \"-p\", \"packages/query-broadcast-client-experimental\"] exit=2"
+  ],
+  "notes": [
+    "Runner provenance: tanstack-query-11522-seeded/commands.json; binary SHA-256 512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2.",
+    "Frozen profile rio/base; resolved profile SHA-256 1049df8bb35d7f36f2982fdce1565c2c50336ce9e898e605f3cac96b7b16b636; Rio dependency trust remains false.",
+    "Offline OSV audit is an explicit excluded capability; no vulnerability-free conclusion.",
+    "See ../tanstack-query-NOTES.md for every setup attempt, installer helper hashes, exclusions and monorepo limitations.",
+    "Coverage skipped because Rio misses root-declared Vitest plus package vite.config.ts; independent instrumented tests pass for the negative case. This makes the final records ineligible even when baseline classification succeeds.",
+    "Local Git URL mirror for the seeded run is /dev/shm/rio-tanstack-work/seed-head; the parent source is the pinned public base, restored with verified Git blob hashes. The mutation was not published.",
+    "UNCLASSIFIED FAILED SETUP: preserved for audit only; do not score this attempt. Final repaired classified attempt is retained in a separate directory."
+  ],
+  "independently_clean": false,
+  "positive_control": {
+    "kind": "seeded-mutation",
+    "expected": [
+      {
+        "id": "broadcast-transaction-string-type",
+        "mechanism": "type-error",
+        "evidence": "Preregistered in ../tanstack-query-11522-seeded-evidence/preregistered-control.json before Rio. Base 8a28904aaccb6bc26398b751400a181c0f6d7f0e, mutation head b32480cc923994ee2c859203a47b78a173e6bf20; seed 20261105; patch SHA-256 2765417edba59265b5a80ba4a4c2d4ae9513939b59bafdbb751cc1796709dc4f. Independent node node_modules/typescript/lib/tsc.js --noEmit --pretty false -p packages/query-broadcast-client-experimental: base exit 0/no diagnostics; head exit 2/TS2322 at 55,57,66. Exact argv, outputs, and wall times: ../tanstack-query-11522-seeded-evidence/oracle-02/. These are one incorrect annotation.",
+        "finding_ids": []
+      }
+    ]
+  },
+  "misses": [
+    {
+      "id": "control/broadcast-transaction-string-type",
+      "scope_class": "deterministic",
+      "mechanism": "type-error",
+      "expectation_id": "broadcast-transaction-string-type",
+      "description": "No type-error detection in this unclassified failed setup attempt; excluded from metrics.",
+      "evidence": "The independent valid oracle establishes the mutation. This attempt skipped type checking because dependency verification failed; it does not measure product recall."
+    }
+  ],
+  "findings": {}
+}

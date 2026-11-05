@@ -1,0 +1,98 @@
+Scope: 2 of 59 workspace projects
+Packages are copied from the content-addressable store to the virtual store.
+  Content-addressable store is at: /dev/shm/trpc-eval/pnpm-store/v11
+  Virtual store is at:             node_modules/.pnpm
+Progress: resolved 70, reused 70, downloaded 0, added 31
+Progress: resolved 79, reused 79, downloaded 0, added 40
+Progress: resolved 97, reused 97, downloaded 0, added 58
+Progress: resolved 100, reused 100, downloaded 0, added 61
+Progress: resolved 103, reused 103, downloaded 0, added 64
+Progress: resolved 119, reused 119, downloaded 0, added 80
+Progress: resolved 138, reused 138, downloaded 0, added 99
+Progress: resolved 147, reused 147, downloaded 0, added 108
+Progress: resolved 163, reused 163, downloaded 0, added 124
+Progress: resolved 176, reused 176, downloaded 0, added 137
+Progress: resolved 193, reused 193, downloaded 0, added 154
+Progress: resolved 198, reused 198, downloaded 0, added 159
+Progress: resolved 205, reused 205, downloaded 0, added 166
+Progress: resolved 211, reused 211, downloaded 0, added 172
+Progress: resolved 220, reused 220, downloaded 0, added 181
+Progress: resolved 223, reused 223, downloaded 0, added 184
+Progress: resolved 243, reused 243, downloaded 0, added 204
+Progress: resolved 246, reused 246, downloaded 0, added 207
+Progress: resolved 249, reused 249, downloaded 0, added 210
+Progress: resolved 252, reused 252, downloaded 0, added 213
+Progress: resolved 260, reused 260, downloaded 0, added 221
+Progress: resolved 274, reused 274, downloaded 0, added 237
+Progress: resolved 280, reused 280, downloaded 0, added 243
+Progress: resolved 292, reused 292, downloaded 0, added 255
+Progress: resolved 300, reused 300, downloaded 0, added 263
+Progress: resolved 316, reused 316, downloaded 0, added 277
+Progress: resolved 317, reused 317, downloaded 0, added 279
+Progress: resolved 336, reused 336, downloaded 0, added 297
+Progress: resolved 338, reused 338, downloaded 0, added 299
+Progress: resolved 340, reused 340, downloaded 0, added 301
+Progress: resolved 346, reused 346, downloaded 0, added 307
+Progress: resolved 362, reused 362, downloaded 0, added 323
+Progress: resolved 366, reused 366, downloaded 0, added 327
+Progress: resolved 388, reused 388, downloaded 0, added 348
+Progress: resolved 394, reused 394, downloaded 0, added 355
+Progress: resolved 414, reused 414, downloaded 0, added 378
+Progress: resolved 418, reused 418, downloaded 0, added 384
+Progress: resolved 428, reused 428, downloaded 0, added 394
+Progress: resolved 436, reused 436, downloaded 0, added 404
+Progress: resolved 441, reused 441, downloaded 0, added 409
+Progress: resolved 450, reused 449, downloaded 0, added 421
+Progress: resolved 451, reused 451, downloaded 0, added 425
+Progress: resolved 458, reused 458, downloaded 0, added 433
+Progress: resolved 462, reused 462, downloaded 0, added 442
+Progress: resolved 465, reused 465, downloaded 0, added 447
+Progress: resolved 468, reused 468, downloaded 0, added 450
+Progress: resolved 472, reused 472, downloaded 0, added 454
+Progress: resolved 476, reused 476, downloaded 0, added 459
+Progress: resolved 478, reused 478, downloaded 0, added 461
+Progress: resolved 479, reused 478, downloaded 0, added 462
+Progress: resolved 479, reused 479, downloaded 0, added 466
+Packages: +479
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Progress: resolved 479, reused 479, downloaded 0, added 479, done
+Lockfile is up to date, resolution step is skipped
+
+dependencies:
++ @actions/core 3.0.0
++ @actions/github 9.0.0
++ @effect/platform-node 4.1.1
++ @manypkg/cli 0.22.0
++ @tanstack/intent 0.5.6
++ @testing-library/dom 10.0.0
++ @testing-library/jest-dom 6.9.1
++ @testing-library/react 16.1.0
++ @testing-library/user-event 14.4.3
++ @types/event-source-polyfill 1.0.5
++ @types/node 24.13.4
++ @vitest/coverage-istanbul 5.0.0
++ @vitest/ui 5.0.0
++ concurrently 9.0.0
++ effect 4.1.1
++ event-source-polyfill 1.0.31
++ express 5.2.1
++ fast-glob 3.3.3
++ hash-sum 2.0.0
++ konn 0.7.0
++ npm-run-all2 8.0.4
++ oxfmt 0.75.0
++ oxlint 1.90.0
++ oxlint-tsgolint 7.0.2005
++ react 19.1.0
++ react-dom 19.1.0
++ superjson 1.12.4
++ tailwindcss 4.3.3
++ ts-prune 0.10.3
++ tsx 4.21.0
++ turbo 2.10.12
++ typescript 6.0.3
++ vite 8.3.0
++ vitest 5.0.0
++ zod 4.2.1
+
+Done in 3m 2.7s using pnpm v12.4.1

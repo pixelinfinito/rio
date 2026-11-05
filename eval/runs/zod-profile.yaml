@@ -1,0 +1,6 @@
+version: 1
+name: zod-eval-b15dc8ff5001
+extends: rio/base
+budget:
+  fast:
+    wall_time: 20m

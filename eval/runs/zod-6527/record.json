@@ -1,0 +1,1253 @@
+{
+  "schema": "rio-eval-record-v1",
+  "methodology": "deterministic-v1",
+  "repository": "colinhacks/zod",
+  "pr": "https://github.com/colinhacks/zod/pull/6527",
+  "case_id": "6527-attempt1-excluded",
+  "languages": [
+    "typescript"
+  ],
+  "reviewer": "sub-agent eval-zod (automated)",
+  "verdict_source": "automated",
+  "independently_clean": true,
+  "commands": [
+    "cwd=/tmp/rio-eval-2azesekp argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/colinhacks/zod.git\", \"/tmp/rio-eval-2azesekp/head\"]",
+    "cwd=/tmp/rio-eval-2azesekp/head argv=[\"git\", \"fetch\", \"origin\", \"b801439b5fb160d651084ff7d7c27a61e24a7334\", \"cbeac9415dc218eae98eaebc35971c0b6743528b\"]",
+    "cwd=/tmp/rio-eval-2azesekp/head argv=[\"git\", \"merge-base\", \"b801439b5fb160d651084ff7d7c27a61e24a7334\", \"cbeac9415dc218eae98eaebc35971c0b6743528b\"]",
+    "cwd=/tmp/rio-eval-2azesekp/head argv=[\"git\", \"checkout\", \"--detach\", \"cbeac9415dc218eae98eaebc35971c0b6743528b\"]",
+    "cwd=/tmp/rio-eval-2azesekp argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/tmp/rio-eval-2azesekp/head\", \"/tmp/rio-eval-2azesekp/base\"]",
+    "cwd=/tmp/rio-eval-2azesekp/base argv=[\"git\", \"checkout\", \"--detach\", \"b801439b5fb160d651084ff7d7c27a61e24a7334\"]",
+    "cwd=/tmp/rio-eval-2azesekp/base argv=[\"corepack\", \"pnpm\", \"install\", \"--frozen-lockfile\"]",
+    "cwd=/tmp/rio-eval-2azesekp/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/tmp/rio-eval-2azesekp/head argv=[\"corepack\", \"pnpm\", \"install\", \"--frozen-lockfile\"]",
+    "cwd=/tmp/rio-eval-2azesekp/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/tmp/rio-eval-2azesekp/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/tmp/rio-eval-2azesekp/head argv=[\"node\", \"--version\"]",
+    "cwd=/tmp/rio-eval-2azesekp/head argv=[\"npm\", \"--version\"]",
+    "cwd=/tmp/rio-eval-2azesekp/head argv=[\"corepack\", \"--version\"]",
+    "cwd=/tmp/rio-eval-2azesekp/head argv=[\"python3\", \"--version\"]",
+    "cwd=/tmp/rio-eval-2azesekp/head argv=[\"uv\", \"--version\"]",
+    "cwd=/tmp/rio-eval-2azesekp/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6527/profile.yaml\"]",
+    "cwd=/tmp/rio-eval-2azesekp/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/tmp/rio-eval-2azesekp/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"b801439b5fb160d651084ff7d7c27a61e24a7334\", \"--format\", \"json\", \"--offline\", \"--profile\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6527/profile.yaml\"]",
+    "Independent oracle ledger: eval/runs/zod-6527-evidence/adjudication-commands.json",
+    "Independent oracle ledger: eval/runs/zod-6527-evidence/base-commands.json",
+    "Independent oracle ledger: eval/runs/zod-6527-evidence/base-repair-commands.json",
+    "Independent oracle ledger: eval/runs/zod-6527-evidence/base-setup1-commands.json",
+    "Independent oracle ledger: eval/runs/zod-6527-evidence/head-commands.json",
+    "Independent oracle ledger: eval/runs/zod-6527-evidence/head-repair-commands.json"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6527/commands.json; Rio binary SHA-256: 512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+    "Excluded evidence only: no base check ran and baseline_classification_ran=false. No precision, recall, usefulness, or release credit is claimed from this run.",
+    "Independent evidence: ../zod-6527-evidence/selection.json and oracle command ledgers; detailed exclusions and reproduction in ../zod-NOTES.md.",
+    "No raw finding/check has been edited or removed. No trust override, source change, lockfile update, or binary rebuild was used.",
+    "Independent negative-control assessment: upstream test tsconfig and Biome lint pass both revisions; source + repaired build-dependent tests total base 7855/head 7858 with no type errors. See ../zod-6527-evidence/independent-assessment.json. Raw default root tsc includes unrelated pre-existing tests/benchmarks and build-dependent consumer fixtures.",
+    "Original disk-backed attempt was interrupted after prolonged filesystem journal waits and replaced by a same-input RAM-backed corrective retry. See ../zod-original-capture-cancellation.json; original report is partial and excluded."
+  ],
+  "positive_control": {
+    "kind": "none",
+    "expected": []
+  },
+  "base_sha": "b801439b5fb160d651084ff7d7c27a61e24a7334",
+  "head_sha": "cbeac9415dc218eae98eaebc35971c0b6743528b",
+  "mode": "branch",
+  "review_id": "30311a6b88e34df5",
+  "run_id": "01M6MSHE875TBYF46D266QF3AZ",
+  "rio_version": "0.1.0",
+  "profile": "zod-eval-b15dc8ff5001",
+  "wall_time_ms": 674186,
+  "status": "partial",
+  "report_path": "eval/runs/zod-6527/report.json",
+  "environment": {
+    "dependency_state": "verified",
+    "baseline_ran": false,
+    "baseline_classification_ran": false,
+    "eligible": false,
+    "reasons": [
+      "coverage . head: skipped dependency_mismatch pnpm-lock.yaml: missing @vitest/mocker at @vitest/mocker@4.1.5(vite@7.3.2(@types/node@22.13.13)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.39.0)(tsx@4.19.3)(yaml@2.8.3)); reinstall dependencies",
+      "coverage packages/bench head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+      "coverage packages/integration head: skipped dependency_mismatch pnpm-lock.yaml: missing drizzle-zod at drizzle-zod@0.8.3(drizzle-orm@0.45.2(@opentelemetry/api@1.9.0))(zod@packages+zod); reinstall dependencies",
+      "coverage packages/mini head: cancelled interrupted",
+      "coverage packages/resolution head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+      "coverage packages/treeshake head: cancelled interrupted",
+      "coverage packages/tsc head: skipped dependency_mismatch pnpm-lock.yaml: missing zod at zod@4.0.0-beta.20250420T053007; reinstall dependencies",
+      "coverage packages/zod head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+      "lint packages/zod head: skipped no_project_config lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+      "lint packages/zod: head=skipped, dependency_state=unavailable, base=unavailable",
+      "report status partial cannot establish a complete change review",
+      "typecheck . head: skipped dependency_mismatch pnpm-lock.yaml: missing @vitest/mocker at @vitest/mocker@4.1.5(vite@7.3.2(@types/node@22.13.13)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.39.0)(tsx@4.19.3)(yaml@2.8.3)); reinstall dependencies",
+      "typecheck .: head=skipped, dependency_state=unavailable, base=unavailable",
+      "typecheck packages/bench head: cancelled interrupted",
+      "typecheck packages/bench: head=cancelled, dependency_state=verified, base=unavailable",
+      "typecheck packages/integration head: skipped dependency_mismatch pnpm-lock.yaml: missing drizzle-zod at drizzle-zod@0.8.3(drizzle-orm@0.45.2(@opentelemetry/api@1.9.0))(zod@packages+zod); reinstall dependencies",
+      "typecheck packages/integration: head=skipped, dependency_state=unavailable, base=unavailable",
+      "typecheck packages/mini: head=passed, dependency_state=verified, base=unavailable",
+      "typecheck packages/resolution head: cancelled interrupted",
+      "typecheck packages/resolution: head=cancelled, dependency_state=verified, base=unavailable",
+      "typecheck packages/treeshake head: cancelled interrupted",
+      "typecheck packages/treeshake: head=cancelled, dependency_state=unavailable, base=unavailable",
+      "typecheck packages/tsc head: cancelled interrupted",
+      "typecheck packages/tsc: head=cancelled, dependency_state=unavailable, base=unavailable",
+      "typecheck packages/zod: head=findings, dependency_state=verified, base=unavailable"
+    ],
+    "checks": [
+      {
+        "findings": [],
+        "hint": "pnpm-lock.yaml: missing @vitest/mocker at @vitest/mocker@4.1.5(vite@7.3.2(@types/node@22.13.13)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.39.0)(tsx@4.19.3)(yaml@2.8.3)); reinstall dependencies",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "dependency_mismatch",
+        "root": ".",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "findings": [],
+        "hint": "pnpm-lock.yaml: missing @vitest/mocker at @vitest/mocker@4.1.5(vite@7.3.2(@types/node@22.13.13)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.39.0)(tsx@4.19.3)(yaml@2.8.3)); reinstall dependencies",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "dependency_mismatch",
+        "root": ".",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "findings": [],
+        "hint": "pnpm-lock.yaml: missing drizzle-zod at drizzle-zod@0.8.3(drizzle-orm@0.45.2(@opentelemetry/api@1.9.0))(zod@packages+zod); reinstall dependencies",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "dependency_mismatch",
+        "root": "packages/integration",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "findings": [],
+        "hint": "pnpm-lock.yaml: missing drizzle-zod at drizzle-zod@0.8.3(drizzle-orm@0.45.2(@opentelemetry/api@1.9.0))(zod@packages+zod); reinstall dependencies",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "dependency_mismatch",
+        "root": "packages/integration",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "findings": [],
+        "hint": "pnpm-lock.yaml: missing zod at zod@4.0.0-beta.20250420T053007; reinstall dependencies",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "dependency_mismatch",
+        "root": "packages/tsc",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "hint": "Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "tests_failed",
+        "root": "packages/bench",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 113035
+      },
+      {
+        "findings": [],
+        "hint": "lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+        "kind": "lint",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "no_project_config",
+        "root": "packages/zod",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/mini",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 69586
+      },
+      {
+        "findings": [],
+        "kind": "secrets",
+        "language": "common",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 6
+      },
+      {
+        "findings": [],
+        "hint": "Dependency audit needs api.osv.dev",
+        "kind": "dependencies",
+        "language": "common",
+        "outcome": "skipped",
+        "reason": "offline",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 441
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "findings",
+        "root": "packages/zod",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 118790
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "hint": "Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "tests_failed",
+        "root": "packages/zod",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 77607
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "hint": "Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "tests_failed",
+        "root": "packages/resolution",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 148792
+      },
+      {
+        "findings": [],
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "cancelled",
+        "reason": "interrupted",
+        "root": "packages/treeshake",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "findings": [],
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "cancelled",
+        "reason": "interrupted",
+        "root": "packages/tsc",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "findings": [],
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "cancelled",
+        "reason": "interrupted",
+        "root": "packages/treeshake",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "cancelled",
+        "reason": "interrupted",
+        "root": "packages/resolution",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 91593
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "cancelled",
+        "reason": "interrupted",
+        "root": "packages/mini",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 108089
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "cancelled",
+        "reason": "interrupted",
+        "root": "packages/bench",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 284709
+      }
+    ],
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "typecheck packages/mini: baseline_failed: linked dependency packages/mini::zod points at changed source packages/zod: packages/zod/src/v4/classic/tests/string.test.ts; commit or stash the linked package's changes",
+      "typecheck packages/zod: baseline_failed: linked dependency .::zod points at changed source packages/zod: packages/zod/src/v4/classic/tests/string.test.ts; commit or stash the linked package's changes",
+      "typecheck packages/resolution: baseline_failed: linked dependency packages/resolution::zod points at changed source packages/zod: packages/zod/src/v4/classic/tests/string.test.ts; commit or stash the linked package's changes",
+      "typecheck packages/bench: baseline_failed: linked dependency packages/bench::zod points at changed source packages/zod: packages/zod/src/v4/classic/tests/string.test.ts; commit or stash the linked package's changes",
+      "Graph references use syntax and text; no language server was used",
+      "Impact graph truncated after interruption",
+      "Offline applies to Rio; tool and test processes were not network-isolated"
+    ]
+  },
+  "findings": [
+    {
+      "finding": {
+        "category": "defect",
+        "evidence": [
+          "tsc diagnostic",
+          "unclassified: outside changed hunks, baseline unavailable (packages/zod/src/v4/classic/tests/assignability.test.ts:301)"
+        ],
+        "evidence_level": "static_proven",
+        "id": "034ba9bebadec8dfecdc1eae53168590bd4868a51aec4bc5916051e7e46aeb94",
+        "location": {
+          "column": 9,
+          "line_end": 301,
+          "line_start": 301,
+          "occurrence_state": "pre-existing",
+          "path": "packages/zod/src/v4/classic/tests/assignability.test.ts",
+          "symbol_path": ""
+        },
+        "locations": [
+          {
+            "column": 9,
+            "line_end": 301,
+            "line_start": 301,
+            "occurrence_state": "pre-existing",
+            "path": "packages/zod/src/v4/classic/tests/assignability.test.ts",
+            "symbol_path": ""
+          }
+        ],
+        "message": "'_a' is declared but its value is never read.",
+        "rule_id": "typecheck/tsc/TS6133",
+        "severity": "error",
+        "source": {
+          "tool": "tsc",
+          "version": "Version 5.5.4"
+        },
+        "state": "pre-existing",
+        "trigger": ""
+      },
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base tsc output ../zod-6527-evidence/adjudication-base-packages-zod.log:5 contains the same file, diagnostic TS6133, and message. This is an existing diagnostic from the raw default config (including test-only unused declarations or unrelated fixtures/benchmarks), not introduced by this PR. Upstream test-config/typecheck evidence is separately retained. Rio labels it pre-existing but has no executed baseline; base status here comes from the independent oracle. Run excluded.",
+      "message_template": "'_a' is declared but its value is never read.",
+      "file_set": [
+        "packages/zod/src/v4/classic/tests/assignability.test.ts"
+      ],
+      "root_cause_key": "fc1e5d40db885fec9bafbd6a477a2e21ecbde959dd520ba21f258020a13e5b9b",
+      "family": "typecheck/tsc/TS6133"
+    },
+    {
+      "finding": {
+        "category": "defect",
+        "evidence": [
+          "tsc diagnostic",
+          "unclassified: outside changed hunks, baseline unavailable (packages/zod/src/v4/classic/tests/assignability.test.ts:303)"
+        ],
+        "evidence_level": "static_proven",
+        "id": "0512d38c397f9a7ac2bd92325b848e3dc36a542a91501293c6d6ec4fd4f45da7",
+        "location": {
+          "column": 9,
+          "line_end": 303,
+          "line_start": 303,
+          "occurrence_state": "pre-existing",
+          "path": "packages/zod/src/v4/classic/tests/assignability.test.ts",
+          "symbol_path": ""
+        },
+        "locations": [
+          {
+            "column": 9,
+            "line_end": 303,
+            "line_start": 303,
+            "occurrence_state": "pre-existing",
+            "path": "packages/zod/src/v4/classic/tests/assignability.test.ts",
+            "symbol_path": ""
+          }
+        ],
+        "message": "'_c' is declared but its value is never read.",
+        "rule_id": "typecheck/tsc/TS6133",
+        "severity": "error",
+        "source": {
+          "tool": "tsc",
+          "version": "Version 5.5.4"
+        },
+        "state": "pre-existing",
+        "trigger": ""
+      },
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base tsc output ../zod-6527-evidence/adjudication-base-packages-zod.log:7 contains the same file, diagnostic TS6133, and message. This is an existing diagnostic from the raw default config (including test-only unused declarations or unrelated fixtures/benchmarks), not introduced by this PR. Upstream test-config/typecheck evidence is separately retained. Rio labels it pre-existing but has no executed baseline; base status here comes from the independent oracle. Run excluded.",
+      "message_template": "'_c' is declared but its value is never read.",
+      "file_set": [
+        "packages/zod/src/v4/classic/tests/assignability.test.ts"
+      ],
+      "root_cause_key": "4273b0a7a3d06ad4e7f0993b770b76d3e8e8b56112bcae27410d1f8080ebfbe8",
+      "family": "typecheck/tsc/TS6133"
+    },
+    {
+      "finding": {
+        "category": "defect",
+        "evidence": [
+          "tsc diagnostic",
+          "unclassified: outside changed hunks, baseline unavailable (packages/zod/src/v3/tests/nativeEnum.test.ts:78)"
+        ],
+        "evidence_level": "static_proven",
+        "id": "1757c2281fc7cf018d2d2e72b5711caff1dcd539eb2b51966b396344c8683f85",
+        "location": {
+          "column": 8,
+          "line_end": 78,
+          "line_start": 78,
+          "occurrence_state": "pre-existing",
+          "path": "packages/zod/src/v3/tests/nativeEnum.test.ts",
+          "symbol_path": "nativeEnum.test._GreekEnum"
+        },
+        "locations": [
+          {
+            "column": 8,
+            "line_end": 78,
+            "line_start": 78,
+            "occurrence_state": "pre-existing",
+            "path": "packages/zod/src/v3/tests/nativeEnum.test.ts",
+            "symbol_path": "nativeEnum.test._GreekEnum"
+          }
+        ],
+        "message": "'_GreekEnum' is declared but never used.",
+        "rule_id": "typecheck/tsc/TS6196",
+        "severity": "error",
+        "source": {
+          "tool": "tsc",
+          "version": "Version 5.5.4"
+        },
+        "state": "pre-existing",
+        "trigger": ""
+      },
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base tsc output ../zod-6527-evidence/adjudication-base-packages-zod.log:3 contains the same file, diagnostic TS6196, and message. This is an existing diagnostic from the raw default config (including test-only unused declarations or unrelated fixtures/benchmarks), not introduced by this PR. Upstream test-config/typecheck evidence is separately retained. Rio labels it pre-existing but has no executed baseline; base status here comes from the independent oracle. Run excluded.",
+      "message_template": "'_GreekEnum' is declared but never used.",
+      "file_set": [
+        "packages/zod/src/v3/tests/nativeEnum.test.ts"
+      ],
+      "root_cause_key": "4b5da5c18bf3d928f078486f703d287ed84670133044f29236543d5f063056c1",
+      "family": "typecheck/tsc/TS6196"
+    },
+    {
+      "finding": {
+        "category": "defect",
+        "evidence": [
+          "tsc diagnostic",
+          "unclassified: outside changed hunks, baseline unavailable (packages/zod/src/v3/tests/intersection.test.ts:56)"
+        ],
+        "evidence_level": "static_proven",
+        "id": "256fddabddd1bb52ff96f4656d0ad66f590c3fd9752d036a020d9476bc0290b2",
+        "location": {
+          "column": 8,
+          "line_end": 56,
+          "line_start": 56,
+          "occurrence_state": "pre-existing",
+          "path": "packages/zod/src/v3/tests/intersection.test.ts",
+          "symbol_path": "intersection.test._Cat"
+        },
+        "locations": [
+          {
+            "column": 8,
+            "line_end": 56,
+            "line_start": 56,
+            "occurrence_state": "pre-existing",
+            "path": "packages/zod/src/v3/tests/intersection.test.ts",
+            "symbol_path": "intersection.test._Cat"
+          }
+        ],
+        "message": "'_Cat' is declared but never used.",
+        "rule_id": "typecheck/tsc/TS6196",
+        "severity": "error",
+        "source": {
+          "tool": "tsc",
+          "version": "Version 5.5.4"
+        },
+        "state": "pre-existing",
+        "trigger": ""
+      },
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base tsc output ../zod-6527-evidence/adjudication-base-packages-zod.log:1 contains the same file, diagnostic TS6196, and message. This is an existing diagnostic from the raw default config (including test-only unused declarations or unrelated fixtures/benchmarks), not introduced by this PR. Upstream test-config/typecheck evidence is separately retained. Rio labels it pre-existing but has no executed baseline; base status here comes from the independent oracle. Run excluded.",
+      "message_template": "'_Cat' is declared but never used.",
+      "file_set": [
+        "packages/zod/src/v3/tests/intersection.test.ts"
+      ],
+      "root_cause_key": "664738101f951149986d45b7727f585bc95d457f6bde8c46b61aa33e11ae0fb9",
+      "family": "typecheck/tsc/TS6196"
+    },
+    {
+      "finding": {
+        "category": "defect",
+        "evidence": [
+          "tsc diagnostic",
+          "unclassified: outside changed hunks, baseline unavailable (packages/zod/src/v4/classic/tests/preprocess-types.test.ts:41)"
+        ],
+        "evidence_level": "static_proven",
+        "id": "56357190303cc4a1945aa5385668fa0e4314c03e8e21dd3a743669b2810f6b7c",
+        "location": {
+          "column": 9,
+          "line_end": 41,
+          "line_start": 41,
+          "occurrence_state": "pre-existing",
+          "path": "packages/zod/src/v4/classic/tests/preprocess-types.test.ts",
+          "symbol_path": ""
+        },
+        "locations": [
+          {
+            "column": 9,
+            "line_end": 41,
+            "line_start": 41,
+            "occurrence_state": "pre-existing",
+            "path": "packages/zod/src/v4/classic/tests/preprocess-types.test.ts",
+            "symbol_path": ""
+          }
+        ],
+        "message": "'_bare' is declared but its value is never read.",
+        "rule_id": "typecheck/tsc/TS6133",
+        "severity": "error",
+        "source": {
+          "tool": "tsc",
+          "version": "Version 5.5.4"
+        },
+        "state": "pre-existing",
+        "trigger": ""
+      },
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base tsc output ../zod-6527-evidence/adjudication-base-packages-zod.log:13 contains the same file, diagnostic TS6133, and message. This is an existing diagnostic from the raw default config (including test-only unused declarations or unrelated fixtures/benchmarks), not introduced by this PR. Upstream test-config/typecheck evidence is separately retained. Rio labels it pre-existing but has no executed baseline; base status here comes from the independent oracle. Run excluded.",
+      "message_template": "'_bare' is declared but its value is never read.",
+      "file_set": [
+        "packages/zod/src/v4/classic/tests/preprocess-types.test.ts"
+      ],
+      "root_cause_key": "ccdf124e5531f27bd2a87f3cab60e8c6c5a24ed634d001ff4ec89b7ac93ec5cd",
+      "family": "typecheck/tsc/TS6133"
+    },
+    {
+      "finding": {
+        "category": "defect",
+        "evidence": [
+          "tsc diagnostic",
+          "unclassified: outside changed hunks, baseline unavailable (packages/zod/src/v4/classic/tests/enum.test.ts:195)"
+        ],
+        "evidence_level": "static_proven",
+        "id": "67c341e462a628fd2b4f1f0429fdef0c904666c638034d0f3790a9dfe2189c14",
+        "location": {
+          "column": 8,
+          "line_end": 195,
+          "line_start": 195,
+          "occurrence_state": "pre-existing",
+          "path": "packages/zod/src/v4/classic/tests/enum.test.ts",
+          "symbol_path": "enum.test._b"
+        },
+        "locations": [
+          {
+            "column": 8,
+            "line_end": 195,
+            "line_start": 195,
+            "occurrence_state": "pre-existing",
+            "path": "packages/zod/src/v4/classic/tests/enum.test.ts",
+            "symbol_path": "enum.test._b"
+          }
+        ],
+        "message": "'_b' is declared but never used.",
+        "rule_id": "typecheck/tsc/TS6196",
+        "severity": "error",
+        "source": {
+          "tool": "tsc",
+          "version": "Version 5.5.4"
+        },
+        "state": "pre-existing",
+        "trigger": ""
+      },
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base tsc output ../zod-6527-evidence/adjudication-base-packages-zod.log:11 contains the same file, diagnostic TS6196, and message. This is an existing diagnostic from the raw default config (including test-only unused declarations or unrelated fixtures/benchmarks), not introduced by this PR. Upstream test-config/typecheck evidence is separately retained. Rio labels it pre-existing but has no executed baseline; base status here comes from the independent oracle. Run excluded.",
+      "message_template": "'_b' is declared but never used.",
+      "file_set": [
+        "packages/zod/src/v4/classic/tests/enum.test.ts"
+      ],
+      "root_cause_key": "5c26e240bee103f201c3d9f98309eeacde1d423306b0b72054a16267b1f7e0c7",
+      "family": "typecheck/tsc/TS6196"
+    },
+    {
+      "finding": {
+        "category": "defect",
+        "evidence": [
+          "tsc diagnostic",
+          "unclassified: outside changed hunks, baseline unavailable (packages/zod/src/v3/tests/nativeEnum.test.ts:59)"
+        ],
+        "evidence_level": "static_proven",
+        "id": "72f77d40f485bfde39b4009b1ca92349f7621c264dbf06595dc29539dc263cdf",
+        "location": {
+          "column": 8,
+          "line_end": 59,
+          "line_start": 59,
+          "occurrence_state": "pre-existing",
+          "path": "packages/zod/src/v3/tests/nativeEnum.test.ts",
+          "symbol_path": "nativeEnum.test._FruitEnum"
+        },
+        "locations": [
+          {
+            "column": 8,
+            "line_end": 59,
+            "line_start": 59,
+            "occurrence_state": "pre-existing",
+            "path": "packages/zod/src/v3/tests/nativeEnum.test.ts",
+            "symbol_path": "nativeEnum.test._FruitEnum"
+          }
+        ],
+        "message": "'_FruitEnum' is declared but never used.",
+        "rule_id": "typecheck/tsc/TS6196",
+        "severity": "error",
+        "source": {
+          "tool": "tsc",
+          "version": "Version 5.5.4"
+        },
+        "state": "pre-existing",
+        "trigger": ""
+      },
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base tsc output ../zod-6527-evidence/adjudication-base-packages-zod.log:2 contains the same file, diagnostic TS6196, and message. This is an existing diagnostic from the raw default config (including test-only unused declarations or unrelated fixtures/benchmarks), not introduced by this PR. Upstream test-config/typecheck evidence is separately retained. Rio labels it pre-existing but has no executed baseline; base status here comes from the independent oracle. Run excluded.",
+      "message_template": "'_FruitEnum' is declared but never used.",
+      "file_set": [
+        "packages/zod/src/v3/tests/nativeEnum.test.ts"
+      ],
+      "root_cause_key": "a1957f04406c3f969cc06299c92c39b124906b431ef55859d000b62887c3596d",
+      "family": "typecheck/tsc/TS6196"
+    },
+    {
+      "finding": {
+        "category": "defect",
+        "evidence": [
+          "tsc diagnostic",
+          "unclassified: outside changed hunks, baseline unavailable (packages/zod/src/v4/mini/tests/assignability.test.ts:181)"
+        ],
+        "evidence_level": "static_proven",
+        "id": "7fd4d42818f12b4eca74614ac7ad1fd61688407474d442b743a440cfbf56a26b",
+        "location": {
+          "column": 8,
+          "line_end": 181,
+          "line_start": 181,
+          "occurrence_state": "pre-existing",
+          "path": "packages/zod/src/v4/mini/tests/assignability.test.ts",
+          "symbol_path": "assignability.test._RefinedSchema"
+        },
+        "locations": [
+          {
+            "column": 8,
+            "line_end": 181,
+            "line_start": 181,
+            "occurrence_state": "pre-existing",
+            "path": "packages/zod/src/v4/mini/tests/assignability.test.ts",
+            "symbol_path": "assignability.test._RefinedSchema"
+          }
+        ],
+        "message": "'_RefinedSchema' is declared but never used.",
+        "rule_id": "typecheck/tsc/TS6196",
+        "severity": "error",
+        "source": {
+          "tool": "tsc",
+          "version": "Version 5.5.4"
+        },
+        "state": "pre-existing",
+        "trigger": ""
+      },
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base tsc output ../zod-6527-evidence/adjudication-base-packages-zod.log:15 contains the same file, diagnostic TS6196, and message. This is an existing diagnostic from the raw default config (including test-only unused declarations or unrelated fixtures/benchmarks), not introduced by this PR. Upstream test-config/typecheck evidence is separately retained. Rio labels it pre-existing but has no executed baseline; base status here comes from the independent oracle. Run excluded.",
+      "message_template": "'_RefinedSchema' is declared but never used.",
+      "file_set": [
+        "packages/zod/src/v4/mini/tests/assignability.test.ts"
+      ],
+      "root_cause_key": "d97d372a7515a4d17b0f2f45a8c3e6c1e0c3ebcd5e7114930f70f3dbbed56339",
+      "family": "typecheck/tsc/TS6196"
+    },
+    {
+      "finding": {
+        "category": "defect",
+        "evidence": [
+          "tsc diagnostic",
+          "unclassified: outside changed hunks, baseline unavailable (packages/zod/src/v4/classic/tests/assignability.test.ts:302)"
+        ],
+        "evidence_level": "static_proven",
+        "id": "92d1ab1c8d7b3161d7fd213f726903e12a428ffe017b003444968e1be41521ec",
+        "location": {
+          "column": 9,
+          "line_end": 302,
+          "line_start": 302,
+          "occurrence_state": "pre-existing",
+          "path": "packages/zod/src/v4/classic/tests/assignability.test.ts",
+          "symbol_path": ""
+        },
+        "locations": [
+          {
+            "column": 9,
+            "line_end": 302,
+            "line_start": 302,
+            "occurrence_state": "pre-existing",
+            "path": "packages/zod/src/v4/classic/tests/assignability.test.ts",
+            "symbol_path": ""
+          }
+        ],
+        "message": "'_b' is declared but its value is never read.",
+        "rule_id": "typecheck/tsc/TS6133",
+        "severity": "error",
+        "source": {
+          "tool": "tsc",
+          "version": "Version 5.5.4"
+        },
+        "state": "pre-existing",
+        "trigger": ""
+      },
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base tsc output ../zod-6527-evidence/adjudication-base-packages-zod.log:6 contains the same file, diagnostic TS6133, and message. This is an existing diagnostic from the raw default config (including test-only unused declarations or unrelated fixtures/benchmarks), not introduced by this PR. Upstream test-config/typecheck evidence is separately retained. Rio labels it pre-existing but has no executed baseline; base status here comes from the independent oracle. Run excluded.",
+      "message_template": "'_b' is declared but its value is never read.",
+      "file_set": [
+        "packages/zod/src/v4/classic/tests/assignability.test.ts"
+      ],
+      "root_cause_key": "df6b6cb11deda2a0d52e4dfc56ff81f003fb78a75bcf42e37212eac7f14453f1",
+      "family": "typecheck/tsc/TS6133"
+    },
+    {
+      "finding": {
+        "category": "defect",
+        "evidence": [
+          "tsc diagnostic",
+          "unclassified: outside changed hunks, baseline unavailable (packages/zod/src/v4/classic/tests/assignability.test.ts:326)"
+        ],
+        "evidence_level": "static_proven",
+        "id": "93298bec4bd1703d3907c6a11293a1cb6bdd0fb0318d4319c32f4ca52b404837",
+        "location": {
+          "column": 8,
+          "line_end": 326,
+          "line_start": 326,
+          "occurrence_state": "pre-existing",
+          "path": "packages/zod/src/v4/classic/tests/assignability.test.ts",
+          "symbol_path": "assignability.test._RefinedSchema"
+        },
+        "locations": [
+          {
+            "column": 8,
+            "line_end": 326,
+            "line_start": 326,
+            "occurrence_state": "pre-existing",
+            "path": "packages/zod/src/v4/classic/tests/assignability.test.ts",
+            "symbol_path": "assignability.test._RefinedSchema"
+          }
+        ],
+        "message": "'_RefinedSchema' is declared but never used.",
+        "rule_id": "typecheck/tsc/TS6196",
+        "severity": "error",
+        "source": {
+          "tool": "tsc",
+          "version": "Version 5.5.4"
+        },
+        "state": "pre-existing",
+        "trigger": ""
+      },
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base tsc output ../zod-6527-evidence/adjudication-base-packages-zod.log:9 contains the same file, diagnostic TS6196, and message. This is an existing diagnostic from the raw default config (including test-only unused declarations or unrelated fixtures/benchmarks), not introduced by this PR. Upstream test-config/typecheck evidence is separately retained. Rio labels it pre-existing but has no executed baseline; base status here comes from the independent oracle. Run excluded.",
+      "message_template": "'_RefinedSchema' is declared but never used.",
+      "file_set": [
+        "packages/zod/src/v4/classic/tests/assignability.test.ts"
+      ],
+      "root_cause_key": "53600b971971b547910958bd346c001bd5722e939e9b738b10287247e44ae6ec",
+      "family": "typecheck/tsc/TS6196"
+    },
+    {
+      "finding": {
+        "category": "defect",
+        "evidence": [
+          "tsc diagnostic",
+          "unclassified: outside changed hunks, baseline unavailable (packages/zod/src/v4/classic/tests/preprocess-types.test.ts:42)"
+        ],
+        "evidence_level": "static_proven",
+        "id": "98e7bead498a71fbc361f462ec2ff2bfa096ea87adf65f918cdbebe30bb9a015",
+        "location": {
+          "column": 9,
+          "line_end": 42,
+          "line_start": 42,
+          "occurrence_state": "pre-existing",
+          "path": "packages/zod/src/v4/classic/tests/preprocess-types.test.ts",
+          "symbol_path": ""
+        },
+        "locations": [
+          {
+            "column": 9,
+            "line_end": 42,
+            "line_start": 42,
+            "occurrence_state": "pre-existing",
+            "path": "packages/zod/src/v4/classic/tests/preprocess-types.test.ts",
+            "symbol_path": ""
+          }
+        ],
+        "message": "'_bareCore' is declared but its value is never read.",
+        "rule_id": "typecheck/tsc/TS6133",
+        "severity": "error",
+        "source": {
+          "tool": "tsc",
+          "version": "Version 5.5.4"
+        },
+        "state": "pre-existing",
+        "trigger": ""
+      },
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base tsc output ../zod-6527-evidence/adjudication-base-packages-zod.log:14 contains the same file, diagnostic TS6133, and message. This is an existing diagnostic from the raw default config (including test-only unused declarations or unrelated fixtures/benchmarks), not introduced by this PR. Upstream test-config/typecheck evidence is separately retained. Rio labels it pre-existing but has no executed baseline; base status here comes from the independent oracle. Run excluded.",
+      "message_template": "'_bareCore' is declared but its value is never read.",
+      "file_set": [
+        "packages/zod/src/v4/classic/tests/preprocess-types.test.ts"
+      ],
+      "root_cause_key": "b19a86566d718c320dda0723284be3b3993b7ec90f75733aeb23eeef260aede2",
+      "family": "typecheck/tsc/TS6133"
+    },
+    {
+      "finding": {
+        "category": "defect",
+        "evidence": [
+          "tsc diagnostic",
+          "unclassified: outside changed hunks, baseline unavailable (packages/zod/src/v4/classic/tests/lazy.test.ts:206)"
+        ],
+        "evidence_level": "static_proven",
+        "id": "b6b83f6da96e5751a8b5109efc011111fab2ea0e8642557b4a7bc4502924c44c",
+        "location": {
+          "column": 8,
+          "line_end": 206,
+          "line_start": 206,
+          "occurrence_state": "pre-existing",
+          "path": "packages/zod/src/v4/classic/tests/lazy.test.ts",
+          "symbol_path": "lazy.test._Category"
+        },
+        "locations": [
+          {
+            "column": 8,
+            "line_end": 206,
+            "line_start": 206,
+            "occurrence_state": "pre-existing",
+            "path": "packages/zod/src/v4/classic/tests/lazy.test.ts",
+            "symbol_path": "lazy.test._Category"
+          }
+        ],
+        "message": "'_Category' is declared but never used.",
+        "rule_id": "typecheck/tsc/TS6196",
+        "severity": "error",
+        "source": {
+          "tool": "tsc",
+          "version": "Version 5.5.4"
+        },
+        "state": "pre-existing",
+        "trigger": ""
+      },
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base tsc output ../zod-6527-evidence/adjudication-base-packages-zod.log:12 contains the same file, diagnostic TS6196, and message. This is an existing diagnostic from the raw default config (including test-only unused declarations or unrelated fixtures/benchmarks), not introduced by this PR. Upstream test-config/typecheck evidence is separately retained. Rio labels it pre-existing but has no executed baseline; base status here comes from the independent oracle. Run excluded.",
+      "message_template": "'_Category' is declared but never used.",
+      "file_set": [
+        "packages/zod/src/v4/classic/tests/lazy.test.ts"
+      ],
+      "root_cause_key": "09faabfed5167f8ff46f3f91bd3ed268ee8b481099c781509ebd533e8e620813",
+      "family": "typecheck/tsc/TS6196"
+    },
+    {
+      "finding": {
+        "category": "defect",
+        "evidence": [
+          "tsc diagnostic",
+          "unclassified: outside changed hunks, baseline unavailable (packages/zod/src/v4/classic/tests/assignability.test.ts:304)"
+        ],
+        "evidence_level": "static_proven",
+        "id": "c93752c7f0e523cd5af4704f15977e17e436ec3d4f14ff7fa4ea0510ffbb556f",
+        "location": {
+          "column": 9,
+          "line_end": 304,
+          "line_start": 304,
+          "occurrence_state": "pre-existing",
+          "path": "packages/zod/src/v4/classic/tests/assignability.test.ts",
+          "symbol_path": ""
+        },
+        "locations": [
+          {
+            "column": 9,
+            "line_end": 304,
+            "line_start": 304,
+            "occurrence_state": "pre-existing",
+            "path": "packages/zod/src/v4/classic/tests/assignability.test.ts",
+            "symbol_path": ""
+          }
+        ],
+        "message": "'_d' is declared but its value is never read.",
+        "rule_id": "typecheck/tsc/TS6133",
+        "severity": "error",
+        "source": {
+          "tool": "tsc",
+          "version": "Version 5.5.4"
+        },
+        "state": "pre-existing",
+        "trigger": ""
+      },
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base tsc output ../zod-6527-evidence/adjudication-base-packages-zod.log:8 contains the same file, diagnostic TS6133, and message. This is an existing diagnostic from the raw default config (including test-only unused declarations or unrelated fixtures/benchmarks), not introduced by this PR. Upstream test-config/typecheck evidence is separately retained. Rio labels it pre-existing but has no executed baseline; base status here comes from the independent oracle. Run excluded.",
+      "message_template": "'_d' is declared but its value is never read.",
+      "file_set": [
+        "packages/zod/src/v4/classic/tests/assignability.test.ts"
+      ],
+      "root_cause_key": "34e50c8859449f1a053b0eaefc7e1673542c2ae6558bdb32089d1cc3b0d1a12a",
+      "family": "typecheck/tsc/TS6133"
+    },
+    {
+      "finding": {
+        "category": "defect",
+        "evidence": [
+          "tsc diagnostic",
+          "unclassified: outside changed hunks, baseline unavailable (packages/zod/src/v4/classic/tests/enum.test.ts:194)"
+        ],
+        "evidence_level": "static_proven",
+        "id": "e6aefef7f9baf2ed91c34c655757b37506e51b8f70cff3339a25e56bee4ec76b",
+        "location": {
+          "column": 8,
+          "line_end": 194,
+          "line_start": 194,
+          "occurrence_state": "pre-existing",
+          "path": "packages/zod/src/v4/classic/tests/enum.test.ts",
+          "symbol_path": "enum.test._a"
+        },
+        "locations": [
+          {
+            "column": 8,
+            "line_end": 194,
+            "line_start": 194,
+            "occurrence_state": "pre-existing",
+            "path": "packages/zod/src/v4/classic/tests/enum.test.ts",
+            "symbol_path": "enum.test._a"
+          }
+        ],
+        "message": "'_a' is declared but never used.",
+        "rule_id": "typecheck/tsc/TS6196",
+        "severity": "error",
+        "source": {
+          "tool": "tsc",
+          "version": "Version 5.5.4"
+        },
+        "state": "pre-existing",
+        "trigger": ""
+      },
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base tsc output ../zod-6527-evidence/adjudication-base-packages-zod.log:10 contains the same file, diagnostic TS6196, and message. This is an existing diagnostic from the raw default config (including test-only unused declarations or unrelated fixtures/benchmarks), not introduced by this PR. Upstream test-config/typecheck evidence is separately retained. Rio labels it pre-existing but has no executed baseline; base status here comes from the independent oracle. Run excluded.",
+      "message_template": "'_a' is declared but never used.",
+      "file_set": [
+        "packages/zod/src/v4/classic/tests/enum.test.ts"
+      ],
+      "root_cause_key": "b0568856ece7cc8a17f84dac3df14123d6d78f83a456d8278716fd7564240aff",
+      "family": "typecheck/tsc/TS6196"
+    },
+    {
+      "finding": {
+        "category": "defect",
+        "evidence": [
+          "tsc diagnostic",
+          "unclassified: outside changed hunks, baseline unavailable (packages/zod/src/v3/tests/object.test.ts:428)"
+        ],
+        "evidence_level": "static_proven",
+        "id": "f56b2867266ccc2d68d7d61a5ee5a99f53f0fadfaeaa359b1a1f3de06e6de55c",
+        "location": {
+          "column": 9,
+          "line_end": 428,
+          "line_start": 428,
+          "occurrence_state": "pre-existing",
+          "path": "packages/zod/src/v3/tests/object.test.ts",
+          "symbol_path": ""
+        },
+        "locations": [
+          {
+            "column": 9,
+            "line_end": 428,
+            "line_start": 428,
+            "occurrence_state": "pre-existing",
+            "path": "packages/zod/src/v3/tests/object.test.ts",
+            "symbol_path": ""
+          }
+        ],
+        "message": "'_Outer' is declared but its value is never read.",
+        "rule_id": "typecheck/tsc/TS6133",
+        "severity": "error",
+        "source": {
+          "tool": "tsc",
+          "version": "Version 5.5.4"
+        },
+        "state": "pre-existing",
+        "trigger": ""
+      },
+      "verdict": "pre-existing-shown",
+      "reason": "Independent pinned-base tsc output ../zod-6527-evidence/adjudication-base-packages-zod.log:4 contains the same file, diagnostic TS6133, and message. This is an existing diagnostic from the raw default config (including test-only unused declarations or unrelated fixtures/benchmarks), not introduced by this PR. Upstream test-config/typecheck evidence is separately retained. Rio labels it pre-existing but has no executed baseline; base status here comes from the independent oracle. Run excluded.",
+      "message_template": "'_Outer' is declared but its value is never read.",
+      "file_set": [
+        "packages/zod/src/v3/tests/object.test.ts"
+      ],
+      "root_cause_key": "d2eab7d111a0e54aaa054be7382fa4e650b47e00aaa50a91b339d288e33e8f09",
+      "family": "typecheck/tsc/TS6133"
+    }
+  ],
+  "root_causes": [
+    {
+      "root_cause_key": "09faabfed5167f8ff46f3f91bd3ed268ee8b481099c781509ebd533e8e620813",
+      "rule_id": "typecheck/tsc/TS6196",
+      "message_template": "'_Category' is declared but never used.",
+      "file_set": [
+        "packages/zod/src/v4/classic/tests/lazy.test.ts"
+      ],
+      "verdict": "pre-existing-shown",
+      "family": "typecheck/tsc/TS6196",
+      "finding_count": 1,
+      "occurrence_count": 1,
+      "finding_ids": [
+        "b6b83f6da96e5751a8b5109efc011111fab2ea0e8642557b4a7bc4502924c44c"
+      ]
+    },
+    {
+      "root_cause_key": "34e50c8859449f1a053b0eaefc7e1673542c2ae6558bdb32089d1cc3b0d1a12a",
+      "rule_id": "typecheck/tsc/TS6133",
+      "message_template": "'_d' is declared but its value is never read.",
+      "file_set": [
+        "packages/zod/src/v4/classic/tests/assignability.test.ts"
+      ],
+      "verdict": "pre-existing-shown",
+      "family": "typecheck/tsc/TS6133",
+      "finding_count": 1,
+      "occurrence_count": 1,
+      "finding_ids": [
+        "c93752c7f0e523cd5af4704f15977e17e436ec3d4f14ff7fa4ea0510ffbb556f"
+      ]
+    },
+    {
+      "root_cause_key": "4273b0a7a3d06ad4e7f0993b770b76d3e8e8b56112bcae27410d1f8080ebfbe8",
+      "rule_id": "typecheck/tsc/TS6133",
+      "message_template": "'_c' is declared but its value is never read.",
+      "file_set": [
+        "packages/zod/src/v4/classic/tests/assignability.test.ts"
+      ],
+      "verdict": "pre-existing-shown",
+      "family": "typecheck/tsc/TS6133",
+      "finding_count": 1,
+      "occurrence_count": 1,
+      "finding_ids": [
+        "0512d38c397f9a7ac2bd92325b848e3dc36a542a91501293c6d6ec4fd4f45da7"
+      ]
+    },
+    {
+      "root_cause_key": "4b5da5c18bf3d928f078486f703d287ed84670133044f29236543d5f063056c1",
+      "rule_id": "typecheck/tsc/TS6196",
+      "message_template": "'_GreekEnum' is declared but never used.",
+      "file_set": [
+        "packages/zod/src/v3/tests/nativeEnum.test.ts"
+      ],
+      "verdict": "pre-existing-shown",
+      "family": "typecheck/tsc/TS6196",
+      "finding_count": 1,
+      "occurrence_count": 1,
+      "finding_ids": [
+        "1757c2281fc7cf018d2d2e72b5711caff1dcd539eb2b51966b396344c8683f85"
+      ]
+    },
+    {
+      "root_cause_key": "53600b971971b547910958bd346c001bd5722e939e9b738b10287247e44ae6ec",
+      "rule_id": "typecheck/tsc/TS6196",
+      "message_template": "'_RefinedSchema' is declared but never used.",
+      "file_set": [
+        "packages/zod/src/v4/classic/tests/assignability.test.ts"
+      ],
+      "verdict": "pre-existing-shown",
+      "family": "typecheck/tsc/TS6196",
+      "finding_count": 1,
+      "occurrence_count": 1,
+      "finding_ids": [
+        "93298bec4bd1703d3907c6a11293a1cb6bdd0fb0318d4319c32f4ca52b404837"
+      ]
+    },
+    {
+      "root_cause_key": "5c26e240bee103f201c3d9f98309eeacde1d423306b0b72054a16267b1f7e0c7",
+      "rule_id": "typecheck/tsc/TS6196",
+      "message_template": "'_b' is declared but never used.",
+      "file_set": [
+        "packages/zod/src/v4/classic/tests/enum.test.ts"
+      ],
+      "verdict": "pre-existing-shown",
+      "family": "typecheck/tsc/TS6196",
+      "finding_count": 1,
+      "occurrence_count": 1,
+      "finding_ids": [
+        "67c341e462a628fd2b4f1f0429fdef0c904666c638034d0f3790a9dfe2189c14"
+      ]
+    },
+    {
+      "root_cause_key": "664738101f951149986d45b7727f585bc95d457f6bde8c46b61aa33e11ae0fb9",
+      "rule_id": "typecheck/tsc/TS6196",
+      "message_template": "'_Cat' is declared but never used.",
+      "file_set": [
+        "packages/zod/src/v3/tests/intersection.test.ts"
+      ],
+      "verdict": "pre-existing-shown",
+      "family": "typecheck/tsc/TS6196",
+      "finding_count": 1,
+      "occurrence_count": 1,
+      "finding_ids": [
+        "256fddabddd1bb52ff96f4656d0ad66f590c3fd9752d036a020d9476bc0290b2"
+      ]
+    },
+    {
+      "root_cause_key": "a1957f04406c3f969cc06299c92c39b124906b431ef55859d000b62887c3596d",
+      "rule_id": "typecheck/tsc/TS6196",
+      "message_template": "'_FruitEnum' is declared but never used.",
+      "file_set": [
+        "packages/zod/src/v3/tests/nativeEnum.test.ts"
+      ],
+      "verdict": "pre-existing-shown",
+      "family": "typecheck/tsc/TS6196",
+      "finding_count": 1,
+      "occurrence_count": 1,
+      "finding_ids": [
+        "72f77d40f485bfde39b4009b1ca92349f7621c264dbf06595dc29539dc263cdf"
+      ]
+    },
+    {
+      "root_cause_key": "b0568856ece7cc8a17f84dac3df14123d6d78f83a456d8278716fd7564240aff",
+      "rule_id": "typecheck/tsc/TS6196",
+      "message_template": "'_a' is declared but never used.",
+      "file_set": [
+        "packages/zod/src/v4/classic/tests/enum.test.ts"
+      ],
+      "verdict": "pre-existing-shown",
+      "family": "typecheck/tsc/TS6196",
+      "finding_count": 1,
+      "occurrence_count": 1,
+      "finding_ids": [
+        "e6aefef7f9baf2ed91c34c655757b37506e51b8f70cff3339a25e56bee4ec76b"
+      ]
+    },
+    {
+      "root_cause_key": "b19a86566d718c320dda0723284be3b3993b7ec90f75733aeb23eeef260aede2",
+      "rule_id": "typecheck/tsc/TS6133",
+      "message_template": "'_bareCore' is declared but its value is never read.",
+      "file_set": [
+        "packages/zod/src/v4/classic/tests/preprocess-types.test.ts"
+      ],
+      "verdict": "pre-existing-shown",
+      "family": "typecheck/tsc/TS6133",
+      "finding_count": 1,
+      "occurrence_count": 1,
+      "finding_ids": [
+        "98e7bead498a71fbc361f462ec2ff2bfa096ea87adf65f918cdbebe30bb9a015"
+      ]
+    },
+    {
+      "root_cause_key": "ccdf124e5531f27bd2a87f3cab60e8c6c5a24ed634d001ff4ec89b7ac93ec5cd",
+      "rule_id": "typecheck/tsc/TS6133",
+      "message_template": "'_bare' is declared but its value is never read.",
+      "file_set": [
+        "packages/zod/src/v4/classic/tests/preprocess-types.test.ts"
+      ],
+      "verdict": "pre-existing-shown",
+      "family": "typecheck/tsc/TS6133",
+      "finding_count": 1,
+      "occurrence_count": 1,
+      "finding_ids": [
+        "56357190303cc4a1945aa5385668fa0e4314c03e8e21dd3a743669b2810f6b7c"
+      ]
+    },
+    {
+      "root_cause_key": "d2eab7d111a0e54aaa054be7382fa4e650b47e00aaa50a91b339d288e33e8f09",
+      "rule_id": "typecheck/tsc/TS6133",
+      "message_template": "'_Outer' is declared but its value is never read.",
+      "file_set": [
+        "packages/zod/src/v3/tests/object.test.ts"
+      ],
+      "verdict": "pre-existing-shown",
+      "family": "typecheck/tsc/TS6133",
+      "finding_count": 1,
+      "occurrence_count": 1,
+      "finding_ids": [
+        "f56b2867266ccc2d68d7d61a5ee5a99f53f0fadfaeaa359b1a1f3de06e6de55c"
+      ]
+    },
+    {
+      "root_cause_key": "d97d372a7515a4d17b0f2f45a8c3e6c1e0c3ebcd5e7114930f70f3dbbed56339",
+      "rule_id": "typecheck/tsc/TS6196",
+      "message_template": "'_RefinedSchema' is declared but never used.",
+      "file_set": [
+        "packages/zod/src/v4/mini/tests/assignability.test.ts"
+      ],
+      "verdict": "pre-existing-shown",
+      "family": "typecheck/tsc/TS6196",
+      "finding_count": 1,
+      "occurrence_count": 1,
+      "finding_ids": [
+        "7fd4d42818f12b4eca74614ac7ad1fd61688407474d442b743a440cfbf56a26b"
+      ]
+    },
+    {
+      "root_cause_key": "df6b6cb11deda2a0d52e4dfc56ff81f003fb78a75bcf42e37212eac7f14453f1",
+      "rule_id": "typecheck/tsc/TS6133",
+      "message_template": "'_b' is declared but its value is never read.",
+      "file_set": [
+        "packages/zod/src/v4/classic/tests/assignability.test.ts"
+      ],
+      "verdict": "pre-existing-shown",
+      "family": "typecheck/tsc/TS6133",
+      "finding_count": 1,
+      "occurrence_count": 1,
+      "finding_ids": [
+        "92d1ab1c8d7b3161d7fd213f726903e12a428ffe017b003444968e1be41521ec"
+      ]
+    },
+    {
+      "root_cause_key": "fc1e5d40db885fec9bafbd6a477a2e21ecbde959dd520ba21f258020a13e5b9b",
+      "rule_id": "typecheck/tsc/TS6133",
+      "message_template": "'_a' is declared but its value is never read.",
+      "file_set": [
+        "packages/zod/src/v4/classic/tests/assignability.test.ts"
+      ],
+      "verdict": "pre-existing-shown",
+      "family": "typecheck/tsc/TS6133",
+      "finding_count": 1,
+      "occurrence_count": 1,
+      "finding_ids": [
+        "034ba9bebadec8dfecdc1eae53168590bd4868a51aec4bc5916051e7e46aeb94"
+      ]
+    }
+  ],
+  "misses": [],
+  "verdict": "environment-failure",
+  "reason": "Baseline/setup must be repaired before this PR can be scored."
+}

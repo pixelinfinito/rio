@@ -1,0 +1,18 @@
+Warning: rio/base:$.steps[3]: rio/triage is deferred locally: no_endpoint
+Warning: rio/base:$.steps[4]: rio/agents is deferred locally: no_endpoint
+Warning: rio/base:$.steps[5]: rio/verify is deferred locally: no_endpoint
+Running prepare…
+Finished prepare
+Running checks…
+secrets .: passed
+dependencies .: skipped (offline)
+coverage packages/query-broadcast-client-experimental: skipped (tool_missing)
+typecheck packages/query-broadcast-client-experimental: findings
+typecheck packages/query-broadcast-client-experimental: passed
+lint packages/query-broadcast-client-experimental: passed
+lint packages/query-broadcast-client-experimental: passed
+Finished checks
+Running graph…
+Finished graph
+Running report…
+Finished report

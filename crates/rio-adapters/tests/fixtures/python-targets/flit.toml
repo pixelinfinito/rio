@@ -1,0 +1,2 @@
+[tool.flit.module]
+name = "custom"

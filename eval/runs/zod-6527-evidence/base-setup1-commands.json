@@ -1,0 +1,91 @@
+[
+  {
+    "argv": [
+      "node",
+      "--version"
+    ],
+    "cwd": "/tmp/rio-zod-eval/negative-base",
+    "exit_code": 0,
+    "wall_time_seconds": 0.017,
+    "log": "base-01.log"
+  },
+  {
+    "argv": [
+      "corepack",
+      "pnpm",
+      "--version"
+    ],
+    "cwd": "/tmp/rio-zod-eval/negative-base",
+    "exit_code": -15,
+    "wall_time_seconds": 85.61,
+    "log": "base-02.log"
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "/tmp/rio-zod-eval/negative-base",
+    "exit_code": 0,
+    "wall_time_seconds": 0.005,
+    "log": "base-03.log"
+  },
+  {
+    "argv": [
+      "corepack",
+      "pnpm",
+      "install",
+      "--frozen-lockfile"
+    ],
+    "cwd": "/tmp/rio-zod-eval/negative-base",
+    "exit_code": 1,
+    "wall_time_seconds": 2.277,
+    "log": "base-04.log"
+  },
+  {
+    "argv": [
+      "corepack",
+      "pnpm",
+      "exec",
+      "tsc",
+      "--noEmit",
+      "--pretty",
+      "false",
+      "-p",
+      "packages/zod/tsconfig.test.json"
+    ],
+    "cwd": "/tmp/rio-zod-eval/negative-base",
+    "exit_code": 254,
+    "wall_time_seconds": 1.724,
+    "log": "base-05.log"
+  },
+  {
+    "argv": [
+      "corepack",
+      "pnpm",
+      "exec",
+      "biome",
+      "lint",
+      "."
+    ],
+    "cwd": "/tmp/rio-zod-eval/negative-base",
+    "exit_code": 254,
+    "wall_time_seconds": 1.372,
+    "log": "base-06.log"
+  },
+  {
+    "argv": [
+      "corepack",
+      "pnpm",
+      "exec",
+      "vitest",
+      "run",
+      "--maxWorkers=2"
+    ],
+    "cwd": "/tmp/rio-zod-eval/negative-base",
+    "exit_code": 254,
+    "wall_time_seconds": 1.384,
+    "log": "base-07.log"
+  }
+]

@@ -1,0 +1,4 @@
+version: 1
+name: invalid-required-check
+extends: rio/base
+fail_on: {required_checks: [unknown]}

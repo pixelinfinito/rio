@@ -1,0 +1,1028 @@
+{
+  "schema": "rio-eval-record-v2",
+  "methodology": "deterministic-v2",
+  "repository": "vuejs/core",
+  "pr": "https://github.com/vuejs/core/pull/15328",
+  "case_id": "15328",
+  "languages": [
+    "typescript"
+  ],
+  "reviewer": "sub-agent eval-vue-core (automated)",
+  "verdict_source": "automated",
+  "independently_clean": true,
+  "commands": [
+    "cwd=/dev/shm/vue-core-runner/rio-eval-thrqlfkp argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/vuejs/core.git\", \"/dev/shm/vue-core-runner/rio-eval-thrqlfkp/head\"]",
+    "cwd=/dev/shm/vue-core-runner/rio-eval-thrqlfkp/head argv=[\"git\", \"fetch\", \"origin\", \"a2b40db9a83b36ed9da3a16403cf8f040262d73f\", \"57c730ab498aba29c525099d0a32529ff6d392e4\"]",
+    "cwd=/dev/shm/vue-core-runner/rio-eval-thrqlfkp/head argv=[\"git\", \"merge-base\", \"a2b40db9a83b36ed9da3a16403cf8f040262d73f\", \"57c730ab498aba29c525099d0a32529ff6d392e4\"]",
+    "cwd=/dev/shm/vue-core-runner/rio-eval-thrqlfkp/head argv=[\"git\", \"checkout\", \"--detach\", \"57c730ab498aba29c525099d0a32529ff6d392e4\"]",
+    "cwd=/dev/shm/vue-core-runner/rio-eval-thrqlfkp argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/dev/shm/vue-core-runner/rio-eval-thrqlfkp/head\", \"/dev/shm/vue-core-runner/rio-eval-thrqlfkp/base\"]",
+    "cwd=/dev/shm/vue-core-runner/rio-eval-thrqlfkp/base argv=[\"git\", \"checkout\", \"--detach\", \"a2b40db9a83b36ed9da3a16403cf8f040262d73f\"]",
+    "cwd=/dev/shm/vue-core-runner/rio-eval-thrqlfkp/base argv=[\"corepack\", \"pnpm\", \"install\", \"--frozen-lockfile\", \"--force\"]",
+    "cwd=/dev/shm/vue-core-runner/rio-eval-thrqlfkp/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/vue-core-runner/rio-eval-thrqlfkp/head argv=[\"corepack\", \"pnpm\", \"install\", \"--frozen-lockfile\", \"--force\"]",
+    "cwd=/dev/shm/vue-core-runner/rio-eval-thrqlfkp/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/vue-core-runner/rio-eval-thrqlfkp/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/dev/shm/vue-core-runner/rio-eval-thrqlfkp/head argv=[\"node\", \"--version\"]",
+    "cwd=/dev/shm/vue-core-runner/rio-eval-thrqlfkp/head argv=[\"npm\", \"--version\"]",
+    "cwd=/dev/shm/vue-core-runner/rio-eval-thrqlfkp/head argv=[\"corepack\", \"--version\"]",
+    "cwd=/dev/shm/vue-core-runner/rio-eval-thrqlfkp/head argv=[\"python3\", \"--version\"]",
+    "cwd=/dev/shm/vue-core-runner/rio-eval-thrqlfkp/head argv=[\"uv\", \"--version\"]",
+    "cwd=/dev/shm/vue-core-runner/rio-eval-thrqlfkp/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-15328-attempt-02/profile.yaml\"]",
+    "cwd=/dev/shm/vue-core-runner/rio-eval-thrqlfkp/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/dev/shm/vue-core-runner/rio-eval-thrqlfkp/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"a2b40db9a83b36ed9da3a16403cf8f040262d73f\", \"--format\", \"json\", \"--offline\", \"--profile\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-15328-attempt-02/profile.yaml\"]"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-15328-attempt-02/commands.json; Rio binary SHA-256: 512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+    "Independent oracle evidence: ../vue-core-15328-evidence/base-oracle-commands.json and head-oracle-commands.json; pinned checkouts verified in base/head-checkout-verification.json.",
+    "UNSCORED environment-failure: both installations succeeded with unchanged lockfiles, but Rio refused linked-source baseline classification. Forced frozen reinstalls were captured in separate attempt directories. No dependency trust was enabled.",
+    "Same pinned PR is repeated across attempts; do not aggregate the attempts as independent PRs or combine them with eligible samples. Offline dependency audit did not establish advisory safety.",
+    "All emitted diagnostics arise from repository-incompatible package invocations or missing build outputs; these are environment-failure observations, not scored product false positives. See ../vue-core-NOTES.md and adapter reproductions."
+  ],
+  "positive_control": {
+    "kind": "none",
+    "expected": []
+  },
+  "base_sha": "a2b40db9a83b36ed9da3a16403cf8f040262d73f",
+  "head_sha": "57c730ab498aba29c525099d0a32529ff6d392e4",
+  "mode": "branch",
+  "review_id": "91aac16a4bdab747",
+  "run_id": "01M6MSKXBW1WP1P75Q0F4SGT33",
+  "rio_version": "0.1.0",
+  "profile": "eval-vue-workspace",
+  "wall_time_ms": 71018,
+  "status": "incomplete",
+  "report_path": "eval/runs/vue-core-15328-attempt-02/report.json",
+  "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+  "profile_sha256": "8d9b6351286c08484e049f0d5c9009f3cd4a0c0b37a61aaaecc11b2e1807fba7",
+  "environment": {
+    "dependency_state": "verified",
+    "baseline_ran": false,
+    "baseline_classification_ran": false,
+    "eligible": false,
+    "reasons": [
+      "coverage packages-private/dts-built-test head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+      "coverage packages-private/dts-test head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+      "coverage packages-private/sfc-playground head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+      "coverage packages-private/vite-debug head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+      "coverage packages/compiler-core head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+      "coverage packages/compiler-dom head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+      "coverage packages/compiler-sfc head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+      "coverage packages/compiler-ssr head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+      "coverage packages/reactivity head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+      "coverage packages/runtime-core head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+      "coverage packages/runtime-dom head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+      "coverage packages/runtime-test head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+      "coverage packages/server-renderer head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+      "coverage packages/shared head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+      "coverage packages/vue head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+      "coverage packages/vue-compat head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+      "lint packages/runtime-dom: head=passed, dependency_state=verified, base=unavailable",
+      "lint packages/shared: head=passed, dependency_state=verified, base=unavailable",
+      "typecheck packages-private/dts-built-test: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck packages-private/dts-test head: failed unparseable_output unrecognized tsc output: error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.",
+      "typecheck packages-private/dts-test: head=failed, dependency_state=verified, base=unavailable",
+      "typecheck packages-private/sfc-playground head: failed unparseable_output unrecognized tsc output: error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.",
+      "typecheck packages-private/sfc-playground: head=failed, dependency_state=verified, base=unavailable",
+      "typecheck packages-private/vite-debug: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck packages/compiler-core head: failed unparseable_output unrecognized tsc output: error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.",
+      "typecheck packages/compiler-core: head=failed, dependency_state=verified, base=unavailable",
+      "typecheck packages/compiler-dom head: failed unparseable_output unrecognized tsc output: error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.",
+      "typecheck packages/compiler-dom: head=failed, dependency_state=verified, base=unavailable",
+      "typecheck packages/compiler-sfc head: failed unparseable_output unrecognized tsc output: error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.",
+      "typecheck packages/compiler-sfc: head=failed, dependency_state=verified, base=unavailable",
+      "typecheck packages/compiler-ssr head: failed unparseable_output unrecognized tsc output: error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.",
+      "typecheck packages/compiler-ssr: head=failed, dependency_state=verified, base=unavailable",
+      "typecheck packages/reactivity head: failed unparseable_output unrecognized tsc output: error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.",
+      "typecheck packages/reactivity: head=failed, dependency_state=verified, base=unavailable",
+      "typecheck packages/runtime-core head: failed unparseable_output unrecognized tsc output: error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.",
+      "typecheck packages/runtime-core: head=failed, dependency_state=verified, base=unavailable",
+      "typecheck packages/runtime-dom head: failed unparseable_output unrecognized tsc output: error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.",
+      "typecheck packages/runtime-dom: head=failed, dependency_state=verified, base=unavailable",
+      "typecheck packages/runtime-test head: failed unparseable_output unrecognized tsc output: error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.",
+      "typecheck packages/runtime-test: head=failed, dependency_state=verified, base=unavailable",
+      "typecheck packages/server-renderer head: failed unparseable_output unrecognized tsc output: error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.",
+      "typecheck packages/server-renderer: head=failed, dependency_state=verified, base=unavailable",
+      "typecheck packages/shared head: failed unparseable_output unrecognized tsc output: error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.",
+      "typecheck packages/shared: head=failed, dependency_state=verified, base=unavailable",
+      "typecheck packages/vue head: failed unparseable_output unrecognized tsc output: error TS6504: File '/dev/shm/vue-core-runner/rio-eval-thrqlfkp/cache/91aac16a4bdab747/runs/01M6MSKXBW1WP1P75Q0F4SGT33/tools/tool.tmp-PuqnBc/packages/vue/compiler-sfc/index.browser.js' is a JavaScript file. Did you mean to enable the 'allowJs' option?",
+      "typecheck packages/vue-compat head: failed unparseable_output unrecognized tsc output: error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.",
+      "typecheck packages/vue-compat: head=failed, dependency_state=verified, base=unavailable",
+      "typecheck packages/vue: head=failed, dependency_state=verified, base=unavailable"
+    ],
+    "checks": [
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "hint": "Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "tests_failed",
+        "root": "packages-private/sfc-playground",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 459
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "hint": "unrecognized tsc output: error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "unparseable_output",
+        "root": "packages-private/sfc-playground",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 797
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "hint": "Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "tests_failed",
+        "root": "packages-private/dts-built-test",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 408
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "hint": "unrecognized tsc output: error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "unparseable_output",
+        "root": "packages-private/dts-test",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 519
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "hint": "Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "tests_failed",
+        "root": "packages-private/dts-test",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 483
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "hint": "Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "tests_failed",
+        "root": "packages/runtime-dom",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 449
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "hint": "unrecognized tsc output: error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "unparseable_output",
+        "root": "packages/runtime-test",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 667
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "hint": "Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "tests_failed",
+        "root": "packages/runtime-test",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 439
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "hint": "unrecognized tsc output: error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "unparseable_output",
+        "root": "packages/server-renderer",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 663
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "hint": "Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "tests_failed",
+        "root": "packages/server-renderer",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 431
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "lint",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/runtime-dom",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 3523
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "hint": "unrecognized tsc output: error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "unparseable_output",
+        "root": "packages/shared",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 598
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "hint": "Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "tests_failed",
+        "root": "packages/vue",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 372
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "findings",
+        "root": "packages-private/dts-built-test",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 4829
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "hint": "unrecognized tsc output: error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "unparseable_output",
+        "root": "packages/vue-compat",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 648
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "hint": "Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "tests_failed",
+        "root": "packages/shared",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 374
+      },
+      {
+        "findings": [],
+        "kind": "secrets",
+        "language": "common",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "findings": [],
+        "hint": "Dependency audit needs api.osv.dev",
+        "kind": "dependencies",
+        "language": "common",
+        "outcome": "skipped",
+        "reason": "offline",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "hint": "Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "tests_failed",
+        "root": "packages/vue-compat",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 350
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "hint": "Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "tests_failed",
+        "root": "packages/compiler-sfc",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 391
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "hint": "Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "tests_failed",
+        "root": "packages-private/vite-debug",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 265
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "hint": "unrecognized tsc output: error TS6504: File '/dev/shm/vue-core-runner/rio-eval-thrqlfkp/cache/91aac16a4bdab747/runs/01M6MSKXBW1WP1P75Q0F4SGT33/tools/tool.tmp-PuqnBc/packages/vue/compiler-sfc/index.browser.js' is a JavaScript file. Did you mean to enable the 'allowJs' option?",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "unparseable_output",
+        "root": "packages/vue",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 3818
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "lint",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/shared",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 2753
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "hint": "unrecognized tsc output: error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "unparseable_output",
+        "root": "packages/compiler-core",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 601
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "hint": "Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "tests_failed",
+        "root": "packages/compiler-core",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 526
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "hint": "Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "tests_failed",
+        "root": "packages/compiler-dom",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 363
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "hint": "unrecognized tsc output: error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "unparseable_output",
+        "root": "packages/compiler-dom",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 682
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "hint": "unrecognized tsc output: error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "unparseable_output",
+        "root": "packages/compiler-sfc",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 611
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "hint": "Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "tests_failed",
+        "root": "packages/reactivity",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 459
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "hint": "Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "tests_failed",
+        "root": "packages/compiler-ssr",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 318
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "hint": "unrecognized tsc output: error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "unparseable_output",
+        "root": "packages/compiler-ssr",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 590
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "hint": "Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "tests_failed",
+        "root": "packages/runtime-core",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 314
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "hint": "unrecognized tsc output: error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "unparseable_output",
+        "root": "packages/runtime-core",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 578
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "hint": "unrecognized tsc output: error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "unparseable_output",
+        "root": "packages/reactivity",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 927
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "hint": "unrecognized tsc output: error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "unparseable_output",
+        "root": "packages/runtime-dom",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 617
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "findings",
+        "root": "packages-private/vite-debug",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 15391
+      }
+    ],
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "typecheck packages-private/sfc-playground: baseline_failed: linked dependency packages/compiler-core::@vue/shared points at changed source packages/shared: packages/shared/__tests__/looseEqual.spec.ts; commit or stash the linked package's changes",
+      "typecheck packages-private/dts-test: baseline_failed: linked dependency packages-private/dts-built-test::@vue/shared points at changed source packages/shared: packages/shared/__tests__/looseEqual.spec.ts; commit or stash the linked package's changes",
+      "typecheck packages/runtime-test: baseline_failed: linked dependency packages/reactivity::@vue/shared points at changed source packages/shared: packages/shared/__tests__/looseEqual.spec.ts; commit or stash the linked package's changes",
+      "typecheck packages/server-renderer: baseline_failed: linked dependency packages/compiler-core::@vue/shared points at changed source packages/shared: packages/shared/__tests__/looseEqual.spec.ts; commit or stash the linked package's changes",
+      "lint packages/runtime-dom: baseline_failed: linked dependency packages/reactivity::@vue/shared points at changed source packages/shared: packages/shared/__tests__/looseEqual.spec.ts; commit or stash the linked package's changes",
+      "typecheck packages/shared: baseline_failed: linked dependency packages-private/dts-built-test::@vue/shared points at changed source packages/shared: packages/shared/__tests__/looseEqual.spec.ts; commit or stash the linked package's changes",
+      "typecheck packages-private/dts-built-test: baseline_failed: linked dependency packages-private/dts-built-test::@vue/shared points at changed source packages/shared: packages/shared/__tests__/looseEqual.spec.ts; commit or stash the linked package's changes",
+      "typecheck packages/vue-compat: baseline_failed: linked dependency packages/compiler-core::@vue/shared points at changed source packages/shared: packages/shared/__tests__/looseEqual.spec.ts; commit or stash the linked package's changes",
+      "typecheck packages/vue: baseline_failed: linked dependency packages/compiler-core::@vue/shared points at changed source packages/shared: packages/shared/__tests__/looseEqual.spec.ts; commit or stash the linked package's changes",
+      "lint packages/shared: baseline_failed: linked dependency packages-private/dts-built-test::@vue/shared points at changed source packages/shared: packages/shared/__tests__/looseEqual.spec.ts; commit or stash the linked package's changes",
+      "typecheck packages/compiler-core: baseline_failed: linked dependency packages/compiler-core::@vue/shared points at changed source packages/shared: packages/shared/__tests__/looseEqual.spec.ts; commit or stash the linked package's changes",
+      "typecheck packages/compiler-dom: baseline_failed: linked dependency packages/compiler-core::@vue/shared points at changed source packages/shared: packages/shared/__tests__/looseEqual.spec.ts; commit or stash the linked package's changes",
+      "typecheck packages/compiler-sfc: baseline_failed: linked dependency packages/compiler-core::@vue/shared points at changed source packages/shared: packages/shared/__tests__/looseEqual.spec.ts; commit or stash the linked package's changes",
+      "typecheck packages/compiler-ssr: baseline_failed: linked dependency packages/compiler-core::@vue/shared points at changed source packages/shared: packages/shared/__tests__/looseEqual.spec.ts; commit or stash the linked package's changes",
+      "typecheck packages/runtime-core: baseline_failed: linked dependency packages/reactivity::@vue/shared points at changed source packages/shared: packages/shared/__tests__/looseEqual.spec.ts; commit or stash the linked package's changes",
+      "typecheck packages/reactivity: baseline_failed: linked dependency packages/reactivity::@vue/shared points at changed source packages/shared: packages/shared/__tests__/looseEqual.spec.ts; commit or stash the linked package's changes",
+      "typecheck packages/runtime-dom: baseline_failed: linked dependency packages/reactivity::@vue/shared points at changed source packages/shared: packages/shared/__tests__/looseEqual.spec.ts; commit or stash the linked package's changes",
+      "typecheck packages-private/vite-debug: baseline_failed: linked dependency packages/compiler-core::@vue/shared points at changed source packages/shared: packages/shared/__tests__/looseEqual.spec.ts; commit or stash the linked package's changes",
+      "Graph references use syntax and text; no language server was used",
+      "Offline applies to Rio; tool and test processes were not network-isolated"
+    ]
+  },
+  "findings": [
+    {
+      "finding": {
+        "category": "defect",
+        "evidence": [
+          "tsc diagnostic",
+          "unclassified: outside changed hunks, baseline unavailable (node_modules/.pnpm/@vitejs+plugin-vue@6.0.8_vite@8.2.0_vue@packages+vue/node_modules/@vitejs/plugin-vue/dist/index.d.mts:3)"
+        ],
+        "evidence_level": "static_proven",
+        "id": "065c5c2b7cadb6b51a6b11ff0ff76322d6ed200a208d7fd6937e32e8853d8457",
+        "location": {
+          "column": 35,
+          "line_end": 3,
+          "line_start": 3,
+          "occurrence_state": "pre-existing",
+          "path": "node_modules/.pnpm/@vitejs+plugin-vue@6.0.8_vite@8.2.0_vue@packages+vue/node_modules/@vitejs/plugin-vue/dist/index.d.mts",
+          "symbol_path": ""
+        },
+        "locations": [
+          {
+            "column": 35,
+            "line_end": 3,
+            "line_start": 3,
+            "occurrence_state": "pre-existing",
+            "path": "node_modules/.pnpm/@vitejs+plugin-vue@6.0.8_vite@8.2.0_vue@packages+vue/node_modules/@vitejs/plugin-vue/dist/index.d.mts",
+            "symbol_path": ""
+          }
+        ],
+        "message": "Module '\"vue/compiler-sfc\"' has no exported member 'SFCStyleCompileOptions'.",
+        "rule_id": "typecheck/tsc/TS2305",
+        "severity": "error",
+        "source": {
+          "tool": "tsc",
+          "version": "Version 6.0.3"
+        },
+        "state": "pre-existing",
+        "trigger": ""
+      },
+      "verdict": "pre-existing-hidden",
+      "reason": "Environment failure at node_modules/.pnpm/@vitejs+plugin-vue@6.0.8_vite@8.2.0_vue@packages+vue/node_modules/@vitejs/plugin-vue/dist/index.d.mts:3 (typecheck/tsc/TS2305): both pinned revisions pass root pnpm check and lint (../vue-core-15328-evidence/base/head-oracle-commands.json). This diagnostic comes from a dependent private playground/built-dts check that needs generated Vue declaration artifacts; those imports are not part of the successful repository root check. Rio has no baseline and most public-package invocations fail TS5112/TS6504. No source change in these diagnostic files is in the PR. Instrumented shared tests execute every introduced statement (../vue-core-15328-evidence/changed-statement-coverage.json). The pre-existing label does not establish a valid baseline.",
+      "message_template": "Module '\"vue/compiler-sfc\"' has no exported member 'SFCStyleCompileOptions'.",
+      "file_set": [
+        "node_modules/.pnpm/@vitejs+plugin-vue@6.0.8_vite@8.2.0_vue@packages+vue/node_modules/@vitejs/plugin-vue/dist/index.d.mts"
+      ],
+      "root_cause_key": "223869e42cd1800672c7fe111373294a5b3f4978a0f77b03683093a248522c6a",
+      "family": "typecheck/tsc/TS2305"
+    },
+    {
+      "finding": {
+        "category": "defect",
+        "evidence": [
+          "tsc diagnostic",
+          "unclassified: outside changed hunks, baseline unavailable (packages/vue/compiler-sfc/index.d.mts:1)"
+        ],
+        "evidence_level": "static_proven",
+        "id": "14b7eb0f888385faa4af0090164425ebffd92263fb241298149e2a1d0121310e",
+        "location": {
+          "column": 15,
+          "line_end": 1,
+          "line_start": 1,
+          "occurrence_state": "pre-existing",
+          "path": "packages/vue/compiler-sfc/index.d.mts",
+          "symbol_path": ""
+        },
+        "locations": [
+          {
+            "column": 15,
+            "line_end": 1,
+            "line_start": 1,
+            "occurrence_state": "pre-existing",
+            "path": "packages/vue/compiler-sfc/index.d.mts",
+            "symbol_path": ""
+          }
+        ],
+        "message": "Cannot find module '@vue/compiler-sfc' or its corresponding type declarations.",
+        "rule_id": "typecheck/tsc/TS2307",
+        "severity": "error",
+        "source": {
+          "tool": "tsc",
+          "version": "Version 6.0.3"
+        },
+        "state": "pre-existing",
+        "trigger": ""
+      },
+      "verdict": "pre-existing-hidden",
+      "reason": "Environment failure at packages/vue/compiler-sfc/index.d.mts:1 (typecheck/tsc/TS2307): both pinned revisions pass root pnpm check and lint (../vue-core-15328-evidence/base/head-oracle-commands.json). This diagnostic comes from a dependent private playground/built-dts check that needs generated Vue declaration artifacts; those imports are not part of the successful repository root check. Rio has no baseline and most public-package invocations fail TS5112/TS6504. No source change in these diagnostic files is in the PR. Instrumented shared tests execute every introduced statement (../vue-core-15328-evidence/changed-statement-coverage.json). The pre-existing label does not establish a valid baseline.",
+      "message_template": "Cannot find module '@vue/compiler-sfc' or its corresponding type declarations.",
+      "file_set": [
+        "packages/vue/compiler-sfc/index.d.mts"
+      ],
+      "root_cause_key": "ab8d6f89b92b8ec1afcd03c188174c0602f9ad76aa1309ec01ef3c62cc73d9e7",
+      "family": "typecheck/tsc/TS2307"
+    },
+    {
+      "finding": {
+        "category": "defect",
+        "evidence": [
+          "tsc diagnostic",
+          "unclassified: outside changed hunks, baseline unavailable (packages-private/vite-debug/main.ts:1)"
+        ],
+        "evidence_level": "static_proven",
+        "id": "4001368175a02b576ea0e12c5d78d797a3bd57aa9ee00af6b385b65af1c4a142",
+        "location": {
+          "column": 27,
+          "line_end": 1,
+          "line_start": 1,
+          "occurrence_state": "pre-existing",
+          "path": "packages-private/vite-debug/main.ts",
+          "symbol_path": ""
+        },
+        "locations": [
+          {
+            "column": 27,
+            "line_end": 1,
+            "line_start": 1,
+            "occurrence_state": "pre-existing",
+            "path": "packages-private/vite-debug/main.ts",
+            "symbol_path": ""
+          }
+        ],
+        "message": "Cannot find module 'vue' or its corresponding type declarations.",
+        "rule_id": "typecheck/tsc/TS2307",
+        "severity": "error",
+        "source": {
+          "tool": "tsc",
+          "version": "Version 6.0.3"
+        },
+        "state": "pre-existing",
+        "trigger": ""
+      },
+      "verdict": "pre-existing-hidden",
+      "reason": "Environment failure at packages-private/vite-debug/main.ts:1 (typecheck/tsc/TS2307): both pinned revisions pass root pnpm check and lint (../vue-core-15328-evidence/base/head-oracle-commands.json). This diagnostic comes from a dependent private playground/built-dts check that needs generated Vue declaration artifacts; those imports are not part of the successful repository root check. Rio has no baseline and most public-package invocations fail TS5112/TS6504. No source change in these diagnostic files is in the PR. Instrumented shared tests execute every introduced statement (../vue-core-15328-evidence/changed-statement-coverage.json). The pre-existing label does not establish a valid baseline.",
+      "message_template": "Cannot find module 'vue' or its corresponding type declarations.",
+      "file_set": [
+        "packages-private/vite-debug/main.ts"
+      ],
+      "root_cause_key": "4f7a1328875d5ba40a80ed3e17aa77b46b5c82fe1a34ed5f44596139092e25fc",
+      "family": "typecheck/tsc/TS2307"
+    },
+    {
+      "finding": {
+        "category": "defect",
+        "evidence": [
+          "tsc diagnostic",
+          "unclassified: outside changed hunks, baseline unavailable (packages-private/vite-debug/main.ts:2)"
+        ],
+        "evidence_level": "static_proven",
+        "id": "80a3f442a288a0886d8ab0cc83e2aebf30f28564773c16c9ec4a9712cc3bef04",
+        "location": {
+          "column": 17,
+          "line_end": 2,
+          "line_start": 2,
+          "occurrence_state": "pre-existing",
+          "path": "packages-private/vite-debug/main.ts",
+          "symbol_path": ""
+        },
+        "locations": [
+          {
+            "column": 17,
+            "line_end": 2,
+            "line_start": 2,
+            "occurrence_state": "pre-existing",
+            "path": "packages-private/vite-debug/main.ts",
+            "symbol_path": ""
+          }
+        ],
+        "message": "Cannot find module './App.vue' or its corresponding type declarations.",
+        "rule_id": "typecheck/tsc/TS2307",
+        "severity": "error",
+        "source": {
+          "tool": "tsc",
+          "version": "Version 6.0.3"
+        },
+        "state": "pre-existing",
+        "trigger": ""
+      },
+      "verdict": "pre-existing-hidden",
+      "reason": "Environment failure at packages-private/vite-debug/main.ts:2 (typecheck/tsc/TS2307): both pinned revisions pass root pnpm check and lint (../vue-core-15328-evidence/base/head-oracle-commands.json). This diagnostic comes from a dependent private playground/built-dts check that needs generated Vue declaration artifacts; those imports are not part of the successful repository root check. Rio has no baseline and most public-package invocations fail TS5112/TS6504. No source change in these diagnostic files is in the PR. Instrumented shared tests execute every introduced statement (../vue-core-15328-evidence/changed-statement-coverage.json). The pre-existing label does not establish a valid baseline.",
+      "message_template": "Cannot find module './App.vue' or its corresponding type declarations.",
+      "file_set": [
+        "packages-private/vite-debug/main.ts"
+      ],
+      "root_cause_key": "2d4aa6bc93fe33bc8b11090aee320cad80434d61a0ff72f040f9a8218d8ff5d1",
+      "family": "typecheck/tsc/TS2307"
+    },
+    {
+      "finding": {
+        "category": "defect",
+        "evidence": [
+          "tsc diagnostic",
+          "unclassified: outside changed hunks, baseline unavailable (node_modules/.pnpm/@vitejs+plugin-vue@6.0.8_vite@8.2.0_vue@packages+vue/node_modules/@vitejs/plugin-vue/dist/index.d.mts:3)"
+        ],
+        "evidence_level": "static_proven",
+        "id": "90b3f04be3030a90e17ccf535582ec53edb2fd58c8433d13e5d95ee99fedfe70",
+        "location": {
+          "column": 10,
+          "line_end": 3,
+          "line_start": 3,
+          "occurrence_state": "pre-existing",
+          "path": "node_modules/.pnpm/@vitejs+plugin-vue@6.0.8_vite@8.2.0_vue@packages+vue/node_modules/@vitejs/plugin-vue/dist/index.d.mts",
+          "symbol_path": ""
+        },
+        "locations": [
+          {
+            "column": 10,
+            "line_end": 3,
+            "line_start": 3,
+            "occurrence_state": "pre-existing",
+            "path": "node_modules/.pnpm/@vitejs+plugin-vue@6.0.8_vite@8.2.0_vue@packages+vue/node_modules/@vitejs/plugin-vue/dist/index.d.mts",
+            "symbol_path": ""
+          }
+        ],
+        "message": "Module '\"vue/compiler-sfc\"' has no exported member 'SFCScriptCompileOptions'.",
+        "rule_id": "typecheck/tsc/TS2305",
+        "severity": "error",
+        "source": {
+          "tool": "tsc",
+          "version": "Version 6.0.3"
+        },
+        "state": "pre-existing",
+        "trigger": ""
+      },
+      "verdict": "pre-existing-hidden",
+      "reason": "Environment failure at node_modules/.pnpm/@vitejs+plugin-vue@6.0.8_vite@8.2.0_vue@packages+vue/node_modules/@vitejs/plugin-vue/dist/index.d.mts:3 (typecheck/tsc/TS2305): both pinned revisions pass root pnpm check and lint (../vue-core-15328-evidence/base/head-oracle-commands.json). This diagnostic comes from a dependent private playground/built-dts check that needs generated Vue declaration artifacts; those imports are not part of the successful repository root check. Rio has no baseline and most public-package invocations fail TS5112/TS6504. No source change in these diagnostic files is in the PR. Instrumented shared tests execute every introduced statement (../vue-core-15328-evidence/changed-statement-coverage.json). The pre-existing label does not establish a valid baseline.",
+      "message_template": "Module '\"vue/compiler-sfc\"' has no exported member 'SFCScriptCompileOptions'.",
+      "file_set": [
+        "node_modules/.pnpm/@vitejs+plugin-vue@6.0.8_vite@8.2.0_vue@packages+vue/node_modules/@vitejs/plugin-vue/dist/index.d.mts"
+      ],
+      "root_cause_key": "7a40277d5f8c1dbafdccadc965e6c72f3db37e76c7c9dcc9329dc5d48eab0217",
+      "family": "typecheck/tsc/TS2305"
+    },
+    {
+      "finding": {
+        "category": "defect",
+        "evidence": [
+          "tsc diagnostic",
+          "unclassified: outside changed hunks, baseline unavailable (packages-private/dts-built-test/src/index.ts:1)"
+        ],
+        "evidence_level": "static_proven",
+        "id": "940940dff88f55b41fcf02bfc73220e85ca465ef6cfd2cd5c73da013edeb6b4e",
+        "location": {
+          "column": 33,
+          "line_end": 1,
+          "line_start": 1,
+          "occurrence_state": "pre-existing",
+          "path": "packages-private/dts-built-test/src/index.ts",
+          "symbol_path": ""
+        },
+        "locations": [
+          {
+            "column": 33,
+            "line_end": 1,
+            "line_start": 1,
+            "occurrence_state": "pre-existing",
+            "path": "packages-private/dts-built-test/src/index.ts",
+            "symbol_path": ""
+          }
+        ],
+        "message": "Cannot find module 'vue' or its corresponding type declarations.",
+        "rule_id": "typecheck/tsc/TS2307",
+        "severity": "error",
+        "source": {
+          "tool": "tsc",
+          "version": "Version 6.0.3"
+        },
+        "state": "pre-existing",
+        "trigger": ""
+      },
+      "verdict": "pre-existing-hidden",
+      "reason": "Environment failure at packages-private/dts-built-test/src/index.ts:1 (typecheck/tsc/TS2307): both pinned revisions pass root pnpm check and lint (../vue-core-15328-evidence/base/head-oracle-commands.json). This diagnostic comes from a dependent private playground/built-dts check that needs generated Vue declaration artifacts; those imports are not part of the successful repository root check. Rio has no baseline and most public-package invocations fail TS5112/TS6504. No source change in these diagnostic files is in the PR. Instrumented shared tests execute every introduced statement (../vue-core-15328-evidence/changed-statement-coverage.json). The pre-existing label does not establish a valid baseline.",
+      "message_template": "Cannot find module 'vue' or its corresponding type declarations.",
+      "file_set": [
+        "packages-private/dts-built-test/src/index.ts"
+      ],
+      "root_cause_key": "f9faf7b8b140fb2e8bd38a1cd2f3f0357fb03ec81c1b5654d38aa03031bbf558",
+      "family": "typecheck/tsc/TS2307"
+    },
+    {
+      "finding": {
+        "category": "defect",
+        "evidence": [
+          "tsc diagnostic",
+          "unclassified: outside changed hunks, baseline unavailable (node_modules/.pnpm/@vitejs+plugin-vue@6.0.8_vite@8.2.0_vue@packages+vue/node_modules/@vitejs/plugin-vue/dist/index.d.mts:3)"
+        ],
+        "evidence_level": "static_proven",
+        "id": "ee046a79593720b8f23e29734b20ef84e3075243794eed40e9eb948f61d85b0c",
+        "location": {
+          "column": 59,
+          "line_end": 3,
+          "line_start": 3,
+          "occurrence_state": "pre-existing",
+          "path": "node_modules/.pnpm/@vitejs+plugin-vue@6.0.8_vite@8.2.0_vue@packages+vue/node_modules/@vitejs/plugin-vue/dist/index.d.mts",
+          "symbol_path": ""
+        },
+        "locations": [
+          {
+            "column": 59,
+            "line_end": 3,
+            "line_start": 3,
+            "occurrence_state": "pre-existing",
+            "path": "node_modules/.pnpm/@vitejs+plugin-vue@6.0.8_vite@8.2.0_vue@packages+vue/node_modules/@vitejs/plugin-vue/dist/index.d.mts",
+            "symbol_path": ""
+          }
+        ],
+        "message": "Module '\"vue/compiler-sfc\"' has no exported member 'SFCTemplateCompileOptions'.",
+        "rule_id": "typecheck/tsc/TS2305",
+        "severity": "error",
+        "source": {
+          "tool": "tsc",
+          "version": "Version 6.0.3"
+        },
+        "state": "pre-existing",
+        "trigger": ""
+      },
+      "verdict": "pre-existing-hidden",
+      "reason": "Environment failure at node_modules/.pnpm/@vitejs+plugin-vue@6.0.8_vite@8.2.0_vue@packages+vue/node_modules/@vitejs/plugin-vue/dist/index.d.mts:3 (typecheck/tsc/TS2305): both pinned revisions pass root pnpm check and lint (../vue-core-15328-evidence/base/head-oracle-commands.json). This diagnostic comes from a dependent private playground/built-dts check that needs generated Vue declaration artifacts; those imports are not part of the successful repository root check. Rio has no baseline and most public-package invocations fail TS5112/TS6504. No source change in these diagnostic files is in the PR. Instrumented shared tests execute every introduced statement (../vue-core-15328-evidence/changed-statement-coverage.json). The pre-existing label does not establish a valid baseline.",
+      "message_template": "Module '\"vue/compiler-sfc\"' has no exported member 'SFCTemplateCompileOptions'.",
+      "file_set": [
+        "node_modules/.pnpm/@vitejs+plugin-vue@6.0.8_vite@8.2.0_vue@packages+vue/node_modules/@vitejs/plugin-vue/dist/index.d.mts"
+      ],
+      "root_cause_key": "ddc024f82178e386ede7a2661f89adff915cc702b5f24b34159acae752389710",
+      "family": "typecheck/tsc/TS2305"
+    }
+  ],
+  "root_causes": [
+    {
+      "root_cause_key": "223869e42cd1800672c7fe111373294a5b3f4978a0f77b03683093a248522c6a",
+      "rule_id": "typecheck/tsc/TS2305",
+      "message_template": "Module '\"vue/compiler-sfc\"' has no exported member 'SFCStyleCompileOptions'.",
+      "file_set": [
+        "node_modules/.pnpm/@vitejs+plugin-vue@6.0.8_vite@8.2.0_vue@packages+vue/node_modules/@vitejs/plugin-vue/dist/index.d.mts"
+      ],
+      "verdict": "pre-existing-hidden",
+      "family": "typecheck/tsc/TS2305",
+      "finding_count": 1,
+      "occurrence_count": 1,
+      "finding_ids": [
+        "065c5c2b7cadb6b51a6b11ff0ff76322d6ed200a208d7fd6937e32e8853d8457"
+      ]
+    },
+    {
+      "root_cause_key": "2d4aa6bc93fe33bc8b11090aee320cad80434d61a0ff72f040f9a8218d8ff5d1",
+      "rule_id": "typecheck/tsc/TS2307",
+      "message_template": "Cannot find module './App.vue' or its corresponding type declarations.",
+      "file_set": [
+        "packages-private/vite-debug/main.ts"
+      ],
+      "verdict": "pre-existing-hidden",
+      "family": "typecheck/tsc/TS2307",
+      "finding_count": 1,
+      "occurrence_count": 1,
+      "finding_ids": [
+        "80a3f442a288a0886d8ab0cc83e2aebf30f28564773c16c9ec4a9712cc3bef04"
+      ]
+    },
+    {
+      "root_cause_key": "4f7a1328875d5ba40a80ed3e17aa77b46b5c82fe1a34ed5f44596139092e25fc",
+      "rule_id": "typecheck/tsc/TS2307",
+      "message_template": "Cannot find module 'vue' or its corresponding type declarations.",
+      "file_set": [
+        "packages-private/vite-debug/main.ts"
+      ],
+      "verdict": "pre-existing-hidden",
+      "family": "typecheck/tsc/TS2307",
+      "finding_count": 1,
+      "occurrence_count": 1,
+      "finding_ids": [
+        "4001368175a02b576ea0e12c5d78d797a3bd57aa9ee00af6b385b65af1c4a142"
+      ]
+    },
+    {
+      "root_cause_key": "7a40277d5f8c1dbafdccadc965e6c72f3db37e76c7c9dcc9329dc5d48eab0217",
+      "rule_id": "typecheck/tsc/TS2305",
+      "message_template": "Module '\"vue/compiler-sfc\"' has no exported member 'SFCScriptCompileOptions'.",
+      "file_set": [
+        "node_modules/.pnpm/@vitejs+plugin-vue@6.0.8_vite@8.2.0_vue@packages+vue/node_modules/@vitejs/plugin-vue/dist/index.d.mts"
+      ],
+      "verdict": "pre-existing-hidden",
+      "family": "typecheck/tsc/TS2305",
+      "finding_count": 1,
+      "occurrence_count": 1,
+      "finding_ids": [
+        "90b3f04be3030a90e17ccf535582ec53edb2fd58c8433d13e5d95ee99fedfe70"
+      ]
+    },
+    {
+      "root_cause_key": "ab8d6f89b92b8ec1afcd03c188174c0602f9ad76aa1309ec01ef3c62cc73d9e7",
+      "rule_id": "typecheck/tsc/TS2307",
+      "message_template": "Cannot find module '@vue/compiler-sfc' or its corresponding type declarations.",
+      "file_set": [
+        "packages/vue/compiler-sfc/index.d.mts"
+      ],
+      "verdict": "pre-existing-hidden",
+      "family": "typecheck/tsc/TS2307",
+      "finding_count": 1,
+      "occurrence_count": 1,
+      "finding_ids": [
+        "14b7eb0f888385faa4af0090164425ebffd92263fb241298149e2a1d0121310e"
+      ]
+    },
+    {
+      "root_cause_key": "ddc024f82178e386ede7a2661f89adff915cc702b5f24b34159acae752389710",
+      "rule_id": "typecheck/tsc/TS2305",
+      "message_template": "Module '\"vue/compiler-sfc\"' has no exported member 'SFCTemplateCompileOptions'.",
+      "file_set": [
+        "node_modules/.pnpm/@vitejs+plugin-vue@6.0.8_vite@8.2.0_vue@packages+vue/node_modules/@vitejs/plugin-vue/dist/index.d.mts"
+      ],
+      "verdict": "pre-existing-hidden",
+      "family": "typecheck/tsc/TS2305",
+      "finding_count": 1,
+      "occurrence_count": 1,
+      "finding_ids": [
+        "ee046a79593720b8f23e29734b20ef84e3075243794eed40e9eb948f61d85b0c"
+      ]
+    },
+    {
+      "root_cause_key": "f9faf7b8b140fb2e8bd38a1cd2f3f0357fb03ec81c1b5654d38aa03031bbf558",
+      "rule_id": "typecheck/tsc/TS2307",
+      "message_template": "Cannot find module 'vue' or its corresponding type declarations.",
+      "file_set": [
+        "packages-private/dts-built-test/src/index.ts"
+      ],
+      "verdict": "pre-existing-hidden",
+      "family": "typecheck/tsc/TS2307",
+      "finding_count": 1,
+      "occurrence_count": 1,
+      "finding_ids": [
+        "940940dff88f55b41fcf02bfc73220e85ca465ef6cfd2cd5c73da013edeb6b4e"
+      ]
+    }
+  ],
+  "misses": [],
+  "verdict": "environment-failure",
+  "reason": "Baseline/setup must be repaired before this PR can be scored."
+}

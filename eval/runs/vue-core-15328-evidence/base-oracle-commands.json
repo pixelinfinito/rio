@@ -1,0 +1,56 @@
+[
+  {
+    "argv": [
+      "corepack",
+      "pnpm",
+      "check"
+    ],
+    "cwd": "/tmp/vue-negative-base",
+    "exit_code": 0,
+    "wall_time_seconds": 71.062,
+    "log": "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-15328-evidence/base-oracle-1.log",
+    "environment": {
+      "PATH": "/tmp/node-v24.22.2-linux-x64/bin:/tmp/vue-eval-tools/node_modules/.bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "PUPPETEER_SKIP_DOWNLOAD": "true"
+    }
+  },
+  {
+    "argv": [
+      "corepack",
+      "pnpm",
+      "lint"
+    ],
+    "cwd": "/tmp/vue-negative-base",
+    "exit_code": 0,
+    "wall_time_seconds": 43.113,
+    "log": "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-15328-evidence/base-oracle-2.log",
+    "environment": {
+      "PATH": "/tmp/node-v24.22.2-linux-x64/bin:/tmp/vue-eval-tools/node_modules/.bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "PUPPETEER_SKIP_DOWNLOAD": "true"
+    }
+  },
+  {
+    "argv": [
+      "corepack",
+      "pnpm",
+      "exec",
+      "vitest",
+      "run",
+      "--project",
+      "unit",
+      "packages/shared/__tests__/looseEqual.spec.ts",
+      "--coverage",
+      "--coverage.reporter=json",
+      "--coverage.reportsDirectory=/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-15328-evidence/base-coverage",
+      "--maxWorkers=2"
+    ],
+    "cwd": "/tmp/vue-negative-base",
+    "exit_code": 0,
+    "wall_time_seconds": 57.549,
+    "log": "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-15328-evidence/base-oracle-3.log",
+    "environment": {
+      "PATH": "/tmp/node-v24.22.2-linux-x64/bin:/tmp/vue-eval-tools/node_modules/.bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "PUPPETEER_SKIP_DOWNLOAD": "true"
+    }
+  }
+]

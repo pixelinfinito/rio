@@ -1,0 +1,53 @@
+{
+  "schema": "rio-eval-runner-v1",
+  "repository": "pydantic/pydantic-ai",
+  "pr": "https://github.com/pydantic/pydantic-ai/pull/12540",
+  "started_utc": "2026-11-05T02:49:59.181208+00:00",
+  "rio_binary": "/home/ubuntu/rio/target/release/rio",
+  "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-checkout",
+        "https://github.com/pydantic/pydantic-ai.git",
+        "/tmp/rio-pydantic-ai-ram/rio-eval-edzsi2xs/head"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/rio-eval-edzsi2xs",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-12540/01-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-12540/01-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 65
+    },
+    {
+      "argv": [
+        "git",
+        "fetch",
+        "origin",
+        "2f0e98cbb7b60e12dcd0edc397f6df11c5cc1c56",
+        "17c4ab5539f8a38aa86b2af69a783cb595269d27"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/rio-eval-edzsi2xs/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-12540/02-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-12540/02-stderr.log",
+      "exit_code": 128,
+      "wall_time_ms": 11863
+    }
+  ],
+  "installations": {},
+  "failures": [
+    "command 2 failed (128); see /home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-12540/02-stderr.log"
+  ],
+  "network": "Installers may use network; Rio review uses --offline. Subprocesses are not isolated.",
+  "profile_sha256": "5cf706f6a702198395e3d4f0d188fa339102c201e509f8d1dda2be9e7373299a",
+  "resolution": {
+    "base_sha": "2f0e98cbb7b60e12dcd0edc397f6df11c5cc1c56",
+    "head_sha": "17c4ab5539f8a38aa86b2af69a783cb595269d27",
+    "source": "pinned argv"
+  },
+  "disposable_directory": "/tmp/rio-pydantic-ai-ram/rio-eval-edzsi2xs",
+  "finished_utc": "2026-11-05T02:50:11.279984+00:00"
+}

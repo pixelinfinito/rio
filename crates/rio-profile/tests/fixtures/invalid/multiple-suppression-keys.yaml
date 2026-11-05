@@ -1,0 +1,3 @@
+version: 1
+name: bad
+suppress: [{path: "src/**", rule: "lint/*"}]

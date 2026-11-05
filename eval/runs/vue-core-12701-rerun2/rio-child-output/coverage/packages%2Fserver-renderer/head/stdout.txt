@@ -1,0 +1,26 @@
+
+ RUN  v3.1.3 /dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/tools/tool.tmp-w3ijzr
+      Coverage enabled with v8
+
+ ✓ |unit| packages/server-renderer/__tests__/ssrDirectives.spec.ts (22 tests) 203ms
+ ✓ |unit| packages/server-renderer/__tests__/render.spec.ts (165 tests) 519ms
+ ✓ |unit| packages/server-renderer/__tests__/ssrScopeId.spec.ts (5 tests) 58ms
+ ✓ |unit| packages/server-renderer/__tests__/ssrSlot.spec.ts (12 tests) 214ms
+ ✓ |unit| packages/server-renderer/__tests__/ssrWatch.spec.ts (7 tests) 51ms
+ ✓ |unit| packages/server-renderer/__tests__/ssrTeleport.spec.ts (7 tests) 74ms
+ ✓ |unit| packages/server-renderer/__tests__/ssrRenderAttrs.spec.ts (21 tests) 19ms
+ ✓ |unit| packages/server-renderer/__tests__/ssrCompilerOptions.spec.ts (9 tests) 105ms
+ ✓ |unit| packages/server-renderer/__tests__/ssrSuspense.spec.ts (6 tests) 39ms
+ ✓ |unit| packages/server-renderer/__tests__/ssrVModelHelpers.spec.ts (2 tests) 23ms
+ ✓ |unit| packages/server-renderer/__tests__/ssrComputed.spec.ts (2 tests) 41ms
+ ✓ |unit| packages/server-renderer/__tests__/ssrDynamicComponent.spec.ts (5 tests) 107ms
+ ✓ |unit| packages/server-renderer/__tests__/ssrRenderList.spec.ts (7 tests) 15ms
+ ✓ |unit| packages/server-renderer/__tests__/ssrAttrFallthrough.spec.ts (5 tests) 93ms
+ ✓ |unit| packages/server-renderer/__tests__/ssrInterpolate.spec.ts (1 test) 19ms
+ ✓ |unit| packages/server-renderer/__tests__/webStream.spec.ts (2 tests) 44ms
+
+ Test Files  16 passed (16)
+      Tests  278 passed (278)
+   Start at  10:56:26
+   Duration  22.13s (transform 5.58s, setup 245ms, collect 21.85s, tests 1.62s, environment 10ms, prepare 4.68s)
+

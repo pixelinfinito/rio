@@ -1,0 +1,3 @@
+error TS5083: Cannot read file '/dev/shm/rio-tanstack-work/rio-eval-oziz3umg/cache/3ae3cd247a42615c/runs/01M6NQVZDGBBG2S9QVF9E2APT3/tools/tool.tmp-z4efn2/examples/svelte/star-wars/.svelte-kit/tsconfig.json'.
+vite.config.ts(3,25): error TS2307: Cannot find module '@tailwindcss/vite' or its corresponding type declarations.
+  There are types at '/dev/shm/rio-tanstack-work/rio-eval-oziz3umg/cache/3ae3cd247a42615c/runs/01M6NQVZDGBBG2S9QVF9E2APT3/tools/tool.tmp-z4efn2/examples/svelte/star-wars/node_modules/@tailwindcss/vite/dist/index.d.mts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.

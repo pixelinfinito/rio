@@ -1,0 +1,28 @@
+---
+source: crates/rio-core/tests/render.rs
+expression: "render_markdown(&report, &RenderOptions::default())"
+---
+# Rio 0.1.0 — incomplete
+
+Review: 1234567890abcdef  Run: 01J00000000000000000000000  
+Mode: working-tree  Base: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb  Head: snapshot:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc  
+Profile: rio/base  Chain: rio/base  
+
+
+## Deterministic results
+
+### typecheck
+
+| Root | Language | Version | Scheduled as | Outcome | Time (ms) |
+| --- | --- | --- | --- | --- | ---: |
+| . | typescript | head | changed | cancelled (timeout) | 100 |
+
+## Findings
+
+No findings were produced. Review incomplete: typecheck .: cancelled (timeout) did not complete.
+
+
+## Footer
+
+- typecheck . head: cancelled (timeout) — Type checking stopped before completion
+- Total: 105 ms

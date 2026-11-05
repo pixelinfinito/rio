@@ -1,0 +1,23 @@
+{
+  "purpose": "Independent exact reproduction of Rio b15dc8ff5001 Vitest coverage arguments on the pinned installed tool.",
+  "cwd": "/tmp/rio-zod-eval/positive-head",
+  "node": "22.23.4",
+  "pnpm": "10.12.1",
+  "vitest": "4.1.5",
+  "argv": [
+    "corepack",
+    "pnpm",
+    "exec",
+    "vitest",
+    "run",
+    "--coverage",
+    "--coverage.reporter=lcov",
+    "--coverage.reportsDirectory=/tmp/rio-zod-eval/coverage-exact-repro",
+    "--maxWorkers=2",
+    "--minWorkers=1"
+  ],
+  "exit_code": 1,
+  "stdout_stderr": "coverage-exact-tool-repro.log",
+  "result": "CACError: Unknown option --minWorkers. Tests/coverage do not run. Removing only that obsolete flag instead exposes missing @vitest/coverage-v8 (separate retained reproduction).",
+  "wall_time": "Not separately measured for this ad hoc diagnostic; actual Rio coverage timings are in reports."
+}

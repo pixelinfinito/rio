@@ -1,0 +1,53 @@
+{
+  "registered_utc": "2026-11-05T02:21:03.704377+00:00",
+  "repository": "pydantic/pydantic",
+  "positive_candidate": {
+    "pr": 14199,
+    "base": "a9f3f3fccc180c05190df0478a17487ec9908e4e",
+    "head": "262700f815672fc37ed637a1604234f6c7cc7ee9",
+    "kind": "real-pr",
+    "expected": [
+      {
+        "id": "contextmanager-uncovered-error-paths",
+        "mechanism": "uncovered-lines",
+        "description": "New internal context manager contains unexecuted executable error/suppression paths, subsequently excluded in PR 14202. Confirm with complete successful coverage run before Rio. One underlying testing gap, not one expectation per line."
+      }
+    ]
+  },
+  "negative_candidate": {
+    "pr": 14213,
+    "base": "5740091dcd08e4a92940ceae841434a83331cb09",
+    "head": "ef2cb073d6be2ef360d2aedcd5afca0983af2507",
+    "rationale": "Merged MEMBER maintainer Viicos refactor of plugin discovery with updated plugin-loader tests; confirm changed source lines executed and static checks clean."
+  },
+  "runtime": "Python 3.12.12 (CI-supported version; no exact repository Python pin)",
+  "uv": "0.13.7 (repository requires >=0.13.0)",
+  "binary_version": "b15dc8ff5001",
+  "profile_sha256": "6ece46cdff0eac9d03cf93bdd17b1c0676733bdb32524180d80e381eff35a9e5",
+  "limitations": [
+    "Dependency audit is explicitly offline without populated advisory cache; no vulnerability safety claim and no dependency control. Neither chosen PR changes dependencies/lockfile.",
+    "Coverage scope explicitly excludes tests/pydantic_core and tests/benchmarks; all Pydantic functional/docs tests retained, no changed source excluded; see preregistered test_scope_reason."
+  ],
+  "final_install_plan_sha256": "ee08d3434c2187e7288d497e8121153727054c4c7a423984e43f5c8518f98815",
+  "setup_revision_utc": "2026-11-05T02:35:29.408645+00:00",
+  "setup_revision": "Added --all-packages --group testing-extra after independent pytest collection failed for missing hypothesis. No Rio output exists yet; expected bug and source/profile/tool pins unchanged.",
+  "test_scope_registered_utc": "2026-11-05T02:46:45.278313+00:00",
+  "test_environment": {
+    "PYTEST_ADDOPTS": "--ignore=tests/pydantic_core --ignore=tests/benchmarks"
+  },
+  "test_scope_reason": "Bound evaluation to the Pydantic Python suite: no selected PR changes core workspace source or benchmarks. Broad workspace runs were interrupted after approximately ten minutes, before any Rio output, and are excluded. Docs and all Pydantic functional tests retained; no changed source excluded.",
+  "positive_oracle_confirmed_utc": "2026-11-05T02:52:06.768492+00:00",
+  "positive_oracle_evidence": "positive-oracle-summary.json; positive-base/head commands.json, 06/07/08 outputs, coverage.json (later archived as coverage.json.gz). Both pytest exits 0; added contextlib file absent at base; head unexecuted non-excluded executable lines independently confirmed.",
+  "all_groups_workaround_utc": "2026-11-05T02:59:27.732521+00:00",
+  "all_groups_workaround": "First Rio attempt rejected valid group-selected installation as missing aiohappyeyeballs. Rio installation group inference extends groups for any installed node, including shared/aggregate all group. Install all locked groups to satisfy that inferred superset, keep verified dependencies. Expected bug/source/tool pins unchanged; conditional unused coverage startup hook removed by hash-checked setup command as required by conservative executable-.pth verification.",
+  "original_selected_groups_install_plan_sha256": "166dbd7d765f223df5cf968376af2d66cc2ec6498e3bbb213fdc0a359a2bf01b",
+  "final_independent_evidence": "wheel-oracle-summary.json and *-wheel-final/{commands.json,07-stdout.log,08-stdout.log,09-stdout.log,coverage.json.gz}",
+  "noneditable_workaround_registered_utc": "2026-11-05T03:15:26.524650+00:00",
+  "noneditable_workaround": "Observed all-groups head verified but base refused because own editable pydantic .pth points at changed head source; uv --no-editable-package pydantic removes that link. Prepend .venv/bin to PATH so Pyright Node host resolves project python rather than global python. Full independent oracles rerun before another Rio review.",
+  "final_independent_confirmed_utc": "2026-11-05T03:22:27.651340+00:00",
+  "wheel_file_workaround_registered_utc": "2026-11-05T03:31:20.171968+00:00",
+  "wheel_file_workaround": "Noneditable local-directory direct_url is still interpreted as linked head source by Rio. Reinstall the exact own package as a local wheel-file URL using uv build --offline and uv pip install --offline --no-deps --reinstall. Assert every installed package code file stays byte-identical; third-party dependency installation unchanged. Full independent oracles rerun before final Rio attempts.",
+  "wheel_plan_sha256": "84b6ee93a18b625409c730d36ba5c00df4812cffe43d766641c55bc93d168f32",
+  "wheel_independent_confirmed_utc_positive": "2026-11-05T03:35:59.776186+00:00",
+  "wheel_independent_confirmed_utc_all": "2026-11-05T03:38:38.347987+00:00"
+}

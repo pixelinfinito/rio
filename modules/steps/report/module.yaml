@@ -1,0 +1,8 @@
+kind: step
+name: rio/report
+version: 0.1.0
+description: Report the review artifacts
+local: true
+inputs: ["findings", "check_outcomes", "impact", "verified_findings"]
+outputs: ["report"]
+schema: {"type": "object", "additionalProperties": false, "properties": {}}

@@ -1,0 +1,38 @@
+[
+  {
+    "sha": "1d500139a80e56e48a11af9cdcd0631b401334e1",
+    "filename": "examples/preact/simple/tsconfig.json",
+    "status": "modified",
+    "additions": 6,
+    "deletions": 1,
+    "changes": 7,
+    "blob_url": "https://github.com/TanStack/query/blob/a99fcdfa22f9d1c8884bdf4280ad571bf5256feb/examples%2Fpreact%2Fsimple%2Ftsconfig.json",
+    "raw_url": "https://github.com/TanStack/query/raw/a99fcdfa22f9d1c8884bdf4280ad571bf5256feb/examples%2Fpreact%2Fsimple%2Ftsconfig.json",
+    "contents_url": "https://api.github.com/repos/TanStack/query/contents/examples%2Fpreact%2Fsimple%2Ftsconfig.json?ref=a99fcdfa22f9d1c8884bdf4280ad571bf5256feb",
+    "patch": "@@ -16,5 +16,10 @@\n       \"react-dom\": [\"./node_modules/preact/compat/\"]\n     }\n   },\n-  \"include\": [\"node_modules/vite/client.d.ts\", \"**/*\"]\n+  \"include\": [\n+    \"node_modules/vite/client.d.ts\",\n+    \"src\",\n+    \"*.config.ts\",\n+    \"*.config.js\"\n+  ]\n }"
+  },
+  {
+    "sha": "cd98581bbb033be1c340c155cf781c150a8fca96",
+    "filename": "integrations/react/next-15/package.json",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "changes": 2,
+    "blob_url": "https://github.com/TanStack/query/blob/a99fcdfa22f9d1c8884bdf4280ad571bf5256feb/integrations%2Freact%2Fnext-15%2Fpackage.json",
+    "raw_url": "https://github.com/TanStack/query/raw/a99fcdfa22f9d1c8884bdf4280ad571bf5256feb/integrations%2Freact%2Fnext-15%2Fpackage.json",
+    "contents_url": "https://api.github.com/repos/TanStack/query/contents/integrations%2Freact%2Fnext-15%2Fpackage.json?ref=a99fcdfa22f9d1c8884bdf4280ad571bf5256feb",
+    "patch": "@@ -2,7 +2,7 @@\n   \"name\": \"@tanstack/query-integration-react-next-15\",\n   \"private\": true,\n   \"scripts\": {\n-    \"dev\": \"next dev --webpack\",\n+    \"dev\": \"next dev\",\n     \"build\": \"next build\"\n   },\n   \"dependencies\": {"
+  },
+  {
+    "sha": "8045d6f7926902b8d435b83a44718d12022fd775",
+    "filename": "integrations/react/next-16/next.config.js",
+    "status": "modified",
+    "additions": 0,
+    "deletions": 3,
+    "changes": 3,
+    "blob_url": "https://github.com/TanStack/query/blob/a99fcdfa22f9d1c8884bdf4280ad571bf5256feb/integrations%2Freact%2Fnext-16%2Fnext.config.js",
+    "raw_url": "https://github.com/TanStack/query/raw/a99fcdfa22f9d1c8884bdf4280ad571bf5256feb/integrations%2Freact%2Fnext-16%2Fnext.config.js",
+    "contents_url": "https://api.github.com/repos/TanStack/query/contents/integrations%2Freact%2Fnext-16%2Fnext.config.js?ref=a99fcdfa22f9d1c8884bdf4280ad571bf5256feb",
+    "patch": "@@ -1,8 +1,5 @@\n /** @type {import('next').NextConfig} */\n const nextConfig = {\n-  eslint: {\n-    ignoreDuringBuilds: true,\n-  },\n   typescript: {\n     ignoreBuildErrors: true,\n   },"
+  }
+]

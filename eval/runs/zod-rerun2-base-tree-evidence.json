@@ -1,0 +1,45 @@
+{
+  "probes": [
+    {
+      "case": 6085,
+      "base_sha": "9f0a3d81221e3ab7c09ca4911ef35b54817869a4",
+      "head_sha": "60496a098ae81beb32f705897f960cf99089d243",
+      "argv": [
+        "git",
+        "cat-file",
+        "-e",
+        "9f0a3d81221e3ab7c09ca4911ef35b54817869a4:packages/zod/index.cjs"
+      ],
+      "cwd": "/tmp/rio-zod-eval/zod",
+      "exit_code": 128,
+      "stderr": "fatal: path 'packages/zod/index.cjs' exists on disk, but not in '9f0a3d81221e3ab7c09ca4911ef35b54817869a4'\n",
+      "selected_base_build_entry_tracked": false
+    },
+    {
+      "case": 6527,
+      "base_sha": "b801439b5fb160d651084ff7d7c27a61e24a7334",
+      "head_sha": "cbeac9415dc218eae98eaebc35971c0b6743528b",
+      "argv": [
+        "git",
+        "cat-file",
+        "-e",
+        "b801439b5fb160d651084ff7d7c27a61e24a7334:packages/zod/index.cjs"
+      ],
+      "cwd": "/tmp/rio-zod-eval/zod",
+      "exit_code": 128,
+      "stderr": "fatal: path 'packages/zod/index.cjs' exists on disk, but not in 'b801439b5fb160d651084ff7d7c27a61e24a7334'\n",
+      "selected_base_build_entry_tracked": false
+    }
+  ],
+  "limitation": "Git-object probes and read-only code inspection, not a repaired-baseline execution. missing_build_output checks request.selected (the base Git tree), not a separately built checkout. The main/module/types/exports scan requires all declared entries regardless of active source conditions.",
+  "rio_source_inspected": [
+    {
+      "path": "crates/rio-adapters/src/dependencies/compatibility.rs",
+      "sha256": "e291ca5bdfbe9117e1a0527267705a588ee5f4f4d01dea0109e16a8b8f993047"
+    },
+    {
+      "path": "crates/rio-engine/src/planner.rs",
+      "sha256": "b9e227dacdb05879a9b5007c7048618ddbaaa6dd08ba46536d5c3e913a1bcf35"
+    }
+  ]
+}

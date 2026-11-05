@@ -1,0 +1,5 @@
+---
+source: crates/rio-core/tests/render.rs
+expression: "render_markdown(&report, &RenderOptions::default())"
+---
+No changes to review

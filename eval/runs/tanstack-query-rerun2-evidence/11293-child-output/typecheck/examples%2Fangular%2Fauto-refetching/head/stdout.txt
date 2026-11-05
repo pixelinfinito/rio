@@ -1,0 +1,6 @@
+src/app/app.config.ts(9,8): error TS2307: Cannot find module '@tanstack/angular-query-experimental' or its corresponding type declarations.
+src/app/app.config.ts(10,30): error TS2307: Cannot find module '@tanstack/angular-query-experimental/devtools' or its corresponding type declarations.
+src/app/components/auto-refetching.component.ts(10,8): error TS2307: Cannot find module '@tanstack/angular-query-experimental' or its corresponding type declarations.
+src/app/services/tasks.service.ts(7,8): error TS2307: Cannot find module '@tanstack/angular-query-experimental' or its corresponding type declarations.
+src/app/services/tasks.service.ts(41,9): error TS2571: Object is of type 'unknown'.
+src/app/services/tasks.service.ts(55,9): error TS2571: Object is of type 'unknown'.

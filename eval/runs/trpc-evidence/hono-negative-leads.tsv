@@ -1,0 +1,12 @@
+5609	fix(client): detect the JSON media type with whitespace before a parameter	2026-11-04T06:20:30Z
+5606	fix(etag,pretty-json): cancel the discarded response body	2026-11-04T06:20:12Z
+5607	fix(utils/url): do not match a query key across separators	2026-11-04T06:20:18Z
+5608	fix(cookie): match the __Secure- and __Host- prefixes case-insensitively	2026-11-04T06:20:24Z
+5597	fix(jwt): reject a signature segment outside the base64url alphabet and a header with crit	2026-11-01T02:46:07Z
+5587	fix(context): allow `c.header()` after the response body is consumed	2026-10-28T01:12:43Z
+5593	docs(contributing): drop the note about linking a fork branch	2026-10-30T09:45:19Z
+5590	fix(auth): escape backslashes in the WWW-Authenticate realm	2026-10-28T12:17:26Z
+5577	fix(ant): allow hono v5 prereleases in peerDependencies	2026-10-22T10:56:27Z
+5563	fix(hono-base): disallow `getPath` when `strict` is `false`	2026-10-16T10:17:45Z
+5557	fix(build): keep barrel imports in the bundled `d.ts`	2026-10-16T01:55:17Z
+5548	docs(readme): remove the deepwiki badge	2026-10-11T06:01:53Z

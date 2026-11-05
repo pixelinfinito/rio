@@ -1,0 +1,113 @@
+{
+  "notes": "Four excluded attempts over TWO independent public PRs. Original and corrective attempts must not be treated as four independent PRs/controls. Counts describe adjudicated observations; no excluded run is scored.",
+  "attempts": [
+    {
+      "case": "6085",
+      "record": "zod-6085/record.json",
+      "kind": "real-pr",
+      "baseline_ran": false,
+      "baseline_classification_ran": false,
+      "eligible": false,
+      "verdict": "environment-failure",
+      "raw_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 15,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "cause_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 15,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "expected_bugs": 1,
+      "detected_expected_bugs": 0,
+      "runner_wall_seconds": 1395.629,
+      "rio_wall_seconds": 624.845
+    },
+    {
+      "case": "6527",
+      "record": "zod-6527/record.json",
+      "kind": "none",
+      "baseline_ran": false,
+      "baseline_classification_ran": false,
+      "eligible": false,
+      "verdict": "environment-failure",
+      "raw_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 15,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "cause_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 15,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "expected_bugs": 0,
+      "detected_expected_bugs": 0,
+      "runner_wall_seconds": 1330.079,
+      "rio_wall_seconds": 674.186
+    },
+    {
+      "case": "6085-retry1",
+      "record": "zod-6085-retry1/record.json",
+      "kind": "real-pr",
+      "baseline_ran": false,
+      "baseline_classification_ran": false,
+      "eligible": false,
+      "verdict": "environment-failure",
+      "raw_counts": {
+        "true-positive": 7,
+        "false-positive": 0,
+        "pre-existing-shown": 32,
+        "environment-failure": 27,
+        "out-of-scope": 0
+      },
+      "cause_counts": {
+        "true-positive": 5,
+        "false-positive": 0,
+        "pre-existing-shown": 32,
+        "environment-failure": 27,
+        "out-of-scope": 0
+      },
+      "expected_bugs": 1,
+      "detected_expected_bugs": 0,
+      "runner_wall_seconds": 118.404,
+      "rio_wall_seconds": 81.581
+    },
+    {
+      "case": "6527-retry1",
+      "record": "zod-6527-retry1/record.json",
+      "kind": "none",
+      "baseline_ran": false,
+      "baseline_classification_ran": false,
+      "eligible": false,
+      "verdict": "environment-failure",
+      "raw_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 38,
+        "environment-failure": 33,
+        "out-of-scope": 0
+      },
+      "cause_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 38,
+        "environment-failure": 33,
+        "out-of-scope": 0
+      },
+      "expected_bugs": 0,
+      "detected_expected_bugs": 0,
+      "runner_wall_seconds": 128.362,
+      "rio_wall_seconds": 99.43
+    }
+  ]
+}

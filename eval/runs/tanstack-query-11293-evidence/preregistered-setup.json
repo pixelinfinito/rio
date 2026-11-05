@@ -1,0 +1,26 @@
+{
+  "date": "2026-11-05",
+  "node": "v24.16.0",
+  "pnpm": "11.9.0",
+  "corepack": "0.35.0 (bundled with pinned Node)",
+  "rio_binary": "/home/ubuntu/rio/target/release/rio",
+  "rio_version": "rio 0.1.0 x86_64-unknown-linux-gnu b15dc8ff5001",
+  "source_mirror": "/dev/shm/rio-tanstack-work/maintainer-mirror",
+  "mirror_origin": "https://github.com/TanStack/query.git",
+  "environment": {
+    "COREPACK_HOME": "/dev/shm/rio-tanstack-tools/corepack-cache",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "TMPDIR": "/dev/shm/rio-tanstack-work",
+    "pnpm_store": "/dev/shm/rio-tanstack-tools/pnpm-store"
+  },
+  "profile": "rio/base",
+  "trust_installed_dependencies": false,
+  "offline_audit": "Not executed; explicit capability limitation; no vulnerability-control expectation.",
+  "pr": "https://github.com/TanStack/query/pull/11293",
+  "kind": "negative-control",
+  "author": "TkDodo (COLLABORATOR)",
+  "base_sha": "d09cf1d605c81238934f6f91a4982f5629065732",
+  "head_sha": "370ed5845530a928fcb5374162de67326724a7d1",
+  "registered_utc": "2026-11-05T03:13:01Z",
+  "selection_rationale": "Maintainer-authored, merged, substantive implementation change in query-core only, with a regression test for disabled observer stale timeouts. Independent base/head compiler/linter/instrumented test oracles run before Rio. Also exercises reverse dependent workspace scheduling."
+}

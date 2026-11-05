@@ -1,0 +1,11 @@
+import concurrent.futures,datetime,json,os,pathlib,subprocess,time
+out=pathlib.Path('/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-evidence')
+def run(side):
+ cwd='/tmp/eval-litestar-oracle-'+side
+ env={'VIRTUAL_ENV':cwd+'/.venv','PATH':cwd+'/.venv/bin:'+os.environ['PATH']}
+ start=time.monotonic();argv=[cwd+'/.venv/bin/pyright']
+ with (out/(side+'-pyright-activated.stdout.log')).open('w') as so,(out/(side+'-pyright-activated.stderr.log')).open('w') as se:
+  code=subprocess.run(argv,cwd=cwd,env={**os.environ,**env},stdout=so,stderr=se,timeout=900).returncode
+ return dict(side=side,argv=argv,cwd=cwd,environment=env,exit_code=code,wall_time_ms=int((time.monotonic()-start)*1000))
+with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool: rows=list(pool.map(run,['base','head']))
+(out/'pyright-activated-commands.json').write_text(json.dumps(rows,indent=2)+'\n');print(rows)

@@ -1,0 +1,284 @@
+{
+  "checks": [
+    {
+      "findings": [],
+      "kind": "secrets",
+      "language": "common",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 0
+    },
+    {
+      "findings": [],
+      "hint": "Dependency audit needs api.osv.dev",
+      "kind": "dependencies",
+      "language": "common",
+      "outcome": "skipped",
+      "reason": "offline",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 1
+    },
+    {
+      "dependency_state": "verified",
+      "findings": [
+        {
+          "category": "defect",
+          "evidence": [
+            "ruff diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "86aa2b2d6d676dda8042c04d8cc9338614f0336ad15f94a7c7c704dcf6c08820",
+          "location": {
+            "column": 8,
+            "line_end": 1,
+            "line_start": 1,
+            "occurrence_state": "new",
+            "path": "mitmproxy/coretypes/multidict.py",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 8,
+              "line_end": 1,
+              "line_start": 1,
+              "occurrence_state": "new",
+              "path": "mitmproxy/coretypes/multidict.py",
+              "symbol_path": ""
+            }
+          ],
+          "message": "`itertools` imported but unused",
+          "rule_id": "lint/ruff/F401",
+          "severity": "error",
+          "source": {
+            "tool": "ruff",
+            "version": "ruff 0.16.9"
+          },
+          "state": "new",
+          "trigger": ""
+        }
+      ],
+      "kind": "lint",
+      "language": "python",
+      "outcome": "findings",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 336
+    },
+    {
+      "dependency_state": "verified",
+      "findings": [],
+      "kind": "lint",
+      "language": "python",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "base",
+      "wall_time_ms": 309
+    },
+    {
+      "dependency_state": "verified",
+      "findings": [],
+      "kind": "coverage",
+      "language": "python",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 9530
+    },
+    {
+      "dependency_state": "verified",
+      "findings": [],
+      "kind": "typecheck",
+      "language": "python",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 15989
+    },
+    {
+      "dependency_state": "verified",
+      "findings": [],
+      "kind": "typecheck",
+      "language": "python",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "base",
+      "wall_time_ms": 15072
+    }
+  ],
+  "deferred": [
+    {
+      "reason": "no_endpoint",
+      "step": "triage"
+    },
+    {
+      "reason": "no_endpoint",
+      "step": "agents"
+    },
+    {
+      "reason": "no_endpoint",
+      "step": "verify"
+    }
+  ],
+  "excluded": [],
+  "findings": [
+    {
+      "category": "defect",
+      "evidence": [
+        "ruff diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "86aa2b2d6d676dda8042c04d8cc9338614f0336ad15f94a7c7c704dcf6c08820",
+      "location": {
+        "column": 8,
+        "line_end": 1,
+        "line_start": 1,
+        "occurrence_state": "new",
+        "path": "mitmproxy/coretypes/multidict.py",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 8,
+          "line_end": 1,
+          "line_start": 1,
+          "occurrence_state": "new",
+          "path": "mitmproxy/coretypes/multidict.py",
+          "symbol_path": ""
+        }
+      ],
+      "message": "`itertools` imported but unused",
+      "rule_id": "lint/ruff/F401",
+      "severity": "error",
+      "source": {
+        "tool": "ruff",
+        "version": "ruff 0.16.9"
+      },
+      "state": "new",
+      "trigger": ""
+    }
+  ],
+  "footer": {
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "Graph references use syntax and text; no language server was used",
+      "Offline applies to Rio; tool and test processes were not network-isolated"
+    ],
+    "suppressions": [],
+    "tool_versions": {
+      "python:.:coverage": "Coverage.py, version 7.13.2 with C extension",
+      "python:.:mypy": "mypy 1.20.2 (compiled: yes)",
+      "python:.:ruff": "ruff 0.16.9"
+    }
+  },
+  "impact": {
+    "symbols": [
+      {
+        "path": "mitmproxy/coretypes/multidict.py",
+        "references_per_hop": [
+          1,
+          2
+        ],
+        "symbol_path": "",
+        "test_referenced": true,
+        "unresolved": 2
+      }
+    ],
+    "truncated": false,
+    "unresolved": 2
+  },
+  "incomplete": [
+    {
+      "findings": [],
+      "hint": "Dependency audit needs api.osv.dev",
+      "kind": "dependencies",
+      "language": "common",
+      "outcome": "skipped",
+      "reason": "offline",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 1
+    }
+  ],
+  "metrics": {
+    "checks": [
+      {
+        "kind": "secrets",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "kind": "dependencies",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 1
+      },
+      {
+        "kind": "lint",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 336
+      },
+      {
+        "kind": "lint",
+        "root": ".",
+        "version": "base",
+        "wall_time_ms": 309
+      },
+      {
+        "kind": "coverage",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 9530
+      },
+      {
+        "kind": "typecheck",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 15989
+      },
+      {
+        "kind": "typecheck",
+        "root": ".",
+        "version": "base",
+        "wall_time_ms": 15072
+      }
+    ],
+    "tool_versions": {
+      "python:.:coverage": "Coverage.py, version 7.13.2 with C extension",
+      "python:.:mypy": "mypy 1.20.2 (compiled: yes)",
+      "python:.:ruff": "ruff 0.16.9"
+    },
+    "wall_time_ms": 33682
+  },
+  "review": {
+    "base": "6debf65b612abc726fe9cabe5c2a1ebb1cb36df4",
+    "chain": [
+      "eval-mitmproxy"
+    ],
+    "head": "986ba556378985647957301e28069e46ee6074ec",
+    "id": "c49b528eb69cfdef",
+    "mode": "branch",
+    "profile": "eval-mitmproxy",
+    "rio_version": "0.1.0",
+    "run_id": "01M6MTSS7ZCMCSQDZZE2FH4TTF"
+  },
+  "risks": [],
+  "schema": "rio-report-v1",
+  "status": "incomplete",
+  "summary": {
+    "fixed": 0,
+    "pre_existing": 0,
+    "suppressed": 0
+  }
+}

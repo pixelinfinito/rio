@@ -1,0 +1,756 @@
+{
+  "blocking_problems": [],
+  "cache": {
+    "free_space": 4918771712,
+    "path": "/dev/shm/trpc-rerun2/rio-eval-did7isqe/cache",
+    "writable": true
+  },
+  "configuration": {
+    "cache": {
+      "dir": "/dev/shm/trpc-rerun2/rio-eval-did7isqe/cache",
+      "max_age": {
+        "nanos": 0,
+        "secs": 2592000
+      },
+      "max_size": 5368709120,
+      "retain_raw_output": true
+    },
+    "config_dir": "/dev/shm/trpc-rerun2/rio-eval-did7isqe/config",
+    "endpoint_url": null,
+    "notices": [],
+    "output_limit": 268435456,
+    "parallelism": 4,
+    "sources": {
+      "cache.dir": "RIO_CACHE_DIR",
+      "cache.max_age": "default",
+      "cache.max_size": "default",
+      "cache.retain_raw_output": "default",
+      "endpoint.url": "default",
+      "run.output_limit": "default",
+      "run.parallelism": "default"
+    }
+  },
+  "endpoint": "No endpoint is available in this version",
+  "head": "248fb772a6d6f7ce2492f8549a8d370ec3df9731",
+  "plan": {
+    "checks": [
+      {
+        "baseline": false,
+        "baseline_hint": null,
+        "baseline_remap": false,
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "secrets",
+        "language": "common",
+        "root": ".",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [],
+        "tool": null
+      },
+      {
+        "baseline": false,
+        "baseline_hint": null,
+        "baseline_remap": false,
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "dependencies",
+        "language": "common",
+        "root": ".",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [],
+        "tool": null
+      }
+    ],
+    "layout": {
+      "dependencies": {
+        ".": [],
+        "examples/.experimental/next-app-dir": [
+          "examples/.experimental/next-app-dir/src/trpc",
+          "packages/client",
+          "packages/next",
+          "packages/server",
+          "packages/tanstack-react-query",
+          "tooling/ui"
+        ],
+        "examples/.experimental/next-app-dir/src/trpc": [],
+        "examples/.test/diagnostics-big-router": [
+          "packages/client",
+          "packages/next",
+          "packages/react-query",
+          "packages/server"
+        ],
+        "examples/.test/internal-types-export": [
+          "packages/client",
+          "packages/next",
+          "packages/react-query",
+          "packages/server"
+        ],
+        "examples/.test/monotest-api": [
+          "examples/.test/monotest-api-router01",
+          "examples/.test/monotest-trpc",
+          "examples/.test/monotest-tsconfig",
+          "packages/server"
+        ],
+        "examples/.test/monotest-api-router01": [
+          "examples/.test/monotest-trpc",
+          "examples/.test/monotest-tsconfig",
+          "packages/server"
+        ],
+        "examples/.test/monotest-app": [
+          "examples/.test/monotest-api",
+          "examples/.test/monotest-tsconfig",
+          "packages/client",
+          "packages/react-query",
+          "packages/server"
+        ],
+        "examples/.test/monotest-trpc": [
+          "examples/.test/monotest-tsconfig",
+          "packages/server"
+        ],
+        "examples/.test/monotest-tsconfig": [],
+        "examples/.test/ssg": [
+          "packages/client",
+          "packages/next",
+          "packages/react-query",
+          "packages/server"
+        ],
+        "examples/.test/ssg-infinite-serialization": [
+          "packages/client",
+          "packages/next",
+          "packages/react-query",
+          "packages/server"
+        ],
+        "examples/bun": [
+          "packages/client",
+          "packages/server"
+        ],
+        "examples/cloudflare-workers": [
+          "packages/client",
+          "packages/server"
+        ],
+        "examples/express-minimal": [
+          "packages/client",
+          "packages/react-query",
+          "packages/server"
+        ],
+        "examples/express-server": [
+          "packages/client",
+          "packages/react-query",
+          "packages/server"
+        ],
+        "examples/fastify-server": [
+          "packages/client",
+          "packages/server"
+        ],
+        "examples/lambda-api-gateway": [
+          "packages/client",
+          "packages/server"
+        ],
+        "examples/lambda-api-gateway-streaming": [
+          "packages/client",
+          "packages/server"
+        ],
+        "examples/lambda-url": [
+          "packages/client",
+          "packages/server"
+        ],
+        "examples/lazy-load": [
+          "packages/client",
+          "packages/server"
+        ],
+        "examples/minimal": [
+          "packages/client",
+          "packages/server"
+        ],
+        "examples/minimal-content-types": [],
+        "examples/minimal-content-types/client": [],
+        "examples/minimal-content-types/server": [],
+        "examples/minimal-per-procedure-errors": [],
+        "examples/minimal-per-procedure-errors/client": [],
+        "examples/minimal-per-procedure-errors/server": [],
+        "examples/minimal-react": [],
+        "examples/minimal-react/client": [],
+        "examples/minimal-react/server": [],
+        "examples/next-big-router": [
+          "packages/client",
+          "packages/next",
+          "packages/react-query",
+          "packages/server"
+        ],
+        "examples/next-edge-runtime": [
+          "packages/client",
+          "packages/next",
+          "packages/react-query",
+          "packages/server"
+        ],
+        "examples/next-formdata": [
+          "packages/client",
+          "packages/next",
+          "packages/react-query",
+          "packages/server"
+        ],
+        "examples/next-minimal-starter": [
+          "packages/client",
+          "packages/server",
+          "packages/tanstack-react-query",
+          "tooling/ui"
+        ],
+        "examples/next-prisma-starter": [
+          "packages/client",
+          "packages/next",
+          "packages/react-query",
+          "packages/server",
+          "tooling/ui"
+        ],
+        "examples/next-prisma-todomvc": [
+          "packages/client",
+          "packages/next",
+          "packages/react-query",
+          "packages/server"
+        ],
+        "examples/next-prisma-websockets-starter": [
+          "packages/client",
+          "packages/next",
+          "packages/react-query",
+          "packages/server",
+          "tooling/ui"
+        ],
+        "examples/next-websockets-encoder": [
+          "packages/client",
+          "packages/next",
+          "packages/react-query",
+          "packages/server"
+        ],
+        "examples/nuxt": [
+          "packages/client",
+          "packages/server"
+        ],
+        "examples/nuxt/server": [],
+        "examples/openapi-codegen": [
+          "packages/client",
+          "packages/openapi",
+          "packages/server"
+        ],
+        "examples/soa": [
+          "packages/client",
+          "packages/server"
+        ],
+        "examples/standalone-server": [
+          "packages/client",
+          "packages/react-query",
+          "packages/server"
+        ],
+        "examples/tanstack-start-sse-chat": [
+          "packages/client",
+          "packages/server",
+          "packages/tanstack-react-query",
+          "tooling/ui"
+        ],
+        "examples/vercel-edge-runtime": [
+          "packages/client",
+          "packages/server"
+        ],
+        "packages/client": [
+          "packages/server"
+        ],
+        "packages/next": [
+          "packages/client",
+          "packages/react-query",
+          "packages/server"
+        ],
+        "packages/openapi": [
+          "packages/server"
+        ],
+        "packages/react-query": [
+          "packages/client",
+          "packages/server"
+        ],
+        "packages/server": [],
+        "packages/tanstack-react-query": [
+          "packages/client",
+          "packages/server"
+        ],
+        "packages/tests": [
+          "packages/client",
+          "packages/server"
+        ],
+        "packages/upgrade": [
+          "packages/client",
+          "packages/react-query",
+          "packages/server",
+          "packages/tanstack-react-query"
+        ],
+        "tooling/oxlint-plugin": [],
+        "tooling/release": [],
+        "tooling/subtree": [],
+        "tooling/ui": [],
+        "www": [
+          "packages/client",
+          "packages/next",
+          "packages/react-query",
+          "packages/server",
+          "packages/tanstack-react-query",
+          "tooling/ui",
+          "www/api-reference",
+          "www/samples/v11"
+        ],
+        "www/api-reference": [],
+        "www/samples/v11": [
+          "packages/client",
+          "packages/next",
+          "packages/react-query",
+          "packages/server",
+          "packages/tanstack-react-query"
+        ]
+      },
+      "notes": [],
+      "roots": [
+        {
+          "language": "typescript",
+          "manifest": "package.json",
+          "name": "root",
+          "path": ".",
+          "workspace": null
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/.experimental/next-app-dir/package.json",
+          "name": "examples-next-app-dir",
+          "path": "examples/.experimental/next-app-dir",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/.experimental/next-app-dir/src/trpc/package.json",
+          "name": "trpc-api",
+          "path": "examples/.experimental/next-app-dir/src/trpc",
+          "workspace": null
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/.test/diagnostics-big-router/package.json",
+          "name": "examples-diagnostics-big-router-declaration",
+          "path": "examples/.test/diagnostics-big-router",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/.test/internal-types-export/package.json",
+          "name": "examples-internal-types-export",
+          "path": "examples/.test/internal-types-export",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/.test/monotest-api/package.json",
+          "name": "@monotest/api",
+          "path": "examples/.test/monotest-api",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/.test/monotest-api-router01/package.json",
+          "name": "@monotest/api-router01",
+          "path": "examples/.test/monotest-api-router01",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/.test/monotest-app/package.json",
+          "name": "@monotest/app",
+          "path": "examples/.test/monotest-app",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/.test/monotest-trpc/package.json",
+          "name": "@monotest/trpc",
+          "path": "examples/.test/monotest-trpc",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/.test/monotest-tsconfig/package.json",
+          "name": "@monotest/tsconfig",
+          "path": "examples/.test/monotest-tsconfig",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/.test/ssg/package.json",
+          "name": "examples-test-ssg",
+          "path": "examples/.test/ssg",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/.test/ssg-infinite-serialization/package.json",
+          "name": "examples-test-ssg-infinite-serialization",
+          "path": "examples/.test/ssg-infinite-serialization",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/bun/package.json",
+          "name": "examples-bun",
+          "path": "examples/bun",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/cloudflare-workers/package.json",
+          "name": "examples-cloudflare-workers",
+          "path": "examples/cloudflare-workers",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/express-minimal/package.json",
+          "name": "examples-express-minimal",
+          "path": "examples/express-minimal",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/express-server/package.json",
+          "name": "examples-express-server",
+          "path": "examples/express-server",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/fastify-server/package.json",
+          "name": "examples-fastify-server",
+          "path": "examples/fastify-server",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/lambda-api-gateway/package.json",
+          "name": "examples-lambda-api-gateway",
+          "path": "examples/lambda-api-gateway",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/lambda-api-gateway-streaming/package.json",
+          "name": "examples-lambda-api-gateway-streaming",
+          "path": "examples/lambda-api-gateway-streaming",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/lambda-url/package.json",
+          "name": "examples-lambda-url",
+          "path": "examples/lambda-url",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/lazy-load/package.json",
+          "name": "examples-lazy-load",
+          "path": "examples/lazy-load",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/minimal/package.json",
+          "name": "examples-minimal",
+          "path": "examples/minimal",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/minimal-content-types/package.json",
+          "name": "examples-minimal-content-types",
+          "path": "examples/minimal-content-types",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/minimal-content-types/client/package.json",
+          "name": "examples-minimal-content-types-react-client",
+          "path": "examples/minimal-content-types/client",
+          "workspace": "examples/minimal-content-types"
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/minimal-content-types/server/package.json",
+          "name": "examples-minimal-content-types-react-server",
+          "path": "examples/minimal-content-types/server",
+          "workspace": "examples/minimal-content-types"
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/minimal-per-procedure-errors/package.json",
+          "name": "examples-minimal-per-procedure-errors",
+          "path": "examples/minimal-per-procedure-errors",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/minimal-per-procedure-errors/client/package.json",
+          "name": "examples-minimal-per-procedure-errors-client",
+          "path": "examples/minimal-per-procedure-errors/client",
+          "workspace": "examples/minimal-per-procedure-errors"
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/minimal-per-procedure-errors/server/package.json",
+          "name": "examples-minimal-per-procedure-errors-server",
+          "path": "examples/minimal-per-procedure-errors/server",
+          "workspace": "examples/minimal-per-procedure-errors"
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/minimal-react/package.json",
+          "name": "examples-minimal-react",
+          "path": "examples/minimal-react",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/minimal-react/client/package.json",
+          "name": "examples-minimal-react-client",
+          "path": "examples/minimal-react/client",
+          "workspace": "examples/minimal-react"
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/minimal-react/server/package.json",
+          "name": "examples-minimal-react-server",
+          "path": "examples/minimal-react/server",
+          "workspace": "examples/minimal-react"
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/next-big-router/package.json",
+          "name": "examples-next-big-router",
+          "path": "examples/next-big-router",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/next-edge-runtime/package.json",
+          "name": "examples-next-edge-runtime",
+          "path": "examples/next-edge-runtime",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/next-formdata/package.json",
+          "name": "examples-next-formdata",
+          "path": "examples/next-formdata",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/next-minimal-starter/package.json",
+          "name": "examples-next-minimal",
+          "path": "examples/next-minimal-starter",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/next-prisma-starter/package.json",
+          "name": "examples-trpc-next-prisma-starter",
+          "path": "examples/next-prisma-starter",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/next-prisma-todomvc/package.json",
+          "name": "examples-trpc-next-prisma-todomvc",
+          "path": "examples/next-prisma-todomvc",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/next-prisma-websockets-starter/package.json",
+          "name": "examples-next-prisma-websockets-starter",
+          "path": "examples/next-prisma-websockets-starter",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/next-websockets-encoder/package.json",
+          "name": "examples-next-websockets-encoder",
+          "path": "examples/next-websockets-encoder",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/nuxt/package.json",
+          "name": "examples-nuxt",
+          "path": "examples/nuxt",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/nuxt/server/tsconfig.json",
+          "name": null,
+          "path": "examples/nuxt/server",
+          "workspace": null
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/openapi-codegen/package.json",
+          "name": "examples-openapi-codegen",
+          "path": "examples/openapi-codegen",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/soa/package.json",
+          "name": "examples-soa",
+          "path": "examples/soa",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/standalone-server/package.json",
+          "name": "examples-standalone-server",
+          "path": "examples/standalone-server",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/tanstack-start-sse-chat/package.json",
+          "name": "examples-tanstack-start-sse-chat",
+          "path": "examples/tanstack-start-sse-chat",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/vercel-edge-runtime/package.json",
+          "name": "examples-vercel-edge-runtime",
+          "path": "examples/vercel-edge-runtime",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/client/package.json",
+          "name": "@trpc/client",
+          "path": "packages/client",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/next/package.json",
+          "name": "@trpc/next",
+          "path": "packages/next",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/openapi/package.json",
+          "name": "@trpc/openapi",
+          "path": "packages/openapi",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/react-query/package.json",
+          "name": "@trpc/react-query",
+          "path": "packages/react-query",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/server/package.json",
+          "name": "@trpc/server",
+          "path": "packages/server",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/tanstack-react-query/package.json",
+          "name": "@trpc/tanstack-react-query",
+          "path": "packages/tanstack-react-query",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/tests/package.json",
+          "name": "@trpc/tests",
+          "path": "packages/tests",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/upgrade/package.json",
+          "name": "@trpc/upgrade",
+          "path": "packages/upgrade",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "tooling/oxlint-plugin/package.json",
+          "name": "@tooling/oxlint-plugin",
+          "path": "tooling/oxlint-plugin",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "tooling/release/package.json",
+          "name": "@tooling/release",
+          "path": "tooling/release",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "tooling/subtree/package.json",
+          "name": "@tooling/subtree",
+          "path": "tooling/subtree",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "tooling/ui/package.json",
+          "name": "@shared/ui",
+          "path": "tooling/ui",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "www/package.json",
+          "name": "www",
+          "path": "www",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "www/api-reference/package.json",
+          "name": "@www/api-reference",
+          "path": "www/api-reference",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "www/samples/v11/package.json",
+          "name": "@samples/v11",
+          "path": "www/samples/v11",
+          "workspace": "."
+        }
+      ]
+    },
+    "notes": [],
+    "probes_ran": false,
+    "roots": []
+  },
+  "profile": {
+    "chain": [
+      "rio/base"
+    ],
+    "name": "rio/base",
+    "valid": true
+  },
+  "repository": "/dev/shm/trpc-rerun2/rio-eval-did7isqe/head",
+  "warnings": [
+    "rio/base:$.steps[3]: rio/triage is deferred locally: no_endpoint",
+    "rio/base:$.steps[4]: rio/agents is deferred locally: no_endpoint",
+    "rio/base:$.steps[5]: rio/verify is deferred locally: no_endpoint"
+  ]
+}

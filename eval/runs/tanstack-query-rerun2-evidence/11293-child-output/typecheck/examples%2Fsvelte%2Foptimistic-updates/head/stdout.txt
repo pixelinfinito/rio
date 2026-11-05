@@ -1,0 +1,1 @@
+error TS5083: Cannot read file '/dev/shm/rio-tanstack-work/rio-eval-oziz3umg/cache/3ae3cd247a42615c/runs/01M6NQVZDGBBG2S9QVF9E2APT3/tools/tool.tmp-IxN8gY/examples/svelte/optimistic-updates/.svelte-kit/tsconfig.json'.

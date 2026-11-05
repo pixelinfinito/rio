@@ -1,0 +1,57 @@
+[
+  {
+    "argv": [
+      "python3",
+      "eval/evaluate.py",
+      "validate",
+      "eval/runs/structlog-805/record.json"
+    ],
+    "exit_code": 0,
+    "stdout": "Valid: eval/runs/structlog-805/record.json\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "python3",
+      "eval/evaluate.py",
+      "validate",
+      "eval/runs/structlog-805-attempt2/record.json"
+    ],
+    "exit_code": 0,
+    "stdout": "Valid: eval/runs/structlog-805-attempt2/record.json\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "python3",
+      "eval/evaluate.py",
+      "validate",
+      "eval/runs/structlog-811/record.json"
+    ],
+    "exit_code": 0,
+    "stdout": "Valid: eval/runs/structlog-811/record.json\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "python3",
+      "eval/evaluate.py",
+      "validate",
+      "eval/runs/structlog-811-attempt2/record.json"
+    ],
+    "exit_code": 0,
+    "stdout": "Valid: eval/runs/structlog-811-attempt2/record.json\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "python3",
+      "eval/evaluate.py",
+      "validate",
+      "eval/runs/structlog-811-seeded-assignment/record.json"
+    ],
+    "exit_code": 0,
+    "stdout": "Valid: eval/runs/structlog-811-seeded-assignment/record.json\n",
+    "stderr": ""
+  }
+]

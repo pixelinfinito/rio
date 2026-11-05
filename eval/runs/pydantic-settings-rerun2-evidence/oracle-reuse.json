@@ -1,0 +1,62 @@
+{
+  "1097": {
+    "reuse_reason": "Identical pinned base/head SHAs, install plan and profile; new Rio-dependent output is adjudicated separately. Original oracle runs are independent of Rio.",
+    "evidence_sha256": {
+      "eval/runs/pydantic-settings-evidence/1097-independent-diff-coverage.json": "42421b43d9992b3ea1bc4e856fd2c06676227c2be0494df75814ae0566f37487",
+      "eval/runs/pydantic-settings-evidence/1097-base/commands.json": "969aa4e0b939c98bdd79e84a01912fb1e0286a8fd69c25e087549ad2c54be71f",
+      "eval/runs/pydantic-settings-evidence/1097-base/coverage.json.gz": "e9840ed82d0b90dc81258e8451594dc35f973701f90b60c9583842f733237b49",
+      "eval/runs/pydantic-settings-evidence/1097-base/mypy.stdout": "5ca59a2361304496c36048048a43aa6f41eb23e74111d16719b962637888fc08",
+      "eval/runs/pydantic-settings-evidence/1097-base/ruff.stdout": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "eval/runs/pydantic-settings-evidence/1097-base/format.stdout": "00130a4c8959aba48d3edd55439cc0023d306b510d8ec56f7d1dd97cd7bf3fb2",
+      "eval/runs/pydantic-settings-evidence/1097-base/pytest-coverage.stdout": "e252573c87ec1bc2f540957849ef62baa0f71579aece3cf463c5c1680ed95717",
+      "eval/runs/pydantic-settings-evidence/1097-head/commands.json": "ae25e2d5529ec108a22df208a00b77990efdc89f05712be1ee4a7624334d72a7",
+      "eval/runs/pydantic-settings-evidence/1097-head/coverage.json.gz": "85dbb35c9072948942865976235b44d7d682144e958efa3163e7b06e9d7352b3",
+      "eval/runs/pydantic-settings-evidence/1097-head/mypy.stdout": "5ca59a2361304496c36048048a43aa6f41eb23e74111d16719b962637888fc08",
+      "eval/runs/pydantic-settings-evidence/1097-head/ruff.stdout": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "eval/runs/pydantic-settings-evidence/1097-head/format.stdout": "00130a4c8959aba48d3edd55439cc0023d306b510d8ec56f7d1dd97cd7bf3fb2",
+      "eval/runs/pydantic-settings-evidence/1097-head/pytest-coverage.stdout": "2e25f1024f69addceaf142f9bd1069536c8c178dc59b2d3074ee3ee427d78c9e",
+      "eval/runs/pydantic-settings-evidence/1097-base-connection-fixtures.txt": "b45577724c61beb62b563cb5955bd3fcf2d02b276d59f83c820941a84d668acd",
+      "eval/runs/pydantic-settings-evidence/1097-head-connection-fixtures.txt": "1de5aae8c15df9cefa32cd6421df8111c1230a9328cb7dfdbee4349c6ca3253e"
+    }
+  },
+  "1109": {
+    "reuse_reason": "Identical pinned base/head SHAs, install plan and profile; new Rio-dependent output is adjudicated separately. Original oracle runs are independent of Rio.",
+    "evidence_sha256": {
+      "eval/runs/pydantic-settings-evidence/1109-independent-diff-coverage.json": "7111ee13c55bde7f69e6e4bd904f90524634db4fd13264082deb8ab5cb5edbfc",
+      "eval/runs/pydantic-settings-evidence/1109-base/commands.json": "a9f05385d2037df7d3bef28439271bb4a84ad8eaabc9d70b0a37ba00466bc2a4",
+      "eval/runs/pydantic-settings-evidence/1109-base/coverage.json.gz": "7b920619da3cbf9ed239996cf31cdef7c8a001f71b36dcd78a4d2298f68bed7d",
+      "eval/runs/pydantic-settings-evidence/1109-base/mypy.stdout": "5ca59a2361304496c36048048a43aa6f41eb23e74111d16719b962637888fc08",
+      "eval/runs/pydantic-settings-evidence/1109-base/ruff.stdout": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "eval/runs/pydantic-settings-evidence/1109-base/format.stdout": "00130a4c8959aba48d3edd55439cc0023d306b510d8ec56f7d1dd97cd7bf3fb2",
+      "eval/runs/pydantic-settings-evidence/1109-base/pytest-coverage.stdout": "4546c6a4730c2432db54a32d71264cd83c85cedafc9d4237fc938ccfdb81dcab",
+      "eval/runs/pydantic-settings-evidence/1109-head/commands.json": "e2cf6ccc36476226da45acd8d281b2e3e7f7089763036cd9ebbabec69d9b5740",
+      "eval/runs/pydantic-settings-evidence/1109-head/coverage.json.gz": "d5d5e9591673bfd694578aea31a3355355f313d847386353288b7d00a6e252e6",
+      "eval/runs/pydantic-settings-evidence/1109-head/mypy.stdout": "5ca59a2361304496c36048048a43aa6f41eb23e74111d16719b962637888fc08",
+      "eval/runs/pydantic-settings-evidence/1109-head/ruff.stdout": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "eval/runs/pydantic-settings-evidence/1109-head/format.stdout": "00130a4c8959aba48d3edd55439cc0023d306b510d8ec56f7d1dd97cd7bf3fb2",
+      "eval/runs/pydantic-settings-evidence/1109-head/pytest-coverage.stdout": "c5f1037ff06553a05ec90ec8b7a2150f313c0b92be6faa41395e78a3cc7e9078",
+      "eval/runs/pydantic-settings-evidence/1109-base-connection-fixtures.txt": "a8909b9a7473afd7be5fc74c816616dc6d99699874b5e699c7a245bb0a007206",
+      "eval/runs/pydantic-settings-evidence/1109-head-connection-fixtures.txt": "cb1dd73849d7e476dea55ad987f9a7ae42a98f39ca6a2a0f8c9c81139b54d4fb"
+    }
+  },
+  "708": {
+    "reuse_reason": "Identical pinned base/head SHAs, install plan and profile; new Rio-dependent output is adjudicated separately. Original oracle runs are independent of Rio.",
+    "evidence_sha256": {
+      "eval/runs/pydantic-settings-evidence/708-independent-diff-coverage.json": "bd8f7de7eb49ae1cadcd322971a58a59e665b3f554b94000968157630d78faf4",
+      "eval/runs/pydantic-settings-evidence/708-base-attempt2/commands.json": "27e8558716a68eaa2388ab37dbab985a2cb54477cb3660bd4b6fa16d6abb2975",
+      "eval/runs/pydantic-settings-evidence/708-base-attempt2/coverage.json.gz": "f287259ead000ba8adda8ff1c3e2a444bac536783f49c7f077e0d3341b3fcfd3",
+      "eval/runs/pydantic-settings-evidence/708-base-attempt2/mypy.stdout": "5ca59a2361304496c36048048a43aa6f41eb23e74111d16719b962637888fc08",
+      "eval/runs/pydantic-settings-evidence/708-base-attempt2/ruff.stdout": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "eval/runs/pydantic-settings-evidence/708-base-attempt2/format.stdout": "2de9ddcc7788f957b3bb03cb8e20b1f07f56cc1347066641a4e1de2f2570418e",
+      "eval/runs/pydantic-settings-evidence/708-base-attempt2/pytest-coverage.stdout": "9b6cc954e9035d19bd56c422ca7092ae2e9a8ee585a279a8bc1e3a579896c63b",
+      "eval/runs/pydantic-settings-evidence/708-head-attempt2/commands.json": "fc857be8f153a813f62062e55be9417aa2e71302dd3f4c28e32fe9134869aa68",
+      "eval/runs/pydantic-settings-evidence/708-head-attempt2/coverage.json.gz": "b384e4bcd1abc79d754573c398e5ddc4c3ef614366e6d73bcbfaddca3ba8139a",
+      "eval/runs/pydantic-settings-evidence/708-head-attempt2/mypy.stdout": "5ca59a2361304496c36048048a43aa6f41eb23e74111d16719b962637888fc08",
+      "eval/runs/pydantic-settings-evidence/708-head-attempt2/ruff.stdout": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "eval/runs/pydantic-settings-evidence/708-head-attempt2/format.stdout": "2de9ddcc7788f957b3bb03cb8e20b1f07f56cc1347066641a4e1de2f2570418e",
+      "eval/runs/pydantic-settings-evidence/708-head-attempt2/pytest-coverage.stdout": "ae4a578a07f0b0ac8419930b4581343d5b1412b95f622a78eeca5526a1456778",
+      "eval/runs/pydantic-settings-evidence/positive-control-register.json": "670e9831d3f9fa958e70abad35893dee43487780c6494e874fbb4aec4637500e",
+      "eval/runs/pydantic-settings-evidence/pr-708.patch": "5c37f2c451be2de8c7228c4b229fd9731377334bfc30e9ef8772d35f7e4c1985"
+    }
+  }
+}

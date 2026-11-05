@@ -1,0 +1,11 @@
+{
+  "expectation_id": "broadcast-transaction-string-type",
+  "finding_ids": [
+    "6e5315be716243c1445322ae82de4a808a08f7dc19c5cc257221acd27d2dca9e",
+    "96fa52ff88dbd2ae7088ab3c6df72c514b63f1e932db5818149e504f65eec772"
+  ],
+  "detected_expected_bugs": 1,
+  "missed_expected_bugs": 0,
+  "eligible_for_scored_recall": false,
+  "exclusion": "Coverage discovery tool_missing despite independent working coverage"
+}

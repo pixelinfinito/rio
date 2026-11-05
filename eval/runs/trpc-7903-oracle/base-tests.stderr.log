@@ -1,0 +1,29 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |release| src/release.test.ts > branchMoved > tells whether the remote branch has commits HEAD lacks
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/release.test.ts:77:3
+     75|
+     76| describe('branchMoved', () => {
+     77|   it('tells whether the remote branch has commits HEAD lacks', () =>
+       |   ^
+     78|     run(
+     79|       Effect.gen(function* () {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  |release| src/release.test.ts > the release guards > publishes a stable release only from the branch
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/release.test.ts:102:3
+    100|
+    101| describe('the release guards', () => {
+    102|   it('publishes a stable release only from the branch', () =>
+       |   ^
+    103|     run(
+    104|       Effect.gen(function* () {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

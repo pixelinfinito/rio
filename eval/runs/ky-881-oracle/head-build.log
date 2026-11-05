@@ -1,0 +1,4 @@
+
+> ky@2.0.2 build
+> del-cli distribution && tsc --project tsconfig.dist.json
+

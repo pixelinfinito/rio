@@ -1,0 +1,173 @@
+diff --git a/src/structlog/_output.py b/src/structlog/_output.py
+index bfa3ef4..c976a46 100644
+--- a/src/structlog/_output.py
++++ b/src/structlog/_output.py
+@@ -252,3 +251,0 @@ class BytesLogger:
+-    Args:
+-        file: File to print to. (default: `sys.stdout`\ ``.buffer``)
+-
+@@ -258,0 +256,9 @@ class BytesLogger:
++    Args:
++        file: File to print to. (default: `sys.stdout`\ ``.buffer``)
++
++        name:
++            Optional name for the logger. If provided, it will be picked up
++            as the logger's name when used with
++            `structlog.stdlib.add_logger_name()` without using standard
++            library integration. ``BytesLogger`` itself does nothing with it.
++
+@@ -259,0 +266,2 @@ class BytesLogger:
++
++    .. versionadded:: 26.1.0 The ``name`` attribute.
+@@ -262 +270 @@ class BytesLogger:
+-    __slots__ = ("_file", "_flush", "_lock", "_write")
++    __slots__ = ("_file", "_flush", "_lock", "_write", "name")
+@@ -264 +272,3 @@ class BytesLogger:
+-    def __init__(self, file: BinaryIO | None = None):
++    def __init__(
++        self, file: BinaryIO | None = None, *, name: str | None = None
++    ):
+@@ -268,0 +279,2 @@ class BytesLogger:
++        self.name = name
++
+@@ -271 +283 @@ class BytesLogger:
+-    def __getstate__(self) -> str:
++    def __getstate__(self) -> tuple[str, str | None]:
+@@ -276 +288 @@ class BytesLogger:
+-            return "stdout"
++            return "stdout", self.name
+@@ -279 +291 @@ class BytesLogger:
+-            return "stderr"
++            return "stderr", self.name
+@@ -288,0 +301,5 @@ class BytesLogger:
++        if isinstance(state, str):
++            name = None
++        else:
++            state, name = state
++
+@@ -295,0 +313 @@ class BytesLogger:
++        self.name = name
+@@ -308 +326 @@ class BytesLogger:
+-        newself = self.__class__(self._file)
++        newself = self.__class__(self._file, name=self.name)
+@@ -317 +335,4 @@ class BytesLogger:
+-        return f"<BytesLogger(file={self._file!r})>"
++        if self.name is None:
++            return f"<BytesLogger(file={self._file!r})>"
++
++        return f"<BytesLogger(name={self.name!r}, file={self._file!r})>"
+@@ -351 +372 @@ class BytesLoggerFactory:
+-        return BytesLogger(self._file)
++        return BytesLogger(self._file, name=args[0] if args else None)
+diff --git a/tests/test_output.py b/tests/test_output.py
+index 460dac4..6727ff4 100644
+--- a/tests/test_output.py
++++ b/tests/test_output.py
+@@ -264 +264 @@ class TestBytesLogger:
+-        __repr__ makes sense.
++        __repr__ shows the name if set, otherwise it shows the file.
+@@ -265,0 +266,3 @@ class TestBytesLogger:
++        assert repr(BytesLogger(name="test")).startswith(
++            "<BytesLogger(name='test', file="
++        )
+@@ -302,0 +306,20 @@ class TestBytesLogger:
++        assert rv.name is None
++
++    @pytest.mark.parametrize("proto", range(pickle.HIGHEST_PROTOCOL + 1))
++    def test_pickle_preserves_name(self, proto):
++        """
++        Pickled and unpickled BytesLoggers preserve their names.
++        """
++        rv = pickle.loads(pickle.dumps(BytesLogger(name="test_logger"), proto))
++
++        assert "test_logger" == rv.name
++
++    def test_unpickle_from_old_state_sets_name_to_none(self):
++        """
++        BytesLoggers from old pickles receive the default name.
++        """
++        logger = object.__new__(BytesLogger)
++
++        logger.__setstate__("stdout")
++
++        assert logger.name is None
+@@ -327,0 +351,24 @@ class TestBytesLogger:
++    def test_deepcopy_preserves_name(self):
++        """
++        Deepcopied BytesLoggers preserve their names.
++        """
++        copied_logger = copy.deepcopy(BytesLogger(name="test_logger"))
++
++        assert "test_logger" == copied_logger.name
++
++    def test_name_attribute(self):
++        """
++        BytesLogger accepts a name keyword argument.
++        """
++        bl = BytesLogger(name="test_logger")
++
++        assert "test_logger" == bl.name
++
++    def test_name_defaults_to_none(self):
++        """
++        BytesLogger name defaults to None when not provided.
++        """
++        bl = BytesLogger()
++
++        assert bl.name is None
++
+@@ -360 +407 @@ class TestBytesLoggerFactory:
+-    def test_ignores_args(self):
++    def test_passes_name_from_args(self):
+@@ -362,2 +409 @@ class TestBytesLoggerFactory:
+-        BytesLogger doesn't take positional arguments.  If any are passed to
+-        the factory, they are not passed to the logger.
++        The first positional argument is used as the logger name.
+@@ -365 +411,20 @@ class TestBytesLoggerFactory:
+-        BytesLoggerFactory()(1, 2, 3)
++        bl = BytesLoggerFactory()("my_logger")
++
++        assert "my_logger" == bl.name
++
++    def test_name_defaults_to_none(self):
++        """
++        If no positional arguments are passed to the factory, the logger
++        name defaults to None.
++        """
++        bl = BytesLoggerFactory()()
++
++        assert bl.name is None
++
++    def test_extra_args_ignored(self):
++        """
++        Positional arguments beyond the first are silently ignored.
++        """
++        bl = BytesLoggerFactory()("my_logger", 2, 3)
++
++        assert "my_logger" == bl.name
+diff --git a/tests/test_stdlib.py b/tests/test_stdlib.py
+index 862e6f6..5e572c0 100644
+--- a/tests/test_stdlib.py
++++ b/tests/test_stdlib.py
+@@ -22,0 +23 @@ from structlog import (
++    BytesLogger,
+@@ -571,0 +573,19 @@ class TestAddLoggerName:
++    def test_logger_name_added_with_bytes_logger(self):
++        """
++        add_logger_name works with BytesLogger that has a name attribute.
++        """
++        name = "sample-name"
++        logger = BytesLogger(name=name)
++        event_dict = add_logger_name(logger, None, {})
++
++        assert name == event_dict["logger"]
++
++    def test_logger_name_none_with_unnamed_bytes_logger(self):
++        """
++        add_logger_name works with BytesLogger without a name, returning None.
++        """
++        logger = BytesLogger()
++        event_dict = add_logger_name(logger, None, {})
++
++        assert event_dict["logger"] is None
++

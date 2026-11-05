@@ -1,0 +1,88 @@
+# Source: /home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-881/profile.yaml
+# Chain: eval-ky-trusted
+version: 1
+name: eval-ky-trusted
+budget:
+  fast:
+    wall_time: 10m
+models: {}
+steps:
+- id: prepare
+  uses: rio/prepare@0.1.0
+  needs: []
+  parallel: false
+  with:
+    exclude: []
+- id: checks
+  uses: rio/checks@0.1.0
+  needs:
+  - prepare
+  parallel: true
+  with:
+    baseline: true
+    coverage: false
+    dependencies: true
+    lint: false
+    secrets: true
+    trust_installed_dependencies: true
+    typecheck: true
+- id: graph
+  uses: rio/graph@0.1.0
+  needs:
+  - prepare
+  parallel: true
+  with:
+    hops: 2
+    max_nodes: 2000
+- id: triage
+  uses: rio/triage@0.1.0
+  needs:
+  - checks
+  - graph
+  parallel: false
+  with: {}
+- id: agents
+  uses: rio/agents@0.1.0
+  needs:
+  - triage
+  parallel: false
+  with: {}
+- id: verify
+  uses: rio/verify@0.1.0
+  needs:
+  - agents
+  parallel: false
+  with: {}
+- id: report
+  uses: rio/report@0.1.0
+  needs:
+  - checks
+  - graph
+  - verify
+  parallel: false
+  with: {}
+suppress: []
+publish: never
+fail_on:
+  evidence: static_proven
+  categories:
+  - defect
+  states:
+  - new
+  - worsened
+  rules: []
+  incomplete: true
+  required_checks: []
+min_evidence: plausible
+max_lines: 1500
+chain:
+- eval-ky-trusted
+modules:
+  rio/agents: 0.1.0
+  rio/checks: 0.1.0
+  rio/graph: 0.1.0
+  rio/prepare: 0.1.0
+  rio/report: 0.1.0
+  rio/triage: 0.1.0
+  rio/verify: 0.1.0
+engine_version: 0.1.0

@@ -1,0 +1,47 @@
+{
+  "repository": "sindresorhus/ky",
+  "pr": "https://github.com/sindresorhus/ky/pull/881",
+  "case_id": "881",
+  "languages": [
+    "typescript"
+  ],
+  "reviewer": "sub-agent rerun2-ky (automated)",
+  "verdict_source": "automated",
+  "commands": [
+    "cwd=/dev/shm/rio-eval-v6uppp77 argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/sindresorhus/ky.git\", \"/dev/shm/rio-eval-v6uppp77/head\"]",
+    "cwd=/dev/shm/rio-eval-v6uppp77/head argv=[\"git\", \"fetch\", \"origin\", \"0bda554d448c1b57c17a5c18114432c02465d467\", \"db318a71b0ba7ff2c52896ac46682f7914c9a82b\"]",
+    "cwd=/dev/shm/rio-eval-v6uppp77/head argv=[\"git\", \"merge-base\", \"0bda554d448c1b57c17a5c18114432c02465d467\", \"db318a71b0ba7ff2c52896ac46682f7914c9a82b\"]",
+    "cwd=/dev/shm/rio-eval-v6uppp77/head argv=[\"git\", \"checkout\", \"--detach\", \"db318a71b0ba7ff2c52896ac46682f7914c9a82b\"]",
+    "cwd=/dev/shm/rio-eval-v6uppp77 argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/dev/shm/rio-eval-v6uppp77/head\", \"/dev/shm/rio-eval-v6uppp77/base\"]",
+    "cwd=/dev/shm/rio-eval-v6uppp77/base argv=[\"git\", \"checkout\", \"--detach\", \"0bda554d448c1b57c17a5c18114432c02465d467\"]",
+    "cwd=/dev/shm/rio-eval-v6uppp77/base argv=[\"python3\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-setup/attach-dependencies.py\", \"881\"]",
+    "cwd=/dev/shm/rio-eval-v6uppp77/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/rio-eval-v6uppp77/head argv=[\"python3\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-setup/attach-dependencies.py\", \"881\"]",
+    "cwd=/dev/shm/rio-eval-v6uppp77/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/rio-eval-v6uppp77/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/dev/shm/rio-eval-v6uppp77/head argv=[\"node\", \"--version\"]",
+    "cwd=/dev/shm/rio-eval-v6uppp77/head argv=[\"npm\", \"--version\"]",
+    "cwd=/dev/shm/rio-eval-v6uppp77/head argv=[\"corepack\", \"--version\"]",
+    "cwd=/dev/shm/rio-eval-v6uppp77/head argv=[\"python3\", \"--version\"]",
+    "cwd=/dev/shm/rio-eval-v6uppp77/head argv=[\"uv\", \"--version\"]",
+    "cwd=/dev/shm/rio-eval-v6uppp77/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"/home/ubuntu/.t3/worktrees/rio/eval-rerun2-ky/eval/runs/ky-881-rerun2/profile.yaml\"]",
+    "cwd=/dev/shm/rio-eval-v6uppp77/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/dev/shm/rio-eval-v6uppp77/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"0bda554d448c1b57c17a5c18114432c02465d467\", \"--format\", \"json\", \"--offline\", \"--profile\", \"/home/ubuntu/.t3/worktrees/rio/eval-rerun2-ky/eval/runs/ky-881-rerun2/profile.yaml\"]"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-rerun2-ky/eval/runs/ky-881-rerun2/commands.json; Rio binary SHA-256: 3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+    "Rerun2 uses binary f6e4f87e4c65; pinned PR, base/head, byte-identical install plan/profile, original frozen installation and Node version are unchanged. See rerun2-evidence.json and comparison.json.",
+    "Current deterministic-v2 methodology accepts successful trusted baseline pairs. Runner exit 0; baseline_ran and baseline_classification_ran true; eligible true, dependency_state trusted. This run is excluded only from the verified-only sensitivity view. Both typecheck entries passed; no nonempty diagnostic set was available to exercise classification transitions.",
+    "Frozen external npm dependencies are attached by symlink after manifest and installed metadata hash verification; there is no upstream lockfile. Original helper exists at the absolute path in install-plan.json; its bytes and adjacent pins were checked against ../ky-setup/. No source or generated lockfile was changed.",
+    "Zero findings and risks; all finding verdict classes have count zero. Footer notes and tool versions, check outcomes/dependency states, and incomplete status match the original run. Resolved-profile hashes differ only because of the absolute Source comment.",
+    "Scope is unchanged: XO lint and AVA coverage explicitly disabled; dependency audit skipped offline (hint: Dependency audit needs api.osv.dev). No dependency-safety or executed-coverage claim. Independent oracle invocations are not evidence of Rio child argv.",
+    "Independent clean assessment reused because SHAs and frozen tools/installations are unchanged: ../ky-881-oracle/clean-assessment.json. Source flush logic and matching tests were independently reviewed; root/browser tsc, build, test-d and changed-file XO passed both sides. Final non-browser suite base 557/head 559 passed, 2 declared known failures each; focused streams 17/19 passed. Same pre-existing full-XO error and retained flake attempts are documented there. No local browser-engine execution or coverage is claimed. Fresh Rio checks pass with zero findings; no independently established change-specific deterministic miss."
+  ],
+  "independently_clean": true,
+  "positive_control": {
+    "kind": "none",
+    "expected": []
+  },
+  "misses": [],
+  "findings": {}
+}

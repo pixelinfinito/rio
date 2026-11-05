@@ -1,0 +1,11 @@
+Warning: you are leaving 1 commit behind, not connected to
+any of your branches:
+
+  ef2cb073d Use entry points API in the plugin loader
+
+If you want to keep it by creating a new branch, this may be a good time
+to do so with:
+
+ git branch <new-branch-name> ef2cb073d
+
+HEAD is now at 5740091dc Skip annotation handler setup when annotations are empty (#14149)

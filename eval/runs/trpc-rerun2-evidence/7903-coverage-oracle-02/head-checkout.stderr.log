@@ -1,0 +1,2 @@
+Previous HEAD position was c869fa107 chore(monorepo): replace lerna-lite with a pnpm publish script, and create GitHub releases (#7832)
+HEAD is now at 248fb772a fix(monorepo): address second review on grouped release notes

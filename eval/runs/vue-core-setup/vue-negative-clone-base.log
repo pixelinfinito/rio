@@ -1,0 +1,3 @@
+Cloning into '/tmp/vue-negative-base'...
+done.
+HEAD is now at a2b40db9a fix(server-renderer): reject CR in attribute names (#15266)

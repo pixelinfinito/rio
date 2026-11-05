@@ -1,0 +1,36 @@
+{
+  "base": [
+    [
+      "uv",
+      "sync",
+      "--locked",
+      "--all-groups",
+      "--all-extras"
+    ],
+    [
+      "uv",
+      "run",
+      "--no-sync",
+      "python",
+      "-c",
+      "import pathlib, sysconfig; p = pathlib.Path(sysconfig.get_path('purelib')) / 'a1_coverage.pth'; print(str(p)); print(p.read_text()); p.unlink()"
+    ]
+  ],
+  "head": [
+    [
+      "uv",
+      "sync",
+      "--locked",
+      "--all-groups",
+      "--all-extras"
+    ],
+    [
+      "uv",
+      "run",
+      "--no-sync",
+      "python",
+      "-c",
+      "import pathlib, sysconfig; p = pathlib.Path(sysconfig.get_path('purelib')) / 'a1_coverage.pth'; print(str(p)); print(p.read_text()); p.unlink()"
+    ]
+  ]
+}

@@ -1,0 +1,218 @@
+{
+  "blocking_problems": [],
+  "cache": {
+    "free_space": 3324071936,
+    "path": "/dev/shm/rio-pydantic/tmp/rio-eval-stumf9ve/supplement-cache",
+    "writable": true
+  },
+  "configuration": {
+    "cache": {
+      "dir": "/dev/shm/rio-pydantic/tmp/rio-eval-stumf9ve/supplement-cache",
+      "max_age": {
+        "nanos": 0,
+        "secs": 2592000
+      },
+      "max_size": 5368709120,
+      "retain_raw_output": true
+    },
+    "config_dir": "/dev/shm/rio-pydantic/tmp/rio-eval-stumf9ve/config",
+    "endpoint_url": null,
+    "notices": [],
+    "output_limit": 268435456,
+    "parallelism": 4,
+    "sources": {
+      "cache.dir": "RIO_CACHE_DIR",
+      "cache.max_age": "default",
+      "cache.max_size": "default",
+      "cache.retain_raw_output": "default",
+      "endpoint.url": "default",
+      "run.output_limit": "default",
+      "run.parallelism": "default"
+    }
+  },
+  "endpoint": "No endpoint is available in this version",
+  "head": "262700f815672fc37ed637a1604234f6c7cc7ee9",
+  "plan": {
+    "checks": [
+      {
+        "baseline": true,
+        "baseline_hint": null,
+        "baseline_remap": false,
+        "dependency_hash": "5bcd9e00586d19dc004fc7b16a8b6459e6b050933873f88b4eb884fed09b9ab4",
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "python",
+        "root": ".",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "pydantic/_internal/_config.py",
+          "pydantic/_internal/_contextlib.py",
+          "pydantic/_internal/_dataclasses.py",
+          "pydantic/_internal/_generate_schema.py",
+          "pydantic/_internal/_generics.py",
+          "pydantic/_internal/_namespace_utils.py"
+        ],
+        "tool": {
+          "name": "pyright",
+          "path": "/dev/shm/rio-pydantic/tmp/rio-eval-stumf9ve/head/./.venv/bin/pyright",
+          "version": "pyright 1.1.411"
+        }
+      },
+      {
+        "baseline": true,
+        "baseline_hint": null,
+        "baseline_remap": false,
+        "dependency_hash": "5bcd9e00586d19dc004fc7b16a8b6459e6b050933873f88b4eb884fed09b9ab4",
+        "dependency_state": "verified",
+        "kind": "lint",
+        "language": "python",
+        "root": ".",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "pydantic/_internal/_config.py",
+          "pydantic/_internal/_contextlib.py",
+          "pydantic/_internal/_dataclasses.py",
+          "pydantic/_internal/_generate_schema.py",
+          "pydantic/_internal/_generics.py",
+          "pydantic/_internal/_namespace_utils.py"
+        ],
+        "tool": {
+          "name": "ruff",
+          "path": "/dev/shm/rio-pydantic/tmp/rio-eval-stumf9ve/head/./.venv/bin/ruff",
+          "version": "ruff 0.17.3"
+        }
+      },
+      {
+        "baseline": true,
+        "baseline_hint": null,
+        "baseline_remap": false,
+        "dependency_hash": "5bcd9e00586d19dc004fc7b16a8b6459e6b050933873f88b4eb884fed09b9ab4",
+        "dependency_state": "verified",
+        "kind": "coverage",
+        "language": "python",
+        "root": ".",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "pydantic/_internal/_config.py",
+          "pydantic/_internal/_contextlib.py",
+          "pydantic/_internal/_dataclasses.py",
+          "pydantic/_internal/_generate_schema.py",
+          "pydantic/_internal/_generics.py",
+          "pydantic/_internal/_namespace_utils.py"
+        ],
+        "tool": {
+          "name": "coverage",
+          "path": "/dev/shm/rio-pydantic/tmp/rio-eval-stumf9ve/head/./.venv/bin/coverage",
+          "version": "Coverage.py, version 7.13.5 with C extension"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": null,
+        "baseline_remap": false,
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "secrets",
+        "language": "common",
+        "root": ".",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [],
+        "tool": null
+      },
+      {
+        "baseline": false,
+        "baseline_hint": null,
+        "baseline_remap": false,
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "dependencies",
+        "language": "common",
+        "root": ".",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [],
+        "tool": null
+      }
+    ],
+    "layout": {
+      "dependencies": {
+        ".": [],
+        "pydantic-core": [],
+        "tests/plugin": [],
+        "tests/typechecking": []
+      },
+      "notes": [],
+      "roots": [
+        {
+          "language": "python",
+          "manifest": "pyproject.toml",
+          "name": "pydantic",
+          "path": ".",
+          "workspace": null
+        },
+        {
+          "language": "python",
+          "manifest": "pydantic-core/pyproject.toml",
+          "name": "pydantic_core",
+          "path": "pydantic-core",
+          "workspace": "."
+        },
+        {
+          "language": "python",
+          "manifest": "tests/plugin/pyproject.toml",
+          "name": "example_plugin",
+          "path": "tests/plugin",
+          "workspace": null
+        },
+        {
+          "language": "python",
+          "manifest": "tests/typechecking/pyproject.toml",
+          "name": null,
+          "path": "tests/typechecking",
+          "workspace": null
+        }
+      ]
+    },
+    "notes": [],
+    "probes_ran": true,
+    "roots": [
+      {
+        "base": {
+          "hash": "5bcd9e00586d19dc004fc7b16a8b6459e6b050933873f88b4eb884fed09b9ab4",
+          "state": "verified"
+        },
+        "environment": "/dev/shm/rio-pydantic/tmp/rio-eval-stumf9ve/head/./.venv",
+        "head": {
+          "hash": "5bcd9e00586d19dc004fc7b16a8b6459e6b050933873f88b4eb884fed09b9ab4",
+          "state": "verified"
+        },
+        "installation_root": ".",
+        "lockfile": "uv.lock",
+        "project": {
+          "language": "python",
+          "manifest": "pyproject.toml",
+          "name": "pydantic",
+          "path": ".",
+          "workspace": null
+        }
+      }
+    ]
+  },
+  "profile": {
+    "chain": [
+      "rio/base"
+    ],
+    "name": "rio/base",
+    "valid": true
+  },
+  "repository": "/dev/shm/rio-pydantic/tmp/rio-eval-stumf9ve/head",
+  "warnings": [
+    "rio/base:$.steps[3]: rio/triage is deferred locally: no_endpoint",
+    "rio/base:$.steps[4]: rio/agents is deferred locally: no_endpoint",
+    "rio/base:$.steps[5]: rio/verify is deferred locally: no_endpoint"
+  ]
+}

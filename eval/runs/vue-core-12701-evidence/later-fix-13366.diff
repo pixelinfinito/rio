@@ -1,0 +1,32 @@
+commit 2c6c0794a1f1d8195024429f1be339ef7472463e
+Author: edison <daiwei521@126.com>
+Date:   Thu May 22 11:38:58 2025 +0800
+
+    chore: fix type check error (#13366)
+
+diff --git a/packages/compiler-sfc/src/compileScript.ts b/packages/compiler-sfc/src/compileScript.ts
+index 18d460ace..2e1e0ec34 100644
+--- a/packages/compiler-sfc/src/compileScript.ts
++++ b/packages/compiler-sfc/src/compileScript.ts
+@@ -1324,7 +1324,7 @@ export function mergeSourceMaps(
+         },
+         original: {
+           line: m.originalLine,
+-          column: m.originalColumn,
++          column: m.originalColumn!,
+         },
+         source: m.source,
+         name: m.name,
+diff --git a/packages/server-renderer/__tests__/webStream.spec.ts b/packages/server-renderer/__tests__/webStream.spec.ts
+index 700a9a0ae..de399dbb8 100644
+--- a/packages/server-renderer/__tests__/webStream.spec.ts
++++ b/packages/server-renderer/__tests__/webStream.spec.ts
+@@ -49,7 +49,7 @@ test('pipeToWebWritable', async () => {
+   }
+ 
+   const { readable, writable } = new TransformStream()
+-  pipeToWebWritable(createApp(App), {}, writable)
++  pipeToWebWritable(createApp(App), {}, writable as any)
+ 
+   const reader = readable.getReader()
+   const decoder = new TextDecoder()

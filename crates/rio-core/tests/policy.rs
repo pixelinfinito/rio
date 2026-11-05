@@ -1,0 +1,190 @@
+use rio_core::*;
+
+fn report() -> Report {
+    let mut report: Report = serde_json::from_str(include_str!("fixtures/complete.json")).unwrap();
+    report.findings.clear();
+    report.checks.clear();
+    report
+}
+
+fn check(outcome: CheckOutcome) -> CheckEntry {
+    CheckEntry {
+        kind: CheckKind::Typecheck,
+        language: "typescript".into(),
+        root: ".".into(),
+        version: Version::Head,
+        scheduled_as: ScheduledAs::Changed,
+        outcome,
+        wall_time_ms: 0,
+        cached: false,
+    }
+}
+
+fn finding() -> Finding {
+    let mut finding: Finding = serde_json::from_str(include_str!("fixtures/finding.json")).unwrap();
+    finding.state = State::New;
+    finding
+}
+
+#[test]
+fn all_suppression_types_remove_every_copy_and_attribute_counts() {
+    let f = finding();
+    for suppression in [
+        Suppression::Path {
+            path: "src/**".into(),
+        },
+        Suppression::Rule {
+            rule: "typecheck/tsc/*".into(),
+        },
+        Suppression::Finding {
+            finding: f.id.clone(),
+        },
+    ] {
+        let mut report = report();
+        report.findings.push(f.clone());
+        report.checks.push(check(CheckOutcome::Findings {
+            details: CheckDetails {
+                findings: vec![f.clone()],
+                ..Default::default()
+            },
+        }));
+        apply_suppressions(&mut report, &[suppression]).unwrap();
+        assert!(report.findings.is_empty());
+        assert!(report.checks[0].outcome.details().findings.is_empty());
+        assert_eq!(report.summary.suppressed, 1);
+        assert_eq!(
+            report.footer.suppressions,
+            vec![SuppressionCount { entry: 0, count: 1 }]
+        );
+    }
+}
+
+#[test]
+fn default_policy_distinguishes_regressions_from_risks_and_existing_findings() {
+    let policy = FailOn::default().compile().unwrap();
+    let mut f = finding();
+    assert!(policy.matches(&f));
+    f.state = State::Worsened;
+    assert!(policy.matches(&f));
+    f.state = State::PreExisting;
+    assert!(!policy.matches(&f));
+    f.state = State::New;
+    f.evidence_level = EvidenceLevel::Plausible;
+    assert!(!policy.matches(&f));
+    f.evidence_level = EvidenceLevel::StaticProven;
+    f.category = Category::Risk;
+    assert!(!policy.matches(&f));
+    f.rule_id = "coverage/untested_change".into();
+    assert!(
+        FailOn {
+            rules: vec!["coverage/*".into()],
+            ..Default::default()
+        }
+        .compile()
+        .unwrap()
+        .matches(&f)
+    );
+}
+
+#[test]
+fn failed_and_required_skipped_checks_affect_exit_independently_of_report_status() {
+    let mut r = report();
+    let policy = FailOn::default().compile().unwrap();
+    r.checks.push(check(CheckOutcome::Failed {
+        reason: FailureReason::ToolCrashed,
+        details: CheckDetails::default(),
+    }));
+    derive_report_status(&mut r);
+    assert_eq!(r.status, ReportStatus::Incomplete);
+    assert_eq!(exit_code(&r, &policy, ExitContext::default()), 4);
+    assert_eq!(
+        exit_code(
+            &r,
+            &FailOn {
+                incomplete: false,
+                ..Default::default()
+            }
+            .compile()
+            .unwrap(),
+            ExitContext::default()
+        ),
+        0
+    );
+    r.checks[0].outcome = CheckOutcome::Skipped {
+        reason: SkipReason::ToolMissing,
+        details: CheckDetails::default(),
+    };
+    derive_report_status(&mut r);
+    assert_eq!(r.status, ReportStatus::Incomplete);
+    assert_eq!(exit_code(&r, &policy, ExitContext::default()), 0);
+    assert_eq!(
+        exit_code(
+            &r,
+            &FailOn {
+                required_checks: vec![CheckKind::Typecheck],
+                ..Default::default()
+            }
+            .compile()
+            .unwrap(),
+            ExitContext::default()
+        ),
+        4
+    );
+    r.checks[0].outcome = CheckOutcome::Skipped {
+        reason: SkipReason::Disabled,
+        details: CheckDetails::default(),
+    };
+    derive_report_status(&mut r);
+    assert_eq!(r.status, ReportStatus::Complete);
+    assert_eq!(r.incomplete.len(), 1);
+}
+
+#[test]
+fn precedence_and_partial_status_are_preserved() {
+    let mut r = report();
+    r.status = ReportStatus::Partial;
+    r.findings.push(finding());
+    r.checks.push(check(CheckOutcome::Cancelled {
+        reason: CancellationReason::Interrupted,
+        details: CheckDetails::default(),
+    }));
+    derive_report_status(&mut r);
+    assert_eq!(r.status, ReportStatus::Partial);
+    let policy = FailOn::default().compile().unwrap();
+    assert_eq!(exit_code(&r, &policy, ExitContext::default()), 1);
+    assert_eq!(
+        exit_code(
+            &r,
+            &policy,
+            ExitContext {
+                second_interrupt: true,
+                error: None
+            }
+        ),
+        130
+    );
+    assert_eq!(
+        exit_code(
+            &r,
+            &policy,
+            ExitContext {
+                second_interrupt: true,
+                error: Some(StartError::UsageOrConfiguration)
+            }
+        ),
+        2
+    );
+    assert_eq!(
+        exit_code(
+            &r,
+            &policy,
+            ExitContext {
+                second_interrupt: true,
+                error: Some(StartError::RepositoryOrInternal)
+            }
+        ),
+        3
+    );
+    r.findings.clear();
+    assert_eq!(exit_code(&r, &policy, ExitContext::default()), 4);
+}

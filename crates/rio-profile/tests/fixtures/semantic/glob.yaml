@@ -1,0 +1,4 @@
+version: 1
+name: invalid-glob
+extends: rio/base
+steps: [{id: a, uses: rio/prepare, with: {exclude: ['[']}}]

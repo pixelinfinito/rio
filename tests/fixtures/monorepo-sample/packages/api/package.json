@@ -1,0 +1,13 @@
+{
+  "name": "@acme/api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": "./src/index.ts",
+  "scripts": {
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@acme/shared": "workspace:*"
+  }
+}

@@ -1,0 +1,131 @@
+[
+  {
+    "path": "eval/runs/tanstack-query-11293/record.json",
+    "baseline_classification_ran": false,
+    "overall": "environment-failure",
+    "raw_counts": {
+      "environment-failure": 482
+    },
+    "cause_counts": {
+      "environment-failure": 399
+    },
+    "expected": 0,
+    "detected": 0,
+    "misses": 0
+  },
+  {
+    "path": "eval/runs/tanstack-query-11392-attempt3/record.json",
+    "baseline_classification_ran": true,
+    "overall": "environment-failure",
+    "raw_counts": {},
+    "cause_counts": {},
+    "expected": 0,
+    "detected": 0,
+    "misses": 0
+  },
+  {
+    "path": "eval/runs/tanstack-query-11522-seeded-attempt2/record.json",
+    "baseline_classification_ran": true,
+    "overall": "environment-failure",
+    "raw_counts": {
+      "true-positive": 2
+    },
+    "cause_counts": {
+      "true-positive": 1
+    },
+    "expected": 1,
+    "detected": 1,
+    "misses": 0
+  },
+  {
+    "path": "eval/runs/tanstack-query-11293-rerun2-attempt2/record.json",
+    "binary": "f6e4f87e4c65",
+    "baseline_classification_ran": false,
+    "dependency_state": "mixed",
+    "eligible": false,
+    "overall": "environment-failure",
+    "raw_state_counts": {
+      "pre-existing": 254
+    },
+    "adjudication_counts": {
+      "environment-failure": 254
+    },
+    "raw_counts": {
+      "pre-existing-hidden": 254
+    },
+    "cause_counts": {
+      "pre-existing-hidden": 250
+    },
+    "expected": 0,
+    "detected": 0,
+    "misses": 0
+  },
+  {
+    "path": "eval/runs/tanstack-query-11392-rerun2/record.json",
+    "binary": "f6e4f87e4c65",
+    "baseline_classification_ran": false,
+    "dependency_state": "unavailable",
+    "eligible": false,
+    "overall": "environment-failure",
+    "raw_state_counts": {},
+    "adjudication_counts": {},
+    "raw_counts": {},
+    "cause_counts": {},
+    "expected": 0,
+    "detected": 0,
+    "misses": 0
+  },
+  {
+    "path": "eval/runs/tanstack-query-11392-rerun2-attempt2/record.json",
+    "binary": "f6e4f87e4c65",
+    "baseline_classification_ran": true,
+    "dependency_state": "verified",
+    "eligible": true,
+    "overall": "useful",
+    "raw_state_counts": {},
+    "adjudication_counts": {},
+    "raw_counts": {},
+    "cause_counts": {},
+    "expected": 0,
+    "detected": 0,
+    "misses": 0
+  },
+  {
+    "path": "eval/runs/tanstack-query-11522-seeded-rerun2/record.json",
+    "binary": "f6e4f87e4c65",
+    "baseline_classification_ran": false,
+    "dependency_state": "unavailable",
+    "eligible": false,
+    "overall": "environment-failure",
+    "raw_state_counts": {},
+    "adjudication_counts": {},
+    "raw_counts": {},
+    "cause_counts": {},
+    "expected": 1,
+    "detected": 0,
+    "misses": 1
+  },
+  {
+    "path": "eval/runs/tanstack-query-11522-seeded-rerun2-attempt2/record.json",
+    "binary": "f6e4f87e4c65",
+    "baseline_classification_ran": true,
+    "dependency_state": "verified",
+    "eligible": true,
+    "overall": "useful",
+    "raw_state_counts": {
+      "new": 2
+    },
+    "adjudication_counts": {
+      "true-positive": 2
+    },
+    "raw_counts": {
+      "true-positive": 2
+    },
+    "cause_counts": {
+      "true-positive": 1
+    },
+    "expected": 1,
+    "detected": 1,
+    "misses": 0
+  }
+]

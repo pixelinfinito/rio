@@ -1,0 +1,4 @@
+{
+  "frozen_profile_problem": "The initial type-only profile emits disabled lint/coverage/dependency entries; eval/evaluate.py environment() rejects all disabled entries, including explicitly disabled checks. No scored run can use this profile. Future attempt must enable lint and coverage; offline dependency skips are allowed. This is a harness limitation relative to predeclared inapplicable capability discussion, not an excuse to score earlier runs.",
+  "planned_next": "Try the isolated upgrade package on pnpm10 (#7448) with all checks enabled; no workspace consumers link to this CLI. If clean, this preserves tRPC despite current pnpm12 parser failure. Candidate is maintainer-merged but CONTRIBUTOR-authored and changes test harness TypeScript, a documented scope deviation if used."
+}

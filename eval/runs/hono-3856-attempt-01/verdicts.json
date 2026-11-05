@@ -1,0 +1,43 @@
+{
+  "repository": "honojs/hono",
+  "pr": "https://github.com/honojs/hono/pull/3856",
+  "case_id": "3856",
+  "languages": [
+    "typescript"
+  ],
+  "reviewer": "sub-agent eval-trpc (automated)",
+  "verdict_source": "automated",
+  "commands": [
+    "cwd=/dev/shm/trpc-eval/rio-eval-31lh7r2g argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/honojs/hono.git\", \"/dev/shm/trpc-eval/rio-eval-31lh7r2g/head\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-31lh7r2g/head argv=[\"git\", \"fetch\", \"origin\", \"ecf5a0b2aeaf29c26ffe1eaf41520f867510cb17\", \"a682b1b55e37f104a3d6593a91b8d59d018cfc20\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-31lh7r2g/head argv=[\"git\", \"merge-base\", \"ecf5a0b2aeaf29c26ffe1eaf41520f867510cb17\", \"a682b1b55e37f104a3d6593a91b8d59d018cfc20\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-31lh7r2g/head argv=[\"git\", \"checkout\", \"--detach\", \"a682b1b55e37f104a3d6593a91b8d59d018cfc20\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-31lh7r2g argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/dev/shm/trpc-eval/rio-eval-31lh7r2g/head\", \"/dev/shm/trpc-eval/rio-eval-31lh7r2g/base\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-31lh7r2g/base argv=[\"git\", \"checkout\", \"--detach\", \"ecf5a0b2aeaf29c26ffe1eaf41520f867510cb17\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-31lh7r2g/base argv=[\"corepack\", \"yarn@1.22.22\", \"install\", \"--frozen-lockfile\", \"--non-interactive\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-31lh7r2g/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-31lh7r2g/head argv=[\"corepack\", \"yarn@1.22.22\", \"install\", \"--frozen-lockfile\", \"--non-interactive\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-31lh7r2g/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-31lh7r2g/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-31lh7r2g/head argv=[\"node\", \"--version\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-31lh7r2g/head argv=[\"npm\", \"--version\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-31lh7r2g/head argv=[\"corepack\", \"--version\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-31lh7r2g/head argv=[\"python3\", \"--version\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-31lh7r2g/head argv=[\"uv\", \"--version\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-31lh7r2g/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-3856-attempt-01/profile.yaml\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-31lh7r2g/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-31lh7r2g/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"ecf5a0b2aeaf29c26ffe1eaf41520f867510cb17\", \"--format\", \"json\", \"--offline\", \"--profile\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-3856-attempt-01/profile.yaml\"]"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-3856-attempt-01/commands.json; Rio binary SHA-256: 512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+    "EXCLUDED: every typecheck/lint/coverage head check skipped dependency_mismatch. No base classification, no scored recall/precision/usefulness. All required Yarn selectors listed in commands.json; do not enable dependency trust.",
+    "Oracle corrections and NO_COLOR environment removal recorded in ../hono-evidence/setup-corrections.json."
+  ],
+  "independently_clean": true,
+  "positive_control": {
+    "kind": "none",
+    "expected": []
+  },
+  "misses": [],
+  "findings": {}
+}

@@ -1,0 +1,1 @@
+{"author_association":"MEMBER","base":"baa9c19679d215c65770e3d066d177703f104371","body":"I caused a bug where  `id` in `sse({})`  wasn't propagated. Fixed it and added tests that the right thing is actually propagated","head":"124440fafb43a33859cd1f5c3232b2d1498742eb","merged_at":"2024-06-22T18:21:05Z","number":5819,"title":"fix(sse): `sse()`-id not propagated","user":"KATT"}

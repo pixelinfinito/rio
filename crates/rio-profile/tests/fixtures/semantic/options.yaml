@@ -1,0 +1,4 @@
+version: 1
+name: invalid-options
+extends: rio/base
+steps: [{id: checks, uses: rio/checks, with: {coverage: "yes"}}]

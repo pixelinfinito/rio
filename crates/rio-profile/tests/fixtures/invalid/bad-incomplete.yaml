@@ -1,0 +1,3 @@
+version: 1
+name: bad
+fail_on: {incomplete: "yes"}

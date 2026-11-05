@@ -1,0 +1,16 @@
+
+ RUN  v3.2.6 /tmp/rio-acceptance-immer
+
+ ✓ .rio/cache/baselines/a42c121e5ee740aec9b4f128e93858dacbe3847e/tree/__tests__/base.js (3683 tests | 3638 skipped) 66ms
+ ✓ .rio/cache/baselines/fee2c4fa1585d5131fc28a991853c692647632f7/tree/__tests__/base.js (3503 tests | 3458 skipped) 82ms
+ ✓ .rio/cache/heads/904bc3c65f60c307b82fab5643bd6b2b9b684eddc393cfa18042c9cd05635d35/tree/__tests__/base.js (3683 tests | 3638 skipped) 61ms
+ ✓ .rio/cache/heads/f783f9c390a34302d15ecf3337be0d9f8198645c63af9af41f45353a97e43ae6/tree/__tests__/base.js (3503 tests | 3458 skipped) 66ms
+ ↓ .rio/cache/heads/d61526fbd552237fc2073b497c9d3d63111c1a71307e418fb13f161a75ff4c03/tree/__tests__/base.js (3377 tests | 3377 skipped)
+ ✓ __tests__/base.js (3395 tests | 3350 skipped) 54ms
+ ↓ .rio/cache/baselines/8848a5b16938e5681a890d73de7bda24b5080498/tree/__tests__/base.js (3350 tests | 3350 skipped)
+
+ Test Files  5 passed | 2 skipped (7)
+      Tests  225 passed | 24269 skipped (24494)
+   Start at  20:01:12
+   Duration  6.24s (transform 3.79s, setup 0ms, collect 6.66s, tests 330ms, environment 3ms, prepare 954ms)
+

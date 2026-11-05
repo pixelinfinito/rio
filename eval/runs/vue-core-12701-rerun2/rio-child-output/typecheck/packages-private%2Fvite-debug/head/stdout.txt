@@ -1,0 +1,6 @@
+main.ts(1,27): error TS2307: Cannot find module 'vue' or its corresponding type declarations.
+main.ts(2,17): error TS2307: Cannot find module './App.vue' or its corresponding type declarations.
+../../../../../../../../head/node_modules/.pnpm/@vitejs+plugin-vue@5.2.4_vite@5.4.15_@types+node@22.14.1_sass@1.87.0__vue@packages+vue/node_modules/@vitejs/plugin-vue/dist/index.d.mts(3,10): error TS2305: Module '"vue/compiler-sfc"' has no exported member 'SFCScriptCompileOptions'.
+../../../../../../../../head/node_modules/.pnpm/@vitejs+plugin-vue@5.2.4_vite@5.4.15_@types+node@22.14.1_sass@1.87.0__vue@packages+vue/node_modules/@vitejs/plugin-vue/dist/index.d.mts(3,35): error TS2305: Module '"vue/compiler-sfc"' has no exported member 'SFCTemplateCompileOptions'.
+../../../../../../../../head/node_modules/.pnpm/@vitejs+plugin-vue@5.2.4_vite@5.4.15_@types+node@22.14.1_sass@1.87.0__vue@packages+vue/node_modules/@vitejs/plugin-vue/dist/index.d.mts(3,62): error TS2305: Module '"vue/compiler-sfc"' has no exported member 'SFCStyleCompileOptions'.
+../../../../../../../../head/packages/vue/compiler-sfc/index.d.mts(1,15): error TS2307: Cannot find module '@vue/compiler-sfc' or its corresponding type declarations.

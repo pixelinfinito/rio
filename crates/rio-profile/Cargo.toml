@@ -1,0 +1,27 @@
+[package]
+name = "rio-profile"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+serde_json.workspace = true
+serde_yaml.workspace = true
+jsonschema.workspace = true
+serde.workspace = true
+thiserror.workspace = true
+blake3.workspace = true
+regex.workspace = true
+globset.workspace = true
+include_dir.workspace = true
+rio-core = { path = "../rio-core" }
+
+[dev-dependencies]
+tempfile.workspace = true
+proptest.workspace = true
+insta.workspace = true

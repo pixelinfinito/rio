@@ -1,0 +1,8 @@
+Using CPython 3.12.12
+Creating virtual environment at: .venv
+Resolved 171 packages in 10ms
+   Building pydantic @ file:///dev/shm/rio-pydantic/tmp/rio-eval-stumf9ve/base
+   Building pydantic-core @ file:///dev/shm/rio-pydantic/tmp/rio-eval-stumf9ve/base/pydantic-core
+      Built pydantic @ file:///dev/shm/rio-pydantic/tmp/rio-eval-stumf9ve/base
+
+Command '['uv', 'sync', '--locked', '--python', '3.12.12', '--all-groups', '--all-packages', '--all-extras', '--no-editable-package', 'pydantic']' timed out after 1199.9999430440366 seconds

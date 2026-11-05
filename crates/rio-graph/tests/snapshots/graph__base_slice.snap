@@ -1,0 +1,87 @@
+---
+source: crates/rio-graph/tests/graph.rs
+expression: slices.base
+---
+{
+  "nodes": [
+    {
+      "id": "3e6e8a9419be4afdcb183b65df114afd9c3b039027545637a187b219a3d87201",
+      "kind": "function",
+      "path": "src/caller.ts",
+      "symbol_path": "caller.caller",
+      "name": "caller",
+      "line_start": 2,
+      "line_end": 2,
+      "version": "base",
+      "seed": false,
+      "hop": 1,
+      "content_hash": "cb4bf634361c3446ffded4b72ceddc95911b6a04a4ca467db41dfdfb229dee40"
+    },
+    {
+      "id": "c684a9b7f959ba8e61fa06677c600072f36f7904c3802d175295590462011bec",
+      "kind": "function",
+      "path": "src/math.ts",
+      "symbol_path": "math.format",
+      "name": "format",
+      "line_start": 1,
+      "line_end": 3,
+      "version": "base",
+      "seed": true,
+      "hop": 0,
+      "content_hash": "16a15d0833efafefbd54f02e602342b345a7239249a4eb3a97fc9f9fc20566da"
+    },
+    {
+      "id": "dffaf59e1b050ef1a7a135622bff311b5e600e24c15d6f32add9250be59acb08",
+      "kind": "function",
+      "path": "src/outer.ts",
+      "symbol_path": "outer.outer",
+      "name": "outer",
+      "line_start": 2,
+      "line_end": 2,
+      "version": "base",
+      "seed": false,
+      "hop": 2,
+      "content_hash": "ac33b111883de6cecb36c90215af8a8baada0c996ffe647f83042670d5dd6eed"
+    },
+    {
+      "id": "9cef7336694c013769f70fabc4da3b71f754ffe42c283f89185ce187c6e8d347",
+      "kind": "test",
+      "path": "tests/math.test.ts",
+      "symbol_path": "math.test.test_format",
+      "name": "test_format",
+      "line_start": 2,
+      "line_end": 2,
+      "version": "base",
+      "seed": false,
+      "hop": 1,
+      "content_hash": "fcc25ac21e02b7adad4a529807a8973512d85990ec461f315799376ffec2915d"
+    }
+  ],
+  "edges": [
+    {
+      "from": "3e6e8a9419be4afdcb183b65df114afd9c3b039027545637a187b219a3d87201",
+      "to": "c684a9b7f959ba8e61fa06677c600072f36f7904c3802d175295590462011bec",
+      "kind": "calls",
+      "source": "tree-sitter",
+      "confidence": "resolved",
+      "version": "base"
+    },
+    {
+      "from": "9cef7336694c013769f70fabc4da3b71f754ffe42c283f89185ce187c6e8d347",
+      "to": "c684a9b7f959ba8e61fa06677c600072f36f7904c3802d175295590462011bec",
+      "kind": "tests",
+      "source": "tree-sitter",
+      "confidence": "resolved",
+      "version": "base"
+    },
+    {
+      "from": "dffaf59e1b050ef1a7a135622bff311b5e600e24c15d6f32add9250be59acb08",
+      "to": "3e6e8a9419be4afdcb183b65df114afd9c3b039027545637a187b219a3d87201",
+      "kind": "calls",
+      "source": "tree-sitter",
+      "confidence": "resolved",
+      "version": "base"
+    }
+  ],
+  "truncated": false
+}

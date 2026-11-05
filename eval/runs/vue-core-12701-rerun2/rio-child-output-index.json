@@ -1,0 +1,292 @@
+{
+  "coverage/packages-private%2Fsfc-playground/head/coverage.json": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/coverage/packages-private%2Fsfc-playground/head/coverage.json",
+    "bytes": 2,
+    "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  },
+  "coverage/packages-private%2Fsfc-playground/head/process-0.stderr.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/coverage/packages-private%2Fsfc-playground/head/process-0.stderr.txt",
+    "bytes": 915,
+    "sha256": "5efbaa9fcebc68bbba50f53635507b67b277822b1cf1c1b4beebe5fcca8dee75"
+  },
+  "coverage/packages-private%2Fsfc-playground/head/process-0.stdout.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/coverage/packages-private%2Fsfc-playground/head/process-0.stdout.txt",
+    "bytes": 166,
+    "sha256": "1e859f687b174814d58456205a775316cf3372c294aef9441f2a0b99f25297fb"
+  },
+  "coverage/packages-private%2Fsfc-playground/head/stderr.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/coverage/packages-private%2Fsfc-playground/head/stderr.txt",
+    "bytes": 915,
+    "sha256": "5efbaa9fcebc68bbba50f53635507b67b277822b1cf1c1b4beebe5fcca8dee75"
+  },
+  "coverage/packages-private%2Fsfc-playground/head/stdout.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/coverage/packages-private%2Fsfc-playground/head/stdout.txt",
+    "bytes": 166,
+    "sha256": "1e859f687b174814d58456205a775316cf3372c294aef9441f2a0b99f25297fb"
+  },
+  "coverage/packages%2Fvue-compat/head/coverage.json": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/coverage/packages%2Fvue-compat/head/coverage.json",
+    "bytes": 194373,
+    "sha256": "3c8b2edd8a7825b9eab121924c162983bba525b90f7b25bd2c8aa2703cc5eb5e"
+  },
+  "coverage/packages%2Fvue-compat/head/process-0.stderr.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/coverage/packages%2Fvue-compat/head/process-0.stderr.txt",
+    "bytes": 324,
+    "sha256": "47bdfcce656fcd79e104eacfa60c98ef752995ef91c747dd24701d3900eb960e"
+  },
+  "coverage/packages%2Fvue-compat/head/process-0.stdout.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/coverage/packages%2Fvue-compat/head/process-0.stdout.txt",
+    "bytes": 1210,
+    "sha256": "677478645adc34f5d3592589d29afc2689573b1cc8d8b50158b1641755b6c99c"
+  },
+  "coverage/packages%2Fvue-compat/head/stderr.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/coverage/packages%2Fvue-compat/head/stderr.txt",
+    "bytes": 324,
+    "sha256": "47bdfcce656fcd79e104eacfa60c98ef752995ef91c747dd24701d3900eb960e"
+  },
+  "coverage/packages%2Fvue-compat/head/stdout.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/coverage/packages%2Fvue-compat/head/stdout.txt",
+    "bytes": 1210,
+    "sha256": "677478645adc34f5d3592589d29afc2689573b1cc8d8b50158b1641755b6c99c"
+  },
+  "coverage/packages-private%2Fdts-test/head/coverage.json": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/coverage/packages-private%2Fdts-test/head/coverage.json",
+    "bytes": 2,
+    "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  },
+  "coverage/packages-private%2Fdts-test/head/process-0.stderr.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/coverage/packages-private%2Fdts-test/head/process-0.stderr.txt",
+    "bytes": 909,
+    "sha256": "28476d00859a966a194bb9b11c069ecc3ce9cd7b13d3f64cc374f07fc0f5abf0"
+  },
+  "coverage/packages-private%2Fdts-test/head/process-0.stdout.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/coverage/packages-private%2Fdts-test/head/process-0.stdout.txt",
+    "bytes": 166,
+    "sha256": "ce8949354d8a86d18ef07a006e500b37c50d2164d5f56af4bd90f94ff9231eb7"
+  },
+  "coverage/packages-private%2Fdts-test/head/stderr.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/coverage/packages-private%2Fdts-test/head/stderr.txt",
+    "bytes": 909,
+    "sha256": "28476d00859a966a194bb9b11c069ecc3ce9cd7b13d3f64cc374f07fc0f5abf0"
+  },
+  "coverage/packages-private%2Fdts-test/head/stdout.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/coverage/packages-private%2Fdts-test/head/stdout.txt",
+    "bytes": 166,
+    "sha256": "ce8949354d8a86d18ef07a006e500b37c50d2164d5f56af4bd90f94ff9231eb7"
+  },
+  "coverage/packages%2Fvue/head/coverage.json": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/coverage/packages%2Fvue/head/coverage.json",
+    "bytes": 2,
+    "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  },
+  "coverage/packages%2Fvue/head/process-0.stderr.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/coverage/packages%2Fvue/head/process-0.stderr.txt",
+    "bytes": 4241,
+    "sha256": "64d7c0c2a15f355ac3900b97dc0738e0e11ccdbe51758b72480ccefb9bdfece5"
+  },
+  "coverage/packages%2Fvue/head/process-0.stdout.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/coverage/packages%2Fvue/head/process-0.stdout.txt",
+    "bytes": 8558,
+    "sha256": "b8961889c1c516389870926aa8849c781ce7f1e1ab59bd7b96a167e8b6448e46"
+  },
+  "coverage/packages%2Fvue/head/stderr.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/coverage/packages%2Fvue/head/stderr.txt",
+    "bytes": 4241,
+    "sha256": "64d7c0c2a15f355ac3900b97dc0738e0e11ccdbe51758b72480ccefb9bdfece5"
+  },
+  "coverage/packages%2Fvue/head/stdout.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/coverage/packages%2Fvue/head/stdout.txt",
+    "bytes": 8558,
+    "sha256": "b8961889c1c516389870926aa8849c781ce7f1e1ab59bd7b96a167e8b6448e46"
+  },
+  "coverage/packages%2Fserver-renderer/head/coverage.json": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/coverage/packages%2Fserver-renderer/head/coverage.json",
+    "bytes": 192191,
+    "sha256": "113221337c334e3c6d43c1478a8f1d2d810db8653ed856cb468d4dea335db493"
+  },
+  "coverage/packages%2Fserver-renderer/head/process-0.stderr.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/coverage/packages%2Fserver-renderer/head/process-0.stderr.txt",
+    "bytes": 324,
+    "sha256": "47bdfcce656fcd79e104eacfa60c98ef752995ef91c747dd24701d3900eb960e"
+  },
+  "coverage/packages%2Fserver-renderer/head/process-0.stdout.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/coverage/packages%2Fserver-renderer/head/process-0.stdout.txt",
+    "bytes": 1704,
+    "sha256": "9d7d63885148ae377460e9c2fc99fe1206be5bcac94ab2fe1fd7da8c6c47f9c0"
+  },
+  "coverage/packages%2Fserver-renderer/head/stderr.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/coverage/packages%2Fserver-renderer/head/stderr.txt",
+    "bytes": 324,
+    "sha256": "47bdfcce656fcd79e104eacfa60c98ef752995ef91c747dd24701d3900eb960e"
+  },
+  "coverage/packages%2Fserver-renderer/head/stdout.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/coverage/packages%2Fserver-renderer/head/stdout.txt",
+    "bytes": 1704,
+    "sha256": "9d7d63885148ae377460e9c2fc99fe1206be5bcac94ab2fe1fd7da8c6c47f9c0"
+  },
+  "coverage/packages-private%2Fdts-built-test/head/coverage.json": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/coverage/packages-private%2Fdts-built-test/head/coverage.json",
+    "bytes": 2,
+    "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  },
+  "coverage/packages-private%2Fdts-built-test/head/process-0.stderr.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/coverage/packages-private%2Fdts-built-test/head/process-0.stderr.txt",
+    "bytes": 915,
+    "sha256": "966b8faa6663e9c4f3a22b546f3a3376c499107773d87213397a66d3e2de674a"
+  },
+  "coverage/packages-private%2Fdts-built-test/head/process-0.stdout.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/coverage/packages-private%2Fdts-built-test/head/process-0.stdout.txt",
+    "bytes": 166,
+    "sha256": "d4ce1ce628a127b0ce0a873c88585219e3b4f0d07688e2ea33a5a62422f31af6"
+  },
+  "coverage/packages-private%2Fdts-built-test/head/stderr.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/coverage/packages-private%2Fdts-built-test/head/stderr.txt",
+    "bytes": 915,
+    "sha256": "966b8faa6663e9c4f3a22b546f3a3376c499107773d87213397a66d3e2de674a"
+  },
+  "coverage/packages-private%2Fdts-built-test/head/stdout.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/coverage/packages-private%2Fdts-built-test/head/stdout.txt",
+    "bytes": 166,
+    "sha256": "d4ce1ce628a127b0ce0a873c88585219e3b4f0d07688e2ea33a5a62422f31af6"
+  },
+  "typecheck/packages%2Fvue-compat/head/stderr.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/typecheck/packages%2Fvue-compat/head/stderr.txt",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "typecheck/packages%2Fvue-compat/head/stdout.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/typecheck/packages%2Fvue-compat/head/stdout.txt",
+    "bytes": 168,
+    "sha256": "b675abeb91f15fe8e45adeecf65ce777b1a3e3670d58c51f76d33f421bd60a6b"
+  },
+  "typecheck/packages-private%2Fvite-debug/head/stderr.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/typecheck/packages-private%2Fvite-debug/head/stderr.txt",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "typecheck/packages-private%2Fvite-debug/head/stdout.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/typecheck/packages-private%2Fvite-debug/head/stdout.txt",
+    "bytes": 1211,
+    "sha256": "8910cfe2a46970cce8e0914e4b6bcf7d229c4c3667f26e4249c4f1a4cc83477f"
+  },
+  "typecheck/packages%2Fvue/head/stderr.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/typecheck/packages%2Fvue/head/stderr.txt",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "typecheck/packages%2Fvue/head/stdout.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/typecheck/packages%2Fvue/head/stdout.txt",
+    "bytes": 168,
+    "sha256": "b675abeb91f15fe8e45adeecf65ce777b1a3e3670d58c51f76d33f421bd60a6b"
+  },
+  "typecheck/packages%2Fserver-renderer/head/stderr.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/typecheck/packages%2Fserver-renderer/head/stderr.txt",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "typecheck/packages%2Fserver-renderer/head/stdout.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/typecheck/packages%2Fserver-renderer/head/stdout.txt",
+    "bytes": 168,
+    "sha256": "b675abeb91f15fe8e45adeecf65ce777b1a3e3670d58c51f76d33f421bd60a6b"
+  },
+  "typecheck/packages-private%2Fdts-built-test/head/stderr.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/typecheck/packages-private%2Fdts-built-test/head/stderr.txt",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "typecheck/packages-private%2Fdts-built-test/head/stdout.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/typecheck/packages-private%2Fdts-built-test/head/stdout.txt",
+    "bytes": 99,
+    "sha256": "01e93a3001caca8d88f5b9f10b2cd1088185a854d300061d385c13b89faa56ab"
+  },
+  "lint/packages%2Fcompiler-sfc/head/stderr.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/lint/packages%2Fcompiler-sfc/head/stderr.txt",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "lint/packages%2Fcompiler-sfc/head/stdout.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/lint/packages%2Fcompiler-sfc/head/stdout.txt",
+    "bytes": 2744,
+    "sha256": "0a3ab130bf4c5068b1f8102cc7bd7b372f87f9630963175cbe5b1058e36960f5"
+  },
+  "coverage/packages-private%2Fvite-debug/head/coverage.json": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/coverage/packages-private%2Fvite-debug/head/coverage.json",
+    "bytes": 2,
+    "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  },
+  "coverage/packages-private%2Fvite-debug/head/process-0.stderr.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/coverage/packages-private%2Fvite-debug/head/process-0.stderr.txt",
+    "bytes": 911,
+    "sha256": "905b5a370565ef52d83365bd473dda59203a22db9d589f33f26a1cc347d95945"
+  },
+  "coverage/packages-private%2Fvite-debug/head/process-0.stdout.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/coverage/packages-private%2Fvite-debug/head/process-0.stdout.txt",
+    "bytes": 166,
+    "sha256": "1ef6bbe2e574e5d45c71951bbfc4f5d95b55deadf54ab662500e2f0642591244"
+  },
+  "coverage/packages-private%2Fvite-debug/head/stderr.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/coverage/packages-private%2Fvite-debug/head/stderr.txt",
+    "bytes": 911,
+    "sha256": "905b5a370565ef52d83365bd473dda59203a22db9d589f33f26a1cc347d95945"
+  },
+  "coverage/packages-private%2Fvite-debug/head/stdout.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/coverage/packages-private%2Fvite-debug/head/stdout.txt",
+    "bytes": 166,
+    "sha256": "1ef6bbe2e574e5d45c71951bbfc4f5d95b55deadf54ab662500e2f0642591244"
+  },
+  "typecheck/packages-private%2Fdts-test/head/stderr.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/typecheck/packages-private%2Fdts-test/head/stderr.txt",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "typecheck/packages-private%2Fdts-test/head/stdout.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/typecheck/packages-private%2Fdts-test/head/stdout.txt",
+    "bytes": 388925,
+    "sha256": "078adf22dadc935ed0df9dc3c2c0dfec6bcc7e9585c993add77dce35d0b20ad5"
+  },
+  "typecheck/packages-private%2Fsfc-playground/head/stderr.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/typecheck/packages-private%2Fsfc-playground/head/stderr.txt",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "typecheck/packages-private%2Fsfc-playground/head/stdout.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/typecheck/packages-private%2Fsfc-playground/head/stdout.txt",
+    "bytes": 388907,
+    "sha256": "754030df3546bbc60af04bc33ccb716012af1036a512c4efebc98f3236861bb1"
+  },
+  "coverage/packages%2Fcompiler-sfc/head/coverage.json": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/coverage/packages%2Fcompiler-sfc/head/coverage.json",
+    "bytes": 193238,
+    "sha256": "6606b039e0121047a8aaaa8452fb6d3f833e98715be647209887370bd2080d9b"
+  },
+  "coverage/packages%2Fcompiler-sfc/head/process-0.stderr.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/coverage/packages%2Fcompiler-sfc/head/process-0.stderr.txt",
+    "bytes": 661,
+    "sha256": "c264042a682e866cd2eadb7a3797f9c3f039d0568255350977d14de6296f38da"
+  },
+  "coverage/packages%2Fcompiler-sfc/head/process-0.stdout.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/coverage/packages%2Fcompiler-sfc/head/process-0.stdout.txt",
+    "bytes": 2151,
+    "sha256": "ec8ddcb2228b0c207695cd62e3401e3031b9266ddda50fa024cfede780806e1a"
+  },
+  "coverage/packages%2Fcompiler-sfc/head/stderr.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/coverage/packages%2Fcompiler-sfc/head/stderr.txt",
+    "bytes": 661,
+    "sha256": "c264042a682e866cd2eadb7a3797f9c3f039d0568255350977d14de6296f38da"
+  },
+  "coverage/packages%2Fcompiler-sfc/head/stdout.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/coverage/packages%2Fcompiler-sfc/head/stdout.txt",
+    "bytes": 2151,
+    "sha256": "ec8ddcb2228b0c207695cd62e3401e3031b9266ddda50fa024cfede780806e1a"
+  },
+  "typecheck/packages%2Fcompiler-sfc/head/stderr.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/typecheck/packages%2Fcompiler-sfc/head/stderr.txt",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "typecheck/packages%2Fcompiler-sfc/head/stdout.txt": {
+    "source": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/checks/typecheck/packages%2Fcompiler-sfc/head/stdout.txt",
+    "bytes": 152,
+    "sha256": "7c8b35390ea50fcdf3561e09f52681ddc3baa6d0a448f8d1d7c6f799dde515c7"
+  }
+}

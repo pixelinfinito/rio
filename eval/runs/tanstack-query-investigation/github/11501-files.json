@@ -1,0 +1,122 @@
+[
+  {
+    "sha": "56ebfc2ae1d31ca959ffaef2539bb317e634bbfd",
+    "filename": ".changeset/small-devtools-dependencies.md",
+    "status": "added",
+    "additions": 8,
+    "deletions": 0,
+    "changes": 8,
+    "blob_url": "https://github.com/TanStack/query/blob/601c564d7e41130c54a56b5a6a90ec0edb767ebe/.changeset%2Fsmall-devtools-dependencies.md",
+    "raw_url": "https://github.com/TanStack/query/raw/601c564d7e41130c54a56b5a6a90ec0edb767ebe/.changeset%2Fsmall-devtools-dependencies.md",
+    "contents_url": "https://api.github.com/repos/TanStack/query/contents/.changeset%2Fsmall-devtools-dependencies.md?ref=601c564d7e41130c54a56b5a6a90ec0edb767ebe",
+    "patch": "@@ -0,0 +1,8 @@\n+---\n+'@tanstack/query-devtools': patch\n+'@tanstack/react-query-devtools': patch\n+---\n+\n+Declare dependencies used by the published devtools source and type declarations so they resolve with strict package managers. Keep runtime dependencies bundled in the compiled devtools.\n+\n+Declare the React types used by React Query Devtools as a peer dependency, compatible with React 18 and 19."
+  },
+  {
+    "sha": "c2c18f10a9fdb17a212c2f01fa92da7b254f7bcd",
+    "filename": "knip.json",
+    "status": "removed",
+    "additions": 0,
+    "deletions": 28,
+    "changes": 28,
+    "blob_url": "https://github.com/TanStack/query/blob/12027efd5c709b95064848239e67fa7bb0155864/knip.json",
+    "raw_url": "https://github.com/TanStack/query/raw/12027efd5c709b95064848239e67fa7bb0155864/knip.json",
+    "contents_url": "https://api.github.com/repos/TanStack/query/contents/knip.json?ref=12027efd5c709b95064848239e67fa7bb0155864",
+    "patch": "@@ -1,28 +0,0 @@\n-{\n-  \"$schema\": \"https://unpkg.com/knip@6/schema.json\",\n-  \"ignore\": [\"scripts/*.{j,t}s\", \"**/ts-fixture/file.ts\"],\n-  \"treatConfigHintsAsErrors\": true,\n-  \"treatTagHintsAsErrors\": true,\n-  \"ignoreDependencies\": [\n-    \"@types/react\",\n-    \"@types/react-dom\",\n-    \"react\",\n-    \"react-dom\"\n-  ],\n-  \"ignoreWorkspaces\": [\"examples/**\", \"integrations/**\"],\n-  \"workspaces\": {\n-    \"packages/angular-query-experimental\": {\n-      \"entry\": [\n-        \"src/devtools/production/index.ts\",\n-        \"src/devtools-panel/production/index.ts\"\n-      ]\n-    },\n-    \"packages/query-codemods\": {\n-      \"entry\": [\"src/v4/**/*.cjs\", \"src/v5/**/*.cjs\"],\n-      \"ignore\": [\"**/__testfixtures__/**\"]\n-    },\n-    \"packages/vue-query\": {\n-      \"ignoreDependencies\": [\"vue2\", \"vue2.7\"]\n-    }\n-  }\n-}"
+  },
+  {
+    "sha": "68d2c4a93d7db3b597447bcd21be8ee3aa30f1d6",
+    "filename": "knip.ts",
+    "status": "added",
+    "additions": 33,
+    "deletions": 0,
+    "changes": 33,
+    "blob_url": "https://github.com/TanStack/query/blob/601c564d7e41130c54a56b5a6a90ec0edb767ebe/knip.ts",
+    "raw_url": "https://github.com/TanStack/query/raw/601c564d7e41130c54a56b5a6a90ec0edb767ebe/knip.ts",
+    "contents_url": "https://api.github.com/repos/TanStack/query/contents/knip.ts?ref=601c564d7e41130c54a56b5a6a90ec0edb767ebe",
+    "patch": "@@ -0,0 +1,33 @@\n+import angularQuery from './packages/angular-query-experimental/package.json'\n+import type { KnipConfig } from 'knip'\n+\n+export default {\n+  ignore: ['scripts/*.{j,t}s', '**/ts-fixture/file.ts'],\n+  treatConfigHintsAsErrors: true,\n+  treatTagHintsAsErrors: true,\n+  ignoreDependencies: ['@types/react', '@types/react-dom'],\n+  ignoreWorkspaces: ['examples/**', 'integrations/**'],\n+  workspaces: {\n+    '.': {\n+      ignoreDependencies: ['react', 'react-dom'],\n+    },\n+    'packages/angular-query-experimental': {\n+      entry: [\n+        'src/devtools/production/index.ts!',\n+        'src/devtools-panel/production/index.ts!',\n+      ],\n+      // Strict mode excludes optional dependencies. Read the declared names\n+      // so removing a declaration still causes an unlisted dependency error.\n+      ignoreDependencies: Object.keys(\n+        angularQuery.optionalDependencies ?? {},\n+      ).map((dependency) => `${dependency}!`),\n+    },\n+    'packages/query-codemods': {\n+      entry: ['src/v4/**/*.cjs', 'src/v5/**/*.cjs'],\n+      ignore: ['**/__testfixtures__/**'],\n+    },\n+    'packages/vue-query': {\n+      ignoreDependencies: ['vue2', 'vue2.7'],\n+    },\n+  },\n+} satisfies KnipConfig"
+  },
+  {
+    "sha": "8f8347b50c298b5419e406754f91e7e47915306a",
+    "filename": "nx.json",
+    "status": "modified",
+    "additions": 6,
+    "deletions": 0,
+    "changes": 6,
+    "blob_url": "https://github.com/TanStack/query/blob/601c564d7e41130c54a56b5a6a90ec0edb767ebe/nx.json",
+    "raw_url": "https://github.com/TanStack/query/raw/601c564d7e41130c54a56b5a6a90ec0edb767ebe/nx.json",
+    "contents_url": "https://api.github.com/repos/TanStack/query/contents/nx.json?ref=601c564d7e41130c54a56b5a6a90ec0edb767ebe",
+    "patch": "@@ -36,6 +36,12 @@\n     },\n     \"test:knip\": {\n       \"cache\": true,\n+      \"dependsOn\": [\n+        {\n+          \"target\": \"build\",\n+          \"projects\": [\"directory:packages/*\"]\n+        }\n+      ],\n       \"inputs\": [\"{workspaceRoot}/**/*\"]\n     },\n     \"test:sherif\": {"
+  },
+  {
+    "sha": "90774d152ea03690218ac01978edfa58169d9f3f",
+    "filename": "package.json",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "changes": 2,
+    "blob_url": "https://github.com/TanStack/query/blob/601c564d7e41130c54a56b5a6a90ec0edb767ebe/package.json",
+    "raw_url": "https://github.com/TanStack/query/raw/601c564d7e41130c54a56b5a6a90ec0edb767ebe/package.json",
+    "contents_url": "https://api.github.com/repos/TanStack/query/contents/package.json?ref=601c564d7e41130c54a56b5a6a90ec0edb767ebe",
+    "patch": "@@ -22,7 +22,7 @@\n     \"test:lib:dev\": \"pnpm run test:lib && nx watch --all -- pnpm run test:lib\",\n     \"test:build\": \"nx affected --target=test:build --exclude=examples/**\",\n     \"test:types\": \"nx affected --target=test:types --exclude=examples/**\",\n-    \"test:knip\": \"knip\",\n+    \"test:knip\": \"knip && knip --strict --include unlisted --no-gitignore\",\n     \"test:docs\": \"node scripts/verify-links.ts\",\n     \"build\": \"nx affected --target=build --exclude=examples/** --exclude=integrations/**\",\n     \"build:all\": \"nx run-many --target=build --exclude=examples/** --exclude=integrations/**\","
+  },
+  {
+    "sha": "4a2c65908726dfa886490652c315ef6c7dab1e16",
+    "filename": "packages/query-devtools/package.json",
+    "status": "modified",
+    "additions": 6,
+    "deletions": 4,
+    "changes": 10,
+    "blob_url": "https://github.com/TanStack/query/blob/601c564d7e41130c54a56b5a6a90ec0edb767ebe/packages%2Fquery-devtools%2Fpackage.json",
+    "raw_url": "https://github.com/TanStack/query/raw/601c564d7e41130c54a56b5a6a90ec0edb767ebe/packages%2Fquery-devtools%2Fpackage.json",
+    "contents_url": "https://api.github.com/repos/TanStack/query/contents/packages%2Fquery-devtools%2Fpackage.json?ref=601c564d7e41130c54a56b5a6a90ec0edb767ebe",
+    "patch": "@@ -60,20 +60,22 @@\n     \"src\",\n     \"!src/__tests__\"\n   ],\n-  \"devDependencies\": {\n+  \"dependencies\": {\n     \"@kobalte/core\": \"^0.13.4\",\n     \"@solid-primitives/keyed\": \"^1.2.2\",\n     \"@solid-primitives/resize-observer\": \"^2.0.26\",\n     \"@solid-primitives/storage\": \"^1.3.11\",\n-    \"@solidjs/testing-library\": \"^0.8.10\",\n     \"@tanstack/match-sorter-utils\": \"^8.19.4\",\n     \"@tanstack/query-core\": \"workspace:*\",\n     \"clsx\": \"^2.1.1\",\n     \"goober\": \"^2.1.16\",\n-    \"npm-run-all2\": \"^5.0.0\",\n     \"solid-js\": \"^1.9.7\",\n     \"solid-transition-group\": \"^0.2.3\",\n-    \"superjson\": \"^2.2.2\",\n+    \"superjson\": \"^2.2.2\"\n+  },\n+  \"devDependencies\": {\n+    \"@solidjs/testing-library\": \"^0.8.10\",\n+    \"npm-run-all2\": \"^5.0.0\",\n     \"unplugin-solid\": \"^2.0.0\",\n     \"vite-plugin-solid\": \"^2.11.6\"\n   }"
+  },
+  {
+    "sha": "f2589ace17fd8e20a4b1e764038ada5c96259b1b",
+    "filename": "packages/query-devtools/tsdown.config.ts",
+    "status": "modified",
+    "additions": 6,
+    "deletions": 0,
+    "changes": 6,
+    "blob_url": "https://github.com/TanStack/query/blob/601c564d7e41130c54a56b5a6a90ec0edb767ebe/packages%2Fquery-devtools%2Ftsdown.config.ts",
+    "raw_url": "https://github.com/TanStack/query/raw/601c564d7e41130c54a56b5a6a90ec0edb767ebe/packages%2Fquery-devtools%2Ftsdown.config.ts",
+    "contents_url": "https://api.github.com/repos/TanStack/query/contents/packages%2Fquery-devtools%2Ftsdown.config.ts?ref=601c564d7e41130c54a56b5a6a90ec0edb767ebe",
+    "patch": "@@ -36,6 +36,12 @@ const baseConfig = {\n   format: ['esm', 'cjs'] as ['esm', 'cjs'],\n   outDir: 'build',\n   fixedExtension: false,\n+  // Published source needs these dependencies declared, but the compiled\n+  // devtools must still bundle them with the Solid browser runtime.\n+  deps: {\n+    alwaysBundle: [/./],\n+    dts: { alwaysBundle: [] },\n+  },\n   inputOptions: {\n     // Keep package imports in declaration output. Runtime Solid imports are\n     // bundled from the browser files by solidBrowserImports above."
+  },
+  {
+    "sha": "2d9f194c50fba2524880f208430243078ce6e97b",
+    "filename": "packages/query-test-utils/package.json",
+    "status": "modified",
+    "additions": 3,
+    "deletions": 0,
+    "changes": 3,
+    "blob_url": "https://github.com/TanStack/query/blob/601c564d7e41130c54a56b5a6a90ec0edb767ebe/packages%2Fquery-test-utils%2Fpackage.json",
+    "raw_url": "https://github.com/TanStack/query/raw/601c564d7e41130c54a56b5a6a90ec0edb767ebe/packages%2Fquery-test-utils%2Fpackage.json",
+    "contents_url": "https://api.github.com/repos/TanStack/query/contents/packages%2Fquery-test-utils%2Fpackage.json?ref=601c564d7e41130c54a56b5a6a90ec0edb767ebe",
+    "patch": "@@ -37,5 +37,8 @@\n   \"type\": \"module\",\n   \"devDependencies\": {\n     \"npm-run-all2\": \"^5.0.0\"\n+  },\n+  \"peerDependencies\": {\n+    \"vitest\": \"^4.0.18\"\n   }\n }"
+  },
+  {
+    "sha": "9eff9bfc1fc22f66a05f4ebf4180b9f532d5c8d4",
+    "filename": "packages/react-query-devtools/package.json",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 0,
+    "changes": 1,
+    "blob_url": "https://github.com/TanStack/query/blob/601c564d7e41130c54a56b5a6a90ec0edb767ebe/packages%2Freact-query-devtools%2Fpackage.json",
+    "raw_url": "https://github.com/TanStack/query/raw/601c564d7e41130c54a56b5a6a90ec0edb767ebe/packages%2Freact-query-devtools%2Fpackage.json",
+    "contents_url": "https://api.github.com/repos/TanStack/query/contents/packages%2Freact-query-devtools%2Fpackage.json?ref=601c564d7e41130c54a56b5a6a90ec0edb767ebe",
+    "patch": "@@ -88,6 +88,7 @@\n   },\n   \"peerDependencies\": {\n     \"@tanstack/react-query\": \"workspace:^\",\n+    \"@types/react\": \"^18 || ^19\",\n     \"react\": \"^18 || ^19\"\n   }\n }"
+  },
+  {
+    "sha": "5b5c1c96d4f549b550c2242654b28cff728d8ffe",
+    "filename": "pnpm-lock.yaml",
+    "status": "modified",
+    "additions": 75,
+    "deletions": 7,
+    "changes": 82,
+    "blob_url": "https://github.com/TanStack/query/blob/601c564d7e41130c54a56b5a6a90ec0edb767ebe/pnpm-lock.yaml",
+    "raw_url": "https://github.com/TanStack/query/raw/601c564d7e41130c54a56b5a6a90ec0edb767ebe/pnpm-lock.yaml",
+    "contents_url": "https://api.github.com/repos/TanStack/query/contents/pnpm-lock.yaml?ref=601c564d7e41130c54a56b5a6a90ec0edb767ebe",
+    "patch": "@@ -2750,7 +2750,7 @@ importers:\n         version: 5.0.2\n \n   packages/query-devtools:\n-    devDependencies:\n+    dependencies:\n       '@kobalte/core':\n         specifier: ^0.13.4\n         version: 0.13.11(solid-js@1.9.12)\n@@ -2763,9 +2763,6 @@ importers:\n       '@solid-primitives/storage':\n         specifier: ^1.3.11\n         version: 1.3.11(solid-js@1.9.12)\n-      '@solidjs/testing-library':\n-        specifier: ^0.8.10\n-        version: 0.8.10(@solidjs/router@0.15.4(solid-js@1.9.12))(solid-js@1.9.12)\n       '@tanstack/match-sorter-utils':\n         specifier: ^8.19.4\n         version: 8.19.4\n@@ -2778,9 +2775,6 @@ importers:\n       goober:\n         specifier: ^2.1.16\n         version: 2.1.18(csstype@3.2.3)\n-      npm-run-all2:\n-        specifier: ^5.0.0\n-        version: 5.0.2\n       solid-js:\n         specifier: ^1.9.7\n         version: 1.9.12\n@@ -2790,6 +2784,13 @@ importers:\n       superjson:\n         specifier: ^2.2.2\n         version: 2.2.6\n+    devDependencies:\n+      '@solidjs/testing-library':\n+        specifier: ^0.8.10\n+        version: 0.8.10(@solidjs/router@0.15.4(solid-js@1.9.12))(solid-js@1.9.12)\n+      npm-run-all2:\n+        specifier: ^5.0.0\n+        version: 5.0.2\n       unplugin-solid:\n         specifier: ^2.0.0\n         version: 2.0.0(@testing-library/jest-dom@6.9.1)(esbuild@0.27.4)(rolldown@1.2.4)(rollup@4.60.1)(solid-js@1.9.12)(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))(webpack@5.105.4(esbuild@0.27.4))\n@@ -2827,6 +2828,10 @@ importers:\n         version: 5.0.2\n \n   packages/query-test-utils:\n+    dependencies:\n+      vitest:\n+        specifier: ^4.0.18\n+        version: 4.1.2(@types/node@22.19.15)(jsdom@27.4.0)(msw@2.12.14(@types/node@22.19.15)(typescript@7.0.2))(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))\n     devDependencies:\n       npm-run-all2:\n         specifier: ^5.0.0\n@@ -22653,6 +22658,15 @@ snapshots:\n       msw: 2.12.14(@types/node@22.19.15)(typescript@6.0.3)\n       vite: 6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)\n \n+  '@vitest/mocker@4.1.2(msw@2.12.14(@types/node@22.19.15)(typescript@7.0.2))(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))':\n+    dependencies:\n+      '@vitest/spy': 4.1.2\n+      estree-walker: 3.0.3\n+      magic-string: 0.30.21\n+    optionalDependencies:\n+      msw: 2.12.14(@types/node@22.19.15)(typescript@7.0.2)\n+      vite: 6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)\n+\n   '@vitest/pretty-format@4.1.2':\n     dependencies:\n       tinyrainbow: 3.1.0\n@@ -28900,6 +28914,32 @@ snapshots:\n       - '@types/node'\n     optional: true\n \n+  msw@2.12.14(@types/node@22.19.15)(typescript@7.0.2):\n+    dependencies:\n+      '@inquirer/confirm': 5.1.21(@types/node@22.19.15)\n+      '@mswjs/interceptors': 0.41.3\n+      '@open-draft/deferred-promise': 2.2.0\n+      '@types/statuses': 2.0.6\n+      cookie: 1.1.1\n+      graphql: 16.13.2\n+      headers-polyfill: 4.0.3\n+      is-node-process: 1.2.0\n+      outvariant: 1.4.3\n+      path-to-regexp: 6.3.0\n+      picocolors: 1.1.1\n+      rettime: 0.10.1\n+      statuses: 2.0.2\n+      strict-event-emitter: 0.5.1\n+      tough-cookie: 6.0.1\n+      type-fest: 5.5.0\n+      until-async: 3.0.2\n+      yargs: 17.7.2\n+    optionalDependencies:\n+      typescript: 7.0.2\n+    transitivePeerDependencies:\n+      - '@types/node'\n+    optional: true\n+\n   muggle-string@0.4.1: {}\n \n   mute-stream@2.0.0: {}\n@@ -33060,6 +33100,34 @@ snapshots:\n     transitivePeerDependencies:\n       - msw\n \n+  vitest@4.1.2(@types/node@22.19.15)(jsdom@27.4.0)(msw@2.12.14(@types/node@22.19.15)(typescript@7.0.2))(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)):\n+    dependencies:\n+      '@vitest/expect': 4.1.2\n+      '@vitest/mocker': 4.1.2(msw@2.12.14(@types/node@22.19.15)(typescript@7.0.2))(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))\n+      '@vitest/pretty-format': 4.1.2\n+      '@vitest/runner': 4.1.2\n+      '@vitest/snapshot': 4.1.2\n+      '@vitest/spy': 4.1.2\n+      '@vitest/utils': 4.1.2\n+      es-module-lexer: 2.0.0\n+      expect-type: 1.3.0\n+      magic-string: 0.30.21\n+      obug: 2.1.4\n+      pathe: 2.0.3\n+      picomatch: 4.0.5\n+      std-env: 4.0.0\n+      tinybench: 2.9.0\n+      tinyexec: 1.3.0\n+      tinyglobby: 0.2.17\n+      tinyrainbow: 3.1.0\n+      vite: 6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)\n+      why-is-node-running: 2.3.0\n+    optionalDependencies:\n+      '@types/node': 22.19.15\n+      jsdom: 27.4.0\n+    transitivePeerDependencies:\n+      - msw\n+\n   vlq@1.0.1: {}\n \n   vm-browserify@1.1.2: {}"
+  }
+]

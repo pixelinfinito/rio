@@ -1,0 +1,172 @@
+---
+source: crates/rio-git/tests/diff.rs
+expression: diff
+---
+{
+  "files": [
+    {
+      "path": "added.ts",
+      "status": "added",
+      "binary": false,
+      "hunks": [
+        {
+          "base": {
+            "start": 0,
+            "count": 0
+          },
+          "head": {
+            "start": 1,
+            "count": 1
+          }
+        }
+      ],
+      "unchanged_lines": {}
+    },
+    {
+      "path": "asset.bin",
+      "status": "modified",
+      "binary": true,
+      "hunks": [],
+      "unchanged_lines": {}
+    },
+    {
+      "path": "case.ts",
+      "old_path": "Case.ts",
+      "status": "renamed",
+      "binary": false,
+      "hunks": [],
+      "unchanged_lines": {
+        "1": 1
+      }
+    },
+    {
+      "path": "deleted.ts",
+      "status": "deleted",
+      "binary": false,
+      "hunks": [
+        {
+          "base": {
+            "start": 1,
+            "count": 1
+          },
+          "head": {
+            "start": 0,
+            "count": 0
+          }
+        }
+      ],
+      "unchanged_lines": {}
+    },
+    {
+      "path": "generated.ts",
+      "status": "modified",
+      "binary": false,
+      "hunks": [
+        {
+          "base": {
+            "start": 1,
+            "count": 1
+          },
+          "head": {
+            "start": 1,
+            "count": 1
+          }
+        }
+      ],
+      "unchanged_lines": {},
+      "excluded": "generated"
+    },
+    {
+      "path": "large.dat",
+      "status": "modified",
+      "binary": false,
+      "hunks": [
+        {
+          "base": {
+            "start": 1,
+            "count": 1
+          },
+          "head": {
+            "start": 1,
+            "count": 3
+          }
+        }
+      ],
+      "unchanged_lines": {},
+      "excluded": "lfs"
+    },
+    {
+      "path": "modified.ts",
+      "status": "modified",
+      "binary": false,
+      "hunks": [
+        {
+          "base": {
+            "start": 2,
+            "count": 1
+          },
+          "head": {
+            "start": 2,
+            "count": 1
+          }
+        }
+      ],
+      "unchanged_lines": {
+        "1": 1,
+        "3": 3
+      }
+    },
+    {
+      "path": "package-lock.json",
+      "status": "modified",
+      "binary": false,
+      "hunks": [
+        {
+          "base": {
+            "start": 1,
+            "count": 1
+          },
+          "head": {
+            "start": 1,
+            "count": 1
+          }
+        }
+      ],
+      "unchanged_lines": {},
+      "excluded": "lockfile"
+    },
+    {
+      "path": "renamed.ts",
+      "old_path": "old.ts",
+      "status": "renamed",
+      "binary": false,
+      "hunks": [
+        {
+          "base": {
+            "start": 2,
+            "count": 1
+          },
+          "head": {
+            "start": 2,
+            "count": 1
+          }
+        }
+      ],
+      "unchanged_lines": {
+        "1": 1,
+        "3": 3,
+        "4": 4
+      }
+    },
+    {
+      "path": "vendor/sub",
+      "status": "submodule",
+      "binary": false,
+      "hunks": [],
+      "unchanged_lines": {},
+      "excluded": "submodule_not_reviewed",
+      "old_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "new_commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    }
+  ]
+}

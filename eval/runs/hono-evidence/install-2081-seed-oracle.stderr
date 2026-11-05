@@ -1,0 +1,3 @@
+warning eslint-define-config@2.0.0: The engine "pnpm" appears to be invalid.
+warning np@7.7.0: The engine "git" appears to be invalid.
+warning Workspaces can only be enabled in private projects.

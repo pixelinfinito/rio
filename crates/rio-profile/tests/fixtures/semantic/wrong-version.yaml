@@ -1,0 +1,4 @@
+version: 1
+name: invalid-wrong-version
+extends: rio/base
+steps: [{id: a, uses: rio/report@999.0.0}]

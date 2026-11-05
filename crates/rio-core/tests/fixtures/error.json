@@ -1,0 +1,38 @@
+{
+  "schema": "rio-report-v1",
+  "status": "error",
+  "review": {
+    "rio_version": "0.1.0"
+  },
+  "checks": [],
+  "impact": {
+    "symbols": [],
+    "unresolved": 0,
+    "truncated": false
+  },
+  "findings": [],
+  "risks": [],
+  "incomplete": [],
+  "deferred": [],
+  "excluded": [],
+  "summary": {
+    "pre_existing": 0,
+    "fixed": 0,
+    "suppressed": 0
+  },
+  "footer": {
+    "notes": [],
+    "suppressions": [],
+    "tool_versions": {}
+  },
+  "metrics": {
+    "wall_time_ms": 0,
+    "checks": [],
+    "tool_versions": {}
+  },
+  "error": {
+    "code": "not_a_repository",
+    "message": "A git repository is required",
+    "details": []
+  }
+}

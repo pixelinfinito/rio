@@ -1,0 +1,12 @@
+Warning: you are leaving 2 commits behind, not connected to
+any of your branches:
+
+  74c01ae Extend tests for nested container dict value types
+  36f3d9f Fix JSON decoding of nested dictionary environment values
+
+If you want to keep them by creating a new branch, this may be a good time
+to do so with:
+
+ git branch <new-branch-name> 74c01ae
+
+HEAD is now at 7d60367 Apply suggestion from @hramezani

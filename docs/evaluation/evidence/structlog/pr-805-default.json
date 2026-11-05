@@ -1,0 +1,662 @@
+{
+  "checks": [
+    {
+      "findings": [],
+      "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+      "kind": "typecheck",
+      "language": "python",
+      "outcome": "skipped",
+      "reason": "dependency_mismatch",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 0
+    },
+    {
+      "findings": [],
+      "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+      "kind": "lint",
+      "language": "python",
+      "outcome": "skipped",
+      "reason": "dependency_mismatch",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 0
+    },
+    {
+      "findings": [],
+      "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+      "kind": "coverage",
+      "language": "python",
+      "outcome": "skipped",
+      "reason": "dependency_mismatch",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 0
+    },
+    {
+      "findings": [
+        {
+          "category": "defect",
+          "evidence": [
+            "Built-in credential pattern high-entropy"
+          ],
+          "evidence_level": "static_proven",
+          "id": "3546bf6ef41f8d6042ee14d590c3c99bfd6efb61a7afae062dc7336435e625ff",
+          "impact": "A credential may be exposed by this change",
+          "location": {
+            "column": 20,
+            "line_end": 65,
+            "line_start": 65,
+            "occurrence_state": "new",
+            "path": "src/structlog/_native.py",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 20,
+              "line_end": 65,
+              "line_start": 65,
+              "occurrence_state": "new",
+              "path": "src/structlog/_native.py",
+              "symbol_path": ""
+            },
+            {
+              "column": 17,
+              "line_end": 68,
+              "line_start": 68,
+              "occurrence_state": "pre-existing",
+              "path": "src/structlog/_native.py",
+              "symbol_path": ""
+            },
+            {
+              "column": 28,
+              "line_end": 184,
+              "line_start": 184,
+              "occurrence_state": "new",
+              "path": "src/structlog/_native.py",
+              "symbol_path": ""
+            },
+            {
+              "column": 25,
+              "line_end": 187,
+              "line_start": 187,
+              "occurrence_state": "pre-existing",
+              "path": "src/structlog/_native.py",
+              "symbol_path": ""
+            },
+            {
+              "column": 24,
+              "line_end": 228,
+              "line_start": 228,
+              "occurrence_state": "new",
+              "path": "src/structlog/_native.py",
+              "symbol_path": ""
+            },
+            {
+              "column": 21,
+              "line_end": 231,
+              "line_start": 231,
+              "occurrence_state": "pre-existing",
+              "path": "src/structlog/_native.py",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Potential high-entropy credential: _ASY[REDACTED]",
+          "rule_id": "secret/high-entropy",
+          "severity": "error",
+          "source": {
+            "tool": "rio-secrets",
+            "version": "0.1.0"
+          },
+          "state": "worsened",
+          "suggested_fix": "Remove the credential and rotate it if it was active",
+          "trigger": "_ASY[REDACTED]"
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "Built-in credential pattern high-entropy"
+          ],
+          "evidence_level": "static_proven",
+          "id": "6793e5b8a3fbb6001c32ab4ce830b9b1e594c4f0335667aa655729916fd0d00d",
+          "impact": "A credential may be exposed by this change",
+          "location": {
+            "column": 24,
+            "line_end": 433,
+            "line_start": 433,
+            "occurrence_state": "new",
+            "path": "src/structlog/stdlib.py",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 24,
+              "line_end": 433,
+              "line_start": 433,
+              "occurrence_state": "new",
+              "path": "src/structlog/stdlib.py",
+              "symbol_path": ""
+            },
+            {
+              "column": 21,
+              "line_end": 436,
+              "line_start": 436,
+              "occurrence_state": "pre-existing",
+              "path": "src/structlog/stdlib.py",
+              "symbol_path": ""
+            },
+            {
+              "column": 24,
+              "line_end": 646,
+              "line_start": 646,
+              "occurrence_state": "new",
+              "path": "src/structlog/stdlib.py",
+              "symbol_path": ""
+            },
+            {
+              "column": 21,
+              "line_end": 649,
+              "line_start": 649,
+              "occurrence_state": "pre-existing",
+              "path": "src/structlog/stdlib.py",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Potential high-entropy credential: _ASY[REDACTED]",
+          "rule_id": "secret/high-entropy",
+          "severity": "error",
+          "source": {
+            "tool": "rio-secrets",
+            "version": "0.1.0"
+          },
+          "state": "worsened",
+          "suggested_fix": "Remove the credential and rotate it if it was active",
+          "trigger": "_ASY[REDACTED]"
+        }
+      ],
+      "kind": "secrets",
+      "language": "common",
+      "outcome": "findings",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 71
+    },
+    {
+      "findings": [],
+      "hint": "Dependency audit needs api.osv.dev",
+      "kind": "dependencies",
+      "language": "common",
+      "outcome": "skipped",
+      "reason": "offline",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 117
+    }
+  ],
+  "deferred": [
+    {
+      "reason": "no_endpoint",
+      "step": "triage"
+    },
+    {
+      "reason": "no_endpoint",
+      "step": "agents"
+    },
+    {
+      "reason": "no_endpoint",
+      "step": "verify"
+    }
+  ],
+  "excluded": [
+    {
+      "path": "src/structlog/_native.py",
+      "reason": "coverage_not_instrumented"
+    },
+    {
+      "path": "src/structlog/contextvars.py",
+      "reason": "coverage_not_instrumented"
+    },
+    {
+      "path": "src/structlog/processors.py",
+      "reason": "coverage_not_instrumented"
+    },
+    {
+      "path": "src/structlog/stdlib.py",
+      "reason": "coverage_not_instrumented"
+    }
+  ],
+  "findings": [
+    {
+      "category": "defect",
+      "evidence": [
+        "Built-in credential pattern high-entropy"
+      ],
+      "evidence_level": "static_proven",
+      "id": "3546bf6ef41f8d6042ee14d590c3c99bfd6efb61a7afae062dc7336435e625ff",
+      "impact": "A credential may be exposed by this change",
+      "location": {
+        "column": 20,
+        "line_end": 65,
+        "line_start": 65,
+        "occurrence_state": "new",
+        "path": "src/structlog/_native.py",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 20,
+          "line_end": 65,
+          "line_start": 65,
+          "occurrence_state": "new",
+          "path": "src/structlog/_native.py",
+          "symbol_path": ""
+        },
+        {
+          "column": 17,
+          "line_end": 68,
+          "line_start": 68,
+          "occurrence_state": "pre-existing",
+          "path": "src/structlog/_native.py",
+          "symbol_path": ""
+        },
+        {
+          "column": 28,
+          "line_end": 184,
+          "line_start": 184,
+          "occurrence_state": "new",
+          "path": "src/structlog/_native.py",
+          "symbol_path": ""
+        },
+        {
+          "column": 25,
+          "line_end": 187,
+          "line_start": 187,
+          "occurrence_state": "pre-existing",
+          "path": "src/structlog/_native.py",
+          "symbol_path": ""
+        },
+        {
+          "column": 24,
+          "line_end": 228,
+          "line_start": 228,
+          "occurrence_state": "new",
+          "path": "src/structlog/_native.py",
+          "symbol_path": ""
+        },
+        {
+          "column": 21,
+          "line_end": 231,
+          "line_start": 231,
+          "occurrence_state": "pre-existing",
+          "path": "src/structlog/_native.py",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Potential high-entropy credential: _ASY[REDACTED]",
+      "rule_id": "secret/high-entropy",
+      "severity": "error",
+      "source": {
+        "tool": "rio-secrets",
+        "version": "0.1.0"
+      },
+      "state": "worsened",
+      "suggested_fix": "Remove the credential and rotate it if it was active",
+      "trigger": "_ASY[REDACTED]"
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "Built-in credential pattern high-entropy"
+      ],
+      "evidence_level": "static_proven",
+      "id": "6793e5b8a3fbb6001c32ab4ce830b9b1e594c4f0335667aa655729916fd0d00d",
+      "impact": "A credential may be exposed by this change",
+      "location": {
+        "column": 24,
+        "line_end": 433,
+        "line_start": 433,
+        "occurrence_state": "new",
+        "path": "src/structlog/stdlib.py",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 24,
+          "line_end": 433,
+          "line_start": 433,
+          "occurrence_state": "new",
+          "path": "src/structlog/stdlib.py",
+          "symbol_path": ""
+        },
+        {
+          "column": 21,
+          "line_end": 436,
+          "line_start": 436,
+          "occurrence_state": "pre-existing",
+          "path": "src/structlog/stdlib.py",
+          "symbol_path": ""
+        },
+        {
+          "column": 24,
+          "line_end": 646,
+          "line_start": 646,
+          "occurrence_state": "new",
+          "path": "src/structlog/stdlib.py",
+          "symbol_path": ""
+        },
+        {
+          "column": 21,
+          "line_end": 649,
+          "line_start": 649,
+          "occurrence_state": "pre-existing",
+          "path": "src/structlog/stdlib.py",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Potential high-entropy credential: _ASY[REDACTED]",
+      "rule_id": "secret/high-entropy",
+      "severity": "error",
+      "source": {
+        "tool": "rio-secrets",
+        "version": "0.1.0"
+      },
+      "state": "worsened",
+      "suggested_fix": "Remove the credential and rotate it if it was active",
+      "trigger": "_ASY[REDACTED]"
+    }
+  ],
+  "footer": {
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "Graph references use syntax and text; no language server was used",
+      "Offline applies to Rio; tool and test processes were not network-isolated"
+    ],
+    "suppressions": [],
+    "tool_versions": {
+      "python:.:coverage": "Coverage.py, version 7.17.1 with C extension",
+      "python:.:mypy": "mypy 2.4.1 (compiled: yes)",
+      "python:.:ruff": "ruff 0.17.3"
+    }
+  },
+  "impact": {
+    "symbols": [
+      {
+        "path": "src/structlog/_native.py",
+        "references_per_hop": [
+          180,
+          212
+        ],
+        "symbol_path": "",
+        "test_referenced": true,
+        "unresolved": 16135
+      },
+      {
+        "path": "src/structlog/_native.py",
+        "references_per_hop": [
+          198,
+          448
+        ],
+        "symbol_path": "_native._make_filtering_bound_logger.alog",
+        "test_referenced": true,
+        "unresolved": 20596
+      },
+      {
+        "path": "src/structlog/_native.py",
+        "references_per_hop": [
+          166,
+          212
+        ],
+        "symbol_path": "_native._make_filtering_bound_logger.make_method.ameth",
+        "test_referenced": true,
+        "unresolved": 13811
+      },
+      {
+        "path": "src/structlog/_native.py",
+        "references_per_hop": [
+          205,
+          441
+        ],
+        "symbol_path": "_native.aexception",
+        "test_referenced": true,
+        "unresolved": 21124
+      },
+      {
+        "path": "src/structlog/contextvars.py",
+        "references_per_hop": [
+          149,
+          402
+        ],
+        "symbol_path": "",
+        "test_referenced": true,
+        "unresolved": 19902
+      },
+      {
+        "path": "src/structlog/contextvars.py",
+        "references_per_hop": [
+          110,
+          410
+        ],
+        "symbol_path": "contextvars._ASYNC_CALLING_THREAD",
+        "test_referenced": true,
+        "unresolved": 15955
+      },
+      {
+        "path": "src/structlog/processors.py",
+        "references_per_hop": [
+          329,
+          487
+        ],
+        "symbol_path": "",
+        "test_referenced": true,
+        "unresolved": 27314
+      },
+      {
+        "path": "src/structlog/processors.py",
+        "references_per_hop": [
+          214,
+          460
+        ],
+        "symbol_path": "processors._get_callsite_thread",
+        "test_referenced": true,
+        "unresolved": 19736
+      },
+      {
+        "path": "src/structlog/processors.py",
+        "references_per_hop": [
+          214,
+          460
+        ],
+        "symbol_path": "processors._get_callsite_thread_name",
+        "test_referenced": true,
+        "unresolved": 19736
+      },
+      {
+        "path": "src/structlog/stdlib.py",
+        "references_per_hop": [
+          249,
+          324
+        ],
+        "symbol_path": "",
+        "test_referenced": true,
+        "unresolved": 27064
+      },
+      {
+        "path": "src/structlog/stdlib.py",
+        "references_per_hop": [
+          203,
+          333
+        ],
+        "symbol_path": "stdlib.AsyncBoundLogger._dispatch_to_sync",
+        "test_referenced": true,
+        "unresolved": 23366
+      },
+      {
+        "path": "src/structlog/stdlib.py",
+        "references_per_hop": [
+          203,
+          333
+        ],
+        "symbol_path": "stdlib.BoundLogger._dispatch_to_sync",
+        "test_referenced": true,
+        "unresolved": 23366
+      },
+      {
+        "path": "tests/processors/test_processors.py",
+        "references_per_hop": [
+          0,
+          0
+        ],
+        "symbol_path": "",
+        "test_referenced": false,
+        "unresolved": 0
+      },
+      {
+        "path": "tests/processors/test_processors.py",
+        "references_per_hop": [
+          14,
+          80
+        ],
+        "symbol_path": "test_processors.TestCallsiteParameterAdder",
+        "test_referenced": true,
+        "unresolved": 334
+      },
+      {
+        "path": "tests/processors/test_processors.py",
+        "references_per_hop": [
+          90,
+          108
+        ],
+        "symbol_path": "test_processors.TestCallsiteParameterAdder.test_async",
+        "test_referenced": true,
+        "unresolved": 6114
+      },
+      {
+        "path": "tests/processors/test_processors.py",
+        "references_per_hop": [
+          14,
+          80
+        ],
+        "symbol_path": "test_processors.TestCallsiteParameterAdder.test_async_native_logger",
+        "test_referenced": true,
+        "unresolved": 334
+      }
+    ],
+    "truncated": false,
+    "unresolved": 254887
+  },
+  "incomplete": [
+    {
+      "findings": [],
+      "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+      "kind": "typecheck",
+      "language": "python",
+      "outcome": "skipped",
+      "reason": "dependency_mismatch",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 0
+    },
+    {
+      "findings": [],
+      "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+      "kind": "lint",
+      "language": "python",
+      "outcome": "skipped",
+      "reason": "dependency_mismatch",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 0
+    },
+    {
+      "findings": [],
+      "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+      "kind": "coverage",
+      "language": "python",
+      "outcome": "skipped",
+      "reason": "dependency_mismatch",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 0
+    },
+    {
+      "findings": [],
+      "hint": "Dependency audit needs api.osv.dev",
+      "kind": "dependencies",
+      "language": "common",
+      "outcome": "skipped",
+      "reason": "offline",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 117
+    }
+  ],
+  "metrics": {
+    "checks": [
+      {
+        "kind": "typecheck",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "kind": "lint",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "kind": "coverage",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "kind": "secrets",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 71
+      },
+      {
+        "kind": "dependencies",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 117
+      }
+    ],
+    "tool_versions": {
+      "python:.:coverage": "Coverage.py, version 7.17.1 with C extension",
+      "python:.:mypy": "mypy 2.4.1 (compiled: yes)",
+      "python:.:ruff": "ruff 0.17.3"
+    },
+    "wall_time_ms": 35785
+  },
+  "review": {
+    "base": "c6e7cad18ffe91febf2b97dac03a465134b1a5d1",
+    "chain": [
+      "rio/base"
+    ],
+    "head": "7d7708fdf39061b6f7515c13ed0404a9bc05fb33",
+    "id": "cd3b7d12a319c439",
+    "mode": "branch",
+    "profile": "rio/base",
+    "rio_version": "0.1.0",
+    "run_id": "01M6M26YDKGY8S38X7SMRFZ6GA"
+  },
+  "risks": [],
+  "schema": "rio-report-v1",
+  "status": "incomplete",
+  "summary": {
+    "fixed": 0,
+    "pre_existing": 0,
+    "suppressed": 0
+  }
+}

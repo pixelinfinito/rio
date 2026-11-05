@@ -1,0 +1,125 @@
+[
+  {
+    "directory": "pydantic-settings-1097",
+    "base_sha": "e71a53e6a0094da671d66eebd806904695722482",
+    "head_sha": "83dc3337b627d6d701f63e69cb77375226651947",
+    "binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+    "eligible": false,
+    "baseline_classification_ran": false,
+    "runner_seconds": 550.445,
+    "rio_command_seconds": 245.998,
+    "rio_exit_code": 4,
+    "visible_findings": 0,
+    "states": {},
+    "failures": [
+      "Baseline/setup ineligible; fix before scoring"
+    ],
+    "record": null
+  },
+  {
+    "directory": "pydantic-settings-1097-attempt2",
+    "base_sha": "e71a53e6a0094da671d66eebd806904695722482",
+    "head_sha": "83dc3337b627d6d701f63e69cb77375226651947",
+    "binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+    "eligible": true,
+    "baseline_classification_ran": true,
+    "runner_seconds": 187.739,
+    "rio_command_seconds": 132.746,
+    "rio_exit_code": 0,
+    "visible_findings": 1,
+    "states": {
+      "pre-existing": 1
+    },
+    "failures": [],
+    "record": "eval/runs/pydantic-settings-1097-attempt2/record.json"
+  },
+  {
+    "directory": "pydantic-settings-1109",
+    "base_sha": "7e2dacb6db07b41abb0c80d0608e46e197265554",
+    "head_sha": "74c01ae3e84f9c8f2b04ec269e67813abd96cf9a",
+    "binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+    "eligible": false,
+    "baseline_classification_ran": false,
+    "runner_seconds": 170.544,
+    "rio_command_seconds": 111.648,
+    "rio_exit_code": 0,
+    "visible_findings": 1,
+    "states": {
+      "pre-existing": 1
+    },
+    "failures": [
+      "Baseline/setup ineligible; fix before scoring"
+    ],
+    "record": null
+  },
+  {
+    "directory": "pydantic-settings-1109-attempt2",
+    "base_sha": "7e2dacb6db07b41abb0c80d0608e46e197265554",
+    "head_sha": "74c01ae3e84f9c8f2b04ec269e67813abd96cf9a",
+    "binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+    "eligible": false,
+    "baseline_classification_ran": false,
+    "runner_seconds": 432.401,
+    "rio_command_seconds": 248.608,
+    "rio_exit_code": 4,
+    "visible_findings": 0,
+    "states": {},
+    "failures": [
+      "Baseline/setup ineligible; fix before scoring"
+    ],
+    "record": null
+  },
+  {
+    "directory": "pydantic-settings-1109-attempt3",
+    "base_sha": "7e2dacb6db07b41abb0c80d0608e46e197265554",
+    "head_sha": "74c01ae3e84f9c8f2b04ec269e67813abd96cf9a",
+    "binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+    "eligible": false,
+    "baseline_classification_ran": false,
+    "runner_seconds": 149.055,
+    "rio_command_seconds": 77.204,
+    "rio_exit_code": 0,
+    "visible_findings": 1,
+    "states": {
+      "pre-existing": 1
+    },
+    "failures": [
+      "Baseline/setup ineligible; fix before scoring"
+    ],
+    "record": null
+  },
+  {
+    "directory": "pydantic-settings-1109-attempt4",
+    "base_sha": "7e2dacb6db07b41abb0c80d0608e46e197265554",
+    "head_sha": "74c01ae3e84f9c8f2b04ec269e67813abd96cf9a",
+    "binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+    "eligible": true,
+    "baseline_classification_ran": true,
+    "runner_seconds": 187.934,
+    "rio_command_seconds": 139.391,
+    "rio_exit_code": 0,
+    "visible_findings": 1,
+    "states": {
+      "pre-existing": 1
+    },
+    "failures": [],
+    "record": "eval/runs/pydantic-settings-1109-attempt4/record.json"
+  },
+  {
+    "directory": "pydantic-settings-708",
+    "base_sha": "61e0b46eb96e2f67f390b0371c4297f2d6b24573",
+    "head_sha": "7d60367d8cc83fb49fb7d93568ff4f10fea9a904",
+    "binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+    "eligible": true,
+    "baseline_classification_ran": true,
+    "runner_seconds": 110.684,
+    "rio_command_seconds": 54.802,
+    "rio_exit_code": 0,
+    "visible_findings": 1,
+    "states": {
+      "new": 1
+    },
+    "failures": [],
+    "record": "eval/runs/pydantic-settings-708/record.json"
+  }
+]

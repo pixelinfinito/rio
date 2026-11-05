@@ -1,0 +1,23 @@
+{
+  "pr": "https://github.com/TanStack/query/pull/11392",
+  "kind": "negative-control",
+  "author": "lazerg (contributor)",
+  "merged_by": "TkDodo (maintainer)",
+  "assessment": "Preserves populated local query data when a remote pending added event arrives; retains state adoption for local queries without data. The two new regression tests exercise both sides. Substantive TypeScript implementation change is confined to one package.",
+  "base_types_exit": 0,
+  "head_types_exit": 0,
+  "base_eslint_messages": 0,
+  "head_eslint_messages": 0,
+  "base_tests_passed": 11,
+  "head_tests_passed": 13,
+  "changed_executable_lines": {
+    "178": 2,
+    "179": 1
+  },
+  "limitations": [
+    "Maintainer-merged, contributor-authored PR; this distinction is explicit.",
+    "Existing uncovered lines outside the diff are not new control bugs.",
+    "Offline dependency auditing is an excluded capability; no vulnerability-free claim."
+  ],
+  "independently_clean": true
+}

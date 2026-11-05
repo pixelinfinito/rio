@@ -1,0 +1,101 @@
+Scope: all 37 workspace projects
+Lockfile is up to date, resolution step is skipped
+Progress: resolved 1, reused 0, downloaded 0, added 0
+Packages: +2632
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Progress: resolved 2632, reused 79, downloaded 0, added 0
+Progress: resolved 2632, reused 116, downloaded 0, added 0
+Progress: resolved 2632, reused 182, downloaded 0, added 0
+Progress: resolved 2632, reused 560, downloaded 0, added 0
+Progress: resolved 2632, reused 1146, downloaded 0, added 0
+Progress: resolved 2632, reused 2123, downloaded 0, added 0
+Progress: resolved 2632, reused 2585, downloaded 0, added 0
+Progress: resolved 2632, reused 2623, downloaded 0, added 254
+Progress: resolved 2632, reused 2623, downloaded 0, added 353
+Progress: resolved 2632, reused 2623, downloaded 0, added 749
+Progress: resolved 2632, reused 2623, downloaded 0, added 763
+Progress: resolved 2632, reused 2623, downloaded 0, added 913
+Progress: resolved 2632, reused 2623, downloaded 0, added 985
+Progress: resolved 2632, reused 2623, downloaded 0, added 1104
+Progress: resolved 2632, reused 2623, downloaded 0, added 1187
+Progress: resolved 2632, reused 2623, downloaded 0, added 1290
+Progress: resolved 2632, reused 2623, downloaded 0, added 1313
+Progress: resolved 2632, reused 2623, downloaded 0, added 1324
+Progress: resolved 2632, reused 2623, downloaded 0, added 1346
+Progress: resolved 2632, reused 2623, downloaded 0, added 1361
+Progress: resolved 2632, reused 2623, downloaded 0, added 1387
+Progress: resolved 2632, reused 2623, downloaded 0, added 1394
+Progress: resolved 2632, reused 2623, downloaded 0, added 1438
+Progress: resolved 2632, reused 2623, downloaded 0, added 1499
+Progress: resolved 2632, reused 2623, downloaded 0, added 1663
+Progress: resolved 2632, reused 2623, downloaded 0, added 1760
+Progress: resolved 2632, reused 2623, downloaded 0, added 1828
+Progress: resolved 2632, reused 2623, downloaded 0, added 1899
+Progress: resolved 2632, reused 2623, downloaded 0, added 1967
+Progress: resolved 2632, reused 2623, downloaded 0, added 2174
+Progress: resolved 2632, reused 2623, downloaded 0, added 2277
+Progress: resolved 2632, reused 2623, downloaded 0, added 2299
+Progress: resolved 2632, reused 2623, downloaded 0, added 2448
+Progress: resolved 2632, reused 2623, downloaded 0, added 2472
+Progress: resolved 2632, reused 2623, downloaded 0, added 2539
+Progress: resolved 2632, reused 2623, downloaded 0, added 2624
+Progress: resolved 2632, reused 2623, downloaded 0, added 2625
+Progress: resolved 2632, reused 2623, downloaded 0, added 2626
+Progress: resolved 2632, reused 2623, downloaded 0, added 2627
+Progress: resolved 2632, reused 2623, downloaded 0, added 2628
+Progress: resolved 2632, reused 2623, downloaded 0, added 2629
+Progress: resolved 2632, reused 2623, downloaded 0, added 2630
+Progress: resolved 2632, reused 2623, downloaded 0, added 2631
+Progress: resolved 2632, reused 2623, downloaded 0, added 2632, done
+
+dependencies:
++ @actions/core 1.10.1
++ @actions/github 6.0.0
++ @ianvs/prettier-plugin-sort-imports 4.0.0
++ @manypkg/cli 0.21.2
++ @rollup/plugin-node-resolve 15.2.3
++ @swc/core 1.3.3
++ @testing-library/dom 10.0.0
++ @testing-library/jest-dom 6.0.0
++ @testing-library/react 16.0.0
++ @testing-library/user-event 14.4.3
++ @types/event-source-polyfill 1.0.5
++ @types/node 20.10.4
++ @types/prettier 2.7.2
++ @typescript-eslint/eslint-plugin 7.7.1
++ @typescript-eslint/parser 7.7.1
++ @vitest/coverage-istanbul 1.5.2
++ @vitest/ui 1.5.2
++ concurrently 8.0.0
++ eslint 8.56.0
++ eslint-config-prettier 8.10.0
++ eslint-plugin-no-only-tests 3.1.0
++ eslint-plugin-react 7.32.2
++ eslint-plugin-react-hooks 4.6.0
++ eslint-plugin-turbo 2.0.3
++ eslint-plugin-unicorn 54.0.0
++ event-source-polyfill 1.0.31
++ express 4.19.2
++ fast-glob 3.2.12
++ hash-sum 2.0.0
++ lerna 8.1.2
++ npm-run-all2 6.1.1
++ prettier 2.8.8
++ prettier-plugin-tailwindcss 0.4.0
++ rollup 4.9.5
++ rollup-plugin-analyzer 4.0.0
++ rollup-plugin-delete 2.0.0
++ rollup-plugin-node-externals 7.0.0
++ rollup-plugin-swc3 0.11.0
++ rollup-plugin-typescript2 0.36.0
++ superjson 1.12.4
++ ts-prune 0.10.3
++ tsx 4.6.2
++ turbo 2.0.3
++ typescript 5.5.2
++ vite 5.1.7
++ vitest 1.5.2
++ vitest-environment-miniflare 2.14.2
++ zod 3.23.8
+
+Done in 5m 8.9s

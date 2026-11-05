@@ -1,0 +1,21 @@
+{
+  "applicable_supported_diagnostic_checks": [
+    "typecheck . (typescript)"
+  ],
+  "successful_trusted_baseline_pairs": true,
+  "pairs": [
+    {
+      "kind": "typecheck",
+      "language": "typescript",
+      "root": ".",
+      "head_outcome": "passed",
+      "head_dependency_state": "trusted",
+      "base_outcome": "passed",
+      "base_dependency_state": "trusted"
+    }
+  ],
+  "raw_report_finding_count": 0,
+  "harness_baseline_classification_ran": false,
+  "scoring_eligible": false,
+  "interpretation": "These check entries establish that Rio executed a successful head/base typecheck pair in trusted mode. This sidecar does not override the evaluator or assert verified dependencies. No classification of actual finding states can be tested with zero diagnostics. Disabled/unsupported lint is not treated as an applicable supported check here; the unchanged harness counts it and rejects trusted dependencies."
+}

@@ -1,0 +1,13 @@
+---
+source: crates/rio-graph/tests/graph.rs
+expression: slices.delta
+---
+{
+  "added": [],
+  "removed": [],
+  "changed": [
+    "src/math.ts::math.format"
+  ],
+  "edges_added": [],
+  "edges_removed": []
+}

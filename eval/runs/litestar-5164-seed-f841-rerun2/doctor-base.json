@@ -1,0 +1,179 @@
+{
+  "blocking_problems": [],
+  "cache": {
+    "free_space": 3591294976,
+    "path": "/run/user/1000/litestar-rerun2/rio-eval-dfh7vlrx/cache",
+    "writable": true
+  },
+  "configuration": {
+    "cache": {
+      "dir": "/run/user/1000/litestar-rerun2/rio-eval-dfh7vlrx/cache",
+      "max_age": {
+        "nanos": 0,
+        "secs": 2592000
+      },
+      "max_size": 5368709120,
+      "retain_raw_output": true
+    },
+    "config_dir": "/run/user/1000/litestar-rerun2/rio-eval-dfh7vlrx/config",
+    "endpoint_url": null,
+    "notices": [],
+    "output_limit": 268435456,
+    "parallelism": 4,
+    "sources": {
+      "cache.dir": "RIO_CACHE_DIR",
+      "cache.max_age": "default",
+      "cache.max_size": "default",
+      "cache.retain_raw_output": "default",
+      "endpoint.url": "default",
+      "run.output_limit": "default",
+      "run.parallelism": "default"
+    }
+  },
+  "endpoint": "No endpoint is available in this version",
+  "head": "fcab0954a74c5f8d340adbbfb9091f94982aa9a2",
+  "plan": {
+    "checks": [
+      {
+        "baseline": true,
+        "baseline_hint": null,
+        "baseline_remap": false,
+        "dependency_hash": "4496d8a1024503ae242c0fd4034dc0bce4d11f17bcc8ddcd8007a3284d88fba6",
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "python",
+        "root": ".",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "litestar/utils/path.py"
+        ],
+        "tool": {
+          "name": "mypy",
+          "path": "/run/user/1000/litestar-rerun2/rio-eval-dfh7vlrx/head/./.venv/bin/mypy",
+          "version": "mypy 1.19.1 (compiled: yes)"
+        }
+      },
+      {
+        "baseline": true,
+        "baseline_hint": null,
+        "baseline_remap": false,
+        "dependency_hash": "4496d8a1024503ae242c0fd4034dc0bce4d11f17bcc8ddcd8007a3284d88fba6",
+        "dependency_state": "verified",
+        "kind": "lint",
+        "language": "python",
+        "root": ".",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "litestar/utils/path.py"
+        ],
+        "tool": {
+          "name": "ruff",
+          "path": "/run/user/1000/litestar-rerun2/rio-eval-dfh7vlrx/head/./.venv/bin/ruff",
+          "version": "ruff 0.15.7"
+        }
+      },
+      {
+        "baseline": true,
+        "baseline_hint": null,
+        "baseline_remap": false,
+        "dependency_hash": "4496d8a1024503ae242c0fd4034dc0bce4d11f17bcc8ddcd8007a3284d88fba6",
+        "dependency_state": "verified",
+        "kind": "coverage",
+        "language": "python",
+        "root": ".",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "litestar/utils/path.py"
+        ],
+        "tool": {
+          "name": "coverage",
+          "path": "/run/user/1000/litestar-rerun2/rio-eval-dfh7vlrx/head/./.venv/bin/coverage",
+          "version": "Coverage.py, version 7.13.5 with C extension"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": null,
+        "baseline_remap": false,
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "secrets",
+        "language": "common",
+        "root": ".",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [],
+        "tool": null
+      },
+      {
+        "baseline": false,
+        "baseline_hint": null,
+        "baseline_remap": false,
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "dependencies",
+        "language": "common",
+        "root": ".",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [],
+        "tool": null
+      }
+    ],
+    "layout": {
+      "dependencies": {
+        ".": []
+      },
+      "notes": [],
+      "roots": [
+        {
+          "language": "python",
+          "manifest": "pyproject.toml",
+          "name": "litestar",
+          "path": ".",
+          "workspace": null
+        }
+      ]
+    },
+    "notes": [],
+    "probes_ran": true,
+    "roots": [
+      {
+        "base": {
+          "hash": "4496d8a1024503ae242c0fd4034dc0bce4d11f17bcc8ddcd8007a3284d88fba6",
+          "state": "verified"
+        },
+        "environment": "/run/user/1000/litestar-rerun2/rio-eval-dfh7vlrx/head/./.venv",
+        "head": {
+          "hash": "4496d8a1024503ae242c0fd4034dc0bce4d11f17bcc8ddcd8007a3284d88fba6",
+          "state": "verified"
+        },
+        "installation_root": ".",
+        "lockfile": "uv.lock",
+        "project": {
+          "language": "python",
+          "manifest": "pyproject.toml",
+          "name": "litestar",
+          "path": ".",
+          "workspace": null
+        }
+      }
+    ]
+  },
+  "profile": {
+    "chain": [
+      "rio/base"
+    ],
+    "name": "rio/base",
+    "valid": true
+  },
+  "repository": "/run/user/1000/litestar-rerun2/rio-eval-dfh7vlrx/head",
+  "warnings": [
+    "rio/base:$.steps[3]: rio/triage is deferred locally: no_endpoint",
+    "rio/base:$.steps[4]: rio/agents is deferred locally: no_endpoint",
+    "rio/base:$.steps[5]: rio/verify is deferred locally: no_endpoint"
+  ]
+}

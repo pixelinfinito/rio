@@ -1,0 +1,43 @@
+version: 1
+name: full
+extends: rio/base
+budget:
+  fast: { wall_time: 4m, tokens: 200000, agents_max: 4 }
+  deep: { wall_time: 10m, tokens: 400000, agents_max: 8 }
+models:
+  default: provider/default
+  verifier: provider/verifier
+steps:
+  - id: checks
+    uses: rio/checks
+    needs: []
+    parallel: true
+    with: { coverage: false }
+  - id: triage
+    uses: rio/triage
+    needs: [checks]
+    rules:
+      - when: 'touches("src/**") and lines_changed > 10'
+        then: enable(correctness)
+  - id: agents
+    uses: rio/agents
+    needs: [triage]
+    agents:
+      - correctness: { model: default, tools: [read_file], budget: fast }
+  - id: verify
+    uses: rio/verify
+    needs: [agents]
+suppress:
+  - path: tests/fixtures/**
+  - rule: lint/eslint/*
+  - finding: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+publish: never
+fail_on:
+  evidence: static_proven
+  categories: [defect]
+  states: [new, worsened]
+  rules: [secret/*]
+  incomplete: true
+  required_checks: [typecheck, lint]
+min_evidence: plausible
+max_lines: 1500

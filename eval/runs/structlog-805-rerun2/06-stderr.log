@@ -1,0 +1,15 @@
+Warning: you are leaving 5 commits behind, not connected to
+any of your branches:
+
+  7d7708f Use CapturingLogger in test
+  e7e0945 Adjust code style, add changelog
+  b5d6b64 Merge branch 'main' into fix-async-thread-info-710
+  f748903 [pre-commit.ci] auto fixes from pre-commit.com hooks
+  8b5eac5 Fix thread name CallsiteParameterAdder in async methods (issue #710)
+
+If you want to keep them by creating a new branch, this may be a good time
+to do so with:
+
+ git branch <new-branch-name> 7d7708f
+
+HEAD is now at c6e7cad Correctly unpickle WriteLogger (#811)

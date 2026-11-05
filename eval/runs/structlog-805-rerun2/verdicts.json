@@ -1,0 +1,53 @@
+{
+  "repository": "hynek/structlog",
+  "pr": "https://github.com/hynek/structlog/pull/805",
+  "case_id": "805",
+  "languages": [
+    "python"
+  ],
+  "reviewer": "sub-agent rerun2-structlog (automated)",
+  "verdict_source": "automated",
+  "commands": [
+    "cwd=/dev/shm/rio-eval-jskluv44 argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/hynek/structlog.git\", \"/dev/shm/rio-eval-jskluv44/head\"]",
+    "cwd=/dev/shm/rio-eval-jskluv44/head argv=[\"git\", \"fetch\", \"origin\", \"c6e7cad18ffe91febf2b97dac03a465134b1a5d1\", \"7d7708fdf39061b6f7515c13ed0404a9bc05fb33\"]",
+    "cwd=/dev/shm/rio-eval-jskluv44/head argv=[\"git\", \"merge-base\", \"c6e7cad18ffe91febf2b97dac03a465134b1a5d1\", \"7d7708fdf39061b6f7515c13ed0404a9bc05fb33\"]",
+    "cwd=/dev/shm/rio-eval-jskluv44/head argv=[\"git\", \"checkout\", \"--detach\", \"7d7708fdf39061b6f7515c13ed0404a9bc05fb33\"]",
+    "cwd=/dev/shm/rio-eval-jskluv44 argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/dev/shm/rio-eval-jskluv44/head\", \"/dev/shm/rio-eval-jskluv44/base\"]",
+    "cwd=/dev/shm/rio-eval-jskluv44/base argv=[\"git\", \"checkout\", \"--detach\", \"c6e7cad18ffe91febf2b97dac03a465134b1a5d1\"]",
+    "cwd=/dev/shm/rio-eval-jskluv44/base argv=[\"python3\", \"-m\", \"venv\", \".venv\"]",
+    "cwd=/dev/shm/rio-eval-jskluv44/base argv=[\".venv/bin/pip\", \"install\", \"--no-deps\", \"ast_serialize==0.13.1\", \"attrs==26.1.0\", \"Automat==25.4.16\", \"constantly==23.10.4\", \"coverage==7.17.1\", \"editables==0.5\", \"hatch-fancy-pypi-readme==25.1.0\", \"hatch-vcs==0.5.0\", \"hatchling==1.30.1\", \"hyperlink==21.0.0\", \"idna==3.20\", \"Incremental==24.11.0\", \"iniconfig==2.3.1\", \"librt==0.16.0\", \"markdown-it-py==4.2.0\", \"mdurl==0.1.2\", \"mypy==2.4.1\", \"mypy_extensions==1.2.0\", \"packaging==26.3\", \"pathspec==1.1.1\", \"pip==26.1.2\", \"pluggy==1.7.0\", \"Pygments==2.21.0\", \"pytest==9.2.0\", \"pytest-asyncio==1.3.0\", \"pytest-randomly==4.0.1\", \"rich==15.0.0\", \"ruff==0.15.12\", \"setuptools==82.0.1\", \"setuptools-scm==10.3.4\", \"simplejson==4.2.0\", \"time-machine==3.6.0\", \"trove-classifiers==2026.9.21.13\", \"Twisted==26.10.0\", \"typing_extensions==4.16.0\", \"vcs-versioning==2.6.0\", \"wheel==0.47.0\", \"zope.interface==8.7\"]",
+    "cwd=/dev/shm/rio-eval-jskluv44/base argv=[\".venv/bin/pip\", \"install\", \"--no-deps\", \"--no-build-isolation\", \"-e\", \".\"]",
+    "cwd=/dev/shm/rio-eval-jskluv44/base argv=[\".venv/bin/pip\", \"freeze\", \"--all\"]",
+    "cwd=/dev/shm/rio-eval-jskluv44/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/rio-eval-jskluv44/head argv=[\"python3\", \"-m\", \"venv\", \".venv\"]",
+    "cwd=/dev/shm/rio-eval-jskluv44/head argv=[\".venv/bin/pip\", \"install\", \"--no-deps\", \"ast_serialize==0.13.1\", \"attrs==26.1.0\", \"Automat==25.4.16\", \"constantly==23.10.4\", \"coverage==7.17.1\", \"editables==0.5\", \"hatch-fancy-pypi-readme==25.1.0\", \"hatch-vcs==0.5.0\", \"hatchling==1.30.1\", \"hyperlink==21.0.0\", \"idna==3.20\", \"Incremental==24.11.0\", \"iniconfig==2.3.1\", \"librt==0.16.0\", \"markdown-it-py==4.2.0\", \"mdurl==0.1.2\", \"mypy==2.4.1\", \"mypy_extensions==1.2.0\", \"packaging==26.3\", \"pathspec==1.1.1\", \"pip==26.1.2\", \"pluggy==1.7.0\", \"Pygments==2.21.0\", \"pytest==9.2.0\", \"pytest-asyncio==1.3.0\", \"pytest-randomly==4.0.1\", \"rich==15.0.0\", \"ruff==0.15.12\", \"setuptools==82.0.1\", \"setuptools-scm==10.3.4\", \"simplejson==4.2.0\", \"time-machine==3.6.0\", \"trove-classifiers==2026.9.21.13\", \"Twisted==26.10.0\", \"typing_extensions==4.16.0\", \"vcs-versioning==2.6.0\", \"wheel==0.47.0\", \"zope.interface==8.7\"]",
+    "cwd=/dev/shm/rio-eval-jskluv44/head argv=[\".venv/bin/pip\", \"install\", \"--no-deps\", \"--no-build-isolation\", \"-e\", \".\"]",
+    "cwd=/dev/shm/rio-eval-jskluv44/head argv=[\".venv/bin/pip\", \"freeze\", \"--all\"]",
+    "cwd=/dev/shm/rio-eval-jskluv44/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/rio-eval-jskluv44/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/dev/shm/rio-eval-jskluv44/head argv=[\"node\", \"--version\"]",
+    "cwd=/dev/shm/rio-eval-jskluv44/head argv=[\"npm\", \"--version\"]",
+    "cwd=/dev/shm/rio-eval-jskluv44/head argv=[\"python3\", \"--version\"]",
+    "cwd=/dev/shm/rio-eval-jskluv44/head argv=[\"uv\", \"--version\"]",
+    "cwd=/dev/shm/rio-eval-jskluv44/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"/home/ubuntu/.t3/worktrees/rio/eval-rerun2-structlog/eval/runs/structlog-805-rerun2/profile.yaml\"]",
+    "cwd=/dev/shm/rio-eval-jskluv44/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/dev/shm/rio-eval-jskluv44/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"c6e7cad18ffe91febf2b97dac03a465134b1a5d1\", \"--format\", \"json\", \"--offline\", \"--profile\", \"/home/ubuntu/.t3/worktrees/rio/eval-rerun2-structlog/eval/runs/structlog-805-rerun2/profile.yaml\"]"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-rerun2-structlog/eval/runs/structlog-805-rerun2/commands.json; Rio binary SHA-256: 3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+    "Rerun2 with binary rio 0.1.0 x86_64-unknown-linux-gnu f6e4f87e4c65. Same pinned PR/base/head, byte-identical install plan and profile; setup and exact runner invocation in eval/runs/structlog-setup/rerun2/.",
+    "Baseline classification ran: lint and mypy head/base all succeeded in trusted dependency state; both installations succeeded. Current unchanged evaluator accepts trusted pairs; prior verified-only evaluator exclusion no longer applies. Eligible in all-eligible metrics; excluded from verified-only metrics.",
+    "Independent oracle evidence reused for unchanged commits and tool pins: eval/runs/structlog-oracle-805/commands.json, base/head mypy-src/mypy-api/Ruff/pytest outputs and coverage JSON. These are prior independent invocations, not Rio child argv. Rio output, footer tool versions, check outcomes and raw states were rechecked for this run.",
+    "TMPDIR=/dev/shm; PIP_CACHE_DIR=/dev/shm/structlog-pip-cache. Shared-host I/O pressure caused long installs; host-pressure.txt and temp-cleanup.json preserve observations. Concurrent cases are not a controlled performance benchmark.",
+    "Dependency audit was skipped offline (Dependency audit needs api.osv.dev); vulnerability detection is outside this measured scope. Report status incomplete accompanies deferred intent (no_endpoint); deterministic checks and baseline succeeded. No semantic endpoint or advisory cache was introduced.",
+    "Independent clean assessment: PR #805 thread-context changes have passing base/head source/API mypy, Ruff and instrumented suite (924\u2192925 passed, 20 skipped), with no unexecuted added source statement; reviewed diff contains ContextVar identifiers, no credential or dependency bump.",
+    "No independently established deterministic or agent-layer miss within the retained oracle scope. Rio emitted no findings or risks; secrets and coverage passed. No new Rio defect observed."
+  ],
+  "independently_clean": true,
+  "positive_control": {
+    "kind": "none",
+    "expected": []
+  },
+  "misses": [],
+  "findings": {}
+}

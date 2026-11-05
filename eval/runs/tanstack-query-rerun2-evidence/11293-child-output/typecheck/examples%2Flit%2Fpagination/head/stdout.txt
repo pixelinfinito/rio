@@ -1,0 +1,18 @@
+src/main.ts(9,8): error TS2307: Cannot find module '@tanstack/lit-query' or its corresponding type declarations.
+src/main.ts(23,8): error TS2307: Cannot find module '@tanstack/lit-query' or its corresponding type declarations.
+src/main.ts(51,10): error TS2339: Property 'client' does not exist on type 'PaginationQueryProvider'.
+src/main.ts(54,22): error TS4112: This member cannot have an 'override' modifier because its containing class 'PaginationQueryProvider' does not extend another class.
+src/main.ts(55,5): error TS2322: Type 'this' is not assignable to type 'HTMLElement | DocumentFragment'.
+  Type 'PaginationQueryProvider' is not assignable to type 'HTMLElement | DocumentFragment'.
+    Type 'this' is not assignable to type 'DocumentFragment'.
+      Type 'PaginationQueryProvider' is missing the following properties from type 'DocumentFragment': ownerDocument, getElementById, baseURI, childNodes, and 56 more.
+src/main.ts(59,52): error TS2345: Argument of type 'typeof PaginationQueryProvider' is not assignable to parameter of type 'CustomElementConstructor'.
+  Type 'PaginationQueryProvider' is missing the following properties from type 'HTMLElement': accessKey, accessKeyLabel, autocapitalize, dir, and 303 more.
+src/main.ts(128,28): error TS7006: Parameter 'input' implicitly has an 'any' type.
+src/main.ts(162,28): error TS7006: Parameter 'input' implicitly has an 'any' type.
+src/main.ts(166,26): error TS7006: Parameter 'variables' implicitly has an 'any' type.
+src/main.ts(182,48): error TS7006: Parameter 'project' implicitly has an 'any' type.
+src/main.ts(192,19): error TS7006: Parameter '_error' implicitly has an 'any' type.
+src/main.ts(192,27): error TS7006: Parameter '_variables' implicitly has an 'any' type.
+src/main.ts(192,39): error TS7006: Parameter 'context' implicitly has an 'any' type.
+src/main.ts(548,14): error TS7006: Parameter 'project' implicitly has an 'any' type.

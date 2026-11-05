@@ -1,0 +1,158 @@
+Scope: all 102 workspace projects
+? Verifying lockfile against supply-chain policies (3111 entries)...
+Lockfile is up to date, resolution step is skipped
+Progress: resolved 1, reused 0, downloaded 0, added 0
+Packages: +2839
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Progress: resolved 2839, reused 0, downloaded 0, added 0
+Progress: resolved 2839, reused 33, downloaded 0, added 0
+Progress: resolved 2839, reused 190, downloaded 0, added 0
+Progress: resolved 2839, reused 224, downloaded 0, added 0
+Progress: resolved 2839, reused 258, downloaded 62, added 5
+Progress: resolved 2839, reused 258, downloaded 136, added 133
+Progress: resolved 2839, reused 258, downloaded 250, added 354
+Progress: resolved 2839, reused 258, downloaded 308, added 393
+Progress: resolved 2839, reused 258, downloaded 352, added 435
+Progress: resolved 2839, reused 258, downloaded 446, added 508
+Progress: resolved 2839, reused 258, downloaded 615, added 591
+[WARN] Request took 12074ms: https://registry.npmjs.org/@astrojs%2Flanguage-server
+Progress: resolved 2839, reused 258, downloaded 652, added 624
+[WARN] Request took 13583ms: https://registry.npmjs.org/@astrojs%2Fmarkdown-remark
+Progress: resolved 2839, reused 258, downloaded 753, added 780
+[WARN] Request took 14490ms: https://registry.npmjs.org/@algolia%2Frequester-node-http
+[WARN] Request took 15833ms: https://registry.npmjs.org/@algolia%2Fclient-search
+Progress: resolved 2839, reused 258, downloaded 800, added 798
+[WARN] Request took 16450ms: https://registry.npmjs.org/@babel%2Fcore
+[WARN] Request took 17395ms: https://registry.npmjs.org/@angular%2Fbuild
+Progress: resolved 2839, reused 258, downloaded 864, added 836
+Progress: resolved 2839, reused 258, downloaded 1009, added 1297
+Progress: resolved 2839, reused 258, downloaded 1027, added 1309
+[WARN] Request took 14801ms: https://registry.npmjs.org/@babel%2Fparser
+Progress: resolved 2839, reused 258, downloaded 1062, added 1343
+Progress: resolved 2839, reused 258, downloaded 1144, added 1427
+[WARN] Request took 26991ms: https://registry.npmjs.org/@algolia%2Frequester-browser-xhr
+[WARN] Request took 26509ms: https://registry.npmjs.org/@babel%2Fcore
+Progress: resolved 2839, reused 258, downloaded 1209, added 1456
+[WARN] Request took 29997ms: https://registry.npmjs.org/@astrojs%2Fvercel
+Progress: resolved 2839, reused 258, downloaded 1246, added 1474
+[WARN] Request took 32092ms: https://registry.npmjs.org/@algolia%2Frecommend
+[WARN] Request took 33389ms: https://registry.npmjs.org/@algolia%2Fclient-common
+Progress: resolved 2839, reused 258, downloaded 1268, added 1482
+Progress: resolved 2839, reused 258, downloaded 1336, added 1534
+[WARN] Request took 36877ms: https://registry.npmjs.org/@algolia%2Frequester-fetch
+[WARN] Request took 37840ms: https://registry.npmjs.org/@algolia%2Fclient-analytics
+Progress: resolved 2839, reused 258, downloaded 1356, added 1543
+[WARN] Request took 40209ms: https://registry.npmjs.org/@astrojs%2Fcompiler
+Progress: resolved 2839, reused 258, downloaded 1433, added 1615
+[WARN] Request took 15964ms: https://registry.npmjs.org/@babel%2Fplugin-transform-typescript
+[WARN] Request took 39851ms: https://registry.npmjs.org/@algolia%2Fclient-personalization
+[WARN] Request took 40971ms: https://registry.npmjs.org/@algolia%2Fingestion
+Progress: resolved 2839, reused 258, downloaded 1510, added 1655
+Progress: resolved 2839, reused 258, downloaded 1569, added 1700
+[WARN] Request took 49470ms: https://registry.npmjs.org/@angular-devkit%2Farchitect
+[WARN] Request took 50092ms: https://registry.npmjs.org/@angular%2Fcompiler
+Progress: resolved 2839, reused 258, downloaded 1618, added 1709
+[WARN] Request took 51449ms: https://registry.npmjs.org/@angular%2Fanimations
+[WARN] Request took 51777ms: https://registry.npmjs.org/@angular-devkit%2Fschematics
+[WARN] Request took 20619ms: https://registry.npmjs.org/@babel%2Ftypes
+[WARN] Request took 52312ms: https://registry.npmjs.org/@angular%2Fcommon
+Progress: resolved 2839, reused 258, downloaded 1769, added 1836
+[WARN] Request took 55168ms: https://registry.npmjs.org/@angular%2Fforms
+[WARN] Request took 55277ms: https://registry.npmjs.org/@angular-devkit%2Fcore
+Progress: resolved 2839, reused 258, downloaded 1802, added 1844
+[WARN] Request took 56294ms: https://registry.npmjs.org/@angular%2Frouter
+[WARN] Request took 16317ms: https://registry.npmjs.org/@cspell%2Fcspell-types
+[WARN] Request took 57194ms: https://registry.npmjs.org/@angular%2Fcore
+Progress: resolved 2839, reused 258, downloaded 1817, added 1848
+[WARN] Request took 59357ms: https://registry.npmjs.org/@angular%2Fplatform-browser
+[WARN] GET https://registry.npmjs.org/@angular%2Fcli error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@angular%2Fcompiler-cli error (23). Will retry in 10 seconds. 2 retries left.
+Progress: resolved 2839, reused 258, downloaded 1938, added 2231
+[WARN] Request took 12808ms: https://registry.npmjs.org/@cspell%2Fdict-latex
+[WARN] Request took 15595ms: https://registry.npmjs.org/@cspell%2Fdict-npm
+[WARN] Request took 60084ms: https://registry.npmjs.org/@algolia%2Fclient-query-suggestions
+[WARN] Request took 11041ms: https://registry.npmjs.org/@cspell%2Fdict-vue
+[WARN] Request took 11043ms: https://registry.npmjs.org/@cspell%2Fdict-zig
+[WARN] GET https://registry.npmjs.org/@algolia%2Fclient-abtesting error (23). Will retry in 10 seconds. 2 retries left.
+Progress: resolved 2839, reused 258, downloaded 2014, added 2246
+Progress: resolved 2839, reused 258, downloaded 2195, added 2492
+Progress: resolved 2839, reused 258, downloaded 2322, added 2584
+[WARN] Request took 14330ms: https://registry.npmjs.org/@cspell%2Fdict-typescript
+[WARN] Request took 28547ms: https://registry.npmjs.org/@changesets%2Fcli
+[WARN] Request took 13164ms: https://registry.npmjs.org/@cspell%2Frpc
+Progress: resolved 2839, reused 258, downloaded 2411, added 2710
+[WARN] Request took 16107ms: https://registry.npmjs.org/@cspell%2Fdict-scala
+[WARN] Request took 18477ms: https://registry.npmjs.org/@cspell%2Fdict-markdown
+[WARN] Request took 25109ms: https://registry.npmjs.org/@cspell%2Fdict-html
+Progress: resolved 2839, reused 258, downloaded 2439, added 2719
+[WARN] Request took 21569ms: https://registry.npmjs.org/@cspell%2Fdict-node
+[WARN] Request took 20389ms: https://registry.npmjs.org/@cspell%2Ffiletypes
+[WARN] Request took 19421ms: https://registry.npmjs.org/@cspell%2Furl
+[WARN] Request took 19418ms: https://registry.npmjs.org/@cspell%2Fdict-public-licenses
+[WARN] Request took 20494ms: https://registry.npmjs.org/@cspell%2Fdict-php
+[WARN] Request took 19515ms: https://registry.npmjs.org/@cspell%2Fdict-powershell
+[WARN] Request took 19521ms: https://registry.npmjs.org/@cspell%2Fdict-ruby
+[WARN] Request took 27666ms: https://registry.npmjs.org/@cspell%2Fdict-en-gb-mit
+[WARN] Request took 36347ms: https://registry.npmjs.org/@babel%2Ftraverse
+Progress: resolved 2839, reused 258, downloaded 2510, added 2809
+[WARN] Request took 53831ms: https://registry.npmjs.org/@babel%2Fpreset-env
+Progress: resolved 2839, reused 258, downloaded 2529, added 2810
+Progress: resolved 2839, reused 258, downloaded 2539, added 2839, done
+[WARN] Request took 57672ms: https://registry.npmjs.org/@angular%2Fbuild
+[WARN] Request took 14171ms: https://registry.npmjs.org/@cspell%2Fdict-typescript
+[WARN] Request took 27714ms: https://registry.npmjs.org/@cspell%2Fdynamic-import
+[WARN] Request took 39821ms: https://registry.npmjs.org/@cspell%2Fcspell-service-bus
+[WARN] Request took 10786ms: https://registry.npmjs.org/@cspell%2Frpc
+[WARN] Request took 32345ms: https://registry.npmjs.org/@cspell%2Fstrong-weak-map
+[WARN] Request took 37731ms: https://registry.npmjs.org/@cspell%2Fdict-software-terms
+[WARN] Request took 15185ms: https://registry.npmjs.org/@csstools%2Fcss-parser-algorithms
+[WARN] Request took 15360ms: https://registry.npmjs.org/@emmetio%2Fabbreviation
+[WARN] Request took 45270ms: https://registry.npmjs.org/@cspell%2Fdict-en_us
+[WARN] Request took 16483ms: https://registry.npmjs.org/@csstools%2Fcss-tokenizer
+[WARN] Request took 17596ms: https://registry.npmjs.org/@csstools%2Fcss-calc
+[WARN] Request took 29986ms: https://registry.npmjs.org/@cspell%2Fdict-python
+[WARN] Request took 17468ms: https://registry.npmjs.org/@csstools%2Fcss-syntax-patches-for-csstree
+[WARN] Request took 18565ms: https://registry.npmjs.org/@csstools%2Fcss-color-parser
+[WARN] Request took 57209ms: https://registry.npmjs.org/@cspell%2Fcspell-bundled-dicts
+[WARN] Request took 21491ms: https://registry.npmjs.org/@cspell%2Ffiletypes
+[WARN] Request took 21700ms: https://registry.npmjs.org/@cspell%2Furl
+[WARN] Request took 32679ms: https://registry.npmjs.org/@cspell%2Fdict-npm
+[WARN] GET https://registry.npmjs.org/@babel%2Fruntime error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 45106ms: https://registry.npmjs.org/@cspell%2Feslint-plugin
+[WARN] Request took 23818ms: https://registry.npmjs.org/@es-joy%2Fjsdoccomment
+[WARN] Request took 10343ms: https://registry.npmjs.org/@esbuild%2Fandroid-arm
+[WARN] Request took 24353ms: https://registry.npmjs.org/@cspell%2Fdynamic-import
+[WARN] GET https://registry.npmjs.org/@cspell%2Fcspell-pipe error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@angular%2Fcompiler error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 12442ms: https://registry.npmjs.org/@eslint-community%2Feslint-utils
+[WARN] Request took 12447ms: https://registry.npmjs.org/@eslint-community%2Fregexpp
+[WARN] Request took 15390ms: https://registry.npmjs.org/@esbuild%2Flinux-ppc64
+[WARN] Request took 15369ms: https://registry.npmjs.org/@esbuild%2Flinux-mips64el
+[WARN] Request took 15395ms: https://registry.npmjs.org/@esbuild%2Flinux-riscv64
+[WARN] GET https://registry.npmjs.org/@angular%2Fanimations error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@angular-devkit%2Farchitect error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@angular-devkit%2Fschematics error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 14940ms: https://registry.npmjs.org/@esbuild%2Flinux-x64
+[WARN] Request took 14947ms: https://registry.npmjs.org/@esbuild%2Fnetbsd-x64
+[WARN] Request took 14961ms: https://registry.npmjs.org/@esbuild%2Flinux-s390x
+[WARN] Request took 15718ms: https://registry.npmjs.org/@esbuild%2Flinux-loong64
+[WARN] GET https://registry.npmjs.org/@angular%2Fcommon error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 10484ms: https://registry.npmjs.org/@eslint%2Fplugin-kit
+[WARN] Request took 15353ms: https://registry.npmjs.org/@eslint%2Fjs
+[WARN] GET https://registry.npmjs.org/@angular%2Fforms error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 15190ms: https://registry.npmjs.org/@expo%2Fbunyan
+[WARN] GET https://registry.npmjs.org/@angular%2Frouter error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@angular%2Fcore error (23). Will retry in 10 seconds. 2 retries left.
+[ERROR] Command was killed with SIGTERM (Termination): /dev/shm/rio-tanstack-tools/node-v24.16.0-linux-x64/bin/node /dev/shm/rio-tanstack-tools/corepack-cache/v1/pnpm/11.9.0/bin/pnpm.mjs install
+
+pnpm: Command was killed with SIGTERM (Termination): /dev/shm/rio-tanstack-tools/node-v24.16.0-linux-x64/bin/node /dev/shm/rio-tanstack-tools/corepack-cache/v1/pnpm/11.9.0/bin/pnpm.mjs install
+    at getFinalError (file:///dev/shm/rio-tanstack-tools/corepack-cache/v1/pnpm/11.9.0/dist/pnpm.mjs:34291:14)
+    at makeError (file:///dev/shm/rio-tanstack-tools/corepack-cache/v1/pnpm/11.9.0/dist/pnpm.mjs:36598:21)
+    at getSyncResult (file:///dev/shm/rio-tanstack-tools/corepack-cache/v1/pnpm/11.9.0/dist/pnpm.mjs:38442:10)
+    at spawnSubprocessSync (file:///dev/shm/rio-tanstack-tools/corepack-cache/v1/pnpm/11.9.0/dist/pnpm.mjs:38402:14)
+    at execaCoreSync (file:///dev/shm/rio-tanstack-tools/corepack-cache/v1/pnpm/11.9.0/dist/pnpm.mjs:38332:23)
+    at callBoundExeca (file:///dev/shm/rio-tanstack-tools/corepack-cache/v1/pnpm/11.9.0/dist/pnpm.mjs:40860:23)
+    at boundExeca (file:///dev/shm/rio-tanstack-tools/corepack-cache/v1/pnpm/11.9.0/dist/pnpm.mjs:40837:49)
+    at sync (file:///dev/shm/rio-tanstack-tools/corepack-cache/v1/pnpm/11.9.0/dist/pnpm.mjs:40996:10)
+    at runPnpmCli (file:///dev/shm/rio-tanstack-tools/corepack-cache/v1/pnpm/11.9.0/dist/pnpm.mjs:247126:5)
+    at runDepsStatusCheck (file:///dev/shm/rio-tanstack-tools/corepack-cache/v1/pnpm/11.9.0/dist/pnpm.mjs:248869:7)

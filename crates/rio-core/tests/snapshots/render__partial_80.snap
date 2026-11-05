@@ -1,0 +1,26 @@
+---
+source: crates/rio-core/tests/render.rs
+expression: output
+---
+Rio 0.1.0 — partial
+Review: 1234567890abcdef  Run: 01J00000000000000000000000
+Mode: working-tree  Base: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb  Head:
+snapshot:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+Profile: rio/base  Chain: rio/base
+
+Deterministic results
+  typecheck . (typescript, head, changed): cancelled (interrupted) — 100 ms
+
+Findings
+1 finding(s). Review partial: typecheck .: cancelled (interrupted) did not
+complete.
+  typecheck/tsc/TS2322 [worsened; error; static_proven] FAIL
+    src/a.ts:8 (a.run) [pre-existing]
+    src/a.ts:12 (a.run) [new]
+    Type 'string' is not assignable to type 'number'.
+    Trigger: Assigning a string to a number
+
+Footer
+typecheck . head: cancelled (interrupted) — Type checking stopped before
+completion
+Total: 105 ms

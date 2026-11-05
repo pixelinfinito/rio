@@ -1,0 +1,30 @@
+[package]
+name = "rio-engine"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+anyhow.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+blake3.workspace = true
+fs4.workspace = true
+ulid.workspace = true
+tokio.workspace = true
+tokio-util.workspace = true
+tempfile.workspace = true
+pep508_rs.workspace = true
+rio-core = { path = "../rio-core" }
+rio-git = { path = "../rio-git" }
+rio-profile = { path = "../rio-profile" }
+rio-adapters = { path = "../rio-adapters" }
+rio-graph = { path = "../rio-graph" }
+
+[dev-dependencies]
+jsonschema.workspace = true

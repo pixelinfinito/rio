@@ -1,0 +1,39 @@
+
+/dev/shm/trpc-eval/hono-2085-oracle/runtime_tests/deno-jsx/jsx.test.tsx
+  40:39  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  63:39  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/dev/shm/trpc-eval/hono-2085-oracle/runtime_tests/deno/middleware.test.tsx
+  3:21  warning  'jsx' is defined but never used       @typescript-eslint/no-unused-vars
+  3:26  warning  'Fragment' is defined but never used  @typescript-eslint/no-unused-vars
+
+/dev/shm/trpc-eval/hono-2085-oracle/src/helper/css/index.test.tsx
+  3:10  warning  'jsx' is defined but never used       @typescript-eslint/no-unused-vars
+  3:15  warning  'Fragment' is defined but never used  @typescript-eslint/no-unused-vars
+
+/dev/shm/trpc-eval/hono-2085-oracle/src/jsx/components.test.tsx
+  187:43  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  265:43  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  295:43  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  330:43  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  358:43  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  386:43  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/dev/shm/trpc-eval/hono-2085-oracle/src/jsx/streaming.test.tsx
+   39:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   87:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  124:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  152:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  178:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  203:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  237:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  271:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  311:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  357:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  413:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  503:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  543:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  555:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+✖ 26 problems (0 errors, 26 warnings)
+

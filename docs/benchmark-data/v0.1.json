@@ -1,0 +1,1691 @@
+{
+  "schema": 1,
+  "platform": "Linux-6.8.0-147-generic-x86_64-with-glibc2.39",
+  "cpu_count": 20,
+  "version": "rio 0.1.0 x86_64-unknown-linux-gnu ce0eb3825675",
+  "binary_sha256": "9aef7d6352d3cfe78b164fafbee721c699c1e90a08967879ef051e8d2e75aa82",
+  "repository": "https://github.com/gvergnaud/ts-pattern.git",
+  "base": "f11be73acb18e1d653d4f252e7d75981d873a2e6",
+  "head": "58b0b15b613877f6a879ebae48a67b4752310bae",
+  "diff_numstat": "300\t0\tsrc/rio-benchmark.ts",
+  "command": [
+    "rio",
+    "review",
+    "--base",
+    "benchmark-base",
+    "--offline",
+    "--format",
+    "json"
+  ],
+  "percentile_method": "linear interpolation at (n-1)*p",
+  "runs": [
+    {
+      "condition": "cold",
+      "index": 1,
+      "wall_time_ms": 110636.425,
+      "report_wall_time_ms": 110169,
+      "exit_code": 0,
+      "status": "incomplete",
+      "review_id": "e5491aa1f5cb969d",
+      "checks": [
+        {
+          "findings": [],
+          "kind": "secrets",
+          "language": "common",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "hint": "Dependency audit needs api.osv.dev",
+          "kind": "dependencies",
+          "language": "common",
+          "outcome": "skipped",
+          "reason": "offline",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 208
+        },
+        {
+          "findings": [],
+          "hint": "lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+          "kind": "lint",
+          "language": "typescript",
+          "outcome": "skipped",
+          "reason": "no_project_config",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "coverage",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 55166
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 15526
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "base",
+          "wall_time_ms": 80696
+        }
+      ]
+    },
+    {
+      "condition": "cold",
+      "index": 2,
+      "wall_time_ms": 38209.019,
+      "report_wall_time_ms": 37689,
+      "exit_code": 0,
+      "status": "incomplete",
+      "review_id": "e5491aa1f5cb969d",
+      "checks": [
+        {
+          "findings": [],
+          "kind": "secrets",
+          "language": "common",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "hint": "Dependency audit needs api.osv.dev",
+          "kind": "dependencies",
+          "language": "common",
+          "outcome": "skipped",
+          "reason": "offline",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 200
+        },
+        {
+          "findings": [],
+          "hint": "lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+          "kind": "lint",
+          "language": "typescript",
+          "outcome": "skipped",
+          "reason": "no_project_config",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 8910
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "base",
+          "wall_time_ms": 7261
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "coverage",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 32314
+        }
+      ]
+    },
+    {
+      "condition": "cold",
+      "index": 3,
+      "wall_time_ms": 48539.575,
+      "report_wall_time_ms": 47988,
+      "exit_code": 0,
+      "status": "incomplete",
+      "review_id": "e5491aa1f5cb969d",
+      "checks": [
+        {
+          "findings": [],
+          "hint": "lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+          "kind": "lint",
+          "language": "typescript",
+          "outcome": "skipped",
+          "reason": "no_project_config",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "kind": "secrets",
+          "language": "common",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "hint": "Dependency audit needs api.osv.dev",
+          "kind": "dependencies",
+          "language": "common",
+          "outcome": "skipped",
+          "reason": "offline",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 272
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 8155
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "base",
+          "wall_time_ms": 7125
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "coverage",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 34333
+        }
+      ]
+    },
+    {
+      "condition": "cold",
+      "index": 4,
+      "wall_time_ms": 44284.478,
+      "report_wall_time_ms": 43800,
+      "exit_code": 0,
+      "status": "incomplete",
+      "review_id": "e5491aa1f5cb969d",
+      "checks": [
+        {
+          "findings": [],
+          "kind": "secrets",
+          "language": "common",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "hint": "Dependency audit needs api.osv.dev",
+          "kind": "dependencies",
+          "language": "common",
+          "outcome": "skipped",
+          "reason": "offline",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 484
+        },
+        {
+          "findings": [],
+          "hint": "lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+          "kind": "lint",
+          "language": "typescript",
+          "outcome": "skipped",
+          "reason": "no_project_config",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 9226
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "base",
+          "wall_time_ms": 10097
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "coverage",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 32147
+        }
+      ]
+    },
+    {
+      "condition": "cold",
+      "index": 5,
+      "wall_time_ms": 39439.541,
+      "report_wall_time_ms": 38968,
+      "exit_code": 0,
+      "status": "incomplete",
+      "review_id": "e5491aa1f5cb969d",
+      "checks": [
+        {
+          "findings": [],
+          "kind": "secrets",
+          "language": "common",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "hint": "Dependency audit needs api.osv.dev",
+          "kind": "dependencies",
+          "language": "common",
+          "outcome": "skipped",
+          "reason": "offline",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 203
+        },
+        {
+          "findings": [],
+          "hint": "lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+          "kind": "lint",
+          "language": "typescript",
+          "outcome": "skipped",
+          "reason": "no_project_config",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 9130
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "base",
+          "wall_time_ms": 5516
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "coverage",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 32271
+        }
+      ]
+    },
+    {
+      "condition": "cold",
+      "index": 6,
+      "wall_time_ms": 50060.29,
+      "report_wall_time_ms": 49621,
+      "exit_code": 0,
+      "status": "incomplete",
+      "review_id": "e5491aa1f5cb969d",
+      "checks": [
+        {
+          "findings": [],
+          "kind": "secrets",
+          "language": "common",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "hint": "Dependency audit needs api.osv.dev",
+          "kind": "dependencies",
+          "language": "common",
+          "outcome": "skipped",
+          "reason": "offline",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 209
+        },
+        {
+          "findings": [],
+          "hint": "lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+          "kind": "lint",
+          "language": "typescript",
+          "outcome": "skipped",
+          "reason": "no_project_config",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 15199
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "base",
+          "wall_time_ms": 8533
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "coverage",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 38431
+        }
+      ]
+    },
+    {
+      "condition": "cold",
+      "index": 7,
+      "wall_time_ms": 35351.524,
+      "report_wall_time_ms": 34896,
+      "exit_code": 0,
+      "status": "incomplete",
+      "review_id": "e5491aa1f5cb969d",
+      "checks": [
+        {
+          "findings": [],
+          "kind": "secrets",
+          "language": "common",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "hint": "Dependency audit needs api.osv.dev",
+          "kind": "dependencies",
+          "language": "common",
+          "outcome": "skipped",
+          "reason": "offline",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 206
+        },
+        {
+          "findings": [],
+          "hint": "lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+          "kind": "lint",
+          "language": "typescript",
+          "outcome": "skipped",
+          "reason": "no_project_config",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 6707
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "base",
+          "wall_time_ms": 4972
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "coverage",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 28929
+        }
+      ]
+    },
+    {
+      "condition": "cold",
+      "index": 8,
+      "wall_time_ms": 34618.593,
+      "report_wall_time_ms": 34169,
+      "exit_code": 0,
+      "status": "incomplete",
+      "review_id": "e5491aa1f5cb969d",
+      "checks": [
+        {
+          "findings": [],
+          "kind": "secrets",
+          "language": "common",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "hint": "Dependency audit needs api.osv.dev",
+          "kind": "dependencies",
+          "language": "common",
+          "outcome": "skipped",
+          "reason": "offline",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 277
+        },
+        {
+          "findings": [],
+          "hint": "lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+          "kind": "lint",
+          "language": "typescript",
+          "outcome": "skipped",
+          "reason": "no_project_config",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 6767
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "base",
+          "wall_time_ms": 4947
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "coverage",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 29102
+        }
+      ]
+    },
+    {
+      "condition": "cold",
+      "index": 9,
+      "wall_time_ms": 34547.556,
+      "report_wall_time_ms": 34106,
+      "exit_code": 0,
+      "status": "incomplete",
+      "review_id": "e5491aa1f5cb969d",
+      "checks": [
+        {
+          "findings": [],
+          "kind": "secrets",
+          "language": "common",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "hint": "Dependency audit needs api.osv.dev",
+          "kind": "dependencies",
+          "language": "common",
+          "outcome": "skipped",
+          "reason": "offline",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 197
+        },
+        {
+          "findings": [],
+          "hint": "lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+          "kind": "lint",
+          "language": "typescript",
+          "outcome": "skipped",
+          "reason": "no_project_config",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 6875
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "base",
+          "wall_time_ms": 4870
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "coverage",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 29213
+        }
+      ]
+    },
+    {
+      "condition": "cold",
+      "index": 10,
+      "wall_time_ms": 34298.997,
+      "report_wall_time_ms": 33855,
+      "exit_code": 0,
+      "status": "incomplete",
+      "review_id": "e5491aa1f5cb969d",
+      "checks": [
+        {
+          "findings": [],
+          "kind": "secrets",
+          "language": "common",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "hint": "Dependency audit needs api.osv.dev",
+          "kind": "dependencies",
+          "language": "common",
+          "outcome": "skipped",
+          "reason": "offline",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 277
+        },
+        {
+          "findings": [],
+          "hint": "lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+          "kind": "lint",
+          "language": "typescript",
+          "outcome": "skipped",
+          "reason": "no_project_config",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 6915
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "base",
+          "wall_time_ms": 4937
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "coverage",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 28723
+        }
+      ]
+    },
+    {
+      "condition": "warm",
+      "index": 1,
+      "wall_time_ms": 29757.06,
+      "report_wall_time_ms": 29324,
+      "exit_code": 0,
+      "status": "incomplete",
+      "review_id": "e5491aa1f5cb969d",
+      "checks": [
+        {
+          "findings": [],
+          "kind": "secrets",
+          "language": "common",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "hint": "Dependency audit needs api.osv.dev",
+          "kind": "dependencies",
+          "language": "common",
+          "outcome": "skipped",
+          "reason": "offline",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 218
+        },
+        {
+          "findings": [],
+          "hint": "lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+          "kind": "lint",
+          "language": "typescript",
+          "outcome": "skipped",
+          "reason": "no_project_config",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 6791
+        },
+        {
+          "cached": true,
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "base",
+          "wall_time_ms": 0
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "coverage",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 28227
+        }
+      ]
+    },
+    {
+      "condition": "warm",
+      "index": 2,
+      "wall_time_ms": 34245.167,
+      "report_wall_time_ms": 33733,
+      "exit_code": 0,
+      "status": "incomplete",
+      "review_id": "e5491aa1f5cb969d",
+      "checks": [
+        {
+          "findings": [],
+          "kind": "secrets",
+          "language": "common",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "hint": "Dependency audit needs api.osv.dev",
+          "kind": "dependencies",
+          "language": "common",
+          "outcome": "skipped",
+          "reason": "offline",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 229
+        },
+        {
+          "findings": [],
+          "hint": "lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+          "kind": "lint",
+          "language": "typescript",
+          "outcome": "skipped",
+          "reason": "no_project_config",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 8841
+        },
+        {
+          "cached": true,
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "base",
+          "wall_time_ms": 0
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "coverage",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 32326
+        }
+      ]
+    },
+    {
+      "condition": "warm",
+      "index": 3,
+      "wall_time_ms": 30277.472,
+      "report_wall_time_ms": 29800,
+      "exit_code": 0,
+      "status": "incomplete",
+      "review_id": "e5491aa1f5cb969d",
+      "checks": [
+        {
+          "findings": [],
+          "kind": "secrets",
+          "language": "common",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "hint": "Dependency audit needs api.osv.dev",
+          "kind": "dependencies",
+          "language": "common",
+          "outcome": "skipped",
+          "reason": "offline",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 222
+        },
+        {
+          "findings": [],
+          "hint": "lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+          "kind": "lint",
+          "language": "typescript",
+          "outcome": "skipped",
+          "reason": "no_project_config",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 6626
+        },
+        {
+          "cached": true,
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "base",
+          "wall_time_ms": 0
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "coverage",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 28709
+        }
+      ]
+    },
+    {
+      "condition": "warm",
+      "index": 4,
+      "wall_time_ms": 32735.172,
+      "report_wall_time_ms": 32290,
+      "exit_code": 0,
+      "status": "incomplete",
+      "review_id": "e5491aa1f5cb969d",
+      "checks": [
+        {
+          "findings": [],
+          "kind": "secrets",
+          "language": "common",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "hint": "Dependency audit needs api.osv.dev",
+          "kind": "dependencies",
+          "language": "common",
+          "outcome": "skipped",
+          "reason": "offline",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 217
+        },
+        {
+          "findings": [],
+          "hint": "lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+          "kind": "lint",
+          "language": "typescript",
+          "outcome": "skipped",
+          "reason": "no_project_config",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 9157
+        },
+        {
+          "cached": true,
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "base",
+          "wall_time_ms": 0
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "coverage",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 31227
+        }
+      ]
+    },
+    {
+      "condition": "warm",
+      "index": 5,
+      "wall_time_ms": 31155.205,
+      "report_wall_time_ms": 30689,
+      "exit_code": 0,
+      "status": "incomplete",
+      "review_id": "e5491aa1f5cb969d",
+      "checks": [
+        {
+          "findings": [],
+          "kind": "secrets",
+          "language": "common",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "hint": "Dependency audit needs api.osv.dev",
+          "kind": "dependencies",
+          "language": "common",
+          "outcome": "skipped",
+          "reason": "offline",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 220
+        },
+        {
+          "findings": [],
+          "hint": "lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+          "kind": "lint",
+          "language": "typescript",
+          "outcome": "skipped",
+          "reason": "no_project_config",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 7297
+        },
+        {
+          "cached": true,
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "base",
+          "wall_time_ms": 0
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "coverage",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 29385
+        }
+      ]
+    },
+    {
+      "condition": "warm",
+      "index": 6,
+      "wall_time_ms": 31895.557,
+      "report_wall_time_ms": 31422,
+      "exit_code": 0,
+      "status": "incomplete",
+      "review_id": "e5491aa1f5cb969d",
+      "checks": [
+        {
+          "findings": [],
+          "kind": "secrets",
+          "language": "common",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "hint": "Dependency audit needs api.osv.dev",
+          "kind": "dependencies",
+          "language": "common",
+          "outcome": "skipped",
+          "reason": "offline",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 208
+        },
+        {
+          "findings": [],
+          "hint": "lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+          "kind": "lint",
+          "language": "typescript",
+          "outcome": "skipped",
+          "reason": "no_project_config",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 6362
+        },
+        {
+          "cached": true,
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "base",
+          "wall_time_ms": 0
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "coverage",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 30357
+        }
+      ]
+    },
+    {
+      "condition": "warm",
+      "index": 7,
+      "wall_time_ms": 30553.753,
+      "report_wall_time_ms": 30087,
+      "exit_code": 0,
+      "status": "incomplete",
+      "review_id": "e5491aa1f5cb969d",
+      "checks": [
+        {
+          "findings": [],
+          "kind": "secrets",
+          "language": "common",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "hint": "Dependency audit needs api.osv.dev",
+          "kind": "dependencies",
+          "language": "common",
+          "outcome": "skipped",
+          "reason": "offline",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 223
+        },
+        {
+          "findings": [],
+          "hint": "lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+          "kind": "lint",
+          "language": "typescript",
+          "outcome": "skipped",
+          "reason": "no_project_config",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 6647
+        },
+        {
+          "cached": true,
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "base",
+          "wall_time_ms": 0
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "coverage",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 28970
+        }
+      ]
+    },
+    {
+      "condition": "warm",
+      "index": 8,
+      "wall_time_ms": 31079.894,
+      "report_wall_time_ms": 30635,
+      "exit_code": 0,
+      "status": "incomplete",
+      "review_id": "e5491aa1f5cb969d",
+      "checks": [
+        {
+          "findings": [],
+          "kind": "secrets",
+          "language": "common",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "hint": "Dependency audit needs api.osv.dev",
+          "kind": "dependencies",
+          "language": "common",
+          "outcome": "skipped",
+          "reason": "offline",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 217
+        },
+        {
+          "findings": [],
+          "hint": "lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+          "kind": "lint",
+          "language": "typescript",
+          "outcome": "skipped",
+          "reason": "no_project_config",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 7389
+        },
+        {
+          "cached": true,
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "base",
+          "wall_time_ms": 0
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "coverage",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 29556
+        }
+      ]
+    },
+    {
+      "condition": "warm",
+      "index": 9,
+      "wall_time_ms": 31092.289,
+      "report_wall_time_ms": 30626,
+      "exit_code": 0,
+      "status": "incomplete",
+      "review_id": "e5491aa1f5cb969d",
+      "checks": [
+        {
+          "findings": [],
+          "kind": "secrets",
+          "language": "common",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "hint": "Dependency audit needs api.osv.dev",
+          "kind": "dependencies",
+          "language": "common",
+          "outcome": "skipped",
+          "reason": "offline",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 214
+        },
+        {
+          "findings": [],
+          "hint": "lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+          "kind": "lint",
+          "language": "typescript",
+          "outcome": "skipped",
+          "reason": "no_project_config",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 6574
+        },
+        {
+          "cached": true,
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "base",
+          "wall_time_ms": 0
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "coverage",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 29546
+        }
+      ]
+    },
+    {
+      "condition": "warm",
+      "index": 10,
+      "wall_time_ms": 30788.723,
+      "report_wall_time_ms": 30339,
+      "exit_code": 0,
+      "status": "incomplete",
+      "review_id": "e5491aa1f5cb969d",
+      "checks": [
+        {
+          "findings": [],
+          "kind": "secrets",
+          "language": "common",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "findings": [],
+          "hint": "Dependency audit needs api.osv.dev",
+          "kind": "dependencies",
+          "language": "common",
+          "outcome": "skipped",
+          "reason": "offline",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 220
+        },
+        {
+          "findings": [],
+          "hint": "lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+          "kind": "lint",
+          "language": "typescript",
+          "outcome": "skipped",
+          "reason": "no_project_config",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 0
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 6913
+        },
+        {
+          "cached": true,
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "typecheck",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "base",
+          "wall_time_ms": 0
+        },
+        {
+          "dependency_state": "verified",
+          "findings": [],
+          "kind": "coverage",
+          "language": "typescript",
+          "outcome": "passed",
+          "root": ".",
+          "scheduled_as": "changed",
+          "version": "head",
+          "wall_time_ms": 29209
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "cold": {
+      "p50_ms": 38824.28,
+      "p95_ms": 83377.16424999994,
+      "per_check": [
+        {
+          "kind": "coverage",
+          "root": ".",
+          "version": "head",
+          "p50_ms": 32209.0,
+          "p95_ms": 47635.249999999985
+        },
+        {
+          "kind": "dependencies",
+          "root": ".",
+          "version": "head",
+          "p50_ms": 208.5,
+          "p95_ms": 390.8499999999998
+        },
+        {
+          "kind": "lint",
+          "root": ".",
+          "version": "head",
+          "p50_ms": 0.0,
+          "p95_ms": 0.0
+        },
+        {
+          "kind": "secrets",
+          "root": ".",
+          "version": "head",
+          "p50_ms": 0.0,
+          "p95_ms": 0.0
+        },
+        {
+          "kind": "typecheck",
+          "root": ".",
+          "version": "base",
+          "p50_ms": 6320.5,
+          "p95_ms": 48926.449999999924
+        },
+        {
+          "kind": "typecheck",
+          "root": ".",
+          "version": "head",
+          "p50_ms": 8532.5,
+          "p95_ms": 15378.85
+        }
+      ]
+    },
+    "warm": {
+      "p50_ms": 31086.091500000002,
+      "p95_ms": 33565.66925,
+      "per_check": [
+        {
+          "kind": "coverage",
+          "root": ".",
+          "version": "head",
+          "p50_ms": 29465.5,
+          "p95_ms": 31831.449999999997
+        },
+        {
+          "kind": "dependencies",
+          "root": ".",
+          "version": "head",
+          "p50_ms": 219.0,
+          "p95_ms": 226.29999999999998
+        },
+        {
+          "kind": "lint",
+          "root": ".",
+          "version": "head",
+          "p50_ms": 0.0,
+          "p95_ms": 0.0
+        },
+        {
+          "kind": "secrets",
+          "root": ".",
+          "version": "head",
+          "p50_ms": 0.0,
+          "p95_ms": 0.0
+        },
+        {
+          "kind": "typecheck",
+          "root": ".",
+          "version": "base",
+          "p50_ms": 0.0,
+          "p95_ms": 0.0
+        },
+        {
+          "kind": "typecheck",
+          "root": ".",
+          "version": "head",
+          "p50_ms": 6852.0,
+          "p95_ms": 9014.8
+        }
+      ]
+    }
+  }
+}

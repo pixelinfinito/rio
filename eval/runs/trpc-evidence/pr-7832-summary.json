@@ -1,0 +1,1 @@
+{"author_association":"MEMBER","base":"83391b53288250e14311e9c9d34949c9365556ac","changed_files":22,"head":"a6cf2474138f56da35cdce50e10a41a7374dd894","merged_at":"2026-11-04T15:37:54Z","number":7832,"title":"chore(monorepo): replace lerna-lite with a pnpm publish script, and create GitHub releases","user":"KATT"}

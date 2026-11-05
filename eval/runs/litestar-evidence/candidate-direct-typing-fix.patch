@@ -1,0 +1,19 @@
+commit c4189610be57a147cebc379a12b5fb399fb5fae7
+Author: Janek Nouvertné <provinzkraut@posteo.de>
+Date:   Wed May 20 18:37:28 2026 +0200
+
+    fix: fix typing after merge
+
+diff --git a/litestar/middleware/allowed_hosts.py b/litestar/middleware/allowed_hosts.py
+index e2e5185aa..3f1121572 100644
+--- a/litestar/middleware/allowed_hosts.py
++++ b/litestar/middleware/allowed_hosts.py
+@@ -64,7 +64,7 @@ class AllowedHostsMiddleware(AbstractMiddleware):
+             return
+ 
+         headers = MutableScopeHeaders(scope=scope)
+-        if host := headers.get("host").split(":")[0]:
++        if (host := headers.get("host")) is not None and host.split(":")[0]:
+             if self.allowed_hosts_regex.fullmatch(host):
+                 await self.app(scope, receive, send)
+                 return

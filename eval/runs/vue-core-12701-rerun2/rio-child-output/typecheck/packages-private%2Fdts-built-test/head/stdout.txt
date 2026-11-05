@@ -1,0 +1,1 @@
+src/index.ts(1,33): error TS2307: Cannot find module 'vue' or its corresponding type declarations.

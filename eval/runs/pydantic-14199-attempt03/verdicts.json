@@ -1,0 +1,770 @@
+{
+  "repository": "pydantic/pydantic",
+  "pr": "https://github.com/pydantic/pydantic/pull/14199",
+  "case_id": "14199",
+  "languages": [
+    "python"
+  ],
+  "reviewer": "sub-agent eval-pydantic (automated)",
+  "verdict_source": "automated",
+  "commands": [
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-4gx6siil argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/pydantic/pydantic.git\", \"/dev/shm/rio-pydantic/tmp/rio-eval-4gx6siil/head\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-4gx6siil/head argv=[\"git\", \"fetch\", \"origin\", \"a9f3f3fccc180c05190df0478a17487ec9908e4e\", \"262700f815672fc37ed637a1604234f6c7cc7ee9\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-4gx6siil/head argv=[\"git\", \"merge-base\", \"a9f3f3fccc180c05190df0478a17487ec9908e4e\", \"262700f815672fc37ed637a1604234f6c7cc7ee9\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-4gx6siil/head argv=[\"git\", \"checkout\", \"--detach\", \"262700f815672fc37ed637a1604234f6c7cc7ee9\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-4gx6siil argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/dev/shm/rio-pydantic/tmp/rio-eval-4gx6siil/head\", \"/dev/shm/rio-pydantic/tmp/rio-eval-4gx6siil/base\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-4gx6siil/base argv=[\"git\", \"checkout\", \"--detach\", \"a9f3f3fccc180c05190df0478a17487ec9908e4e\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-4gx6siil/base argv=[\"uv\", \"sync\", \"--locked\", \"--python\", \"3.12.12\", \"--all-groups\", \"--all-packages\", \"--all-extras\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-4gx6siil/base argv=[\"uv\", \"run\", \"--no-sync\", \"python\", \"-c\", \"import pathlib,sysconfig,hashlib; p=pathlib.Path(sysconfig.get_path('purelib'))/'a1_coverage.pth'; assert hashlib.sha256(p.read_bytes()).hexdigest() == 'ef2ed06d19867ec669c09a804060666a9cd5e383af0a9d11aa2de79b77d448e8'; p.unlink(); print('Removed unused conditional coverage startup hook; coverage run instrumentation remains explicit')\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-4gx6siil/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-4gx6siil/head argv=[\"uv\", \"sync\", \"--locked\", \"--python\", \"3.12.12\", \"--all-groups\", \"--all-packages\", \"--all-extras\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-4gx6siil/head argv=[\"uv\", \"run\", \"--no-sync\", \"python\", \"-c\", \"import pathlib,sysconfig,hashlib; p=pathlib.Path(sysconfig.get_path('purelib'))/'a1_coverage.pth'; assert hashlib.sha256(p.read_bytes()).hexdigest() == 'ef2ed06d19867ec669c09a804060666a9cd5e383af0a9d11aa2de79b77d448e8'; p.unlink(); print('Removed unused conditional coverage startup hook; coverage run instrumentation remains explicit')\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-4gx6siil/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-4gx6siil/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-4gx6siil/head argv=[\"node\", \"--version\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-4gx6siil/head argv=[\"npm\", \"--version\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-4gx6siil/head argv=[\"python3\", \"--version\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-4gx6siil/head argv=[\"uv\", \"--version\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-4gx6siil/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14199-attempt03/profile.yaml\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-4gx6siil/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-4gx6siil/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"a9f3f3fccc180c05190df0478a17487ec9908e4e\", \"--format\", \"json\", \"--offline\", \"--profile\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14199-attempt03/profile.yaml\"]"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14199-attempt03/commands.json; Rio binary SHA-256: 512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+    "UNSCORED: baseline_classification_ran=false. All findings adjudicated for observation only; no normalized record generated. See pydantic-NOTES.md."
+  ],
+  "independently_clean": false,
+  "positive_control": {
+    "kind": "real-pr",
+    "expected": [
+      {
+        "id": "contextmanager-uncovered-error-paths",
+        "mechanism": "uncovered-lines",
+        "evidence": "Preregistered control-register.json; independent positive-head-all-groups and positive-head-noneditable coverage, new file absent at base, 14 missing executable lines, successful suite. This attempt remains unscored because baseline failed.",
+        "finding_ids": [
+          "118c18a4b17e4c34b05d5a4a882b58df6e4e1e888c7dca2e28da3d76c95d9001",
+          "e7fa463a43044b607c2f933410131203ec164611cc22c7828e682002fefafe89"
+        ]
+      }
+    ]
+  },
+  "misses": [],
+  "findings": {
+    "002bdc60607c92db3519cc6ac72c3a50567486a2f4cb93d245b0df443745bb14": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "0109a0494cd4324b8df016e00403e979c40ec2e5a5287134286169dc530d97d5": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "01314ab57e2da29f4579a7b3bff39d5f719ad6af3bf2045a2b5076a42cf16a98": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "02e06c3dcb99dbbccca8643341b1a52ea44bfffce576f2977fb690a8bb92800d": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "0353dd51abda837c9dfab2e47949dbaf1b948eb31b6160710ee6b0f0d9b401c6": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "0385ddd57abe5f408ea4c547bc698f6d443eb21636816bef867924b47221d111": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "07834b6389c6781c429ce518338a579a017f41642c41d6f274cf0740634e125d": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "0884bbee8358da6cc254cbe6cb25d36e69602a9dd57bafee93380e7941c7d408": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "098c035c5029886ac338ba1c16779ff77faf6172c7f38255bcf0be176041940f": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "0b4bcc0e0a90ebdcfdce938768c04ed6d3db9a6ba2e80ca748c8746845c78678": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "0c16e8302a8c55deb1ac6bf13dae58b2e5ef247f46ad654a71624cc9bd8ef594": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "0c708dac1e6dedabbb1b19dcf3ad2415b4836ed5a6906498f63381f00bd3bec0": {
+      "verdict": "pre-existing-shown",
+      "reason": "Exact path/line/rule/message reproduced in independent project-PATH Pyright and both positive base/head native Pyright outputs (07-stdout.log); unchanged tests/test_pipeline.py. Rio labels this pre-existing/unclassified. Overall attempt lacks baseline classification and is unscored."
+    },
+    "0f6a84c0f904aa5b4ba20066e598d5d06038f82bdf3fb1a870055e7864511ceb": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "10f84e2bfc203d0082f04cd6402f25354c1f7d1431dc66d25999d6ea65c762a1": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "117f3dcf7a426df5a36161594ccbb035683b02ad2c3fa66cdabfc033e73e1f68": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "14c6d843e4ccb5e2d030f2fcc552805ccbdff802b09defe9f793c42d39bb04c2": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "15f0ad2f61a78babe9b44d06f045553f6dc0eaa926626368026d28d8e5c9c493": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "160a0837e13a794faf6830322b50ea4a98f8ba047529f20489a39a6543f2c580": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "172f556c32de056e7daa2c231ac422e7c07b6ddfa815c9ab21c02b7810e0b677": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "17900593307b1a37d2c8c7cce87036ec8127726245536c156e591672edafe7c0": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "196b867e995202f8e483f01fd6ad3b5b89e5e6d199e2b7c7bd86c4dbd7abd7e3": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "1a803673bad9618fd43791bc7adc556e8d1e696b7dbd134adfff4f9c21059ac8": {
+      "verdict": "pre-existing-shown",
+      "reason": "Exact path/line/rule/message reproduced in independent project-PATH Pyright and both positive base/head native Pyright outputs (07-stdout.log); unchanged tests/test_pipeline.py. Rio labels this pre-existing/unclassified. Overall attempt lacks baseline classification and is unscored."
+    },
+    "1c6414ddc62ffb452695775a46b0114a11b5810070304858e22a1069524a0829": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "1c94a42b494a09bae806c78255cd4685a8b80ba758c5012ee11dff9435dacef6": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "1d5882f262625f683cc386cfa1f52342d166a75b9129883c42a23c38b1090731": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "1de857f3c6c42b4ec3fa195a1158ec480a956a2980928d21859242b19baffd27": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "1e2fe6d63fc76c8903c11e189c5a42736045a3b35ba9ee25837f8b13295863bd": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "207bf3162826c60f418402d9c5c9e9e13b67ff46e85830d94cbf7152e9fb41ca": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "20b7527c90239f6f272e0b0798888d3b654cfc6d8fcfb9a05ed6c4ab2cb6d636": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "21747ea2cb3b374f99fa49ee69864bc013890dfc0ef8f0f17e4fc8e8bfadfe3e": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "22c2af86d9a676a47bf4ec35ea450e68ac50bb60ecdba80a15e20374b8a4f9f5": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "2538e10b1077cc133019680e6444a2f2f8d99674bdecc29a67e8c2fe1a419c1a": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "2583299327e0cc5a94e98790bad7f37cd5e0253393377668b0c1c3d93e37a1fe": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "29ab65c3569b9815d78e5d1ccca758915c58019f6ddb6eac2f9790dcec66938c": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "2ab216597175dd187bc07256d6b2b31cd5a08237e5ee66209d0ccace551e1f35": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "2b6e64fbf8f32b3c6bda571e3c8e99dcd61d78263aac53ba40ae9d7dde0329e6": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "2c60191fcb20730285c4d894d45e46b7296231974a28482d41a74ba63b09cf5d": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "2d067a93e92864daf911e53c5df61d53f03a9343af69488cb354c8de26973b8d": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "2d61cd4fc2c7de9c514a51cb7376fb42b830200ef2f94114609d6f1e11837e79": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "2e7f3a4aa3cc7bb0c24efea64220139866abcf164878756fdb25fc5a49d1dee3": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "305be775e1c640eb0b77a25ae959dccafbfbaa56a9964b889ccd9adeabfba134": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "338f6d595bce782c9b9be3901ca995812ebfa8e41f810de450200307d23a0ef8": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "3cf08ff3a68d3f899c737edf9cb07df7c2987d4168d61bb8b1d935e774c53564": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "3f16fd27e6e8ef5301389c3acf7e7629b4749931add630749937cb4a9f9eeefe": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "4041a61bdc6806eb0f47068ddd24b8495c0de0dc731832a78859d8edfc548d3a": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "4059bf8b71d13d48003617593f0e02bbe7dd3528cdce6cf5f66f58497f7f29ae": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "40cfafd7520b058940e510ac4e54e4193cf5ce8978f1a275f4807619d1f4ea9e": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "422bd418d0203e62f2ebb5ff56c62cfe2135d52b95d535e8fc40ab0e18b90f5e": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "427475f034806ef36985b8272c5fc917c269bb511e11e73e6696bea0fee7b0ea": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "447015c1e6bb957abdcd3d0e84d025848e01bd2b355fddfdb6bb7ed1dc8ad7a7": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "450d031b4cf38fde61f1ecfbd402389cedd375078a0209f592d41b18285291a7": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "458fd1ca1df423cb49d776359dc50e9ed8c0ad2184c494c47903d37c0108f8b6": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "472980307dd7393890cbc8548c887ee2eb4953013f792da21ba8d6c0d4651330": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "48ad93936b6deb7ce4016d03b06ea1ef29ef03f16f0d42280dbf22d9ce4f174f": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "48f69a41503d45aea55d0e2a3e2d91130a6c6a34705743c50b72f7d2c3af6918": {
+      "verdict": "pre-existing-shown",
+      "reason": "Exact path/line/rule/message reproduced in independent project-PATH Pyright and both positive base/head native Pyright outputs (07-stdout.log); unchanged tests/test_pipeline.py. Rio labels this pre-existing/unclassified. Overall attempt lacks baseline classification and is unscored."
+    },
+    "492769b71de69cf845653534f6405e19b28e7055c21b0779959ed81f709bf2ae": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "49598139263956107b9b2cd14cb2f95aaf69d59bc3bd1125a069815e84dd91fd": {
+      "verdict": "pre-existing-shown",
+      "reason": "Exact path/line/rule/message reproduced in independent project-PATH Pyright and both positive base/head native Pyright outputs (07-stdout.log); unchanged tests/test_pipeline.py. Rio labels this pre-existing/unclassified. Overall attempt lacks baseline classification and is unscored."
+    },
+    "49e6e4722e991abac164402c25551a9267c8486da1f9e58e0ce9bfbc96c8d23d": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "4e91dabea2376b31b118ba2db9511e3ccc7018fa0f9257d4ad7ed19be14ade2f": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "4f0a2d968072618d17c473adaa5b6fa94426acdaddcf8784cd3e90b7cf7b3041": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "5180da9c08113ee67d105b1bd76e1ac1bc99bf8a0a8dbd6e8200ee31e2e67477": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "52d44452bb2a4f6ed756749160eed78c69a445934c16785c189861ebf254090c": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "56f71e8abbe6603314585aa0d476e34b4fea611edaa018a18d17691c89e671c2": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "57b88fd4f49cc2b7ca72b8a2be932c3a96e467489002ef1172674feb03b9126e": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "59d60374051cd21cc4e219fb31c12c4077392411f8251bf00ba324224d13a828": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "5a58d6aa8125b4cf79d8b79470eca58da289bfa960754eafd5c47e2ba128f329": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "61e193a0858a9158db10d355683f46151329348f79540179916d92f392fd001d": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "64642d625147be885e49667b114c05f6970d0586970cf6a8eee3f7bf3435af30": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "64a27ee240ad3f05f6f20ef59c51cc461a94c5ce6da4cfec8211eda855ee877f": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "6aab32109626b9c43adeab37a1c2d2383792eeb7213d7c8964939920b902d6e4": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "6bddafb6203dd0c222646a4cd008ff886f66ab6ec4c97e5eaa59687e7b6cceda": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "6c9c7b742fff08dba5e6aa361c4c13ecff274b665aacaae216c20b4478426be8": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "71b669da4712e3bd059697e56570f5cf832c93a181675985b63dfea46fb9865c": {
+      "verdict": "pre-existing-shown",
+      "reason": "Exact path/line/rule/message reproduced in independent project-PATH Pyright and both positive base/head native Pyright outputs (07-stdout.log); unchanged tests/test_pipeline.py. Rio labels this pre-existing/unclassified. Overall attempt lacks baseline classification and is unscored."
+    },
+    "7386b2e65818cec7fd89937b5a41e46bfc6e4064d8931e8a5b53df4e3551bad5": {
+      "verdict": "pre-existing-shown",
+      "reason": "Exact path/line/rule/message reproduced in independent project-PATH Pyright and both positive base/head native Pyright outputs (07-stdout.log); unchanged tests/test_pipeline.py. Rio labels this pre-existing/unclassified. Overall attempt lacks baseline classification and is unscored."
+    },
+    "73e0cdc461fe3f68caaccc16a9429a904ef2c2d09cee43f03c8f90835362910e": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "75a2d3557229fdbf22485e2108463e0e86a52f928d7363ca8300f46a6e45627b": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "7802c0700fa562f6a7a07491c03e0ee8970e064b2239be3f427da7bb0769910a": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "786f57580c0be793ceaafdc3cf769008c02bccbb3a27a440e95bfe173efbe201": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "78c4bd1fdbc052b8fef57402c9e84f77f0d548f8152aadab59fa233c08294aa6": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "7bab26ee038c0c3557a714882d45810140df5074a2043760fcc6a58f2251b8de": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "7c1a56bc375d197a78776f37bc6ad669e04c9e365268f56b440d766f21017852": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "7e5fe181d085f9d3764efb8468bcfe85f4412b6afa2a3cf1a49db8d1a8274def": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "83eb9e8388fb47be8583c75ab4296b6dc5150ba176e4b3975d1ac2ebb1ca6391": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "8557d923b88c79562370e7cf8d16a01525b460845d1c808ed375ab5b5b98dd46": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "8656b04caf5ea2ce1d21b96be4cbc6043abb1ce83f659ecd8e202de3d9219949": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "86f90c6c2aece90395b10142ab58a47e5e22c7ef9557ebba21bf1f4bb6ae34f3": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "894e79b8721d7e4a2e224d3f216354e54ca349ce1662cfd732a8a2603efe3e2b": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "8d445ec437f973d38f6b2591172ef591dc8d2679a337a3999b81ea2b2372c566": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "8f1689fa103c8134c2017d7c0424e5678c4a7bc308fcc91cf20a33b4050cdeac": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "8fbc6b468e30871da10e1aa35f0e6674953ff9ed575642cc76c8ab168790a234": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "923d442f512fba5b9ff06b800e41408fe3d34f4ae70c972d32e9feb787163bf6": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "926fa1b54054e9c28bee6d303531b6e05ae681d8ac4252a1f1b3f7be83306e14": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "9457c6b1b2e8a185a8504b797b9af8312ec5418c4c8a0bb07d189f3410d520c0": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "959b4af9c7c677cbc621ca0a5aba3adc34631a0329066cae16cdc6486b3bcb3d": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "9607488d64ce9bafff0e549ce97471c6b9f94f7100701f680dccb59513f4fcd1": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "98b6a890f23923f82074fb713964421afdfcf6e97e605f5f9176d5906b62e7c1": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "9abb47b2e5460409ddd421c72c5afc5a62cfc19dc3f39b74974dc2f090d819dd": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "9b7cb6ddc6b55235dd400c5c8fafa962bce967efccdf8732a04608ee51f4a3f2": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "9bfb287df9265d5e4041db718be0c51ac16ec3d007d719c47a6b72791148d097": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "9c6113c993faed06acbf36924c8beebd140d142642618118cb4d640ec2764446": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "9d65adc90b8868396eb50d26978f4804a4caf2f15ea4192f2327b38dce2c4581": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "9e0f727d9a6c6511db735f4207d1f85bc978a1b7bafb32006f6b917461b680c1": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "9ef5158365ba64cb68e14349a8719d365bbae880837f4112c2a9489b1b2155d5": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "a2dd25e25a526b2a46b7797109936e843ffd99dd6557bc6b8dc08f412848e0c0": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "a63c404c463fedd889b5fbf032e90e9e7c8cc8dbe14791e132fbcbbd5ac94b32": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "a832f667fdc26e8f9be5e0b6a33ce8f8edddc62128accc5e8e8c734adc0e5e4f": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "a9005e71189b3881f40d91dc15fc86c16bc13fc85a6da92118fa15a70fef428e": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "a92a8f540549b61ad472ee3cd8966076a6dab314db925cf80d9431f8ce507a1c": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "a9b7993ac6ee4b3b602a67b9b244cd1da228d0d5bef59c525e4c1476d6d72f82": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "aa50fd1c92627b277e3732ba75f412732c2a38a7c7394aba29299e59b10aa273": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "aa9a22d0856cd1f924806e1d09d542cc4ca61a67104246a22d3b69cdc4da6e29": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "aad1cc1946db2e93329b236307f322050f44600294243812fe5b081ecd560fb0": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "ab6b39e00c90caad42625e8c7c22bd4d4285877e2101faaac7986200a9ae1c47": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "ab80efbc0bc8403dd896c043eb5c78e633807a7919d66170aeb22f8b01959d35": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "ad0e56c61b105aa76892d6f60c121248f2f1ef7d9e2a9a9ffa539d992e830f7e": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "ad6376638b903a23e26300220b604298acaf0397b7480a49f059d86279f8a74d": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "aefffac951f043101bcfb0a76f716442878c7c97c7f63cd093e6bd7c2dd40503": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "af6a7bf6faf43cd49b5db22b8e72e1efc5eeb0ed6f2e0d5ae56999839a5bfd78": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "b0cfca1088ff617c659501abd127403dc884f453c8ba0fa96922605aaf439e9c": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "b11996621272e200847b2bba76a44497a6bc5154e3f96d81c95cac3b5eee3e79": {
+      "verdict": "pre-existing-shown",
+      "reason": "Exact path/line/rule/message reproduced in independent project-PATH Pyright and both positive base/head native Pyright outputs (07-stdout.log); unchanged tests/test_pipeline.py. Rio labels this pre-existing/unclassified. Overall attempt lacks baseline classification and is unscored."
+    },
+    "b6f2ea628b7ab7abbb0841b61b3635c0d040519934fe14da69c8f7bc86029b92": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "b9fd6b9b827e6fcb4ca05916eaba6d08597140b3bd9f9e6eb561f1afee43992a": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "ba961d8dfa129faf5f5471aef36326be642ea88cff683b6672ac8d0741d72caf": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "badb65e6195f90a1672652d906bf49dcc3ee027868a7ce63beb2ef6d89fdcf5c": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "bb2dcd6680a82ab6d3eedb9bfab6528611a08f9a2f5fe2ae36f420e65ad08eb5": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "bc8e6f46462bb76fd577a84f8794322bc42b5f09ff1e3bbe23aaec268d35fceb": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "bd0ab16af44e73669153f076e9e626d48eb2d068aa04985c9b25829fc18dbebe": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "bd8cf45a0998ad66f63b98b90537e983583daf1595961462e391e5a6e97ef579": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "bdd889b25fdaed35c09dda3788ca6772d57b1b7dc5ec7ffd058c499824703f36": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "be44da13aa704d8f01f98cbf1ea5fb0aa346406f66d34e95d33cc5cc1e97c2e1": {
+      "verdict": "pre-existing-shown",
+      "reason": "Exact path/line/rule/message reproduced in independent project-PATH Pyright and both positive base/head native Pyright outputs (07-stdout.log); unchanged tests/test_pipeline.py. Rio labels this pre-existing/unclassified. Overall attempt lacks baseline classification and is unscored."
+    },
+    "c077a755840c6e7ee282d96d1cf9a24a1b0d66e56de3ae623783dda0b391c15a": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "c084228402f3146215815bef164d7ea47aad4a136c2f2c32d472979328644fb7": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "c42835821e2dc02d633be779782444c12004e13735365ff779955561c1f338f2": {
+      "verdict": "pre-existing-shown",
+      "reason": "Exact path/line/rule/message reproduced in independent project-PATH Pyright and both positive base/head native Pyright outputs (07-stdout.log); unchanged tests/test_pipeline.py. Rio labels this pre-existing/unclassified. Overall attempt lacks baseline classification and is unscored."
+    },
+    "c48d9001cac5833b0f0446b02609fb6e2b6c94ec5078d319f44892a77caf81de": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "c691098a2e2b41907d5e039a7bb70fafe866c3efabdf264da07a870f90e22df7": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "c9acdbb504e6af1a7f99ed69fba4d4592136338312bb46e685e9ced5e6c53c6f": {
+      "verdict": "pre-existing-shown",
+      "reason": "Exact path/line/rule/message reproduced in independent project-PATH Pyright and both positive base/head native Pyright outputs (07-stdout.log); unchanged tests/test_pipeline.py. Rio labels this pre-existing/unclassified. Overall attempt lacks baseline classification and is unscored."
+    },
+    "cb8ee608f50694516c56c5c20db3329bcaf6d6a9600171b8f447bc02c27e7db7": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "cc5cb73cc40cfe8aa90c6356c6ead25ecf352e51c261325e00e6671024f14213": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "ccad816a92f93aa0013a63128fe966ec7695fdc8c913e4173b513a6c828f2719": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "cd4c53e3d80f751b1595837085b576b68a16767a97d7e98b3a0119d76ed38dbe": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "cf6a5107a33ff327f7608e3e07d826a90014fb9e74841b54972cba51b326e109": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "d0172e07240eb1505aa22411bcb073f27dc35d0a4db94ad2cc04abfd5a44fc8d": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "d0865f99875cac2cf2af6dbc547cb4b7d79aff6296b58e8ea1885ba873f1b7eb": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "d16f8549c865dd8ebf203c54a42f7d1428a78177f81d8f9e5b10455ee1eb77b6": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "d1c36c27b679ebd6b50f8aa8b43eb01668c477b60a198f6990633f21254a4d95": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "d3b950b503653e72515d436f964a7dbce1551a522ddcd8fc8b58b0c16f58b9da": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "d3c04877ff8864af50516d53f89773dca6370ef38742ec6d208d4cd40cac1870": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "d61c0058b0eb3f270b3c8ab3253546c77a5a0ff2e70c91184d3709be1fef8a35": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "d76e11bd5f366c98d7d02d5d22dd3d56246655228bc80367020a813fd46805dd": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "d8615cda111cc3af8b41234950f21c9c50c123f6404c1a0ae1d4f39cfa5064b0": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "dbe0328010e7324f3689e26ffc06caf571e9b9b27e6c9c22e950e58a6623275c": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "ddaf14a56202135ba475fa15edc61806085a53f9be1cc0db93b7cd5c0ae87723": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "de29a425480040a418a5c04758d778f9cfd8643606ed5ff50eaec1ae2902dcbc": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "def2d541cdd113a215929d15c85f44cc2cf951e23db628312a08204ccbbbe1ee": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "df53acedb77d16021550b8bdf6fa7c7c87c7d9b8150c23b621064ea30100c662": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "df74a4150bf93e377784f92dc3107ca7bc941bdb5d1ae29522d6cd7861e3859b": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "dfe660bdb436f7ce095f9ad5469d4a4cd9d4923c0d1efa59959c14e008e2e273": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "e03fbb3a4b057892f9de4bd10440cbf37dbba26ac079a1dd704816863f6b59ae": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "e07ede48e43007e622ea6992a9c80a3cf1f8ba76c6507136494957c37a1e9189": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "e0b98c3573926a213d4ccc2dca6160c589a7401e5f1b672d157b8dfcd762fac5": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "e1f03ee9a61940e36d0e3512dae23eac95c7cd5923f4a41ebc57cd0071ee243d": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "ea7ff7b843dd1f82a85ae155d7955c8cf9d7cae783f90bf789773a1a6fab65f3": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "ef7d77f5694f3bda0c26892fca2f5fab2019804d77fe9ec5ae1d6773da4839a8": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "f25b838ed1947c06e450711653c2c1b51cb7d8fa819b58ccc6712275129c6212": {
+      "verdict": "pre-existing-shown",
+      "reason": "Exact path/line/rule/message reproduced in independent project-PATH Pyright and both positive base/head native Pyright outputs (07-stdout.log); unchanged tests/test_pipeline.py. Rio labels this pre-existing/unclassified. Overall attempt lacks baseline classification and is unscored."
+    },
+    "f4809468ff593dde3dbc19c20a873b44da899c87b5b34de5c2f1f6d0f5437759": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "f52e527c3a5e09f2b7fa27f4bec8af7c9a1b56dd5c539aa2ce716ab3ede816f3": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "f6a2bea33532c2f4e12d0c30ac1ac8c1bbefcd9794978c54317f47295343910f": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "f71fd9c9bd128b1ea30d636046fc7791fd51b9c6f99ee9f0411d0b7420da4ef3": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "f7c599eaf869576173c9be091e6190558eaa0b3d525017fc3abe13634cf7e8a0": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "f836889cdc8ca1a0bff696ad80cd37b5cb6bc2d96de1f2bb592fa8fbe5586c9d": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "f83b887371fe22a7dcfd092f303ffa88109eb152c94dc49a08ab7d1bb90d6e2d": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "f9306591613a24134631d45908106ee968a8d8cc9dd95b626ea416c91a5d6d36": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "fa00c3e5a10092b1753ca558fb1cd4238187c310715ac7d6109bc1a829a4dd7c": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "fa60a31a6c922b45e4ebf4ba9744fc92e1f1d66683469a074306c2c28140ebad": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "fb01e0cf585da5446e73ebf0385e7a3d0e6026e27d74d80ccbf6e0ba183ebcbb": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "fc46d72f8c5aa5626f9bff528b37f1666003cfd6be358812155d90524cd03b27": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "ff71187bacdbe40faa152e9b014f66a578af8183cd4528a208f9dc99114275ce": {
+      "verdict": "environment-failure",
+      "reason": "Every occurrence exactly reproduced in pyright-interpreter-probe/global-path.stdout.json, and absent from project-path.stdout.json and independent project-PATH base/head native Pyright. The Node Pyright host resolves global Python unless .venv/bin is on PATH, causing missing imports and cascading diagnostics. See probe commands.json; unclassified failed-baseline attempt, unscored."
+    },
+    "118c18a4b17e4c34b05d5a4a882b58df6e4e1e888c7dca2e28da3d76c95d9001": {
+      "verdict": "true-positive",
+      "reason": "Independently confirmed in positive-head-all-groups and positive-head-noneditable coverage.json.gz (49 executable, 35 covered, 14 missing lines); file absent at base. This failed baseline attempt is retained unscored despite a correct coverage observation."
+    },
+    "e7fa463a43044b607c2f933410131203ec164611cc22c7828e682002fefafe89": {
+      "verdict": "true-positive",
+      "reason": "Independently confirmed in positive-head-all-groups and positive-head-noneditable coverage.json.gz (49 executable, 35 covered, 14 missing lines); file absent at base. This failed baseline attempt is retained unscored despite a correct coverage observation."
+    }
+  }
+}

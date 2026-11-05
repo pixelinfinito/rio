@@ -1,0 +1,15 @@
+{
+  "source": "Current Rio normalized coverage artifact, not independent oracle",
+  "file": "litestar/utils/path.py",
+  "changed_lines": [
+    24
+  ],
+  "changed_instrumented_lines": [
+    24
+  ],
+  "changed_executed_lines": [
+    24
+  ],
+  "changed_missing_executable_lines": [],
+  "scope": "Only seeded assignment; F841 is a lint control, not an uncovered-lines control"
+}

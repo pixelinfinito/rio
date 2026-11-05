@@ -1,0 +1,174 @@
+diff --git a/pydantic_settings/sources/base.py b/pydantic_settings/sources/base.py
+index 493bcb85..9ddbd890 100644
+--- a/pydantic_settings/sources/base.py
++++ b/pydantic_settings/sources/base.py
+@@ -204,7 +204,9 @@ def decode_complex_value(self, field_name: str, field: FieldInfo, value: Any) ->
+             The decoded value for further preparation
+         """
+         metadata = _get_field_metadata(field) if field else []
+-        if NoDecode in metadata or (self.config.get('enable_decoding') is False and ForceDecode not in metadata):
++        if field and (
++            NoDecode in metadata or (self.config.get('enable_decoding') is False and ForceDecode not in metadata)
++        ):
+             return value
+ 
+         return json.loads(value)
+diff --git a/pydantic_settings/sources/providers/env.py b/pydantic_settings/sources/providers/env.py
+index 8421f1da..a3c96441 100644
+--- a/pydantic_settings/sources/providers/env.py
++++ b/pydantic_settings/sources/providers/env.py
+@@ -29,8 +29,10 @@
+     _get_model_config,
+     _get_model_fields,
+     _literal_has_numeric_enum,
++    _resolve_type_alias,
+     _union_has_strict_types,
+     _union_is_complex,
++    _unwrap_union_member,
+     parse_env_vars,
+ )
+ 
+@@ -211,6 +213,28 @@ def _field_is_complex(self, field: FieldInfo) -> tuple[bool, bool]:
+ 
+         return True, allow_parse_failure
+ 
++    def _raw_union_is_complex(self, annotation: Any) -> bool:
++        """
++        Find out if a raw type (e.g. a dict value type) is a union containing complex types.
++        """
++        union = _unwrap_union_member(_resolve_type_alias(annotation))
++        return is_union_origin(get_origin(union)) and _union_is_complex(union, [], self._init_state)
++
++    def _decode_union_value(self, field_name: str, field: FieldInfo, value: str) -> Any:
++        """
++        Decode a value whose raw type is a union containing complex types, e.g. `list[str] | str`.
++
++        Only JSON arrays and objects are used, any other value is kept as the original string so that
++        values like `123` or `true` still validate against the scalar members of the union.
++        Decoding follows the `NoDecode`/`ForceDecode` metadata of the containing `field` and the
++        `enable_decoding` config.
++        """
++        try:
++            decoded = self.decode_complex_value(field_name, field, value)
++        except ValueError:
++            return value
++        return decoded if isinstance(decoded, (list, dict)) else value
++
+     # Default value of `case_sensitive` is `None`, because we don't want to break existing behavior.
+     # We have to change the method to a non-static method and use
+     # `self.case_sensitive` instead in V3.
+@@ -306,8 +330,12 @@ def explode_env_vars(self, field_name: str, field: FieldInfo, env_vars: Mapping[
+             *keys, last_key = env_name_without_prefix.split(self.env_nested_delimiter, self.maxsplit)
+             env_var = result
+             target_field: FieldInfo | None = field
++            # the closest field containing the target, its decoding settings apply to raw types
++            parent_field = field
+             for key in keys:
+                 target_field = self.next_field(target_field, key, self.case_sensitive)
++                if isinstance(target_field, FieldInfo):
++                    parent_field = target_field
+                 if isinstance(env_var, dict):
+                     env_var = env_var.setdefault(key, {})
+ 
+@@ -327,11 +355,10 @@ def explode_env_vars(self, field_name: str, field: FieldInfo, env_vars: Mapping[
+                         env_val = env_val if enum_val is None else enum_val
+                 elif target_field:
+                     # target_field is a raw type (e.g. from dict value type annotation)
+-                    is_complex = _annotation_is_complex(target_field, [], self._init_state) or (
+-                        is_union_origin(get_origin(target_field))
+-                        and _union_is_complex(target_field, [], self._init_state)
+-                    )
++                    is_complex = _annotation_is_complex(target_field, [], self._init_state)
+                     allow_json_failure = True
++                    if not is_complex and self._raw_union_is_complex(target_field):
++                        env_val = self._decode_union_value(last_key, parent_field, env_val)
+                 else:
+                     # nested field type is dict
+                     is_complex, allow_json_failure = True, True
+diff --git a/tests/test_settings.py b/tests/test_settings.py
+index 8487da84..b9e0d4ed 100644
+--- a/tests/test_settings.py
++++ b/tests/test_settings.py
+@@ -4437,6 +4437,9 @@ class Settings(BaseSettings):
+     assert s.model_dump() == {'nested_field': {'key': ['a', 'b']}}
+ 
+ 
++ListOrStr = TypeAliasType('ListOrStr', list[str] | str)
++
++
+ @pytest.mark.parametrize('nested', [False, True])
+ @pytest.mark.parametrize(
+     'value_type,env_value,expected',
+@@ -4445,10 +4448,21 @@ class Settings(BaseSettings):
+         (list[str] | str, '["a", "b"]', ['a', 'b']),
+         (list[str] | None, '[]', []),
+         (list[str] | None, '["a", "b"]', ['a', 'b']),
+-        (list[str] | None, 'null', None),
++        (typing.Optional[list[str]], '["a"]', ['a']),  # noqa: UP045
++        (typing.Union[list[str], str], '["a"]', ['a']),  # noqa: UP007
++        (ListOrStr, '["a"]', ['a']),
++        (Annotated[list[str] | str, Field(min_length=1)], '["a"]', ['a']),
+         (list[str] | str, 'plain', 'plain'),
+         (list[str] | str, '[invalid', '[invalid'),
++        (list[str] | str, '123', '123'),
++        (list[str] | str, 'true', 'true'),
++        (list[str] | str, 'null', 'null'),
++        (list[str] | str, '"quoted"', '"quoted"'),
++        (list[str] | int, '123', 123),
+         (int | str, '123', '123'),
++        # Json values are left to pydantic
++        (Json[list[str] | str], '["a"]', ['a']),
++        (Json[list[str] | str], '"a"', 'a'),
+     ],
+ )
+ def test_env_nested_dict_union_value_type(env, nested, value_type, env_value, expected):
+@@ -4465,29 +4479,32 @@ class Settings(BaseSettings):
+ 
+ 
+ @pytest.mark.parametrize('nested', [False, True])
+-@pytest.mark.parametrize('value_type', [list[str], list[str] | str, list[str] | None])
+-def test_env_nested_dict_value_disable_decoding(env, nested, value_type):
+-    seen = []
++@pytest.mark.parametrize(
++    'value_type,marker,enable_decoding,expected',
++    [
++        (list[str] | str, None, True, ['a']),
++        (list[str] | str, None, False, '["a"]'),
++        (list[str] | str, NoDecode, True, '["a"]'),
++        (list[str] | str, ForceDecode, False, ['a']),
++        # values of non-union types are decoded regardless of the decoding settings
++        (list[str], None, False, ['a']),
++        (list[str], NoDecode, True, ['a']),
++    ],
++)
++def test_env_nested_dict_union_value_decoding_settings(env, nested, value_type, marker, enable_decoding, expected):
++    # NoDecode/ForceDecode apply to the field containing the dict
++    dict_type = dict[str, value_type] if marker is None else Annotated[dict[str, value_type], marker]
+ 
+     class SubModel(BaseModel):
+-        values: dict[str, value_type]
++        values: dict_type
+ 
+     class Settings(BaseSettings):
+-        model_config = SettingsConfigDict(env_nested_delimiter='__', enable_decoding=False)
+-        config: SubModel if nested else dict[str, value_type]
++        model_config = SettingsConfigDict(env_nested_delimiter='__', enable_decoding=enable_decoding)
++        config: SubModel if nested else dict_type
+ 
+-        @field_validator('config', mode='before')
+-        @classmethod
+-        def decode_config(cls, value):
+-            values = value['values'] if nested else value
+-            seen.append(values['key'])
+-            values['key'] = json.loads(values['key'])
+-            return value
+-
+-    env.set('CONFIG__VALUES__KEY' if nested else 'CONFIG__KEY', '["a", "b"]')
+-    expected_values = {'key': ['a', 'b']}
++    env.set('CONFIG__VALUES__KEY' if nested else 'CONFIG__KEY', '["a"]')
++    expected_values = {'key': expected}
+     assert Settings().model_dump() == {'config': {'values': expected_values} if nested else expected_values}
+-    assert seen == ['["a", "b"]']
+ 
+ 
+ def test_nested_models_leaf_vs_deeper_env_dict_assumed(env):

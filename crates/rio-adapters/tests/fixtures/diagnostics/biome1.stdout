@@ -1,0 +1,140 @@
+{
+  "summary": {
+    "changed": 0,
+    "unchanged": 1,
+    "matches": 0,
+    "duration": {
+      "secs": 0,
+      "nanos": 0
+    },
+    "errors": 0,
+    "warnings": 1,
+    "skipped": 0,
+    "suggestedFixesSkipped": 0,
+    "diagnosticsNotPrinted": 0
+  },
+  "diagnostics": [
+    {
+      "category": "lint/correctness/noUnusedVariables",
+      "severity": "warning",
+      "description": "This variable is unused.",
+      "message": [
+        {
+          "elements": [],
+          "content": "This variable is unused."
+        }
+      ],
+      "advices": {
+        "advices": [
+          {
+            "log": [
+              "info",
+              [
+                {
+                  "elements": [],
+                  "content": "Unused variables usually are result of incomplete refactoring, typos and other source of bugs."
+                }
+              ]
+            ]
+          },
+          {
+            "log": [
+              "info",
+              [
+                {
+                  "elements": [],
+                  "content": "Unsafe fix: If this is intentional, prepend "
+                },
+                {
+                  "elements": [
+                    "Emphasis"
+                  ],
+                  "content": "unused"
+                },
+                {
+                  "elements": [],
+                  "content": " with an underscore."
+                }
+              ]
+            ]
+          },
+          {
+            "diff": {
+              "dictionary": "export function sample() {\n  const unused_unused = 1;\n  return 2;\n}\n",
+              "ops": [
+                {
+                  "diffOp": {
+                    "equal": {
+                      "range": [
+                        0,
+                        35
+                      ]
+                    }
+                  }
+                },
+                {
+                  "diffOp": {
+                    "delete": {
+                      "range": [
+                        35,
+                        41
+                      ]
+                    }
+                  }
+                },
+                {
+                  "diffOp": {
+                    "insert": {
+                      "range": [
+                        41,
+                        48
+                      ]
+                    }
+                  }
+                },
+                {
+                  "diffOp": {
+                    "equal": {
+                      "range": [
+                        48,
+                        49
+                      ]
+                    }
+                  }
+                },
+                {
+                  "diffOp": {
+                    "equal": {
+                      "range": [
+                        49,
+                        68
+                      ]
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "verboseAdvices": {
+        "advices": []
+      },
+      "location": {
+        "path": {
+          "file": "/recorded/repo/src/biome.ts"
+        },
+        "span": [
+          35,
+          41
+        ],
+        "sourceCode": "export function sample() {\n  const unused = 1;\n  return 2;\n}\n"
+      },
+      "tags": [
+        "fixable"
+      ],
+      "source": null
+    }
+  ],
+  "command": "lint"
+}

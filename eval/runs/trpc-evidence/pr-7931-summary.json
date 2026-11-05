@@ -1,0 +1,1 @@
+{"author_association":"MEMBER","base":"296b6e473ab070534f14434cfd3164e658ac482d","changed_files":2,"head":"60a480cbc20f7e03b4b4bfdf0983abe386560457","merged_at":"2026-11-05T00:50:35Z","number":7931,"title":"fix(server): keep the Node adapters running when a streamed body fails or errorFormatter throws","user":"KATT"}

@@ -1,0 +1,71 @@
+diff --git a/__tests__/base.js b/__tests__/base.js
+index 208a1149..6ee12157 100644
+--- a/__tests__/base.js
++++ b/__tests__/base.js
+@@ -2317,6 +2317,46 @@ function runBaseTest(
+ 				expect(result.get("second").a).toEqual(100)
+ 			})
+ 
++			it("visits added entries and skips deleted entries during forEach", () => {
++				const base = new Map([
++					["first", 1],
++					["second", 2]
++				])
++				const seen = []
++				produce(base, draft => {
++					draft.forEach((value, key) => {
++						seen.push([key, value])
++						if (key === "first") {
++							draft.delete("second")
++							draft.set("third", 3)
++						}
++					})
++				})
++				expect(seen).toEqual([
++					["first", 1],
++					["third", 3]
++				])
++			})
++
++			it.each([
++				["keys", ["third"]],
++				["values", [3]],
++				["entries", [["third", 3]]],
++				[Symbol.iterator, [["third", 3]]]
++			])("keeps %s iterators live across mutations", (method, expected) => {
++				const base = new Map([
++					["first", 1],
++					["second", 2]
++				])
++				produce(base, draft => {
++					const iterator = draft[method]()
++					iterator.next()
++					draft.delete("second")
++					draft.set("third", 3)
++					expect([...iterator]).toEqual(expected)
++				})
++			})
++
+ 			it("can assign by key", () => {
+ 				const nextState = produce(baseState, s => {
+ 					// Map.prototype.set should return the Map itself
+diff --git a/src/plugins/mapset.ts b/src/plugins/mapset.ts
+index c9b21cbe..ecb1a42e 100644
+--- a/src/plugins/mapset.ts
++++ b/src/plugins/mapset.ts
+@@ -114,6 +114,7 @@ export function enableMapSet() {
+ 		forEach(cb: (value: any, key: any, self: any) => void, thisArg?: any) {
+ 			const state: MapState = this[DRAFT_STATE]
+ 			assertUnrevoked(state)
++			prepareMapCopy(state)
+ 			latest(state).forEach((_value: any, key: any, _map: any) => {
+ 				cb.call(thisArg, this.get(key), key, this)
+ 			})
+@@ -139,6 +140,7 @@ export function enableMapSet() {
+ 		keys(): IterableIterator<any> {
+ 			const state: MapState = this[DRAFT_STATE]
+ 			assertUnrevoked(state)
++			prepareMapCopy(state)
+ 			return latest(state).keys()
+ 		}
+ 

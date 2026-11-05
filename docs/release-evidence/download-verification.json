@@ -1,0 +1,91 @@
+{
+  "version": "0.1.0-rc.1",
+  "asset_count": 15,
+  "archives": [
+    {
+      "target": "aarch64-apple-darwin",
+      "archive": "rio-0.1.0-rc.1-aarch64-apple-darwin.tar.gz",
+      "bytes": 7703014,
+      "sha256": "15eef5d991de87c8116ba499c6cac2cfed8c6140a11072e33cbe685e4127636c",
+      "members": [
+        "LICENSE",
+        "README.md",
+        "rio"
+      ],
+      "attestation_verified": true,
+      "source_commit_verified": true
+    },
+    {
+      "target": "aarch64-pc-windows-msvc",
+      "archive": "rio-0.1.0-rc.1-aarch64-pc-windows-msvc.zip",
+      "bytes": 6872028,
+      "sha256": "b39e525d704a6ce2d3d990d8de9ed0e306f18cedba57e62d81490cde00803bee",
+      "members": [
+        "LICENSE",
+        "README.md",
+        "rio.exe"
+      ],
+      "attestation_verified": true,
+      "source_commit_verified": true
+    },
+    {
+      "target": "aarch64-unknown-linux-musl",
+      "archive": "rio-0.1.0-rc.1-aarch64-unknown-linux-musl.tar.gz",
+      "bytes": 8581935,
+      "sha256": "c5dc2acdff0f28687a9dd10e59ac15921ba5bd84cb15aa84e56a7225be19ad3b",
+      "members": [
+        "LICENSE",
+        "README.md",
+        "rio"
+      ],
+      "attestation_verified": true,
+      "source_commit_verified": true
+    },
+    {
+      "target": "x86_64-apple-darwin",
+      "archive": "rio-0.1.0-rc.1-x86_64-apple-darwin.tar.gz",
+      "bytes": 8074928,
+      "sha256": "7f9496bb0a62e85cbaf847ac8147eac6c86006e520284b3a45fb0471142e7494",
+      "members": [
+        "LICENSE",
+        "README.md",
+        "rio"
+      ],
+      "attestation_verified": true,
+      "source_commit_verified": true
+    },
+    {
+      "target": "x86_64-pc-windows-msvc",
+      "archive": "rio-0.1.0-rc.1-x86_64-pc-windows-msvc.zip",
+      "bytes": 7319233,
+      "sha256": "b7d6b304f78e6b54df033f0d74aa656b7958732c6f36576561ddb5532234d3d7",
+      "members": [
+        "LICENSE",
+        "README.md",
+        "rio.exe"
+      ],
+      "attestation_verified": true,
+      "source_commit_verified": true
+    },
+    {
+      "target": "x86_64-unknown-linux-musl",
+      "archive": "rio-0.1.0-rc.1-x86_64-unknown-linux-musl.tar.gz",
+      "bytes": 8931830,
+      "sha256": "f6bf81cd9a226b1e6374d0a2c119994a47098b51a516981d4527bf20490bfe40",
+      "members": [
+        "LICENSE",
+        "README.md",
+        "rio"
+      ],
+      "attestation_verified": true,
+      "source_commit_verified": true
+    }
+  ],
+  "repository": "mctlisboa/rio-v01-validation-20261104",
+  "source_commit": "abb02751de7cd95dac021da3f21b02bb89425eef",
+  "release_run": "https://github.com/mctlisboa/rio-v01-validation-20261104/actions/runs/41916670430",
+  "verification_cli": "gh 2.103.3",
+  "latest_before_http_status": 404,
+  "latest_after_http_status": 404,
+  "published_installer_run": "https://github.com/mctlisboa/rio-v01-validation-20261104/actions/runs/41918223523"
+}

@@ -1,0 +1,97 @@
+Resolved 171 packages in 7ms
+   Updating https://github.com/pydantic/pydantic-docs (HEAD)
+Downloading mkdocs (3.7MiB)
+Downloading aiohttp (1.8MiB)
+Downloading cryptography (4.5MiB)
+Downloading babel (9.1MiB)
+Downloading mkdocs-material (8.9MiB)
+ Downloaded aiohttp
+   Building mkdocs-exclude==1.0.2
+ Downloaded cryptography
+ Downloaded mkdocs
+ Downloaded mkdocs-material
+      Built mkdocs-exclude==1.0.2
+    Updated https://github.com/pydantic/pydantic-docs (51a5fa18eb3fefc71fe566c58fc0682183a9bbb1)
+   Building pydantic-docs @ git+https://github.com/pydantic/pydantic-docs@51a5fa18eb3fefc71fe566c58fc0682183a9bbb1
+      Built pydantic-docs @ git+https://github.com/pydantic/pydantic-docs@51a5fa18eb3fefc71fe566c58fc0682183a9bbb1
+ Downloaded babel
+Prepared 78 packages in 3.51s
+Installed 78 packages in 227ms
+ + aiohappyeyeballs==2.6.1
+ + aiohttp==3.14.5
+ + aiosignal==1.4.0
+ + algoliasearch==4.13.2
+ + async-timeout==5.0.1
+ + auditwheel-emscripten==0.3.0
+ + autoflake==2.3.1
+ + babel==2.16.0
+ + backrefs==6.1
+ + beautifulsoup4==4.14.2
+ + build==1.6.1
+ + cattrs==25.2.0
+ + certifi==2026.10.19
+ + charset-normalizer==3.4.1
+ + cryptography==50.0.0
+ + docutils==0.22.4
+ + frozenlist==1.5.0
+ + ghp-import==2.1.0
+ + id==1.6.1
+ + importlib-metadata==8.6.1
+ + importlib-resources==6.5.2
+ + jaraco-classes==3.4.0
+ + jaraco-context==6.1.2
+ + jaraco-functools==4.4.0
+ + jeepney==0.9.0
+ + keyring==25.7.0
+ + leb128==1.0.9
+ + markdown==3.8.1
+ + markdownify==1.1.0
+ + mdformat==0.7.22
+ + mergedeep==1.3.4
+ + mike==2.1.3
+ + mkdocs==1.6.1
+ + mkdocs-autorefs==1.3.0
+ + mkdocs-exclude==1.0.2
+ + mkdocs-get-deps==0.2.0
+ + mkdocs-llmstxt==0.2.0
+ + mkdocs-material==9.7.7
+ + mkdocs-material-extensions==1.3.1
+ + mkdocs-redirects==1.2.2
+ + mkdocstrings==0.27.0
+ + mkdocstrings-python==1.13.0
+ + more-itertools==11.0.1
+ + multidict==6.1.0
+ + nh3==0.3.4
+ + oauthlib==4.0.0
+ + paginate==0.5.7
+ + propcache==0.2.1
+ + pydantic-docs==0.0.1 (from git+https://github.com/pydantic/pydantic-docs@51a5fa18eb3fefc71fe566c58fc0682183a9bbb1)
+ + pydantic-extra-types==2.10.6
+ + pyflakes==3.2.0
+ + pymdown-extensions==11.0.1
+ + pyodide-build==0.39.2
+ + pyodide-cli==0.5.0
+ + pyodide-lock==0.2.1
+ + pyparsing==3.2.1
+ + pyproject-hooks==1.2.0
+ + pyupgrade==3.19.1
+ + pyyaml-env-tag==0.1
+ + readme-renderer==44.0
+ + requests==2.33.0
+ + requests-oauthlib==1.3.1
+ + requests-toolbelt==1.0.0
+ + rfc3986==2.0.0
+ + ruamel-yaml==0.18.16
+ + ruamel-yaml-clib==0.2.15
+ + secretstorage==3.5.0
+ + soupsieve==2.9
+ + tokenize-rt==6.1.0
+ + tomli==2.2.1
+ + tweepy==4.5.0
+ + twine==7.0.0
+ + urllib3==2.8.0
+ + verspec==0.1.0
+ + watchdog==6.0.0
+ + wheel==0.47.0
+ + yarl==1.25.1
+ + zipp==3.21.0

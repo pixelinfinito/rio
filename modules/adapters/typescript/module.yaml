@@ -1,0 +1,141 @@
+kind: adapter
+name: rio/adapter-typescript
+version: 0.1.0
+description: Built-in Typescript adapter
+languages: [typescript]
+files: ["*.ts", "*.tsx", "*.mts", "*.cts", "*.js", "*.jsx", "*.mjs", "*.cjs"]
+capabilities: [parse, typecheck, lint, test, coverage, scan]
+schema: {"type": "object", "additionalProperties": false}
+tools:
+  {
+    "parse": [],
+    "scan": [],
+    "typecheck": [
+      {
+        "name": "tsc",
+        "command": [
+          "tsc",
+          "--noEmit",
+          "--pretty",
+          "false",
+          "-p",
+          "{root}"
+        ],
+        "network": [],
+        "exit_codes": {
+          "clean": [
+            0
+          ],
+          "diagnostics": [
+            1,
+            2
+          ]
+        }
+      }
+    ],
+    "lint": [
+      {
+        "name": "biome",
+        "command": ["biome", "lint", "--reporter=json", "--max-diagnostics=none", "{files}"],
+        "network": [],
+        "exit_codes": {"clean": [0], "diagnostics": [1]}
+      },
+      {
+        "name": "eslint",
+        "command": [
+          "eslint",
+          "-f",
+          "json",
+          "{files}"
+        ],
+        "network": [],
+        "exit_codes": {
+          "clean": [
+            0
+          ],
+          "diagnostics": [
+            1
+          ],
+          "failed": {
+            "2": "tool_config_error"
+          }
+        }
+      }
+    ],
+    "test": [
+      {
+        "name": "vitest",
+        "command": [
+          "vitest",
+          "run"
+        ],
+        "network": [],
+        "exit_codes": {
+          "clean": [
+            0
+          ],
+          "diagnostics": [],
+          "failed": {
+            "1": "tests_failed"
+          }
+        }
+      },
+      {
+        "name": "jest",
+        "command": [
+          "jest"
+        ],
+        "network": [],
+        "exit_codes": {
+          "clean": [
+            0
+          ],
+          "diagnostics": [],
+          "failed": {
+            "1": "tests_failed"
+          }
+        }
+      }
+    ],
+    "coverage": [
+      {
+        "name": "vitest",
+        "command": [
+          "vitest",
+          "run",
+          "--coverage",
+          "--coverage.reporter=lcov",
+          "--coverage.reportsDirectory={output}"
+        ],
+        "network": [],
+        "exit_codes": {
+          "clean": [
+            0
+          ],
+          "diagnostics": [],
+          "failed": {
+            "1": "tests_failed"
+          }
+        }
+      },
+      {
+        "name": "jest",
+        "command": [
+          "jest",
+          "--coverage",
+          "--coverageReporters=lcov",
+          "--coverageDirectory={output}"
+        ],
+        "network": [],
+        "exit_codes": {
+          "clean": [
+            0
+          ],
+          "diagnostics": [],
+          "failed": {
+            "1": "tests_failed"
+          }
+        }
+      }
+    ]
+  }

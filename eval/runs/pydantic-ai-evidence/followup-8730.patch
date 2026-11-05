@@ -1,0 +1,83 @@
+diff --git a/pydantic_ai_slim/pydantic_ai/output.py b/pydantic_ai_slim/pydantic_ai/output.py
+index a47b2c5d699..88dfaa340a1 100644
+--- a/pydantic_ai_slim/pydantic_ai/output.py
++++ b/pydantic_ai_slim/pydantic_ai/output.py
+@@ -753,9 +753,11 @@ def __get_pydantic_json_schema__(
+ )
+ 
+ 
++# `_NoneOutput` stays out of the recursive sequence: in there, mypy can't solve `T_co` when a generic `OutputSpec[T]`
++# is passed on, so a list with a bare `None` has its own branch, one level deep.
+ OutputSpec = TypeAliasType(
+     'OutputSpec',
+-    _OutputSpecItem[T_co] | Sequence['OutputSpec[T_co] | _NoneOutput[T_co]'],
++    _OutputSpecItem[T_co] | Sequence['OutputSpec[T_co]'] | Sequence[_OutputSpecItem[T_co] | _NoneOutput[T_co]],
+     type_params=(T_co,),
+ )
+ """Specification of the agent's output data.
+diff --git a/tests/typed_agent.py b/tests/typed_agent.py
+index 1dfa44d72c8..4c7e61d2bb4 100644
+--- a/tests/typed_agent.py
++++ b/tests/typed_agent.py
+@@ -6,16 +6,25 @@
+ from dataclasses import dataclass
+ from decimal import Decimal
+ from functools import partial
+-from typing import Annotated, Any, Literal, TypeAlias
++from typing import Annotated, Any, Literal, TypeAlias, TypeVar
+ 
+ from pydantic import Field
+ from starlette.requests import Request
+ from typing_extensions import assert_type
+ 
+ from pydantic_ai import Agent, ModelRetry, RunContext, RunUsage, Tool
+-from pydantic_ai.agent import AgentRunResult
++from pydantic_ai.agent import AgentRun, AgentRunResult
+ from pydantic_ai.capabilities import PrepareTools, Thinking, WebSearch
+-from pydantic_ai.output import Choice, Choices, NativeOutput, PromptedOutput, StructuredDict, TextOutput, ToolOutput
++from pydantic_ai.output import (
++    Choice,
++    Choices,
++    NativeOutput,
++    OutputSpec,
++    PromptedOutput,
++    StructuredDict,
++    TextOutput,
++    ToolOutput,
++)
+ from pydantic_ai.tools import DeferredToolRequests, ToolDefinition
+ from pydantic_ai.ui.vercel_ai import VercelAIAdapter
+ 
+@@ -215,6 +224,32 @@ def run_with_override() -> None:
+         typed_agent.run_sync('testing', deps=MyDeps(3, 4))
+ 
+ 
++T = TypeVar('T')
++
++
++# A generic `OutputSpec[T]` passed on to a run keeps its type variable (issue #8717)
++async def run_with_output_spec(output_type: OutputSpec[T]) -> T:
++    result = await typed_agent.run('testing', deps=MyDeps(1, 2), output_type=output_type)
++    assert_type(result, AgentRunResult[T])
++    return result.output
++
++
++def run_sync_with_output_spec(output_type: OutputSpec[T]) -> T:
++    result = typed_agent.run_sync('testing', deps=MyDeps(1, 2), output_type=output_type)
++    assert_type(result, AgentRunResult[T])
++    return result.output
++
++
++async def run_stream_with_output_spec(output_type: OutputSpec[T]) -> T:
++    async with typed_agent.run_stream('testing', deps=MyDeps(1, 2), output_type=output_type) as streamed_result:
++        return await streamed_result.get_output()
++
++
++async def iter_with_output_spec(output_type: OutputSpec[T]) -> None:
++    async with typed_agent.iter('testing', deps=MyDeps(1, 2), output_type=output_type) as agent_run:
++        assert_type(agent_run, AgentRun[MyDeps, T])
++
++
+ @dataclass
+ class Foo:
+     a: int

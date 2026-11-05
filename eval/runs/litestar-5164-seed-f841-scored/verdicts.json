@@ -1,0 +1,66 @@
+{
+  "repository": "litestar-org/litestar",
+  "pr": "https://github.com/litestar-org/litestar/pull/5164",
+  "case_id": "5164-seed-f841",
+  "languages": [
+    "python"
+  ],
+  "reviewer": "sub-agent eval-litestar (automated)",
+  "verdict_source": "automated",
+  "commands": [
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-ddh9z01e argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/litestar-org/litestar.git\", \"/run/user/1000/rio-litestar-eval/rio-eval-ddh9z01e/head\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-ddh9z01e/head argv=[\"git\", \"fetch\", \"origin\", \"f4f7e9831574ed08f50901e62911019b5e7383ac\", \"fcab0954a74c5f8d340adbbfb9091f94982aa9a2\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-ddh9z01e/head argv=[\"git\", \"merge-base\", \"f4f7e9831574ed08f50901e62911019b5e7383ac\", \"fcab0954a74c5f8d340adbbfb9091f94982aa9a2\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-ddh9z01e/head argv=[\"git\", \"checkout\", \"--detach\", \"fcab0954a74c5f8d340adbbfb9091f94982aa9a2\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-ddh9z01e argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/run/user/1000/rio-litestar-eval/rio-eval-ddh9z01e/head\", \"/run/user/1000/rio-litestar-eval/rio-eval-ddh9z01e/base\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-ddh9z01e/base argv=[\"git\", \"checkout\", \"--detach\", \"f4f7e9831574ed08f50901e62911019b5e7383ac\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-ddh9z01e/base argv=[\"uv\", \"sync\", \"--locked\", \"--all-groups\", \"--all-extras\", \"--no-editable\", \"--python\", \"3.12.12\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-ddh9z01e/base argv=[\".venv/bin/python\", \"-I\", \"-c\", \"import hashlib,pathlib,sysconfig; s=pathlib.Path(sysconfig.get_paths()[\\\"purelib\\\"]); names=[\\\"a1_coverage.pth\\\",\\\"_sphinx_jinja2_compat.pth\\\",\\\"sphinxcontrib_jsmath-1.0.1-py3.7-nspkg.pth\\\",\\\"distutils-precedence.pth\\\"]; [(print(str(p),hashlib.sha256(p.read_bytes()).hexdigest(),repr(p.read_text())),p.rename(p.with_suffix(\\\".pth.disabled\\\"))) for n in names if (p:=s/n).exists()]\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-ddh9z01e/base argv=[\".venv/bin/python\", \"-I\", \"-c\", \"import hashlib,json,pathlib,sysconfig; s=pathlib.Path(sysconfig.get_paths()[\\\"purelib\\\"]); ps=list(s.glob(\\\"litestar-*.dist-info/direct_url.json\\\")); assert len(ps)==1,ps; p=ps[0]; text=p.read_text(); meta=json.loads(text); assert not meta.get(\\\"dir_info\\\",{}).get(\\\"editable\\\",False),meta; assert meta[\\\"url\\\"]==pathlib.Path.cwd().as_uri(),meta; print(str(p),hashlib.sha256(text.encode()).hexdigest(),text); p.rename(p.with_suffix(\\\".json.disabled\\\"))\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-ddh9z01e/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-ddh9z01e/head argv=[\"uv\", \"sync\", \"--locked\", \"--all-groups\", \"--all-extras\", \"--no-editable\", \"--python\", \"3.12.12\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-ddh9z01e/head argv=[\".venv/bin/python\", \"-I\", \"-c\", \"import hashlib,pathlib,sysconfig; s=pathlib.Path(sysconfig.get_paths()[\\\"purelib\\\"]); names=[\\\"a1_coverage.pth\\\",\\\"_sphinx_jinja2_compat.pth\\\",\\\"sphinxcontrib_jsmath-1.0.1-py3.7-nspkg.pth\\\",\\\"distutils-precedence.pth\\\"]; [(print(str(p),hashlib.sha256(p.read_bytes()).hexdigest(),repr(p.read_text())),p.rename(p.with_suffix(\\\".pth.disabled\\\"))) for n in names if (p:=s/n).exists()]\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-ddh9z01e/head argv=[\".venv/bin/python\", \"-I\", \"-c\", \"import hashlib,json,pathlib,sysconfig; s=pathlib.Path(sysconfig.get_paths()[\\\"purelib\\\"]); ps=list(s.glob(\\\"litestar-*.dist-info/direct_url.json\\\")); assert len(ps)==1,ps; p=ps[0]; text=p.read_text(); meta=json.loads(text); assert not meta.get(\\\"dir_info\\\",{}).get(\\\"editable\\\",False),meta; assert meta[\\\"url\\\"]==pathlib.Path.cwd().as_uri(),meta; print(str(p),hashlib.sha256(text.encode()).hexdigest(),text); p.rename(p.with_suffix(\\\".json.disabled\\\"))\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-ddh9z01e/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-ddh9z01e/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-ddh9z01e/head argv=[\"node\", \"--version\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-ddh9z01e/head argv=[\"npm\", \"--version\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-ddh9z01e/head argv=[\"python3\", \"--version\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-ddh9z01e/head argv=[\"uv\", \"--version\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-ddh9z01e/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5164-seed-f841-scored/profile.yaml\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-ddh9z01e/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-ddh9z01e/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"f4f7e9831574ed08f50901e62911019b5e7383ac\", \"--format\", \"json\", \"--offline\", \"--profile\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5164-seed-f841-scored/profile.yaml\"]"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5164-seed-f841-scored/commands.json; Rio binary SHA-256: 512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+    "Eligible scored run: baseline_ran=true and baseline_classification_ran=true. Head/base typecheck and lint all completed successfully with dependency_state verified. Coverage tests and JSON export passed. Raw status incomplete reflects the explicitly excluded offline audit, not unavailable diagnostic baselines.",
+    "Frozen binary rio 0.1.0 b15dc8ff5001, SHA-256 512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2; no rebuild. CPython 3.12.12, uv 0.13.7; same unchanged uv.lock SHA-256 8f25baff7a27134191cd7adcb550963aa1212f1081f13196b929e305ff17dfbd at both commits.",
+    "Setup reproduction: ../litestar-evidence/REPRODUCE.md and install-plan-final.json. All locked groups/extras, --no-editable; four known startup .pth hooks disabled; only the non-editable root wheel direct_url.json renamed after asserting editable=false and URL=current checkout. Original contents and hashes are logged. Trust remains false; no tracked source/configuration/lockfile was changed.",
+    "Profile ../litestar-evidence/profile-long.yaml SHA-256 7f79af17af30fa064a6c7382114fbaca818be229d12e4bfea20ca9678544f4b8; all rio/base checks on, baseline on, 60m budget. Temporary storage /run/user/1000/rio-litestar-eval. Coverage suite intentionally scoped using PYTEST_ADDOPTS=tests/e2e/test_routing/test_path_mounting.py. COVERAGE_RCFILE=/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-evidence/coverage-scoped-threshold.toml (SHA-256 b8ec9bb43dba19bc819dd1faa7cb579e566c3f51120db465e8fdf80b2d106efd); same repository instrumentation/exclusions with global export threshold 0.01, preserved by covdefaults. This is not full-suite coverage.",
+    "Network policy: Rio --offline, fresh unpopulated advisory cache, dependency audit explicitly excluded. Installers used the network. A process-scoped Git URL rewrite maps only the Litestar repository URL to file:///tmp/litestar-eval-transport.git, containing exact GitHub-fetched commits plus the seed; GIT_CONFIG_COUNT=2 also sets http.version=HTTP/1.1. No public commit was reconstructed.",
+    "Resolved typecheck target evidence: rio-tool-evidence/commands.json captures both actual mypy --output json --config-file .../pyproject.toml commands and the config text. Explicit packages are litestar, tests, docs.examples, configured python_version=3.11; no inferred positional target. Rio selected mypy 1.19.1, not Pyright. Raw outcomes/output are retained under rio-tool-evidence/cache/.",
+    "All earlier attempts remain as excluded environment-failure records, with unique attempt case IDs; see ../litestar-NOTES.md. No skipped audit is treated as proof of safety, and no excluded attempt contributes detection credit.",
+    "Synthetic case on public PR #5164 base, not its real introducing head. After roughly 30 minutes of unsuccessful real-control investigation, the permitted fallback was registered before Rio. Seed identity/date/message and incremental Git bundle are preserved. Exactly one expected bug detected; zero expected bugs missed; no additional independent deterministic miss established. Scoped tests: 4 passed, 3 deselected."
+  ],
+  "independently_clean": false,
+  "positive_control": {
+    "kind": "seeded-mutation",
+    "expected": [
+      {
+        "id": "unused-local-normalize-path",
+        "mechanism": "lint-rule",
+        "evidence": "Preregistered unused-local-normalize-path: ../litestar-evidence/positive-control-register.md, seed-manifest.json, seed-f841.patch (SHA-256 2ef92d4ca023bd78f1efbec512a0ff9788d1f0e2dbd957c5f66e9d3802455c4a), seed-oracle-commands.json, seed-base-ruff.stdout.log and seed-head-ruff.stdout.log. Independent full .venv/bin/ruff check . exits 0 at public base f4f7e9831574ed08f50901e62911019b5e7383ac and 1 with exactly F841 at synthetic fcab0954a74c5f8d340adbbfb9091f94982aa9a2, litestar/utils/path.py:24.",
+        "finding_ids": [
+          "43d6925de36ee0e0beb788c1be9fd46de7152f1be80230d5085329c5f9911eab"
+        ]
+      }
+    ]
+  },
+  "misses": [],
+  "findings": {
+    "43d6925de36ee0e0beb788c1be9fd46de7152f1be80230d5085329c5f9911eab": {
+      "verdict": "true-positive",
+      "reason": "Preregistered unused-local-normalize-path: ../litestar-evidence/positive-control-register.md, seed-manifest.json, seed-f841.patch (SHA-256 2ef92d4ca023bd78f1efbec512a0ff9788d1f0e2dbd957c5f66e9d3802455c4a), seed-oracle-commands.json, seed-base-ruff.stdout.log and seed-head-ruff.stdout.log. Independent full .venv/bin/ruff check . exits 0 at public base f4f7e9831574ed08f50901e62911019b5e7383ac and 1 with exactly F841 at synthetic fcab0954a74c5f8d340adbbfb9091f94982aa9a2, litestar/utils/path.py:24. The only mutation adds an unused local assignment inside normalize_path. F841 is enabled by the repository F rule family and unsuppressed. Rio reports exactly this issue as new; its verified base lint passes. The test suite executes the assignment, so this is a lint control, not an uncovered-lines control."
+    }
+  }
+}

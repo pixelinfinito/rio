@@ -1,0 +1,78 @@
+{
+  "captured_utc": "2026-11-05T03:46:00.043771+00:00",
+  "note": "Read-only supplemental completed check outputs captured before runner cleanup. Final report establishes baseline eligibility. Each selected directory had findings.json or coverage.json completion artifact.",
+  "files": [
+    {
+      "source": "/dev/shm/rio-pydantic/tmp/rio-eval-diul7ije/cache/942fce5293eb6bd4/runs/01M6MWS6FRQFY6JAFD6X03P2SC/checks/lint/%2E/base/findings.json",
+      "path": "eval/runs/pydantic-14213-attempt04/rio-check-artifacts/lint/%2E/base/findings.json",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "bytes": 2
+    },
+    {
+      "source": "/dev/shm/rio-pydantic/tmp/rio-eval-diul7ije/cache/942fce5293eb6bd4/runs/01M6MWS6FRQFY6JAFD6X03P2SC/checks/lint/%2E/base/stderr.txt",
+      "path": "eval/runs/pydantic-14213-attempt04/rio-check-artifacts/lint/%2E/base/stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "source": "/dev/shm/rio-pydantic/tmp/rio-eval-diul7ije/cache/942fce5293eb6bd4/runs/01M6MWS6FRQFY6JAFD6X03P2SC/checks/lint/%2E/base/stdout.txt",
+      "path": "eval/runs/pydantic-14213-attempt04/rio-check-artifacts/lint/%2E/base/stdout.txt",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "bytes": 2
+    },
+    {
+      "source": "/dev/shm/rio-pydantic/tmp/rio-eval-diul7ije/cache/942fce5293eb6bd4/runs/01M6MWS6FRQFY6JAFD6X03P2SC/checks/lint/%2E/head/findings.json",
+      "path": "eval/runs/pydantic-14213-attempt04/rio-check-artifacts/lint/%2E/head/findings.json",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "bytes": 2
+    },
+    {
+      "source": "/dev/shm/rio-pydantic/tmp/rio-eval-diul7ije/cache/942fce5293eb6bd4/runs/01M6MWS6FRQFY6JAFD6X03P2SC/checks/lint/%2E/head/stderr.txt",
+      "path": "eval/runs/pydantic-14213-attempt04/rio-check-artifacts/lint/%2E/head/stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "source": "/dev/shm/rio-pydantic/tmp/rio-eval-diul7ije/cache/942fce5293eb6bd4/runs/01M6MWS6FRQFY6JAFD6X03P2SC/checks/lint/%2E/head/stdout.txt",
+      "path": "eval/runs/pydantic-14213-attempt04/rio-check-artifacts/lint/%2E/head/stdout.txt",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "bytes": 2
+    },
+    {
+      "source": "/dev/shm/rio-pydantic/tmp/rio-eval-diul7ije/cache/942fce5293eb6bd4/runs/01M6MWS6FRQFY6JAFD6X03P2SC/checks/typecheck/%2E/base/findings.json",
+      "path": "eval/runs/pydantic-14213-attempt04/rio-check-artifacts/typecheck/%2E/base/findings.json",
+      "sha256": "2a810f39ce97cfd6e4ba8cd283324b56f9a31f5f4efe0450dc12f9b2ae9046d8",
+      "bytes": 10446
+    },
+    {
+      "source": "/dev/shm/rio-pydantic/tmp/rio-eval-diul7ije/cache/942fce5293eb6bd4/runs/01M6MWS6FRQFY6JAFD6X03P2SC/checks/typecheck/%2E/base/stderr.txt",
+      "path": "eval/runs/pydantic-14213-attempt04/rio-check-artifacts/typecheck/%2E/base/stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "source": "/dev/shm/rio-pydantic/tmp/rio-eval-diul7ije/cache/942fce5293eb6bd4/runs/01M6MWS6FRQFY6JAFD6X03P2SC/checks/typecheck/%2E/base/stdout.txt",
+      "path": "eval/runs/pydantic-14213-attempt04/rio-check-artifacts/typecheck/%2E/base/stdout.txt",
+      "sha256": "9e736aa0249d40a002679f9681e662a4c09d0d6fb377314fce977ad8f978efc1",
+      "bytes": 9208
+    },
+    {
+      "source": "/dev/shm/rio-pydantic/tmp/rio-eval-diul7ije/cache/942fce5293eb6bd4/runs/01M6MWS6FRQFY6JAFD6X03P2SC/checks/typecheck/%2E/head/findings.json",
+      "path": "eval/runs/pydantic-14213-attempt04/rio-check-artifacts/typecheck/%2E/head/findings.json",
+      "sha256": "2a810f39ce97cfd6e4ba8cd283324b56f9a31f5f4efe0450dc12f9b2ae9046d8",
+      "bytes": 10446
+    },
+    {
+      "source": "/dev/shm/rio-pydantic/tmp/rio-eval-diul7ije/cache/942fce5293eb6bd4/runs/01M6MWS6FRQFY6JAFD6X03P2SC/checks/typecheck/%2E/head/stderr.txt",
+      "path": "eval/runs/pydantic-14213-attempt04/rio-check-artifacts/typecheck/%2E/head/stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "source": "/dev/shm/rio-pydantic/tmp/rio-eval-diul7ije/cache/942fce5293eb6bd4/runs/01M6MWS6FRQFY6JAFD6X03P2SC/checks/typecheck/%2E/head/stdout.txt",
+      "path": "eval/runs/pydantic-14213-attempt04/rio-check-artifacts/typecheck/%2E/head/stdout.txt",
+      "sha256": "4323a74122d365a05142a7ce9a46c2f6f88a627d9378bf41efe14926ef95d468",
+      "bytes": 9208
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "reason": "Shared machine I/O contention caused both initial base installations to time out. Rio nevertheless produced successful verified baseline classification in both initial reports. Retain initial attempts and select retries with both independent installs successful.",
+  "timeout_change": {
+    "initial_seconds": 1200,
+    "retry_seconds": 1800
+  },
+  "unchanged": "Base/head SHAs, installed tool versions, install plan, profile, seed and patch unchanged.",
+  "2085_attempt2": "No report: historical file transport /dev/shm/trpc-eval/hono-2081-seed no longer existed. git clone exit128. Preserve commands.json and stderr; cannot build record without Rio report metadata.",
+  "2085_attempt3_transport": {
+    "GIT_CONFIG_COUNT": "1",
+    "GIT_CONFIG_KEY_0": "url.file:///dev/shm/hono-rerun2/seed-transport.insteadOf",
+    "GIT_CONFIG_VALUE_0": "https://github.com/honojs/hono.git"
+  },
+  "reconstruction": [
+    "git clone --no-checkout https://github.com/honojs/hono.git /dev/shm/hono-rerun2/seed-transport",
+    "git -C /dev/shm/hono-rerun2/seed-transport fetch $PWD/eval/runs/hono-evidence/2085-seed.bundle rio-eval-2085-seed:refs/heads/rio-eval-2085-seed"
+  ],
+  "reconstructed_patch_sha256": "8f8a2a9bf2defa96158c9b3102ce8b35f64a9996428174e73d5ba367dd4d7b6b"
+}

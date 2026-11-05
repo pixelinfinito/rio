@@ -1,0 +1,147 @@
+diff --git a/src/structlog/_native.py b/src/structlog/_native.py
+index 368779d..5775b8d 100644
+--- a/src/structlog/_native.py
++++ b/src/structlog/_native.py
+@@ -15,0 +16 @@ import sys
++import threading
+@@ -31 +32 @@ from ._log_levels import (
+-from .contextvars import _ASYNC_CALLING_STACK
++from .contextvars import _ASYNC_CALLING_STACK, _ASYNC_CALLING_THREAD
+@@ -62,0 +64,4 @@ async def aexception(
++    # Capture thread-specific info before handing off to the executor.
++    thread_token = _ASYNC_CALLING_THREAD.set(
++        (threading.get_ident(), threading.current_thread().name)
++    )
+@@ -64,0 +70 @@ async def aexception(
++
+@@ -71,0 +78 @@ async def aexception(
++        _ASYNC_CALLING_THREAD.reset(thread_token)
+@@ -175,0 +183,4 @@ def _make_filtering_bound_logger(min_level: int) -> type[FilteringBoundLogger]:
++            # Capture thread-specific info before handing off to the executor.
++            thread_token = _ASYNC_CALLING_THREAD.set(
++                (threading.get_ident(), threading.current_thread().name)
++            )
+@@ -177,0 +189 @@ def _make_filtering_bound_logger(min_level: int) -> type[FilteringBoundLogger]:
++
+@@ -186,0 +199 @@ def _make_filtering_bound_logger(min_level: int) -> type[FilteringBoundLogger]:
++                _ASYNC_CALLING_THREAD.reset(thread_token)
+@@ -213,0 +227,4 @@ def _make_filtering_bound_logger(min_level: int) -> type[FilteringBoundLogger]:
++        # Capture thread-specific info before handing off to the executor.
++        thread_token = _ASYNC_CALLING_THREAD.set(
++            (threading.get_ident(), threading.current_thread().name)
++        )
+@@ -215,0 +233 @@ def _make_filtering_bound_logger(min_level: int) -> type[FilteringBoundLogger]:
++
+@@ -224,0 +243,2 @@ def _make_filtering_bound_logger(min_level: int) -> type[FilteringBoundLogger]:
++            _ASYNC_CALLING_THREAD.reset(thread_token)
++
+diff --git a/src/structlog/contextvars.py b/src/structlog/contextvars.py
+index 71561a7..75bfec8 100644
+--- a/src/structlog/contextvars.py
++++ b/src/structlog/contextvars.py
+@@ -40,0 +41,6 @@ _ASYNC_CALLING_STACK: contextvars.ContextVar[FrameType] = (
++# Stores thread info captured at async call time.
++# Value is a tuple of (thread_id: int, thread_name: str)
++_ASYNC_CALLING_THREAD: contextvars.ContextVar[tuple[int, str]] = (
++    contextvars.ContextVar("_ASYNC_CALLING_THREAD")
++)
++
+diff --git a/src/structlog/processors.py b/src/structlog/processors.py
+index 34406ad..2cc0ebf 100644
+--- a/src/structlog/processors.py
++++ b/src/structlog/processors.py
+@@ -38,0 +39 @@ from ._utils import get_processname
++from .contextvars import _ASYNC_CALLING_THREAD
+@@ -786 +787,5 @@ def _get_callsite_thread(module: str, frame: FrameType) -> Any:
+-    return threading.get_ident()
++    thread_info = _ASYNC_CALLING_THREAD.get(None)
++    if thread_info is None:
++        return threading.get_ident()
++
++    return thread_info[0]
+@@ -790 +795,5 @@ def _get_callsite_thread_name(module: str, frame: FrameType) -> Any:
+-    return threading.current_thread().name
++    thread_info = _ASYNC_CALLING_THREAD.get(None)
++    if thread_info is None:
++        return threading.current_thread().name
++
++    return thread_info[1]
+diff --git a/src/structlog/stdlib.py b/src/structlog/stdlib.py
+index bf0a208..7474744 100644
+--- a/src/structlog/stdlib.py
++++ b/src/structlog/stdlib.py
+@@ -18,0 +19 @@ import sys
++import threading
+@@ -36 +37,5 @@ from ._log_levels import LEVEL_TO_NAME, NAME_TO_LEVEL, add_log_level
+-from .contextvars import _ASYNC_CALLING_STACK, merge_contextvars
++from .contextvars import (
++    _ASYNC_CALLING_STACK,
++    _ASYNC_CALLING_THREAD,
++    merge_contextvars,
++)
+@@ -426,0 +432,4 @@ class BoundLogger(BoundLoggerBase):
++        # Capture thread-specific info before handing off to the executor.
++        thread_token = _ASYNC_CALLING_THREAD.set(
++            (threading.get_ident(), threading.current_thread().name)
++        )
+@@ -436,0 +446 @@ class BoundLogger(BoundLoggerBase):
++            _ASYNC_CALLING_THREAD.reset(thread_token)
+@@ -634,0 +645,4 @@ class AsyncBoundLogger:
++        # Capture thread-specific info before handing off to the executor.
++        thread_token = _ASYNC_CALLING_THREAD.set(
++            (threading.get_ident(), threading.current_thread().name)
++        )
+@@ -644,0 +659 @@ class AsyncBoundLogger:
++            _ASYNC_CALLING_THREAD.reset(thread_token)
+diff --git a/tests/processors/test_processors.py b/tests/processors/test_processors.py
+index e43485e..99516b4 100644
+--- a/tests/processors/test_processors.py
++++ b/tests/processors/test_processors.py
+@@ -38,0 +39 @@ from structlog.stdlib import ProcessorFormatter
++from structlog.testing import CapturingLoggerFactory
+@@ -380,0 +382 @@ class TestCallsiteParameterAdder:
++        Thread information is now correctly captured before async bridge.
+@@ -397,0 +400,4 @@ class TestCallsiteParameterAdder:
++        # Capture thread info before async call
++        expected_thread = threading.get_ident()
++        expected_thread_name = threading.current_thread().name
++
+@@ -402 +408,4 @@ class TestCallsiteParameterAdder:
+-        # These are different when running under async
++        assert expected_thread == logger_params["thread"]
++        assert expected_thread_name == logger_params["thread_name"]
++
++        # Remove thread info from comparison for remaining params
+@@ -408,0 +418,32 @@ class TestCallsiteParameterAdder:
++    @pytest.mark.asyncio
++    async def test_async_native_logger(self) -> None:
++        """
++        Callsite thread information for native async invocations is correct.
++        """
++        cf = CapturingLoggerFactory()
++        structlog.configure(
++            processors=[
++                CallsiteParameterAdder(
++                    parameters=[
++                        CallsiteParameter.THREAD,
++                        CallsiteParameter.THREAD_NAME,
++                    ]
++                ),
++            ],
++            logger_factory=cf,
++            wrapper_class=structlog._native.BoundLoggerFilteringAtInfo,
++            cache_logger_on_first_use=True,
++        )
++
++        logger = structlog.get_logger()
++
++        expected_thread = threading.get_ident()
++        expected_thread_name = threading.current_thread().name
++
++        await logger.ainfo("test native async")
++
++        captured = cf.logger.calls[0].kwargs
++
++        assert expected_thread == captured["thread"]
++        assert expected_thread_name == captured["thread_name"]
++

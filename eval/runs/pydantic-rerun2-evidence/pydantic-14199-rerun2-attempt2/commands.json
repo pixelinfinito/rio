@@ -1,0 +1,80 @@
+[
+  {
+    "argv": [
+      "/home/ubuntu/rio/target/release/rio",
+      "doctor",
+      "--base",
+      "a9f3f3fccc180c05190df0478a17487ec9908e4e",
+      "--format",
+      "json"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/tmp/rio-eval-aa93hczd/head",
+    "environment": {
+      "PATH": ".venv/bin:/home/ubuntu/.cargo/bin:/home/ubuntu/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin:/tmp/rio-acceptance-tools:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg02i4dIb:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "RIO_CONFIG_DIR": "/dev/shm/rio-pydantic/tmp/rio-eval-aa93hczd/config",
+      "RIO_CACHE_DIR": "/dev/shm/rio-pydantic/tmp/rio-eval-aa93hczd/supplement-cache"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 3539,
+    "stdout": "eval/runs/pydantic-rerun2-evidence/pydantic-14199-rerun2-attempt2/doctor-base.stdout.log",
+    "stderr": "eval/runs/pydantic-rerun2-evidence/pydantic-14199-rerun2-attempt2/doctor-base.stderr.log"
+  },
+  {
+    "argv": [
+      "/home/ubuntu/rio/target/release/rio",
+      "doctor",
+      "--all-roots",
+      "--format",
+      "json"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/tmp/rio-eval-aa93hczd/head",
+    "environment": {
+      "PATH": ".venv/bin:/home/ubuntu/.cargo/bin:/home/ubuntu/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin:/tmp/rio-acceptance-tools:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg02i4dIb:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "RIO_CONFIG_DIR": "/dev/shm/rio-pydantic/tmp/rio-eval-aa93hczd/config",
+      "RIO_CACHE_DIR": "/dev/shm/rio-pydantic/tmp/rio-eval-aa93hczd/supplement-cache"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 6394,
+    "stdout": "eval/runs/pydantic-rerun2-evidence/pydantic-14199-rerun2-attempt2/doctor-all-roots.stdout.log",
+    "stderr": "eval/runs/pydantic-rerun2-evidence/pydantic-14199-rerun2-attempt2/doctor-all-roots.stderr.log"
+  },
+  {
+    "argv": [
+      "git",
+      "diff",
+      "a9f3f3fccc180c05190df0478a17487ec9908e4e",
+      "262700f815672fc37ed637a1604234f6c7cc7ee9",
+      "--"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/tmp/rio-eval-aa93hczd/head",
+    "environment": {
+      "PATH": ".venv/bin:/home/ubuntu/.cargo/bin:/home/ubuntu/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin:/tmp/rio-acceptance-tools:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg02i4dIb:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "RIO_CONFIG_DIR": "/dev/shm/rio-pydantic/tmp/rio-eval-aa93hczd/config",
+      "RIO_CACHE_DIR": "/dev/shm/rio-pydantic/tmp/rio-eval-aa93hczd/supplement-cache"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 11,
+    "stdout": "eval/runs/pydantic-rerun2-evidence/pydantic-14199-rerun2-attempt2/source-diff.stdout.log",
+    "stderr": "eval/runs/pydantic-rerun2-evidence/pydantic-14199-rerun2-attempt2/source-diff.stderr.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "python",
+      "-c",
+      "import sys,importlib.metadata,json; print(json.dumps({\"python\":sys.version,\"packages\":{p:importlib.metadata.version(p) for p in [\"pyright\",\"mypy\",\"ruff\",\"pytest\",\"coverage\"]}},indent=2))"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/tmp/rio-eval-aa93hczd/head",
+    "environment": {
+      "PATH": ".venv/bin:/home/ubuntu/.cargo/bin:/home/ubuntu/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin:/tmp/rio-acceptance-tools:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg02i4dIb:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "RIO_CONFIG_DIR": "/dev/shm/rio-pydantic/tmp/rio-eval-aa93hczd/config",
+      "RIO_CACHE_DIR": "/dev/shm/rio-pydantic/tmp/rio-eval-aa93hczd/supplement-cache"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 150,
+    "stdout": "eval/runs/pydantic-rerun2-evidence/pydantic-14199-rerun2-attempt2/tool-versions.stdout.log",
+    "stderr": "eval/runs/pydantic-rerun2-evidence/pydantic-14199-rerun2-attempt2/tool-versions.stderr.log"
+  }
+]

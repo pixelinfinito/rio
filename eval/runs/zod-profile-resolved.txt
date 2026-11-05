@@ -1,0 +1,89 @@
+# Source: /home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-profile.yaml
+# Chain: zod-eval-b15dc8ff5001 -> rio/base
+version: 1
+name: zod-eval-b15dc8ff5001
+budget:
+  fast:
+    wall_time: 20m
+models: {}
+steps:
+- id: prepare
+  uses: rio/prepare@0.1.0
+  needs: []
+  parallel: false
+  with:
+    exclude: []
+- id: checks
+  uses: rio/checks@0.1.0
+  needs:
+  - prepare
+  parallel: true
+  with:
+    baseline: true
+    coverage: true
+    dependencies: true
+    lint: true
+    secrets: true
+    trust_installed_dependencies: false
+    typecheck: true
+- id: graph
+  uses: rio/graph@0.1.0
+  needs:
+  - prepare
+  parallel: true
+  with:
+    hops: 2
+    max_nodes: 2000
+- id: triage
+  uses: rio/triage@0.1.0
+  needs:
+  - checks
+  - graph
+  parallel: false
+  with: {}
+- id: agents
+  uses: rio/agents@0.1.0
+  needs:
+  - triage
+  parallel: false
+  with: {}
+- id: verify
+  uses: rio/verify@0.1.0
+  needs:
+  - agents
+  parallel: false
+  with: {}
+- id: report
+  uses: rio/report@0.1.0
+  needs:
+  - checks
+  - graph
+  - verify
+  parallel: false
+  with: {}
+suppress: []
+publish: never
+fail_on:
+  evidence: static_proven
+  categories:
+  - defect
+  states:
+  - new
+  - worsened
+  rules: []
+  incomplete: true
+  required_checks: []
+min_evidence: plausible
+max_lines: 1500
+chain:
+- zod-eval-b15dc8ff5001
+- rio/base
+modules:
+  rio/agents: 0.1.0
+  rio/checks: 0.1.0
+  rio/graph: 0.1.0
+  rio/prepare: 0.1.0
+  rio/report: 0.1.0
+  rio/triage: 0.1.0
+  rio/verify: 0.1.0
+engine_version: 0.1.0

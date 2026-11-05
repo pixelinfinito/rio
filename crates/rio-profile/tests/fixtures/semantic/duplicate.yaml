@@ -1,0 +1,4 @@
+version: 1
+name: invalid-duplicate
+extends: rio/base
+steps: [{id: a, uses: rio/report}, {id: a, uses: rio/report}]

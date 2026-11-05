@@ -1,0 +1,11 @@
+Using CPython 3.12.12
+Creating virtual environment at: .venv
+Resolved 171 packages in 11ms
+   Building pydantic @ file:///tmp/rio-eval-ba5t52p1/head
+   Building pydantic-core @ file:///tmp/rio-eval-ba5t52p1/head/pydantic-core
+      Built pydantic @ file:///tmp/rio-eval-ba5t52p1/head
+      Built pydantic-core @ file:///tmp/rio-eval-ba5t52p1/head/pydantic-core
+Prepared 2 packages in 1m 00s
+warning: Failed to hardlink files; falling back to full copy. This may lead to degraded performance.
+         If the cache and target directories are on different filesystems, hardlinking may not be supported.
+         If this is intentional, set `export UV_LINK_MODE=copy` or use `--link-mode=copy` to suppress this warning.

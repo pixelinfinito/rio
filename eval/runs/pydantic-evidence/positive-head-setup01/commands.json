@@ -1,0 +1,28 @@
+[
+  {
+    "argv": [
+      "uv",
+      "sync",
+      "--locked",
+      "--python",
+      "3.12.12",
+      "--group",
+      "dev",
+      "--group",
+      "linting",
+      "--group",
+      "typechecking",
+      "--group",
+      "coverage",
+      "--all-extras"
+    ],
+    "cwd": "/tmp/eval-pydantic-positive-head",
+    "environment": {
+      "CONTEXT": "eval-pydantic"
+    },
+    "exit_code": -15,
+    "wall_time_ms": 163685,
+    "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-head-setup01/00-stdout.log",
+    "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-head-setup01/00-stderr.log"
+  }
+]

@@ -1,0 +1,40 @@
+6996	bug: Unstable streaming responses with httpBatchStreamLink on React Native / Expo	2025-11-05T15:17:27Z
+5787	feat(server): extending `.output()`s	2024-06-12T13:47:10Z
+6260	feat: Add a link that uses angulars httpCient	2024-11-22T16:07:33Z
+6188	bug: React: Types for callback of `trpc.useQueries` doesn't allow returning an empty array	2024-11-04T15:21:38Z
+6741	docs: NextJS 15/AppRouter + tRPC + @tanstack/react-query: Integration & Code Examples	2025-05-03T18:09:57Z
+5643	docs: write up content-type docs	2024-04-19T13:33:21Z
+3438	feat: inferable errors from procedures	2022-12-19T23:41:06Z
+3548	docs: provide example for server side calls (`createCaller`), when importing files	2023-01-05T20:08:10Z
+6978	feat: Bind return type of a procedure to the input type of the `output` schema	2025-10-18T15:01:44Z
+1963	Add a way to access the `ctx` in the `input` parsers	2022-06-07T10:56:39Z
+3958	docs: recommendations on how to handle "dependency injection"	2023-03-09T15:59:14Z
+6950	feat: support using fetchEventSource for subscriptions	2025-09-17T22:39:55Z
+6947	feat: Distinguish handled and unhandled exceptions	2025-09-14T15:22:48Z
+7064	feat: Controlling retry behavior of `useSubscription`	2025-12-20T04:28:39Z
+6892	feat: overwrite input in middleware	2025-08-14T06:30:08Z
+3710	DX: using `client` as the route name causes an error	2023-02-02T13:58:07Z
+887	[RFC] Next major overview	2021-09-05T08:32:00Z
+1937	Support for additional `Content-Type`s	2022-05-25T09:00:50Z
+6977	bug: onError not reporting original error	2025-10-17T17:20:56Z
+6057	feat: Stricter typing for `opts` passed into `nodeHTTPRequestHandler`	2024-09-27T15:41:32Z
+6195	bug: useSuspenseInfiniteQuery's select method expects wrong return type	2024-11-07T05:56:57Z
+6500	bug: Invalid serialization of zod branded tuples	2025-02-15T11:21:24Z
+6521	bug: Type error in homepage demo of new tanstack query client	2025-02-18T21:26:10Z
+6998	bug: Error when removing baseUrl - unstable-core-do-not-import type issue	2025-11-06T03:26:52Z
+6997	bug: Unable to infer `Prisma.JsonValue` properly, TypeScript says Type instantiation is excessively deep and possibly infinite	2025-11-05T17:46:35Z
+6832	feat: custom type-safe errors	2025-06-22T21:21:52Z
+7430	assertIsRequestId is a no-op for all non-number invalid types (only throws for NaN)	2026-07-07T23:56:15Z
+6189	docs: `retryLink` guide should mention that user needs to set `QueryClient` `defaultOptions.retry` to false	2024-11-04T16:23:57Z
+6889	bug: regression / breaking since 1.4.0	2025-08-12T09:11:49Z
+6989	bug: on the client, httpBatchStreamLink throws an 'undefined' error when edge function streams are terminated	2025-10-27T20:44:57Z
+7269	docs: pathExtractor in server actions docs causes script tag error when meta is undefined	2026-03-20T04:17:21Z
+7112	feat: sever link to @trpc/server in @trpc/client	2026-01-21T07:14:45Z
+6701	bug: `useSuspenseInfiniteQueries` `typeof skipToken is not assignable to type 'QueryFunction...` Type Error	2025-04-12T00:38:47Z
+7083	v11: tRPC server returns non-superjson error responses causing client 'Unable to transform response from server'	2026-01-02T21:00:25Z
+7035	bug: TRPC's inferred mutation input type is incorrect when used with zod4's preprocess	2025-12-10T12:01:03Z
+7022	feat: OpenTelemetry-Based Observability Hooks for Procedures	2025-11-18T22:17:47Z
+4989	feat: overwrite query key on trpc.useQuery options	2023-11-02T10:56:01Z
+6710	bug: Exported variable 'router' has or is using name 'FileLike' from external module	2025-04-15T12:23:34Z
+6956	bug: since TRPC v11.5.0 errors on createTRPCOptionsProxy are broken and not typed properly	2025-09-22T23:38:43Z
+5682	bug: error: NEXT_REDIRECT	2024-04-28T04:37:20Z

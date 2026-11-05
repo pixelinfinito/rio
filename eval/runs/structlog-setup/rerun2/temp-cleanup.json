@@ -1,0 +1,17 @@
+{
+  "utc": "2026-11-05T11:20:51.595101+00:00",
+  "reason": "Free shared tmpfs occupied by previous completed structlog oracle disposable environments; durable oracle evidence remains in eval/runs. Active rerun directories and transport clone are untouched.",
+  "removed": [
+    "/dev/shm/structlog-eval-venv",
+    "/dev/shm/structlog-oracle-786-base",
+    "/dev/shm/structlog-oracle-786-head",
+    "/dev/shm/structlog-oracle-805-base",
+    "/dev/shm/structlog-oracle-805-head",
+    "/dev/shm/structlog-oracle-811-base",
+    "/dev/shm/structlog-oracle-811-base-attempt1",
+    "/dev/shm/structlog-oracle-811-head",
+    "/dev/shm/structlog-oracle-811-seeded-assignment-base",
+    "/dev/shm/structlog-oracle-811-seeded-assignment-head"
+  ],
+  "free_bytes_after": 2268143616
+}

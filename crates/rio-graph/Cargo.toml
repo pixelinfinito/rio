@@ -1,0 +1,26 @@
+[package]
+name = "rio-graph"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+anyhow.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+blake3.workspace = true
+ignore.workspace = true
+aho-corasick.workspace = true
+json5.workspace = true
+tempfile.workspace = true
+rio-core = { path = "../rio-core" }
+rio-git = { path = "../rio-git" }
+rio-adapters = { path = "../rio-adapters" }
+
+[dev-dependencies]
+insta.workspace = true

@@ -1,0 +1,16 @@
+import subprocess,json,pathlib,time,os,sys
+root=pathlib.Path('/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence')
+case=sys.argv[1]; checkout=pathlib.Path(sys.argv[2]); out=root/case; out.mkdir(exist_ok=True)
+plan=json.loads((root/'install-plan-wheel-root.json').read_text())['head']
+commands=plan+[['uv','run','--no-sync','python','--version'],['uv','run','--no-sync','pyright','--version'],['uv','run','--no-sync','mypy','--version'],['uv','run','--no-sync','ruff','--version'],['uv','run','--no-sync','coverage','--version'],['uv','run','--no-sync','pyright','--outputjson'],['uv','run','--no-sync','ruff','check','--output-format','json','pydantic','tests/test_plugin_loader.py'],['uv','run','--no-sync','coverage','run','-m','pytest','-q'],['uv','run','--no-sync','coverage','json','-o',str(out/'coverage.json')],['git','status','--porcelain','--untracked-files=no']]
+ledger=[]
+for i,cmd in enumerate(commands):
+ start=time.monotonic(); so=out/f'{i:02d}-stdout.log'; se=out/f'{i:02d}-stderr.log'
+ print(case,i,cmd,flush=True)
+ with so.open('w') as a,se.open('w') as b:
+  try: code=subprocess.run(cmd,cwd=checkout,env={**os.environ,'CONTEXT':'eval-pydantic','PATH':'.venv/bin:/home/ubuntu/.cargo/bin:'+os.environ['PATH'],'UV_CACHE_DIR':'/dev/shm/rio-pydantic/uv-cache','CARGO_HOME':'/dev/shm/rio-pydantic/cargo','CARGO_TARGET_DIR':'/dev/shm/rio-pydantic/cargo-target','CARGO_BUILD_JOBS':'2','TMPDIR':'/dev/shm/rio-pydantic/tmp','PYTEST_ADDOPTS':'--ignore=tests/pydantic_core --ignore=tests/benchmarks'},stdout=a,stderr=b,timeout=1500).returncode
+  except subprocess.TimeoutExpired: code=124
+ ledger.append(dict(argv=cmd,cwd=str(checkout),environment={'CONTEXT':'eval-pydantic','PATH':'.venv/bin:/home/ubuntu/.cargo/bin:'+os.environ['PATH'],'UV_CACHE_DIR':'/dev/shm/rio-pydantic/uv-cache','CARGO_HOME':'/dev/shm/rio-pydantic/cargo','CARGO_TARGET_DIR':'/dev/shm/rio-pydantic/cargo-target','CARGO_BUILD_JOBS':'2','TMPDIR':'/dev/shm/rio-pydantic/tmp','PYTEST_ADDOPTS':'--ignore=tests/pydantic_core --ignore=tests/benchmarks'},exit_code=code,wall_time_ms=int((time.monotonic()-start)*1000),stdout=str(so),stderr=str(se)))
+ (out/'commands.json').write_text(json.dumps(ledger,indent=2)+'\n')
+ print(case,i,'exit',code,'ms',ledger[-1]['wall_time_ms'],flush=True)
+ if i < len(plan) and code: break

@@ -1,0 +1,15 @@
+Warning: you are leaving 7 commits behind, not connected to
+any of your branches:
+
+  17c4ab553 Move the evals case to the evals tests and the fixture to conftest
+  a51ad290a Read the policy's loop through getattr, for pyright
+  b30bbb205 Mark the deprecated event loop policy calls in the test fixture for pyright
+  0678cccc0 Test the warning in-process with a fresh event loop policy instead of a subprocess
+ ... and 3 more.
+
+If you want to keep them by creating a new branch, this may be a good time
+to do so with:
+
+ git branch <new-branch-name> 17c4ab553
+
+HEAD is now at 2f0e98cbb Keep narrow `clai2` resume rows readable by dropping the Claude Code or Codex label when it would clip the counts (#11161)

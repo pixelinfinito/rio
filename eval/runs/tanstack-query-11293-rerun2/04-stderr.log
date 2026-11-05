@@ -1,0 +1,12 @@
+Warning: you are leaving 2 commits behind, not connected to
+any of your branches:
+
+  0a73db4c2 test(query-broadcast-client-experimental): drop test that duplicates existing 'added' build coverage
+  d47e3e9df fix(broadcast-client): don't overwrite an existing query's data on an incoming 'added' message
+
+If you want to keep them by creating a new branch, this may be a good time
+to do so with:
+
+ git branch <new-branch-name> 0a73db4c2
+
+HEAD is now at 370ed5845 ref: do the cheap thing first

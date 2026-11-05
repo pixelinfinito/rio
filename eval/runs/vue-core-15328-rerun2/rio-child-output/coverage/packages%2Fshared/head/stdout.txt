@@ -1,0 +1,10 @@
+
+ RUN  v4.1.10 /dev/shm/vue-core-rerun2/rio-eval-w7i0tw6v/cache/91aac16a4bdab747/runs/01M6NQ4XKMP7WEMABQW1EDZ5Z4/tools/tool.tmp-aFs7kI
+      Coverage enabled with v8
+
+
+ Test Files  6 passed (6)
+      Tests  62 passed (62)
+   Start at  11:24:02
+   Duration  10.12s (transform 1.04s, setup 178ms, import 1.46s, tests 221ms, environment 3.37s)
+

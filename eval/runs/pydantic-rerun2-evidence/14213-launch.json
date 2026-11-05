@@ -1,0 +1,45 @@
+{
+  "argv": [
+    "python3",
+    "eval/runner.py",
+    "--repository",
+    "pydantic/pydantic",
+    "--pr",
+    "14213",
+    "--base",
+    "5740091dcd08e4a92940ceae841434a83331cb09",
+    "--head",
+    "ef2cb073d6be2ef360d2aedcd5afca0983af2507",
+    "--languages",
+    "python",
+    "--rio",
+    "/home/ubuntu/rio/target/release/rio",
+    "--out",
+    "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic/eval/runs/pydantic-14213-rerun2",
+    "--install-plan",
+    "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic/eval/runs/pydantic-14213-attempt04/install-plan.json",
+    "--profile",
+    "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic/eval/runs/pydantic-14213-attempt04/profile.yaml",
+    "--timeout",
+    "3600"
+  ],
+  "runtime_environment_overrides": {
+    "PATH": ".venv/bin:/home/ubuntu/.cargo/bin:/home/ubuntu/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin:/tmp/rio-acceptance-tools:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg02i4dIb:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+    "CONTEXT": "eval-pydantic",
+    "UV_CACHE_DIR": "/dev/shm/rio-pydantic/uv-cache",
+    "CARGO_HOME": "/dev/shm/rio-pydantic/cargo",
+    "CARGO_TARGET_DIR": "/dev/shm/rio-pydantic/cargo-target",
+    "CARGO_BUILD_JOBS": "2",
+    "TMPDIR": "/dev/shm/rio-pydantic/tmp",
+    "PYTEST_ADDOPTS": "--ignore=tests/pydantic_core --ignore=tests/benchmarks"
+  },
+  "unset_environment": [
+    "COVERAGE_PROCESS_START",
+    "COVERAGE_CORE"
+  ],
+  "binary_version": "rio 0.1.0 x86_64-unknown-linux-gnu f6e4f87e4c65",
+  "started_utc": "2026-11-05T11:36:06.518065+00:00",
+  "exit_code": 0,
+  "wall_seconds": 841.62,
+  "finished_utc": "2026-11-05T11:50:08.138148+00:00"
+}

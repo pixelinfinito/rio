@@ -1,0 +1,6 @@
+python3 eval/evaluate.py record --report eval/runs/tanstack-query-11293-rerun2/report.json --verdicts eval/runs/tanstack-query-11293-rerun2/verdicts.json --out eval/runs/tanstack-query-11293-rerun2/record.json
+exit 1
+evaluation error: Expecting value: line 1 column 1 (char 0)
+python3 eval/evaluate.py validate eval/runs/tanstack-query-11293-rerun2/record.json
+exit 1
+evaluation error: [Errno 2] No such file or directory: 'eval/runs/tanstack-query-11293-rerun2/record.json'

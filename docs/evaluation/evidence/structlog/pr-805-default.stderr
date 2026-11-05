@@ -1,0 +1,16 @@
+Warning: rio/base:$.steps[3]: rio/triage is deferred locally: no_endpoint
+Warning: rio/base:$.steps[4]: rio/agents is deferred locally: no_endpoint
+Warning: rio/base:$.steps[5]: rio/verify is deferred locally: no_endpoint
+Running prepare…
+Finished prepare
+Running checks…
+typecheck .: skipped (dependency_mismatch)
+lint .: skipped (dependency_mismatch)
+coverage .: skipped (dependency_mismatch)
+secrets .: findings
+dependencies .: skipped (offline)
+Finished checks
+Running graph…
+Finished graph
+Running report…
+Finished report

@@ -1,0 +1,32 @@
+{
+  "binary": "/home/ubuntu/rio/target/release/rio",
+  "version": "rio 0.1.0 x86_64-unknown-linux-gnu b15dc8ff5001",
+  "sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+  "runtime_install_command": [
+    "uv",
+    "python",
+    "install",
+    "3.13.9"
+  ],
+  "uv_version": "0.13.7",
+  "runtime_choice": "Exact CPython 3.13.9 selected with UV_PYTHON; historical/current CI supports 3.13 but does not pin a patch. Upstream does not pin uv version; freeze available uv 0.13.7.",
+  "platform": "Linux-6.8.0-147-generic-x86_64-with-glibc2.39",
+  "container_image": "No container image identity exposed; shared Linux VM, not network isolated.",
+  "selected_inherited_environment": {
+    "PATH": "/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+    "PYTHONPATH": null,
+    "PYTHONHOME": null,
+    "MYPYPATH": null,
+    "PYTEST_ADDOPTS": null,
+    "COVERAGE_FILE": null,
+    "COVERAGE_PROCESS_START": null,
+    "COVERAGE_PROCESS_CONFIG": null
+  },
+  "final_run_overrides": {
+    "UV_PYTHON": "3.13.9",
+    "TMPDIR": "/dev/shm/pydantic-settings-eval",
+    "UV_CACHE_DIR": "/dev/shm/pydantic-settings-eval/uv-cache"
+  },
+  "raw_command_capture": "strace -f -e trace=execve -s 8192 -o /dev/shm/pydantic-settings-eval/CASE-execve.log python3 eval/runner.py ...; raw trace gzipped under each eligible run/observed; no environment values traced.",
+  "external_process_environment_note": "Runner adds fresh RIO_CONFIG_DIR/RIO_CACHE_DIR and removes inherited RIO_* keys as recorded in its original commands.json."
+}

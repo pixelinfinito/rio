@@ -1,0 +1,46 @@
+{
+  "repository": "litestar-org/litestar",
+  "pr": "https://github.com/litestar-org/litestar/pull/5178",
+  "case_id": "5178-ext4-interrupted",
+  "languages": [
+    "python"
+  ],
+  "reviewer": "sub-agent eval-litestar (automated)",
+  "verdict_source": "automated",
+  "commands": [
+    "cwd=/tmp/rio-eval-bkoo1you argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/litestar-org/litestar.git\", \"/tmp/rio-eval-bkoo1you/head\"]",
+    "cwd=/tmp/rio-eval-bkoo1you/head argv=[\"git\", \"fetch\", \"origin\", \"716f8b023b1c13e6f1e8ab08dfa1938f7923312d\", \"9870dce9dc2688e78fc43bc73e27eed4198893ac\"]",
+    "cwd=/tmp/rio-eval-bkoo1you/head argv=[\"git\", \"merge-base\", \"716f8b023b1c13e6f1e8ab08dfa1938f7923312d\", \"9870dce9dc2688e78fc43bc73e27eed4198893ac\"]",
+    "cwd=/tmp/rio-eval-bkoo1you/head argv=[\"git\", \"checkout\", \"--detach\", \"9870dce9dc2688e78fc43bc73e27eed4198893ac\"]",
+    "cwd=/tmp/rio-eval-bkoo1you argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/tmp/rio-eval-bkoo1you/head\", \"/tmp/rio-eval-bkoo1you/base\"]",
+    "cwd=/tmp/rio-eval-bkoo1you/base argv=[\"git\", \"checkout\", \"--detach\", \"716f8b023b1c13e6f1e8ab08dfa1938f7923312d\"]",
+    "cwd=/tmp/rio-eval-bkoo1you/base argv=[\"uv\", \"sync\", \"--locked\", \"--all-groups\", \"--all-extras\", \"--no-editable\", \"--python\", \"3.12.12\"]",
+    "cwd=/tmp/rio-eval-bkoo1you/base argv=[\".venv/bin/python\", \"-I\", \"-c\", \"import hashlib,pathlib,sysconfig; s=pathlib.Path(sysconfig.get_paths()[\\\"purelib\\\"]); names=[\\\"a1_coverage.pth\\\",\\\"_sphinx_jinja2_compat.pth\\\",\\\"sphinxcontrib_jsmath-1.0.1-py3.7-nspkg.pth\\\",\\\"distutils-precedence.pth\\\"]; [(print(str(p),hashlib.sha256(p.read_bytes()).hexdigest(),repr(p.read_text())),p.rename(p.with_suffix(\\\".pth.disabled\\\"))) for n in names if (p:=s/n).exists()]\"]",
+    "cwd=/tmp/rio-eval-bkoo1you/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/tmp/rio-eval-bkoo1you/head argv=[\"uv\", \"sync\", \"--locked\", \"--all-groups\", \"--all-extras\", \"--no-editable\", \"--python\", \"3.12.12\"]",
+    "cwd=/tmp/rio-eval-bkoo1you/head argv=[\".venv/bin/python\", \"-I\", \"-c\", \"import hashlib,pathlib,sysconfig; s=pathlib.Path(sysconfig.get_paths()[\\\"purelib\\\"]); names=[\\\"a1_coverage.pth\\\",\\\"_sphinx_jinja2_compat.pth\\\",\\\"sphinxcontrib_jsmath-1.0.1-py3.7-nspkg.pth\\\",\\\"distutils-precedence.pth\\\"]; [(print(str(p),hashlib.sha256(p.read_bytes()).hexdigest(),repr(p.read_text())),p.rename(p.with_suffix(\\\".pth.disabled\\\"))) for n in names if (p:=s/n).exists()]\"]",
+    "cwd=/tmp/rio-eval-bkoo1you/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/tmp/rio-eval-bkoo1you/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/tmp/rio-eval-bkoo1you/head argv=[\"node\", \"--version\"]",
+    "cwd=/tmp/rio-eval-bkoo1you/head argv=[\"npm\", \"--version\"]",
+    "cwd=/tmp/rio-eval-bkoo1you/head argv=[\"python3\", \"--version\"]",
+    "cwd=/tmp/rio-eval-bkoo1you/head argv=[\"uv\", \"--version\"]",
+    "cwd=/tmp/rio-eval-bkoo1you/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178/profile.yaml\"]",
+    "cwd=/tmp/rio-eval-bkoo1you/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/tmp/rio-eval-bkoo1you/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"716f8b023b1c13e6f1e8ab08dfa1938f7923312d\", \"--format\", \"json\", \"--offline\", \"--profile\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178/profile.yaml\"]"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178/commands.json; Rio binary SHA-256: 512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+    "EXCLUDED interrupted ext4 attempt: SIGINT was sent because worker threads spent many minutes in jbd2_log_wait_commit while fsyncing copied source files. Baseline classification did not run; this record contributes no quality score. Same pinned change rerun under ../litestar-5178-tmpfs.",
+    "All dependencies installed and four known executable startup hooks disabled per the saved install plan; trust_installed_dependencies remains false. Profile policy and 60m budget identical to the tmpfs rerun.",
+    "PYTEST_ADDOPTS=tests/e2e/test_routing/test_path_mounting.py; offline dependency auditing explicitly excluded. Scoped Git URL rewrite to a local bare repository preserves public GitHub-fetched commits and the seeded object. See ../litestar-evidence/REPRODUCE.md.",
+    "Independent full configured mypy and full Ruff pass base/head; activated Pyright has zero errors; relevant instrumented tests pass, with no missing changed executable lines. Evidence under ../litestar-evidence/."
+  ],
+  "independently_clean": true,
+  "positive_control": {
+    "kind": "none",
+    "expected": []
+  },
+  "misses": [],
+  "findings": {}
+}

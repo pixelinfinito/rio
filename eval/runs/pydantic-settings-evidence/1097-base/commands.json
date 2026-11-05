@@ -1,0 +1,237 @@
+{
+  "sha": "e71a53e6a0094da671d66eebd806904695722482",
+  "environment": {
+    "UV_PYTHON": "3.13.9"
+  },
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-checkout",
+        "/tmp/pydantic-settings-eval/repo",
+        "/dev/shm/pydantic-settings-eval/pydantic-oracle-gapllxsr/repo"
+      ],
+      "cwd": "/dev/shm/pydantic-settings-eval/pydantic-oracle-gapllxsr",
+      "exit_code": 0,
+      "wall_time_seconds": 0.069,
+      "stdout": "clone.stdout",
+      "stderr": "clone.stderr"
+    },
+    {
+      "argv": [
+        "git",
+        "checkout",
+        "--detach",
+        "e71a53e6a0094da671d66eebd806904695722482"
+      ],
+      "cwd": "/dev/shm/pydantic-settings-eval/pydantic-oracle-gapllxsr/repo",
+      "exit_code": 0,
+      "wall_time_seconds": 0.036,
+      "stdout": "checkout.stdout",
+      "stderr": "checkout.stderr"
+    },
+    {
+      "argv": [
+        "uv",
+        "sync",
+        "--locked",
+        "--all-groups",
+        "--all-extras"
+      ],
+      "cwd": "/dev/shm/pydantic-settings-eval/pydantic-oracle-gapllxsr/repo",
+      "exit_code": 0,
+      "wall_time_seconds": 4.28,
+      "stdout": "install.stdout",
+      "stderr": "install.stderr"
+    },
+    {
+      "argv": [
+        "uv",
+        "--version"
+      ],
+      "cwd": "/dev/shm/pydantic-settings-eval/pydantic-oracle-gapllxsr/repo",
+      "exit_code": 0,
+      "wall_time_seconds": 0.072,
+      "stdout": "uv-version.stdout",
+      "stderr": "uv-version.stderr"
+    },
+    {
+      "argv": [
+        "uv",
+        "run",
+        "--no-sync",
+        "python",
+        "--version"
+      ],
+      "cwd": "/dev/shm/pydantic-settings-eval/pydantic-oracle-gapllxsr/repo",
+      "exit_code": 0,
+      "wall_time_seconds": 0.53,
+      "stdout": "python-version.stdout",
+      "stderr": "python-version.stderr"
+    },
+    {
+      "argv": [
+        "uv",
+        "run",
+        "--no-sync",
+        "mypy",
+        "--version"
+      ],
+      "cwd": "/dev/shm/pydantic-settings-eval/pydantic-oracle-gapllxsr/repo",
+      "exit_code": 0,
+      "wall_time_seconds": 1.592,
+      "stdout": "mypy-version.stdout",
+      "stderr": "mypy-version.stderr"
+    },
+    {
+      "argv": [
+        "uv",
+        "run",
+        "--no-sync",
+        "ruff",
+        "--version"
+      ],
+      "cwd": "/dev/shm/pydantic-settings-eval/pydantic-oracle-gapllxsr/repo",
+      "exit_code": 0,
+      "wall_time_seconds": 0.073,
+      "stdout": "ruff-version.stdout",
+      "stderr": "ruff-version.stderr"
+    },
+    {
+      "argv": [
+        "uv",
+        "run",
+        "--no-sync",
+        "coverage",
+        "--version"
+      ],
+      "cwd": "/dev/shm/pydantic-settings-eval/pydantic-oracle-gapllxsr/repo",
+      "exit_code": 0,
+      "wall_time_seconds": 2.033,
+      "stdout": "coverage-version.stdout",
+      "stderr": "coverage-version.stderr"
+    },
+    {
+      "argv": [
+        "uv",
+        "run",
+        "--no-sync",
+        "pytest",
+        "--version"
+      ],
+      "cwd": "/dev/shm/pydantic-settings-eval/pydantic-oracle-gapllxsr/repo",
+      "exit_code": 0,
+      "wall_time_seconds": 0.736,
+      "stdout": "pytest-version.stdout",
+      "stderr": "pytest-version.stderr"
+    },
+    {
+      "argv": [
+        "uv",
+        "run",
+        "--no-sync",
+        "mypy",
+        "pydantic_settings"
+      ],
+      "cwd": "/dev/shm/pydantic-settings-eval/pydantic-oracle-gapllxsr/repo",
+      "exit_code": 0,
+      "wall_time_seconds": 13.614,
+      "stdout": "mypy.stdout",
+      "stderr": "mypy.stderr"
+    },
+    {
+      "argv": [
+        "uv",
+        "run",
+        "--no-sync",
+        "ruff",
+        "check"
+      ],
+      "cwd": "/dev/shm/pydantic-settings-eval/pydantic-oracle-gapllxsr/repo",
+      "exit_code": 0,
+      "wall_time_seconds": 0.274,
+      "stdout": "ruff.stdout",
+      "stderr": "ruff.stderr"
+    },
+    {
+      "argv": [
+        "uv",
+        "run",
+        "--no-sync",
+        "ruff",
+        "format",
+        "--check",
+        "pydantic_settings",
+        "tests"
+      ],
+      "cwd": "/dev/shm/pydantic-settings-eval/pydantic-oracle-gapllxsr/repo",
+      "exit_code": 0,
+      "wall_time_seconds": 0.227,
+      "stdout": "format.stdout",
+      "stderr": "format.stderr"
+    },
+    {
+      "argv": [
+        "uv",
+        "run",
+        "--no-sync",
+        "coverage",
+        "run",
+        "-m",
+        "pytest"
+      ],
+      "cwd": "/dev/shm/pydantic-settings-eval/pydantic-oracle-gapllxsr/repo",
+      "exit_code": 0,
+      "wall_time_seconds": 255.898,
+      "stdout": "pytest-coverage.stdout",
+      "stderr": "pytest-coverage.stderr"
+    },
+    {
+      "argv": [
+        "uv",
+        "run",
+        "--no-sync",
+        "coverage",
+        "report",
+        "--include=pydantic_settings/*"
+      ],
+      "cwd": "/dev/shm/pydantic-settings-eval/pydantic-oracle-gapllxsr/repo",
+      "exit_code": 0,
+      "wall_time_seconds": 3.288,
+      "stdout": "coverage-report.stdout",
+      "stderr": "coverage-report.stderr"
+    },
+    {
+      "argv": [
+        "uv",
+        "run",
+        "--no-sync",
+        "coverage",
+        "json",
+        "-o",
+        "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-evidence/1097-base/coverage.json"
+      ],
+      "cwd": "/dev/shm/pydantic-settings-eval/pydantic-oracle-gapllxsr/repo",
+      "exit_code": 0,
+      "wall_time_seconds": 11.452,
+      "stdout": "coverage-json.stdout",
+      "stderr": "coverage-json.stderr"
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "cwd": "/dev/shm/pydantic-settings-eval/pydantic-oracle-gapllxsr/repo",
+      "exit_code": 0,
+      "wall_time_seconds": 0.02,
+      "stdout": "tracked-status.stdout",
+      "stderr": "tracked-status.stderr"
+    }
+  ],
+  "lockfile_sha256": "a6c5b41872992fbdd21621bed21c3d3ca592bc02ab0765530d35697708136534",
+  "wall_time_seconds": 319.672
+}

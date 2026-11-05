@@ -1,0 +1,195 @@
+{
+  "report": "../vue-core-12701/report.json",
+  "baseline_pair_count": 0,
+  "check_outcomes": [
+    {
+      "root": "packages-private/sfc-playground",
+      "kind": "coverage",
+      "scheduled_as": "dependent",
+      "version": "head",
+      "outcome": "skipped",
+      "reason": "dependency_mismatch",
+      "hint": "pnpm-lock.yaml: missing @vitejs/plugin-vue at @vitejs/plugin-vue@5.2.4(vite@5.4.15(@types/node@22.14.1)(sass@1.87.0))(vue@packages+vue); reinstall dependencies"
+    },
+    {
+      "root": "packages-private/sfc-playground",
+      "kind": "typecheck",
+      "scheduled_as": "dependent",
+      "version": "head",
+      "outcome": "skipped",
+      "reason": "dependency_mismatch",
+      "hint": "pnpm-lock.yaml: missing @vitejs/plugin-vue at @vitejs/plugin-vue@5.2.4(vite@5.4.15(@types/node@22.14.1)(sass@1.87.0))(vue@packages+vue); reinstall dependencies"
+    },
+    {
+      "root": "packages-private/vite-debug",
+      "kind": "typecheck",
+      "scheduled_as": "dependent",
+      "version": "head",
+      "outcome": "skipped",
+      "reason": "dependency_mismatch",
+      "hint": "pnpm-lock.yaml: missing @vitejs/plugin-vue at @vitejs/plugin-vue@5.2.4(vite@5.4.15(@types/node@22.14.1)(sass@1.87.0))(vue@packages+vue); reinstall dependencies"
+    },
+    {
+      "root": "packages-private/vite-debug",
+      "kind": "coverage",
+      "scheduled_as": "dependent",
+      "version": "head",
+      "outcome": "skipped",
+      "reason": "dependency_mismatch",
+      "hint": "pnpm-lock.yaml: missing @vitejs/plugin-vue at @vitejs/plugin-vue@5.2.4(vite@5.4.15(@types/node@22.14.1)(sass@1.87.0))(vue@packages+vue); reinstall dependencies"
+    },
+    {
+      "root": "packages-private/dts-built-test",
+      "kind": "coverage",
+      "scheduled_as": "dependent",
+      "version": "head",
+      "outcome": "failed",
+      "reason": "tests_failed",
+      "hint": "Tests failed (see raw output for details); usable coverage from the incomplete run is retained"
+    },
+    {
+      "root": "packages-private/dts-test",
+      "kind": "coverage",
+      "scheduled_as": "dependent",
+      "version": "head",
+      "outcome": "failed",
+      "reason": "tests_failed",
+      "hint": "Tests failed (see raw output for details); usable coverage from the incomplete run is retained"
+    },
+    {
+      "root": "packages/compiler-sfc",
+      "kind": "coverage",
+      "scheduled_as": "changed",
+      "version": "head",
+      "outcome": "failed",
+      "reason": "tests_failed",
+      "hint": "Tests failed (see raw output for details); usable coverage from the incomplete run is retained"
+    },
+    {
+      "root": "packages/vue",
+      "kind": "coverage",
+      "scheduled_as": "dependent",
+      "version": "head",
+      "outcome": "failed",
+      "reason": "tests_failed",
+      "hint": "Tests failed (see raw output for details); usable coverage from the incomplete run is retained"
+    },
+    {
+      "root": "packages/compiler-sfc",
+      "kind": "lint",
+      "scheduled_as": "changed",
+      "version": "head",
+      "outcome": "passed",
+      "reason": null,
+      "hint": null
+    },
+    {
+      "root": "packages-private/dts-built-test",
+      "kind": "typecheck",
+      "scheduled_as": "dependent",
+      "version": "head",
+      "outcome": "findings",
+      "reason": null,
+      "hint": null
+    },
+    {
+      "root": "packages/server-renderer",
+      "kind": "coverage",
+      "scheduled_as": "dependent",
+      "version": "head",
+      "outcome": "failed",
+      "reason": "tests_failed",
+      "hint": "Tests failed (see raw output for details); usable coverage from the incomplete run is retained"
+    },
+    {
+      "root": "packages/server-renderer",
+      "kind": "typecheck",
+      "scheduled_as": "dependent",
+      "version": "head",
+      "outcome": "failed",
+      "reason": "unparseable_output",
+      "hint": "unrecognized tsc output: error TS6504: File '/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/cache/b57e1cb3323cf4e6/runs/01M6MS3WQ2PTPBFGFK1K3M5S0M/tools/tool.tmp-tw1FcT/packages/server-renderer/index.js' is a JavaScript file. Did you mean to enable the 'allowJs' option?"
+    },
+    {
+      "root": "packages/vue-compat",
+      "kind": "coverage",
+      "scheduled_as": "dependent",
+      "version": "head",
+      "outcome": "failed",
+      "reason": "tests_failed",
+      "hint": "Tests failed (see raw output for details); usable coverage from the incomplete run is retained"
+    },
+    {
+      "root": ".",
+      "kind": "secrets",
+      "scheduled_as": "changed",
+      "version": "head",
+      "outcome": "passed",
+      "reason": null,
+      "hint": null
+    },
+    {
+      "root": ".",
+      "kind": "dependencies",
+      "scheduled_as": "changed",
+      "version": "head",
+      "outcome": "skipped",
+      "reason": "offline",
+      "hint": "Dependency audit needs api.osv.dev"
+    },
+    {
+      "root": "packages/vue-compat",
+      "kind": "typecheck",
+      "scheduled_as": "dependent",
+      "version": "head",
+      "outcome": "failed",
+      "reason": "unparseable_output",
+      "hint": "unrecognized tsc output: error TS6504: File '/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/cache/b57e1cb3323cf4e6/runs/01M6MS3WQ2PTPBFGFK1K3M5S0M/tools/tool.tmp-nmpYQU/packages/vue-compat/index.js' is a JavaScript file. Did you mean to enable the 'allowJs' option?"
+    },
+    {
+      "root": "packages/vue",
+      "kind": "typecheck",
+      "scheduled_as": "dependent",
+      "version": "head",
+      "outcome": "failed",
+      "reason": "unparseable_output",
+      "hint": "unrecognized tsc output: error TS6504: File '/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/cache/b57e1cb3323cf4e6/runs/01M6MS3WQ2PTPBFGFK1K3M5S0M/tools/tool.tmp-RqnT7L/packages/vue/compiler-sfc/index.browser.js' is a JavaScript file. Did you mean to enable the 'allowJs' option?"
+    },
+    {
+      "root": "packages-private/dts-test",
+      "kind": "typecheck",
+      "scheduled_as": "dependent",
+      "version": "head",
+      "outcome": "findings",
+      "reason": null,
+      "hint": null
+    },
+    {
+      "root": "packages/compiler-sfc",
+      "kind": "typecheck",
+      "scheduled_as": "changed",
+      "version": "head",
+      "outcome": "findings",
+      "reason": null,
+      "hint": null
+    }
+  ],
+  "finding_groups": {
+    "typecheck/tsc/TS2339": 60,
+    "typecheck/tsc/TS2304": 178,
+    "typecheck/tsc/TS1259": 10,
+    "typecheck/tsc/TS2307": 25,
+    "typecheck/tsc/TS2665": 2,
+    "typecheck/tsc/TS2345": 39,
+    "typecheck/tsc/TS2349": 1,
+    "typecheck/tsc/TS2578": 26,
+    "typecheck/tsc/TS2322": 8,
+    "typecheck/tsc/TS2582": 37,
+    "typecheck/tsc/TS2461": 1,
+    "typecheck/tsc/TS17004": 6,
+    "typecheck/tsc/TS2802": 8,
+    "typecheck/tsc/TS18028": 2,
+    "typecheck/tsc/TS2769": 1,
+    "typecheck/tsc/TS2469": 1
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "id": "doctor-all-roots-false-base-lockfile-state",
+  "finding_ids": [],
+  "binary": "f6e4f87e4c65",
+  "scope": "Supplemental doctor readiness planning; actual review baseline succeeds",
+  "repro": [
+    "Install the byte-identical scored install-plan.json at either pinned case; keep trust false.",
+    "Run rio doctor --base FULL_BASE_SHA --format json.",
+    "Run rio doctor --all-roots --base FULL_BASE_SHA --format json in the same installed checkout."
+  ],
+  "expected": "Python base lockfile/dependency verification must refer to the supplied real base, which contains the same uv.lock as head.",
+  "observed": {
+    "doctor_base": {
+      "python_roots": [
+        {
+          "base": {
+            "hash": "4496d8a1024503ae242c0fd4034dc0bce4d11f17bcc8ddcd8007a3284d88fba6",
+            "state": "verified"
+          },
+          "environment": "/run/user/1000/litestar-rerun2/rio-eval-1dm4jpow/head/./.venv",
+          "head": {
+            "hash": "4496d8a1024503ae242c0fd4034dc0bce4d11f17bcc8ddcd8007a3284d88fba6",
+            "state": "verified"
+          },
+          "installation_root": ".",
+          "lockfile": "uv.lock",
+          "project": {
+            "language": "python",
+            "manifest": "pyproject.toml",
+            "name": "litestar",
+            "path": ".",
+            "workspace": null
+          }
+        }
+      ],
+      "python_baseline_flags": [
+        true,
+        true,
+        true
+      ]
+    },
+    "doctor_all_roots": {
+      "python_roots": [
+        {
+          "base": {
+            "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+            "state": "unverified"
+          },
+          "environment": "/run/user/1000/litestar-rerun2/rio-eval-1dm4jpow/head/./.venv",
+          "head": {
+            "hash": "4496d8a1024503ae242c0fd4034dc0bce4d11f17bcc8ddcd8007a3284d88fba6",
+            "state": "verified"
+          },
+          "installation_root": ".",
+          "lockfile": "uv.lock",
+          "project": {
+            "language": "python",
+            "manifest": "pyproject.toml",
+            "name": "litestar",
+            "path": ".",
+            "workspace": null
+          }
+        }
+      ],
+      "python_baseline_flags": [
+        false,
+        false,
+        false
+      ],
+      "baseline_hints": [
+        "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)"
+      ]
+    }
+  },
+  "exact_note_text": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+  "evidence": [
+    "../litestar-5178-rerun2-attempt2/doctor-base.json",
+    "../litestar-5178-rerun2-attempt2/doctor-base-command.json",
+    "../litestar-5178-rerun2-attempt2/doctor-all-roots.json",
+    "../litestar-5178-rerun2-attempt2/doctor-all-roots-command.json",
+    "../litestar-5164-seed-f841-rerun2/doctor-base.json",
+    "../litestar-5164-seed-f841-rerun2/doctor-all-roots.json"
+  ],
+  "source_observation": "Read-only inspection of crates/rio-cli/src/main.rs: doctor all_roots assigns changes.base = rio_git::Tree::new() before both diff and plan_review_with_progress; it does not restore the actual base before dependency planning. No source was changed.",
+  "workaround": "Use doctor --base for readiness of this review; use successful actual review base/head checks for eligibility."
+}

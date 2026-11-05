@@ -1,0 +1,91 @@
+{
+  "kind": "descriptive attempt ledger, not a cohort aggregate",
+  "canonical_records": [
+    "zod-6085-rerun2/record.json",
+    "zod-6527-rerun2-attempt2/record.json"
+  ],
+  "attempts": [
+    {
+      "attempt": "zod-6085-rerun2",
+      "status": "incomplete",
+      "baseline_ran": false,
+      "baseline_classification_ran": false,
+      "eligible": false,
+      "dependency_state": "verified",
+      "raw_states": {
+        "pre-existing": 59,
+        "unclassified": 8
+      },
+      "annotation_counts": {
+        "pre-existing-shown": 32,
+        "environment-failure": 27,
+        "true-positive": 8
+      },
+      "record_verdict_counts": {
+        "pre-existing-hidden": 59,
+        "true-positive": 8
+      },
+      "record_cause_counts": {
+        "pre-existing-hidden": 59,
+        "true-positive": 6
+      },
+      "runner_wall_seconds": 140.795526,
+      "rio_wall_seconds": 115.251,
+      "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+      "input_profile_sha256": "c583e519d93df6c88c6cff76b79e44cdc12ed50720b0797618c22524f60d2dc6",
+      "resolved_profile_sha256": "fc41e9bc3b0fe5c4c816df700d1feb3d537e4ab1994e89bff7ace41951261c28"
+    },
+    {
+      "attempt": "zod-6527-rerun2",
+      "status": "incomplete",
+      "baseline_ran": false,
+      "baseline_classification_ran": false,
+      "eligible": false,
+      "dependency_state": "mixed",
+      "raw_states": {
+        "pre-existing": 11
+      },
+      "annotation_counts": {
+        "environment-failure": 9,
+        "pre-existing-shown": 2
+      },
+      "record_verdict_counts": {
+        "pre-existing-hidden": 11
+      },
+      "record_cause_counts": {
+        "pre-existing-hidden": 11
+      },
+      "runner_wall_seconds": 1339.939489,
+      "rio_wall_seconds": 1287.116,
+      "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+      "input_profile_sha256": "c583e519d93df6c88c6cff76b79e44cdc12ed50720b0797618c22524f60d2dc6",
+      "resolved_profile_sha256": "24679117953ed3c6b317853d2f268b34cac8c25353ce006f2476a2d97e702a28"
+    },
+    {
+      "attempt": "zod-6527-rerun2-attempt2",
+      "status": "incomplete",
+      "baseline_ran": false,
+      "baseline_classification_ran": false,
+      "eligible": false,
+      "dependency_state": "verified",
+      "raw_states": {
+        "pre-existing": 71
+      },
+      "annotation_counts": {
+        "pre-existing-shown": 38,
+        "environment-failure": 33
+      },
+      "record_verdict_counts": {
+        "pre-existing-hidden": 71
+      },
+      "record_cause_counts": {
+        "pre-existing-hidden": 71
+      },
+      "runner_wall_seconds": 137.717807,
+      "rio_wall_seconds": 108.987,
+      "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+      "input_profile_sha256": "c583e519d93df6c88c6cff76b79e44cdc12ed50720b0797618c22524f60d2dc6",
+      "resolved_profile_sha256": "9622126a53bb6a1072aaa246590f82474089a162a0ec0549df2d64b530949ada"
+    }
+  ]
+}

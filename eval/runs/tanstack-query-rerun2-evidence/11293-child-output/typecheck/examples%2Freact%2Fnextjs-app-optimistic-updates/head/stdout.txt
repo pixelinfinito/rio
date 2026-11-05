@@ -1,0 +1,14 @@
+app/get-query-client.ts(5,8): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+app/get-query-client.ts(14,32): error TS7006: Parameter 'query' implicitly has an 'any' type.
+app/page.tsx(2,52): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+app/providers.tsx(2,37): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+app/providers.tsx(3,36): error TS2307: Cannot find module '@tanstack/react-query-devtools' or its corresponding type declarations.
+components/TodoListCache.tsx(4,55): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+components/TodoListCache.tsx(43,22): error TS7006: Parameter 'text' implicitly has an 'any' type.
+components/TodoListCache.tsx(63,15): error TS7006: Parameter '_err' implicitly has an 'any' type.
+components/TodoListCache.tsx(63,21): error TS7006: Parameter '_text' implicitly has an 'any' type.
+components/TodoListCache.tsx(63,28): error TS7006: Parameter 'context' implicitly has an 'any' type.
+components/TodoListCache.tsx(69,37): error TS2339: Property 'id' does not exist on type 'never'.
+components/TodoListCache.tsx(114,21): error TS7006: Parameter 'todo' implicitly has an 'any' type.
+components/TodoListUI.tsx(4,55): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+components/TodoListUI.tsx(80,21): error TS7006: Parameter 'todo' implicitly has an 'any' type.

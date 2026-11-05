@@ -1,0 +1,85 @@
+{
+  "assets": [
+    {
+      "digest": "sha256:6ec7074244fb87487a68838cb8d497ae5934125a4c738861812afb5393273cd7",
+      "name": "install.ps1",
+      "size": 11904
+    },
+    {
+      "digest": "sha256:b38a65bb9dd3efadd6bbfc2369cb115482c39ed22ca69607b527073a4aea8e94",
+      "name": "install.sh",
+      "size": 7766
+    },
+    {
+      "digest": "sha256:15eef5d991de87c8116ba499c6cac2cfed8c6140a11072e33cbe685e4127636c",
+      "name": "rio-0.1.0-rc.1-aarch64-apple-darwin.tar.gz",
+      "size": 7703014
+    },
+    {
+      "digest": "sha256:5dac7d93719ff171ad849825843b53f041b21c9e86fd3dfcd520899749728bab",
+      "name": "rio-0.1.0-rc.1-aarch64-apple-darwin.tar.gz.intoto.jsonl",
+      "size": 11202
+    },
+    {
+      "digest": "sha256:b39e525d704a6ce2d3d990d8de9ed0e306f18cedba57e62d81490cde00803bee",
+      "name": "rio-0.1.0-rc.1-aarch64-pc-windows-msvc.zip",
+      "size": 6872028
+    },
+    {
+      "digest": "sha256:52e269927ddfcdfc546244dfd555acb656b26ea39a1af18af59137c4fb45e57d",
+      "name": "rio-0.1.0-rc.1-aarch64-pc-windows-msvc.zip.intoto.jsonl",
+      "size": 11250
+    },
+    {
+      "digest": "sha256:c5dc2acdff0f28687a9dd10e59ac15921ba5bd84cb15aa84e56a7225be19ad3b",
+      "name": "rio-0.1.0-rc.1-aarch64-unknown-linux-musl.tar.gz",
+      "size": 8581935
+    },
+    {
+      "digest": "sha256:a3f7f40a800a28f74aa7386a1864e4a33309899c7569703cccbc16ac02c2ef3e",
+      "name": "rio-0.1.0-rc.1-aarch64-unknown-linux-musl.tar.gz.intoto.jsonl",
+      "size": 11257
+    },
+    {
+      "digest": "sha256:7f9496bb0a62e85cbaf847ac8147eac6c86006e520284b3a45fb0471142e7494",
+      "name": "rio-0.1.0-rc.1-x86_64-apple-darwin.tar.gz",
+      "size": 8074928
+    },
+    {
+      "digest": "sha256:fba721f7118c19bb337d09b1c6b248d4abebe6f8a8afc2fece39c79acd7f8bb5",
+      "name": "rio-0.1.0-rc.1-x86_64-apple-darwin.tar.gz.intoto.jsonl",
+      "size": 11206
+    },
+    {
+      "digest": "sha256:b7d6b304f78e6b54df033f0d74aa656b7958732c6f36576561ddb5532234d3d7",
+      "name": "rio-0.1.0-rc.1-x86_64-pc-windows-msvc.zip",
+      "size": 7319233
+    },
+    {
+      "digest": "sha256:5c84a6b234c46cffff8300432de26d06e85b42a1518162588838befabaafcf23",
+      "name": "rio-0.1.0-rc.1-x86_64-pc-windows-msvc.zip.intoto.jsonl",
+      "size": 11254
+    },
+    {
+      "digest": "sha256:f6bf81cd9a226b1e6374d0a2c119994a47098b51a516981d4527bf20490bfe40",
+      "name": "rio-0.1.0-rc.1-x86_64-unknown-linux-musl.tar.gz",
+      "size": 8931830
+    },
+    {
+      "digest": "sha256:064cb03999d4b76865575b5836ee392980c0fe42b4a846a8db9f15c5f6c301ed",
+      "name": "rio-0.1.0-rc.1-x86_64-unknown-linux-musl.tar.gz.intoto.jsonl",
+      "size": 11402
+    },
+    {
+      "digest": "sha256:899da30fa3a93bb63022f80032c519667bcbf70dfd1b45aaaae46f93f45acd34",
+      "name": "SHA256SUMS",
+      "size": 663
+    }
+  ],
+  "draft": false,
+  "html_url": "https://github.com/mctlisboa/rio-v01-validation-20261104/releases/tag/v0.1.0-rc.1",
+  "id": 434484343,
+  "prerelease": true,
+  "published_at": "2026-11-04T21:39:34Z",
+  "tag_name": "v0.1.0-rc.1"
+}

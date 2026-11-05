@@ -1,0 +1,4 @@
+{"version":"base","plugin":false,"observed":[{"index":0,"value":1}],"result":[1]}
+{"version":"base","plugin":true,"observed":[{"index":0,"value":1}],"result":[1]}
+{"version":"head","plugin":false,"observed":[{"index":0,"value":1}],"result":[1]}
+{"version":"head","plugin":true,"observed":[{"index":0,"value":1},{"index":1,"value":null}],"error":"Cannot read properties of undefined (reading 'id')"}

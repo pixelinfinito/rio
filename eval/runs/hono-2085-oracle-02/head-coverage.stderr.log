@@ -1,0 +1,16 @@
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+TypeError: input.includes is not a function
+    at normalizeWindowsPath (file:///dev/shm/trpc-eval/hono-2085-oracle/node_modules/pathe/dist/shared/pathe.92c04245.mjs:2:24)
+    at normalize (file:///dev/shm/trpc-eval/hono-2085-oracle/node_modules/pathe/dist/shared/pathe.92c04245.mjs:17:10)
+    at Array.map (<anonymous>)
+    at start (file:///dev/shm/trpc-eval/hono-2085-oracle/node_modules/vitest/dist/cli.js:142:52)
+    at CAC.run (file:///dev/shm/trpc-eval/hono-2085-oracle/node_modules/vitest/dist/cli.js:98:9)
+    at CAC.runMatchedCommand (file:///dev/shm/trpc-eval/hono-2085-oracle/node_modules/cac/dist/index.mjs:610:34)
+    at CAC.parse (file:///dev/shm/trpc-eval/hono-2085-oracle/node_modules/cac/dist/index.mjs:537:12)
+    at file:///dev/shm/trpc-eval/hono-2085-oracle/node_modules/vitest/dist/cli.js:71:7
+    at ModuleJob.run (node:internal/modules/esm/module_job:218:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:329:24)
+
+
+

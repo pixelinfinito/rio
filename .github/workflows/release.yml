@@ -1,0 +1,155 @@
+name: Release
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      force_upload_failure:
+        description: 'Validation only: force publication failure after draft creation'
+        type: boolean
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  checks:
+    uses: ./.github/workflows/ci.yml
+  build:
+    needs: checks
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {os: ubuntu-24.04, target: x86_64-unknown-linux-musl, cross: true}
+          - {os: ubuntu-24.04, target: aarch64-unknown-linux-musl, cross: true}
+          - {os: macos-15-intel, target: x86_64-apple-darwin, cross: false}
+          - {os: macos-26, target: aarch64-apple-darwin, cross: false}
+          - {os: windows-2025, target: x86_64-pc-windows-msvc, cross: false}
+          - {os: windows-11-arm, target: aarch64-pc-windows-msvc, cross: false}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: '1.99.1'
+          targets: ${{ matrix.target }}
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: release-${{ matrix.target }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate version and acceptance gate
+        shell: bash
+        run: |
+          tag="$GITHUB_REF_NAME"
+          if ! [[ "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+)?$ ]]; then
+            echo 'Release ref must be a v<semver> tag' >&2
+            exit 1
+          fi
+          echo "RIO_BUILD_VERSION=${tag#v}" >> "$GITHUB_ENV"
+          echo "RIO_BUILD_COMMIT=$GITHUB_SHA" >> "$GITHUB_ENV"
+          if [[ "${tag%%+*}" != *-* ]]; then python scripts/check-acceptance.py; fi
+      - name: Install cross
+        if: matrix.cross
+        run: cargo install cross --version 0.2.5 --locked
+      - name: Build
+        shell: bash
+        env:
+          RIO_RELEASE_TARGET: ${{ matrix.target }}
+          RIO_USE_CROSS: ${{ matrix.cross }}
+        run: |
+          if [ "$RIO_USE_CROSS" = true ]; then
+            cross build --release --locked -p rio-cli --target "$RIO_RELEASE_TARGET"
+          else
+            cargo build --release --locked -p rio-cli --target "$RIO_RELEASE_TARGET"
+          fi
+      - name: Package
+        id: package
+        shell: bash
+        env:
+          RIO_RELEASE_TARGET: ${{ matrix.target }}
+        run: python scripts/package-release.py "$RIO_BUILD_VERSION" "$RIO_RELEASE_TARGET"
+      - name: Smoke-test installer on native runner
+        if: matrix.target != 'aarch64-unknown-linux-musl'
+        shell: bash
+        run: |
+          if [[ "$RIO_RELEASE_TARGET" == *windows* ]]; then
+            pwsh -NoProfile -File scripts/install.ps1 -Version "$RIO_BUILD_VERSION" -InstallDir "$RUNNER_TEMP/rio-install" -NoModifyPath
+            version_output=$("$RUNNER_TEMP/rio-install/rio.exe" --version)
+            printf '%s\n' "$version_output"
+            test "$version_output" = "rio $RIO_BUILD_VERSION $RIO_RELEASE_TARGET $RIO_BUILD_COMMIT"
+            pwsh -NoProfile -File scripts/install.ps1 -InstallDir "$RUNNER_TEMP/rio-install" -Uninstall
+          else
+            sh scripts/install.sh --version "$RIO_BUILD_VERSION" --install-dir "$RUNNER_TEMP/rio-install"
+            version_output=$("$RUNNER_TEMP/rio-install/rio" --version)
+            printf '%s\n' "$version_output"
+            test "$version_output" = "rio $RIO_BUILD_VERSION $RIO_RELEASE_TARGET $RIO_BUILD_COMMIT"
+            sh scripts/install.sh --install-dir "$RUNNER_TEMP/rio-install" --uninstall
+          fi
+        # Environment uses a local directory; every installer still checks SHA-256.
+        env:
+          RIO_RELEASE_TARGET: ${{ matrix.target }}
+          RIO_DOWNLOAD_BASE: ${{ github.workspace }}/dist
+      - name: ARM Linux installer under QEMU
+        if: matrix.target == 'aarch64-unknown-linux-musl'
+        shell: bash
+        run: |
+          docker run --privileged --rm tonistiigi/binfmt --install arm64
+          docker run --rm --platform linux/arm64 -v "$PWD:/work:ro" -e RIO_DOWNLOAD_BASE=/work/dist -e RIO_VERSION="$RIO_BUILD_VERSION" -e RIO_BUILD_COMMIT alpine:3.21 sh -ec '
+            sh /work/scripts/install.sh --install-dir /tmp/rio
+            version_output=$(/tmp/rio/rio --version)
+            printf "%s\n" "$version_output"
+            test "$version_output" = "rio ${RIO_VERSION#v} aarch64-unknown-linux-musl $RIO_BUILD_COMMIT"
+            sh /work/scripts/install.sh --install-dir /tmp/rio --uninstall'
+      - uses: actions/attest-build-provenance@v2
+        id: attest
+        with:
+          subject-path: dist/${{ steps.package.outputs.archive }}
+      - name: Keep attestation bundle
+        shell: bash
+        env:
+          RIO_ATTESTATION: ${{ steps.attest.outputs.bundle-path }}
+          RIO_ARCHIVE: ${{ steps.package.outputs.archive }}
+        run: cp "$RIO_ATTESTATION" "dist/$RIO_ARCHIVE.intoto.jsonl"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-${{ matrix.target }}
+          path: |
+            dist/*.tar.gz
+            dist/*.zip
+            dist/*.intoto.jsonl
+          if-no-files-found: error
+  publish:
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      attestations: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: release-*
+          path: dist
+          merge-multiple: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Assemble checksums and tagged installers
+        run: |
+          python scripts/package-release.py --checksums dist
+          cp scripts/install.sh scripts/install.ps1 dist/
+      - name: Create draft, upload with retries, verify every asset, publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RIO_FORCE_UPLOAD_FAILURE: ${{ (inputs.force_upload_failure || vars.RIO_FORCE_UPLOAD_FAILURE == '1') && '1' || '0' }}
+        run: python scripts/publish-release.py "$GITHUB_REF_NAME" dist

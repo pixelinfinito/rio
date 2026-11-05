@@ -1,0 +1,13 @@
+diff --git a/source/types/request.ts b/source/types/request.ts
+index 17e3108..ccaab36 100644
+--- a/source/types/request.ts
++++ b/source/types/request.ts
+@@ -16,7 +16,7 @@ type UndiciBodyInit =
+ 	| Blob
+ 	| FormData
+ 	| Iterable<Uint8Array>
+-	| NodeJS.ArrayBufferView
++	| ArrayBufferView
+ 	| URLSearchParams
+ 	// eslint-disable-next-line @typescript-eslint/ban-types
+ 	| null

@@ -1,0 +1,798 @@
+0 verbose cli /tmp/rio-ky-eval/node-v18.20.8-linux-x64/bin/node /tmp/rio-ky-eval/node-v18.20.8-linux-x64/bin/npm
+1 info using npm@10.8.2
+2 info using node@v18.20.8
+3 silly config load:file:/tmp/rio-ky-eval/node-v18.20.8-linux-x64/lib/node_modules/npm/npmrc
+4 silly config load:file:/tmp/rio-ky-eval/578-head/.npmrc
+5 silly config load:file:/home/ubuntu/.npmrc
+6 silly config load:file:/home/ubuntu/.local/etc/npmrc
+7 verbose title npm ci
+8 verbose argv "ci" "--ignore-scripts" "--package-lock" "true" "--no-audit" "--no-fund" "--prefer-offline"
+9 verbose logfile logs-max:10 dir:/home/ubuntu/.npm/_logs/2026-11-05T02_41_27_567Z-
+10 verbose logfile /home/ubuntu/.npm/_logs/2026-11-05T02_41_27_567Z-debug-0.log
+11 silly packumentCache heap:4345298944 maxSize:1086324736 maxEntrySize:543162368
+12 silly logfile start cleaning logs, removing 1 files
+13 silly logfile done cleaning log files
+14 silly idealTree buildDeps
+15 warn EBADENGINE Unsupported engine {
+15 warn EBADENGINE   package: 'playwright@1.64.1',
+15 warn EBADENGINE   required: { node: '>=20' },
+15 warn EBADENGINE   current: { node: 'v18.20.8', npm: '10.8.2' }
+15 warn EBADENGINE }
+16 warn EBADENGINE Unsupported engine {
+16 warn EBADENGINE   package: 'playwright-core@1.64.1',
+16 warn EBADENGINE   required: { node: '>=20' },
+16 warn EBADENGINE   current: { node: 'v18.20.8', npm: '10.8.2' }
+16 warn EBADENGINE }
+17 silly reify moves {}
+18 verbose reify failed optional dependency /tmp/rio-ky-eval/578-head/node_modules/fsevents
+19 silly reify mark deleted [ '/tmp/rio-ky-eval/578-head/node_modules/fsevents' ]
+20 verbose reify failed optional dependency /tmp/rio-ky-eval/578-head/node_modules/@esbuild/win32-x64
+21 silly reify mark deleted [ '/tmp/rio-ky-eval/578-head/node_modules/@esbuild/win32-x64' ]
+22 verbose reify failed optional dependency /tmp/rio-ky-eval/578-head/node_modules/@esbuild/win32-ia32
+23 silly reify mark deleted [ '/tmp/rio-ky-eval/578-head/node_modules/@esbuild/win32-ia32' ]
+24 verbose reify failed optional dependency /tmp/rio-ky-eval/578-head/node_modules/@esbuild/win32-arm64
+25 silly reify mark deleted [ '/tmp/rio-ky-eval/578-head/node_modules/@esbuild/win32-arm64' ]
+26 verbose reify failed optional dependency /tmp/rio-ky-eval/578-head/node_modules/@esbuild/sunos-x64
+27 silly reify mark deleted [ '/tmp/rio-ky-eval/578-head/node_modules/@esbuild/sunos-x64' ]
+28 verbose reify failed optional dependency /tmp/rio-ky-eval/578-head/node_modules/@esbuild/openharmony-arm64
+29 silly reify mark deleted [ '/tmp/rio-ky-eval/578-head/node_modules/@esbuild/openharmony-arm64' ]
+30 verbose reify failed optional dependency /tmp/rio-ky-eval/578-head/node_modules/@esbuild/openbsd-x64
+31 silly reify mark deleted [ '/tmp/rio-ky-eval/578-head/node_modules/@esbuild/openbsd-x64' ]
+32 verbose reify failed optional dependency /tmp/rio-ky-eval/578-head/node_modules/@esbuild/openbsd-arm64
+33 silly reify mark deleted [ '/tmp/rio-ky-eval/578-head/node_modules/@esbuild/openbsd-arm64' ]
+34 verbose reify failed optional dependency /tmp/rio-ky-eval/578-head/node_modules/@esbuild/netbsd-x64
+35 silly reify mark deleted [ '/tmp/rio-ky-eval/578-head/node_modules/@esbuild/netbsd-x64' ]
+36 verbose reify failed optional dependency /tmp/rio-ky-eval/578-head/node_modules/@esbuild/netbsd-arm64
+37 silly reify mark deleted [ '/tmp/rio-ky-eval/578-head/node_modules/@esbuild/netbsd-arm64' ]
+38 verbose reify failed optional dependency /tmp/rio-ky-eval/578-head/node_modules/@esbuild/linux-s390x
+39 silly reify mark deleted [ '/tmp/rio-ky-eval/578-head/node_modules/@esbuild/linux-s390x' ]
+40 verbose reify failed optional dependency /tmp/rio-ky-eval/578-head/node_modules/@esbuild/linux-riscv64
+41 silly reify mark deleted [ '/tmp/rio-ky-eval/578-head/node_modules/@esbuild/linux-riscv64' ]
+42 verbose reify failed optional dependency /tmp/rio-ky-eval/578-head/node_modules/@esbuild/linux-ppc64
+43 silly reify mark deleted [ '/tmp/rio-ky-eval/578-head/node_modules/@esbuild/linux-ppc64' ]
+44 verbose reify failed optional dependency /tmp/rio-ky-eval/578-head/node_modules/@esbuild/linux-mips64el
+45 silly reify mark deleted [ '/tmp/rio-ky-eval/578-head/node_modules/@esbuild/linux-mips64el' ]
+46 verbose reify failed optional dependency /tmp/rio-ky-eval/578-head/node_modules/@esbuild/linux-loong64
+47 silly reify mark deleted [ '/tmp/rio-ky-eval/578-head/node_modules/@esbuild/linux-loong64' ]
+48 verbose reify failed optional dependency /tmp/rio-ky-eval/578-head/node_modules/@esbuild/linux-ia32
+49 silly reify mark deleted [ '/tmp/rio-ky-eval/578-head/node_modules/@esbuild/linux-ia32' ]
+50 verbose reify failed optional dependency /tmp/rio-ky-eval/578-head/node_modules/@esbuild/linux-arm64
+51 silly reify mark deleted [ '/tmp/rio-ky-eval/578-head/node_modules/@esbuild/linux-arm64' ]
+52 verbose reify failed optional dependency /tmp/rio-ky-eval/578-head/node_modules/@esbuild/linux-arm
+53 silly reify mark deleted [ '/tmp/rio-ky-eval/578-head/node_modules/@esbuild/linux-arm' ]
+54 verbose reify failed optional dependency /tmp/rio-ky-eval/578-head/node_modules/@esbuild/freebsd-x64
+55 silly reify mark deleted [ '/tmp/rio-ky-eval/578-head/node_modules/@esbuild/freebsd-x64' ]
+56 verbose reify failed optional dependency /tmp/rio-ky-eval/578-head/node_modules/@esbuild/freebsd-arm64
+57 silly reify mark deleted [ '/tmp/rio-ky-eval/578-head/node_modules/@esbuild/freebsd-arm64' ]
+58 verbose reify failed optional dependency /tmp/rio-ky-eval/578-head/node_modules/@esbuild/darwin-x64
+59 silly reify mark deleted [ '/tmp/rio-ky-eval/578-head/node_modules/@esbuild/darwin-x64' ]
+60 verbose reify failed optional dependency /tmp/rio-ky-eval/578-head/node_modules/@esbuild/darwin-arm64
+61 silly reify mark deleted [ '/tmp/rio-ky-eval/578-head/node_modules/@esbuild/darwin-arm64' ]
+62 verbose reify failed optional dependency /tmp/rio-ky-eval/578-head/node_modules/@esbuild/android-x64
+63 silly reify mark deleted [ '/tmp/rio-ky-eval/578-head/node_modules/@esbuild/android-x64' ]
+64 verbose reify failed optional dependency /tmp/rio-ky-eval/578-head/node_modules/@esbuild/android-arm64
+65 silly reify mark deleted [ '/tmp/rio-ky-eval/578-head/node_modules/@esbuild/android-arm64' ]
+66 verbose reify failed optional dependency /tmp/rio-ky-eval/578-head/node_modules/@esbuild/android-arm
+67 silly reify mark deleted [ '/tmp/rio-ky-eval/578-head/node_modules/@esbuild/android-arm' ]
+68 verbose reify failed optional dependency /tmp/rio-ky-eval/578-head/node_modules/@esbuild/aix-ppc64
+69 silly reify mark deleted [ '/tmp/rio-ky-eval/578-head/node_modules/@esbuild/aix-ppc64' ]
+70 warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+71 warn deprecated @humanwhocodes/config-array@0.13.0: Use @eslint/config-array instead
+72 warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+73 warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+74 warn deprecated @humanwhocodes/object-schema@2.0.3: Use @eslint/object-schema instead
+75 warn deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+76 silly ADD node_modules/yocto-queue
+77 silly ADD node_modules/yargs-parser
+78 silly ADD node_modules/yargs
+79 silly ADD node_modules/yargs/node_modules/yargs-parser
+80 silly ADD node_modules/yargs/node_modules/strip-ansi
+81 silly ADD node_modules/yargs/node_modules/string-width
+82 silly ADD node_modules/yargs/node_modules/is-fullwidth-code-point
+83 silly ADD node_modules/yargs/node_modules/emoji-regex
+84 silly ADD node_modules/yargs/node_modules/ansi-regex
+85 silly ADD node_modules/yallist
+86 silly ADD node_modules/y18n
+87 silly ADD node_modules/xo
+88 silly ADD node_modules/xo/node_modules/slash
+89 silly ADD node_modules/xo/node_modules/meow
+90 silly ADD node_modules/write-file-atomic
+91 silly ADD node_modules/wrappy
+92 silly ADD node_modules/wrap-ansi
+93 silly ADD node_modules/wrap-ansi/node_modules/strip-ansi
+94 silly ADD node_modules/wrap-ansi/node_modules/string-width
+95 silly ADD node_modules/wrap-ansi/node_modules/is-fullwidth-code-point
+96 silly ADD node_modules/wrap-ansi/node_modules/emoji-regex
+97 silly ADD node_modules/wrap-ansi/node_modules/ansi-styles
+98 silly ADD node_modules/wrap-ansi/node_modules/ansi-regex
+99 silly ADD node_modules/word-wrap
+100 silly ADD node_modules/which-typed-array
+101 silly ADD node_modules/which-collection
+102 silly ADD node_modules/which-builtin-type
+103 silly ADD node_modules/which-boxed-primitive
+104 silly ADD node_modules/which
+105 silly ADD node_modules/well-known-symbols
+106 silly ADD node_modules/webpack-sources
+107 silly ADD node_modules/webpack
+108 silly ADD node_modules/webpack/node_modules/tapable
+109 silly ADD node_modules/webpack/node_modules/mime-db
+110 silly ADD node_modules/webpack/node_modules/enhanced-resolve
+111 silly ADD node_modules/watchpack
+112 silly ADD node_modules/vary
+113 silly ADD node_modules/validate-npm-package-license
+114 silly ADD node_modules/utils-merge
+115 silly ADD node_modules/url-or-path
+116 silly ADD node_modules/uri-js
+117 silly ADD node_modules/update-browserslist-db
+118 silly ADD node_modules/unpipe
+119 silly ADD node_modules/undici-types
+120 silly ADD node_modules/unc-path-regex
+121 silly ADD node_modules/unbox-primitive
+122 silly ADD node_modules/typescript
+123 silly ADD node_modules/typed-array-length
+124 silly ADD node_modules/typed-array-byte-offset
+125 silly ADD node_modules/typed-array-byte-length
+126 silly ADD node_modules/typed-array-buffer
+127 silly ADD node_modules/type-is
+128 silly ADD node_modules/type-fest
+129 silly ADD node_modules/type-check
+130 silly ADD node_modules/tsx
+131 silly ADD node_modules/tsconfig-paths
+132 silly ADD node_modules/ts-api-utils
+133 silly ADD node_modules/trim-newlines
+134 silly ADD node_modules/toidentifier
+135 silly ADD node_modules/to-regex-range
+136 silly ADD node_modules/to-absolute-glob
+137 silly ADD node_modules/time-zone
+138 silly ADD node_modules/text-table
+139 silly ADD node_modules/terser
+140 silly ADD node_modules/temp-dir
+141 silly ADD node_modules/tapable
+142 silly ADD node_modules/synckit
+143 silly ADD node_modules/supports-preserve-symlinks-flag
+144 silly ADD node_modules/supports-hyperlinks
+145 silly ADD node_modules/supports-color
+146 silly ADD node_modules/supertap
+147 silly ADD node_modules/strip-json-comments
+148 silly ADD node_modules/strip-indent
+149 silly ADD node_modules/strip-final-newline
+150 silly ADD node_modules/strip-bom
+151 silly ADD node_modules/strip-ansi
+152 silly ADD node_modules/string.prototype.trimstart
+153 silly ADD node_modules/string.prototype.trimend
+154 silly ADD node_modules/string.prototype.trim
+155 silly ADD node_modules/string-width
+156 silly ADD node_modules/streamsearch
+157 silly ADD node_modules/stop-iteration-iterator
+158 silly ADD node_modules/statuses
+159 silly ADD node_modules/stack-utils
+160 silly ADD node_modules/stack-utils/node_modules/escape-string-regexp
+161 silly ADD node_modules/sprintf-js
+162 silly ADD node_modules/spdx-license-ids
+163 silly ADD node_modules/spdx-expression-parse
+164 silly ADD node_modules/spdx-exceptions
+165 silly ADD node_modules/spdx-correct
+166 silly ADD node_modules/source-map-support
+167 silly ADD node_modules/source-map
+168 silly ADD node_modules/slice-ansi
+169 silly ADD node_modules/slash
+170 silly ADD node_modules/signal-exit
+171 silly ADD node_modules/side-channel-weakmap
+172 silly ADD node_modules/side-channel-map
+173 silly ADD node_modules/side-channel-list
+174 silly ADD node_modules/side-channel
+175 silly ADD node_modules/shebang-regex
+176 silly ADD node_modules/shebang-command
+177 silly ADD node_modules/setprototypeof
+178 silly ADD node_modules/set-proto
+179 silly ADD node_modules/set-function-name
+180 silly ADD node_modules/set-function-length
+181 silly ADD node_modules/serve-static
+182 silly ADD node_modules/serialize-error
+183 silly ADD node_modules/serialize-error/node_modules/type-fest
+184 silly ADD node_modules/send
+185 silly ADD node_modules/send/node_modules/debug
+186 silly ADD node_modules/send/node_modules/debug/node_modules/ms
+187 silly ADD node_modules/semver
+188 silly ADD node_modules/schema-utils
+189 silly ADD node_modules/schema-utils/node_modules/json-schema-traverse
+190 silly ADD node_modules/schema-utils/node_modules/ajv-keywords
+191 silly ADD node_modules/schema-utils/node_modules/ajv
+192 silly ADD node_modules/safer-buffer
+193 silly ADD node_modules/safe-regex-test
+194 silly ADD node_modules/safe-push-apply
+195 silly ADD node_modules/safe-buffer
+196 silly ADD node_modules/safe-array-concat
+197 silly ADD node_modules/run-parallel
+198 silly ADD node_modules/rimraf
+199 silly ADD node_modules/reusify
+200 silly ADD node_modules/resolve-pkg-maps
+201 silly ADD node_modules/resolve-from
+202 silly ADD node_modules/resolve-cwd
+203 silly ADD node_modules/resolve
+204 silly ADD node_modules/require-from-string
+205 silly ADD node_modules/require-directory
+206 silly ADD node_modules/regjsparser
+207 silly ADD node_modules/regjsparser/node_modules/jsesc
+208 silly ADD node_modules/regexp.prototype.flags
+209 silly ADD node_modules/regexp-tree
+210 silly ADD node_modules/reflect.getprototypeof
+211 silly ADD node_modules/redent
+212 silly ADD node_modules/readdirp
+213 silly ADD node_modules/read-pkg-up
+214 silly ADD node_modules/read-pkg-up/node_modules/yocto-queue
+215 silly ADD node_modules/read-pkg-up/node_modules/path-exists
+216 silly ADD node_modules/read-pkg-up/node_modules/p-locate
+217 silly ADD node_modules/read-pkg-up/node_modules/p-limit
+218 silly ADD node_modules/read-pkg-up/node_modules/locate-path
+219 silly ADD node_modules/read-pkg-up/node_modules/find-up
+220 silly ADD node_modules/read-pkg
+221 silly ADD node_modules/raw-body
+222 silly ADD node_modules/range-parser
+223 silly ADD node_modules/quick-lru
+224 silly ADD node_modules/queue-microtask
+225 silly ADD node_modules/qs
+226 silly ADD node_modules/punycode
+227 silly ADD node_modules/proxy-addr
+228 silly ADD node_modules/proto-props
+229 silly ADD node_modules/pretty-ms
+230 silly ADD node_modules/prettier-linter-helpers
+231 silly ADD node_modules/prettier
+232 silly ADD node_modules/prelude-ls
+233 silly ADD node_modules/possible-typed-array-names
+234 silly ADD node_modules/pluralize
+235 silly ADD node_modules/plur
+236 silly ADD node_modules/playwright-core
+237 silly ADD node_modules/playwright
+238 silly ADD node_modules/pkg-dir
+239 silly ADD node_modules/pkg-dir/node_modules/yocto-queue
+240 silly ADD node_modules/pkg-dir/node_modules/path-exists
+241 silly ADD node_modules/pkg-dir/node_modules/p-locate
+242 silly ADD node_modules/pkg-dir/node_modules/p-limit
+243 silly ADD node_modules/pkg-dir/node_modules/locate-path
+244 silly ADD node_modules/pkg-dir/node_modules/find-up
+245 silly ADD node_modules/pkg-conf
+246 silly ADD node_modules/pify
+247 silly ADD node_modules/picomatch
+248 silly ADD node_modules/picocolors
+249 silly ADD node_modules/path-type
+250 silly ADD node_modules/path-to-regexp
+251 silly ADD node_modules/path-parse
+252 silly ADD node_modules/path-key
+253 silly ADD node_modules/path-is-absolute
+254 silly ADD node_modules/path-exists
+255 silly ADD node_modules/parseurl
+256 silly ADD node_modules/parse-ms
+257 silly ADD node_modules/parse-json
+258 silly ADD node_modules/parent-module
+259 silly ADD node_modules/parent-module/node_modules/callsites
+260 silly ADD node_modules/p-try
+261 silly ADD node_modules/p-timeout
+262 silly ADD node_modules/p-map
+263 silly ADD node_modules/p-locate
+264 silly ADD node_modules/p-limit
+265 silly ADD node_modules/p-event
+266 silly ADD node_modules/p-defer
+267 silly ADD node_modules/own-keys
+268 silly ADD node_modules/optionator
+269 silly ADD node_modules/open-editor
+270 silly ADD node_modules/open
+271 silly ADD node_modules/open/node_modules/define-lazy-prop
+272 silly ADD node_modules/onetime
+273 silly ADD node_modules/onetime/node_modules/mimic-fn
+274 silly ADD node_modules/once
+275 silly ADD node_modules/on-finished
+276 silly ADD node_modules/object.values
+277 silly ADD node_modules/object.entries
+278 silly ADD node_modules/object.assign
+279 silly ADD node_modules/object-keys
+280 silly ADD node_modules/object-inspect
+281 silly ADD node_modules/obj-props
+282 silly ADD node_modules/npm-run-path
+283 silly ADD node_modules/normalize-path
+284 silly ADD node_modules/normalize-package-data
+285 silly ADD node_modules/nofilter
+286 silly ADD node_modules/node-releases
+287 silly ADD node_modules/node-exports-info
+288 silly ADD node_modules/node-exports-info/node_modules/semver
+289 silly ADD node_modules/negotiator
+290 silly ADD node_modules/natural-compare
+291 silly ADD node_modules/ms
+292 silly ADD node_modules/minimizer-webpack-plugin
+293 silly ADD node_modules/minimist-options
+294 silly ADD node_modules/minimist-options/node_modules/arrify
+295 silly ADD node_modules/minimist
+296 silly ADD node_modules/minimatch
+297 silly ADD node_modules/min-indent
+298 silly ADD node_modules/mimic-fn
+299 silly ADD node_modules/mime-types
+300 silly ADD node_modules/mime-db
+301 silly ADD node_modules/mime
+302 silly ADD node_modules/micromatch
+303 silly ADD node_modules/micro-spelling-correcter
+304 silly ADD node_modules/methods
+305 silly ADD node_modules/merge2
+306 silly ADD node_modules/merge-stream
+307 silly ADD node_modules/merge-descriptors
+308 silly ADD node_modules/meow
+309 silly ADD node_modules/memory-fs
+310 silly ADD node_modules/mem
+311 silly ADD node_modules/media-typer
+312 silly ADD node_modules/md5-hex
+313 silly ADD node_modules/math-intrinsics
+314 silly ADD node_modules/matcher
+315 silly ADD node_modules/map-obj
+316 silly ADD node_modules/map-age-cleaner
+317 silly ADD node_modules/lru-cache
+318 silly ADD node_modules/lowercase-keys
+319 silly ADD node_modules/log-symbols
+320 silly ADD node_modules/log-symbols/node_modules/is-unicode-supported
+321 silly ADD node_modules/log-symbols/node_modules/chalk
+322 silly ADD node_modules/log-symbols/node_modules/ansi-styles
+323 silly ADD node_modules/lodash.merge
+324 silly ADD node_modules/lodash-es
+325 silly ADD node_modules/lodash
+326 silly ADD node_modules/locate-path
+327 silly ADD node_modules/load-json-file
+328 silly ADD node_modules/lines-and-columns
+329 silly ADD node_modules/line-column-path
+330 silly ADD node_modules/line-column-path/node_modules/type-fest
+331 silly ADD node_modules/levn
+332 silly ADD node_modules/kind-of
+333 silly ADD node_modules/keyv
+334 silly ADD node_modules/json5
+335 silly ADD node_modules/json-stable-stringify-without-jsonify
+336 silly ADD node_modules/json-schema-traverse
+337 silly ADD node_modules/json-parse-even-better-errors
+338 silly ADD node_modules/json-buffer
+339 silly ADD node_modules/jsesc
+340 silly ADD node_modules/js-yaml
+341 silly ADD node_modules/js-types
+342 silly ADD node_modules/js-tokens
+343 silly ADD node_modules/js-string-escape
+344 silly ADD node_modules/jest-worker
+345 silly ADD node_modules/jest-worker/node_modules/supports-color
+346 silly ADD node_modules/isexe
+347 silly ADD node_modules/isarray
+348 silly ADD node_modules/is-wsl
+349 silly ADD node_modules/is-windows
+350 silly ADD node_modules/is-weakset
+351 silly ADD node_modules/is-weakref
+352 silly ADD node_modules/is-weakmap
+353 silly ADD node_modules/is-unicode-supported
+354 silly ADD node_modules/is-unc-path
+355 silly ADD node_modules/is-typed-array
+356 silly ADD node_modules/is-symbol
+357 silly ADD node_modules/is-string
+358 silly ADD node_modules/is-stream
+359 silly ADD node_modules/is-shared-array-buffer
+360 silly ADD node_modules/is-set
+361 silly ADD node_modules/is-relative
+362 silly ADD node_modules/is-regex
+363 silly ADD node_modules/is-proto-prop
+364 silly ADD node_modules/is-promise
+365 silly ADD node_modules/is-plain-object
+366 silly ADD node_modules/is-plain-obj
+367 silly ADD node_modules/is-path-inside
+368 silly ADD node_modules/is-path-cwd
+369 silly ADD node_modules/is-obj-prop
+370 silly ADD node_modules/is-number-object
+371 silly ADD node_modules/is-number
+372 silly ADD node_modules/is-negative-zero
+373 silly ADD node_modules/is-negated-glob
+374 silly ADD node_modules/is-map
+375 silly ADD node_modules/is-js-type
+376 silly ADD node_modules/is-glob
+377 silly ADD node_modules/is-get-set-prop
+378 silly ADD node_modules/is-generator-function
+379 silly ADD node_modules/is-fullwidth-code-point
+380 silly ADD node_modules/is-finalizationregistry
+381 silly ADD node_modules/is-extglob
+382 silly ADD node_modules/is-error
+383 silly ADD node_modules/is-document.all
+384 silly ADD node_modules/is-docker
+385 silly ADD node_modules/is-date-object
+386 silly ADD node_modules/is-data-view
+387 silly ADD node_modules/is-core-module
+388 silly ADD node_modules/is-callable
+389 silly ADD node_modules/is-builtin-module
+390 silly ADD node_modules/is-boolean-object
+391 silly ADD node_modules/is-binary-path
+392 silly ADD node_modules/is-bigint
+393 silly ADD node_modules/is-async-function
+394 silly ADD node_modules/is-arrayish
+395 silly ADD node_modules/is-array-buffer
+396 silly ADD node_modules/is-absolute
+397 silly ADD node_modules/irregular-plurals
+398 silly ADD node_modules/ipaddr.js
+399 silly ADD node_modules/interpret
+400 silly ADD node_modules/internal-slot
+401 silly ADD node_modules/inherits
+402 silly ADD node_modules/inflight
+403 silly ADD node_modules/indent-string
+404 silly ADD node_modules/imurmurhash
+405 silly ADD node_modules/import-modules
+406 silly ADD node_modules/import-meta-resolve
+407 silly ADD node_modules/import-fresh
+408 silly ADD node_modules/import-fresh/node_modules/resolve-from
+409 silly ADD node_modules/ignore-by-default
+410 silly ADD node_modules/ignore
+411 silly ADD node_modules/iconv-lite
+412 silly ADD node_modules/human-signals
+413 silly ADD node_modules/http-errors
+414 silly ADD node_modules/hosted-git-info
+415 silly ADD node_modules/hasown
+416 silly ADD node_modules/has-tostringtag
+417 silly ADD node_modules/has-symbols
+418 silly ADD node_modules/has-proto
+419 silly ADD node_modules/has-property-descriptors
+420 silly ADD node_modules/has-flag
+421 silly ADD node_modules/has-bigints
+422 silly ADD node_modules/has
+423 silly ADD node_modules/hard-rejection
+424 silly ADD node_modules/graphemer
+425 silly ADD node_modules/graceful-fs
+426 silly ADD node_modules/gopd
+427 silly ADD node_modules/globby
+428 silly ADD node_modules/globalthis
+429 silly ADD node_modules/globals
+430 silly ADD node_modules/globals/node_modules/type-fest
+431 silly ADD node_modules/glob-parent
+432 silly ADD node_modules/glob
+433 silly ADD node_modules/get-tsconfig
+434 silly ADD node_modules/get-symbol-description
+435 silly ADD node_modules/get-stream
+436 silly ADD node_modules/get-stdin
+437 silly ADD node_modules/get-set-props
+438 silly ADD node_modules/get-proto
+439 silly ADD node_modules/get-intrinsic
+440 silly ADD node_modules/get-caller-file
+441 silly ADD node_modules/generator-function
+442 silly ADD node_modules/functions-have-names
+443 silly ADD node_modules/function.prototype.name
+444 silly ADD node_modules/function-bind
+445 silly ADD
+446 silly ADD node_modules/fs.realpath
+447 silly ADD node_modules/fresh
+448 silly ADD node_modules/forwarded
+449 silly ADD node_modules/for-each
+450 silly ADD node_modules/flatted
+451 silly ADD node_modules/flat-cache
+452 silly ADD node_modules/find-up
+453 silly ADD node_modules/find-root
+454 silly ADD node_modules/find-cache-dir
+455 silly ADD node_modules/find-cache-dir/node_modules/pkg-dir
+456 silly ADD node_modules/finalhandler
+457 silly ADD node_modules/finalhandler/node_modules/ms
+458 silly ADD node_modules/finalhandler/node_modules/debug
+459 silly ADD node_modules/fill-range
+460 silly ADD node_modules/file-entry-cache
+461 silly ADD node_modules/figures
+462 silly ADD node_modules/fastq
+463 silly ADD node_modules/fast-uri
+464 silly ADD node_modules/fast-levenshtein
+465 silly ADD node_modules/fast-json-stable-stringify
+466 silly ADD node_modules/fast-glob
+467 silly ADD node_modules/fast-diff
+468 silly ADD node_modules/fast-deep-equal
+469 silly ADD node_modules/express
+470 silly ADD node_modules/express/node_modules/ms
+471 silly ADD node_modules/express/node_modules/debug
+472 silly ADD node_modules/expect-type
+473 silly ADD node_modules/execa
+474 silly ADD node_modules/execa/node_modules/signal-exit
+475 silly ADD node_modules/events
+476 silly ADD node_modules/etag
+477 silly ADD node_modules/esutils
+478 silly ADD node_modules/estraverse
+479 silly ADD node_modules/esrecurse
+480 silly ADD node_modules/esquery
+481 silly ADD node_modules/espurify
+482 silly ADD node_modules/esprima
+483 silly ADD node_modules/espree
+484 silly ADD node_modules/esm-utils
+485 silly ADD node_modules/eslint-visitor-keys
+486 silly ADD node_modules/eslint-utils
+487 silly ADD node_modules/eslint-utils/node_modules/eslint-visitor-keys
+488 silly ADD node_modules/eslint-scope
+489 silly ADD node_modules/eslint-rule-docs
+490 silly ADD node_modules/eslint-plugin-unicorn
+491 silly ADD node_modules/eslint-plugin-unicorn/node_modules/type-fest
+492 silly ADD node_modules/eslint-plugin-unicorn/node_modules/strip-indent
+493 silly ADD node_modules/eslint-plugin-unicorn/node_modules/resolve
+494 silly ADD node_modules/eslint-plugin-unicorn/node_modules/read-pkg-up
+495 silly ADD node_modules/eslint-plugin-unicorn/node_modules/read-pkg
+496 silly ADD node_modules/eslint-plugin-unicorn/node_modules/read-pkg/node_modules/type-fest
+497 silly ADD node_modules/eslint-plugin-unicorn/node_modules/path-exists
+498 silly ADD node_modules/eslint-plugin-unicorn/node_modules/p-locate
+499 silly ADD node_modules/eslint-plugin-unicorn/node_modules/p-limit
+500 silly ADD node_modules/eslint-plugin-unicorn/node_modules/normalize-package-data
+501 silly ADD node_modules/eslint-plugin-unicorn/node_modules/normalize-package-data/node_modules/semver
+502 silly ADD node_modules/eslint-plugin-unicorn/node_modules/locate-path
+503 silly ADD node_modules/eslint-plugin-unicorn/node_modules/indent-string
+504 silly ADD node_modules/eslint-plugin-unicorn/node_modules/hosted-git-info
+505 silly ADD node_modules/eslint-plugin-unicorn/node_modules/find-up
+506 silly ADD node_modules/eslint-plugin-prettier
+507 silly ADD node_modules/eslint-plugin-no-use-extend-native
+508 silly ADD node_modules/eslint-plugin-n
+509 silly ADD node_modules/eslint-plugin-n/node_modules/resolve
+510 silly ADD node_modules/eslint-plugin-import
+511 silly ADD node_modules/eslint-plugin-import/node_modules/semver
+512 silly ADD node_modules/eslint-plugin-import/node_modules/resolve
+513 silly ADD node_modules/eslint-plugin-import/node_modules/doctrine
+514 silly ADD node_modules/eslint-plugin-import/node_modules/debug
+515 silly ADD node_modules/eslint-plugin-eslint-comments
+516 silly ADD node_modules/eslint-plugin-eslint-comments/node_modules/escape-string-regexp
+517 silly ADD node_modules/eslint-plugin-es-x
+518 silly ADD node_modules/eslint-plugin-ava
+519 silly ADD node_modules/eslint-module-utils
+520 silly ADD node_modules/eslint-module-utils/node_modules/debug
+521 silly ADD node_modules/eslint-import-resolver-webpack
+522 silly ADD node_modules/eslint-import-resolver-webpack/node_modules/semver
+523 silly ADD node_modules/eslint-import-resolver-webpack/node_modules/debug
+524 silly ADD node_modules/eslint-import-resolver-node
+525 silly ADD node_modules/eslint-import-resolver-node/node_modules/debug
+526 silly ADD node_modules/eslint-formatter-pretty
+527 silly ADD node_modules/eslint-formatter-pretty/node_modules/strip-ansi
+528 silly ADD node_modules/eslint-formatter-pretty/node_modules/string-width
+529 silly ADD node_modules/eslint-formatter-pretty/node_modules/plur
+530 silly ADD node_modules/eslint-formatter-pretty/node_modules/is-fullwidth-code-point
+531 silly ADD node_modules/eslint-formatter-pretty/node_modules/emoji-regex
+532 silly ADD node_modules/eslint-formatter-pretty/node_modules/chalk
+533 silly ADD node_modules/eslint-formatter-pretty/node_modules/ansi-styles
+534 silly ADD node_modules/eslint-formatter-pretty/node_modules/ansi-regex
+535 silly ADD node_modules/eslint-config-xo-typescript
+536 silly ADD node_modules/eslint-config-xo
+537 silly ADD node_modules/eslint-config-prettier
+538 silly ADD node_modules/eslint-compat-utils
+539 silly ADD node_modules/eslint
+540 silly ADD node_modules/eslint/node_modules/yocto-queue
+541 silly ADD node_modules/eslint/node_modules/strip-ansi
+542 silly ADD node_modules/eslint/node_modules/path-exists
+543 silly ADD node_modules/eslint/node_modules/p-locate
+544 silly ADD node_modules/eslint/node_modules/p-limit
+545 silly ADD node_modules/eslint/node_modules/locate-path
+546 silly ADD node_modules/eslint/node_modules/js-yaml
+547 silly ADD node_modules/eslint/node_modules/is-path-inside
+548 silly ADD node_modules/eslint/node_modules/glob-parent
+549 silly ADD node_modules/eslint/node_modules/find-up
+550 silly ADD node_modules/eslint/node_modules/escape-string-regexp
+551 silly ADD node_modules/eslint/node_modules/chalk
+552 silly ADD node_modules/eslint/node_modules/argparse
+553 silly ADD node_modules/eslint/node_modules/ansi-styles
+554 silly ADD node_modules/eslint/node_modules/ansi-regex
+555 silly ADD node_modules/escape-string-regexp
+556 silly ADD node_modules/escape-html
+557 silly ADD node_modules/escalade
+558 silly ADD node_modules/esbuild
+559 silly ADD node_modules/es-to-primitive
+560 silly ADD node_modules/es-shim-unscopables
+561 silly ADD node_modules/es-set-tostringtag
+562 silly ADD node_modules/es-object-atoms
+563 silly ADD node_modules/es-module-lexer
+564 silly ADD node_modules/es-errors
+565 silly ADD node_modules/es-define-property
+566 silly ADD node_modules/es-abstract-get
+567 silly ADD node_modules/es-abstract
+568 silly ADD node_modules/error-ex
+569 silly ADD node_modules/env-editor
+570 silly ADD node_modules/enhanced-resolve
+571 silly ADD node_modules/enhance-visitors
+572 silly ADD node_modules/encodeurl
+573 silly ADD node_modules/emoji-regex
+574 silly ADD node_modules/emittery
+575 silly ADD node_modules/electron-to-chromium
+576 silly ADD node_modules/ee-first
+577 silly ADD node_modules/eastasianwidth
+578 silly ADD node_modules/dunder-proto
+579 silly ADD node_modules/doctrine
+580 silly ADD node_modules/dir-glob
+581 silly ADD node_modules/destroy
+582 silly ADD node_modules/depd
+583 silly ADD node_modules/delay
+584 silly ADD node_modules/del-cli
+585 silly ADD node_modules/del
+586 silly ADD node_modules/define-properties
+587 silly ADD node_modules/define-lazy-prop
+588 silly ADD node_modules/define-data-property
+589 silly ADD node_modules/deep-is
+590 silly ADD node_modules/decamelize-keys
+591 silly ADD node_modules/decamelize-keys/node_modules/map-obj
+592 silly ADD node_modules/decamelize-keys/node_modules/decamelize
+593 silly ADD node_modules/decamelize
+594 silly ADD node_modules/debug
+595 silly ADD node_modules/date-time
+596 silly ADD node_modules/data-view-byte-offset
+597 silly ADD node_modules/data-view-byte-length
+598 silly ADD node_modules/data-view-buffer
+599 silly ADD node_modules/currently-unhandled
+600 silly ADD node_modules/cross-spawn
+601 silly ADD node_modules/cosmiconfig
+602 silly ADD node_modules/cosmiconfig/node_modules/js-yaml
+603 silly ADD node_modules/cosmiconfig/node_modules/argparse
+604 silly ADD node_modules/cookie-signature
+605 silly ADD node_modules/cookie
+606 silly ADD node_modules/convert-to-spaces
+607 silly ADD node_modules/content-type
+608 silly ADD node_modules/content-disposition
+609 silly ADD node_modules/confusing-browser-globals
+610 silly ADD node_modules/concordance
+611 silly ADD node_modules/concat-map
+612 silly ADD node_modules/common-path-prefix
+613 silly ADD node_modules/commander
+614 silly ADD node_modules/color-name
+615 silly ADD node_modules/color-convert
+616 silly ADD node_modules/code-excerpt
+617 silly ADD node_modules/cliui
+618 silly ADD node_modules/cliui/node_modules/strip-ansi
+619 silly ADD node_modules/cliui/node_modules/string-width
+620 silly ADD node_modules/cliui/node_modules/is-fullwidth-code-point
+621 silly ADD node_modules/cliui/node_modules/emoji-regex
+622 silly ADD node_modules/cliui/node_modules/ansi-regex
+623 silly ADD node_modules/cli-truncate
+624 silly ADD node_modules/clean-yaml-object
+625 silly ADD node_modules/clean-stack
+626 silly ADD node_modules/clean-regexp
+627 silly ADD node_modules/clean-regexp/node_modules/escape-string-regexp
+628 silly ADD node_modules/ci-parallel-vars
+629 silly ADD node_modules/ci-info
+630 silly ADD node_modules/chunkd
+631 silly ADD node_modules/chrome-trace-event
+632 silly ADD node_modules/chokidar
+633 silly ADD node_modules/chalk
+634 silly ADD node_modules/cbor
+635 silly ADD node_modules/caniuse-lite
+636 silly ADD node_modules/camelcase-keys
+637 silly ADD node_modules/camelcase
+638 silly ADD node_modules/callsites
+639 silly ADD node_modules/call-bound
+640 silly ADD node_modules/call-bind-apply-helpers
+641 silly ADD node_modules/call-bind
+642 silly ADD node_modules/bytes
+643 silly ADD node_modules/busboy
+644 silly ADD node_modules/builtins
+645 silly ADD node_modules/builtin-modules
+646 silly ADD node_modules/buffer-from
+647 silly ADD node_modules/browserslist
+648 silly ADD node_modules/braces
+649 silly ADD node_modules/brace-expansion
+650 silly ADD node_modules/body-parser
+651 silly ADD node_modules/body-parser/node_modules/ms
+652 silly ADD node_modules/body-parser/node_modules/debug
+653 silly ADD node_modules/blueimp-md5
+654 silly ADD node_modules/binary-extensions
+655 silly ADD node_modules/baseline-browser-mapping
+656 silly ADD node_modules/balanced-match
+657 silly ADD node_modules/available-typed-arrays
+658 silly ADD node_modules/ava
+659 silly ADD node_modules/async-function
+660 silly ADD node_modules/arrify
+661 silly ADD node_modules/arrgv
+662 silly ADD node_modules/arraybuffer.prototype.slice
+663 silly ADD node_modules/array.prototype.flatmap
+664 silly ADD node_modules/array.prototype.flat
+665 silly ADD node_modules/array-union
+666 silly ADD node_modules/array-includes
+667 silly ADD node_modules/array-flatten
+668 silly ADD node_modules/array-find-index
+669 silly ADD node_modules/array-buffer-byte-length
+670 silly ADD node_modules/argparse
+671 silly ADD node_modules/anymatch
+672 silly ADD node_modules/ansi-styles
+673 silly ADD node_modules/ansi-regex
+674 silly ADD node_modules/ansi-escapes
+675 silly ADD node_modules/ansi-escapes/node_modules/type-fest
+676 silly ADD node_modules/ajv-formats
+677 silly ADD node_modules/ajv-formats/node_modules/json-schema-traverse
+678 silly ADD node_modules/ajv-formats/node_modules/ajv
+679 silly ADD node_modules/ajv
+680 silly ADD node_modules/aggregate-error
+681 silly ADD node_modules/acorn-walk
+682 silly ADD node_modules/acorn-jsx
+683 silly ADD node_modules/acorn
+684 silly ADD node_modules/accepts
+685 silly ADD node_modules/@xtuc/long
+686 silly ADD node_modules/@xtuc/ieee754
+687 silly ADD node_modules/@webassemblyjs/wast-printer
+688 silly ADD node_modules/@webassemblyjs/wasm-parser
+689 silly ADD node_modules/@webassemblyjs/wasm-opt
+690 silly ADD node_modules/@webassemblyjs/wasm-gen
+691 silly ADD node_modules/@webassemblyjs/wasm-edit
+692 silly ADD node_modules/@webassemblyjs/utf8
+693 silly ADD node_modules/@webassemblyjs/leb128
+694 silly ADD node_modules/@webassemblyjs/ieee754
+695 silly ADD node_modules/@webassemblyjs/helper-wasm-section
+696 silly ADD node_modules/@webassemblyjs/helper-wasm-bytecode
+697 silly ADD node_modules/@webassemblyjs/helper-numbers
+698 silly ADD node_modules/@webassemblyjs/helper-buffer
+699 silly ADD node_modules/@webassemblyjs/helper-api-error
+700 silly ADD node_modules/@webassemblyjs/floating-point-hex-parser
+701 silly ADD node_modules/@webassemblyjs/ast
+702 silly ADD node_modules/@ungap/structured-clone
+703 silly ADD node_modules/@typescript-eslint/visitor-keys
+704 silly ADD node_modules/@typescript-eslint/utils
+705 silly ADD node_modules/@typescript-eslint/typescript-estree
+706 silly ADD node_modules/@typescript-eslint/typescript-estree/node_modules/slash
+707 silly ADD node_modules/@typescript-eslint/typescript-estree/node_modules/minimatch
+708 silly ADD node_modules/@typescript-eslint/typescript-estree/node_modules/globby
+709 silly ADD node_modules/@typescript-eslint/typescript-estree/node_modules/brace-expansion
+710 silly ADD node_modules/@typescript-eslint/types
+711 silly ADD node_modules/@typescript-eslint/type-utils
+712 silly ADD node_modules/@typescript-eslint/scope-manager
+713 silly ADD node_modules/@typescript-eslint/parser
+714 silly ADD node_modules/@typescript-eslint/eslint-plugin
+715 silly ADD node_modules/@types/serve-static
+716 silly ADD node_modules/@types/serve-static/node_modules/@types/send
+717 silly ADD node_modules/@types/send
+718 silly ADD node_modules/@types/semver
+719 silly ADD node_modules/@types/range-parser
+720 silly ADD node_modules/@types/qs
+721 silly ADD node_modules/@types/normalize-package-data
+722 silly ADD node_modules/@types/node
+723 silly ADD node_modules/@types/minimist
+724 silly ADD node_modules/@types/mime
+725 silly ADD node_modules/@types/json5
+726 silly ADD node_modules/@types/json-schema
+727 silly ADD node_modules/@types/http-errors
+728 silly ADD node_modules/@types/express-serve-static-core
+729 silly ADD node_modules/@types/express
+730 silly ADD node_modules/@types/estree
+731 silly ADD node_modules/@types/eslint
+732 silly ADD node_modules/@types/connect
+733 silly ADD node_modules/@types/busboy
+734 silly ADD node_modules/@types/body-parser
+735 silly ADD node_modules/@type-challenges/utils
+736 silly ADD node_modules/@sindresorhus/tsconfig
+737 silly ADD node_modules/@pkgr/core
+738 silly ADD node_modules/@nodelib/fs.walk
+739 silly ADD node_modules/@nodelib/fs.stat
+740 silly ADD node_modules/@nodelib/fs.scandir
+741 silly ADD node_modules/@jridgewell/trace-mapping
+742 silly ADD node_modules/@jridgewell/sourcemap-codec
+743 silly ADD node_modules/@jridgewell/source-map
+744 silly ADD node_modules/@jridgewell/resolve-uri
+745 silly ADD node_modules/@jridgewell/gen-mapping
+746 silly ADD node_modules/@humanwhocodes/object-schema
+747 silly ADD node_modules/@humanwhocodes/module-importer
+748 silly ADD node_modules/@humanwhocodes/config-array
+749 silly ADD node_modules/@eslint/js
+750 silly ADD node_modules/@eslint/eslintrc
+751 silly ADD node_modules/@eslint/eslintrc/node_modules/js-yaml
+752 silly ADD node_modules/@eslint/eslintrc/node_modules/argparse
+753 silly ADD node_modules/@eslint-community/regexpp
+754 silly ADD node_modules/@eslint-community/eslint-utils
+755 silly ADD
+756 silly ADD
+757 silly ADD
+758 silly ADD
+759 silly ADD
+760 silly ADD
+761 silly ADD
+762 silly ADD
+763 silly ADD
+764 silly ADD node_modules/@esbuild/linux-x64
+765 silly ADD
+766 silly ADD
+767 silly ADD
+768 silly ADD
+769 silly ADD
+770 silly ADD
+771 silly ADD
+772 silly ADD
+773 silly ADD
+774 silly ADD
+775 silly ADD
+776 silly ADD
+777 silly ADD
+778 silly ADD
+779 silly ADD
+780 silly ADD
+781 silly ADD node_modules/@dual-bundle/import-meta-resolve
+782 silly ADD node_modules/@babel/helper-validator-identifier
+783 silly ADD node_modules/@babel/code-frame
+784 verbose cwd /tmp/rio-ky-eval/578-head
+785 verbose os Linux 6.8.0-147-generic
+786 verbose node v18.20.8
+787 verbose npm  v10.8.2
+788 verbose exit 0
+789 info ok

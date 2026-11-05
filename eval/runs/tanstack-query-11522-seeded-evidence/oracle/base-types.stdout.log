@@ -1,0 +1,14 @@
+packages/query-broadcast-client-experimental/eslint.config.js(3,24): error TS2307: Cannot find module './root.eslint.config.js' or its corresponding type declarations.
+packages/query-broadcast-client-experimental/src/__tests__/index.test.ts(1,29): error TS2307: Cannot find module '@tanstack/query-core' or its corresponding type declarations.
+packages/query-broadcast-client-experimental/src/__tests__/index.test.ts(3,33): error TS2307: Cannot find module '@tanstack/query-test-utils' or its corresponding type declarations.
+packages/query-broadcast-client-experimental/src/__tests__/index.test.ts(6,33): error TS2307: Cannot find module '@tanstack/query-core' or its corresponding type declarations.
+packages/query-broadcast-client-experimental/src/index.ts(1,34): error TS2307: Cannot find module 'broadcast-channel' or its corresponding type declarations.
+packages/query-broadcast-client-experimental/src/index.ts(2,46): error TS2307: Cannot find module 'broadcast-channel' or its corresponding type declarations.
+packages/query-broadcast-client-experimental/src/index.ts(3,44): error TS2307: Cannot find module '@tanstack/query-core' or its corresponding type declarations.
+packages/query-broadcast-client-experimental/src/index.ts(112,45): error TS7006: Parameter 'queryEvent' implicitly has an 'any' type.
+packages/query-broadcast-client-experimental/src/index.ts(148,24): error TS7006: Parameter 'action' implicitly has an 'any' type.
+packages/query-broadcast-client-experimental/test-setup.ts(2,44): error TS2307: Cannot find module '@testing-library/react' or its corresponding type declarations.
+packages/query-broadcast-client-experimental/test-setup.ts(4,31): error TS2307: Cannot find module '@tanstack/query-core' or its corresponding type declarations.
+packages/query-broadcast-client-experimental/test-setup.ts(12,34): error TS7006: Parameter 'fn' implicitly has an 'any' type.
+packages/query-broadcast-client-experimental/vite.config.ts(2,19): error TS2307: Cannot find module '@vitejs/plugin-react' or its corresponding type declarations.
+packages/query-broadcast-client-experimental/vite.config.ts(4,25): error TS2307: Cannot find module './package.json' or its corresponding type declarations.

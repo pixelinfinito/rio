@@ -1,0 +1,11 @@
+{
+  "observed_utc": "2026-11-05T02:47:30.718414+00:00",
+  "pr": 7903,
+  "attempt": "../trpc-7903-attempt-01",
+  "rio_defect": "pnpm 12 lockfiles contain separate package-manager and project YAML documents. Rio attempts serde_yaml single-document deserialization and aborts before checks.",
+  "reproduction": "At pinned head 248fb772a6d6f7ce2492f8549a8d370ec3df9731, install frozen pnpm12.4.1; run rio doctor --format json or rio review --base c869fa1075fc3ce11b38495c5e6044fb97b335d2 --format json --offline --profile profile.yaml.",
+  "finding_ids": [],
+  "raw_error": "cannot parse pnpm-lock.yaml: deserializing from YAML containing more than one document is not supported",
+  "harness_defect": "runner reports Rio reviewed different commits than the pinned change rather than the Rio internal_error because it checks missing review.base/head before exposing the fatal error. It creates no verdict skeleton.",
+  "workaround_constraints": "Changing install flags cannot repair parsing of immutable source lockfile. No tracked lockfile normalization or binary modification permitted. Investigating earlier source controls; no score for this attempt."
+}

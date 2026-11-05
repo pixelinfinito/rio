@@ -1,0 +1,85 @@
+{
+  "tag": "v0.1.0-rc.1",
+  "source_commit": "abb02751de7cd95dac021da3f21b02bb89425eef",
+  "run_url": "https://github.com/mctlisboa/rio-v01-validation-20261104/actions/runs/41918223523",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "name": "unix (macos-26)",
+      "url": "https://github.com/mctlisboa/rio-v01-validation-20261104/actions/runs/41918223523/job/126883499815",
+      "conclusion": "success",
+      "versions": [
+        "rio 0.1.0-rc.1 aarch64-apple-darwin abb02751de7cd95dac021da3f21b02bb89425eef"
+      ],
+      "doctor_json_parsed": true,
+      "doctor_blocking_problems": [],
+      "successful_steps": [
+        "Set up job",
+        "Run actions/checkout@v4",
+        "Install published binary, version, doctor and uninstall",
+        "Run actions/upload-artifact@v4",
+        "Post Run actions/checkout@v4",
+        "Complete job"
+      ],
+      "alpine_verified": false
+    },
+    {
+      "name": "windows (powershell)",
+      "url": "https://github.com/mctlisboa/rio-v01-validation-20261104/actions/runs/41918223523/job/126883500238",
+      "conclusion": "success",
+      "versions": [
+        "rio 0.1.0-rc.1 x86_64-pc-windows-msvc abb02751de7cd95dac021da3f21b02bb89425eef"
+      ],
+      "doctor_json_parsed": true,
+      "doctor_blocking_problems": [],
+      "successful_steps": [
+        "Set up job",
+        "Run actions/checkout@v4",
+        "Install published binary, version, doctor and uninstall",
+        "Run actions/upload-artifact@v4",
+        "Post Run actions/checkout@v4",
+        "Complete job"
+      ],
+      "alpine_verified": false
+    },
+    {
+      "name": "unix (ubuntu-24.04)",
+      "url": "https://github.com/mctlisboa/rio-v01-validation-20261104/actions/runs/41918223523/job/126883500256",
+      "conclusion": "success",
+      "versions": [
+        "rio 0.1.0-rc.1 x86_64-unknown-linux-musl abb02751de7cd95dac021da3f21b02bb89425eef"
+      ],
+      "doctor_json_parsed": true,
+      "doctor_blocking_problems": [],
+      "successful_steps": [
+        "Set up job",
+        "Run actions/checkout@v4",
+        "Install published binary, version, doctor and uninstall",
+        "Run actions/upload-artifact@v4",
+        "Alpine published installer",
+        "Post Run actions/checkout@v4",
+        "Complete job"
+      ],
+      "alpine_verified": true
+    },
+    {
+      "name": "windows (pwsh)",
+      "url": "https://github.com/mctlisboa/rio-v01-validation-20261104/actions/runs/41918223523/job/126883500444",
+      "conclusion": "success",
+      "versions": [
+        "rio 0.1.0-rc.1 x86_64-pc-windows-msvc abb02751de7cd95dac021da3f21b02bb89425eef"
+      ],
+      "doctor_json_parsed": true,
+      "doctor_blocking_problems": [],
+      "successful_steps": [
+        "Set up job",
+        "Run actions/checkout@v4",
+        "Install published binary, version, doctor and uninstall",
+        "Run actions/upload-artifact@v4",
+        "Post Run actions/checkout@v4",
+        "Complete job"
+      ],
+      "alpine_verified": false
+    }
+  ]
+}

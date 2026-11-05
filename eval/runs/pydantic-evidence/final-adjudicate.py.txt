@@ -1,0 +1,37 @@
+from pathlib import Path
+import json,sys,collections
+root=Path('/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic');runs=root/'eval/runs';e=runs/'pydantic-evidence'
+pr=int(sys.argv[1]);suffix=sys.argv[2];out=runs/f'pydantic-{pr}{suffix}'
+d=json.loads((out/'report.json').read_text());v=json.loads((out/'verdicts.json').read_text());ledger=json.loads((out/'commands.json').read_text())
+if len(sys.argv)<4 or sys.argv[3]!='unscored':
+ assert ledger['environment']['baseline_classification_ran'],ledger['environment']
+ assert ledger['environment']['eligible'],ledger['environment']
+case='positive' if pr==14199 else 'negative'
+def keys(which):
+ rows=json.loads((e/f'{case}-{which}-wheel-final/07-stdout.log').read_text())['generalDiagnostics']
+ return {(x['file'].split('/'+case+'-'+which+'/')[-1],x['range']['start']['line']+1,x.get('rule'),x['message']) for x in rows}
+b,h=keys('base'),keys('head');assert b==h
+summary=json.loads((e/'wheel-oracle-summary.json').read_text());missing=summary['positive-head']['coverage']['missing_lines'];covered=set();annotations={};coverage_ids=[]
+for f in d['findings']+d['risks']:
+ locs=f.get('locations') or [f['location']]
+ if f['rule_id'].startswith('typecheck/pyright/'):
+  assert all((x['path'],x['line_start'],f['rule_id'].split('/')[-1],f['message']) in b for x in locs),f
+  assert f['state'] in ['pre-existing','unclassified'],f
+  annotations[f['id']]={'verdict':'pre-existing-shown','reason':f'Each path/line/rule/message occurrence exactly matches independent {case}-base-wheel-final/07-stdout.log and {case}-head-wheel-final/07-stdout.log; source tests/test_pipeline.py is unchanged. The same 12 native Pyright diagnostics existed at both pinned revisions. Rio successfully ran a verified base and honestly labels this pre-existing. No introduced type error is inferred.'}
+ elif f['rule_id']=='coverage/untested_change' and pr==14199:
+  lines={line for loc in locs for line in range(loc['line_start'],loc['line_end']+1)}
+  assert all(x['path']=='pydantic/_internal/_contextlib.py' for x in locs),f
+  assert lines<=set(missing),(f,lines)
+  covered.update(lines);coverage_ids.append(f['id'])
+  annotations[f['id']]={'verdict':'true-positive','reason':'Independent positive-base-wheel-final coverage has no _contextlib.py; positive-head-wheel-final/coverage.json.gz instruments the added module (49 executable, 35 executed, 14 missing, no exclusions) after 6560 tests pass. Every reported line matches independent missing executable lines. Follow-up PR 14202 adds coverage exclusions. This is the preregistered testing gap, not an asserted runtime semantic bug. Both method findings share one root-cause template/file set because they partition the same new context-manager module error/suppression-path coverage gap.','message_template':'New internal context-manager error and suppression paths lack executed tests','file_set':['pydantic/_internal/_contextlib.py'],'family':'contextmanager-uncovered-error-paths'}
+ else:
+  raise AssertionError(('Unexpected finding needs individual investigation',f))
+if pr==14199:assert covered==set(missing),(covered,missing)
+v['reviewer']='sub-agent eval-pydantic (automated)';v['verdict_source']='automated';v['findings']=annotations;v['independently_clean']=pr==14213;v['misses']=[]
+v['positive_control']={'kind':'real-pr' if pr==14199 else 'none','expected':[{'id':'contextmanager-uncovered-error-paths','mechanism':'uncovered-lines','evidence':'Preregistered in pydantic-evidence/control-register.json before Rio. Public introducing PR 14199 head 262700f815672fc37ed637a1604234f6c7cc7ee9 vs base a9f3f3fccc180c05190df0478a17487ec9908e4e. Independent positive-base/head-wheel-final commands.json and coverage.json.gz: base file absent; head 49 executable, 35 executed, missing 30,38,39,41,47,52,60,61,62,63,68,71,72,74, zero exclusions, both 6560 tests passed. See wheel-oracle-summary.json. Follow-up 14202 excludes error/suppression paths. One expected testing gap.','finding_ids':coverage_ids}] if pr==14199 else []}
+v['commands'] += [f'Independent oracle ledger: eval/runs/pydantic-evidence/{case}-{side}-wheel-final/commands.json' for side in ['base','head']]
+v['commands'] += [f"Observed Rio {x['kind']} child: cwd={x['cwd']} argv={json.dumps(x['argv'])}" for x in ledger['observed_child_invocations']]
+v['notes'] += ['Authoritative independent evidence: eval/runs/pydantic-evidence/wheel-oracle-summary.json and *-wheel-final command/output files. Independent assessment is automated; no human confirmation claimed.','Locked Python 3.12.12, uv 0.13.7, Pyright 1.1.411, mypy 2.3.0, Ruff 0.17.3, pytest 9.1.1, coverage 7.13.5. Final wheel-file plan installs all locked groups/packages/extras, then reinstalls only own pydantic from a built wheel file with byte-identical package content assertion; hash-checked unused conditional coverage startup hook removed. Relative .venv/bin prepended to PATH; all external environment overrides retained in commands.json.','PYTEST_ADDOPTS=--ignore=tests/pydantic_core --ignore=tests/benchmarks was declared before Rio; all Pydantic functional/docs tests retained, no changed source excluded. Offline audit lacks advisory cache; no dependency safety claim. Lockfiles unchanged.','Rio selects native Pyright rather than mypy: venv pyright --outputjson, without a dot target. Root native include covers pydantic and tests/test_pipeline.py, with explicit excludes and strict test config; see typecheck-scope.json. Test-file diagnostics are real pre-existing native-tool output, not a new change-specific type error.','Failed/interrupted attempts are preserved and excluded from scoring. Setup defects and exact reproductions, finding IDs, limitations and timings: eval/runs/pydantic-NOTES.md.']
+if pr==14213:v['notes'].append('Independent clean-change assessment: merged maintainer plugin entry-point refactor with updated tests; base/head selected suites each 10936 passed, 247 skipped, 28 xfailed. Ruff clean; native Pyright unchanged12; supplemental package-only Pyright clean. All changed executable loader lines 6,40-48 executed; missing line32 unchanged. No changes to lockfiles or credential material. This does not claim the entire repository has zero baseline diagnostics.')
+if len(sys.argv)>3 and sys.argv[3]=='unscored':v['notes'].append('UNSCORED failed-baseline attempt: no normalized record and no score. Own noneditable local-directory direct_url provenance still triggered linked-source refusal. See commands.json/footer and pydantic-NOTES.md.')
+(out/'verdicts.json').write_text(json.dumps(v,indent=2)+'\n');print(pr,collections.Counter(x['verdict'] for x in annotations.values()),'expected detections',coverage_ids)

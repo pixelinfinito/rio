@@ -1,0 +1,10 @@
+diff --git a/src/utils/url.ts b/src/utils/url.ts
+index 57adfeb7..23f50727 100644
+--- a/src/utils/url.ts
++++ b/src/utils/url.ts
+@@ -310,3 +310,5 @@ export const getQueryParams = (
+ // `decodeURIComponent` is a long name.
+ // By making it a function, we can use it commonly when minified, reducing the amount of code.
+ export const decodeURIComponent_ = decodeURIComponent
++
++export const rioEvalTypeControl: number = 'rio-eval-trpc-20261105'

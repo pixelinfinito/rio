@@ -1,0 +1,38 @@
+{
+  "base": [
+    [
+      "uv",
+      "sync",
+      "--locked",
+      "--all-groups",
+      "--all-extras",
+      "--no-editable",
+      "--python",
+      "3.12.12"
+    ],
+    [
+      ".venv/bin/python",
+      "-I",
+      "-c",
+      "import hashlib,pathlib,sysconfig; s=pathlib.Path(sysconfig.get_paths()[\"purelib\"]); names=[\"a1_coverage.pth\",\"_sphinx_jinja2_compat.pth\",\"sphinxcontrib_jsmath-1.0.1-py3.7-nspkg.pth\",\"distutils-precedence.pth\"]; [(print(str(p),hashlib.sha256(p.read_bytes()).hexdigest(),repr(p.read_text())),p.rename(p.with_suffix(\".pth.disabled\"))) for n in names if (p:=s/n).exists()]"
+    ]
+  ],
+  "head": [
+    [
+      "uv",
+      "sync",
+      "--locked",
+      "--all-groups",
+      "--all-extras",
+      "--no-editable",
+      "--python",
+      "3.12.12"
+    ],
+    [
+      ".venv/bin/python",
+      "-I",
+      "-c",
+      "import hashlib,pathlib,sysconfig; s=pathlib.Path(sysconfig.get_paths()[\"purelib\"]); names=[\"a1_coverage.pth\",\"_sphinx_jinja2_compat.pth\",\"sphinxcontrib_jsmath-1.0.1-py3.7-nspkg.pth\",\"distutils-precedence.pth\"]; [(print(str(p),hashlib.sha256(p.read_bytes()).hexdigest(),repr(p.read_text())),p.rename(p.with_suffix(\".pth.disabled\"))) for n in names if (p:=s/n).exists()]"
+    ]
+  ]
+}

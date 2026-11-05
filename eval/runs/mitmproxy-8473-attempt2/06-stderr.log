@@ -1,0 +1,11 @@
+Warning: you are leaving 1 commit behind, not connected to
+any of your branches:
+
+  be9f49d24 do not add empty SAN extensions
+
+If you want to keep it by creating a new branch, this may be a good time
+to do so with:
+
+ git branch <new-branch-name> be9f49d24
+
+HEAD is now at 3368a0a06 Fix Basic auth passwords containing colons (#8469)

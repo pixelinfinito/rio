@@ -1,0 +1,13 @@
+---
+source: crates/rio-core/tests/render.rs
+expression: output
+---
+Rio 0.1.0 — error
+Review: —  Run: —
+not_a_repository: A git repository is required
+
+Findings
+No findings were produced.
+
+Footer
+Total: 0 ms

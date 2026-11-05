@@ -1,0 +1,12 @@
+
+ RUN  v3.2.6 /tmp/rio-acceptance-immer
+
+ ✓ .rio/cache/baselines/a42c121e5ee740aec9b4f128e93858dacbe3847e/tree/__tests__/array-methods-filter-length.js (4 tests) 13ms
+ ✓ __tests__/array-methods-filter-length.js (4 tests) 19ms
+ ✓ .rio/cache/heads/904bc3c65f60c307b82fab5643bd6b2b9b684eddc393cfa18042c9cd05635d35/tree/__tests__/array-methods-filter-length.js (4 tests) 12ms
+
+ Test Files  3 passed (3)
+      Tests  12 passed (12)
+   Start at  19:59:29
+   Duration  1.48s (transform 718ms, setup 0ms, collect 992ms, tests 45ms, environment 1ms, prepare 384ms)
+

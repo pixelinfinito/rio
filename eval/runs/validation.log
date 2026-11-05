@@ -1,0 +1,12 @@
+Automated validation evidence (recorded after execution).
+Command: python3 -m unittest discover -s eval/tests -v
+Result: exit 0; Ran 19 tests in 10.770s; OK.
+Individual test output was observed in the tool session; this is a result summary, not a raw redirected transcript.
+
+Valid: eval/runs/mitmproxy-8473/record.json
+Valid: eval/runs/mitmproxy-8473-attempt2/record.json
+Valid: eval/runs/mitmproxy-8521-seeded/record.json
+Valid: eval/runs/pydantic-ai-12540-attempt3/record.json
+Valid: eval/runs/pydantic-ai-8641-seeded-attempt1/record.json
+Staged scope/size check: all files under eval/runs/, no .venv or .git paths, all files below 5,000,000 bytes.
+Git whitespace check reports spaces in preserved raw .patch context lines and installer logs; raw evidence was intentionally retained byte-for-byte.

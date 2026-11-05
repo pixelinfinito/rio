@@ -1,0 +1,20 @@
+{
+  "cwd": "/tmp/rio-zod-eval/positive-head",
+  "node": "22.23.4",
+  "pnpm": "10.12.1",
+  "argv": [
+    "corepack",
+    "pnpm",
+    "exec",
+    "vitest",
+    "run",
+    "--coverage",
+    "--coverage.reporter=lcov",
+    "--coverage.reportsDirectory=/tmp/rio-zod-eval/coverage-repro",
+    "--maxWorkers=2"
+  ],
+  "exit_code": 1,
+  "stdout_stderr": "coverage-tool-repro.log",
+  "result": "Missing @vitest/coverage-v8; no executed-coverage assertion. This omits Rio minWorkers to independently probe the underlying coverage installation.",
+  "wall_time": "Not separately measured for this ad hoc diagnostic."
+}

@@ -1,0 +1,38 @@
+packages/bench/key-iteration.ts(26,5): error TS6133: '_temp' is declared but its value is never read.
+packages/bench/safeparse.ts(26,15): error TS6133: '_result' is declared but its value is never read.
+packages/integration/fixtures/internal-types/cjs-test.cts(3,19): error TS1479: The current file is a CommonJS module whose imports will produce 'require' calls; however, the referenced file is an ECMAScript module and cannot be imported with 'require'. Consider writing a dynamic 'import("zod")' call instead.
+packages/integration/fixtures/internal-types/index.ts(45,7): error TS6133: '_refinedSchema' is declared but its value is never read.
+packages/integration/fixtures/internal-types/index.ts(46,7): error TS6133: '_transformedSchema' is declared but its value is never read.
+packages/integration/fixtures/internal-types/index.ts(47,7): error TS6133: '_pipedSchema' is declared but its value is never read.
+packages/integration/fixtures/internal-types/index.ts(50,7): error TS6133: '_optionalSchema' is declared but its value is never read.
+packages/resolution/src/index.cts(1,21): error TS1479: The current file is a CommonJS module whose imports will produce 'require' calls; however, the referenced file is an ECMAScript module and cannot be imported with 'require'. Consider writing a dynamic 'import("zod")' call instead.
+packages/resolution/src/index.cts(2,16): error TS1479: The current file is a CommonJS module whose imports will produce 'require' calls; however, the referenced file is an ECMAScript module and cannot be imported with 'require'. Consider writing a dynamic 'import("zod")' call instead.
+packages/resolution/src/index.cts(3,25): error TS1479: The current file is a CommonJS module whose imports will produce 'require' calls; however, the referenced file is an ECMAScript module and cannot be imported with 'require'. Consider writing a dynamic 'import("zod")' call instead.
+packages/resolution/src/index.cts(4,21): error TS1479: The current file is a CommonJS module whose imports will produce 'require' calls; however, the referenced file is an ECMAScript module and cannot be imported with 'require'. Consider writing a dynamic 'import("zod/mini")' call instead.
+packages/resolution/src/index.cts(5,21): error TS1479: The current file is a CommonJS module whose imports will produce 'require' calls; however, the referenced file is an ECMAScript module and cannot be imported with 'require'. Consider writing a dynamic 'import("zod/v3")' call instead.
+packages/resolution/src/index.cts(6,21): error TS1479: The current file is a CommonJS module whose imports will produce 'require' calls; however, the referenced file is an ECMAScript module and cannot be imported with 'require'. Consider writing a dynamic 'import("zod/v4")' call instead.
+packages/resolution/src/index.cts(7,21): error TS1479: The current file is a CommonJS module whose imports will produce 'require' calls; however, the referenced file is an ECMAScript module and cannot be imported with 'require'. Consider writing a dynamic 'import("zod/v4-mini")' call instead.
+packages/resolution/src/index.cts(8,16): error TS2307: Cannot find module 'zod/v4/locales/fr.cjs' or its corresponding type declarations.
+packages/resolution/src/index.cts(9,21): error TS1479: The current file is a CommonJS module whose imports will produce 'require' calls; however, the referenced file is an ECMAScript module and cannot be imported with 'require'. Consider writing a dynamic 'import("zod/v4/mini")' call instead.
+packages/resolution/vitest.config.ts(2,24): error TS7016: Could not find a declaration file for module '../../vitest.root.mjs'. '/tmp/rio-zod-eval/positive-base/vitest.root.mjs' implicitly has an 'any' type.
+packages/treeshake/default-locale.test.ts(56,28): error TS2349: This expression is not callable.
+  Type 'typeof import("/tmp/rio-zod-eval/positive-base/node_modules/.pnpm/@rollup+plugin-node-resolve@16.0.1_rollup@4.60.2/node_modules/@rollup/plugin-node-resolve/types/index")' has no call signatures.
+packages/treeshake/locale-treeshake.test.ts(46,28): error TS2349: This expression is not callable.
+  Type 'typeof import("/tmp/rio-zod-eval/positive-base/node_modules/.pnpm/@rollup+plugin-node-resolve@16.0.1_rollup@4.60.2/node_modules/@rollup/plugin-node-resolve/types/index")' has no call signatures.
+packages/zod/src/v3/tests/intersection.test.ts(56,8): error TS6196: '_Cat' is declared but never used.
+packages/zod/src/v3/tests/nativeEnum.test.ts(59,8): error TS6196: '_FruitEnum' is declared but never used.
+packages/zod/src/v3/tests/nativeEnum.test.ts(78,8): error TS6196: '_GreekEnum' is declared but never used.
+packages/zod/src/v3/tests/object.test.ts(428,9): error TS6133: '_Outer' is declared but its value is never read.
+packages/zod/src/v4/classic/tests/assignability.test.ts(166,9): error TS6133: '_a' is declared but its value is never read.
+packages/zod/src/v4/classic/tests/assignability.test.ts(167,9): error TS6133: '_b' is declared but its value is never read.
+packages/zod/src/v4/classic/tests/assignability.test.ts(168,9): error TS6133: '_c' is declared but its value is never read.
+packages/zod/src/v4/classic/tests/assignability.test.ts(169,9): error TS6133: '_d' is declared but its value is never read.
+packages/zod/src/v4/classic/tests/assignability.test.ts(191,8): error TS6196: '_RefinedSchema' is declared but never used.
+packages/zod/src/v4/classic/tests/enum.test.ts(183,8): error TS6196: '_a' is declared but never used.
+packages/zod/src/v4/classic/tests/enum.test.ts(184,8): error TS6196: '_b' is declared but never used.
+packages/zod/src/v4/classic/tests/lazy.test.ts(206,8): error TS6196: '_Category' is declared but never used.
+packages/zod/src/v4/classic/tests/preprocess-types.test.ts(41,9): error TS6133: '_bare' is declared but its value is never read.
+packages/zod/src/v4/classic/tests/preprocess-types.test.ts(42,9): error TS6133: '_bareCore' is declared but its value is never read.
+packages/zod/src/v4/mini/tests/assignability.test.ts(120,8): error TS6196: '_RefinedSchema' is declared but never used.
+scripts/triage-signal.ts(676,7): error TS2412: Type '{ verdict: string; status: string; } | undefined' is not assignable to type '{ verdict: string; status: string; }' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the type of the target.
+  Type 'undefined' is not assignable to type '{ verdict: string; status: string; }'.

@@ -1,0 +1,6 @@
+src/unstable-core-do-not-import/stream/sse.test.ts(33,9): error TS2322: Type 'number' is not assignable to type 'string'.
+src/unstable-core-do-not-import/stream/sse.test.ts(106,17): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'number'.
+src/unstable-core-do-not-import/stream/sse.test.ts(139,17): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'number'.
+src/unstable-core-do-not-import/stream/sse.test.ts(157,9): error TS2322: Type 'number' is not assignable to type 'string'.
+src/unstable-core-do-not-import/stream/sse.test.ts(248,17): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'number'.
+src/unstable-core-do-not-import/stream/sse.test.ts(315,5): error TS2322: Type 'number' is not assignable to type 'string'.

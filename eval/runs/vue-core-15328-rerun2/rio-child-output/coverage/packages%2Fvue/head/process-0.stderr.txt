@@ -1,0 +1,98 @@
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 11 ⎯⎯⎯⎯⎯⎯
+
+ FAIL  |e2e| packages/vue/__tests__/e2e/commits.spec.ts > e2e: commits
+ FAIL  |e2e| packages/vue/__tests__/e2e/grid.spec.ts > e2e: grid
+ FAIL  |e2e| packages/vue/__tests__/e2e/hydrationStrategies.spec.ts > async component hydration strategies
+ FAIL  |e2e| packages/vue/__tests__/e2e/markdown.spec.ts > e2e: markdown
+ FAIL  |e2e| packages/vue/__tests__/e2e/memory-leak.spec.ts [ packages/vue/__tests__/e2e/memory-leak.spec.ts ]
+ FAIL  |e2e| packages/vue/__tests__/e2e/ssr-custom-element.spec.ts [ packages/vue/__tests__/e2e/ssr-custom-element.spec.ts ]
+ FAIL  |e2e| packages/vue/__tests__/e2e/svg.spec.ts > e2e: svg
+ FAIL  |e2e| packages/vue/__tests__/e2e/todomvc.spec.ts > e2e: todomvc
+ FAIL  |e2e| packages/vue/__tests__/e2e/tree.spec.ts > e2e: tree
+ FAIL  |e2e| packages/vue/__tests__/e2e/trusted-types.spec.ts [ packages/vue/__tests__/e2e/trusted-types.spec.ts ]
+ FAIL  |e2e| packages/vue/__tests__/e2e/vModel.spec.ts [ packages/vue/__tests__/e2e/vModel.spec.ts ]
+Error: Could not find Chrome (ver. 151.0.7922.47). This can occur if either
+ 1. you did not perform an installation before running the script (e.g. `npx puppeteer browsers install chrome`) or
+ 2. your cache path is incorrectly configured (which is: /home/ubuntu/.cache/puppeteer).
+For (2), check out our guide on configuring puppeteer at https://pptr.dev/guides/configuration.
+ ❯ ChromeLauncher.resolveExecutablePath ../../../../../../head/node_modules/.pnpm/puppeteer-core@25.4.0/node_modules/puppeteer-core/src/node/BrowserLauncher.ts:566:12
+ ❯ ChromeLauncher.computeLaunchArguments ../../../../../../head/node_modules/.pnpm/puppeteer-core@25.4.0/node_modules/puppeteer-core/src/node/ChromeLauncher.ts:140:10
+ ❯ ChromeLauncher.launch ../../../../../../head/node_modules/.pnpm/puppeteer-core@25.4.0/node_modules/puppeteer-core/src/node/BrowserLauncher.ts:135:23
+ ❯ ChromeLauncher.launch ../../../../../../head/node_modules/.pnpm/puppeteer-core@25.4.0/node_modules/puppeteer-core/src/node/ChromeLauncher.ts:59:11
+ ❯ PuppeteerNode.launch ../../../../../../head/node_modules/.pnpm/puppeteer-core@25.4.0/node_modules/puppeteer-core/src/node/PuppeteerNode.ts:143:11
+ ❯ packages/vue/__tests__/e2e/e2eUtils.ts:67:15
+     65|
+     66|   beforeAll(async () => {
+     67|     browser = await puppeteer.launch(resolvedOptions)
+       |               ^
+     68|   }, 20000)
+     69|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/22]⎯
+
+ FAIL  |e2e| packages/vue/__tests__/e2e/commits.spec.ts > e2e: commits
+ FAIL  |e2e| packages/vue/__tests__/e2e/grid.spec.ts > e2e: grid
+ FAIL  |e2e| packages/vue/__tests__/e2e/hydrationStrategies.spec.ts > async component hydration strategies
+ FAIL  |e2e| packages/vue/__tests__/e2e/markdown.spec.ts > e2e: markdown
+ FAIL  |e2e| packages/vue/__tests__/e2e/memory-leak.spec.ts [ packages/vue/__tests__/e2e/memory-leak.spec.ts ]
+ FAIL  |e2e| packages/vue/__tests__/e2e/ssr-custom-element.spec.ts [ packages/vue/__tests__/e2e/ssr-custom-element.spec.ts ]
+ FAIL  |e2e| packages/vue/__tests__/e2e/svg.spec.ts > e2e: svg
+ FAIL  |e2e| packages/vue/__tests__/e2e/todomvc.spec.ts > e2e: todomvc
+ FAIL  |e2e| packages/vue/__tests__/e2e/tree.spec.ts > e2e: tree
+ FAIL  |e2e| packages/vue/__tests__/e2e/trusted-types.spec.ts [ packages/vue/__tests__/e2e/trusted-types.spec.ts ]
+ FAIL  |e2e| packages/vue/__tests__/e2e/vModel.spec.ts [ packages/vue/__tests__/e2e/vModel.spec.ts ]
+TypeError: Cannot read properties of undefined (reading 'close')
+ ❯ packages/vue/__tests__/e2e/e2eUtils.ts:90:19
+     88|
+     89|   afterAll(async () => {
+     90|     await browser.close()
+       |                   ^
+     91|   })
+     92|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/22]⎯
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: browserType.launch: Executable doesn't exist at /home/ubuntu/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+╔════════════════════════════════════════════════════════════╗
+║ Looks like Playwright was just installed or updated.       ║
+║ Please run the following command to download new browsers: ║
+║                                                            ║
+║     npx playwright install                                 ║
+║                                                            ║
+║ <3 Playwright Team                                         ║
+╚════════════════════════════════════════════════════════════╝
+ ❯ ../../../../../../head/node_modules/.pnpm/@vitest+browser-playwright@4.1.10_playwright@1.62.1_vite@8.2.0_vitest@4.1.10/node_modules/@vitest/browser-playwright/dist/index.js:941:55
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { log: [] }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+error during close browserType.launch: Executable doesn't exist at /home/ubuntu/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+╔════════════════════════════════════════════════════════════╗
+║ Looks like Playwright was just installed or updated.       ║
+║ Please run the following command to download new browsers: ║
+║                                                            ║
+║     npx playwright install                                 ║
+║                                                            ║
+║ <3 Playwright Team                                         ║
+╚════════════════════════════════════════════════════════════╝
+    at /dev/shm/vue-core-rerun2/rio-eval-w7i0tw6v/head/node_modules/.pnpm/@vitest+browser-playwright@4.1.10_playwright@1.62.1_vite@8.2.0_vitest@4.1.10/node_modules/@vitest/browser-playwright/dist/index.js:941:55 {
+  log: [],
+  name: 'Error',
+  type: 'Unhandled Error',
+  stacks: [
+    {
+      method: '',
+      file: '/dev/shm/vue-core-rerun2/rio-eval-w7i0tw6v/head/node_modules/.pnpm/@vitest+browser-playwright@4.1.10_playwright@1.62.1_vite@8.2.0_vitest@4.1.10/node_modules/@vitest/browser-playwright/dist/index.js',
+      line: 941,
+      column: 55
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+python3 eval/evaluate.py record --report /home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2/report.json --verdicts /home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2/verdicts.json --out /home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2/record.json
+python3 eval/evaluate.py validate /home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2/record.json
+Valid: /home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2/record.json
+python3 eval/evaluate.py record --report eval/runs/tanstack-query-11392-rerun2/report.json --verdicts eval/runs/tanstack-query-11392-rerun2/verdicts.json --out eval/runs/tanstack-query-11392-rerun2/record.json
+python3 eval/evaluate.py validate eval/runs/tanstack-query-11392-rerun2/record.json
+Valid: eval/runs/tanstack-query-11392-rerun2/record.json

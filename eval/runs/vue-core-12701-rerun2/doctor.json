@@ -1,0 +1,322 @@
+{
+  "blocking_problems": [],
+  "cache": {
+    "free_space": 6078013440,
+    "path": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache",
+    "writable": true
+  },
+  "configuration": {
+    "cache": {
+      "dir": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache",
+      "max_age": {
+        "nanos": 0,
+        "secs": 2592000
+      },
+      "max_size": 5368709120,
+      "retain_raw_output": true
+    },
+    "config_dir": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/config",
+    "endpoint_url": null,
+    "notices": [],
+    "output_limit": 268435456,
+    "parallelism": 4,
+    "sources": {
+      "cache.dir": "RIO_CACHE_DIR",
+      "cache.max_age": "default",
+      "cache.max_size": "default",
+      "cache.retain_raw_output": "default",
+      "endpoint.url": "default",
+      "run.output_limit": "default",
+      "run.parallelism": "default"
+    }
+  },
+  "endpoint": "No endpoint is available in this version",
+  "head": "cc34f2e4b1490d55a18c9f8e4f83bda855a6e105",
+  "plan": {
+    "checks": [
+      {
+        "baseline": false,
+        "baseline_hint": null,
+        "baseline_remap": false,
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "secrets",
+        "language": "common",
+        "root": ".",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [],
+        "tool": null
+      },
+      {
+        "baseline": false,
+        "baseline_hint": null,
+        "baseline_remap": false,
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "dependencies",
+        "language": "common",
+        "root": ".",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [],
+        "tool": null
+      }
+    ],
+    "layout": {
+      "dependencies": {
+        ".": [],
+        "packages-private": [],
+        "packages-private/dts-built-test": [
+          "packages/reactivity",
+          "packages/shared",
+          "packages/vue"
+        ],
+        "packages-private/dts-test": [
+          "packages-private/dts-built-test",
+          "packages/vue"
+        ],
+        "packages-private/sfc-playground": [
+          "packages/vue"
+        ],
+        "packages-private/sfc-playground/src/download/template": [],
+        "packages-private/template-explorer": [],
+        "packages-private/vite-debug": [
+          "packages/vue"
+        ],
+        "packages/compiler-core": [
+          "packages/shared"
+        ],
+        "packages/compiler-dom": [
+          "packages/compiler-core",
+          "packages/shared"
+        ],
+        "packages/compiler-sfc": [
+          "packages/compiler-core",
+          "packages/compiler-dom",
+          "packages/compiler-ssr",
+          "packages/shared"
+        ],
+        "packages/compiler-ssr": [
+          "packages/compiler-dom",
+          "packages/shared"
+        ],
+        "packages/reactivity": [
+          "packages/shared"
+        ],
+        "packages/runtime-core": [
+          "packages/reactivity",
+          "packages/shared"
+        ],
+        "packages/runtime-dom": [
+          "packages/reactivity",
+          "packages/runtime-core",
+          "packages/shared"
+        ],
+        "packages/runtime-test": [
+          "packages/runtime-core",
+          "packages/shared"
+        ],
+        "packages/server-renderer": [
+          "packages/compiler-ssr",
+          "packages/shared",
+          "packages/vue"
+        ],
+        "packages/shared": [],
+        "packages/vue": [
+          "packages/compiler-dom",
+          "packages/compiler-sfc",
+          "packages/runtime-dom",
+          "packages/server-renderer",
+          "packages/shared"
+        ],
+        "packages/vue-compat": [
+          "packages/vue"
+        ],
+        "packages/vue/compiler-sfc": [],
+        "packages/vue/jsx-runtime": [],
+        "packages/vue/server-renderer": []
+      },
+      "notes": [],
+      "roots": [
+        {
+          "language": "typescript",
+          "manifest": "package.json",
+          "name": null,
+          "path": ".",
+          "workspace": null
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages-private/tsconfig.json",
+          "name": null,
+          "path": "packages-private",
+          "workspace": null
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages-private/dts-built-test/package.json",
+          "name": "dts-built-test",
+          "path": "packages-private/dts-built-test",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages-private/dts-test/package.json",
+          "name": "dts-test",
+          "path": "packages-private/dts-test",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages-private/sfc-playground/package.json",
+          "name": "@vue/sfc-playground",
+          "path": "packages-private/sfc-playground",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages-private/sfc-playground/src/download/template/package.json",
+          "name": "vite-vue-starter",
+          "path": "packages-private/sfc-playground/src/download/template",
+          "workspace": null
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages-private/template-explorer/package.json",
+          "name": "@vue/template-explorer",
+          "path": "packages-private/template-explorer",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages-private/vite-debug/package.json",
+          "name": "vite-debug",
+          "path": "packages-private/vite-debug",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/compiler-core/package.json",
+          "name": "@vue/compiler-core",
+          "path": "packages/compiler-core",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/compiler-dom/package.json",
+          "name": "@vue/compiler-dom",
+          "path": "packages/compiler-dom",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/compiler-sfc/package.json",
+          "name": "@vue/compiler-sfc",
+          "path": "packages/compiler-sfc",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/compiler-ssr/package.json",
+          "name": "@vue/compiler-ssr",
+          "path": "packages/compiler-ssr",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/reactivity/package.json",
+          "name": "@vue/reactivity",
+          "path": "packages/reactivity",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/runtime-core/package.json",
+          "name": "@vue/runtime-core",
+          "path": "packages/runtime-core",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/runtime-dom/package.json",
+          "name": "@vue/runtime-dom",
+          "path": "packages/runtime-dom",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/runtime-test/package.json",
+          "name": "@vue/runtime-test",
+          "path": "packages/runtime-test",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/server-renderer/package.json",
+          "name": "@vue/server-renderer",
+          "path": "packages/server-renderer",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/shared/package.json",
+          "name": "@vue/shared",
+          "path": "packages/shared",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/vue/package.json",
+          "name": "vue",
+          "path": "packages/vue",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/vue-compat/package.json",
+          "name": "@vue/compat",
+          "path": "packages/vue-compat",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/vue/compiler-sfc/package.json",
+          "name": null,
+          "path": "packages/vue/compiler-sfc",
+          "workspace": null
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/vue/jsx-runtime/package.json",
+          "name": null,
+          "path": "packages/vue/jsx-runtime",
+          "workspace": null
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/vue/server-renderer/package.json",
+          "name": null,
+          "path": "packages/vue/server-renderer",
+          "workspace": null
+        }
+      ]
+    },
+    "notes": [],
+    "probes_ran": false,
+    "roots": []
+  },
+  "profile": {
+    "chain": [
+      "rio/base"
+    ],
+    "name": "rio/base",
+    "valid": true
+  },
+  "repository": "/dev/shm/vue-core-rerun2/rio-eval-bcixpg06/head",
+  "warnings": [
+    "rio/base:$.steps[3]: rio/triage is deferred locally: no_endpoint",
+    "rio/base:$.steps[4]: rio/agents is deferred locally: no_endpoint",
+    "rio/base:$.steps[5]: rio/verify is deferred locally: no_endpoint"
+  ]
+}

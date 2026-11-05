@@ -1,0 +1,2 @@
+src/app/app.config.ts(9,8): error TS2307: Cannot find module '@tanstack/angular-query-experimental' or its corresponding type declarations.
+src/app/app.ts(2,29): error TS2307: Cannot find module '@tanstack/angular-query-experimental' or its corresponding type declarations.

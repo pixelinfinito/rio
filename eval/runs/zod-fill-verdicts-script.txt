@@ -1,0 +1,55 @@
+import pathlib,json,re,subprocess,collections
+root=pathlib.Path('/home/ubuntu/.t3/worktrees/rio/eval-run-zod'); runs=root/'eval/runs'
+def norm(s):
+ return re.sub(r"(['\"])/[^'\"\n]+\1",lambda m:m.group(1)+'<absolute>/'+pathlib.PurePosixPath(m.group(0)[1:-1]).name+m.group(1),' '.join(s.split()))
+def diagnostics(p):
+ found=[]
+ for n,l in enumerate(p.read_text().splitlines(),1):
+  m=re.match(r'(.+?)\((\d+),(\d+)\): error (TS\d+): (.*)',l)
+  if m: found.append((m.group(1),m.group(4),norm(m.group(5)),p,n))
+ return found
+for case in ['6085','6527','6085-retry1','6527-retry1']:
+ n=case.split('-')[0];directory=runs/f'zod-{case}';ev=runs/f'zod-{n}-evidence'
+ report=json.loads((directory/'report.json').read_text());v=json.loads((directory/'verdicts.json').read_text())
+ base=[d for p in ev.glob('adjudication-base-*.log') for d in diagnostics(p)]
+ head=[d for p in ev.glob('adjudication-head-*.log') for d in diagnostics(p)]
+ v['reviewer']='sub-agent eval-zod (automated)';v['verdict_source']='automated'
+ v['case_id']=n if 'retry1' in case else n+'-attempt1-excluded'
+ v['independently_clean']=n=='6527'
+ v['notes'] += ['Excluded evidence only: no base check ran and baseline_classification_ran=false. No precision, recall, usefulness, or release credit is claimed from this run.',f'Independent evidence: ../zod-{n}-evidence/selection.json and oracle command ledgers; detailed exclusions and reproduction in ../zod-NOTES.md.','No raw finding/check has been edited or removed. No trust override, source change, lockfile update, or binary rebuild was used.']
+ v['commands'] += [f'Independent oracle ledger: eval/runs/zod-{n}-evidence/{p.name}' for p in sorted(ev.glob('*commands.json'))]
+ if n=='6085':
+  selection=json.loads((ev/'selection.json').read_text());expect=selection['expected'][0]
+  v['positive_control']={'kind':'real-pr','expected':[{'id':expect['id'],'mechanism':'lint-rule','evidence':'Before Rio, ../zod-6085-evidence/base-05.log: exit 0, new file absent; ../zod-6085-evidence/head-05.log: exit 1, one enabled Biome lint/correctness/noUnusedVariables warning at scripts/compile-fuzz.ts:353:14 for catch(e). Full lint context in base-06.log/head-06.log. Follow-up PR6504 removes exactly this binding (fix.patch). Rio emits no matching lint finding and skips ESLint for no_project_config. This observation is excluded from recall because baseline/setup is ineligible.','finding_ids':[]}]}
+  v['misses']=[{'id':'control/unused-compile-fuzz-catch-binding','scope_class':'deterministic','mechanism':'lint-rule','expectation_id':expect['id'],'description':'The independently established introduced Biome unused-catch binding is absent from Rio findings. Rio does not support the repository Biome linter.','evidence':'Independent preregistered oracle and fix evidence: ../zod-6085-evidence/{selection.json,base-05.log,head-05.log,fix.patch}. Raw lint checks are skipped/no_project_config. Expected finding_ids=[]. Ineligible environment, so no scored recall conclusion.'}]
+  if 'retry1' in case:v['notes'].append('Seven additional benchmark type-error findings (nine occurrences) were independently confirmed after capture in adjudication-head-root.log; their files are absent at base. They are observations, not post-hoc additions to the preregistered Biome expectation or scored precision.')
+ else:
+  v['positive_control']={'kind':'none','expected':[]};v['misses']=[]
+  v['notes'].append('Independent negative-control assessment: upstream test tsconfig and Biome lint pass both revisions; source + repaired build-dependent tests total base 7855/head 7858 with no type errors. See ../zod-6527-evidence/independent-assessment.json. Raw default root tsc includes unrelated pre-existing tests/benchmarks and build-dependent consumer fixtures.')
+ if 'retry1' in case:
+  v['notes'].append('Corrective install plan adds validated pnpm node_modules directory aliases; RAM-backed temporary directory avoids original filesystem journal stalls. Git transport redirected through a downloaded public clone using per-process GIT_CONFIG_COUNT/KEY_0/VALUE_0, fully described in ../zod-NOTES.md. Commits/profile/binary unchanged.')
+ else:v['notes'].append('Original disk-backed attempt was interrupted after prolonged filesystem journal waits and replaced by a same-input RAM-backed corrective retry. See ../zod-original-capture-cancellation.json; original report is partial and excluded.')
+ v['findings']={};proof=[]
+ for f in report['findings']+report['risks']:
+  path=f['location']['path'];code=f['rule_id'].rsplit('/',1)[-1];first=norm(f['message'].splitlines()[0])
+  matches=[d for d in base if d[:3]==(path,code,first)]
+  h=[d for d in head if d[:3]==(path,code,first)]
+  if n=='6085' and path in ['packages/bench/compile-tuple.ts','packages/bench/compile-matrix.ts']:
+   absent=subprocess.run(['git','cat-file','-e',report['review']['base']+':'+path],cwd='/tmp/rio-zod-eval/zod',stderr=subprocess.DEVNULL).returncode!=0
+   assert absent and h,(f['id'],path,code,first)
+   verdict='true-positive';ref=h[0]
+   reason=f'Independent ../zod-6085-evidence/{ref[3].name}:{ref[4]} reproduces {code} under the pinned root tsc config at head. git cat-file confirms {path} is absent at base. New benchmark incorrectly treats compiled tuple schemas as callables/objects with .code, or passes an unconstrained array where a nonempty discriminated-union tuple is required. Correct change-specific type diagnostic despite Rio state unclassified. Run remains excluded because no baseline ran; no scored TP credit.'
+  elif code in ['TS2307','TS7006'] and path.startswith(('packages/resolution/','packages/integration/')):
+   verdict='environment-failure'
+   reason='Build-dependent consumer fixture analyzed by raw project tsc before published Zod artifacts are built in Rio materialization. Missing-module or consequent implicit-any diagnostic does not establish an introduced PR defect. Independent consumer/root oracle outputs and upstream build/test repair are retained in ../zod-'+n+'-evidence/. Rio base checks never ran because its linked-workspace guard rejects the committed source delta, so attribution cannot be completed. Excluded from metrics.'
+  elif matches:
+   verdict='pre-existing-shown';ref=matches[0]
+   reason=f'Independent pinned-base tsc output ../zod-{n}-evidence/{ref[3].name}:{ref[4]} contains the same file, diagnostic {code}, and message. This is an existing diagnostic from the raw default config (including test-only unused declarations or unrelated fixtures/benchmarks), not introduced by this PR. Upstream test-config/typecheck evidence is separately retained. Rio labels it pre-existing but has no executed baseline; base status here comes from the independent oracle. Run excluded.'
+  else:
+   verdict='environment-failure'
+   reason=f'No working Rio baseline exists: the linked-source compatibility guard rejects the committed packages/zod change. Independent oracles do not establish this {code} diagnostic as change-specific, and raw materialized consumer checks lack the full upstream build/test setup. Conservative environment-failure rather than an unverified TP/FP/pre-existing claim. See ../zod-{n}-evidence/adjudication-commands.json and ../zod-NOTES.md; excluded from metrics.'
+  v['findings'][f['id']]={'verdict':verdict,'reason':reason}
+  proof.append({'finding_id':f['id'],'rule_id':f['rule_id'],'path':path,'verdict':verdict,'base_oracle_matches':[{'path':str(d[3].relative_to(runs)),'line':d[4]} for d in matches],'head_oracle_matches':[{'path':str(d[3].relative_to(runs)),'line':d[4]} for d in h]})
+ (directory/'verdicts.json').write_text(json.dumps(v,indent=2)+'\n')
+ (directory/'adjudication-evidence.json').write_text(json.dumps(proof,indent=2)+'\n')
+ print(case,dict(collections.Counter(x['verdict'] for x in v['findings'].values())))

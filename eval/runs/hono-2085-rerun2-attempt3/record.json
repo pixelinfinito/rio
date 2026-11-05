@@ -1,0 +1,228 @@
+{
+  "schema": "rio-eval-record-v2",
+  "methodology": "deterministic-v2",
+  "repository": "honojs/hono",
+  "pr": "https://github.com/honojs/hono/pull/2085",
+  "case_id": "2085-seeded-type-error-20261105",
+  "languages": [
+    "typescript"
+  ],
+  "reviewer": "sub-agent rerun2-hono (automated)",
+  "verdict_source": "automated",
+  "independently_clean": false,
+  "commands": [
+    "cwd=/dev/shm/hono-rerun2/rio-eval-hxgcihnk argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/honojs/hono.git\", \"/dev/shm/hono-rerun2/rio-eval-hxgcihnk/head\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-hxgcihnk/head argv=[\"git\", \"fetch\", \"origin\", \"b23cf8d65d851de9726d6388b45dda39e6fdb9ab\", \"94d2dcbf315dd3ac969d321b532fb0049b1a7c36\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-hxgcihnk/head argv=[\"git\", \"merge-base\", \"b23cf8d65d851de9726d6388b45dda39e6fdb9ab\", \"94d2dcbf315dd3ac969d321b532fb0049b1a7c36\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-hxgcihnk/head argv=[\"git\", \"checkout\", \"--detach\", \"94d2dcbf315dd3ac969d321b532fb0049b1a7c36\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-hxgcihnk argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/dev/shm/hono-rerun2/rio-eval-hxgcihnk/head\", \"/dev/shm/hono-rerun2/rio-eval-hxgcihnk/base\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-hxgcihnk/base argv=[\"git\", \"checkout\", \"--detach\", \"b23cf8d65d851de9726d6388b45dda39e6fdb9ab\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-hxgcihnk/base argv=[\"corepack\", \"yarn@1.22.22\", \"install\", \"--frozen-lockfile\", \"--non-interactive\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-hxgcihnk/base argv=[\"python3\", \"-c\", \"from pathlib import Path; import hashlib; p=Path('node_modules/.bin/vitest'); assert p.is_symlink(); target=p.resolve(); original=target.read_bytes(); p.unlink(); p.write_text(\\\"#!/usr/bin/env python3\\\\n# Vitest 1.1 CLI compatibility only; package files and test selection are unchanged.\\\\nimport os\\\\nfrom pathlib import Path\\\\nimport sys\\\\nargs = []\\\\nfor arg in sys.argv[1:]:\\\\n    if arg == '--coverage':\\\\n        args.append('--coverage.enabled')\\\\n    elif arg.startswith('--maxWorkers='):\\\\n        value = arg.split('=', 1)[1]\\\\n        os.environ['VITEST_MAX_THREADS'] = value\\\\n        os.environ['VITEST_MAX_FORKS'] = value\\\\n    elif arg.startswith('--minWorkers='):\\\\n        value = arg.split('=', 1)[1]\\\\n        os.environ['VITEST_MIN_THREADS'] = value\\\\n        os.environ['VITEST_MIN_FORKS'] = value\\\\n    else:\\\\n        args.append(arg)\\\\nentry = Path(__file__).absolute().parent.parent / 'vitest' / 'vitest.mjs'\\\\nos.execvp('node', ['node', str(entry), *args])\\\\n\\\"); p.chmod(0o755); print('Original entry:',target,'SHA256:',hashlib.sha256(original).hexdigest()); print('CLI compatibility shim SHA256:',hashlib.sha256(p.read_bytes()).hexdigest())\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-hxgcihnk/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-hxgcihnk/head argv=[\"corepack\", \"yarn@1.22.22\", \"install\", \"--frozen-lockfile\", \"--non-interactive\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-hxgcihnk/head argv=[\"python3\", \"-c\", \"from pathlib import Path; import hashlib; p=Path('node_modules/.bin/vitest'); assert p.is_symlink(); target=p.resolve(); original=target.read_bytes(); p.unlink(); p.write_text(\\\"#!/usr/bin/env python3\\\\n# Vitest 1.1 CLI compatibility only; package files and test selection are unchanged.\\\\nimport os\\\\nfrom pathlib import Path\\\\nimport sys\\\\nargs = []\\\\nfor arg in sys.argv[1:]:\\\\n    if arg == '--coverage':\\\\n        args.append('--coverage.enabled')\\\\n    elif arg.startswith('--maxWorkers='):\\\\n        value = arg.split('=', 1)[1]\\\\n        os.environ['VITEST_MAX_THREADS'] = value\\\\n        os.environ['VITEST_MAX_FORKS'] = value\\\\n    elif arg.startswith('--minWorkers='):\\\\n        value = arg.split('=', 1)[1]\\\\n        os.environ['VITEST_MIN_THREADS'] = value\\\\n        os.environ['VITEST_MIN_FORKS'] = value\\\\n    else:\\\\n        args.append(arg)\\\\nentry = Path(__file__).absolute().parent.parent / 'vitest' / 'vitest.mjs'\\\\nos.execvp('node', ['node', str(entry), *args])\\\\n\\\"); p.chmod(0o755); print('Original entry:',target,'SHA256:',hashlib.sha256(original).hexdigest()); print('CLI compatibility shim SHA256:',hashlib.sha256(p.read_bytes()).hexdigest())\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-hxgcihnk/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-hxgcihnk/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-hxgcihnk/head argv=[\"node\", \"--version\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-hxgcihnk/head argv=[\"npm\", \"--version\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-hxgcihnk/head argv=[\"corepack\", \"--version\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-hxgcihnk/head argv=[\"python3\", \"--version\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-hxgcihnk/head argv=[\"uv\", \"--version\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-hxgcihnk/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"/home/ubuntu/.t3/worktrees/rio/eval-rerun2-hono/eval/runs/hono-2085-rerun2-attempt3/profile.yaml\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-hxgcihnk/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/dev/shm/hono-rerun2/rio-eval-hxgcihnk/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"b23cf8d65d851de9726d6388b45dda39e6fdb9ab\", \"--format\", \"json\", \"--offline\", \"--profile\", \"/home/ubuntu/.t3/worktrees/rio/eval-rerun2-hono/eval/runs/hono-2085-rerun2-attempt3/profile.yaml\"]"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-rerun2-hono/eval/runs/hono-2085-rerun2-attempt3/commands.json; Rio binary SHA-256: 3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+    "Rerun2 binary f6e4f87e4c65. Same preregistered base/head, install plan and profile; see ../hono-rerun2-evidence/registration.json for exact runtime, transport, hashes and expectations.",
+    "Pinned Node20.10.0, Corepack0.36.0, Yarn1.22.22; COREPACK_ENABLE_AUTO_PIN=0, NO_COLOR unset, TMPDIR=/dev/shm/hono-rerun2. Unchanged historical Vitest1.1 launcher shim retained; native version-aware Rio invocation is not separately established by this experiment.",
+    "All applicable root typecheck/lint head/base pairs succeeded with verified dependencies; coverage passed and secrets passed. Dependency audit deliberately skipped offline; no vulnerability-detection or secret-positive-control claim. Report incomplete includes no_endpoint agent deferral.",
+    "Canonical retry: both independent frozen base/head installations succeeded, no runner failures, runner exit0 (Rio review exit1 is the expected type-error finding). Increased per-command timeout from1200s to1800s after shared I/O contention; same preregistered pins, tool versions, install plan and profile.",
+    "Attempt2 failed before review because the historical local seed-transport directory no longer existed. Attempt3 reconstructed the exact commit from ../hono-evidence/2085-seed.bundle in /dev/shm/hono-rerun2/seed-transport, then used the same process-local Git insteadOf mechanism. Rechecked patch SHA256 8f8a2a9bf2defa96158c9b3102ce8b35f64a9996428174e73d5ba367dd4d7b6b; seed and synthetic SHA unchanged. See ../hono-rerun2-evidence/setup-retries.json.",
+    "Expected seeded-url-export-type-mismatch detected by the same preregistered TS2322 finding ID as before. No independently established additional deterministic miss."
+  ],
+  "positive_control": {
+    "kind": "seeded-mutation",
+    "expected": [
+      {
+        "id": "seeded-url-export-type-mismatch",
+        "mechanism": "type-error",
+        "evidence": "../hono-2085-seed-oracle/: original locked TypeScript5.3.3 tsc --noEmit --pretty false, base b23cf8d65d851de9726d6388b45dda39e6fdb9ab exit0; seeded head 94d2dcbf315dd3ac969d321b532fb0049b1a7c36 exit2 with exactly TS2322 src/utils/url.ts:267:14 string not assignable to number. Lint and 15 instrumented URL tests pass both. Exact patch/hash in 2085-seed.patch and 2085-seed-pins.json.",
+        "finding_ids": [
+          "61519345c86a98b40bcf228e8c5bcea888770a6b79ee55a392217a938457659c"
+        ]
+      }
+    ]
+  },
+  "base_sha": "b23cf8d65d851de9726d6388b45dda39e6fdb9ab",
+  "head_sha": "94d2dcbf315dd3ac969d321b532fb0049b1a7c36",
+  "mode": "branch",
+  "review_id": "db03c31db037905c",
+  "run_id": "01M6NQJRVEMRPMZ8SZS60GMG7J",
+  "rio_version": "0.1.0",
+  "profile": "hono-typescript-verified-all-checks",
+  "wall_time_ms": 42064,
+  "status": "incomplete",
+  "report_path": "eval/runs/hono-2085-rerun2-attempt3/report.json",
+  "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+  "profile_sha256": "3a3138714cdc833eb6047bd4f7bf284e5d9a4c960429e2e40202d3aa5db40831",
+  "environment": {
+    "dependency_state": "verified",
+    "baseline_ran": true,
+    "baseline_classification_ran": true,
+    "eligible": true,
+    "reasons": [],
+    "checks": [
+      {
+        "findings": [],
+        "kind": "secrets",
+        "language": "common",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "findings": [],
+        "hint": "Dependency audit needs api.osv.dev",
+        "kind": "dependencies",
+        "language": "common",
+        "outcome": "skipped",
+        "reason": "offline",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "lint",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 2699
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "lint",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "base",
+        "wall_time_ms": 2466
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 31933
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "findings",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 15474
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "base",
+        "wall_time_ms": 17584
+      }
+    ],
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "Graph references use syntax and text; no language server was used",
+      "Offline applies to Rio; tool and test processes were not network-isolated"
+    ]
+  },
+  "findings": [
+    {
+      "finding": {
+        "category": "defect",
+        "evidence": [
+          "tsc diagnostic"
+        ],
+        "evidence_level": "static_proven",
+        "id": "61519345c86a98b40bcf228e8c5bcea888770a6b79ee55a392217a938457659c",
+        "location": {
+          "column": 14,
+          "line_end": 267,
+          "line_start": 267,
+          "occurrence_state": "new",
+          "path": "src/utils/url.ts",
+          "symbol_path": "url.rioEvalTypeControl"
+        },
+        "locations": [
+          {
+            "column": 14,
+            "line_end": 267,
+            "line_start": 267,
+            "occurrence_state": "new",
+            "path": "src/utils/url.ts",
+            "symbol_path": "url.rioEvalTypeControl"
+          }
+        ],
+        "message": "Type 'string' is not assignable to type 'number'.",
+        "rule_id": "typecheck/tsc/TS2322",
+        "severity": "error",
+        "source": {
+          "tool": "tsc",
+          "version": "Version 5.3.3"
+        },
+        "state": "new",
+        "trigger": ""
+      },
+      "verdict": "true-positive",
+      "reason": "Exact independent oracle match: ../hono-2085-seed-oracle/base-typecheck.stdout.log has no errors and base command exits0; head-typecheck.stdout.log has exactly TS2322 string not assignable to number at src/utils/url.ts267:14 and exits2. The preserved single-change patch adds this mismatched numeric export. Rio correctly labels it new; base/head typecheck and lint are dependency_state verified. This is one underlying seeded type bug. Rechecked rerun2 report: same rule, message, path, line267:14 and new state; independent oracle pins and patch are unchanged.",
+      "message_template": "Type 'string' is not assignable to type 'number'.",
+      "file_set": [
+        "src/utils/url.ts"
+      ],
+      "root_cause_key": "e4a15967e2f8d196bb4d2b169534d2c63be691eec3c93f7c4ffa2632fbf15c38",
+      "family": "typecheck/tsc/TS2322"
+    }
+  ],
+  "root_causes": [
+    {
+      "root_cause_key": "e4a15967e2f8d196bb4d2b169534d2c63be691eec3c93f7c4ffa2632fbf15c38",
+      "rule_id": "typecheck/tsc/TS2322",
+      "message_template": "Type 'string' is not assignable to type 'number'.",
+      "file_set": [
+        "src/utils/url.ts"
+      ],
+      "verdict": "true-positive",
+      "family": "typecheck/tsc/TS2322",
+      "finding_count": 1,
+      "occurrence_count": 1,
+      "finding_ids": [
+        "61519345c86a98b40bcf228e8c5bcea888770a6b79ee55a392217a938457659c"
+      ]
+    }
+  ],
+  "misses": [],
+  "verdict": "useful",
+  "reason": "At least one independently confirmed actionable deterministic root cause."
+}

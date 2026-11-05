@@ -1,0 +1,4 @@
+version: 1
+name: invalid-rule
+extends: rio/base
+steps: [{id: a, uses: rio/triage, rules: [{when: "owns(x)", then: "require_human()"}]}]

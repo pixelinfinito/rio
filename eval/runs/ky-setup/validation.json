@@ -1,0 +1,92 @@
+{
+  "validated_utc": "2026-11-05T02:56:54.446945+00:00",
+  "commands": [
+    {
+      "argv": [
+        "python3",
+        "eval/evaluate.py",
+        "record",
+        "--report",
+        "eval/runs/ky-578/report.json",
+        "--verdicts",
+        "eval/runs/ky-578/verdicts.json",
+        "--out",
+        "eval/runs/ky-578/record.json"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "wall_time_ms": 214
+    },
+    {
+      "argv": [
+        "python3",
+        "eval/evaluate.py",
+        "validate",
+        "eval/runs/ky-578/record.json"
+      ],
+      "exit_code": 0,
+      "stdout": "Valid: eval/runs/ky-578/record.json\n",
+      "stderr": "",
+      "wall_time_ms": 102
+    },
+    {
+      "argv": [
+        "python3",
+        "eval/evaluate.py",
+        "record",
+        "--report",
+        "eval/runs/ky-881/report.json",
+        "--verdicts",
+        "eval/runs/ky-881/verdicts.json",
+        "--out",
+        "eval/runs/ky-881/record.json"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "wall_time_ms": 212
+    },
+    {
+      "argv": [
+        "python3",
+        "eval/evaluate.py",
+        "validate",
+        "eval/runs/ky-881/record.json"
+      ],
+      "exit_code": 0,
+      "stdout": "Valid: eval/runs/ky-881/record.json\n",
+      "stderr": "",
+      "wall_time_ms": 151
+    },
+    {
+      "argv": [
+        "python3",
+        "eval/evaluate.py",
+        "record",
+        "--report",
+        "eval/runs/ky-881-attempt1/report.json",
+        "--verdicts",
+        "eval/runs/ky-881-attempt1/verdicts.json",
+        "--out",
+        "eval/runs/ky-881-attempt1/record.json"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "wall_time_ms": 138
+    },
+    {
+      "argv": [
+        "python3",
+        "eval/evaluate.py",
+        "validate",
+        "eval/runs/ky-881-attempt1/record.json"
+      ],
+      "exit_code": 0,
+      "stdout": "Valid: eval/runs/ky-881-attempt1/record.json\n",
+      "stderr": "",
+      "wall_time_ms": 138
+    }
+  ]
+}

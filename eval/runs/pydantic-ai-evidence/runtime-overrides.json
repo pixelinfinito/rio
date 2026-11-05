@@ -1,0 +1,9 @@
+{
+  "recorded_utc": "2026-11-05T02:48:47.812062+00:00",
+  "UV_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/uv-cache",
+  "TMPDIR": "/tmp/rio-pydantic-ai-ram/tmp",
+  "GIT_CONFIG_COUNT": "1",
+  "GIT_CONFIG_KEY_0": "url./tmp/rio-pydantic-ai-ram/runner-cache.insteadOf",
+  "GIT_CONFIG_VALUE_0": "https://github.com/pydantic/pydantic-ai.git",
+  "explanation": "Local Git object cache contains exact public commits and the explicitly labelled synthetic mutation. No source content rewriting. Disposable clones retain exact pinned commit IDs. Executable private tmpfs avoids measured shared-disk write stalls."
+}

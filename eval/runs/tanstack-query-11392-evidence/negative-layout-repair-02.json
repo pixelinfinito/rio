@@ -1,0 +1,65 @@
+{
+  "aliases": [
+    {
+      "rio": "@csstools+css-calc@3.1.1_@csstools+css-parser-algorithms@4.0.0_@csstools+css-tokenizer@4.0.0_@csstools+css-tokenizer@4.0.0",
+      "actual": "@csstools+css-calc@3.1.1_@csstools+css-parser-algorithms@4.0.0_@csstools+css-tokenizer@4.0.0__@csstools+css-tokenizer@4.0.0"
+    },
+    {
+      "rio": "@csstools+css-color-parser@4.0.2_@csstools+css-parser-algorithms@4.0.0_@csstools+css-tokenizer@4.0.0_@csstools+css-tokenizer@4.0.0",
+      "actual": "@csstools+css-color-parser@4.0.2_@csstools+css-parser-algorithms@4.0.0_@csstools+css-tokenizer@4.0.0__@csstools+css-tokenizer@4.0.0"
+    },
+    {
+      "rio": "@tanstack+eslint-config@0.3.2_@typescript-eslint+utils@8.58.1_eslint@9.39.4_jiti@2.7.0_typescript@6.0.3_eslint@9.39.4_jiti@2.7.0_typescript@6.0.3",
+      "actual": "@tanstack+eslint-config@0.3.2_@typescript-eslint+utils@8.58.1_eslint@9.39.4_jiti@2.7.0__typescript@6.0.3__eslint@9.39.4_jiti@2.7.0__typescript@6.0.3"
+    },
+    {
+      "rio": "@tanstack+vite-config@0.4.3_@types+node@22.19.15_rollup@4.60.1_typescript@6.0.3_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0",
+      "actual": "@tanstack+vite-config@0.4.3_@types+node@22.19.15_rollup@4.60.1_typescript@6.0.3_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_"
+    },
+    {
+      "rio": "@testing-library+react@16.3.2_@testing-library+dom@10.4.1_@types+react-dom@19.2.3_@types+react@19.2.14_@types+react@19.2.14_react-dom@19.2.4_react@19.2.4_react@19.2.4",
+      "actual": "@testing-library+react@16.3.2_@testing-library+dom@10.4.1_@types+react-dom@19.2.3_@types+react@19.2.14__@types+react@19.2.14_react-dom@19.2.4_react@19.2.4__react@19.2.4"
+    },
+    {
+      "rio": "@typescript-eslint+eslint-plugin@8.58.1_@typescript-eslint+parser@8.58.1_eslint@9.39.4_jiti@2.7.0_typescript@6.0.3_eslint@9.39.4_jiti@2.7.0_typescript@6.0.3",
+      "actual": "@typescript-eslint+eslint-plugin@8.58.1_@typescript-eslint+parser@8.58.1_eslint@9.39.4_jiti@2.7.0__typescript@6.0.3__eslint@9.39.4_jiti@2.7.0__typescript@6.0.3"
+    },
+    {
+      "rio": "@vitejs+plugin-react@4.7.0_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0",
+      "actual": "@vitejs+plugin-react@4.7.0_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_"
+    },
+    {
+      "rio": "@vitest+coverage-istanbul@4.0.6_vitest@4.1.2_@types+node@22.19.15_jsdom@27.4.0_msw@2.12.14_@types+node@22.19.15_typescript@6.0.3_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0",
+      "actual": "@vitest+coverage-istanbul@4.0.6_vitest@4.1.2_@types+node@22.19.15_jsdom@27.4.0_msw@2.12.14_@types+node@22.19.15_typescript@6.0.3__vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0__"
+    },
+    {
+      "rio": "@vitest+mocker@4.1.2_msw@2.12.14_@types+node@22.19.15_typescript@6.0.3_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0",
+      "actual": "@vitest+mocker@4.1.2_msw@2.12.14_@types+node@22.19.15_typescript@6.0.3__vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_"
+    },
+    {
+      "rio": "eslint-plugin-import-x@4.16.2_@typescript-eslint+utils@8.58.1_eslint@9.39.4_jiti@2.7.0_typescript@6.0.3_eslint@9.39.4_jiti@2.7.0",
+      "actual": "eslint-plugin-import-x@4.16.2_@typescript-eslint+utils@8.58.1_eslint@9.39.4_jiti@2.7.0__typescript@6.0.3__eslint@9.39.4_jiti@2.7.0_"
+    },
+    {
+      "rio": "vite-plugin-dts@4.2.3_@types+node@22.19.15_rollup@4.60.1_typescript@6.0.3_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0",
+      "actual": "vite-plugin-dts@4.2.3_@types+node@22.19.15_rollup@4.60.1_typescript@6.0.3_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_"
+    },
+    {
+      "rio": "vite-plugin-externalize-deps@0.10.0_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0",
+      "actual": "vite-plugin-externalize-deps@0.10.0_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_"
+    },
+    {
+      "rio": "vite-tsconfig-paths@5.1.4_typescript@6.0.3_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0",
+      "actual": "vite-tsconfig-paths@5.1.4_typescript@6.0.3_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_"
+    },
+    {
+      "rio": "vitest@4.1.2_@types+node@22.19.15_jsdom@27.4.0_msw@2.12.14_@types+node@22.19.15_typescript@6.0.3_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0",
+      "actual": "vitest@4.1.2_@types+node@22.19.15_jsdom@27.4.0_msw@2.12.14_@types+node@22.19.15_typescript@6.0.3__vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_"
+    }
+  ],
+  "unrepresentable_keys": [
+    "@vitest/eslint-plugin@1.6.14(@typescript-eslint/eslint-plugin@8.58.1(@typescript-eslint/parser@8.58.1(eslint@9.39.4(jiti@2.7.0))(typescript@6.0.3))(eslint@9.39.4(jiti@2.7.0))(typescript@6.0.3))(eslint@9.39.4(jiti@2.7.0))(typescript@6.0.3)(vitest@4.1.2(@types/node@22.19.15)(jsdom@27.4.0)(msw@2.12.14(@types/node@22.19.15)(typescript@6.0.3))(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))"
+  ],
+  "virtual_store_dir_max_length": 250,
+  "tsc": "node_modules/typescript/bin/tsc"
+}

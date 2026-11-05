@@ -1,0 +1,570 @@
+{
+  "schema": "rio-eval-runner-v2",
+  "repository": "TanStack/query",
+  "pr": "https://github.com/TanStack/query/pull/11392",
+  "started_utc": "2026-11-05T11:28:06.343233+00:00",
+  "rio_binary": "/home/ubuntu/rio/target/release/rio",
+  "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-checkout",
+        "https://github.com/TanStack/query.git",
+        "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/head"
+      ],
+      "cwd": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/01-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/01-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 424
+    },
+    {
+      "argv": [
+        "git",
+        "fetch",
+        "origin",
+        "fc51e96045d729a98bc784e1bb11ea16d7d7a4c1",
+        "0a73db4c255eb44e1889696f8d5a9ddf57934229"
+      ],
+      "cwd": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/02-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/02-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 2189
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "fc51e96045d729a98bc784e1bb11ea16d7d7a4c1",
+        "0a73db4c255eb44e1889696f8d5a9ddf57934229"
+      ],
+      "cwd": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/03-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/03-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 5353
+    },
+    {
+      "argv": [
+        "git",
+        "checkout",
+        "--detach",
+        "0a73db4c255eb44e1889696f8d5a9ddf57934229"
+      ],
+      "cwd": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/04-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/04-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 324
+    },
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-hardlinks",
+        "--no-checkout",
+        "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/head",
+        "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/base"
+      ],
+      "cwd": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/05-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/05-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 219
+    },
+    {
+      "argv": [
+        "git",
+        "checkout",
+        "--detach",
+        "fc51e96045d729a98bc784e1bb11ea16d7d7a4c1"
+      ],
+      "cwd": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/06-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/06-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 6041
+    },
+    {
+      "argv": [
+        "corepack",
+        "pnpm",
+        "install",
+        "--frozen-lockfile",
+        "--trust-lockfile",
+        "--ignore-scripts",
+        "--config.virtual-store-dir-max-length=250",
+        "--config.confirmModulesPurge=false",
+        "--package-import-method=hardlink",
+        "--store-dir",
+        "/dev/shm/rio-tanstack-tools/pnpm-store"
+      ],
+      "cwd": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/07-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/07-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 43840
+    },
+    {
+      "argv": [
+        "python3",
+        "/home/ubuntu/.t3/worktrees/rio/eval-run-tanstack-query/eval/runs/tanstack-query-11392-evidence/prepare-installation-02.py"
+      ],
+      "cwd": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/08-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/08-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 2635
+    },
+    {
+      "argv": [
+        "node",
+        "node_modules/typescript/lib/tsc.js",
+        "-b",
+        "packages/query-core",
+        "packages/query-test-utils"
+      ],
+      "cwd": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/09-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/09-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 11962
+    },
+    {
+      "argv": [
+        "python3",
+        "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-rerun2-evidence/prepare-pnpm-string-length.py"
+      ],
+      "cwd": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/10-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/10-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 3033
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "cwd": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/11-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/11-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 271
+    },
+    {
+      "argv": [
+        "corepack",
+        "pnpm",
+        "install",
+        "--frozen-lockfile",
+        "--trust-lockfile",
+        "--ignore-scripts",
+        "--config.virtual-store-dir-max-length=250",
+        "--config.confirmModulesPurge=false",
+        "--package-import-method=hardlink",
+        "--store-dir",
+        "/dev/shm/rio-tanstack-tools/pnpm-store"
+      ],
+      "cwd": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/12-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/12-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 15934
+    },
+    {
+      "argv": [
+        "python3",
+        "/home/ubuntu/.t3/worktrees/rio/eval-run-tanstack-query/eval/runs/tanstack-query-11392-evidence/prepare-installation-02.py"
+      ],
+      "cwd": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/13-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/13-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 216
+    },
+    {
+      "argv": [
+        "node",
+        "node_modules/typescript/lib/tsc.js",
+        "-b",
+        "packages/query-core",
+        "packages/query-test-utils"
+      ],
+      "cwd": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/14-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/14-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 9322
+    },
+    {
+      "argv": [
+        "python3",
+        "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-rerun2-evidence/prepare-pnpm-string-length.py"
+      ],
+      "cwd": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/15-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/15-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 220
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "cwd": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/16-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/16-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 423
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "--version"
+      ],
+      "cwd": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/rio-version.txt",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/17-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 21
+    },
+    {
+      "argv": [
+        "node",
+        "--version"
+      ],
+      "cwd": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/18-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/18-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 19
+    },
+    {
+      "argv": [
+        "npm",
+        "--version"
+      ],
+      "cwd": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/19-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/19-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 425
+    },
+    {
+      "argv": [
+        "corepack",
+        "--version"
+      ],
+      "cwd": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/20-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/20-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 171
+    },
+    {
+      "argv": [
+        "python3",
+        "--version"
+      ],
+      "cwd": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/21-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/21-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 13
+    },
+    {
+      "argv": [
+        "uv",
+        "--version"
+      ],
+      "cwd": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/22-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/22-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 17
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "profile",
+        "show",
+        "rio/base"
+      ],
+      "cwd": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/resolved-profile.txt",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/23-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 328
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "doctor",
+        "--format",
+        "json"
+      ],
+      "cwd": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/doctor.json",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/24-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 1486
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "review",
+        "--base",
+        "fc51e96045d729a98bc784e1bb11ea16d7d7a4c1",
+        "--format",
+        "json",
+        "--offline",
+        "--profile",
+        "rio/base"
+      ],
+      "cwd": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/report.json",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/25-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 34714
+    }
+  ],
+  "installations": {
+    "base": {
+      "commands": [
+        [
+          "corepack",
+          "pnpm",
+          "install",
+          "--frozen-lockfile",
+          "--trust-lockfile",
+          "--ignore-scripts",
+          "--config.virtual-store-dir-max-length=250",
+          "--config.confirmModulesPurge=false",
+          "--package-import-method=hardlink",
+          "--store-dir",
+          "/dev/shm/rio-tanstack-tools/pnpm-store"
+        ],
+        [
+          "python3",
+          "/home/ubuntu/.t3/worktrees/rio/eval-run-tanstack-query/eval/runs/tanstack-query-11392-evidence/prepare-installation-02.py"
+        ],
+        [
+          "node",
+          "node_modules/typescript/lib/tsc.js",
+          "-b",
+          "packages/query-core",
+          "packages/query-test-utils"
+        ],
+        [
+          "python3",
+          "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-rerun2-evidence/prepare-pnpm-string-length.py"
+        ]
+      ],
+      "succeeded": true,
+      "lockfiles": {
+        "pnpm-lock.yaml": "701001c386e07047b105642089c2f44ab917bafbd606bca7f37b488a05243e57"
+      }
+    },
+    "head": {
+      "commands": [
+        [
+          "corepack",
+          "pnpm",
+          "install",
+          "--frozen-lockfile",
+          "--trust-lockfile",
+          "--ignore-scripts",
+          "--config.virtual-store-dir-max-length=250",
+          "--config.confirmModulesPurge=false",
+          "--package-import-method=hardlink",
+          "--store-dir",
+          "/dev/shm/rio-tanstack-tools/pnpm-store"
+        ],
+        [
+          "python3",
+          "/home/ubuntu/.t3/worktrees/rio/eval-run-tanstack-query/eval/runs/tanstack-query-11392-evidence/prepare-installation-02.py"
+        ],
+        [
+          "node",
+          "node_modules/typescript/lib/tsc.js",
+          "-b",
+          "packages/query-core",
+          "packages/query-test-utils"
+        ],
+        [
+          "python3",
+          "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-rerun2-evidence/prepare-pnpm-string-length.py"
+        ]
+      ],
+      "succeeded": true,
+      "lockfiles": {
+        "pnpm-lock.yaml": "701001c386e07047b105642089c2f44ab917bafbd606bca7f37b488a05243e57"
+      }
+    }
+  },
+  "failures": [],
+  "network": "Installers may use network; Rio review uses --offline. Subprocesses are not isolated.",
+  "resolution": {
+    "base_sha": "fc51e96045d729a98bc784e1bb11ea16d7d7a4c1",
+    "head_sha": "0a73db4c255eb44e1889696f8d5a9ddf57934229",
+    "source": "pinned argv"
+  },
+  "disposable_directory": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g",
+  "base_sha": "fc51e96045d729a98bc784e1bb11ea16d7d7a4c1",
+  "head_sha": "0a73db4c255eb44e1889696f8d5a9ddf57934229",
+  "removed_environment_keys": [],
+  "resolved_profile_sha256": "1049df8bb35d7f36f2982fdce1565c2c50336ce9e898e605f3cac96b7b16b636",
+  "review_exit_code": 0,
+  "rio_checks": {
+    "source": "report.json#/checks",
+    "child_argv_available": false,
+    "limitation": "Rio report-v1 checks contain no child executable, argv, cwd, or tool version. The v0.1 CLI has no child-argv trace flag or environment hook; runner commands and Rio stderr are retained separately.",
+    "entries": [
+      {
+        "kind": "secrets",
+        "language": "common",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "hint": "Dependency audit needs api.osv.dev",
+        "kind": "dependencies",
+        "language": "common",
+        "outcome": "skipped",
+        "reason": "offline",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/query-broadcast-client-experimental",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 7120
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/query-broadcast-client-experimental",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 8724
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/query-broadcast-client-experimental",
+        "scheduled_as": "changed",
+        "version": "base",
+        "wall_time_ms": 7325
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "lint",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/query-broadcast-client-experimental",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 13863
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "lint",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/query-broadcast-client-experimental",
+        "scheduled_as": "changed",
+        "version": "base",
+        "wall_time_ms": 10448
+      }
+    ]
+  },
+  "rio_review_stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2-attempt2/25-stderr.log",
+  "environment": {
+    "dependency_state": "verified",
+    "baseline_ran": true,
+    "baseline_classification_ran": true,
+    "eligible": true,
+    "reasons": [],
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "Graph references use syntax and text; no language server was used",
+      "Offline applies to Rio; tool and test processes were not network-isolated"
+    ]
+  },
+  "finished_utc": "2026-11-05T11:31:12.230909+00:00"
+}

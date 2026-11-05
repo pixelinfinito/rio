@@ -1,0 +1,58 @@
+{
+  "base": {
+    "tsconfig.json": {
+      "exit_code": 0,
+      "stdout": "{\n  \"$schema\": \"https://json.schemastore.org/tsconfig\",\n  \"compilerOptions\": {\n    \"allowJs\": true,\n    \"allowSyntheticDefaultImports\": true,\n    \"allowUnreachableCode\": false,\n    \"allowUnusedLabels\": false,\n    \"checkJs\": true,\n    \"composite\": true,\n    \"customConditions\": [\"@tanstack/custom-condition\"],\n    \"declaration\": true,\n    \"declarationMap\": true,\n    \"emitDeclarationOnly\": true,\n    \"esModuleInterop\": true,\n    \"forceConsistentCasingInFileNames\": true,\n    \"incremental\": true,\n    \"isolatedModules\": true,\n    \"lib\": [\"DOM\", \"DOM.Iterable\", \"ES2022\"],\n    \"module\": \"ESNext\",\n    \"moduleResolution\": \"Bundler\",\n    \"noEmit\": false,\n    \"noImplicitReturns\": true,\n    \"noUncheckedIndexedAccess\": true,\n    \"noUnusedLocals\": true,\n    \"noUnusedParameters\": true,\n    \"resolveJsonModule\": true,\n    \"skipLibCheck\": true,\n    \"strict\": true,\n    \"target\": \"ES2020\",\n    \"types\": [\"node\"]\n  },\n  \"include\": [\"*.config.*\"]\n}\n",
+      "stderr": ""
+    },
+    "packages/query-core/package.json": {
+      "exit_code": 0,
+      "stdout": "{\n  \"name\": \"@tanstack/query-core\",\n  \"version\": \"5.102.3\",\n  \"description\": \"The framework agnostic core that powers TanStack Query\",\n  \"author\": \"tannerlinsley\",\n  \"license\": \"MIT\",\n  \"repository\": {\n    \"type\": \"git\",\n    \"url\": \"git+https://github.com/TanStack/query.git\",\n    \"directory\": \"packages/query-core\"\n  },\n  \"homepage\": \"https://tanstack.com/query\",\n  \"funding\": {\n    \"type\": \"github\",\n    \"url\": \"https://github.com/sponsors/tannerlinsley\"\n  },\n  \"scripts\": {\n    \"clean\": \"premove ./build ./coverage ./dist-ts\",\n    \"compile\": \"tsc --build\",\n    \"test:eslint\": \"eslint --concurrency=auto ./src\",\n    \"test:types\": \"npm-run-all --serial test:types:*\",\n    \"test:types:ts56\": \"node ../../node_modules/typescript56/lib/tsc.js --build tsconfig.legacy.json\",\n    \"test:types:ts57\": \"node ../../node_modules/typescript57/lib/tsc.js --build tsconfig.legacy.json\",\n    \"test:types:ts58\": \"node ../../node_modules/typescript58/lib/tsc.js --build tsconfig.legacy.json\",\n    \"test:types:ts59\": \"node ../../node_modules/typescript59/lib/tsc.js --build tsconfig.legacy.json\",\n    \"test:types:tscurrent\": \"tsc --build\",\n    \"test:types:ts70\": \"node ../../node_modules/typescript70/lib/tsc.js --build tsconfig.legacy.json\",\n    \"test:lib\": \"vitest\",\n    \"test:lib:dev\": \"pnpm run test:lib --watch\",\n    \"test:build\": \"publint --strict && attw --pack\",\n    \"build\": \"tsdown --tsconfig tsconfig.prod.json\"\n  },\n  \"type\": \"module\",\n  \"types\": \"build/legacy/index.d.ts\",\n  \"main\": \"build/legacy/index.cjs\",\n  \"module\": \"build/legacy/index.js\",\n  \"react-native\": \"src/index.ts\",\n  \"exports\": {\n    \".\": {\n      \"@tanstack/custom-condition\": \"./src/index.ts\",\n      \"import\": {\n        \"types\": \"./build/modern/index.d.ts\",\n        \"default\": \"./build/modern/index.js\"\n      },\n      \"require\": {\n        \"types\": \"./build/modern/index.d.cts\",\n        \"default\": \"./build/modern/index.cjs\"\n      }\n    },\n    \"./package.json\": \"./package.json\"\n  },\n  \"sideEffects\": false,\n  \"files\": [\n    \"build\",\n    \"src\",\n    \"!src/__tests__\"\n  ],\n  \"devDependencies\": {\n    \"@tanstack/query-test-utils\": \"workspace:*\",\n    \"npm-run-all2\": \"^5.0.0\"\n  }\n}\n",
+      "stderr": ""
+    },
+    "packages/query-core/tsconfig.json": {
+      "exit_code": 0,
+      "stdout": "{\n  \"extends\": \"../../tsconfig.json\",\n  \"compilerOptions\": {\n    \"outDir\": \"./dist-ts\",\n    \"rootDir\": \".\"\n  },\n  \"include\": [\"src\", \"*.config.ts\", \"*.config.js\", \"package.json\"]\n}\n",
+      "stderr": ""
+    },
+    "examples/react/basic/tsconfig.json": {
+      "exit_code": 0,
+      "stdout": "{\n  \"compilerOptions\": {\n    \"target\": \"ES2020\",\n    \"useDefineForClassFields\": true,\n    \"lib\": [\"ES2020\", \"DOM\", \"DOM.Iterable\"],\n    \"module\": \"ESNext\",\n    \"skipLibCheck\": true,\n\n    /* Bundler mode */\n    \"moduleResolution\": \"Bundler\",\n    \"allowImportingTsExtensions\": true,\n    \"resolveJsonModule\": true,\n    \"isolatedModules\": true,\n    \"noEmit\": true,\n    \"jsx\": \"react-jsx\",\n\n    /* Linting */\n    \"strict\": true,\n    \"noUnusedLocals\": true,\n    \"noUnusedParameters\": true,\n    \"noFallthroughCasesInSwitch\": true\n  },\n  \"include\": [\"src\", \"eslint.config.js\"]\n}\n",
+      "stderr": ""
+    },
+    "integrations/react-webpack-4/tsconfig.json": {
+      "exit_code": 128,
+      "stdout": "",
+      "stderr": "fatal: path 'integrations/react-webpack-4/tsconfig.json' does not exist in 'd09cf1d605c81238934f6f91a4982f5629065732'\n"
+    },
+    "tracked_build_paths": []
+  },
+  "head": {
+    "tsconfig.json": {
+      "exit_code": 0,
+      "stdout": "{\n  \"$schema\": \"https://json.schemastore.org/tsconfig\",\n  \"compilerOptions\": {\n    \"allowJs\": true,\n    \"allowSyntheticDefaultImports\": true,\n    \"allowUnreachableCode\": false,\n    \"allowUnusedLabels\": false,\n    \"checkJs\": true,\n    \"composite\": true,\n    \"customConditions\": [\"@tanstack/custom-condition\"],\n    \"declaration\": true,\n    \"declarationMap\": true,\n    \"emitDeclarationOnly\": true,\n    \"esModuleInterop\": true,\n    \"forceConsistentCasingInFileNames\": true,\n    \"incremental\": true,\n    \"isolatedModules\": true,\n    \"lib\": [\"DOM\", \"DOM.Iterable\", \"ES2022\"],\n    \"module\": \"ESNext\",\n    \"moduleResolution\": \"Bundler\",\n    \"noEmit\": false,\n    \"noImplicitReturns\": true,\n    \"noUncheckedIndexedAccess\": true,\n    \"noUnusedLocals\": true,\n    \"noUnusedParameters\": true,\n    \"resolveJsonModule\": true,\n    \"skipLibCheck\": true,\n    \"strict\": true,\n    \"target\": \"ES2020\",\n    \"types\": [\"node\"]\n  },\n  \"include\": [\"*.config.*\"]\n}\n",
+      "stderr": ""
+    },
+    "packages/query-core/package.json": {
+      "exit_code": 0,
+      "stdout": "{\n  \"name\": \"@tanstack/query-core\",\n  \"version\": \"5.102.3\",\n  \"description\": \"The framework agnostic core that powers TanStack Query\",\n  \"author\": \"tannerlinsley\",\n  \"license\": \"MIT\",\n  \"repository\": {\n    \"type\": \"git\",\n    \"url\": \"git+https://github.com/TanStack/query.git\",\n    \"directory\": \"packages/query-core\"\n  },\n  \"homepage\": \"https://tanstack.com/query\",\n  \"funding\": {\n    \"type\": \"github\",\n    \"url\": \"https://github.com/sponsors/tannerlinsley\"\n  },\n  \"scripts\": {\n    \"clean\": \"premove ./build ./coverage ./dist-ts\",\n    \"compile\": \"tsc --build\",\n    \"test:eslint\": \"eslint --concurrency=auto ./src\",\n    \"test:types\": \"npm-run-all --serial test:types:*\",\n    \"test:types:ts56\": \"node ../../node_modules/typescript56/lib/tsc.js --build tsconfig.legacy.json\",\n    \"test:types:ts57\": \"node ../../node_modules/typescript57/lib/tsc.js --build tsconfig.legacy.json\",\n    \"test:types:ts58\": \"node ../../node_modules/typescript58/lib/tsc.js --build tsconfig.legacy.json\",\n    \"test:types:ts59\": \"node ../../node_modules/typescript59/lib/tsc.js --build tsconfig.legacy.json\",\n    \"test:types:tscurrent\": \"tsc --build\",\n    \"test:types:ts70\": \"node ../../node_modules/typescript70/lib/tsc.js --build tsconfig.legacy.json\",\n    \"test:lib\": \"vitest\",\n    \"test:lib:dev\": \"pnpm run test:lib --watch\",\n    \"test:build\": \"publint --strict && attw --pack\",\n    \"build\": \"tsdown --tsconfig tsconfig.prod.json\"\n  },\n  \"type\": \"module\",\n  \"types\": \"build/legacy/index.d.ts\",\n  \"main\": \"build/legacy/index.cjs\",\n  \"module\": \"build/legacy/index.js\",\n  \"react-native\": \"src/index.ts\",\n  \"exports\": {\n    \".\": {\n      \"@tanstack/custom-condition\": \"./src/index.ts\",\n      \"import\": {\n        \"types\": \"./build/modern/index.d.ts\",\n        \"default\": \"./build/modern/index.js\"\n      },\n      \"require\": {\n        \"types\": \"./build/modern/index.d.cts\",\n        \"default\": \"./build/modern/index.cjs\"\n      }\n    },\n    \"./package.json\": \"./package.json\"\n  },\n  \"sideEffects\": false,\n  \"files\": [\n    \"build\",\n    \"src\",\n    \"!src/__tests__\"\n  ],\n  \"devDependencies\": {\n    \"@tanstack/query-test-utils\": \"workspace:*\",\n    \"npm-run-all2\": \"^5.0.0\"\n  }\n}\n",
+      "stderr": ""
+    },
+    "packages/query-core/tsconfig.json": {
+      "exit_code": 0,
+      "stdout": "{\n  \"extends\": \"../../tsconfig.json\",\n  \"compilerOptions\": {\n    \"outDir\": \"./dist-ts\",\n    \"rootDir\": \".\"\n  },\n  \"include\": [\"src\", \"*.config.ts\", \"*.config.js\", \"package.json\"]\n}\n",
+      "stderr": ""
+    },
+    "examples/react/basic/tsconfig.json": {
+      "exit_code": 0,
+      "stdout": "{\n  \"compilerOptions\": {\n    \"target\": \"ES2020\",\n    \"useDefineForClassFields\": true,\n    \"lib\": [\"ES2020\", \"DOM\", \"DOM.Iterable\"],\n    \"module\": \"ESNext\",\n    \"skipLibCheck\": true,\n\n    /* Bundler mode */\n    \"moduleResolution\": \"Bundler\",\n    \"allowImportingTsExtensions\": true,\n    \"resolveJsonModule\": true,\n    \"isolatedModules\": true,\n    \"noEmit\": true,\n    \"jsx\": \"react-jsx\",\n\n    /* Linting */\n    \"strict\": true,\n    \"noUnusedLocals\": true,\n    \"noUnusedParameters\": true,\n    \"noFallthroughCasesInSwitch\": true\n  },\n  \"include\": [\"src\", \"eslint.config.js\"]\n}\n",
+      "stderr": ""
+    },
+    "integrations/react-webpack-4/tsconfig.json": {
+      "exit_code": 128,
+      "stdout": "",
+      "stderr": "fatal: path 'integrations/react-webpack-4/tsconfig.json' does not exist in '370ed5845530a928fcb5374162de67326724a7d1'\n"
+    },
+    "tracked_build_paths": []
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "repository": "pydantic/pydantic-settings",
+  "pr": "https://github.com/pydantic/pydantic-settings/pull/708",
+  "case_id": "708",
+  "languages": [
+    "python"
+  ],
+  "reviewer": "sub-agent eval-pydantic-settings (automated)",
+  "verdict_source": "automated",
+  "commands": [
+    "cwd=/dev/shm/pydantic-settings-eval/rio-eval-3u5jk8zv argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/pydantic/pydantic-settings.git\", \"/dev/shm/pydantic-settings-eval/rio-eval-3u5jk8zv/head\"]",
+    "cwd=/dev/shm/pydantic-settings-eval/rio-eval-3u5jk8zv/head argv=[\"git\", \"fetch\", \"origin\", \"61e0b46eb96e2f67f390b0371c4297f2d6b24573\", \"7d60367d8cc83fb49fb7d93568ff4f10fea9a904\"]",
+    "cwd=/dev/shm/pydantic-settings-eval/rio-eval-3u5jk8zv/head argv=[\"git\", \"merge-base\", \"61e0b46eb96e2f67f390b0371c4297f2d6b24573\", \"7d60367d8cc83fb49fb7d93568ff4f10fea9a904\"]",
+    "cwd=/dev/shm/pydantic-settings-eval/rio-eval-3u5jk8zv/head argv=[\"git\", \"checkout\", \"--detach\", \"7d60367d8cc83fb49fb7d93568ff4f10fea9a904\"]",
+    "cwd=/dev/shm/pydantic-settings-eval/rio-eval-3u5jk8zv argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/dev/shm/pydantic-settings-eval/rio-eval-3u5jk8zv/head\", \"/dev/shm/pydantic-settings-eval/rio-eval-3u5jk8zv/base\"]",
+    "cwd=/dev/shm/pydantic-settings-eval/rio-eval-3u5jk8zv/base argv=[\"git\", \"checkout\", \"--detach\", \"61e0b46eb96e2f67f390b0371c4297f2d6b24573\"]",
+    "cwd=/dev/shm/pydantic-settings-eval/rio-eval-3u5jk8zv/base argv=[\"uv\", \"sync\", \"--locked\", \"--all-groups\", \"--all-extras\", \"--no-install-project\"]",
+    "cwd=/dev/shm/pydantic-settings-eval/rio-eval-3u5jk8zv/base argv=[\"uv\", \"run\", \"--no-sync\", \"python\", \"-c\", \"import pathlib, sysconfig; p = pathlib.Path(sysconfig.get_path('purelib')) / 'a1_coverage.pth'; print(str(p)); print(p.read_text() if p.exists() else 'absent'); p.unlink(missing_ok=True)\"]",
+    "cwd=/dev/shm/pydantic-settings-eval/rio-eval-3u5jk8zv/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/pydantic-settings-eval/rio-eval-3u5jk8zv/head argv=[\"uv\", \"sync\", \"--locked\", \"--all-groups\", \"--all-extras\", \"--no-install-project\"]",
+    "cwd=/dev/shm/pydantic-settings-eval/rio-eval-3u5jk8zv/head argv=[\"uv\", \"run\", \"--no-sync\", \"python\", \"-c\", \"import pathlib, sysconfig; p = pathlib.Path(sysconfig.get_path('purelib')) / 'a1_coverage.pth'; print(str(p)); print(p.read_text() if p.exists() else 'absent'); p.unlink(missing_ok=True)\"]",
+    "cwd=/dev/shm/pydantic-settings-eval/rio-eval-3u5jk8zv/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/pydantic-settings-eval/rio-eval-3u5jk8zv/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/dev/shm/pydantic-settings-eval/rio-eval-3u5jk8zv/head argv=[\"node\", \"--version\"]",
+    "cwd=/dev/shm/pydantic-settings-eval/rio-eval-3u5jk8zv/head argv=[\"npm\", \"--version\"]",
+    "cwd=/dev/shm/pydantic-settings-eval/rio-eval-3u5jk8zv/head argv=[\"python3\", \"--version\"]",
+    "cwd=/dev/shm/pydantic-settings-eval/rio-eval-3u5jk8zv/head argv=[\"uv\", \"--version\"]",
+    "cwd=/dev/shm/pydantic-settings-eval/rio-eval-3u5jk8zv/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-708/profile.yaml\"]",
+    "cwd=/dev/shm/pydantic-settings-eval/rio-eval-3u5jk8zv/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/dev/shm/pydantic-settings-eval/rio-eval-3u5jk8zv/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"61e0b46eb96e2f67f390b0371c4297f2d6b24573\", \"--format\", \"json\", \"--offline\", \"--profile\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-708/profile.yaml\"]",
+    "observed execve: [\"/dev/shm/pydantic-settings-eval/rio-eval-3u5jk8zv/head/./.venv/bin/ruff\", \"check\", \"--output-format\", \"json\", \"--\", \"/dev/shm/pydantic-settings-eval/rio-eval-3u5jk8zv/cache/1b9ac648fd6992f7/runs/01M6MSK3FNGQWGVJGYAX7H5Z5X/tools/tool.tmp-ba78Wf/pydantic_settings/sources/providers/aws.py\"]",
+    "observed execve: [\"/dev/shm/pydantic-settings-eval/rio-eval-3u5jk8zv/head/./.venv/bin/mypy\", \"--output\", \"json\", \"--config-file\", \"/dev/shm/pydantic-settings-eval/rio-eval-3u5jk8zv/cache/1b9ac648fd6992f7/runs/01M6MSK3FNGQWGVJGYAX7H5Z5X/tools/tool.tmp-xyGJ74/pyproject.toml\", \"pydantic_settings\"]",
+    "observed execve: [\"/dev/shm/pydantic-settings-eval/rio-eval-3u5jk8zv/head/./.venv/bin/coverage\", \"run\", \"-m\", \"pytest\", \"-q\"]",
+    "observed execve: [\"/dev/shm/pydantic-settings-eval/rio-eval-3u5jk8zv/head/./.venv/bin/ruff\", \"check\", \"--output-format\", \"json\", \"--\", \"/dev/shm/pydantic-settings-eval/rio-eval-3u5jk8zv/cache/1b9ac648fd6992f7/runs/01M6MSK3FNGQWGVJGYAX7H5Z5X/tools/tool.tmp-bC7Gyb/pydantic_settings/sources/providers/aws.py\"]",
+    "observed execve: [\"/dev/shm/pydantic-settings-eval/rio-eval-3u5jk8zv/head/./.venv/bin/mypy\", \"--output\", \"json\", \"--config-file\", \"/dev/shm/pydantic-settings-eval/rio-eval-3u5jk8zv/cache/1b9ac648fd6992f7/runs/01M6MSK3FNGQWGVJGYAX7H5Z5X/tools/tool.tmp-CowTdh/pyproject.toml\", \"pydantic_settings\"]",
+    "observed execve: [\"/dev/shm/pydantic-settings-eval/rio-eval-3u5jk8zv/head/./.venv/bin/coverage\", \"json\", \"-o\", \"/dev/shm/pydantic-settings-eval/rio-eval-3u5jk8zv/cache/1b9ac648fd6992f7/runs/01M6MSK3FNGQWGVJGYAX7H5Z5X/tools/tool.tmp-jnuA01/./.rio-coverage/coverage.json\"]"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-708/commands.json; Rio binary SHA-256: 512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+    "Original introducing PR head is reviewed, not later coverage fix #963. Base 61e0b46eb96e2f67f390b0371c4297f2d6b24573; head 7d60367d8cc83fb49fb7d93568ff4f10fea9a904. Mutation: none.",
+    "Binary verified: rio 0.1.0 x86_64-unknown-linux-gnu b15dc8ff5001; SHA-256 512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2; not rebuilt.",
+    "CPython 3.13.9, uv 0.13.7, repository-locked mypy 1.18.2, Ruff 0.13.1; exact pytest/coverage versions in independent oracle logs. Linux shared VM.",
+    "Applicable typecheck, lint, secrets and coverage checks; dependency audit explicitly offline without populated advisory cache and unassessed. No semantic agent endpoint.",
+    "Install plan v3 uses uv sync --locked --all-groups --all-extras --no-install-project; optional a1_coverage.pth startup hook removed only if present. No tracked changes or lockfile updates; trust_installed_dependencies=false. TMPDIR and UV_CACHE_DIR under /dev/shm/pydantic-settings-eval. Profile extends rio/base with 20m fast budget.",
+    "Both lint and typecheck head/base pairs pass with dependency_state=verified; instrumented coverage executed successfully. Exact nested argv in observed/commands.json from strace around unchanged runner.",
+    "One visible top-level coverage risk, no defect findings. Check outcome coverage=passed and CLI exit=0 do not mean no test gap: coverage risk is in risks[], while rio/base fail_on selects defect categories only.",
+    "Original disk-backed independent oracle attempts 708-base and 708-head were slow due to shared disk write stalls; retained, with new memory-backed attempt2 evidence used for preregistration. No unclassified run is scored."
+  ],
+  "independently_clean": false,
+  "positive_control": {
+    "kind": "real-pr",
+    "expected": [
+      {
+        "id": "aws-version-id-uncovered",
+        "mechanism": "uncovered-lines",
+        "evidence": "Before Rio execution, independent oracles retained in eval/runs/pydantic-settings-evidence/708-base-attempt2 and 708-head-attempt2: locked uv sync, uv run --no-sync mypy pydantic_settings and ruff check pass both; coverage run -m pytest passes 495 tests with 4 skips both. AWS file is 100% at base with missing_lines=[]; head missing_lines=[66], missing_branches=[[65,66]]. coverage_gate.py returns base 0/head 1. See positive-control-register.json registered before runner started, and 708-independent-diff-coverage.json.",
+        "finding_ids": [
+          "9fef2a2d9e8b5202043d7425de33cae2f3aa38091bad992b3086e7ab3ed1c489"
+        ]
+      }
+    ]
+  },
+  "misses": [],
+  "findings": {
+    "9fef2a2d9e8b5202043d7425de33cae2f3aa38091bad992b3086e7ab3ed1c489": {
+      "verdict": "true-positive",
+      "reason": "Independent full pytest+coverage at base and introducing head both exit 0 (495 passed, 4 skipped each). The AWS source file has no missing statements at base and introduced line 66 is instrumented but never executed at head; branch 65->66 is missing. The independent per-file statement gate exits 0 at base and 1 at head. This PR adds version_id handling without tests, and follow-up PR #963 adds test_version_id. Evidence: eval/runs/pydantic-settings-evidence/708-base-attempt2 and 708-head-attempt2 (coverage.json.gz, coverage-gate.stdout and commands), 708-independent-diff-coverage.json, pr-708.patch and pr-963-followup.json. Add a test that exercises a nonempty version_id; no semantic failure is claimed."
+    }
+  }
+}

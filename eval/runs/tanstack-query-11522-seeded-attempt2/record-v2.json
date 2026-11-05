@@ -1,0 +1,292 @@
+{
+  "schema": "rio-eval-record-v2",
+  "methodology": "deterministic-v2",
+  "repository": "TanStack/query",
+  "pr": "https://github.com/TanStack/query/pull/11522",
+  "case_id": "11522-seeded-transaction-type-20261105",
+  "languages": [
+    "typescript"
+  ],
+  "reviewer": "sub-agent eval-tanstack-query (automated)",
+  "verdict_source": "automated",
+  "independently_clean": false,
+  "commands": [
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-b3alny_m argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/TanStack/query.git\", \"/dev/shm/rio-tanstack-work/rio-eval-b3alny_m/head\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-b3alny_m/head argv=[\"git\", \"fetch\", \"origin\", \"8a28904aaccb6bc26398b751400a181c0f6d7f0e\", \"b32480cc923994ee2c859203a47b78a173e6bf20\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-b3alny_m/head argv=[\"git\", \"merge-base\", \"8a28904aaccb6bc26398b751400a181c0f6d7f0e\", \"b32480cc923994ee2c859203a47b78a173e6bf20\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-b3alny_m/head argv=[\"git\", \"checkout\", \"--detach\", \"b32480cc923994ee2c859203a47b78a173e6bf20\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-b3alny_m argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/dev/shm/rio-tanstack-work/rio-eval-b3alny_m/head\", \"/dev/shm/rio-tanstack-work/rio-eval-b3alny_m/base\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-b3alny_m/base argv=[\"git\", \"checkout\", \"--detach\", \"8a28904aaccb6bc26398b751400a181c0f6d7f0e\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-b3alny_m/base argv=[\"corepack\", \"pnpm\", \"install\", \"--frozen-lockfile\", \"--trust-lockfile\", \"--ignore-scripts\", \"--config.virtual-store-dir-max-length=250\", \"--config.confirmModulesPurge=false\", \"--package-import-method=hardlink\", \"--store-dir\", \"/dev/shm/rio-tanstack-tools/pnpm-store\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-b3alny_m/base argv=[\"python3\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-tanstack-query/eval/runs/tanstack-query-11392-evidence/prepare-installation-02.py\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-b3alny_m/base argv=[\"node\", \"node_modules/typescript/lib/tsc.js\", \"-b\", \"packages/query-core\", \"packages/query-test-utils\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-b3alny_m/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-b3alny_m/head argv=[\"corepack\", \"pnpm\", \"install\", \"--frozen-lockfile\", \"--trust-lockfile\", \"--ignore-scripts\", \"--config.virtual-store-dir-max-length=250\", \"--config.confirmModulesPurge=false\", \"--package-import-method=hardlink\", \"--store-dir\", \"/dev/shm/rio-tanstack-tools/pnpm-store\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-b3alny_m/head argv=[\"python3\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-tanstack-query/eval/runs/tanstack-query-11392-evidence/prepare-installation-02.py\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-b3alny_m/head argv=[\"node\", \"node_modules/typescript/lib/tsc.js\", \"-b\", \"packages/query-core\", \"packages/query-test-utils\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-b3alny_m/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-b3alny_m/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-b3alny_m/head argv=[\"node\", \"--version\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-b3alny_m/head argv=[\"npm\", \"--version\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-b3alny_m/head argv=[\"corepack\", \"--version\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-b3alny_m/head argv=[\"python3\", \"--version\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-b3alny_m/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"rio/base\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-b3alny_m/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-b3alny_m/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"8a28904aaccb6bc26398b751400a181c0f6d7f0e\", \"--format\", \"json\", \"--offline\", \"--profile\", \"rio/base\"]",
+    "Independent oracle: cwd=/dev/shm/rio-tanstack-work/seed-base argv=[\"corepack\", \"pnpm\", \"--filter\", \"root\", \"--filter\", \"@tanstack/query-broadcast-client-experimental...\", \"install\", \"--frozen-lockfile\", \"--trust-lockfile\", \"--offline\", \"--ignore-scripts\", \"--store-dir\", \"/dev/shm/rio-tanstack-tools/pnpm-store\"] exit=0",
+    "Independent oracle: cwd=/dev/shm/rio-tanstack-work/seed-base argv=[\"/dev/shm/rio-tanstack-tools/node-v24.16.0-linux-x64/bin/node\", \"node_modules/typescript/lib/tsc.js\", \"-b\", \"--force\", \"packages/query-core\", \"packages/query-test-utils\"] exit=0",
+    "Independent oracle: cwd=/dev/shm/rio-tanstack-work/seed-base argv=[\"/dev/shm/rio-tanstack-tools/node-v24.16.0-linux-x64/bin/node\", \"node_modules/typescript/lib/tsc.js\", \"--noEmit\", \"--pretty\", \"false\", \"-p\", \"packages/query-broadcast-client-experimental\"] exit=0",
+    "Independent oracle: cwd=/dev/shm/rio-tanstack-work/seed-head argv=[\"corepack\", \"pnpm\", \"--filter\", \"root\", \"--filter\", \"@tanstack/query-broadcast-client-experimental...\", \"install\", \"--frozen-lockfile\", \"--trust-lockfile\", \"--offline\", \"--ignore-scripts\", \"--store-dir\", \"/dev/shm/rio-tanstack-tools/pnpm-store\"] exit=0",
+    "Independent oracle: cwd=/dev/shm/rio-tanstack-work/seed-head argv=[\"/dev/shm/rio-tanstack-tools/node-v24.16.0-linux-x64/bin/node\", \"node_modules/typescript/lib/tsc.js\", \"-b\", \"--force\", \"packages/query-core\", \"packages/query-test-utils\"] exit=0",
+    "Independent oracle: cwd=/dev/shm/rio-tanstack-work/seed-head argv=[\"/dev/shm/rio-tanstack-tools/node-v24.16.0-linux-x64/bin/node\", \"node_modules/typescript/lib/tsc.js\", \"--noEmit\", \"--pretty\", \"false\", \"-p\", \"packages/query-broadcast-client-experimental\"] exit=2"
+  ],
+  "notes": [
+    "Runner provenance: tanstack-query-11522-seeded-attempt2/commands.json; binary SHA-256 512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2.",
+    "Frozen profile rio/base; resolved profile SHA-256 1049df8bb35d7f36f2982fdce1565c2c50336ce9e898e605f3cac96b7b16b636; Rio dependency trust remains false.",
+    "Offline OSV audit is an explicit excluded capability; no vulnerability-free conclusion.",
+    "See ../tanstack-query-NOTES.md for every setup attempt, installer helper hashes, exclusions and monorepo limitations.",
+    "Coverage skipped because Rio misses root-declared Vitest plus package vite.config.ts; independent instrumented tests pass for the negative case. This makes the final records ineligible even when baseline classification succeeds.",
+    "Local Git URL mirror for the seeded run is /dev/shm/rio-tanstack-work/seed-head; the parent source is the pinned public base, restored with verified Git blob hashes. The mutation was not published."
+  ],
+  "positive_control": {
+    "kind": "seeded-mutation",
+    "expected": [
+      {
+        "id": "broadcast-transaction-string-type",
+        "mechanism": "type-error",
+        "evidence": "Preregistered in ../tanstack-query-11522-seeded-evidence/preregistered-control.json before Rio. Base 8a28904aaccb6bc26398b751400a181c0f6d7f0e, mutation head b32480cc923994ee2c859203a47b78a173e6bf20; seed 20261105; patch SHA-256 2765417edba59265b5a80ba4a4c2d4ae9513939b59bafdbb751cc1796709dc4f. Independent node node_modules/typescript/lib/tsc.js --noEmit --pretty false -p packages/query-broadcast-client-experimental: base exit 0/no diagnostics; head exit 2/TS2322 at 55,57,66. Exact argv, outputs, and wall times: ../tanstack-query-11522-seeded-evidence/oracle-02/. These are one incorrect annotation.",
+        "finding_ids": [
+          "6e5315be716243c1445322ae82de4a808a08f7dc19c5cc257221acd27d2dca9e",
+          "96fa52ff88dbd2ae7088ab3c6df72c514b63f1e932db5818149e504f65eec772"
+        ]
+      }
+    ]
+  },
+  "base_sha": "8a28904aaccb6bc26398b751400a181c0f6d7f0e",
+  "head_sha": "b32480cc923994ee2c859203a47b78a173e6bf20",
+  "mode": "branch",
+  "review_id": "ee72fcf25e49229e",
+  "run_id": "01M6MTK417361Y2A182GADCKVP",
+  "rio_version": "0.1.0",
+  "profile": "rio/base",
+  "wall_time_ms": 32154,
+  "status": "incomplete",
+  "report_path": "eval/runs/tanstack-query-11522-seeded-attempt2/report.json",
+  "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+  "profile_sha256": "1049df8bb35d7f36f2982fdce1565c2c50336ce9e898e605f3cac96b7b16b636",
+  "environment": {
+    "dependency_state": "verified",
+    "baseline_ran": true,
+    "baseline_classification_ran": true,
+    "eligible": false,
+    "reasons": [
+      "coverage packages/query-broadcast-client-experimental head: skipped tool_missing Install vitest or jest in the project environment"
+    ],
+    "checks": [
+      {
+        "findings": [],
+        "kind": "secrets",
+        "language": "common",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "findings": [],
+        "hint": "Dependency audit needs api.osv.dev",
+        "kind": "dependencies",
+        "language": "common",
+        "outcome": "skipped",
+        "reason": "offline",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "findings": [],
+        "hint": "Install vitest or jest in the project environment",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "tool_missing",
+        "root": "packages/query-broadcast-client-experimental",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "findings",
+        "root": "packages/query-broadcast-client-experimental",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 5975
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/query-broadcast-client-experimental",
+        "scheduled_as": "changed",
+        "version": "base",
+        "wall_time_ms": 5495
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "lint",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/query-broadcast-client-experimental",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 10105
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "lint",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/query-broadcast-client-experimental",
+        "scheduled_as": "changed",
+        "version": "base",
+        "wall_time_ms": 11456
+      }
+    ],
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "Graph references use syntax and text; no language server was used",
+      "Offline applies to Rio; tool and test processes were not network-isolated"
+    ]
+  },
+  "findings": [
+    {
+      "finding": {
+        "category": "defect",
+        "evidence": [
+          "tsc diagnostic"
+        ],
+        "evidence_level": "static_proven",
+        "id": "6e5315be716243c1445322ae82de4a808a08f7dc19c5cc257221acd27d2dca9e",
+        "location": {
+          "column": 7,
+          "line_end": 55,
+          "line_start": 55,
+          "occurrence_state": "new",
+          "path": "packages/query-broadcast-client-experimental/src/index.ts",
+          "symbol_path": "index.broadcastQueryClient"
+        },
+        "locations": [
+          {
+            "column": 7,
+            "line_end": 55,
+            "line_start": 55,
+            "occurrence_state": "new",
+            "path": "packages/query-broadcast-client-experimental/src/index.ts",
+            "symbol_path": "index.broadcastQueryClient"
+          }
+        ],
+        "message": "Type 'boolean' is not assignable to type 'string'.",
+        "rule_id": "typecheck/tsc/TS2322",
+        "severity": "error",
+        "source": {
+          "tool": "tsc",
+          "version": "Version 6.0.3"
+        },
+        "state": "new",
+        "trigger": ""
+      },
+      "verdict": "true-positive",
+      "reason": "Independent TypeScript 6.0.3 oracle in ../tanstack-query-11522-seeded-evidence/oracle-02/: base-types exits 0 with no diagnostics; head-types exits 2 with TS2322 at lines 55, 57, 66. This finding covers [55]. The only committed edit is the erroneous string annotation on the existing boolean transaction flag; all three diagnostics arise from that one annotation. Rio independently ran verified base/head type checks and honestly classifies these locations new. Default same-rule/message/file dedupe merges the two findings into one cause.",
+      "message_template": "Type 'boolean' is not assignable to type 'string'.",
+      "file_set": [
+        "packages/query-broadcast-client-experimental/src/index.ts"
+      ],
+      "root_cause_key": "71237c028e56999633c9dbadacff63381c649b4e41364880571619e859a35d76",
+      "family": "typecheck/tsc/TS2322"
+    },
+    {
+      "finding": {
+        "category": "defect",
+        "evidence": [
+          "tsc diagnostic"
+        ],
+        "evidence_level": "static_proven",
+        "id": "96fa52ff88dbd2ae7088ab3c6df72c514b63f1e932db5818149e504f65eec772",
+        "location": {
+          "column": 5,
+          "line_end": 57,
+          "line_start": 57,
+          "occurrence_state": "new",
+          "path": "packages/query-broadcast-client-experimental/src/index.ts",
+          "symbol_path": "index.broadcastQueryClient.tx"
+        },
+        "locations": [
+          {
+            "column": 5,
+            "line_end": 57,
+            "line_start": 57,
+            "occurrence_state": "new",
+            "path": "packages/query-broadcast-client-experimental/src/index.ts",
+            "symbol_path": "index.broadcastQueryClient.tx"
+          },
+          {
+            "column": 7,
+            "line_end": 66,
+            "line_start": 66,
+            "occurrence_state": "new",
+            "path": "packages/query-broadcast-client-experimental/src/index.ts",
+            "symbol_path": "index.broadcastQueryClient.tx"
+          }
+        ],
+        "message": "Type 'boolean' is not assignable to type 'string'.",
+        "rule_id": "typecheck/tsc/TS2322",
+        "severity": "error",
+        "source": {
+          "tool": "tsc",
+          "version": "Version 6.0.3"
+        },
+        "state": "new",
+        "trigger": ""
+      },
+      "verdict": "true-positive",
+      "reason": "Independent TypeScript 6.0.3 oracle in ../tanstack-query-11522-seeded-evidence/oracle-02/: base-types exits 0 with no diagnostics; head-types exits 2 with TS2322 at lines 55, 57, 66. This finding covers [57, 66]. The only committed edit is the erroneous string annotation on the existing boolean transaction flag; all three diagnostics arise from that one annotation. Rio independently ran verified base/head type checks and honestly classifies these locations new. Default same-rule/message/file dedupe merges the two findings into one cause.",
+      "message_template": "Type 'boolean' is not assignable to type 'string'.",
+      "file_set": [
+        "packages/query-broadcast-client-experimental/src/index.ts"
+      ],
+      "root_cause_key": "71237c028e56999633c9dbadacff63381c649b4e41364880571619e859a35d76",
+      "family": "typecheck/tsc/TS2322"
+    }
+  ],
+  "root_causes": [
+    {
+      "root_cause_key": "71237c028e56999633c9dbadacff63381c649b4e41364880571619e859a35d76",
+      "rule_id": "typecheck/tsc/TS2322",
+      "message_template": "Type 'boolean' is not assignable to type 'string'.",
+      "file_set": [
+        "packages/query-broadcast-client-experimental/src/index.ts"
+      ],
+      "verdict": "true-positive",
+      "family": "typecheck/tsc/TS2322",
+      "finding_count": 2,
+      "occurrence_count": 3,
+      "finding_ids": [
+        "6e5315be716243c1445322ae82de4a808a08f7dc19c5cc257221acd27d2dca9e",
+        "96fa52ff88dbd2ae7088ab3c6df72c514b63f1e932db5818149e504f65eec772"
+      ]
+    }
+  ],
+  "misses": [],
+  "verdict": "environment-failure",
+  "reason": "Baseline/setup must be repaired before this PR can be scored."
+}

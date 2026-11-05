@@ -1,0 +1,4 @@
+version: 1
+name: invalid-unknown-needs
+extends: rio/base
+steps: [{id: a, uses: rio/report, needs: [missing]}]

@@ -1,0 +1,29 @@
+version: 1
+name: automated-python-acceptance
+extends: rio/base
+budget:
+  fast: {wall_time: 4m}
+steps:
+  - id: prepare
+    uses: rio/prepare
+  - id: checks
+    uses: rio/checks
+    needs: [prepare]
+    with:
+      trust_installed_dependencies: true
+  - id: graph
+    uses: rio/graph
+    needs: [prepare]
+    with: {hops: 2, max_nodes: 2000}
+  - id: triage
+    uses: rio/triage
+    needs: [checks, graph]
+  - id: agents
+    uses: rio/agents
+    needs: [triage]
+  - id: verify
+    uses: rio/verify
+    needs: [agents]
+  - id: report
+    uses: rio/report
+    needs: [verify]

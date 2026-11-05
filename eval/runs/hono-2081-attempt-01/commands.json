@@ -1,0 +1,397 @@
+{
+  "schema": "rio-eval-runner-v1",
+  "repository": "honojs/hono",
+  "pr": "https://github.com/honojs/hono/pull/2081",
+  "started_utc": "2026-11-05T03:29:41.894061+00:00",
+  "rio_binary": "/home/ubuntu/rio/target/release/rio",
+  "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-checkout",
+        "https://github.com/honojs/hono.git",
+        "/dev/shm/trpc-eval/rio-eval-e3480gk0/head"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-e3480gk0",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/01-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/01-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 3995
+    },
+    {
+      "argv": [
+        "git",
+        "fetch",
+        "origin",
+        "4ec3a9bf41ec3de004836e84757c07ec2b7b4156",
+        "310c8733dbde15f6b279863798e740953a4341dd"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-e3480gk0/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/02-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/02-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 3955
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "4ec3a9bf41ec3de004836e84757c07ec2b7b4156",
+        "310c8733dbde15f6b279863798e740953a4341dd"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-e3480gk0/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/03-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/03-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 8
+    },
+    {
+      "argv": [
+        "git",
+        "checkout",
+        "--detach",
+        "310c8733dbde15f6b279863798e740953a4341dd"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-e3480gk0/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/04-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/04-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 66
+    },
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-hardlinks",
+        "--no-checkout",
+        "/dev/shm/trpc-eval/rio-eval-e3480gk0/head",
+        "/dev/shm/trpc-eval/rio-eval-e3480gk0/base"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-e3480gk0",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/05-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/05-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 66
+    },
+    {
+      "argv": [
+        "git",
+        "checkout",
+        "--detach",
+        "4ec3a9bf41ec3de004836e84757c07ec2b7b4156"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-e3480gk0/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/06-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/06-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 115
+    },
+    {
+      "argv": [
+        "corepack",
+        "yarn@1.22.22",
+        "install",
+        "--frozen-lockfile",
+        "--non-interactive"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-e3480gk0/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/07-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/07-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 9120
+    },
+    {
+      "argv": [
+        "python3",
+        "-c",
+        "from pathlib import Path; import hashlib; p=Path('node_modules/.bin/vitest'); assert p.is_symlink(); target=p.resolve(); original=target.read_bytes(); p.unlink(); p.write_text(\"#!/usr/bin/env python3\\n# Vitest 1.1 CLI compatibility only; package files and test selection are unchanged.\\nimport os\\nfrom pathlib import Path\\nimport sys\\nargs = []\\nfor arg in sys.argv[1:]:\\n    if arg == '--coverage':\\n        args.append('--coverage.enabled')\\n    elif arg.startswith('--maxWorkers='):\\n        value = arg.split('=', 1)[1]\\n        os.environ['VITEST_MAX_THREADS'] = value\\n        os.environ['VITEST_MAX_FORKS'] = value\\n    elif arg.startswith('--minWorkers='):\\n        value = arg.split('=', 1)[1]\\n        os.environ['VITEST_MIN_THREADS'] = value\\n        os.environ['VITEST_MIN_FORKS'] = value\\n    else:\\n        args.append(arg)\\nentry = Path(__file__).absolute().parent.parent / 'vitest' / 'vitest.mjs'\\nos.execvp('node', ['node', str(entry), *args])\\n\"); p.chmod(0o755); print('Original entry:',target,'SHA256:',hashlib.sha256(original).hexdigest()); print('CLI compatibility shim SHA256:',hashlib.sha256(p.read_bytes()).hexdigest())"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-e3480gk0/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/08-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/08-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 65
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-e3480gk0/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/09-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/09-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 68
+    },
+    {
+      "argv": [
+        "corepack",
+        "yarn@1.22.22",
+        "install",
+        "--frozen-lockfile",
+        "--non-interactive"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-e3480gk0/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/10-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/10-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 7455
+    },
+    {
+      "argv": [
+        "python3",
+        "-c",
+        "from pathlib import Path; import hashlib; p=Path('node_modules/.bin/vitest'); assert p.is_symlink(); target=p.resolve(); original=target.read_bytes(); p.unlink(); p.write_text(\"#!/usr/bin/env python3\\n# Vitest 1.1 CLI compatibility only; package files and test selection are unchanged.\\nimport os\\nfrom pathlib import Path\\nimport sys\\nargs = []\\nfor arg in sys.argv[1:]:\\n    if arg == '--coverage':\\n        args.append('--coverage.enabled')\\n    elif arg.startswith('--maxWorkers='):\\n        value = arg.split('=', 1)[1]\\n        os.environ['VITEST_MAX_THREADS'] = value\\n        os.environ['VITEST_MAX_FORKS'] = value\\n    elif arg.startswith('--minWorkers='):\\n        value = arg.split('=', 1)[1]\\n        os.environ['VITEST_MIN_THREADS'] = value\\n        os.environ['VITEST_MIN_FORKS'] = value\\n    else:\\n        args.append(arg)\\nentry = Path(__file__).absolute().parent.parent / 'vitest' / 'vitest.mjs'\\nos.execvp('node', ['node', str(entry), *args])\\n\"); p.chmod(0o755); print('Original entry:',target,'SHA256:',hashlib.sha256(original).hexdigest()); print('CLI compatibility shim SHA256:',hashlib.sha256(p.read_bytes()).hexdigest())"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-e3480gk0/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/11-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/11-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 64
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-e3480gk0/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/12-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/12-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 32
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "--version"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-e3480gk0/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/trpc-eval/rio-eval-e3480gk0/config",
+        "RIO_CACHE_DIR": "/dev/shm/trpc-eval/rio-eval-e3480gk0/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/rio-version.txt",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/13-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 8
+    },
+    {
+      "argv": [
+        "node",
+        "--version"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-e3480gk0/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/trpc-eval/rio-eval-e3480gk0/config",
+        "RIO_CACHE_DIR": "/dev/shm/trpc-eval/rio-eval-e3480gk0/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/14-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/14-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 16
+    },
+    {
+      "argv": [
+        "npm",
+        "--version"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-e3480gk0/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/trpc-eval/rio-eval-e3480gk0/config",
+        "RIO_CACHE_DIR": "/dev/shm/trpc-eval/rio-eval-e3480gk0/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/15-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/15-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 415
+    },
+    {
+      "argv": [
+        "corepack",
+        "--version"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-e3480gk0/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/trpc-eval/rio-eval-e3480gk0/config",
+        "RIO_CACHE_DIR": "/dev/shm/trpc-eval/rio-eval-e3480gk0/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/16-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/16-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 165
+    },
+    {
+      "argv": [
+        "python3",
+        "--version"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-e3480gk0/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/trpc-eval/rio-eval-e3480gk0/config",
+        "RIO_CACHE_DIR": "/dev/shm/trpc-eval/rio-eval-e3480gk0/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/17-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/17-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 4
+    },
+    {
+      "argv": [
+        "uv",
+        "--version"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-e3480gk0/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/trpc-eval/rio-eval-e3480gk0/config",
+        "RIO_CACHE_DIR": "/dev/shm/trpc-eval/rio-eval-e3480gk0/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/18-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/18-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 16
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "profile",
+        "show",
+        "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/profile.yaml"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-e3480gk0/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/trpc-eval/rio-eval-e3480gk0/config",
+        "RIO_CACHE_DIR": "/dev/shm/trpc-eval/rio-eval-e3480gk0/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/resolved-profile.txt",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/19-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 216
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "doctor",
+        "--format",
+        "json"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-e3480gk0/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/trpc-eval/rio-eval-e3480gk0/config",
+        "RIO_CACHE_DIR": "/dev/shm/trpc-eval/rio-eval-e3480gk0/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/doctor.json",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/20-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 9097
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "review",
+        "--base",
+        "4ec3a9bf41ec3de004836e84757c07ec2b7b4156",
+        "--format",
+        "json",
+        "--offline",
+        "--profile",
+        "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/profile.yaml"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-e3480gk0/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/trpc-eval/rio-eval-e3480gk0/config",
+        "RIO_CACHE_DIR": "/dev/shm/trpc-eval/rio-eval-e3480gk0/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/report.json",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2081-attempt-01/21-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 29688
+    }
+  ],
+  "installations": {
+    "base": {
+      "commands": [
+        [
+          "corepack",
+          "yarn@1.22.22",
+          "install",
+          "--frozen-lockfile",
+          "--non-interactive"
+        ],
+        [
+          "python3",
+          "-c",
+          "from pathlib import Path; import hashlib; p=Path('node_modules/.bin/vitest'); assert p.is_symlink(); target=p.resolve(); original=target.read_bytes(); p.unlink(); p.write_text(\"#!/usr/bin/env python3\\n# Vitest 1.1 CLI compatibility only; package files and test selection are unchanged.\\nimport os\\nfrom pathlib import Path\\nimport sys\\nargs = []\\nfor arg in sys.argv[1:]:\\n    if arg == '--coverage':\\n        args.append('--coverage.enabled')\\n    elif arg.startswith('--maxWorkers='):\\n        value = arg.split('=', 1)[1]\\n        os.environ['VITEST_MAX_THREADS'] = value\\n        os.environ['VITEST_MAX_FORKS'] = value\\n    elif arg.startswith('--minWorkers='):\\n        value = arg.split('=', 1)[1]\\n        os.environ['VITEST_MIN_THREADS'] = value\\n        os.environ['VITEST_MIN_FORKS'] = value\\n    else:\\n        args.append(arg)\\nentry = Path(__file__).absolute().parent.parent / 'vitest' / 'vitest.mjs'\\nos.execvp('node', ['node', str(entry), *args])\\n\"); p.chmod(0o755); print('Original entry:',target,'SHA256:',hashlib.sha256(original).hexdigest()); print('CLI compatibility shim SHA256:',hashlib.sha256(p.read_bytes()).hexdigest())"
+        ]
+      ],
+      "succeeded": true,
+      "lockfiles": {
+        "yarn.lock": "29d39f128d5c33a6fc4689564006456e4c86febe2653849c18f3e49baa19f086"
+      }
+    },
+    "head": {
+      "commands": [
+        [
+          "corepack",
+          "yarn@1.22.22",
+          "install",
+          "--frozen-lockfile",
+          "--non-interactive"
+        ],
+        [
+          "python3",
+          "-c",
+          "from pathlib import Path; import hashlib; p=Path('node_modules/.bin/vitest'); assert p.is_symlink(); target=p.resolve(); original=target.read_bytes(); p.unlink(); p.write_text(\"#!/usr/bin/env python3\\n# Vitest 1.1 CLI compatibility only; package files and test selection are unchanged.\\nimport os\\nfrom pathlib import Path\\nimport sys\\nargs = []\\nfor arg in sys.argv[1:]:\\n    if arg == '--coverage':\\n        args.append('--coverage.enabled')\\n    elif arg.startswith('--maxWorkers='):\\n        value = arg.split('=', 1)[1]\\n        os.environ['VITEST_MAX_THREADS'] = value\\n        os.environ['VITEST_MAX_FORKS'] = value\\n    elif arg.startswith('--minWorkers='):\\n        value = arg.split('=', 1)[1]\\n        os.environ['VITEST_MIN_THREADS'] = value\\n        os.environ['VITEST_MIN_FORKS'] = value\\n    else:\\n        args.append(arg)\\nentry = Path(__file__).absolute().parent.parent / 'vitest' / 'vitest.mjs'\\nos.execvp('node', ['node', str(entry), *args])\\n\"); p.chmod(0o755); print('Original entry:',target,'SHA256:',hashlib.sha256(original).hexdigest()); print('CLI compatibility shim SHA256:',hashlib.sha256(p.read_bytes()).hexdigest())"
+        ]
+      ],
+      "succeeded": true,
+      "lockfiles": {
+        "yarn.lock": "29d39f128d5c33a6fc4689564006456e4c86febe2653849c18f3e49baa19f086"
+      }
+    }
+  },
+  "failures": [],
+  "network": "Installers may use network; Rio review uses --offline. Subprocesses are not isolated.",
+  "profile_sha256": "6fc8403032b9ed8c47cbe10b8c4e8140350c4a92367eb7db34086daf4925a7d4",
+  "resolution": {
+    "base_sha": "4ec3a9bf41ec3de004836e84757c07ec2b7b4156",
+    "head_sha": "310c8733dbde15f6b279863798e740953a4341dd",
+    "source": "pinned argv"
+  },
+  "disposable_directory": "/dev/shm/trpc-eval/rio-eval-e3480gk0",
+  "base_sha": "4ec3a9bf41ec3de004836e84757c07ec2b7b4156",
+  "head_sha": "310c8733dbde15f6b279863798e740953a4341dd",
+  "removed_environment_keys": [],
+  "resolved_profile_sha256": "00714f175b0ede5b16f6a5efa958055d4aa74b1ac88fdf7450c7d7e16e21e475",
+  "review_exit_code": 0,
+  "environment": {
+    "dependency_state": "verified",
+    "baseline_ran": true,
+    "baseline_classification_ran": true,
+    "eligible": true,
+    "reasons": [],
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "Graph references use syntax and text; no language server was used",
+      "Offline applies to Rio; tool and test processes were not network-isolated"
+    ]
+  },
+  "finished_utc": "2026-11-05T03:30:47.911594+00:00"
+}

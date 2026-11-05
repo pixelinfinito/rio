@@ -1,0 +1,1 @@
+Removed coverage subprocess bootstrap: .venv/lib/python3.13/site-packages/a1_coverage.pth

@@ -1,0 +1,4 @@
+src/allowlist-demo.tsx(1,30): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+src/prefer-query-options-demo.tsx(1,42): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+src/prefer-query-options-demo.tsx(14,14): error TS7006: Parameter 'data' implicitly has an 'any' type.
+src/queries.tsx(1,30): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.

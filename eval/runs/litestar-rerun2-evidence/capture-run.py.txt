@@ -1,0 +1,123 @@
+"""Run unchanged eval/runner.py and capture supplemental /proc + doctor evidence.
+
+Usage: python3 capture-run.py.txt 5178 | 5164
+No source tree, installation, or review profile is changed by this observer.
+"""
+import datetime
+import gzip
+import hashlib
+import json
+import os
+import pathlib
+import shutil
+import subprocess
+import sys
+import time
+
+root = pathlib.Path(__file__).resolve().parents[3]
+evidence = pathlib.Path(__file__).resolve().parent
+registration = json.loads((evidence / "preregistration.json").read_text())
+pr = int(sys.argv[1])
+case = registration["cases"][0 if pr == 5178 else 1]
+name = "litestar-5178-rerun2" if pr == 5178 else "litestar-5164-seed-f841-rerun2"
+retry = len(sys.argv) > 2 and sys.argv[2] == "attempt2"
+if retry:
+    name += "-attempt2"
+out = root / "eval/runs" / name
+prior = root / case["prior"]
+env = os.environ.copy()
+settings = registration["setup_environment"].copy()
+prefix = settings.pop("PATH_prefix")
+env.update(settings)
+if retry or pr == 5164:
+    settings.update(TMPDIR="/run/user/1000/litestar-rerun2", UV_CACHE_DIR="/run/user/1000/litestar-rerun2/uv-cache")
+    env.update(settings)
+    pathlib.Path(settings["TMPDIR"]).mkdir(exist_ok=True)
+env["PATH"] = os.pathsep.join(prefix + [env["PATH"]])
+argv = ["python3", "eval/runner.py", "--repository", "litestar-org/litestar",
+        "--pr", str(pr), "--base", case["base"], "--head", case["head"],
+        "--languages", "python", "--rio", "/home/ubuntu/rio/target/release/rio",
+        "--out", str(out), "--install-plan", str(prior / "install-plan.json"),
+        "--profile", str(prior / "profile.yaml"), "--temp-root", "/dev/shm/litestar-rerun2"]
+if retry or pr == 5164:
+    argv[-1] = settings["TMPDIR"]
+if pr == 5164:
+    argv += ["--case-id", "5164-seed-f841"]
+start = time.monotonic()
+launch = {"argv": argv, "cwd": str(root), "environment": settings,
+          "PATH_prefix": prefix, "started_utc": datetime.datetime.now(datetime.timezone.utc).isoformat()}
+proc = subprocess.Popen(argv, cwd=root, env=env)
+seen = {}
+doctor_done = False
+while True:
+    try:
+        ledger = json.loads((out / "commands.json").read_text())
+        temp = pathlib.Path(ledger["disposable_directory"])
+    except (OSError, ValueError, KeyError):
+        if proc.poll() is not None:
+            break
+        time.sleep(0.5)
+        continue
+    dest = out / "rio-tool-evidence"
+    dest.mkdir(exist_ok=True)
+    for process in pathlib.Path("/proc").iterdir():
+        if not process.name.isdigit():
+            continue
+        try:
+            args = [a.decode(errors="replace") for a in (process / "cmdline").read_bytes().split(b"\0") if a]
+            cwd = str((process / "cwd").resolve())
+            if not args or not cwd.startswith(str(temp) + "/"):
+                continue
+            if not any(x in " ".join(args) for x in ["/bin/mypy", "/bin/ruff", "/bin/coverage", "/bin/python", "/bin/pytest"]):
+                continue
+            key = process.name + "|" + json.dumps(args)
+            if key in seen:
+                continue
+            row = {"pid": int(process.name), "argv": args, "cwd": cwd,
+                   "observed_utc": datetime.datetime.now(datetime.timezone.utc).isoformat()}
+            child_env = dict(x.decode(errors="replace").split("=", 1) for x in (process / "environ").read_bytes().split(b"\0") if b"=" in x)
+            row["environment"] = {k: child_env[k] for k in ["PATH", "VIRTUAL_ENV", "PYTEST_ADDOPTS", "COVERAGE_RCFILE", "COVERAGE_FILE", "CI"] if k in child_env}
+            if "--config-file" in args:
+                row["config_text"] = pathlib.Path(args[args.index("--config-file") + 1]).read_text()
+            seen[key] = row
+            (dest / "commands.json").write_text(json.dumps({"capture": "Supplemental Linux /proc observations, not runner child-argv telemetry", "commands": list(seen.values())}, indent=2) + "\n")
+        except (OSError, ValueError, IndexError):
+            pass
+    for run in (temp / "cache").glob("*/runs/*"):
+        for folder_name, dirs, files in os.walk(run):
+            dirs[:] = [n for n in dirs if n != "tools"]
+            for filename in files:
+                source = pathlib.Path(folder_name) / filename
+                if source.suffix not in [".json", ".txt", ".yaml"]:
+                    continue
+                target = dest / "cache" / source.relative_to(run)
+                try:
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    if not target.exists() or target.stat().st_size != source.stat().st_size:
+                        shutil.copyfile(source, target)
+                except OSError:
+                    pass
+    # Default doctor runs in the unchanged harness. Capture the new all-roots
+    # variant after installations finish, while the disposable checkout exists.
+    if not doctor_done and (out / "doctor.json").exists() and (out / "doctor.json").stat().st_size:
+        doctor_done = True
+        doctor_env = {k: v for k, v in env.items() if not k.startswith("RIO_")}
+        doctor_env.update(RIO_CONFIG_DIR=str(temp / "config"), RIO_CACHE_DIR=str(temp / "cache"))
+        for label, flags in [("doctor-all-roots", ["--all-roots"]), ("doctor-base", [])]:
+            doctor_argv = ["/home/ubuntu/rio/target/release/rio", "doctor", *flags, "--base", case["base"], "--format", "json"]
+            doctor_start = time.monotonic()
+            with (out / (label + ".json")).open("wb") as so, (out / (label + ".stderr.log")).open("wb") as se:
+                result = subprocess.run(doctor_argv, cwd=temp / "head", env=doctor_env, stdout=so, stderr=se, timeout=120)
+            (out / (label + "-command.json")).write_text(json.dumps({"argv": doctor_argv, "cwd": str(temp / "head"), "environment": {k: doctor_env[k] for k in ["RIO_CONFIG_DIR", "RIO_CACHE_DIR"]}, "exit_code": result.returncode, "wall_time_ms": int((time.monotonic() - doctor_start) * 1000)}, indent=2) + "\n")
+    if proc.poll() is not None:
+        break
+    time.sleep(0.5)
+launch.update(exit_code=proc.wait(), wall_time_ms=int((time.monotonic() - start) * 1000), finished_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(), commands_captured=len(seen))
+(evidence / (name + "-launch.json")).write_text(json.dumps(launch, indent=2) + "\n")
+for file in out.rglob("*"):
+    if file.is_file() and file.suffix == ".json" and file.stat().st_size > 5_000_000:
+        with file.open("rb") as source, gzip.open(str(file) + ".gz", "wb") as target:
+            shutil.copyfileobj(source, target)
+        file.unlink()
+print(json.dumps(launch), flush=True)
+sys.exit(launch["exit_code"])

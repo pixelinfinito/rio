@@ -1,0 +1,16 @@
+{
+  "base": {
+    "cwd": "/tmp/vue-positive-base",
+    "sha": "35aeae7fa3168adcf9ed95fd35495d17c8b93eeb",
+    "tracked_status": "",
+    "source_sha": "36bb2cfd2dff29762aa5325715b00110c937f9e7",
+    "expected_source_sha": "36bb2cfd2dff29762aa5325715b00110c937f9e7"
+  },
+  "head": {
+    "cwd": "/tmp/vue-positive-head",
+    "sha": "cc34f2e4b1490d55a18c9f8e4f83bda855a6e105",
+    "tracked_status": "",
+    "source_sha": "18d460ace9037d379972c96068b7bdd2f6c764e4",
+    "expected_source_sha": "18d460ace9037d379972c96068b7bdd2f6c764e4"
+  }
+}

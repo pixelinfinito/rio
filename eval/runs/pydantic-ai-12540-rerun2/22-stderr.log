@@ -1,0 +1,28 @@
+Warning: /home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/profile.yaml:$.steps[3]: rio/triage is deferred locally: no_endpoint
+Warning: /home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/profile.yaml:$.steps[4]: rio/agents is deferred locally: no_endpoint
+Warning: /home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/profile.yaml:$.steps[5]: rio/verify is deferred locally: no_endpoint
+Running prepare…
+Finished prepare
+Running checks…
+typecheck .: skipped (dependency_mismatch)
+lint .: skipped (dependency_mismatch)
+coverage pydantic_graph: skipped (disabled)
+coverage .: skipped (disabled)
+typecheck src/pydantic_ai_harness: skipped (dependency_mismatch)
+typecheck examples: skipped (dependency_mismatch)
+coverage src/pydantic_ai_harness: skipped (disabled)
+coverage examples: skipped (disabled)
+typecheck src/pydantic_clai2: skipped (dependency_mismatch)
+typecheck pydantic_ai_slim: skipped (dependency_mismatch)
+coverage src/pydantic_clai2: skipped (disabled)
+lint pydantic_ai_slim: skipped (dependency_mismatch)
+secrets .: findings
+coverage pydantic_ai_slim: skipped (disabled)
+dependencies .: skipped (disabled)
+typecheck pydantic_evals: skipped (dependency_mismatch)
+lint pydantic_evals: skipped (dependency_mismatch)
+coverage pydantic_evals: skipped (disabled)
+lint pydantic_graph: passed
+lint pydantic_graph: passed
+
+Command '['/home/ubuntu/rio/target/release/rio', 'review', '--base', '2f0e98cbb7b60e12dcd0edc397f6df11c5cc1c56', '--format', 'json', '--offline', '--profile', '/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-ai/eval/runs/pydantic-ai-12540-rerun2/profile.yaml']' timed out after 1200 seconds

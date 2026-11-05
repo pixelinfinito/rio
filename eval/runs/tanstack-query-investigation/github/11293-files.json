@@ -1,0 +1,38 @@
+[
+  {
+    "sha": "64ba646af0a0be1b206cbf22210e1556be045a99",
+    "filename": ".changeset/quiet-timers-rest.md",
+    "status": "added",
+    "additions": 5,
+    "deletions": 0,
+    "changes": 5,
+    "blob_url": "https://github.com/TanStack/query/blob/370ed5845530a928fcb5374162de67326724a7d1/.changeset%2Fquiet-timers-rest.md",
+    "raw_url": "https://github.com/TanStack/query/raw/370ed5845530a928fcb5374162de67326724a7d1/.changeset%2Fquiet-timers-rest.md",
+    "contents_url": "https://api.github.com/repos/TanStack/query/contents/.changeset%2Fquiet-timers-rest.md?ref=370ed5845530a928fcb5374162de67326724a7d1",
+    "patch": "@@ -0,0 +1,5 @@\n+---\n+'@tanstack/query-core': patch\n+---\n+\n+Avoid scheduling stale timeouts for disabled query observers."
+  },
+  {
+    "sha": "7c649089c93f4523f835c6e7fc00d9d86de72ec9",
+    "filename": "packages/query-core/src/__tests__/queryObserver.test.tsx",
+    "status": "modified",
+    "additions": 21,
+    "deletions": 1,
+    "changes": 22,
+    "blob_url": "https://github.com/TanStack/query/blob/370ed5845530a928fcb5374162de67326724a7d1/packages%2Fquery-core%2Fsrc%2F__tests__%2FqueryObserver.test.tsx",
+    "raw_url": "https://github.com/TanStack/query/raw/370ed5845530a928fcb5374162de67326724a7d1/packages%2Fquery-core%2Fsrc%2F__tests__%2FqueryObserver.test.tsx",
+    "contents_url": "https://api.github.com/repos/TanStack/query/contents/packages%2Fquery-core%2Fsrc%2F__tests__%2FqueryObserver.test.tsx?ref=370ed5845530a928fcb5374162de67326724a7d1",
+    "patch": "@@ -8,7 +8,7 @@ import {\n   vi,\n } from 'vitest'\n import { queryKey, sleep } from '@tanstack/query-test-utils'\n-import { QueryClient, QueryObserver, focusManager } from '..'\n+import { QueryClient, QueryObserver, focusManager, timeoutManager } from '..'\n import type { QueryObserverResult } from '..'\n \n describe('queryObserver', () => {\n@@ -1405,6 +1405,26 @@ describe('queryObserver', () => {\n     expect(result.isStale).toBe(false)\n   })\n \n+  it('should not schedule a stale timeout for disabled observers', () => {\n+    const key = queryKey()\n+    queryClient.setQueryData(key, 'data', {\n+      updatedAt: Date.now() - 20,\n+    })\n+\n+    const observer = new QueryObserver(queryClient, {\n+      queryKey: key,\n+      enabled: false,\n+      staleTime: 10,\n+    })\n+    const setTimeoutSpy = vi.spyOn(timeoutManager, 'setTimeout')\n+\n+    const unsubscribe = observer.subscribe(vi.fn())\n+\n+    expect(setTimeoutSpy).not.toHaveBeenCalled()\n+\n+    unsubscribe()\n+  })\n+\n   it('should allow staleTime as a function', async () => {\n     const key = queryKey()\n     const observer = new QueryObserver(queryClient, {"
+  },
+  {
+    "sha": "105a3b376a99886095f8fd65630e7088e44e408d",
+    "filename": "packages/query-core/src/queryObserver.ts",
+    "status": "modified",
+    "additions": 11,
+    "deletions": 9,
+    "changes": 20,
+    "blob_url": "https://github.com/TanStack/query/blob/370ed5845530a928fcb5374162de67326724a7d1/packages%2Fquery-core%2Fsrc%2FqueryObserver.ts",
+    "raw_url": "https://github.com/TanStack/query/raw/370ed5845530a928fcb5374162de67326724a7d1/packages%2Fquery-core%2Fsrc%2FqueryObserver.ts",
+    "contents_url": "https://api.github.com/repos/TanStack/query/contents/packages%2Fquery-core%2Fsrc%2FqueryObserver.ts?ref=370ed5845530a928fcb5374162de67326724a7d1",
+    "patch": "@@ -369,18 +369,22 @@ export class QueryObserver<\n     return promise\n   }\n \n+  #shouldScheduleTimer(timeout: unknown): timeout is number {\n+    return (\n+      !environmentManager.isServer() &&\n+      resolveQueryBoolean(this.options.enabled, this.#currentQuery) !== false &&\n+      isValidTimeout(timeout)\n+    )\n+  }\n+\n   #updateStaleTimeout(): void {\n     this.#clearStaleTimeout()\n     const staleTime = resolveStaleTime(\n       this.options.staleTime,\n       this.#currentQuery,\n     )\n \n-    if (\n-      environmentManager.isServer() ||\n-      this.#currentResult.isStale ||\n-      !isValidTimeout(staleTime)\n-    ) {\n+    if (this.#currentResult.isStale || !this.#shouldScheduleTimer(staleTime)) {\n       return\n     }\n \n@@ -411,10 +415,8 @@ export class QueryObserver<\n     this.#currentRefetchInterval = nextInterval\n \n     if (\n-      environmentManager.isServer() ||\n-      resolveQueryBoolean(this.options.enabled, this.#currentQuery) === false ||\n-      !isValidTimeout(this.#currentRefetchInterval) ||\n-      this.#currentRefetchInterval === 0\n+      this.#currentRefetchInterval === 0 ||\n+      !this.#shouldScheduleTimer(this.#currentRefetchInterval)\n     ) {\n       return\n     }"
+  }
+]

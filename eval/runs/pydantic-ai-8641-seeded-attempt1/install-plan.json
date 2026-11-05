@@ -1,0 +1,34 @@
+{
+  "base": [
+    [
+      "uv",
+      "sync",
+      "--locked",
+      "--python",
+      "3.13.9",
+      "--group",
+      "lint"
+    ],
+    [
+      "python3",
+      "-c",
+      "from pathlib import Path; files=list(Path('.venv/lib').glob('python*/site-packages/a1_coverage.pth')); [(p.unlink(),print('Removed coverage subprocess bootstrap:',p)) for p in files]"
+    ]
+  ],
+  "head": [
+    [
+      "uv",
+      "sync",
+      "--locked",
+      "--python",
+      "3.13.9",
+      "--group",
+      "lint"
+    ],
+    [
+      "python3",
+      "-c",
+      "from pathlib import Path; files=list(Path('.venv/lib').glob('python*/site-packages/a1_coverage.pth')); [(p.unlink(),print('Removed coverage subprocess bootstrap:',p)) for p in files]"
+    ]
+  ]
+}

@@ -1,0 +1,10 @@
+
+ RUN  v3.2.6 /tmp/rio-acceptance-immer
+
+ ✓ __tests__/base.js (3395 tests | 3350 skipped) 56ms
+
+ Test Files  1 passed (1)
+      Tests  45 passed | 3350 skipped (3395)
+   Start at  20:02:22
+   Duration  1.38s (transform 484ms, setup 0ms, collect 759ms, tests 56ms, environment 0ms, prepare 112ms)
+

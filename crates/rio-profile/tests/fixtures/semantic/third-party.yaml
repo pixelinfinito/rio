@@ -1,0 +1,4 @@
+version: 1
+name: invalid-third-party
+extends: rio/base
+steps: [{id: a, uses: acme/review}]

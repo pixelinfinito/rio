@@ -1,0 +1,1424 @@
+......................................F........F..F....................F [ 41%]
+.............................F......F...F......FF............FF.F.F..... [ 83%]
+...................FF........                                            [100%]
+=================================== FAILURES ===================================
+_ TestCallsiteParameterAdder.test_e2e[common-with-pre-logging-parameter_strings39] _
+
+self = <tests.processors.test_processors.TestCallsiteParameterAdder object at 0x7c4c250bb890>
+setup = 'common-with-pre', origin = 'logging'
+parameter_strings = {'filename', 'func_name', 'lineno', 'module', 'pathname', 'process', ...}
+
+    @pytest.mark.parametrize(
+        ("setup", "origin", "parameter_strings"),
+        itertools.product(
+            ["common-without-pre", "common-with-pre", "shared", "everywhere"],
+            ["logging", "structlog"],
+            [
+                None,
+                *[{parameter} for parameter in parameter_strings],
+                set(),
+                parameter_strings,
+                {"pathname", "filename"},
+                {"module", "func_name"},
+            ],
+        ),
+    )
+    def test_e2e(
+        self,
+        setup: str,
+        origin: str,
+        parameter_strings: set[str] | None,
+    ) -> None:
+        """
+        Logging output contains the correct callsite parameters.
+        """
+        logger = logging.Logger(sys._getframe().f_code.co_name)
+        string_io = StringIO()
+        handler = logging.StreamHandler(string_io)
+        processors = [self.make_processor(parameter_strings)]
+        if setup == "common-without-pre":
+            common_processors = processors
+            formatter = ProcessorFormatter(
+                processors=[*processors, JSONRenderer()]
+            )
+        elif setup == "common-with-pre":
+            common_processors = processors
+            formatter = ProcessorFormatter(
+                foreign_pre_chain=processors,
+                processors=[JSONRenderer()],
+            )
+        elif setup == "shared":
+            common_processors = []
+            formatter = ProcessorFormatter(
+                processors=[*processors, JSONRenderer()],
+            )
+        elif setup == "everywhere":
+            common_processors = processors
+            formatter = ProcessorFormatter(
+                foreign_pre_chain=processors,
+                processors=[*processors, JSONRenderer()],
+            )
+        else:
+            pytest.fail(f"invalid setup {setup}")
+        handler.setFormatter(formatter)
+        handler.setLevel(0)
+        logger.addHandler(handler)
+        logger.setLevel(0)
+    
+        test_message = "test message"
+        if origin == "logging":
+            callsite_params = self.get_callsite_parameters()
+            logger.info(test_message)
+        elif origin == "structlog":
+            ctx = {}
+            bound_logger = BoundLogger(
+                logger,
+                [*common_processors, ProcessorFormatter.wrap_for_formatter],
+                ctx,
+            )
+            callsite_params = self.get_callsite_parameters()
+            bound_logger.info(test_message)
+        else:
+            pytest.fail(f"invalid origin {origin}")
+    
+        callsite_params = self.filter_parameter_dict(
+            callsite_params, parameter_strings
+        )
+        actual = {
+            key: value
+            for key, value in json.loads(string_io.getvalue()).items()
+            if not key.startswith("_")
+        }
+        expected = {"event": test_message, **callsite_params}
+    
+>       assert expected == actual
+E       AssertionError: assert {'event': 'te...cessors', ...} == {'event': 'te...nThread', ...}
+E         
+E         Omitting 9 identical items, use -vv to show
+E         Differing items:
+E         {'process_name': 'n/a'} != {'process_name': 'MainProcess'}
+E         Use -v to get more diff
+
+tests/processors/test_processors.py:571: AssertionError
+_ TestCallsiteParameterAdder.test_e2e[common-without-pre-logging-parameter_strings11] _
+
+self = <tests.processors.test_processors.TestCallsiteParameterAdder object at 0x7c4c250ba120>
+setup = 'common-without-pre', origin = 'logging'
+parameter_strings = {'filename', 'func_name', 'lineno', 'module', 'pathname', 'process', ...}
+
+    @pytest.mark.parametrize(
+        ("setup", "origin", "parameter_strings"),
+        itertools.product(
+            ["common-without-pre", "common-with-pre", "shared", "everywhere"],
+            ["logging", "structlog"],
+            [
+                None,
+                *[{parameter} for parameter in parameter_strings],
+                set(),
+                parameter_strings,
+                {"pathname", "filename"},
+                {"module", "func_name"},
+            ],
+        ),
+    )
+    def test_e2e(
+        self,
+        setup: str,
+        origin: str,
+        parameter_strings: set[str] | None,
+    ) -> None:
+        """
+        Logging output contains the correct callsite parameters.
+        """
+        logger = logging.Logger(sys._getframe().f_code.co_name)
+        string_io = StringIO()
+        handler = logging.StreamHandler(string_io)
+        processors = [self.make_processor(parameter_strings)]
+        if setup == "common-without-pre":
+            common_processors = processors
+            formatter = ProcessorFormatter(
+                processors=[*processors, JSONRenderer()]
+            )
+        elif setup == "common-with-pre":
+            common_processors = processors
+            formatter = ProcessorFormatter(
+                foreign_pre_chain=processors,
+                processors=[JSONRenderer()],
+            )
+        elif setup == "shared":
+            common_processors = []
+            formatter = ProcessorFormatter(
+                processors=[*processors, JSONRenderer()],
+            )
+        elif setup == "everywhere":
+            common_processors = processors
+            formatter = ProcessorFormatter(
+                foreign_pre_chain=processors,
+                processors=[*processors, JSONRenderer()],
+            )
+        else:
+            pytest.fail(f"invalid setup {setup}")
+        handler.setFormatter(formatter)
+        handler.setLevel(0)
+        logger.addHandler(handler)
+        logger.setLevel(0)
+    
+        test_message = "test message"
+        if origin == "logging":
+            callsite_params = self.get_callsite_parameters()
+            logger.info(test_message)
+        elif origin == "structlog":
+            ctx = {}
+            bound_logger = BoundLogger(
+                logger,
+                [*common_processors, ProcessorFormatter.wrap_for_formatter],
+                ctx,
+            )
+            callsite_params = self.get_callsite_parameters()
+            bound_logger.info(test_message)
+        else:
+            pytest.fail(f"invalid origin {origin}")
+    
+        callsite_params = self.filter_parameter_dict(
+            callsite_params, parameter_strings
+        )
+        actual = {
+            key: value
+            for key, value in json.loads(string_io.getvalue()).items()
+            if not key.startswith("_")
+        }
+        expected = {"event": test_message, **callsite_params}
+    
+>       assert expected == actual
+E       AssertionError: assert {'event': 'te...cessors', ...} == {'event': 'te...nThread', ...}
+E         
+E         Omitting 9 identical items, use -vv to show
+E         Differing items:
+E         {'process_name': 'n/a'} != {'process_name': 'MainProcess'}
+E         Use -v to get more diff
+
+tests/processors/test_processors.py:571: AssertionError
+_____ TestCallsiteParameterAdder.test_e2e[common-without-pre-logging-None] _____
+
+self = <tests.processors.test_processors.TestCallsiteParameterAdder object at 0x7c4c250b9f70>
+setup = 'common-without-pre', origin = 'logging', parameter_strings = None
+
+    @pytest.mark.parametrize(
+        ("setup", "origin", "parameter_strings"),
+        itertools.product(
+            ["common-without-pre", "common-with-pre", "shared", "everywhere"],
+            ["logging", "structlog"],
+            [
+                None,
+                *[{parameter} for parameter in parameter_strings],
+                set(),
+                parameter_strings,
+                {"pathname", "filename"},
+                {"module", "func_name"},
+            ],
+        ),
+    )
+    def test_e2e(
+        self,
+        setup: str,
+        origin: str,
+        parameter_strings: set[str] | None,
+    ) -> None:
+        """
+        Logging output contains the correct callsite parameters.
+        """
+        logger = logging.Logger(sys._getframe().f_code.co_name)
+        string_io = StringIO()
+        handler = logging.StreamHandler(string_io)
+        processors = [self.make_processor(parameter_strings)]
+        if setup == "common-without-pre":
+            common_processors = processors
+            formatter = ProcessorFormatter(
+                processors=[*processors, JSONRenderer()]
+            )
+        elif setup == "common-with-pre":
+            common_processors = processors
+            formatter = ProcessorFormatter(
+                foreign_pre_chain=processors,
+                processors=[JSONRenderer()],
+            )
+        elif setup == "shared":
+            common_processors = []
+            formatter = ProcessorFormatter(
+                processors=[*processors, JSONRenderer()],
+            )
+        elif setup == "everywhere":
+            common_processors = processors
+            formatter = ProcessorFormatter(
+                foreign_pre_chain=processors,
+                processors=[*processors, JSONRenderer()],
+            )
+        else:
+            pytest.fail(f"invalid setup {setup}")
+        handler.setFormatter(formatter)
+        handler.setLevel(0)
+        logger.addHandler(handler)
+        logger.setLevel(0)
+    
+        test_message = "test message"
+        if origin == "logging":
+            callsite_params = self.get_callsite_parameters()
+            logger.info(test_message)
+        elif origin == "structlog":
+            ctx = {}
+            bound_logger = BoundLogger(
+                logger,
+                [*common_processors, ProcessorFormatter.wrap_for_formatter],
+                ctx,
+            )
+            callsite_params = self.get_callsite_parameters()
+            bound_logger.info(test_message)
+        else:
+            pytest.fail(f"invalid origin {origin}")
+    
+        callsite_params = self.filter_parameter_dict(
+            callsite_params, parameter_strings
+        )
+        actual = {
+            key: value
+            for key, value in json.loads(string_io.getvalue()).items()
+            if not key.startswith("_")
+        }
+        expected = {"event": test_message, **callsite_params}
+    
+>       assert expected == actual
+E       AssertionError: assert {'event': 'te...cessors', ...} == {'event': 'te...nThread', ...}
+E         
+E         Omitting 9 identical items, use -vv to show
+E         Differing items:
+E         {'process_name': 'n/a'} != {'process_name': 'MainProcess'}
+E         Use -v to get more diff
+
+tests/processors/test_processors.py:571: AssertionError
+_ TestCallsiteParameterAdder.test_e2e[everywhere-logging-parameter_strings95] __
+
+self = <tests.processors.test_processors.TestCallsiteParameterAdder object at 0x7c4c24fca240>
+setup = 'everywhere', origin = 'logging'
+parameter_strings = {'filename', 'func_name', 'lineno', 'module', 'pathname', 'process', ...}
+
+    @pytest.mark.parametrize(
+        ("setup", "origin", "parameter_strings"),
+        itertools.product(
+            ["common-without-pre", "common-with-pre", "shared", "everywhere"],
+            ["logging", "structlog"],
+            [
+                None,
+                *[{parameter} for parameter in parameter_strings],
+                set(),
+                parameter_strings,
+                {"pathname", "filename"},
+                {"module", "func_name"},
+            ],
+        ),
+    )
+    def test_e2e(
+        self,
+        setup: str,
+        origin: str,
+        parameter_strings: set[str] | None,
+    ) -> None:
+        """
+        Logging output contains the correct callsite parameters.
+        """
+        logger = logging.Logger(sys._getframe().f_code.co_name)
+        string_io = StringIO()
+        handler = logging.StreamHandler(string_io)
+        processors = [self.make_processor(parameter_strings)]
+        if setup == "common-without-pre":
+            common_processors = processors
+            formatter = ProcessorFormatter(
+                processors=[*processors, JSONRenderer()]
+            )
+        elif setup == "common-with-pre":
+            common_processors = processors
+            formatter = ProcessorFormatter(
+                foreign_pre_chain=processors,
+                processors=[JSONRenderer()],
+            )
+        elif setup == "shared":
+            common_processors = []
+            formatter = ProcessorFormatter(
+                processors=[*processors, JSONRenderer()],
+            )
+        elif setup == "everywhere":
+            common_processors = processors
+            formatter = ProcessorFormatter(
+                foreign_pre_chain=processors,
+                processors=[*processors, JSONRenderer()],
+            )
+        else:
+            pytest.fail(f"invalid setup {setup}")
+        handler.setFormatter(formatter)
+        handler.setLevel(0)
+        logger.addHandler(handler)
+        logger.setLevel(0)
+    
+        test_message = "test message"
+        if origin == "logging":
+            callsite_params = self.get_callsite_parameters()
+            logger.info(test_message)
+        elif origin == "structlog":
+            ctx = {}
+            bound_logger = BoundLogger(
+                logger,
+                [*common_processors, ProcessorFormatter.wrap_for_formatter],
+                ctx,
+            )
+            callsite_params = self.get_callsite_parameters()
+            bound_logger.info(test_message)
+        else:
+            pytest.fail(f"invalid origin {origin}")
+    
+        callsite_params = self.filter_parameter_dict(
+            callsite_params, parameter_strings
+        )
+        actual = {
+            key: value
+            for key, value in json.loads(string_io.getvalue()).items()
+            if not key.startswith("_")
+        }
+        expected = {"event": test_message, **callsite_params}
+    
+>       assert expected == actual
+E       AssertionError: assert {'event': 'te...cessors', ...} == {'event': 'te...nThread', ...}
+E         
+E         Omitting 9 identical items, use -vv to show
+E         Differing items:
+E         {'process_name': 'n/a'} != {'process_name': 'MainProcess'}
+E         Use -v to get more diff
+
+tests/processors/test_processors.py:571: AssertionError
+______ TestCallsiteParameterAdder.test_e2e[common-with-pre-logging-None] _______
+
+self = <tests.processors.test_processors.TestCallsiteParameterAdder object at 0x7c4c250bb050>
+setup = 'common-with-pre', origin = 'logging', parameter_strings = None
+
+    @pytest.mark.parametrize(
+        ("setup", "origin", "parameter_strings"),
+        itertools.product(
+            ["common-without-pre", "common-with-pre", "shared", "everywhere"],
+            ["logging", "structlog"],
+            [
+                None,
+                *[{parameter} for parameter in parameter_strings],
+                set(),
+                parameter_strings,
+                {"pathname", "filename"},
+                {"module", "func_name"},
+            ],
+        ),
+    )
+    def test_e2e(
+        self,
+        setup: str,
+        origin: str,
+        parameter_strings: set[str] | None,
+    ) -> None:
+        """
+        Logging output contains the correct callsite parameters.
+        """
+        logger = logging.Logger(sys._getframe().f_code.co_name)
+        string_io = StringIO()
+        handler = logging.StreamHandler(string_io)
+        processors = [self.make_processor(parameter_strings)]
+        if setup == "common-without-pre":
+            common_processors = processors
+            formatter = ProcessorFormatter(
+                processors=[*processors, JSONRenderer()]
+            )
+        elif setup == "common-with-pre":
+            common_processors = processors
+            formatter = ProcessorFormatter(
+                foreign_pre_chain=processors,
+                processors=[JSONRenderer()],
+            )
+        elif setup == "shared":
+            common_processors = []
+            formatter = ProcessorFormatter(
+                processors=[*processors, JSONRenderer()],
+            )
+        elif setup == "everywhere":
+            common_processors = processors
+            formatter = ProcessorFormatter(
+                foreign_pre_chain=processors,
+                processors=[*processors, JSONRenderer()],
+            )
+        else:
+            pytest.fail(f"invalid setup {setup}")
+        handler.setFormatter(formatter)
+        handler.setLevel(0)
+        logger.addHandler(handler)
+        logger.setLevel(0)
+    
+        test_message = "test message"
+        if origin == "logging":
+            callsite_params = self.get_callsite_parameters()
+            logger.info(test_message)
+        elif origin == "structlog":
+            ctx = {}
+            bound_logger = BoundLogger(
+                logger,
+                [*common_processors, ProcessorFormatter.wrap_for_formatter],
+                ctx,
+            )
+            callsite_params = self.get_callsite_parameters()
+            bound_logger.info(test_message)
+        else:
+            pytest.fail(f"invalid origin {origin}")
+    
+        callsite_params = self.filter_parameter_dict(
+            callsite_params, parameter_strings
+        )
+        actual = {
+            key: value
+            for key, value in json.loads(string_io.getvalue()).items()
+            if not key.startswith("_")
+        }
+        expected = {"event": test_message, **callsite_params}
+    
+>       assert expected == actual
+E       AssertionError: assert {'event': 'te...cessors', ...} == {'event': 'te...nThread', ...}
+E         
+E         Omitting 9 identical items, use -vv to show
+E         Differing items:
+E         {'process_name': 'n/a'} != {'process_name': 'MainProcess'}
+E         Use -v to get more diff
+
+tests/processors/test_processors.py:571: AssertionError
+_________ TestCallsiteParameterAdder.test_e2e[everywhere-logging-None] _________
+
+self = <tests.processors.test_processors.TestCallsiteParameterAdder object at 0x7c4c24fc9a00>
+setup = 'everywhere', origin = 'logging', parameter_strings = None
+
+    @pytest.mark.parametrize(
+        ("setup", "origin", "parameter_strings"),
+        itertools.product(
+            ["common-without-pre", "common-with-pre", "shared", "everywhere"],
+            ["logging", "structlog"],
+            [
+                None,
+                *[{parameter} for parameter in parameter_strings],
+                set(),
+                parameter_strings,
+                {"pathname", "filename"},
+                {"module", "func_name"},
+            ],
+        ),
+    )
+    def test_e2e(
+        self,
+        setup: str,
+        origin: str,
+        parameter_strings: set[str] | None,
+    ) -> None:
+        """
+        Logging output contains the correct callsite parameters.
+        """
+        logger = logging.Logger(sys._getframe().f_code.co_name)
+        string_io = StringIO()
+        handler = logging.StreamHandler(string_io)
+        processors = [self.make_processor(parameter_strings)]
+        if setup == "common-without-pre":
+            common_processors = processors
+            formatter = ProcessorFormatter(
+                processors=[*processors, JSONRenderer()]
+            )
+        elif setup == "common-with-pre":
+            common_processors = processors
+            formatter = ProcessorFormatter(
+                foreign_pre_chain=processors,
+                processors=[JSONRenderer()],
+            )
+        elif setup == "shared":
+            common_processors = []
+            formatter = ProcessorFormatter(
+                processors=[*processors, JSONRenderer()],
+            )
+        elif setup == "everywhere":
+            common_processors = processors
+            formatter = ProcessorFormatter(
+                foreign_pre_chain=processors,
+                processors=[*processors, JSONRenderer()],
+            )
+        else:
+            pytest.fail(f"invalid setup {setup}")
+        handler.setFormatter(formatter)
+        handler.setLevel(0)
+        logger.addHandler(handler)
+        logger.setLevel(0)
+    
+        test_message = "test message"
+        if origin == "logging":
+            callsite_params = self.get_callsite_parameters()
+            logger.info(test_message)
+        elif origin == "structlog":
+            ctx = {}
+            bound_logger = BoundLogger(
+                logger,
+                [*common_processors, ProcessorFormatter.wrap_for_formatter],
+                ctx,
+            )
+            callsite_params = self.get_callsite_parameters()
+            bound_logger.info(test_message)
+        else:
+            pytest.fail(f"invalid origin {origin}")
+    
+        callsite_params = self.filter_parameter_dict(
+            callsite_params, parameter_strings
+        )
+        actual = {
+            key: value
+            for key, value in json.loads(string_io.getvalue()).items()
+            if not key.startswith("_")
+        }
+        expected = {"event": test_message, **callsite_params}
+    
+>       assert expected == actual
+E       AssertionError: assert {'event': 'te...cessors', ...} == {'event': 'te...nThread', ...}
+E         
+E         Omitting 9 identical items, use -vv to show
+E         Differing items:
+E         {'process_name': 'n/a'} != {'process_name': 'MainProcess'}
+E         Use -v to get more diff
+
+tests/processors/test_processors.py:571: AssertionError
+___ TestCallsiteParameterAdder.test_e2e[shared-logging-parameter_strings60] ____
+
+self = <tests.processors.test_processors.TestCallsiteParameterAdder object at 0x7c4c24fc8800>
+setup = 'shared', origin = 'logging', parameter_strings = {'process_name'}
+
+    @pytest.mark.parametrize(
+        ("setup", "origin", "parameter_strings"),
+        itertools.product(
+            ["common-without-pre", "common-with-pre", "shared", "everywhere"],
+            ["logging", "structlog"],
+            [
+                None,
+                *[{parameter} for parameter in parameter_strings],
+                set(),
+                parameter_strings,
+                {"pathname", "filename"},
+                {"module", "func_name"},
+            ],
+        ),
+    )
+    def test_e2e(
+        self,
+        setup: str,
+        origin: str,
+        parameter_strings: set[str] | None,
+    ) -> None:
+        """
+        Logging output contains the correct callsite parameters.
+        """
+        logger = logging.Logger(sys._getframe().f_code.co_name)
+        string_io = StringIO()
+        handler = logging.StreamHandler(string_io)
+        processors = [self.make_processor(parameter_strings)]
+        if setup == "common-without-pre":
+            common_processors = processors
+            formatter = ProcessorFormatter(
+                processors=[*processors, JSONRenderer()]
+            )
+        elif setup == "common-with-pre":
+            common_processors = processors
+            formatter = ProcessorFormatter(
+                foreign_pre_chain=processors,
+                processors=[JSONRenderer()],
+            )
+        elif setup == "shared":
+            common_processors = []
+            formatter = ProcessorFormatter(
+                processors=[*processors, JSONRenderer()],
+            )
+        elif setup == "everywhere":
+            common_processors = processors
+            formatter = ProcessorFormatter(
+                foreign_pre_chain=processors,
+                processors=[*processors, JSONRenderer()],
+            )
+        else:
+            pytest.fail(f"invalid setup {setup}")
+        handler.setFormatter(formatter)
+        handler.setLevel(0)
+        logger.addHandler(handler)
+        logger.setLevel(0)
+    
+        test_message = "test message"
+        if origin == "logging":
+            callsite_params = self.get_callsite_parameters()
+            logger.info(test_message)
+        elif origin == "structlog":
+            ctx = {}
+            bound_logger = BoundLogger(
+                logger,
+                [*common_processors, ProcessorFormatter.wrap_for_formatter],
+                ctx,
+            )
+            callsite_params = self.get_callsite_parameters()
+            bound_logger.info(test_message)
+        else:
+            pytest.fail(f"invalid origin {origin}")
+    
+        callsite_params = self.filter_parameter_dict(
+            callsite_params, parameter_strings
+        )
+        actual = {
+            key: value
+            for key, value in json.loads(string_io.getvalue()).items()
+            if not key.startswith("_")
+        }
+        expected = {"event": test_message, **callsite_params}
+    
+>       assert expected == actual
+E       AssertionError: assert {'event': 'te..._name': 'n/a'} == {'event': 'te...'MainProcess'}
+E         
+E         Omitting 1 identical items, use -vv to show
+E         Differing items:
+E         {'process_name': 'n/a'} != {'process_name': 'MainProcess'}
+E         Use -v to get more diff
+
+tests/processors/test_processors.py:571: AssertionError
+____ TestCallsiteParameterAdder.test_processor[logging-parameter_strings4] _____
+
+self = <tests.processors.test_processors.TestCallsiteParameterAdder object at 0x7c4c2527ec30>
+origin = 'logging', parameter_strings = {'process_name'}
+
+    @pytest.mark.parametrize(
+        ("origin", "parameter_strings"),
+        itertools.product(
+            ["logging", "structlog"],
+            [
+                None,
+                *[{parameter} for parameter in parameter_strings],
+                set(),
+                parameter_strings,
+                {"pathname", "filename"},
+                {"module", "func_name"},
+            ],
+        ),
+    )
+    def test_processor(
+        self,
+        origin: str,
+        parameter_strings: set[str] | None,
+    ):
+        """
+        The correct callsite parameters are added to event dictionaries.
+        """
+        test_message = "test message"
+        processor = self.make_processor(parameter_strings)
+        if origin == "structlog":
+            event_dict: EventDict = {"event": test_message}
+            callsite_params = self.get_callsite_parameters()
+            actual = processor(None, None, event_dict)
+        elif origin == "logging":
+            callsite_params = self.get_callsite_parameters()
+            record = logging.LogRecord(
+                "name",
+                logging.INFO,
+                callsite_params["pathname"],
+                callsite_params["lineno"],
+                test_message,
+                None,
+                None,
+                callsite_params["func_name"],
+            )
+            event_dict: EventDict = {
+                "event": test_message,
+                "_record": record,
+                "_from_structlog": False,
+            }
+            actual = processor(None, None, event_dict)
+        else:
+            pytest.fail(f"invalid origin {origin}")
+        actual = {
+            key: value
+            for key, value in actual.items()
+            if not key.startswith("_")
+        }
+        callsite_params = self.filter_parameter_dict(
+            callsite_params, parameter_strings
+        )
+        expected = {"event": test_message, **callsite_params}
+    
+>       assert expected == actual
+E       AssertionError: assert {'event': 'te..._name': 'n/a'} == {'event': 'te...'MainProcess'}
+E         
+E         Omitting 1 identical items, use -vv to show
+E         Differing items:
+E         {'process_name': 'n/a'} != {'process_name': 'MainProcess'}
+E         Use -v to get more diff
+
+tests/processors/test_processors.py:486: AssertionError
+_ TestCallsiteParameterAdder.test_e2e[common-without-pre-logging-parameter_strings4] _
+
+self = <tests.processors.test_processors.TestCallsiteParameterAdder object at 0x7c4c250b98b0>
+setup = 'common-without-pre', origin = 'logging'
+parameter_strings = {'process_name'}
+
+    @pytest.mark.parametrize(
+        ("setup", "origin", "parameter_strings"),
+        itertools.product(
+            ["common-without-pre", "common-with-pre", "shared", "everywhere"],
+            ["logging", "structlog"],
+            [
+                None,
+                *[{parameter} for parameter in parameter_strings],
+                set(),
+                parameter_strings,
+                {"pathname", "filename"},
+                {"module", "func_name"},
+            ],
+        ),
+    )
+    def test_e2e(
+        self,
+        setup: str,
+        origin: str,
+        parameter_strings: set[str] | None,
+    ) -> None:
+        """
+        Logging output contains the correct callsite parameters.
+        """
+        logger = logging.Logger(sys._getframe().f_code.co_name)
+        string_io = StringIO()
+        handler = logging.StreamHandler(string_io)
+        processors = [self.make_processor(parameter_strings)]
+        if setup == "common-without-pre":
+            common_processors = processors
+            formatter = ProcessorFormatter(
+                processors=[*processors, JSONRenderer()]
+            )
+        elif setup == "common-with-pre":
+            common_processors = processors
+            formatter = ProcessorFormatter(
+                foreign_pre_chain=processors,
+                processors=[JSONRenderer()],
+            )
+        elif setup == "shared":
+            common_processors = []
+            formatter = ProcessorFormatter(
+                processors=[*processors, JSONRenderer()],
+            )
+        elif setup == "everywhere":
+            common_processors = processors
+            formatter = ProcessorFormatter(
+                foreign_pre_chain=processors,
+                processors=[*processors, JSONRenderer()],
+            )
+        else:
+            pytest.fail(f"invalid setup {setup}")
+        handler.setFormatter(formatter)
+        handler.setLevel(0)
+        logger.addHandler(handler)
+        logger.setLevel(0)
+    
+        test_message = "test message"
+        if origin == "logging":
+            callsite_params = self.get_callsite_parameters()
+            logger.info(test_message)
+        elif origin == "structlog":
+            ctx = {}
+            bound_logger = BoundLogger(
+                logger,
+                [*common_processors, ProcessorFormatter.wrap_for_formatter],
+                ctx,
+            )
+            callsite_params = self.get_callsite_parameters()
+            bound_logger.info(test_message)
+        else:
+            pytest.fail(f"invalid origin {origin}")
+    
+        callsite_params = self.filter_parameter_dict(
+            callsite_params, parameter_strings
+        )
+        actual = {
+            key: value
+            for key, value in json.loads(string_io.getvalue()).items()
+            if not key.startswith("_")
+        }
+        expected = {"event": test_message, **callsite_params}
+    
+>       assert expected == actual
+E       AssertionError: assert {'event': 'te..._name': 'n/a'} == {'event': 'te...'MainProcess'}
+E         
+E         Omitting 1 identical items, use -vv to show
+E         Differing items:
+E         {'process_name': 'n/a'} != {'process_name': 'MainProcess'}
+E         Use -v to get more diff
+
+tests/processors/test_processors.py:571: AssertionError
+____ TestCallsiteParameterAdder.test_processor[logging-parameter_strings11] ____
+
+self = <tests.processors.test_processors.TestCallsiteParameterAdder object at 0x7c4c2527e2d0>
+origin = 'logging'
+parameter_strings = {'filename', 'func_name', 'lineno', 'module', 'pathname', 'process', ...}
+
+    @pytest.mark.parametrize(
+        ("origin", "parameter_strings"),
+        itertools.product(
+            ["logging", "structlog"],
+            [
+                None,
+                *[{parameter} for parameter in parameter_strings],
+                set(),
+                parameter_strings,
+                {"pathname", "filename"},
+                {"module", "func_name"},
+            ],
+        ),
+    )
+    def test_processor(
+        self,
+        origin: str,
+        parameter_strings: set[str] | None,
+    ):
+        """
+        The correct callsite parameters are added to event dictionaries.
+        """
+        test_message = "test message"
+        processor = self.make_processor(parameter_strings)
+        if origin == "structlog":
+            event_dict: EventDict = {"event": test_message}
+            callsite_params = self.get_callsite_parameters()
+            actual = processor(None, None, event_dict)
+        elif origin == "logging":
+            callsite_params = self.get_callsite_parameters()
+            record = logging.LogRecord(
+                "name",
+                logging.INFO,
+                callsite_params["pathname"],
+                callsite_params["lineno"],
+                test_message,
+                None,
+                None,
+                callsite_params["func_name"],
+            )
+            event_dict: EventDict = {
+                "event": test_message,
+                "_record": record,
+                "_from_structlog": False,
+            }
+            actual = processor(None, None, event_dict)
+        else:
+            pytest.fail(f"invalid origin {origin}")
+        actual = {
+            key: value
+            for key, value in actual.items()
+            if not key.startswith("_")
+        }
+        callsite_params = self.filter_parameter_dict(
+            callsite_params, parameter_strings
+        )
+        expected = {"event": test_message, **callsite_params}
+    
+>       assert expected == actual
+E       AssertionError: assert {'event': 'te...cessors', ...} == {'event': 'te...nThread', ...}
+E         
+E         Omitting 9 identical items, use -vv to show
+E         Differing items:
+E         {'process_name': 'n/a'} != {'process_name': 'MainProcess'}
+E         Use -v to get more diff
+
+tests/processors/test_processors.py:486: AssertionError
+___ TestCallsiteParameterAdder.test_e2e[shared-logging-parameter_strings67] ____
+
+self = <tests.processors.test_processors.TestCallsiteParameterAdder object at 0x7c4c24fc8d40>
+setup = 'shared', origin = 'logging'
+parameter_strings = {'filename', 'func_name', 'lineno', 'module', 'pathname', 'process', ...}
+
+    @pytest.mark.parametrize(
+        ("setup", "origin", "parameter_strings"),
+        itertools.product(
+            ["common-without-pre", "common-with-pre", "shared", "everywhere"],
+            ["logging", "structlog"],
+            [
+                None,
+                *[{parameter} for parameter in parameter_strings],
+                set(),
+                parameter_strings,
+                {"pathname", "filename"},
+                {"module", "func_name"},
+            ],
+        ),
+    )
+    def test_e2e(
+        self,
+        setup: str,
+        origin: str,
+        parameter_strings: set[str] | None,
+    ) -> None:
+        """
+        Logging output contains the correct callsite parameters.
+        """
+        logger = logging.Logger(sys._getframe().f_code.co_name)
+        string_io = StringIO()
+        handler = logging.StreamHandler(string_io)
+        processors = [self.make_processor(parameter_strings)]
+        if setup == "common-without-pre":
+            common_processors = processors
+            formatter = ProcessorFormatter(
+                processors=[*processors, JSONRenderer()]
+            )
+        elif setup == "common-with-pre":
+            common_processors = processors
+            formatter = ProcessorFormatter(
+                foreign_pre_chain=processors,
+                processors=[JSONRenderer()],
+            )
+        elif setup == "shared":
+            common_processors = []
+            formatter = ProcessorFormatter(
+                processors=[*processors, JSONRenderer()],
+            )
+        elif setup == "everywhere":
+            common_processors = processors
+            formatter = ProcessorFormatter(
+                foreign_pre_chain=processors,
+                processors=[*processors, JSONRenderer()],
+            )
+        else:
+            pytest.fail(f"invalid setup {setup}")
+        handler.setFormatter(formatter)
+        handler.setLevel(0)
+        logger.addHandler(handler)
+        logger.setLevel(0)
+    
+        test_message = "test message"
+        if origin == "logging":
+            callsite_params = self.get_callsite_parameters()
+            logger.info(test_message)
+        elif origin == "structlog":
+            ctx = {}
+            bound_logger = BoundLogger(
+                logger,
+                [*common_processors, ProcessorFormatter.wrap_for_formatter],
+                ctx,
+            )
+            callsite_params = self.get_callsite_parameters()
+            bound_logger.info(test_message)
+        else:
+            pytest.fail(f"invalid origin {origin}")
+    
+        callsite_params = self.filter_parameter_dict(
+            callsite_params, parameter_strings
+        )
+        actual = {
+            key: value
+            for key, value in json.loads(string_io.getvalue()).items()
+            if not key.startswith("_")
+        }
+        expected = {"event": test_message, **callsite_params}
+    
+>       assert expected == actual
+E       AssertionError: assert {'event': 'te...cessors', ...} == {'event': 'te...nThread', ...}
+E         
+E         Omitting 9 identical items, use -vv to show
+E         Differing items:
+E         {'process_name': 'n/a'} != {'process_name': 'MainProcess'}
+E         Use -v to get more diff
+
+tests/processors/test_processors.py:571: AssertionError
+___________ TestCallsiteParameterAdder.test_processor[logging-None] ____________
+
+self = <tests.processors.test_processors.TestCallsiteParameterAdder object at 0x7c4c2527f860>
+origin = 'logging', parameter_strings = None
+
+    @pytest.mark.parametrize(
+        ("origin", "parameter_strings"),
+        itertools.product(
+            ["logging", "structlog"],
+            [
+                None,
+                *[{parameter} for parameter in parameter_strings],
+                set(),
+                parameter_strings,
+                {"pathname", "filename"},
+                {"module", "func_name"},
+            ],
+        ),
+    )
+    def test_processor(
+        self,
+        origin: str,
+        parameter_strings: set[str] | None,
+    ):
+        """
+        The correct callsite parameters are added to event dictionaries.
+        """
+        test_message = "test message"
+        processor = self.make_processor(parameter_strings)
+        if origin == "structlog":
+            event_dict: EventDict = {"event": test_message}
+            callsite_params = self.get_callsite_parameters()
+            actual = processor(None, None, event_dict)
+        elif origin == "logging":
+            callsite_params = self.get_callsite_parameters()
+            record = logging.LogRecord(
+                "name",
+                logging.INFO,
+                callsite_params["pathname"],
+                callsite_params["lineno"],
+                test_message,
+                None,
+                None,
+                callsite_params["func_name"],
+            )
+            event_dict: EventDict = {
+                "event": test_message,
+                "_record": record,
+                "_from_structlog": False,
+            }
+            actual = processor(None, None, event_dict)
+        else:
+            pytest.fail(f"invalid origin {origin}")
+        actual = {
+            key: value
+            for key, value in actual.items()
+            if not key.startswith("_")
+        }
+        callsite_params = self.filter_parameter_dict(
+            callsite_params, parameter_strings
+        )
+        expected = {"event": test_message, **callsite_params}
+    
+>       assert expected == actual
+E       AssertionError: assert {'event': 'te...cessors', ...} == {'event': 'te...nThread', ...}
+E         
+E         Omitting 9 identical items, use -vv to show
+E         Differing items:
+E         {'process_name': 'n/a'} != {'process_name': 'MainProcess'}
+E         Use -v to get more diff
+
+tests/processors/test_processors.py:486: AssertionError
+___________ TestCallsiteParameterAdder.test_e2e[shared-logging-None] ___________
+
+self = <tests.processors.test_processors.TestCallsiteParameterAdder object at 0x7c4c24fc8500>
+setup = 'shared', origin = 'logging', parameter_strings = None
+
+    @pytest.mark.parametrize(
+        ("setup", "origin", "parameter_strings"),
+        itertools.product(
+            ["common-without-pre", "common-with-pre", "shared", "everywhere"],
+            ["logging", "structlog"],
+            [
+                None,
+                *[{parameter} for parameter in parameter_strings],
+                set(),
+                parameter_strings,
+                {"pathname", "filename"},
+                {"module", "func_name"},
+            ],
+        ),
+    )
+    def test_e2e(
+        self,
+        setup: str,
+        origin: str,
+        parameter_strings: set[str] | None,
+    ) -> None:
+        """
+        Logging output contains the correct callsite parameters.
+        """
+        logger = logging.Logger(sys._getframe().f_code.co_name)
+        string_io = StringIO()
+        handler = logging.StreamHandler(string_io)
+        processors = [self.make_processor(parameter_strings)]
+        if setup == "common-without-pre":
+            common_processors = processors
+            formatter = ProcessorFormatter(
+                processors=[*processors, JSONRenderer()]
+            )
+        elif setup == "common-with-pre":
+            common_processors = processors
+            formatter = ProcessorFormatter(
+                foreign_pre_chain=processors,
+                processors=[JSONRenderer()],
+            )
+        elif setup == "shared":
+            common_processors = []
+            formatter = ProcessorFormatter(
+                processors=[*processors, JSONRenderer()],
+            )
+        elif setup == "everywhere":
+            common_processors = processors
+            formatter = ProcessorFormatter(
+                foreign_pre_chain=processors,
+                processors=[*processors, JSONRenderer()],
+            )
+        else:
+            pytest.fail(f"invalid setup {setup}")
+        handler.setFormatter(formatter)
+        handler.setLevel(0)
+        logger.addHandler(handler)
+        logger.setLevel(0)
+    
+        test_message = "test message"
+        if origin == "logging":
+            callsite_params = self.get_callsite_parameters()
+            logger.info(test_message)
+        elif origin == "structlog":
+            ctx = {}
+            bound_logger = BoundLogger(
+                logger,
+                [*common_processors, ProcessorFormatter.wrap_for_formatter],
+                ctx,
+            )
+            callsite_params = self.get_callsite_parameters()
+            bound_logger.info(test_message)
+        else:
+            pytest.fail(f"invalid origin {origin}")
+    
+        callsite_params = self.filter_parameter_dict(
+            callsite_params, parameter_strings
+        )
+        actual = {
+            key: value
+            for key, value in json.loads(string_io.getvalue()).items()
+            if not key.startswith("_")
+        }
+        expected = {"event": test_message, **callsite_params}
+    
+>       assert expected == actual
+E       AssertionError: assert {'event': 'te...cessors', ...} == {'event': 'te...nThread', ...}
+E         
+E         Omitting 9 identical items, use -vv to show
+E         Differing items:
+E         {'process_name': 'n/a'} != {'process_name': 'MainProcess'}
+E         Use -v to get more diff
+
+tests/processors/test_processors.py:571: AssertionError
+_ TestCallsiteParameterAdder.test_e2e[common-with-pre-logging-parameter_strings32] _
+
+self = <tests.processors.test_processors.TestCallsiteParameterAdder object at 0x7c4c250bb350>
+setup = 'common-with-pre', origin = 'logging'
+parameter_strings = {'process_name'}
+
+    @pytest.mark.parametrize(
+        ("setup", "origin", "parameter_strings"),
+        itertools.product(
+            ["common-without-pre", "common-with-pre", "shared", "everywhere"],
+            ["logging", "structlog"],
+            [
+                None,
+                *[{parameter} for parameter in parameter_strings],
+                set(),
+                parameter_strings,
+                {"pathname", "filename"},
+                {"module", "func_name"},
+            ],
+        ),
+    )
+    def test_e2e(
+        self,
+        setup: str,
+        origin: str,
+        parameter_strings: set[str] | None,
+    ) -> None:
+        """
+        Logging output contains the correct callsite parameters.
+        """
+        logger = logging.Logger(sys._getframe().f_code.co_name)
+        string_io = StringIO()
+        handler = logging.StreamHandler(string_io)
+        processors = [self.make_processor(parameter_strings)]
+        if setup == "common-without-pre":
+            common_processors = processors
+            formatter = ProcessorFormatter(
+                processors=[*processors, JSONRenderer()]
+            )
+        elif setup == "common-with-pre":
+            common_processors = processors
+            formatter = ProcessorFormatter(
+                foreign_pre_chain=processors,
+                processors=[JSONRenderer()],
+            )
+        elif setup == "shared":
+            common_processors = []
+            formatter = ProcessorFormatter(
+                processors=[*processors, JSONRenderer()],
+            )
+        elif setup == "everywhere":
+            common_processors = processors
+            formatter = ProcessorFormatter(
+                foreign_pre_chain=processors,
+                processors=[*processors, JSONRenderer()],
+            )
+        else:
+            pytest.fail(f"invalid setup {setup}")
+        handler.setFormatter(formatter)
+        handler.setLevel(0)
+        logger.addHandler(handler)
+        logger.setLevel(0)
+    
+        test_message = "test message"
+        if origin == "logging":
+            callsite_params = self.get_callsite_parameters()
+            logger.info(test_message)
+        elif origin == "structlog":
+            ctx = {}
+            bound_logger = BoundLogger(
+                logger,
+                [*common_processors, ProcessorFormatter.wrap_for_formatter],
+                ctx,
+            )
+            callsite_params = self.get_callsite_parameters()
+            bound_logger.info(test_message)
+        else:
+            pytest.fail(f"invalid origin {origin}")
+    
+        callsite_params = self.filter_parameter_dict(
+            callsite_params, parameter_strings
+        )
+        actual = {
+            key: value
+            for key, value in json.loads(string_io.getvalue()).items()
+            if not key.startswith("_")
+        }
+        expected = {"event": test_message, **callsite_params}
+    
+>       assert expected == actual
+E       AssertionError: assert {'event': 'te..._name': 'n/a'} == {'event': 'te...'MainProcess'}
+E         
+E         Omitting 1 identical items, use -vv to show
+E         Differing items:
+E         {'process_name': 'n/a'} != {'process_name': 'MainProcess'}
+E         Use -v to get more diff
+
+tests/processors/test_processors.py:571: AssertionError
+_ TestCallsiteParameterAdder.test_e2e[everywhere-logging-parameter_strings88] __
+
+self = <tests.processors.test_processors.TestCallsiteParameterAdder object at 0x7c4c24fc9d00>
+setup = 'everywhere', origin = 'logging', parameter_strings = {'process_name'}
+
+    @pytest.mark.parametrize(
+        ("setup", "origin", "parameter_strings"),
+        itertools.product(
+            ["common-without-pre", "common-with-pre", "shared", "everywhere"],
+            ["logging", "structlog"],
+            [
+                None,
+                *[{parameter} for parameter in parameter_strings],
+                set(),
+                parameter_strings,
+                {"pathname", "filename"},
+                {"module", "func_name"},
+            ],
+        ),
+    )
+    def test_e2e(
+        self,
+        setup: str,
+        origin: str,
+        parameter_strings: set[str] | None,
+    ) -> None:
+        """
+        Logging output contains the correct callsite parameters.
+        """
+        logger = logging.Logger(sys._getframe().f_code.co_name)
+        string_io = StringIO()
+        handler = logging.StreamHandler(string_io)
+        processors = [self.make_processor(parameter_strings)]
+        if setup == "common-without-pre":
+            common_processors = processors
+            formatter = ProcessorFormatter(
+                processors=[*processors, JSONRenderer()]
+            )
+        elif setup == "common-with-pre":
+            common_processors = processors
+            formatter = ProcessorFormatter(
+                foreign_pre_chain=processors,
+                processors=[JSONRenderer()],
+            )
+        elif setup == "shared":
+            common_processors = []
+            formatter = ProcessorFormatter(
+                processors=[*processors, JSONRenderer()],
+            )
+        elif setup == "everywhere":
+            common_processors = processors
+            formatter = ProcessorFormatter(
+                foreign_pre_chain=processors,
+                processors=[*processors, JSONRenderer()],
+            )
+        else:
+            pytest.fail(f"invalid setup {setup}")
+        handler.setFormatter(formatter)
+        handler.setLevel(0)
+        logger.addHandler(handler)
+        logger.setLevel(0)
+    
+        test_message = "test message"
+        if origin == "logging":
+            callsite_params = self.get_callsite_parameters()
+            logger.info(test_message)
+        elif origin == "structlog":
+            ctx = {}
+            bound_logger = BoundLogger(
+                logger,
+                [*common_processors, ProcessorFormatter.wrap_for_formatter],
+                ctx,
+            )
+            callsite_params = self.get_callsite_parameters()
+            bound_logger.info(test_message)
+        else:
+            pytest.fail(f"invalid origin {origin}")
+    
+        callsite_params = self.filter_parameter_dict(
+            callsite_params, parameter_strings
+        )
+        actual = {
+            key: value
+            for key, value in json.loads(string_io.getvalue()).items()
+            if not key.startswith("_")
+        }
+        expected = {"event": test_message, **callsite_params}
+    
+>       assert expected == actual
+E       AssertionError: assert {'event': 'te..._name': 'n/a'} == {'event': 'te...'MainProcess'}
+E         
+E         Omitting 1 identical items, use -vv to show
+E         Differing items:
+E         {'process_name': 'n/a'} != {'process_name': 'MainProcess'}
+E         Use -v to get more diff
+
+tests/processors/test_processors.py:571: AssertionError
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/_pytest/python.py:144
+  /tmp/rio-acceptance-structlog/.venv/lib/python3.12/site-packages/_pytest/python.py:144: PytestRemovedIn10Warning: Passing a non-Collection iterable to parametrize is deprecated.
+  Test: tests/processors/test_processors.py::TestCallsiteParameterAdder::test_processor, argvalues type: product
+  Please convert to a list or tuple.
+  See https://docs.pytest.org/en/stable/deprecations.html#parametrize-iterators
+    metafunc.parametrize(*marker.args, **marker.kwargs, _param_mark=marker)
+
+.venv/lib/python3.12/site-packages/_pytest/python.py:144
+  /tmp/rio-acceptance-structlog/.venv/lib/python3.12/site-packages/_pytest/python.py:144: PytestRemovedIn10Warning: Passing a non-Collection iterable to parametrize is deprecated.
+  Test: tests/processors/test_processors.py::TestCallsiteParameterAdder::test_e2e, argvalues type: product
+  Please convert to a list or tuple.
+  See https://docs.pytest.org/en/stable/deprecations.html#parametrize-iterators
+    metafunc.parametrize(*marker.args, **marker.kwargs, _param_mark=marker)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/processors/test_processors.py::TestCallsiteParameterAdder::test_e2e[common-with-pre-logging-parameter_strings39]
+FAILED tests/processors/test_processors.py::TestCallsiteParameterAdder::test_e2e[common-without-pre-logging-parameter_strings11]
+FAILED tests/processors/test_processors.py::TestCallsiteParameterAdder::test_e2e[common-without-pre-logging-None]
+FAILED tests/processors/test_processors.py::TestCallsiteParameterAdder::test_e2e[everywhere-logging-parameter_strings95]
+FAILED tests/processors/test_processors.py::TestCallsiteParameterAdder::test_e2e[common-with-pre-logging-None]
+FAILED tests/processors/test_processors.py::TestCallsiteParameterAdder::test_e2e[everywhere-logging-None]
+FAILED tests/processors/test_processors.py::TestCallsiteParameterAdder::test_e2e[shared-logging-parameter_strings60]
+FAILED tests/processors/test_processors.py::TestCallsiteParameterAdder::test_processor[logging-parameter_strings4]
+FAILED tests/processors/test_processors.py::TestCallsiteParameterAdder::test_e2e[common-without-pre-logging-parameter_strings4]
+FAILED tests/processors/test_processors.py::TestCallsiteParameterAdder::test_processor[logging-parameter_strings11]
+FAILED tests/processors/test_processors.py::TestCallsiteParameterAdder::test_e2e[shared-logging-parameter_strings67]
+FAILED tests/processors/test_processors.py::TestCallsiteParameterAdder::test_processor[logging-None]
+FAILED tests/processors/test_processors.py::TestCallsiteParameterAdder::test_e2e[shared-logging-None]
+FAILED tests/processors/test_processors.py::TestCallsiteParameterAdder::test_e2e[common-with-pre-logging-parameter_strings32]
+FAILED tests/processors/test_processors.py::TestCallsiteParameterAdder::test_e2e[everywhere-logging-parameter_strings88]
+15 failed, 158 passed, 2 warnings in 1.26s

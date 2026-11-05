@@ -1,0 +1,3 @@
+src/chat.ts(4,8): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+src/index.tsx(6,8): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+src/index.tsx(7,36): error TS2307: Cannot find module '@tanstack/react-query-devtools' or its corresponding type declarations.

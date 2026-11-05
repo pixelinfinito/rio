@@ -1,0 +1,40 @@
+{
+  "source": "Actual Linux /proc observations in rio-tool-evidence/commands.json",
+  "tool": "mypy 1.19.1 (compiled: yes)",
+  "commands": [
+    {
+      "argv": [
+        "/run/user/1000/litestar-rerun2/rio-eval-dfh7vlrx/head/.venv/bin/python",
+        "/run/user/1000/litestar-rerun2/rio-eval-dfh7vlrx/head/./.venv/bin/mypy",
+        "--output",
+        "json",
+        "--config-file",
+        "/run/user/1000/litestar-rerun2/rio-eval-dfh7vlrx/cache/4fbe7a5f98898db5/runs/01M6NQKFJT61GVAGVXSMZS1PA4/tools/tool.tmp-wH2gs8/pyproject.toml"
+      ],
+      "cwd": "/run/user/1000/litestar-rerun2/rio-eval-dfh7vlrx/cache/4fbe7a5f98898db5/runs/01M6NQKFJT61GVAGVXSMZS1PA4/tools/tool.tmp-wH2gs8",
+      "configured_packages": [
+        "litestar",
+        "tests",
+        "docs.examples"
+      ],
+      "configured_python_version": "3.11"
+    },
+    {
+      "argv": [
+        "/run/user/1000/litestar-rerun2/rio-eval-dfh7vlrx/head/.venv/bin/python",
+        "/run/user/1000/litestar-rerun2/rio-eval-dfh7vlrx/head/./.venv/bin/mypy",
+        "--output",
+        "json",
+        "--config-file",
+        "/run/user/1000/litestar-rerun2/rio-eval-dfh7vlrx/cache/4fbe7a5f98898db5/runs/01M6NQKFJT61GVAGVXSMZS1PA4/tools/tool.tmp-PoALmn/pyproject.toml"
+      ],
+      "cwd": "/run/user/1000/litestar-rerun2/rio-eval-dfh7vlrx/cache/4fbe7a5f98898db5/runs/01M6NQKFJT61GVAGVXSMZS1PA4/tools/tool.tmp-PoALmn",
+      "configured_packages": [
+        "litestar",
+        "tests",
+        "docs.examples"
+      ],
+      "configured_python_version": "3.11"
+    }
+  ]
+}

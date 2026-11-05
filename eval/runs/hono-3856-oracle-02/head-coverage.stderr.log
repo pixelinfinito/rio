@@ -1,0 +1,84 @@
+stderr | src/hono.test.ts > Middleware > Basic > internal server error
+Error: Error!
+    at /dev/shm/trpc-eval/hono-oracle/src/hono.test.ts:1036:13
+    at dispatch (/dev/shm/trpc-eval/hono-oracle/src/compose.ts:75:23)
+    at /dev/shm/trpc-eval/hono-oracle/src/compose.ts:76:20
+    at /dev/shm/trpc-eval/hono-oracle/src/hono.test.ts:993:13
+    at dispatch (/dev/shm/trpc-eval/hono-oracle/src/compose.ts:75:23)
+    at /dev/shm/trpc-eval/hono-oracle/src/compose.ts:76:20
+    at /dev/shm/trpc-eval/hono-oracle/src/hono.test.ts:988:13
+    at dispatch (/dev/shm/trpc-eval/hono-oracle/src/compose.ts:75:23)
+    at /dev/shm/trpc-eval/hono-oracle/src/compose.ts:41:12
+    at /dev/shm/trpc-eval/hono-oracle/src/hono-base.ts:435:31
+
+stderr | src/hono.test.ts > Error handling in middleware > Should handle the error in middleware
+Error: Error message
+    at /dev/shm/trpc-eval/hono-oracle/src/hono.test.ts:1511:11
+    at dispatch (/dev/shm/trpc-eval/hono-oracle/src/compose.ts:75:23)
+    at /dev/shm/trpc-eval/hono-oracle/src/compose.ts:76:20
+    at /dev/shm/trpc-eval/hono-oracle/src/hono.test.ts:1492:11
+    at dispatch (/dev/shm/trpc-eval/hono-oracle/src/compose.ts:75:23)
+    at /dev/shm/trpc-eval/hono-oracle/src/compose.ts:41:12
+    at /dev/shm/trpc-eval/hono-oracle/src/hono-base.ts:435:31
+    at Hono.#dispatch (/dev/shm/trpc-eval/hono-oracle/src/hono-base.ts:446:5)
+    at Hono.fetch (/dev/shm/trpc-eval/hono-oracle/src/hono-base.ts:465:17)
+    at Hono.request (/dev/shm/trpc-eval/hono-oracle/src/hono-base.ts:490:17)
+
+stderr | src/hono.test.ts > Error handling in middleware > Should handle the error in middleware - async
+Error: Error message
+    at /dev/shm/trpc-eval/hono-oracle/src/hono.test.ts:1515:11
+    at dispatch (/dev/shm/trpc-eval/hono-oracle/src/compose.ts:75:23)
+    at /dev/shm/trpc-eval/hono-oracle/src/compose.ts:76:20
+    at /dev/shm/trpc-eval/hono-oracle/src/hono.test.ts:1500:11
+    at dispatch (/dev/shm/trpc-eval/hono-oracle/src/compose.ts:75:23)
+    at /dev/shm/trpc-eval/hono-oracle/src/compose.ts:41:12
+    at /dev/shm/trpc-eval/hono-oracle/src/hono-base.ts:435:31
+    at Hono.#dispatch (/dev/shm/trpc-eval/hono-oracle/src/hono-base.ts:446:5)
+    at Hono.fetch (/dev/shm/trpc-eval/hono-oracle/src/hono-base.ts:465:17)
+    at Hono.request (/dev/shm/trpc-eval/hono-oracle/src/hono-base.ts:490:17)
+
+stderr | src/jsx/dom/intrinsic-element/components.test.tsx > intrinsic element > document metadata > script element > should be fired onError event
+Error: Could not load script: "http://localhost/invalid.js"
+    at QueueItem.onErrorWrapped [as onError] (/dev/shm/trpc-eval/hono-oracle/node_modules/jsdom/lib/jsdom/browser/resources/per-document-resource-loader.js:38:19)
+    at AsyncResourceQueue._check (/dev/shm/trpc-eval/hono-oracle/node_modules/jsdom/lib/jsdom/browser/resources/async-resource-queue.js:37:22)
+    at /dev/shm/trpc-eval/hono-oracle/node_modules/jsdom/lib/jsdom/browser/resources/async-resource-queue.js:94:20 Invalid URL
+
+stderr | src/jsx/dom/intrinsic-element/components.test.tsx > intrinsic element > document metadata > script element > should be inserted into body if has no props
+Error: Not implemented: window.alert
+    at module.exports (/dev/shm/trpc-eval/hono-oracle/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at /dev/shm/trpc-eval/hono-oracle/node_modules/jsdom/lib/jsdom/browser/Window.js:897:7
+    at about:blank:1:1
+    at Script.runInContext (node:vm:133:12)
+    at Object.runInContext (node:vm:279:6)
+    at processJavaScript (/dev/shm/trpc-eval/hono-oracle/node_modules/jsdom/lib/jsdom/living/nodes/HTMLScriptElement-impl.js:238:10)
+    at HTMLScriptElementImpl._innerEval (/dev/shm/trpc-eval/hono-oracle/node_modules/jsdom/lib/jsdom/living/nodes/HTMLScriptElement-impl.js:173:5)
+    at /dev/shm/trpc-eval/hono-oracle/node_modules/jsdom/lib/jsdom/living/nodes/HTMLScriptElement-impl.js:114:12
+    at ResourceQueue.push (/dev/shm/trpc-eval/hono-oracle/node_modules/jsdom/lib/jsdom/browser/resources/resource-queue.js:53:16)
+    at HTMLScriptElementImpl._fetchInternalScript (/dev/shm/trpc-eval/hono-oracle/node_modules/jsdom/lib/jsdom/living/nodes/HTMLScriptElement-impl.js:113:21) undefined
+
+(node:720234) ExperimentalWarning: The Ed25519 Web Crypto API algorithm is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+stderr | src/jsx/dom/server.test.tsx > renderToString > Should omit options
+options are not supported yet
+
+stderr | src/jsx/dom/server.test.tsx > renderToReadableStream > Should omit options, except onError
+options are not supported yet, except onError
+
+stderr | src/middleware/body-limit/index.test.ts > Body Limit Middleware > POST request > ReadableStream body > should return 413 response
+BodyLimitError: Payload Too Large
+    at Object.start (/dev/shm/trpc-eval/hono-oracle/src/middleware/body-limit/index.ts:94:32)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+
+stderr | src/adapter/cloudflare-workers/websocket.test.ts > upgradeWebSocket middleware > Should receive message and readyState is valid
+RangeError: init["status"] must be in the range of 200 to 599, inclusive.
+    at initializeResponse (node:internal/deps/undici/undici:5063:15)
+    at new Response (node:internal/deps/undici/undici:4875:9)
+    at /dev/shm/trpc-eval/hono-oracle/src/adapter/cloudflare-workers/websocket.ts:48:10
+    at Array.UpgradeWebSocket (/dev/shm/trpc-eval/hono-oracle/src/helper/websocket/index.ts:109:28)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at /dev/shm/trpc-eval/hono-oracle/src/adapter/cloudflare-workers/websocket.test.ts:32:5
+    at file:///dev/shm/trpc-eval/hono-oracle/node_modules/@vitest/runner/dist/index.js:529:5
+    at runTest (file:///dev/shm/trpc-eval/hono-oracle/node_modules/@vitest/runner/dist/index.js:982:11)
+    at runSuite (file:///dev/shm/trpc-eval/hono-oracle/node_modules/@vitest/runner/dist/index.js:1131:15)
+    at runSuite (file:///dev/shm/trpc-eval/hono-oracle/node_modules/@vitest/runner/dist/index.js:1131:15)
+

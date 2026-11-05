@@ -1,0 +1,147 @@
+{
+  "schema": "rio-eval-record-v2",
+  "methodology": "deterministic-v2",
+  "repository": "trpc/trpc",
+  "pr": "https://github.com/trpc/trpc/pull/7903",
+  "case_id": "7903",
+  "languages": [
+    "typescript"
+  ],
+  "reviewer": "sub-agent rerun2-trpc (automated)",
+  "verdict_source": "automated",
+  "independently_clean": false,
+  "commands": [
+    "cwd=/dev/shm/trpc-rerun2/rio-eval-4oggxjhj argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/trpc/trpc.git\", \"/dev/shm/trpc-rerun2/rio-eval-4oggxjhj/head\"]",
+    "cwd=/dev/shm/trpc-rerun2/rio-eval-4oggxjhj/head argv=[\"git\", \"fetch\", \"origin\", \"c869fa1075fc3ce11b38495c5e6044fb97b335d2\", \"248fb772a6d6f7ce2492f8549a8d370ec3df9731\"]",
+    "cwd=/dev/shm/trpc-rerun2/rio-eval-4oggxjhj/head argv=[\"git\", \"merge-base\", \"c869fa1075fc3ce11b38495c5e6044fb97b335d2\", \"248fb772a6d6f7ce2492f8549a8d370ec3df9731\"]",
+    "cwd=/dev/shm/trpc-rerun2/rio-eval-4oggxjhj/head argv=[\"git\", \"checkout\", \"--detach\", \"248fb772a6d6f7ce2492f8549a8d370ec3df9731\"]",
+    "cwd=/dev/shm/trpc-rerun2/rio-eval-4oggxjhj argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/dev/shm/trpc-rerun2/rio-eval-4oggxjhj/head\", \"/dev/shm/trpc-rerun2/rio-eval-4oggxjhj/base\"]",
+    "cwd=/dev/shm/trpc-rerun2/rio-eval-4oggxjhj/base argv=[\"git\", \"checkout\", \"--detach\", \"c869fa1075fc3ce11b38495c5e6044fb97b335d2\"]",
+    "cwd=/dev/shm/trpc-rerun2/rio-eval-4oggxjhj/base argv=[\"corepack\", \"pnpm\", \"--filter\", \"@tooling/release\", \"--filter\", \"@tooling/oxlint-plugin\", \"install\", \"--frozen-lockfile\", \"--ignore-scripts\", \"--store-dir\", \"/dev/shm/trpc-eval/pnpm-store\", \"--trust-lockfile\"]",
+    "cwd=/dev/shm/trpc-rerun2/rio-eval-4oggxjhj/base argv=[\"python3\", \"-c\", \"from pathlib import Path\\nimport json,hashlib\\nfor name in (\\\"node_modules/.bin/vitest\\\", \\\"tooling/release/node_modules/.bin/vitest\\\"):\\n    p=Path(name)\\n    if not p.is_file(): continue\\n    original=p.with_name(\\\"vitest.rio-original\\\")\\n    original.write_bytes(p.read_bytes()); original.chmod(0o755)\\n    print(json.dumps({\\\"launcher\\\":name,\\\"original_sha256\\\":hashlib.sha256(original.read_bytes()).hexdigest()}))\\n    p.write_text(\\\"#!/usr/bin/env python3\\\\nimport os,sys\\\\nfrom pathlib import Path\\\\nargs=sys.argv[1:]\\\\nif any(a == '--coverage' or a.startswith('--coverage.enabled') for a in args):\\\\n    if not any(a.startswith('--coverage.provider') for a in args): args += ['--coverage.provider=istanbul']\\\\n    args += ['--testTimeout=30000','--hookTimeout=30000']\\\\noriginal=str(Path(__file__).with_name('vitest.rio-original'))\\\\nos.execv(original,[original,*args])\\\\n\\\")\\n    p.chmod(0o755)\\n\"]",
+    "cwd=/dev/shm/trpc-rerun2/rio-eval-4oggxjhj/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/trpc-rerun2/rio-eval-4oggxjhj/head argv=[\"corepack\", \"pnpm\", \"--filter\", \"@tooling/release\", \"--filter\", \"@tooling/oxlint-plugin\", \"install\", \"--frozen-lockfile\", \"--ignore-scripts\", \"--store-dir\", \"/dev/shm/trpc-eval/pnpm-store\", \"--trust-lockfile\"]",
+    "cwd=/dev/shm/trpc-rerun2/rio-eval-4oggxjhj/head argv=[\"python3\", \"-c\", \"from pathlib import Path\\nimport json,hashlib\\nfor name in (\\\"node_modules/.bin/vitest\\\", \\\"tooling/release/node_modules/.bin/vitest\\\"):\\n    p=Path(name)\\n    if not p.is_file(): continue\\n    original=p.with_name(\\\"vitest.rio-original\\\")\\n    original.write_bytes(p.read_bytes()); original.chmod(0o755)\\n    print(json.dumps({\\\"launcher\\\":name,\\\"original_sha256\\\":hashlib.sha256(original.read_bytes()).hexdigest()}))\\n    p.write_text(\\\"#!/usr/bin/env python3\\\\nimport os,sys\\\\nfrom pathlib import Path\\\\nargs=sys.argv[1:]\\\\nif any(a == '--coverage' or a.startswith('--coverage.enabled') for a in args):\\\\n    if not any(a.startswith('--coverage.provider') for a in args): args += ['--coverage.provider=istanbul']\\\\n    args += ['--testTimeout=30000','--hookTimeout=30000']\\\\noriginal=str(Path(__file__).with_name('vitest.rio-original'))\\\\nos.execv(original,[original,*args])\\\\n\\\")\\n    p.chmod(0o755)\\n\"]",
+    "cwd=/dev/shm/trpc-rerun2/rio-eval-4oggxjhj/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/trpc-rerun2/rio-eval-4oggxjhj/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/dev/shm/trpc-rerun2/rio-eval-4oggxjhj/head argv=[\"node\", \"--version\"]",
+    "cwd=/dev/shm/trpc-rerun2/rio-eval-4oggxjhj/head argv=[\"npm\", \"--version\"]",
+    "cwd=/dev/shm/trpc-rerun2/rio-eval-4oggxjhj/head argv=[\"corepack\", \"--version\"]",
+    "cwd=/dev/shm/trpc-rerun2/rio-eval-4oggxjhj/head argv=[\"python3\", \"--version\"]",
+    "cwd=/dev/shm/trpc-rerun2/rio-eval-4oggxjhj/head argv=[\"uv\", \"--version\"]",
+    "cwd=/dev/shm/trpc-rerun2/rio-eval-4oggxjhj/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-7903-rerun2-attempt3/profile.yaml\"]",
+    "cwd=/dev/shm/trpc-rerun2/rio-eval-4oggxjhj/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/dev/shm/trpc-rerun2/rio-eval-4oggxjhj/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"c869fa1075fc3ce11b38495c5e6044fb97b335d2\", \"--format\", \"json\", \"--offline\", \"--profile\", \"/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-7903-rerun2-attempt3/profile.yaml\"]"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-7903-rerun2-attempt3/commands.json; Rio binary SHA-256: 3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+    "Pinned SHAs unchanged. Prior independent tsc/oxlint and base 26/head 42 passing tests are in ../trpc-7903-oracle-02/. No positive-control expectation was registered for this intended negative.",
+    "Run is excluded by the unmodified evaluator; zero findings do not establish clean coverage. See commands.json environment reasons and ../trpc-rerun2-evidence/setup.json for setup history. Oxlint is outside the configured Rio lint adapters and is skipped as no_project_config."
+  ],
+  "positive_control": {
+    "kind": "none",
+    "expected": []
+  },
+  "base_sha": "c869fa1075fc3ce11b38495c5e6044fb97b335d2",
+  "head_sha": "248fb772a6d6f7ce2492f8549a8d370ec3df9731",
+  "mode": "branch",
+  "review_id": "0a40f039203ae5a0",
+  "run_id": "01M6NR490BZGZ0Z6PNAGZ7W5DZ",
+  "rio_version": "0.1.0",
+  "profile": "trpc-typescript-all-checks",
+  "wall_time_ms": 51026,
+  "status": "incomplete",
+  "report_path": "eval/runs/trpc-7903-rerun2-attempt3/report.json",
+  "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+  "profile_sha256": "99ccfe402e9fd500eebfcf172b02a974b01a7d62783f0ab721344df88e427bc8",
+  "environment": {
+    "dependency_state": "verified",
+    "baseline_ran": true,
+    "baseline_classification_ran": true,
+    "eligible": false,
+    "reasons": [
+      "coverage tooling/release head: failed tests_failed Test runner exited with code 1 without producing usable coverage: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+    ],
+    "checks": [
+      {
+        "findings": [],
+        "kind": "secrets",
+        "language": "common",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 1
+      },
+      {
+        "findings": [],
+        "hint": "Dependency audit needs api.osv.dev",
+        "kind": "dependencies",
+        "language": "common",
+        "outcome": "skipped",
+        "reason": "offline",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 1
+      },
+      {
+        "findings": [],
+        "hint": "lint runs only against the project's own rules; add an ESLint, Biome or Ruff configuration",
+        "kind": "lint",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "no_project_config",
+        "root": "tooling/release",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "tooling/release",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 1919
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "tooling/release",
+        "scheduled_as": "changed",
+        "version": "base",
+        "wall_time_ms": 1800
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "hint": "Test runner exited with code 1 without producing usable coverage: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "tests_failed",
+        "root": "tooling/release",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 11245
+      }
+    ],
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "Graph references use syntax and text; no language server was used",
+      "Offline applies to Rio; tool and test processes were not network-isolated"
+    ]
+  },
+  "findings": [],
+  "root_causes": [],
+  "misses": [],
+  "verdict": "environment-failure",
+  "reason": "Baseline/setup must be repaired before this PR can be scored."
+}

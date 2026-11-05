@@ -1,0 +1,37 @@
+{
+  "capture": "Supplemental Linux /proc observations, not runner child-argv telemetry",
+  "commands": [
+    {
+      "pid": 952667,
+      "argv": [
+        "/home/ubuntu/.cache/uv/builds-v0/.tmpTvzAqn/bin/python",
+        "-c",
+        "import sys\n\nif sys.path[0] == \"\":\n    sys.path.pop(0)\n\nsys.path = [] + sys.path\n\nimport hatchling.build as backend\n\nimport json\n\nget_requires_for_build = getattr(backend, \"get_requires_for_build_wheel\", None)\nif get_requires_for_build:\n    requires = get_requires_for_build({})\nelse:\n    requires = []\n\nwith open(__import__(\"os\").fsdecode(b\"/home/ubuntu/.cache/uv/builds-v0/.tmpTvzAqn/get_requires_for_build_wheel.txt\"), \"w\") as fp:\n    json.dump(requires, fp)\n"
+      ],
+      "cwd": "/dev/shm/litestar-rerun2/rio-eval-5t_nix5p/head",
+      "observed_utc": "2026-11-05T11:21:46.082150+00:00",
+      "environment": {
+        "PATH": "/home/ubuntu/.cache/uv/builds-v0/.tmpTvzAqn/bin:/home/ubuntu/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin:/tmp/rio-acceptance-tools:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg02i4dIb:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+        "VIRTUAL_ENV": "/home/ubuntu/.cache/uv/builds-v0/.tmpTvzAqn",
+        "PYTEST_ADDOPTS": "tests/e2e/test_routing/test_path_mounting.py",
+        "COVERAGE_RCFILE": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-litestar/eval/runs/litestar-evidence/coverage-scoped-threshold.toml"
+      }
+    },
+    {
+      "pid": 953257,
+      "argv": [
+        "/home/ubuntu/.cache/uv/builds-v0/.tmpTvzAqn/bin/python",
+        "-c",
+        "import sys\n\nif sys.path[0] == \"\":\n    sys.path.pop(0)\n\nsys.path = [] + sys.path\n\nimport hatchling.build as backend\n\n\nwheel_filename = backend.build_wheel(__import__(\"os\").fsdecode(b\"/home/ubuntu/.cache/uv/builds-v0/.tmpvDMmqB\"), {}, None)\nwith open(__import__(\"os\").fsdecode(b\"/home/ubuntu/.cache/uv/builds-v0/.tmpTvzAqn/build_wheel.txt\"), \"w\") as fp:\n    fp.write(wheel_filename)\n"
+      ],
+      "cwd": "/dev/shm/litestar-rerun2/rio-eval-5t_nix5p/head",
+      "observed_utc": "2026-11-05T11:22:26.775800+00:00",
+      "environment": {
+        "PATH": "/home/ubuntu/.cache/uv/builds-v0/.tmpTvzAqn/bin:/home/ubuntu/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin:/tmp/rio-acceptance-tools:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg02i4dIb:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+        "VIRTUAL_ENV": "/home/ubuntu/.cache/uv/builds-v0/.tmpTvzAqn",
+        "PYTEST_ADDOPTS": "tests/e2e/test_routing/test_path_mounting.py",
+        "COVERAGE_RCFILE": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-litestar/eval/runs/litestar-evidence/coverage-scoped-threshold.toml"
+      }
+    }
+  ]
+}

@@ -1,0 +1,157 @@
+Scope: all 18 workspace projects
+ WARN  There are cyclic workspace dependencies: /tmp/vue-positive-base/packages/server-renderer, /tmp/vue-positive-base/packages/vue
+Lockfile is up to date, resolution step is skipped
+Progress: resolved 1, reused 0, downloaded 0, added 0
+Packages: +628
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Progress: resolved 628, reused 179, downloaded 2, added 0
+Progress: resolved 628, reused 179, downloaded 8, added 11
+Progress: resolved 628, reused 179, downloaded 37, added 44
+Progress: resolved 628, reused 179, downloaded 41, added 75
+Progress: resolved 628, reused 179, downloaded 57, added 82
+Progress: resolved 628, reused 179, downloaded 82, added 164
+Progress: resolved 628, reused 179, downloaded 104, added 195
+Progress: resolved 628, reused 179, downloaded 117, added 220
+Progress: resolved 628, reused 179, downloaded 141, added 320
+Progress: resolved 628, reused 179, downloaded 166, added 345
+Progress: resolved 628, reused 179, downloaded 172, added 349
+Progress: resolved 628, reused 179, downloaded 177, added 356
+Progress: resolved 628, reused 179, downloaded 184, added 357
+Progress: resolved 628, reused 179, downloaded 192, added 371
+Progress: resolved 628, reused 179, downloaded 200, added 379
+Progress: resolved 628, reused 179, downloaded 208, added 386
+Progress: resolved 628, reused 179, downloaded 212, added 387
+Progress: resolved 628, reused 179, downloaded 213, added 387
+Progress: resolved 628, reused 179, downloaded 228, added 407
+Progress: resolved 628, reused 179, downloaded 230, added 409
+Progress: resolved 628, reused 179, downloaded 236, added 415
+Progress: resolved 628, reused 179, downloaded 246, added 423
+Progress: resolved 628, reused 179, downloaded 255, added 434
+Progress: resolved 628, reused 179, downloaded 261, added 439
+Progress: resolved 628, reused 179, downloaded 276, added 444
+Progress: resolved 628, reused 179, downloaded 290, added 469
+Progress: resolved 628, reused 179, downloaded 298, added 476
+Progress: resolved 628, reused 179, downloaded 299, added 476
+Progress: resolved 628, reused 179, downloaded 303, added 481
+Progress: resolved 628, reused 179, downloaded 307, added 485
+Progress: resolved 628, reused 179, downloaded 316, added 492
+Progress: resolved 628, reused 179, downloaded 320, added 494
+Progress: resolved 628, reused 179, downloaded 322, added 499
+Progress: resolved 628, reused 179, downloaded 325, added 502
+Progress: resolved 628, reused 179, downloaded 326, added 502
+Progress: resolved 628, reused 179, downloaded 330, added 505
+Progress: resolved 628, reused 179, downloaded 336, added 511
+Progress: resolved 628, reused 179, downloaded 343, added 517
+Progress: resolved 628, reused 179, downloaded 346, added 520
+Progress: resolved 628, reused 179, downloaded 362, added 538
+Progress: resolved 628, reused 179, downloaded 369, added 547
+Progress: resolved 628, reused 179, downloaded 372, added 548
+Progress: resolved 628, reused 179, downloaded 379, added 555
+Progress: resolved 628, reused 179, downloaded 380, added 558
+Progress: resolved 628, reused 179, downloaded 382, added 558
+Progress: resolved 628, reused 179, downloaded 383, added 558
+Progress: resolved 628, reused 179, downloaded 385, added 561
+Progress: resolved 628, reused 179, downloaded 388, added 564
+Progress: resolved 628, reused 179, downloaded 394, added 572
+Progress: resolved 628, reused 179, downloaded 396, added 572
+Progress: resolved 628, reused 179, downloaded 399, added 575
+Progress: resolved 628, reused 179, downloaded 401, added 576
+Progress: resolved 628, reused 179, downloaded 407, added 585
+Progress: resolved 628, reused 179, downloaded 415, added 588
+Progress: resolved 628, reused 179, downloaded 428, added 603
+Progress: resolved 628, reused 179, downloaded 433, added 611
+Progress: resolved 628, reused 179, downloaded 434, added 612
+Progress: resolved 628, reused 179, downloaded 435, added 612
+Progress: resolved 628, reused 179, downloaded 435, added 613
+Progress: resolved 628, reused 179, downloaded 436, added 613
+Progress: resolved 628, reused 179, downloaded 438, added 616
+Progress: resolved 628, reused 179, downloaded 440, added 619
+Progress: resolved 628, reused 179, downloaded 441, added 619
+Progress: resolved 628, reused 179, downloaded 442, added 621
+Progress: resolved 628, reused 179, downloaded 443, added 621
+Progress: resolved 628, reused 179, downloaded 443, added 622
+Progress: resolved 628, reused 179, downloaded 444, added 623
+Progress: resolved 628, reused 179, downloaded 445, added 623
+Progress: resolved 628, reused 179, downloaded 445, added 624
+Progress: resolved 628, reused 179, downloaded 446, added 624
+Progress: resolved 628, reused 179, downloaded 446, added 625
+Progress: resolved 628, reused 179, downloaded 447, added 625
+Progress: resolved 628, reused 179, downloaded 447, added 626
+Progress: resolved 628, reused 179, downloaded 448, added 626
+Progress: resolved 628, reused 179, downloaded 448, added 627
+Progress: resolved 628, reused 179, downloaded 449, added 627
+Progress: resolved 628, reused 179, downloaded 449, added 628
+Progress: resolved 628, reused 179, downloaded 449, added 628, done
+.../node_modules/@swc/core postinstall$ node postinstall.js
+.../node_modules/puppeteer postinstall$ node install.mjs
+.../esbuild@0.25.4/node_modules/esbuild postinstall$ node install.js
+.../node_modules/unrs-resolver postinstall$ napi-postinstall unrs-resolver 1.7.2 check
+.../esbuild@0.21.5/node_modules/esbuild postinstall$ node install.js
+.../node_modules/@swc/core postinstall: Done
+.../node_modules/unrs-resolver postinstall: Done
+.../esbuild@0.25.4/node_modules/esbuild postinstall: Done
+.../node_modules/puppeteer postinstall: **INFO** Skipping downloading browsers as instructed.
+.../node_modules/puppeteer postinstall: Done
+.../node_modules/simple-git-hooks postinstall$ node ./postinstall.js
+.../esbuild@0.21.5/node_modules/esbuild postinstall: Done
+.../node_modules/simple-git-hooks postinstall: [INFO] Successfully set the pre-commit with command: pnpm lint-staged && pnpm check
+.../node_modules/simple-git-hooks postinstall: [INFO] Successfully set the commit-msg with command: node scripts/verify-commit.js
+.../node_modules/simple-git-hooks postinstall: Done
+
+devDependencies:
++ @babel/parser 7.27.2
++ @babel/types 7.27.1
++ @rollup/plugin-alias 5.1.1
++ @rollup/plugin-commonjs 28.0.3
++ @rollup/plugin-json 6.1.0
++ @rollup/plugin-node-resolve 16.0.1
++ @rollup/plugin-replace 5.0.4
++ @swc/core 1.11.24
++ @types/hash-sum 1.0.2
++ @types/node 22.14.1
++ @types/semver 7.7.0
++ @types/serve-handler 6.1.4
++ @vitest/coverage-v8 3.1.3
++ @vitest/eslint-plugin 1.1.44
++ @vue/consolidate 1.0.0
++ conventional-changelog-cli 5.0.0
++ enquirer 2.4.1
++ esbuild 0.25.4
++ esbuild-plugin-polyfill-node 0.3.0
++ eslint 9.25.1
++ eslint-plugin-import-x 4.11.0
++ estree-walker 2.0.2
++ jsdom 26.1.0
++ lint-staged 15.5.1
++ lodash 4.17.21
++ magic-string 0.30.17
++ markdown-table 3.0.4
++ marked 13.0.3
++ npm-run-all2 7.0.2
++ picocolors 1.1.1
++ prettier 3.5.3
++ pretty-bytes 6.1.1
++ pug 3.0.3
++ puppeteer 24.8.2
++ rimraf 6.0.1
++ rollup 4.40.2
++ rollup-plugin-dts 6.2.1
++ rollup-plugin-esbuild 6.2.1
++ rollup-plugin-polyfill-node 0.13.0
++ semver 7.7.1
++ serve 14.2.4
++ serve-handler 6.1.6
++ simple-git-hooks 2.13.0
++ todomvc-app-css 2.4.3
++ tslib 2.8.1
++ typescript 5.6.3
++ typescript-eslint 8.31.1
++ vite 5.4.15
++ vitest 3.1.3
+
+. postinstall$ simple-git-hooks
+. postinstall: [INFO] Successfully set the pre-commit with command: pnpm lint-staged && pnpm check
+. postinstall: [INFO] Successfully set the commit-msg with command: node scripts/verify-commit.js
+. postinstall: [INFO] Successfully set all git hooks
+. postinstall: Done
+Done in 11m 17.8s using pnpm v10.9.0

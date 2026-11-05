@@ -1,0 +1,24 @@
+{
+  "base": [
+    [
+      "corepack",
+      "pnpm",
+      "install",
+      "--frozen-lockfile",
+      "--ignore-scripts",
+      "--store-dir",
+      "/dev/shm/trpc-eval/pnpm8-store"
+    ]
+  ],
+  "head": [
+    [
+      "corepack",
+      "pnpm",
+      "install",
+      "--frozen-lockfile",
+      "--ignore-scripts",
+      "--store-dir",
+      "/dev/shm/trpc-eval/pnpm8-store"
+    ]
+  ]
+}

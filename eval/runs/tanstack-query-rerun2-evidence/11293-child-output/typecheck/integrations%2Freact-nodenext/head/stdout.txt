@@ -1,0 +1,2 @@
+src/hooks.cts(1,26): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+src/hooks.ts(1,26): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.

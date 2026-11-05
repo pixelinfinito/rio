@@ -1,0 +1,54 @@
+{
+  "base": [
+    [
+      "corepack",
+      "pnpm",
+      "install",
+      "--frozen-lockfile",
+      "--trust-lockfile",
+      "--ignore-scripts",
+      "--config.virtual-store-dir-max-length=250",
+      "--config.confirmModulesPurge=false",
+      "--package-import-method=hardlink",
+      "--store-dir",
+      "/dev/shm/rio-tanstack-tools/pnpm-store"
+    ],
+    [
+      "python3",
+      "/home/ubuntu/.t3/worktrees/rio/eval-run-tanstack-query/eval/runs/tanstack-query-11392-evidence/prepare-installation-02.py"
+    ],
+    [
+      "node",
+      "node_modules/typescript/lib/tsc.js",
+      "-b",
+      "packages/query-core",
+      "packages/query-test-utils"
+    ]
+  ],
+  "head": [
+    [
+      "corepack",
+      "pnpm",
+      "install",
+      "--frozen-lockfile",
+      "--trust-lockfile",
+      "--ignore-scripts",
+      "--config.virtual-store-dir-max-length=250",
+      "--config.confirmModulesPurge=false",
+      "--package-import-method=hardlink",
+      "--store-dir",
+      "/dev/shm/rio-tanstack-tools/pnpm-store"
+    ],
+    [
+      "python3",
+      "/home/ubuntu/.t3/worktrees/rio/eval-run-tanstack-query/eval/runs/tanstack-query-11392-evidence/prepare-installation-02.py"
+    ],
+    [
+      "node",
+      "node_modules/typescript/lib/tsc.js",
+      "-b",
+      "packages/query-core",
+      "packages/query-test-utils"
+    ]
+  ]
+}

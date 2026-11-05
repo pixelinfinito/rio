@@ -1,0 +1,15 @@
+#!/bin/bash
+export PATH=".venv/bin:/home/ubuntu/.cargo/bin:$PATH"
+export CONTEXT=eval-pydantic
+export UV_CACHE_DIR=/dev/shm/rio-pydantic/uv-cache
+export CARGO_HOME=/dev/shm/rio-pydantic/cargo
+export CARGO_TARGET_DIR=/dev/shm/rio-pydantic/cargo-target
+export CARGO_BUILD_JOBS=2
+export TMPDIR=/dev/shm/rio-pydantic/tmp
+export PYTEST_ADDOPTS='--ignore=tests/pydantic_core --ignore=tests/benchmarks'
+case "$1" in
+  14199) base=a9f3f3fccc180c05190df0478a17487ec9908e4e; head=262700f815672fc37ed637a1604234f6c7cc7ee9;;
+  14213) base=5740091dcd08e4a92940ceae841434a83331cb09; head=ef2cb073d6be2ef360d2aedcd5afca0983af2507;;
+  *) exit 2;;
+esac
+strace -f -s 4096 -e trace=execve,chdir -o "eval/runs/pydantic-evidence/rio-$1-$2-exec.log" python3 eval/runner.py --repository pydantic/pydantic --pr "$1" --base "$base" --head "$head" --languages python --rio /home/ubuntu/rio/target/release/rio --install-plan "$3" --profile "$PWD/eval/runs/pydantic-evidence/profile.yaml" --temp-root "${4:-$TMPDIR}" --timeout 1800 --out "$PWD/eval/runs/pydantic-$1$2"

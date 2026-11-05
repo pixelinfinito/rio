@@ -1,0 +1,134 @@
+kind: adapter
+name: rio/adapter-python
+version: 0.1.0
+description: Built-in Python adapter
+languages: [python]
+files: ["*.py", "*.pyi"]
+capabilities: [parse, typecheck, lint, test, coverage, scan]
+schema: {"type": "object", "additionalProperties": false}
+tools:
+  {
+    "parse": [],
+    "scan": [],
+    "typecheck": [
+      {
+        "name": "pyright",
+        "command": [
+          "pyright",
+          "--outputjson"
+        ],
+        "network": [],
+        "exit_codes": {
+          "clean": [
+            0
+          ],
+          "diagnostics": [
+            1
+          ],
+          "failed": {
+            "2": "tool_crashed",
+            "3": "tool_config_error",
+            "4": "tool_config_error"
+          }
+        }
+      },
+      {
+        "name": "mypy",
+        "command": [
+          "mypy",
+          "--output",
+          "json",
+          "{root}"
+        ],
+        "network": [],
+        "exit_codes": {
+          "clean": [
+            0
+          ],
+          "diagnostics": [
+            1
+          ],
+          "failed": {
+            "2": "tool_crashed"
+          }
+        }
+      }
+    ],
+    "lint": [
+      {
+        "name": "ruff",
+        "command": [
+          "ruff",
+          "check",
+          "--output-format",
+          "json",
+          "{files}"
+        ],
+        "network": [],
+        "exit_codes": {
+          "clean": [
+            0
+          ],
+          "diagnostics": [
+            1
+          ],
+          "failed": {
+            "2": "tool_config_error"
+          }
+        }
+      }
+    ],
+    "test": [
+      {
+        "name": "pytest",
+        "command": [
+          "pytest",
+          "-q"
+        ],
+        "network": [],
+        "exit_codes": {
+          "clean": [
+            0
+          ],
+          "diagnostics": [],
+          "failed": {
+            "1": "tests_failed",
+            "2": "tool_crashed",
+            "3": "tool_crashed",
+            "4": "tool_crashed"
+          },
+          "skipped": {
+            "5": "no_tests"
+          }
+        }
+      }
+    ],
+    "coverage": [
+      {
+        "name": "coverage",
+        "command": [
+          "coverage",
+          "run",
+          "-m",
+          "pytest",
+          "-q"
+        ],
+        "network": [],
+        "exit_codes": {
+          "clean": [
+            0
+          ],
+          "diagnostics": [],
+          "failed": {
+            "1": "tests_failed",
+            "2": "tool_crashed",
+            "3": "tool_crashed",
+            "4": "tool_crashed"
+          },
+          "skipped": {
+            "5": "no_tests"
+          }
+        }
+      }
+    ]
+  }

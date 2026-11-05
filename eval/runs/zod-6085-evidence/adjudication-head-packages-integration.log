@@ -1,0 +1,8 @@
+packages/integration/fixtures/ai-sdk/index.ts(6,19): error TS2307: Cannot find module 'zod' or its corresponding type declarations.
+packages/integration/fixtures/drizzle-zod/index.ts(7,20): error TS2307: Cannot find module 'zod' or its corresponding type declarations.
+packages/integration/fixtures/internal-types/cjs-test.cts(3,19): error TS2307: Cannot find module 'zod' or its corresponding type declarations.
+packages/integration/fixtures/internal-types/cjs-test.cts(44,42): error TS7006: Parameter 's' implicitly has an 'any' type.
+packages/integration/fixtures/internal-types/cjs-test.cts(45,49): error TS7006: Parameter 's' implicitly has an 'any' type.
+packages/integration/fixtures/internal-types/index.ts(4,19): error TS2307: Cannot find module 'zod' or its corresponding type declarations.
+packages/integration/fixtures/internal-types/index.ts(45,43): error TS7006: Parameter 's' implicitly has an 'any' type.
+packages/integration/fixtures/internal-types/index.ts(46,50): error TS7006: Parameter 's' implicitly has an 'any' type.

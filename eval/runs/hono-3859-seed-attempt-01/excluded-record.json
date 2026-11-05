@@ -1,0 +1,152 @@
+{
+  "schema": "rio-eval-record-v1",
+  "methodology": "deterministic-v1",
+  "repository": "honojs/hono",
+  "pr": "https://github.com/honojs/hono/pull/3859",
+  "case_id": "3859-seeded-type-error-20261105",
+  "languages": [
+    "typescript"
+  ],
+  "reviewer": "sub-agent eval-trpc (automated)",
+  "verdict_source": "automated",
+  "independently_clean": false,
+  "commands": [
+    "cwd=/dev/shm/trpc-eval/rio-eval-w0gwgkty argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/honojs/hono.git\", \"/dev/shm/trpc-eval/rio-eval-w0gwgkty/head\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-w0gwgkty/head argv=[\"git\", \"fetch\", \"origin\", \"d40fffbec624bae50f8fc3b619125dda9a8c50e2\", \"584ec1d27768144b5e7eff7cd735416727f9ade4\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-w0gwgkty/head argv=[\"git\", \"merge-base\", \"d40fffbec624bae50f8fc3b619125dda9a8c50e2\", \"584ec1d27768144b5e7eff7cd735416727f9ade4\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-w0gwgkty/head argv=[\"git\", \"checkout\", \"--detach\", \"584ec1d27768144b5e7eff7cd735416727f9ade4\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-w0gwgkty argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/dev/shm/trpc-eval/rio-eval-w0gwgkty/head\", \"/dev/shm/trpc-eval/rio-eval-w0gwgkty/base\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-w0gwgkty/base argv=[\"git\", \"checkout\", \"--detach\", \"d40fffbec624bae50f8fc3b619125dda9a8c50e2\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-w0gwgkty/base argv=[\"corepack\", \"yarn@1.22.22\", \"install\", \"--frozen-lockfile\", \"--non-interactive\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-w0gwgkty/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-w0gwgkty/head argv=[\"corepack\", \"yarn@1.22.22\", \"install\", \"--frozen-lockfile\", \"--non-interactive\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-w0gwgkty/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-w0gwgkty/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-w0gwgkty/head argv=[\"node\", \"--version\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-w0gwgkty/head argv=[\"npm\", \"--version\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-w0gwgkty/head argv=[\"corepack\", \"--version\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-w0gwgkty/head argv=[\"python3\", \"--version\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-w0gwgkty/head argv=[\"uv\", \"--version\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-w0gwgkty/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-3859-seed-attempt-01/profile.yaml\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-w0gwgkty/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-w0gwgkty/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"d40fffbec624bae50f8fc3b619125dda9a8c50e2\", \"--format\", \"json\", \"--offline\", \"--profile\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-3859-seed-attempt-01/profile.yaml\"]"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-3859-seed-attempt-01/commands.json; Rio binary SHA-256: 512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+    "EXCLUDED: every typecheck/lint/coverage head check skipped dependency_mismatch. No base classification, no scored recall/precision/usefulness. All required Yarn selectors listed in commands.json; do not enable dependency trust.",
+    "Oracle corrections and NO_COLOR environment removal recorded in ../hono-evidence/setup-corrections.json."
+  ],
+  "positive_control": {
+    "kind": "seeded-mutation",
+    "expected": [
+      {
+        "id": "seeded-url-export-type-mismatch",
+        "mechanism": "type-error",
+        "evidence": "Independent oracle ../hono-3859-seed-oracle/: base tsc --noEmit --pretty false exit0; seeded head exit2 with exactly TS2322 at src/utils/url.ts:314:14 string not assignable to number. Single mutation patch c7a26ee8c1e198b95d47a8dd67c6ff222d1a072bee5fffa85d51716d7e622fba. ESLint and 15 URL tests pass both; JSON coverage retains execution counts.",
+        "finding_ids": []
+      }
+    ]
+  },
+  "base_sha": "d40fffbec624bae50f8fc3b619125dda9a8c50e2",
+  "head_sha": "584ec1d27768144b5e7eff7cd735416727f9ade4",
+  "mode": "branch",
+  "review_id": "2b8cb364c26699b0",
+  "run_id": "01M6MVC97K94FAT6AE1DMYP2PN",
+  "rio_version": "0.1.0",
+  "profile": "hono-typescript-verified-all-checks",
+  "wall_time_ms": 11953,
+  "status": "incomplete",
+  "report_path": "eval/runs/hono-3859-seed-attempt-01/report.json",
+  "environment": {
+    "dependency_state": "unavailable",
+    "baseline_ran": false,
+    "baseline_classification_ran": false,
+    "eligible": false,
+    "reasons": [
+      "coverage . head: skipped dependency_mismatch unresolved yarn selector: string-width-cjs@npm:string-width@^4.2.0; unresolved yarn selector: strip-ansi-cjs@npm:strip-ansi@^6.0.1; unresolved yarn selector: wrap-ansi-cjs@npm:wrap-ansi@^7.0.0; unresolved yarn selector: safer-buffer@>= 2.1.2 < 3.0.0; unresolved yarn selector: type-check@~0.4.0; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+      "lint . head: skipped dependency_mismatch unresolved yarn selector: string-width-cjs@npm:string-width@^4.2.0; unresolved yarn selector: strip-ansi-cjs@npm:strip-ansi@^6.0.1; unresolved yarn selector: wrap-ansi-cjs@npm:wrap-ansi@^7.0.0; unresolved yarn selector: safer-buffer@>= 2.1.2 < 3.0.0; unresolved yarn selector: type-check@~0.4.0; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+      "lint .: head=skipped, dependency_state=unavailable, base=unavailable",
+      "typecheck . head: skipped dependency_mismatch unresolved yarn selector: string-width-cjs@npm:string-width@^4.2.0; unresolved yarn selector: strip-ansi-cjs@npm:strip-ansi@^6.0.1; unresolved yarn selector: wrap-ansi-cjs@npm:wrap-ansi@^7.0.0; unresolved yarn selector: safer-buffer@>= 2.1.2 < 3.0.0; unresolved yarn selector: type-check@~0.4.0; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+      "typecheck .: head=skipped, dependency_state=unavailable, base=unavailable"
+    ],
+    "checks": [
+      {
+        "findings": [],
+        "hint": "unresolved yarn selector: string-width-cjs@npm:string-width@^4.2.0; unresolved yarn selector: strip-ansi-cjs@npm:strip-ansi@^6.0.1; unresolved yarn selector: wrap-ansi-cjs@npm:wrap-ansi@^7.0.0; unresolved yarn selector: safer-buffer@>= 2.1.2 < 3.0.0; unresolved yarn selector: type-check@~0.4.0; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "dependency_mismatch",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "findings": [],
+        "hint": "unresolved yarn selector: string-width-cjs@npm:string-width@^4.2.0; unresolved yarn selector: strip-ansi-cjs@npm:strip-ansi@^6.0.1; unresolved yarn selector: wrap-ansi-cjs@npm:wrap-ansi@^7.0.0; unresolved yarn selector: safer-buffer@>= 2.1.2 < 3.0.0; unresolved yarn selector: type-check@~0.4.0; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "kind": "lint",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "dependency_mismatch",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "findings": [],
+        "hint": "unresolved yarn selector: string-width-cjs@npm:string-width@^4.2.0; unresolved yarn selector: strip-ansi-cjs@npm:strip-ansi@^6.0.1; unresolved yarn selector: wrap-ansi-cjs@npm:wrap-ansi@^7.0.0; unresolved yarn selector: safer-buffer@>= 2.1.2 < 3.0.0; unresolved yarn selector: type-check@~0.4.0; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "dependency_mismatch",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "findings": [],
+        "kind": "secrets",
+        "language": "common",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "findings": [],
+        "hint": "Dependency audit needs api.osv.dev",
+        "kind": "dependencies",
+        "language": "common",
+        "outcome": "skipped",
+        "reason": "offline",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      }
+    ],
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "Graph references use syntax and text; no language server was used",
+      "Offline applies to Rio; tool and test processes were not network-isolated"
+    ]
+  },
+  "findings": [],
+  "root_causes": [],
+  "misses": [
+    {
+      "id": "control/seeded-url-export-type-mismatch",
+      "scope_class": "deterministic",
+      "description": "Positive control seeded-url-export-type-mismatch was not detected.",
+      "evidence": "Independent oracle ../hono-3859-seed-oracle/: base tsc --noEmit --pretty false exit0; seeded head exit2 with exactly TS2322 at src/utils/url.ts:314:14 string not assignable to number. Single mutation patch c7a26ee8c1e198b95d47a8dd67c6ff222d1a072bee5fffa85d51716d7e622fba. ESLint and 15 URL tests pass both; JSON coverage retains execution counts.",
+      "mechanism": "type-error",
+      "expectation_id": "seeded-url-export-type-mismatch"
+    }
+  ],
+  "verdict": "environment-failure",
+  "reason": "Baseline/setup must be repaired before this PR can be scored."
+}

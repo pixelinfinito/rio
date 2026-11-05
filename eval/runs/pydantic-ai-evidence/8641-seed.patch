@@ -1,0 +1,12 @@
+diff --git a/pydantic_ai_slim/pydantic_ai/output.py b/pydantic_ai_slim/pydantic_ai/output.py
+index acfcd51de..3f2cb88f6 100644
+--- a/pydantic_ai_slim/pydantic_ai/output.py
++++ b/pydantic_ai_slim/pydantic_ai/output.py
+@@ -1,6 +1,7 @@
+ from __future__ import annotations
+ 
+ import inspect
++import itertools
+ from collections.abc import Awaitable, Callable, Mapping, Sequence
+ from dataclasses import dataclass
+ from typing import Any, ClassVar, Generic, Literal, overload

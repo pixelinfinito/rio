@@ -1,0 +1,64 @@
+[
+  {
+    "kind": "typecheck",
+    "pid": 735434,
+    "argv": [
+      "/dev/shm/rio-pydantic/tmp/rio-eval-7drefovb/head/./.venv/bin/pyright",
+      "--outputjson"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/tmp/rio-eval-7drefovb/cache/623e84ab5476264e/runs/01M6MVR1QM168R8VVVZ4FCHXYR/tools/tool.tmp-UHotxX/.",
+    "trace_path": "eval/runs/pydantic-evidence/rio-14199--attempt04-exec.log",
+    "trace_line": 1602,
+    "raw_execve": "735434 execve(\"/dev/shm/rio-pydantic/tmp/rio-eval-7drefovb/head/./.venv/bin/pyright\", [\"/dev/shm/rio-pydantic/tmp/rio-eval-7drefovb/head/./.venv/bin/pyright\", \"--outputjson\"], 0x7ffc8ea96618 /* 50 vars */) = 0"
+  },
+  {
+    "kind": "lint",
+    "pid": 735445,
+    "argv": [
+      "/dev/shm/rio-pydantic/tmp/rio-eval-7drefovb/head/./.venv/bin/ruff",
+      "check",
+      "--output-format",
+      "json",
+      "--",
+      "/dev/shm/rio-pydantic/tmp/rio-eval-7drefovb/cache/623e84ab5476264e/runs/01M6MVR1QM168R8VVVZ4FCHXYR/tools/tool.tmp-zLJlFP/pydantic/_internal/_config.py",
+      "/dev/shm/rio-pydantic/tmp/rio-eval-7drefovb/cache/623e84ab5476264e/runs/01M6MVR1QM168R8VVVZ4FCHXYR/tools/tool.tmp-zLJlFP/pydantic/_internal/_contextlib.py",
+      "/dev/shm/rio-pydantic/tmp/rio-eval-7drefovb/cache/623e84ab5476264e/runs/01M6MVR1QM168R8VVVZ4FCHXYR/tools/tool.tmp-zLJlFP/pydantic/_internal/_dataclasses.py",
+      "/dev/shm/rio-pydantic/tmp/rio-eval-7drefovb/cache/623e84ab5476264e/runs/01M6MVR1QM168R8VVVZ4FCHXYR/tools/tool.tmp-zLJlFP/pydantic/_internal/_generate_schema.py",
+      "/dev/shm/rio-pydantic/tmp/rio-eval-7drefovb/cache/623e84ab5476264e/runs/01M6MVR1QM168R8VVVZ4FCHXYR/tools/tool.tmp-zLJlFP/pydantic/_internal/_generics.py",
+      "/dev/shm/rio-pydantic/tmp/rio-eval-7drefovb/cache/623e84ab5476264e/runs/01M6MVR1QM168R8VVVZ4FCHXYR/tools/tool.tmp-zLJlFP/pydantic/_internal/_namespace_utils.py"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/tmp/rio-eval-7drefovb/cache/623e84ab5476264e/runs/01M6MVR1QM168R8VVVZ4FCHXYR/tools/tool.tmp-zLJlFP/.",
+    "trace_path": "eval/runs/pydantic-evidence/rio-14199--attempt04-exec.log",
+    "trace_line": 1612,
+    "raw_execve": "735445 execve(\"/dev/shm/rio-pydantic/tmp/rio-eval-7drefovb/head/./.venv/bin/ruff\", [\"/dev/shm/rio-pydantic/tmp/rio-eval-7drefovb/head/./.venv/bin/ruff\", \"check\", \"--output-format\", \"json\", \"--\", \"/dev/shm/rio-pydantic/tmp/rio-eval-7drefovb/cache/623e84ab5476264e/runs/01M6MVR1QM168R8VVVZ4FCHXYR/tools/tool.tmp-zLJlFP/pydantic/_internal/_config.py\", \"/dev/shm/rio-pydantic/tmp/rio-eval-7drefovb/cache/623e84ab5476264e/runs/01M6MVR1QM168R8VVVZ4FCHXYR/tools/tool.tmp-zLJlFP/pydantic/_internal/_contextlib.py\", \"/dev/shm/rio-pydantic/tmp/rio-eval-7drefovb/cache/623e84ab5476264e/runs/01M6MVR1QM168R8VVVZ4FCHXYR/tools/tool.tmp-zLJlFP/pydantic/_internal/_dataclasses.py\", \"/dev/shm/rio-pydantic/tmp/rio-eval-7drefovb/cache/623e84ab5476264e/runs/01M6MVR1QM168R8VVVZ4FCHXYR/tools/tool.tmp-zLJlFP/pydantic/_internal/_generate_schema.py\", \"/dev/shm/rio-pydantic/tmp/rio-eval-7drefovb/cache/623e84ab5476264e/runs/01M6MVR1QM168R8VVVZ4FCHXYR/tools/tool.tmp-zLJlFP/pydantic/_internal/_generics.py\", \"/dev/shm/rio-pydantic/tmp/rio-eval-7drefovb/cache/623e84ab5476264e/runs/01M6MVR1QM168R8VVVZ4FCHXYR/tools/tool.tmp-zLJlFP/pydantic/_internal/_namespace_utils.py\"], 0x7ffc8ea96618 /* 50 vars */) = 0"
+  },
+  {
+    "kind": "coverage",
+    "pid": 735479,
+    "argv": [
+      "/dev/shm/rio-pydantic/tmp/rio-eval-7drefovb/head/./.venv/bin/coverage",
+      "run",
+      "-m",
+      "pytest",
+      "-q"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/tmp/rio-eval-7drefovb/cache/623e84ab5476264e/runs/01M6MVR1QM168R8VVVZ4FCHXYR/tools/tool.tmp-MbUNdj/.",
+    "trace_path": "eval/runs/pydantic-evidence/rio-14199--attempt04-exec.log",
+    "trace_line": 1649,
+    "raw_execve": "735479 execve(\"/dev/shm/rio-pydantic/tmp/rio-eval-7drefovb/head/./.venv/bin/coverage\", [\"/dev/shm/rio-pydantic/tmp/rio-eval-7drefovb/head/./.venv/bin/coverage\", \"run\", \"-m\", \"pytest\", \"-q\"], 0x73e6d8f37d30 /* 52 vars */) = 0"
+  },
+  {
+    "kind": "coverage",
+    "pid": 740916,
+    "argv": [
+      "/dev/shm/rio-pydantic/tmp/rio-eval-7drefovb/head/./.venv/bin/coverage",
+      "json",
+      "-o",
+      "/dev/shm/rio-pydantic/tmp/rio-eval-7drefovb/cache/623e84ab5476264e/runs/01M6MVR1QM168R8VVVZ4FCHXYR/tools/tool.tmp-MbUNdj/./.rio-coverage/coverage.json"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/tmp/rio-eval-7drefovb/cache/623e84ab5476264e/runs/01M6MVR1QM168R8VVVZ4FCHXYR/tools/tool.tmp-MbUNdj/.",
+    "trace_path": "eval/runs/pydantic-evidence/rio-14199--attempt04-exec.log",
+    "trace_line": 3699,
+    "raw_execve": "740916 execve(\"/dev/shm/rio-pydantic/tmp/rio-eval-7drefovb/head/./.venv/bin/coverage\", [\"/dev/shm/rio-pydantic/tmp/rio-eval-7drefovb/head/./.venv/bin/coverage\", \"json\", \"-o\", \"/dev/shm/rio-pydantic/tmp/rio-eval-7drefovb/cache/623e84ab5476264e/runs/01M6MVR1QM168R8VVVZ4FCHXYR/tools/tool.tmp-MbUNdj/./.rio-coverage/coverage.json\"], 0x73e6d8f4a5c0 /* 51 vars */) = 0"
+  }
+]

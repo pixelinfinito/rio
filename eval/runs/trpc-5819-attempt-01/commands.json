@@ -1,0 +1,484 @@
+{
+  "schema": "rio-eval-runner-v1",
+  "repository": "trpc/trpc",
+  "pr": "https://github.com/trpc/trpc/pull/5819",
+  "started_utc": "2026-11-05T02:41:14.025101+00:00",
+  "rio_binary": "/home/ubuntu/rio/target/release/rio",
+  "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-checkout",
+        "https://github.com/trpc/trpc.git",
+        "/dev/shm/trpc-eval/rio-eval-pq9q8w9v/head"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-pq9q8w9v",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-5819-attempt-01/01-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-5819-attempt-01/01-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 14935
+    },
+    {
+      "argv": [
+        "git",
+        "fetch",
+        "origin",
+        "baa9c19679d215c65770e3d066d177703f104371",
+        "124440fafb43a33859cd1f5c3232b2d1498742eb"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-pq9q8w9v/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-5819-attempt-01/02-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-5819-attempt-01/02-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 4968
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "baa9c19679d215c65770e3d066d177703f104371",
+        "124440fafb43a33859cd1f5c3232b2d1498742eb"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-pq9q8w9v/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-5819-attempt-01/03-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-5819-attempt-01/03-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 5820
+    },
+    {
+      "argv": [
+        "git",
+        "checkout",
+        "--detach",
+        "124440fafb43a33859cd1f5c3232b2d1498742eb"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-pq9q8w9v/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-5819-attempt-01/04-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-5819-attempt-01/04-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 2527
+    },
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-hardlinks",
+        "--no-checkout",
+        "/dev/shm/trpc-eval/rio-eval-pq9q8w9v/head",
+        "/dev/shm/trpc-eval/rio-eval-pq9q8w9v/base"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-pq9q8w9v",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-5819-attempt-01/05-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-5819-attempt-01/05-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 3034
+    },
+    {
+      "argv": [
+        "git",
+        "checkout",
+        "--detach",
+        "baa9c19679d215c65770e3d066d177703f104371"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-pq9q8w9v/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-5819-attempt-01/06-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-5819-attempt-01/06-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 3538
+    },
+    {
+      "argv": [
+        "corepack",
+        "pnpm",
+        "--filter",
+        "root",
+        "--filter",
+        "@trpc/server",
+        "install",
+        "--frozen-lockfile",
+        "--ignore-scripts",
+        "--store-dir",
+        "/dev/shm/trpc-eval/pnpm8-store"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-pq9q8w9v/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-5819-attempt-01/07-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-5819-attempt-01/07-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 63494
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-pq9q8w9v/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-5819-attempt-01/08-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-5819-attempt-01/08-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 79
+    },
+    {
+      "argv": [
+        "corepack",
+        "pnpm",
+        "--filter",
+        "root",
+        "--filter",
+        "@trpc/server",
+        "install",
+        "--frozen-lockfile",
+        "--ignore-scripts",
+        "--store-dir",
+        "/dev/shm/trpc-eval/pnpm8-store"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-pq9q8w9v/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-5819-attempt-01/09-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-5819-attempt-01/09-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 35294
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-pq9q8w9v/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-5819-attempt-01/10-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-5819-attempt-01/10-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 3449
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "--version"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-pq9q8w9v/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/trpc-eval/rio-eval-pq9q8w9v/config",
+        "RIO_CACHE_DIR": "/dev/shm/trpc-eval/rio-eval-pq9q8w9v/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-5819-attempt-01/rio-version.txt",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-5819-attempt-01/11-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 23
+    },
+    {
+      "argv": [
+        "node",
+        "--version"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-pq9q8w9v/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/trpc-eval/rio-eval-pq9q8w9v/config",
+        "RIO_CACHE_DIR": "/dev/shm/trpc-eval/rio-eval-pq9q8w9v/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-5819-attempt-01/12-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-5819-attempt-01/12-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 721
+    },
+    {
+      "argv": [
+        "npm",
+        "--version"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-pq9q8w9v/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/trpc-eval/rio-eval-pq9q8w9v/config",
+        "RIO_CACHE_DIR": "/dev/shm/trpc-eval/rio-eval-pq9q8w9v/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-5819-attempt-01/13-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-5819-attempt-01/13-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 1004
+    },
+    {
+      "argv": [
+        "corepack",
+        "--version"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-pq9q8w9v/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/trpc-eval/rio-eval-pq9q8w9v/config",
+        "RIO_CACHE_DIR": "/dev/shm/trpc-eval/rio-eval-pq9q8w9v/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-5819-attempt-01/14-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-5819-attempt-01/14-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 1327
+    },
+    {
+      "argv": [
+        "python3",
+        "--version"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-pq9q8w9v/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/trpc-eval/rio-eval-pq9q8w9v/config",
+        "RIO_CACHE_DIR": "/dev/shm/trpc-eval/rio-eval-pq9q8w9v/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-5819-attempt-01/15-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-5819-attempt-01/15-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 4
+    },
+    {
+      "argv": [
+        "uv",
+        "--version"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-pq9q8w9v/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/trpc-eval/rio-eval-pq9q8w9v/config",
+        "RIO_CACHE_DIR": "/dev/shm/trpc-eval/rio-eval-pq9q8w9v/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-5819-attempt-01/16-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-5819-attempt-01/16-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 30
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "profile",
+        "show",
+        "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-5819-attempt-01/profile.yaml"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-pq9q8w9v/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/trpc-eval/rio-eval-pq9q8w9v/config",
+        "RIO_CACHE_DIR": "/dev/shm/trpc-eval/rio-eval-pq9q8w9v/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-5819-attempt-01/resolved-profile.txt",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-5819-attempt-01/17-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 1580
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "doctor",
+        "--format",
+        "json"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-pq9q8w9v/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/trpc-eval/rio-eval-pq9q8w9v/config",
+        "RIO_CACHE_DIR": "/dev/shm/trpc-eval/rio-eval-pq9q8w9v/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-5819-attempt-01/doctor.json",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-5819-attempt-01/18-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 163475
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "review",
+        "--base",
+        "baa9c19679d215c65770e3d066d177703f104371",
+        "--format",
+        "json",
+        "--offline",
+        "--profile",
+        "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-5819-attempt-01/profile.yaml"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-pq9q8w9v/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/trpc-eval/rio-eval-pq9q8w9v/config",
+        "RIO_CACHE_DIR": "/dev/shm/trpc-eval/rio-eval-pq9q8w9v/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-5819-attempt-01/report.json",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-5819-attempt-01/19-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 122133
+    }
+  ],
+  "installations": {
+    "base": {
+      "commands": [
+        [
+          "corepack",
+          "pnpm",
+          "--filter",
+          "root",
+          "--filter",
+          "@trpc/server",
+          "install",
+          "--frozen-lockfile",
+          "--ignore-scripts",
+          "--store-dir",
+          "/dev/shm/trpc-eval/pnpm8-store"
+        ]
+      ],
+      "succeeded": true,
+      "lockfiles": {
+        "pnpm-lock.yaml": "ddcf4cd116f26623bc26a7093b2cdf45acfc945e51cff2b99d996fd81cb31c8f"
+      }
+    },
+    "head": {
+      "commands": [
+        [
+          "corepack",
+          "pnpm",
+          "--filter",
+          "root",
+          "--filter",
+          "@trpc/server",
+          "install",
+          "--frozen-lockfile",
+          "--ignore-scripts",
+          "--store-dir",
+          "/dev/shm/trpc-eval/pnpm8-store"
+        ]
+      ],
+      "succeeded": true,
+      "lockfiles": {
+        "pnpm-lock.yaml": "ddcf4cd116f26623bc26a7093b2cdf45acfc945e51cff2b99d996fd81cb31c8f"
+      }
+    }
+  },
+  "failures": [
+    "Baseline/setup ineligible; fix before scoring"
+  ],
+  "network": "Installers may use network; Rio review uses --offline. Subprocesses are not isolated.",
+  "profile_sha256": "4bd969a9dd665ee1bd6465232d27c4ea8b8f37b8bbf2e442eaa93c33bd63674b",
+  "resolution": {
+    "base_sha": "baa9c19679d215c65770e3d066d177703f104371",
+    "head_sha": "124440fafb43a33859cd1f5c3232b2d1498742eb",
+    "source": "pinned argv"
+  },
+  "disposable_directory": "/dev/shm/trpc-eval/rio-eval-pq9q8w9v",
+  "base_sha": "baa9c19679d215c65770e3d066d177703f104371",
+  "head_sha": "124440fafb43a33859cd1f5c3232b2d1498742eb",
+  "removed_environment_keys": [],
+  "resolved_profile_sha256": "119fd9a21ec0905eca7ed61087865f7ba8b801e878abc31aec8ef452693c2ca4",
+  "review_exit_code": 0,
+  "environment": {
+    "dependency_state": "verified",
+    "baseline_ran": false,
+    "baseline_classification_ran": false,
+    "eligible": false,
+    "reasons": [
+      "coverage examples/.experimental/next-app-dir head: skipped disabled Disabled in the profile",
+      "coverage examples/.test/diagnostics-big-router head: skipped disabled Disabled in the profile",
+      "coverage examples/.test/internal-types-export head: skipped disabled Disabled in the profile",
+      "coverage examples/.test/ssg head: skipped disabled Disabled in the profile",
+      "coverage examples/.test/ssg-infinite-serialization head: skipped disabled Disabled in the profile",
+      "coverage examples/bun head: skipped disabled Disabled in the profile",
+      "coverage examples/cloudflare-workers head: skipped disabled Disabled in the profile",
+      "coverage examples/express-minimal head: skipped disabled Disabled in the profile",
+      "coverage examples/express-server head: skipped disabled Disabled in the profile",
+      "coverage examples/fastify-server head: skipped disabled Disabled in the profile",
+      "coverage examples/lambda-api-gateway head: skipped disabled Disabled in the profile",
+      "coverage examples/minimal head: skipped disabled Disabled in the profile",
+      "coverage examples/next-big-router head: skipped disabled Disabled in the profile",
+      "coverage examples/next-edge-runtime head: skipped disabled Disabled in the profile",
+      "coverage examples/next-formdata head: skipped disabled Disabled in the profile",
+      "coverage examples/next-minimal-starter head: skipped disabled Disabled in the profile",
+      "coverage examples/next-prisma-starter head: skipped disabled Disabled in the profile",
+      "coverage examples/next-prisma-todomvc head: skipped disabled Disabled in the profile",
+      "coverage examples/next-prisma-websockets-starter head: skipped disabled Disabled in the profile",
+      "coverage examples/next-sse-chat head: skipped disabled Disabled in the profile",
+      "coverage examples/soa head: skipped disabled Disabled in the profile",
+      "coverage examples/standalone-server head: skipped disabled Disabled in the profile",
+      "coverage examples/vercel-edge-runtime head: skipped disabled Disabled in the profile",
+      "coverage packages/client head: skipped disabled Disabled in the profile",
+      "coverage packages/next head: skipped disabled Disabled in the profile",
+      "coverage packages/react-query head: skipped disabled Disabled in the profile",
+      "coverage packages/server head: skipped disabled Disabled in the profile",
+      "coverage packages/tests head: skipped disabled Disabled in the profile",
+      "coverage www head: skipped disabled Disabled in the profile",
+      "dependencies . head: skipped disabled Disabled in the profile",
+      "lint examples/next-sse-chat head: skipped disabled Disabled in the profile",
+      "lint examples/next-sse-chat: head=skipped, dependency_state=unavailable, base=unavailable",
+      "lint packages/client head: skipped disabled Disabled in the profile",
+      "lint packages/client: head=skipped, dependency_state=unavailable, base=unavailable",
+      "lint packages/server head: skipped disabled Disabled in the profile",
+      "lint packages/server: head=skipped, dependency_state=unavailable, base=unavailable",
+      "lint packages/tests head: skipped disabled Disabled in the profile",
+      "lint packages/tests: head=skipped, dependency_state=unavailable, base=unavailable",
+      "typecheck examples/.experimental/next-app-dir: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck examples/.test/diagnostics-big-router: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck examples/.test/internal-types-export: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck examples/.test/ssg-infinite-serialization: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck examples/.test/ssg: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck examples/bun: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck examples/cloudflare-workers: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck examples/express-minimal: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck examples/express-server: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck examples/fastify-server: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck examples/lambda-api-gateway: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck examples/minimal: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck examples/next-big-router: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck examples/next-edge-runtime: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck examples/next-formdata: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck examples/next-minimal-starter: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck examples/next-prisma-starter: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck examples/next-prisma-todomvc: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck examples/next-prisma-websockets-starter: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck examples/next-sse-chat: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck examples/soa: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck examples/standalone-server: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck examples/vercel-edge-runtime: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck packages/client: head=passed, dependency_state=verified, base=unavailable",
+      "typecheck packages/next: head=passed, dependency_state=verified, base=unavailable",
+      "typecheck packages/react-query: head=passed, dependency_state=verified, base=unavailable",
+      "typecheck packages/server: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck packages/tests head: skipped dependency_mismatch pnpm-lock.yaml: /scale-codec@0.13.0: expected scale-codec@0.13.0, installed scale-codec@v0.13.0; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+      "typecheck packages/tests: head=skipped, dependency_state=unavailable, base=unavailable",
+      "typecheck www head: skipped dependency_mismatch pnpm-lock.yaml: missing @docusaurus/core at /@docusaurus/core@2.4.1(@docusaurus/types@2.4.1)(@swc/core@1.3.3)(eslint@8.56.0)(react-dom@18.3.1)(react@18.3.1)(typescript@5.1.3); reinstall dependencies",
+      "typecheck www: head=skipped, dependency_state=unavailable, base=unavailable"
+    ],
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "typecheck examples/.test/diagnostics-big-router: baseline_failed: linked dependency examples/.test/diagnostics-big-router::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+      "typecheck examples/.test/ssg: baseline_failed: linked dependency examples/.test/ssg::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+      "typecheck examples/.test/ssg-infinite-serialization: baseline_failed: linked dependency examples/.test/ssg-infinite-serialization::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+      "typecheck examples/.test/internal-types-export: baseline_failed: linked dependency examples/.test/internal-types-export::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+      "typecheck examples/.experimental/next-app-dir: baseline_failed: linked dependency examples/.experimental/next-app-dir::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+      "typecheck examples/standalone-server: baseline_failed: linked dependency examples/standalone-server::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+      "typecheck examples/vercel-edge-runtime: baseline_failed: linked dependency examples/vercel-edge-runtime::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+      "typecheck examples/soa: baseline_failed: linked dependency examples/soa::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+      "typecheck examples/next-sse-chat: baseline_failed: linked dependency examples/next-sse-chat::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+      "typecheck packages/react-query: baseline_failed: linked dependency packages/react-query::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+      "typecheck examples/bun: baseline_failed: linked dependency examples/bun::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+      "typecheck examples/cloudflare-workers: baseline_failed: linked dependency examples/cloudflare-workers::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+      "typecheck packages/client: baseline_failed: linked dependency examples/.experimental/next-app-dir::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+      "typecheck examples/express-minimal: baseline_failed: linked dependency examples/express-minimal::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+      "typecheck examples/express-server: baseline_failed: linked dependency examples/express-server::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+      "typecheck examples/fastify-server: baseline_failed: linked dependency examples/fastify-server::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+      "typecheck packages/server: baseline_failed: linked dependency examples/.experimental/next-app-dir::@trpc/server points at changed source packages/server: packages/server/src/unstable-core-do-not-import/stream/sse.test.ts; commit or stash the linked package's changes",
+      "typecheck examples/minimal: baseline_failed: linked dependency examples/minimal::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+      "typecheck examples/next-big-router: baseline_failed: linked dependency examples/next-big-router::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+      "typecheck examples/next-edge-runtime: baseline_failed: linked dependency examples/next-edge-runtime::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+      "typecheck examples/lambda-api-gateway: baseline_failed: linked dependency examples/lambda-api-gateway::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+      "typecheck examples/next-formdata: baseline_failed: linked dependency examples/next-formdata::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+      "typecheck examples/next-minimal-starter: baseline_failed: linked dependency examples/next-minimal-starter::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+      "typecheck examples/next-prisma-starter: baseline_failed: linked dependency examples/next-prisma-starter::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+      "typecheck examples/next-prisma-todomvc: baseline_failed: linked dependency examples/next-prisma-todomvc::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+      "typecheck examples/next-prisma-websockets-starter: baseline_failed: linked dependency examples/next-prisma-websockets-starter::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+      "typecheck packages/next: baseline_failed: linked dependency packages/next::@trpc/client points at changed source packages/client: packages/client/src/links/httpSubscriptionLink.ts; commit or stash the linked package's changes",
+      "Graph references use syntax and text; no language server was used",
+      "Offline applies to Rio; tool and test processes were not network-isolated"
+    ]
+  },
+  "finished_utc": "2026-11-05T02:49:11.667438+00:00"
+}

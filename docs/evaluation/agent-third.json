@@ -1,0 +1,5233 @@
+{
+  "schema": "rio-acceptance-agent-v1",
+  "reviewer": "sub-agent acceptance_mixed",
+  "verdict_source": "automated",
+  "date": "2026-11-04",
+  "repository_checkout": "/tmp/rio-acceptance-structlog",
+  "setup": {
+    "clone": "git clone --filter=blob:none https://github.com/hynek/structlog /tmp/rio-acceptance-structlog; git fetch --refetch --no-filter origin",
+    "environment": "python3 -m venv .venv; .venv/bin/pip install -e . pytest pytest-asyncio pytest-randomly simplejson time-machine mypy ruff coverage rich twisted",
+    "local_git_excludes": [
+      ".venv/",
+      ".rio/cache/"
+    ],
+    "tracked_python_files": 46,
+    "trusted_profile": "version: 1\nname: acceptance-structlog-trusted\nextends: rio/base\nbudget:\n  fast: {wall_time: 90s}\nsteps:\n  - id: prepare\n    uses: rio/prepare\n  - id: checks\n    uses: rio/checks\n    needs: [prepare]\n    with:\n      trust_installed_dependencies: true\n  - id: graph\n    uses: rio/graph\n    needs: [prepare]\n  - id: report\n    uses: rio/report\n    needs: [checks, graph]\n",
+    "command_template": "RIO_CONFIG_DIR=/tmp/rio-acceptance-config /home/ubuntu/rio/target/debug/rio review --base BASE_SHA --profile /tmp/rio-structlog-trusted.yaml --offline --format json"
+  },
+  "pull_requests": [
+    {
+      "repository": "hynek/structlog",
+      "pr": "https://github.com/hynek/structlog/pull/811",
+      "title": "Correctly unpickle WriteLogger",
+      "base": "de5dcd4127b8c9652ebadf0b6411c4bb9c10f3b7",
+      "head": "c0ba373b5c4ead7f39630026808bc74418a4460a",
+      "languages": [
+        "python"
+      ],
+      "mode": "base",
+      "review_id": "065f8e42204dece3",
+      "wall_time_ms": 32710,
+      "status": "incomplete",
+      "exit_code": 0,
+      "profile": "acceptance-structlog-trusted",
+      "binary_sha256": "33b5fe2fcccb7700142d45d15a62df706995998f94e7f741351755454b4e95e6",
+      "findings": [
+        {
+          "id": "59fe4bf212cd3c21217d2e6553407046a044161ed8ac0d462d6ed114f4b1a367",
+          "rule_id": "typecheck/mypy/no-untyped-def",
+          "message": "Function is missing a return type annotation",
+          "location": {
+            "column": 1,
+            "line_end": 40,
+            "line_start": 40,
+            "occurrence_state": "unclassified",
+            "path": "show_off.py",
+            "symbol_path": "show_off.make_call_stack_more_impressive"
+          },
+          "state": "unclassified",
+          "verdict": "noise",
+          "reason": "The diagnostic concerns an unchanged docs configuration or demonstration file outside this PR. It is a valid tool diagnostic but review noise; trusted dependencies prevent baseline classification.",
+          "reviewer": "sub-agent acceptance_mixed",
+          "verdict_source": "automated",
+          "observed_in": [
+            "trusted"
+          ],
+          "independent_evidence": {
+            "head_source_line": "def make_call_stack_more_impressive():",
+            "exact_source_line_present_in_base": true
+          }
+        },
+        {
+          "id": "7ca01ce62540376560c728bb913c527e3e4199d7e4c00cb03e132a6d45259846",
+          "rule_id": "typecheck/mypy/var-annotated",
+          "message": "Need type annotation for \"html_theme_options\" (hint: \"html_theme_options: dict[<type>, <type>] = ...\")",
+          "location": {
+            "column": 1,
+            "line_end": 107,
+            "line_start": 107,
+            "occurrence_state": "unclassified",
+            "path": "docs/conf.py",
+            "symbol_path": "conf.html_theme_options"
+          },
+          "state": "unclassified",
+          "verdict": "noise",
+          "reason": "The diagnostic concerns an unchanged docs configuration or demonstration file outside this PR. It is a valid tool diagnostic but review noise; trusted dependencies prevent baseline classification.",
+          "reviewer": "sub-agent acceptance_mixed",
+          "verdict_source": "automated",
+          "observed_in": [
+            "trusted"
+          ],
+          "independent_evidence": {
+            "head_source_line": "html_theme_options = {}",
+            "exact_source_line_present_in_base": true
+          }
+        },
+        {
+          "id": "a8bcf257e6f50133b818df3a9d88ebde30fc8a00efb30b904e48069934155206",
+          "rule_id": "lint/ruff/CPY001",
+          "message": "Missing copyright notice at top of file",
+          "location": {
+            "column": 1,
+            "line_end": 1,
+            "line_start": 1,
+            "occurrence_state": "unclassified",
+            "path": "tests/test_output.py",
+            "symbol_path": ""
+          },
+          "state": "unclassified",
+          "verdict": "noise",
+          "reason": "The unchanged existing SPDX licence header triggers the installed newer Ruff copyright rule. This change does not introduce the header or remove a copyright notice; no baseline classification is claimed with trusted dependencies.",
+          "reviewer": "sub-agent acceptance_mixed",
+          "verdict_source": "automated",
+          "observed_in": [
+            "trusted"
+          ],
+          "independent_evidence": {
+            "head_source_line": "# SPDX-License-Identifier: MIT OR Apache-2.0",
+            "exact_source_line_present_in_base": true
+          }
+        },
+        {
+          "id": "f07afb5460b432d5aeade19d9a6089f58365ea290c63dc67683358f40d052bf4",
+          "rule_id": "lint/ruff/CPY001",
+          "message": "Missing copyright notice at top of file",
+          "location": {
+            "column": 1,
+            "line_end": 1,
+            "line_start": 1,
+            "occurrence_state": "unclassified",
+            "path": "src/structlog/_output.py",
+            "symbol_path": ""
+          },
+          "state": "unclassified",
+          "verdict": "noise",
+          "reason": "The unchanged existing SPDX licence header triggers the installed newer Ruff copyright rule. This change does not introduce the header or remove a copyright notice; no baseline classification is claimed with trusted dependencies.",
+          "reviewer": "sub-agent acceptance_mixed",
+          "verdict_source": "automated",
+          "observed_in": [
+            "trusted"
+          ],
+          "independent_evidence": {
+            "head_source_line": "# SPDX-License-Identifier: MIT OR Apache-2.0",
+            "exact_source_line_present_in_base": true
+          }
+        },
+        {
+          "id": "fdf1d09f6d63ab6a1c0e170f535de9685a8980fbdccf0283e468fc6da085e769",
+          "rule_id": "typecheck/mypy/no-untyped-call",
+          "message": "Call to untyped function \"make_call_stack_more_impressive\" in typed context",
+          "location": {
+            "column": 1,
+            "line_end": 49,
+            "line_start": 49,
+            "occurrence_state": "unclassified",
+            "path": "show_off.py",
+            "symbol_path": ""
+          },
+          "state": "unclassified",
+          "verdict": "noise",
+          "reason": "The diagnostic concerns an unchanged docs configuration or demonstration file outside this PR. It is a valid tool diagnostic but review noise; trusted dependencies prevent baseline classification.",
+          "reviewer": "sub-agent acceptance_mixed",
+          "verdict_source": "automated",
+          "observed_in": [
+            "trusted"
+          ],
+          "independent_evidence": {
+            "head_source_line": "make_call_stack_more_impressive()",
+            "exact_source_line_present_in_base": true
+          }
+        }
+      ],
+      "risks": [],
+      "misses": [],
+      "verdict": "useful",
+      "reason": "The trusted run executed coverage over the real suite and mapped the unpickle restoration and pickle tests to existing test references. Independent output tests passed (136 tests), and no introduced defect was found. Five unchanged tool diagnostics were review noise and remain unclassified.",
+      "reviewer": "sub-agent acceptance_mixed",
+      "verdict_source": "automated",
+      "independent_tests": [
+        {
+          "variant": "tests",
+          "summary": "136 passed, 18 warnings in 0.65s",
+          "evidence_path": "/tmp/rio-acceptance-evidence/structlog/pr-811-tests.txt"
+        }
+      ],
+      "limitations": [
+        "No supported lockfile exists in this repository; default runs correctly skip Python tools as dependency_mismatch.",
+        "The primary trusted profile explicitly permits unverified installed dependencies. Diagnostic states remain unclassified and no baseline new/fixed attribution is claimed.",
+        "Runs are offline and have no model endpoint: dependency audit is skipped, and semantic model steps are deferred. Offline does not network-isolate tool/test subprocesses.",
+        "Tools were installed for this evaluation rather than reproduced from a project lockfile: Python3.12.3, mypy2.4.1, Ruff0.17.3, coverage7.17.1, pytest9.2.0."
+      ],
+      "reports": {
+        "default": {
+          "checks": [
+            {
+              "findings": [],
+              "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+              "kind": "typecheck",
+              "language": "python",
+              "outcome": "skipped",
+              "reason": "dependency_mismatch",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 0
+            },
+            {
+              "findings": [],
+              "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+              "kind": "coverage",
+              "language": "python",
+              "outcome": "skipped",
+              "reason": "dependency_mismatch",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 0
+            },
+            {
+              "findings": [],
+              "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+              "kind": "lint",
+              "language": "python",
+              "outcome": "skipped",
+              "reason": "dependency_mismatch",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 0
+            },
+            {
+              "findings": [],
+              "kind": "secrets",
+              "language": "common",
+              "outcome": "passed",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 49
+            },
+            {
+              "findings": [],
+              "hint": "Dependency audit needs api.osv.dev",
+              "kind": "dependencies",
+              "language": "common",
+              "outcome": "skipped",
+              "reason": "offline",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 113
+            }
+          ],
+          "deferred": [
+            {
+              "reason": "no_endpoint",
+              "step": "triage"
+            },
+            {
+              "reason": "no_endpoint",
+              "step": "agents"
+            },
+            {
+              "reason": "no_endpoint",
+              "step": "verify"
+            }
+          ],
+          "excluded": [
+            {
+              "path": "src/structlog/_output.py",
+              "reason": "coverage_not_instrumented"
+            }
+          ],
+          "findings": [],
+          "footer": {
+            "notes": [
+              "Intent inference is deferred: no_endpoint",
+              "Graph references use syntax and text; no language server was used",
+              "Offline applies to Rio; tool and test processes were not network-isolated"
+            ],
+            "suppressions": [],
+            "tool_versions": {
+              "python:.:coverage": "Coverage.py, version 7.17.1 with C extension",
+              "python:.:mypy": "mypy 2.4.1 (compiled: yes)",
+              "python:.:ruff": "ruff 0.17.3"
+            }
+          },
+          "impact": {
+            "symbols": [
+              {
+                "path": "src/structlog/_output.py",
+                "references_per_hop": [
+                  45,
+                  291
+                ],
+                "symbol_path": "_output.WriteLogger.__setstate__",
+                "test_referenced": true,
+                "unresolved": 5369
+              },
+              {
+                "path": "tests/test_output.py",
+                "references_per_hop": [
+                  76,
+                  134
+                ],
+                "symbol_path": "test_output.TestBytesLogger.test_pickle",
+                "test_referenced": true,
+                "unresolved": 2841
+              },
+              {
+                "path": "tests/test_output.py",
+                "references_per_hop": [
+                  76,
+                  134
+                ],
+                "symbol_path": "test_output.TestLoggers.test_pickle",
+                "test_referenced": true,
+                "unresolved": 2841
+              }
+            ],
+            "truncated": false,
+            "unresolved": 11051
+          },
+          "incomplete": [
+            {
+              "findings": [],
+              "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+              "kind": "typecheck",
+              "language": "python",
+              "outcome": "skipped",
+              "reason": "dependency_mismatch",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 0
+            },
+            {
+              "findings": [],
+              "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+              "kind": "coverage",
+              "language": "python",
+              "outcome": "skipped",
+              "reason": "dependency_mismatch",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 0
+            },
+            {
+              "findings": [],
+              "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+              "kind": "lint",
+              "language": "python",
+              "outcome": "skipped",
+              "reason": "dependency_mismatch",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 0
+            },
+            {
+              "findings": [],
+              "hint": "Dependency audit needs api.osv.dev",
+              "kind": "dependencies",
+              "language": "common",
+              "outcome": "skipped",
+              "reason": "offline",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 113
+            }
+          ],
+          "metrics": {
+            "checks": [
+              {
+                "kind": "typecheck",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 0
+              },
+              {
+                "kind": "coverage",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 0
+              },
+              {
+                "kind": "lint",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 0
+              },
+              {
+                "kind": "secrets",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 49
+              },
+              {
+                "kind": "dependencies",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 113
+              }
+            ],
+            "tool_versions": {
+              "python:.:coverage": "Coverage.py, version 7.17.1 with C extension",
+              "python:.:mypy": "mypy 2.4.1 (compiled: yes)",
+              "python:.:ruff": "ruff 0.17.3"
+            },
+            "wall_time_ms": 10100
+          },
+          "review": {
+            "base": "de5dcd4127b8c9652ebadf0b6411c4bb9c10f3b7",
+            "chain": [
+              "rio/base"
+            ],
+            "head": "c0ba373b5c4ead7f39630026808bc74418a4460a",
+            "id": "6324642e9d761b03",
+            "mode": "branch",
+            "profile": "rio/base",
+            "rio_version": "0.1.0",
+            "run_id": "01M6M2DB1VFKP4SGCJ33B85KQP"
+          },
+          "risks": [],
+          "schema": "rio-report-v1",
+          "status": "incomplete",
+          "summary": {
+            "fixed": 0,
+            "pre_existing": 0,
+            "suppressed": 0
+          }
+        },
+        "trusted": {
+          "checks": [
+            {
+              "findings": [],
+              "kind": "secrets",
+              "language": "common",
+              "outcome": "passed",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 34
+            },
+            {
+              "findings": [],
+              "hint": "Dependency audit needs api.osv.dev",
+              "kind": "dependencies",
+              "language": "common",
+              "outcome": "skipped",
+              "reason": "offline",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 402
+            },
+            {
+              "dependency_state": "trusted",
+              "findings": [
+                {
+                  "category": "defect",
+                  "evidence": [
+                    "ruff diagnostic"
+                  ],
+                  "evidence_level": "static_proven",
+                  "id": "a8bcf257e6f50133b818df3a9d88ebde30fc8a00efb30b904e48069934155206",
+                  "location": {
+                    "column": 1,
+                    "line_end": 1,
+                    "line_start": 1,
+                    "occurrence_state": "unclassified",
+                    "path": "tests/test_output.py",
+                    "symbol_path": ""
+                  },
+                  "locations": [
+                    {
+                      "column": 1,
+                      "line_end": 1,
+                      "line_start": 1,
+                      "occurrence_state": "unclassified",
+                      "path": "tests/test_output.py",
+                      "symbol_path": ""
+                    }
+                  ],
+                  "message": "Missing copyright notice at top of file",
+                  "rule_id": "lint/ruff/CPY001",
+                  "severity": "error",
+                  "source": {
+                    "tool": "ruff",
+                    "version": "ruff 0.17.3"
+                  },
+                  "state": "unclassified",
+                  "trigger": ""
+                },
+                {
+                  "category": "defect",
+                  "evidence": [
+                    "ruff diagnostic"
+                  ],
+                  "evidence_level": "static_proven",
+                  "id": "f07afb5460b432d5aeade19d9a6089f58365ea290c63dc67683358f40d052bf4",
+                  "location": {
+                    "column": 1,
+                    "line_end": 1,
+                    "line_start": 1,
+                    "occurrence_state": "unclassified",
+                    "path": "src/structlog/_output.py",
+                    "symbol_path": ""
+                  },
+                  "locations": [
+                    {
+                      "column": 1,
+                      "line_end": 1,
+                      "line_start": 1,
+                      "occurrence_state": "unclassified",
+                      "path": "src/structlog/_output.py",
+                      "symbol_path": ""
+                    }
+                  ],
+                  "message": "Missing copyright notice at top of file",
+                  "rule_id": "lint/ruff/CPY001",
+                  "severity": "error",
+                  "source": {
+                    "tool": "ruff",
+                    "version": "ruff 0.17.3"
+                  },
+                  "state": "unclassified",
+                  "trigger": ""
+                }
+              ],
+              "kind": "lint",
+              "language": "python",
+              "outcome": "findings",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 6915
+            },
+            {
+              "dependency_state": "trusted",
+              "findings": [
+                {
+                  "category": "defect",
+                  "evidence": [
+                    "mypy diagnostic"
+                  ],
+                  "evidence_level": "static_proven",
+                  "id": "59fe4bf212cd3c21217d2e6553407046a044161ed8ac0d462d6ed114f4b1a367",
+                  "location": {
+                    "column": 1,
+                    "line_end": 40,
+                    "line_start": 40,
+                    "occurrence_state": "unclassified",
+                    "path": "show_off.py",
+                    "symbol_path": "show_off.make_call_stack_more_impressive"
+                  },
+                  "locations": [
+                    {
+                      "column": 1,
+                      "line_end": 40,
+                      "line_start": 40,
+                      "occurrence_state": "unclassified",
+                      "path": "show_off.py",
+                      "symbol_path": "show_off.make_call_stack_more_impressive"
+                    }
+                  ],
+                  "message": "Function is missing a return type annotation",
+                  "rule_id": "typecheck/mypy/no-untyped-def",
+                  "severity": "error",
+                  "source": {
+                    "tool": "mypy",
+                    "version": "mypy 2.4.1 (compiled: yes)"
+                  },
+                  "state": "unclassified",
+                  "trigger": ""
+                },
+                {
+                  "category": "defect",
+                  "evidence": [
+                    "mypy diagnostic"
+                  ],
+                  "evidence_level": "static_proven",
+                  "id": "7ca01ce62540376560c728bb913c527e3e4199d7e4c00cb03e132a6d45259846",
+                  "location": {
+                    "column": 1,
+                    "line_end": 107,
+                    "line_start": 107,
+                    "occurrence_state": "unclassified",
+                    "path": "docs/conf.py",
+                    "symbol_path": "conf.html_theme_options"
+                  },
+                  "locations": [
+                    {
+                      "column": 1,
+                      "line_end": 107,
+                      "line_start": 107,
+                      "occurrence_state": "unclassified",
+                      "path": "docs/conf.py",
+                      "symbol_path": "conf.html_theme_options"
+                    }
+                  ],
+                  "message": "Need type annotation for \"html_theme_options\" (hint: \"html_theme_options: dict[<type>, <type>] = ...\")",
+                  "rule_id": "typecheck/mypy/var-annotated",
+                  "severity": "error",
+                  "source": {
+                    "tool": "mypy",
+                    "version": "mypy 2.4.1 (compiled: yes)"
+                  },
+                  "state": "unclassified",
+                  "trigger": ""
+                },
+                {
+                  "category": "defect",
+                  "evidence": [
+                    "mypy diagnostic"
+                  ],
+                  "evidence_level": "static_proven",
+                  "id": "fdf1d09f6d63ab6a1c0e170f535de9685a8980fbdccf0283e468fc6da085e769",
+                  "location": {
+                    "column": 1,
+                    "line_end": 49,
+                    "line_start": 49,
+                    "occurrence_state": "unclassified",
+                    "path": "show_off.py",
+                    "symbol_path": ""
+                  },
+                  "locations": [
+                    {
+                      "column": 1,
+                      "line_end": 49,
+                      "line_start": 49,
+                      "occurrence_state": "unclassified",
+                      "path": "show_off.py",
+                      "symbol_path": ""
+                    }
+                  ],
+                  "message": "Call to untyped function \"make_call_stack_more_impressive\" in typed context",
+                  "rule_id": "typecheck/mypy/no-untyped-call",
+                  "severity": "error",
+                  "source": {
+                    "tool": "mypy",
+                    "version": "mypy 2.4.1 (compiled: yes)"
+                  },
+                  "state": "unclassified",
+                  "trigger": ""
+                }
+              ],
+              "kind": "typecheck",
+              "language": "python",
+              "outcome": "findings",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 14767
+            },
+            {
+              "dependency_state": "trusted",
+              "findings": [],
+              "kind": "coverage",
+              "language": "python",
+              "outcome": "passed",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 23087
+            }
+          ],
+          "deferred": [],
+          "excluded": [],
+          "findings": [
+            {
+              "category": "defect",
+              "evidence": [
+                "mypy diagnostic"
+              ],
+              "evidence_level": "static_proven",
+              "id": "59fe4bf212cd3c21217d2e6553407046a044161ed8ac0d462d6ed114f4b1a367",
+              "location": {
+                "column": 1,
+                "line_end": 40,
+                "line_start": 40,
+                "occurrence_state": "unclassified",
+                "path": "show_off.py",
+                "symbol_path": "show_off.make_call_stack_more_impressive"
+              },
+              "locations": [
+                {
+                  "column": 1,
+                  "line_end": 40,
+                  "line_start": 40,
+                  "occurrence_state": "unclassified",
+                  "path": "show_off.py",
+                  "symbol_path": "show_off.make_call_stack_more_impressive"
+                }
+              ],
+              "message": "Function is missing a return type annotation",
+              "rule_id": "typecheck/mypy/no-untyped-def",
+              "severity": "error",
+              "source": {
+                "tool": "mypy",
+                "version": "mypy 2.4.1 (compiled: yes)"
+              },
+              "state": "unclassified",
+              "trigger": ""
+            },
+            {
+              "category": "defect",
+              "evidence": [
+                "mypy diagnostic"
+              ],
+              "evidence_level": "static_proven",
+              "id": "7ca01ce62540376560c728bb913c527e3e4199d7e4c00cb03e132a6d45259846",
+              "location": {
+                "column": 1,
+                "line_end": 107,
+                "line_start": 107,
+                "occurrence_state": "unclassified",
+                "path": "docs/conf.py",
+                "symbol_path": "conf.html_theme_options"
+              },
+              "locations": [
+                {
+                  "column": 1,
+                  "line_end": 107,
+                  "line_start": 107,
+                  "occurrence_state": "unclassified",
+                  "path": "docs/conf.py",
+                  "symbol_path": "conf.html_theme_options"
+                }
+              ],
+              "message": "Need type annotation for \"html_theme_options\" (hint: \"html_theme_options: dict[<type>, <type>] = ...\")",
+              "rule_id": "typecheck/mypy/var-annotated",
+              "severity": "error",
+              "source": {
+                "tool": "mypy",
+                "version": "mypy 2.4.1 (compiled: yes)"
+              },
+              "state": "unclassified",
+              "trigger": ""
+            },
+            {
+              "category": "defect",
+              "evidence": [
+                "ruff diagnostic"
+              ],
+              "evidence_level": "static_proven",
+              "id": "a8bcf257e6f50133b818df3a9d88ebde30fc8a00efb30b904e48069934155206",
+              "location": {
+                "column": 1,
+                "line_end": 1,
+                "line_start": 1,
+                "occurrence_state": "unclassified",
+                "path": "tests/test_output.py",
+                "symbol_path": ""
+              },
+              "locations": [
+                {
+                  "column": 1,
+                  "line_end": 1,
+                  "line_start": 1,
+                  "occurrence_state": "unclassified",
+                  "path": "tests/test_output.py",
+                  "symbol_path": ""
+                }
+              ],
+              "message": "Missing copyright notice at top of file",
+              "rule_id": "lint/ruff/CPY001",
+              "severity": "error",
+              "source": {
+                "tool": "ruff",
+                "version": "ruff 0.17.3"
+              },
+              "state": "unclassified",
+              "trigger": ""
+            },
+            {
+              "category": "defect",
+              "evidence": [
+                "ruff diagnostic"
+              ],
+              "evidence_level": "static_proven",
+              "id": "f07afb5460b432d5aeade19d9a6089f58365ea290c63dc67683358f40d052bf4",
+              "location": {
+                "column": 1,
+                "line_end": 1,
+                "line_start": 1,
+                "occurrence_state": "unclassified",
+                "path": "src/structlog/_output.py",
+                "symbol_path": ""
+              },
+              "locations": [
+                {
+                  "column": 1,
+                  "line_end": 1,
+                  "line_start": 1,
+                  "occurrence_state": "unclassified",
+                  "path": "src/structlog/_output.py",
+                  "symbol_path": ""
+                }
+              ],
+              "message": "Missing copyright notice at top of file",
+              "rule_id": "lint/ruff/CPY001",
+              "severity": "error",
+              "source": {
+                "tool": "ruff",
+                "version": "ruff 0.17.3"
+              },
+              "state": "unclassified",
+              "trigger": ""
+            },
+            {
+              "category": "defect",
+              "evidence": [
+                "mypy diagnostic"
+              ],
+              "evidence_level": "static_proven",
+              "id": "fdf1d09f6d63ab6a1c0e170f535de9685a8980fbdccf0283e468fc6da085e769",
+              "location": {
+                "column": 1,
+                "line_end": 49,
+                "line_start": 49,
+                "occurrence_state": "unclassified",
+                "path": "show_off.py",
+                "symbol_path": ""
+              },
+              "locations": [
+                {
+                  "column": 1,
+                  "line_end": 49,
+                  "line_start": 49,
+                  "occurrence_state": "unclassified",
+                  "path": "show_off.py",
+                  "symbol_path": ""
+                }
+              ],
+              "message": "Call to untyped function \"make_call_stack_more_impressive\" in typed context",
+              "rule_id": "typecheck/mypy/no-untyped-call",
+              "severity": "error",
+              "source": {
+                "tool": "mypy",
+                "version": "mypy 2.4.1 (compiled: yes)"
+              },
+              "state": "unclassified",
+              "trigger": ""
+            }
+          ],
+          "footer": {
+            "notes": [
+              "Intent inference is deferred: no_endpoint",
+              "lint .: dependencies_trusted: results use unverified dependencies",
+              "typecheck .: dependencies_trusted: results use unverified dependencies",
+              "Graph references use syntax and text; no language server was used",
+              "Offline applies to Rio; tool and test processes were not network-isolated",
+              "dependencies_trusted: results were computed against unverified dependencies"
+            ],
+            "suppressions": [],
+            "tool_versions": {
+              "python:.:coverage": "Coverage.py, version 7.17.1 with C extension",
+              "python:.:mypy": "mypy 2.4.1 (compiled: yes)",
+              "python:.:ruff": "ruff 0.17.3"
+            }
+          },
+          "impact": {
+            "symbols": [
+              {
+                "path": "src/structlog/_output.py",
+                "references_per_hop": [
+                  45,
+                  291
+                ],
+                "symbol_path": "_output.WriteLogger.__setstate__",
+                "test_referenced": true,
+                "unresolved": 5369
+              },
+              {
+                "path": "tests/test_output.py",
+                "references_per_hop": [
+                  76,
+                  134
+                ],
+                "symbol_path": "test_output.TestBytesLogger.test_pickle",
+                "test_referenced": true,
+                "unresolved": 2841
+              },
+              {
+                "path": "tests/test_output.py",
+                "references_per_hop": [
+                  76,
+                  134
+                ],
+                "symbol_path": "test_output.TestLoggers.test_pickle",
+                "test_referenced": true,
+                "unresolved": 2841
+              }
+            ],
+            "truncated": false,
+            "unresolved": 11051
+          },
+          "incomplete": [
+            {
+              "findings": [],
+              "hint": "Dependency audit needs api.osv.dev",
+              "kind": "dependencies",
+              "language": "common",
+              "outcome": "skipped",
+              "reason": "offline",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 402
+            }
+          ],
+          "metrics": {
+            "checks": [
+              {
+                "kind": "secrets",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 34
+              },
+              {
+                "kind": "dependencies",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 402
+              },
+              {
+                "kind": "lint",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 6915
+              },
+              {
+                "kind": "typecheck",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 14767
+              },
+              {
+                "kind": "coverage",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 23087
+              }
+            ],
+            "tool_versions": {
+              "python:.:coverage": "Coverage.py, version 7.17.1 with C extension",
+              "python:.:mypy": "mypy 2.4.1 (compiled: yes)",
+              "python:.:ruff": "ruff 0.17.3"
+            },
+            "wall_time_ms": 32710
+          },
+          "review": {
+            "base": "de5dcd4127b8c9652ebadf0b6411c4bb9c10f3b7",
+            "chain": [
+              "acceptance-structlog-trusted",
+              "rio/base"
+            ],
+            "head": "c0ba373b5c4ead7f39630026808bc74418a4460a",
+            "id": "065f8e42204dece3",
+            "mode": "branch",
+            "profile": "acceptance-structlog-trusted",
+            "rio_version": "0.1.0",
+            "run_id": "01M6M2CXDHTC1WGFDM12RPHWK6"
+          },
+          "risks": [],
+          "schema": "rio-report-v1",
+          "status": "incomplete",
+          "summary": {
+            "fixed": 0,
+            "pre_existing": 0,
+            "suppressed": 0
+          }
+        }
+      },
+      "evidence_paths": [
+        "/tmp/rio-acceptance-evidence/structlog/pr-811-default.json",
+        "/tmp/rio-acceptance-evidence/structlog/pr-811-trusted.json"
+      ],
+      "initial_observations": {
+        "default": {
+          "checks": [
+            {
+              "findings": [],
+              "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+              "kind": "typecheck",
+              "language": "python",
+              "outcome": "skipped",
+              "reason": "dependency_mismatch",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 0
+            },
+            {
+              "findings": [],
+              "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+              "kind": "lint",
+              "language": "python",
+              "outcome": "skipped",
+              "reason": "dependency_mismatch",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 0
+            },
+            {
+              "findings": [],
+              "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+              "kind": "coverage",
+              "language": "python",
+              "outcome": "skipped",
+              "reason": "dependency_mismatch",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 0
+            },
+            {
+              "findings": [],
+              "kind": "secrets",
+              "language": "common",
+              "outcome": "passed",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 24
+            },
+            {
+              "findings": [],
+              "hint": "Dependency audit needs api.osv.dev",
+              "kind": "dependencies",
+              "language": "common",
+              "outcome": "skipped",
+              "reason": "offline",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 7894
+            }
+          ],
+          "deferred": [
+            {
+              "reason": "no_endpoint",
+              "step": "triage"
+            },
+            {
+              "reason": "no_endpoint",
+              "step": "agents"
+            },
+            {
+              "reason": "no_endpoint",
+              "step": "verify"
+            }
+          ],
+          "excluded": [
+            {
+              "path": "src/structlog/_output.py",
+              "reason": "coverage_not_instrumented"
+            }
+          ],
+          "findings": [],
+          "footer": {
+            "notes": [
+              "Intent inference is deferred: no_endpoint",
+              "Graph references use syntax and text; no language server was used",
+              "Offline applies to Rio; tool and test processes were not network-isolated"
+            ],
+            "suppressions": [],
+            "tool_versions": {
+              "python:.:coverage": "Coverage.py, version 7.17.1 with C extension",
+              "python:.:mypy": "mypy 2.4.1 (compiled: yes)",
+              "python:.:ruff": "ruff 0.17.3"
+            }
+          },
+          "impact": {
+            "symbols": [
+              {
+                "path": "src/structlog/_output.py",
+                "references_per_hop": [
+                  45,
+                  291
+                ],
+                "symbol_path": "_output.WriteLogger.__setstate__",
+                "test_referenced": true,
+                "unresolved": 5369
+              },
+              {
+                "path": "tests/test_output.py",
+                "references_per_hop": [
+                  76,
+                  134
+                ],
+                "symbol_path": "test_output.TestBytesLogger.test_pickle",
+                "test_referenced": true,
+                "unresolved": 2841
+              },
+              {
+                "path": "tests/test_output.py",
+                "references_per_hop": [
+                  76,
+                  134
+                ],
+                "symbol_path": "test_output.TestLoggers.test_pickle",
+                "test_referenced": true,
+                "unresolved": 2841
+              }
+            ],
+            "truncated": false,
+            "unresolved": 11051
+          },
+          "incomplete": [
+            {
+              "findings": [],
+              "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+              "kind": "typecheck",
+              "language": "python",
+              "outcome": "skipped",
+              "reason": "dependency_mismatch",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 0
+            },
+            {
+              "findings": [],
+              "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+              "kind": "lint",
+              "language": "python",
+              "outcome": "skipped",
+              "reason": "dependency_mismatch",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 0
+            },
+            {
+              "findings": [],
+              "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+              "kind": "coverage",
+              "language": "python",
+              "outcome": "skipped",
+              "reason": "dependency_mismatch",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 0
+            },
+            {
+              "findings": [],
+              "hint": "Dependency audit needs api.osv.dev",
+              "kind": "dependencies",
+              "language": "common",
+              "outcome": "skipped",
+              "reason": "offline",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 7894
+            }
+          ],
+          "metrics": {
+            "checks": [
+              {
+                "kind": "typecheck",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 0
+              },
+              {
+                "kind": "lint",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 0
+              },
+              {
+                "kind": "coverage",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 0
+              },
+              {
+                "kind": "secrets",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 24
+              },
+              {
+                "kind": "dependencies",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 7894
+              }
+            ],
+            "tool_versions": {
+              "python:.:coverage": "Coverage.py, version 7.17.1 with C extension",
+              "python:.:mypy": "mypy 2.4.1 (compiled: yes)",
+              "python:.:ruff": "ruff 0.17.3"
+            },
+            "wall_time_ms": 45360
+          },
+          "review": {
+            "base": "de5dcd4127b8c9652ebadf0b6411c4bb9c10f3b7",
+            "chain": [
+              "rio/base"
+            ],
+            "head": "c0ba373b5c4ead7f39630026808bc74418a4460a",
+            "id": "6324642e9d761b03",
+            "mode": "branch",
+            "profile": "rio/base",
+            "rio_version": "0.1.0",
+            "run_id": "01M6M1VM3GDVR925BJX6MDNYBW"
+          },
+          "risks": [],
+          "schema": "rio-report-v1",
+          "status": "incomplete",
+          "summary": {
+            "fixed": 0,
+            "pre_existing": 0,
+            "suppressed": 0
+          }
+        },
+        "trusted": {
+          "checks": [
+            {
+              "findings": [],
+              "kind": "typecheck",
+              "language": "python",
+              "outcome": "cancelled",
+              "reason": "timeout",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 0
+            },
+            {
+              "findings": [],
+              "kind": "lint",
+              "language": "python",
+              "outcome": "cancelled",
+              "reason": "timeout",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 0
+            },
+            {
+              "findings": [],
+              "kind": "secrets",
+              "language": "common",
+              "outcome": "cancelled",
+              "reason": "timeout",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 0
+            },
+            {
+              "findings": [],
+              "kind": "dependencies",
+              "language": "common",
+              "outcome": "cancelled",
+              "reason": "timeout",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 0
+            },
+            {
+              "findings": [],
+              "kind": "coverage",
+              "language": "python",
+              "outcome": "cancelled",
+              "reason": "timeout",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 0
+            }
+          ],
+          "deferred": [],
+          "excluded": [
+            {
+              "path": "src/structlog/_output.py",
+              "reason": "coverage_not_instrumented"
+            }
+          ],
+          "findings": [],
+          "footer": {
+            "notes": [
+              "Intent inference is deferred: no_endpoint",
+              "Graph references use syntax and text; no language server was used",
+              "Impact graph truncated at max_nodes",
+              "Offline applies to Rio; tool and test processes were not network-isolated"
+            ],
+            "suppressions": [],
+            "tool_versions": {
+              "python:.:coverage": "Coverage.py, version 7.17.1 with C extension",
+              "python:.:mypy": "mypy 2.4.1 (compiled: yes)",
+              "python:.:ruff": "ruff 0.17.3"
+            }
+          },
+          "impact": {
+            "symbols": [],
+            "truncated": true,
+            "unresolved": 0
+          },
+          "incomplete": [
+            {
+              "findings": [],
+              "kind": "typecheck",
+              "language": "python",
+              "outcome": "cancelled",
+              "reason": "timeout",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 0
+            },
+            {
+              "findings": [],
+              "kind": "lint",
+              "language": "python",
+              "outcome": "cancelled",
+              "reason": "timeout",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 0
+            },
+            {
+              "findings": [],
+              "kind": "secrets",
+              "language": "common",
+              "outcome": "cancelled",
+              "reason": "timeout",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 0
+            },
+            {
+              "findings": [],
+              "kind": "dependencies",
+              "language": "common",
+              "outcome": "cancelled",
+              "reason": "timeout",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 0
+            },
+            {
+              "findings": [],
+              "kind": "coverage",
+              "language": "python",
+              "outcome": "cancelled",
+              "reason": "timeout",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 0
+            }
+          ],
+          "metrics": {
+            "checks": [
+              {
+                "kind": "typecheck",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 0
+              },
+              {
+                "kind": "lint",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 0
+              },
+              {
+                "kind": "secrets",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 0
+              },
+              {
+                "kind": "dependencies",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 0
+              },
+              {
+                "kind": "coverage",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 0
+              }
+            ],
+            "tool_versions": {
+              "python:.:coverage": "Coverage.py, version 7.17.1 with C extension",
+              "python:.:mypy": "mypy 2.4.1 (compiled: yes)",
+              "python:.:ruff": "ruff 0.17.3"
+            },
+            "wall_time_ms": 159308
+          },
+          "review": {
+            "base": "de5dcd4127b8c9652ebadf0b6411c4bb9c10f3b7",
+            "chain": [
+              "acceptance-structlog-trusted",
+              "rio/base"
+            ],
+            "head": "c0ba373b5c4ead7f39630026808bc74418a4460a",
+            "id": "065f8e42204dece3",
+            "mode": "branch",
+            "profile": "acceptance-structlog-trusted",
+            "rio_version": "0.1.0",
+            "run_id": "01M6M1VNF6GRP0DFTK7GG0YXR3"
+          },
+          "risks": [],
+          "schema": "rio-report-v1",
+          "status": "incomplete",
+          "summary": {
+            "fixed": 0,
+            "pre_existing": 0,
+            "suppressed": 0
+          }
+        },
+        "note": "The initial trusted concurrent run timed out before tools with159308ms wall time; it was superseded by the completed final trusted run. A preliminary partial-clone missing-object failure was resolved by git fetch --refetch --no-filter origin before these reports."
+      },
+      "coverage_suite_summary": "924 passed, 20 skipped, 20 warnings in 12.84s"
+    },
+    {
+      "repository": "hynek/structlog",
+      "pr": "https://github.com/hynek/structlog/pull/807",
+      "title": "Use WeakKeyDictionary for WRITE_LOCKS to prevent file object leaks",
+      "base": "92fd882817a8e6aae192cfe6266fded2d597f522",
+      "head": "88f668d9e834fb9382d3ffedc23d04c67422692b",
+      "languages": [
+        "python"
+      ],
+      "mode": "base",
+      "review_id": "78f55b90291305c6",
+      "wall_time_ms": 33348,
+      "status": "incomplete",
+      "exit_code": 0,
+      "profile": "acceptance-structlog-trusted",
+      "binary_sha256": "33b5fe2fcccb7700142d45d15a62df706995998f94e7f741351755454b4e95e6",
+      "findings": [
+        {
+          "id": "59fe4bf212cd3c21217d2e6553407046a044161ed8ac0d462d6ed114f4b1a367",
+          "rule_id": "typecheck/mypy/no-untyped-def",
+          "message": "Function is missing a return type annotation",
+          "location": {
+            "column": 1,
+            "line_end": 40,
+            "line_start": 40,
+            "occurrence_state": "unclassified",
+            "path": "show_off.py",
+            "symbol_path": "show_off.make_call_stack_more_impressive"
+          },
+          "state": "unclassified",
+          "verdict": "noise",
+          "reason": "The diagnostic concerns an unchanged docs configuration or demonstration file outside this PR. It is a valid tool diagnostic but review noise; trusted dependencies prevent baseline classification.",
+          "reviewer": "sub-agent acceptance_mixed",
+          "verdict_source": "automated",
+          "observed_in": [
+            "trusted"
+          ],
+          "independent_evidence": {
+            "head_source_line": "def make_call_stack_more_impressive():",
+            "exact_source_line_present_in_base": true
+          }
+        },
+        {
+          "id": "7ca01ce62540376560c728bb913c527e3e4199d7e4c00cb03e132a6d45259846",
+          "rule_id": "typecheck/mypy/var-annotated",
+          "message": "Need type annotation for \"html_theme_options\" (hint: \"html_theme_options: dict[<type>, <type>] = ...\")",
+          "location": {
+            "column": 1,
+            "line_end": 107,
+            "line_start": 107,
+            "occurrence_state": "unclassified",
+            "path": "docs/conf.py",
+            "symbol_path": "conf.html_theme_options"
+          },
+          "state": "unclassified",
+          "verdict": "noise",
+          "reason": "The diagnostic concerns an unchanged docs configuration or demonstration file outside this PR. It is a valid tool diagnostic but review noise; trusted dependencies prevent baseline classification.",
+          "reviewer": "sub-agent acceptance_mixed",
+          "verdict_source": "automated",
+          "observed_in": [
+            "trusted"
+          ],
+          "independent_evidence": {
+            "head_source_line": "html_theme_options = {}",
+            "exact_source_line_present_in_base": true
+          }
+        },
+        {
+          "id": "a8bcf257e6f50133b818df3a9d88ebde30fc8a00efb30b904e48069934155206",
+          "rule_id": "lint/ruff/CPY001",
+          "message": "Missing copyright notice at top of file",
+          "location": {
+            "column": 1,
+            "line_end": 1,
+            "line_start": 1,
+            "occurrence_state": "unclassified",
+            "path": "tests/test_output.py",
+            "symbol_path": ""
+          },
+          "state": "unclassified",
+          "verdict": "noise",
+          "reason": "The unchanged existing SPDX licence header triggers the installed newer Ruff copyright rule. This change does not introduce the header or remove a copyright notice; no baseline classification is claimed with trusted dependencies.",
+          "reviewer": "sub-agent acceptance_mixed",
+          "verdict_source": "automated",
+          "observed_in": [
+            "trusted"
+          ],
+          "independent_evidence": {
+            "head_source_line": "# SPDX-License-Identifier: MIT OR Apache-2.0",
+            "exact_source_line_present_in_base": true
+          }
+        },
+        {
+          "id": "f07afb5460b432d5aeade19d9a6089f58365ea290c63dc67683358f40d052bf4",
+          "rule_id": "lint/ruff/CPY001",
+          "message": "Missing copyright notice at top of file",
+          "location": {
+            "column": 1,
+            "line_end": 1,
+            "line_start": 1,
+            "occurrence_state": "unclassified",
+            "path": "src/structlog/_output.py",
+            "symbol_path": ""
+          },
+          "state": "unclassified",
+          "verdict": "noise",
+          "reason": "The unchanged existing SPDX licence header triggers the installed newer Ruff copyright rule. This change does not introduce the header or remove a copyright notice; no baseline classification is claimed with trusted dependencies.",
+          "reviewer": "sub-agent acceptance_mixed",
+          "verdict_source": "automated",
+          "observed_in": [
+            "trusted"
+          ],
+          "independent_evidence": {
+            "head_source_line": "# SPDX-License-Identifier: MIT OR Apache-2.0",
+            "exact_source_line_present_in_base": true
+          }
+        },
+        {
+          "id": "fdf1d09f6d63ab6a1c0e170f535de9685a8980fbdccf0283e468fc6da085e769",
+          "rule_id": "typecheck/mypy/no-untyped-call",
+          "message": "Call to untyped function \"make_call_stack_more_impressive\" in typed context",
+          "location": {
+            "column": 1,
+            "line_end": 49,
+            "line_start": 49,
+            "occurrence_state": "unclassified",
+            "path": "show_off.py",
+            "symbol_path": ""
+          },
+          "state": "unclassified",
+          "verdict": "noise",
+          "reason": "The diagnostic concerns an unchanged docs configuration or demonstration file outside this PR. It is a valid tool diagnostic but review noise; trusted dependencies prevent baseline classification.",
+          "reviewer": "sub-agent acceptance_mixed",
+          "verdict_source": "automated",
+          "observed_in": [
+            "trusted"
+          ],
+          "independent_evidence": {
+            "head_source_line": "make_call_stack_more_impressive()",
+            "exact_source_line_present_in_base": true
+          }
+        }
+      ],
+      "risks": [],
+      "misses": [
+        {
+          "id": "independent/weakref-slotted-file-regression",
+          "category": "semantic-regression",
+          "location": {
+            "path": "src/structlog/_output.py",
+            "line_start": 22
+          },
+          "description": "Replacing the dict of file locks with WeakKeyDictionary rejects existing hashable file-like writers that cannot be weakly referenced. WriteLogger raises TypeError before writing.",
+          "reviewer": "sub-agent acceptance_mixed",
+          "verdict_source": "automated",
+          "evidence": [
+            {
+              "version": "base",
+              "commit": "92fd882817a8e6aae192cfe6266fded2d597f522",
+              "outcome": "passed",
+              "lines": [
+                "hello\n"
+              ]
+            },
+            {
+              "version": "head",
+              "commit": "88f668d9e834fb9382d3ffedc23d04c67422692b",
+              "outcome": "failed",
+              "exception": "TypeError",
+              "message": "cannot create weak reference to 'SlotWriter' object"
+            }
+          ],
+          "reproduction": "class SlotWriter:\n    __slots__ = (\"lines\",)\n    def __init__(self): self.lines = []\n    def write(self, text): self.lines.append(text)\n    def flush(self): pass\n\nWriteLogger(SlotWriter()).msg(\"hello\")",
+          "scope_note": "A duck-typed writer has the write/flush API already consumed by WriteLogger; this compatibility edge case is absent from the upstream GC lifecycle test. The miss is within semantic review scope; Rio deferred semantic agents because no model endpoint was configured."
+        }
+      ],
+      "verdict": "not-useful",
+      "reason": "The review found no actionable new issue and missed the independently reproduced regression for non-weak-referenceable file-like writers. Passing coverage and five existing unclassified tool diagnostics did not reveal that compatibility break.",
+      "reviewer": "sub-agent acceptance_mixed",
+      "verdict_source": "automated",
+      "independent_tests": [
+        {
+          "variant": "tests",
+          "summary": "124 passed, 18 warnings in 0.42s",
+          "evidence_path": "/tmp/rio-acceptance-evidence/structlog/pr-807-tests.txt"
+        }
+      ],
+      "limitations": [
+        "No supported lockfile exists in this repository; default runs correctly skip Python tools as dependency_mismatch.",
+        "The primary trusted profile explicitly permits unverified installed dependencies. Diagnostic states remain unclassified and no baseline new/fixed attribution is claimed.",
+        "Runs are offline and have no model endpoint: dependency audit is skipped, and semantic model steps are deferred. Offline does not network-isolate tool/test subprocesses.",
+        "Tools were installed for this evaluation rather than reproduced from a project lockfile: Python3.12.3, mypy2.4.1, Ruff0.17.3, coverage7.17.1, pytest9.2.0."
+      ],
+      "reports": {
+        "default": {
+          "checks": [
+            {
+              "findings": [],
+              "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+              "kind": "typecheck",
+              "language": "python",
+              "outcome": "skipped",
+              "reason": "dependency_mismatch",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 0
+            },
+            {
+              "findings": [],
+              "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+              "kind": "coverage",
+              "language": "python",
+              "outcome": "skipped",
+              "reason": "dependency_mismatch",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 0
+            },
+            {
+              "findings": [],
+              "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+              "kind": "lint",
+              "language": "python",
+              "outcome": "skipped",
+              "reason": "dependency_mismatch",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 0
+            },
+            {
+              "findings": [],
+              "kind": "secrets",
+              "language": "common",
+              "outcome": "passed",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 25
+            },
+            {
+              "findings": [],
+              "hint": "Dependency audit needs api.osv.dev",
+              "kind": "dependencies",
+              "language": "common",
+              "outcome": "skipped",
+              "reason": "offline",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 121
+            }
+          ],
+          "deferred": [
+            {
+              "reason": "no_endpoint",
+              "step": "triage"
+            },
+            {
+              "reason": "no_endpoint",
+              "step": "agents"
+            },
+            {
+              "reason": "no_endpoint",
+              "step": "verify"
+            }
+          ],
+          "excluded": [
+            {
+              "path": "src/structlog/_output.py",
+              "reason": "coverage_not_instrumented"
+            }
+          ],
+          "findings": [],
+          "footer": {
+            "notes": [
+              "Intent inference is deferred: no_endpoint",
+              "Graph references use syntax and text; no language server was used",
+              "Offline applies to Rio; tool and test processes were not network-isolated"
+            ],
+            "suppressions": [],
+            "tool_versions": {
+              "python:.:coverage": "Coverage.py, version 7.17.1 with C extension",
+              "python:.:mypy": "mypy 2.4.1 (compiled: yes)",
+              "python:.:ruff": "ruff 0.17.3"
+            }
+          },
+          "impact": {
+            "symbols": [
+              {
+                "path": "src/structlog/_output.py",
+                "references_per_hop": [
+                  29,
+                  308
+                ],
+                "symbol_path": "",
+                "test_referenced": true,
+                "unresolved": 2440
+              },
+              {
+                "path": "src/structlog/_output.py",
+                "references_per_hop": [
+                  28,
+                  274
+                ],
+                "symbol_path": "_output.WRITE_LOCKS",
+                "test_referenced": true,
+                "unresolved": 1905
+              },
+              {
+                "path": "tests/test_output.py",
+                "references_per_hop": [
+                  0,
+                  0
+                ],
+                "symbol_path": "",
+                "test_referenced": false,
+                "unresolved": 0
+              },
+              {
+                "path": "tests/test_output.py",
+                "references_per_hop": [
+                  12,
+                  62
+                ],
+                "symbol_path": "test_output.test_write_locks_released_on_gc",
+                "test_referenced": true,
+                "unresolved": 272
+              }
+            ],
+            "truncated": false,
+            "unresolved": 4617
+          },
+          "incomplete": [
+            {
+              "findings": [],
+              "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+              "kind": "typecheck",
+              "language": "python",
+              "outcome": "skipped",
+              "reason": "dependency_mismatch",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 0
+            },
+            {
+              "findings": [],
+              "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+              "kind": "coverage",
+              "language": "python",
+              "outcome": "skipped",
+              "reason": "dependency_mismatch",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 0
+            },
+            {
+              "findings": [],
+              "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+              "kind": "lint",
+              "language": "python",
+              "outcome": "skipped",
+              "reason": "dependency_mismatch",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 0
+            },
+            {
+              "findings": [],
+              "hint": "Dependency audit needs api.osv.dev",
+              "kind": "dependencies",
+              "language": "common",
+              "outcome": "skipped",
+              "reason": "offline",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 121
+            }
+          ],
+          "metrics": {
+            "checks": [
+              {
+                "kind": "typecheck",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 0
+              },
+              {
+                "kind": "coverage",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 0
+              },
+              {
+                "kind": "lint",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 0
+              },
+              {
+                "kind": "secrets",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 25
+              },
+              {
+                "kind": "dependencies",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 121
+              }
+            ],
+            "tool_versions": {
+              "python:.:coverage": "Coverage.py, version 7.17.1 with C extension",
+              "python:.:mypy": "mypy 2.4.1 (compiled: yes)",
+              "python:.:ruff": "ruff 0.17.3"
+            },
+            "wall_time_ms": 8151
+          },
+          "review": {
+            "base": "92fd882817a8e6aae192cfe6266fded2d597f522",
+            "chain": [
+              "rio/base"
+            ],
+            "head": "88f668d9e834fb9382d3ffedc23d04c67422692b",
+            "id": "ed06736fff561214",
+            "mode": "branch",
+            "profile": "rio/base",
+            "rio_version": "0.1.0",
+            "run_id": "01M6M2BQC6WA2NHEPC92GGCJH8"
+          },
+          "risks": [],
+          "schema": "rio-report-v1",
+          "status": "incomplete",
+          "summary": {
+            "fixed": 0,
+            "pre_existing": 0,
+            "suppressed": 0
+          }
+        },
+        "trusted": {
+          "checks": [
+            {
+              "findings": [],
+              "kind": "secrets",
+              "language": "common",
+              "outcome": "passed",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 31
+            },
+            {
+              "findings": [],
+              "hint": "Dependency audit needs api.osv.dev",
+              "kind": "dependencies",
+              "language": "common",
+              "outcome": "skipped",
+              "reason": "offline",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 375
+            },
+            {
+              "dependency_state": "trusted",
+              "findings": [
+                {
+                  "category": "defect",
+                  "evidence": [
+                    "ruff diagnostic"
+                  ],
+                  "evidence_level": "static_proven",
+                  "id": "a8bcf257e6f50133b818df3a9d88ebde30fc8a00efb30b904e48069934155206",
+                  "location": {
+                    "column": 1,
+                    "line_end": 1,
+                    "line_start": 1,
+                    "occurrence_state": "unclassified",
+                    "path": "tests/test_output.py",
+                    "symbol_path": ""
+                  },
+                  "locations": [
+                    {
+                      "column": 1,
+                      "line_end": 1,
+                      "line_start": 1,
+                      "occurrence_state": "unclassified",
+                      "path": "tests/test_output.py",
+                      "symbol_path": ""
+                    }
+                  ],
+                  "message": "Missing copyright notice at top of file",
+                  "rule_id": "lint/ruff/CPY001",
+                  "severity": "error",
+                  "source": {
+                    "tool": "ruff",
+                    "version": "ruff 0.17.3"
+                  },
+                  "state": "unclassified",
+                  "trigger": ""
+                },
+                {
+                  "category": "defect",
+                  "evidence": [
+                    "ruff diagnostic"
+                  ],
+                  "evidence_level": "static_proven",
+                  "id": "f07afb5460b432d5aeade19d9a6089f58365ea290c63dc67683358f40d052bf4",
+                  "location": {
+                    "column": 1,
+                    "line_end": 1,
+                    "line_start": 1,
+                    "occurrence_state": "unclassified",
+                    "path": "src/structlog/_output.py",
+                    "symbol_path": ""
+                  },
+                  "locations": [
+                    {
+                      "column": 1,
+                      "line_end": 1,
+                      "line_start": 1,
+                      "occurrence_state": "unclassified",
+                      "path": "src/structlog/_output.py",
+                      "symbol_path": ""
+                    }
+                  ],
+                  "message": "Missing copyright notice at top of file",
+                  "rule_id": "lint/ruff/CPY001",
+                  "severity": "error",
+                  "source": {
+                    "tool": "ruff",
+                    "version": "ruff 0.17.3"
+                  },
+                  "state": "unclassified",
+                  "trigger": ""
+                }
+              ],
+              "kind": "lint",
+              "language": "python",
+              "outcome": "findings",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 7380
+            },
+            {
+              "dependency_state": "trusted",
+              "findings": [
+                {
+                  "category": "defect",
+                  "evidence": [
+                    "mypy diagnostic"
+                  ],
+                  "evidence_level": "static_proven",
+                  "id": "59fe4bf212cd3c21217d2e6553407046a044161ed8ac0d462d6ed114f4b1a367",
+                  "location": {
+                    "column": 1,
+                    "line_end": 40,
+                    "line_start": 40,
+                    "occurrence_state": "unclassified",
+                    "path": "show_off.py",
+                    "symbol_path": "show_off.make_call_stack_more_impressive"
+                  },
+                  "locations": [
+                    {
+                      "column": 1,
+                      "line_end": 40,
+                      "line_start": 40,
+                      "occurrence_state": "unclassified",
+                      "path": "show_off.py",
+                      "symbol_path": "show_off.make_call_stack_more_impressive"
+                    }
+                  ],
+                  "message": "Function is missing a return type annotation",
+                  "rule_id": "typecheck/mypy/no-untyped-def",
+                  "severity": "error",
+                  "source": {
+                    "tool": "mypy",
+                    "version": "mypy 2.4.1 (compiled: yes)"
+                  },
+                  "state": "unclassified",
+                  "trigger": ""
+                },
+                {
+                  "category": "defect",
+                  "evidence": [
+                    "mypy diagnostic"
+                  ],
+                  "evidence_level": "static_proven",
+                  "id": "7ca01ce62540376560c728bb913c527e3e4199d7e4c00cb03e132a6d45259846",
+                  "location": {
+                    "column": 1,
+                    "line_end": 107,
+                    "line_start": 107,
+                    "occurrence_state": "unclassified",
+                    "path": "docs/conf.py",
+                    "symbol_path": "conf.html_theme_options"
+                  },
+                  "locations": [
+                    {
+                      "column": 1,
+                      "line_end": 107,
+                      "line_start": 107,
+                      "occurrence_state": "unclassified",
+                      "path": "docs/conf.py",
+                      "symbol_path": "conf.html_theme_options"
+                    }
+                  ],
+                  "message": "Need type annotation for \"html_theme_options\" (hint: \"html_theme_options: dict[<type>, <type>] = ...\")",
+                  "rule_id": "typecheck/mypy/var-annotated",
+                  "severity": "error",
+                  "source": {
+                    "tool": "mypy",
+                    "version": "mypy 2.4.1 (compiled: yes)"
+                  },
+                  "state": "unclassified",
+                  "trigger": ""
+                },
+                {
+                  "category": "defect",
+                  "evidence": [
+                    "mypy diagnostic"
+                  ],
+                  "evidence_level": "static_proven",
+                  "id": "fdf1d09f6d63ab6a1c0e170f535de9685a8980fbdccf0283e468fc6da085e769",
+                  "location": {
+                    "column": 1,
+                    "line_end": 49,
+                    "line_start": 49,
+                    "occurrence_state": "unclassified",
+                    "path": "show_off.py",
+                    "symbol_path": ""
+                  },
+                  "locations": [
+                    {
+                      "column": 1,
+                      "line_end": 49,
+                      "line_start": 49,
+                      "occurrence_state": "unclassified",
+                      "path": "show_off.py",
+                      "symbol_path": ""
+                    }
+                  ],
+                  "message": "Call to untyped function \"make_call_stack_more_impressive\" in typed context",
+                  "rule_id": "typecheck/mypy/no-untyped-call",
+                  "severity": "error",
+                  "source": {
+                    "tool": "mypy",
+                    "version": "mypy 2.4.1 (compiled: yes)"
+                  },
+                  "state": "unclassified",
+                  "trigger": ""
+                }
+              ],
+              "kind": "typecheck",
+              "language": "python",
+              "outcome": "findings",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 12495
+            },
+            {
+              "dependency_state": "trusted",
+              "findings": [],
+              "kind": "coverage",
+              "language": "python",
+              "outcome": "passed",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 20184
+            }
+          ],
+          "deferred": [],
+          "excluded": [],
+          "findings": [
+            {
+              "category": "defect",
+              "evidence": [
+                "mypy diagnostic"
+              ],
+              "evidence_level": "static_proven",
+              "id": "59fe4bf212cd3c21217d2e6553407046a044161ed8ac0d462d6ed114f4b1a367",
+              "location": {
+                "column": 1,
+                "line_end": 40,
+                "line_start": 40,
+                "occurrence_state": "unclassified",
+                "path": "show_off.py",
+                "symbol_path": "show_off.make_call_stack_more_impressive"
+              },
+              "locations": [
+                {
+                  "column": 1,
+                  "line_end": 40,
+                  "line_start": 40,
+                  "occurrence_state": "unclassified",
+                  "path": "show_off.py",
+                  "symbol_path": "show_off.make_call_stack_more_impressive"
+                }
+              ],
+              "message": "Function is missing a return type annotation",
+              "rule_id": "typecheck/mypy/no-untyped-def",
+              "severity": "error",
+              "source": {
+                "tool": "mypy",
+                "version": "mypy 2.4.1 (compiled: yes)"
+              },
+              "state": "unclassified",
+              "trigger": ""
+            },
+            {
+              "category": "defect",
+              "evidence": [
+                "mypy diagnostic"
+              ],
+              "evidence_level": "static_proven",
+              "id": "7ca01ce62540376560c728bb913c527e3e4199d7e4c00cb03e132a6d45259846",
+              "location": {
+                "column": 1,
+                "line_end": 107,
+                "line_start": 107,
+                "occurrence_state": "unclassified",
+                "path": "docs/conf.py",
+                "symbol_path": "conf.html_theme_options"
+              },
+              "locations": [
+                {
+                  "column": 1,
+                  "line_end": 107,
+                  "line_start": 107,
+                  "occurrence_state": "unclassified",
+                  "path": "docs/conf.py",
+                  "symbol_path": "conf.html_theme_options"
+                }
+              ],
+              "message": "Need type annotation for \"html_theme_options\" (hint: \"html_theme_options: dict[<type>, <type>] = ...\")",
+              "rule_id": "typecheck/mypy/var-annotated",
+              "severity": "error",
+              "source": {
+                "tool": "mypy",
+                "version": "mypy 2.4.1 (compiled: yes)"
+              },
+              "state": "unclassified",
+              "trigger": ""
+            },
+            {
+              "category": "defect",
+              "evidence": [
+                "ruff diagnostic"
+              ],
+              "evidence_level": "static_proven",
+              "id": "a8bcf257e6f50133b818df3a9d88ebde30fc8a00efb30b904e48069934155206",
+              "location": {
+                "column": 1,
+                "line_end": 1,
+                "line_start": 1,
+                "occurrence_state": "unclassified",
+                "path": "tests/test_output.py",
+                "symbol_path": ""
+              },
+              "locations": [
+                {
+                  "column": 1,
+                  "line_end": 1,
+                  "line_start": 1,
+                  "occurrence_state": "unclassified",
+                  "path": "tests/test_output.py",
+                  "symbol_path": ""
+                }
+              ],
+              "message": "Missing copyright notice at top of file",
+              "rule_id": "lint/ruff/CPY001",
+              "severity": "error",
+              "source": {
+                "tool": "ruff",
+                "version": "ruff 0.17.3"
+              },
+              "state": "unclassified",
+              "trigger": ""
+            },
+            {
+              "category": "defect",
+              "evidence": [
+                "ruff diagnostic"
+              ],
+              "evidence_level": "static_proven",
+              "id": "f07afb5460b432d5aeade19d9a6089f58365ea290c63dc67683358f40d052bf4",
+              "location": {
+                "column": 1,
+                "line_end": 1,
+                "line_start": 1,
+                "occurrence_state": "unclassified",
+                "path": "src/structlog/_output.py",
+                "symbol_path": ""
+              },
+              "locations": [
+                {
+                  "column": 1,
+                  "line_end": 1,
+                  "line_start": 1,
+                  "occurrence_state": "unclassified",
+                  "path": "src/structlog/_output.py",
+                  "symbol_path": ""
+                }
+              ],
+              "message": "Missing copyright notice at top of file",
+              "rule_id": "lint/ruff/CPY001",
+              "severity": "error",
+              "source": {
+                "tool": "ruff",
+                "version": "ruff 0.17.3"
+              },
+              "state": "unclassified",
+              "trigger": ""
+            },
+            {
+              "category": "defect",
+              "evidence": [
+                "mypy diagnostic"
+              ],
+              "evidence_level": "static_proven",
+              "id": "fdf1d09f6d63ab6a1c0e170f535de9685a8980fbdccf0283e468fc6da085e769",
+              "location": {
+                "column": 1,
+                "line_end": 49,
+                "line_start": 49,
+                "occurrence_state": "unclassified",
+                "path": "show_off.py",
+                "symbol_path": ""
+              },
+              "locations": [
+                {
+                  "column": 1,
+                  "line_end": 49,
+                  "line_start": 49,
+                  "occurrence_state": "unclassified",
+                  "path": "show_off.py",
+                  "symbol_path": ""
+                }
+              ],
+              "message": "Call to untyped function \"make_call_stack_more_impressive\" in typed context",
+              "rule_id": "typecheck/mypy/no-untyped-call",
+              "severity": "error",
+              "source": {
+                "tool": "mypy",
+                "version": "mypy 2.4.1 (compiled: yes)"
+              },
+              "state": "unclassified",
+              "trigger": ""
+            }
+          ],
+          "footer": {
+            "notes": [
+              "Intent inference is deferred: no_endpoint",
+              "lint .: dependencies_trusted: results use unverified dependencies",
+              "typecheck .: dependencies_trusted: results use unverified dependencies",
+              "Graph references use syntax and text; no language server was used",
+              "Offline applies to Rio; tool and test processes were not network-isolated",
+              "dependencies_trusted: results were computed against unverified dependencies"
+            ],
+            "suppressions": [],
+            "tool_versions": {
+              "python:.:coverage": "Coverage.py, version 7.17.1 with C extension",
+              "python:.:mypy": "mypy 2.4.1 (compiled: yes)",
+              "python:.:ruff": "ruff 0.17.3"
+            }
+          },
+          "impact": {
+            "symbols": [
+              {
+                "path": "src/structlog/_output.py",
+                "references_per_hop": [
+                  29,
+                  308
+                ],
+                "symbol_path": "",
+                "test_referenced": true,
+                "unresolved": 2440
+              },
+              {
+                "path": "src/structlog/_output.py",
+                "references_per_hop": [
+                  28,
+                  274
+                ],
+                "symbol_path": "_output.WRITE_LOCKS",
+                "test_referenced": true,
+                "unresolved": 1905
+              },
+              {
+                "path": "tests/test_output.py",
+                "references_per_hop": [
+                  0,
+                  0
+                ],
+                "symbol_path": "",
+                "test_referenced": false,
+                "unresolved": 0
+              },
+              {
+                "path": "tests/test_output.py",
+                "references_per_hop": [
+                  12,
+                  62
+                ],
+                "symbol_path": "test_output.test_write_locks_released_on_gc",
+                "test_referenced": true,
+                "unresolved": 272
+              }
+            ],
+            "truncated": false,
+            "unresolved": 4617
+          },
+          "incomplete": [
+            {
+              "findings": [],
+              "hint": "Dependency audit needs api.osv.dev",
+              "kind": "dependencies",
+              "language": "common",
+              "outcome": "skipped",
+              "reason": "offline",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 375
+            }
+          ],
+          "metrics": {
+            "checks": [
+              {
+                "kind": "secrets",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 31
+              },
+              {
+                "kind": "dependencies",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 375
+              },
+              {
+                "kind": "lint",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 7380
+              },
+              {
+                "kind": "typecheck",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 12495
+              },
+              {
+                "kind": "coverage",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 20184
+              }
+            ],
+            "tool_versions": {
+              "python:.:coverage": "Coverage.py, version 7.17.1 with C extension",
+              "python:.:mypy": "mypy 2.4.1 (compiled: yes)",
+              "python:.:ruff": "ruff 0.17.3"
+            },
+            "wall_time_ms": 33348
+          },
+          "review": {
+            "base": "92fd882817a8e6aae192cfe6266fded2d597f522",
+            "chain": [
+              "acceptance-structlog-trusted",
+              "rio/base"
+            ],
+            "head": "88f668d9e834fb9382d3ffedc23d04c67422692b",
+            "id": "78f55b90291305c6",
+            "mode": "branch",
+            "profile": "acceptance-structlog-trusted",
+            "rio_version": "0.1.0",
+            "run_id": "01M6M2B30890FFZY026AB2C5YA"
+          },
+          "risks": [],
+          "schema": "rio-report-v1",
+          "status": "incomplete",
+          "summary": {
+            "fixed": 0,
+            "pre_existing": 0,
+            "suppressed": 0
+          }
+        }
+      },
+      "evidence_paths": [
+        "/tmp/rio-acceptance-evidence/structlog/pr-807-default.json",
+        "/tmp/rio-acceptance-evidence/structlog/pr-807-trusted.json"
+      ],
+      "coverage_suite_summary": "907 passed, 20 skipped, 20 warnings in 10.00s"
+    },
+    {
+      "repository": "hynek/structlog",
+      "pr": "https://github.com/hynek/structlog/pull/805",
+      "title": "Fix thread name CallsiteParameterAdder in async methods (issue #710)",
+      "base": "c6e7cad18ffe91febf2b97dac03a465134b1a5d1",
+      "head": "7d7708fdf39061b6f7515c13ed0404a9bc05fb33",
+      "languages": [
+        "python"
+      ],
+      "mode": "base",
+      "review_id": "671b78fa89d139ee",
+      "wall_time_ms": 68991,
+      "status": "incomplete",
+      "exit_code": 1,
+      "profile": "acceptance-structlog-trusted",
+      "binary_sha256": "33b5fe2fcccb7700142d45d15a62df706995998f94e7f741351755454b4e95e6",
+      "findings": [
+        {
+          "id": "3546bf6ef41f8d6042ee14d590c3c99bfd6efb61a7afae062dc7336435e625ff",
+          "rule_id": "secret/high-entropy",
+          "message": "Potential high-entropy credential: _ASY[REDACTED]",
+          "location": {
+            "column": 20,
+            "line_end": 65,
+            "line_start": 65,
+            "occurrence_state": "new",
+            "path": "src/structlog/_native.py",
+            "symbol_path": ""
+          },
+          "state": "worsened",
+          "verdict": "false-positive",
+          "reason": "The flagged text is an unquoted ContextVar identifier (_ASYNC_CALLING_THREAD/_ASYNC_CALLING_STACK) used in a method call. It is executable source code, not a credential or credential literal.",
+          "reviewer": "sub-agent acceptance_mixed",
+          "verdict_source": "automated",
+          "observed_in": [
+            "default",
+            "trusted"
+          ],
+          "independent_evidence": {
+            "head_source_line": "    thread_token = _ASYNC_CALLING_THREAD.set(",
+            "exact_source_line_present_in_base": false
+          }
+        },
+        {
+          "id": "6793e5b8a3fbb6001c32ab4ce830b9b1e594c4f0335667aa655729916fd0d00d",
+          "rule_id": "secret/high-entropy",
+          "message": "Potential high-entropy credential: _ASY[REDACTED]",
+          "location": {
+            "column": 24,
+            "line_end": 433,
+            "line_start": 433,
+            "occurrence_state": "new",
+            "path": "src/structlog/stdlib.py",
+            "symbol_path": ""
+          },
+          "state": "worsened",
+          "verdict": "false-positive",
+          "reason": "The flagged text is an unquoted ContextVar identifier (_ASYNC_CALLING_THREAD/_ASYNC_CALLING_STACK) used in a method call. It is executable source code, not a credential or credential literal.",
+          "reviewer": "sub-agent acceptance_mixed",
+          "verdict_source": "automated",
+          "observed_in": [
+            "default",
+            "trusted"
+          ],
+          "independent_evidence": {
+            "head_source_line": "        thread_token = _ASYNC_CALLING_THREAD.set(",
+            "exact_source_line_present_in_base": false
+          }
+        },
+        {
+          "id": "04842a33b0aeedc6dc8c556b05ac3a8b53bf057e1af2441b8dabf785b9e13768",
+          "rule_id": "lint/ruff/CPY001",
+          "message": "Missing copyright notice at top of file",
+          "location": {
+            "column": 1,
+            "line_end": 1,
+            "line_start": 1,
+            "occurrence_state": "unclassified",
+            "path": "src/structlog/contextvars.py",
+            "symbol_path": ""
+          },
+          "state": "unclassified",
+          "verdict": "noise",
+          "reason": "The unchanged existing SPDX licence header triggers the installed newer Ruff copyright rule. This change does not introduce the header or remove a copyright notice; no baseline classification is claimed with trusted dependencies.",
+          "reviewer": "sub-agent acceptance_mixed",
+          "verdict_source": "automated",
+          "observed_in": [
+            "trusted"
+          ],
+          "independent_evidence": {
+            "head_source_line": "# SPDX-License-Identifier: MIT OR Apache-2.0",
+            "exact_source_line_present_in_base": true
+          }
+        },
+        {
+          "id": "05813de22ae1defcfabdf2e97427a5dc87ff8101a77869b4d7b2f5a0a3bfabd0",
+          "rule_id": "lint/ruff/ICN001",
+          "message": "`datetime` should be imported as `dt`",
+          "location": {
+            "column": 8,
+            "line_end": 12,
+            "line_start": 12,
+            "occurrence_state": "unclassified",
+            "path": "src/structlog/processors.py",
+            "symbol_path": ""
+          },
+          "state": "unclassified",
+          "verdict": "noise",
+          "reason": "An existing unchanged import or public API signature triggers a style diagnostic under the installed Ruff version. It is unrelated to the async thread-context changes and is explicitly unclassified.",
+          "reviewer": "sub-agent acceptance_mixed",
+          "verdict_source": "automated",
+          "observed_in": [
+            "trusted"
+          ],
+          "independent_evidence": {
+            "head_source_line": "import datetime",
+            "exact_source_line_present_in_base": true
+          }
+        },
+        {
+          "id": "13d059ecd7d2fdb30517c4d39b8d8f75fc5283e7b2fe70618d6decab6eb6a061",
+          "rule_id": "lint/ruff/CPY001",
+          "message": "Missing copyright notice at top of file",
+          "location": {
+            "column": 1,
+            "line_end": 1,
+            "line_start": 1,
+            "occurrence_state": "unclassified",
+            "path": "src/structlog/_native.py",
+            "symbol_path": ""
+          },
+          "state": "unclassified",
+          "verdict": "noise",
+          "reason": "The unchanged existing SPDX licence header triggers the installed newer Ruff copyright rule. This change does not introduce the header or remove a copyright notice; no baseline classification is claimed with trusted dependencies.",
+          "reviewer": "sub-agent acceptance_mixed",
+          "verdict_source": "automated",
+          "observed_in": [
+            "trusted"
+          ],
+          "independent_evidence": {
+            "head_source_line": "# SPDX-License-Identifier: MIT OR Apache-2.0",
+            "exact_source_line_present_in_base": true
+          }
+        },
+        {
+          "id": "59fe4bf212cd3c21217d2e6553407046a044161ed8ac0d462d6ed114f4b1a367",
+          "rule_id": "typecheck/mypy/no-untyped-def",
+          "message": "Function is missing a return type annotation",
+          "location": {
+            "column": 1,
+            "line_end": 40,
+            "line_start": 40,
+            "occurrence_state": "unclassified",
+            "path": "show_off.py",
+            "symbol_path": "show_off.make_call_stack_more_impressive"
+          },
+          "state": "unclassified",
+          "verdict": "noise",
+          "reason": "The diagnostic concerns an unchanged docs configuration or demonstration file outside this PR. It is a valid tool diagnostic but review noise; trusted dependencies prevent baseline classification.",
+          "reviewer": "sub-agent acceptance_mixed",
+          "verdict_source": "automated",
+          "observed_in": [
+            "trusted"
+          ],
+          "independent_evidence": {
+            "head_source_line": "def make_call_stack_more_impressive():",
+            "exact_source_line_present_in_base": true
+          }
+        },
+        {
+          "id": "7ca01ce62540376560c728bb913c527e3e4199d7e4c00cb03e132a6d45259846",
+          "rule_id": "typecheck/mypy/var-annotated",
+          "message": "Need type annotation for \"html_theme_options\" (hint: \"html_theme_options: dict[<type>, <type>] = ...\")",
+          "location": {
+            "column": 1,
+            "line_end": 107,
+            "line_start": 107,
+            "occurrence_state": "unclassified",
+            "path": "docs/conf.py",
+            "symbol_path": "conf.html_theme_options"
+          },
+          "state": "unclassified",
+          "verdict": "noise",
+          "reason": "The diagnostic concerns an unchanged docs configuration or demonstration file outside this PR. It is a valid tool diagnostic but review noise; trusted dependencies prevent baseline classification.",
+          "reviewer": "sub-agent acceptance_mixed",
+          "verdict_source": "automated",
+          "observed_in": [
+            "trusted"
+          ],
+          "independent_evidence": {
+            "head_source_line": "html_theme_options = {}",
+            "exact_source_line_present_in_base": true
+          }
+        },
+        {
+          "id": "92f39487e0b02eb5bf08a8107cac7499b7e5d634b184fb305eeea03664d85868",
+          "rule_id": "lint/ruff/CPY001",
+          "message": "Missing copyright notice at top of file",
+          "location": {
+            "column": 1,
+            "line_end": 1,
+            "line_start": 1,
+            "occurrence_state": "unclassified",
+            "path": "src/structlog/processors.py",
+            "symbol_path": ""
+          },
+          "state": "unclassified",
+          "verdict": "noise",
+          "reason": "The unchanged existing SPDX licence header triggers the installed newer Ruff copyright rule. This change does not introduce the header or remove a copyright notice; no baseline classification is claimed with trusted dependencies.",
+          "reviewer": "sub-agent acceptance_mixed",
+          "verdict_source": "automated",
+          "observed_in": [
+            "trusted"
+          ],
+          "independent_evidence": {
+            "head_source_line": "# SPDX-License-Identifier: MIT OR Apache-2.0",
+            "exact_source_line_present_in_base": true
+          }
+        },
+        {
+          "id": "96853e4c87f0515b23a9d9cc3e5e6d5ebb4cf9130639e9bba6db73f3ff658d05",
+          "rule_id": "lint/ruff/PLR0917",
+          "message": "Too many positional arguments (9 > 5)",
+          "location": {
+            "column": 9,
+            "line_end": 351,
+            "line_start": 351,
+            "occurrence_state": "unclassified",
+            "path": "src/structlog/stdlib.py",
+            "symbol_path": "stdlib.BoundLogger.makeRecord"
+          },
+          "state": "unclassified",
+          "verdict": "noise",
+          "reason": "An existing unchanged import or public API signature triggers a style diagnostic under the installed Ruff version. It is unrelated to the async thread-context changes and is explicitly unclassified.",
+          "reviewer": "sub-agent acceptance_mixed",
+          "verdict_source": "automated",
+          "observed_in": [
+            "trusted"
+          ],
+          "independent_evidence": {
+            "head_source_line": "    def makeRecord(",
+            "exact_source_line_present_in_base": true
+          }
+        },
+        {
+          "id": "d82eb174ad58036091f13fc32f6e801d4898078c4f40a36f76defe749a252d34",
+          "rule_id": "lint/ruff/PLR0917",
+          "message": "Too many positional arguments (8 > 5)",
+          "location": {
+            "column": 9,
+            "line_end": 1077,
+            "line_start": 1077,
+            "occurrence_state": "unclassified",
+            "path": "src/structlog/stdlib.py",
+            "symbol_path": "stdlib.ProcessorFormatter.__init__"
+          },
+          "state": "unclassified",
+          "verdict": "noise",
+          "reason": "An existing unchanged import or public API signature triggers a style diagnostic under the installed Ruff version. It is unrelated to the async thread-context changes and is explicitly unclassified.",
+          "reviewer": "sub-agent acceptance_mixed",
+          "verdict_source": "automated",
+          "observed_in": [
+            "trusted"
+          ],
+          "independent_evidence": {
+            "head_source_line": "    def __init__(",
+            "exact_source_line_present_in_base": true
+          }
+        },
+        {
+          "id": "db0c8f45a947cc94ffac90f83296a774862aac9204d429b55a0ccda6d6082d42",
+          "rule_id": "lint/ruff/CPY001",
+          "message": "Missing copyright notice at top of file",
+          "location": {
+            "column": 1,
+            "line_end": 1,
+            "line_start": 1,
+            "occurrence_state": "unclassified",
+            "path": "src/structlog/stdlib.py",
+            "symbol_path": ""
+          },
+          "state": "unclassified",
+          "verdict": "noise",
+          "reason": "The unchanged existing SPDX licence header triggers the installed newer Ruff copyright rule. This change does not introduce the header or remove a copyright notice; no baseline classification is claimed with trusted dependencies.",
+          "reviewer": "sub-agent acceptance_mixed",
+          "verdict_source": "automated",
+          "observed_in": [
+            "trusted"
+          ],
+          "independent_evidence": {
+            "head_source_line": "# This file is dual licensed under the terms of the Apache License, Version",
+            "exact_source_line_present_in_base": true
+          }
+        },
+        {
+          "id": "f67e6f74cb224a9052a2c45462ef24503eff351efcf8946a6df141c82fe473a4",
+          "rule_id": "lint/ruff/CPY001",
+          "message": "Missing copyright notice at top of file",
+          "location": {
+            "column": 1,
+            "line_end": 1,
+            "line_start": 1,
+            "occurrence_state": "unclassified",
+            "path": "tests/processors/test_processors.py",
+            "symbol_path": ""
+          },
+          "state": "unclassified",
+          "verdict": "noise",
+          "reason": "The unchanged existing SPDX licence header triggers the installed newer Ruff copyright rule. This change does not introduce the header or remove a copyright notice; no baseline classification is claimed with trusted dependencies.",
+          "reviewer": "sub-agent acceptance_mixed",
+          "verdict_source": "automated",
+          "observed_in": [
+            "trusted"
+          ],
+          "independent_evidence": {
+            "head_source_line": "# SPDX-License-Identifier: MIT OR Apache-2.0",
+            "exact_source_line_present_in_base": true
+          }
+        },
+        {
+          "id": "fdf1d09f6d63ab6a1c0e170f535de9685a8980fbdccf0283e468fc6da085e769",
+          "rule_id": "typecheck/mypy/no-untyped-call",
+          "message": "Call to untyped function \"make_call_stack_more_impressive\" in typed context",
+          "location": {
+            "column": 1,
+            "line_end": 49,
+            "line_start": 49,
+            "occurrence_state": "unclassified",
+            "path": "show_off.py",
+            "symbol_path": ""
+          },
+          "state": "unclassified",
+          "verdict": "noise",
+          "reason": "The diagnostic concerns an unchanged docs configuration or demonstration file outside this PR. It is a valid tool diagnostic but review noise; trusted dependencies prevent baseline classification.",
+          "reviewer": "sub-agent acceptance_mixed",
+          "verdict_source": "automated",
+          "observed_in": [
+            "trusted"
+          ],
+          "independent_evidence": {
+            "head_source_line": "make_call_stack_more_impressive()",
+            "exact_source_line_present_in_base": true
+          }
+        }
+      ],
+      "risks": [],
+      "misses": [],
+      "verdict": "not-useful",
+      "reason": "The review emitted two false credential alerts for ContextVar identifiers and eleven existing tool diagnostics. Coverage passed and impact references identified async callsites, but the reported defects were not actionable on this PR. A later focused confirmation records remediation separately.",
+      "reviewer": "sub-agent acceptance_mixed",
+      "verdict_source": "automated",
+      "independent_tests": [
+        {
+          "variant": "tests",
+          "summary": "15 failed, 159 passed, 2 warnings in 1.35s",
+          "evidence_path": "/tmp/rio-acceptance-evidence/structlog/pr-805-tests.txt"
+        },
+        {
+          "variant": "base-tests",
+          "summary": "15 failed, 158 passed, 2 warnings in 1.26s",
+          "evidence_path": "/tmp/rio-acceptance-evidence/structlog/pr-805-base-tests.txt"
+        },
+        {
+          "variant": "async-tests",
+          "summary": "3 passed, 171 deselected, 2 warnings in 0.12s",
+          "evidence_path": "/tmp/rio-acceptance-evidence/structlog/pr-805-async-tests.txt"
+        }
+      ],
+      "limitations": [
+        "No supported lockfile exists in this repository; default runs correctly skip Python tools as dependency_mismatch.",
+        "The primary trusted profile explicitly permits unverified installed dependencies. Diagnostic states remain unclassified and no baseline new/fixed attribution is claimed.",
+        "Runs are offline and have no model endpoint: dependency audit is skipped, and semantic model steps are deferred. Offline does not network-isolate tool/test subprocesses.",
+        "Tools were installed for this evaluation rather than reproduced from a project lockfile: Python3.12.3, mypy2.4.1, Ruff0.17.3, coverage7.17.1, pytest9.2.0."
+      ],
+      "reports": {
+        "default": {
+          "checks": [
+            {
+              "findings": [],
+              "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+              "kind": "typecheck",
+              "language": "python",
+              "outcome": "skipped",
+              "reason": "dependency_mismatch",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 0
+            },
+            {
+              "findings": [],
+              "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+              "kind": "lint",
+              "language": "python",
+              "outcome": "skipped",
+              "reason": "dependency_mismatch",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 0
+            },
+            {
+              "findings": [],
+              "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+              "kind": "coverage",
+              "language": "python",
+              "outcome": "skipped",
+              "reason": "dependency_mismatch",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 0
+            },
+            {
+              "findings": [
+                {
+                  "category": "defect",
+                  "evidence": [
+                    "Built-in credential pattern high-entropy"
+                  ],
+                  "evidence_level": "static_proven",
+                  "id": "3546bf6ef41f8d6042ee14d590c3c99bfd6efb61a7afae062dc7336435e625ff",
+                  "impact": "A credential may be exposed by this change",
+                  "location": {
+                    "column": 20,
+                    "line_end": 65,
+                    "line_start": 65,
+                    "occurrence_state": "new",
+                    "path": "src/structlog/_native.py",
+                    "symbol_path": ""
+                  },
+                  "locations": [
+                    {
+                      "column": 20,
+                      "line_end": 65,
+                      "line_start": 65,
+                      "occurrence_state": "new",
+                      "path": "src/structlog/_native.py",
+                      "symbol_path": ""
+                    },
+                    {
+                      "column": 17,
+                      "line_end": 68,
+                      "line_start": 68,
+                      "occurrence_state": "pre-existing",
+                      "path": "src/structlog/_native.py",
+                      "symbol_path": ""
+                    },
+                    {
+                      "column": 28,
+                      "line_end": 184,
+                      "line_start": 184,
+                      "occurrence_state": "new",
+                      "path": "src/structlog/_native.py",
+                      "symbol_path": ""
+                    },
+                    {
+                      "column": 25,
+                      "line_end": 187,
+                      "line_start": 187,
+                      "occurrence_state": "pre-existing",
+                      "path": "src/structlog/_native.py",
+                      "symbol_path": ""
+                    },
+                    {
+                      "column": 24,
+                      "line_end": 228,
+                      "line_start": 228,
+                      "occurrence_state": "new",
+                      "path": "src/structlog/_native.py",
+                      "symbol_path": ""
+                    },
+                    {
+                      "column": 21,
+                      "line_end": 231,
+                      "line_start": 231,
+                      "occurrence_state": "pre-existing",
+                      "path": "src/structlog/_native.py",
+                      "symbol_path": ""
+                    }
+                  ],
+                  "message": "Potential high-entropy credential: _ASY[REDACTED]",
+                  "rule_id": "secret/high-entropy",
+                  "severity": "error",
+                  "source": {
+                    "tool": "rio-secrets",
+                    "version": "0.1.0"
+                  },
+                  "state": "worsened",
+                  "suggested_fix": "Remove the credential and rotate it if it was active",
+                  "trigger": "_ASY[REDACTED]"
+                },
+                {
+                  "category": "defect",
+                  "evidence": [
+                    "Built-in credential pattern high-entropy"
+                  ],
+                  "evidence_level": "static_proven",
+                  "id": "6793e5b8a3fbb6001c32ab4ce830b9b1e594c4f0335667aa655729916fd0d00d",
+                  "impact": "A credential may be exposed by this change",
+                  "location": {
+                    "column": 24,
+                    "line_end": 433,
+                    "line_start": 433,
+                    "occurrence_state": "new",
+                    "path": "src/structlog/stdlib.py",
+                    "symbol_path": ""
+                  },
+                  "locations": [
+                    {
+                      "column": 24,
+                      "line_end": 433,
+                      "line_start": 433,
+                      "occurrence_state": "new",
+                      "path": "src/structlog/stdlib.py",
+                      "symbol_path": ""
+                    },
+                    {
+                      "column": 21,
+                      "line_end": 436,
+                      "line_start": 436,
+                      "occurrence_state": "pre-existing",
+                      "path": "src/structlog/stdlib.py",
+                      "symbol_path": ""
+                    },
+                    {
+                      "column": 24,
+                      "line_end": 646,
+                      "line_start": 646,
+                      "occurrence_state": "new",
+                      "path": "src/structlog/stdlib.py",
+                      "symbol_path": ""
+                    },
+                    {
+                      "column": 21,
+                      "line_end": 649,
+                      "line_start": 649,
+                      "occurrence_state": "pre-existing",
+                      "path": "src/structlog/stdlib.py",
+                      "symbol_path": ""
+                    }
+                  ],
+                  "message": "Potential high-entropy credential: _ASY[REDACTED]",
+                  "rule_id": "secret/high-entropy",
+                  "severity": "error",
+                  "source": {
+                    "tool": "rio-secrets",
+                    "version": "0.1.0"
+                  },
+                  "state": "worsened",
+                  "suggested_fix": "Remove the credential and rotate it if it was active",
+                  "trigger": "_ASY[REDACTED]"
+                }
+              ],
+              "kind": "secrets",
+              "language": "common",
+              "outcome": "findings",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 71
+            },
+            {
+              "findings": [],
+              "hint": "Dependency audit needs api.osv.dev",
+              "kind": "dependencies",
+              "language": "common",
+              "outcome": "skipped",
+              "reason": "offline",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 117
+            }
+          ],
+          "deferred": [
+            {
+              "reason": "no_endpoint",
+              "step": "triage"
+            },
+            {
+              "reason": "no_endpoint",
+              "step": "agents"
+            },
+            {
+              "reason": "no_endpoint",
+              "step": "verify"
+            }
+          ],
+          "excluded": [
+            {
+              "path": "src/structlog/_native.py",
+              "reason": "coverage_not_instrumented"
+            },
+            {
+              "path": "src/structlog/contextvars.py",
+              "reason": "coverage_not_instrumented"
+            },
+            {
+              "path": "src/structlog/processors.py",
+              "reason": "coverage_not_instrumented"
+            },
+            {
+              "path": "src/structlog/stdlib.py",
+              "reason": "coverage_not_instrumented"
+            }
+          ],
+          "findings": [
+            {
+              "category": "defect",
+              "evidence": [
+                "Built-in credential pattern high-entropy"
+              ],
+              "evidence_level": "static_proven",
+              "id": "3546bf6ef41f8d6042ee14d590c3c99bfd6efb61a7afae062dc7336435e625ff",
+              "impact": "A credential may be exposed by this change",
+              "location": {
+                "column": 20,
+                "line_end": 65,
+                "line_start": 65,
+                "occurrence_state": "new",
+                "path": "src/structlog/_native.py",
+                "symbol_path": ""
+              },
+              "locations": [
+                {
+                  "column": 20,
+                  "line_end": 65,
+                  "line_start": 65,
+                  "occurrence_state": "new",
+                  "path": "src/structlog/_native.py",
+                  "symbol_path": ""
+                },
+                {
+                  "column": 17,
+                  "line_end": 68,
+                  "line_start": 68,
+                  "occurrence_state": "pre-existing",
+                  "path": "src/structlog/_native.py",
+                  "symbol_path": ""
+                },
+                {
+                  "column": 28,
+                  "line_end": 184,
+                  "line_start": 184,
+                  "occurrence_state": "new",
+                  "path": "src/structlog/_native.py",
+                  "symbol_path": ""
+                },
+                {
+                  "column": 25,
+                  "line_end": 187,
+                  "line_start": 187,
+                  "occurrence_state": "pre-existing",
+                  "path": "src/structlog/_native.py",
+                  "symbol_path": ""
+                },
+                {
+                  "column": 24,
+                  "line_end": 228,
+                  "line_start": 228,
+                  "occurrence_state": "new",
+                  "path": "src/structlog/_native.py",
+                  "symbol_path": ""
+                },
+                {
+                  "column": 21,
+                  "line_end": 231,
+                  "line_start": 231,
+                  "occurrence_state": "pre-existing",
+                  "path": "src/structlog/_native.py",
+                  "symbol_path": ""
+                }
+              ],
+              "message": "Potential high-entropy credential: _ASY[REDACTED]",
+              "rule_id": "secret/high-entropy",
+              "severity": "error",
+              "source": {
+                "tool": "rio-secrets",
+                "version": "0.1.0"
+              },
+              "state": "worsened",
+              "suggested_fix": "Remove the credential and rotate it if it was active",
+              "trigger": "_ASY[REDACTED]"
+            },
+            {
+              "category": "defect",
+              "evidence": [
+                "Built-in credential pattern high-entropy"
+              ],
+              "evidence_level": "static_proven",
+              "id": "6793e5b8a3fbb6001c32ab4ce830b9b1e594c4f0335667aa655729916fd0d00d",
+              "impact": "A credential may be exposed by this change",
+              "location": {
+                "column": 24,
+                "line_end": 433,
+                "line_start": 433,
+                "occurrence_state": "new",
+                "path": "src/structlog/stdlib.py",
+                "symbol_path": ""
+              },
+              "locations": [
+                {
+                  "column": 24,
+                  "line_end": 433,
+                  "line_start": 433,
+                  "occurrence_state": "new",
+                  "path": "src/structlog/stdlib.py",
+                  "symbol_path": ""
+                },
+                {
+                  "column": 21,
+                  "line_end": 436,
+                  "line_start": 436,
+                  "occurrence_state": "pre-existing",
+                  "path": "src/structlog/stdlib.py",
+                  "symbol_path": ""
+                },
+                {
+                  "column": 24,
+                  "line_end": 646,
+                  "line_start": 646,
+                  "occurrence_state": "new",
+                  "path": "src/structlog/stdlib.py",
+                  "symbol_path": ""
+                },
+                {
+                  "column": 21,
+                  "line_end": 649,
+                  "line_start": 649,
+                  "occurrence_state": "pre-existing",
+                  "path": "src/structlog/stdlib.py",
+                  "symbol_path": ""
+                }
+              ],
+              "message": "Potential high-entropy credential: _ASY[REDACTED]",
+              "rule_id": "secret/high-entropy",
+              "severity": "error",
+              "source": {
+                "tool": "rio-secrets",
+                "version": "0.1.0"
+              },
+              "state": "worsened",
+              "suggested_fix": "Remove the credential and rotate it if it was active",
+              "trigger": "_ASY[REDACTED]"
+            }
+          ],
+          "footer": {
+            "notes": [
+              "Intent inference is deferred: no_endpoint",
+              "Graph references use syntax and text; no language server was used",
+              "Offline applies to Rio; tool and test processes were not network-isolated"
+            ],
+            "suppressions": [],
+            "tool_versions": {
+              "python:.:coverage": "Coverage.py, version 7.17.1 with C extension",
+              "python:.:mypy": "mypy 2.4.1 (compiled: yes)",
+              "python:.:ruff": "ruff 0.17.3"
+            }
+          },
+          "impact": {
+            "symbols": [
+              {
+                "path": "src/structlog/_native.py",
+                "references_per_hop": [
+                  180,
+                  212
+                ],
+                "symbol_path": "",
+                "test_referenced": true,
+                "unresolved": 16135
+              },
+              {
+                "path": "src/structlog/_native.py",
+                "references_per_hop": [
+                  198,
+                  448
+                ],
+                "symbol_path": "_native._make_filtering_bound_logger.alog",
+                "test_referenced": true,
+                "unresolved": 20596
+              },
+              {
+                "path": "src/structlog/_native.py",
+                "references_per_hop": [
+                  166,
+                  212
+                ],
+                "symbol_path": "_native._make_filtering_bound_logger.make_method.ameth",
+                "test_referenced": true,
+                "unresolved": 13811
+              },
+              {
+                "path": "src/structlog/_native.py",
+                "references_per_hop": [
+                  205,
+                  441
+                ],
+                "symbol_path": "_native.aexception",
+                "test_referenced": true,
+                "unresolved": 21124
+              },
+              {
+                "path": "src/structlog/contextvars.py",
+                "references_per_hop": [
+                  149,
+                  402
+                ],
+                "symbol_path": "",
+                "test_referenced": true,
+                "unresolved": 19902
+              },
+              {
+                "path": "src/structlog/contextvars.py",
+                "references_per_hop": [
+                  110,
+                  410
+                ],
+                "symbol_path": "contextvars._ASYNC_CALLING_THREAD",
+                "test_referenced": true,
+                "unresolved": 15955
+              },
+              {
+                "path": "src/structlog/processors.py",
+                "references_per_hop": [
+                  329,
+                  487
+                ],
+                "symbol_path": "",
+                "test_referenced": true,
+                "unresolved": 27314
+              },
+              {
+                "path": "src/structlog/processors.py",
+                "references_per_hop": [
+                  214,
+                  460
+                ],
+                "symbol_path": "processors._get_callsite_thread",
+                "test_referenced": true,
+                "unresolved": 19736
+              },
+              {
+                "path": "src/structlog/processors.py",
+                "references_per_hop": [
+                  214,
+                  460
+                ],
+                "symbol_path": "processors._get_callsite_thread_name",
+                "test_referenced": true,
+                "unresolved": 19736
+              },
+              {
+                "path": "src/structlog/stdlib.py",
+                "references_per_hop": [
+                  249,
+                  324
+                ],
+                "symbol_path": "",
+                "test_referenced": true,
+                "unresolved": 27064
+              },
+              {
+                "path": "src/structlog/stdlib.py",
+                "references_per_hop": [
+                  203,
+                  333
+                ],
+                "symbol_path": "stdlib.AsyncBoundLogger._dispatch_to_sync",
+                "test_referenced": true,
+                "unresolved": 23366
+              },
+              {
+                "path": "src/structlog/stdlib.py",
+                "references_per_hop": [
+                  203,
+                  333
+                ],
+                "symbol_path": "stdlib.BoundLogger._dispatch_to_sync",
+                "test_referenced": true,
+                "unresolved": 23366
+              },
+              {
+                "path": "tests/processors/test_processors.py",
+                "references_per_hop": [
+                  0,
+                  0
+                ],
+                "symbol_path": "",
+                "test_referenced": false,
+                "unresolved": 0
+              },
+              {
+                "path": "tests/processors/test_processors.py",
+                "references_per_hop": [
+                  14,
+                  80
+                ],
+                "symbol_path": "test_processors.TestCallsiteParameterAdder",
+                "test_referenced": true,
+                "unresolved": 334
+              },
+              {
+                "path": "tests/processors/test_processors.py",
+                "references_per_hop": [
+                  90,
+                  108
+                ],
+                "symbol_path": "test_processors.TestCallsiteParameterAdder.test_async",
+                "test_referenced": true,
+                "unresolved": 6114
+              },
+              {
+                "path": "tests/processors/test_processors.py",
+                "references_per_hop": [
+                  14,
+                  80
+                ],
+                "symbol_path": "test_processors.TestCallsiteParameterAdder.test_async_native_logger",
+                "test_referenced": true,
+                "unresolved": 334
+              }
+            ],
+            "truncated": false,
+            "unresolved": 254887
+          },
+          "incomplete": [
+            {
+              "findings": [],
+              "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+              "kind": "typecheck",
+              "language": "python",
+              "outcome": "skipped",
+              "reason": "dependency_mismatch",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 0
+            },
+            {
+              "findings": [],
+              "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+              "kind": "lint",
+              "language": "python",
+              "outcome": "skipped",
+              "reason": "dependency_mismatch",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 0
+            },
+            {
+              "findings": [],
+              "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+              "kind": "coverage",
+              "language": "python",
+              "outcome": "skipped",
+              "reason": "dependency_mismatch",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 0
+            },
+            {
+              "findings": [],
+              "hint": "Dependency audit needs api.osv.dev",
+              "kind": "dependencies",
+              "language": "common",
+              "outcome": "skipped",
+              "reason": "offline",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 117
+            }
+          ],
+          "metrics": {
+            "checks": [
+              {
+                "kind": "typecheck",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 0
+              },
+              {
+                "kind": "lint",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 0
+              },
+              {
+                "kind": "coverage",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 0
+              },
+              {
+                "kind": "secrets",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 71
+              },
+              {
+                "kind": "dependencies",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 117
+              }
+            ],
+            "tool_versions": {
+              "python:.:coverage": "Coverage.py, version 7.17.1 with C extension",
+              "python:.:mypy": "mypy 2.4.1 (compiled: yes)",
+              "python:.:ruff": "ruff 0.17.3"
+            },
+            "wall_time_ms": 35785
+          },
+          "review": {
+            "base": "c6e7cad18ffe91febf2b97dac03a465134b1a5d1",
+            "chain": [
+              "rio/base"
+            ],
+            "head": "7d7708fdf39061b6f7515c13ed0404a9bc05fb33",
+            "id": "cd3b7d12a319c439",
+            "mode": "branch",
+            "profile": "rio/base",
+            "rio_version": "0.1.0",
+            "run_id": "01M6M26YDKGY8S38X7SMRFZ6GA"
+          },
+          "risks": [],
+          "schema": "rio-report-v1",
+          "status": "incomplete",
+          "summary": {
+            "fixed": 0,
+            "pre_existing": 0,
+            "suppressed": 0
+          }
+        },
+        "trusted": {
+          "checks": [
+            {
+              "findings": [
+                {
+                  "category": "defect",
+                  "evidence": [
+                    "Built-in credential pattern high-entropy"
+                  ],
+                  "evidence_level": "static_proven",
+                  "id": "3546bf6ef41f8d6042ee14d590c3c99bfd6efb61a7afae062dc7336435e625ff",
+                  "impact": "A credential may be exposed by this change",
+                  "location": {
+                    "column": 20,
+                    "line_end": 65,
+                    "line_start": 65,
+                    "occurrence_state": "new",
+                    "path": "src/structlog/_native.py",
+                    "symbol_path": ""
+                  },
+                  "locations": [
+                    {
+                      "column": 20,
+                      "line_end": 65,
+                      "line_start": 65,
+                      "occurrence_state": "new",
+                      "path": "src/structlog/_native.py",
+                      "symbol_path": ""
+                    },
+                    {
+                      "column": 17,
+                      "line_end": 68,
+                      "line_start": 68,
+                      "occurrence_state": "pre-existing",
+                      "path": "src/structlog/_native.py",
+                      "symbol_path": ""
+                    },
+                    {
+                      "column": 28,
+                      "line_end": 184,
+                      "line_start": 184,
+                      "occurrence_state": "new",
+                      "path": "src/structlog/_native.py",
+                      "symbol_path": ""
+                    },
+                    {
+                      "column": 25,
+                      "line_end": 187,
+                      "line_start": 187,
+                      "occurrence_state": "pre-existing",
+                      "path": "src/structlog/_native.py",
+                      "symbol_path": ""
+                    },
+                    {
+                      "column": 24,
+                      "line_end": 228,
+                      "line_start": 228,
+                      "occurrence_state": "new",
+                      "path": "src/structlog/_native.py",
+                      "symbol_path": ""
+                    },
+                    {
+                      "column": 21,
+                      "line_end": 231,
+                      "line_start": 231,
+                      "occurrence_state": "pre-existing",
+                      "path": "src/structlog/_native.py",
+                      "symbol_path": ""
+                    }
+                  ],
+                  "message": "Potential high-entropy credential: _ASY[REDACTED]",
+                  "rule_id": "secret/high-entropy",
+                  "severity": "error",
+                  "source": {
+                    "tool": "rio-secrets",
+                    "version": "0.1.0"
+                  },
+                  "state": "worsened",
+                  "suggested_fix": "Remove the credential and rotate it if it was active",
+                  "trigger": "_ASY[REDACTED]"
+                },
+                {
+                  "category": "defect",
+                  "evidence": [
+                    "Built-in credential pattern high-entropy"
+                  ],
+                  "evidence_level": "static_proven",
+                  "id": "6793e5b8a3fbb6001c32ab4ce830b9b1e594c4f0335667aa655729916fd0d00d",
+                  "impact": "A credential may be exposed by this change",
+                  "location": {
+                    "column": 24,
+                    "line_end": 433,
+                    "line_start": 433,
+                    "occurrence_state": "new",
+                    "path": "src/structlog/stdlib.py",
+                    "symbol_path": ""
+                  },
+                  "locations": [
+                    {
+                      "column": 24,
+                      "line_end": 433,
+                      "line_start": 433,
+                      "occurrence_state": "new",
+                      "path": "src/structlog/stdlib.py",
+                      "symbol_path": ""
+                    },
+                    {
+                      "column": 21,
+                      "line_end": 436,
+                      "line_start": 436,
+                      "occurrence_state": "pre-existing",
+                      "path": "src/structlog/stdlib.py",
+                      "symbol_path": ""
+                    },
+                    {
+                      "column": 24,
+                      "line_end": 646,
+                      "line_start": 646,
+                      "occurrence_state": "new",
+                      "path": "src/structlog/stdlib.py",
+                      "symbol_path": ""
+                    },
+                    {
+                      "column": 21,
+                      "line_end": 649,
+                      "line_start": 649,
+                      "occurrence_state": "pre-existing",
+                      "path": "src/structlog/stdlib.py",
+                      "symbol_path": ""
+                    }
+                  ],
+                  "message": "Potential high-entropy credential: _ASY[REDACTED]",
+                  "rule_id": "secret/high-entropy",
+                  "severity": "error",
+                  "source": {
+                    "tool": "rio-secrets",
+                    "version": "0.1.0"
+                  },
+                  "state": "worsened",
+                  "suggested_fix": "Remove the credential and rotate it if it was active",
+                  "trigger": "_ASY[REDACTED]"
+                }
+              ],
+              "kind": "secrets",
+              "language": "common",
+              "outcome": "findings",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 72
+            },
+            {
+              "findings": [],
+              "hint": "Dependency audit needs api.osv.dev",
+              "kind": "dependencies",
+              "language": "common",
+              "outcome": "skipped",
+              "reason": "offline",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 315
+            },
+            {
+              "dependency_state": "trusted",
+              "findings": [
+                {
+                  "category": "defect",
+                  "evidence": [
+                    "ruff diagnostic"
+                  ],
+                  "evidence_level": "static_proven",
+                  "id": "04842a33b0aeedc6dc8c556b05ac3a8b53bf057e1af2441b8dabf785b9e13768",
+                  "location": {
+                    "column": 1,
+                    "line_end": 1,
+                    "line_start": 1,
+                    "occurrence_state": "unclassified",
+                    "path": "src/structlog/contextvars.py",
+                    "symbol_path": ""
+                  },
+                  "locations": [
+                    {
+                      "column": 1,
+                      "line_end": 1,
+                      "line_start": 1,
+                      "occurrence_state": "unclassified",
+                      "path": "src/structlog/contextvars.py",
+                      "symbol_path": ""
+                    }
+                  ],
+                  "message": "Missing copyright notice at top of file",
+                  "rule_id": "lint/ruff/CPY001",
+                  "severity": "error",
+                  "source": {
+                    "tool": "ruff",
+                    "version": "ruff 0.17.3"
+                  },
+                  "state": "unclassified",
+                  "trigger": ""
+                },
+                {
+                  "category": "defect",
+                  "evidence": [
+                    "ruff diagnostic"
+                  ],
+                  "evidence_level": "static_proven",
+                  "id": "05813de22ae1defcfabdf2e97427a5dc87ff8101a77869b4d7b2f5a0a3bfabd0",
+                  "location": {
+                    "column": 8,
+                    "line_end": 12,
+                    "line_start": 12,
+                    "occurrence_state": "unclassified",
+                    "path": "src/structlog/processors.py",
+                    "symbol_path": ""
+                  },
+                  "locations": [
+                    {
+                      "column": 8,
+                      "line_end": 12,
+                      "line_start": 12,
+                      "occurrence_state": "unclassified",
+                      "path": "src/structlog/processors.py",
+                      "symbol_path": ""
+                    }
+                  ],
+                  "message": "`datetime` should be imported as `dt`",
+                  "rule_id": "lint/ruff/ICN001",
+                  "severity": "error",
+                  "source": {
+                    "tool": "ruff",
+                    "version": "ruff 0.17.3"
+                  },
+                  "state": "unclassified",
+                  "trigger": ""
+                },
+                {
+                  "category": "defect",
+                  "evidence": [
+                    "ruff diagnostic"
+                  ],
+                  "evidence_level": "static_proven",
+                  "id": "13d059ecd7d2fdb30517c4d39b8d8f75fc5283e7b2fe70618d6decab6eb6a061",
+                  "location": {
+                    "column": 1,
+                    "line_end": 1,
+                    "line_start": 1,
+                    "occurrence_state": "unclassified",
+                    "path": "src/structlog/_native.py",
+                    "symbol_path": ""
+                  },
+                  "locations": [
+                    {
+                      "column": 1,
+                      "line_end": 1,
+                      "line_start": 1,
+                      "occurrence_state": "unclassified",
+                      "path": "src/structlog/_native.py",
+                      "symbol_path": ""
+                    }
+                  ],
+                  "message": "Missing copyright notice at top of file",
+                  "rule_id": "lint/ruff/CPY001",
+                  "severity": "error",
+                  "source": {
+                    "tool": "ruff",
+                    "version": "ruff 0.17.3"
+                  },
+                  "state": "unclassified",
+                  "trigger": ""
+                },
+                {
+                  "category": "defect",
+                  "evidence": [
+                    "ruff diagnostic"
+                  ],
+                  "evidence_level": "static_proven",
+                  "id": "92f39487e0b02eb5bf08a8107cac7499b7e5d634b184fb305eeea03664d85868",
+                  "location": {
+                    "column": 1,
+                    "line_end": 1,
+                    "line_start": 1,
+                    "occurrence_state": "unclassified",
+                    "path": "src/structlog/processors.py",
+                    "symbol_path": ""
+                  },
+                  "locations": [
+                    {
+                      "column": 1,
+                      "line_end": 1,
+                      "line_start": 1,
+                      "occurrence_state": "unclassified",
+                      "path": "src/structlog/processors.py",
+                      "symbol_path": ""
+                    }
+                  ],
+                  "message": "Missing copyright notice at top of file",
+                  "rule_id": "lint/ruff/CPY001",
+                  "severity": "error",
+                  "source": {
+                    "tool": "ruff",
+                    "version": "ruff 0.17.3"
+                  },
+                  "state": "unclassified",
+                  "trigger": ""
+                },
+                {
+                  "category": "defect",
+                  "evidence": [
+                    "ruff diagnostic"
+                  ],
+                  "evidence_level": "static_proven",
+                  "id": "96853e4c87f0515b23a9d9cc3e5e6d5ebb4cf9130639e9bba6db73f3ff658d05",
+                  "location": {
+                    "column": 9,
+                    "line_end": 351,
+                    "line_start": 351,
+                    "occurrence_state": "unclassified",
+                    "path": "src/structlog/stdlib.py",
+                    "symbol_path": "stdlib.BoundLogger.makeRecord"
+                  },
+                  "locations": [
+                    {
+                      "column": 9,
+                      "line_end": 351,
+                      "line_start": 351,
+                      "occurrence_state": "unclassified",
+                      "path": "src/structlog/stdlib.py",
+                      "symbol_path": "stdlib.BoundLogger.makeRecord"
+                    }
+                  ],
+                  "message": "Too many positional arguments (9 > 5)",
+                  "rule_id": "lint/ruff/PLR0917",
+                  "severity": "error",
+                  "source": {
+                    "tool": "ruff",
+                    "version": "ruff 0.17.3"
+                  },
+                  "state": "unclassified",
+                  "trigger": ""
+                },
+                {
+                  "category": "defect",
+                  "evidence": [
+                    "ruff diagnostic"
+                  ],
+                  "evidence_level": "static_proven",
+                  "id": "d82eb174ad58036091f13fc32f6e801d4898078c4f40a36f76defe749a252d34",
+                  "location": {
+                    "column": 9,
+                    "line_end": 1077,
+                    "line_start": 1077,
+                    "occurrence_state": "unclassified",
+                    "path": "src/structlog/stdlib.py",
+                    "symbol_path": "stdlib.ProcessorFormatter.__init__"
+                  },
+                  "locations": [
+                    {
+                      "column": 9,
+                      "line_end": 1077,
+                      "line_start": 1077,
+                      "occurrence_state": "unclassified",
+                      "path": "src/structlog/stdlib.py",
+                      "symbol_path": "stdlib.ProcessorFormatter.__init__"
+                    }
+                  ],
+                  "message": "Too many positional arguments (8 > 5)",
+                  "rule_id": "lint/ruff/PLR0917",
+                  "severity": "error",
+                  "source": {
+                    "tool": "ruff",
+                    "version": "ruff 0.17.3"
+                  },
+                  "state": "unclassified",
+                  "trigger": ""
+                },
+                {
+                  "category": "defect",
+                  "evidence": [
+                    "ruff diagnostic"
+                  ],
+                  "evidence_level": "static_proven",
+                  "id": "db0c8f45a947cc94ffac90f83296a774862aac9204d429b55a0ccda6d6082d42",
+                  "location": {
+                    "column": 1,
+                    "line_end": 1,
+                    "line_start": 1,
+                    "occurrence_state": "unclassified",
+                    "path": "src/structlog/stdlib.py",
+                    "symbol_path": ""
+                  },
+                  "locations": [
+                    {
+                      "column": 1,
+                      "line_end": 1,
+                      "line_start": 1,
+                      "occurrence_state": "unclassified",
+                      "path": "src/structlog/stdlib.py",
+                      "symbol_path": ""
+                    }
+                  ],
+                  "message": "Missing copyright notice at top of file",
+                  "rule_id": "lint/ruff/CPY001",
+                  "severity": "error",
+                  "source": {
+                    "tool": "ruff",
+                    "version": "ruff 0.17.3"
+                  },
+                  "state": "unclassified",
+                  "trigger": ""
+                },
+                {
+                  "category": "defect",
+                  "evidence": [
+                    "ruff diagnostic"
+                  ],
+                  "evidence_level": "static_proven",
+                  "id": "f67e6f74cb224a9052a2c45462ef24503eff351efcf8946a6df141c82fe473a4",
+                  "location": {
+                    "column": 1,
+                    "line_end": 1,
+                    "line_start": 1,
+                    "occurrence_state": "unclassified",
+                    "path": "tests/processors/test_processors.py",
+                    "symbol_path": ""
+                  },
+                  "locations": [
+                    {
+                      "column": 1,
+                      "line_end": 1,
+                      "line_start": 1,
+                      "occurrence_state": "unclassified",
+                      "path": "tests/processors/test_processors.py",
+                      "symbol_path": ""
+                    }
+                  ],
+                  "message": "Missing copyright notice at top of file",
+                  "rule_id": "lint/ruff/CPY001",
+                  "severity": "error",
+                  "source": {
+                    "tool": "ruff",
+                    "version": "ruff 0.17.3"
+                  },
+                  "state": "unclassified",
+                  "trigger": ""
+                }
+              ],
+              "kind": "lint",
+              "language": "python",
+              "outcome": "findings",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 9082
+            },
+            {
+              "dependency_state": "trusted",
+              "findings": [
+                {
+                  "category": "defect",
+                  "evidence": [
+                    "mypy diagnostic"
+                  ],
+                  "evidence_level": "static_proven",
+                  "id": "59fe4bf212cd3c21217d2e6553407046a044161ed8ac0d462d6ed114f4b1a367",
+                  "location": {
+                    "column": 1,
+                    "line_end": 40,
+                    "line_start": 40,
+                    "occurrence_state": "unclassified",
+                    "path": "show_off.py",
+                    "symbol_path": "show_off.make_call_stack_more_impressive"
+                  },
+                  "locations": [
+                    {
+                      "column": 1,
+                      "line_end": 40,
+                      "line_start": 40,
+                      "occurrence_state": "unclassified",
+                      "path": "show_off.py",
+                      "symbol_path": "show_off.make_call_stack_more_impressive"
+                    }
+                  ],
+                  "message": "Function is missing a return type annotation",
+                  "rule_id": "typecheck/mypy/no-untyped-def",
+                  "severity": "error",
+                  "source": {
+                    "tool": "mypy",
+                    "version": "mypy 2.4.1 (compiled: yes)"
+                  },
+                  "state": "unclassified",
+                  "trigger": ""
+                },
+                {
+                  "category": "defect",
+                  "evidence": [
+                    "mypy diagnostic"
+                  ],
+                  "evidence_level": "static_proven",
+                  "id": "7ca01ce62540376560c728bb913c527e3e4199d7e4c00cb03e132a6d45259846",
+                  "location": {
+                    "column": 1,
+                    "line_end": 107,
+                    "line_start": 107,
+                    "occurrence_state": "unclassified",
+                    "path": "docs/conf.py",
+                    "symbol_path": "conf.html_theme_options"
+                  },
+                  "locations": [
+                    {
+                      "column": 1,
+                      "line_end": 107,
+                      "line_start": 107,
+                      "occurrence_state": "unclassified",
+                      "path": "docs/conf.py",
+                      "symbol_path": "conf.html_theme_options"
+                    }
+                  ],
+                  "message": "Need type annotation for \"html_theme_options\" (hint: \"html_theme_options: dict[<type>, <type>] = ...\")",
+                  "rule_id": "typecheck/mypy/var-annotated",
+                  "severity": "error",
+                  "source": {
+                    "tool": "mypy",
+                    "version": "mypy 2.4.1 (compiled: yes)"
+                  },
+                  "state": "unclassified",
+                  "trigger": ""
+                },
+                {
+                  "category": "defect",
+                  "evidence": [
+                    "mypy diagnostic"
+                  ],
+                  "evidence_level": "static_proven",
+                  "id": "fdf1d09f6d63ab6a1c0e170f535de9685a8980fbdccf0283e468fc6da085e769",
+                  "location": {
+                    "column": 1,
+                    "line_end": 49,
+                    "line_start": 49,
+                    "occurrence_state": "unclassified",
+                    "path": "show_off.py",
+                    "symbol_path": ""
+                  },
+                  "locations": [
+                    {
+                      "column": 1,
+                      "line_end": 49,
+                      "line_start": 49,
+                      "occurrence_state": "unclassified",
+                      "path": "show_off.py",
+                      "symbol_path": ""
+                    }
+                  ],
+                  "message": "Call to untyped function \"make_call_stack_more_impressive\" in typed context",
+                  "rule_id": "typecheck/mypy/no-untyped-call",
+                  "severity": "error",
+                  "source": {
+                    "tool": "mypy",
+                    "version": "mypy 2.4.1 (compiled: yes)"
+                  },
+                  "state": "unclassified",
+                  "trigger": ""
+                }
+              ],
+              "kind": "typecheck",
+              "language": "python",
+              "outcome": "findings",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 14900
+            },
+            {
+              "dependency_state": "trusted",
+              "findings": [],
+              "kind": "coverage",
+              "language": "python",
+              "outcome": "passed",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 22788
+            }
+          ],
+          "deferred": [],
+          "excluded": [],
+          "findings": [
+            {
+              "category": "defect",
+              "evidence": [
+                "ruff diagnostic"
+              ],
+              "evidence_level": "static_proven",
+              "id": "04842a33b0aeedc6dc8c556b05ac3a8b53bf057e1af2441b8dabf785b9e13768",
+              "location": {
+                "column": 1,
+                "line_end": 1,
+                "line_start": 1,
+                "occurrence_state": "unclassified",
+                "path": "src/structlog/contextvars.py",
+                "symbol_path": ""
+              },
+              "locations": [
+                {
+                  "column": 1,
+                  "line_end": 1,
+                  "line_start": 1,
+                  "occurrence_state": "unclassified",
+                  "path": "src/structlog/contextvars.py",
+                  "symbol_path": ""
+                }
+              ],
+              "message": "Missing copyright notice at top of file",
+              "rule_id": "lint/ruff/CPY001",
+              "severity": "error",
+              "source": {
+                "tool": "ruff",
+                "version": "ruff 0.17.3"
+              },
+              "state": "unclassified",
+              "trigger": ""
+            },
+            {
+              "category": "defect",
+              "evidence": [
+                "ruff diagnostic"
+              ],
+              "evidence_level": "static_proven",
+              "id": "05813de22ae1defcfabdf2e97427a5dc87ff8101a77869b4d7b2f5a0a3bfabd0",
+              "location": {
+                "column": 8,
+                "line_end": 12,
+                "line_start": 12,
+                "occurrence_state": "unclassified",
+                "path": "src/structlog/processors.py",
+                "symbol_path": ""
+              },
+              "locations": [
+                {
+                  "column": 8,
+                  "line_end": 12,
+                  "line_start": 12,
+                  "occurrence_state": "unclassified",
+                  "path": "src/structlog/processors.py",
+                  "symbol_path": ""
+                }
+              ],
+              "message": "`datetime` should be imported as `dt`",
+              "rule_id": "lint/ruff/ICN001",
+              "severity": "error",
+              "source": {
+                "tool": "ruff",
+                "version": "ruff 0.17.3"
+              },
+              "state": "unclassified",
+              "trigger": ""
+            },
+            {
+              "category": "defect",
+              "evidence": [
+                "ruff diagnostic"
+              ],
+              "evidence_level": "static_proven",
+              "id": "13d059ecd7d2fdb30517c4d39b8d8f75fc5283e7b2fe70618d6decab6eb6a061",
+              "location": {
+                "column": 1,
+                "line_end": 1,
+                "line_start": 1,
+                "occurrence_state": "unclassified",
+                "path": "src/structlog/_native.py",
+                "symbol_path": ""
+              },
+              "locations": [
+                {
+                  "column": 1,
+                  "line_end": 1,
+                  "line_start": 1,
+                  "occurrence_state": "unclassified",
+                  "path": "src/structlog/_native.py",
+                  "symbol_path": ""
+                }
+              ],
+              "message": "Missing copyright notice at top of file",
+              "rule_id": "lint/ruff/CPY001",
+              "severity": "error",
+              "source": {
+                "tool": "ruff",
+                "version": "ruff 0.17.3"
+              },
+              "state": "unclassified",
+              "trigger": ""
+            },
+            {
+              "category": "defect",
+              "evidence": [
+                "Built-in credential pattern high-entropy"
+              ],
+              "evidence_level": "static_proven",
+              "id": "3546bf6ef41f8d6042ee14d590c3c99bfd6efb61a7afae062dc7336435e625ff",
+              "impact": "A credential may be exposed by this change",
+              "location": {
+                "column": 20,
+                "line_end": 65,
+                "line_start": 65,
+                "occurrence_state": "new",
+                "path": "src/structlog/_native.py",
+                "symbol_path": ""
+              },
+              "locations": [
+                {
+                  "column": 20,
+                  "line_end": 65,
+                  "line_start": 65,
+                  "occurrence_state": "new",
+                  "path": "src/structlog/_native.py",
+                  "symbol_path": ""
+                },
+                {
+                  "column": 17,
+                  "line_end": 68,
+                  "line_start": 68,
+                  "occurrence_state": "pre-existing",
+                  "path": "src/structlog/_native.py",
+                  "symbol_path": ""
+                },
+                {
+                  "column": 28,
+                  "line_end": 184,
+                  "line_start": 184,
+                  "occurrence_state": "new",
+                  "path": "src/structlog/_native.py",
+                  "symbol_path": ""
+                },
+                {
+                  "column": 25,
+                  "line_end": 187,
+                  "line_start": 187,
+                  "occurrence_state": "pre-existing",
+                  "path": "src/structlog/_native.py",
+                  "symbol_path": ""
+                },
+                {
+                  "column": 24,
+                  "line_end": 228,
+                  "line_start": 228,
+                  "occurrence_state": "new",
+                  "path": "src/structlog/_native.py",
+                  "symbol_path": ""
+                },
+                {
+                  "column": 21,
+                  "line_end": 231,
+                  "line_start": 231,
+                  "occurrence_state": "pre-existing",
+                  "path": "src/structlog/_native.py",
+                  "symbol_path": ""
+                }
+              ],
+              "message": "Potential high-entropy credential: _ASY[REDACTED]",
+              "rule_id": "secret/high-entropy",
+              "severity": "error",
+              "source": {
+                "tool": "rio-secrets",
+                "version": "0.1.0"
+              },
+              "state": "worsened",
+              "suggested_fix": "Remove the credential and rotate it if it was active",
+              "trigger": "_ASY[REDACTED]"
+            },
+            {
+              "category": "defect",
+              "evidence": [
+                "mypy diagnostic"
+              ],
+              "evidence_level": "static_proven",
+              "id": "59fe4bf212cd3c21217d2e6553407046a044161ed8ac0d462d6ed114f4b1a367",
+              "location": {
+                "column": 1,
+                "line_end": 40,
+                "line_start": 40,
+                "occurrence_state": "unclassified",
+                "path": "show_off.py",
+                "symbol_path": "show_off.make_call_stack_more_impressive"
+              },
+              "locations": [
+                {
+                  "column": 1,
+                  "line_end": 40,
+                  "line_start": 40,
+                  "occurrence_state": "unclassified",
+                  "path": "show_off.py",
+                  "symbol_path": "show_off.make_call_stack_more_impressive"
+                }
+              ],
+              "message": "Function is missing a return type annotation",
+              "rule_id": "typecheck/mypy/no-untyped-def",
+              "severity": "error",
+              "source": {
+                "tool": "mypy",
+                "version": "mypy 2.4.1 (compiled: yes)"
+              },
+              "state": "unclassified",
+              "trigger": ""
+            },
+            {
+              "category": "defect",
+              "evidence": [
+                "Built-in credential pattern high-entropy"
+              ],
+              "evidence_level": "static_proven",
+              "id": "6793e5b8a3fbb6001c32ab4ce830b9b1e594c4f0335667aa655729916fd0d00d",
+              "impact": "A credential may be exposed by this change",
+              "location": {
+                "column": 24,
+                "line_end": 433,
+                "line_start": 433,
+                "occurrence_state": "new",
+                "path": "src/structlog/stdlib.py",
+                "symbol_path": ""
+              },
+              "locations": [
+                {
+                  "column": 24,
+                  "line_end": 433,
+                  "line_start": 433,
+                  "occurrence_state": "new",
+                  "path": "src/structlog/stdlib.py",
+                  "symbol_path": ""
+                },
+                {
+                  "column": 21,
+                  "line_end": 436,
+                  "line_start": 436,
+                  "occurrence_state": "pre-existing",
+                  "path": "src/structlog/stdlib.py",
+                  "symbol_path": ""
+                },
+                {
+                  "column": 24,
+                  "line_end": 646,
+                  "line_start": 646,
+                  "occurrence_state": "new",
+                  "path": "src/structlog/stdlib.py",
+                  "symbol_path": ""
+                },
+                {
+                  "column": 21,
+                  "line_end": 649,
+                  "line_start": 649,
+                  "occurrence_state": "pre-existing",
+                  "path": "src/structlog/stdlib.py",
+                  "symbol_path": ""
+                }
+              ],
+              "message": "Potential high-entropy credential: _ASY[REDACTED]",
+              "rule_id": "secret/high-entropy",
+              "severity": "error",
+              "source": {
+                "tool": "rio-secrets",
+                "version": "0.1.0"
+              },
+              "state": "worsened",
+              "suggested_fix": "Remove the credential and rotate it if it was active",
+              "trigger": "_ASY[REDACTED]"
+            },
+            {
+              "category": "defect",
+              "evidence": [
+                "mypy diagnostic"
+              ],
+              "evidence_level": "static_proven",
+              "id": "7ca01ce62540376560c728bb913c527e3e4199d7e4c00cb03e132a6d45259846",
+              "location": {
+                "column": 1,
+                "line_end": 107,
+                "line_start": 107,
+                "occurrence_state": "unclassified",
+                "path": "docs/conf.py",
+                "symbol_path": "conf.html_theme_options"
+              },
+              "locations": [
+                {
+                  "column": 1,
+                  "line_end": 107,
+                  "line_start": 107,
+                  "occurrence_state": "unclassified",
+                  "path": "docs/conf.py",
+                  "symbol_path": "conf.html_theme_options"
+                }
+              ],
+              "message": "Need type annotation for \"html_theme_options\" (hint: \"html_theme_options: dict[<type>, <type>] = ...\")",
+              "rule_id": "typecheck/mypy/var-annotated",
+              "severity": "error",
+              "source": {
+                "tool": "mypy",
+                "version": "mypy 2.4.1 (compiled: yes)"
+              },
+              "state": "unclassified",
+              "trigger": ""
+            },
+            {
+              "category": "defect",
+              "evidence": [
+                "ruff diagnostic"
+              ],
+              "evidence_level": "static_proven",
+              "id": "92f39487e0b02eb5bf08a8107cac7499b7e5d634b184fb305eeea03664d85868",
+              "location": {
+                "column": 1,
+                "line_end": 1,
+                "line_start": 1,
+                "occurrence_state": "unclassified",
+                "path": "src/structlog/processors.py",
+                "symbol_path": ""
+              },
+              "locations": [
+                {
+                  "column": 1,
+                  "line_end": 1,
+                  "line_start": 1,
+                  "occurrence_state": "unclassified",
+                  "path": "src/structlog/processors.py",
+                  "symbol_path": ""
+                }
+              ],
+              "message": "Missing copyright notice at top of file",
+              "rule_id": "lint/ruff/CPY001",
+              "severity": "error",
+              "source": {
+                "tool": "ruff",
+                "version": "ruff 0.17.3"
+              },
+              "state": "unclassified",
+              "trigger": ""
+            },
+            {
+              "category": "defect",
+              "evidence": [
+                "ruff diagnostic"
+              ],
+              "evidence_level": "static_proven",
+              "id": "96853e4c87f0515b23a9d9cc3e5e6d5ebb4cf9130639e9bba6db73f3ff658d05",
+              "location": {
+                "column": 9,
+                "line_end": 351,
+                "line_start": 351,
+                "occurrence_state": "unclassified",
+                "path": "src/structlog/stdlib.py",
+                "symbol_path": "stdlib.BoundLogger.makeRecord"
+              },
+              "locations": [
+                {
+                  "column": 9,
+                  "line_end": 351,
+                  "line_start": 351,
+                  "occurrence_state": "unclassified",
+                  "path": "src/structlog/stdlib.py",
+                  "symbol_path": "stdlib.BoundLogger.makeRecord"
+                }
+              ],
+              "message": "Too many positional arguments (9 > 5)",
+              "rule_id": "lint/ruff/PLR0917",
+              "severity": "error",
+              "source": {
+                "tool": "ruff",
+                "version": "ruff 0.17.3"
+              },
+              "state": "unclassified",
+              "trigger": ""
+            },
+            {
+              "category": "defect",
+              "evidence": [
+                "ruff diagnostic"
+              ],
+              "evidence_level": "static_proven",
+              "id": "d82eb174ad58036091f13fc32f6e801d4898078c4f40a36f76defe749a252d34",
+              "location": {
+                "column": 9,
+                "line_end": 1077,
+                "line_start": 1077,
+                "occurrence_state": "unclassified",
+                "path": "src/structlog/stdlib.py",
+                "symbol_path": "stdlib.ProcessorFormatter.__init__"
+              },
+              "locations": [
+                {
+                  "column": 9,
+                  "line_end": 1077,
+                  "line_start": 1077,
+                  "occurrence_state": "unclassified",
+                  "path": "src/structlog/stdlib.py",
+                  "symbol_path": "stdlib.ProcessorFormatter.__init__"
+                }
+              ],
+              "message": "Too many positional arguments (8 > 5)",
+              "rule_id": "lint/ruff/PLR0917",
+              "severity": "error",
+              "source": {
+                "tool": "ruff",
+                "version": "ruff 0.17.3"
+              },
+              "state": "unclassified",
+              "trigger": ""
+            },
+            {
+              "category": "defect",
+              "evidence": [
+                "ruff diagnostic"
+              ],
+              "evidence_level": "static_proven",
+              "id": "db0c8f45a947cc94ffac90f83296a774862aac9204d429b55a0ccda6d6082d42",
+              "location": {
+                "column": 1,
+                "line_end": 1,
+                "line_start": 1,
+                "occurrence_state": "unclassified",
+                "path": "src/structlog/stdlib.py",
+                "symbol_path": ""
+              },
+              "locations": [
+                {
+                  "column": 1,
+                  "line_end": 1,
+                  "line_start": 1,
+                  "occurrence_state": "unclassified",
+                  "path": "src/structlog/stdlib.py",
+                  "symbol_path": ""
+                }
+              ],
+              "message": "Missing copyright notice at top of file",
+              "rule_id": "lint/ruff/CPY001",
+              "severity": "error",
+              "source": {
+                "tool": "ruff",
+                "version": "ruff 0.17.3"
+              },
+              "state": "unclassified",
+              "trigger": ""
+            },
+            {
+              "category": "defect",
+              "evidence": [
+                "ruff diagnostic"
+              ],
+              "evidence_level": "static_proven",
+              "id": "f67e6f74cb224a9052a2c45462ef24503eff351efcf8946a6df141c82fe473a4",
+              "location": {
+                "column": 1,
+                "line_end": 1,
+                "line_start": 1,
+                "occurrence_state": "unclassified",
+                "path": "tests/processors/test_processors.py",
+                "symbol_path": ""
+              },
+              "locations": [
+                {
+                  "column": 1,
+                  "line_end": 1,
+                  "line_start": 1,
+                  "occurrence_state": "unclassified",
+                  "path": "tests/processors/test_processors.py",
+                  "symbol_path": ""
+                }
+              ],
+              "message": "Missing copyright notice at top of file",
+              "rule_id": "lint/ruff/CPY001",
+              "severity": "error",
+              "source": {
+                "tool": "ruff",
+                "version": "ruff 0.17.3"
+              },
+              "state": "unclassified",
+              "trigger": ""
+            },
+            {
+              "category": "defect",
+              "evidence": [
+                "mypy diagnostic"
+              ],
+              "evidence_level": "static_proven",
+              "id": "fdf1d09f6d63ab6a1c0e170f535de9685a8980fbdccf0283e468fc6da085e769",
+              "location": {
+                "column": 1,
+                "line_end": 49,
+                "line_start": 49,
+                "occurrence_state": "unclassified",
+                "path": "show_off.py",
+                "symbol_path": ""
+              },
+              "locations": [
+                {
+                  "column": 1,
+                  "line_end": 49,
+                  "line_start": 49,
+                  "occurrence_state": "unclassified",
+                  "path": "show_off.py",
+                  "symbol_path": ""
+                }
+              ],
+              "message": "Call to untyped function \"make_call_stack_more_impressive\" in typed context",
+              "rule_id": "typecheck/mypy/no-untyped-call",
+              "severity": "error",
+              "source": {
+                "tool": "mypy",
+                "version": "mypy 2.4.1 (compiled: yes)"
+              },
+              "state": "unclassified",
+              "trigger": ""
+            }
+          ],
+          "footer": {
+            "notes": [
+              "Intent inference is deferred: no_endpoint",
+              "lint .: dependencies_trusted: results use unverified dependencies",
+              "typecheck .: dependencies_trusted: results use unverified dependencies",
+              "Graph references use syntax and text; no language server was used",
+              "Offline applies to Rio; tool and test processes were not network-isolated",
+              "dependencies_trusted: results were computed against unverified dependencies"
+            ],
+            "suppressions": [],
+            "tool_versions": {
+              "python:.:coverage": "Coverage.py, version 7.17.1 with C extension",
+              "python:.:mypy": "mypy 2.4.1 (compiled: yes)",
+              "python:.:ruff": "ruff 0.17.3"
+            }
+          },
+          "impact": {
+            "symbols": [
+              {
+                "path": "src/structlog/_native.py",
+                "references_per_hop": [
+                  180,
+                  212
+                ],
+                "symbol_path": "",
+                "test_referenced": true,
+                "unresolved": 16135
+              },
+              {
+                "path": "src/structlog/_native.py",
+                "references_per_hop": [
+                  198,
+                  448
+                ],
+                "symbol_path": "_native._make_filtering_bound_logger.alog",
+                "test_referenced": true,
+                "unresolved": 20596
+              },
+              {
+                "path": "src/structlog/_native.py",
+                "references_per_hop": [
+                  166,
+                  212
+                ],
+                "symbol_path": "_native._make_filtering_bound_logger.make_method.ameth",
+                "test_referenced": true,
+                "unresolved": 13811
+              },
+              {
+                "path": "src/structlog/_native.py",
+                "references_per_hop": [
+                  205,
+                  441
+                ],
+                "symbol_path": "_native.aexception",
+                "test_referenced": true,
+                "unresolved": 21124
+              },
+              {
+                "path": "src/structlog/contextvars.py",
+                "references_per_hop": [
+                  149,
+                  402
+                ],
+                "symbol_path": "",
+                "test_referenced": true,
+                "unresolved": 19902
+              },
+              {
+                "path": "src/structlog/contextvars.py",
+                "references_per_hop": [
+                  110,
+                  410
+                ],
+                "symbol_path": "contextvars._ASYNC_CALLING_THREAD",
+                "test_referenced": true,
+                "unresolved": 15955
+              },
+              {
+                "path": "src/structlog/processors.py",
+                "references_per_hop": [
+                  329,
+                  487
+                ],
+                "symbol_path": "",
+                "test_referenced": true,
+                "unresolved": 27314
+              },
+              {
+                "path": "src/structlog/processors.py",
+                "references_per_hop": [
+                  214,
+                  460
+                ],
+                "symbol_path": "processors._get_callsite_thread",
+                "test_referenced": true,
+                "unresolved": 19736
+              },
+              {
+                "path": "src/structlog/processors.py",
+                "references_per_hop": [
+                  214,
+                  460
+                ],
+                "symbol_path": "processors._get_callsite_thread_name",
+                "test_referenced": true,
+                "unresolved": 19736
+              },
+              {
+                "path": "src/structlog/stdlib.py",
+                "references_per_hop": [
+                  249,
+                  324
+                ],
+                "symbol_path": "",
+                "test_referenced": true,
+                "unresolved": 27064
+              },
+              {
+                "path": "src/structlog/stdlib.py",
+                "references_per_hop": [
+                  203,
+                  333
+                ],
+                "symbol_path": "stdlib.AsyncBoundLogger._dispatch_to_sync",
+                "test_referenced": true,
+                "unresolved": 23366
+              },
+              {
+                "path": "src/structlog/stdlib.py",
+                "references_per_hop": [
+                  203,
+                  333
+                ],
+                "symbol_path": "stdlib.BoundLogger._dispatch_to_sync",
+                "test_referenced": true,
+                "unresolved": 23366
+              },
+              {
+                "path": "tests/processors/test_processors.py",
+                "references_per_hop": [
+                  0,
+                  0
+                ],
+                "symbol_path": "",
+                "test_referenced": false,
+                "unresolved": 0
+              },
+              {
+                "path": "tests/processors/test_processors.py",
+                "references_per_hop": [
+                  14,
+                  80
+                ],
+                "symbol_path": "test_processors.TestCallsiteParameterAdder",
+                "test_referenced": true,
+                "unresolved": 334
+              },
+              {
+                "path": "tests/processors/test_processors.py",
+                "references_per_hop": [
+                  90,
+                  108
+                ],
+                "symbol_path": "test_processors.TestCallsiteParameterAdder.test_async",
+                "test_referenced": true,
+                "unresolved": 6114
+              },
+              {
+                "path": "tests/processors/test_processors.py",
+                "references_per_hop": [
+                  14,
+                  80
+                ],
+                "symbol_path": "test_processors.TestCallsiteParameterAdder.test_async_native_logger",
+                "test_referenced": true,
+                "unresolved": 334
+              }
+            ],
+            "truncated": false,
+            "unresolved": 254887
+          },
+          "incomplete": [
+            {
+              "findings": [],
+              "hint": "Dependency audit needs api.osv.dev",
+              "kind": "dependencies",
+              "language": "common",
+              "outcome": "skipped",
+              "reason": "offline",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 315
+            }
+          ],
+          "metrics": {
+            "checks": [
+              {
+                "kind": "secrets",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 72
+              },
+              {
+                "kind": "dependencies",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 315
+              },
+              {
+                "kind": "lint",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 9082
+              },
+              {
+                "kind": "typecheck",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 14900
+              },
+              {
+                "kind": "coverage",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 22788
+              }
+            ],
+            "tool_versions": {
+              "python:.:coverage": "Coverage.py, version 7.17.1 with C extension",
+              "python:.:mypy": "mypy 2.4.1 (compiled: yes)",
+              "python:.:ruff": "ruff 0.17.3"
+            },
+            "wall_time_ms": 68991
+          },
+          "review": {
+            "base": "c6e7cad18ffe91febf2b97dac03a465134b1a5d1",
+            "chain": [
+              "acceptance-structlog-trusted",
+              "rio/base"
+            ],
+            "head": "7d7708fdf39061b6f7515c13ed0404a9bc05fb33",
+            "id": "671b78fa89d139ee",
+            "mode": "branch",
+            "profile": "acceptance-structlog-trusted",
+            "rio_version": "0.1.0",
+            "run_id": "01M6M28BXR624VJ4G26FS6CHJE"
+          },
+          "risks": [],
+          "schema": "rio-report-v1",
+          "status": "incomplete",
+          "summary": {
+            "fixed": 0,
+            "pre_existing": 0,
+            "suppressed": 0
+          }
+        }
+      },
+      "evidence_paths": [
+        "/tmp/rio-acceptance-evidence/structlog/pr-805-default.json",
+        "/tmp/rio-acceptance-evidence/structlog/pr-805-trusted.json"
+      ],
+      "independent_tests_note": "Isolated full processor tests fail 15 process_name comparisons on both base (158 passed) and head (159 passed). Three async-focused head cases pass. The full suite inside Rio passes 925 tests with20 skips, so the isolated process_name failures are pre-existing/environment-dependent, not a demonstrated introduced defect.",
+      "coverage_suite_summary": "925 passed, 20 skipped, 20 warnings in 10.96s",
+      "remediation_confirmation": {
+        "binary_sha256": "9a97b77ddfac5dfe165fa611cbabe6eeb84ae33878e2dd8f6fdfca456ca6c32f",
+        "exit_code": 0,
+        "report": {
+          "checks": [
+            {
+              "findings": [],
+              "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+              "kind": "typecheck",
+              "language": "python",
+              "outcome": "skipped",
+              "reason": "dependency_mismatch",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 0
+            },
+            {
+              "findings": [],
+              "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+              "kind": "lint",
+              "language": "python",
+              "outcome": "skipped",
+              "reason": "dependency_mismatch",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 0
+            },
+            {
+              "findings": [],
+              "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+              "kind": "coverage",
+              "language": "python",
+              "outcome": "skipped",
+              "reason": "dependency_mismatch",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 0
+            },
+            {
+              "findings": [],
+              "kind": "secrets",
+              "language": "common",
+              "outcome": "passed",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 53
+            },
+            {
+              "findings": [],
+              "hint": "Dependency audit needs api.osv.dev",
+              "kind": "dependencies",
+              "language": "common",
+              "outcome": "skipped",
+              "reason": "offline",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 6193
+            }
+          ],
+          "deferred": [
+            {
+              "reason": "no_endpoint",
+              "step": "triage"
+            },
+            {
+              "reason": "no_endpoint",
+              "step": "agents"
+            },
+            {
+              "reason": "no_endpoint",
+              "step": "verify"
+            }
+          ],
+          "excluded": [
+            {
+              "path": "src/structlog/_native.py",
+              "reason": "coverage_not_instrumented"
+            },
+            {
+              "path": "src/structlog/contextvars.py",
+              "reason": "coverage_not_instrumented"
+            },
+            {
+              "path": "src/structlog/processors.py",
+              "reason": "coverage_not_instrumented"
+            },
+            {
+              "path": "src/structlog/stdlib.py",
+              "reason": "coverage_not_instrumented"
+            }
+          ],
+          "findings": [],
+          "footer": {
+            "notes": [
+              "Intent inference is deferred: no_endpoint",
+              "Graph references use syntax and text; no language server was used",
+              "Offline applies to Rio; tool and test processes were not network-isolated"
+            ],
+            "suppressions": [],
+            "tool_versions": {
+              "python:.:coverage": "Coverage.py, version 7.17.1 with C extension",
+              "python:.:mypy": "mypy 2.4.1 (compiled: yes)",
+              "python:.:ruff": "ruff 0.17.3"
+            }
+          },
+          "impact": {
+            "symbols": [
+              {
+                "path": "src/structlog/_native.py",
+                "references_per_hop": [
+                  2,
+                  4
+                ],
+                "symbol_path": "",
+                "test_referenced": true,
+                "unresolved": 4
+              },
+              {
+                "path": "src/structlog/_native.py",
+                "references_per_hop": [
+                  9,
+                  6
+                ],
+                "symbol_path": "_native._make_filtering_bound_logger.alog",
+                "test_referenced": true,
+                "unresolved": 15
+              },
+              {
+                "path": "src/structlog/_native.py",
+                "references_per_hop": [
+                  1,
+                  1
+                ],
+                "symbol_path": "_native._make_filtering_bound_logger.make_method.ameth",
+                "test_referenced": false,
+                "unresolved": 3
+              },
+              {
+                "path": "src/structlog/_native.py",
+                "references_per_hop": [
+                  10,
+                  6
+                ],
+                "symbol_path": "_native.aexception",
+                "test_referenced": true,
+                "unresolved": 16
+              },
+              {
+                "path": "src/structlog/contextvars.py",
+                "references_per_hop": [
+                  43,
+                  71
+                ],
+                "symbol_path": "",
+                "test_referenced": true,
+                "unresolved": 252
+              },
+              {
+                "path": "src/structlog/contextvars.py",
+                "references_per_hop": [
+                  14,
+                  66
+                ],
+                "symbol_path": "contextvars._ASYNC_CALLING_THREAD",
+                "test_referenced": true,
+                "unresolved": 123
+              },
+              {
+                "path": "src/structlog/processors.py",
+                "references_per_hop": [
+                  98,
+                  49
+                ],
+                "symbol_path": "",
+                "test_referenced": true,
+                "unresolved": 78
+              },
+              {
+                "path": "src/structlog/processors.py",
+                "references_per_hop": [
+                  1,
+                  7
+                ],
+                "symbol_path": "processors._get_callsite_thread",
+                "test_referenced": true,
+                "unresolved": 8
+              },
+              {
+                "path": "src/structlog/processors.py",
+                "references_per_hop": [
+                  1,
+                  7
+                ],
+                "symbol_path": "processors._get_callsite_thread_name",
+                "test_referenced": true,
+                "unresolved": 8
+              },
+              {
+                "path": "src/structlog/stdlib.py",
+                "references_per_hop": [
+                  65,
+                  36
+                ],
+                "symbol_path": "",
+                "test_referenced": true,
+                "unresolved": 47
+              },
+              {
+                "path": "src/structlog/stdlib.py",
+                "references_per_hop": [
+                  17,
+                  118
+                ],
+                "symbol_path": "stdlib.AsyncBoundLogger._dispatch_to_sync",
+                "test_referenced": true,
+                "unresolved": 170
+              },
+              {
+                "path": "src/structlog/stdlib.py",
+                "references_per_hop": [
+                  17,
+                  118
+                ],
+                "symbol_path": "stdlib.BoundLogger._dispatch_to_sync",
+                "test_referenced": true,
+                "unresolved": 170
+              },
+              {
+                "path": "tests/processors/test_processors.py",
+                "references_per_hop": [
+                  0,
+                  0
+                ],
+                "symbol_path": "",
+                "test_referenced": false,
+                "unresolved": 0
+              },
+              {
+                "path": "tests/processors/test_processors.py",
+                "references_per_hop": [
+                  0,
+                  0
+                ],
+                "symbol_path": "test_processors.TestCallsiteParameterAdder",
+                "test_referenced": false,
+                "unresolved": 0
+              },
+              {
+                "path": "tests/processors/test_processors.py",
+                "references_per_hop": [
+                  0,
+                  0
+                ],
+                "symbol_path": "test_processors.TestCallsiteParameterAdder.test_async",
+                "test_referenced": false,
+                "unresolved": 0
+              },
+              {
+                "path": "tests/processors/test_processors.py",
+                "references_per_hop": [
+                  0,
+                  0
+                ],
+                "symbol_path": "test_processors.TestCallsiteParameterAdder.test_async_native_logger",
+                "test_referenced": false,
+                "unresolved": 0
+              }
+            ],
+            "truncated": false,
+            "unresolved": 894
+          },
+          "incomplete": [
+            {
+              "findings": [],
+              "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+              "kind": "typecheck",
+              "language": "python",
+              "outcome": "skipped",
+              "reason": "dependency_mismatch",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 0
+            },
+            {
+              "findings": [],
+              "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+              "kind": "lint",
+              "language": "python",
+              "outcome": "skipped",
+              "reason": "dependency_mismatch",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 0
+            },
+            {
+              "findings": [],
+              "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+              "kind": "coverage",
+              "language": "python",
+              "outcome": "skipped",
+              "reason": "dependency_mismatch",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 0
+            },
+            {
+              "findings": [],
+              "hint": "Dependency audit needs api.osv.dev",
+              "kind": "dependencies",
+              "language": "common",
+              "outcome": "skipped",
+              "reason": "offline",
+              "root": ".",
+              "scheduled_as": "changed",
+              "version": "head",
+              "wall_time_ms": 6193
+            }
+          ],
+          "metrics": {
+            "checks": [
+              {
+                "kind": "typecheck",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 0
+              },
+              {
+                "kind": "lint",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 0
+              },
+              {
+                "kind": "coverage",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 0
+              },
+              {
+                "kind": "secrets",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 53
+              },
+              {
+                "kind": "dependencies",
+                "root": ".",
+                "version": "head",
+                "wall_time_ms": 6193
+              }
+            ],
+            "tool_versions": {
+              "python:.:coverage": "Coverage.py, version 7.17.1 with C extension",
+              "python:.:mypy": "mypy 2.4.1 (compiled: yes)",
+              "python:.:ruff": "ruff 0.17.3"
+            },
+            "wall_time_ms": 46590
+          },
+          "review": {
+            "base": "c6e7cad18ffe91febf2b97dac03a465134b1a5d1",
+            "chain": [
+              "rio/base"
+            ],
+            "head": "7d7708fdf39061b6f7515c13ed0404a9bc05fb33",
+            "id": "cd3b7d12a319c439",
+            "mode": "branch",
+            "profile": "rio/base",
+            "rio_version": "0.1.0",
+            "run_id": "01M6M2GR7BFPD82AS4WTSGCERV"
+          },
+          "risks": [],
+          "schema": "rio-report-v1",
+          "status": "incomplete",
+          "summary": {
+            "fixed": 0,
+            "pre_existing": 0,
+            "suppressed": 0
+          }
+        },
+        "assessment": "Both previously observed ContextVar-identifier secret false positives are absent. Secrets check passes with no findings. The default run still honestly skips unverified Python tools and offline audit. Original automated finding verdicts are retained as evidence of the acceptance-discovered issue and are not claims against the corrected binary.",
+        "evidence_path": "/tmp/rio-acceptance-evidence/structlog/pr-805-confirmation.json"
+      }
+    }
+  ],
+  "assessment": "Independent automated verdicts only. No human acceptance verdicts are represented. No upstream repository was modified, no upstream PR was created, and these are reviews of actual merged public PRs."
+}

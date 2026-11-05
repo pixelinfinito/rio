@@ -1,0 +1,54 @@
+{
+  "base": [
+    [
+      "corepack",
+      "pnpm",
+      "--filter",
+      "@tooling/release",
+      "--filter",
+      "@tooling/oxlint-plugin",
+      "install",
+      "--frozen-lockfile",
+      "--ignore-scripts",
+      "--store-dir",
+      "/dev/shm/trpc-eval/pnpm-store",
+      "--trust-lockfile"
+    ],
+    [
+      "corepack",
+      "enable",
+      "pnpm"
+    ],
+    [
+      "python3",
+      "-c",
+      "from pathlib import Path\nimport json,hashlib\nfor name in (\"node_modules/.bin/vitest\", \"tooling/release/node_modules/.bin/vitest\"):\n    p=Path(name)\n    if not p.is_file(): continue\n    original=p.with_name(\"vitest.rio-original\")\n    original.write_bytes(p.read_bytes()); original.chmod(0o755)\n    print(json.dumps({\"launcher\":name,\"original_sha256\":hashlib.sha256(original.read_bytes()).hexdigest()}))\n    p.write_text(\"#!/usr/bin/env python3\\nimport os,sys\\nfrom pathlib import Path\\nargs=sys.argv[1:]\\nif any(a == '--coverage' or a.startswith('--coverage.enabled') for a in args):\\n    if not any(a.startswith('--coverage.provider') for a in args): args += ['--coverage.provider=istanbul']\\n    args += ['--testTimeout=30000','--hookTimeout=30000']\\noriginal=str(Path(__file__).with_name('vitest.rio-original'))\\nos.execv(original,[original,*args])\\n\")\n    p.chmod(0o755)\n"
+    ]
+  ],
+  "head": [
+    [
+      "corepack",
+      "pnpm",
+      "--filter",
+      "@tooling/release",
+      "--filter",
+      "@tooling/oxlint-plugin",
+      "install",
+      "--frozen-lockfile",
+      "--ignore-scripts",
+      "--store-dir",
+      "/dev/shm/trpc-eval/pnpm-store",
+      "--trust-lockfile"
+    ],
+    [
+      "corepack",
+      "enable",
+      "pnpm"
+    ],
+    [
+      "python3",
+      "-c",
+      "from pathlib import Path\nimport json,hashlib\nfor name in (\"node_modules/.bin/vitest\", \"tooling/release/node_modules/.bin/vitest\"):\n    p=Path(name)\n    if not p.is_file(): continue\n    original=p.with_name(\"vitest.rio-original\")\n    original.write_bytes(p.read_bytes()); original.chmod(0o755)\n    print(json.dumps({\"launcher\":name,\"original_sha256\":hashlib.sha256(original.read_bytes()).hexdigest()}))\n    p.write_text(\"#!/usr/bin/env python3\\nimport os,sys\\nfrom pathlib import Path\\nargs=sys.argv[1:]\\nif any(a == '--coverage' or a.startswith('--coverage.enabled') for a in args):\\n    if not any(a.startswith('--coverage.provider') for a in args): args += ['--coverage.provider=istanbul']\\n    args += ['--testTimeout=30000','--hookTimeout=30000']\\noriginal=str(Path(__file__).with_name('vitest.rio-original'))\\nos.execv(original,[original,*args])\\n\")\n    p.chmod(0o755)\n"
+    ]
+  ]
+}

@@ -1,0 +1,38 @@
+[package]
+name = "rio-cli"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description.workspace = true
+
+[[bin]]
+name = "rio"
+path = "src/main.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+anyhow.workspace = true
+clap.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+toml.workspace = true
+tokio.workspace = true
+tokio-util.workspace = true
+fs4.workspace = true
+tempfile.workspace = true
+sysinfo.workspace = true
+rio-core = { path = "../rio-core" }
+rio-git = { path = "../rio-git" }
+rio-profile = { path = "../rio-profile" }
+rio-engine = { path = "../rio-engine" }
+rio-adapters = { path = "../rio-adapters" }
+
+[dev-dependencies]
+assert_cmd.workspace = true
+jsonschema.workspace = true
+
+[target.'cfg(unix)'.dev-dependencies]
+libc.workspace = true

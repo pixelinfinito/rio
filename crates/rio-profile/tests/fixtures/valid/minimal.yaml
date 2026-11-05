@@ -1,0 +1,3 @@
+version: 1
+name: minimal
+extends: rio/base

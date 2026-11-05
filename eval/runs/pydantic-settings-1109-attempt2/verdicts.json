@@ -1,0 +1,47 @@
+{
+  "repository": "pydantic/pydantic-settings",
+  "pr": "https://github.com/pydantic/pydantic-settings/pull/1109",
+  "case_id": "1109",
+  "languages": [
+    "python"
+  ],
+  "reviewer": "sub-agent eval-pydantic-settings (automated)",
+  "verdict_source": "automated",
+  "commands": [
+    "cwd=/tmp/rio-eval-9jfvmcho argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/pydantic/pydantic-settings.git\", \"/tmp/rio-eval-9jfvmcho/head\"]",
+    "cwd=/tmp/rio-eval-9jfvmcho/head argv=[\"git\", \"fetch\", \"origin\", \"7e2dacb6db07b41abb0c80d0608e46e197265554\", \"74c01ae3e84f9c8f2b04ec269e67813abd96cf9a\"]",
+    "cwd=/tmp/rio-eval-9jfvmcho/head argv=[\"git\", \"merge-base\", \"7e2dacb6db07b41abb0c80d0608e46e197265554\", \"74c01ae3e84f9c8f2b04ec269e67813abd96cf9a\"]",
+    "cwd=/tmp/rio-eval-9jfvmcho/head argv=[\"git\", \"checkout\", \"--detach\", \"74c01ae3e84f9c8f2b04ec269e67813abd96cf9a\"]",
+    "cwd=/tmp/rio-eval-9jfvmcho argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/tmp/rio-eval-9jfvmcho/head\", \"/tmp/rio-eval-9jfvmcho/base\"]",
+    "cwd=/tmp/rio-eval-9jfvmcho/base argv=[\"git\", \"checkout\", \"--detach\", \"7e2dacb6db07b41abb0c80d0608e46e197265554\"]",
+    "cwd=/tmp/rio-eval-9jfvmcho/base argv=[\"uv\", \"sync\", \"--locked\", \"--all-groups\", \"--all-extras\"]",
+    "cwd=/tmp/rio-eval-9jfvmcho/base argv=[\"uv\", \"run\", \"--no-sync\", \"python\", \"-c\", \"import pathlib, sysconfig; p = pathlib.Path(sysconfig.get_path('purelib')) / 'a1_coverage.pth'; print(str(p)); print(p.read_text()); p.unlink()\"]",
+    "cwd=/tmp/rio-eval-9jfvmcho/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/tmp/rio-eval-9jfvmcho/head argv=[\"uv\", \"sync\", \"--locked\", \"--all-groups\", \"--all-extras\"]",
+    "cwd=/tmp/rio-eval-9jfvmcho/head argv=[\"uv\", \"run\", \"--no-sync\", \"python\", \"-c\", \"import pathlib, sysconfig; p = pathlib.Path(sysconfig.get_path('purelib')) / 'a1_coverage.pth'; print(str(p)); print(p.read_text()); p.unlink()\"]",
+    "cwd=/tmp/rio-eval-9jfvmcho/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/tmp/rio-eval-9jfvmcho/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/tmp/rio-eval-9jfvmcho/head argv=[\"node\", \"--version\"]",
+    "cwd=/tmp/rio-eval-9jfvmcho/head argv=[\"npm\", \"--version\"]",
+    "cwd=/tmp/rio-eval-9jfvmcho/head argv=[\"python3\", \"--version\"]",
+    "cwd=/tmp/rio-eval-9jfvmcho/head argv=[\"uv\", \"--version\"]",
+    "cwd=/tmp/rio-eval-9jfvmcho/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"rio/base\"]",
+    "cwd=/tmp/rio-eval-9jfvmcho/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/tmp/rio-eval-9jfvmcho/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"7e2dacb6db07b41abb0c80d0608e46e197265554\", \"--format\", \"json\", \"--offline\", \"--profile\", \"rio/base\"]"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-settings/eval/runs/pydantic-settings-1109-attempt2/commands.json; Rio binary SHA-256: 512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+    "Binary verified: rio 0.1.0 x86_64-unknown-linux-gnu b15dc8ff5001; no rebuild or product/harness edits.",
+    "Offline cohort: typecheck, lint, instrumented coverage and secret scanning applicable; network dependency audit is explicitly excluded (no advisory-cache claim). No semantic agent endpoint. Automated assessment, no human confirmation claimed.",
+    "CPython 3.13.9 and uv 0.13.7 explicitly selected; Linux shared VM. Check commands use repository-locked tool versions.",
+    "EXCLUDED attempt: baseline classification did not run; no record.json produced and this attempt is not scored. Failure reasons: [\"coverage . head: cancelled timeout\", \"dependencies . head: cancelled timeout\", \"lint . head: cancelled timeout\", \"lint .: head=cancelled, dependency_state=unavailable, base=unavailable\", \"secrets . head: cancelled timeout\", \"typecheck . head: cancelled timeout\", \"typecheck .: head=cancelled, dependency_state=unavailable, base=unavailable\"]",
+    "Preserved unchanged raw reports/command ledger; setup repaired in pydantic-settings-1109-attempt4 or pydantic-settings-1097-attempt2. Independently clean is false here because an ineligible attempt cannot establish a clean report."
+  ],
+  "independently_clean": false,
+  "positive_control": {
+    "kind": "none",
+    "expected": []
+  },
+  "misses": [],
+  "findings": {}
+}

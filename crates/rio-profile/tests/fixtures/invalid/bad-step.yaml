@@ -1,0 +1,3 @@
+version: 1
+name: bad
+steps: [{uses: rio/checks}]

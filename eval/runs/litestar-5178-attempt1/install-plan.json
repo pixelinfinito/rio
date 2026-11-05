@@ -1,0 +1,26 @@
+{
+  "base": [
+    [
+      "uv",
+      "sync",
+      "--locked",
+      "--all-groups",
+      "--all-extras",
+      "--no-editable",
+      "--python",
+      "3.12.12"
+    ]
+  ],
+  "head": [
+    [
+      "uv",
+      "sync",
+      "--locked",
+      "--all-groups",
+      "--all-extras",
+      "--no-editable",
+      "--python",
+      "3.12.12"
+    ]
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "/home/ubuntu/rio/target/release/rio",
+    "review",
+    "--base",
+    "HEAD^",
+    "--format",
+    "json",
+    "--offline",
+    "--profile",
+    "rio/base"
+  ],
+  "exit_code": 3,
+  "wall_time_seconds": 1.0879262920934707,
+  "lockfile_from": "b16567764:pnpm-lock.yaml"
+}

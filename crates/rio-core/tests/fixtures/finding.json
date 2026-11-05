@@ -1,0 +1,43 @@
+{
+  "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "rule_id": "typecheck/tsc/TS2322",
+  "category": "defect",
+  "evidence_level": "static_proven",
+  "severity": "error",
+  "state": "worsened",
+  "location": {
+    "path": "src/a.ts",
+    "line_start": 12,
+    "line_end": 12,
+    "column": 5,
+    "symbol_path": "a.run",
+    "occurrence_state": "new"
+  },
+  "message": "Type 'string' is not assignable to type 'number'.",
+  "trigger": "Assigning a string to a number",
+  "evidence": [
+    "checks/typecheck/root/stdout"
+  ],
+  "source": {
+    "tool": "tsc",
+    "version": "5.7.2"
+  },
+  "locations": [
+    {
+      "path": "src/a.ts",
+      "line_start": 8,
+      "line_end": 8,
+      "column": 5,
+      "symbol_path": "a.run",
+      "occurrence_state": "pre-existing"
+    },
+    {
+      "path": "src/a.ts",
+      "line_start": 12,
+      "line_end": 12,
+      "column": 5,
+      "symbol_path": "a.run",
+      "occurrence_state": "new"
+    }
+  ]
+}

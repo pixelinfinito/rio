@@ -1,0 +1,9 @@
+[project]
+name = "rio-lockfile-fixture"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = ["requests==2.32.3", "colorama==0.4.6; sys_platform == 'win32'"]
+[dependency-groups]
+dev = ["iniconfig==2.0.0"]
+[project.optional-dependencies]
+security = ["idna==3.10"]

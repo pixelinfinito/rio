@@ -1,0 +1,202 @@
+{
+  "blocking_problems": [],
+  "cache": {
+    "free_space": 1870995456,
+    "path": "/dev/shm/rio-eval-yj5pkx8n/cache",
+    "writable": true
+  },
+  "configuration": {
+    "cache": {
+      "dir": "/dev/shm/rio-eval-yj5pkx8n/cache",
+      "max_age": {
+        "nanos": 0,
+        "secs": 2592000
+      },
+      "max_size": 5368709120,
+      "retain_raw_output": true
+    },
+    "config_dir": "/dev/shm/rio-eval-yj5pkx8n/config",
+    "endpoint_url": null,
+    "notices": [],
+    "output_limit": 268435456,
+    "parallelism": 4,
+    "sources": {
+      "cache.dir": "RIO_CACHE_DIR",
+      "cache.max_age": "default",
+      "cache.max_size": "default",
+      "cache.retain_raw_output": "default",
+      "endpoint.url": "default",
+      "run.output_limit": "default",
+      "run.parallelism": "default"
+    }
+  },
+  "endpoint": "No endpoint is available in this version",
+  "head": "cbeac9415dc218eae98eaebc35971c0b6743528b",
+  "plan": {
+    "checks": [
+      {
+        "baseline": false,
+        "baseline_hint": null,
+        "baseline_remap": false,
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "secrets",
+        "language": "common",
+        "root": ".",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [],
+        "tool": null
+      },
+      {
+        "baseline": false,
+        "baseline_hint": null,
+        "baseline_remap": false,
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "dependencies",
+        "language": "common",
+        "root": ".",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [],
+        "tool": null
+      }
+    ],
+    "layout": {
+      "dependencies": {
+        ".": [
+          "packages/zod"
+        ],
+        "packages/bench": [
+          "packages/zod"
+        ],
+        "packages/bench/typia-case": [],
+        "packages/docs": [],
+        "packages/integration": [
+          "packages/mini",
+          "packages/zod"
+        ],
+        "packages/integration/fixtures/ai-sdk": [],
+        "packages/integration/fixtures/drizzle-zod": [],
+        "packages/mini": [
+          "packages/zod"
+        ],
+        "packages/resolution": [
+          "packages/mini",
+          "packages/zod"
+        ],
+        "packages/treeshake": [
+          "packages/zod"
+        ],
+        "packages/tsc": [
+          "packages/zod"
+        ],
+        "packages/zod": []
+      },
+      "notes": [],
+      "roots": [
+        {
+          "language": "typescript",
+          "manifest": "package.json",
+          "name": null,
+          "path": ".",
+          "workspace": null
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/bench/package.json",
+          "name": "@zod/benchmarks",
+          "path": "packages/bench",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/bench/typia-case/tsconfig.json",
+          "name": null,
+          "path": "packages/bench/typia-case",
+          "workspace": null
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/docs/package.json",
+          "name": "@zod/docs",
+          "path": "packages/docs",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/integration/package.json",
+          "name": "@zod/integration",
+          "path": "packages/integration",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/integration/fixtures/ai-sdk/tsconfig.json",
+          "name": null,
+          "path": "packages/integration/fixtures/ai-sdk",
+          "workspace": null
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/integration/fixtures/drizzle-zod/tsconfig.json",
+          "name": null,
+          "path": "packages/integration/fixtures/drizzle-zod",
+          "workspace": null
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/mini/package.json",
+          "name": "@zod/mini",
+          "path": "packages/mini",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/resolution/package.json",
+          "name": "@zod/resolution",
+          "path": "packages/resolution",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/treeshake/package.json",
+          "name": "@zod/treeshaking",
+          "path": "packages/treeshake",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/tsc/package.json",
+          "name": "@zod/tsc-perftest",
+          "path": "packages/tsc",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/zod/package.json",
+          "name": "zod",
+          "path": "packages/zod",
+          "workspace": "."
+        }
+      ]
+    },
+    "notes": [],
+    "probes_ran": false,
+    "roots": []
+  },
+  "profile": {
+    "chain": [
+      "rio/base"
+    ],
+    "name": "rio/base",
+    "valid": true
+  },
+  "repository": "/dev/shm/rio-eval-yj5pkx8n/head",
+  "warnings": [
+    "rio/base:$.steps[3]: rio/triage is deferred locally: no_endpoint",
+    "rio/base:$.steps[4]: rio/agents is deferred locally: no_endpoint",
+    "rio/base:$.steps[5]: rio/verify is deferred locally: no_endpoint"
+  ]
+}

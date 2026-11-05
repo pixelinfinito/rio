@@ -1,0 +1,29 @@
+[
+  {
+    "argv": [
+      "uv",
+      "sync",
+      "--locked",
+      "--python",
+      "3.12.12",
+      "--group",
+      "dev",
+      "--group",
+      "linting",
+      "--group",
+      "typechecking",
+      "--group",
+      "coverage",
+      "--all-extras"
+    ],
+    "cwd": "/tmp/eval-pydantic-positive-head",
+    "environment": {
+      "CONTEXT": "eval-pydantic",
+      "PATH": "/home/ubuntu/.cargo/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+    },
+    "exit_code": -15,
+    "wall_time_ms": 189142,
+    "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-head-setup02/00-stdout.log",
+    "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-head-setup02/00-stderr.log"
+  }
+]

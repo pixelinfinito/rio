@@ -1,0 +1,19 @@
+Warning: /tmp/rio-acceptance-immer-profile.yaml:$.steps[3]: rio/triage is deferred locally: no_endpoint
+Warning: /tmp/rio-acceptance-immer-profile.yaml:$.steps[4]: rio/agents is deferred locally: no_endpoint
+Warning: /tmp/rio-acceptance-immer-profile.yaml:$.steps[5]: rio/verify is deferred locally: no_endpoint
+Running prepare…
+Finished prepare
+Running checks…
+typecheck .: skipped (dependency_mismatch)
+lint .: skipped (no_project_config)
+coverage .: skipped (dependency_mismatch)
+secrets .: passed
+dependencies .: skipped (offline)
+lint __tests__: skipped (no_project_config)
+typecheck __tests__: findings
+coverage __tests__: skipped (no_tests)
+Finished checks
+Running graph…
+Finished graph
+Running report…
+Finished report

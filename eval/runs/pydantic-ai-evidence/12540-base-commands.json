@@ -1,0 +1,90 @@
+[
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "mypy"
+    ],
+    "cwd": "/tmp/rio-pydantic-ai-ram/negative-oracle",
+    "exit_code": 0,
+    "wall_time_s": 113.127,
+    "output": "12540-base-mypy-configured.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "ruff",
+      "check"
+    ],
+    "cwd": "/tmp/rio-pydantic-ai-ram/negative-oracle",
+    "exit_code": 0,
+    "wall_time_s": 0.951,
+    "output": "12540-base-ruff.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "pyright",
+      "pydantic_ai_slim/pydantic_ai/_utils.py",
+      "pydantic_graph/pydantic_graph/_utils.py",
+      "pydantic_evals/pydantic_evals/_utils.py"
+    ],
+    "cwd": "/tmp/rio-pydantic-ai-ram/negative-oracle",
+    "exit_code": 0,
+    "wall_time_s": 12.618,
+    "output": "12540-base-pyright-utils.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "coverage",
+      "run",
+      "-m",
+      "pytest",
+      "-q",
+      "tests/test_utils.py",
+      "tests/evals/test_utils.py"
+    ],
+    "cwd": "/tmp/rio-pydantic-ai-ram/negative-oracle",
+    "exit_code": 0,
+    "wall_time_s": 186.268,
+    "output": "12540-base-pytest-coverage.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "coverage",
+      "json",
+      "--fail-under=0",
+      "-o",
+      "/tmp/rio-pydantic-ai-ram/evidence/12540-base-coverage.json"
+    ],
+    "cwd": "/tmp/rio-pydantic-ai-ram/negative-oracle",
+    "exit_code": 1,
+    "wall_time_s": 0.202,
+    "output": "12540-base-coverage-json.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "python",
+      "-c",
+      "import importlib.metadata as m,sys; print(sys.version); print({n:m.version(n) for n in [\"mypy\",\"pyright\",\"ruff\",\"coverage\",\"pytest\"]})"
+    ],
+    "cwd": "/tmp/rio-pydantic-ai-ram/negative-oracle",
+    "exit_code": 0,
+    "wall_time_s": 0.142,
+    "output": "12540-base-versions.log"
+  }
+]

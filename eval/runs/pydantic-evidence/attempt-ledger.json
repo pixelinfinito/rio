@@ -1,0 +1,138 @@
+[
+  {
+    "attempt": "pydantic-14199",
+    "started_utc": "2026-11-05T02:58:26.391542+00:00",
+    "finished_utc": "2026-11-05T02:58:54.244455+00:00",
+    "runner_wall_seconds": 27.853,
+    "rio_wall_ms": null,
+    "baseline_classification_ran": false,
+    "eligible": false,
+    "failures": [
+      "Evaluator interrupted premature retry before Rio execution; setup diagnosis required all groups rather than only removing the conditional coverage startup hook."
+    ],
+    "raw_verdict_counts": {},
+    "record_path": null
+  },
+  {
+    "attempt": "pydantic-14199-attempt01",
+    "started_utc": "2026-11-05T02:52:07.090370+00:00",
+    "finished_utc": "2026-11-05T02:58:00.461082+00:00",
+    "runner_wall_seconds": 353.371,
+    "rio_wall_ms": 65073,
+    "baseline_classification_ran": false,
+    "eligible": false,
+    "failures": [
+      "Baseline/setup ineligible; fix before scoring"
+    ],
+    "raw_verdict_counts": {},
+    "record_path": null
+  },
+  {
+    "attempt": "pydantic-14199-attempt03",
+    "started_utc": "2026-11-05T03:03:48.585168+00:00",
+    "finished_utc": "2026-11-05T03:13:41.419355+00:00",
+    "runner_wall_seconds": 592.834,
+    "rio_wall_ms": 283992,
+    "baseline_classification_ran": false,
+    "eligible": false,
+    "failures": [
+      "Baseline/setup ineligible; fix before scoring"
+    ],
+    "raw_verdict_counts": {
+      "environment-failure": 166,
+      "pre-existing-shown": 11,
+      "true-positive": 2
+    },
+    "record_path": null
+  },
+  {
+    "attempt": "pydantic-14199-attempt04",
+    "started_utc": "2026-11-05T03:20:28.912138+00:00",
+    "finished_utc": "2026-11-05T03:28:27.348488+00:00",
+    "runner_wall_seconds": 478.436,
+    "rio_wall_ms": 260759,
+    "baseline_classification_ran": false,
+    "eligible": false,
+    "failures": [
+      "Baseline/setup ineligible; fix before scoring"
+    ],
+    "raw_verdict_counts": {
+      "pre-existing-shown": 11,
+      "true-positive": 2
+    },
+    "record_path": null
+  },
+  {
+    "attempt": "pydantic-14199-attempt05",
+    "started_utc": "2026-11-05T03:36:06.950195+00:00",
+    "finished_utc": "2026-11-05T03:43:54.203842+00:00",
+    "runner_wall_seconds": 467.254,
+    "rio_wall_ms": 249863,
+    "baseline_classification_ran": true,
+    "eligible": true,
+    "failures": [],
+    "raw_verdict_counts": {
+      "pre-existing-shown": 11,
+      "true-positive": 2
+    },
+    "record_path": "eval/runs/pydantic-14199-attempt05/record.json"
+  },
+  {
+    "attempt": "pydantic-14213",
+    "started_utc": "2026-11-05T03:04:13.926098+00:00",
+    "finished_utc": "2026-11-05T03:15:07.056572+00:00",
+    "runner_wall_seconds": 653.13,
+    "rio_wall_ms": null,
+    "baseline_classification_ran": false,
+    "eligible": false,
+    "failures": [
+      "Evaluator interrupted retry during disk-backed installation before Rio execution after separate positive retry exposed own-editable-root baseline refusal. No report or score."
+    ],
+    "raw_verdict_counts": {},
+    "record_path": null
+  },
+  {
+    "attempt": "pydantic-14213-attempt01",
+    "started_utc": "2026-11-05T02:52:44.570028+00:00",
+    "finished_utc": "2026-11-05T02:59:05.213972+00:00",
+    "runner_wall_seconds": 380.644,
+    "rio_wall_ms": 43891,
+    "baseline_classification_ran": false,
+    "eligible": false,
+    "failures": [
+      "Baseline/setup ineligible; fix before scoring"
+    ],
+    "raw_verdict_counts": {},
+    "record_path": null
+  },
+  {
+    "attempt": "pydantic-14213-attempt03",
+    "started_utc": "2026-11-05T03:22:34.257859+00:00",
+    "finished_utc": "2026-11-05T03:31:13.026580+00:00",
+    "runner_wall_seconds": 518.769,
+    "rio_wall_ms": 308532,
+    "baseline_classification_ran": false,
+    "eligible": false,
+    "failures": [
+      "Baseline/setup ineligible; fix before scoring"
+    ],
+    "raw_verdict_counts": {
+      "pre-existing-shown": 11
+    },
+    "record_path": null
+  },
+  {
+    "attempt": "pydantic-14213-attempt04",
+    "started_utc": "2026-11-05T03:38:38.798461+00:00",
+    "finished_utc": "2026-11-05T03:46:57.777815+00:00",
+    "runner_wall_seconds": 498.979,
+    "rio_wall_ms": 288125,
+    "baseline_classification_ran": true,
+    "eligible": true,
+    "failures": [],
+    "raw_verdict_counts": {
+      "pre-existing-shown": 11
+    },
+    "record_path": "eval/runs/pydantic-14213-attempt04/record.json"
+  }
+]

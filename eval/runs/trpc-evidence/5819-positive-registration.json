@@ -1,0 +1,25 @@
+{
+  "registered_utc": "2026-11-05T02:41:07.572632+00:00",
+  "kind": "real-pr",
+  "pr": "https://github.com/trpc/trpc/pull/5819",
+  "base": "baa9c19679d215c65770e3d066d177703f104371",
+  "head": "124440fafb43a33859cd1f5c3232b2d1498742eb",
+  "expected": [
+    {
+      "id": "sse-test-numeric-ids",
+      "mechanism": "type-error",
+      "finding_ids": [],
+      "evidence": "Independent corepack pnpm exec tsc --noEmit --pretty false in packages/server, Node 20.10.0 / pnpm 8.15.5 / frozen lockfile: base exit 0; head exit 2 with TS2322 at sse.test.ts lines 33,157,315 (number not assignable to string). Full outputs ../trpc-5819-oracle/. Follow-up #5841 converts precisely these IDs to strings."
+    },
+    {
+      "id": "sse-test-unknown-resume-ids",
+      "mechanism": "type-error",
+      "finding_ids": [],
+      "evidence": "Same independent oracle: base tsc exits 0; introducing head exits 2 with TS2345 at sse.test.ts lines 106,139,248: unknown is not assignable to number. Registered before inspecting any Rio output, while runner is cloning/installing. This is separate from TS2322 numeric SSE envelope IDs."
+    }
+  ],
+  "profile_sha256": "4bd969a9dd665ee1bd6465232d27c4ea8b8f37b8bbf2e442eaa93c33bd63674b",
+  "reviewer": "sub-agent eval-trpc (automated)",
+  "verdict_source": "automated",
+  "full_oracle_registered_utc": "2026-11-05T02:41:58.387515+00:00"
+}

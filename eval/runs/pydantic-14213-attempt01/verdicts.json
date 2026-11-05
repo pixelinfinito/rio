@@ -1,0 +1,41 @@
+{
+  "repository": "pydantic/pydantic",
+  "pr": "https://github.com/pydantic/pydantic/pull/14213",
+  "case_id": "14213",
+  "languages": [
+    "python"
+  ],
+  "reviewer": "sub-agent eval-pydantic (automated)",
+  "verdict_source": "automated",
+  "commands": [
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-am1lub8m argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/pydantic/pydantic.git\", \"/dev/shm/rio-pydantic/tmp/rio-eval-am1lub8m/head\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-am1lub8m/head argv=[\"git\", \"fetch\", \"origin\", \"5740091dcd08e4a92940ceae841434a83331cb09\", \"ef2cb073d6be2ef360d2aedcd5afca0983af2507\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-am1lub8m/head argv=[\"git\", \"merge-base\", \"5740091dcd08e4a92940ceae841434a83331cb09\", \"ef2cb073d6be2ef360d2aedcd5afca0983af2507\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-am1lub8m/head argv=[\"git\", \"checkout\", \"--detach\", \"ef2cb073d6be2ef360d2aedcd5afca0983af2507\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-am1lub8m argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/dev/shm/rio-pydantic/tmp/rio-eval-am1lub8m/head\", \"/dev/shm/rio-pydantic/tmp/rio-eval-am1lub8m/base\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-am1lub8m/base argv=[\"git\", \"checkout\", \"--detach\", \"5740091dcd08e4a92940ceae841434a83331cb09\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-am1lub8m/base argv=[\"uv\", \"sync\", \"--locked\", \"--python\", \"3.12.12\", \"--group\", \"dev\", \"--group\", \"linting\", \"--group\", \"typechecking\", \"--group\", \"coverage\", \"--all-extras\", \"--all-packages\", \"--group\", \"testing-extra\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-am1lub8m/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-am1lub8m/head argv=[\"uv\", \"sync\", \"--locked\", \"--python\", \"3.12.12\", \"--group\", \"dev\", \"--group\", \"linting\", \"--group\", \"typechecking\", \"--group\", \"coverage\", \"--all-extras\", \"--all-packages\", \"--group\", \"testing-extra\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-am1lub8m/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-am1lub8m/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-am1lub8m/head argv=[\"node\", \"--version\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-am1lub8m/head argv=[\"npm\", \"--version\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-am1lub8m/head argv=[\"python3\", \"--version\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-am1lub8m/head argv=[\"uv\", \"--version\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-am1lub8m/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt01/profile.yaml\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-am1lub8m/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-am1lub8m/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"5740091dcd08e4a92940ceae841434a83331cb09\", \"--format\", \"json\", \"--offline\", \"--profile\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt01/profile.yaml\"]"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt01/commands.json; Rio binary SHA-256: 512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+    "EXCLUDED setup attempt: baseline_classification_ran=false; typecheck/lint/coverage skipped for dependency_mismatch (missing aiohappyeyeballs). No findings emitted, no record built and no score assigned. This none control marker applies only to this excluded attempt; the successful PR record carries the registered control kind."
+  ],
+  "independently_clean": false,
+  "positive_control": {
+    "kind": "none",
+    "expected": []
+  },
+  "misses": [],
+  "findings": {}
+}

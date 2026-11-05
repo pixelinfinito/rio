@@ -1,0 +1,4087 @@
+{
+  "checks": [
+    {
+      "findings": [],
+      "hint": "yarn.lock: node_modules/npm/node_modules/hosted-git-info: expected hosted-git-info@9.0.3, installed hosted-git-info@9.0.2; reinstall dependencies",
+      "kind": "typecheck",
+      "language": "typescript",
+      "outcome": "skipped",
+      "reason": "dependency_mismatch",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 0
+    },
+    {
+      "findings": [],
+      "hint": "lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+      "kind": "lint",
+      "language": "typescript",
+      "outcome": "skipped",
+      "reason": "no_project_config",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 0
+    },
+    {
+      "findings": [],
+      "hint": "yarn.lock: node_modules/npm/node_modules/hosted-git-info: expected hosted-git-info@9.0.3, installed hosted-git-info@9.0.2; reinstall dependencies",
+      "kind": "coverage",
+      "language": "typescript",
+      "outcome": "skipped",
+      "reason": "dependency_mismatch",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 0
+    },
+    {
+      "findings": [],
+      "kind": "secrets",
+      "language": "common",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 53
+    },
+    {
+      "findings": [],
+      "hint": "Dependency audit needs api.osv.dev",
+      "kind": "dependencies",
+      "language": "common",
+      "outcome": "skipped",
+      "reason": "offline",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 6786
+    },
+    {
+      "findings": [],
+      "hint": "lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+      "kind": "lint",
+      "language": "typescript",
+      "outcome": "skipped",
+      "reason": "no_project_config",
+      "root": "__tests__",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 0
+    },
+    {
+      "dependency_state": "trusted",
+      "findings": [
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "043e591503c2fafb5a0d97cb8d74638abaf3a7616a39bafb519e2b37753da8ea",
+          "location": {
+            "column": 49,
+            "line_end": 2,
+            "line_start": 2,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/vitest/node_modules/vite/dist/node/module-runner.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 49,
+              "line_end": 2,
+              "line_start": 2,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/vitest/node_modules/vite/dist/node/module-runner.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Cannot find module '#types/hot' or its corresponding type declarations.",
+          "rule_id": "typecheck/tsc/TS2307",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "129ef329250550be94461333cf7c0429ecae9d95d9734eb7c656f3b20213d2ca",
+          "location": {
+            "column": 13,
+            "line_end": 2200,
+            "line_start": 2200,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/@types/node/test.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 13,
+              "line_end": 2200,
+              "line_start": 2200,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/@types/node/test.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "A computed property name in an interface must refer to an expression whose type is a literal type or a 'unique symbol' type.",
+          "rule_id": "typecheck/tsc/TS1169",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "1ba84550b351fc4a28172606cb7ceaaabfcbdb8c72169416e24216e8eef736cb",
+          "location": {
+            "column": 56,
+            "line_end": 26,
+            "line_start": 26,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/vitest/node_modules/vite/dist/node/index.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 56,
+              "line_end": 26,
+              "line_start": 26,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/vitest/node_modules/vite/dist/node/index.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Cannot find module '#types/metadata' or its corresponding type declarations.",
+          "rule_id": "typecheck/tsc/TS2307",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "2115bc47636342237ea36e2c0f4aae0150abd7505681ab24e5c4bb3de463e0ff",
+          "location": {
+            "column": 223,
+            "line_end": 3,
+            "line_start": 3,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/vitest/node_modules/vite/dist/node/index.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 223,
+              "line_end": 3,
+              "line_start": 3,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/vitest/node_modules/vite/dist/node/index.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Cannot find module '#types/hmrPayload' or its corresponding type declarations.",
+          "rule_id": "typecheck/tsc/TS2307",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "22554665013db5016b7ed0ca48cc2478621e425b460cef8185b76f6248c6674a",
+          "location": {
+            "column": 96,
+            "line_end": 97,
+            "line_start": 97,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/@vitest/utils/dist/diff.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 96,
+              "line_end": 97,
+              "line_start": 97,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/@vitest/utils/dist/diff.d.ts",
+              "symbol_path": ""
+            },
+            {
+              "column": 133,
+              "line_end": 97,
+              "line_start": 97,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/@vitest/utils/dist/diff.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Cannot find name 'WeakKey'.",
+          "rule_id": "typecheck/tsc/TS2304",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "22f3e7fe68fc2b4cadeba0c89344af6106ae0f0dc535e5c8da2dc27e7cda1a99",
+          "location": {
+            "column": 97,
+            "line_end": 25,
+            "line_start": 25,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/vitest/node_modules/vite/dist/node/index.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 97,
+              "line_end": 25,
+              "line_start": 25,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/vitest/node_modules/vite/dist/node/index.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Cannot find module '#types/importGlob' or its corresponding type declarations.",
+          "rule_id": "typecheck/tsc/TS2307",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "2ad13f62af3b212fc1dfa60e9ecf6219d77bcc0ccde9739a62eedce3ca8b69a7",
+          "location": {
+            "column": 58,
+            "line_end": 5,
+            "line_start": 5,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/@vitest/utils/dist/error.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 58,
+              "line_end": 5,
+              "line_start": 5,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/@vitest/utils/dist/error.d.ts",
+              "symbol_path": ""
+            },
+            {
+              "column": 84,
+              "line_end": 7,
+              "line_start": 7,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/@vitest/utils/dist/error.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Cannot find name 'WeakKey'.",
+          "rule_id": "typecheck/tsc/TS2304",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "2e3c5472c5bbf9695c8404fb14453364899e4bd91378e587df3a78bc0b6749c2",
+          "location": {
+            "column": 9,
+            "line_end": 829,
+            "line_start": 829,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/@types/node/perf_hooks.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 9,
+              "line_end": 829,
+              "line_start": 829,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/@types/node/perf_hooks.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "A computed property name in an interface must refer to an expression whose type is a literal type or a 'unique symbol' type.",
+          "rule_id": "typecheck/tsc/TS1169",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "3403438b7112eaa821444146dbb85498e887100578c4136ed35f104d5ad2f545",
+          "location": {
+            "column": 17,
+            "line_end": 738,
+            "line_start": 738,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/@types/node/net.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 17,
+              "line_end": 738,
+              "line_start": 738,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/@types/node/net.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Property 'asyncDispose' does not exist on type 'SymbolConstructor'.",
+          "rule_id": "typecheck/tsc/TS2339",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "49e1d8cb009b493736ad622c46adea300c90a861d8390a712d889260a76020d9",
+          "location": {
+            "column": 101,
+            "line_end": 24,
+            "line_start": 24,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/vitest/node_modules/vite/dist/node/index.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 101,
+              "line_end": 24,
+              "line_start": 24,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/vitest/node_modules/vite/dist/node/index.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Cannot find module '#types/internal/lightningcssOptions' or its corresponding type declarations.",
+          "rule_id": "typecheck/tsc/TS2307",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "4ecd3a9beac07292d1f9121eff64b3fcfac40fe0511498fb73ab0a495a1b4a58",
+          "location": {
+            "column": 109,
+            "line_end": 23,
+            "line_start": 23,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/vitest/node_modules/vite/dist/node/index.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 109,
+              "line_end": 23,
+              "line_start": 23,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/vitest/node_modules/vite/dist/node/index.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Cannot find module '#types/internal/cssPreprocessorOptions' or its corresponding type declarations.",
+          "rule_id": "typecheck/tsc/TS2307",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "511b19c080fc40691cff2df96850a5012c3b06d35a0420caba13499be659b60b",
+          "location": {
+            "column": 41,
+            "line_end": 7,
+            "line_start": 7,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/vitest/node_modules/vite/dist/node/index.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 41,
+              "line_end": 7,
+              "line_start": 7,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/vitest/node_modules/vite/dist/node/index.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Cannot find module 'rollup/parseAst' or its corresponding type declarations.",
+          "rule_id": "typecheck/tsc/TS2307",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "66154a8a43c340ad00e5edb6b15f9142116ba7b61c05256277fb0cc7246878c5",
+          "location": {
+            "column": 17,
+            "line_end": 215,
+            "line_start": 215,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/@types/node/readline.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 17,
+              "line_end": 215,
+              "line_start": 215,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/@types/node/readline.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Property 'dispose' does not exist on type 'SymbolConstructor'.",
+          "rule_id": "typecheck/tsc/TS2339",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "67c8967d075202e6f26c791ab2cda41d1430a65ace3d6552ad267745fcd637ae",
+          "location": {
+            "column": 2,
+            "line_end": 1014,
+            "line_start": 1014,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/vitest/node_modules/rollup/dist/rollup.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 2,
+              "line_end": 1014,
+              "line_start": 1014,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/vitest/node_modules/rollup/dist/rollup.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "A computed property name in an interface must refer to an expression whose type is a literal type or a 'unique symbol' type.",
+          "rule_id": "typecheck/tsc/TS1169",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "6c03b9243cb6959d7377ecca25f3217bb817cc5fd3da2c5e4252e0363a6f16de",
+          "location": {
+            "column": 17,
+            "line_end": 336,
+            "line_start": 336,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/@types/node/fs.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 17,
+              "line_end": 336,
+              "line_start": 336,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/@types/node/fs.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Property 'dispose' does not exist on type 'SymbolConstructor'.",
+          "rule_id": "typecheck/tsc/TS2339",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "7782ae21110dd0ad3d391fe0e995ebb95649bed671d92c500d56ebbc10232554",
+          "location": {
+            "column": 9,
+            "line_end": 594,
+            "line_start": 594,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/@types/node/dgram.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 9,
+              "line_end": 594,
+              "line_start": 594,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/@types/node/dgram.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "A computed property name in an ambient context must refer to an expression whose type is a literal type or a 'unique symbol' type.",
+          "rule_id": "typecheck/tsc/TS1165",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "779c5c15e9c3d4fdd390a863d2fba13beab6c2eb1c5417e6849e3ae97e573471",
+          "location": {
+            "column": 21,
+            "line_end": 2200,
+            "line_start": 2200,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/@types/node/test.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 21,
+              "line_end": 2200,
+              "line_start": 2200,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/@types/node/test.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Property 'dispose' does not exist on type 'SymbolConstructor'.",
+          "rule_id": "typecheck/tsc/TS2339",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "7ce24e06e69654559d642a2a56cedca564a04f7d86e3d6cec9a16f8f445ede89",
+          "location": {
+            "column": 17,
+            "line_end": 496,
+            "line_start": 496,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/@types/node/worker_threads.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 17,
+              "line_end": 496,
+              "line_start": 496,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/@types/node/worker_threads.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Property 'asyncDispose' does not exist on type 'SymbolConstructor'.",
+          "rule_id": "typecheck/tsc/TS2339",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "8641a07f298e8983a31f0d374d66af59f83e381ad906504f775fd3e2e11c3527",
+          "location": {
+            "column": 45,
+            "line_end": 21,
+            "line_start": 21,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/vitest/node_modules/vite/dist/node/index.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 45,
+              "line_end": 21,
+              "line_start": 21,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/vitest/node_modules/vite/dist/node/index.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Cannot find module '#types/internal/terserOptions' or its corresponding type declarations.",
+          "rule_id": "typecheck/tsc/TS2307",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "8a62a6c20e315059a2b92bfd3d9d630b9293805150403094e05bdf161d93296e",
+          "location": {
+            "column": 9,
+            "line_end": 330,
+            "line_start": 330,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/@types/node/fs.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 9,
+              "line_end": 330,
+              "line_start": 330,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/@types/node/fs.d.ts",
+              "symbol_path": ""
+            },
+            {
+              "column": 9,
+              "line_end": 336,
+              "line_start": 336,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/@types/node/fs.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "A computed property name in an ambient context must refer to an expression whose type is a literal type or a 'unique symbol' type.",
+          "rule_id": "typecheck/tsc/TS1165",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "8aee026a9b313b8f0c81dd77f3f6b19778263ed58ac9c0ac67a8e3dd2e89b243",
+          "location": {
+            "column": 17,
+            "line_end": 829,
+            "line_start": 829,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/@types/node/perf_hooks.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 17,
+              "line_end": 829,
+              "line_start": 829,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/@types/node/perf_hooks.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Property 'dispose' does not exist on type 'SymbolConstructor'.",
+          "rule_id": "typecheck/tsc/TS2339",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "8bd12bd00db9bad79d30b2a0cc968acc76556345078d1ca3a423b9c47d559204",
+          "location": {
+            "column": 28,
+            "line_end": 1,
+            "line_start": 1,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/vitest/node_modules/vite/dist/node/chunks/moduleRunnerTransport.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 28,
+              "line_end": 1,
+              "line_start": 1,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/vitest/node_modules/vite/dist/node/chunks/moduleRunnerTransport.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Cannot find module '#types/hmrPayload' or its corresponding type declarations.",
+          "rule_id": "typecheck/tsc/TS2307",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "8fa656533979bd9648a5623dae20e77378e14a2c3e9afab5459cda012fb23e69",
+          "location": {
+            "column": 6,
+            "line_end": 106,
+            "line_start": 106,
+            "occurrence_state": "unclassified",
+            "path": "src/plugins/arrayMethods.ts",
+            "symbol_path": "arrayMethods.enableArrayMethods"
+          },
+          "locations": [
+            {
+              "column": 6,
+              "line_end": 106,
+              "line_start": 106,
+              "occurrence_state": "unclassified",
+              "path": "src/plugins/arrayMethods.ts",
+              "symbol_path": "arrayMethods.enableArrayMethods"
+            },
+            {
+              "column": 6,
+              "line_end": 107,
+              "line_start": 107,
+              "occurrence_state": "unclassified",
+              "path": "src/plugins/arrayMethods.ts",
+              "symbol_path": "arrayMethods.enableArrayMethods"
+            },
+            {
+              "column": 6,
+              "line_end": 114,
+              "line_start": 114,
+              "occurrence_state": "unclassified",
+              "path": "src/plugins/arrayMethods.ts",
+              "symbol_path": "arrayMethods.enableArrayMethods"
+            },
+            {
+              "column": 6,
+              "line_end": 115,
+              "line_start": 115,
+              "occurrence_state": "unclassified",
+              "path": "src/plugins/arrayMethods.ts",
+              "symbol_path": "arrayMethods.enableArrayMethods"
+            }
+          ],
+          "message": "Type 'Set<MutatingArrayMethod>' can only be iterated through when using the '--downlevelIteration' flag or with a '--target' of 'es2015' or higher.",
+          "rule_id": "typecheck/tsc/TS2802",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "9a5b3e7945d3bf7b1b283d807bc25554100374629ea847e8c0bae5839f6fedc1",
+          "location": {
+            "column": 66,
+            "line_end": 3021,
+            "line_start": 3021,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/@types/node/inspector.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 66,
+              "line_end": 3021,
+              "line_start": 3021,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/@types/node/inspector.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Cannot find name 'Disposable'.",
+          "rule_id": "typecheck/tsc/TS2304",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "a19e0642a9ab967792c4df0a7f502387d3a176560b2e0d27462ddae8310adb05",
+          "location": {
+            "column": 41,
+            "line_end": 4,
+            "line_start": 4,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/vitest/node_modules/vite/dist/node/module-runner.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 41,
+              "line_end": 4,
+              "line_start": 4,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/vitest/node_modules/vite/dist/node/module-runner.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Cannot find module '#types/customEvent' or its corresponding type declarations.",
+          "rule_id": "typecheck/tsc/TS2307",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "a2d2f5e849ef89ae64c41916711181d77383aa9e5b57bd6cbb7835e1649b6afd",
+          "location": {
+            "column": 17,
+            "line_end": 484,
+            "line_start": 484,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/@types/node/fs/promises.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 17,
+              "line_end": 484,
+              "line_start": 484,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/@types/node/fs/promises.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Property 'asyncDispose' does not exist on type 'SymbolConstructor'.",
+          "rule_id": "typecheck/tsc/TS2339",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "a6444bc2c50d3013d6b0de778b87a7f541f610aac2176ac75d028b1568e3fcc3",
+          "location": {
+            "column": 10,
+            "line_end": 1014,
+            "line_start": 1014,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/vitest/node_modules/rollup/dist/rollup.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 10,
+              "line_end": 1014,
+              "line_start": 1014,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/vitest/node_modules/rollup/dist/rollup.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Property 'asyncDispose' does not exist on type 'SymbolConstructor'.",
+          "rule_id": "typecheck/tsc/TS2339",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "a9e58be383c4949406c11093d0ea437245ff10b9d39cda9ab523d29c2ccf862f",
+          "location": {
+            "column": 17,
+            "line_end": 594,
+            "line_start": 594,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/@types/node/dgram.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 17,
+              "line_end": 594,
+              "line_start": 594,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/@types/node/dgram.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Property 'asyncDispose' does not exist on type 'SymbolConstructor'.",
+          "rule_id": "typecheck/tsc/TS2339",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "ac3890dcf44d5af0b66ce05d375fbd8f793cf93eaab198590b8f5c628c5556b9",
+          "location": {
+            "column": 89,
+            "line_end": 436,
+            "line_start": 436,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/@types/node/events.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 89,
+              "line_end": 436,
+              "line_start": 436,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/@types/node/events.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Cannot find name 'Disposable'.",
+          "rule_id": "typecheck/tsc/TS2304",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "b2d8da8db9a84712decd6909334fd3d4586b0ba739e2fdcd47a460881c3eb46e",
+          "location": {
+            "column": 6,
+            "line_end": 126,
+            "line_start": 126,
+            "occurrence_state": "unclassified",
+            "path": "src/plugins/arrayMethods.ts",
+            "symbol_path": "arrayMethods.enableArrayMethods"
+          },
+          "locations": [
+            {
+              "column": 6,
+              "line_end": 126,
+              "line_start": 126,
+              "occurrence_state": "unclassified",
+              "path": "src/plugins/arrayMethods.ts",
+              "symbol_path": "arrayMethods.enableArrayMethods"
+            }
+          ],
+          "message": "Type 'Set<NonMutatingArrayMethod>' can only be iterated through when using the '--downlevelIteration' flag or with a '--target' of 'es2015' or higher.",
+          "rule_id": "typecheck/tsc/TS2802",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "b4313c832307b2dbd2301c04ec1a2531402087fb18e42010a0941f40805205fd",
+          "location": {
+            "column": 36,
+            "line_end": 3,
+            "line_start": 3,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/vitest/node_modules/vite/dist/node/module-runner.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 36,
+              "line_end": 3,
+              "line_start": 3,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/vitest/node_modules/vite/dist/node/module-runner.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Cannot find module '#types/hmrPayload' or its corresponding type declarations.",
+          "rule_id": "typecheck/tsc/TS2307",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "b527d4b1393cc4e9d14c21a298df931f049bfb77333c0d84927ba4e0c9935eb9",
+          "location": {
+            "column": 65,
+            "line_end": 155,
+            "line_start": 155,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/@vitest/spy/dist/index.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 65,
+              "line_end": 155,
+              "line_start": 155,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/@vitest/spy/dist/index.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Cannot find name 'Disposable'.",
+          "rule_id": "typecheck/tsc/TS2304",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "b568a239f551aba1f113db78bf2a9a503e0894292bf4f99453700806762e4eee",
+          "location": {
+            "column": 53,
+            "line_end": 34,
+            "line_start": 34,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/@types/node/timers.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 53,
+              "line_end": 34,
+              "line_start": 34,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/@types/node/timers.d.ts",
+              "symbol_path": ""
+            },
+            {
+              "column": 51,
+              "line_end": 86,
+              "line_start": 86,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/@types/node/timers.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Cannot find name 'Disposable'.",
+          "rule_id": "typecheck/tsc/TS2304",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "bba4ed02d5f370dd6ff6afb755560b8c26404910d937469a3b754e8ae157a2b8",
+          "location": {
+            "column": 9,
+            "line_end": 373,
+            "line_start": 373,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/@types/node/sqlite.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 9,
+              "line_end": 373,
+              "line_start": 373,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/@types/node/sqlite.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "A computed property name in an ambient context must refer to an expression whose type is a literal type or a 'unique symbol' type.",
+          "rule_id": "typecheck/tsc/TS1165",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "c97f8ef057fd13855f378ff23db9e3e28ec6fc277406a996f31473366158da32",
+          "location": {
+            "column": 35,
+            "line_end": 207,
+            "line_start": 207,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/@types/node/sqlite.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 35,
+              "line_end": 207,
+              "line_start": 207,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/@types/node/sqlite.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Cannot find name 'Disposable'.",
+          "rule_id": "typecheck/tsc/TS2304",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "cc42ae0debeb2bd44c1d08ff277fa72937fc9f8b1cb152ce5ddb7711e53db5b6",
+          "location": {
+            "column": 17,
+            "line_end": 330,
+            "line_start": 330,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/@types/node/fs.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 17,
+              "line_end": 330,
+              "line_start": 330,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/@types/node/fs.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Property 'asyncDispose' does not exist on type 'SymbolConstructor'.",
+          "rule_id": "typecheck/tsc/TS2339",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "d02109edf1d5d47decc3a4473acfbbb6d1a4602d0f81ed475b1af89ba837d03c",
+          "location": {
+            "column": 60,
+            "line_end": 54,
+            "line_start": 54,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/@types/node/readline.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 60,
+              "line_end": 54,
+              "line_start": 54,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/@types/node/readline.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Cannot find name 'Disposable'.",
+          "rule_id": "typecheck/tsc/TS2304",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "d2dca89496d0ebc68c7f0b4ec854444c7e8c82c12fc19baa7b431d9404b9a089",
+          "location": {
+            "column": 2,
+            "line_end": 105,
+            "line_start": 105,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/vitest/dist/chunks/reporters.d.BuRON0I0.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 2,
+              "line_end": 105,
+              "line_start": 105,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/vitest/dist/chunks/reporters.d.BuRON0I0.d.ts",
+              "symbol_path": ""
+            },
+            {
+              "column": 2,
+              "line_end": 146,
+              "line_start": 146,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/vitest/dist/chunks/reporters.d.BuRON0I0.d.ts",
+              "symbol_path": ""
+            },
+            {
+              "column": 2,
+              "line_end": 197,
+              "line_start": 197,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/vitest/dist/chunks/reporters.d.BuRON0I0.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Private identifiers are only available when targeting ECMAScript 2015 and higher.",
+          "rule_id": "typecheck/tsc/TS18028",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "d81c62509a3e0c34098ef69c08915dcdab0d62956551a07e7a67a09c48961290",
+          "location": {
+            "column": 17,
+            "line_end": 373,
+            "line_start": 373,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/@types/node/sqlite.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 17,
+              "line_end": 373,
+              "line_start": 373,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/@types/node/sqlite.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Property 'dispose' does not exist on type 'SymbolConstructor'.",
+          "rule_id": "typecheck/tsc/TS2339",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "dce61a6aafeafa876b2275c55c98541499bc4c91a7e9610d8dc076a1ea2eb72d",
+          "location": {
+            "column": 25,
+            "line_end": 64,
+            "line_start": 64,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/@types/node/timers.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 25,
+              "line_end": 64,
+              "line_start": 64,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/@types/node/timers.d.ts",
+              "symbol_path": ""
+            },
+            {
+              "column": 25,
+              "line_end": 144,
+              "line_start": 144,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/@types/node/timers.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Property 'dispose' does not exist on type 'SymbolConstructor'.",
+          "rule_id": "typecheck/tsc/TS2339",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "dd178693be8dbac046fa06d93f3cab12cc214feee776d9debc52714af574222b",
+          "location": {
+            "column": 9,
+            "line_end": 215,
+            "line_start": 215,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/@types/node/readline.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 9,
+              "line_end": 215,
+              "line_start": 215,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/@types/node/readline.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "A computed property name in an ambient context must refer to an expression whose type is a literal type or a 'unique symbol' type.",
+          "rule_id": "typecheck/tsc/TS1165",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "df99f4cb0a9f736ec1a23a21b094fa8146be37914b6d48a959849f66f9421fc2",
+          "location": {
+            "column": 21,
+            "line_end": 29,
+            "line_start": 29,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/@types/node/ts5.6/index.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 21,
+              "line_end": 29,
+              "line_start": 29,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/@types/node/ts5.6/index.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Cannot find lib definition for 'esnext.disposable'.",
+          "rule_id": "typecheck/tsc/TS2726",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "e4923fa31397736613126d4126bd1f1b3b4c332f108665d0abfa9a657b49b788",
+          "location": {
+            "column": 139,
+            "line_end": 4,
+            "line_start": 4,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/vitest/node_modules/vite/dist/node/index.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 139,
+              "line_end": 4,
+              "line_start": 4,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/vitest/node_modules/vite/dist/node/index.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Cannot find module '#types/customEvent' or its corresponding type declarations.",
+          "rule_id": "typecheck/tsc/TS2307",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "e666d9b60eca4af90c7d77e553aa0bfae352e28a647bd04d0ea8a90f55a5d19b",
+          "location": {
+            "column": 13,
+            "line_end": 628,
+            "line_start": 628,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/@types/node/stream.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 13,
+              "line_end": 628,
+              "line_start": 628,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/@types/node/stream.d.ts",
+              "symbol_path": ""
+            },
+            {
+              "column": 13,
+              "line_end": 970,
+              "line_start": 970,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/@types/node/stream.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "A computed property name in an ambient context must refer to an expression whose type is a literal type or a 'unique symbol' type.",
+          "rule_id": "typecheck/tsc/TS1165",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "e8172d0dc073accc630741a44b14f89f83da1a948725026ca215e50f12d02592",
+          "location": {
+            "column": 17,
+            "line_end": 309,
+            "line_start": 309,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/@types/node/child_process.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 17,
+              "line_end": 309,
+              "line_start": 309,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/@types/node/child_process.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Property 'dispose' does not exist on type 'SymbolConstructor'.",
+          "rule_id": "typecheck/tsc/TS2339",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "ed93eafb7b964b3ced41eab0b4d2efe76efa01be2a4cee4807749c4cf4377c76",
+          "location": {
+            "column": 21,
+            "line_end": 628,
+            "line_start": 628,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/@types/node/stream.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 21,
+              "line_end": 628,
+              "line_start": 628,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/@types/node/stream.d.ts",
+              "symbol_path": ""
+            },
+            {
+              "column": 21,
+              "line_end": 970,
+              "line_start": 970,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/@types/node/stream.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Property 'asyncDispose' does not exist on type 'SymbolConstructor'.",
+          "rule_id": "typecheck/tsc/TS2339",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "f7c7535f4910ca0c4bfe528a79aeaa6c1772828f5937c947f84431379a87e02c",
+          "location": {
+            "column": 9,
+            "line_end": 309,
+            "line_start": 309,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/@types/node/child_process.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 9,
+              "line_end": 309,
+              "line_start": 309,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/@types/node/child_process.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "A computed property name in an ambient context must refer to an expression whose type is a literal type or a 'unique symbol' type.",
+          "rule_id": "typecheck/tsc/TS1165",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "f918055d97c5c526974a208ff2cb762fd64cb0ac7a61f5d4ad1496c3993be5a9",
+          "location": {
+            "column": 9,
+            "line_end": 484,
+            "line_start": 484,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/@types/node/fs/promises.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 9,
+              "line_end": 484,
+              "line_start": 484,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/@types/node/fs/promises.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "A computed property name in an interface must refer to an expression whose type is a literal type or a 'unique symbol' type.",
+          "rule_id": "typecheck/tsc/TS1169",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "fd454e6ab8222e873650ee39563fc691071045bb9a1329814b4132d3105f1aa6",
+          "location": {
+            "column": 9,
+            "line_end": 738,
+            "line_start": 738,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/@types/node/net.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 9,
+              "line_end": 738,
+              "line_start": 738,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/@types/node/net.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "A computed property name in an ambient context must refer to an expression whose type is a literal type or a 'unique symbol' type.",
+          "rule_id": "typecheck/tsc/TS1165",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "fd63598f6508fe5329c0a0360b5b30582f2ff1bcde2c6932eb751e15ca135e6a",
+          "location": {
+            "column": 17,
+            "line_end": 64,
+            "line_start": 64,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/@types/node/timers.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 17,
+              "line_end": 64,
+              "line_start": 64,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/@types/node/timers.d.ts",
+              "symbol_path": ""
+            },
+            {
+              "column": 17,
+              "line_end": 144,
+              "line_start": 144,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/@types/node/timers.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "A computed property name in an interface must refer to an expression whose type is a literal type or a 'unique symbol' type.",
+          "rule_id": "typecheck/tsc/TS1169",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "tsc diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "feb1090e5425ad01d941fc0692d40ffc859818a944adebbf46e5775ad5178b95",
+          "location": {
+            "column": 9,
+            "line_end": 496,
+            "line_start": 496,
+            "occurrence_state": "unclassified",
+            "path": "node_modules/@types/node/worker_threads.d.ts",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 9,
+              "line_end": 496,
+              "line_start": 496,
+              "occurrence_state": "unclassified",
+              "path": "node_modules/@types/node/worker_threads.d.ts",
+              "symbol_path": ""
+            }
+          ],
+          "message": "A computed property name in an ambient context must refer to an expression whose type is a literal type or a 'unique symbol' type.",
+          "rule_id": "typecheck/tsc/TS1165",
+          "severity": "error",
+          "source": {
+            "tool": "tsc",
+            "version": "Version 5.0.2"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        }
+      ],
+      "kind": "typecheck",
+      "language": "typescript",
+      "outcome": "findings",
+      "root": "__tests__",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 80603
+    },
+    {
+      "dependency_state": "trusted",
+      "findings": [],
+      "hint": "The project's test runner found no tests",
+      "kind": "coverage",
+      "language": "typescript",
+      "outcome": "skipped",
+      "reason": "no_tests",
+      "root": "__tests__",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 74158
+    }
+  ],
+  "deferred": [
+    {
+      "reason": "no_endpoint",
+      "step": "triage"
+    },
+    {
+      "reason": "no_endpoint",
+      "step": "agents"
+    },
+    {
+      "reason": "no_endpoint",
+      "step": "verify"
+    }
+  ],
+  "excluded": [
+    {
+      "path": "src/plugins/mapset.ts",
+      "reason": "coverage_not_instrumented"
+    }
+  ],
+  "findings": [
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "043e591503c2fafb5a0d97cb8d74638abaf3a7616a39bafb519e2b37753da8ea",
+      "location": {
+        "column": 49,
+        "line_end": 2,
+        "line_start": 2,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/vitest/node_modules/vite/dist/node/module-runner.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 49,
+          "line_end": 2,
+          "line_start": 2,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/vitest/node_modules/vite/dist/node/module-runner.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Cannot find module '#types/hot' or its corresponding type declarations.",
+      "rule_id": "typecheck/tsc/TS2307",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "129ef329250550be94461333cf7c0429ecae9d95d9734eb7c656f3b20213d2ca",
+      "location": {
+        "column": 13,
+        "line_end": 2200,
+        "line_start": 2200,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/@types/node/test.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 13,
+          "line_end": 2200,
+          "line_start": 2200,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/@types/node/test.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "A computed property name in an interface must refer to an expression whose type is a literal type or a 'unique symbol' type.",
+      "rule_id": "typecheck/tsc/TS1169",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "1ba84550b351fc4a28172606cb7ceaaabfcbdb8c72169416e24216e8eef736cb",
+      "location": {
+        "column": 56,
+        "line_end": 26,
+        "line_start": 26,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/vitest/node_modules/vite/dist/node/index.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 56,
+          "line_end": 26,
+          "line_start": 26,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/vitest/node_modules/vite/dist/node/index.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Cannot find module '#types/metadata' or its corresponding type declarations.",
+      "rule_id": "typecheck/tsc/TS2307",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "2115bc47636342237ea36e2c0f4aae0150abd7505681ab24e5c4bb3de463e0ff",
+      "location": {
+        "column": 223,
+        "line_end": 3,
+        "line_start": 3,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/vitest/node_modules/vite/dist/node/index.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 223,
+          "line_end": 3,
+          "line_start": 3,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/vitest/node_modules/vite/dist/node/index.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Cannot find module '#types/hmrPayload' or its corresponding type declarations.",
+      "rule_id": "typecheck/tsc/TS2307",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "22554665013db5016b7ed0ca48cc2478621e425b460cef8185b76f6248c6674a",
+      "location": {
+        "column": 96,
+        "line_end": 97,
+        "line_start": 97,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/@vitest/utils/dist/diff.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 96,
+          "line_end": 97,
+          "line_start": 97,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/@vitest/utils/dist/diff.d.ts",
+          "symbol_path": ""
+        },
+        {
+          "column": 133,
+          "line_end": 97,
+          "line_start": 97,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/@vitest/utils/dist/diff.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Cannot find name 'WeakKey'.",
+      "rule_id": "typecheck/tsc/TS2304",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "22f3e7fe68fc2b4cadeba0c89344af6106ae0f0dc535e5c8da2dc27e7cda1a99",
+      "location": {
+        "column": 97,
+        "line_end": 25,
+        "line_start": 25,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/vitest/node_modules/vite/dist/node/index.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 97,
+          "line_end": 25,
+          "line_start": 25,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/vitest/node_modules/vite/dist/node/index.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Cannot find module '#types/importGlob' or its corresponding type declarations.",
+      "rule_id": "typecheck/tsc/TS2307",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "2ad13f62af3b212fc1dfa60e9ecf6219d77bcc0ccde9739a62eedce3ca8b69a7",
+      "location": {
+        "column": 58,
+        "line_end": 5,
+        "line_start": 5,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/@vitest/utils/dist/error.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 58,
+          "line_end": 5,
+          "line_start": 5,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/@vitest/utils/dist/error.d.ts",
+          "symbol_path": ""
+        },
+        {
+          "column": 84,
+          "line_end": 7,
+          "line_start": 7,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/@vitest/utils/dist/error.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Cannot find name 'WeakKey'.",
+      "rule_id": "typecheck/tsc/TS2304",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "2e3c5472c5bbf9695c8404fb14453364899e4bd91378e587df3a78bc0b6749c2",
+      "location": {
+        "column": 9,
+        "line_end": 829,
+        "line_start": 829,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/@types/node/perf_hooks.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 9,
+          "line_end": 829,
+          "line_start": 829,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/@types/node/perf_hooks.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "A computed property name in an interface must refer to an expression whose type is a literal type or a 'unique symbol' type.",
+      "rule_id": "typecheck/tsc/TS1169",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "3403438b7112eaa821444146dbb85498e887100578c4136ed35f104d5ad2f545",
+      "location": {
+        "column": 17,
+        "line_end": 738,
+        "line_start": 738,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/@types/node/net.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 17,
+          "line_end": 738,
+          "line_start": 738,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/@types/node/net.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Property 'asyncDispose' does not exist on type 'SymbolConstructor'.",
+      "rule_id": "typecheck/tsc/TS2339",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "49e1d8cb009b493736ad622c46adea300c90a861d8390a712d889260a76020d9",
+      "location": {
+        "column": 101,
+        "line_end": 24,
+        "line_start": 24,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/vitest/node_modules/vite/dist/node/index.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 101,
+          "line_end": 24,
+          "line_start": 24,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/vitest/node_modules/vite/dist/node/index.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Cannot find module '#types/internal/lightningcssOptions' or its corresponding type declarations.",
+      "rule_id": "typecheck/tsc/TS2307",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "4ecd3a9beac07292d1f9121eff64b3fcfac40fe0511498fb73ab0a495a1b4a58",
+      "location": {
+        "column": 109,
+        "line_end": 23,
+        "line_start": 23,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/vitest/node_modules/vite/dist/node/index.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 109,
+          "line_end": 23,
+          "line_start": 23,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/vitest/node_modules/vite/dist/node/index.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Cannot find module '#types/internal/cssPreprocessorOptions' or its corresponding type declarations.",
+      "rule_id": "typecheck/tsc/TS2307",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "511b19c080fc40691cff2df96850a5012c3b06d35a0420caba13499be659b60b",
+      "location": {
+        "column": 41,
+        "line_end": 7,
+        "line_start": 7,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/vitest/node_modules/vite/dist/node/index.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 41,
+          "line_end": 7,
+          "line_start": 7,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/vitest/node_modules/vite/dist/node/index.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Cannot find module 'rollup/parseAst' or its corresponding type declarations.",
+      "rule_id": "typecheck/tsc/TS2307",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "66154a8a43c340ad00e5edb6b15f9142116ba7b61c05256277fb0cc7246878c5",
+      "location": {
+        "column": 17,
+        "line_end": 215,
+        "line_start": 215,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/@types/node/readline.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 17,
+          "line_end": 215,
+          "line_start": 215,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/@types/node/readline.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Property 'dispose' does not exist on type 'SymbolConstructor'.",
+      "rule_id": "typecheck/tsc/TS2339",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "67c8967d075202e6f26c791ab2cda41d1430a65ace3d6552ad267745fcd637ae",
+      "location": {
+        "column": 2,
+        "line_end": 1014,
+        "line_start": 1014,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/vitest/node_modules/rollup/dist/rollup.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 2,
+          "line_end": 1014,
+          "line_start": 1014,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/vitest/node_modules/rollup/dist/rollup.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "A computed property name in an interface must refer to an expression whose type is a literal type or a 'unique symbol' type.",
+      "rule_id": "typecheck/tsc/TS1169",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "6c03b9243cb6959d7377ecca25f3217bb817cc5fd3da2c5e4252e0363a6f16de",
+      "location": {
+        "column": 17,
+        "line_end": 336,
+        "line_start": 336,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/@types/node/fs.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 17,
+          "line_end": 336,
+          "line_start": 336,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/@types/node/fs.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Property 'dispose' does not exist on type 'SymbolConstructor'.",
+      "rule_id": "typecheck/tsc/TS2339",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "7782ae21110dd0ad3d391fe0e995ebb95649bed671d92c500d56ebbc10232554",
+      "location": {
+        "column": 9,
+        "line_end": 594,
+        "line_start": 594,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/@types/node/dgram.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 9,
+          "line_end": 594,
+          "line_start": 594,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/@types/node/dgram.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "A computed property name in an ambient context must refer to an expression whose type is a literal type or a 'unique symbol' type.",
+      "rule_id": "typecheck/tsc/TS1165",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "779c5c15e9c3d4fdd390a863d2fba13beab6c2eb1c5417e6849e3ae97e573471",
+      "location": {
+        "column": 21,
+        "line_end": 2200,
+        "line_start": 2200,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/@types/node/test.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 21,
+          "line_end": 2200,
+          "line_start": 2200,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/@types/node/test.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Property 'dispose' does not exist on type 'SymbolConstructor'.",
+      "rule_id": "typecheck/tsc/TS2339",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "7ce24e06e69654559d642a2a56cedca564a04f7d86e3d6cec9a16f8f445ede89",
+      "location": {
+        "column": 17,
+        "line_end": 496,
+        "line_start": 496,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/@types/node/worker_threads.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 17,
+          "line_end": 496,
+          "line_start": 496,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/@types/node/worker_threads.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Property 'asyncDispose' does not exist on type 'SymbolConstructor'.",
+      "rule_id": "typecheck/tsc/TS2339",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "8641a07f298e8983a31f0d374d66af59f83e381ad906504f775fd3e2e11c3527",
+      "location": {
+        "column": 45,
+        "line_end": 21,
+        "line_start": 21,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/vitest/node_modules/vite/dist/node/index.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 45,
+          "line_end": 21,
+          "line_start": 21,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/vitest/node_modules/vite/dist/node/index.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Cannot find module '#types/internal/terserOptions' or its corresponding type declarations.",
+      "rule_id": "typecheck/tsc/TS2307",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "8a62a6c20e315059a2b92bfd3d9d630b9293805150403094e05bdf161d93296e",
+      "location": {
+        "column": 9,
+        "line_end": 330,
+        "line_start": 330,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/@types/node/fs.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 9,
+          "line_end": 330,
+          "line_start": 330,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/@types/node/fs.d.ts",
+          "symbol_path": ""
+        },
+        {
+          "column": 9,
+          "line_end": 336,
+          "line_start": 336,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/@types/node/fs.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "A computed property name in an ambient context must refer to an expression whose type is a literal type or a 'unique symbol' type.",
+      "rule_id": "typecheck/tsc/TS1165",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "8aee026a9b313b8f0c81dd77f3f6b19778263ed58ac9c0ac67a8e3dd2e89b243",
+      "location": {
+        "column": 17,
+        "line_end": 829,
+        "line_start": 829,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/@types/node/perf_hooks.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 17,
+          "line_end": 829,
+          "line_start": 829,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/@types/node/perf_hooks.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Property 'dispose' does not exist on type 'SymbolConstructor'.",
+      "rule_id": "typecheck/tsc/TS2339",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "8bd12bd00db9bad79d30b2a0cc968acc76556345078d1ca3a423b9c47d559204",
+      "location": {
+        "column": 28,
+        "line_end": 1,
+        "line_start": 1,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/vitest/node_modules/vite/dist/node/chunks/moduleRunnerTransport.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 28,
+          "line_end": 1,
+          "line_start": 1,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/vitest/node_modules/vite/dist/node/chunks/moduleRunnerTransport.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Cannot find module '#types/hmrPayload' or its corresponding type declarations.",
+      "rule_id": "typecheck/tsc/TS2307",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "8fa656533979bd9648a5623dae20e77378e14a2c3e9afab5459cda012fb23e69",
+      "location": {
+        "column": 6,
+        "line_end": 106,
+        "line_start": 106,
+        "occurrence_state": "unclassified",
+        "path": "src/plugins/arrayMethods.ts",
+        "symbol_path": "arrayMethods.enableArrayMethods"
+      },
+      "locations": [
+        {
+          "column": 6,
+          "line_end": 106,
+          "line_start": 106,
+          "occurrence_state": "unclassified",
+          "path": "src/plugins/arrayMethods.ts",
+          "symbol_path": "arrayMethods.enableArrayMethods"
+        },
+        {
+          "column": 6,
+          "line_end": 107,
+          "line_start": 107,
+          "occurrence_state": "unclassified",
+          "path": "src/plugins/arrayMethods.ts",
+          "symbol_path": "arrayMethods.enableArrayMethods"
+        },
+        {
+          "column": 6,
+          "line_end": 114,
+          "line_start": 114,
+          "occurrence_state": "unclassified",
+          "path": "src/plugins/arrayMethods.ts",
+          "symbol_path": "arrayMethods.enableArrayMethods"
+        },
+        {
+          "column": 6,
+          "line_end": 115,
+          "line_start": 115,
+          "occurrence_state": "unclassified",
+          "path": "src/plugins/arrayMethods.ts",
+          "symbol_path": "arrayMethods.enableArrayMethods"
+        }
+      ],
+      "message": "Type 'Set<MutatingArrayMethod>' can only be iterated through when using the '--downlevelIteration' flag or with a '--target' of 'es2015' or higher.",
+      "rule_id": "typecheck/tsc/TS2802",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "9a5b3e7945d3bf7b1b283d807bc25554100374629ea847e8c0bae5839f6fedc1",
+      "location": {
+        "column": 66,
+        "line_end": 3021,
+        "line_start": 3021,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/@types/node/inspector.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 66,
+          "line_end": 3021,
+          "line_start": 3021,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/@types/node/inspector.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Cannot find name 'Disposable'.",
+      "rule_id": "typecheck/tsc/TS2304",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "a19e0642a9ab967792c4df0a7f502387d3a176560b2e0d27462ddae8310adb05",
+      "location": {
+        "column": 41,
+        "line_end": 4,
+        "line_start": 4,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/vitest/node_modules/vite/dist/node/module-runner.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 41,
+          "line_end": 4,
+          "line_start": 4,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/vitest/node_modules/vite/dist/node/module-runner.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Cannot find module '#types/customEvent' or its corresponding type declarations.",
+      "rule_id": "typecheck/tsc/TS2307",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "a2d2f5e849ef89ae64c41916711181d77383aa9e5b57bd6cbb7835e1649b6afd",
+      "location": {
+        "column": 17,
+        "line_end": 484,
+        "line_start": 484,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/@types/node/fs/promises.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 17,
+          "line_end": 484,
+          "line_start": 484,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/@types/node/fs/promises.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Property 'asyncDispose' does not exist on type 'SymbolConstructor'.",
+      "rule_id": "typecheck/tsc/TS2339",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "a6444bc2c50d3013d6b0de778b87a7f541f610aac2176ac75d028b1568e3fcc3",
+      "location": {
+        "column": 10,
+        "line_end": 1014,
+        "line_start": 1014,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/vitest/node_modules/rollup/dist/rollup.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 10,
+          "line_end": 1014,
+          "line_start": 1014,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/vitest/node_modules/rollup/dist/rollup.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Property 'asyncDispose' does not exist on type 'SymbolConstructor'.",
+      "rule_id": "typecheck/tsc/TS2339",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "a9e58be383c4949406c11093d0ea437245ff10b9d39cda9ab523d29c2ccf862f",
+      "location": {
+        "column": 17,
+        "line_end": 594,
+        "line_start": 594,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/@types/node/dgram.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 17,
+          "line_end": 594,
+          "line_start": 594,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/@types/node/dgram.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Property 'asyncDispose' does not exist on type 'SymbolConstructor'.",
+      "rule_id": "typecheck/tsc/TS2339",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "ac3890dcf44d5af0b66ce05d375fbd8f793cf93eaab198590b8f5c628c5556b9",
+      "location": {
+        "column": 89,
+        "line_end": 436,
+        "line_start": 436,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/@types/node/events.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 89,
+          "line_end": 436,
+          "line_start": 436,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/@types/node/events.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Cannot find name 'Disposable'.",
+      "rule_id": "typecheck/tsc/TS2304",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "b2d8da8db9a84712decd6909334fd3d4586b0ba739e2fdcd47a460881c3eb46e",
+      "location": {
+        "column": 6,
+        "line_end": 126,
+        "line_start": 126,
+        "occurrence_state": "unclassified",
+        "path": "src/plugins/arrayMethods.ts",
+        "symbol_path": "arrayMethods.enableArrayMethods"
+      },
+      "locations": [
+        {
+          "column": 6,
+          "line_end": 126,
+          "line_start": 126,
+          "occurrence_state": "unclassified",
+          "path": "src/plugins/arrayMethods.ts",
+          "symbol_path": "arrayMethods.enableArrayMethods"
+        }
+      ],
+      "message": "Type 'Set<NonMutatingArrayMethod>' can only be iterated through when using the '--downlevelIteration' flag or with a '--target' of 'es2015' or higher.",
+      "rule_id": "typecheck/tsc/TS2802",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "b4313c832307b2dbd2301c04ec1a2531402087fb18e42010a0941f40805205fd",
+      "location": {
+        "column": 36,
+        "line_end": 3,
+        "line_start": 3,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/vitest/node_modules/vite/dist/node/module-runner.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 36,
+          "line_end": 3,
+          "line_start": 3,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/vitest/node_modules/vite/dist/node/module-runner.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Cannot find module '#types/hmrPayload' or its corresponding type declarations.",
+      "rule_id": "typecheck/tsc/TS2307",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "b527d4b1393cc4e9d14c21a298df931f049bfb77333c0d84927ba4e0c9935eb9",
+      "location": {
+        "column": 65,
+        "line_end": 155,
+        "line_start": 155,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/@vitest/spy/dist/index.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 65,
+          "line_end": 155,
+          "line_start": 155,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/@vitest/spy/dist/index.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Cannot find name 'Disposable'.",
+      "rule_id": "typecheck/tsc/TS2304",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "b568a239f551aba1f113db78bf2a9a503e0894292bf4f99453700806762e4eee",
+      "location": {
+        "column": 53,
+        "line_end": 34,
+        "line_start": 34,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/@types/node/timers.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 53,
+          "line_end": 34,
+          "line_start": 34,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/@types/node/timers.d.ts",
+          "symbol_path": ""
+        },
+        {
+          "column": 51,
+          "line_end": 86,
+          "line_start": 86,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/@types/node/timers.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Cannot find name 'Disposable'.",
+      "rule_id": "typecheck/tsc/TS2304",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "bba4ed02d5f370dd6ff6afb755560b8c26404910d937469a3b754e8ae157a2b8",
+      "location": {
+        "column": 9,
+        "line_end": 373,
+        "line_start": 373,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/@types/node/sqlite.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 9,
+          "line_end": 373,
+          "line_start": 373,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/@types/node/sqlite.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "A computed property name in an ambient context must refer to an expression whose type is a literal type or a 'unique symbol' type.",
+      "rule_id": "typecheck/tsc/TS1165",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "c97f8ef057fd13855f378ff23db9e3e28ec6fc277406a996f31473366158da32",
+      "location": {
+        "column": 35,
+        "line_end": 207,
+        "line_start": 207,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/@types/node/sqlite.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 35,
+          "line_end": 207,
+          "line_start": 207,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/@types/node/sqlite.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Cannot find name 'Disposable'.",
+      "rule_id": "typecheck/tsc/TS2304",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "cc42ae0debeb2bd44c1d08ff277fa72937fc9f8b1cb152ce5ddb7711e53db5b6",
+      "location": {
+        "column": 17,
+        "line_end": 330,
+        "line_start": 330,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/@types/node/fs.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 17,
+          "line_end": 330,
+          "line_start": 330,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/@types/node/fs.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Property 'asyncDispose' does not exist on type 'SymbolConstructor'.",
+      "rule_id": "typecheck/tsc/TS2339",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "d02109edf1d5d47decc3a4473acfbbb6d1a4602d0f81ed475b1af89ba837d03c",
+      "location": {
+        "column": 60,
+        "line_end": 54,
+        "line_start": 54,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/@types/node/readline.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 60,
+          "line_end": 54,
+          "line_start": 54,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/@types/node/readline.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Cannot find name 'Disposable'.",
+      "rule_id": "typecheck/tsc/TS2304",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "d2dca89496d0ebc68c7f0b4ec854444c7e8c82c12fc19baa7b431d9404b9a089",
+      "location": {
+        "column": 2,
+        "line_end": 105,
+        "line_start": 105,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/vitest/dist/chunks/reporters.d.BuRON0I0.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 2,
+          "line_end": 105,
+          "line_start": 105,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/vitest/dist/chunks/reporters.d.BuRON0I0.d.ts",
+          "symbol_path": ""
+        },
+        {
+          "column": 2,
+          "line_end": 146,
+          "line_start": 146,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/vitest/dist/chunks/reporters.d.BuRON0I0.d.ts",
+          "symbol_path": ""
+        },
+        {
+          "column": 2,
+          "line_end": 197,
+          "line_start": 197,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/vitest/dist/chunks/reporters.d.BuRON0I0.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Private identifiers are only available when targeting ECMAScript 2015 and higher.",
+      "rule_id": "typecheck/tsc/TS18028",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "d81c62509a3e0c34098ef69c08915dcdab0d62956551a07e7a67a09c48961290",
+      "location": {
+        "column": 17,
+        "line_end": 373,
+        "line_start": 373,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/@types/node/sqlite.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 17,
+          "line_end": 373,
+          "line_start": 373,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/@types/node/sqlite.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Property 'dispose' does not exist on type 'SymbolConstructor'.",
+      "rule_id": "typecheck/tsc/TS2339",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "dce61a6aafeafa876b2275c55c98541499bc4c91a7e9610d8dc076a1ea2eb72d",
+      "location": {
+        "column": 25,
+        "line_end": 64,
+        "line_start": 64,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/@types/node/timers.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 25,
+          "line_end": 64,
+          "line_start": 64,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/@types/node/timers.d.ts",
+          "symbol_path": ""
+        },
+        {
+          "column": 25,
+          "line_end": 144,
+          "line_start": 144,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/@types/node/timers.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Property 'dispose' does not exist on type 'SymbolConstructor'.",
+      "rule_id": "typecheck/tsc/TS2339",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "dd178693be8dbac046fa06d93f3cab12cc214feee776d9debc52714af574222b",
+      "location": {
+        "column": 9,
+        "line_end": 215,
+        "line_start": 215,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/@types/node/readline.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 9,
+          "line_end": 215,
+          "line_start": 215,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/@types/node/readline.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "A computed property name in an ambient context must refer to an expression whose type is a literal type or a 'unique symbol' type.",
+      "rule_id": "typecheck/tsc/TS1165",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "df99f4cb0a9f736ec1a23a21b094fa8146be37914b6d48a959849f66f9421fc2",
+      "location": {
+        "column": 21,
+        "line_end": 29,
+        "line_start": 29,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/@types/node/ts5.6/index.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 21,
+          "line_end": 29,
+          "line_start": 29,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/@types/node/ts5.6/index.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Cannot find lib definition for 'esnext.disposable'.",
+      "rule_id": "typecheck/tsc/TS2726",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "e4923fa31397736613126d4126bd1f1b3b4c332f108665d0abfa9a657b49b788",
+      "location": {
+        "column": 139,
+        "line_end": 4,
+        "line_start": 4,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/vitest/node_modules/vite/dist/node/index.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 139,
+          "line_end": 4,
+          "line_start": 4,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/vitest/node_modules/vite/dist/node/index.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Cannot find module '#types/customEvent' or its corresponding type declarations.",
+      "rule_id": "typecheck/tsc/TS2307",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "e666d9b60eca4af90c7d77e553aa0bfae352e28a647bd04d0ea8a90f55a5d19b",
+      "location": {
+        "column": 13,
+        "line_end": 628,
+        "line_start": 628,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/@types/node/stream.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 13,
+          "line_end": 628,
+          "line_start": 628,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/@types/node/stream.d.ts",
+          "symbol_path": ""
+        },
+        {
+          "column": 13,
+          "line_end": 970,
+          "line_start": 970,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/@types/node/stream.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "A computed property name in an ambient context must refer to an expression whose type is a literal type or a 'unique symbol' type.",
+      "rule_id": "typecheck/tsc/TS1165",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "e8172d0dc073accc630741a44b14f89f83da1a948725026ca215e50f12d02592",
+      "location": {
+        "column": 17,
+        "line_end": 309,
+        "line_start": 309,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/@types/node/child_process.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 17,
+          "line_end": 309,
+          "line_start": 309,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/@types/node/child_process.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Property 'dispose' does not exist on type 'SymbolConstructor'.",
+      "rule_id": "typecheck/tsc/TS2339",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "ed93eafb7b964b3ced41eab0b4d2efe76efa01be2a4cee4807749c4cf4377c76",
+      "location": {
+        "column": 21,
+        "line_end": 628,
+        "line_start": 628,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/@types/node/stream.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 21,
+          "line_end": 628,
+          "line_start": 628,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/@types/node/stream.d.ts",
+          "symbol_path": ""
+        },
+        {
+          "column": 21,
+          "line_end": 970,
+          "line_start": 970,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/@types/node/stream.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Property 'asyncDispose' does not exist on type 'SymbolConstructor'.",
+      "rule_id": "typecheck/tsc/TS2339",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "f7c7535f4910ca0c4bfe528a79aeaa6c1772828f5937c947f84431379a87e02c",
+      "location": {
+        "column": 9,
+        "line_end": 309,
+        "line_start": 309,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/@types/node/child_process.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 9,
+          "line_end": 309,
+          "line_start": 309,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/@types/node/child_process.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "A computed property name in an ambient context must refer to an expression whose type is a literal type or a 'unique symbol' type.",
+      "rule_id": "typecheck/tsc/TS1165",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "f918055d97c5c526974a208ff2cb762fd64cb0ac7a61f5d4ad1496c3993be5a9",
+      "location": {
+        "column": 9,
+        "line_end": 484,
+        "line_start": 484,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/@types/node/fs/promises.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 9,
+          "line_end": 484,
+          "line_start": 484,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/@types/node/fs/promises.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "A computed property name in an interface must refer to an expression whose type is a literal type or a 'unique symbol' type.",
+      "rule_id": "typecheck/tsc/TS1169",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "fd454e6ab8222e873650ee39563fc691071045bb9a1329814b4132d3105f1aa6",
+      "location": {
+        "column": 9,
+        "line_end": 738,
+        "line_start": 738,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/@types/node/net.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 9,
+          "line_end": 738,
+          "line_start": 738,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/@types/node/net.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "A computed property name in an ambient context must refer to an expression whose type is a literal type or a 'unique symbol' type.",
+      "rule_id": "typecheck/tsc/TS1165",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "fd63598f6508fe5329c0a0360b5b30582f2ff1bcde2c6932eb751e15ca135e6a",
+      "location": {
+        "column": 17,
+        "line_end": 64,
+        "line_start": 64,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/@types/node/timers.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 17,
+          "line_end": 64,
+          "line_start": 64,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/@types/node/timers.d.ts",
+          "symbol_path": ""
+        },
+        {
+          "column": 17,
+          "line_end": 144,
+          "line_start": 144,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/@types/node/timers.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "A computed property name in an interface must refer to an expression whose type is a literal type or a 'unique symbol' type.",
+      "rule_id": "typecheck/tsc/TS1169",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "tsc diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "feb1090e5425ad01d941fc0692d40ffc859818a944adebbf46e5775ad5178b95",
+      "location": {
+        "column": 9,
+        "line_end": 496,
+        "line_start": 496,
+        "occurrence_state": "unclassified",
+        "path": "node_modules/@types/node/worker_threads.d.ts",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 9,
+          "line_end": 496,
+          "line_start": 496,
+          "occurrence_state": "unclassified",
+          "path": "node_modules/@types/node/worker_threads.d.ts",
+          "symbol_path": ""
+        }
+      ],
+      "message": "A computed property name in an ambient context must refer to an expression whose type is a literal type or a 'unique symbol' type.",
+      "rule_id": "typecheck/tsc/TS1165",
+      "severity": "error",
+      "source": {
+        "tool": "tsc",
+        "version": "Version 5.0.2"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    }
+  ],
+  "footer": {
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "typecheck __tests__: dependencies_trusted: results use unverified dependencies",
+      "Graph references use syntax and text; no language server was used",
+      "Impact graph truncated at the review deadline",
+      "Offline applies to Rio; tool and test processes were not network-isolated",
+      "dependencies_trusted: results were computed against unverified dependencies"
+    ],
+    "suppressions": [],
+    "tool_versions": {
+      "typescript:.:tsc": "Version 5.0.2",
+      "typescript:.:vitest": "vitest/3.2.6 linux-x64 node-v26.13.0",
+      "typescript:__tests__:tsc": "Version 5.0.2",
+      "typescript:__tests__:vitest": "vitest/3.2.6 linux-x64 node-v26.13.0"
+    }
+  },
+  "impact": {
+    "symbols": [
+      {
+        "path": "__tests__/base.js",
+        "references_per_hop": [
+          0,
+          0
+        ],
+        "symbol_path": "base.runBaseTest",
+        "test_referenced": false,
+        "unresolved": 0
+      }
+    ],
+    "truncated": true,
+    "unresolved": 0
+  },
+  "incomplete": [
+    {
+      "findings": [],
+      "hint": "yarn.lock: node_modules/npm/node_modules/hosted-git-info: expected hosted-git-info@9.0.3, installed hosted-git-info@9.0.2; reinstall dependencies",
+      "kind": "typecheck",
+      "language": "typescript",
+      "outcome": "skipped",
+      "reason": "dependency_mismatch",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 0
+    },
+    {
+      "findings": [],
+      "hint": "lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+      "kind": "lint",
+      "language": "typescript",
+      "outcome": "skipped",
+      "reason": "no_project_config",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 0
+    },
+    {
+      "findings": [],
+      "hint": "yarn.lock: node_modules/npm/node_modules/hosted-git-info: expected hosted-git-info@9.0.3, installed hosted-git-info@9.0.2; reinstall dependencies",
+      "kind": "coverage",
+      "language": "typescript",
+      "outcome": "skipped",
+      "reason": "dependency_mismatch",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 0
+    },
+    {
+      "findings": [],
+      "hint": "Dependency audit needs api.osv.dev",
+      "kind": "dependencies",
+      "language": "common",
+      "outcome": "skipped",
+      "reason": "offline",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 6786
+    },
+    {
+      "findings": [],
+      "hint": "lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+      "kind": "lint",
+      "language": "typescript",
+      "outcome": "skipped",
+      "reason": "no_project_config",
+      "root": "__tests__",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 0
+    },
+    {
+      "dependency_state": "trusted",
+      "findings": [],
+      "hint": "The project's test runner found no tests",
+      "kind": "coverage",
+      "language": "typescript",
+      "outcome": "skipped",
+      "reason": "no_tests",
+      "root": "__tests__",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 74158
+    }
+  ],
+  "metrics": {
+    "checks": [
+      {
+        "kind": "typecheck",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "kind": "lint",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "kind": "coverage",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "kind": "secrets",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 53
+      },
+      {
+        "kind": "dependencies",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 6786
+      },
+      {
+        "kind": "lint",
+        "root": "__tests__",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "kind": "typecheck",
+        "root": "__tests__",
+        "version": "head",
+        "wall_time_ms": 80603
+      },
+      {
+        "kind": "coverage",
+        "root": "__tests__",
+        "version": "head",
+        "wall_time_ms": 74158
+      }
+    ],
+    "tool_versions": {
+      "typescript:.:tsc": "Version 5.0.2",
+      "typescript:.:vitest": "vitest/3.2.6 linux-x64 node-v26.13.0",
+      "typescript:__tests__:tsc": "Version 5.0.2",
+      "typescript:__tests__:vitest": "vitest/3.2.6 linux-x64 node-v26.13.0"
+    },
+    "wall_time_ms": 123977
+  },
+  "review": {
+    "base": "8848a5b16938e5681a890d73de7bda24b5080498",
+    "chain": [
+      "automated-typescript-acceptance",
+      "rio/base"
+    ],
+    "head": "b066364a27a2915662366399ef33e785ee90fb01",
+    "id": "6a37683d73bc734d",
+    "mode": "branch",
+    "profile": "automated-typescript-acceptance",
+    "rio_version": "0.1.0",
+    "run_id": "01M6M2GM4M3RJHHAJJCWQXM66P"
+  },
+  "risks": [],
+  "schema": "rio-report-v1",
+  "status": "incomplete",
+  "summary": {
+    "fixed": 0,
+    "pre_existing": 0,
+    "suppressed": 0
+  }
+}

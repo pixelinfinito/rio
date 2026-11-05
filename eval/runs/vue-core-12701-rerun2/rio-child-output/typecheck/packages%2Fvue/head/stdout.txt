@@ -1,0 +1,2 @@
+../compiler-sfc/src/compileScript.ts(1327,11): error TS2322: Type 'number | null' is not assignable to type 'number'.
+  Type 'null' is not assignable to type 'number'.

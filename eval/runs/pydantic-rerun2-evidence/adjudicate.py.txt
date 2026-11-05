@@ -1,0 +1,28 @@
+import collections, copy, json, pathlib, sys
+root=pathlib.Path.cwd()
+pr=int(sys.argv[1])
+old=root/'eval/runs'/({14199:'pydantic-14199-attempt05',14213:'pydantic-14213-attempt04'}[pr])
+new=root/'eval/runs'/(sys.argv[2] if len(sys.argv)>2 else f'pydantic-{pr}-rerun2')
+r=json.loads((new/'report.json').read_text())
+o=json.loads((old/'report.json').read_text())
+v=json.loads((old/'verdicts.json').read_text())
+skel=json.loads((new/'verdicts.json').read_text())
+a={f['id']:f for f in o['findings']+o['risks']}
+b={f['id']:f for f in r['findings']+r['risks']}
+assert a.keys()==b.keys(), ('changed IDs require manual adjudication', a.keys()-b.keys(), b.keys()-a.keys())
+for key in a:
+    assert a[key]==b[key], ('changed finding requires manual adjudication',key)
+v['reviewer']='sub-agent rerun2-pydantic (automated)'
+v['verdict_source']='automated'
+v['commands']=skel['commands']+[f'Independent oracle ledger reused at identical SHAs: eval/runs/pydantic-evidence/{prefix}-wheel-final/commands.json' for prefix in (['positive-base','positive-head'] if pr==14199 else ['negative-base','negative-head'])]
+v['notes']=skel['notes']+[s for s in v['notes'] if not s.startswith('Runner provenance:') and not s.startswith('Rio selects') and not s.startswith('Failed/interrupted')]
+v['notes'] += ['Rerun2 uses binary f6e4f87e4c65 with unchanged source SHAs, exact install-plan and profile bytes. Every top-level finding was compared field-for-field with the prior raw report. Prior independent wheel-file oracle evidence is reused; current checks and child invocations are retained alongside this report.', 'All raw pre-existing/fixed findings are hidden under deterministic-v2. Prior notes and stored records called the 11 pre-existing Pyright findings pre-existing-shown; that historical scoring contradicts their raw state. This rerun follows current METHODOLOGY.md and does not count them as visible noise.', 'External environment overrides, unset coverage startup variables, strace evidence and supplementary doctor results are retained in commands.json and pydantic-rerun2-evidence. Offline dependency auditing remains a declared capability limitation; these cases do not change lockfiles.']
+for key,f in b.items():
+    annotation=v['findings'][key]
+    if f['state'] in ['pre-existing','fixed']:
+        annotation['verdict']='pre-existing-hidden'
+        annotation['reason']=annotation['reason'].replace('Rio successfully ran a verified base and honestly labels this pre-existing.','Rerun2 ran verified head/base checks and the raw state is pre-existing (hidden).')+' Finding is field-for-field unchanged from the previous pinned raw report.'
+    else:
+        annotation['reason']+=' Rerun2 finding is field-for-field unchanged from the previous pinned raw report; independent oracle evidence remains applicable.'
+(new/'verdicts.json').write_text(json.dumps(v,indent=2)+'\n')
+print(pr,collections.Counter(x['verdict'] for x in v['findings'].values()))

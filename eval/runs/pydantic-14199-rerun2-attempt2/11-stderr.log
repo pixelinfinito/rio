@@ -1,0 +1,8 @@
+Building wheel...
+Successfully built /dev/shm/rio-pydantic/tmp/rio-pydantic-wheel-mp6htodx/pydantic-2.15.0a0+dev-py3-none-any.whl
+Resolved 1 package in 14ms
+Prepared 1 package in 112ms
+Uninstalled 1 package in 8ms
+Installed 1 package in 18ms
+ - pydantic==2.15.0a0+dev (from file:///dev/shm/rio-pydantic/tmp/rio-eval-aa93hczd/head)
+ + pydantic==2.15.0a0+dev (from file:///dev/shm/rio-pydantic/tmp/rio-pydantic-wheel-mp6htodx/pydantic-2.15.0a0+dev-py3-none-any.whl)

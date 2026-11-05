@@ -1,0 +1,11 @@
+{
+  "kind": "seeded-mutation",
+  "parent_pr": 5164,
+  "seed": "litestar-f841-20261105-v1",
+  "base": "f4f7e9831574ed08f50901e62911019b5e7383ac",
+  "head": "fcab0954a74c5f8d340adbbfb9091f94982aa9a2",
+  "patch_sha256": "2ef92d4ca023bd78f1efbec512a0ff9788d1f0e2dbd957c5f66e9d3802455c4a",
+  "profile_sha256": "7f79af17af30fa064a6c7382114fbaca818be229d12e4bfea20ca9678544f4b8",
+  "lockfile_sha256": "8f25baff7a27134191cd7adcb550963aa1212f1081f13196b929e305ff17dfbd",
+  "registered_utc": "2026-11-05T02:47:33.194318+00:00"
+}

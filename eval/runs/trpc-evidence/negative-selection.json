@@ -1,0 +1,9 @@
+{
+  "registered_utc": "2026-11-05T02:26:00Z",
+  "pr": 7903,
+  "kind": "none",
+  "base": "c869fa1075fc3ce11b38495c5e6044fb97b335d2",
+  "head": "248fb772a6d6f7ce2492f8549a8d370ec3df9731",
+  "rationale": "Merged MEMBER/KATT PR with substantial TypeScript source changes and tests confined to tooling/release. Independent oracle must confirm base/head typecheck, enabled oxlint, and release tests before accepting as negative. Rio profile predeclares typechecking and secret scanning; oxlint unsupported by binary, coverage/dependency audit excluded from this type/lint cohort and cannot establish their absence.",
+  "reviewer": "sub-agent eval-trpc (automated)"
+}

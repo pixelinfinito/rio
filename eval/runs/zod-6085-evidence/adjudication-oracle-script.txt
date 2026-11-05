@@ -1,0 +1,10 @@
+import pathlib,json,subprocess,os,time,concurrent.futures
+root=pathlib.Path('/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-evidence');env=os.environ.copy();env['PATH']='/tmp/rio-zod-eval/node-v22.23.4-linux-x64/bin:'+env['PATH']
+def run(item):
+ rev,project=item;cwd=f'/tmp/rio-zod-eval/positive-{rev}';slug=project.replace('/','-').replace('.','root');cmd=['corepack','pnpm','exec','tsc','--noEmit','--pretty','false','-p',project];log=root/f'adjudication-{rev}-{slug}.log';t=time.monotonic()
+ with log.open('w') as f:p=subprocess.run(cmd,cwd=cwd,env=env,stdout=f,stderr=subprocess.STDOUT,timeout=900)
+ r=dict(revision=rev,project=project,argv=cmd,cwd=cwd,exit_code=p.returncode,wall_time_seconds=round(time.monotonic()-t,3),log=log.name);print(rev,project,p.returncode,flush=True);return r
+items=[(rev,p) for rev in ['base','head'] for p in ['.','packages/zod','packages/resolution','packages/integration']]
+with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:
+ result=list(pool.map(run,items))
+(root/'adjudication-commands.json').write_text(json.dumps(result,indent=2)+'\n')

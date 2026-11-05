@@ -1,0 +1,35 @@
+{
+  "argv": [
+    "python3",
+    "eval/runner.py",
+    "--repository",
+    "hynek/structlog",
+    "--pr",
+    "805",
+    "--base",
+    "c6e7cad18ffe91febf2b97dac03a465134b1a5d1",
+    "--head",
+    "7d7708fdf39061b6f7515c13ed0404a9bc05fb33",
+    "--languages",
+    "python",
+    "--rio",
+    "/home/ubuntu/rio/target/release/rio",
+    "--out",
+    "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-structlog/eval/runs/structlog-805-rerun2",
+    "--install-plan",
+    "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-structlog/eval/runs/structlog-805-attempt2/install-plan.json",
+    "--profile",
+    "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-structlog/eval/runs/structlog-805-attempt2/profile.yaml",
+    "--case-id",
+    "805"
+  ],
+  "cwd": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-structlog",
+  "environment_overrides": {
+    "TMPDIR": "/dev/shm",
+    "PIP_CACHE_DIR": "/dev/shm/structlog-pip-cache"
+  },
+  "started_utc": "2026-11-05T10:59:27.684877+00:00",
+  "exit_code": 0,
+  "wall_time_seconds": 1511.285082275048,
+  "finished_utc": "2026-11-05T11:24:38.970048+00:00"
+}

@@ -1,0 +1,4 @@
+version: 1
+name: invalid-action
+extends: rio/base
+steps: [{id: a, uses: rio/triage, rules: [{when: "adds_dependency()", then: "launch(x)"}]}]

@@ -1,0 +1,8 @@
+kind: step
+name: rio/graph
+version: 0.1.0
+description: Graph the review artifacts
+local: true
+inputs: ["snapshot", "projects"]
+outputs: ["graph", "impact"]
+schema: {"type": "object", "additionalProperties": false, "properties": {"hops": {"type": "integer", "minimum": 0, "default": 2}, "max_nodes": {"type": "integer", "minimum": 1, "default": 2000}}}

@@ -1,0 +1,7 @@
+src/pages/api/data.ts(11,24): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string'.
+  Type 'string[]' is not assignable to type 'string'.
+src/pages/api/data.ts(12,17): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string'.
+  Type 'string[]' is not assignable to type 'string'.
+src/pages/index.tsx(9,8): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+src/pages/index.tsx(10,36): error TS2307: Cannot find module '@tanstack/react-query-devtools' or its corresponding type declarations.
+src/pages/index.tsx(97,20): error TS7006: Parameter 'item' implicitly has an 'any' type.

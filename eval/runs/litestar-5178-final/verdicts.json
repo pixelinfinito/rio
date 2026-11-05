@@ -1,0 +1,47 @@
+{
+  "repository": "litestar-org/litestar",
+  "pr": "https://github.com/litestar-org/litestar/pull/5178",
+  "case_id": "5178-zero-threshold",
+  "languages": [
+    "python"
+  ],
+  "reviewer": "sub-agent eval-litestar (automated)",
+  "verdict_source": "automated",
+  "commands": [
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-v1o80hzz argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/litestar-org/litestar.git\", \"/run/user/1000/rio-litestar-eval/rio-eval-v1o80hzz/head\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-v1o80hzz/head argv=[\"git\", \"fetch\", \"origin\", \"716f8b023b1c13e6f1e8ab08dfa1938f7923312d\", \"9870dce9dc2688e78fc43bc73e27eed4198893ac\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-v1o80hzz/head argv=[\"git\", \"merge-base\", \"716f8b023b1c13e6f1e8ab08dfa1938f7923312d\", \"9870dce9dc2688e78fc43bc73e27eed4198893ac\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-v1o80hzz/head argv=[\"git\", \"checkout\", \"--detach\", \"9870dce9dc2688e78fc43bc73e27eed4198893ac\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-v1o80hzz argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/run/user/1000/rio-litestar-eval/rio-eval-v1o80hzz/head\", \"/run/user/1000/rio-litestar-eval/rio-eval-v1o80hzz/base\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-v1o80hzz/base argv=[\"git\", \"checkout\", \"--detach\", \"716f8b023b1c13e6f1e8ab08dfa1938f7923312d\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-v1o80hzz/base argv=[\"uv\", \"sync\", \"--locked\", \"--all-groups\", \"--all-extras\", \"--no-editable\", \"--python\", \"3.12.12\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-v1o80hzz/base argv=[\".venv/bin/python\", \"-I\", \"-c\", \"import hashlib,pathlib,sysconfig; s=pathlib.Path(sysconfig.get_paths()[\\\"purelib\\\"]); names=[\\\"a1_coverage.pth\\\",\\\"_sphinx_jinja2_compat.pth\\\",\\\"sphinxcontrib_jsmath-1.0.1-py3.7-nspkg.pth\\\",\\\"distutils-precedence.pth\\\"]; [(print(str(p),hashlib.sha256(p.read_bytes()).hexdigest(),repr(p.read_text())),p.rename(p.with_suffix(\\\".pth.disabled\\\"))) for n in names if (p:=s/n).exists()]\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-v1o80hzz/base argv=[\".venv/bin/python\", \"-I\", \"-c\", \"import hashlib,json,pathlib,sysconfig; s=pathlib.Path(sysconfig.get_paths()[\\\"purelib\\\"]); ps=list(s.glob(\\\"litestar-*.dist-info/direct_url.json\\\")); assert len(ps)==1,ps; p=ps[0]; text=p.read_text(); meta=json.loads(text); assert not meta.get(\\\"dir_info\\\",{}).get(\\\"editable\\\",False),meta; assert meta[\\\"url\\\"]==pathlib.Path.cwd().as_uri(),meta; print(str(p),hashlib.sha256(text.encode()).hexdigest(),text); p.rename(p.with_suffix(\\\".json.disabled\\\"))\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-v1o80hzz/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-v1o80hzz/head argv=[\"uv\", \"sync\", \"--locked\", \"--all-groups\", \"--all-extras\", \"--no-editable\", \"--python\", \"3.12.12\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-v1o80hzz/head argv=[\".venv/bin/python\", \"-I\", \"-c\", \"import hashlib,pathlib,sysconfig; s=pathlib.Path(sysconfig.get_paths()[\\\"purelib\\\"]); names=[\\\"a1_coverage.pth\\\",\\\"_sphinx_jinja2_compat.pth\\\",\\\"sphinxcontrib_jsmath-1.0.1-py3.7-nspkg.pth\\\",\\\"distutils-precedence.pth\\\"]; [(print(str(p),hashlib.sha256(p.read_bytes()).hexdigest(),repr(p.read_text())),p.rename(p.with_suffix(\\\".pth.disabled\\\"))) for n in names if (p:=s/n).exists()]\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-v1o80hzz/head argv=[\".venv/bin/python\", \"-I\", \"-c\", \"import hashlib,json,pathlib,sysconfig; s=pathlib.Path(sysconfig.get_paths()[\\\"purelib\\\"]); ps=list(s.glob(\\\"litestar-*.dist-info/direct_url.json\\\")); assert len(ps)==1,ps; p=ps[0]; text=p.read_text(); meta=json.loads(text); assert not meta.get(\\\"dir_info\\\",{}).get(\\\"editable\\\",False),meta; assert meta[\\\"url\\\"]==pathlib.Path.cwd().as_uri(),meta; print(str(p),hashlib.sha256(text.encode()).hexdigest(),text); p.rename(p.with_suffix(\\\".json.disabled\\\"))\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-v1o80hzz/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-v1o80hzz/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-v1o80hzz/head argv=[\"node\", \"--version\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-v1o80hzz/head argv=[\"npm\", \"--version\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-v1o80hzz/head argv=[\"python3\", \"--version\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-v1o80hzz/head argv=[\"uv\", \"--version\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-v1o80hzz/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-final/profile.yaml\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-v1o80hzz/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-v1o80hzz/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"716f8b023b1c13e6f1e8ab08dfa1938f7923312d\", \"--format\", \"json\", \"--offline\", \"--profile\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-final/profile.yaml\"]"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-final/commands.json; Rio binary SHA-256: 512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+    "EXCLUDED coverage configuration attempt: baseline_ran=true and baseline_classification_ran=true, with head/base mypy and Ruff dependency_state verified. Overall run remains ineligible because covdefaults treats a zero configured fail_under as unset and overrides it to 100, so JSON export exits 2 despite successful tests. Raw coverage process-2 output records the threshold 100. This is a corrected evaluator setup mistake, not a finding false positive.",
+    "Same pins/profile/installer rerun in the -scored directory with coverage-scoped-threshold.toml, using fail_under=0.01 so covdefaults preserves the setting. Instrumentation, plugins, parallel settings, omissions, exclusions and diff coverage are identical. An independent coverage export probe using existing head data exits 0 with that config.",
+    "Runtime CPython 3.12.12 and uv 0.13.7; all dependency groups/extras locked; known startup hooks and non-editable local-wheel provenance workaround are in install-plan.json with original file contents/hashes in stdout. Trust remains false. Offline audit excluded; coverage suite is tests/e2e/test_routing/test_path_mounting.py. Exact internal target evidence: rio-tool-evidence/commands.json and typecheck-target.json; configured mypy packages are litestar, tests, docs.examples."
+  ],
+  "independently_clean": true,
+  "positive_control": {
+    "kind": "none",
+    "expected": []
+  },
+  "misses": [],
+  "findings": {}
+}

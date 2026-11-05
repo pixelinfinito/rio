@@ -1,0 +1,210 @@
+{
+  "schema": "rio-eval-record-v1",
+  "methodology": "deterministic-v1",
+  "repository": "litestar-org/litestar",
+  "pr": "https://github.com/litestar-org/litestar/pull/5164",
+  "case_id": "5164-seed-f841-ext4-interrupted",
+  "languages": [
+    "python"
+  ],
+  "reviewer": "sub-agent eval-litestar (automated)",
+  "verdict_source": "automated",
+  "independently_clean": false,
+  "commands": [
+    "cwd=/tmp/rio-eval-dwd6w69m argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/litestar-org/litestar.git\", \"/tmp/rio-eval-dwd6w69m/head\"]",
+    "cwd=/tmp/rio-eval-dwd6w69m/head argv=[\"git\", \"fetch\", \"origin\", \"f4f7e9831574ed08f50901e62911019b5e7383ac\", \"fcab0954a74c5f8d340adbbfb9091f94982aa9a2\"]",
+    "cwd=/tmp/rio-eval-dwd6w69m/head argv=[\"git\", \"merge-base\", \"f4f7e9831574ed08f50901e62911019b5e7383ac\", \"fcab0954a74c5f8d340adbbfb9091f94982aa9a2\"]",
+    "cwd=/tmp/rio-eval-dwd6w69m/head argv=[\"git\", \"checkout\", \"--detach\", \"fcab0954a74c5f8d340adbbfb9091f94982aa9a2\"]",
+    "cwd=/tmp/rio-eval-dwd6w69m argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/tmp/rio-eval-dwd6w69m/head\", \"/tmp/rio-eval-dwd6w69m/base\"]",
+    "cwd=/tmp/rio-eval-dwd6w69m/base argv=[\"git\", \"checkout\", \"--detach\", \"f4f7e9831574ed08f50901e62911019b5e7383ac\"]",
+    "cwd=/tmp/rio-eval-dwd6w69m/base argv=[\"uv\", \"sync\", \"--locked\", \"--all-groups\", \"--all-extras\", \"--no-editable\", \"--python\", \"3.12.12\"]",
+    "cwd=/tmp/rio-eval-dwd6w69m/base argv=[\".venv/bin/python\", \"-I\", \"-c\", \"import hashlib,pathlib,sysconfig; s=pathlib.Path(sysconfig.get_paths()[\\\"purelib\\\"]); names=[\\\"a1_coverage.pth\\\",\\\"_sphinx_jinja2_compat.pth\\\",\\\"sphinxcontrib_jsmath-1.0.1-py3.7-nspkg.pth\\\",\\\"distutils-precedence.pth\\\"]; [(print(str(p),hashlib.sha256(p.read_bytes()).hexdigest(),repr(p.read_text())),p.rename(p.with_suffix(\\\".pth.disabled\\\"))) for n in names if (p:=s/n).exists()]\"]",
+    "cwd=/tmp/rio-eval-dwd6w69m/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/tmp/rio-eval-dwd6w69m/head argv=[\"uv\", \"sync\", \"--locked\", \"--all-groups\", \"--all-extras\", \"--no-editable\", \"--python\", \"3.12.12\"]",
+    "cwd=/tmp/rio-eval-dwd6w69m/head argv=[\".venv/bin/python\", \"-I\", \"-c\", \"import hashlib,pathlib,sysconfig; s=pathlib.Path(sysconfig.get_paths()[\\\"purelib\\\"]); names=[\\\"a1_coverage.pth\\\",\\\"_sphinx_jinja2_compat.pth\\\",\\\"sphinxcontrib_jsmath-1.0.1-py3.7-nspkg.pth\\\",\\\"distutils-precedence.pth\\\"]; [(print(str(p),hashlib.sha256(p.read_bytes()).hexdigest(),repr(p.read_text())),p.rename(p.with_suffix(\\\".pth.disabled\\\"))) for n in names if (p:=s/n).exists()]\"]",
+    "cwd=/tmp/rio-eval-dwd6w69m/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/tmp/rio-eval-dwd6w69m/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/tmp/rio-eval-dwd6w69m/head argv=[\"node\", \"--version\"]",
+    "cwd=/tmp/rio-eval-dwd6w69m/head argv=[\"npm\", \"--version\"]",
+    "cwd=/tmp/rio-eval-dwd6w69m/head argv=[\"python3\", \"--version\"]",
+    "cwd=/tmp/rio-eval-dwd6w69m/head argv=[\"uv\", \"--version\"]",
+    "cwd=/tmp/rio-eval-dwd6w69m/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5164-seed-f841/profile.yaml\"]",
+    "cwd=/tmp/rio-eval-dwd6w69m/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/tmp/rio-eval-dwd6w69m/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"f4f7e9831574ed08f50901e62911019b5e7383ac\", \"--format\", \"json\", \"--offline\", \"--profile\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5164-seed-f841/profile.yaml\"]"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5164-seed-f841/commands.json; Rio binary SHA-256: 512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+    "EXCLUDED interrupted ext4 attempt: SIGINT was sent because worker threads spent many minutes in jbd2_log_wait_commit while fsyncing copied source files. Baseline classification did not run; this record contributes no quality score. Same pinned change rerun under ../litestar-5164-seed-f841-tmpfs.",
+    "All dependencies installed and four known executable startup hooks disabled per the saved install plan; trust_installed_dependencies remains false. Profile policy and 60m budget identical to the tmpfs rerun.",
+    "PYTEST_ADDOPTS=tests/e2e/test_routing/test_path_mounting.py; offline dependency auditing explicitly excluded. Scoped Git URL rewrite to a local bare repository preserves public GitHub-fetched commits and the seeded object. See ../litestar-evidence/REPRODUCE.md."
+  ],
+  "positive_control": {
+    "kind": "seeded-mutation",
+    "expected": [
+      {
+        "id": "unused-local-normalize-path",
+        "mechanism": "lint-rule",
+        "evidence": "../litestar-evidence/seed-oracle-commands.json and seed-{base,head}-ruff.stdout.log: ruff check . exit 0 at f4f7e9831574ed08f50901e62911019b5e7383ac and exit 1 with exactly F841 at synthetic fcab0954a74c5f8d340adbbfb9091f94982aa9a2, litestar/utils/path.py:24. Registered before Rio in positive-control-register.md.",
+        "finding_ids": [
+          "43d6925de36ee0e0beb788c1be9fd46de7152f1be80230d5085329c5f9911eab"
+        ]
+      }
+    ]
+  },
+  "base_sha": "f4f7e9831574ed08f50901e62911019b5e7383ac",
+  "head_sha": "fcab0954a74c5f8d340adbbfb9091f94982aa9a2",
+  "mode": "branch",
+  "review_id": "4fbe7a5f98898db5",
+  "run_id": "01M6MSSKS2SAJ7J8HMAGW38M93",
+  "rio_version": "0.1.0",
+  "profile": "eval-litestar-b15dc8ff5001",
+  "wall_time_ms": 485257,
+  "status": "partial",
+  "report_path": "eval/runs/litestar-5164-seed-f841/report.json",
+  "environment": {
+    "dependency_state": "verified",
+    "baseline_ran": false,
+    "baseline_classification_ran": false,
+    "eligible": false,
+    "reasons": [
+      "coverage . head: cancelled interrupted",
+      "lint .: head=findings, dependency_state=verified, base=unavailable",
+      "report status partial cannot establish a complete change review",
+      "typecheck . head: cancelled interrupted",
+      "typecheck .: head=cancelled, dependency_state=verified, base=unavailable"
+    ],
+    "checks": [
+      {
+        "findings": [],
+        "kind": "secrets",
+        "language": "common",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "findings": [],
+        "hint": "Dependency audit needs api.osv.dev",
+        "kind": "dependencies",
+        "language": "common",
+        "outcome": "skipped",
+        "reason": "offline",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 2363
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "lint",
+        "language": "python",
+        "outcome": "findings",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 174197
+      },
+      {
+        "findings": [],
+        "kind": "coverage",
+        "language": "python",
+        "outcome": "cancelled",
+        "reason": "interrupted",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "typecheck",
+        "language": "python",
+        "outcome": "cancelled",
+        "reason": "interrupted",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 213380
+      }
+    ],
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "lint .: baseline_failed: linked dependency litestar points at changed source : litestar/utils/path.py; commit or stash the linked package's changes",
+      "typecheck .: baseline_failed: linked dependency litestar points at changed source : litestar/utils/path.py; commit or stash the linked package's changes",
+      "Graph references use syntax and text; no language server was used",
+      "Impact graph truncated after interruption",
+      "Offline applies to Rio; tool and test processes were not network-isolated"
+    ]
+  },
+  "findings": [
+    {
+      "finding": {
+        "category": "defect",
+        "evidence": [
+          "ruff diagnostic"
+        ],
+        "evidence_level": "static_proven",
+        "id": "43d6925de36ee0e0beb788c1be9fd46de7152f1be80230d5085329c5f9911eab",
+        "location": {
+          "column": 5,
+          "line_end": 24,
+          "line_start": 24,
+          "occurrence_state": "unclassified",
+          "path": "litestar/utils/path.py",
+          "symbol_path": "path.normalize_path"
+        },
+        "locations": [
+          {
+            "column": 5,
+            "line_end": 24,
+            "line_start": 24,
+            "occurrence_state": "unclassified",
+            "path": "litestar/utils/path.py",
+            "symbol_path": "path.normalize_path"
+          }
+        ],
+        "message": "Local variable `rio_eval_unused` is assigned to but never used",
+        "rule_id": "lint/ruff/F841",
+        "severity": "error",
+        "source": {
+          "tool": "ruff",
+          "version": "ruff 0.15.7"
+        },
+        "state": "unclassified",
+        "trigger": ""
+      },
+      "verdict": "true-positive",
+      "reason": "../litestar-evidence/seed-oracle-commands.json and seed-{base,head}-ruff.stdout.log: ruff check . exit 0 at f4f7e9831574ed08f50901e62911019b5e7383ac and exit 1 with exactly F841 at synthetic fcab0954a74c5f8d340adbbfb9091f94982aa9a2, litestar/utils/path.py:24. Registered before Rio in positive-control-register.md. This unclassified report independently matches the introduced lint error, but missing baseline excludes the entire attempt from metrics; no detection credit is claimed for this attempt.",
+      "message_template": "Local variable `rio_eval_unused` is assigned to but never used",
+      "file_set": [
+        "litestar/utils/path.py"
+      ],
+      "root_cause_key": "a309ec15c876b1449ed5d8ded3967663dc3c70fd6032fa737e7e67f200a1a3d2",
+      "family": "lint/ruff/F841"
+    }
+  ],
+  "root_causes": [
+    {
+      "root_cause_key": "a309ec15c876b1449ed5d8ded3967663dc3c70fd6032fa737e7e67f200a1a3d2",
+      "rule_id": "lint/ruff/F841",
+      "message_template": "Local variable `rio_eval_unused` is assigned to but never used",
+      "file_set": [
+        "litestar/utils/path.py"
+      ],
+      "verdict": "true-positive",
+      "family": "lint/ruff/F841",
+      "finding_count": 1,
+      "occurrence_count": 1,
+      "finding_ids": [
+        "43d6925de36ee0e0beb788c1be9fd46de7152f1be80230d5085329c5f9911eab"
+      ]
+    }
+  ],
+  "misses": [],
+  "verdict": "environment-failure",
+  "reason": "Baseline/setup must be repaired before this PR can be scored."
+}

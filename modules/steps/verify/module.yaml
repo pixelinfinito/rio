@@ -1,0 +1,8 @@
+kind: step
+name: rio/verify
+version: 0.1.0
+description: Verify the review artifacts
+local: false
+inputs: ["snapshot", "hypotheses"]
+outputs: ["verified_findings"]
+schema: {"type": "object", "additionalProperties": false, "properties": {}}

@@ -1,0 +1,121 @@
+diff --git a/__tests__/base.js b/__tests__/base.js
+index 208a1149..47f7925f 100644
+--- a/__tests__/base.js
++++ b/__tests__/base.js
+@@ -60,7 +60,7 @@ function runBaseTest(
+ 	useListener,
+ 	useArrayMethods = false
+ ) {
+-	const listener = useListener ? function() {} : undefined
++	const listener = useListener ? function () {} : undefined
+ 
+ 	const {produce, produceWithPatches} = createPatchedImmer({
+ 		autoFreeze,
+@@ -73,7 +73,7 @@ function runBaseTest(
+ 		const immer = new Immer(options)
+ 
+ 		const {produce} = immer
+-		immer.produce = function(...args) {
++		immer.produce = function (...args) {
+ 			return typeof args[1] === "function" && args.length < 3
+ 				? produce(...args, listener)
+ 				: produce(...args)
+@@ -1910,6 +1910,54 @@ function runBaseTest(
+ 					})
+ 				})
+ 
++				describe("array search iteration bounds", () => {
++					test("find ignores matches appended by the predicate", () => {
++						const base = [1, 2]
++						const result = produce(base, draft => {
++							draft.push(3)
++							const found = draft.find(value => {
++								if (value === 1) draft.push(4)
++								return value === 4
++							})
++							expect(found).toBeUndefined()
++						})
++						expect(result).toEqual([1, 2, 3, 4])
++						expect(base).toEqual([1, 2])
++					})
++
++					test.each(["find", "findLast"])(
++						"%s visits its original range after the predicate shrinks the array",
++						method => {
++							const base = [1, 2]
++							const visited = []
++							const result = produce(base, draft => {
++								draft.push(3)
++								const found = draft[method]((value, index) => {
++									visited.push([value, index])
++									draft.length = 1
++									return false
++								})
++								expect(found).toBeUndefined()
++							})
++							expect(visited).toEqual(
++								method === "find"
++									? [
++											[1, 0],
++											[undefined, 1],
++											[undefined, 2]
++										]
++									: [
++											[3, 2],
++											[undefined, 1],
++											[1, 0]
++										]
++							)
++							expect(result).toEqual([1])
++							expect(base).toEqual([1, 2])
++						}
++					)
++				})
++
+ 				describe("comparison: filter vs concat behavior", () => {
+ 					test("filter returns drafts that can affect original", () => {
+ 						const base = {
+@@ -3415,13 +3463,13 @@ function runBaseTest(
+ 
+ 		it("'this' should not be bound anymore - 1", () => {
+ 			const base = {x: 3}
+-			const next1 = produce(base, function() {
++			const next1 = produce(base, function () {
+ 				expect(this).toBe(undefined)
+ 			})
+ 		})
+ 
+ 		it("'this' should not be bound anymore - 2", () => {
+-			const incrementor = produce(function() {
++			const incrementor = produce(function () {
+ 				expect(this).toBe(undefined)
+ 			})
+ 			incrementor()
+@@ -3430,7 +3478,7 @@ function runBaseTest(
+ 		it("should be possible to use dynamic bound this", () => {
+ 			const world = {
+ 				counter: {count: 1},
+-				inc: produce(function(draft) {
++				inc: produce(function (draft) {
+ 					expect(this).toBe(world)
+ 					draft.counter.count = this.counter.count + 1
+ 				})
+diff --git a/src/plugins/arrayMethods.ts b/src/plugins/arrayMethods.ts
+index 0310e237..b8a96a68 100644
+--- a/src/plugins/arrayMethods.ts
++++ b/src/plugins/arrayMethods.ts
+@@ -464,11 +464,12 @@ export function enableArrayMethods() {
+ 		if (FIND_METHODS.has(method)) {
+ 			const predicate = args[0]
+ 			const thisArg = args[1]
++			const length = source.length
+ 			const isForward = method === "find"
+ 			const step = isForward ? 1 : -1
+-			const start = isForward ? 0 : source.length - 1
++			const start = isForward ? 0 : length - 1
+ 
+-			for (let i = start; i >= 0 && i < source.length; i += step) {
++			for (let i = start; i >= 0 && i < length; i += step) {
+ 				if (predicate.call(thisArg, source[i], i, source)) {
+ 					return state.draft_[i]
+ 				}

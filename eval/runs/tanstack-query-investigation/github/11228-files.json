@@ -1,0 +1,26 @@
+[
+  {
+    "sha": "1f7f33dd83d5b77a860705dfeb60fde848b5c153",
+    "filename": ".changeset/quiet-types-import.md",
+    "status": "added",
+    "additions": 5,
+    "deletions": 0,
+    "changes": 5,
+    "blob_url": "https://github.com/TanStack/query/blob/c6c56ba5de02f7464917a9b1637c1075a0ba7cf5/.changeset%2Fquiet-types-import.md",
+    "raw_url": "https://github.com/TanStack/query/raw/c6c56ba5de02f7464917a9b1637c1075a0ba7cf5/.changeset%2Fquiet-types-import.md",
+    "contents_url": "https://api.github.com/repos/TanStack/query/contents/.changeset%2Fquiet-types-import.md?ref=c6c56ba5de02f7464917a9b1637c1075a0ba7cf5",
+    "patch": "@@ -0,0 +1,5 @@\n+---\n+'@tanstack/react-query': patch\n+---\n+\n+Avoid emitting a runtime import for React Query's type-only exports."
+  },
+  {
+    "sha": "6f7197941facca0d034aae3820ae0f1db7d0155a",
+    "filename": "packages/react-query/src/index.ts",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 1,
+    "changes": 2,
+    "blob_url": "https://github.com/TanStack/query/blob/c6c56ba5de02f7464917a9b1637c1075a0ba7cf5/packages%2Freact-query%2Fsrc%2Findex.ts",
+    "raw_url": "https://github.com/TanStack/query/raw/c6c56ba5de02f7464917a9b1637c1075a0ba7cf5/packages%2Freact-query%2Fsrc%2Findex.ts",
+    "contents_url": "https://api.github.com/repos/TanStack/query/contents/packages%2Freact-query%2Fsrc%2Findex.ts?ref=c6c56ba5de02f7464917a9b1637c1075a0ba7cf5",
+    "patch": "@@ -4,7 +4,7 @@\n export * from '@tanstack/query-core'\n \n // React Query\n-export * from './types'\n+export type * from './types'\n export { useQueries } from './useQueries'\n export type { QueriesResults, QueriesOptions } from './useQueries'\n export { useQuery } from './useQuery'"
+  }
+]

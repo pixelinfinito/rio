@@ -1,0 +1,38 @@
+{
+  "captured_utc": "2026-11-05T10:55:44.286176+00:00",
+  "environment": {
+    "PUPPETEER_SKIP_DOWNLOAD": "true",
+    "TMPDIR": "/dev/shm",
+    "temp_root": "/dev/shm/vue-core-rerun2"
+  },
+  "binary_version": "rio 0.1.0 x86_64-unknown-linux-gnu f6e4f87e4c65",
+  "binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+  "tools": {
+    "12701": {
+      "['node', '--version']": "v22.14.0",
+      "['corepack', '--version']": "0.31.0",
+      "['corepack', 'pnpm', '--version']": "10.12.1"
+    },
+    "15328": {
+      "['node', '--version']": "v24.22.2",
+      "['corepack', '--version']": "0.36.0",
+      "['corepack', 'pnpm', '--version']": "10.12.1"
+    }
+  },
+  "df": "Filesystem      Size  Used Avail Use% Mounted on\ntmpfs            20G   14G  5.9G  70% /dev/shm\n/dev/vda1       158G  124G   35G  79% /\n",
+  "outside_checkout_corepack_note": "corepack pnpm --version from the Rio repository resolves its default 10.12.1; this is not the Vue installer version. Per-case *-package-manager.json captures execution inside each pinned Vue checkout, selected by its packageManager field.",
+  "actual_vue_checkouts": {
+    "12701": {
+      "node": "v22.14.0",
+      "corepack": "0.31.0",
+      "pnpm": "10.9.0",
+      "base_pnpm": "10.9.0"
+    },
+    "15328": {
+      "node": "v24.22.2",
+      "corepack": "0.36.0",
+      "pnpm": "11.19.0",
+      "base_pnpm": "11.19.0"
+    }
+  }
+}

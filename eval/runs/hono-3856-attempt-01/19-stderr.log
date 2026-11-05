@@ -1,0 +1,16 @@
+Warning: /home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-3856-attempt-01/profile.yaml:$.steps[3]: rio/triage is deferred locally: no_endpoint
+Warning: /home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-3856-attempt-01/profile.yaml:$.steps[4]: rio/agents is deferred locally: no_endpoint
+Warning: /home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-3856-attempt-01/profile.yaml:$.steps[5]: rio/verify is deferred locally: no_endpoint
+Running prepare…
+Finished prepare
+Running checks…
+typecheck .: skipped (dependency_mismatch)
+lint .: skipped (dependency_mismatch)
+coverage .: skipped (dependency_mismatch)
+secrets .: passed
+dependencies .: skipped (offline)
+Finished checks
+Running graph…
+Finished graph
+Running report…
+Finished report

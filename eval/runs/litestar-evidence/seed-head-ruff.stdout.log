@@ -1,0 +1,14 @@
+F841 Local variable `rio_eval_unused` is assigned to but never used
+  --> litestar/utils/path.py:24:5
+   |
+22 |         Path string
+23 |     """
+24 |     rio_eval_unused = 1
+   |     ^^^^^^^^^^^^^^^
+25 |     path = path.strip("/")
+26 |     path = f"/{path}"
+   |
+help: Remove assignment to unused variable `rio_eval_unused`
+
+Found 1 error.
+No fixes available (1 hidden fix can be enabled with the `--unsafe-fixes` option).

@@ -1,0 +1,819 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rio.dev/schemas/report-v1.json",
+  "title": "Rio report v1",
+  "type": "object",
+  "properties": {
+    "schema": {
+      "const": "rio-report-v1"
+    },
+    "status": {
+      "enum": [
+        "complete",
+        "incomplete",
+        "partial",
+        "no_changes",
+        "error"
+      ]
+    },
+    "review": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "run_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "mode": {
+          "enum": [
+            "working-tree",
+            "staged",
+            "branch"
+          ]
+        },
+        "base": {
+          "type": "string",
+          "minLength": 1
+        },
+        "head": {
+          "type": "string",
+          "minLength": 1
+        },
+        "profile": {
+          "type": "string",
+          "minLength": 1
+        },
+        "chain": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "rio_version": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "rio_version"
+      ],
+      "additionalProperties": false
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/check"
+      }
+    },
+    "impact": {
+      "type": "object",
+      "properties": {
+        "symbols": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "symbol_path": {
+                "type": "string"
+              },
+              "references_per_hop": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "test_referenced": {
+                "type": "boolean"
+              },
+              "unresolved": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "path",
+              "symbol_path",
+              "references_per_hop",
+              "test_referenced",
+              "unresolved"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "unresolved": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "truncated": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "symbols",
+        "unresolved",
+        "truncated"
+      ],
+      "additionalProperties": false
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/finding"
+      }
+    },
+    "risks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/finding"
+      }
+    },
+    "incomplete": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/check"
+      }
+    },
+    "deferred": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "step": {
+            "type": "string",
+            "minLength": 1
+          },
+          "reason": {
+            "const": "no_endpoint"
+          }
+        },
+        "required": [
+          "step",
+          "reason"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "excluded": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "path",
+          "reason"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "summary": {
+      "type": "object",
+      "properties": {
+        "pre_existing": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "fixed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "suppressed": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "pre_existing",
+        "fixed",
+        "suppressed"
+      ],
+      "additionalProperties": false
+    },
+    "footer": {
+      "type": "object",
+      "properties": {
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "suppressions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "entry": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "count": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "entry",
+              "count"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "tool_versions": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "notes",
+        "suppressions",
+        "tool_versions"
+      ],
+      "additionalProperties": false
+    },
+    "metrics": {
+      "type": "object",
+      "properties": {
+        "wall_time_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "enum": [
+                  "typecheck",
+                  "lint",
+                  "secrets",
+                  "coverage",
+                  "dependencies"
+                ]
+              },
+              "root": {
+                "type": "string",
+                "minLength": 1
+              },
+              "version": {
+                "enum": [
+                  "base",
+                  "head"
+                ]
+              },
+              "wall_time_ms": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "kind",
+              "root",
+              "version",
+              "wall_time_ms"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "tool_versions": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "wall_time_ms",
+        "checks",
+        "tool_versions"
+      ],
+      "additionalProperties": false
+    },
+    "error": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "minLength": 1
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "code",
+        "message",
+        "details"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "schema",
+    "status",
+    "review",
+    "checks",
+    "impact",
+    "findings",
+    "risks",
+    "incomplete",
+    "deferred",
+    "excluded",
+    "metrics",
+    "summary",
+    "footer"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "finding": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "rule_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "category": {
+          "enum": [
+            "defect",
+            "risk"
+          ]
+        },
+        "evidence_level": {
+          "enum": [
+            "reproduced",
+            "static_proven",
+            "plausible",
+            "refuted"
+          ]
+        },
+        "severity": {
+          "enum": [
+            "error",
+            "warning",
+            "info"
+          ]
+        },
+        "state": {
+          "enum": [
+            "new",
+            "worsened",
+            "pre-existing",
+            "fixed",
+            "unclassified"
+          ]
+        },
+        "location": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^(?!/)(?![A-Za-z]:)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"
+            },
+            "line_start": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "line_end": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "column": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "symbol_path": {
+              "type": "string"
+            },
+            "occurrence_state": {
+              "enum": [
+                "new",
+                "pre-existing",
+                "fixed",
+                "unclassified"
+              ]
+            }
+          },
+          "required": [
+            "path",
+            "line_start",
+            "line_end",
+            "symbol_path",
+            "occurrence_state"
+          ],
+          "additionalProperties": false
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1
+        },
+        "trigger": {
+          "type": "string"
+        },
+        "impact": {
+          "type": "string",
+          "minLength": 1
+        },
+        "suggested_fix": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "source": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "tool": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "version": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "tool",
+                "version"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "agent": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "agent"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        },
+        "locations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^(?!/)(?![A-Za-z]:)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"
+              },
+              "line_start": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "line_end": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "column": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "symbol_path": {
+                "type": "string"
+              },
+              "occurrence_state": {
+                "enum": [
+                  "new",
+                  "pre-existing",
+                  "fixed",
+                  "unclassified"
+                ]
+              }
+            },
+            "required": [
+              "path",
+              "line_start",
+              "line_end",
+              "symbol_path",
+              "occurrence_state"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "advisory": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "aliases": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "severity": {
+              "enum": [
+                "critical",
+                "high",
+                "moderate",
+                "low",
+                "unknown"
+              ]
+            },
+            "fixed_version": {
+              "type": "string",
+              "minLength": 1
+            },
+            "url": {
+              "type": "string",
+              "pattern": "^https://"
+            }
+          },
+          "required": [
+            "id",
+            "aliases",
+            "severity",
+            "fixed_version",
+            "url"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "id",
+        "rule_id",
+        "category",
+        "evidence_level",
+        "severity",
+        "state",
+        "location",
+        "message",
+        "trigger",
+        "evidence",
+        "source",
+        "locations"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "rule_id": {
+                "pattern": "^dependency/"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "advisory"
+            ]
+          }
+        }
+      ]
+    },
+    "check": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "enum": [
+            "typecheck",
+            "lint",
+            "secrets",
+            "coverage",
+            "dependencies"
+          ]
+        },
+        "language": {
+          "type": "string",
+          "minLength": 1
+        },
+        "root": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "enum": [
+            "base",
+            "head"
+          ]
+        },
+        "scheduled_as": {
+          "enum": [
+            "changed",
+            "dependent"
+          ]
+        },
+        "outcome": {
+          "enum": [
+            "passed",
+            "findings",
+            "failed",
+            "skipped",
+            "cancelled"
+          ]
+        },
+        "reason": {
+          "type": "string"
+        },
+        "hint": {
+          "type": "string"
+        },
+        "dependency_state": {
+          "enum": [
+            "verified",
+            "trusted"
+          ]
+        },
+        "wall_time_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/finding"
+          }
+        },
+        "cached": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "kind",
+        "language",
+        "root",
+        "version",
+        "scheduled_as",
+        "outcome",
+        "wall_time_ms",
+        "findings"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "const": "failed"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "reason"
+            ],
+            "properties": {
+              "reason": {
+                "enum": [
+                  "spawn_failed",
+                  "tool_crashed",
+                  "tool_config_error",
+                  "unparseable_output",
+                  "output_limit",
+                  "disk_full",
+                  "tests_failed",
+                  "network_error",
+                  "partial_data"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "const": "skipped"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "reason"
+            ],
+            "properties": {
+              "reason": {
+                "enum": [
+                  "tool_missing",
+                  "no_project_config",
+                  "not_supported_by_adapter",
+                  "disabled",
+                  "offline",
+                  "dependency_mismatch",
+                  "no_tests",
+                  "nothing_to_audit"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "const": "cancelled"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "reason"
+            ],
+            "properties": {
+              "reason": {
+                "enum": [
+                  "timeout",
+                  "interrupted"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "passed",
+                  "findings"
+                ]
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "required": [
+                "reason"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "error"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "error"
+        ]
+      },
+      "else": {
+        "not": {
+          "required": [
+            "error"
+          ]
+        }
+      }
+    }
+  ]
+}

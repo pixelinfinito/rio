@@ -1,0 +1,13 @@
+Obtaining file:///dev/shm/rio-eval-jskluv44/base
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: structlog
+  Building editable for structlog (pyproject.toml): started
+  Building editable for structlog (pyproject.toml): finished with status 'done'
+  Created wheel for structlog: filename=structlog-25.5.1.dev63-py3-none-any.whl size=9108 sha256=de19d5b05b835fb9300e3f32d01234624c8da2e3ffe636994a43396fb6aebfee
+  Stored in directory: /dev/shm/pip-ephem-wheel-cache-d2bqfsz_/wheels/e2/68/8a/d7a3d2ed336d912751a90486348617d4442f8680ad9fbb303b
+Successfully built structlog
+Installing collected packages: structlog
+Successfully installed structlog-25.5.1.dev63

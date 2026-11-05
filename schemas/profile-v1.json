@@ -1,0 +1,278 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rio.dev/schemas/profile-v1.json",
+  "title": "Rio profile v1",
+  "type": "object",
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "extends": {
+      "type": "string",
+      "minLength": 1
+    },
+    "budget": {
+      "type": "object",
+      "properties": {
+        "fast": {
+          "type": "object",
+          "properties": {
+            "wall_time": {
+              "type": "string",
+              "pattern": "^([0-9]+(\\.[0-9]+)?)(ms|s|m|h|d)$"
+            },
+            "tokens": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "agents_max": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        },
+        "deep": {
+          "type": "object",
+          "properties": {
+            "wall_time": {
+              "type": "string",
+              "pattern": "^([0-9]+(\\.[0-9]+)?)(ms|s|m|h|d)$"
+            },
+            "tokens": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "agents_max": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "models": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uses": {
+            "type": "string",
+            "minLength": 1
+          },
+          "needs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "parallel": {
+            "type": "boolean"
+          },
+          "with": {
+            "type": "object"
+          },
+          "rules": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "when": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "then": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "when",
+                "then"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "agents": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "minProperties": 1,
+              "maxProperties": 1,
+              "additionalProperties": {
+                "type": "object",
+                "properties": {
+                  "model": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "model"
+                ]
+              }
+            }
+          }
+        },
+        "required": [
+          "id",
+          "uses"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "suppress": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "rule": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "rule"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "finding": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "finding"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    },
+    "publish": {
+      "enum": [
+        "never",
+        "ask",
+        "auto"
+      ]
+    },
+    "fail_on": {
+      "type": "object",
+      "properties": {
+        "evidence": {
+          "enum": [
+            "reproduced",
+            "static_proven",
+            "plausible",
+            "refuted"
+          ]
+        },
+        "categories": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "defect",
+              "risk"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "states": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "new",
+              "worsened",
+              "pre-existing",
+              "fixed",
+              "unclassified"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "rules": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "incomplete": {
+          "type": "boolean"
+        },
+        "required_checks": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "typecheck",
+              "lint",
+              "secrets",
+              "coverage",
+              "dependencies"
+            ]
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "min_evidence": {
+      "enum": [
+        "reproduced",
+        "static_proven",
+        "plausible",
+        "refuted"
+      ]
+    },
+    "max_lines": {
+      "type": "integer",
+      "minimum": 1
+    }
+  },
+  "required": [
+    "version",
+    "name"
+  ],
+  "additionalProperties": false
+}

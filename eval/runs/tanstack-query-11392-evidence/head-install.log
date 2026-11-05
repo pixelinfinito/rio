@@ -1,0 +1,56 @@
+Scope: 4 of 102 workspace projects
+? Verifying lockfile against supply-chain policies (3111 entries)...
+Lockfile is up to date, resolution step is skipped
+Progress: resolved 1, reused 0, downloaded 0, added 0
+.                                        | +879 ++++++++++++++++++++++++++++++++
+Progress: resolved 879, reused 18, downloaded 0, added 0
+Progress: resolved 879, reused 184, downloaded 0, added 0
+Progress: resolved 879, reused 184, downloaded 18, added 0
+Progress: resolved 879, reused 184, downloaded 27, added 0
+[WARN] Request took 10139ms: https://registry.npmjs.org/@astrojs%2Fyaml2ts
+Progress: resolved 879, reused 184, downloaded 38, added 0
+[WARN] Request took 16275ms: https://registry.npmjs.org/@andrewbranch%2Funtar.js
+Progress: resolved 879, reused 184, downloaded 46, added 0
+[WARN] Request took 17638ms: https://registry.npmjs.org/@asamuzakjp%2Fnwsapi
+Progress: resolved 879, reused 184, downloaded 55, added 0
+[WARN] Request took 19082ms: https://registry.npmjs.org/@acemir%2Fcssom
+[WARN] Request took 19147ms: https://registry.npmjs.org/@astrojs%2Finternal-helpers
+[WARN] Request took 19238ms: https://registry.npmjs.org/@adobe%2Fcss-tools
+[WARN] Request took 19308ms: https://registry.npmjs.org/@algolia%2Fabtesting
+[WARN] Request took 19230ms: https://registry.npmjs.org/@astrojs%2Fcheck
+[WARN] Request took 19304ms: https://registry.npmjs.org/@arethetypeswrong%2Fcore
+[WARN] Request took 19348ms: https://registry.npmjs.org/@ampproject%2Fremapping
+[WARN] Request took 19314ms: https://registry.npmjs.org/@arethetypeswrong%2Fcli
+[WARN] Request took 19296ms: https://registry.npmjs.org/@babel%2Feslint-parser
+[WARN] Request took 19318ms: https://registry.npmjs.org/@astrojs%2Fprism
+[WARN] Request took 19327ms: https://registry.npmjs.org/@astrojs%2Ftelemetry
+[WARN] Request took 19470ms: https://registry.npmjs.org/@0no-co%2Fgraphql.web
+[WARN] Request took 19399ms: https://registry.npmjs.org/@astrojs%2Ftailwind
+[WARN] Request took 19490ms: https://registry.npmjs.org/@algolia%2Fmonitoring
+[WARN] Request took 19605ms: https://registry.npmjs.org/@astrojs%2Fsolid-js
+[WARN] Request took 19635ms: https://registry.npmjs.org/@babel%2Fcompat-data
+Progress: resolved 879, reused 184, downloaded 77, added 4
+Progress: resolved 879, reused 184, downloaded 78, added 4
+Progress: resolved 879, reused 184, downloaded 94, added 4
+[WARN] Request took 25093ms: https://registry.npmjs.org/@algolia%2Fingestion
+[WARN] Request took 25217ms: https://registry.npmjs.org/@astrojs%2Fnode
+Progress: resolved 879, reused 184, downloaded 109, added 4
+[WARN] Request took 26993ms: https://registry.npmjs.org/@algolia%2Fclient-query-suggestions
+Progress: resolved 879, reused 184, downloaded 114, added 5
+[WARN] Request took 27923ms: https://registry.npmjs.org/@babel%2Fgenerator
+[WARN] Request took 28043ms: https://registry.npmjs.org/@algolia%2Fclient-insights
+[WARN] Request took 28450ms: https://registry.npmjs.org/@algolia%2Fclient-abtesting
+[WARN] Request took 28469ms: https://registry.npmjs.org/@algolia%2Frequester-fetch
+Progress: resolved 879, reused 184, downloaded 138, added 8
+[WARN] Request took 10613ms: https://registry.npmjs.org/@astrojs%2Ftailwind
+Progress: resolved 879, reused 184, downloaded 158, added 9
+Progress: resolved 879, reused 184, downloaded 168, added 12
+Progress: resolved 879, reused 184, downloaded 181, added 12
+[WARN] Request took 20694ms: https://registry.npmjs.org/@0no-co%2Fgraphql.web
+[WARN] Request took 40154ms: https://registry.npmjs.org/@algolia%2Fclient-personalization
+[WARN] Request took 14902ms: https://registry.npmjs.org/@babel%2Fhelper-optimise-call-expression
+Progress: resolved 879, reused 184, downloaded 194, added 13
+[WARN] Request took 26541ms: https://registry.npmjs.org/@babel%2Fhelper-annotate-as-pure
+[WARN] Request took 46109ms: https://registry.npmjs.org/@algolia%2Frecommend
+[WARN] Request took 20804ms: https://registry.npmjs.org/@babel%2Fhelper-remap-async-to-generator
+[WARN] Request took 18052ms: https://registry.npmjs.org/@babel%2Fhelper-validator-option

@@ -1,0 +1,4 @@
+
+> @3.5.14 check /tmp/vue-positive-base
+> tsc --incremental --noEmit
+

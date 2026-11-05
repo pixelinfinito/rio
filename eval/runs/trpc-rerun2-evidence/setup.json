@@ -1,0 +1,78 @@
+{
+  "binary_version": "rio 0.1.0 x86_64-unknown-linux-gnu f6e4f87e4c65",
+  "binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+  "cases": {
+    "5819": {
+      "base_sha": "baa9c19679d215c65770e3d066d177703f104371",
+      "head_sha": "124440fafb43a33859cd1f5c3232b2d1498742eb",
+      "install-plan.json_sha256": "f437a96961e7e82f683f84d391c961b7a4df8e33cb6e65b4913e9d9cb15b412d",
+      "profile.yaml_sha256": "59b65f540e1080d4ae2d70404b6f90b6957a3b08d0536238afb1476225d17cc4"
+    },
+    "7903": {
+      "base_sha": "c869fa1075fc3ce11b38495c5e6044fb97b335d2",
+      "head_sha": "248fb772a6d6f7ce2492f8549a8d370ec3df9731",
+      "install-plan.json_sha256": "0d6e1bf1f2d24eec005dfb7d2fa023457c7fbcd694b418a5a0fccee96f12e78a",
+      "profile.yaml_sha256": "59b65f540e1080d4ae2d70404b6f90b6957a3b08d0536238afb1476225d17cc4"
+    }
+  },
+  "temp_root": "/tmp/rio-rerun2-trpc",
+  "TMPDIR": "/dev/shm",
+  "store_symlinks": {
+    "/dev/shm/trpc-eval/pnpm8-store": "/tmp/rio-rerun2-trpc/pnpm8-store",
+    "/dev/shm/trpc-eval/pnpm-store": "/tmp/rio-rerun2-trpc/pnpm12-store"
+  },
+  "setup_notes": [
+    "Only 6 GiB tmpfs was free before starting; disposable runner clones and package stores are on disk, while Rio materialization/test temporary files use TMPDIR=/dev/shm. Store paths from the unchanged install plans resolve via symlinks to disk.",
+    "No tracked PR source, lockfile, input install plan or profile changes. Corepack prepare activated pnpm@8.15.5 and pnpm@12.4.1 before starting the corresponding runner.",
+    "The unchanged profiles explicitly enable dependency trust; current methodology accepts successful trusted baseline pairs and separates verified-only results. Historical blanket trust disqualification in trpc-NOTES.md is superseded.",
+    "#7903 is a previously prepared negative control with independent clean tsc/oxlint/test evidence; #7448 was rejected independently of the old baseline guard and is not rerun.",
+    "Shared tmpfs later reached 95% usage. Removed only the two stale disposable Hono clone/install directories from the previous tRPC evaluation: /dev/shm/trpc-eval/hono-2081-seed, /dev/shm/trpc-eval/hono-2085-oracle. All versioned oracle evidence remains intact.",
+    "The initial #5819 base install crashed in pinned Node20.10.0 internalConnectMultipleTimeout after socket timeouts (ERR_INTERNAL_ASSERTION; 07-stderr.log). Retry keeps the same Node/pnpm, plan and profile, and disables Node network family autoselection via NODE_OPTIONS=--no-network-family-autoselection. No reviewer/harness/binary source changes.",
+    "Live #7903 inspection found Rio baseline materialization blocked in jbd2_log_wait_commit while fsyncing source files under the disk RIO_CACHE_DIR; TMPDIR alone does not relocate that cache because the runner explicitly overrides RIO_CACHE_DIR. Before Rio starts on both #5819 attempts, their as-yet-absent cache paths were symlinked into tmpfs. This preserves pinned inputs and avoids disk fsync contention.",
+    "Corepack prepare does not create a pnpm executable. Independent #7903 coverage attempt01 found spawn pnpm ENOENT. Enabled pnpm launchers before the subsequent corrected oracle; pinned dedicated-runtime pnpm launchers to corepack pnpm@8.15.5 / pnpm@12.4.1 to avoid shared lastKnownGood selection in test fixtures without packageManager fields. These launchers change only disposable runtime bin entries, not packages or PR sources.",
+    "#7903 attempts 01 and 02 use byte-identical original plans/profiles. Attempt03 extends the frozen plan only with the retained Vitest launcher selecting the already installed @vitest/coverage-istanbul@5.0.0 and 30-second fixture timeouts. Attempt04 also explicitly enables the pnpm executable with Corepack. Original locked Vitest package sources and tracked configs remain unchanged. Launcher hashes are printed in the runner install logs.",
+    "Pinned pnpm runtime launchers were installed after attempt04 corepack enable and before the corrected result was adjudicated; the successful corrected independent coverage oracle executed after corepack enable and used pnpm12.4.1.",
+    "The #5819 independent coverage attempt started against the still-present disposable head, but runner cleanup removed modules during its execution. It ended with ERR_MODULE_NOT_FOUND @vitest/utils and no final coverage; no independent coverage conclusion is drawn. This is an evaluator-side experiment race, not a Rio product finding."
+  ],
+  "inherited_runtime_environment": {
+    "NO_COLOR": "1"
+  },
+  "attempt_environment": {
+    "trpc-5819-rerun2": {
+      "TMPDIR": "/dev/shm"
+    },
+    "trpc-7903-rerun2": {
+      "TMPDIR": "/dev/shm"
+    },
+    "trpc-5819-rerun2-attempt2": {
+      "TMPDIR": "/dev/shm",
+      "NODE_OPTIONS": "--no-network-family-autoselection"
+    },
+    "trpc-7903-rerun2-attempt2": {
+      "TMPDIR": "/dev/shm",
+      "temp_root": "/dev/shm/trpc-rerun2"
+    },
+    "trpc-7903-rerun2-attempt3": {
+      "TMPDIR": "/dev/shm",
+      "temp_root": "/dev/shm/trpc-rerun2"
+    },
+    "trpc-7903-rerun2-attempt4": {
+      "TMPDIR": "/dev/shm",
+      "temp_root": "/dev/shm/trpc-rerun2"
+    }
+  },
+  "cache_symlinks": {
+    "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/cache": "/dev/shm/trpc-5819-rerun2-cache",
+    "/tmp/rio-rerun2-trpc/rio-eval-etvw3zcb/cache": "/dev/shm/trpc-5819-rerun2-attempt2-cache"
+  },
+  "pinned_pnpm_launchers": [
+    {
+      "path": "/dev/shm/trpc-eval/old-tools/node-v20.10.0-linux-x64/bin/pnpm",
+      "content": "#!/bin/sh\nexec /dev/shm/trpc-eval/old-tools/node-v20.10.0-linux-x64/bin/node /dev/shm/trpc-eval/old-tools/node-v20.10.0-linux-x64/lib/node_modules/corepack/dist/corepack.js pnpm@8.15.5 \"$@\"\n"
+    },
+    {
+      "path": "/dev/shm/trpc-eval/node-v24.22.2-linux-x64/bin/pnpm",
+      "content": "#!/bin/sh\nexec /dev/shm/trpc-eval/node-v24.22.2-linux-x64/bin/node /dev/shm/trpc-eval/node-v24.22.2-linux-x64/lib/node_modules/corepack/dist/corepack.js pnpm@12.4.1 \"$@\"\n"
+    }
+  ]
+}

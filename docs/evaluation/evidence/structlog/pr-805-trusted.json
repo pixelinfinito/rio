@@ -1,0 +1,1369 @@
+{
+  "checks": [
+    {
+      "findings": [
+        {
+          "category": "defect",
+          "evidence": [
+            "Built-in credential pattern high-entropy"
+          ],
+          "evidence_level": "static_proven",
+          "id": "3546bf6ef41f8d6042ee14d590c3c99bfd6efb61a7afae062dc7336435e625ff",
+          "impact": "A credential may be exposed by this change",
+          "location": {
+            "column": 20,
+            "line_end": 65,
+            "line_start": 65,
+            "occurrence_state": "new",
+            "path": "src/structlog/_native.py",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 20,
+              "line_end": 65,
+              "line_start": 65,
+              "occurrence_state": "new",
+              "path": "src/structlog/_native.py",
+              "symbol_path": ""
+            },
+            {
+              "column": 17,
+              "line_end": 68,
+              "line_start": 68,
+              "occurrence_state": "pre-existing",
+              "path": "src/structlog/_native.py",
+              "symbol_path": ""
+            },
+            {
+              "column": 28,
+              "line_end": 184,
+              "line_start": 184,
+              "occurrence_state": "new",
+              "path": "src/structlog/_native.py",
+              "symbol_path": ""
+            },
+            {
+              "column": 25,
+              "line_end": 187,
+              "line_start": 187,
+              "occurrence_state": "pre-existing",
+              "path": "src/structlog/_native.py",
+              "symbol_path": ""
+            },
+            {
+              "column": 24,
+              "line_end": 228,
+              "line_start": 228,
+              "occurrence_state": "new",
+              "path": "src/structlog/_native.py",
+              "symbol_path": ""
+            },
+            {
+              "column": 21,
+              "line_end": 231,
+              "line_start": 231,
+              "occurrence_state": "pre-existing",
+              "path": "src/structlog/_native.py",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Potential high-entropy credential: _ASY[REDACTED]",
+          "rule_id": "secret/high-entropy",
+          "severity": "error",
+          "source": {
+            "tool": "rio-secrets",
+            "version": "0.1.0"
+          },
+          "state": "worsened",
+          "suggested_fix": "Remove the credential and rotate it if it was active",
+          "trigger": "_ASY[REDACTED]"
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "Built-in credential pattern high-entropy"
+          ],
+          "evidence_level": "static_proven",
+          "id": "6793e5b8a3fbb6001c32ab4ce830b9b1e594c4f0335667aa655729916fd0d00d",
+          "impact": "A credential may be exposed by this change",
+          "location": {
+            "column": 24,
+            "line_end": 433,
+            "line_start": 433,
+            "occurrence_state": "new",
+            "path": "src/structlog/stdlib.py",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 24,
+              "line_end": 433,
+              "line_start": 433,
+              "occurrence_state": "new",
+              "path": "src/structlog/stdlib.py",
+              "symbol_path": ""
+            },
+            {
+              "column": 21,
+              "line_end": 436,
+              "line_start": 436,
+              "occurrence_state": "pre-existing",
+              "path": "src/structlog/stdlib.py",
+              "symbol_path": ""
+            },
+            {
+              "column": 24,
+              "line_end": 646,
+              "line_start": 646,
+              "occurrence_state": "new",
+              "path": "src/structlog/stdlib.py",
+              "symbol_path": ""
+            },
+            {
+              "column": 21,
+              "line_end": 649,
+              "line_start": 649,
+              "occurrence_state": "pre-existing",
+              "path": "src/structlog/stdlib.py",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Potential high-entropy credential: _ASY[REDACTED]",
+          "rule_id": "secret/high-entropy",
+          "severity": "error",
+          "source": {
+            "tool": "rio-secrets",
+            "version": "0.1.0"
+          },
+          "state": "worsened",
+          "suggested_fix": "Remove the credential and rotate it if it was active",
+          "trigger": "_ASY[REDACTED]"
+        }
+      ],
+      "kind": "secrets",
+      "language": "common",
+      "outcome": "findings",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 72
+    },
+    {
+      "findings": [],
+      "hint": "Dependency audit needs api.osv.dev",
+      "kind": "dependencies",
+      "language": "common",
+      "outcome": "skipped",
+      "reason": "offline",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 315
+    },
+    {
+      "dependency_state": "trusted",
+      "findings": [
+        {
+          "category": "defect",
+          "evidence": [
+            "ruff diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "04842a33b0aeedc6dc8c556b05ac3a8b53bf057e1af2441b8dabf785b9e13768",
+          "location": {
+            "column": 1,
+            "line_end": 1,
+            "line_start": 1,
+            "occurrence_state": "unclassified",
+            "path": "src/structlog/contextvars.py",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 1,
+              "line_end": 1,
+              "line_start": 1,
+              "occurrence_state": "unclassified",
+              "path": "src/structlog/contextvars.py",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Missing copyright notice at top of file",
+          "rule_id": "lint/ruff/CPY001",
+          "severity": "error",
+          "source": {
+            "tool": "ruff",
+            "version": "ruff 0.17.3"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "ruff diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "05813de22ae1defcfabdf2e97427a5dc87ff8101a77869b4d7b2f5a0a3bfabd0",
+          "location": {
+            "column": 8,
+            "line_end": 12,
+            "line_start": 12,
+            "occurrence_state": "unclassified",
+            "path": "src/structlog/processors.py",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 8,
+              "line_end": 12,
+              "line_start": 12,
+              "occurrence_state": "unclassified",
+              "path": "src/structlog/processors.py",
+              "symbol_path": ""
+            }
+          ],
+          "message": "`datetime` should be imported as `dt`",
+          "rule_id": "lint/ruff/ICN001",
+          "severity": "error",
+          "source": {
+            "tool": "ruff",
+            "version": "ruff 0.17.3"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "ruff diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "13d059ecd7d2fdb30517c4d39b8d8f75fc5283e7b2fe70618d6decab6eb6a061",
+          "location": {
+            "column": 1,
+            "line_end": 1,
+            "line_start": 1,
+            "occurrence_state": "unclassified",
+            "path": "src/structlog/_native.py",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 1,
+              "line_end": 1,
+              "line_start": 1,
+              "occurrence_state": "unclassified",
+              "path": "src/structlog/_native.py",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Missing copyright notice at top of file",
+          "rule_id": "lint/ruff/CPY001",
+          "severity": "error",
+          "source": {
+            "tool": "ruff",
+            "version": "ruff 0.17.3"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "ruff diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "92f39487e0b02eb5bf08a8107cac7499b7e5d634b184fb305eeea03664d85868",
+          "location": {
+            "column": 1,
+            "line_end": 1,
+            "line_start": 1,
+            "occurrence_state": "unclassified",
+            "path": "src/structlog/processors.py",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 1,
+              "line_end": 1,
+              "line_start": 1,
+              "occurrence_state": "unclassified",
+              "path": "src/structlog/processors.py",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Missing copyright notice at top of file",
+          "rule_id": "lint/ruff/CPY001",
+          "severity": "error",
+          "source": {
+            "tool": "ruff",
+            "version": "ruff 0.17.3"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "ruff diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "96853e4c87f0515b23a9d9cc3e5e6d5ebb4cf9130639e9bba6db73f3ff658d05",
+          "location": {
+            "column": 9,
+            "line_end": 351,
+            "line_start": 351,
+            "occurrence_state": "unclassified",
+            "path": "src/structlog/stdlib.py",
+            "symbol_path": "stdlib.BoundLogger.makeRecord"
+          },
+          "locations": [
+            {
+              "column": 9,
+              "line_end": 351,
+              "line_start": 351,
+              "occurrence_state": "unclassified",
+              "path": "src/structlog/stdlib.py",
+              "symbol_path": "stdlib.BoundLogger.makeRecord"
+            }
+          ],
+          "message": "Too many positional arguments (9 > 5)",
+          "rule_id": "lint/ruff/PLR0917",
+          "severity": "error",
+          "source": {
+            "tool": "ruff",
+            "version": "ruff 0.17.3"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "ruff diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "d82eb174ad58036091f13fc32f6e801d4898078c4f40a36f76defe749a252d34",
+          "location": {
+            "column": 9,
+            "line_end": 1077,
+            "line_start": 1077,
+            "occurrence_state": "unclassified",
+            "path": "src/structlog/stdlib.py",
+            "symbol_path": "stdlib.ProcessorFormatter.__init__"
+          },
+          "locations": [
+            {
+              "column": 9,
+              "line_end": 1077,
+              "line_start": 1077,
+              "occurrence_state": "unclassified",
+              "path": "src/structlog/stdlib.py",
+              "symbol_path": "stdlib.ProcessorFormatter.__init__"
+            }
+          ],
+          "message": "Too many positional arguments (8 > 5)",
+          "rule_id": "lint/ruff/PLR0917",
+          "severity": "error",
+          "source": {
+            "tool": "ruff",
+            "version": "ruff 0.17.3"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "ruff diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "db0c8f45a947cc94ffac90f83296a774862aac9204d429b55a0ccda6d6082d42",
+          "location": {
+            "column": 1,
+            "line_end": 1,
+            "line_start": 1,
+            "occurrence_state": "unclassified",
+            "path": "src/structlog/stdlib.py",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 1,
+              "line_end": 1,
+              "line_start": 1,
+              "occurrence_state": "unclassified",
+              "path": "src/structlog/stdlib.py",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Missing copyright notice at top of file",
+          "rule_id": "lint/ruff/CPY001",
+          "severity": "error",
+          "source": {
+            "tool": "ruff",
+            "version": "ruff 0.17.3"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "ruff diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "f67e6f74cb224a9052a2c45462ef24503eff351efcf8946a6df141c82fe473a4",
+          "location": {
+            "column": 1,
+            "line_end": 1,
+            "line_start": 1,
+            "occurrence_state": "unclassified",
+            "path": "tests/processors/test_processors.py",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 1,
+              "line_end": 1,
+              "line_start": 1,
+              "occurrence_state": "unclassified",
+              "path": "tests/processors/test_processors.py",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Missing copyright notice at top of file",
+          "rule_id": "lint/ruff/CPY001",
+          "severity": "error",
+          "source": {
+            "tool": "ruff",
+            "version": "ruff 0.17.3"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        }
+      ],
+      "kind": "lint",
+      "language": "python",
+      "outcome": "findings",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 9082
+    },
+    {
+      "dependency_state": "trusted",
+      "findings": [
+        {
+          "category": "defect",
+          "evidence": [
+            "mypy diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "59fe4bf212cd3c21217d2e6553407046a044161ed8ac0d462d6ed114f4b1a367",
+          "location": {
+            "column": 1,
+            "line_end": 40,
+            "line_start": 40,
+            "occurrence_state": "unclassified",
+            "path": "show_off.py",
+            "symbol_path": "show_off.make_call_stack_more_impressive"
+          },
+          "locations": [
+            {
+              "column": 1,
+              "line_end": 40,
+              "line_start": 40,
+              "occurrence_state": "unclassified",
+              "path": "show_off.py",
+              "symbol_path": "show_off.make_call_stack_more_impressive"
+            }
+          ],
+          "message": "Function is missing a return type annotation",
+          "rule_id": "typecheck/mypy/no-untyped-def",
+          "severity": "error",
+          "source": {
+            "tool": "mypy",
+            "version": "mypy 2.4.1 (compiled: yes)"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "mypy diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "7ca01ce62540376560c728bb913c527e3e4199d7e4c00cb03e132a6d45259846",
+          "location": {
+            "column": 1,
+            "line_end": 107,
+            "line_start": 107,
+            "occurrence_state": "unclassified",
+            "path": "docs/conf.py",
+            "symbol_path": "conf.html_theme_options"
+          },
+          "locations": [
+            {
+              "column": 1,
+              "line_end": 107,
+              "line_start": 107,
+              "occurrence_state": "unclassified",
+              "path": "docs/conf.py",
+              "symbol_path": "conf.html_theme_options"
+            }
+          ],
+          "message": "Need type annotation for \"html_theme_options\" (hint: \"html_theme_options: dict[<type>, <type>] = ...\")",
+          "rule_id": "typecheck/mypy/var-annotated",
+          "severity": "error",
+          "source": {
+            "tool": "mypy",
+            "version": "mypy 2.4.1 (compiled: yes)"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "mypy diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "fdf1d09f6d63ab6a1c0e170f535de9685a8980fbdccf0283e468fc6da085e769",
+          "location": {
+            "column": 1,
+            "line_end": 49,
+            "line_start": 49,
+            "occurrence_state": "unclassified",
+            "path": "show_off.py",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 1,
+              "line_end": 49,
+              "line_start": 49,
+              "occurrence_state": "unclassified",
+              "path": "show_off.py",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Call to untyped function \"make_call_stack_more_impressive\" in typed context",
+          "rule_id": "typecheck/mypy/no-untyped-call",
+          "severity": "error",
+          "source": {
+            "tool": "mypy",
+            "version": "mypy 2.4.1 (compiled: yes)"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        }
+      ],
+      "kind": "typecheck",
+      "language": "python",
+      "outcome": "findings",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 14900
+    },
+    {
+      "dependency_state": "trusted",
+      "findings": [],
+      "kind": "coverage",
+      "language": "python",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 22788
+    }
+  ],
+  "deferred": [],
+  "excluded": [],
+  "findings": [
+    {
+      "category": "defect",
+      "evidence": [
+        "ruff diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "04842a33b0aeedc6dc8c556b05ac3a8b53bf057e1af2441b8dabf785b9e13768",
+      "location": {
+        "column": 1,
+        "line_end": 1,
+        "line_start": 1,
+        "occurrence_state": "unclassified",
+        "path": "src/structlog/contextvars.py",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 1,
+          "line_end": 1,
+          "line_start": 1,
+          "occurrence_state": "unclassified",
+          "path": "src/structlog/contextvars.py",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Missing copyright notice at top of file",
+      "rule_id": "lint/ruff/CPY001",
+      "severity": "error",
+      "source": {
+        "tool": "ruff",
+        "version": "ruff 0.17.3"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "ruff diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "05813de22ae1defcfabdf2e97427a5dc87ff8101a77869b4d7b2f5a0a3bfabd0",
+      "location": {
+        "column": 8,
+        "line_end": 12,
+        "line_start": 12,
+        "occurrence_state": "unclassified",
+        "path": "src/structlog/processors.py",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 8,
+          "line_end": 12,
+          "line_start": 12,
+          "occurrence_state": "unclassified",
+          "path": "src/structlog/processors.py",
+          "symbol_path": ""
+        }
+      ],
+      "message": "`datetime` should be imported as `dt`",
+      "rule_id": "lint/ruff/ICN001",
+      "severity": "error",
+      "source": {
+        "tool": "ruff",
+        "version": "ruff 0.17.3"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "ruff diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "13d059ecd7d2fdb30517c4d39b8d8f75fc5283e7b2fe70618d6decab6eb6a061",
+      "location": {
+        "column": 1,
+        "line_end": 1,
+        "line_start": 1,
+        "occurrence_state": "unclassified",
+        "path": "src/structlog/_native.py",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 1,
+          "line_end": 1,
+          "line_start": 1,
+          "occurrence_state": "unclassified",
+          "path": "src/structlog/_native.py",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Missing copyright notice at top of file",
+      "rule_id": "lint/ruff/CPY001",
+      "severity": "error",
+      "source": {
+        "tool": "ruff",
+        "version": "ruff 0.17.3"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "Built-in credential pattern high-entropy"
+      ],
+      "evidence_level": "static_proven",
+      "id": "3546bf6ef41f8d6042ee14d590c3c99bfd6efb61a7afae062dc7336435e625ff",
+      "impact": "A credential may be exposed by this change",
+      "location": {
+        "column": 20,
+        "line_end": 65,
+        "line_start": 65,
+        "occurrence_state": "new",
+        "path": "src/structlog/_native.py",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 20,
+          "line_end": 65,
+          "line_start": 65,
+          "occurrence_state": "new",
+          "path": "src/structlog/_native.py",
+          "symbol_path": ""
+        },
+        {
+          "column": 17,
+          "line_end": 68,
+          "line_start": 68,
+          "occurrence_state": "pre-existing",
+          "path": "src/structlog/_native.py",
+          "symbol_path": ""
+        },
+        {
+          "column": 28,
+          "line_end": 184,
+          "line_start": 184,
+          "occurrence_state": "new",
+          "path": "src/structlog/_native.py",
+          "symbol_path": ""
+        },
+        {
+          "column": 25,
+          "line_end": 187,
+          "line_start": 187,
+          "occurrence_state": "pre-existing",
+          "path": "src/structlog/_native.py",
+          "symbol_path": ""
+        },
+        {
+          "column": 24,
+          "line_end": 228,
+          "line_start": 228,
+          "occurrence_state": "new",
+          "path": "src/structlog/_native.py",
+          "symbol_path": ""
+        },
+        {
+          "column": 21,
+          "line_end": 231,
+          "line_start": 231,
+          "occurrence_state": "pre-existing",
+          "path": "src/structlog/_native.py",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Potential high-entropy credential: _ASY[REDACTED]",
+      "rule_id": "secret/high-entropy",
+      "severity": "error",
+      "source": {
+        "tool": "rio-secrets",
+        "version": "0.1.0"
+      },
+      "state": "worsened",
+      "suggested_fix": "Remove the credential and rotate it if it was active",
+      "trigger": "_ASY[REDACTED]"
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "mypy diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "59fe4bf212cd3c21217d2e6553407046a044161ed8ac0d462d6ed114f4b1a367",
+      "location": {
+        "column": 1,
+        "line_end": 40,
+        "line_start": 40,
+        "occurrence_state": "unclassified",
+        "path": "show_off.py",
+        "symbol_path": "show_off.make_call_stack_more_impressive"
+      },
+      "locations": [
+        {
+          "column": 1,
+          "line_end": 40,
+          "line_start": 40,
+          "occurrence_state": "unclassified",
+          "path": "show_off.py",
+          "symbol_path": "show_off.make_call_stack_more_impressive"
+        }
+      ],
+      "message": "Function is missing a return type annotation",
+      "rule_id": "typecheck/mypy/no-untyped-def",
+      "severity": "error",
+      "source": {
+        "tool": "mypy",
+        "version": "mypy 2.4.1 (compiled: yes)"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "Built-in credential pattern high-entropy"
+      ],
+      "evidence_level": "static_proven",
+      "id": "6793e5b8a3fbb6001c32ab4ce830b9b1e594c4f0335667aa655729916fd0d00d",
+      "impact": "A credential may be exposed by this change",
+      "location": {
+        "column": 24,
+        "line_end": 433,
+        "line_start": 433,
+        "occurrence_state": "new",
+        "path": "src/structlog/stdlib.py",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 24,
+          "line_end": 433,
+          "line_start": 433,
+          "occurrence_state": "new",
+          "path": "src/structlog/stdlib.py",
+          "symbol_path": ""
+        },
+        {
+          "column": 21,
+          "line_end": 436,
+          "line_start": 436,
+          "occurrence_state": "pre-existing",
+          "path": "src/structlog/stdlib.py",
+          "symbol_path": ""
+        },
+        {
+          "column": 24,
+          "line_end": 646,
+          "line_start": 646,
+          "occurrence_state": "new",
+          "path": "src/structlog/stdlib.py",
+          "symbol_path": ""
+        },
+        {
+          "column": 21,
+          "line_end": 649,
+          "line_start": 649,
+          "occurrence_state": "pre-existing",
+          "path": "src/structlog/stdlib.py",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Potential high-entropy credential: _ASY[REDACTED]",
+      "rule_id": "secret/high-entropy",
+      "severity": "error",
+      "source": {
+        "tool": "rio-secrets",
+        "version": "0.1.0"
+      },
+      "state": "worsened",
+      "suggested_fix": "Remove the credential and rotate it if it was active",
+      "trigger": "_ASY[REDACTED]"
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "mypy diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "7ca01ce62540376560c728bb913c527e3e4199d7e4c00cb03e132a6d45259846",
+      "location": {
+        "column": 1,
+        "line_end": 107,
+        "line_start": 107,
+        "occurrence_state": "unclassified",
+        "path": "docs/conf.py",
+        "symbol_path": "conf.html_theme_options"
+      },
+      "locations": [
+        {
+          "column": 1,
+          "line_end": 107,
+          "line_start": 107,
+          "occurrence_state": "unclassified",
+          "path": "docs/conf.py",
+          "symbol_path": "conf.html_theme_options"
+        }
+      ],
+      "message": "Need type annotation for \"html_theme_options\" (hint: \"html_theme_options: dict[<type>, <type>] = ...\")",
+      "rule_id": "typecheck/mypy/var-annotated",
+      "severity": "error",
+      "source": {
+        "tool": "mypy",
+        "version": "mypy 2.4.1 (compiled: yes)"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "ruff diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "92f39487e0b02eb5bf08a8107cac7499b7e5d634b184fb305eeea03664d85868",
+      "location": {
+        "column": 1,
+        "line_end": 1,
+        "line_start": 1,
+        "occurrence_state": "unclassified",
+        "path": "src/structlog/processors.py",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 1,
+          "line_end": 1,
+          "line_start": 1,
+          "occurrence_state": "unclassified",
+          "path": "src/structlog/processors.py",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Missing copyright notice at top of file",
+      "rule_id": "lint/ruff/CPY001",
+      "severity": "error",
+      "source": {
+        "tool": "ruff",
+        "version": "ruff 0.17.3"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "ruff diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "96853e4c87f0515b23a9d9cc3e5e6d5ebb4cf9130639e9bba6db73f3ff658d05",
+      "location": {
+        "column": 9,
+        "line_end": 351,
+        "line_start": 351,
+        "occurrence_state": "unclassified",
+        "path": "src/structlog/stdlib.py",
+        "symbol_path": "stdlib.BoundLogger.makeRecord"
+      },
+      "locations": [
+        {
+          "column": 9,
+          "line_end": 351,
+          "line_start": 351,
+          "occurrence_state": "unclassified",
+          "path": "src/structlog/stdlib.py",
+          "symbol_path": "stdlib.BoundLogger.makeRecord"
+        }
+      ],
+      "message": "Too many positional arguments (9 > 5)",
+      "rule_id": "lint/ruff/PLR0917",
+      "severity": "error",
+      "source": {
+        "tool": "ruff",
+        "version": "ruff 0.17.3"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "ruff diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "d82eb174ad58036091f13fc32f6e801d4898078c4f40a36f76defe749a252d34",
+      "location": {
+        "column": 9,
+        "line_end": 1077,
+        "line_start": 1077,
+        "occurrence_state": "unclassified",
+        "path": "src/structlog/stdlib.py",
+        "symbol_path": "stdlib.ProcessorFormatter.__init__"
+      },
+      "locations": [
+        {
+          "column": 9,
+          "line_end": 1077,
+          "line_start": 1077,
+          "occurrence_state": "unclassified",
+          "path": "src/structlog/stdlib.py",
+          "symbol_path": "stdlib.ProcessorFormatter.__init__"
+        }
+      ],
+      "message": "Too many positional arguments (8 > 5)",
+      "rule_id": "lint/ruff/PLR0917",
+      "severity": "error",
+      "source": {
+        "tool": "ruff",
+        "version": "ruff 0.17.3"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "ruff diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "db0c8f45a947cc94ffac90f83296a774862aac9204d429b55a0ccda6d6082d42",
+      "location": {
+        "column": 1,
+        "line_end": 1,
+        "line_start": 1,
+        "occurrence_state": "unclassified",
+        "path": "src/structlog/stdlib.py",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 1,
+          "line_end": 1,
+          "line_start": 1,
+          "occurrence_state": "unclassified",
+          "path": "src/structlog/stdlib.py",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Missing copyright notice at top of file",
+      "rule_id": "lint/ruff/CPY001",
+      "severity": "error",
+      "source": {
+        "tool": "ruff",
+        "version": "ruff 0.17.3"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "ruff diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "f67e6f74cb224a9052a2c45462ef24503eff351efcf8946a6df141c82fe473a4",
+      "location": {
+        "column": 1,
+        "line_end": 1,
+        "line_start": 1,
+        "occurrence_state": "unclassified",
+        "path": "tests/processors/test_processors.py",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 1,
+          "line_end": 1,
+          "line_start": 1,
+          "occurrence_state": "unclassified",
+          "path": "tests/processors/test_processors.py",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Missing copyright notice at top of file",
+      "rule_id": "lint/ruff/CPY001",
+      "severity": "error",
+      "source": {
+        "tool": "ruff",
+        "version": "ruff 0.17.3"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "mypy diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "fdf1d09f6d63ab6a1c0e170f535de9685a8980fbdccf0283e468fc6da085e769",
+      "location": {
+        "column": 1,
+        "line_end": 49,
+        "line_start": 49,
+        "occurrence_state": "unclassified",
+        "path": "show_off.py",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 1,
+          "line_end": 49,
+          "line_start": 49,
+          "occurrence_state": "unclassified",
+          "path": "show_off.py",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Call to untyped function \"make_call_stack_more_impressive\" in typed context",
+      "rule_id": "typecheck/mypy/no-untyped-call",
+      "severity": "error",
+      "source": {
+        "tool": "mypy",
+        "version": "mypy 2.4.1 (compiled: yes)"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    }
+  ],
+  "footer": {
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "lint .: dependencies_trusted: results use unverified dependencies",
+      "typecheck .: dependencies_trusted: results use unverified dependencies",
+      "Graph references use syntax and text; no language server was used",
+      "Offline applies to Rio; tool and test processes were not network-isolated",
+      "dependencies_trusted: results were computed against unverified dependencies"
+    ],
+    "suppressions": [],
+    "tool_versions": {
+      "python:.:coverage": "Coverage.py, version 7.17.1 with C extension",
+      "python:.:mypy": "mypy 2.4.1 (compiled: yes)",
+      "python:.:ruff": "ruff 0.17.3"
+    }
+  },
+  "impact": {
+    "symbols": [
+      {
+        "path": "src/structlog/_native.py",
+        "references_per_hop": [
+          180,
+          212
+        ],
+        "symbol_path": "",
+        "test_referenced": true,
+        "unresolved": 16135
+      },
+      {
+        "path": "src/structlog/_native.py",
+        "references_per_hop": [
+          198,
+          448
+        ],
+        "symbol_path": "_native._make_filtering_bound_logger.alog",
+        "test_referenced": true,
+        "unresolved": 20596
+      },
+      {
+        "path": "src/structlog/_native.py",
+        "references_per_hop": [
+          166,
+          212
+        ],
+        "symbol_path": "_native._make_filtering_bound_logger.make_method.ameth",
+        "test_referenced": true,
+        "unresolved": 13811
+      },
+      {
+        "path": "src/structlog/_native.py",
+        "references_per_hop": [
+          205,
+          441
+        ],
+        "symbol_path": "_native.aexception",
+        "test_referenced": true,
+        "unresolved": 21124
+      },
+      {
+        "path": "src/structlog/contextvars.py",
+        "references_per_hop": [
+          149,
+          402
+        ],
+        "symbol_path": "",
+        "test_referenced": true,
+        "unresolved": 19902
+      },
+      {
+        "path": "src/structlog/contextvars.py",
+        "references_per_hop": [
+          110,
+          410
+        ],
+        "symbol_path": "contextvars._ASYNC_CALLING_THREAD",
+        "test_referenced": true,
+        "unresolved": 15955
+      },
+      {
+        "path": "src/structlog/processors.py",
+        "references_per_hop": [
+          329,
+          487
+        ],
+        "symbol_path": "",
+        "test_referenced": true,
+        "unresolved": 27314
+      },
+      {
+        "path": "src/structlog/processors.py",
+        "references_per_hop": [
+          214,
+          460
+        ],
+        "symbol_path": "processors._get_callsite_thread",
+        "test_referenced": true,
+        "unresolved": 19736
+      },
+      {
+        "path": "src/structlog/processors.py",
+        "references_per_hop": [
+          214,
+          460
+        ],
+        "symbol_path": "processors._get_callsite_thread_name",
+        "test_referenced": true,
+        "unresolved": 19736
+      },
+      {
+        "path": "src/structlog/stdlib.py",
+        "references_per_hop": [
+          249,
+          324
+        ],
+        "symbol_path": "",
+        "test_referenced": true,
+        "unresolved": 27064
+      },
+      {
+        "path": "src/structlog/stdlib.py",
+        "references_per_hop": [
+          203,
+          333
+        ],
+        "symbol_path": "stdlib.AsyncBoundLogger._dispatch_to_sync",
+        "test_referenced": true,
+        "unresolved": 23366
+      },
+      {
+        "path": "src/structlog/stdlib.py",
+        "references_per_hop": [
+          203,
+          333
+        ],
+        "symbol_path": "stdlib.BoundLogger._dispatch_to_sync",
+        "test_referenced": true,
+        "unresolved": 23366
+      },
+      {
+        "path": "tests/processors/test_processors.py",
+        "references_per_hop": [
+          0,
+          0
+        ],
+        "symbol_path": "",
+        "test_referenced": false,
+        "unresolved": 0
+      },
+      {
+        "path": "tests/processors/test_processors.py",
+        "references_per_hop": [
+          14,
+          80
+        ],
+        "symbol_path": "test_processors.TestCallsiteParameterAdder",
+        "test_referenced": true,
+        "unresolved": 334
+      },
+      {
+        "path": "tests/processors/test_processors.py",
+        "references_per_hop": [
+          90,
+          108
+        ],
+        "symbol_path": "test_processors.TestCallsiteParameterAdder.test_async",
+        "test_referenced": true,
+        "unresolved": 6114
+      },
+      {
+        "path": "tests/processors/test_processors.py",
+        "references_per_hop": [
+          14,
+          80
+        ],
+        "symbol_path": "test_processors.TestCallsiteParameterAdder.test_async_native_logger",
+        "test_referenced": true,
+        "unresolved": 334
+      }
+    ],
+    "truncated": false,
+    "unresolved": 254887
+  },
+  "incomplete": [
+    {
+      "findings": [],
+      "hint": "Dependency audit needs api.osv.dev",
+      "kind": "dependencies",
+      "language": "common",
+      "outcome": "skipped",
+      "reason": "offline",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 315
+    }
+  ],
+  "metrics": {
+    "checks": [
+      {
+        "kind": "secrets",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 72
+      },
+      {
+        "kind": "dependencies",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 315
+      },
+      {
+        "kind": "lint",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 9082
+      },
+      {
+        "kind": "typecheck",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 14900
+      },
+      {
+        "kind": "coverage",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 22788
+      }
+    ],
+    "tool_versions": {
+      "python:.:coverage": "Coverage.py, version 7.17.1 with C extension",
+      "python:.:mypy": "mypy 2.4.1 (compiled: yes)",
+      "python:.:ruff": "ruff 0.17.3"
+    },
+    "wall_time_ms": 68991
+  },
+  "review": {
+    "base": "c6e7cad18ffe91febf2b97dac03a465134b1a5d1",
+    "chain": [
+      "acceptance-structlog-trusted",
+      "rio/base"
+    ],
+    "head": "7d7708fdf39061b6f7515c13ed0404a9bc05fb33",
+    "id": "671b78fa89d139ee",
+    "mode": "branch",
+    "profile": "acceptance-structlog-trusted",
+    "rio_version": "0.1.0",
+    "run_id": "01M6M28BXR624VJ4G26FS6CHJE"
+  },
+  "risks": [],
+  "schema": "rio-report-v1",
+  "status": "incomplete",
+  "summary": {
+    "fixed": 0,
+    "pre_existing": 0,
+    "suppressed": 0
+  }
+}

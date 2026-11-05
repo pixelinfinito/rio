@@ -1,0 +1,26 @@
+{
+  "base": [
+    [
+      "corepack",
+      "pnpm",
+      "install",
+      "--frozen-lockfile"
+    ],
+    [
+      "python3",
+      "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-pnpm-directory-aliases.txt"
+    ]
+  ],
+  "head": [
+    [
+      "corepack",
+      "pnpm",
+      "install",
+      "--frozen-lockfile"
+    ],
+    [
+      "python3",
+      "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-pnpm-directory-aliases.txt"
+    ]
+  ]
+}

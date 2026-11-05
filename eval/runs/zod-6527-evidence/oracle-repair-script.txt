@@ -1,0 +1,8 @@
+import json,os,subprocess,time,pathlib,sys
+rev,cwd=sys.argv[1:];out=pathlib.Path('/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6527-evidence'); env=os.environ.copy();env['PATH']='/tmp/rio-zod-eval/node-v24.22.2-linux-x64/bin:'+env['PATH']; ledger=[]
+cmds=[(['corepack','pnpm','exec','tsc','--noEmit','--pretty','false','-p','packages/zod/tsconfig.test.json'],cwd),(['corepack','pnpm','exec','zshy','--project','tsconfig.build.json'],cwd+'/packages/zod'),(['git','diff','--exit-code'],cwd),(['corepack','pnpm','exec','vitest','run','packages/treeshake','--maxWorkers=2'],cwd)]
+for i,(cmd,wd) in enumerate(cmds):
+ t=time.monotonic();log=out/f'{rev}-repair-{i+1:02}.log'
+ with log.open('w') as f:
+  p=subprocess.run(cmd,cwd=wd,env=env,stdout=f,stderr=subprocess.STDOUT,timeout=900)
+ ledger.append(dict(argv=cmd,cwd=wd,exit_code=p.returncode,wall_time_seconds=round(time.monotonic()-t,3),log=log.name));(out/f'{rev}-repair-commands.json').write_text(json.dumps(ledger,indent=2)+'\n');print(rev,cmd,p.returncode,flush=True)

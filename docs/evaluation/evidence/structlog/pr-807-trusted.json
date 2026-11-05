@@ -1,0 +1,552 @@
+{
+  "checks": [
+    {
+      "findings": [],
+      "kind": "secrets",
+      "language": "common",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 31
+    },
+    {
+      "findings": [],
+      "hint": "Dependency audit needs api.osv.dev",
+      "kind": "dependencies",
+      "language": "common",
+      "outcome": "skipped",
+      "reason": "offline",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 375
+    },
+    {
+      "dependency_state": "trusted",
+      "findings": [
+        {
+          "category": "defect",
+          "evidence": [
+            "ruff diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "a8bcf257e6f50133b818df3a9d88ebde30fc8a00efb30b904e48069934155206",
+          "location": {
+            "column": 1,
+            "line_end": 1,
+            "line_start": 1,
+            "occurrence_state": "unclassified",
+            "path": "tests/test_output.py",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 1,
+              "line_end": 1,
+              "line_start": 1,
+              "occurrence_state": "unclassified",
+              "path": "tests/test_output.py",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Missing copyright notice at top of file",
+          "rule_id": "lint/ruff/CPY001",
+          "severity": "error",
+          "source": {
+            "tool": "ruff",
+            "version": "ruff 0.17.3"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "ruff diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "f07afb5460b432d5aeade19d9a6089f58365ea290c63dc67683358f40d052bf4",
+          "location": {
+            "column": 1,
+            "line_end": 1,
+            "line_start": 1,
+            "occurrence_state": "unclassified",
+            "path": "src/structlog/_output.py",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 1,
+              "line_end": 1,
+              "line_start": 1,
+              "occurrence_state": "unclassified",
+              "path": "src/structlog/_output.py",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Missing copyright notice at top of file",
+          "rule_id": "lint/ruff/CPY001",
+          "severity": "error",
+          "source": {
+            "tool": "ruff",
+            "version": "ruff 0.17.3"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        }
+      ],
+      "kind": "lint",
+      "language": "python",
+      "outcome": "findings",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 7380
+    },
+    {
+      "dependency_state": "trusted",
+      "findings": [
+        {
+          "category": "defect",
+          "evidence": [
+            "mypy diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "59fe4bf212cd3c21217d2e6553407046a044161ed8ac0d462d6ed114f4b1a367",
+          "location": {
+            "column": 1,
+            "line_end": 40,
+            "line_start": 40,
+            "occurrence_state": "unclassified",
+            "path": "show_off.py",
+            "symbol_path": "show_off.make_call_stack_more_impressive"
+          },
+          "locations": [
+            {
+              "column": 1,
+              "line_end": 40,
+              "line_start": 40,
+              "occurrence_state": "unclassified",
+              "path": "show_off.py",
+              "symbol_path": "show_off.make_call_stack_more_impressive"
+            }
+          ],
+          "message": "Function is missing a return type annotation",
+          "rule_id": "typecheck/mypy/no-untyped-def",
+          "severity": "error",
+          "source": {
+            "tool": "mypy",
+            "version": "mypy 2.4.1 (compiled: yes)"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "mypy diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "7ca01ce62540376560c728bb913c527e3e4199d7e4c00cb03e132a6d45259846",
+          "location": {
+            "column": 1,
+            "line_end": 107,
+            "line_start": 107,
+            "occurrence_state": "unclassified",
+            "path": "docs/conf.py",
+            "symbol_path": "conf.html_theme_options"
+          },
+          "locations": [
+            {
+              "column": 1,
+              "line_end": 107,
+              "line_start": 107,
+              "occurrence_state": "unclassified",
+              "path": "docs/conf.py",
+              "symbol_path": "conf.html_theme_options"
+            }
+          ],
+          "message": "Need type annotation for \"html_theme_options\" (hint: \"html_theme_options: dict[<type>, <type>] = ...\")",
+          "rule_id": "typecheck/mypy/var-annotated",
+          "severity": "error",
+          "source": {
+            "tool": "mypy",
+            "version": "mypy 2.4.1 (compiled: yes)"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        },
+        {
+          "category": "defect",
+          "evidence": [
+            "mypy diagnostic"
+          ],
+          "evidence_level": "static_proven",
+          "id": "fdf1d09f6d63ab6a1c0e170f535de9685a8980fbdccf0283e468fc6da085e769",
+          "location": {
+            "column": 1,
+            "line_end": 49,
+            "line_start": 49,
+            "occurrence_state": "unclassified",
+            "path": "show_off.py",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "column": 1,
+              "line_end": 49,
+              "line_start": 49,
+              "occurrence_state": "unclassified",
+              "path": "show_off.py",
+              "symbol_path": ""
+            }
+          ],
+          "message": "Call to untyped function \"make_call_stack_more_impressive\" in typed context",
+          "rule_id": "typecheck/mypy/no-untyped-call",
+          "severity": "error",
+          "source": {
+            "tool": "mypy",
+            "version": "mypy 2.4.1 (compiled: yes)"
+          },
+          "state": "unclassified",
+          "trigger": ""
+        }
+      ],
+      "kind": "typecheck",
+      "language": "python",
+      "outcome": "findings",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 12495
+    },
+    {
+      "dependency_state": "trusted",
+      "findings": [],
+      "kind": "coverage",
+      "language": "python",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 20184
+    }
+  ],
+  "deferred": [],
+  "excluded": [],
+  "findings": [
+    {
+      "category": "defect",
+      "evidence": [
+        "mypy diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "59fe4bf212cd3c21217d2e6553407046a044161ed8ac0d462d6ed114f4b1a367",
+      "location": {
+        "column": 1,
+        "line_end": 40,
+        "line_start": 40,
+        "occurrence_state": "unclassified",
+        "path": "show_off.py",
+        "symbol_path": "show_off.make_call_stack_more_impressive"
+      },
+      "locations": [
+        {
+          "column": 1,
+          "line_end": 40,
+          "line_start": 40,
+          "occurrence_state": "unclassified",
+          "path": "show_off.py",
+          "symbol_path": "show_off.make_call_stack_more_impressive"
+        }
+      ],
+      "message": "Function is missing a return type annotation",
+      "rule_id": "typecheck/mypy/no-untyped-def",
+      "severity": "error",
+      "source": {
+        "tool": "mypy",
+        "version": "mypy 2.4.1 (compiled: yes)"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "mypy diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "7ca01ce62540376560c728bb913c527e3e4199d7e4c00cb03e132a6d45259846",
+      "location": {
+        "column": 1,
+        "line_end": 107,
+        "line_start": 107,
+        "occurrence_state": "unclassified",
+        "path": "docs/conf.py",
+        "symbol_path": "conf.html_theme_options"
+      },
+      "locations": [
+        {
+          "column": 1,
+          "line_end": 107,
+          "line_start": 107,
+          "occurrence_state": "unclassified",
+          "path": "docs/conf.py",
+          "symbol_path": "conf.html_theme_options"
+        }
+      ],
+      "message": "Need type annotation for \"html_theme_options\" (hint: \"html_theme_options: dict[<type>, <type>] = ...\")",
+      "rule_id": "typecheck/mypy/var-annotated",
+      "severity": "error",
+      "source": {
+        "tool": "mypy",
+        "version": "mypy 2.4.1 (compiled: yes)"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "ruff diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "a8bcf257e6f50133b818df3a9d88ebde30fc8a00efb30b904e48069934155206",
+      "location": {
+        "column": 1,
+        "line_end": 1,
+        "line_start": 1,
+        "occurrence_state": "unclassified",
+        "path": "tests/test_output.py",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 1,
+          "line_end": 1,
+          "line_start": 1,
+          "occurrence_state": "unclassified",
+          "path": "tests/test_output.py",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Missing copyright notice at top of file",
+      "rule_id": "lint/ruff/CPY001",
+      "severity": "error",
+      "source": {
+        "tool": "ruff",
+        "version": "ruff 0.17.3"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "ruff diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "f07afb5460b432d5aeade19d9a6089f58365ea290c63dc67683358f40d052bf4",
+      "location": {
+        "column": 1,
+        "line_end": 1,
+        "line_start": 1,
+        "occurrence_state": "unclassified",
+        "path": "src/structlog/_output.py",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 1,
+          "line_end": 1,
+          "line_start": 1,
+          "occurrence_state": "unclassified",
+          "path": "src/structlog/_output.py",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Missing copyright notice at top of file",
+      "rule_id": "lint/ruff/CPY001",
+      "severity": "error",
+      "source": {
+        "tool": "ruff",
+        "version": "ruff 0.17.3"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    },
+    {
+      "category": "defect",
+      "evidence": [
+        "mypy diagnostic"
+      ],
+      "evidence_level": "static_proven",
+      "id": "fdf1d09f6d63ab6a1c0e170f535de9685a8980fbdccf0283e468fc6da085e769",
+      "location": {
+        "column": 1,
+        "line_end": 49,
+        "line_start": 49,
+        "occurrence_state": "unclassified",
+        "path": "show_off.py",
+        "symbol_path": ""
+      },
+      "locations": [
+        {
+          "column": 1,
+          "line_end": 49,
+          "line_start": 49,
+          "occurrence_state": "unclassified",
+          "path": "show_off.py",
+          "symbol_path": ""
+        }
+      ],
+      "message": "Call to untyped function \"make_call_stack_more_impressive\" in typed context",
+      "rule_id": "typecheck/mypy/no-untyped-call",
+      "severity": "error",
+      "source": {
+        "tool": "mypy",
+        "version": "mypy 2.4.1 (compiled: yes)"
+      },
+      "state": "unclassified",
+      "trigger": ""
+    }
+  ],
+  "footer": {
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "lint .: dependencies_trusted: results use unverified dependencies",
+      "typecheck .: dependencies_trusted: results use unverified dependencies",
+      "Graph references use syntax and text; no language server was used",
+      "Offline applies to Rio; tool and test processes were not network-isolated",
+      "dependencies_trusted: results were computed against unverified dependencies"
+    ],
+    "suppressions": [],
+    "tool_versions": {
+      "python:.:coverage": "Coverage.py, version 7.17.1 with C extension",
+      "python:.:mypy": "mypy 2.4.1 (compiled: yes)",
+      "python:.:ruff": "ruff 0.17.3"
+    }
+  },
+  "impact": {
+    "symbols": [
+      {
+        "path": "src/structlog/_output.py",
+        "references_per_hop": [
+          29,
+          308
+        ],
+        "symbol_path": "",
+        "test_referenced": true,
+        "unresolved": 2440
+      },
+      {
+        "path": "src/structlog/_output.py",
+        "references_per_hop": [
+          28,
+          274
+        ],
+        "symbol_path": "_output.WRITE_LOCKS",
+        "test_referenced": true,
+        "unresolved": 1905
+      },
+      {
+        "path": "tests/test_output.py",
+        "references_per_hop": [
+          0,
+          0
+        ],
+        "symbol_path": "",
+        "test_referenced": false,
+        "unresolved": 0
+      },
+      {
+        "path": "tests/test_output.py",
+        "references_per_hop": [
+          12,
+          62
+        ],
+        "symbol_path": "test_output.test_write_locks_released_on_gc",
+        "test_referenced": true,
+        "unresolved": 272
+      }
+    ],
+    "truncated": false,
+    "unresolved": 4617
+  },
+  "incomplete": [
+    {
+      "findings": [],
+      "hint": "Dependency audit needs api.osv.dev",
+      "kind": "dependencies",
+      "language": "common",
+      "outcome": "skipped",
+      "reason": "offline",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 375
+    }
+  ],
+  "metrics": {
+    "checks": [
+      {
+        "kind": "secrets",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 31
+      },
+      {
+        "kind": "dependencies",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 375
+      },
+      {
+        "kind": "lint",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 7380
+      },
+      {
+        "kind": "typecheck",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 12495
+      },
+      {
+        "kind": "coverage",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 20184
+      }
+    ],
+    "tool_versions": {
+      "python:.:coverage": "Coverage.py, version 7.17.1 with C extension",
+      "python:.:mypy": "mypy 2.4.1 (compiled: yes)",
+      "python:.:ruff": "ruff 0.17.3"
+    },
+    "wall_time_ms": 33348
+  },
+  "review": {
+    "base": "92fd882817a8e6aae192cfe6266fded2d597f522",
+    "chain": [
+      "acceptance-structlog-trusted",
+      "rio/base"
+    ],
+    "head": "88f668d9e834fb9382d3ffedc23d04c67422692b",
+    "id": "78f55b90291305c6",
+    "mode": "branch",
+    "profile": "acceptance-structlog-trusted",
+    "rio_version": "0.1.0",
+    "run_id": "01M6M2B30890FFZY026AB2C5YA"
+  },
+  "risks": [],
+  "schema": "rio-report-v1",
+  "status": "incomplete",
+  "summary": {
+    "fixed": 0,
+    "pre_existing": 0,
+    "suppressed": 0
+  }
+}

@@ -1,0 +1,3 @@
+[ERROR] Unknown option: 'virtual-store-dir-max-length'
+Did you mean 'virtual-store-dir'? Use "--config.unknown=value" to force an unknown option.
+For help, run: pnpm help install

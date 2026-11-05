@@ -1,0 +1,3 @@
+Using Python 3.14.10 environment at: /tmp/rio-pydantic-ai-ram/mitmproxy-negative-head/.venv
+Uninstalled 1 package in 7ms
+ - mitmproxy==13.0.0.dev0 (from file:///tmp/rio-pydantic-ai-ram/mitmproxy-negative-head)

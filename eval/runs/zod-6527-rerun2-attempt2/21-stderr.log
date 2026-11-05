@@ -1,0 +1,30 @@
+Warning: rio/base:$.steps[3]: rio/triage is deferred locally: no_endpoint
+Warning: rio/base:$.steps[4]: rio/agents is deferred locally: no_endpoint
+Warning: rio/base:$.steps[5]: rio/verify is deferred locally: no_endpoint
+Running prepare…
+Finished prepare
+Running checks…
+coverage packages/resolution: failed (tests_failed)
+coverage .: failed (tests_failed)
+typecheck packages/resolution: findings
+coverage packages/bench: failed (tests_failed)
+typecheck packages/integration: findings
+coverage packages/integration: failed (tests_failed)
+typecheck packages/mini: passed
+coverage packages/mini: failed (tests_failed)
+lint packages/zod: passed
+coverage packages/zod: failed (tests_failed)
+secrets .: passed
+dependencies .: skipped (offline)
+typecheck packages/tsc: passed
+typecheck packages/bench: findings
+coverage packages/treeshake: failed (tests_failed)
+coverage packages/tsc: failed (tests_failed)
+typecheck packages/zod: findings
+typecheck .: findings
+typecheck packages/treeshake: findings
+Finished checks
+Running graph…
+Finished graph
+Running report…
+Finished report

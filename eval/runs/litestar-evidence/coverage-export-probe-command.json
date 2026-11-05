@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "/tmp/eval-litestar-oracle-head/.venv/bin/coverage",
+    "json",
+    "--data-file",
+    "/tmp/eval-litestar-oracle-head/.coverage",
+    "-o",
+    "/tmp/litestar-export-probe.json"
+  ],
+  "cwd": "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar",
+  "environment": {
+    "COVERAGE_RCFILE": "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-evidence/coverage-scoped-threshold.toml"
+  },
+  "exit_code": 0,
+  "stdout": "coverage-export-probe.stdout.log",
+  "stderr": "coverage-export-probe.stderr.log",
+  "config_sha256": "b8ec9bb43dba19bc819dd1faa7cb579e566c3f51120db465e8fdf80b2d106efd"
+}

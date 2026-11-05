@@ -1,0 +1,8 @@
+kind: step
+name: rio/agents
+version: 0.1.0
+description: Agents the review artifacts
+local: false
+inputs: ["snapshot", "findings", "graph", "plan"]
+outputs: ["hypotheses"]
+schema: {"type": "object", "additionalProperties": false, "properties": {}}

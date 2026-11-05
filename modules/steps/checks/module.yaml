@@ -1,0 +1,8 @@
+kind: step
+name: rio/checks
+version: 0.1.0
+description: Checks the review artifacts
+local: true
+inputs: ["snapshot", "projects"]
+outputs: ["findings", "check_outcomes"]
+schema: {"type": "object", "additionalProperties": false, "properties": {"typecheck": {"type": "boolean", "default": true}, "lint": {"type": "boolean", "default": true}, "secrets": {"type": "boolean", "default": true}, "coverage": {"type": "boolean", "default": true}, "dependencies": {"type": "boolean", "default": true}, "baseline": {"type": "boolean", "default": true}, "trust_installed_dependencies": {"type": "boolean", "default": false}}}

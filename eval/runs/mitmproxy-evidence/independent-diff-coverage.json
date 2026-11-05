@@ -1,0 +1,56 @@
+[
+  {
+    "base_sha": "3368a0a06ae6195aad817a1ece1aaeb6fe0353a1",
+    "head_sha": "be9f49d248a0142ae30f8bd412ad45060d0ee25e",
+    "coverage_file": "mitmproxy-8473-head-py314-coverage.json.gz",
+    "method": "git diff --unified=0 added-line ranges intersected with coverage.py executed_lines/missing_lines; non-executable lines excluded",
+    "files": [
+      {
+        "path": "mitmproxy/certs.py",
+        "added_lines": [
+          356,
+          357,
+          358,
+          359,
+          360,
+          361,
+          362
+        ],
+        "instrumented": true,
+        "added_executable_lines": [
+          356,
+          357,
+          359
+        ],
+        "covered_added_lines": [
+          356,
+          357,
+          359
+        ],
+        "missing_added_lines": []
+      }
+    ]
+  },
+  {
+    "base_sha": "6debf65b612abc726fe9cabe5c2a1ebb1cb36df4",
+    "head_sha": "986ba556378985647957301e28069e46ee6074ec",
+    "coverage_file": "mitmproxy-8521-seed-py314-coverage.json.gz",
+    "method": "git diff --unified=0 added-line ranges intersected with coverage.py executed_lines/missing_lines; non-executable lines excluded",
+    "files": [
+      {
+        "path": "mitmproxy/coretypes/multidict.py",
+        "added_lines": [
+          1
+        ],
+        "instrumented": true,
+        "added_executable_lines": [
+          1
+        ],
+        "covered_added_lines": [
+          1
+        ],
+        "missing_added_lines": []
+      }
+    ]
+  }
+]

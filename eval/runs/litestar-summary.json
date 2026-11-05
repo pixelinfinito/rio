@@ -1,0 +1,286 @@
+{
+  "schema": "rio-eval-summary-v1",
+  "methodology": "deterministic-v1",
+  "records": [
+    "eval/runs/litestar-5164-seed-f841-final/record.json",
+    "eval/runs/litestar-5164-seed-f841-scored/record.json",
+    "eval/runs/litestar-5164-seed-f841-tmpfs/record.json",
+    "eval/runs/litestar-5164-seed-f841/record.json",
+    "eval/runs/litestar-5178-attempt1/record.json",
+    "eval/runs/litestar-5178-final/record.json",
+    "eval/runs/litestar-5178-scored/record.json",
+    "eval/runs/litestar-5178-tmpfs/record.json",
+    "eval/runs/litestar-5178/record.json"
+  ],
+  "attempts": 9,
+  "observed_raw_counts": {
+    "true-positive": 4,
+    "false-positive": 0,
+    "pre-existing-shown": 0,
+    "environment-failure": 0,
+    "out-of-scope": 0
+  },
+  "observed_occurrence_counts": {
+    "true-positive": 4,
+    "false-positive": 0,
+    "pre-existing-shown": 0,
+    "environment-failure": 0,
+    "out-of-scope": 0
+  },
+  "observed_cause_counts": {
+    "true-positive": 4,
+    "false-positive": 0,
+    "pre-existing-shown": 0,
+    "environment-failure": 0,
+    "out-of-scope": 0
+  },
+  "observed_unique_cause_counts": {
+    "true-positive": 1,
+    "false-positive": 0,
+    "pre-existing-shown": 0,
+    "environment-failure": 0,
+    "out-of-scope": 0
+  },
+  "eligible": {
+    "eligible_prs": 2,
+    "raw_counts": {
+      "true-positive": 1,
+      "false-positive": 0,
+      "pre-existing-shown": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0
+    },
+    "occurrence_counts": {
+      "true-positive": 1,
+      "false-positive": 0,
+      "pre-existing-shown": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0
+    },
+    "cause_counts": {
+      "true-positive": 1,
+      "false-positive": 0,
+      "pre-existing-shown": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0
+    },
+    "unique_cause_counts": {
+      "true-positive": 1,
+      "false-positive": 0,
+      "pre-existing-shown": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0
+    },
+    "precision": 1.0,
+    "positive_control_cases": 1,
+    "positive_control_expected": 1,
+    "positive_control_detected": 1,
+    "positive_control_recall": 1.0,
+    "false_positive_per_pr": 0.0,
+    "pr_with_false_positive_fraction": 0.0,
+    "useful_prs": 2,
+    "useful_real_prs": 1,
+    "usefulness_fraction": 1.0
+  },
+  "by_repository": {
+    "litestar-org/litestar": {
+      "eligible_prs": 2,
+      "raw_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "occurrence_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "cause_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "unique_cause_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "precision": 1.0,
+      "positive_control_cases": 1,
+      "positive_control_expected": 1,
+      "positive_control_detected": 1,
+      "positive_control_recall": 1.0,
+      "false_positive_per_pr": 0.0,
+      "pr_with_false_positive_fraction": 0.0,
+      "useful_prs": 2,
+      "useful_real_prs": 1,
+      "usefulness_fraction": 1.0
+    }
+  },
+  "by_language": {
+    "python": {
+      "eligible_prs": 2,
+      "raw_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "occurrence_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "cause_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "unique_cause_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "precision": 1.0,
+      "positive_control_cases": 1,
+      "positive_control_expected": 1,
+      "positive_control_detected": 1,
+      "positive_control_recall": 1.0,
+      "false_positive_per_pr": 0.0,
+      "pr_with_false_positive_fraction": 0.0,
+      "useful_prs": 2,
+      "useful_real_prs": 1,
+      "usefulness_fraction": 1.0
+    }
+  },
+  "environment_failures": [
+    {
+      "repository": "litestar-org/litestar",
+      "pr": "https://github.com/litestar-org/litestar/pull/5164",
+      "case_id": "5164-seed-f841-zero-threshold",
+      "record_path": "eval/runs/litestar-5164-seed-f841-final/record.json",
+      "reasons": [
+        "coverage . head: failed tool_crashed tool exited with undeclared code 2"
+      ]
+    },
+    {
+      "repository": "litestar-org/litestar",
+      "pr": "https://github.com/litestar-org/litestar/pull/5164",
+      "case_id": "5164-seed-f841-tmpfs-provenance",
+      "record_path": "eval/runs/litestar-5164-seed-f841-tmpfs/record.json",
+      "reasons": [
+        "coverage . head: failed tool_crashed tool exited with undeclared code 2",
+        "lint .: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck .: head=passed, dependency_state=verified, base=unavailable"
+      ]
+    },
+    {
+      "repository": "litestar-org/litestar",
+      "pr": "https://github.com/litestar-org/litestar/pull/5164",
+      "case_id": "5164-seed-f841-ext4-interrupted",
+      "record_path": "eval/runs/litestar-5164-seed-f841/record.json",
+      "reasons": [
+        "coverage . head: cancelled interrupted",
+        "lint .: head=findings, dependency_state=verified, base=unavailable",
+        "report status partial cannot establish a complete change review",
+        "typecheck . head: cancelled interrupted",
+        "typecheck .: head=cancelled, dependency_state=verified, base=unavailable"
+      ]
+    },
+    {
+      "repository": "litestar-org/litestar",
+      "pr": "https://github.com/litestar-org/litestar/pull/5178",
+      "case_id": "5178-attempt1",
+      "record_path": "eval/runs/litestar-5178-attempt1/record.json",
+      "reasons": [
+        "coverage . head: skipped dependency_mismatch executable .pth cannot be verified: /tmp/rio-eval-4vy53hxo/head/./.venv/lib/python3.12/site-packages/a1_coverage.pth; executable .pth cannot be verified: /tmp/rio-eval-4vy53hxo/head/./.venv/lib/python3.12/site-packages/_sphinx_jinja2_compat.pth; executable .pth cannot be verified: /tmp/rio-eval-4vy53hxo/head/./.venv/lib/python3.12/site-packages/sphinxcontrib_jsmath-1.0.1-py3.7-nspkg.pth; executable .pth cannot be verified: /tmp/rio-eval-4vy53hxo/head/./.venv/lib/python3.12/site-packages/distutils-precedence.pth; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "lint . head: skipped dependency_mismatch executable .pth cannot be verified: /tmp/rio-eval-4vy53hxo/head/./.venv/lib/python3.12/site-packages/a1_coverage.pth; executable .pth cannot be verified: /tmp/rio-eval-4vy53hxo/head/./.venv/lib/python3.12/site-packages/_sphinx_jinja2_compat.pth; executable .pth cannot be verified: /tmp/rio-eval-4vy53hxo/head/./.venv/lib/python3.12/site-packages/sphinxcontrib_jsmath-1.0.1-py3.7-nspkg.pth; executable .pth cannot be verified: /tmp/rio-eval-4vy53hxo/head/./.venv/lib/python3.12/site-packages/distutils-precedence.pth; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "lint .: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck . head: skipped dependency_mismatch executable .pth cannot be verified: /tmp/rio-eval-4vy53hxo/head/./.venv/lib/python3.12/site-packages/a1_coverage.pth; executable .pth cannot be verified: /tmp/rio-eval-4vy53hxo/head/./.venv/lib/python3.12/site-packages/_sphinx_jinja2_compat.pth; executable .pth cannot be verified: /tmp/rio-eval-4vy53hxo/head/./.venv/lib/python3.12/site-packages/sphinxcontrib_jsmath-1.0.1-py3.7-nspkg.pth; executable .pth cannot be verified: /tmp/rio-eval-4vy53hxo/head/./.venv/lib/python3.12/site-packages/distutils-precedence.pth; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "typecheck .: head=skipped, dependency_state=unavailable, base=unavailable"
+      ]
+    },
+    {
+      "repository": "litestar-org/litestar",
+      "pr": "https://github.com/litestar-org/litestar/pull/5178",
+      "case_id": "5178-zero-threshold",
+      "record_path": "eval/runs/litestar-5178-final/record.json",
+      "reasons": [
+        "coverage . head: failed tool_crashed tool exited with undeclared code 2"
+      ]
+    },
+    {
+      "repository": "litestar-org/litestar",
+      "pr": "https://github.com/litestar-org/litestar/pull/5178",
+      "case_id": "5178-tmpfs-provenance",
+      "record_path": "eval/runs/litestar-5178-tmpfs/record.json",
+      "reasons": [
+        "coverage . head: failed tool_crashed tool exited with undeclared code 2",
+        "lint .: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck .: head=passed, dependency_state=verified, base=unavailable"
+      ]
+    },
+    {
+      "repository": "litestar-org/litestar",
+      "pr": "https://github.com/litestar-org/litestar/pull/5178",
+      "case_id": "5178-ext4-interrupted",
+      "record_path": "eval/runs/litestar-5178/record.json",
+      "reasons": [
+        "coverage . head: cancelled interrupted",
+        "lint .: head=passed, dependency_state=verified, base=unavailable",
+        "report status partial cannot establish a complete change review",
+        "typecheck . head: cancelled interrupted",
+        "typecheck .: head=cancelled, dependency_state=verified, base=unavailable"
+      ]
+    }
+  ],
+  "agent_layer_backlog": [],
+  "deterministic_misses": 0,
+  "sample": {
+    "eligible_real_prs": 1,
+    "repositories": 1,
+    "languages": [
+      "python"
+    ],
+    "positive_control_repositories": 1,
+    "positive_controls_by_language": {
+      "typescript": 0,
+      "python": 1
+    },
+    "clean_negative_controls": 1,
+    "adequate": false,
+    "requirements_missing": [
+      "Need at least 10 eligible real PRs",
+      "Need at least 5 eligible repositories",
+      "Need both languages",
+      "Need at least 10 eligible positive controls",
+      "Need controls across at least 3 repositories",
+      "Need at least 5 controls per language"
+    ]
+  },
+  "decision": "insufficient-evidence",
+  "decision_reasons": [
+    "Need at least 10 eligible real PRs",
+    "Need at least 5 eligible repositories",
+    "Need both languages",
+    "Need at least 10 eligible positive controls",
+    "Need controls across at least 3 repositories",
+    "Need at least 5 controls per language",
+    "Need at least 10 useful real PRs"
+  ]
+}

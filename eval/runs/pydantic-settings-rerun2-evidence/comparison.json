@@ -1,0 +1,317 @@
+[
+  {
+    "pr": 1097,
+    "run": "eval/runs/pydantic-settings-1097-rerun2",
+    "previous_run": "eval/runs/pydantic-settings-1097-attempt2",
+    "base_sha": "e71a53e6a0094da671d66eebd806904695722482",
+    "head_sha": "83dc3337b627d6d701f63e69cb77375226651947",
+    "identical_install_plan": true,
+    "input_profile_sha256": "64e6ce34ac0cf189c92e8aac8e336f4d83a91f6aa456126c420214d9976c1dde",
+    "previous_resolved_profile_sha256": "693e00f75c3c74d7d637e03673327e2926c1d26ff028fc1f0cec98d218703338",
+    "resolved_profile_sha256": "2a6bba5d59dcc05559b167f3bb79c05639cccbd248142631d4b17e8c7b553305",
+    "environment": {
+      "dependency_state": "verified",
+      "baseline_ran": true,
+      "baseline_classification_ran": true,
+      "eligible": false,
+      "reasons": [
+        "coverage . head: cancelled timeout"
+      ],
+      "notes": [
+        "Intent inference is deferred: no_endpoint",
+        "Graph references use syntax and text; no language server was used",
+        "Impact graph truncated at the review deadline",
+        "Offline applies to Rio; tool and test processes were not network-isolated"
+      ]
+    },
+    "old_raw": {
+      "findings": 1,
+      "risks": 0,
+      "total": 1,
+      "states": {
+        "pre-existing": 1
+      },
+      "visible": 0,
+      "occurrences": 6
+    },
+    "new_raw": {
+      "findings": 0,
+      "risks": 0,
+      "total": 0,
+      "states": {},
+      "visible": 0,
+      "occurrences": 0
+    },
+    "old_verdicts_normalized_v2": {
+      "pre-existing-hidden": 1
+    },
+    "new_verdict_counts": {},
+    "new_cause_counts": {},
+    "positive_control": {
+      "kind": "none",
+      "expected": []
+    },
+    "mypy_argv": [
+      [
+        "/dev/shm/pydantic-settings-rerun2-eval/rio-eval-mubrgsjr/head/./.venv/bin/mypy",
+        "--output",
+        "json",
+        "--config-file",
+        "/dev/shm/pydantic-settings-rerun2-eval/rio-eval-mubrgsjr/cache/c52ea3bc2353d064/runs/01M6NNS56ZDJA4SBVQ3A1A4QF5/tools/tool.tmp-GPwAW0/pyproject.toml",
+        "pydantic_settings"
+      ],
+      [
+        "/dev/shm/pydantic-settings-rerun2-eval/rio-eval-mubrgsjr/head/./.venv/bin/mypy",
+        "--output",
+        "json",
+        "--config-file",
+        "/dev/shm/pydantic-settings-rerun2-eval/rio-eval-mubrgsjr/cache/c52ea3bc2353d064/runs/01M6NNS56ZDJA4SBVQ3A1A4QF5/tools/tool.tmp-3P9TYy/pyproject.toml",
+        "pydantic_settings"
+      ]
+    ],
+    "footer_notes": [
+      "Intent inference is deferred: no_endpoint",
+      "Graph references use syntax and text; no language server was used",
+      "Impact graph truncated at the review deadline",
+      "Offline applies to Rio; tool and test processes were not network-isolated"
+    ],
+    "resolved_profile_payload_sha256_excluding_comments": "ecb7928416e1ac487c730e48c951c2e0eb51d28e920f418e9ba7761ee71a6c71"
+  },
+  {
+    "pr": 1097,
+    "run": "eval/runs/pydantic-settings-1097-rerun2-attempt2",
+    "previous_run": "eval/runs/pydantic-settings-1097-attempt2",
+    "base_sha": "e71a53e6a0094da671d66eebd806904695722482",
+    "head_sha": "83dc3337b627d6d701f63e69cb77375226651947",
+    "identical_install_plan": true,
+    "input_profile_sha256": "64e6ce34ac0cf189c92e8aac8e336f4d83a91f6aa456126c420214d9976c1dde",
+    "previous_resolved_profile_sha256": "693e00f75c3c74d7d637e03673327e2926c1d26ff028fc1f0cec98d218703338",
+    "resolved_profile_sha256": "0a3e48da1a7fe123b94ec8cf2de2ee936c05965e15006eb3efc3eddb1029f362",
+    "environment": {
+      "dependency_state": "verified",
+      "baseline_ran": true,
+      "baseline_classification_ran": true,
+      "eligible": true,
+      "reasons": [],
+      "notes": [
+        "Intent inference is deferred: no_endpoint",
+        "Graph references use syntax and text; no language server was used",
+        "Offline applies to Rio; tool and test processes were not network-isolated"
+      ]
+    },
+    "old_raw": {
+      "findings": 1,
+      "risks": 0,
+      "total": 1,
+      "states": {
+        "pre-existing": 1
+      },
+      "visible": 0,
+      "occurrences": 6
+    },
+    "new_raw": {
+      "findings": 0,
+      "risks": 0,
+      "total": 0,
+      "states": {},
+      "visible": 0,
+      "occurrences": 0
+    },
+    "old_verdicts_normalized_v2": {
+      "pre-existing-hidden": 1
+    },
+    "new_verdict_counts": {},
+    "new_cause_counts": {},
+    "positive_control": {
+      "kind": "none",
+      "expected": []
+    },
+    "mypy_argv": [
+      [
+        "/dev/shm/pydantic-settings-rerun2-eval/rio-eval-mws6kr6b/head/./.venv/bin/mypy",
+        "--output",
+        "json",
+        "--config-file",
+        "/dev/shm/pydantic-settings-rerun2-eval/rio-eval-mws6kr6b/cache/c52ea3bc2353d064/runs/01M6NQHC6BRXAXDMXXDCTNNFCX/tools/tool.tmp-CvZfH3/pyproject.toml",
+        "pydantic_settings"
+      ],
+      [
+        "/dev/shm/pydantic-settings-rerun2-eval/rio-eval-mws6kr6b/head/./.venv/bin/mypy",
+        "--output",
+        "json",
+        "--config-file",
+        "/dev/shm/pydantic-settings-rerun2-eval/rio-eval-mws6kr6b/cache/c52ea3bc2353d064/runs/01M6NQHC6BRXAXDMXXDCTNNFCX/tools/tool.tmp-CLeqxE/pyproject.toml",
+        "pydantic_settings"
+      ]
+    ],
+    "footer_notes": [
+      "Intent inference is deferred: no_endpoint",
+      "Graph references use syntax and text; no language server was used",
+      "Offline applies to Rio; tool and test processes were not network-isolated"
+    ],
+    "resolved_profile_payload_sha256_excluding_comments": "ecb7928416e1ac487c730e48c951c2e0eb51d28e920f418e9ba7761ee71a6c71"
+  },
+  {
+    "pr": 1109,
+    "run": "eval/runs/pydantic-settings-1109-rerun2",
+    "previous_run": "eval/runs/pydantic-settings-1109-attempt4",
+    "base_sha": "7e2dacb6db07b41abb0c80d0608e46e197265554",
+    "head_sha": "74c01ae3e84f9c8f2b04ec269e67813abd96cf9a",
+    "identical_install_plan": true,
+    "input_profile_sha256": "64e6ce34ac0cf189c92e8aac8e336f4d83a91f6aa456126c420214d9976c1dde",
+    "previous_resolved_profile_sha256": "b5732544385e1ad2e12a3254cfecb9e99af8fe42943f0b6f20ff7dbf95aa97eb",
+    "resolved_profile_sha256": "6e86d0f73e8c4df00cdb68de9813c82eb0aac4853cfc2a071c23ea3ec6cffbe2",
+    "environment": {
+      "dependency_state": "verified",
+      "baseline_ran": true,
+      "baseline_classification_ran": true,
+      "eligible": true,
+      "reasons": [],
+      "notes": [
+        "Intent inference is deferred: no_endpoint",
+        "Graph references use syntax and text; no language server was used",
+        "Offline applies to Rio; tool and test processes were not network-isolated"
+      ]
+    },
+    "old_raw": {
+      "findings": 1,
+      "risks": 0,
+      "total": 1,
+      "states": {
+        "pre-existing": 1
+      },
+      "visible": 0,
+      "occurrences": 6
+    },
+    "new_raw": {
+      "findings": 0,
+      "risks": 0,
+      "total": 0,
+      "states": {},
+      "visible": 0,
+      "occurrences": 0
+    },
+    "old_verdicts_normalized_v2": {
+      "pre-existing-hidden": 1
+    },
+    "new_verdict_counts": {},
+    "new_cause_counts": {},
+    "positive_control": {
+      "kind": "none",
+      "expected": []
+    },
+    "mypy_argv": [
+      [
+        "/dev/shm/pydantic-settings-rerun2-eval/rio-eval-3hdr8k6l/head/./.venv/bin/mypy",
+        "--output",
+        "json",
+        "--config-file",
+        "/dev/shm/pydantic-settings-rerun2-eval/rio-eval-3hdr8k6l/cache/d1c8882c886b285a/runs/01M6NQMQN1JA32QE0ZGVH0QD1Y/tools/tool.tmp-w71aXY/pyproject.toml",
+        "pydantic_settings"
+      ],
+      [
+        "/dev/shm/pydantic-settings-rerun2-eval/rio-eval-3hdr8k6l/head/./.venv/bin/mypy",
+        "--output",
+        "json",
+        "--config-file",
+        "/dev/shm/pydantic-settings-rerun2-eval/rio-eval-3hdr8k6l/cache/d1c8882c886b285a/runs/01M6NQMQN1JA32QE0ZGVH0QD1Y/tools/tool.tmp-okcOP4/pyproject.toml",
+        "pydantic_settings"
+      ]
+    ],
+    "footer_notes": [
+      "Intent inference is deferred: no_endpoint",
+      "Graph references use syntax and text; no language server was used",
+      "Offline applies to Rio; tool and test processes were not network-isolated"
+    ],
+    "resolved_profile_payload_sha256_excluding_comments": "ecb7928416e1ac487c730e48c951c2e0eb51d28e920f418e9ba7761ee71a6c71"
+  },
+  {
+    "pr": 708,
+    "run": "eval/runs/pydantic-settings-708-rerun2",
+    "previous_run": "eval/runs/pydantic-settings-708",
+    "base_sha": "61e0b46eb96e2f67f390b0371c4297f2d6b24573",
+    "head_sha": "7d60367d8cc83fb49fb7d93568ff4f10fea9a904",
+    "identical_install_plan": true,
+    "input_profile_sha256": "64e6ce34ac0cf189c92e8aac8e336f4d83a91f6aa456126c420214d9976c1dde",
+    "previous_resolved_profile_sha256": "ab1812ca1f81bfd767994a9ad457324355a4690506e7d2718ab808594d05d59e",
+    "resolved_profile_sha256": "d004acb9c0875c4dd472cc1e8adc1eaf7431d47b3be995bd5dafe1a465bb1b8d",
+    "environment": {
+      "dependency_state": "verified",
+      "baseline_ran": true,
+      "baseline_classification_ran": true,
+      "eligible": true,
+      "reasons": [],
+      "notes": [
+        "Intent inference is deferred: no_endpoint",
+        "Graph references use syntax and text; no language server was used",
+        "Offline applies to Rio; tool and test processes were not network-isolated"
+      ]
+    },
+    "old_raw": {
+      "findings": 0,
+      "risks": 1,
+      "total": 1,
+      "states": {
+        "new": 1
+      },
+      "visible": 1,
+      "occurrences": 1
+    },
+    "new_raw": {
+      "findings": 0,
+      "risks": 1,
+      "total": 1,
+      "states": {
+        "new": 1
+      },
+      "visible": 1,
+      "occurrences": 1
+    },
+    "old_verdicts_normalized_v2": {
+      "true-positive": 1
+    },
+    "new_verdict_counts": {
+      "true-positive": 1
+    },
+    "new_cause_counts": {
+      "true-positive": 1
+    },
+    "positive_control": {
+      "kind": "real-pr",
+      "expected": [
+        {
+          "id": "aws-version-id-uncovered",
+          "mechanism": "uncovered-lines",
+          "evidence": "Before Rio execution, independent oracles retained in eval/runs/pydantic-settings-evidence/708-base-attempt2 and 708-head-attempt2: locked uv sync, uv run --no-sync mypy pydantic_settings and ruff check pass both; coverage run -m pytest passes 495 tests with 4 skips both. AWS file is 100% at base with missing_lines=[]; head missing_lines=[66], missing_branches=[[65,66]]. coverage_gate.py returns base 0/head 1. See positive-control-register.json registered before runner started, and 708-independent-diff-coverage.json.",
+          "finding_ids": [
+            "9fef2a2d9e8b5202043d7425de33cae2f3aa38091bad992b3086e7ab3ed1c489"
+          ]
+        }
+      ]
+    },
+    "mypy_argv": [
+      [
+        "/dev/shm/pydantic-settings-rerun2-eval/rio-eval-etlwrujn/head/./.venv/bin/mypy",
+        "--output",
+        "json",
+        "--config-file",
+        "/dev/shm/pydantic-settings-rerun2-eval/rio-eval-etlwrujn/cache/1b9ac648fd6992f7/runs/01M6NQTNJTN518T4AD03EG9ZCA/tools/tool.tmp-FtEGb9/pyproject.toml",
+        "pydantic_settings"
+      ],
+      [
+        "/dev/shm/pydantic-settings-rerun2-eval/rio-eval-etlwrujn/head/./.venv/bin/mypy",
+        "--output",
+        "json",
+        "--config-file",
+        "/dev/shm/pydantic-settings-rerun2-eval/rio-eval-etlwrujn/cache/1b9ac648fd6992f7/runs/01M6NQTNJTN518T4AD03EG9ZCA/tools/tool.tmp-Taz3L6/pyproject.toml",
+        "pydantic_settings"
+      ]
+    ],
+    "footer_notes": [
+      "Intent inference is deferred: no_endpoint",
+      "Graph references use syntax and text; no language server was used",
+      "Offline applies to Rio; tool and test processes were not network-isolated"
+    ],
+    "resolved_profile_payload_sha256_excluding_comments": "ecb7928416e1ac487c730e48c951c2e0eb51d28e920f418e9ba7761ee71a6c71"
+  }
+]

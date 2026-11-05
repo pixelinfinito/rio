@@ -1,0 +1,10 @@
+
+ RUN  v3.2.6 /tmp/rio-acceptance-immer
+
+ ✓ __tests__/array-methods-filter-length.js (4 tests) 11ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  20:02:17
+   Duration  650ms (transform 248ms, setup 0ms, collect 301ms, tests 11ms, environment 0ms, prepare 107ms)
+

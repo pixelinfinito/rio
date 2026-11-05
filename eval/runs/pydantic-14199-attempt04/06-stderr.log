@@ -1,0 +1,11 @@
+Warning: you are leaving 1 commit behind, not connected to
+any of your branches:
+
+  262700f81 Use a lightweight `contextmanager` implementation internally
+
+If you want to keep it by creating a new branch, this may be a good time
+to do so with:
+
+ git branch <new-branch-name> 262700f81
+
+HEAD is now at a9f3f3fcc Avoid slow runtime `Protocol` check when expanding `GroupedMetadata` annotations (#14196)

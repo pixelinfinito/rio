@@ -1,0 +1,5 @@
+src/app/app.config.ts(7,8): error TS2307: Cannot find module '@tanstack/angular-query-experimental' or its corresponding type declarations.
+src/app/components/basic-devtools-panel-example.component.ts(7,37): error TS2307: Cannot find module '@tanstack/angular-query-experimental/devtools-panel' or its corresponding type declarations.
+src/app/components/example-query.component.ts(2,29): error TS2307: Cannot find module '@tanstack/angular-query-experimental' or its corresponding type declarations.
+src/app/components/lazy-load-devtools-panel-example.component.ts(13,39): error TS2307: Cannot find module '@tanstack/angular-query-experimental/devtools-panel' or its corresponding type declarations.
+src/app/components/lazy-load-devtools-panel-example.component.ts(52,16): error TS2307: Cannot find module '@tanstack/angular-query-experimental/devtools-panel' or its corresponding type declarations.

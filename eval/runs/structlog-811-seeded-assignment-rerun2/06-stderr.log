@@ -1,0 +1,11 @@
+Warning: you are leaving 1 commit behind, not connected to
+any of your branches:
+
+  50aa6f5 eval: seed one incompatible annotated assignment
+
+If you want to keep it by creating a new branch, this may be a good time
+to do so with:
+
+ git branch <new-branch-name> 50aa6f5
+
+HEAD is now at de5dcd4 Let ty analyze everything, but report only tests/typing

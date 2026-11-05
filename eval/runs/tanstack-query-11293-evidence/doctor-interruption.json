@@ -1,0 +1,7 @@
+{
+  "pid": 715414,
+  "limit_seconds": 120,
+  "result": "SIGTERM sent to optional doctor",
+  "reason": "Known clean-tree doctor expands all workspace roots. Stop optional readiness scan; retain raw exit/status and continue runner review.",
+  "utc": "2026-11-05T03:15:44Z"
+}

@@ -1,0 +1,54 @@
+stderr | src/hono.test.ts > Middleware > Basic > internal server error
+Error: Error!
+    at [90m/dev/shm/trpc-eval/hono-2085-oracle/[39msrc/hono.test.ts:973:13
+    at dispatch [90m(/dev/shm/trpc-eval/hono-2085-oracle/[39msrc/compose.ts:45:23[90m)[39m
+    at [90m/dev/shm/trpc-eval/hono-2085-oracle/[39msrc/compose.ts:46:20
+    at [90m/dev/shm/trpc-eval/hono-2085-oracle/[39msrc/hono.test.ts:930:13
+    at dispatch [90m(/dev/shm/trpc-eval/hono-2085-oracle/[39msrc/compose.ts:45:23[90m)[39m
+    at [90m/dev/shm/trpc-eval/hono-2085-oracle/[39msrc/compose.ts:46:20
+    at [90m/dev/shm/trpc-eval/hono-2085-oracle/[39msrc/hono.test.ts:925:13
+    at dispatch [90m(/dev/shm/trpc-eval/hono-2085-oracle/[39msrc/compose.ts:45:23[90m)[39m
+    at [90m/dev/shm/trpc-eval/hono-2085-oracle/[39msrc/compose.ts:18:12
+    at [90m/dev/shm/trpc-eval/hono-2085-oracle/[39msrc/hono-base.ts:332:31
+
+stderr | src/hono.test.ts > Error handling in middleware > Should handle the error in middleware
+Error: Error message
+    at [90m/dev/shm/trpc-eval/hono-2085-oracle/[39msrc/hono.test.ts:1400:11
+    at dispatch [90m(/dev/shm/trpc-eval/hono-2085-oracle/[39msrc/compose.ts:45:23[90m)[39m
+    at [90m/dev/shm/trpc-eval/hono-2085-oracle/[39msrc/compose.ts:46:20
+    at [90m/dev/shm/trpc-eval/hono-2085-oracle/[39msrc/hono.test.ts:1381:11
+    at dispatch [90m(/dev/shm/trpc-eval/hono-2085-oracle/[39msrc/compose.ts:45:23[90m)[39m
+    at [90m/dev/shm/trpc-eval/hono-2085-oracle/[39msrc/compose.ts:18:12
+    at [90m/dev/shm/trpc-eval/hono-2085-oracle/[39msrc/hono-base.ts:332:31
+    at Hono.dispatch [90m(/dev/shm/trpc-eval/hono-2085-oracle/[39msrc/hono-base.ts:342:5[90m)[39m
+    at Hono.fetch [90m(/dev/shm/trpc-eval/hono-2085-oracle/[39msrc/hono-base.ts:355:17[90m)[39m
+    at Hono.request [90m(/dev/shm/trpc-eval/hono-2085-oracle/[39msrc/hono-base.ts:373:17[90m)[39m
+
+stderr | src/hono.test.ts > Error handling in middleware > Should handle the error in middleware - async
+Error: Error message
+    at [90m/dev/shm/trpc-eval/hono-2085-oracle/[39msrc/hono.test.ts:1404:11
+    at dispatch [90m(/dev/shm/trpc-eval/hono-2085-oracle/[39msrc/compose.ts:45:23[90m)[39m
+    at [90m/dev/shm/trpc-eval/hono-2085-oracle/[39msrc/compose.ts:46:20
+    at [90m/dev/shm/trpc-eval/hono-2085-oracle/[39msrc/hono.test.ts:1389:11
+    at dispatch [90m(/dev/shm/trpc-eval/hono-2085-oracle/[39msrc/compose.ts:45:23[90m)[39m
+    at [90m/dev/shm/trpc-eval/hono-2085-oracle/[39msrc/compose.ts:18:12
+    at [90m/dev/shm/trpc-eval/hono-2085-oracle/[39msrc/hono-base.ts:332:31
+    at Hono.dispatch [90m(/dev/shm/trpc-eval/hono-2085-oracle/[39msrc/hono-base.ts:342:5[90m)[39m
+    at Hono.fetch [90m(/dev/shm/trpc-eval/hono-2085-oracle/[39msrc/hono-base.ts:355:17[90m)[39m
+    at Hono.request [90m(/dev/shm/trpc-eval/hono-2085-oracle/[39msrc/hono-base.ts:373:17[90m)[39m
+
+stderr | src/validator/validator.test.ts > Malformed JSON > Should return 400 response
+Invalid HTTP header: Content-Type=undefined
+
+stderr | src/validator/validator.test.ts > Malformed JSON > Should return 400 response, for request with wrong Content-Type header
+Invalid HTTP header: Content-Type=text/plain;charset=utf-8
+
+stderr | src/validator/validator.test.ts > Malformed JSON > Should return 400 response, if Content-Type header does not start with application/json
+Invalid HTTP header: Content-Type=Xapplication/json
+
+stderr | src/jsx/streaming.test.tsx > Streaming > reject()
+Trace: [90mundefined[39m
+    at /dev/shm/trpc-eval/hono-2085-oracle/src/jsx/streaming.ts:113:23
+    at async Promise.all (index 0)
+    at Object.start (/dev/shm/trpc-eval/hono-2085-oracle/src/jsx/streaming.ts:134:9)
+

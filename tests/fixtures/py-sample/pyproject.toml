@@ -1,0 +1,22 @@
+[project]
+name = "rio-py-sample"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = []
+[dependency-groups]
+dev = ["pytest==8.3.4", "coverage==7.6.10", "mypy==1.14.1", "ruff==0.9.3"]
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+[tool.mypy]
+files = ["src"]
+check_untyped_defs = true
+show_error_codes = true
+[tool.ruff]
+[tool.ruff.lint]
+select = ["F"]
+[tool.coverage.run]
+source = ["sample"]
+omit = ["scripts/*"]
+[tool.coverage.report]
+exclude_lines = ["pragma: no cover"]

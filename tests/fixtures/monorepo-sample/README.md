@@ -1,0 +1,1 @@
+`shared` is consumed only by `api`; its executable lines are covered exclusively by the consumer tests. `web` is independent. `pnpm install && pnpm test` passes. All packages share the root installation and governing pnpm lockfile.

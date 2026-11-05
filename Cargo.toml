@@ -1,0 +1,70 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/rio-cli",
+    "crates/rio-core",
+    "crates/rio-git",
+    "crates/rio-profile",
+    "crates/rio-adapters",
+    "crates/rio-graph",
+    "crates/rio-engine",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "Apache-2.0"
+repository = "https://github.com/pixelinfinito/rio"
+description = "Local, evidence-based code change reviews"
+
+[workspace.dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+serde_yaml = "0.9"
+jsonschema = { version = "0.33", default-features = false }
+blake3 = "1"
+thiserror = "2"
+anyhow = "1"
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "process", "signal", "sync", "time", "io-util"] }
+tracing = "0.1"
+clap = { version = "4", features = ["derive", "env"] }
+fs4 = "0.13"
+ulid = { version = "1", features = ["serde"] }
+insta = { version = "1", features = ["json", "yaml"] }
+proptest = "1"
+assert_cmd = "2"
+tempfile = "3"
+regex = "1"
+globset = "0.4"
+gix = { version = "0.90", default-features = false, features = ["revision", "index", "sha1", "sha256", "excludes"] }
+ignore = "0.4"
+gix-attributes = "0.37"
+similar = "2"
+tar = "0.4"
+zstd = "0.13"
+cap-std = "3"
+cap-fs-ext = "3"
+include_dir = "0.7"
+toml = "0.9"
+pep508_rs = "0.9"
+pep440_rs = "0.7"
+node-semver = "2"
+tokio-util = { version = "0.7", features = ["rt"] }
+libc = "0.2"
+sysinfo = { version = "0.37", default-features = false, features = ["system"] }
+windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_Security", "Win32_System_JobObjects", "Win32_System_Threading"] }
+tree-sitter = "0.25"
+tree-sitter-typescript = "0.23"
+tree-sitter-python = "0.25"
+streaming-iterator = "0.1"
+json5 = "0.4"
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "json"] }
+cvss = "3"
+aho-corasick = "1"
+textwrap = "0.16"
+
+[workspace.lints.rust]
+warnings = "deny"
+
+[workspace.lints.clippy]
+all = "deny"

@@ -1,0 +1,63 @@
+{
+  "registered_utc": "2026-11-05T10:57:50.949802+00:00",
+  "binary_version": "rio 0.1.0 x86_64-unknown-linux-gnu f6e4f87e4c65",
+  "binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+  "node": "20.10.0",
+  "node_sha256": "d9cbc20cbf39eba838b077d3358d3203d549ae1f71e8085c6451d3bd712610ae",
+  "corepack": "0.36.0",
+  "yarn": "1.22.22",
+  "environment": {
+    "PATH_prefix": "/tmp/trpc-eval/toolchain/corepack/node_modules/.bin:/dev/shm/trpc-eval/old-tools/node-v20.10.0-linux-x64/bin",
+    "COREPACK_ENABLE_AUTO_PIN": "0",
+    "NO_COLOR": "unset",
+    "TMPDIR": "/dev/shm/hono-rerun2"
+  },
+  "seed_transport": {
+    "GIT_CONFIG_COUNT": "1",
+    "GIT_CONFIG_KEY_0": "url.file:///dev/shm/trpc-eval/hono-2081-seed.insteadOf",
+    "GIT_CONFIG_VALUE_0": "https://github.com/honojs/hono.git"
+  },
+  "seed_patch_sha256": "8f8a2a9bf2defa96158c9b3102ce8b35f64a9996428174e73d5ba367dd4d7b6b",
+  "cases": [
+    {
+      "previous": "hono-2081-attempt-01",
+      "out": "hono-2081-rerun2",
+      "base": "4ec3a9bf41ec3de004836e84757c07ec2b7b4156",
+      "head": "310c8733dbde15f6b279863798e740953a4341dd",
+      "case_id": "2081",
+      "install_plan_sha256": "1b02b60912f4b5a3268b8ae44ee746ca5476dfeddcbec5e1e87a1eeea17b5598",
+      "profile_sha256": "6fc8403032b9ed8c47cbe10b8c4e8140350c4a92367eb7db34086daf4925a7d4",
+      "expectations": {
+        "kind": "none",
+        "expected": []
+      },
+      "independently_clean": true,
+      "oracle": "hono-2081-oracle"
+    },
+    {
+      "previous": "hono-2085-seed-attempt-01",
+      "out": "hono-2085-rerun2",
+      "base": "b23cf8d65d851de9726d6388b45dda39e6fdb9ab",
+      "head": "94d2dcbf315dd3ac969d321b532fb0049b1a7c36",
+      "case_id": "2085-seeded-type-error-20261105",
+      "install_plan_sha256": "1b02b60912f4b5a3268b8ae44ee746ca5476dfeddcbec5e1e87a1eeea17b5598",
+      "profile_sha256": "6fc8403032b9ed8c47cbe10b8c4e8140350c4a92367eb7db34086daf4925a7d4",
+      "expectations": {
+        "kind": "seeded-mutation",
+        "expected": [
+          {
+            "id": "seeded-url-export-type-mismatch",
+            "mechanism": "type-error",
+            "evidence": "../hono-2085-seed-oracle/: original locked TypeScript5.3.3 tsc --noEmit --pretty false, base b23cf8d65d851de9726d6388b45dda39e6fdb9ab exit0; seeded head 94d2dcbf315dd3ac969d321b532fb0049b1a7c36 exit2 with exactly TS2322 src/utils/url.ts:267:14 string not assignable to number. Lint and 15 instrumented URL tests pass both. Exact patch/hash in 2085-seed.patch and 2085-seed-pins.json.",
+            "finding_ids": [
+              "61519345c86a98b40bcf228e8c5bcea888770a6b79ee55a392217a938457659c"
+            ]
+          }
+        ]
+      },
+      "independently_clean": false,
+      "oracle": "hono-2085-seed-oracle"
+    }
+  ],
+  "optional_cases": "Not rerun: prior notes explicitly mark #3856 and #3859 seed excluded, not complete scorable cases."
+}

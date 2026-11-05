@@ -1,0 +1,62 @@
+[
+  {
+    "argv": [
+      "/tmp/vue-negative-head/node_modules/.bin/tsc",
+      "--noEmit",
+      "--pretty",
+      "false",
+      "/tmp/vue-negative-head/packages/shared/__tests__/codeframe.spec.ts",
+      "/tmp/vue-negative-head/packages/shared/__tests__/cssVars.spec.ts",
+      "/tmp/vue-negative-head/packages/shared/__tests__/escapeHtml.spec.ts",
+      "/tmp/vue-negative-head/packages/shared/__tests__/looseEqual.spec.ts",
+      "/tmp/vue-negative-head/packages/shared/__tests__/normalizeProp.spec.ts",
+      "/tmp/vue-negative-head/packages/shared/__tests__/toDisplayString.spec.ts",
+      "/tmp/vue-negative-head/packages/shared/index.js",
+      "/tmp/vue-negative-head/packages/shared/src/codeframe.ts",
+      "/tmp/vue-negative-head/packages/shared/src/cssVars.ts",
+      "/tmp/vue-negative-head/packages/shared/src/domAttrConfig.ts",
+      "/tmp/vue-negative-head/packages/shared/src/domTagConfig.ts",
+      "/tmp/vue-negative-head/packages/shared/src/escapeHtml.ts",
+      "/tmp/vue-negative-head/packages/shared/src/general.ts",
+      "/tmp/vue-negative-head/packages/shared/src/globalsAllowList.ts",
+      "/tmp/vue-negative-head/packages/shared/src/index.ts",
+      "/tmp/vue-negative-head/packages/shared/src/looseEqual.ts",
+      "/tmp/vue-negative-head/packages/shared/src/makeMap.ts",
+      "/tmp/vue-negative-head/packages/shared/src/normalizeProp.ts",
+      "/tmp/vue-negative-head/packages/shared/src/patchFlags.ts",
+      "/tmp/vue-negative-head/packages/shared/src/shapeFlags.ts",
+      "/tmp/vue-negative-head/packages/shared/src/slotFlags.ts",
+      "/tmp/vue-negative-head/packages/shared/src/toDisplayString.ts",
+      "/tmp/vue-negative-head/packages/shared/src/typeUtils.ts"
+    ],
+    "cwd": "/tmp/vue-negative-head/packages/shared",
+    "exit_code": 1,
+    "wall_time_seconds": 1.652,
+    "log": "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-15328-evidence/head-adapter-typecheck-fallback.log",
+    "environment": {
+      "PATH": "/tmp/node-v24.22.2-linux-x64/bin:/tmp/vue-eval-tools/node_modules/.bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "CI": "1",
+      "PUPPETEER_SKIP_DOWNLOAD": "true"
+    }
+  },
+  {
+    "argv": [
+      "/tmp/vue-negative-head/node_modules/.bin/vitest",
+      "run",
+      "--coverage",
+      "--coverage.reporter=lcov",
+      "--coverage.reportsDirectory=/tmp/vue-repro-coverage-15328-head",
+      "--maxWorkers=2",
+      "--minWorkers=1"
+    ],
+    "cwd": "/tmp/vue-negative-head/packages/shared",
+    "exit_code": 1,
+    "wall_time_seconds": 1.076,
+    "log": "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-15328-evidence/head-adapter-coverage-package-root.log",
+    "environment": {
+      "PATH": "/tmp/node-v24.22.2-linux-x64/bin:/tmp/vue-eval-tools/node_modules/.bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "CI": "1",
+      "PUPPETEER_SKIP_DOWNLOAD": "true"
+    }
+  }
+]

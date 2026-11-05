@@ -1,0 +1,282 @@
+[
+  {
+    "argv": [
+      "git",
+      "clone",
+      "--no-hardlinks",
+      "/tmp/structlog-eval-oracle",
+      "/dev/shm/structlog-oracle-811-seeded-assignment-base"
+    ],
+    "cwd": "/dev/shm",
+    "exit_code": 0,
+    "wall_time_ms": 4701,
+    "stdout": "base-clone.stdout",
+    "stderr": "base-clone.stderr"
+  },
+  {
+    "argv": [
+      "git",
+      "checkout",
+      "--detach",
+      "de5dcd4127b8c9652ebadf0b6411c4bb9c10f3b7"
+    ],
+    "cwd": "/dev/shm/structlog-oracle-811-seeded-assignment-base",
+    "exit_code": 0,
+    "wall_time_ms": 64,
+    "stdout": "base-checkout.stdout",
+    "stderr": "base-checkout.stderr"
+  },
+  {
+    "argv": [
+      "/dev/shm/structlog-eval-venv/bin/pip",
+      "install",
+      "--no-deps",
+      "--no-build-isolation",
+      "-e",
+      "."
+    ],
+    "cwd": "/dev/shm/structlog-oracle-811-seeded-assignment-base",
+    "exit_code": 0,
+    "wall_time_ms": 2009,
+    "stdout": "base-install.stdout",
+    "stderr": "base-install.stderr"
+  },
+  {
+    "argv": [
+      "/dev/shm/structlog-eval-venv/bin/pip",
+      "list",
+      "--format=json"
+    ],
+    "cwd": "/dev/shm/structlog-oracle-811-seeded-assignment-base",
+    "exit_code": 0,
+    "wall_time_ms": 1123,
+    "stdout": "base-versions.stdout",
+    "stderr": "base-versions.stderr"
+  },
+  {
+    "argv": [
+      "/dev/shm/structlog-eval-venv/bin/mypy",
+      "src"
+    ],
+    "cwd": "/dev/shm/structlog-oracle-811-seeded-assignment-base",
+    "exit_code": 0,
+    "wall_time_ms": 4744,
+    "stdout": "base-mypy-src.stdout",
+    "stderr": "base-mypy-src.stderr"
+  },
+  {
+    "argv": [
+      "/dev/shm/structlog-eval-venv/bin/mypy",
+      "tests/typing"
+    ],
+    "cwd": "/dev/shm/structlog-oracle-811-seeded-assignment-base",
+    "exit_code": 0,
+    "wall_time_ms": 1094,
+    "stdout": "base-mypy-api.stdout",
+    "stderr": "base-mypy-api.stderr"
+  },
+  {
+    "argv": [
+      "/dev/shm/structlog-eval-venv/bin/ruff",
+      "check",
+      ".",
+      "--output-format=json"
+    ],
+    "cwd": "/dev/shm/structlog-oracle-811-seeded-assignment-base",
+    "exit_code": 0,
+    "wall_time_ms": 77,
+    "stdout": "base-ruff.stdout",
+    "stderr": "base-ruff.stderr"
+  },
+  {
+    "argv": [
+      "/dev/shm/structlog-eval-venv/bin/coverage",
+      "run",
+      "-m",
+      "pytest",
+      "-q"
+    ],
+    "cwd": "/dev/shm/structlog-oracle-811-seeded-assignment-base",
+    "exit_code": 0,
+    "wall_time_ms": 14941,
+    "stdout": "base-pytest.stdout",
+    "stderr": "base-pytest.stderr"
+  },
+  {
+    "argv": [
+      "/dev/shm/structlog-eval-venv/bin/coverage",
+      "combine"
+    ],
+    "cwd": "/dev/shm/structlog-oracle-811-seeded-assignment-base",
+    "exit_code": 0,
+    "wall_time_ms": 896,
+    "stdout": "base-coverage-combine.stdout",
+    "stderr": "base-coverage-combine.stderr"
+  },
+  {
+    "argv": [
+      "/dev/shm/structlog-eval-venv/bin/coverage",
+      "json",
+      "-o",
+      "/home/ubuntu/.t3/worktrees/rio/eval-run-structlog/eval/runs/structlog-oracle-811-seeded-assignment/base-coverage.json"
+    ],
+    "cwd": "/dev/shm/structlog-oracle-811-seeded-assignment-base",
+    "exit_code": 0,
+    "wall_time_ms": 1707,
+    "stdout": "base-coverage-json.stdout",
+    "stderr": "base-coverage-json.stderr"
+  },
+  {
+    "argv": [
+      "git",
+      "status",
+      "--porcelain",
+      "--untracked-files=no"
+    ],
+    "cwd": "/dev/shm/structlog-oracle-811-seeded-assignment-base",
+    "exit_code": 0,
+    "wall_time_ms": 16,
+    "stdout": "base-status.stdout",
+    "stderr": "base-status.stderr"
+  },
+  {
+    "argv": [
+      "git",
+      "clone",
+      "--no-hardlinks",
+      "/tmp/structlog-eval-oracle",
+      "/dev/shm/structlog-oracle-811-seeded-assignment-head"
+    ],
+    "cwd": "/dev/shm",
+    "exit_code": 0,
+    "wall_time_ms": 1403,
+    "stdout": "head-clone.stdout",
+    "stderr": "head-clone.stderr"
+  },
+  {
+    "argv": [
+      "git",
+      "checkout",
+      "--detach",
+      "50aa6f517262a936224ab1338e244eb5a4dbaefb"
+    ],
+    "cwd": "/dev/shm/structlog-oracle-811-seeded-assignment-head",
+    "exit_code": 0,
+    "wall_time_ms": 103,
+    "stdout": "head-checkout.stdout",
+    "stderr": "head-checkout.stderr"
+  },
+  {
+    "argv": [
+      "/dev/shm/structlog-eval-venv/bin/pip",
+      "install",
+      "--no-deps",
+      "--no-build-isolation",
+      "-e",
+      "."
+    ],
+    "cwd": "/dev/shm/structlog-oracle-811-seeded-assignment-head",
+    "exit_code": 0,
+    "wall_time_ms": 4321,
+    "stdout": "head-install.stdout",
+    "stderr": "head-install.stderr"
+  },
+  {
+    "argv": [
+      "/dev/shm/structlog-eval-venv/bin/pip",
+      "list",
+      "--format=json"
+    ],
+    "cwd": "/dev/shm/structlog-oracle-811-seeded-assignment-head",
+    "exit_code": 0,
+    "wall_time_ms": 1497,
+    "stdout": "head-versions.stdout",
+    "stderr": "head-versions.stderr"
+  },
+  {
+    "argv": [
+      "/dev/shm/structlog-eval-venv/bin/mypy",
+      "src"
+    ],
+    "cwd": "/dev/shm/structlog-oracle-811-seeded-assignment-head",
+    "exit_code": 1,
+    "wall_time_ms": 8841,
+    "stdout": "head-mypy-src.stdout",
+    "stderr": "head-mypy-src.stderr"
+  },
+  {
+    "argv": [
+      "/dev/shm/structlog-eval-venv/bin/mypy",
+      "tests/typing"
+    ],
+    "cwd": "/dev/shm/structlog-oracle-811-seeded-assignment-head",
+    "exit_code": 0,
+    "wall_time_ms": 1402,
+    "stdout": "head-mypy-api.stdout",
+    "stderr": "head-mypy-api.stderr"
+  },
+  {
+    "argv": [
+      "/dev/shm/structlog-eval-venv/bin/ruff",
+      "check",
+      ".",
+      "--output-format=json"
+    ],
+    "cwd": "/dev/shm/structlog-oracle-811-seeded-assignment-head",
+    "exit_code": 0,
+    "wall_time_ms": 158,
+    "stdout": "head-ruff.stdout",
+    "stderr": "head-ruff.stderr"
+  },
+  {
+    "argv": [
+      "/dev/shm/structlog-eval-venv/bin/coverage",
+      "run",
+      "-m",
+      "pytest",
+      "-q"
+    ],
+    "cwd": "/dev/shm/structlog-oracle-811-seeded-assignment-head",
+    "exit_code": 0,
+    "wall_time_ms": 17361,
+    "stdout": "head-pytest.stdout",
+    "stderr": "head-pytest.stderr"
+  },
+  {
+    "argv": [
+      "/dev/shm/structlog-eval-venv/bin/coverage",
+      "combine"
+    ],
+    "cwd": "/dev/shm/structlog-oracle-811-seeded-assignment-head",
+    "exit_code": 0,
+    "wall_time_ms": 896,
+    "stdout": "head-coverage-combine.stdout",
+    "stderr": "head-coverage-combine.stderr"
+  },
+  {
+    "argv": [
+      "/dev/shm/structlog-eval-venv/bin/coverage",
+      "json",
+      "-o",
+      "/home/ubuntu/.t3/worktrees/rio/eval-run-structlog/eval/runs/structlog-oracle-811-seeded-assignment/head-coverage.json"
+    ],
+    "cwd": "/dev/shm/structlog-oracle-811-seeded-assignment-head",
+    "exit_code": 0,
+    "wall_time_ms": 7274,
+    "stdout": "head-coverage-json.stdout",
+    "stderr": "head-coverage-json.stderr"
+  },
+  {
+    "argv": [
+      "git",
+      "status",
+      "--porcelain",
+      "--untracked-files=no"
+    ],
+    "cwd": "/dev/shm/structlog-oracle-811-seeded-assignment-head",
+    "exit_code": 0,
+    "wall_time_ms": 6,
+    "stdout": "head-status.stdout",
+    "stderr": "head-status.stderr"
+  }
+]

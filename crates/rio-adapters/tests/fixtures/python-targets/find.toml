@@ -1,0 +1,4 @@
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["custom*"]
+exclude = ["other*"]

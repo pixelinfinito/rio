@@ -1,0 +1,2 @@
+["94d6aa239d3a5c12e465e77b108d8d8546481939","Fix `_dec_pydantic_uuid` return type annotation\n\nIt does not return `type`s, it returns instances"]
+["99c889215c19c81aef6cdf8efc1f9625605002ed","Update init.py"]

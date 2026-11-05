@@ -1,0 +1,16 @@
+eval/runs/tanstack-query-11293-evidence/oracle-base/coverage.stdout.log:11: new blank line at EOF.
+eval/runs/tanstack-query-11293-evidence/oracle-head/coverage.stdout.log:11: new blank line at EOF.
+eval/runs/tanstack-query-11293-evidence/source-diff.patch:23: trailing whitespace.
++ 
+eval/runs/tanstack-query-11293-evidence/source-diff.patch:28: trailing whitespace.
++ 
+eval/runs/tanstack-query-11293-evidence/source-diff.patch:59: trailing whitespace.
++ 
+eval/runs/tanstack-query-11293-evidence/source-diff.patch:74: trailing whitespace.
++ 
+eval/runs/tanstack-query-11293-evidence/source-diff.patch:83: trailing whitespace.
++ 
+eval/runs/tanstack-query-11293-evidence/source-diff.patch:86: trailing whitespace.
++ 
+eval/runs/tanstack-query-11392-evidence/oracle-base/coverage.stdout.log:11: new blank line at EOF.
+eval/runs/tanstack-query-11392-evidence/oracle-head/coverage.stdout.log:11: new blank line at EOF.

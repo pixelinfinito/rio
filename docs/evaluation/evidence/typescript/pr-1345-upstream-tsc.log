@@ -1,0 +1,42 @@
+node_modules/@types/chai/index.d.ts(2,58): error TS2792: Cannot find module 'assertion-error'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?
+node_modules/@types/node/child_process.d.ts(309,9): error TS1165: A computed property name in an ambient context must refer to an expression whose type is a literal type or a 'unique symbol' type.
+node_modules/@types/node/child_process.d.ts(309,17): error TS2339: Property 'dispose' does not exist on type 'SymbolConstructor'.
+node_modules/@types/node/dgram.d.ts(594,9): error TS1165: A computed property name in an ambient context must refer to an expression whose type is a literal type or a 'unique symbol' type.
+node_modules/@types/node/dgram.d.ts(594,17): error TS2339: Property 'asyncDispose' does not exist on type 'SymbolConstructor'.
+node_modules/@types/node/events.d.ts(436,89): error TS2304: Cannot find name 'Disposable'.
+node_modules/@types/node/fs.d.ts(330,9): error TS1165: A computed property name in an ambient context must refer to an expression whose type is a literal type or a 'unique symbol' type.
+node_modules/@types/node/fs.d.ts(330,17): error TS2339: Property 'asyncDispose' does not exist on type 'SymbolConstructor'.
+node_modules/@types/node/fs.d.ts(336,9): error TS1165: A computed property name in an ambient context must refer to an expression whose type is a literal type or a 'unique symbol' type.
+node_modules/@types/node/fs.d.ts(336,17): error TS2339: Property 'dispose' does not exist on type 'SymbolConstructor'.
+node_modules/@types/node/fs/promises.d.ts(484,9): error TS1169: A computed property name in an interface must refer to an expression whose type is a literal type or a 'unique symbol' type.
+node_modules/@types/node/fs/promises.d.ts(484,17): error TS2339: Property 'asyncDispose' does not exist on type 'SymbolConstructor'.
+node_modules/@types/node/http.d.ts(2034,29): error TS2792: Cannot find module 'undici-types'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?
+node_modules/@types/node/http.d.ts(2038,30): error TS2792: Cannot find module 'undici-types'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?
+node_modules/@types/node/http.d.ts(2042,32): error TS2792: Cannot find module 'undici-types'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?
+node_modules/@types/node/inspector.d.ts(3021,66): error TS2304: Cannot find name 'Disposable'.
+node_modules/@types/node/net.d.ts(738,9): error TS1165: A computed property name in an ambient context must refer to an expression whose type is a literal type or a 'unique symbol' type.
+node_modules/@types/node/net.d.ts(738,17): error TS2339: Property 'asyncDispose' does not exist on type 'SymbolConstructor'.
+node_modules/@types/node/perf_hooks.d.ts(829,9): error TS1169: A computed property name in an interface must refer to an expression whose type is a literal type or a 'unique symbol' type.
+node_modules/@types/node/perf_hooks.d.ts(829,17): error TS2339: Property 'dispose' does not exist on type 'SymbolConstructor'.
+node_modules/@types/node/readline.d.ts(54,60): error TS2304: Cannot find name 'Disposable'.
+node_modules/@types/node/readline.d.ts(215,9): error TS1165: A computed property name in an ambient context must refer to an expression whose type is a literal type or a 'unique symbol' type.
+node_modules/@types/node/readline.d.ts(215,17): error TS2339: Property 'dispose' does not exist on type 'SymbolConstructor'.
+node_modules/@types/node/sqlite.d.ts(207,35): error TS2304: Cannot find name 'Disposable'.
+node_modules/@types/node/sqlite.d.ts(373,9): error TS1165: A computed property name in an ambient context must refer to an expression whose type is a literal type or a 'unique symbol' type.
+node_modules/@types/node/sqlite.d.ts(373,17): error TS2339: Property 'dispose' does not exist on type 'SymbolConstructor'.
+node_modules/@types/node/stream.d.ts(628,13): error TS1165: A computed property name in an ambient context must refer to an expression whose type is a literal type or a 'unique symbol' type.
+node_modules/@types/node/stream.d.ts(628,21): error TS2339: Property 'asyncDispose' does not exist on type 'SymbolConstructor'.
+node_modules/@types/node/stream.d.ts(970,13): error TS1165: A computed property name in an ambient context must refer to an expression whose type is a literal type or a 'unique symbol' type.
+node_modules/@types/node/stream.d.ts(970,21): error TS2339: Property 'asyncDispose' does not exist on type 'SymbolConstructor'.
+node_modules/@types/node/test.d.ts(2200,13): error TS1169: A computed property name in an interface must refer to an expression whose type is a literal type or a 'unique symbol' type.
+node_modules/@types/node/test.d.ts(2200,21): error TS2339: Property 'dispose' does not exist on type 'SymbolConstructor'.
+node_modules/@types/node/timers.d.ts(34,53): error TS2304: Cannot find name 'Disposable'.
+node_modules/@types/node/timers.d.ts(64,17): error TS1169: A computed property name in an interface must refer to an expression whose type is a literal type or a 'unique symbol' type.
+node_modules/@types/node/timers.d.ts(64,25): error TS2339: Property 'dispose' does not exist on type 'SymbolConstructor'.
+node_modules/@types/node/timers.d.ts(86,51): error TS2304: Cannot find name 'Disposable'.
+node_modules/@types/node/timers.d.ts(144,17): error TS1169: A computed property name in an interface must refer to an expression whose type is a literal type or a 'unique symbol' type.
+node_modules/@types/node/timers.d.ts(144,25): error TS2339: Property 'dispose' does not exist on type 'SymbolConstructor'.
+node_modules/@types/node/ts5.6/index.d.ts(29,21): error TS2726: Cannot find lib definition for 'esnext.disposable'.
+node_modules/@types/node/web-globals/fetch.d.ts(3,25): error TS2792: Cannot find module 'undici-types'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?
+node_modules/@types/node/worker_threads.d.ts(496,9): error TS1165: A computed property name in an ambient context must refer to an expression whose type is a literal type or a 'unique symbol' type.
+node_modules/@types/node/worker_threads.d.ts(496,17): error TS2339: Property 'asyncDispose' does not exist on type 'SymbolConstructor'.

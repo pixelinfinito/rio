@@ -1,0 +1,17 @@
+[
+  {
+    "version": "base",
+    "commit": "92fd882817a8e6aae192cfe6266fded2d597f522",
+    "outcome": "passed",
+    "lines": [
+      "hello\n"
+    ]
+  },
+  {
+    "version": "head",
+    "commit": "88f668d9e834fb9382d3ffedc23d04c67422692b",
+    "outcome": "failed",
+    "exception": "TypeError",
+    "message": "cannot create weak reference to 'SlotWriter' object"
+  }
+]

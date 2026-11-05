@@ -1,0 +1,7 @@
+{
+  "utc": "2026-11-05T03:01:38.321047+00:00",
+  "5819": "Repair initial profile by enabling all checks and use full workspace frozen install instead of filters; retain originals. Known workspace-source baseline refusal may still block classification; no product code or tracked dependency locks may be altered.",
+  "7903": "Repair initial disabled-check profile; pnpm12 multi-document parser failure is expected to persist and cannot be fixed by installation flags without violating the locked-source constraint.",
+  "7448": "Rejected independent negative candidate: both base/head tsc have unresolved-module/DOM-lib diagnostics and package-local Vitest config resolves projects incorrectly; not independently confirmed clean and CONTRIBUTOR-authored.",
+  "substitutes": "Hono current/migration history uses the same unsupported pnpm12 multi-document format; pre-migration controls use unsupported Bun locks. Vitest current uses oxlint, unsupported by Rio ESLint adapter, and pnpm workspace link baselines; assessing earlier leaf roots before choosing any scored substitute."
+}

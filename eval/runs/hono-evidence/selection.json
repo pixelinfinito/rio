@@ -1,0 +1,13 @@
+{
+  "registered_utc": "2026-11-05T03:05:13.626648+00:00",
+  "repository": "honojs/hono",
+  "negative_pr": 3856,
+  "negative_kind": "none",
+  "negative_rationale": "MEMBER/yusukebe, merged Jan 2025, TypeScript source+test in helper/adapter. Deliberately older than requested recent control: modern Hono pnpm12 locks share fatal Rio parser incompatibility. Independent clean oracle pending.",
+  "positive_parent_pr": 3859,
+  "positive_kind": "seeded-mutation",
+  "positive_rationale": "No compatible real introducing Hono control established after tRPC real-control setup failure and >45 minutes total tRPC setup/investigation. Seed must be exactly one inert TypeScript type mismatch, on public parent PR base, with passing base/failing head independent tsc. Preregister exact patch/expectation after oracle, before any Rio review.",
+  "recency_deviation": "Older fallback chosen after asynchronous clarification was offered and useful compatible-history research continued. No claim these are recent PRs.",
+  "reviewer": "sub-agent eval-trpc (automated)",
+  "verdict_source": "automated"
+}

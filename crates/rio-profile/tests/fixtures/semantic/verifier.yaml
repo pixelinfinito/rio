@@ -1,0 +1,4 @@
+version: 1
+name: invalid-verifier
+extends: rio/base
+steps: [{id: agents, uses: rio/agents}]

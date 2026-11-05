@@ -1,0 +1,350 @@
+Scope: all 18 workspace projects
+? Verifying lockfile against supply-chain policies (620 entries)...
+Lockfile is up to date, resolution step is skipped
+Progress: resolved 1, reused 0, downloaded 0, added 0
+Packages: +503
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Progress: resolved 503, reused 0, downloaded 0, added 0
+Progress: resolved 503, reused 0, downloaded 10, added 0
+Progress: resolved 503, reused 0, downloaded 14, added 0
+Progress: resolved 503, reused 0, downloaded 19, added 0
+Progress: resolved 503, reused 0, downloaded 26, added 0
+Progress: resolved 503, reused 0, downloaded 28, added 0
+Progress: resolved 503, reused 0, downloaded 29, added 0
+Progress: resolved 503, reused 0, downloaded 31, added 0
+Progress: resolved 503, reused 0, downloaded 38, added 0
+Progress: resolved 503, reused 0, downloaded 39, added 0
+Progress: resolved 503, reused 0, downloaded 44, added 0
+[WARN] Request took 16368ms: https://registry.npmjs.org/@babel%2Fcode-frame
+Progress: resolved 503, reused 0, downloaded 50, added 0
+[WARN] Request took 17698ms: https://registry.npmjs.org/@esbuild%2Fsunos-x64
+[WARN] Request took 17737ms: https://registry.npmjs.org/@esbuild%2Fandroid-arm64
+[WARN] Request took 17733ms: https://registry.npmjs.org/@esbuild%2Ffreebsd-x64
+[WARN] Request took 17738ms: https://registry.npmjs.org/@esbuild%2Fdarwin-arm64
+[WARN] Request took 17754ms: https://registry.npmjs.org/@esbuild%2Fdarwin-x64
+[WARN] Request took 17752ms: https://registry.npmjs.org/@esbuild%2Flinux-arm
+[WARN] Request took 17758ms: https://registry.npmjs.org/@esbuild%2Ffreebsd-arm64
+[WARN] Request took 17845ms: https://registry.npmjs.org/@esbuild%2Flinux-riscv64
+[WARN] Request took 17867ms: https://registry.npmjs.org/@esbuild%2Flinux-arm64
+[WARN] Request took 17851ms: https://registry.npmjs.org/@esbuild%2Flinux-mips64el
+[WARN] Request took 17867ms: https://registry.npmjs.org/@esbuild%2Flinux-ia32
+[WARN] Request took 17845ms: https://registry.npmjs.org/@esbuild%2Fopenbsd-x64
+[WARN] Request took 17841ms: https://registry.npmjs.org/@esbuild%2Fwin32-x64
+[WARN] Request took 17878ms: https://registry.npmjs.org/@esbuild%2Fandroid-x64
+[WARN] Request took 17857ms: https://registry.npmjs.org/@esbuild%2Flinux-ppc64
+[WARN] Request took 17847ms: https://registry.npmjs.org/@esbuild%2Fwin32-arm64
+[WARN] Request took 17856ms: https://registry.npmjs.org/@esbuild%2Fnetbsd-x64
+[WARN] Request took 17861ms: https://registry.npmjs.org/@esbuild%2Flinux-s390x
+[WARN] Request took 17861ms: https://registry.npmjs.org/@esbuild%2Flinux-x64
+Packages are copied from the content-addressable store to the virtual store.
+  Content-addressable store is at: /home/ubuntu/.local/share/pnpm/store/v11
+  Virtual store is at:             node_modules/.pnpm
+Progress: resolved 503, reused 0, downloaded 53, added 1
+[WARN] Request took 18901ms: https://registry.npmjs.org/@esbuild%2Fwin32-ia32
+Progress: resolved 503, reused 0, downloaded 53, added 4
+Progress: resolved 503, reused 0, downloaded 54, added 4
+Progress: resolved 503, reused 0, downloaded 57, added 4
+[WARN] Request took 11423ms: https://registry.npmjs.org/@rollup%2Frollup-linux-x64-musl
+[WARN] Request took 13019ms: https://registry.npmjs.org/@rollup%2Frollup-linux-s390x-gnu
+[WARN] Request took 10422ms: https://registry.npmjs.org/@rollup%2Frollup-win32-arm64-msvc
+[WARN] Request took 23856ms: https://registry.npmjs.org/@esbuild%2Fandroid-arm
+Progress: resolved 503, reused 0, downloaded 59, added 4
+[WARN] Request took 15183ms: https://registry.npmjs.org/@rollup%2Frollup-darwin-x64
+[WARN] Request took 11121ms: https://registry.npmjs.org/@rollup%2Frollup-win32-ia32-msvc
+[WARN] Request took 10506ms: https://registry.npmjs.org/@rollup%2Frollup-win32-x64-msvc
+[WARN] Request took 16510ms: https://registry.npmjs.org/@rollup%2Frollup-android-arm-eabi
+[WARN] Request took 15001ms: https://registry.npmjs.org/@rollup%2Frollup-linux-arm-gnueabihf
+[WARN] Request took 19314ms: https://registry.npmjs.org/@rolldown%2Fbinding-freebsd-x64
+Progress: resolved 503, reused 0, downloaded 62, added 4
+[WARN] Request took 26145ms: https://registry.npmjs.org/@esbuild%2Flinux-loong64
+Progress: resolved 503, reused 0, downloaded 69, added 4
+Progress: resolved 503, reused 0, downloaded 74, added 4
+[WARN] Request took 24475ms: https://registry.npmjs.org/@rolldown%2Fbinding-darwin-arm64
+[WARN] Request took 24097ms: https://registry.npmjs.org/@rolldown%2Fbinding-win32-x64-msvc
+[WARN] Request took 24319ms: https://registry.npmjs.org/@rolldown%2Fbinding-linux-arm64-musl
+[WARN] Request took 24219ms: https://registry.npmjs.org/@rolldown%2Fbinding-linux-x64-musl
+Progress: resolved 503, reused 0, downloaded 80, added 4
+Progress: resolved 503, reused 0, downloaded 81, added 4
+[WARN] Request took 33084ms: https://registry.npmjs.org/@asamuzakjp%2Fdom-selector
+Progress: resolved 503, reused 0, downloaded 84, added 4
+[WARN] Request took 28325ms: https://registry.npmjs.org/@rolldown%2Fbinding-linux-x64-gnu
+[WARN] Request took 34584ms: https://registry.npmjs.org/@babel%2Ftypes
+[WARN] Request took 28442ms: https://registry.npmjs.org/@rolldown%2Fbinding-win32-arm64-msvc
+[WARN] Request took 29415ms: https://registry.npmjs.org/@rolldown%2Fbinding-linux-arm-gnueabihf
+Progress: resolved 503, reused 0, downloaded 94, added 4
+Progress: resolved 503, reused 0, downloaded 97, added 6
+Progress: resolved 503, reused 0, downloaded 98, added 6
+[WARN] Request took 12170ms: https://registry.npmjs.org/@vitest%2Feslint-plugin
+Progress: resolved 503, reused 0, downloaded 101, added 7
+[WARN] Request took 39699ms: https://registry.npmjs.org/@babel%2Fparser
+[WARN] Request took 11035ms: https://registry.npmjs.org/@vitest%2Fspy
+Progress: resolved 503, reused 0, downloaded 112, added 8
+[WARN] Request took 10899ms: https://registry.npmjs.org/@vue%2Frepl
+[WARN] Request took 35243ms: https://registry.npmjs.org/@rolldown%2Fbinding-darwin-x64
+Progress: resolved 503, reused 0, downloaded 118, added 8
+[WARN] Request took 13042ms: https://registry.npmjs.org/@vitest%2Futils
+Progress: resolved 503, reused 0, downloaded 130, added 8
+[WARN] Request took 11778ms: https://registry.npmjs.org/comment-parser
+[WARN] Request took 40329ms: https://registry.npmjs.org/@rolldown%2Fbinding-wasm32-wasi
+Progress: resolved 503, reused 0, downloaded 135, added 8
+[WARN] Request took 12081ms: https://registry.npmjs.org/eslint-visitor-keys
+[WARN] Request took 11812ms: https://registry.npmjs.org/esquery
+[WARN] Request took 12552ms: https://registry.npmjs.org/esbuild-plugin-polyfill-node
+[WARN] Request took 13522ms: https://registry.npmjs.org/entities
+[WARN] Request took 12551ms: https://registry.npmjs.org/eslint-scope
+[WARN] Request took 14469ms: https://registry.npmjs.org/csstype
+[WARN] Request took 13542ms: https://registry.npmjs.org/enquirer
+[WARN] Request took 10438ms: https://registry.npmjs.org/esrecurse
+[WARN] Request took 10432ms: https://registry.npmjs.org/esutils
+[WARN] Request took 10441ms: https://registry.npmjs.org/estree-walker
+Progress: resolved 503, reused 0, downloaded 137, added 8
+[WARN] Request took 11146ms: https://registry.npmjs.org/estraverse
+[WARN] Request took 14064ms: https://registry.npmjs.org/es-module-lexer
+[WARN] Request took 16952ms: https://registry.npmjs.org/conventional-changelog
+[WARN] Request took 47663ms: https://registry.npmjs.org/@rolldown%2Fbinding-linux-arm64-gnu
+[WARN] Request took 24085ms: https://registry.npmjs.org/ajv
+[WARN] Request took 27666ms: https://registry.npmjs.org/@vitest%2Fbrowser
+[WARN] Request took 11347ms: https://registry.npmjs.org/execa
+Progress: resolved 503, reused 0, downloaded 144, added 10
+[WARN] Request took 15168ms: https://registry.npmjs.org/espree
+Progress: resolved 503, reused 0, downloaded 148, added 12
+Progress: resolved 503, reused 0, downloaded 151, added 12
+[WARN] Request took 24148ms: https://registry.npmjs.org/chromium-bidi
+Progress: resolved 503, reused 0, downloaded 156, added 12
+[WARN] Request took 19986ms: https://registry.npmjs.org/eslint-plugin-import-x
+Progress: resolved 503, reused 0, downloaded 160, added 12
+[WARN] Request took 25190ms: https://registry.npmjs.org/dompurify
+[WARN] Request took 10517ms: https://registry.npmjs.org/get-tsconfig
+Progress: resolved 503, reused 0, downloaded 161, added 12
+[WARN] Request took 47449ms: https://registry.npmjs.org/@swc%2Fcore-darwin-x64
+[WARN] Request took 47459ms: https://registry.npmjs.org/@swc%2Fcore-linux-arm64-gnu
+[WARN] Request took 47473ms: https://registry.npmjs.org/@swc%2Fcore-linux-arm64-musl
+Progress: resolved 503, reused 0, downloaded 164, added 12
+[WARN] Request took 52080ms: https://registry.npmjs.org/@swc%2Fcore-darwin-arm64
+[WARN] Request took 51980ms: https://registry.npmjs.org/@swc%2Fcore-linux-x64-gnu
+[WARN] Request took 52010ms: https://registry.npmjs.org/@swc%2Fcore-linux-arm-gnueabihf
+[WARN] Request took 52020ms: https://registry.npmjs.org/@swc%2Fcore-linux-x64-musl
+Progress: resolved 503, reused 0, downloaded 183, added 12
+[WARN] Request took 18081ms: https://registry.npmjs.org/ignore
+Progress: resolved 503, reused 0, downloaded 205, added 16
+[WARN] Request took 55375ms: https://registry.npmjs.org/@swc%2Fcore-win32-ia32-msvc
+[WARN] Request took 17456ms: https://registry.npmjs.org/immutable
+[WARN] Request took 55399ms: https://registry.npmjs.org/@swc%2Fcore-win32-arm64-msvc
+[WARN] Request took 54380ms: https://registry.npmjs.org/@swc%2Fcore-win32-x64-msvc
+Progress: resolved 503, reused 0, downloaded 206, added 16
+Progress: resolved 503, reused 0, downloaded 216, added 16
+[WARN] Request took 16539ms: https://registry.npmjs.org/istanbul-reports
+[WARN] GET https://registry.npmjs.org/@swc%2Fcore error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@types%2Fnode error (23). Will retry in 10 seconds. 2 retries left.
+Progress: resolved 503, reused 0, downloaded 220, added 16
+[WARN] Request took 14035ms: https://registry.npmjs.org/jszip
+[WARN] Request took 25638ms: https://registry.npmjs.org/glob
+[WARN] GET https://registry.npmjs.org/@typescript-eslint%2Feslint-plugin error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 14324ms: https://registry.npmjs.org/keyv
+[WARN] Request took 56248ms: https://registry.npmjs.org/@typescript-eslint%2Ftsconfig-utils
+Progress: resolved 503, reused 0, downloaded 234, added 19
+[WARN] GET https://registry.npmjs.org/@typescript-eslint%2Fparser error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@typescript-eslint%2Fproject-service error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@typescript-eslint%2Fscope-manager error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@typescript-eslint%2Ftype-utils error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@typescript-eslint%2Ftypes error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@typescript-eslint%2Ftypescript-estree error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@typescript-eslint%2Futils error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@typescript-eslint%2Fvisitor-keys error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 15063ms: https://registry.npmjs.org/mdn-data
+[WARN] Request took 15122ms: https://registry.npmjs.org/magic-string
+Progress: resolved 503, reused 0, downloaded 245, added 20
+[WARN] Request took 13702ms: https://registry.npmjs.org/minipass
+Progress: resolved 503, reused 0, downloaded 269, added 21
+[WARN] Request took 15490ms: https://registry.npmjs.org/nanoid
+[WARN] Request took 16639ms: https://registry.npmjs.org/minimatch
+Progress: resolved 503, reused 0, downloaded 284, added 24
+Progress: resolved 503, reused 0, downloaded 294, added 25
+Progress: resolved 503, reused 0, downloaded 304, added 25
+[WARN] GET https://registry.npmjs.org/devtools-protocol error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 14235ms: https://registry.npmjs.org/postcss-selector-parser
+[WARN] Request took 12108ms: https://registry.npmjs.org/pug-strip-comments
+[WARN] Request took 11348ms: https://registry.npmjs.org/read-package-json-fast
+[WARN] Request took 10406ms: https://registry.npmjs.org/resolve-pkg-maps
+[WARN] GET https://registry.npmjs.org/esbuild error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/eslint error (23). Will retry in 10 seconds. 2 retries left.
+Progress: resolved 503, reused 0, downloaded 310, added 27
+[WARN] Request took 15750ms: https://registry.npmjs.org/pug-walk
+Progress: resolved 503, reused 0, downloaded 319, added 28
+[WARN] Request took 22376ms: https://registry.npmjs.org/pug-runtime
+[WARN] Request took 20672ms: https://registry.npmjs.org/require-from-string
+Progress: resolved 503, reused 0, downloaded 330, added 29
+Progress: resolved 503, reused 0, downloaded 339, added 30
+[WARN] Request took 37122ms: https://registry.npmjs.org/postcss-modules-scope
+[WARN] Request took 37071ms: https://registry.npmjs.org/promise
+[WARN] Request took 37126ms: https://registry.npmjs.org/postcss-modules
+[WARN] Request took 34778ms: https://registry.npmjs.org/punycode
+[WARN] Request took 30036ms: https://registry.npmjs.org/rollup-plugin-polyfill-node
+[WARN] Request took 22899ms: https://registry.npmjs.org/set-function-length
+Progress: resolved 503, reused 0, downloaded 344, added 31
+[WARN] GET https://registry.npmjs.org/jsdom error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 38010ms: https://registry.npmjs.org/registry-url
+[WARN] Request took 34750ms: https://registry.npmjs.org/safe-buffer
+[WARN] Request took 23973ms: https://registry.npmjs.org/siginfo
+[WARN] Request took 23978ms: https://registry.npmjs.org/shebang-command
+[WARN] Request took 23983ms: https://registry.npmjs.org/setimmediate
+Progress: resolved 503, reused 0, downloaded 354, added 32
+[WARN] Request took 58129ms: https://registry.npmjs.org/lodash
+[WARN] Request took 35735ms: https://registry.npmjs.org/saxes
+[WARN] Request took 24960ms: https://registry.npmjs.org/shell-quote
+[WARN] Request took 57982ms: https://registry.npmjs.org/marked
+[WARN] Request took 38228ms: https://registry.npmjs.org/rimraf
+[WARN] Request took 25047ms: https://registry.npmjs.org/shebang-regex
+[WARN] Request took 39148ms: https://registry.npmjs.org/resolve
+Progress: resolved 503, reused 0, downloaded 378, added 36
+[WARN] Request took 19695ms: https://registry.npmjs.org/signal-exit
+[WARN] GET https://registry.npmjs.org/lint-staged error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/lru-cache error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 40893ms: https://registry.npmjs.org/registry-auth-token
+[WARN] Request took 37625ms: https://registry.npmjs.org/semver
+[WARN] Request took 42833ms: https://registry.npmjs.org/pug
+[WARN] Request took 37870ms: https://registry.npmjs.org/rollup-plugin-esbuild
+Progress: resolved 503, reused 0, downloaded 398, added 41
+[WARN] Request took 45385ms: https://registry.npmjs.org/prettier
+Progress: resolved 503, reused 0, downloaded 407, added 42
+[WARN] Request took 41797ms: https://registry.npmjs.org/rollup-plugin-dts
+[WARN] Request took 42950ms: https://registry.npmjs.org/readdirp
+Progress: resolved 503, reused 0, downloaded 428, added 46
+[WARN] Request took 36956ms: https://registry.npmjs.org/serve
+[WARN] Request took 36962ms: https://registry.npmjs.org/serve-handler
+[WARN] Request took 12109ms: https://registry.npmjs.org/simple-git-hooks
+[WARN] Request took 12129ms: https://registry.npmjs.org/sirv
+[WARN] GET https://registry.npmjs.org/monaco-editor error (23). Will retry in 10 seconds. 2 retries left.
+Progress: resolved 503, reused 0, downloaded 446, added 50
+Progress: resolved 503, reused 0, downloaded 473, added 55
+Progress: resolved 503, reused 0, downloaded 481, added 57
+[WARN] Request took 48637ms: https://registry.npmjs.org/readable-stream
+[WARN] Request took 45374ms: https://registry.npmjs.org/sass
+Progress: resolved 503, reused 0, downloaded 493, added 81
+[WARN] GET https://registry.npmjs.org/playwright-core error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/playwright error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 52209ms: https://registry.npmjs.org/puppeteer-core
+Progress: resolved 503, reused 0, downloaded 493, added 100
+[WARN] Request took 10226ms: https://registry.npmjs.org/lodash
+Progress: resolved 503, reused 0, downloaded 495, added 118
+[WARN] Request took 10190ms: https://registry.npmjs.org/undici
+[WARN] Request took 56770ms: https://registry.npmjs.org/postcss
+Progress: resolved 503, reused 0, downloaded 495, added 207
+[WARN] Request took 22244ms: https://registry.npmjs.org/esbuild
+[WARN] Request took 53542ms: https://registry.npmjs.org/rolldown
+[WARN] Request took 47308ms: https://registry.npmjs.org/@typescript-eslint%2Fproject-service
+Progress: resolved 503, reused 0, downloaded 495, added 494
+[WARN] GET https://registry.npmjs.org/puppeteer error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 28589ms: https://registry.npmjs.org/eslint
+Progress: resolved 503, reused 0, downloaded 496, added 496
+[WARN] GET https://registry.npmjs.org/@swc%2Fcore error (23). Will retry in 1 minute. 1 retries left.
+[WARN] GET https://registry.npmjs.org/@types%2Fnode error (23). Will retry in 1 minute. 1 retries left.
+[WARN] GET https://registry.npmjs.org/@typescript-eslint%2Feslint-plugin error (23). Will retry in 1 minute. 1 retries left.
+[WARN] Request took 18873ms: https://registry.npmjs.org/vitest
+[WARN] GET https://registry.npmjs.org/rollup error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 14794ms: https://registry.npmjs.org/zod
+[WARN] Request took 22257ms: https://registry.npmjs.org/tldts-core
+Progress: resolved 503, reused 0, downloaded 497, added 496
+[WARN] Request took 25484ms: https://registry.npmjs.org/tldts
+[WARN] Request took 46487ms: https://registry.npmjs.org/devtools-protocol
+[WARN] GET https://registry.npmjs.org/@typescript-eslint%2Fparser error (23). Will retry in 1 minute. 1 retries left.
+[WARN] GET https://registry.npmjs.org/@typescript-eslint%2Fscope-manager error (23). Will retry in 1 minute. 1 retries left.
+[WARN] GET https://registry.npmjs.org/@typescript-eslint%2Ftype-utils error (23). Will retry in 1 minute. 1 retries left.
+[WARN] GET https://registry.npmjs.org/@typescript-eslint%2Ftypes error (23). Will retry in 1 minute. 1 retries left.
+[WARN] GET https://registry.npmjs.org/@typescript-eslint%2Ftypescript-estree error (23). Will retry in 1 minute. 1 retries left.
+[WARN] GET https://registry.npmjs.org/@typescript-eslint%2Futils error (23). Will retry in 1 minute. 1 retries left.
+[WARN] GET https://registry.npmjs.org/@typescript-eslint%2Fvisitor-keys error (23). Will retry in 1 minute. 1 retries left.
+Progress: resolved 503, reused 0, downloaded 498, added 497
+[WARN] Request took 27041ms: https://registry.npmjs.org/typescript-eslint
+Progress: resolved 503, reused 0, downloaded 499, added 498
+[WARN] Request took 27295ms: https://registry.npmjs.org/vite
+Progress: resolved 503, reused 0, downloaded 500, added 498
+[WARN] Request took 13100ms: https://registry.npmjs.org/monaco-editor
+Progress: resolved 503, reused 0, downloaded 500, added 499
+[WARN] Request took 33571ms: https://registry.npmjs.org/typescript
+Progress: resolved 503, reused 0, downloaded 501, added 499
+[WARN] Request took 15654ms: https://registry.npmjs.org/playwright
+Progress: resolved 503, reused 0, downloaded 501, added 500
+[WARN] Request took 20942ms: https://registry.npmjs.org/playwright-core
+Progress: resolved 503, reused 0, downloaded 501, added 501
+[WARN] Request took 53152ms: https://registry.npmjs.org/@typescript-eslint%2Ftype-utils
+[WARN] Request took 53562ms: https://registry.npmjs.org/@typescript-eslint%2Futils
+Progress: resolved 503, reused 0, downloaded 501, added 502
+✓ Lockfile passes supply-chain policies (620 entries in 6m 42.1s)
+Progress: resolved 503, reused 0, downloaded 502, added 502
+Progress: resolved 503, reused 0, downloaded 502, added 503
+Progress: resolved 503, reused 0, downloaded 502, added 503, done
+.../node_modules/@swc/core postinstall$ node postinstall.js
+.../node_modules/puppeteer postinstall$ node install.mjs
+.../node_modules/simple-git-hooks postinstall$ node ./postinstall.js
+.../esbuild@0.28.1/node_modules/esbuild postinstall$ node install.js
+.../node_modules/@swc/core postinstall: Done
+.../node_modules/puppeteer postinstall: **INFO** Skipping downloading browsers as instructed.
+.../node_modules/simple-git-hooks postinstall: [INFO] Successfully set the pre-commit with command: pnpm lint-staged && pnpm check
+.../node_modules/puppeteer postinstall: Done
+.../node_modules/simple-git-hooks postinstall: [INFO] Successfully set the commit-msg with command: node scripts/verify-commit.js
+.../esbuild@0.28.1/node_modules/esbuild postinstall: Done
+.../node_modules/unrs-resolver postinstall$ napi-postinstall unrs-resolver 1.11.1 check
+.../node_modules/simple-git-hooks postinstall: Done
+.../node_modules/unrs-resolver postinstall: Done
+
+devDependencies:
++ @babel/parser 7.29.8
++ @babel/types 7.29.8
++ @rollup/plugin-alias 6.0.0
++ @rollup/plugin-commonjs 29.0.3
++ @rollup/plugin-json 6.1.0
++ @rollup/plugin-node-resolve 16.0.3
++ @rollup/plugin-replace 5.0.4
++ @swc/core 1.15.47
++ @types/hash-sum 1.0.2
++ @types/node 24.13.3
++ @types/semver 7.8.0
++ @types/serve-handler 6.1.4
++ @vitest/browser-playwright 4.1.10
++ @vitest/coverage-v8 4.1.10
++ @vitest/eslint-plugin 1.6.26
++ @vue/consolidate 1.0.0
++ conventional-changelog 8.1.0
++ conventional-changelog-angular 9.2.1
++ enquirer 2.4.1
++ esbuild 0.28.1
++ esbuild-plugin-polyfill-node 0.3.0
++ eslint 10.8.0
++ eslint-plugin-import-x 4.17.1
++ estree-walker 2.0.2
++ jsdom 30.0.1
++ lint-staged 17.3.0
++ lodash 4.18.1
++ magic-string 0.30.21
++ markdown-table 3.0.4
++ marked 13.0.3
++ npm-run-all2 9.0.3
++ picocolors 1.1.1
++ playwright 1.62.1
++ prettier 3.9.6
++ pretty-bytes 7.1.1
++ pug 3.0.4
++ puppeteer 25.4.0
++ rimraf 6.1.3
++ rollup 4.62.4
++ rollup-plugin-dts 6.4.1
++ rollup-plugin-esbuild 6.2.1
++ rollup-plugin-polyfill-node 0.13.0
++ semver 7.8.5
++ serve 14.2.6
++ serve-handler 6.1.7
++ simple-git-hooks 2.13.1
++ todomvc-app-css 2.4.3
++ tslib 2.8.1
++ typescript 6.0.3
++ typescript-eslint 8.65.0
++ vite 8.2.0
++ vitest 4.1.10
+
+. postinstall$ simple-git-hooks
+. postinstall: [INFO] Successfully set the pre-commit with command: pnpm lint-staged && pnpm check
+. postinstall: [INFO] Successfully set the commit-msg with command: node scripts/verify-commit.js
+. postinstall: [INFO] Successfully set all git hooks
+. postinstall: Done
+Done in 9m 5.7s using pnpm v11.19.0
