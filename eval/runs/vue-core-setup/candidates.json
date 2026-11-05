@@ -1,0 +1,102 @@
+[
+  {
+    "pr": 12701,
+    "url": "https://github.com/vuejs/core/pull/12701",
+    "title": "fix(compile-sfc): handle inline template source map in prod build",
+    "merged_at": "2025-05-20T00:46:01Z",
+    "author": "edison1105",
+    "author_association": "MEMBER",
+    "base": "35aeae7fa3168adcf9ed95fd35495d17c8b93eeb",
+    "head": "cc34f2e4b1490d55a18c9f8e4f83bda855a6e105"
+  },
+  {
+    "pr": 14451,
+    "url": "https://github.com/vuejs/core/pull/14451",
+    "title": "types(jsx): change typescript error handling (fix #14450)",
+    "merged_at": "2026-02-24T03:56:16Z",
+    "author": "MisterIsaak",
+    "author_association": "NONE",
+    "base": "4aa77beb86b5c80478a65476f02952f89f74dd31",
+    "head": "fd88b97b74b48bd38ad11b13cebe214fa63ddffb"
+  },
+  {
+    "pr": 16120,
+    "url": "https://github.com/vuejs/core/pull/16120",
+    "title": "fix(runtime-core): call directive mounted hooks with the latest binding",
+    "merged_at": "2026-11-04T01:59:24Z",
+    "author": "edison1105",
+    "author_association": "MEMBER",
+    "base": "716a29eca2e53a51bd2437cfae055c83157d4ca2",
+    "head": "add21a6f337d4cad6f7e4f4ff6c62bddb2ee3535"
+  },
+  {
+    "pr": 15794,
+    "url": "https://github.com/vuejs/core/pull/15794",
+    "title": "fix(runtime-dom): preserve v-show display for unchanged style strings",
+    "merged_at": "2026-10-13T00:21:15Z",
+    "author": "sergioperezcheco",
+    "author_association": "CONTRIBUTOR",
+    "base": "0f8e7b40175059e262e0db232ae0c08b427486b5",
+    "head": "63a04365cd273cfa4003637f95aa80a816499c02"
+  },
+  {
+    "pr": 15793,
+    "url": "https://github.com/vuejs/core/pull/15793",
+    "title": "fix(reactivity): preserve shallow collection semantics",
+    "merged_at": "2026-10-12T09:17:08Z",
+    "author": "zhoubiao188",
+    "author_association": "CONTRIBUTOR",
+    "base": "7f9d45d15bd10b6b9b136eb2b3a8879b449fec0d",
+    "head": "65e444ad4ce8443008c34d8bb4a998027faa2488"
+  },
+  {
+    "pr": 15782,
+    "url": "https://github.com/vuejs/core/pull/15782",
+    "title": "fix(reactivity): do not track deps in watcher callbacks run inside another effect (fix #5009)",
+    "merged_at": "2026-10-13T00:30:37Z",
+    "author": "parsajiravand",
+    "author_association": "CONTRIBUTOR",
+    "base": "9f3b4377c4bb5ff32b35ff08ce7670f6be6f5dbb",
+    "head": "738505647571cd50602542ed3d786bf6cb1eda28"
+  },
+  {
+    "pr": 15853,
+    "url": "https://github.com/vuejs/core/pull/15853",
+    "title": "fix(transition): handle comment-wrapped component roots",
+    "merged_at": "2026-10-13T02:51:02Z",
+    "author": "edison1105",
+    "author_association": "MEMBER",
+    "base": "d084b904903a7710ea19b7256b7c681e838eb63e",
+    "head": "e03877a0f834802b4e187dcf66119ca2d31ac934"
+  },
+  {
+    "pr": 16055,
+    "url": "https://github.com/vuejs/core/pull/16055",
+    "title": "fix(compiler-dom): preserve static boolean binding semantics",
+    "merged_at": "2026-10-29T00:54:23Z",
+    "author": "edison1105",
+    "author_association": "MEMBER",
+    "base": "ca034820b8288ab6da3a033626a7857401ee64a5",
+    "head": "bff7d3fa83f2c9e1ac7c3f72cbbcce01ac9d28c2"
+  },
+  {
+    "pr": 15499,
+    "url": "https://github.com/vuejs/core/pull/15499",
+    "title": "fix(shared): handle circular references in looseEqual",
+    "merged_at": "2026-09-17T02:58:54Z",
+    "author": "ondrhn",
+    "author_association": "CONTRIBUTOR",
+    "base": "54097087a0918b98f16c84599b1a6d654e952ca7",
+    "head": "e74c50d4bf760d93862f467303437a49c6648bdc"
+  },
+  {
+    "pr": 15328,
+    "url": "https://github.com/vuejs/core/pull/15328",
+    "title": "fix(shared): correctly compare Map and Set values",
+    "merged_at": "2026-08-27T00:21:43Z",
+    "author": "edison1105",
+    "author_association": "MEMBER",
+    "base": "a2b40db9a83b36ed9da3a16403cf8f040262d73f",
+    "head": "57c730ab498aba29c525099d0a32529ff6d392e4"
+  }
+]

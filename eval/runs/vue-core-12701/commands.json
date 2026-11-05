@@ -1,0 +1,389 @@
+{
+  "schema": "rio-eval-runner-v1",
+  "repository": "vuejs/core",
+  "pr": "https://github.com/vuejs/core/pull/12701",
+  "started_utc": "2026-11-05T02:35:29.918549+00:00",
+  "rio_binary": "/home/ubuntu/rio/target/release/rio",
+  "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-checkout",
+        "https://github.com/vuejs/core.git",
+        "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head"
+      ],
+      "cwd": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-12701/01-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-12701/01-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 10769
+    },
+    {
+      "argv": [
+        "git",
+        "fetch",
+        "origin",
+        "35aeae7fa3168adcf9ed95fd35495d17c8b93eeb",
+        "cc34f2e4b1490d55a18c9f8e4f83bda855a6e105"
+      ],
+      "cwd": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-12701/02-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-12701/02-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 5264
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "35aeae7fa3168adcf9ed95fd35495d17c8b93eeb",
+        "cc34f2e4b1490d55a18c9f8e4f83bda855a6e105"
+      ],
+      "cwd": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-12701/03-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-12701/03-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 17
+    },
+    {
+      "argv": [
+        "git",
+        "checkout",
+        "--detach",
+        "cc34f2e4b1490d55a18c9f8e4f83bda855a6e105"
+      ],
+      "cwd": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-12701/04-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-12701/04-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 231
+    },
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-hardlinks",
+        "--no-checkout",
+        "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head",
+        "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/base"
+      ],
+      "cwd": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-12701/05-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-12701/05-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 168
+    },
+    {
+      "argv": [
+        "git",
+        "checkout",
+        "--detach",
+        "35aeae7fa3168adcf9ed95fd35495d17c8b93eeb"
+      ],
+      "cwd": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-12701/06-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-12701/06-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 724
+    },
+    {
+      "argv": [
+        "corepack",
+        "pnpm",
+        "install",
+        "--frozen-lockfile"
+      ],
+      "cwd": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-12701/07-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-12701/07-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 18585
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "cwd": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-12701/08-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-12701/08-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 169
+    },
+    {
+      "argv": [
+        "corepack",
+        "pnpm",
+        "install",
+        "--frozen-lockfile"
+      ],
+      "cwd": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-12701/09-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-12701/09-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 12725
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "cwd": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-12701/10-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-12701/10-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 176
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "--version"
+      ],
+      "cwd": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/config",
+        "RIO_CACHE_DIR": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-12701/rio-version.txt",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-12701/11-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 18
+    },
+    {
+      "argv": [
+        "node",
+        "--version"
+      ],
+      "cwd": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/config",
+        "RIO_CACHE_DIR": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-12701/12-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-12701/12-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 17
+    },
+    {
+      "argv": [
+        "npm",
+        "--version"
+      ],
+      "cwd": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/config",
+        "RIO_CACHE_DIR": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-12701/13-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-12701/13-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 5867
+    },
+    {
+      "argv": [
+        "corepack",
+        "--version"
+      ],
+      "cwd": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/config",
+        "RIO_CACHE_DIR": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-12701/14-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-12701/14-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 1482
+    },
+    {
+      "argv": [
+        "python3",
+        "--version"
+      ],
+      "cwd": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/config",
+        "RIO_CACHE_DIR": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-12701/15-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-12701/15-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 344
+    },
+    {
+      "argv": [
+        "uv",
+        "--version"
+      ],
+      "cwd": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/config",
+        "RIO_CACHE_DIR": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-12701/16-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-12701/16-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 123
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "profile",
+        "show",
+        "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-12701/profile.yaml"
+      ],
+      "cwd": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/config",
+        "RIO_CACHE_DIR": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-12701/resolved-profile.txt",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-12701/17-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 425
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "doctor",
+        "--format",
+        "json"
+      ],
+      "cwd": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/config",
+        "RIO_CACHE_DIR": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-12701/doctor.json",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-12701/18-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 77775
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "review",
+        "--base",
+        "35aeae7fa3168adcf9ed95fd35495d17c8b93eeb",
+        "--format",
+        "json",
+        "--offline",
+        "--profile",
+        "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-12701/profile.yaml"
+      ],
+      "cwd": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/config",
+        "RIO_CACHE_DIR": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-12701/report.json",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-12701/19-stderr.log",
+      "exit_code": 4,
+      "wall_time_ms": 94630
+    }
+  ],
+  "installations": {
+    "base": {
+      "commands": [
+        [
+          "corepack",
+          "pnpm",
+          "install",
+          "--frozen-lockfile"
+        ]
+      ],
+      "succeeded": true,
+      "lockfiles": {
+        "pnpm-lock.yaml": "aae6d1e05861866d49a735760fb32aa27d68e5dff97ce24c90487c3b40b39ebc"
+      }
+    },
+    "head": {
+      "commands": [
+        [
+          "corepack",
+          "pnpm",
+          "install",
+          "--frozen-lockfile"
+        ]
+      ],
+      "succeeded": true,
+      "lockfiles": {
+        "pnpm-lock.yaml": "aae6d1e05861866d49a735760fb32aa27d68e5dff97ce24c90487c3b40b39ebc"
+      }
+    }
+  },
+  "failures": [
+    "Baseline/setup ineligible; fix before scoring"
+  ],
+  "network": "Installers may use network; Rio review uses --offline. Subprocesses are not isolated.",
+  "profile_sha256": "54923428bdf61617ff4f2dc8555ae85ca45e40511dcb9e344ad6deff777ea206",
+  "resolution": {
+    "base_sha": "35aeae7fa3168adcf9ed95fd35495d17c8b93eeb",
+    "head_sha": "cc34f2e4b1490d55a18c9f8e4f83bda855a6e105",
+    "source": "pinned argv"
+  },
+  "disposable_directory": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4",
+  "base_sha": "35aeae7fa3168adcf9ed95fd35495d17c8b93eeb",
+  "head_sha": "cc34f2e4b1490d55a18c9f8e4f83bda855a6e105",
+  "removed_environment_keys": [],
+  "resolved_profile_sha256": "bdf37f1a810d222e888810b81bc72e447b0f28bd8e4789b4b4cd4a05daa347b2",
+  "review_exit_code": 4,
+  "environment": {
+    "dependency_state": "verified",
+    "baseline_ran": false,
+    "baseline_classification_ran": false,
+    "eligible": false,
+    "reasons": [
+      "coverage packages-private/dts-built-test head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+      "coverage packages-private/dts-test head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+      "coverage packages-private/sfc-playground head: skipped dependency_mismatch pnpm-lock.yaml: missing @vitejs/plugin-vue at @vitejs/plugin-vue@5.2.4(vite@5.4.15(@types/node@22.14.1)(sass@1.87.0))(vue@packages+vue); reinstall dependencies",
+      "coverage packages-private/vite-debug head: skipped dependency_mismatch pnpm-lock.yaml: missing @vitejs/plugin-vue at @vitejs/plugin-vue@5.2.4(vite@5.4.15(@types/node@22.14.1)(sass@1.87.0))(vue@packages+vue); reinstall dependencies",
+      "coverage packages/compiler-sfc head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+      "coverage packages/server-renderer head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+      "coverage packages/vue head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+      "coverage packages/vue-compat head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+      "lint packages/compiler-sfc: head=passed, dependency_state=verified, base=unavailable",
+      "typecheck packages-private/dts-built-test: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck packages-private/dts-test: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck packages-private/sfc-playground head: skipped dependency_mismatch pnpm-lock.yaml: missing @vitejs/plugin-vue at @vitejs/plugin-vue@5.2.4(vite@5.4.15(@types/node@22.14.1)(sass@1.87.0))(vue@packages+vue); reinstall dependencies",
+      "typecheck packages-private/sfc-playground: head=skipped, dependency_state=unavailable, base=unavailable",
+      "typecheck packages-private/vite-debug head: skipped dependency_mismatch pnpm-lock.yaml: missing @vitejs/plugin-vue at @vitejs/plugin-vue@5.2.4(vite@5.4.15(@types/node@22.14.1)(sass@1.87.0))(vue@packages+vue); reinstall dependencies",
+      "typecheck packages-private/vite-debug: head=skipped, dependency_state=unavailable, base=unavailable",
+      "typecheck packages/compiler-sfc: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck packages/server-renderer head: failed unparseable_output unrecognized tsc output: error TS6504: File '/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/cache/b57e1cb3323cf4e6/runs/01M6MS3WQ2PTPBFGFK1K3M5S0M/tools/tool.tmp-tw1FcT/packages/server-renderer/index.js' is a JavaScript file. Did you mean to enable the 'allowJs' option?",
+      "typecheck packages/server-renderer: head=failed, dependency_state=verified, base=unavailable",
+      "typecheck packages/vue head: failed unparseable_output unrecognized tsc output: error TS6504: File '/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/cache/b57e1cb3323cf4e6/runs/01M6MS3WQ2PTPBFGFK1K3M5S0M/tools/tool.tmp-RqnT7L/packages/vue/compiler-sfc/index.browser.js' is a JavaScript file. Did you mean to enable the 'allowJs' option?",
+      "typecheck packages/vue-compat head: failed unparseable_output unrecognized tsc output: error TS6504: File '/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/cache/b57e1cb3323cf4e6/runs/01M6MS3WQ2PTPBFGFK1K3M5S0M/tools/tool.tmp-nmpYQU/packages/vue-compat/index.js' is a JavaScript file. Did you mean to enable the 'allowJs' option?",
+      "typecheck packages/vue-compat: head=failed, dependency_state=verified, base=unavailable",
+      "typecheck packages/vue: head=failed, dependency_state=verified, base=unavailable"
+    ],
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "lint packages/compiler-sfc: baseline_failed: linked dependency packages/vue::@vue/compiler-sfc points at changed source packages/compiler-sfc: packages/compiler-sfc/__tests__/compileScript.spec.ts; commit or stash the linked package's changes",
+      "typecheck packages-private/dts-built-test: baseline_failed: linked dependency packages/vue::@vue/compiler-sfc points at changed source packages/compiler-sfc: packages/compiler-sfc/__tests__/compileScript.spec.ts; commit or stash the linked package's changes",
+      "typecheck packages/server-renderer: baseline_failed: linked dependency packages/vue::@vue/compiler-sfc points at changed source packages/compiler-sfc: packages/compiler-sfc/__tests__/compileScript.spec.ts; commit or stash the linked package's changes",
+      "typecheck packages/vue-compat: baseline_failed: linked dependency packages/vue::@vue/compiler-sfc points at changed source packages/compiler-sfc: packages/compiler-sfc/__tests__/compileScript.spec.ts; commit or stash the linked package's changes",
+      "typecheck packages/vue: baseline_failed: linked dependency packages/vue::@vue/compiler-sfc points at changed source packages/compiler-sfc: packages/compiler-sfc/__tests__/compileScript.spec.ts; commit or stash the linked package's changes",
+      "typecheck packages-private/dts-test: baseline_failed: linked dependency packages/vue::@vue/compiler-sfc points at changed source packages/compiler-sfc: packages/compiler-sfc/__tests__/compileScript.spec.ts; commit or stash the linked package's changes",
+      "typecheck packages/compiler-sfc: baseline_failed: linked dependency packages/vue::@vue/compiler-sfc points at changed source packages/compiler-sfc: packages/compiler-sfc/__tests__/compileScript.spec.ts; commit or stash the linked package's changes",
+      "Graph references use syntax and text; no language server was used",
+      "Offline applies to Rio; tool and test processes were not network-isolated"
+    ]
+  },
+  "finished_utc": "2026-11-05T02:39:36.242803+00:00"
+}

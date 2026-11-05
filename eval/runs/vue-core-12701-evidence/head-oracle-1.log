@@ -1,0 +1,7 @@
+
+> @3.5.14 check /tmp/vue-positive-head
+> tsc --incremental --noEmit
+
+packages/compiler-sfc/src/compileScript.ts(1327,11): error TS2322: Type 'number | null' is not assignable to type 'number'.
+  Type 'null' is not assignable to type 'number'.
+ ELIFECYCLE  Command failed with exit code 2.

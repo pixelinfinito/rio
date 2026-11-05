@@ -1,0 +1,74 @@
+{
+  "repository": "vuejs/core",
+  "pr": "https://github.com/vuejs/core/pull/15328",
+  "case_id": "15328",
+  "languages": [
+    "typescript"
+  ],
+  "reviewer": "sub-agent eval-vue-core (automated)",
+  "verdict_source": "automated",
+  "commands": [
+    "cwd=/dev/shm/vue-core-runner/rio-eval-5ketlyec argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/vuejs/core.git\", \"/dev/shm/vue-core-runner/rio-eval-5ketlyec/head\"]",
+    "cwd=/dev/shm/vue-core-runner/rio-eval-5ketlyec/head argv=[\"git\", \"fetch\", \"origin\", \"a2b40db9a83b36ed9da3a16403cf8f040262d73f\", \"57c730ab498aba29c525099d0a32529ff6d392e4\"]",
+    "cwd=/dev/shm/vue-core-runner/rio-eval-5ketlyec/head argv=[\"git\", \"merge-base\", \"a2b40db9a83b36ed9da3a16403cf8f040262d73f\", \"57c730ab498aba29c525099d0a32529ff6d392e4\"]",
+    "cwd=/dev/shm/vue-core-runner/rio-eval-5ketlyec/head argv=[\"git\", \"checkout\", \"--detach\", \"57c730ab498aba29c525099d0a32529ff6d392e4\"]",
+    "cwd=/dev/shm/vue-core-runner/rio-eval-5ketlyec argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/dev/shm/vue-core-runner/rio-eval-5ketlyec/head\", \"/dev/shm/vue-core-runner/rio-eval-5ketlyec/base\"]",
+    "cwd=/dev/shm/vue-core-runner/rio-eval-5ketlyec/base argv=[\"git\", \"checkout\", \"--detach\", \"a2b40db9a83b36ed9da3a16403cf8f040262d73f\"]",
+    "cwd=/dev/shm/vue-core-runner/rio-eval-5ketlyec/base argv=[\"corepack\", \"pnpm\", \"install\", \"--frozen-lockfile\"]",
+    "cwd=/dev/shm/vue-core-runner/rio-eval-5ketlyec/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/vue-core-runner/rio-eval-5ketlyec/head argv=[\"corepack\", \"pnpm\", \"install\", \"--frozen-lockfile\"]",
+    "cwd=/dev/shm/vue-core-runner/rio-eval-5ketlyec/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/vue-core-runner/rio-eval-5ketlyec/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/dev/shm/vue-core-runner/rio-eval-5ketlyec/head argv=[\"node\", \"--version\"]",
+    "cwd=/dev/shm/vue-core-runner/rio-eval-5ketlyec/head argv=[\"npm\", \"--version\"]",
+    "cwd=/dev/shm/vue-core-runner/rio-eval-5ketlyec/head argv=[\"corepack\", \"--version\"]",
+    "cwd=/dev/shm/vue-core-runner/rio-eval-5ketlyec/head argv=[\"python3\", \"--version\"]",
+    "cwd=/dev/shm/vue-core-runner/rio-eval-5ketlyec/head argv=[\"uv\", \"--version\"]",
+    "cwd=/dev/shm/vue-core-runner/rio-eval-5ketlyec/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-15328/profile.yaml\"]",
+    "cwd=/dev/shm/vue-core-runner/rio-eval-5ketlyec/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/dev/shm/vue-core-runner/rio-eval-5ketlyec/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"a2b40db9a83b36ed9da3a16403cf8f040262d73f\", \"--format\", \"json\", \"--offline\", \"--profile\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-15328/profile.yaml\"]"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-run-vue-core/eval/runs/vue-core-15328/commands.json; Rio binary SHA-256: 512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+    "Independent oracle evidence: ../vue-core-15328-evidence/base-oracle-commands.json and head-oracle-commands.json; pinned checkouts verified in base/head-checkout-verification.json.",
+    "UNSCORED environment-failure: both installations succeeded with unchanged lockfiles, but Rio refused linked-source baseline classification. Forced frozen reinstalls were captured in separate attempt directories. No dependency trust was enabled.",
+    "Same pinned PR is repeated across attempts; do not aggregate the attempts as independent PRs or combine them with eligible samples. Offline dependency audit did not establish advisory safety.",
+    "All emitted diagnostics arise from repository-incompatible package invocations or missing build outputs; these are environment-failure observations, not scored product false positives. See ../vue-core-NOTES.md and adapter reproductions."
+  ],
+  "independently_clean": true,
+  "positive_control": {
+    "kind": "none",
+    "expected": []
+  },
+  "misses": [],
+  "findings": {
+    "065c5c2b7cadb6b51a6b11ff0ff76322d6ed200a208d7fd6937e32e8853d8457": {
+      "verdict": "environment-failure",
+      "reason": "Environment failure at node_modules/.pnpm/@vitejs+plugin-vue@6.0.8_vite@8.2.0_vue@packages+vue/node_modules/@vitejs/plugin-vue/dist/index.d.mts:3 (typecheck/tsc/TS2305): both pinned revisions pass root pnpm check and lint (../vue-core-15328-evidence/base/head-oracle-commands.json). This diagnostic comes from a dependent private playground/built-dts check that needs generated Vue declaration artifacts; those imports are not part of the successful repository root check. Rio has no baseline and most public-package invocations fail TS5112/TS6504. No source change in these diagnostic files is in the PR. Instrumented shared tests execute every introduced statement (../vue-core-15328-evidence/changed-statement-coverage.json). The pre-existing label does not establish a valid baseline."
+    },
+    "14b7eb0f888385faa4af0090164425ebffd92263fb241298149e2a1d0121310e": {
+      "verdict": "environment-failure",
+      "reason": "Environment failure at packages/vue/compiler-sfc/index.d.mts:1 (typecheck/tsc/TS2307): both pinned revisions pass root pnpm check and lint (../vue-core-15328-evidence/base/head-oracle-commands.json). This diagnostic comes from a dependent private playground/built-dts check that needs generated Vue declaration artifacts; those imports are not part of the successful repository root check. Rio has no baseline and most public-package invocations fail TS5112/TS6504. No source change in these diagnostic files is in the PR. Instrumented shared tests execute every introduced statement (../vue-core-15328-evidence/changed-statement-coverage.json). The pre-existing label does not establish a valid baseline."
+    },
+    "4001368175a02b576ea0e12c5d78d797a3bd57aa9ee00af6b385b65af1c4a142": {
+      "verdict": "environment-failure",
+      "reason": "Environment failure at packages-private/vite-debug/main.ts:1 (typecheck/tsc/TS2307): both pinned revisions pass root pnpm check and lint (../vue-core-15328-evidence/base/head-oracle-commands.json). This diagnostic comes from a dependent private playground/built-dts check that needs generated Vue declaration artifacts; those imports are not part of the successful repository root check. Rio has no baseline and most public-package invocations fail TS5112/TS6504. No source change in these diagnostic files is in the PR. Instrumented shared tests execute every introduced statement (../vue-core-15328-evidence/changed-statement-coverage.json). The pre-existing label does not establish a valid baseline."
+    },
+    "80a3f442a288a0886d8ab0cc83e2aebf30f28564773c16c9ec4a9712cc3bef04": {
+      "verdict": "environment-failure",
+      "reason": "Environment failure at packages-private/vite-debug/main.ts:2 (typecheck/tsc/TS2307): both pinned revisions pass root pnpm check and lint (../vue-core-15328-evidence/base/head-oracle-commands.json). This diagnostic comes from a dependent private playground/built-dts check that needs generated Vue declaration artifacts; those imports are not part of the successful repository root check. Rio has no baseline and most public-package invocations fail TS5112/TS6504. No source change in these diagnostic files is in the PR. Instrumented shared tests execute every introduced statement (../vue-core-15328-evidence/changed-statement-coverage.json). The pre-existing label does not establish a valid baseline."
+    },
+    "90b3f04be3030a90e17ccf535582ec53edb2fd58c8433d13e5d95ee99fedfe70": {
+      "verdict": "environment-failure",
+      "reason": "Environment failure at node_modules/.pnpm/@vitejs+plugin-vue@6.0.8_vite@8.2.0_vue@packages+vue/node_modules/@vitejs/plugin-vue/dist/index.d.mts:3 (typecheck/tsc/TS2305): both pinned revisions pass root pnpm check and lint (../vue-core-15328-evidence/base/head-oracle-commands.json). This diagnostic comes from a dependent private playground/built-dts check that needs generated Vue declaration artifacts; those imports are not part of the successful repository root check. Rio has no baseline and most public-package invocations fail TS5112/TS6504. No source change in these diagnostic files is in the PR. Instrumented shared tests execute every introduced statement (../vue-core-15328-evidence/changed-statement-coverage.json). The pre-existing label does not establish a valid baseline."
+    },
+    "940940dff88f55b41fcf02bfc73220e85ca465ef6cfd2cd5c73da013edeb6b4e": {
+      "verdict": "environment-failure",
+      "reason": "Environment failure at packages-private/dts-built-test/src/index.ts:1 (typecheck/tsc/TS2307): both pinned revisions pass root pnpm check and lint (../vue-core-15328-evidence/base/head-oracle-commands.json). This diagnostic comes from a dependent private playground/built-dts check that needs generated Vue declaration artifacts; those imports are not part of the successful repository root check. Rio has no baseline and most public-package invocations fail TS5112/TS6504. No source change in these diagnostic files is in the PR. Instrumented shared tests execute every introduced statement (../vue-core-15328-evidence/changed-statement-coverage.json). The pre-existing label does not establish a valid baseline."
+    },
+    "ee046a79593720b8f23e29734b20ef84e3075243794eed40e9eb948f61d85b0c": {
+      "verdict": "environment-failure",
+      "reason": "Environment failure at node_modules/.pnpm/@vitejs+plugin-vue@6.0.8_vite@8.2.0_vue@packages+vue/node_modules/@vitejs/plugin-vue/dist/index.d.mts:3 (typecheck/tsc/TS2305): both pinned revisions pass root pnpm check and lint (../vue-core-15328-evidence/base/head-oracle-commands.json). This diagnostic comes from a dependent private playground/built-dts check that needs generated Vue declaration artifacts; those imports are not part of the successful repository root check. Rio has no baseline and most public-package invocations fail TS5112/TS6504. No source change in these diagnostic files is in the PR. Instrumented shared tests execute every introduced statement (../vue-core-15328-evidence/changed-statement-coverage.json). The pre-existing label does not establish a valid baseline."
+    }
+  }
+}

@@ -1,0 +1,10 @@
+
+ RUN  v4.1.10 /tmp/vue-negative-head
+      Coverage enabled with v8
+
+
+ Test Files  1 passed (1)
+      Tests  14 passed (14)
+   Start at  02:34:43
+   Duration  13.92s (transform 402ms, setup 78ms, import 413ms, tests 22ms, environment 4.57s)
+

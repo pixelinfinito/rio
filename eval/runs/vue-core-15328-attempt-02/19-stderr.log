@@ -1,0 +1,47 @@
+Warning: rio/base:$.steps[3]: rio/triage is deferred locally: no_endpoint
+Warning: rio/base:$.steps[4]: rio/agents is deferred locally: no_endpoint
+Warning: rio/base:$.steps[5]: rio/verify is deferred locally: no_endpoint
+Running prepare…
+Finished prepare
+Running checks…
+coverage packages-private/sfc-playground: failed (tests_failed)
+typecheck packages-private/sfc-playground: failed (unparseable_output)
+coverage packages-private/dts-built-test: failed (tests_failed)
+typecheck packages-private/dts-test: failed (unparseable_output)
+coverage packages-private/dts-test: failed (tests_failed)
+coverage packages/runtime-dom: failed (tests_failed)
+typecheck packages/runtime-test: failed (unparseable_output)
+coverage packages/runtime-test: failed (tests_failed)
+typecheck packages/server-renderer: failed (unparseable_output)
+coverage packages/server-renderer: failed (tests_failed)
+lint packages/runtime-dom: passed
+typecheck packages/shared: failed (unparseable_output)
+coverage packages/vue: failed (tests_failed)
+typecheck packages-private/dts-built-test: findings
+typecheck packages/vue-compat: failed (unparseable_output)
+coverage packages/shared: failed (tests_failed)
+secrets .: passed
+dependencies .: skipped (offline)
+coverage packages/vue-compat: failed (tests_failed)
+coverage packages/compiler-sfc: failed (tests_failed)
+coverage packages-private/vite-debug: failed (tests_failed)
+typecheck packages/vue: failed (unparseable_output)
+lint packages/shared: passed
+typecheck packages/compiler-core: failed (unparseable_output)
+coverage packages/compiler-core: failed (tests_failed)
+coverage packages/compiler-dom: failed (tests_failed)
+typecheck packages/compiler-dom: failed (unparseable_output)
+typecheck packages/compiler-sfc: failed (unparseable_output)
+coverage packages/reactivity: failed (tests_failed)
+coverage packages/compiler-ssr: failed (tests_failed)
+typecheck packages/compiler-ssr: failed (unparseable_output)
+coverage packages/runtime-core: failed (tests_failed)
+typecheck packages/runtime-core: failed (unparseable_output)
+typecheck packages/reactivity: failed (unparseable_output)
+typecheck packages/runtime-dom: failed (unparseable_output)
+typecheck packages-private/vite-debug: findings
+Finished checks
+Running graph…
+Finished graph
+Running report…
+Finished report
