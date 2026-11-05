@@ -844,6 +844,141 @@ fn doctor_limits_clean_and_changed_monorepos_and_all_roots_is_explicit() {
     assert!(String::from_utf8_lossy(&output.stderr).contains("Checking root packages/a"));
 }
 
+#[cfg(unix)]
+#[test]
+fn doctor_all_roots_preserves_selected_base_dependencies_for_root_and_nested_projects() {
+    use std::os::unix::fs::PermissionsExt;
+
+    let lockfile = |version| {
+        format!("version = 1\n[[package]]\nname = 'sample-dependency'\nversion = '{version}'\n")
+    };
+    for (nested_version, nested_state, nested_baseline) in [
+        (Some("1.0.0"), "verified", true),
+        (Some("2.0.0"), "mismatch", false),
+        (None, "unverified", false),
+    ] {
+        let temp = repository();
+        let root = temp.path();
+        fs::write(root.join(".gitignore"), ".rio/cache/\n.venv/\n").unwrap();
+        for project in [".", "nested"] {
+            let directory = root.join(project);
+            fs::create_dir_all(&directory).unwrap();
+            fs::write(
+                directory.join("pyproject.toml"),
+                "[project]\nname = 'fixture'\nversion = '0.1.0'\n[tool.mypy]\n[tool.ruff]\n",
+            )
+            .unwrap();
+            fs::write(directory.join("app.py"), "value = 1\n").unwrap();
+            let version = if project == "." {
+                Some("1.0.0")
+            } else {
+                nested_version
+            };
+            if let Some(version) = version {
+                fs::write(directory.join("uv.lock"), lockfile(version)).unwrap();
+            }
+            let metadata = directory
+                .join(".venv/lib/python3.12/site-packages/sample_dependency-1.0.0.dist-info");
+            fs::create_dir_all(&metadata).unwrap();
+            fs::write(
+                metadata.join("METADATA"),
+                "Metadata-Version: 2.3\nName: sample-dependency\nVersion: 1.0.0\n",
+            )
+            .unwrap();
+            let bin = directory.join(".venv/bin");
+            fs::create_dir_all(&bin).unwrap();
+            for tool in ["mypy", "ruff", "coverage", "pytest"] {
+                let path = bin.join(tool);
+                fs::write(&path, "#!/bin/sh\necho 'fixture 1.0.0'\n").unwrap();
+                fs::set_permissions(path, fs::Permissions::from_mode(0o755)).unwrap();
+            }
+        }
+        git(root, &["add", "."]);
+        git(root, &["commit", "-m", "Python base environments"]);
+        let base = Process::new("git")
+            .args(["rev-parse", "HEAD"])
+            .current_dir(root)
+            .output()
+            .unwrap();
+        assert!(base.status.success());
+        let base = String::from_utf8(base.stdout).unwrap();
+        fs::write(root.join("app.py"), "value = 2\n").unwrap();
+        fs::write(root.join("nested/uv.lock"), lockfile("1.0.0")).unwrap();
+        git(root, &["add", "."]);
+        git(root, &["commit", "-m", "Python head environments"]);
+
+        let doctor = |all_roots| {
+            let mut command = rio(root);
+            command
+                .env("PATH", "")
+                .args(["doctor", "--base", base.trim(), "--format", "json"]);
+            if all_roots {
+                command.arg("--all-roots");
+            }
+            let output = command.assert().success().get_output().clone();
+            serde_json::from_slice::<Value>(&output.stdout).unwrap()
+        };
+        let all_roots = doctor(true);
+        assert_eq!(all_roots["plan"]["roots"].as_array().unwrap().len(), 2);
+        for readiness in all_roots["plan"]["roots"].as_array().unwrap() {
+            let nested = readiness["project"]["path"] == "nested";
+            assert_eq!(readiness["head"]["state"], "verified");
+            assert_eq!(
+                readiness["base"]["state"],
+                if nested { nested_state } else { "verified" }
+            );
+            assert_eq!(
+                readiness["base_lockfile"],
+                if nested && nested_version.is_none() {
+                    Value::Null
+                } else {
+                    Value::from(if nested { "nested/uv.lock" } else { "uv.lock" })
+                }
+            );
+            let checks: Vec<_> = all_roots["plan"]["checks"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .filter(|check| {
+                    check["language"] == "python" && check["root"] == readiness["project"]["path"]
+                })
+                .collect();
+            assert_eq!(checks.len(), 3);
+            for check in checks {
+                assert!(check["skip"].is_null(), "{check}");
+                assert_eq!(check["baseline"], !nested || nested_baseline, "{check}");
+                assert_eq!(check["baseline_hint"].is_null(), !nested || nested_baseline);
+            }
+        }
+
+        // With matching locks, nested is outside the diff but still verified above.
+        let scoped = doctor(false);
+        if nested_baseline {
+            assert_eq!(scoped["plan"]["roots"].as_array().unwrap().len(), 1);
+        }
+        fs::write(root.join("nested/app.py"), "value = 2\n").unwrap();
+        git(root, &["add", "."]);
+        git(
+            root,
+            &["commit", "-m", "Include nested project in the diff"],
+        );
+        let scoped = doctor(false);
+        assert_eq!(scoped["plan"]["roots"], all_roots["plan"]["roots"]);
+        for check in scoped["plan"]["checks"].as_array().unwrap() {
+            let all_check = all_roots["plan"]["checks"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|candidate| {
+                    candidate["root"] == check["root"] && candidate["kind"] == check["kind"]
+                })
+                .unwrap();
+            assert_eq!(check["baseline"], all_check["baseline"]);
+            assert_eq!(check["baseline_hint"], all_check["baseline_hint"]);
+        }
+    }
+}
+
 #[test]
 fn malformed_lockfile_reports_unverified_dependencies_without_internal_error() {
     let temp = repository();

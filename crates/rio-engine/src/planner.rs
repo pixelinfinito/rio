@@ -32,6 +32,9 @@ pub struct RootReadiness {
     pub project: ProjectRoot,
     pub installation_root: String,
     pub lockfile: Option<String>,
+    /// Repository-relative governing lockfile found in the selected base tree.
+    #[serde(default)]
+    pub base_lockfile: Option<String>,
     pub environment: Option<PathBuf>,
     pub head: Compatibility,
     pub base: Compatibility,
@@ -388,6 +391,7 @@ pub async fn plan_review_with_progress(
             project: project.clone(),
             installation_root,
             lockfile: lock.map(|lock| lock.path),
+            base_lockfile: base_lock.map(|lock| lock.path),
             environment: environment_path,
             head,
             base,
