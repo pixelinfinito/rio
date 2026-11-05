@@ -246,8 +246,29 @@ impl Execution {
             ToolTree::create_until(cached, &self.cache.path.join("tools"), &self.links, &|| {
                 self.before().is_some()
             })?;
+        let remapped = if version == Version::Base && check.baseline_remap {
+            remap_base_dependencies(
+                &self.request.worktree,
+                disposable.path(),
+                &self.links,
+                &self.request.working,
+                tree,
+                &|| self.before().is_some(),
+            )?
+        } else {
+            0
+        };
         let tool = check.tool.as_ref().context("no diagnostic tool")?;
         let mut command = diagnostic_command(tool, tree, disposable.path(), &check.root, &targets)?;
+        if remapped > 0 {
+            configure_base_command(
+                &mut command,
+                &self.request.worktree,
+                disposable.path(),
+                &self.links,
+                &tool.name,
+            )?;
+        }
         command.timeout = self.available(check.kind);
         command.output_limit = self.request.output_limit;
         let result = self
@@ -270,6 +291,14 @@ impl Execution {
         let spec = tool_contract(&adapter.manifest().name, key(check.kind), &tool.name)?;
         let mut outcome = evaluate_exit(&result, &spec.exit_codes, parsed);
         outcome.details_mut().dependency_state = check.dependency_state;
+        if remapped > 0 {
+            let note = format!("baseline: {remapped} linked packages remapped to base");
+            let hint = &mut outcome.details_mut().hint;
+            *hint = Some(
+                hint.as_ref()
+                    .map_or(note.clone(), |hint| format!("{hint}; {note}")),
+            );
+        }
         if let Err(error) = self.persist_process(check, version, &result) {
             outcome = failure(error.to_string());
         }
@@ -305,7 +334,7 @@ impl Execution {
         let mut targets = check.targets.clone();
         targets.sort();
         let input = serde_json::to_vec(
-            &serde_json::json!({"version":1,"root":check.root,"kind":check.kind,"tool":tool.name,"tool_version":tool.version,"targets":targets,"dependencies":check.dependency_hash,"dependency_state":check.dependency_state,"invocation":"rio-diagnostic-v2"}),
+            &serde_json::json!({"version":1,"root":check.root,"kind":check.kind,"tool":tool.name,"tool_version":tool.version,"targets":targets,"dependencies":check.dependency_hash,"dependency_state":check.dependency_state,"invocation":"rio-diagnostic-v3-remapped"}),
         )?;
         let hash = blake3::hash(&input).to_hex().to_string();
         let relative = format!(
@@ -760,6 +789,7 @@ pub async fn review(
                     .iter()
                     .map(|root| root.project.path.clone())
                     .collect();
+                roots.extend(planned.layout.roots.iter().map(|root| root.path.clone()));
                 roots.extend(
                     planned
                         .roots

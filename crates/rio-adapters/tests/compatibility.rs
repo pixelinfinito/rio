@@ -578,3 +578,198 @@ fn yarn_classic_workspace_links_are_resolved_using_workspace_manifests() {
     let result = check(root.path(), &tree, &tree, Some(&lock), &installed, false);
     assert!(result.can_run(), "{result:?}");
 }
+
+#[cfg(unix)]
+#[test]
+fn baseline_remaps_source_but_rejects_untracked_build_entry_points() {
+    use rio_adapters::check_base_compatibility;
+    let root = tempfile::tempdir().unwrap();
+    let lock = serde_json::json!({"lockfileVersion":3,"packages":{
+        "":{"dependencies":{"shared":"*"}},
+        "packages/shared":{"name":"shared","version":"1.0.0"},
+        "node_modules/shared":{"resolved":"packages/shared","link":true}
+    }})
+    .to_string();
+    let mut base = Tree::new();
+    put(&mut base, "package-lock.json", &lock);
+    put(
+        &mut base,
+        "packages/shared/package.json",
+        r#"{"name":"shared","version":"1.0.0","types":"src/index.ts"}"#,
+    );
+    put(
+        &mut base,
+        "packages/shared/src/index.ts",
+        "export const value = 1;",
+    );
+    let mut head = base.clone();
+    put(
+        &mut head,
+        "packages/shared/src/index.ts",
+        "export const value = 'new';",
+    );
+    write(root.path(), "node_modules/.package-lock.json", &lock);
+    package(root.path(), "packages/shared", "shared", "1.0.0");
+    std::os::unix::fs::symlink(
+        "../packages/shared",
+        root.path().join("node_modules/shared"),
+    )
+    .unwrap();
+    let installed = read_installation(
+        root.path(),
+        ".",
+        &governing_lockfile(&head, ".", None, Ecosystem::Npm)
+            .unwrap()
+            .unwrap()
+            .graph,
+    );
+    for field in ["types", "main", "exports"] {
+        for (entry, compiled) in [
+            ("./src/index.ts", false),
+            ("./dist/index.js", true),
+            ("./index.cjs", true),
+        ] {
+            let mut selected = base.clone();
+            // A tracked placeholder does not make ignored build output usable.
+            put(
+                &mut selected,
+                "packages/shared/dist/README.md",
+                "build output goes here",
+            );
+            let mut manifest = serde_json::json!({"name":"shared","version":"1.0.0"});
+            manifest[field] = if field == "exports" {
+                serde_json::json!({".":{"types":entry,"default":entry}})
+            } else {
+                serde_json::json!(entry)
+            };
+            put(
+                &mut selected,
+                "packages/shared/package.json",
+                &manifest.to_string(),
+            );
+            let lock = governing_lockfile(&selected, ".", None, Ecosystem::Npm)
+                .unwrap()
+                .unwrap();
+            let result = check_base_compatibility(CompatibilityRequest {
+                worktree: root.path(),
+                working: &head,
+                selected: &selected,
+                project_root: ".",
+                lockfile: Some(&lock),
+                installation: &installed,
+                environment: &DependencyEnvironment::default(),
+                trust: false,
+            });
+            if compiled {
+                assert!(
+                    matches!(result, Compatibility::Mismatch { .. }),
+                    "{result:?}"
+                );
+                assert!(
+                    result
+                        .hint()
+                        .unwrap()
+                        .contains(if entry.starts_with("./dist/") {
+                            "consumed through build output dist/ that is not in the tree"
+                        } else {
+                            "consumed through build output index.cjs that is not in the tree"
+                        })
+                );
+                assert!(!result.hint().unwrap().contains("commit or stash"));
+            } else {
+                assert!(result.can_run(), "{result:?}");
+            }
+        }
+    }
+}
+
+#[test]
+fn npm_versions_allow_one_leading_v_but_still_reject_different_versions() {
+    let root = tempfile::tempdir().unwrap();
+    let selected = npm_tree("0.13.0");
+    write(
+        root.path(),
+        "node_modules/.package-lock.json",
+        &npm_lock("0.13.0"),
+    );
+    let lock = governing_lockfile(&selected, ".", None, Ecosystem::Npm)
+        .unwrap()
+        .unwrap();
+    for (version, compatible) in [("v0.13.0", true), ("v0.14.0", false), ("vv0.13.0", false)] {
+        package(root.path(), "node_modules/react", "react", version);
+        let installed = read_installation(root.path(), ".", &lock.graph);
+        let result = check(
+            root.path(),
+            &selected,
+            &selected,
+            Some(&lock),
+            &installed,
+            false,
+        );
+        assert_eq!(result.can_run(), compatible, "{version}: {result:?}");
+    }
+}
+
+#[test]
+fn filtered_pnpm_importers_are_optional_only_when_absent_and_outside_scheduled_roots() {
+    use rio_adapters::{parse_lockfile, scope_pnpm_importers};
+    let root = tempfile::tempdir().unwrap();
+    let content = "lockfileVersion: '9.0'\nimporters:\n  .:\n    dependencies:\n      react: {version: 0.13.0}\n  examples/uninstalled:\n    dependencies:\n      missing: {version: 2.0.0}\npackages:\n  react@0.13.0: {}\nsnapshots:\n  react@0.13.0: {}\n";
+    write(root.path(), "node_modules/.pnpm/lock.yaml", content);
+    package(
+        root.path(),
+        "node_modules/.pnpm/react@0.13.0/node_modules/react",
+        "react",
+        "v0.13.0",
+    );
+    let graph = parse_lockfile("pnpm-lock.yaml", content).unwrap();
+    assert!(!graph.complete);
+    for scheduled in [
+        vec![".".into()],
+        vec![".".into(), "examples/uninstalled".into()],
+    ] {
+        let mut lock = GoverningLockfile {
+            path: "pnpm-lock.yaml".into(),
+            root: ".".into(),
+            importer: ".".into(),
+            graph: graph.clone(),
+        };
+        let mut installed = read_installation(root.path(), ".", &graph);
+        scope_pnpm_importers(
+            &mut lock.graph,
+            Some(&mut installed),
+            root.path(),
+            ".",
+            &scheduled,
+        );
+        let result = check(
+            root.path(),
+            &Tree::new(),
+            &Tree::new(),
+            Some(&lock),
+            &installed,
+            false,
+        );
+        assert_eq!(result.can_run(), scheduled.len() == 1, "{result:?}");
+    }
+    fs::create_dir_all(root.path().join("examples/uninstalled/node_modules")).unwrap();
+    let mut graph = graph;
+    scope_pnpm_importers(&mut graph, None, root.path(), ".", &[".".into()]);
+    assert!(!graph.complete, "installed importer must remain strict");
+}
+
+#[test]
+fn unresolved_required_workspace_importer_is_never_ignored_by_filtered_install_scope() {
+    use rio_adapters::{parse_lockfile, scope_pnpm_importers};
+    let root = tempfile::tempdir().unwrap();
+    let content = "lockfileVersion: '9.0'\nimporters:\n  .:\n    dependencies:\n      required: {version: 'link:packages/required'}\n  packages/required:\n    dependencies:\n      missing: {version: 2.0.0}\n";
+    let mut graph = parse_lockfile("pnpm-lock.yaml", content).unwrap();
+    scope_pnpm_importers(&mut graph, None, root.path(), ".", &[".".into()]);
+    assert!(!graph.complete);
+    assert!(
+        graph
+            .notes
+            .iter()
+            .any(|note| note.contains("packages/required"))
+    );
+}

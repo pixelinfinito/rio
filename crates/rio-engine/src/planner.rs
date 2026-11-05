@@ -23,6 +23,8 @@ pub struct PlannedCheck {
     pub dependency_state: Option<DependencyState>,
     pub dependency_hash: Option<String>,
     pub baseline: bool,
+    #[serde(default)]
+    pub baseline_remap: bool,
     pub baseline_hint: Option<String>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -147,6 +149,11 @@ pub async fn plan_review(
         .unwrap_or(false);
     let baseline = options["baseline"].as_bool().unwrap_or(true);
     let mut versions = BTreeMap::<(String, String, String), Option<ResolvedTool>>::new();
+    let base_source_changes = rio_git::changed_paths(working, &changes.base);
+    let scheduled_roots: Vec<_> = scheduled
+        .iter()
+        .map(|root| root.project.path.clone())
+        .collect();
     for scheduled in scheduled {
         let project = &scheduled.project;
         let language = &project.language;
@@ -156,9 +163,9 @@ pub async fn plan_review(
         } else {
             Ecosystem::PyPi
         };
-        let lock =
+        let mut lock =
             governing_lockfile(&changes.head, root, project.workspace.as_deref(), ecosystem)?;
-        let base_lock =
+        let mut base_lock =
             governing_lockfile(&changes.base, root, project.workspace.as_deref(), ecosystem)?;
         let installation_root = lock
             .as_ref()
@@ -175,7 +182,25 @@ pub async fn plan_review(
                     "requirements"
                 })
             });
-        let installation = read_installation(worktree, &installation_root, &installed_graph);
+        let mut installation = read_installation(worktree, &installation_root, &installed_graph);
+        if let Some(lock) = &mut lock {
+            scope_pnpm_importers(
+                &mut lock.graph,
+                Some(&mut installation),
+                worktree,
+                &installation_root,
+                &scheduled_roots,
+            );
+        }
+        if let Some(lock) = &mut base_lock {
+            scope_pnpm_importers(
+                &mut lock.graph,
+                None,
+                worktree,
+                &installation_root,
+                &scheduled_roots,
+            );
+        }
         let mut environment = DependencyEnvironment::default();
         if language == "python"
             && [CheckKind::Typecheck, CheckKind::Lint, CheckKind::Coverage]
@@ -192,8 +217,13 @@ pub async fn plan_review(
             .await;
             plan.probes_ran = true;
         }
-        let compatibility = |selected: &Tree, lockfile: Option<&GoverningLockfile>, trust| {
-            check_compatibility(CompatibilityRequest {
+        let compatibility = |selected: &Tree, lockfile: Option<&GoverningLockfile>, trust, base| {
+            let checker = if base {
+                check_base_compatibility
+            } else {
+                check_compatibility
+            };
+            checker(CompatibilityRequest {
                 worktree,
                 working,
                 selected,
@@ -204,8 +234,25 @@ pub async fn plan_review(
                 trust,
             })
         };
-        let head = compatibility(&changes.head, lock.as_ref(), trust);
-        let base = compatibility(&changes.base, base_lock.as_ref(), false);
+        let head = compatibility(&changes.head, lock.as_ref(), trust, false);
+        let base = compatibility(&changes.base, base_lock.as_ref(), false, true);
+        let canonical_worktree = worktree.canonicalize()?;
+        let baseline_remap = matches!(head, Compatibility::Trusted { .. })
+            || installation.links.values().any(|target| {
+                target
+                    .strip_prefix(&canonical_worktree)
+                    .is_ok_and(|relative| {
+                        let path = relative.to_string_lossy().replace('\\', "/");
+                        let prefix = if path.is_empty() {
+                            path
+                        } else {
+                            format!("{path}/")
+                        };
+                        base_source_changes
+                            .iter()
+                            .any(|path| path.starts_with(&prefix))
+                    })
+            });
         let environment_path = if language == "typescript" {
             Some(worktree.join(&installation_root).join("node_modules"))
         } else {
@@ -308,6 +355,7 @@ pub async fn plan_review(
                 dependency_state: head.dependency_state(),
                 dependency_hash,
                 baseline: can_baseline,
+                baseline_remap,
                 baseline_hint,
             });
         }
@@ -333,6 +381,7 @@ pub async fn plan_review(
             dependency_state: None,
             dependency_hash: None,
             baseline: false,
+            baseline_remap: false,
             baseline_hint: None,
         });
     }

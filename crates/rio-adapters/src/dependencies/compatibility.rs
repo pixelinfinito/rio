@@ -307,7 +307,12 @@ fn compare_yarn(
         };
         let actual = &installation.nodes[&location];
         if actual.name != expected.package.name
-            || (expected.package.link.is_none() && actual.version != expected.package.version)
+            || (expected.package.link.is_none()
+                && !same_version(
+                    &actual.version,
+                    &expected.package.version,
+                    expected.package.ecosystem,
+                ))
         {
             return Some(format!(
                 "{location}: expected {}@{}, installed {}@{}; reinstall dependencies",
@@ -333,6 +338,16 @@ pub struct CompatibilityRequest<'a> {
 }
 
 pub fn check_compatibility(request: CompatibilityRequest<'_>) -> Compatibility {
+    compatibility(request, false)
+}
+
+/// Base source links are redirected into the disposable base tree before tools
+/// run. Installation graph mismatches still prevent classification.
+pub fn check_base_compatibility(request: CompatibilityRequest<'_>) -> Compatibility {
+    compatibility(request, true)
+}
+
+fn compatibility(request: CompatibilityRequest<'_>, remap: bool) -> Compatibility {
     let mut inputs = request.installation.fingerprints.clone();
     let mut unverified = Vec::new();
     let hash = |inputs: &BTreeMap<String, Vec<u8>>| dependency_state_hash(inputs);
@@ -371,6 +386,7 @@ pub fn check_compatibility(request: CompatibilityRequest<'_>) -> Compatibility {
         .worktree
         .canonicalize()
         .unwrap_or_else(|_| request.worktree.to_path_buf());
+    let source_changes = changed_paths(request.working, request.selected);
     for (name, target) in &request.installation.links {
         let Ok(relative) = target.strip_prefix(&canonical_worktree) else {
             continue;
@@ -388,7 +404,11 @@ pub fn check_compatibility(request: CompatibilityRequest<'_>) -> Compatibility {
                 request.project_root
             }
             || (relative.is_empty() && request.project_root == ".");
-        if expected.is_none() && !own_root && !name.ends_with(".pth") {
+        if expected.is_none()
+            && !own_root
+            && !name.ends_with(".pth")
+            && !name.ends_with(".egg-link")
+        {
             continue;
         }
         if let Some(expected_source) = expected.and_then(|node| node.package.link.as_deref()) {
@@ -408,15 +428,17 @@ pub fn check_compatibility(request: CompatibilityRequest<'_>) -> Compatibility {
         } else {
             format!("{relative}/")
         };
-        if let Some(path) = changed_paths(request.working, request.selected)
-            .into_iter()
-            .find(|path| path.starts_with(&prefix))
-        {
-            return Compatibility::Mismatch {
-                hint: format!(
-                    "linked dependency {name} points at changed source {relative}: {path}; commit or stash the linked package's changes"
-                ),
-            };
+        if let Some(path) = source_changes.iter().find(|path| path.starts_with(&prefix)) {
+            if !remap {
+                return Compatibility::Mismatch {
+                    hint: format!(
+                        "linked dependency {name} points at changed source {relative}: {path}; make the installed source match the selected head"
+                    ),
+                };
+            }
+            if let Some(hint) = missing_build_output(request.selected, &relative, name) {
+                return Compatibility::Mismatch { hint };
+            }
         }
         for (path, entry) in request
             .selected
@@ -451,7 +473,11 @@ pub fn check_compatibility(request: CompatibilityRequest<'_>) -> Compatibility {
                 Some(actual)
                     if actual.name != expected.package.name
                         || (expected.package.link.is_none()
-                            && actual.version != expected.package.version) =>
+                            && !same_version(
+                                &actual.version,
+                                &expected.package.version,
+                                expected.package.ecosystem,
+                            )) =>
                 {
                     mismatch = Some(format!(
                         "{key}: expected {}@{}, installed {}@{}; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
@@ -512,4 +538,69 @@ pub fn check_compatibility(request: CompatibilityRequest<'_>) -> Compatibility {
     Compatibility::Verified {
         hash: hash(&inputs),
     }
+}
+
+// Entry points can be conditional exports or arrays, as well as main/types.
+pub(super) fn missing_build_output(tree: &Tree, root: &str, name: &str) -> Option<String> {
+    let manifest = tree.get(&join(root, "package.json"))?;
+    let manifest: Value = serde_json::from_slice(&manifest.content).ok()?;
+    fn strings(value: &Value, result: &mut Vec<String>) {
+        match value {
+            Value::String(value) => result.push(value.clone()),
+            Value::Array(values) => values.iter().for_each(|value| strings(value, result)),
+            Value::Object(values) => values.values().for_each(|value| strings(value, result)),
+            _ => {}
+        }
+    }
+    let mut entries = Vec::new();
+    for key in [
+        "main",
+        "module",
+        "types",
+        "typings",
+        "exports",
+        "typesVersions",
+    ] {
+        strings(&manifest[key], &mut entries);
+    }
+    for entry in entries {
+        let entry = entry.trim_start_matches("./");
+        let directory = entry.split('/').next()?;
+        if entry.is_empty() || directory == ".." {
+            continue;
+        }
+        let path = join(root, entry);
+        let prefix = format!("{path}/");
+        let present = if path.contains('*') {
+            globset::Glob::new(&path).ok().is_some_and(|glob| {
+                let matcher = glob.compile_matcher();
+                tree.keys().any(|path| matcher.is_match(path))
+            })
+        } else {
+            tree.contains_key(&path) || tree.keys().any(|path| path.starts_with(&prefix))
+        };
+        if !present {
+            if directory == "src" {
+                return Some(format!(
+                    "linked package {name} source entry point {entry} is absent from the base tree; cannot remap"
+                ));
+            }
+            let output = if entry.contains('/') {
+                format!("{directory}/")
+            } else {
+                entry.to_owned()
+            };
+            return Some(format!(
+                "linked package {name} is consumed through build output {output} that is not in the tree; run the build in the base or configure source entry points"
+            ));
+        }
+    }
+    None
+}
+
+fn same_version(actual: &str, expected: &str, ecosystem: Ecosystem) -> bool {
+    actual == expected
+        || ecosystem == Ecosystem::Npm
+            && actual.strip_prefix('v').unwrap_or(actual)
+                == expected.strip_prefix('v').unwrap_or(expected)
 }
