@@ -1,0 +1,124 @@
+{
+  "checked_utc": "2026-11-05T10:57:04.178448+00:00",
+  "node_bin": "/tmp/rio-ky-eval/node-v18.20.8-linux-x64/bin",
+  "TMPDIR": "/dev/shm",
+  "install_plan_reused": "../ky-578/install-plan.json",
+  "profile_reused": "../ky-578/profile.yaml",
+  "commands": [
+    {
+      "argv": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false",
+        "-p",
+        "."
+      ],
+      "cwd": "/tmp/rio-ky-eval/578-base",
+      "git_sha": "2d56baf6739a49655cbbe74b5083c0350511bbed",
+      "exit_code": 0,
+      "wall_time_ms": 3561,
+      "output": "base-default-oracle.log"
+    },
+    {
+      "argv": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "--pretty",
+        "false",
+        "-p",
+        "tsconfig.eval-browser.json"
+      ],
+      "cwd": "/tmp/rio-ky-eval/578-base",
+      "git_sha": "2d56baf6739a49655cbbe74b5083c0350511bbed",
+      "exit_code": 0,
+      "wall_time_ms": 3919,
+      "output": "base-browser-oracle.log"
+    },
+    {
+      "argv": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false",
+        "-p",
+        "."
+      ],
+      "cwd": "/tmp/rio-ky-eval/578-head",
+      "git_sha": "ebfc6f4dad3764086ab4be39ec48f7b83058b7dd",
+      "exit_code": 0,
+      "wall_time_ms": 3537,
+      "output": "head-default-oracle.log"
+    },
+    {
+      "argv": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "--pretty",
+        "false",
+        "-p",
+        "tsconfig.eval-browser.json"
+      ],
+      "cwd": "/tmp/rio-ky-eval/578-head",
+      "git_sha": "ebfc6f4dad3764086ab4be39ec48f7b83058b7dd",
+      "exit_code": 2,
+      "wall_time_ms": 4252,
+      "output": "head-browser-oracle.log"
+    }
+  ],
+  "oracle_evidence_reused": "../ky-578-oracle/",
+  "note": "Independent oracle commands are not Rio child argv evidence. Same introducing SHAs and frozen dependency installation as original run.",
+  "rio_version": "rio 0.1.0 x86_64-unknown-linux-gnu f6e4f87e4c65",
+  "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+  "profile_sha256": "8e6eea2525b73db9b76b3d77dec4e471f3a4ed9990cca0a083a9a53e4f8a94e4",
+  "resolved_profile_sha256": "6e080aeb0758c4aea760d8a46b54427c3695a6a458ec4c5ad71c4639e14dcc77",
+  "source_verification": {
+    "base": {
+      "sha": "2d56baf6739a49655cbbe74b5083c0350511bbed",
+      "matches_previous": true,
+      "independent_oracle_tree_tracked_diff_empty": true
+    },
+    "head": {
+      "sha": "ebfc6f4dad3764086ab4be39ec48f7b83058b7dd",
+      "matches_previous": true,
+      "independent_oracle_tree_tracked_diff_empty": true
+    }
+  },
+  "dependency_pins": {
+    "external_node_modules": "/tmp/rio-ky-eval/578-head/node_modules",
+    "manifest_sha256": "e2ab9f8685aff494bb4b47d5b5229e55b1cd071f9edf1d4e163d56cb77fe5ad0",
+    "package_lock_sha256": "c5ee19a4a35bab01a56ebeb50dd1c3688d64e2f0ea53e0a055bf1c6ff215ab9b",
+    "installed_lock_sha256": "07dc774822413dbf3965b1957b33825c7ec412cb7fb4310f2d00cfb7936a7394"
+  },
+  "dependency_hashes_rechecked": true,
+  "original_install_helper_bytes_match_current_worktree": true,
+  "runner_exit_code": 0,
+  "runner_argv": [
+    "python3",
+    "eval/runner.py",
+    "--repository",
+    "sindresorhus/ky",
+    "--pr",
+    "578",
+    "--base",
+    "2d56baf6739a49655cbbe74b5083c0350511bbed",
+    "--head",
+    "ebfc6f4dad3764086ab4be39ec48f7b83058b7dd",
+    "--languages",
+    "typescript",
+    "--rio",
+    "/home/ubuntu/rio/target/release/rio",
+    "--out",
+    "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-ky/eval/runs/ky-578-rerun2",
+    "--install-plan",
+    "eval/runs/ky-578/install-plan.json",
+    "--profile",
+    "eval/runs/ky-578/profile.yaml"
+  ],
+  "runner_environment_overrides": {
+    "PATH_prefix": "/tmp/rio-ky-eval/node-v18.20.8-linux-x64/bin",
+    "TMPDIR": "/dev/shm"
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "previous_attempt": "../ky-578/",
+  "findings_unchanged": true,
+  "risks_unchanged": true,
+  "footer_unchanged": true,
+  "status_unchanged": true,
+  "check_outcomes_and_dependency_states_unchanged": true,
+  "previous_environment": {
+    "dependency_state": "trusted",
+    "baseline_ran": true,
+    "baseline_classification_ran": false,
+    "eligible": false,
+    "reasons": [
+      "coverage . head: skipped disabled Disabled in the profile",
+      "lint . head: skipped disabled Disabled in the profile",
+      "lint .: head=skipped, dependency_state=unavailable, base=unavailable",
+      "typecheck .: head=passed, dependency_state=trusted, base=passed"
+    ],
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "typecheck .: dependencies_trusted: results use unverified dependencies",
+      "Graph references use syntax and text; no language server was used",
+      "Offline applies to Rio; tool and test processes were not network-isolated",
+      "dependencies_trusted: results were computed against unverified dependencies"
+    ]
+  },
+  "rerun2_environment": {
+    "dependency_state": "trusted",
+    "baseline_ran": true,
+    "baseline_classification_ran": true,
+    "eligible": true,
+    "reasons": [],
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "typecheck .: dependencies_trusted: results use unverified dependencies",
+      "Graph references use syntax and text; no language server was used",
+      "Offline applies to Rio; tool and test processes were not network-isolated",
+      "dependencies_trusted: results were computed against unverified dependencies"
+    ]
+  },
+  "finding_counts_by_state": {},
+  "finding_counts_by_verdict": {
+    "true-positive": 0,
+    "false-positive": 0,
+    "pre-existing-shown": 0,
+    "pre-existing-hidden": 0,
+    "environment-failure": 0,
+    "out-of-scope": 0
+  },
+  "resolved_profile_difference": "Only the # Source absolute path comment differs; input profile bytes and semantic resolved YAML are unchanged.",
+  "wall_times_seconds": {
+    "runner": 46.006005,
+    "rio_subprocess": 36.05
+  },
+  "baseline_note": "Passing, uncached trusted typecheck head/base pair. No nonempty diagnostic set is available to test state transitions."
+}

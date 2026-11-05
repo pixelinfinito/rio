@@ -1,0 +1,61 @@
+{
+  "checked_utc": "2026-11-05T10:57:19.469310+00:00",
+  "node_bin": "/tmp/rio-ky-eval/node-v22.20.0-linux-x64/bin",
+  "TMPDIR": "/dev/shm",
+  "install_plan_reused": "../ky-881/install-plan.json",
+  "profile_reused": "../ky-881/profile.yaml",
+  "commands": [],
+  "oracle_evidence_reused": "../ky-881-oracle/",
+  "note": "Independent oracle commands are not Rio child argv evidence. Same introducing SHAs and frozen dependency installation as original run.",
+  "rio_version": "rio 0.1.0 x86_64-unknown-linux-gnu f6e4f87e4c65",
+  "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+  "profile_sha256": "8e6eea2525b73db9b76b3d77dec4e471f3a4ed9990cca0a083a9a53e4f8a94e4",
+  "resolved_profile_sha256": "506e23bf6697e3859e75f0cf37c1c93d58eedca306bddc3fa6c890dfc4ed77c4",
+  "source_verification": {
+    "base": {
+      "sha": "0bda554d448c1b57c17a5c18114432c02465d467",
+      "matches_previous": true,
+      "independent_oracle_tree_tracked_diff_empty": true
+    },
+    "head": {
+      "sha": "db318a71b0ba7ff2c52896ac46682f7914c9a82b",
+      "matches_previous": true,
+      "independent_oracle_tree_tracked_diff_empty": true
+    }
+  },
+  "dependency_pins": {
+    "external_node_modules": "/tmp/rio-ky-eval/881-head/node_modules",
+    "manifest_sha256": "812841b8f534816dc43f238af92dd21269746d9e29123d4f45ccc99879e0d36b",
+    "package_lock_sha256": "99e178dfed884b537f392cdb46cacbc76d691cefedfa402e8b89f24d2ea725a0",
+    "installed_lock_sha256": "6a80f92ec7c52f0079447347d1440a0cf6e533dd7f538edd256b859a8134c233"
+  },
+  "dependency_hashes_rechecked": true,
+  "original_install_helper_bytes_match_current_worktree": true,
+  "runner_exit_code": 0,
+  "runner_argv": [
+    "python3",
+    "eval/runner.py",
+    "--repository",
+    "sindresorhus/ky",
+    "--pr",
+    "881",
+    "--base",
+    "0bda554d448c1b57c17a5c18114432c02465d467",
+    "--head",
+    "db318a71b0ba7ff2c52896ac46682f7914c9a82b",
+    "--languages",
+    "typescript",
+    "--rio",
+    "/home/ubuntu/rio/target/release/rio",
+    "--out",
+    "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-ky/eval/runs/ky-881-rerun2",
+    "--install-plan",
+    "eval/runs/ky-881/install-plan.json",
+    "--profile",
+    "eval/runs/ky-881/profile.yaml"
+  ],
+  "runner_environment_overrides": {
+    "PATH_prefix": "/tmp/rio-ky-eval/node-v22.20.0-linux-x64/bin",
+    "TMPDIR": "/dev/shm"
+  }
+}
