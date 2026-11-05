@@ -335,3 +335,88 @@ fn tsc_trace_and_global_errors_preserve_valid_diagnostics() {
     assert_eq!(parsed[0].rule_id, "typecheck/tsc/TS5112");
 }
 
+#[test]
+fn typescript_uses_ancestor_and_referenced_configs_for_ts5_and_ts6() {
+    let root = tempfile::tempdir().unwrap();
+    std::fs::create_dir_all(root.path().join("packages/a")).unwrap();
+    let mut tree: Tree = [
+        (
+            "tsconfig.json".into(),
+            entry(r#"{compilerOptions:{strict:true,target:'esnext'},include:['packages/**/*']}"#),
+        ),
+        (
+            "packages/a/index.ts".into(),
+            entry("export const n: number = 'bad'"),
+        ),
+    ]
+    .into();
+    for version in ["Version 5.9.3", "Version 6.0.3"] {
+        let tool = ResolvedTool {
+            name: "tsc".into(),
+            path: "tsc".into(),
+            version: version.into(),
+            version_hint: None,
+        };
+        let command = diagnostic_command(&tool, &tree, root.path(), "packages/a", &[]).unwrap();
+        assert_eq!(command.args.len(), 5);
+        assert_eq!(command.args[3], "-p");
+        assert!(Path::new(&command.args[4]).ends_with("tsconfig.json"));
+        assert!(
+            !command
+                .args
+                .iter()
+                .any(|arg| arg.to_string_lossy().ends_with("index.ts"))
+        );
+    }
+    tree.insert(
+        "tsconfig.json".into(),
+        entry(r#"{files:[],references:[{path:'./packages/a/tsconfig.build.json'}]}"#),
+    );
+    tree.insert(
+        "packages/a/tsconfig.build.json".into(),
+        entry(r#"{extends:'../../tsconfig.base.json',include:['*.ts']}"#),
+    );
+    assert_eq!(
+        typescript_config(&tree, "packages/a"),
+        Some("packages/a/tsconfig.build.json".into())
+    );
+}
+
+#[test]
+fn typescript_file_fallback_writes_disposable_config_with_inherited_options() {
+    let root = tempfile::tempdir().unwrap();
+    std::fs::create_dir_all(root.path().join("pkg")).unwrap();
+    let mut tree: Tree = [("pkg/index.ts".into(), entry("const x = 1"))].into();
+    let tool = ResolvedTool {
+        name: "tsc".into(),
+        path: "tsc".into(),
+        version: "Version 6.0.3".into(),
+        version_hint: None,
+    };
+    for inherited in [false, true] {
+        if inherited {
+            tree.insert(
+                "tsconfig.json".into(),
+                entry("{files:[],compilerOptions:{strict:true}}"),
+            );
+        }
+        let command = diagnostic_command(&tool, &tree, root.path(), "pkg", &[]).unwrap();
+        let path = Path::new(&command.args[4]);
+        assert!(
+            path.file_name()
+                .unwrap()
+                .to_string_lossy()
+                .starts_with(".rio-tsconfig-")
+        );
+        let value: serde_json::Value =
+            serde_json::from_slice(&std::fs::read(path).unwrap()).unwrap();
+        assert_eq!(value["files"].as_array().unwrap().len(), 1);
+        assert_eq!(value.get("extends").is_some(), inherited);
+        assert!(
+            value["files"][0]
+                .as_str()
+                .unwrap()
+                .ends_with("pkg/index.ts")
+        );
+    }
+}
