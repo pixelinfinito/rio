@@ -2,7 +2,7 @@
 
 A checked box records actual evidence. Source code or a workflow definition alone does not establish that a release ran successfully.
 
-- [ ] CI passes on the first pushed implementation commit, including a negative check with Ruff removed under `RIO_REQUIRE_TOOLS=1`.
+- [x] Corrected CI passes, including a negative check with Ruff removed under `RIO_REQUIRE_TOOLS=1`; the first-push failures remain recorded below (user-accepted exception, 2026-11-05).
 - [x] Unix installer checks pass on Ubuntu and macOS; PowerShell checks pass on Windows with 5.1 and 7.
 - [x] Cold/warm benchmark has ten runs of each, p50/p95 and per-check breakdown, with cold p50 at most four minutes or a linked performance issue.
 - [x] Ten real PRs across at least three repositories and both languages have complete independent automated verdicts and a go/no-go conclusion in `docs/evaluation/v0.1.md`.
@@ -47,7 +47,7 @@ Local validation completed during implementation is recorded in the OpenSpec tas
 
 - Commit `d07dfa8f337333348db6622044b4f906c590625c`: [CI run 41912745695](https://github.com/mctlisboa/rio-v01-validation-20261104/actions/runs/41912745695) passed Ubuntu 24.04 x86_64, macOS 26 ARM64 and Windows 2025 x86_64. Both Unix jobs passed fmt, Clippy, the full workspace suite with required tools, fixture suites, the missing-Ruff negative check, ShellCheck, ten installer tests, nine release lifecycle tests, the automated acceptance completeness check and profile-reference freshness. Windows passed supervision, CLI build, ScriptAnalyzer, and installer checks in PowerShell 7 and 5.1.
 - The macOS installer test created and mounted a separate HFS+ disk image and verified successful installation there. Windows used a temporary VHD; Linux verified rollback on a separate noexec filesystem. Task 12.3 is complete.
-- Task 10.3 remains unchecked because the historical first implementation push failed. Corrected CI is green; treating that as acceptance of the first-push requirement awaits the user's decision. The original failures remain recorded above.
+- On 2026-11-05, the user accepted the green rerun for task 10.3 while retaining the first-push failure record. This explicitly replaces the original requirement for a green first push. [Final implementation/evidence CI 41918738887](https://github.com/mctlisboa/rio-v01-validation-20261104/actions/runs/41918738887), commit `ee2a22fb1cccd60dcebf28de8512cfec5d4c8f6f`, passed Ubuntu, macOS and Windows. Task 10.3 is complete under that accepted exception; the original Windows and Ubuntu failures remain recorded above.
 
 ## Actual forced-upload failure
 
