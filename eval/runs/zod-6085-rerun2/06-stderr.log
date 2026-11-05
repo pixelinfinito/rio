@@ -1,0 +1,15 @@
+Warning: you are leaving 82 commits behind, not connected to
+any of your branches:
+
+  60496a09 docs(v4): correct the union throw-parity comment
+  cde7e303 test(v4): identify a thrown error by its class, not its name
+  2dbe4144 test(v4): make assertUnionSound observe a throwing schema
+  f2cf3e00 fix(v4): throw for a thenable predicate instead of rejecting
+ ... and 78 more.
+
+If you want to keep them by creating a new branch, this may be a good time
+to do so with:
+
+ git branch <new-branch-name> 60496a09
+
+HEAD is now at 9f0a3d81 fix(core): restore defineLazy semantics lost in the internals move (#6429)

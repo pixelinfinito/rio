@@ -1,0 +1,1598 @@
+[
+  {
+    "finding_id": "034ba9bebadec8dfecdc1eae53168590bd4868a51aec4bc5916051e7e46aeb94",
+    "rule_id": "typecheck/tsc/TS6133",
+    "path": "packages/zod/src/v4/classic/tests/assignability.test.ts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-zod.log",
+        "line": 5
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 26
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-zod.log",
+        "line": 5
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 42
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "672791afbb3480ee3c8297ae08b6cd6c95943a7f57f62942ed421551ab1210b2"
+  },
+  {
+    "finding_id": "045fc3f5a5717d84457bc42948c0d38a2568e1c44b7239ad19fec76a5f483d4a",
+    "rule_id": "typecheck/tsc/TS7016",
+    "path": "packages/resolution/vitest.config.ts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 17
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-resolution.log",
+        "line": 28
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-resolution.log",
+        "line": 28
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 33
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "09003f460628ab45c9aa68ee1ee8af157b2bfcd9ed6179d7da24aaf01934e58e"
+  },
+  {
+    "finding_id": "0512d38c397f9a7ac2bd92325b848e3dc36a542a91501293c6d6ec4fd4f45da7",
+    "rule_id": "typecheck/tsc/TS6133",
+    "path": "packages/zod/src/v4/classic/tests/assignability.test.ts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-zod.log",
+        "line": 7
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 28
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-zod.log",
+        "line": 7
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 44
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "fa82b3e40fa5a0b0d3ab3cd49e8e9d9552d8736427b2d4b760e8f916c7b26c24"
+  },
+  {
+    "finding_id": "06953f3fbba2aef7c9889906082d497d94e5a0d8ee4d1af57538ca737c140ebd",
+    "rule_id": "typecheck/tsc/TS2307",
+    "path": "packages/resolution/src/index.mts",
+    "verdict": "environment-failure",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-resolution.log",
+        "line": 10
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-resolution.log",
+        "line": 11
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-resolution.log",
+        "line": 12
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-resolution.log",
+        "line": 10
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-resolution.log",
+        "line": 11
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-resolution.log",
+        "line": 12
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "7a77d28c55c564db4ae9cb7b9f803667e2ee4585b644c6acdd172451f5fd5c9c"
+  },
+  {
+    "finding_id": "151de4fadf3f80773a7ea49e695ae41ce86ec53ee052554269ef227c140207ae",
+    "rule_id": "typecheck/tsc/TS1479",
+    "path": "packages/resolution/src/index.cts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 16
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 32
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "67c35682f5f8b2f548a1c2e995c76941f93578391198822c2865f4e4831a78f0"
+  },
+  {
+    "finding_id": "1757c2281fc7cf018d2d2e72b5711caff1dcd539eb2b51966b396344c8683f85",
+    "rule_id": "typecheck/tsc/TS6196",
+    "path": "packages/zod/src/v3/tests/nativeEnum.test.ts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-zod.log",
+        "line": 3
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 24
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-zod.log",
+        "line": 3
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 40
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "e01a7d447ba16e6046d89db13db1cc377f4d4dc3fbdf33690c90e88cfdbbc5c4"
+  },
+  {
+    "finding_id": "1f21e23f8328641af8ed9ef11794c7470af1a3356fee2cb0c6f1c197dc202203",
+    "rule_id": "typecheck/tsc/TS2307",
+    "path": "packages/integration/fixtures/internal-types/cjs-test.cts",
+    "verdict": "environment-failure",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-integration.log",
+        "line": 3
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-integration.log",
+        "line": 3
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "7a77d28c55c564db4ae9cb7b9f803667e2ee4585b644c6acdd172451f5fd5c9c"
+  },
+  {
+    "finding_id": "219898f89a7708de260002d9873cb36cef05a82df1d55f7dcf3baf0d4a22e791",
+    "rule_id": "typecheck/tsc/TS7006",
+    "path": "packages/integration/fixtures/internal-types/index.ts",
+    "verdict": "environment-failure",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-integration.log",
+        "line": 7
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-integration.log",
+        "line": 8
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-integration.log",
+        "line": 7
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-integration.log",
+        "line": 8
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "236eb8f6442fd8c1fbe0fe5b33c95a891013be6548c06b2d4736229ffb1ad4c5"
+  },
+  {
+    "finding_id": "224c5ab03b1ab000b991ad125c0525db68bf649c7d33fbe221864b0b10d98c8c",
+    "rule_id": "typecheck/tsc/TS2307",
+    "path": "packages/resolution/src/index.ts",
+    "verdict": "environment-failure",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-resolution.log",
+        "line": 22
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-resolution.log",
+        "line": 22
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "e7cb4cb885da5f4bf2b423414145b03a131082dd41213f8a03c4c7593c312e62"
+  },
+  {
+    "finding_id": "243b09670d05a3752d4ad895e7c2e0a9bd21377b239ef5708941b45e5f3ed8ea",
+    "rule_id": "typecheck/tsc/TS2307",
+    "path": "packages/resolution/src/index.cts",
+    "verdict": "environment-failure",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-resolution.log",
+        "line": 5
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-resolution.log",
+        "line": 5
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "ddac122f4f43c30226445703be1fc81280c2992e3700a3a66a731cd74e9f7913"
+  },
+  {
+    "finding_id": "256fddabddd1bb52ff96f4656d0ad66f590c3fd9752d036a020d9476bc0290b2",
+    "rule_id": "typecheck/tsc/TS6196",
+    "path": "packages/zod/src/v3/tests/intersection.test.ts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-zod.log",
+        "line": 1
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 22
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-zod.log",
+        "line": 1
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 38
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "69c0f2e7ead2ad35c8a91609161be6b75d242f85624d8d3db0f866370352dc0b"
+  },
+  {
+    "finding_id": "26229ff83ee01a66a3b8f10808a98137d83335586e468d6234211e8394c9a75f",
+    "rule_id": "typecheck/tsc/TS1479",
+    "path": "packages/resolution/src/index.cts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 8
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 9
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 10
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 24
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 25
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 26
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "53f72682b36c8961677f69fec752d1eca1396b28f00da2b34594a75da11512dd"
+  },
+  {
+    "finding_id": "285dd3c2266e2e81690cc88aacb70f40ad91f5df93a680df765e225828568913",
+    "rule_id": "typecheck/tsc/TS2307",
+    "path": "packages/integration/fixtures/internal-types/index.ts",
+    "verdict": "environment-failure",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-integration.log",
+        "line": 6
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-integration.log",
+        "line": 6
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "7a77d28c55c564db4ae9cb7b9f803667e2ee4585b644c6acdd172451f5fd5c9c"
+  },
+  {
+    "finding_id": "2a0528eb480250cb5cf11a86f4b297b421f57d2c928d2dec48d59183e750bb43",
+    "rule_id": "typecheck/tsc/TS2307",
+    "path": "packages/resolution/src/index.mts",
+    "verdict": "environment-failure",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-resolution.log",
+        "line": 16
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-resolution.log",
+        "line": 16
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "b8337da45e0955502c00f2edb97731358bfea458bcdadd129a44cc2d4dbd4c08"
+  },
+  {
+    "finding_id": "2e4d56fdef3186234e841a535fef434491de2b2f5b5e930bb22c878072e0064d",
+    "rule_id": "typecheck/tsc/TS1479",
+    "path": "packages/resolution/src/index.cts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 11
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 27
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "1381d8ddf702491c5b38b4df3e8a1b225249edc599c27f81b5774772672a652c"
+  },
+  {
+    "finding_id": "34eb1f9954e0048cc5696fd22897c29dc9d0a9930ca22efc81462e2f4720bde2",
+    "rule_id": "typecheck/tsc/TS2307",
+    "path": "packages/resolution/src/index.mts",
+    "verdict": "environment-failure",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-resolution.log",
+        "line": 17
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-resolution.log",
+        "line": 17
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "d47c32d9631e59d91ebd16800e1441a0199b3d8e9486b84f5badfb8f22071a74"
+  },
+  {
+    "finding_id": "35b705babb83baa6e474a95715dcd82f638f2a75fc4e0006209711ddafa4a2de",
+    "rule_id": "typecheck/tsc/TS2307",
+    "path": "packages/resolution/src/index.ts",
+    "verdict": "environment-failure",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-resolution.log",
+        "line": 19
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-resolution.log",
+        "line": 20
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-resolution.log",
+        "line": 21
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-resolution.log",
+        "line": 19
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-resolution.log",
+        "line": 20
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-resolution.log",
+        "line": 21
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "7a77d28c55c564db4ae9cb7b9f803667e2ee4585b644c6acdd172451f5fd5c9c"
+  },
+  {
+    "finding_id": "454e26523ab03910c77d5cb4f23f57788acb0f8dcfeafa9baa8248cde150f968",
+    "rule_id": "typecheck/tsc/TS2412",
+    "path": "scripts/triage-signal.ts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 37
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 53
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "a6c390df6190dfb7ecfd172a88a1c77b2a5a312cbfa9ddbdccde1d8be75a468f"
+  },
+  {
+    "finding_id": "45fd9b99f62099c1e5a571afd08967932ad31ae1c8ce135734886658cf258980",
+    "rule_id": "typecheck/tsc/TS1479",
+    "path": "packages/resolution/src/index.cts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 12
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 28
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "74ffcd4c2683f9348304b5daa08cfb6e165a39bc1c0bf9fe4ef3935cd6a04a35"
+  },
+  {
+    "finding_id": "52076a1d43d8f6d0f02d213b8f82f2267dacca82e90f32acb9e139358abe1b35",
+    "rule_id": "typecheck/tsc/TS2349",
+    "path": "packages/treeshake/locale-treeshake.test.ts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 20
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 36
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "0b5f0257c9f8a0bf9410878fa4899c32d5fefae90b853a9137f8b2175d08dc8f"
+  },
+  {
+    "finding_id": "5435b332fbbfeff148a95acdf49752cfbc851db18065116a982ac60c10cbf2e8",
+    "rule_id": "typecheck/tsc/TS2307",
+    "path": "packages/resolution/src/index.ts",
+    "verdict": "environment-failure",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-resolution.log",
+        "line": 25
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-resolution.log",
+        "line": 25
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "b8337da45e0955502c00f2edb97731358bfea458bcdadd129a44cc2d4dbd4c08"
+  },
+  {
+    "finding_id": "56357190303cc4a1945aa5385668fa0e4314c03e8e21dd3a743669b2810f6b7c",
+    "rule_id": "typecheck/tsc/TS6133",
+    "path": "packages/zod/src/v4/classic/tests/preprocess-types.test.ts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-zod.log",
+        "line": 13
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 34
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-zod.log",
+        "line": 13
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 50
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "264da6851740eb58e0066c14a955358c7424f077ffc8319a59efd1965b9014c9"
+  },
+  {
+    "finding_id": "592fff9986d42f4d6c8ef6b8c9fcd84e8187d6942a9996fc73f35ea3beecaed1",
+    "rule_id": "lint/biome/correctness/noUnusedVariables",
+    "path": "scripts/compile-fuzz.ts",
+    "base_oracle_matches": [],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/head-05.log",
+        "line": 1
+      }
+    ],
+    "verdict": "true-positive",
+    "raw_state": "unclassified",
+    "current_message_sha256": "84230c49c3f0f3fcec698a70da0cebf2901958c8abcd0f026919d5b18eab4911"
+  },
+  {
+    "finding_id": "5e1598a8b953de387dbab20ad2826f3bc2dda61fbb14e4b678b9bf2221ea7c21",
+    "rule_id": "typecheck/tsc/TS2307",
+    "path": "packages/resolution/src/index.mts",
+    "verdict": "environment-failure",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-resolution.log",
+        "line": 18
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-resolution.log",
+        "line": 18
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "da672f8cd97236652607d21ad115488ad2987059b468628f5d9dedfd7692c23f"
+  },
+  {
+    "finding_id": "6460bfa091439696628a9f433827531d6f806aa49ff779272dc02f47be801e5c",
+    "rule_id": "typecheck/tsc/TS1479",
+    "path": "packages/resolution/src/index.cts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 14
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 30
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "781d5d7fddede41398b6bcd7b7de5c6e021ab8b087a84b4329df789c99d24531"
+  },
+  {
+    "finding_id": "67c341e462a628fd2b4f1f0429fdef0c904666c638034d0f3790a9dfe2189c14",
+    "rule_id": "typecheck/tsc/TS6196",
+    "path": "packages/zod/src/v4/classic/tests/enum.test.ts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-zod.log",
+        "line": 11
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 32
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-zod.log",
+        "line": 11
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 48
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "311dc83f5d96c2a430a378cb7ee74e3744e2acb6ae796a4f573e90a1867826c2"
+  },
+  {
+    "finding_id": "699c0e2120d51bdec0499b6edb31dd975e7c4350dc562fcc76eb81d5fcb784aa",
+    "rule_id": "typecheck/tsc/TS6133",
+    "path": "packages/bench/safeparse.ts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 2
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 18
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "8de1338d4f9e98794ea753a8b2f595ab8a3b7025d8fbd0f30de844a35ea11be8"
+  },
+  {
+    "finding_id": "6c5320df1d927afa0ee36410314b44f8063c941dca9a7ebaf5c0414e24a57571",
+    "rule_id": "typecheck/tsc/TS2349",
+    "path": "packages/bench/compile-tuple.ts",
+    "verdict": "true-positive",
+    "base_oracle_matches": [],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 3
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 5
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 7
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 9
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 13
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 15
+      }
+    ],
+    "raw_state": "unclassified",
+    "current_message_sha256": "9f7eb9961e7a692aa30d3f216a5e653199b7e3492be4ccbd130fd61576e2ba73"
+  },
+  {
+    "finding_id": "70f963b92c76804d2b5eaf9a6a123093cf859fe9f463fb96c927a04f70e0f341",
+    "rule_id": "typecheck/tsc/TS2307",
+    "path": "packages/resolution/src/index.cts",
+    "verdict": "environment-failure",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-resolution.log",
+        "line": 6
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-resolution.log",
+        "line": 6
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "179b2f685a358782c255f9f4cd0fab7f1bafbc97e72b2574da713abde6def43c"
+  },
+  {
+    "finding_id": "72f77d40f485bfde39b4009b1ca92349f7621c264dbf06595dc29539dc263cdf",
+    "rule_id": "typecheck/tsc/TS6196",
+    "path": "packages/zod/src/v3/tests/nativeEnum.test.ts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-zod.log",
+        "line": 2
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 23
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-zod.log",
+        "line": 2
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 39
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "4ee2f84285736dfe79c89c73f74991415565bb161aed768a98b3215203a27fca"
+  },
+  {
+    "finding_id": "73199bbc15e20eb760c048eb790ea0cb37ec0c91859e860be0dd88625ccae424",
+    "rule_id": "typecheck/tsc/TS2307",
+    "path": "packages/integration/fixtures/ai-sdk/index.ts",
+    "verdict": "environment-failure",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-integration.log",
+        "line": 1
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-integration.log",
+        "line": 1
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "7a77d28c55c564db4ae9cb7b9f803667e2ee4585b644c6acdd172451f5fd5c9c"
+  },
+  {
+    "finding_id": "7a11f2e398955da49ffb26c5b308845984db6fa7001e7e7430432341b57c2861",
+    "rule_id": "typecheck/tsc/TS2349",
+    "path": "packages/treeshake/default-locale.test.ts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 18
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 34
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "0b5f0257c9f8a0bf9410878fa4899c32d5fefae90b853a9137f8b2175d08dc8f"
+  },
+  {
+    "finding_id": "7fd4d42818f12b4eca74614ac7ad1fd61688407474d442b743a440cfbf56a26b",
+    "rule_id": "typecheck/tsc/TS6196",
+    "path": "packages/zod/src/v4/mini/tests/assignability.test.ts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-zod.log",
+        "line": 15
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 36
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-zod.log",
+        "line": 15
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 52
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "1bfae7e3a4a70da63f6c25278460c8543ca7cd344f45233cbb6dfb1eeff96b97"
+  },
+  {
+    "finding_id": "92d1ab1c8d7b3161d7fd213f726903e12a428ffe017b003444968e1be41521ec",
+    "rule_id": "typecheck/tsc/TS6133",
+    "path": "packages/zod/src/v4/classic/tests/assignability.test.ts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-zod.log",
+        "line": 6
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 27
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-zod.log",
+        "line": 6
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 43
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "23f26fc4bd3a1c89071bac3c76256b1d850c3ad2327957f69e646bc508a13fb7"
+  },
+  {
+    "finding_id": "93298bec4bd1703d3907c6a11293a1cb6bdd0fb0318d4319c32f4ca52b404837",
+    "rule_id": "typecheck/tsc/TS6196",
+    "path": "packages/zod/src/v4/classic/tests/assignability.test.ts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-zod.log",
+        "line": 9
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 30
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-zod.log",
+        "line": 9
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 46
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "1bfae7e3a4a70da63f6c25278460c8543ca7cd344f45233cbb6dfb1eeff96b97"
+  },
+  {
+    "finding_id": "965da11f56129190b55e950d5968ef74fc30cefa41d7dc79b16b34b834ffd60b",
+    "rule_id": "typecheck/tsc/TS2307",
+    "path": "packages/resolution/src/index.cts",
+    "verdict": "environment-failure",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-resolution.log",
+        "line": 1
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-resolution.log",
+        "line": 2
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-resolution.log",
+        "line": 3
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-resolution.log",
+        "line": 1
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-resolution.log",
+        "line": 2
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-resolution.log",
+        "line": 3
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "7a77d28c55c564db4ae9cb7b9f803667e2ee4585b644c6acdd172451f5fd5c9c"
+  },
+  {
+    "finding_id": "976d87f99006663c1a139e92e96e5b0cff2ee2729e1e92db5b3932b12dc38ade",
+    "rule_id": "typecheck/tsc/TS2307",
+    "path": "packages/resolution/src/index.cts",
+    "verdict": "environment-failure",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 15
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-resolution.log",
+        "line": 8
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-resolution.log",
+        "line": 8
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 31
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "f6c701b85d2d4cf8f9068c713f479eab1de765fb8778ed209f077381b1d52b43"
+  },
+  {
+    "finding_id": "98e7bead498a71fbc361f462ec2ff2bfa096ea87adf65f918cdbebe30bb9a015",
+    "rule_id": "typecheck/tsc/TS6133",
+    "path": "packages/zod/src/v4/classic/tests/preprocess-types.test.ts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-zod.log",
+        "line": 14
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 35
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-zod.log",
+        "line": 14
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 51
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "2e7736d95f206e6ce11778386dad3e56fb5075560591de612c7b33d724ad7dd1"
+  },
+  {
+    "finding_id": "9f56030f19a55a830024f57e582d339e9657cc5eee5ae0d314210f59e474d71e",
+    "rule_id": "typecheck/tsc/TS2307",
+    "path": "packages/resolution/src/index.ts",
+    "verdict": "environment-failure",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-resolution.log",
+        "line": 24
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-resolution.log",
+        "line": 24
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "179b2f685a358782c255f9f4cd0fab7f1bafbc97e72b2574da713abde6def43c"
+  },
+  {
+    "finding_id": "a3e37aa5f3f22a8ad65d225012046f9addcd56640f9fc2d99c42b46784f9e246",
+    "rule_id": "typecheck/tsc/TS1479",
+    "path": "packages/integration/fixtures/internal-types/cjs-test.cts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 3
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 19
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "53f72682b36c8961677f69fec752d1eca1396b28f00da2b34594a75da11512dd"
+  },
+  {
+    "finding_id": "aaa68cd784c22ef381a0c179b9ee498e0292b47c7c6363c125881025e27a853d",
+    "rule_id": "typecheck/tsc/TS2307",
+    "path": "packages/resolution/src/index.cts",
+    "verdict": "environment-failure",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-resolution.log",
+        "line": 4
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-resolution.log",
+        "line": 4
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "e7cb4cb885da5f4bf2b423414145b03a131082dd41213f8a03c4c7593c312e62"
+  },
+  {
+    "finding_id": "b1024b31b3282122318169c54b8c0be471e5875485bf55221914987e2e07f9ed",
+    "rule_id": "typecheck/tsc/TS6133",
+    "path": "packages/integration/fixtures/internal-types/index.ts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 6
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 22
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "2f523ca163cf507a156aebbd5aeb3b7ca048d2bada80ebc64dba42d71e669dca"
+  },
+  {
+    "finding_id": "b6b83f6da96e5751a8b5109efc011111fab2ea0e8642557b4a7bc4502924c44c",
+    "rule_id": "typecheck/tsc/TS6196",
+    "path": "packages/zod/src/v4/classic/tests/lazy.test.ts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-zod.log",
+        "line": 12
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 33
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-zod.log",
+        "line": 12
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 49
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "8f25efccdcd8ea1f6040238d2c4c359adbfa6096bf88b36977133c236a1efba0"
+  },
+  {
+    "finding_id": "b8aa1bdea476f0da82a46623a072c55bee35e6ecdd5dbd5b3ee389179ddfd1c0",
+    "rule_id": "typecheck/tsc/TS2307",
+    "path": "packages/resolution/src/index.cts",
+    "verdict": "environment-failure",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-resolution.log",
+        "line": 7
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-resolution.log",
+        "line": 7
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "b8337da45e0955502c00f2edb97731358bfea458bcdadd129a44cc2d4dbd4c08"
+  },
+  {
+    "finding_id": "b952a59666651eab02e74dd17bdc0b219e78b667918bf6a6f87d9a72b1a496b0",
+    "rule_id": "typecheck/tsc/TS2349",
+    "path": "packages/bench/compile-tuple.ts",
+    "verdict": "true-positive",
+    "base_oracle_matches": [],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 3
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 5
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 7
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 9
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 13
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 15
+      }
+    ],
+    "raw_state": "unclassified",
+    "current_message_sha256": "9f7eb9961e7a692aa30d3f216a5e653199b7e3492be4ccbd130fd61576e2ba73"
+  },
+  {
+    "finding_id": "b9da1706283a71a8467bb137e01cfbb51882aaacca89b6adbfce4a504110cd81",
+    "rule_id": "typecheck/tsc/TS6133",
+    "path": "packages/integration/fixtures/internal-types/index.ts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 5
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 21
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "7cb73db74886b5b5209d5e163a53895fd62f97f40ac8efe5bee3d83b73bed37a"
+  },
+  {
+    "finding_id": "be8a630817cb400bb4bfface7da065b230849c3457fc0f521a3d82ac766c2ceb",
+    "rule_id": "typecheck/tsc/TS6133",
+    "path": "packages/bench/key-iteration.ts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 1
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 17
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "006d4272b75fc8bd6f77ee276554b9b0cc665e3aa0534be5f1b228d9c5c82d46"
+  },
+  {
+    "finding_id": "bfe54568f684c715c1d98e1af403796896aa4a773552246370fc257f648e4b96",
+    "rule_id": "typecheck/tsc/TS6133",
+    "path": "packages/integration/fixtures/internal-types/index.ts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 7
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 23
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "5a7cf52f414696e0c994e97c17ad1c9af13ab604268f7279dfd0dec7d6db1ab4"
+  },
+  {
+    "finding_id": "c93752c7f0e523cd5af4704f15977e17e436ec3d4f14ff7fa4ea0510ffbb556f",
+    "rule_id": "typecheck/tsc/TS6133",
+    "path": "packages/zod/src/v4/classic/tests/assignability.test.ts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-zod.log",
+        "line": 8
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 29
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-zod.log",
+        "line": 8
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 45
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "9e70e4612d1badb60c4859412679a97dbced37e5cc1fbec1016c991c21838b22"
+  },
+  {
+    "finding_id": "cbf2d71284871493aa8c5fe20083b2957fb890d97752f0a43912b8e5fc7c6105",
+    "rule_id": "typecheck/tsc/TS2307",
+    "path": "packages/resolution/src/index.ts",
+    "verdict": "environment-failure",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-resolution.log",
+        "line": 27
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-resolution.log",
+        "line": 27
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "da672f8cd97236652607d21ad115488ad2987059b468628f5d9dedfd7692c23f"
+  },
+  {
+    "finding_id": "cede339a11f16211635cc7e0a6440939a4b8f699bf19e532f8eef9831a5b0cc7",
+    "rule_id": "typecheck/tsc/TS2349",
+    "path": "packages/bench/compile-tuple.ts",
+    "verdict": "true-positive",
+    "base_oracle_matches": [],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 3
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 5
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 7
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 9
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 13
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 15
+      }
+    ],
+    "raw_state": "unclassified",
+    "current_message_sha256": "5ea965f5b6b200d92c3db00c838e3dbec0f7711931b096328802c349f9e5d241"
+  },
+  {
+    "finding_id": "d1120b2a31084874a6bbe4f0b982050a91334a908667e9642d978a05f3b569de",
+    "rule_id": "typecheck/tsc/TS2349",
+    "path": "packages/bench/compile-tuple.ts",
+    "verdict": "true-positive",
+    "base_oracle_matches": [],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 3
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 5
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 7
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 9
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 13
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 15
+      }
+    ],
+    "raw_state": "unclassified",
+    "current_message_sha256": "5ea965f5b6b200d92c3db00c838e3dbec0f7711931b096328802c349f9e5d241"
+  },
+  {
+    "finding_id": "d1ffbf21588804667448e9910403800bb297e9c4457177764bd9591aae4b17ef",
+    "rule_id": "typecheck/tsc/TS2307",
+    "path": "packages/resolution/src/index.mts",
+    "verdict": "environment-failure",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-resolution.log",
+        "line": 15
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-resolution.log",
+        "line": 15
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "179b2f685a358782c255f9f4cd0fab7f1bafbc97e72b2574da713abde6def43c"
+  },
+  {
+    "finding_id": "d7fa1794f35cff1fad54a5480b3a9218c44cd3c4d7e11a2356372c003106e1b2",
+    "rule_id": "typecheck/tsc/TS2307",
+    "path": "packages/integration/fixtures/drizzle-zod/index.ts",
+    "verdict": "environment-failure",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-integration.log",
+        "line": 2
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-integration.log",
+        "line": 2
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "7a77d28c55c564db4ae9cb7b9f803667e2ee4585b644c6acdd172451f5fd5c9c"
+  },
+  {
+    "finding_id": "dffab234c36273326bcbe43b5f6dab9021338eedbf2e92af747579f7a4c7ccbc",
+    "rule_id": "typecheck/tsc/TS2339",
+    "path": "packages/bench/compile-tuple.ts",
+    "verdict": "true-positive",
+    "base_oracle_matches": [],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 11
+      }
+    ],
+    "raw_state": "unclassified",
+    "current_message_sha256": "2fc8096b87ad0cc33a2468653ce4d45825c37e1f1beae37a7a7f7cd819c53ab0"
+  },
+  {
+    "finding_id": "e1a0aac6402054e2f1538d1c3e98f34b02a2337ee08dc916ca3d242295732d65",
+    "rule_id": "typecheck/tsc/TS2339",
+    "path": "packages/bench/compile-tuple.ts",
+    "verdict": "true-positive",
+    "base_oracle_matches": [],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 12
+      }
+    ],
+    "raw_state": "unclassified",
+    "current_message_sha256": "f076f04c9964bd8bce225b658e085bd755e840d73fc00f1e9ba086387a09a49e"
+  },
+  {
+    "finding_id": "e2964f42832383e39c9453de581ef4865ad6c8a5c58aa8db27ad194e8d44dbb8",
+    "rule_id": "typecheck/tsc/TS1479",
+    "path": "packages/resolution/src/index.cts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 13
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 29
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "9aee42df5d4ca57f9d3372016d3fdb3b7b41ca511cba36b802e2a8d0adc574e3"
+  },
+  {
+    "finding_id": "e6aefef7f9baf2ed91c34c655757b37506e51b8f70cff3339a25e56bee4ec76b",
+    "rule_id": "typecheck/tsc/TS6196",
+    "path": "packages/zod/src/v4/classic/tests/enum.test.ts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-zod.log",
+        "line": 10
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 31
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-zod.log",
+        "line": 10
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 47
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "049c19e38d6b40af07abf8d0e8b1085f375436ff30086d86e0503f11f0497f87"
+  },
+  {
+    "finding_id": "eb9555fd7d859266dac780d3aac29bfaca4a12e3043f1a1055804e2371b02775",
+    "rule_id": "typecheck/tsc/TS2307",
+    "path": "packages/resolution/src/index.cts",
+    "verdict": "environment-failure",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-resolution.log",
+        "line": 9
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-resolution.log",
+        "line": 9
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "da672f8cd97236652607d21ad115488ad2987059b468628f5d9dedfd7692c23f"
+  },
+  {
+    "finding_id": "ee727930520b5297cf0d1589eb1da7b48281cc79e70feac2fe0092c830f8d311",
+    "rule_id": "typecheck/tsc/TS2345",
+    "path": "packages/bench/compile-matrix.ts",
+    "verdict": "true-positive",
+    "base_oracle_matches": [],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 1
+      }
+    ],
+    "raw_state": "unclassified",
+    "current_message_sha256": "dbae8b48605abad71cfafaa5d259af27c2e2c8766b91246af7792ac5906ef6b6"
+  },
+  {
+    "finding_id": "f1346d02e7b3a7e67dd84729e7e3da0187df691ad06075a9f76109ea76a7d78f",
+    "rule_id": "typecheck/tsc/TS6133",
+    "path": "packages/integration/fixtures/internal-types/index.ts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 4
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 20
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "4469b209ffd7469b1223c8b2f60ac08123aa3b29d74c8e6f7d34f59b32da62f7"
+  },
+  {
+    "finding_id": "f1ebc60629a47287a0152960b7474f3d5be4e2b7e0e864766586c949a96dcb2b",
+    "rule_id": "typecheck/tsc/TS2307",
+    "path": "packages/resolution/src/index.ts",
+    "verdict": "environment-failure",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-resolution.log",
+        "line": 26
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-resolution.log",
+        "line": 26
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "d47c32d9631e59d91ebd16800e1441a0199b3d8e9486b84f5badfb8f22071a74"
+  },
+  {
+    "finding_id": "f4e92af952aadd903463bb1c1a6db720bda720ede118fdc615031e0c43ae94c3",
+    "rule_id": "typecheck/tsc/TS2307",
+    "path": "packages/resolution/src/index.mts",
+    "verdict": "environment-failure",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-resolution.log",
+        "line": 13
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-resolution.log",
+        "line": 13
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "e7cb4cb885da5f4bf2b423414145b03a131082dd41213f8a03c4c7593c312e62"
+  },
+  {
+    "finding_id": "f56b2867266ccc2d68d7d61a5ee5a99f53f0fadfaeaa359b1a1f3de06e6de55c",
+    "rule_id": "typecheck/tsc/TS6133",
+    "path": "packages/zod/src/v3/tests/object.test.ts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-zod.log",
+        "line": 4
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-base-root.log",
+        "line": 25
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-zod.log",
+        "line": 4
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-root.log",
+        "line": 41
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "e98820d70a91c54747e4bf23253d86c73845695f0b1b1073894179ccb70c7428"
+  },
+  {
+    "finding_id": "f84ba8c2dbb2a196cc2851ef03cc422cb09c705594351702a048639929605dac",
+    "rule_id": "typecheck/tsc/TS2307",
+    "path": "packages/resolution/src/index.mts",
+    "verdict": "environment-failure",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-resolution.log",
+        "line": 14
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-resolution.log",
+        "line": 14
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "ddac122f4f43c30226445703be1fc81280c2992e3700a3a66a731cd74e9f7913"
+  },
+  {
+    "finding_id": "fe97a1d5f223bb2ef1de7b47e1a65d9749a1e19759a25108b9e0f5ac5fce39bd",
+    "rule_id": "typecheck/tsc/TS7006",
+    "path": "packages/integration/fixtures/internal-types/cjs-test.cts",
+    "verdict": "environment-failure",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-integration.log",
+        "line": 4
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-integration.log",
+        "line": 5
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-integration.log",
+        "line": 4
+      },
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-integration.log",
+        "line": 5
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "236eb8f6442fd8c1fbe0fe5b33c95a891013be6548c06b2d4736229ffb1ad4c5"
+  },
+  {
+    "finding_id": "ff939034149a12f3c465df1e26bb90c53ed67ae18ce5902674b70510833b289b",
+    "rule_id": "typecheck/tsc/TS2307",
+    "path": "packages/resolution/src/index.ts",
+    "verdict": "environment-failure",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-base-packages-resolution.log",
+        "line": 23
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6085-evidence/adjudication-head-packages-resolution.log",
+        "line": 23
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "ddac122f4f43c30226445703be1fc81280c2992e3700a3a66a731cd74e9f7913"
+  }
+]

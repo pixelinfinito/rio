@@ -1,0 +1,660 @@
+{
+  "schema": "rio-eval-runner-v2",
+  "repository": "colinhacks/zod",
+  "pr": "https://github.com/colinhacks/zod/pull/6085",
+  "started_utc": "2026-11-05T10:55:37.003976+00:00",
+  "rio_binary": "/home/ubuntu/rio/target/release/rio",
+  "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-checkout",
+        "https://github.com/colinhacks/zod.git",
+        "/dev/shm/rio-eval-lscsrphe/head"
+      ],
+      "cwd": "/dev/shm/rio-eval-lscsrphe",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/01-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/01-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 1069
+    },
+    {
+      "argv": [
+        "git",
+        "fetch",
+        "origin",
+        "9f0a3d81221e3ab7c09ca4911ef35b54817869a4",
+        "60496a098ae81beb32f705897f960cf99089d243"
+      ],
+      "cwd": "/dev/shm/rio-eval-lscsrphe/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/02-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/02-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 65
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "9f0a3d81221e3ab7c09ca4911ef35b54817869a4",
+        "60496a098ae81beb32f705897f960cf99089d243"
+      ],
+      "cwd": "/dev/shm/rio-eval-lscsrphe/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/03-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/03-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 17
+    },
+    {
+      "argv": [
+        "git",
+        "checkout",
+        "--detach",
+        "60496a098ae81beb32f705897f960cf99089d243"
+      ],
+      "cwd": "/dev/shm/rio-eval-lscsrphe/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/04-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/04-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 215
+    },
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-hardlinks",
+        "--no-checkout",
+        "/dev/shm/rio-eval-lscsrphe/head",
+        "/dev/shm/rio-eval-lscsrphe/base"
+      ],
+      "cwd": "/dev/shm/rio-eval-lscsrphe",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/05-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/05-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 115
+    },
+    {
+      "argv": [
+        "git",
+        "checkout",
+        "--detach",
+        "9f0a3d81221e3ab7c09ca4911ef35b54817869a4"
+      ],
+      "cwd": "/dev/shm/rio-eval-lscsrphe/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/06-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/06-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 215
+    },
+    {
+      "argv": [
+        "corepack",
+        "pnpm",
+        "install",
+        "--frozen-lockfile"
+      ],
+      "cwd": "/dev/shm/rio-eval-lscsrphe/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/07-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/07-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 5414
+    },
+    {
+      "argv": [
+        "python3",
+        "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-pnpm-directory-aliases.txt"
+      ],
+      "cwd": "/dev/shm/rio-eval-lscsrphe/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/08-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/08-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 116
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "cwd": "/dev/shm/rio-eval-lscsrphe/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/09-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/09-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 16
+    },
+    {
+      "argv": [
+        "corepack",
+        "pnpm",
+        "install",
+        "--frozen-lockfile"
+      ],
+      "cwd": "/dev/shm/rio-eval-lscsrphe/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/10-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/10-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 4396
+    },
+    {
+      "argv": [
+        "python3",
+        "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-pnpm-directory-aliases.txt"
+      ],
+      "cwd": "/dev/shm/rio-eval-lscsrphe/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/11-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/11-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 115
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "cwd": "/dev/shm/rio-eval-lscsrphe/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/12-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/12-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 115
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "--version"
+      ],
+      "cwd": "/dev/shm/rio-eval-lscsrphe/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-eval-lscsrphe/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-eval-lscsrphe/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/rio-version.txt",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/13-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 8
+    },
+    {
+      "argv": [
+        "node",
+        "--version"
+      ],
+      "cwd": "/dev/shm/rio-eval-lscsrphe/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-eval-lscsrphe/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-eval-lscsrphe/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/14-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/14-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 8
+    },
+    {
+      "argv": [
+        "npm",
+        "--version"
+      ],
+      "cwd": "/dev/shm/rio-eval-lscsrphe/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-eval-lscsrphe/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-eval-lscsrphe/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/15-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/15-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 679
+    },
+    {
+      "argv": [
+        "corepack",
+        "--version"
+      ],
+      "cwd": "/dev/shm/rio-eval-lscsrphe/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-eval-lscsrphe/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-eval-lscsrphe/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/16-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/16-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 115
+    },
+    {
+      "argv": [
+        "python3",
+        "--version"
+      ],
+      "cwd": "/dev/shm/rio-eval-lscsrphe/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-eval-lscsrphe/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-eval-lscsrphe/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/17-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/17-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 4
+    },
+    {
+      "argv": [
+        "uv",
+        "--version"
+      ],
+      "cwd": "/dev/shm/rio-eval-lscsrphe/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-eval-lscsrphe/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-eval-lscsrphe/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/18-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/18-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 16
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "profile",
+        "show",
+        "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/profile.yaml"
+      ],
+      "cwd": "/dev/shm/rio-eval-lscsrphe/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-eval-lscsrphe/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-eval-lscsrphe/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/resolved-profile.txt",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/19-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 165
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "doctor",
+        "--format",
+        "json"
+      ],
+      "cwd": "/dev/shm/rio-eval-lscsrphe/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-eval-lscsrphe/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-eval-lscsrphe/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/doctor.json",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/20-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 566
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "review",
+        "--base",
+        "9f0a3d81221e3ab7c09ca4911ef35b54817869a4",
+        "--format",
+        "json",
+        "--offline",
+        "--profile",
+        "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/profile.yaml"
+      ],
+      "cwd": "/dev/shm/rio-eval-lscsrphe/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-eval-lscsrphe/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-eval-lscsrphe/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/report.json",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/21-stderr.log",
+      "exit_code": 4,
+      "wall_time_ms": 117913
+    }
+  ],
+  "installations": {
+    "base": {
+      "commands": [
+        [
+          "corepack",
+          "pnpm",
+          "install",
+          "--frozen-lockfile"
+        ],
+        [
+          "python3",
+          "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-pnpm-directory-aliases.txt"
+        ]
+      ],
+      "succeeded": true,
+      "lockfiles": {
+        "pnpm-lock.yaml": "03627f8232469285ad0ae0199f749bf5471f71e4d78f709cb74ad63bbf87bbc3"
+      }
+    },
+    "head": {
+      "commands": [
+        [
+          "corepack",
+          "pnpm",
+          "install",
+          "--frozen-lockfile"
+        ],
+        [
+          "python3",
+          "/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-pnpm-directory-aliases.txt"
+        ]
+      ],
+      "succeeded": true,
+      "lockfiles": {
+        "pnpm-lock.yaml": "03627f8232469285ad0ae0199f749bf5471f71e4d78f709cb74ad63bbf87bbc3"
+      }
+    }
+  },
+  "failures": [
+    "Baseline/setup ineligible; fix before scoring"
+  ],
+  "network": "Installers may use network; Rio review uses --offline. Subprocesses are not isolated.",
+  "profile_sha256": "c583e519d93df6c88c6cff76b79e44cdc12ed50720b0797618c22524f60d2dc6",
+  "resolution": {
+    "base_sha": "9f0a3d81221e3ab7c09ca4911ef35b54817869a4",
+    "head_sha": "60496a098ae81beb32f705897f960cf99089d243",
+    "source": "pinned argv"
+  },
+  "disposable_directory": "/dev/shm/rio-eval-lscsrphe",
+  "base_sha": "9f0a3d81221e3ab7c09ca4911ef35b54817869a4",
+  "head_sha": "60496a098ae81beb32f705897f960cf99089d243",
+  "removed_environment_keys": [],
+  "resolved_profile_sha256": "fc41e9bc3b0fe5c4c816df700d1feb3d537e4ab1994e89bff7ace41951261c28",
+  "review_exit_code": 4,
+  "rio_checks": {
+    "source": "report.json#/checks",
+    "child_argv_available": false,
+    "limitation": "Rio report-v1 checks contain no child executable, argv, cwd, or tool version. The v0.1 CLI has no child-argv trace flag or environment hook; runner commands and Rio stderr are retained separately.",
+    "entries": [
+      {
+        "dependency_state": "verified",
+        "hint": "Test runner exited with code 1 without producing usable coverage: Testing types with tsc and vue-tsc is an experimental feature.",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "tests_failed",
+        "root": "packages/bench",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 1742
+      },
+      {
+        "dependency_state": "verified",
+        "hint": "Test runner exited with code 1 without producing usable coverage: Testing types with tsc and vue-tsc is an experimental feature.",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "tests_failed",
+        "root": "packages/tsc",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 1646
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "lint",
+        "language": "typescript",
+        "outcome": "findings",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 344
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/tsc",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 2011
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "lint",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/bench",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 252
+      },
+      {
+        "dependency_state": "verified",
+        "hint": "Test runner exited with code 1 without producing usable coverage: Testing types with tsc and vue-tsc is an experimental feature.",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "tests_failed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 1286
+      },
+      {
+        "kind": "secrets",
+        "language": "common",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 9
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "lint",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/zod",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 460
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "findings",
+        "root": "packages/integration",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 3272
+      },
+      {
+        "dependency_state": "verified",
+        "hint": "Test runner exited with code 1 without producing usable coverage: Testing types with tsc and vue-tsc is an experimental feature.",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "tests_failed",
+        "root": "packages/integration",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 1311
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "findings",
+        "root": "packages/resolution",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 3165
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "lint",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/resolution",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 295
+      },
+      {
+        "hint": "Dependency audit needs api.osv.dev",
+        "kind": "dependencies",
+        "language": "common",
+        "outcome": "skipped",
+        "reason": "offline",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "dependency_state": "verified",
+        "hint": "Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "tests_failed",
+        "root": "packages/resolution",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 963
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "findings",
+        "root": "packages/bench",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 25717
+      },
+      {
+        "dependency_state": "verified",
+        "hint": "tool exited with diagnostics code 1 but no diagnostics could be parsed",
+        "kind": "lint",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "unparseable_output",
+        "root": "packages/treeshake",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 390
+      },
+      {
+        "dependency_state": "verified",
+        "hint": "Test runner exited with code 1 without producing usable coverage: Testing types with tsc and vue-tsc is an experimental feature.",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "tests_failed",
+        "root": "packages/treeshake",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 1872
+      },
+      {
+        "dependency_state": "verified",
+        "hint": "Test runner exited with code 1 without producing usable coverage: Testing types with tsc and vue-tsc is an experimental feature.",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "tests_failed",
+        "root": "packages/zod",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 1104
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "findings",
+        "root": "packages/zod",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 36383
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "findings",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 56742
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "findings",
+        "root": "packages/treeshake",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 58590
+      }
+    ]
+  },
+  "rio_review_stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-zod/eval/runs/zod-6085-rerun2/21-stderr.log",
+  "environment": {
+    "dependency_state": "verified",
+    "baseline_ran": false,
+    "baseline_classification_ran": false,
+    "eligible": false,
+    "reasons": [
+      "coverage . head: failed tests_failed Test runner exited with code 1 without producing usable coverage: Testing types with tsc and vue-tsc is an experimental feature.",
+      "coverage packages/bench head: failed tests_failed Test runner exited with code 1 without producing usable coverage: Testing types with tsc and vue-tsc is an experimental feature.",
+      "coverage packages/integration head: failed tests_failed Test runner exited with code 1 without producing usable coverage: Testing types with tsc and vue-tsc is an experimental feature.",
+      "coverage packages/resolution head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+      "coverage packages/treeshake head: failed tests_failed Test runner exited with code 1 without producing usable coverage: Testing types with tsc and vue-tsc is an experimental feature.",
+      "coverage packages/tsc head: failed tests_failed Test runner exited with code 1 without producing usable coverage: Testing types with tsc and vue-tsc is an experimental feature.",
+      "coverage packages/zod head: failed tests_failed Test runner exited with code 1 without producing usable coverage: Testing types with tsc and vue-tsc is an experimental feature.",
+      "lint .: head=findings, dependency_state=verified, base=unavailable",
+      "lint packages/bench: head=passed, dependency_state=verified, base=unavailable",
+      "lint packages/resolution: head=passed, dependency_state=verified, base=unavailable",
+      "lint packages/treeshake head: failed unparseable_output tool exited with diagnostics code 1 but no diagnostics could be parsed",
+      "lint packages/treeshake: head=failed, dependency_state=verified, base=unavailable",
+      "lint packages/zod: head=passed, dependency_state=verified, base=unavailable",
+      "typecheck .: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck packages/bench: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck packages/integration: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck packages/resolution: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck packages/treeshake: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck packages/tsc: head=passed, dependency_state=verified, base=unavailable",
+      "typecheck packages/zod: head=findings, dependency_state=verified, base=unavailable"
+    ],
+    "notes": [
+      "Change has 8832 lines, exceeding max_lines 1500; consider splitting it",
+      "Intent inference is deferred: no_endpoint",
+      "lint .: baseline_failed: linked package .::zod is consumed through build output index.cjs that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck packages/tsc: baseline_failed: linked package packages/tsc::zod is consumed through build output index.cjs that is not in the tree; run the build in the base or configure source entry points",
+      "lint packages/bench: baseline_failed: linked package packages/bench::zod is consumed through build output index.cjs that is not in the tree; run the build in the base or configure source entry points",
+      "lint packages/zod: baseline_failed: linked package .::zod is consumed through build output index.cjs that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck packages/integration: baseline_failed: linked package .::zod is consumed through build output index.cjs that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck packages/resolution: baseline_failed: linked package packages/resolution::zod is consumed through build output index.cjs that is not in the tree; run the build in the base or configure source entry points",
+      "lint packages/resolution: baseline_failed: linked package packages/resolution::zod is consumed through build output index.cjs that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck packages/bench: baseline_failed: linked package packages/bench::zod is consumed through build output index.cjs that is not in the tree; run the build in the base or configure source entry points",
+      "lint packages/treeshake: baseline_failed: linked package packages/treeshake::zod is consumed through build output index.cjs that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck packages/zod: baseline_failed: linked package .::zod is consumed through build output index.cjs that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck .: baseline_failed: linked package .::zod is consumed through build output index.cjs that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck packages/treeshake: baseline_failed: linked package packages/treeshake::zod is consumed through build output index.cjs that is not in the tree; run the build in the base or configure source entry points",
+      "Graph references use syntax and text; no language server was used",
+      "Impact graph truncated at max_nodes",
+      "Offline applies to Rio; tool and test processes were not network-isolated"
+    ]
+  },
+  "finished_utc": "2026-11-05T10:57:57.799502+00:00"
+}

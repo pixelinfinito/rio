@@ -105,3 +105,187 @@ GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=url./tmp/rio-zod-eval/zod.insteadOf GIT_CONF
 ```
 
 Both corrective runners exited 1 for ineligible setup, despite verified head dependencies. Their excluded records were then built with `python3 eval/evaluate.py record --report DIR/report.json --verdicts DIR/verdicts.json --out DIR/record.json` and checked with `python3 eval/evaluate.py validate DIR/record.json`, for each of the four attempt directories. The same unmodified evaluator validates `zod-summary.json`.
+
+## Rerun2 (binary f6e4f87e4c65)
+
+Date: 2026-11-05 UTC. Reviewer: `sub-agent rerun2-zod (automated)`;
+`verdict_source: automated`. No human-review claim. Binary verified before
+execution as `rio 0.1.0 x86_64-unknown-linux-gnu f6e4f87e4c65`, SHA-256
+`3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7`.
+Rio was not rebuilt; no `crates/` or `eval/*.py` file was modified.
+
+### Inputs and attempt ledger
+
+These are the same two real PRs, with no seeded mutation. Base/head SHAs are
+unchanged from the previous corrective attempts:
+
+- #6085: `9f0a3d81221e3ab7c09ca4911ef35b54817869a4` /
+  `60496a098ae81beb32f705897f960cf99089d243`.
+- #6527: `b801439b5fb160d651084ff7d7c27a61e24a7334` /
+  `cbeac9415dc218eae98eaebc35971c0b6743528b`.
+
+Each runner uses the corresponding retry1 `install-plan.json` and `profile.yaml`
+without changing their bytes. The plan still performs frozen pnpm installation
+and the previous validated directory-alias helper at its original absolute path;
+that helper was checked byte-for-byte against this worktree's copy. Thus these
+runs do **not** independently prove that aliases are no longer necessary. Both
+base/head installs succeed and their lock hashes match the previous attempt.
+No source/manifest/lockfile mutation or trust override was made. Input profile
+SHA-256 remains `c583e519d93df6c88c6cff76b79e44cdc12ed50720b0797618c22524f60d2dc6`;
+its old display name is intentionally retained. Per-run resolved hashes are in
+`zod-rerun2-summary.json`; the resolved profile text differs between these runs
+only in its absolute `# Source:` comment.
+
+Pinned Node 22.23.4 (#6085) / 24.22.2 (#6527) and pnpm 10.12.1 were verified,
+with `corepack enable` and `corepack prepare pnpm@10.12.1 --activate` before
+running. Corepack is now 0.36.0 (previous notes reported 0.34.6); this dispatcher
+version difference is disclosed, not represented as an unchanged tool version.
+See `zod-rerun2-tooling.json` and captured version logs.
+
+All runs use `TMPDIR=/dev/shm`, `--temp-root /dev/shm`, `--timeout 1800`, and the
+same process-only Git URL rewrite to `/tmp/rio-zod-eval/zod` described above.
+Free RAM-backed space was checked first: 6.0 GB before #6085, 3.6 GB before the
+final retry. The first #6527 rerun reached the review deadline during observed
+host filesystem stalls (`jbd2/vda1-8` was in D state); causality was not isolated.
+Its original report, verdicts, and record remain intact. A corrective attempt
+also places **output evidence** in RAM, then copies it unchanged to this worktree.
+Original absolute capture paths remain in its ledger; `rerun2-provenance.json`
+records the durable location. The RAM-output retry completes in 137.718 seconds.
+
+| Attempt / record directory | Baseline ran / classification ran | Dependency state | Raw states | Runner / Rio seconds |
+| --- | --- | --- | --- | ---: |
+| `zod-6085-rerun2` | false / false | verified | 59 pre-existing, 8 unclassified | 140.796 / 115.251 |
+| `zod-6527-rerun2` | false / false | mixed (verified plus unavailable cancelled checks) | 11 pre-existing | 1339.939 / 1287.116 |
+| `zod-6527-rerun2-attempt2` | false / false | verified | 71 pre-existing | 137.718 / 108.987 |
+
+Each directory contains `report.json`, fully adjudicated `verdicts.json`, and a
+validated `record.json`. All three runners exit 1; all records are ineligible
+`environment-failure`. The first #6527 report contains timeout cancellations;
+the final retry completes every head slot without cancellation. There are **no
+base check entries in any attempt**. Verified means the completed head diagnostic
+checks verified their dependencies; it does not mean a verified baseline exists.
+The final pair for reporting is #6085's rerun2 and #6527's attempt2, both excluded.
+The descriptive ledger `zod-rerun2-summary.json` is not a scored cohort aggregate.
+
+### Adjudication and comparison
+
+Independent source oracles are reused only for unchanged pinned commits. The
+helper `zod-rerun2-adjudicate.txt` checks each reused finding's rule/path/normalized
+message against retry1 and checks referenced oracle lines. Current raw states,
+checks, footer notes, and the new Biome finding were inspected separately.
+Per-ID mappings are in each new `adjudication-evidence.json`.
+
+| Attempt | TP | FP | Pre-existing shown | Environment annotations | Out of scope | Total |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| #6085 rerun2 annotations | 8 | 0 | 32 | 27 | 0 | 67 |
+| #6527 rerun2 annotations | 0 | 0 | 2 | 9 | 0 | 11 |
+| #6527 attempt2 annotations | 0 | 0 | 38 | 33 | 0 | 71 |
+
+Under current **methodology v2**, raw `pre-existing` states override annotations
+and become informational `pre-existing-hidden`. Consequently the final #6085
+record has **8 TP (6 distinct causes), 59 hidden**, and zero FP / shown / environment
+/ out-of-scope findings. The final #6527 record has **71 hidden**, and zero in all
+other classes. Its interrupted predecessor has 11 hidden. The records' overall
+verdict is still environment-failure. Annotation environment failures describe
+unbuilt consumer fixtures; they are not product false positives.
+
+The previous retry1 records are historical v1 records, so their reported
+7 TP / 32 shown / 27 environment (#6085) and 0 / 38 / 33 (#6527) should not be
+confused with the current v2 visibility counts. The #6085 raw output differs by
+one additional finding, and the final #6527 output has the same 71 finding IDs.
+The original 7 benchmark type-error observations remain independently supported;
+they are not additional preregistered expectations.
+
+The one expected control, `unused-compile-fuzz-catch-binding`, is **now detected**:
+`592fff9986d42f4d6c8ef6b8c9fcd84e8187d6942a9996fc73f35ea3beecaed1`,
+`lint/biome/correctness/noUnusedVariables`, `scripts/compile-fuzz.ts:353:14`,
+message `This variable is unused.`, state `unclassified`. This matches the
+preregistered Biome oracle in `zod-6085-evidence/head-05.log` and the exact later
+fix. Previously the expected IDs were empty because Rio lacked Biome support.
+Now `positive_control.expected[0].finding_ids` contains that ID and `misses` is
+empty. This is observed detection, **not eligible recall credit**. #6527 retains
+its independent clean assessment and has no expected controls or established
+misses; no clean Rio confirmation is claimed.
+
+### Remaining Rio limitations, exact notes, and reproduction
+
+1. **Workspace baseline still blocked by declared build entry points.** Both
+   final reports contain exactly:
+   `typecheck .: baseline_failed: linked package .::zod is consumed through build output index.cjs that is not in the tree; run the build in the base or configure source entry points`.
+   Root-specific variants are preserved verbatim in `commands.json` and report
+   footer notes. There is no finding ID for this metadata/check failure. The
+   previous “points at changed source” text is gone, but classification still
+   never executes. Read-only inspection of
+   `crates/rio-adapters/src/dependencies/compatibility.rs` shows the new guard
+   calls `missing_build_output(request.selected, ...)` and scans all declared
+   `main`/`module`/types/export strings in the selected Git tree. It does not
+   consume a separate base checkout's generated files. Git-object probes in
+   `zod-rerun2-base-tree-evidence.json` confirm `packages/zod/index.cjs` is absent
+   from both pinned base objects even though the cached oracle clone has a built
+   copy on disk. Therefore running another external build cannot satisfy this
+   guard under the same SHAs; changing committed manifests/exports or bypassing
+   the guard would change the experiment. No such workaround was used. Reproduce
+   using the exact runner commands below. No assertion is made that every Zod
+   consumer can safely use source entry points.
+2. **Biome ignored targets become parser failures.** #6085's
+   `lint packages/treeshake head` fails with reason `unparseable_output`, hint
+   `tool exited with diagnostics code 1 but no diagnostics could be parsed`.
+   The committed `biome.jsonc` ignores `packages/treeshake`; raw stdout contains
+   `diagnostics: []`, while stderr says `No files were processed in the specified paths.`
+   There is no finding ID. `zod-6085-rerun2/biome-ignored-target-repro.json` independently
+   reproduces this with pinned `corepack pnpm exec biome lint --reporter=json
+   --max-diagnostics=none -- /tmp/rio-zod-eval/positive-head/packages/treeshake/default-locale.test.ts`
+   from that pinned head checkout. This is labelled an independent invocation,
+   not a captured Rio argv.
+3. **Coverage cannot execute with the frozen dependency/configuration setup;
+   hints can mask the useful error.** Captured child output reports
+   `MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'` for multiple
+   roots. #6085's `coverage packages/zod` instead reports
+   `Projects definition references a non-existing file or a directory:` followed
+   by the disposable `packages/zod/vitest.compile.config.ts` path. Its report hint
+   only quotes the preceding `Testing types with tsc and vue-tsc is an experimental feature.`
+   Coverage results are empty. These are check/setup limitations with **no finding
+   IDs**, not source FPs or coverage misses. The old `--minWorkers` rejection is
+   not observed in these runs; they reach later startup/instrumentation failures.
+   Reproduce with the pinned runner commands; partial captured child output is
+   retained in `raw-check-output.json.gz` in every attempt. The snapshots are
+   explicitly partial and do not establish full child argv.
+4. **State/evidence uncertainty remains without an executed baseline.** Finding
+   `034ba9bebadec8dfecdc1eae53168590bd4868a51aec4bc5916051e7e46aeb94`
+   still has raw state/occurrence `pre-existing` while evidence says
+   `unclassified: outside changed hunks, baseline unavailable (...)`. See the
+   exact evidence strings in the final reports (line 166 in #6085, 301 in #6527).
+   The independent base oracle confirms this unused declaration, so it is not
+   called a false positive. Current v2 records hide it as required. The concern
+   is unsupported certainty in Rio's state/evidence communication, not proof
+   that a baseline executed.
+
+The previous tsc parser failures are not reproduced: the #6085 bench trace output
+and treeshake fallback now yield `findings` check outcomes. Biome capability is
+also repaired for the registered control. The pnpm naming/lockfile changes cannot
+be isolated from the retained alias installation plan. Offline audit remains an
+explicit skipped capability; no advisory-safety claim is made.
+
+### Exact runner reproduction and validation
+
+Use a fresh output path; these attempts are immutable evidence. Environment for
+all commands: `GIT_CONFIG_COUNT=1`,
+`GIT_CONFIG_KEY_0=url./tmp/rio-zod-eval/zod.insteadOf`,
+`GIT_CONFIG_VALUE_0=https://github.com/colinhacks/zod.git`, `TMPDIR=/dev/shm`, and
+`PATH` prefixed with `/tmp/rio-zod-eval/node-v22.23.4-linux-x64/bin` (#6085) or
+`/tmp/rio-zod-eval/node-v24.22.2-linux-x64/bin` (#6527). Omit the Git rewrite to
+use GitHub transport for the same public objects.
+
+```sh
+python3 eval/runner.py --repository colinhacks/zod --pr 6085 --base 9f0a3d81221e3ab7c09ca4911ef35b54817869a4 --head 60496a098ae81beb32f705897f960cf99089d243 --languages typescript --rio /home/ubuntu/rio/target/release/rio --profile eval/runs/zod-6085-retry1/profile.yaml --install-plan eval/runs/zod-6085-retry1/install-plan.json --out "$PWD/eval/runs/zod-6085-rerun2" --temp-root /dev/shm --timeout 1800
+python3 eval/runner.py --repository colinhacks/zod --pr 6527 --base b801439b5fb160d651084ff7d7c27a61e24a7334 --head cbeac9415dc218eae98eaebc35971c0b6743528b --languages typescript --rio /home/ubuntu/rio/target/release/rio --profile eval/runs/zod-6527-retry1/profile.yaml --install-plan eval/runs/zod-6527-retry1/install-plan.json --out "$PWD/eval/runs/zod-6527-rerun2" --temp-root /dev/shm --timeout 1800
+python3 eval/runner.py --repository colinhacks/zod --pr 6527 --base b801439b5fb160d651084ff7d7c27a61e24a7334 --head cbeac9415dc218eae98eaebc35971c0b6743528b --languages typescript --rio /home/ubuntu/rio/target/release/rio --profile eval/runs/zod-6527-retry1/profile.yaml --install-plan eval/runs/zod-6527-retry1/install-plan.json --out /dev/shm/rio-zod-rerun2-evidence/zod-6527-rerun2-attempt2 --temp-root /dev/shm --timeout 1800
+```
+
+All emitted top-level findings (no risks) have evidence-backed annotations with
+the requested reviewer/source. For each of the three durable directories,
+`python3 eval/evaluate.py record --report DIR/report.json --verdicts DIR/verdicts.json --out DIR/record.json`
+and `python3 eval/evaluate.py validate DIR/record.json` completed successfully
+using the unmodified evaluator. All report/record JSON files are below 5 MB;
+raw child text snapshots are gzipped for compactness. Only evaluation evidence
+and these notes are committed; no clones, node_modules, push, or PR.

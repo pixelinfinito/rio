@@ -1,0 +1,21 @@
+{
+  "captured_out": "/dev/shm/rio-zod-rerun2-evidence/zod-6527-rerun2-attempt2",
+  "durable_out": "eval/runs/zod-6527-rerun2-attempt2",
+  "storage_relocation": true,
+  "runner_exit_code": 1,
+  "process_environment": {
+    "GIT_CONFIG_COUNT": "1",
+    "GIT_CONFIG_KEY_0": "url./tmp/rio-zod-eval/zod.insteadOf",
+    "GIT_CONFIG_VALUE_0": "https://github.com/colinhacks/zod.git",
+    "TMPDIR": "/dev/shm",
+    "PATH_prefix": "/tmp/rio-zod-eval/node-v24.22.2-linux-x64/bin"
+  },
+  "same_as_retry1": {
+    "base_sha": true,
+    "head_sha": true,
+    "install_plan": true,
+    "input_profile_bytes": true
+  },
+  "raw_child_output_snapshot": "raw-check-output.json.gz (partial; captured before runner cleanup)",
+  "reviewer": "sub-agent rerun2-zod (automated)"
+}

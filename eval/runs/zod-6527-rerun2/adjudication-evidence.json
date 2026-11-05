@@ -1,0 +1,132 @@
+[
+  {
+    "finding_id": "0d29387adb563f0bffd2fc45f17655b25ba032d51ba2df39c3e1b4e3c7cf8b1c",
+    "rule_id": "typecheck/tsc/TS2307",
+    "path": "packages/integration/fixtures/internal-types/mini.ts",
+    "verdict": "environment-failure",
+    "base_oracle_matches": [],
+    "head_oracle_matches": [],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "3ba44cab33335bd0681fdaffe700419ce6ca00fe680e0cc046c429c5ed0eabd8"
+  },
+  {
+    "finding_id": "1f21e23f8328641af8ed9ef11794c7470af1a3356fee2cb0c6f1c197dc202203",
+    "rule_id": "typecheck/tsc/TS2307",
+    "path": "packages/integration/fixtures/internal-types/cjs-test.cts",
+    "verdict": "environment-failure",
+    "base_oracle_matches": [],
+    "head_oracle_matches": [],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "7a77d28c55c564db4ae9cb7b9f803667e2ee4585b644c6acdd172451f5fd5c9c"
+  },
+  {
+    "finding_id": "203c2cb751904ed4e0ccff307683893fe5a98d2ed9ef79b9942fdcc31a7f7467",
+    "rule_id": "typecheck/tsc/TS2307",
+    "path": "packages/integration/fixtures/internal-types/mini-cjs-test.cts",
+    "verdict": "environment-failure",
+    "base_oracle_matches": [],
+    "head_oracle_matches": [],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "3ba44cab33335bd0681fdaffe700419ce6ca00fe680e0cc046c429c5ed0eabd8"
+  },
+  {
+    "finding_id": "219898f89a7708de260002d9873cb36cef05a82df1d55f7dcf3baf0d4a22e791",
+    "rule_id": "typecheck/tsc/TS7006",
+    "path": "packages/integration/fixtures/internal-types/index.ts",
+    "verdict": "environment-failure",
+    "base_oracle_matches": [],
+    "head_oracle_matches": [],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "236eb8f6442fd8c1fbe0fe5b33c95a891013be6548c06b2d4736229ffb1ad4c5"
+  },
+  {
+    "finding_id": "285dd3c2266e2e81690cc88aacb70f40ad91f5df93a680df765e225828568913",
+    "rule_id": "typecheck/tsc/TS2307",
+    "path": "packages/integration/fixtures/internal-types/index.ts",
+    "verdict": "environment-failure",
+    "base_oracle_matches": [],
+    "head_oracle_matches": [],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "7a77d28c55c564db4ae9cb7b9f803667e2ee4585b644c6acdd172451f5fd5c9c"
+  },
+  {
+    "finding_id": "446093402afe459d0094dae33d8c7f0da9d2bf0fd7acd5f35ce793aa974522e8",
+    "rule_id": "typecheck/tsc/TS2307",
+    "path": "packages/integration/fixtures/internal-types/mini.ts",
+    "verdict": "environment-failure",
+    "base_oracle_matches": [],
+    "head_oracle_matches": [],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "e7cb4cb885da5f4bf2b423414145b03a131082dd41213f8a03c4c7593c312e62"
+  },
+  {
+    "finding_id": "73199bbc15e20eb760c048eb790ea0cb37ec0c91859e860be0dd88625ccae424",
+    "rule_id": "typecheck/tsc/TS2307",
+    "path": "packages/integration/fixtures/ai-sdk/index.ts",
+    "verdict": "environment-failure",
+    "base_oracle_matches": [],
+    "head_oracle_matches": [],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "7a77d28c55c564db4ae9cb7b9f803667e2ee4585b644c6acdd172451f5fd5c9c"
+  },
+  {
+    "finding_id": "848c9ea8b786ce7e5e25e5186fb389b4b165f92dccf894822ece1f46f57d88bc",
+    "rule_id": "typecheck/tsc/TS2345",
+    "path": "packages/bench/compile-matrix.ts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6527-evidence/adjudication-base-root.log",
+        "line": 1
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6527-evidence/adjudication-head-root.log",
+        "line": 1
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "14fbc9564c7e6cc0e5d5486352b830feb14d8f0a9ce95f6a2927f8335909e848"
+  },
+  {
+    "finding_id": "88bfeefa7d554969af4f70d2e3e5c8469a34f5037958a8e770b9a1b88acbcb25",
+    "rule_id": "typecheck/tsc/TS2775",
+    "path": "packages/bench/moltar-libs.ts",
+    "verdict": "pre-existing-shown",
+    "base_oracle_matches": [
+      {
+        "path": "zod-6527-evidence/adjudication-base-root.log",
+        "line": 4
+      }
+    ],
+    "head_oracle_matches": [
+      {
+        "path": "zod-6527-evidence/adjudication-head-root.log",
+        "line": 4
+      }
+    ],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "14a3d87447f90b67742e5457236dcfcc058bc44b887f5ca69f6bd2858fd3038b"
+  },
+  {
+    "finding_id": "d7fa1794f35cff1fad54a5480b3a9218c44cd3c4d7e11a2356372c003106e1b2",
+    "rule_id": "typecheck/tsc/TS2307",
+    "path": "packages/integration/fixtures/drizzle-zod/index.ts",
+    "verdict": "environment-failure",
+    "base_oracle_matches": [],
+    "head_oracle_matches": [],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "7a77d28c55c564db4ae9cb7b9f803667e2ee4585b644c6acdd172451f5fd5c9c"
+  },
+  {
+    "finding_id": "fe97a1d5f223bb2ef1de7b47e1a65d9749a1e19759a25108b9e0f5ac5fce39bd",
+    "rule_id": "typecheck/tsc/TS7006",
+    "path": "packages/integration/fixtures/internal-types/cjs-test.cts",
+    "verdict": "environment-failure",
+    "base_oracle_matches": [],
+    "head_oracle_matches": [],
+    "raw_state": "pre-existing",
+    "current_message_sha256": "236eb8f6442fd8c1fbe0fe5b33c95a891013be6548c06b2d4736229ffb1ad4c5"
+  }
+]

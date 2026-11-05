@@ -1,0 +1,85 @@
+"""Rerun2 adjudication helper; does not modify Rio or the evaluation harness."""
+import collections, copy, gzip, hashlib, json, pathlib, re
+runs = pathlib.Path(__file__).resolve().parent
+
+def read(p):
+    return json.loads(p.read_text())
+
+def normalized(message):
+    return re.sub(r"(['\"])/[^'\"\n]+\1", lambda m: m[1] + '<absolute>/' + pathlib.PurePosixPath(m[0][1:-1]).name + m[1], ' '.join(message.split()))
+
+for out in sorted(runs.glob('zod-*-rerun2*')):
+    if not out.is_dir():
+        continue
+    n = int(out.name.split('-')[1])
+    if not (out / 'verdicts.json').exists():
+        continue
+    report = read(out / 'report.json')
+    ledger = read(out / 'commands.json')
+    old_dir = runs / f'zod-{n}-retry1'
+    old_report = read(old_dir / 'report.json')
+    old_verdicts = read(old_dir / 'verdicts.json')
+    old_findings = {f['id']: f for f in old_report['findings'] + old_report['risks']}
+    old_proof = {p['finding_id']: p for p in read(old_dir / 'adjudication-evidence.json')}
+    verdicts = read(out / 'verdicts.json')
+    assert all(ledger[k] == read(old_dir / 'commands.json')[k] for k in ('base_sha', 'head_sha'))
+    assert (out / 'profile.yaml').read_bytes() == (old_dir / 'profile.yaml').read_bytes()
+    assert read(out / 'install-plan.json') == read(old_dir / 'install-plan.json')
+    verdicts.update(reviewer='sub-agent rerun2-zod (automated)', verdict_source='automated', case_id=str(n), independently_clean=n == 6527)
+    verdicts['notes'] = [
+        'Pinned PR/base/head, install plan and input profile match retry1 exactly; no seeded mutation applies. Independent oracle evidence is reused for unchanged source objects; current Rio output was rechecked.',
+        'No source/lockfile changes, dependency trust override, or Rio rebuild. Corepack 0.36.0 launches the pinned pnpm 10.12.1; Node is 22.23.4 (#6085) or 24.22.2 (#6527). See ../zod-rerun2-tooling.json.',
+        'TMPDIR=/dev/shm and --temp-root /dev/shm. Process-only Git transport rewrite: GIT_CONFIG_COUNT=1, GIT_CONFIG_KEY_0=url./tmp/rio-zod-eval/zod.insteadOf, GIT_CONFIG_VALUE_0=https://github.com/colinhacks/zod.git. PATH prepends the matching /tmp/rio-zod-eval/node-vVERSION-linux-x64/bin. Public cached Git objects are unchanged.',
+        f'Combined diagnostic dependency state: {ledger["environment"]["dependency_state"]}. No base check ran. The new missing-build-entry guard rejects packages/zod/index.cjs in the selected Git tree. An external base build does not enter that tree. See commands.json environment.notes and ../zod-rerun2-base-tree-evidence.json. Excluded from release metrics.',
+        'Raw states pre-existing/fixed are informational pre-existing-hidden in record.json under methodology v2, regardless of the independent annotation. Base attribution in annotations comes from preserved independent oracle logs, not a Rio baseline.',
+        'raw-check-output.json.gz contains child output copied during this run before runner cleanup; it is a partial snapshot, not an argv trace or a complete replacement for report.json.',
+    ]
+    if n == 6527:
+        verdicts['notes'].append('Independent negative assessment reused: ../zod-6527-evidence/independent-assessment.json; upstream test tsconfig and Biome pass both, source plus repaired tree-shaking tests total base 7855/head 7858. No claim of executed Rio coverage or advisory safety.')
+    verdicts['findings'] = {}
+    proof = []
+    control_ids = []
+    for f in report['findings'] + report['risks']:
+        fid = f['id']; path = f['location']['path']; code = f['rule_id'].rsplit('/', 1)[-1]
+        if fid in old_findings:
+            previous = old_findings[fid]
+            assert f['rule_id'] == previous['rule_id']
+            assert f['location']['path'] == previous['location']['path']
+            assert normalized(f['message']) == normalized(previous['message']), fid
+            annotation = old_verdicts['findings'][fid]
+            verdict = annotation['verdict']
+            evidence = copy.deepcopy(old_proof[fid])
+            for side in ('base', 'head'):
+                for ref in evidence[f'{side}_oracle_matches']:
+                    line = (runs / ref['path']).read_text().splitlines()[ref['line'] - 1]
+                    assert path in line and code in line and normalized(f['message'].splitlines()[0]) in normalized(line), (fid, ref)
+            if verdict == 'true-positive':
+                assert evidence['head_oracle_matches'] and n == 6085
+                reason = 'Independent unchanged-head oracle ' + ', '.join(f"../{r['path']}:{r['line']}" for r in evidence['head_oracle_matches']) + f' reproduces {code}; the new benchmark file is absent at base (prior adjudication and introducing.patch). This change-specific diagnostic remains valid. No working Rio baseline or scored release credit is claimed.'
+            elif verdict == 'pre-existing-shown':
+                assert evidence['base_oracle_matches']
+                reason = 'Independent pinned-base oracle ' + ', '.join(f"../{r['path']}:{r['line']}" for r in evidence['base_oracle_matches']) + f' reproduces this file/{code}/message. Current Rio state is {f["state"]}; its baseline never ran. Methodology v2 hides raw pre-existing/fixed states. The source diagnostic was not introduced by this PR.'
+            elif verdict == 'environment-failure':
+                reason = f'Unbuilt consumer fixture {path}: {code} depends on absent published Zod artifacts or resulting unresolved types. The unchanged install plan does not build packages/zod. Independent setup/build evidence is in ../zod-{n}-evidence/ and prior adjudication-evidence.json; Rio baseline remains unavailable under the missing-build-entry guard. No introduced source defect is established.'
+            else:
+                raise AssertionError((fid, verdict))
+        else:
+            assert n == 6085 and f['rule_id'] == 'lint/biome/correctness/noUnusedVariables'
+            assert path == 'scripts/compile-fuzz.ts' and f['location']['line_start'] == 353 and f['state'] == 'unclassified'
+            assert f['message'] == 'This variable is unused.'
+            verdict = 'true-positive'
+            reason = 'Preregistered independent oracle ../zod-6085-evidence/head-05.log identifies unused catch(e) at scripts/compile-fuzz.ts:353:14 under enabled Biome correctness/noUnusedVariables; base-05.log has no file/warning. introducing.patch adds it and fix.patch removes that exact binding. Rio now reports the same rule/location/message. Detection observed, but baseline ineligibility excludes scored recall.'
+            evidence = {'finding_id': fid, 'rule_id': f['rule_id'], 'path': path, 'base_oracle_matches': [], 'head_oracle_matches': [{'path': 'zod-6085-evidence/head-05.log', 'line': 1}]}
+            control_ids.append(fid)
+        verdicts['findings'][fid] = {'verdict': verdict, 'reason': reason}
+        evidence.update(verdict=verdict, raw_state=f['state'], current_message_sha256=hashlib.sha256(f['message'].encode()).hexdigest())
+        proof.append(evidence)
+    verdicts['positive_control'] = copy.deepcopy(old_verdicts['positive_control'])
+    verdicts['misses'] = []
+    if n == 6085:
+        assert len(control_ids) == 1
+        expected = verdicts['positive_control']['expected'][0]
+        expected.update(finding_ids=control_ids, evidence='Preregistered independent Biome oracle ../zod-6085-evidence/{selection.json,base-05.log,head-05.log,fix.patch}; unused catch(e) at scripts/compile-fuzz.ts:353:14 is absent at base and warned at head. Current Rio lint/biome/correctness/noUnusedVariables finding matches exactly; see report.json. Detection is observed; the run remains ineligible because no baseline ran.')
+    (out / 'verdicts.json').write_text(json.dumps(verdicts, indent=2) + '\n')
+    (out / 'adjudication-evidence.json').write_text(json.dumps(proof, indent=2) + '\n')
+    print(n, 'annotations', dict(collections.Counter(x['verdict'] for x in verdicts['findings'].values())), 'states', dict(collections.Counter(f['state'] for f in report['findings'] + report['risks'])))
