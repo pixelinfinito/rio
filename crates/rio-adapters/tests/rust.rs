@@ -6,6 +6,88 @@ use rio_git::{SafeTreeWriter, diff as git_diff};
 use std::{fs, path::Path};
 use tokio_util::sync::CancellationToken;
 
+#[cfg(unix)]
+#[tokio::test]
+async fn cargo_discovery_supports_path_installations_and_preserves_rustup_selection() {
+    use std::os::unix::fs::PermissionsExt;
+    for mode in [
+        "path",
+        "selected",
+        "missing-toolchain",
+        "failed-version",
+        "missing",
+    ] {
+        let temp = tempfile::tempdir().unwrap();
+        let bin = temp.path().join("bin");
+        fs::create_dir(&bin).unwrap();
+        let executable = |name: &str, body: &str| {
+            let path = bin.join(name);
+            fs::write(&path, format!("#!/bin/sh\n{body}\n")).unwrap();
+            fs::set_permissions(&path, fs::Permissions::from_mode(0o755)).unwrap();
+            path
+        };
+        if mode != "missing" {
+            executable(
+                "cargo",
+                if mode == "failed-version" {
+                    "exit 2"
+                } else {
+                    "[ \"$1\" = --version ] && [ \"$RUSTUP_AUTO_INSTALL\" = 0 ] && [ \"$RUSTUP_TOOLCHAIN\" = installed ] || exit 90\necho cargo-path"
+                },
+            );
+        }
+        if mode == "selected" {
+            executable(
+                "selected-cargo",
+                "[ \"$1\" = --version ] && [ \"$RUSTUP_TOOLCHAIN\" = installed ] || exit 91\necho cargo-selected",
+            );
+            executable(
+                "rustup",
+                "[ \"$*\" = 'which cargo --toolchain installed' ] && [ \"$RUSTUP_AUTO_INSTALL\" = 0 ] || exit 92\nprintf '%s/selected-cargo\\n' \"${0%/*}\"",
+            );
+        } else if mode == "missing-toolchain" {
+            executable("rustup", "exit 1");
+        }
+        let resolver = ToolResolver {
+            repository_root: temp.path().into(),
+            search_path: vec![bin.clone()],
+            virtual_env: None,
+        };
+        let tree = rio_git::Tree::from([(
+            "rust-toolchain.toml".into(),
+            entry("[toolchain]\nchannel = 'installed'\n"),
+        )]);
+        let tool = rust_cargo(
+            &resolver,
+            &tree,
+            ".",
+            &ProcessSupervisor::default(),
+            CancellationToken::new(),
+        )
+        .await
+        .unwrap();
+        match mode {
+            "path" | "selected" => {
+                let tool = tool.unwrap_or_else(|| panic!("Cargo was not found: {mode}"));
+                let selected = mode == "selected";
+                assert_eq!(
+                    tool.path,
+                    bin.join(if selected { "selected-cargo" } else { "cargo" })
+                );
+                assert_eq!(
+                    tool.version,
+                    if selected {
+                        "cargo-selected"
+                    } else {
+                        "cargo-path"
+                    }
+                );
+            }
+            _ => assert!(tool.is_none(), "{mode}: {tool:?}"),
+        }
+    }
+}
+
 #[test]
 fn rust_workspace_roots_schedule_members_consumers_and_workspace_changes() {
     let base = read_tree(&fixture("rs-sample"));

@@ -47,26 +47,30 @@ pub async fn rust_cargo(
     supervisor: &ProcessSupervisor,
     cancellation: CancellationToken,
 ) -> Result<Option<ResolvedTool>> {
-    let Some(rustup) = resolver.locate("rustup", root, "rust") else {
-        return Ok(None);
-    };
     let temp = tempfile::tempdir()?;
-    let mut command = ToolCommand::new(rustup, temp.path().into());
-    command.args = vec!["which".into(), "cargo".into()];
-    if let Some(channel) = rust_toolchain(tree, root)? {
-        command.args.extend(["--toolchain".into(), channel.into()]);
-    }
-    command.env.insert("RUSTUP_AUTO_INSTALL".into(), "0".into());
-    command.timeout = Duration::from_secs(10);
-    let result = supervisor.run(command, cancellation.clone()).await;
-    if !result.cleanup_confirmed {
-        let _ = temp.keep();
-        return Ok(None);
-    }
-    if !matches!(result.termination, Termination::Exited { code: Some(0) }) {
-        return Ok(None);
-    }
-    let path = std::path::PathBuf::from(std::str::from_utf8(&result.stdout)?.trim());
+    let path = if let Some(rustup) = resolver.locate("rustup", root, "rust") {
+        let mut command = ToolCommand::new(rustup, temp.path().into());
+        command.args = vec!["which".into(), "cargo".into()];
+        if let Some(channel) = rust_toolchain(tree, root)? {
+            command.args.extend(["--toolchain".into(), channel.into()]);
+        }
+        command.env.insert("RUSTUP_AUTO_INSTALL".into(), "0".into());
+        command.timeout = Duration::from_secs(10);
+        let result = supervisor.run(command, cancellation.clone()).await;
+        if !result.cleanup_confirmed {
+            let _ = temp.keep();
+            return Ok(None);
+        }
+        if !matches!(result.termination, Termination::Exited { code: Some(0) }) {
+            return Ok(None);
+        }
+        std::path::PathBuf::from(std::str::from_utf8(&result.stdout)?.trim())
+    } else {
+        let Some(path) = resolver.locate("cargo", root, "rust") else {
+            return Ok(None);
+        };
+        path
+    };
     let mut command = ToolCommand::new(path.clone(), temp.path().into());
     command.args = vec!["--version".into()];
     configure_cargo(&mut command, tree, root)?;
