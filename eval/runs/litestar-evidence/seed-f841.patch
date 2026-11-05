@@ -1,0 +1,12 @@
+diff --git a/litestar/utils/path.py b/litestar/utils/path.py
+index 4eb07f4..9a3d621 100644
+--- a/litestar/utils/path.py
++++ b/litestar/utils/path.py
+@@ -21,6 +21,7 @@ def normalize_path(path: str) -> str:
+     Returns:
+         Path string
+     """
++    rio_eval_unused = 1
+     path = path.strip("/")
+     path = f"/{path}"
+     return multi_slash_pattern.sub("/", path)

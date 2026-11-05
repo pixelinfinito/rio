@@ -1,0 +1,137 @@
+{
+  "schema": "rio-eval-record-v1",
+  "methodology": "deterministic-v1",
+  "repository": "litestar-org/litestar",
+  "pr": "https://github.com/litestar-org/litestar/pull/5178",
+  "case_id": "5178-attempt1",
+  "languages": [
+    "python"
+  ],
+  "reviewer": "sub-agent eval-litestar (automated)",
+  "verdict_source": "automated",
+  "independently_clean": true,
+  "commands": [
+    "cwd=/tmp/rio-eval-4vy53hxo argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/litestar-org/litestar.git\", \"/tmp/rio-eval-4vy53hxo/head\"]",
+    "cwd=/tmp/rio-eval-4vy53hxo/head argv=[\"git\", \"fetch\", \"origin\", \"716f8b023b1c13e6f1e8ab08dfa1938f7923312d\", \"9870dce9dc2688e78fc43bc73e27eed4198893ac\"]",
+    "cwd=/tmp/rio-eval-4vy53hxo/head argv=[\"git\", \"merge-base\", \"716f8b023b1c13e6f1e8ab08dfa1938f7923312d\", \"9870dce9dc2688e78fc43bc73e27eed4198893ac\"]",
+    "cwd=/tmp/rio-eval-4vy53hxo/head argv=[\"git\", \"checkout\", \"--detach\", \"9870dce9dc2688e78fc43bc73e27eed4198893ac\"]",
+    "cwd=/tmp/rio-eval-4vy53hxo argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/tmp/rio-eval-4vy53hxo/head\", \"/tmp/rio-eval-4vy53hxo/base\"]",
+    "cwd=/tmp/rio-eval-4vy53hxo/base argv=[\"git\", \"checkout\", \"--detach\", \"716f8b023b1c13e6f1e8ab08dfa1938f7923312d\"]",
+    "cwd=/tmp/rio-eval-4vy53hxo/base argv=[\"uv\", \"sync\", \"--locked\", \"--all-groups\", \"--all-extras\", \"--no-editable\", \"--python\", \"3.12.12\"]",
+    "cwd=/tmp/rio-eval-4vy53hxo/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/tmp/rio-eval-4vy53hxo/head argv=[\"uv\", \"sync\", \"--locked\", \"--all-groups\", \"--all-extras\", \"--no-editable\", \"--python\", \"3.12.12\"]",
+    "cwd=/tmp/rio-eval-4vy53hxo/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/tmp/rio-eval-4vy53hxo/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/tmp/rio-eval-4vy53hxo/head argv=[\"node\", \"--version\"]",
+    "cwd=/tmp/rio-eval-4vy53hxo/head argv=[\"npm\", \"--version\"]",
+    "cwd=/tmp/rio-eval-4vy53hxo/head argv=[\"python3\", \"--version\"]",
+    "cwd=/tmp/rio-eval-4vy53hxo/head argv=[\"uv\", \"--version\"]",
+    "cwd=/tmp/rio-eval-4vy53hxo/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-attempt1/profile.yaml\"]",
+    "cwd=/tmp/rio-eval-4vy53hxo/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/tmp/rio-eval-4vy53hxo/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"716f8b023b1c13e6f1e8ab08dfa1938f7923312d\", \"--format\", \"json\", \"--offline\", \"--profile\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-attempt1/profile.yaml\"]"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-attempt1/commands.json; Rio binary SHA-256: 512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+    "EXCLUDED attempt: baseline_ran=false and baseline_classification_ran=false. Typecheck/lint/coverage skipped because four executable .pth hooks could not be verified. This attempt contributes no quality score; repaired run is ../litestar-5178.",
+    "Independent base/head oracle evidence: ../litestar-evidence/oracle-commands.json and pyright-activated-commands.json. mypy succeeds in 1116 files each; activated Pyright has 0 errors each; Ruff passes each; scoped routing tests pass (4 base, 14 head). The first nonactivated Pyright invocation is a preserved setup error, superseded by the activated run.",
+    "Runtime CPython 3.12.12 and uv 0.13.7; all groups/extras from unchanged uv.lock; --no-editable. PYTEST_ADDOPTS=tests/e2e/test_routing/test_path_mounting.py; offline dependency auditing explicitly excluded.",
+    "Transport: scoped Git URL rewrite from https://github.com/litestar-org/litestar.git to file:///tmp/litestar-eval-transport.git, containing exact GitHub-fetched public SHAs. GIT_CONFIG_COUNT=2: http.version=HTTP/1.1 and URL rewrite. No source/config/lockfile edits. Profile used 20m budget; repaired cohort uses 60m."
+  ],
+  "positive_control": {
+    "kind": "none",
+    "expected": []
+  },
+  "base_sha": "716f8b023b1c13e6f1e8ab08dfa1938f7923312d",
+  "head_sha": "9870dce9dc2688e78fc43bc73e27eed4198893ac",
+  "mode": "branch",
+  "review_id": "f13bdd3935fa3490",
+  "run_id": "01M6MSFX4C9ZRK5CXXCHA7CPT5",
+  "rio_version": "0.1.0",
+  "profile": "eval-litestar-b15dc8ff5001",
+  "wall_time_ms": 76774,
+  "status": "incomplete",
+  "report_path": "eval/runs/litestar-5178-attempt1/report.json",
+  "environment": {
+    "dependency_state": "unavailable",
+    "baseline_ran": false,
+    "baseline_classification_ran": false,
+    "eligible": false,
+    "reasons": [
+      "coverage . head: skipped dependency_mismatch executable .pth cannot be verified: /tmp/rio-eval-4vy53hxo/head/./.venv/lib/python3.12/site-packages/a1_coverage.pth; executable .pth cannot be verified: /tmp/rio-eval-4vy53hxo/head/./.venv/lib/python3.12/site-packages/_sphinx_jinja2_compat.pth; executable .pth cannot be verified: /tmp/rio-eval-4vy53hxo/head/./.venv/lib/python3.12/site-packages/sphinxcontrib_jsmath-1.0.1-py3.7-nspkg.pth; executable .pth cannot be verified: /tmp/rio-eval-4vy53hxo/head/./.venv/lib/python3.12/site-packages/distutils-precedence.pth; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+      "lint . head: skipped dependency_mismatch executable .pth cannot be verified: /tmp/rio-eval-4vy53hxo/head/./.venv/lib/python3.12/site-packages/a1_coverage.pth; executable .pth cannot be verified: /tmp/rio-eval-4vy53hxo/head/./.venv/lib/python3.12/site-packages/_sphinx_jinja2_compat.pth; executable .pth cannot be verified: /tmp/rio-eval-4vy53hxo/head/./.venv/lib/python3.12/site-packages/sphinxcontrib_jsmath-1.0.1-py3.7-nspkg.pth; executable .pth cannot be verified: /tmp/rio-eval-4vy53hxo/head/./.venv/lib/python3.12/site-packages/distutils-precedence.pth; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+      "lint .: head=skipped, dependency_state=unavailable, base=unavailable",
+      "typecheck . head: skipped dependency_mismatch executable .pth cannot be verified: /tmp/rio-eval-4vy53hxo/head/./.venv/lib/python3.12/site-packages/a1_coverage.pth; executable .pth cannot be verified: /tmp/rio-eval-4vy53hxo/head/./.venv/lib/python3.12/site-packages/_sphinx_jinja2_compat.pth; executable .pth cannot be verified: /tmp/rio-eval-4vy53hxo/head/./.venv/lib/python3.12/site-packages/sphinxcontrib_jsmath-1.0.1-py3.7-nspkg.pth; executable .pth cannot be verified: /tmp/rio-eval-4vy53hxo/head/./.venv/lib/python3.12/site-packages/distutils-precedence.pth; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+      "typecheck .: head=skipped, dependency_state=unavailable, base=unavailable"
+    ],
+    "checks": [
+      {
+        "findings": [],
+        "hint": "executable .pth cannot be verified: /tmp/rio-eval-4vy53hxo/head/./.venv/lib/python3.12/site-packages/a1_coverage.pth; executable .pth cannot be verified: /tmp/rio-eval-4vy53hxo/head/./.venv/lib/python3.12/site-packages/_sphinx_jinja2_compat.pth; executable .pth cannot be verified: /tmp/rio-eval-4vy53hxo/head/./.venv/lib/python3.12/site-packages/sphinxcontrib_jsmath-1.0.1-py3.7-nspkg.pth; executable .pth cannot be verified: /tmp/rio-eval-4vy53hxo/head/./.venv/lib/python3.12/site-packages/distutils-precedence.pth; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "kind": "typecheck",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "dependency_mismatch",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "findings": [],
+        "hint": "executable .pth cannot be verified: /tmp/rio-eval-4vy53hxo/head/./.venv/lib/python3.12/site-packages/a1_coverage.pth; executable .pth cannot be verified: /tmp/rio-eval-4vy53hxo/head/./.venv/lib/python3.12/site-packages/_sphinx_jinja2_compat.pth; executable .pth cannot be verified: /tmp/rio-eval-4vy53hxo/head/./.venv/lib/python3.12/site-packages/sphinxcontrib_jsmath-1.0.1-py3.7-nspkg.pth; executable .pth cannot be verified: /tmp/rio-eval-4vy53hxo/head/./.venv/lib/python3.12/site-packages/distutils-precedence.pth; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "kind": "lint",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "dependency_mismatch",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "findings": [],
+        "hint": "executable .pth cannot be verified: /tmp/rio-eval-4vy53hxo/head/./.venv/lib/python3.12/site-packages/a1_coverage.pth; executable .pth cannot be verified: /tmp/rio-eval-4vy53hxo/head/./.venv/lib/python3.12/site-packages/_sphinx_jinja2_compat.pth; executable .pth cannot be verified: /tmp/rio-eval-4vy53hxo/head/./.venv/lib/python3.12/site-packages/sphinxcontrib_jsmath-1.0.1-py3.7-nspkg.pth; executable .pth cannot be verified: /tmp/rio-eval-4vy53hxo/head/./.venv/lib/python3.12/site-packages/distutils-precedence.pth; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "kind": "coverage",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "dependency_mismatch",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "findings": [],
+        "kind": "secrets",
+        "language": "common",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 1
+      },
+      {
+        "findings": [],
+        "hint": "Dependency audit needs api.osv.dev",
+        "kind": "dependencies",
+        "language": "common",
+        "outcome": "skipped",
+        "reason": "offline",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 13079
+      }
+    ],
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "Graph references use syntax and text; no language server was used",
+      "Offline applies to Rio; tool and test processes were not network-isolated"
+    ]
+  },
+  "findings": [],
+  "root_causes": [],
+  "misses": [],
+  "verdict": "environment-failure",
+  "reason": "Baseline/setup must be repaired before this PR can be scored."
+}

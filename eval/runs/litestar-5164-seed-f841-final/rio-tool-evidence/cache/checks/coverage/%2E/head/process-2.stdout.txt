@@ -1,0 +1,2 @@
+Wrote JSON report to /run/user/1000/rio-litestar-eval/rio-eval-08zd4q_p/cache/4fbe7a5f98898db5/runs/01M6MTGZRBCA4GXT7NJX8DJ3EM/tools/tool.tmp-DskFHr/./.rio-coverage/coverage.json
+Coverage failure: total of 39 is less than fail-under=100

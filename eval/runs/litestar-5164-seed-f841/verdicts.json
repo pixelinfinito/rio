@@ -1,0 +1,59 @@
+{
+  "repository": "litestar-org/litestar",
+  "pr": "https://github.com/litestar-org/litestar/pull/5164",
+  "case_id": "5164-seed-f841-ext4-interrupted",
+  "languages": [
+    "python"
+  ],
+  "reviewer": "sub-agent eval-litestar (automated)",
+  "verdict_source": "automated",
+  "commands": [
+    "cwd=/tmp/rio-eval-dwd6w69m argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/litestar-org/litestar.git\", \"/tmp/rio-eval-dwd6w69m/head\"]",
+    "cwd=/tmp/rio-eval-dwd6w69m/head argv=[\"git\", \"fetch\", \"origin\", \"f4f7e9831574ed08f50901e62911019b5e7383ac\", \"fcab0954a74c5f8d340adbbfb9091f94982aa9a2\"]",
+    "cwd=/tmp/rio-eval-dwd6w69m/head argv=[\"git\", \"merge-base\", \"f4f7e9831574ed08f50901e62911019b5e7383ac\", \"fcab0954a74c5f8d340adbbfb9091f94982aa9a2\"]",
+    "cwd=/tmp/rio-eval-dwd6w69m/head argv=[\"git\", \"checkout\", \"--detach\", \"fcab0954a74c5f8d340adbbfb9091f94982aa9a2\"]",
+    "cwd=/tmp/rio-eval-dwd6w69m argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/tmp/rio-eval-dwd6w69m/head\", \"/tmp/rio-eval-dwd6w69m/base\"]",
+    "cwd=/tmp/rio-eval-dwd6w69m/base argv=[\"git\", \"checkout\", \"--detach\", \"f4f7e9831574ed08f50901e62911019b5e7383ac\"]",
+    "cwd=/tmp/rio-eval-dwd6w69m/base argv=[\"uv\", \"sync\", \"--locked\", \"--all-groups\", \"--all-extras\", \"--no-editable\", \"--python\", \"3.12.12\"]",
+    "cwd=/tmp/rio-eval-dwd6w69m/base argv=[\".venv/bin/python\", \"-I\", \"-c\", \"import hashlib,pathlib,sysconfig; s=pathlib.Path(sysconfig.get_paths()[\\\"purelib\\\"]); names=[\\\"a1_coverage.pth\\\",\\\"_sphinx_jinja2_compat.pth\\\",\\\"sphinxcontrib_jsmath-1.0.1-py3.7-nspkg.pth\\\",\\\"distutils-precedence.pth\\\"]; [(print(str(p),hashlib.sha256(p.read_bytes()).hexdigest(),repr(p.read_text())),p.rename(p.with_suffix(\\\".pth.disabled\\\"))) for n in names if (p:=s/n).exists()]\"]",
+    "cwd=/tmp/rio-eval-dwd6w69m/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/tmp/rio-eval-dwd6w69m/head argv=[\"uv\", \"sync\", \"--locked\", \"--all-groups\", \"--all-extras\", \"--no-editable\", \"--python\", \"3.12.12\"]",
+    "cwd=/tmp/rio-eval-dwd6w69m/head argv=[\".venv/bin/python\", \"-I\", \"-c\", \"import hashlib,pathlib,sysconfig; s=pathlib.Path(sysconfig.get_paths()[\\\"purelib\\\"]); names=[\\\"a1_coverage.pth\\\",\\\"_sphinx_jinja2_compat.pth\\\",\\\"sphinxcontrib_jsmath-1.0.1-py3.7-nspkg.pth\\\",\\\"distutils-precedence.pth\\\"]; [(print(str(p),hashlib.sha256(p.read_bytes()).hexdigest(),repr(p.read_text())),p.rename(p.with_suffix(\\\".pth.disabled\\\"))) for n in names if (p:=s/n).exists()]\"]",
+    "cwd=/tmp/rio-eval-dwd6w69m/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/tmp/rio-eval-dwd6w69m/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/tmp/rio-eval-dwd6w69m/head argv=[\"node\", \"--version\"]",
+    "cwd=/tmp/rio-eval-dwd6w69m/head argv=[\"npm\", \"--version\"]",
+    "cwd=/tmp/rio-eval-dwd6w69m/head argv=[\"python3\", \"--version\"]",
+    "cwd=/tmp/rio-eval-dwd6w69m/head argv=[\"uv\", \"--version\"]",
+    "cwd=/tmp/rio-eval-dwd6w69m/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5164-seed-f841/profile.yaml\"]",
+    "cwd=/tmp/rio-eval-dwd6w69m/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/tmp/rio-eval-dwd6w69m/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"f4f7e9831574ed08f50901e62911019b5e7383ac\", \"--format\", \"json\", \"--offline\", \"--profile\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5164-seed-f841/profile.yaml\"]"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5164-seed-f841/commands.json; Rio binary SHA-256: 512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+    "EXCLUDED interrupted ext4 attempt: SIGINT was sent because worker threads spent many minutes in jbd2_log_wait_commit while fsyncing copied source files. Baseline classification did not run; this record contributes no quality score. Same pinned change rerun under ../litestar-5164-seed-f841-tmpfs.",
+    "All dependencies installed and four known executable startup hooks disabled per the saved install plan; trust_installed_dependencies remains false. Profile policy and 60m budget identical to the tmpfs rerun.",
+    "PYTEST_ADDOPTS=tests/e2e/test_routing/test_path_mounting.py; offline dependency auditing explicitly excluded. Scoped Git URL rewrite to a local bare repository preserves public GitHub-fetched commits and the seeded object. See ../litestar-evidence/REPRODUCE.md."
+  ],
+  "independently_clean": false,
+  "positive_control": {
+    "kind": "seeded-mutation",
+    "expected": [
+      {
+        "id": "unused-local-normalize-path",
+        "mechanism": "lint-rule",
+        "evidence": "../litestar-evidence/seed-oracle-commands.json and seed-{base,head}-ruff.stdout.log: ruff check . exit 0 at f4f7e9831574ed08f50901e62911019b5e7383ac and exit 1 with exactly F841 at synthetic fcab0954a74c5f8d340adbbfb9091f94982aa9a2, litestar/utils/path.py:24. Registered before Rio in positive-control-register.md.",
+        "finding_ids": [
+          "43d6925de36ee0e0beb788c1be9fd46de7152f1be80230d5085329c5f9911eab"
+        ]
+      }
+    ]
+  },
+  "misses": [],
+  "findings": {
+    "43d6925de36ee0e0beb788c1be9fd46de7152f1be80230d5085329c5f9911eab": {
+      "verdict": "true-positive",
+      "reason": "../litestar-evidence/seed-oracle-commands.json and seed-{base,head}-ruff.stdout.log: ruff check . exit 0 at f4f7e9831574ed08f50901e62911019b5e7383ac and exit 1 with exactly F841 at synthetic fcab0954a74c5f8d340adbbfb9091f94982aa9a2, litestar/utils/path.py:24. Registered before Rio in positive-control-register.md. This unclassified report independently matches the introduced lint error, but missing baseline excludes the entire attempt from metrics; no detection credit is claimed for this attempt."
+    }
+  }
+}

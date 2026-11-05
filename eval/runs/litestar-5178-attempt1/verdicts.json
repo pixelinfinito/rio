@@ -1,0 +1,44 @@
+{
+  "repository": "litestar-org/litestar",
+  "pr": "https://github.com/litestar-org/litestar/pull/5178",
+  "case_id": "5178-attempt1",
+  "languages": [
+    "python"
+  ],
+  "reviewer": "sub-agent eval-litestar (automated)",
+  "verdict_source": "automated",
+  "commands": [
+    "cwd=/tmp/rio-eval-4vy53hxo argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/litestar-org/litestar.git\", \"/tmp/rio-eval-4vy53hxo/head\"]",
+    "cwd=/tmp/rio-eval-4vy53hxo/head argv=[\"git\", \"fetch\", \"origin\", \"716f8b023b1c13e6f1e8ab08dfa1938f7923312d\", \"9870dce9dc2688e78fc43bc73e27eed4198893ac\"]",
+    "cwd=/tmp/rio-eval-4vy53hxo/head argv=[\"git\", \"merge-base\", \"716f8b023b1c13e6f1e8ab08dfa1938f7923312d\", \"9870dce9dc2688e78fc43bc73e27eed4198893ac\"]",
+    "cwd=/tmp/rio-eval-4vy53hxo/head argv=[\"git\", \"checkout\", \"--detach\", \"9870dce9dc2688e78fc43bc73e27eed4198893ac\"]",
+    "cwd=/tmp/rio-eval-4vy53hxo argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/tmp/rio-eval-4vy53hxo/head\", \"/tmp/rio-eval-4vy53hxo/base\"]",
+    "cwd=/tmp/rio-eval-4vy53hxo/base argv=[\"git\", \"checkout\", \"--detach\", \"716f8b023b1c13e6f1e8ab08dfa1938f7923312d\"]",
+    "cwd=/tmp/rio-eval-4vy53hxo/base argv=[\"uv\", \"sync\", \"--locked\", \"--all-groups\", \"--all-extras\", \"--no-editable\", \"--python\", \"3.12.12\"]",
+    "cwd=/tmp/rio-eval-4vy53hxo/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/tmp/rio-eval-4vy53hxo/head argv=[\"uv\", \"sync\", \"--locked\", \"--all-groups\", \"--all-extras\", \"--no-editable\", \"--python\", \"3.12.12\"]",
+    "cwd=/tmp/rio-eval-4vy53hxo/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/tmp/rio-eval-4vy53hxo/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/tmp/rio-eval-4vy53hxo/head argv=[\"node\", \"--version\"]",
+    "cwd=/tmp/rio-eval-4vy53hxo/head argv=[\"npm\", \"--version\"]",
+    "cwd=/tmp/rio-eval-4vy53hxo/head argv=[\"python3\", \"--version\"]",
+    "cwd=/tmp/rio-eval-4vy53hxo/head argv=[\"uv\", \"--version\"]",
+    "cwd=/tmp/rio-eval-4vy53hxo/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-attempt1/profile.yaml\"]",
+    "cwd=/tmp/rio-eval-4vy53hxo/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/tmp/rio-eval-4vy53hxo/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"716f8b023b1c13e6f1e8ab08dfa1938f7923312d\", \"--format\", \"json\", \"--offline\", \"--profile\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-attempt1/profile.yaml\"]"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-attempt1/commands.json; Rio binary SHA-256: 512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+    "EXCLUDED attempt: baseline_ran=false and baseline_classification_ran=false. Typecheck/lint/coverage skipped because four executable .pth hooks could not be verified. This attempt contributes no quality score; repaired run is ../litestar-5178.",
+    "Independent base/head oracle evidence: ../litestar-evidence/oracle-commands.json and pyright-activated-commands.json. mypy succeeds in 1116 files each; activated Pyright has 0 errors each; Ruff passes each; scoped routing tests pass (4 base, 14 head). The first nonactivated Pyright invocation is a preserved setup error, superseded by the activated run.",
+    "Runtime CPython 3.12.12 and uv 0.13.7; all groups/extras from unchanged uv.lock; --no-editable. PYTEST_ADDOPTS=tests/e2e/test_routing/test_path_mounting.py; offline dependency auditing explicitly excluded.",
+    "Transport: scoped Git URL rewrite from https://github.com/litestar-org/litestar.git to file:///tmp/litestar-eval-transport.git, containing exact GitHub-fetched public SHAs. GIT_CONFIG_COUNT=2: http.version=HTTP/1.1 and URL rewrite. No source/config/lockfile edits. Profile used 20m budget; repaired cohort uses 60m."
+  ],
+  "independently_clean": true,
+  "positive_control": {
+    "kind": "none",
+    "expected": []
+  },
+  "misses": [],
+  "findings": {}
+}

@@ -1,0 +1,1060 @@
+/tmp/eval-litestar-oracle-base/litestar/__main__.py
+  /tmp/eval-litestar-oracle-base/litestar/__main__.py:10:5 - error: Arguments missing for parameters "ctx", "app_path" (reportCallIssue)
+/tmp/eval-litestar-oracle-base/litestar/_kwargs/cleanup.py
+  /tmp/eval-litestar-oracle-base/litestar/_kwargs/cleanup.py:7:6 - error: Import "anyio" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/_kwargs/kwargs_model.py
+  /tmp/eval-litestar-oracle-base/litestar/_kwargs/kwargs_model.py:7:6 - error: Import "anyio" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/_multipart.py
+  /tmp/eval-litestar-oracle-base/litestar/_multipart.py:95:36 - error: "filename" is not a known attribute of "None" (reportOptionalMemberAccess)
+  /tmp/eval-litestar-oracle-base/litestar/_multipart.py:97:54 - error: "content_type" is not a known attribute of "None" (reportOptionalMemberAccess)
+  /tmp/eval-litestar-oracle-base/litestar/_multipart.py:98:50 - error: "filename" is not a known attribute of "None" (reportOptionalMemberAccess)
+  /tmp/eval-litestar-oracle-base/litestar/_multipart.py:99:54 - error: "headerlist" is not a known attribute of "None" (reportOptionalMemberAccess)
+/tmp/eval-litestar-oracle-base/litestar/_openapi/schema_generation/examples.py
+  /tmp/eval-litestar-oracle-base/litestar/_openapi/schema_generation/examples.py:9:8 - error: Import "msgspec" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/_openapi/schema_generation/examples.py:10:6 - error: Import "polyfactory.exceptions" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/_openapi/schema_generation/examples.py:11:6 - error: Import "polyfactory.factories" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/_openapi/schema_generation/examples.py:12:6 - error: Import "polyfactory.field_meta" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/_openapi/schema_generation/examples.py:13:6 - error: Import "polyfactory.utils.helpers" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/_openapi/schema_generation/examples.py:14:6 - error: Import "polyfactory.utils.predicates" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/_openapi/schema_generation/plugins/pagination.py
+  /tmp/eval-litestar-oracle-base/litestar/_openapi/schema_generation/plugins/pagination.py:6:70 - error: "OffsetPagination" is unknown import symbol (reportAttributeAccessIssue)
+/tmp/eval-litestar-oracle-base/litestar/_openapi/schema_generation/plugins/struct.py
+  /tmp/eval-litestar-oracle-base/litestar/_openapi/schema_generation/plugins/struct.py:5:8 - error: Import "msgspec" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/_openapi/schema_generation/plugins/struct.py:6:6 - error: Import "msgspec" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/_openapi/schema_generation/plugins/struct.py:30:104 - error: Unnecessary "# type: ignore" comment (reportUnnecessaryTypeIgnoreComment)
+/tmp/eval-litestar-oracle-base/litestar/_signature/model.py
+  /tmp/eval-litestar-oracle-base/litestar/_signature/model.py:20:6 - error: Import "msgspec" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/_signature/model.py:21:6 - error: Import "msgspec.structs" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/_signature/types.py
+  /tmp/eval-litestar-oracle-base/litestar/_signature/types.py:5:6 - error: Import "msgspec" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/app.py
+  /tmp/eval-litestar-oracle-base/litestar/app.py:438:18 - error: Import "starlette.exceptions" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/background_tasks.py
+  /tmp/eval-litestar-oracle-base/litestar/background_tasks.py:4:6 - error: Import "anyio" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/channels/backends/asyncpg.py
+  /tmp/eval-litestar-oracle-base/litestar/channels/backends/asyncpg.py:18:29 - error: "Connection" is not a known attribute of module "asyncpg" (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/litestar/channels/backends/asyncpg.py:27:57 - error: "Connection" is not a known attribute of module "asyncpg" (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/litestar/channels/backends/asyncpg.py:34:57 - error: "Connection" is not a known attribute of module "asyncpg" (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/litestar/channels/backends/asyncpg.py:41:60 - error: "connect" is not a known attribute of module "asyncpg" (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/litestar/channels/backends/asyncpg.py:73:84 - error: Unnecessary "# type: ignore" comment (reportUnnecessaryTypeIgnoreComment)
+  /tmp/eval-litestar-oracle-base/litestar/channels/backends/asyncpg.py:80:87 - error: Unnecessary "# type: ignore" comment (reportUnnecessaryTypeIgnoreComment)
+  /tmp/eval-litestar-oracle-base/litestar/channels/backends/asyncpg.py:98:48 - error: "Connection" is not a known attribute of module "asyncpg" (reportAttributeAccessIssue)
+/tmp/eval-litestar-oracle-base/litestar/channels/backends/psycopg.py
+  /tmp/eval-litestar-oracle-base/litestar/channels/backends/psycopg.py:8:6 - error: Import "psycopg.sql" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/channels/backends/psycopg.py:23:21 - error: Object of type "Module("psycopg")" is not subscriptable (reportIndexIssue)
+  /tmp/eval-litestar-oracle-base/litestar/channels/backends/psycopg.py:39:37 - error: Object of type "Module("psycopg")" is not subscriptable (reportIndexIssue)
+  /tmp/eval-litestar-oracle-base/litestar/channels/backends/psycopg.py:52:26 - error: Object of type "Module("psycopg")" is not subscriptable (reportIndexIssue)
+/tmp/eval-litestar-oracle-base/litestar/channels/backends/redis.py
+  /tmp/eval-litestar-oracle-base/litestar/channels/backends/redis.py:14:10 - error: Import "redis.asyncio" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/channels/backends/redis.py:15:10 - error: Import "redis.asyncio.client" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/channels/plugin.py
+  /tmp/eval-litestar-oracle-base/litestar/channels/plugin.py:11:8 - error: Import "msgspec.json" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/cli/__init__.py
+  /tmp/eval-litestar-oracle-base/litestar/cli/__init__.py:8:12 - error: Import "rich_click" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/cli/_suggestions.py
+  /tmp/eval-litestar-oracle-base/litestar/cli/_suggestions.py:6:12 - error: Import "rich_click" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/cli/_utils.py
+  /tmp/eval-litestar-oracle-base/litestar/cli/_utils.py:23:10 - error: Import "rich_click" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/cli/_utils.py:24:10 - error: Import "rich_click" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/cli/_utils.py:25:10 - error: Import "rich_click" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/cli/_utils.py:48:14 - error: Import "rich_click" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/cli/_utils.py:113:20 - error: Import "dotenv" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/cli/commands/core.py
+  /tmp/eval-litestar-oracle-base/litestar/cli/commands/core.py:16:12 - error: Import "rich_click" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/cli/commands/core.py:116:25 - error: Argument to class must be a base class (reportGeneralTypeIssues)
+  /tmp/eval-litestar-oracle-base/litestar/cli/commands/core.py:298:24 - error: Type "object | Unknown" is not assignable to declared type "LitestarEnv"
+    Type "object | Unknown" is not assignable to type "LitestarEnv"
+      "object" is not assignable to "LitestarEnv" (reportAssignmentType)
+  /tmp/eval-litestar-oracle-base/litestar/cli/commands/core.py:315:20 - error: Import "uvicorn" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/cli/commands/schema.py
+  /tmp/eval-litestar-oracle-base/litestar/cli/commands/schema.py:5:8 - error: Import "msgspec" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/cli/commands/schema.py:9:12 - error: Import "rich_click" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/cli/commands/schema.py:82:14 - error: Import "jsbeautifier" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/cli/commands/sessions.py
+  /tmp/eval-litestar-oracle-base/litestar/cli/commands/sessions.py:4:12 - error: Import "rich_click" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/cli/commands/sessions.py:41:12 - error: Import "anyio" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/cli/commands/sessions.py:54:12 - error: Import "anyio" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/cli/main.py
+  /tmp/eval-litestar-oracle-base/litestar/cli/main.py:8:12 - error: Import "rich_click" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/cli/main.py:51:16 - error: Cannot access attribute "add_command" for class "FunctionType"
+    Attribute "add_command" is unknown (reportFunctionMemberAccess)
+  /tmp/eval-litestar-oracle-base/litestar/cli/main.py:52:16 - error: Cannot access attribute "add_command" for class "FunctionType"
+    Attribute "add_command" is unknown (reportFunctionMemberAccess)
+  /tmp/eval-litestar-oracle-base/litestar/cli/main.py:53:16 - error: Cannot access attribute "add_command" for class "FunctionType"
+    Attribute "add_command" is unknown (reportFunctionMemberAccess)
+  /tmp/eval-litestar-oracle-base/litestar/cli/main.py:54:16 - error: Cannot access attribute "add_command" for class "FunctionType"
+    Attribute "add_command" is unknown (reportFunctionMemberAccess)
+  /tmp/eval-litestar-oracle-base/litestar/cli/main.py:55:16 - error: Cannot access attribute "add_command" for class "FunctionType"
+    Attribute "add_command" is unknown (reportFunctionMemberAccess)
+  /tmp/eval-litestar-oracle-base/litestar/cli/main.py:56:16 - error: Cannot access attribute "add_command" for class "FunctionType"
+    Attribute "add_command" is unknown (reportFunctionMemberAccess)
+/tmp/eval-litestar-oracle-base/litestar/concurrency.py
+  /tmp/eval-litestar-oracle-base/litestar/concurrency.py:8:8 - error: Import "sniffio" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/concurrency.py:15:12 - error: Import "trio" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/concurrency.py:43:12 - error: Import "trio" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/constants.py
+  /tmp/eval-litestar-oracle-base/litestar/constants.py:8:6 - error: Import "msgspec" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/datastructures/headers.py
+  /tmp/eval-litestar-oracle-base/litestar/datastructures/headers.py:18:8 - error: Import "msgspec" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/datastructures/headers.py:19:6 - error: Import "multidict" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/datastructures/headers.py:47:75 - error: Unnecessary "# pyright: ignore" rule: "reportIncompatibleMethodOverride" (reportUnnecessaryTypeIgnoreComment)
+/tmp/eval-litestar-oracle-base/litestar/datastructures/multi_dicts.py
+  /tmp/eval-litestar-oracle-base/litestar/datastructures/multi_dicts.py:6:6 - error: Import "multidict" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/datastructures/multi_dicts.py:7:6 - error: Import "multidict" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/datastructures/multi_dicts.py:44:82 - error: Unnecessary "# pyright: ignore" rule: "reportIncompatibleMethodOverride" (reportUnnecessaryTypeIgnoreComment)
+  /tmp/eval-litestar-oracle-base/litestar/datastructures/multi_dicts.py:71:92 - error: Unnecessary "# pyright: ignore" rule: "reportIncompatibleMethodOverride" (reportUnnecessaryTypeIgnoreComment)
+  /tmp/eval-litestar-oracle-base/litestar/datastructures/multi_dicts.py:91:32 - error: Unnecessary "# type: ignore" comment (reportUnnecessaryTypeIgnoreComment)
+/tmp/eval-litestar-oracle-base/litestar/dto/_backend.py
+  /tmp/eval-litestar-oracle-base/litestar/dto/_backend.py:20:8 - error: Import "msgspec" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/dto/_backend.py:21:6 - error: Import "msgspec" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/dto/_codegen_backend.py
+  /tmp/eval-litestar-oracle-base/litestar/dto/_codegen_backend.py:22:6 - error: Import "msgspec" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/dto/msgspec_dto.py
+  /tmp/eval-litestar-oracle-base/litestar/dto/msgspec_dto.py:7:8 - error: Import "msgspec.inspect" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/dto/msgspec_dto.py:8:6 - error: Import "msgspec" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/dto/msgspec_dto.py:45:74 - error: Unnecessary "# type: ignore" comment (reportUnnecessaryTypeIgnoreComment)
+/tmp/eval-litestar-oracle-base/litestar/events/emitter.py
+  /tmp/eval-litestar-oracle-base/litestar/events/emitter.py:11:8 - error: Import "anyio" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/events/emitter.py:19:10 - error: Import "anyio.streams.memory" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/file_system.py
+  /tmp/eval-litestar-oracle-base/litestar/file_system.py:11:8 - error: Import "anyio" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/file_system.py:34:10 - error: Import "fsspec" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/file_system.py:35:10 - error: Import "fsspec.asyn" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/file_system.py:145:10 - error: Import "fsspec.implementations.local" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/file_system.py:274:57 - error: Unnecessary "# pyright: ignore" rule: "reportReturnType" (reportUnnecessaryTypeIgnoreComment)
+  /tmp/eval-litestar-oracle-base/litestar/file_system.py:330:16 - error: Import "fsspec.asyn" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/file_system.py:388:100 - error: Unnecessary "# pyright: ignore" rule: "reportGeneralTypeIssues" (reportUnnecessaryTypeIgnoreComment)
+  /tmp/eval-litestar-oracle-base/litestar/file_system.py:425:14 - error: Import "fsspec" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/file_system.py:426:14 - error: Import "fsspec.asyn" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/handlers/http_handlers/base.py
+  /tmp/eval-litestar-oracle-base/litestar/handlers/http_handlers/base.py:9:6 - error: Import "msgspec.msgpack" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/handlers/websocket_handlers/_utils.py
+  /tmp/eval-litestar-oracle-base/litestar/handlers/websocket_handlers/_utils.py:7:6 - error: Import "msgspec.json" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/handlers/websocket_handlers/stream.py
+  /tmp/eval-litestar-oracle-base/litestar/handlers/websocket_handlers/stream.py:10:8 - error: Import "anyio" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/handlers/websocket_handlers/stream.py:11:6 - error: Import "msgspec.json" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/middleware/_internal/exceptions/middleware.py
+  /tmp/eval-litestar-oracle-base/litestar/middleware/_internal/exceptions/middleware.py:18:10 - error: Import "starlette.exceptions" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/middleware/_internal/exceptions/middleware.py:82:37 - error: Unnecessary "# type: ignore" comment (reportUnnecessaryTypeIgnoreComment)
+/tmp/eval-litestar-oracle-base/litestar/middleware/_internal/response_cache.py
+  /tmp/eval-litestar-oracle-base/litestar/middleware/_internal/response_cache.py:5:6 - error: Import "msgspec.msgpack" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/middleware/compression/brotli_facade.py
+  /tmp/eval-litestar-oracle-base/litestar/middleware/compression/brotli_facade.py:10:10 - error: Import "brotli" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/middleware/compression/middleware.py
+  /tmp/eval-litestar-oracle-base/litestar/middleware/compression/middleware.py:27:14 - error: Import "brotli" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/middleware/compression/zstd_facade.py
+  /tmp/eval-litestar-oracle-base/litestar/middleware/compression/zstd_facade.py:14:14 - error: Import "backports" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/middleware/rate_limit.py
+  /tmp/eval-litestar-oracle-base/litestar/middleware/rate_limit.py:7:8 - error: Import "anyio" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/openapi/plugins.py
+  /tmp/eval-litestar-oracle-base/litestar/openapi/plugins.py:6:8 - error: Import "msgspec" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/pagination.py
+  /tmp/eval-litestar-oracle-base/litestar/pagination.py:46:10 - error: Import "advanced_alchemy.service" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/plugins/core/_msgspec.py
+  /tmp/eval-litestar-oracle-base/litestar/plugins/core/_msgspec.py:9:8 - error: Import "msgspec" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/plugins/htmx.py
+  /tmp/eval-litestar-oracle-base/litestar/plugins/htmx.py:4:6 - error: Import "litestar_htmx" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/plugins/minijinja.py
+  /tmp/eval-litestar-oracle-base/litestar/plugins/minijinja.py:20:27 - error: "TemplateError" is unknown import symbol (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/litestar/plugins/minijinja.py:46:10 - error: Module cannot be used as a type (reportGeneralTypeIssues)
+  /tmp/eval-litestar-oracle-base/litestar/plugins/minijinja.py:77:32 - error: Module cannot be used as a type (reportGeneralTypeIssues)
+  /tmp/eval-litestar-oracle-base/litestar/plugins/minijinja.py:93:36 - error: "render_template" is not a known attribute of module "minijinja" (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/litestar/plugins/minijinja.py:104:27 - error: Module cannot be used as a type (reportInvalidTypeForm)
+  /tmp/eval-litestar-oracle-base/litestar/plugins/minijinja.py:138:27 - error: Module is not callable (reportCallIssue)
+  /tmp/eval-litestar-oracle-base/litestar/plugins/minijinja.py:198:54 - error: Module cannot be used as a type (reportGeneralTypeIssues)
+/tmp/eval-litestar-oracle-base/litestar/plugins/opentelemetry/_utils.py
+  /tmp/eval-litestar-oracle-base/litestar/plugins/opentelemetry/_utils.py:13:6 - error: Import "opentelemetry.semconv.attributes.http_attributes" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/plugins/opentelemetry/config.py
+  /tmp/eval-litestar-oracle-base/litestar/plugins/opentelemetry/config.py:21:6 - error: Import "opentelemetry.trace" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/plugins/opentelemetry/config.py:24:10 - error: Import "opentelemetry.metrics" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/plugins/opentelemetry/middleware.py
+  /tmp/eval-litestar-oracle-base/litestar/plugins/opentelemetry/middleware.py:14:6 - error: Import "opentelemetry.instrumentation.asgi" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/plugins/opentelemetry/middleware.py:15:6 - error: Import "opentelemetry.util.http" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/plugins/opentelemetry/middleware.py:62:71 - error: Unnecessary "# type: ignore" comment (reportUnnecessaryTypeIgnoreComment)
+/tmp/eval-litestar-oracle-base/litestar/plugins/prometheus/config.py
+  /tmp/eval-litestar-oracle-base/litestar/plugins/prometheus/config.py:16:12 - error: Import "prometheus_client" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/plugins/prometheus/controller.py
+  /tmp/eval-litestar-oracle-base/litestar/plugins/prometheus/controller.py:12:12 - error: Import "prometheus_client" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/plugins/prometheus/controller.py:16:6 - error: Import "prometheus_client" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/plugins/prometheus/controller.py:23:6 - error: Import "prometheus_client.openmetrics.exposition" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/plugins/prometheus/controller.py:26:6 - error: Import "prometheus_client.openmetrics.exposition" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/plugins/prometheus/middleware.py
+  /tmp/eval-litestar-oracle-base/litestar/plugins/prometheus/middleware.py:17:12 - error: Import "prometheus_client" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/plugins/prometheus/middleware.py:21:6 - error: Import "prometheus_client" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/plugins/prometheus/middleware.py:26:10 - error: Import "prometheus_client.metrics" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/plugins/pydantic/__init__.py
+  /tmp/eval-litestar-oracle-base/litestar/plugins/pydantic/__init__.py:27:12 - error: Module cannot be used as a type (reportGeneralTypeIssues)
+  /tmp/eval-litestar-oracle-base/litestar/plugins/pydantic/__init__.py:32:18 - error: "model_dump" is not a known attribute of module "pydantic" (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/litestar/plugins/pydantic/__init__.py:36:12 - error: Module cannot be used as a type (reportGeneralTypeIssues)
+  /tmp/eval-litestar-oracle-base/litestar/plugins/pydantic/__init__.py:40:18 - error: "model_dump_json" is not a known attribute of module "pydantic" (reportAttributeAccessIssue)
+/tmp/eval-litestar-oracle-base/litestar/plugins/pydantic/dto.py
+  /tmp/eval-litestar-oracle-base/litestar/plugins/pydantic/dto.py:32:22 - error: "ValidationError" is unknown import symbol (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/litestar/plugins/pydantic/dto.py:37:25 - error: Module cannot be used as a type (reportInvalidTypeForm)
+  /tmp/eval-litestar-oracle-base/litestar/plugins/pydantic/dto.py:37:48 - error: Module cannot be used as a type (reportInvalidTypeForm)
+  /tmp/eval-litestar-oracle-base/litestar/plugins/pydantic/dto.py:43:14 - error: "EmailStr" is not a known attribute of module "pydantic" (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/litestar/plugins/pydantic/dto.py:44:14 - error: "IPvAnyAddress" is not a known attribute of module "pydantic" (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/litestar/plugins/pydantic/dto.py:45:14 - error: "IPvAnyInterface" is not a known attribute of module "pydantic" (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/litestar/plugins/pydantic/dto.py:46:14 - error: "IPvAnyNetwork" is not a known attribute of module "pydantic" (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/litestar/plugins/pydantic/dto.py:47:14 - error: "JsonValue" is not a known attribute of module "pydantic" (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/litestar/plugins/pydantic/dto.py:48:14 - error: "AwareDatetime" is not a known attribute of module "pydantic" (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/litestar/plugins/pydantic/dto.py:88:26 - error: Module cannot be used as a type (reportInvalidTypeForm)
+/tmp/eval-litestar-oracle-base/litestar/plugins/pydantic/utils.py
+  /tmp/eval-litestar-oracle-base/litestar/plugins/pydantic/utils.py:12:6 - error: Import "pydantic_core" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/plugins/pydantic/utils.py:30:21 - error: Module cannot be used as a type (reportInvalidTypeForm)
+  /tmp/eval-litestar-oracle-base/litestar/plugins/pydantic/utils.py:44:16 - error: Module cannot be used as a type (reportInvalidTypeForm)
+  /tmp/eval-litestar-oracle-base/litestar/plugins/pydantic/utils.py:88:15 - error: Module cannot be used as a type (reportInvalidTypeForm)
+  /tmp/eval-litestar-oracle-base/litestar/plugins/pydantic/utils.py:89:16 - error: Module cannot be used as a type (reportInvalidTypeForm)
+  /tmp/eval-litestar-oracle-base/litestar/plugins/pydantic/utils.py:98:17 - error: Module cannot be used as a type (reportInvalidTypeForm)
+  /tmp/eval-litestar-oracle-base/litestar/plugins/pydantic/utils.py:153:38 - error: "fields" is not a known attribute of module "pydantic" (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/litestar/plugins/pydantic/utils.py:165:26 - error: "fields" is not a known attribute of module "pydantic" (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/litestar/plugins/pydantic/utils.py:196:38 - error: "types" is not a known attribute of module "pydantic" (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/litestar/plugins/pydantic/utils.py:230:17 - error: Module cannot be used as a type (reportInvalidTypeForm)
+  /tmp/eval-litestar-oracle-base/litestar/plugins/pydantic/utils.py:239:26 - error: "model_config" is not a known attribute of module "pydantic" (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/litestar/plugins/pydantic/utils.py:240:30 - error: "model_fields" is not a known attribute of module "pydantic" (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/litestar/plugins/pydantic/utils.py:244:38 - error: "fields" is not a known attribute of module "pydantic" (reportAttributeAccessIssue)
+/tmp/eval-litestar-oracle-base/litestar/repository/__init__.py
+  /tmp/eval-litestar-oracle-base/litestar/repository/__init__.py:4:25 - error: "ConflictError" is unknown import symbol (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/litestar/repository/__init__.py:4:40 - error: "NotFoundError" is unknown import symbol (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/litestar/repository/__init__.py:4:55 - error: "RepositoryError" is unknown import symbol (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/litestar/repository/__init__.py:5:22 - error: "FilterTypes" is unknown import symbol (reportAttributeAccessIssue)
+/tmp/eval-litestar-oracle-base/litestar/repository/abc/_async.py
+  /tmp/eval-litestar-oracle-base/litestar/repository/abc/_async.py:6:44 - error: "NotFoundError" is unknown import symbol (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/litestar/repository/abc/_async.py:9:45 - error: "FilterTypes" is unknown import symbol (reportAttributeAccessIssue)
+/tmp/eval-litestar-oracle-base/litestar/repository/abc/_sync.py
+  /tmp/eval-litestar-oracle-base/litestar/repository/abc/_sync.py:8:44 - error: "NotFoundError" is unknown import symbol (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/litestar/repository/abc/_sync.py:11:45 - error: "FilterTypes" is unknown import symbol (reportAttributeAccessIssue)
+/tmp/eval-litestar-oracle-base/litestar/repository/exceptions.py
+  /tmp/eval-litestar-oracle-base/litestar/repository/exceptions.py:4:10 - error: Import "advanced_alchemy.exceptions" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/repository/exceptions.py:5:10 - error: Import "advanced_alchemy.exceptions" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/repository/filters.py
+  /tmp/eval-litestar-oracle-base/litestar/repository/filters.py:4:10 - error: Import "advanced_alchemy.filters" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/repository/handlers.py
+  /tmp/eval-litestar-oracle-base/litestar/repository/handlers.py:4:5 - error: "BeforeAfter" is unknown import symbol (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/litestar/repository/handlers.py:5:5 - error: "CollectionFilter" is unknown import symbol (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/litestar/repository/handlers.py:6:5 - error: "FilterTypes" is unknown import symbol (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/litestar/repository/handlers.py:7:5 - error: "LimitOffset" is unknown import symbol (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/litestar/repository/handlers.py:8:5 - error: "NotInCollectionFilter" is unknown import symbol (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/litestar/repository/handlers.py:9:5 - error: "NotInSearchFilter" is unknown import symbol (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/litestar/repository/handlers.py:10:5 - error: "OnBeforeAfter" is unknown import symbol (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/litestar/repository/handlers.py:11:5 - error: "OrderBy" is unknown import symbol (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/litestar/repository/handlers.py:12:5 - error: "SearchFilter" is unknown import symbol (reportAttributeAccessIssue)
+/tmp/eval-litestar-oracle-base/litestar/repository/testing/generic_mock_repository.py
+  /tmp/eval-litestar-oracle-base/litestar/repository/testing/generic_mock_repository.py:12:82 - error: "FilterTypes" is unknown import symbol (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/litestar/repository/testing/generic_mock_repository.py:13:44 - error: "ConflictError" is unknown import symbol (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/litestar/repository/testing/generic_mock_repository.py:13:59 - error: "RepositoryError" is unknown import symbol (reportAttributeAccessIssue)
+/tmp/eval-litestar-oracle-base/litestar/response/file.py
+  /tmp/eval-litestar-oracle-base/litestar/response/file.py:24:10 - error: Import "anyio" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/response/file.py:25:10 - error: Import "fsspec" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/response/file.py:26:10 - error: Import "fsspec.asyn" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/response/sse.py
+  /tmp/eval-litestar-oracle-base/litestar/response/sse.py:10:8 - error: Import "anyio" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/response/streaming.py
+  /tmp/eval-litestar-oracle-base/litestar/response/streaming.py:7:6 - error: Import "anyio" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/routes/base.py
+  /tmp/eval-litestar-oracle-base/litestar/routes/base.py:11:8 - error: Import "msgspec" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/security/jwt/token.py
+  /tmp/eval-litestar-oracle-base/litestar/security/jwt/token.py:10:8 - error: Import "msgspec" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/security/jwt/token.py:108:20 - error: Argument of type "str | Sequence[str] | None" cannot be assigned to parameter "issuer" of type "str | None" in function "decode"
+    Type "str | Sequence[str] | None" is not assignable to type "str | None"
+      Type "Sequence[str]" is not assignable to type "str | None"
+        "Sequence[str]" is not assignable to "str"
+        "Sequence[str]" is not assignable to "None" (reportArgumentType)
+/tmp/eval-litestar-oracle-base/litestar/serialization/msgspec_hooks.py
+  /tmp/eval-litestar-oracle-base/litestar/serialization/msgspec_hooks.py:20:8 - error: Import "msgspec" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/stores/base.py
+  /tmp/eval-litestar-oracle-base/litestar/stores/base.py:7:6 - error: Import "msgspec" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/stores/base.py:8:6 - error: Import "msgspec.msgpack" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/stores/base.py:9:6 - error: Import "msgspec.msgpack" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/stores/file.py
+  /tmp/eval-litestar-oracle-base/litestar/stores/file.py:9:6 - error: Import "anyio" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/stores/memory.py
+  /tmp/eval-litestar-oracle-base/litestar/stores/memory.py:5:8 - error: Import "anyio" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/stores/memory.py:6:6 - error: Import "anyio" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/stores/redis.py
+  /tmp/eval-litestar-oracle-base/litestar/stores/redis.py:6:6 - error: Import "redis.asyncio" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/stores/redis.py:7:6 - error: Import "redis.asyncio.connection" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/stores/redis.py:18:10 - error: Import "redis.asyncio.connection" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/stores/redis.py:83:69 - error: Unnecessary "# type: ignore" comment (reportUnnecessaryTypeIgnoreComment)
+/tmp/eval-litestar-oracle-base/litestar/stores/valkey.py
+  /tmp/eval-litestar-oracle-base/litestar/stores/valkey.py:8:6 - error: Import "valkey.asyncio" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/stores/valkey.py:9:6 - error: Import "valkey.asyncio.connection" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/testing/__init__.py
+  /tmp/eval-litestar-oracle-base/litestar/testing/__init__.py:4:12 - error: Import "httpx" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/testing/client/_base.py
+  /tmp/eval-litestar-oracle-base/litestar/testing/client/_base.py:15:10 - error: Import "httpx._client" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/testing/client/_base.py:16:10 - error: Import "httpx._types" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/testing/client/_base.py:26:8 - error: Import "httpx" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/testing/client/_base.py:27:6 - error: Import "httpx._client" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/testing/client/_base.py:82:64 - error: Unnecessary "# type: ignore" comment (reportUnnecessaryTypeIgnoreComment)
+/tmp/eval-litestar-oracle-base/litestar/testing/client/async_client.py
+  /tmp/eval-litestar-oracle-base/litestar/testing/client/async_client.py:7:8 - error: Import "anyio" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/testing/client/async_client.py:8:6 - error: Import "httpx" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/testing/client/async_client.py:20:10 - error: Import "httpx._client" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/testing/client/async_client.py:21:10 - error: Import "httpx._types" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/testing/client/async_client.py:33:6 - error: Import "httpx._client" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/testing/client/async_client.py:41:10 - error: Import "httpx._types" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/testing/client/subprocess_client.py
+  /tmp/eval-litestar-oracle-base/litestar/testing/client/subprocess_client.py:8:8 - error: Import "httpx" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/testing/client/sync_client.py
+  /tmp/eval-litestar-oracle-base/litestar/testing/client/sync_client.py:7:8 - error: Import "anyio.from_thread" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/testing/client/sync_client.py:8:6 - error: Import "httpx" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/testing/client/sync_client.py:26:10 - error: Import "httpx._client" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/testing/client/sync_client.py:27:10 - error: Import "httpx._types" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/testing/life_span_handler.py
+  /tmp/eval-litestar-oracle-base/litestar/testing/life_span_handler.py:9:8 - error: Import "anyio" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/testing/life_span_handler.py:10:6 - error: Import "anyio" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/testing/life_span_handler.py:11:6 - error: Import "anyio.streams.stapled" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/testing/request_factory.py
+  /tmp/eval-litestar-oracle-base/litestar/testing/request_factory.py:10:6 - error: Import "httpx._content" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/testing/request_factory.py:11:6 - error: Import "httpx._content" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/testing/request_factory.py:25:10 - error: Import "httpx._types" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/testing/transport.py
+  /tmp/eval-litestar-oracle-base/litestar/testing/transport.py:11:8 - error: Import "anyio" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/testing/transport.py:12:6 - error: Import "httpx" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/testing/transport.py:18:10 - error: Import "httpx" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/testing/websocket_test_session.py
+  /tmp/eval-litestar-oracle-base/litestar/testing/websocket_test_session.py:7:8 - error: Import "anyio" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/testing/websocket_test_session.py:8:8 - error: Import "anyio.abc" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/testing/websocket_test_session.py:9:6 - error: Import "anyio.streams.stapled" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/testing/websocket_test_session.py:19:10 - error: Import "anyio.streams.memory" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/testing/websocket_test_session.py:283:50 - error: Unnecessary "# type: ignore" comment (reportUnnecessaryTypeIgnoreComment)
+/tmp/eval-litestar-oracle-base/litestar/types/serialization.py
+  /tmp/eval-litestar-oracle-base/litestar/types/serialization.py:26:10 - error: Import "msgspec" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/types/serialization.py:27:10 - error: Import "msgspec.msgpack" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/litestar/typing.py
+  /tmp/eval-litestar-oracle-base/litestar/typing.py:27:12 - error: Import "annotated_types" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/litestar/typing.py:33:6 - error: Import "msgspec" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/conftest.py
+  /tmp/eval-litestar-oracle-base/tests/conftest.py:19:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/conftest.py:20:6 - error: Import "pytest_lazy_fixtures" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/conftest.py:21:6 - error: Import "redis.asyncio" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/conftest.py:22:6 - error: Import "redis.client" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/conftest.py:23:6 - error: Import "time_machine" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/conftest.py:24:6 - error: Import "valkey.asyncio" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/conftest.py:25:6 - error: Import "valkey.client" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/conftest.py:43:10 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/conftest.py:44:10 - error: Import "time_machine" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/e2e/test_advanced_alchemy.py
+  /tmp/eval-litestar-oracle-base/tests/e2e/test_advanced_alchemy.py:1:6 - error: Import "advanced_alchemy.extensions.litestar.plugins" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/e2e/test_advanced_alchemy.py:2:6 - error: Import "advanced_alchemy.filters" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/e2e/test_cors/test_cors_for_mount.py
+  /tmp/eval-litestar-oracle-base/tests/e2e/test_cors/test_cors_for_mount.py:6:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/e2e/test_dependency_injection/test_dependency_validation.py
+  /tmp/eval-litestar-oracle-base/tests/e2e/test_dependency_injection/test_dependency_validation.py:1:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/e2e/test_dependency_injection/test_http_handler_dependency_injection.py
+  /tmp/eval-litestar-oracle-base/tests/e2e/test_dependency_injection/test_http_handler_dependency_injection.py:4:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/e2e/test_dependency_injection/test_injection_of_classes.py
+  /tmp/eval-litestar-oracle-base/tests/e2e/test_dependency_injection/test_injection_of_classes.py:3:8 - error: Import "msgspec" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/e2e/test_dependency_injection/test_injection_of_generic_models.py
+  /tmp/eval-litestar-oracle-base/tests/e2e/test_dependency_injection/test_injection_of_generic_models.py:3:6 - error: Import "msgspec" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/e2e/test_dependency_injection/test_websocket_handler_dependency_injection.py
+  /tmp/eval-litestar-oracle-base/tests/e2e/test_dependency_injection/test_websocket_handler_dependency_injection.py:4:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/e2e/test_exception_handlers/test_exception_handlers.py
+  /tmp/eval-litestar-oracle-base/tests/e2e/test_exception_handlers/test_exception_handlers.py:3:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/e2e/test_life_cycle_hooks/test_after_request.py
+  /tmp/eval-litestar-oracle-base/tests/e2e/test_life_cycle_hooks/test_after_request.py:3:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/e2e/test_life_cycle_hooks/test_after_response.py
+  /tmp/eval-litestar-oracle-base/tests/e2e/test_life_cycle_hooks/test_after_response.py:5:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/e2e/test_life_cycle_hooks/test_before_request.py
+  /tmp/eval-litestar-oracle-base/tests/e2e/test_life_cycle_hooks/test_before_request.py:5:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/e2e/test_logging/test_structlog_to_file.py
+  /tmp/eval-litestar-oracle-base/tests/e2e/test_logging/test_structlog_to_file.py:8:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/e2e/test_logging/test_structlog_to_file.py:9:8 - error: Import "structlog" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/e2e/test_option_requests.py
+  /tmp/eval-litestar-oracle-base/tests/e2e/test_option_requests.py:5:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/e2e/test_response_caching.py
+  /tmp/eval-litestar-oracle-base/tests/e2e/test_response_caching.py:10:8 - error: Import "msgspec" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/e2e/test_response_caching.py:11:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/e2e/test_response_caching.py:25:10 - error: Import "time_machine" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/e2e/test_router_registration.py
+  /tmp/eval-litestar-oracle-base/tests/e2e/test_router_registration.py:1:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/e2e/test_routing/conftest.py
+  /tmp/eval-litestar-oracle-base/tests/e2e/test_routing/conftest.py:5:8 - error: Import "httpx" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/e2e/test_routing/conftest.py:6:8 - warning: Import "psutil" could not be resolved from source (reportMissingModuleSource)
+  /tmp/eval-litestar-oracle-base/tests/e2e/test_routing/conftest.py:7:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/e2e/test_routing/conftest.py:8:6 - error: Import "_pytest.fixtures" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/e2e/test_routing/conftest.py:9:6 - error: Import "_pytest.monkeypatch" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/e2e/test_routing/test_path_mounting.py
+  /tmp/eval-litestar-oracle-base/tests/e2e/test_routing/test_path_mounting.py:5:8 - error: Import "httpx" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/e2e/test_routing/test_path_mounting.py:6:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/e2e/test_routing/test_path_mounting.py:7:6 - error: Import "_pytest.monkeypatch" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/e2e/test_routing/test_path_resolution.py
+  /tmp/eval-litestar-oracle-base/tests/e2e/test_routing/test_path_resolution.py:5:8 - error: Import "httpx" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/e2e/test_routing/test_path_resolution.py:6:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/e2e/test_routing/test_path_resolution.py:7:6 - error: Import "_pytest.monkeypatch" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/e2e/test_routing/test_route_indexing.py
+  /tmp/eval-litestar-oracle-base/tests/e2e/test_routing/test_route_indexing.py:3:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/e2e/test_routing/test_route_reverse.py
+  /tmp/eval-litestar-oracle-base/tests/e2e/test_routing/test_route_reverse.py:7:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/e2e/test_routing/test_validations.py
+  /tmp/eval-litestar-oracle-base/tests/e2e/test_routing/test_validations.py:3:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/e2e/test_starlette_responses.py
+  /tmp/eval-litestar-oracle-base/tests/e2e/test_starlette_responses.py:1:6 - error: Import "starlette.responses" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/helpers.py
+  /tmp/eval-litestar-oracle-base/tests/helpers.py:14:6 - error: Import "_pytest.logging" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/models.py
+  /tmp/eval-litestar-oracle-base/tests/models.py:6:8 - error: Import "msgspec" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/models.py:7:6 - error: Import "polyfactory.factories" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/conftest.py
+  /tmp/eval-litestar-oracle-base/tests/unit/conftest.py:4:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/conftest.py:5:6 - error: Import "_pytest.fixtures" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_app.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_app.py:10:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_app.py:12:6 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_app.py:13:6 - error: Import "pytest_mock" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_asgi/test_asgi_router.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_asgi/test_asgi_router.py:8:8 - error: Import "anyio" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_asgi/test_asgi_router.py:9:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_asgi/test_asgi_router.py:10:6 - error: Import "pytest_mock" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_asgi/test_routing_trie/test_mapping.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_asgi/test_routing_trie/test_mapping.py:5:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_asgi/test_routing_trie/test_traversal.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_asgi/test_routing_trie/test_traversal.py:3:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_asgi/test_validations.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_asgi/test_validations.py:1:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_channels/conftest.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_channels/conftest.py:3:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_channels/conftest.py:4:6 - error: Import "redis.asyncio" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_channels/test_asyncpg_backend.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_channels/test_asyncpg_backend.py:38:44 - error: Unnecessary "# type: ignore" comment (reportUnnecessaryTypeIgnoreComment)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_channels/test_asyncpg_backend.py:48:44 - error: Unnecessary "# type: ignore" comment (reportUnnecessaryTypeIgnoreComment)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_channels/test_asyncpg_backend.py:75:58 - error: Unnecessary "# type: ignore" comment (reportUnnecessaryTypeIgnoreComment)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_channels/test_asyncpg_backend.py:76:59 - error: Unnecessary "# type: ignore" comment (reportUnnecessaryTypeIgnoreComment)
+/tmp/eval-litestar-oracle-base/tests/unit/test_channels/test_backends.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_channels/test_backends.py:9:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_channels/test_backends.py:10:6 - error: Import "_pytest.fixtures" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_channels/test_backends.py:11:6 - error: Import "redis.asyncio.client" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_channels/test_plugin.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_channels/test_plugin.py:10:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_channels/test_plugin.py:11:6 - error: Import "_pytest.fixtures" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_channels/test_plugin.py:12:6 - error: Import "pytest_mock" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_channels/test_psycopg_backend.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_channels/test_psycopg_backend.py:7:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_channels/test_psycopg_backend.py:49:44 - error: Unnecessary "# type: ignore" comment (reportUnnecessaryTypeIgnoreComment)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_channels/test_psycopg_backend.py:58:54 - error: Unnecessary "# type: ignore" comment (reportUnnecessaryTypeIgnoreComment)
+/tmp/eval-litestar-oracle-base/tests/unit/test_channels/test_subscriber.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_channels/test_subscriber.py:8:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_cli/conftest.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/conftest.py:10:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/conftest.py:11:6 - error: Import "_pytest.fixtures" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/conftest.py:12:6 - error: Import "_pytest.monkeypatch" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/conftest.py:14:6 - error: Import "pytest_mock" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_cli.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_cli.py:3:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_cli.py:14:10 - error: Import "pytest_mock" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_cli.py:29:28 - error: Argument of type "(ctx: Unknown, app_path: str | None, app_dir: Path | None = None) -> None" cannot be assigned to parameter "cli" of type "BaseCommand" in function "invoke"
+    "FunctionType" is not assignable to "BaseCommand" (reportArgumentType)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_cli.py:49:28 - error: Argument of type "(ctx: Unknown, app_path: str | None, app_dir: Path | None = None) -> None" cannot be assigned to parameter "cli" of type "BaseCommand" in function "invoke"
+    "FunctionType" is not assignable to "BaseCommand" (reportArgumentType)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_cli.py:72:28 - error: Argument of type "(ctx: Unknown, app_path: str | None, app_dir: Path | None = None) -> None" cannot be assigned to parameter "cli" of type "BaseCommand" in function "invoke"
+    "FunctionType" is not assignable to "BaseCommand" (reportArgumentType)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_cli.py:92:28 - error: Argument of type "(ctx: Unknown, app_path: str | None, app_dir: Path | None = None) -> None" cannot be assigned to parameter "cli" of type "BaseCommand" in function "invoke"
+    "FunctionType" is not assignable to "BaseCommand" (reportArgumentType)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_cli.py:112:28 - error: Argument of type "(ctx: Unknown, app_path: str | None, app_dir: Path | None = None) -> None" cannot be assigned to parameter "cli" of type "BaseCommand" in function "invoke"
+    "FunctionType" is not assignable to "BaseCommand" (reportArgumentType)
+/tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_core_commands.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_core_commands.py:12:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_core_commands.py:13:6 - error: Import "_pytest.monkeypatch" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_core_commands.py:15:6 - error: Import "pytest_mock" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_core_commands.py:168:28 - error: Argument of type "(ctx: Unknown, app_path: str | None, app_dir: Path | None = None) -> None" cannot be assigned to parameter "cli" of type "BaseCommand" in function "invoke"
+    "FunctionType" is not assignable to "BaseCommand" (reportArgumentType)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_core_commands.py:249:28 - error: Argument of type "(ctx: Unknown, app_path: str | None, app_dir: Path | None = None) -> None" cannot be assigned to parameter "cli" of type "BaseCommand" in function "invoke"
+    "FunctionType" is not assignable to "BaseCommand" (reportArgumentType)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_core_commands.py:287:28 - error: Argument of type "(ctx: Unknown, app_path: str | None, app_dir: Path | None = None) -> None" cannot be assigned to parameter "cli" of type "BaseCommand" in function "invoke"
+    "FunctionType" is not assignable to "BaseCommand" (reportArgumentType)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_core_commands.py:393:28 - error: Argument of type "(ctx: Unknown, app_path: str | None, app_dir: Path | None = None) -> None" cannot be assigned to parameter "cli" of type "BaseCommand" in function "invoke"
+    "FunctionType" is not assignable to "BaseCommand" (reportArgumentType)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_core_commands.py:434:28 - error: Argument of type "(ctx: Unknown, app_path: str | None, app_dir: Path | None = None) -> None" cannot be assigned to parameter "cli" of type "BaseCommand" in function "invoke"
+    "FunctionType" is not assignable to "BaseCommand" (reportArgumentType)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_core_commands.py:456:28 - error: Argument of type "(ctx: Unknown, app_path: str | None, app_dir: Path | None = None) -> None" cannot be assigned to parameter "cli" of type "BaseCommand" in function "invoke"
+    "FunctionType" is not assignable to "BaseCommand" (reportArgumentType)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_core_commands.py:466:28 - error: Argument of type "(ctx: Unknown, app_path: str | None, app_dir: Path | None = None) -> None" cannot be assigned to parameter "cli" of type "BaseCommand" in function "invoke"
+    "FunctionType" is not assignable to "BaseCommand" (reportArgumentType)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_core_commands.py:491:28 - error: Argument of type "(ctx: Unknown, app_path: str | None, app_dir: Path | None = None) -> None" cannot be assigned to parameter "cli" of type "BaseCommand" in function "invoke"
+    "FunctionType" is not assignable to "BaseCommand" (reportArgumentType)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_core_commands.py:499:28 - error: Argument of type "(ctx: Unknown, app_path: str | None, app_dir: Path | None = None) -> None" cannot be assigned to parameter "cli" of type "BaseCommand" in function "invoke"
+    "FunctionType" is not assignable to "BaseCommand" (reportArgumentType)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_core_commands.py:517:32 - error: Argument of type "(ctx: Unknown, app_path: str | None, app_dir: Path | None = None) -> None" cannot be assigned to parameter "cli" of type "BaseCommand" in function "invoke"
+    "FunctionType" is not assignable to "BaseCommand" (reportArgumentType)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_core_commands.py:536:28 - error: Argument of type "(ctx: Unknown, app_path: str | None, app_dir: Path | None = None) -> None" cannot be assigned to parameter "cli" of type "BaseCommand" in function "invoke"
+    "FunctionType" is not assignable to "BaseCommand" (reportArgumentType)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_core_commands.py:543:28 - error: Argument of type "(ctx: Unknown, app_path: str | None, app_dir: Path | None = None) -> None" cannot be assigned to parameter "cli" of type "BaseCommand" in function "invoke"
+    "FunctionType" is not assignable to "BaseCommand" (reportArgumentType)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_core_commands.py:554:28 - error: Argument of type "(ctx: Unknown, app_path: str | None, app_dir: Path | None = None) -> None" cannot be assigned to parameter "cli" of type "BaseCommand" in function "invoke"
+    "FunctionType" is not assignable to "BaseCommand" (reportArgumentType)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_core_commands.py:613:28 - error: Argument of type "(ctx: Unknown, app_path: str | None, app_dir: Path | None = None) -> None" cannot be assigned to parameter "cli" of type "BaseCommand" in function "invoke"
+    "FunctionType" is not assignable to "BaseCommand" (reportArgumentType)
+/tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_env_resolution.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_env_resolution.py:3:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_env_resolution.py:4:6 - error: Import "_pytest.monkeypatch" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_main.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_main.py:8:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_main.py:14:10 - error: Import "pytest_mock" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_schema_commands.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_schema_commands.py:7:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_schema_commands.py:18:10 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_schema_commands.py:19:10 - error: Import "pytest_mock" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_schema_commands.py:41:28 - error: Argument of type "(ctx: Unknown, app_path: str | None, app_dir: Path | None = None) -> None" cannot be assigned to parameter "cli" of type "BaseCommand" in function "invoke"
+    "FunctionType" is not assignable to "BaseCommand" (reportArgumentType)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_schema_commands.py:82:28 - error: Argument of type "(ctx: Unknown, app_path: str | None, app_dir: Path | None = None) -> None" cannot be assigned to parameter "cli" of type "BaseCommand" in function "invoke"
+    "FunctionType" is not assignable to "BaseCommand" (reportArgumentType)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_schema_commands.py:103:28 - error: Argument of type "(ctx: Unknown, app_path: str | None, app_dir: Path | None = None) -> None" cannot be assigned to parameter "cli" of type "BaseCommand" in function "invoke"
+    "FunctionType" is not assignable to "BaseCommand" (reportArgumentType)
+/tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_session_commands.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_session_commands.py:14:10 - error: Import "_pytest.monkeypatch" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_session_commands.py:16:10 - error: Import "pytest_mock" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_session_commands.py:28:28 - error: Argument of type "(ctx: Unknown, app_path: str | None, app_dir: Path | None = None) -> None" cannot be assigned to parameter "cli" of type "BaseCommand" in function "invoke"
+    "FunctionType" is not assignable to "BaseCommand" (reportArgumentType)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_session_commands.py:37:28 - error: Argument of type "(ctx: Unknown, app_path: str | None, app_dir: Path | None = None) -> None" cannot be assigned to parameter "cli" of type "BaseCommand" in function "invoke"
+    "FunctionType" is not assignable to "BaseCommand" (reportArgumentType)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_session_commands.py:49:28 - error: Argument of type "(ctx: Unknown, app_path: str | None, app_dir: Path | None = None) -> None" cannot be assigned to parameter "cli" of type "BaseCommand" in function "invoke"
+    "FunctionType" is not assignable to "BaseCommand" (reportArgumentType)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_session_commands.py:58:28 - error: Argument of type "(ctx: Unknown, app_path: str | None, app_dir: Path | None = None) -> None" cannot be assigned to parameter "cli" of type "BaseCommand" in function "invoke"
+    "FunctionType" is not assignable to "BaseCommand" (reportArgumentType)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_session_commands.py:67:28 - error: Argument of type "(ctx: Unknown, app_path: str | None, app_dir: Path | None = None) -> None" cannot be assigned to parameter "cli" of type "BaseCommand" in function "invoke"
+    "FunctionType" is not assignable to "BaseCommand" (reportArgumentType)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_session_commands.py:79:28 - error: Argument of type "(ctx: Unknown, app_path: str | None, app_dir: Path | None = None) -> None" cannot be assigned to parameter "cli" of type "BaseCommand" in function "invoke"
+    "FunctionType" is not assignable to "BaseCommand" (reportArgumentType)
+/tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_ssl.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_ssl.py:8:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_ssl.py:11:6 - error: Import "pytest_mock" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_ssl.py:52:28 - error: Argument of type "(ctx: Unknown, app_path: str | None, app_dir: Path | None = None) -> None" cannot be assigned to parameter "cli" of type "BaseCommand" in function "invoke"
+    "FunctionType" is not assignable to "BaseCommand" (reportArgumentType)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_ssl.py:89:28 - error: Argument of type "(ctx: Unknown, app_path: str | None, app_dir: Path | None = None) -> None" cannot be assigned to parameter "cli" of type "BaseCommand" in function "invoke"
+    "FunctionType" is not assignable to "BaseCommand" (reportArgumentType)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_ssl.py:128:28 - error: Argument of type "(ctx: Unknown, app_path: str | None, app_dir: Path | None = None) -> None" cannot be assigned to parameter "cli" of type "BaseCommand" in function "invoke"
+    "FunctionType" is not assignable to "BaseCommand" (reportArgumentType)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_ssl.py:166:28 - error: Argument of type "(ctx: Unknown, app_path: str | None, app_dir: Path | None = None) -> None" cannot be assigned to parameter "cli" of type "BaseCommand" in function "invoke"
+    "FunctionType" is not assignable to "BaseCommand" (reportArgumentType)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_ssl.py:209:28 - error: Argument of type "(ctx: Unknown, app_path: str | None, app_dir: Path | None = None) -> None" cannot be assigned to parameter "cli" of type "BaseCommand" in function "invoke"
+    "FunctionType" is not assignable to "BaseCommand" (reportArgumentType)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_ssl.py:241:28 - error: Argument of type "(ctx: Unknown, app_path: str | None, app_dir: Path | None = None) -> None" cannot be assigned to parameter "cli" of type "BaseCommand" in function "invoke"
+    "FunctionType" is not assignable to "BaseCommand" (reportArgumentType)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_ssl.py:269:28 - error: Argument of type "(ctx: Unknown, app_path: str | None, app_dir: Path | None = None) -> None" cannot be assigned to parameter "cli" of type "BaseCommand" in function "invoke"
+    "FunctionType" is not assignable to "BaseCommand" (reportArgumentType)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_ssl.py:311:28 - error: Argument of type "(ctx: Unknown, app_path: str | None, app_dir: Path | None = None) -> None" cannot be assigned to parameter "cli" of type "BaseCommand" in function "invoke"
+    "FunctionType" is not assignable to "BaseCommand" (reportArgumentType)
+/tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_suggestions.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_suggestions.py:1:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_cli/test_suggestions.py:9:28 - error: Argument of type "(ctx: Unknown, app_path: str | None, app_dir: Path | None = None) -> None" cannot be assigned to parameter "cli" of type "BaseCommand" in function "invoke"
+    "FunctionType" is not assignable to "BaseCommand" (reportArgumentType)
+/tmp/eval-litestar-oracle-base/tests/unit/test_concurrency.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_concurrency.py:9:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_concurrency.py:10:8 - error: Import "trio" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_concurrency.py:11:6 - error: Import "pytest_mock" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_connection/test_connection_caching.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_connection/test_connection_caching.py:7:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_connection/test_request.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_connection/test_request.py:13:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_connection/test_websocket.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_connection/test_websocket.py:12:8 - error: Import "anyio" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_connection/test_websocket.py:13:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_controller.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_controller.py:3:8 - error: Import "msgspec" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_controller.py:4:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_data_extractors.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_data_extractors.py:4:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_data_extractors.py:5:6 - error: Import "pytest_mock" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_datastructures/test_cookie.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_datastructures/test_cookie.py:3:6 - error: Import "time_machine" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_datastructures/test_headers.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_datastructures/test_headers.py:5:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_datastructures/test_headers.py:6:6 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_datastructures/test_multi_dicts.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_datastructures/test_multi_dicts.py:5:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_datastructures/test_response_header.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_datastructures/test_response_header.py:1:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_datastructures/test_secret_values.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_datastructures/test_secret_values.py:5:8 - error: Import "msgspec" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_datastructures/test_secret_values.py:6:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_datastructures/test_state.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_datastructures/test_state.py:6:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_datastructures/test_url.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_datastructures/test_url.py:4:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_di.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_di.py:5:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_dto/conftest.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_dto/conftest.py:6:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_dto/test_config.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_dto/test_config.py:1:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_dto/test_factory/test_backends/conftest.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_dto/test_factory/test_backends/conftest.py:3:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_dto/test_factory/test_backends/test_backends.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_dto/test_factory/test_backends/test_backends.py:13:8 - error: Import "msgspec" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_dto/test_factory/test_backends/test_backends.py:14:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_dto/test_factory/test_backends/test_backends.py:15:6 - error: Import "msgspec" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_dto/test_factory/test_backends/test_base_dto.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_dto/test_factory/test_backends/test_base_dto.py:9:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_dto/test_factory/test_backends/test_utils.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_dto/test_factory/test_backends/test_utils.py:6:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_dto/test_factory/test_backends/test_utils.py:7:6 - error: Import "msgspec" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_dto/test_factory/test_base_dto.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_dto/test_factory/test_base_dto.py:7:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_dto/test_factory/test_dataclass_dto.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_dto/test_factory/test_dataclass_dto.py:8:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_dto/test_factory/test_field.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_dto/test_factory/test_field.py:3:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_dto/test_factory/test_integration.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_dto/test_factory/test_integration.py:12:8 - error: Import "msgspec" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_dto/test_factory/test_integration.py:13:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_dto/test_factory/test_integration.py:14:6 - error: Import "msgspec" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_dto/test_factory/test_integration.py:24:70 - error: "OffsetPagination" is unknown import symbol (reportAttributeAccessIssue)
+/tmp/eval-litestar-oracle-base/tests/unit/test_dto/test_msgspec.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_dto/test_msgspec.py:8:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_dto/test_msgspec.py:9:6 - error: Import "msgspec" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_dto/test_msgspec.py:163:11 - error: Incorrect keyword arguments for __init_subclass__ method (reportGeneralTypeIssues)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_dto/test_msgspec.py:163:25 - error: No parameter named "tag" (reportCallIssue)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_dto/test_msgspec.py:167:11 - error: Incorrect keyword arguments for __init_subclass__ method (reportGeneralTypeIssues)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_dto/test_msgspec.py:167:26 - error: No parameter named "tag" (reportCallIssue)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_dto/test_msgspec.py:171:11 - error: Incorrect keyword arguments for __init_subclass__ method (reportGeneralTypeIssues)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_dto/test_msgspec.py:171:26 - error: No parameter named "tag_field" (reportCallIssue)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_dto/test_msgspec.py:171:43 - error: No parameter named "tag" (reportCallIssue)
+/tmp/eval-litestar-oracle-base/tests/unit/test_events.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_events.py:4:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_events.py:5:6 - error: Import "pytest_lazy_fixtures" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_exceptions.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_exceptions.py:1:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_exceptions.py:2:6 - error: Import "hypothesis" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_exceptions.py:3:6 - error: Import "hypothesis" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_exceptions.py:4:6 - error: Import "starlette.exceptions" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_file_system.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_file_system.py:7:8 - error: Import "aiohttp" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_file_system.py:8:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_file_system.py:9:6 - error: Import "fsspec.implementations.http" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_file_system.py:10:6 - error: Import "fsspec.implementations.local" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_guards.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_guards.py:3:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_handlers/test_asgi_handlers/test_handle_asgi.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_handlers/test_asgi_handlers/test_handle_asgi.py:4:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_handlers/test_asgi_handlers/test_validations.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_handlers/test_asgi_handlers/test_validations.py:3:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_handlers/test_base_handlers/test_opt.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_handlers/test_base_handlers/test_opt.py:4:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_handlers/test_base_handlers/test_validations.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_handlers/test_base_handlers/test_validations.py:3:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_handlers/test_http_handlers/test_custom_handler_class.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_handlers/test_http_handlers/test_custom_handler_class.py:3:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_handlers/test_http_handlers/test_defaults.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_handlers/test_http_handlers/test_defaults.py:3:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_handlers/test_http_handlers/test_head.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_handlers/test_http_handlers/test_head.py:4:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_handlers/test_http_handlers/test_kwarg_handling.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_handlers/test_http_handlers/test_kwarg_handling.py:3:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_handlers/test_http_handlers/test_kwarg_handling.py:4:6 - error: Import "hypothesis" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_handlers/test_http_handlers/test_kwarg_handling.py:5:6 - error: Import "hypothesis" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_handlers/test_http_handlers/test_media_type.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_handlers/test_http_handlers/test_media_type.py:4:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_handlers/test_http_handlers/test_options.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_handlers/test_http_handlers/test_options.py:1:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_handlers/test_http_handlers/test_resolution.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_handlers/test_http_handlers/test_resolution.py:3:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_handlers/test_http_handlers/test_signature_namespace.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_handlers/test_http_handlers/test_signature_namespace.py:5:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_handlers/test_http_handlers/test_sync.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_handlers/test_http_handlers/test_sync.py:1:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_handlers/test_http_handlers/test_validations.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_handlers/test_http_handlers/test_validations.py:8:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_handlers/test_websocket_handlers/test_handle_websocket.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_handlers/test_websocket_handlers/test_handle_websocket.py:3:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_handlers/test_websocket_handlers/test_listeners.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_handlers/test_websocket_handlers/test_listeners.py:7:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_handlers/test_websocket_handlers/test_listeners.py:8:6 - error: Import "pytest_lazy_fixtures" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_handlers/test_websocket_handlers/test_stream.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_handlers/test_websocket_handlers/test_stream.py:9:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_handlers/test_websocket_handlers/test_validations.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_handlers/test_websocket_handlers/test_validations.py:3:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_kwargs/test_cleanup_group.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_kwargs/test_cleanup_group.py:6:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_kwargs/test_cookie_params.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_kwargs/test_cookie_params.py:3:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_kwargs/test_dependency_batches.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_kwargs/test_dependency_batches.py:1:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_kwargs/test_generator_dependencies.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_kwargs/test_generator_dependencies.py:5:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_kwargs/test_generator_dependencies.py:6:6 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_kwargs/test_header_params.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_kwargs/test_header_params.py:3:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_kwargs/test_json_data.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_kwargs/test_json_data.py:3:6 - error: Import "msgspec" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_kwargs/test_json_data.py:44:11 - error: Incorrect keyword arguments for __init_subclass__ method (reportGeneralTypeIssues)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_kwargs/test_json_data.py:44:24 - error: No parameter named "frozen" (reportCallIssue)
+/tmp/eval-litestar-oracle-base/tests/unit/test_kwargs/test_layered_params.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_kwargs/test_layered_params.py:3:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_kwargs/test_msgpack_data.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_kwargs/test_msgpack_data.py:1:6 - error: Import "msgspec" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_kwargs/test_msgpack_data.py:29:11 - error: Incorrect keyword arguments for __init_subclass__ method (reportGeneralTypeIssues)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_kwargs/test_msgpack_data.py:29:24 - error: No parameter named "frozen" (reportCallIssue)
+/tmp/eval-litestar-oracle-base/tests/unit/test_kwargs/test_multipart_data.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_kwargs/test_multipart_data.py:10:8 - error: Import "msgspec" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_kwargs/test_multipart_data.py:11:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_kwargs/test_param_markers.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_kwargs/test_param_markers.py:5:8 - error: Import "annotated_types" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_kwargs/test_param_markers.py:6:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_kwargs/test_path_params.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_kwargs/test_path_params.py:8:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_kwargs/test_query_params.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_kwargs/test_query_params.py:11:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_kwargs/test_reserved_kwargs_injection.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_kwargs/test_reserved_kwargs_injection.py:7:8 - error: Import "annotated_types" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_kwargs/test_reserved_kwargs_injection.py:8:8 - error: Import "msgspec.json" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_kwargs/test_reserved_kwargs_injection.py:9:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_kwargs/test_validations.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_kwargs/test_validations.py:7:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_middleware/test_allowed_hosts_middleware.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_middleware/test_allowed_hosts_middleware.py:3:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_middleware/test_base_authentication_middleware.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_middleware/test_base_authentication_middleware.py:4:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_middleware/test_base_middleware.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_middleware/test_base_middleware.py:5:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_middleware/test_compression_middleware.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_middleware/test_compression_middleware.py:10:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_middleware/test_compression_middleware.py:35:10 - error: Import "backports" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_middleware/test_constraints.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_middleware/test_constraints.py:3:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_middleware/test_cors_middleware.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_middleware/test_cors_middleware.py:6:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_middleware/test_csrf_middleware.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_middleware/test_csrf_middleware.py:6:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_middleware/test_exception_handler_middleware.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_middleware/test_exception_handler_middleware.py:7:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_middleware/test_exception_handler_middleware.py:8:6 - error: Import "pytest_mock" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_middleware/test_exception_handler_middleware.py:9:6 - error: Import "starlette.exceptions" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_middleware/test_logging_middleware.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_middleware/test_logging_middleware.py:5:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_middleware/test_logging_middleware.py:6:8 - error: Import "structlog" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_middleware/test_logging_middleware.py:7:6 - error: Import "structlog.testing" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_middleware/test_logging_middleware.py:23:10 - error: Import "_pytest.logging" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_middleware/test_logging_middleware.py:24:10 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_middleware/test_middleware_handling.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_middleware/test_middleware_handling.py:8:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_middleware/test_middleware_handling.py:9:6 - error: Import "pytest_mock" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_middleware/test_middleware_handling.py:10:6 - error: Import "starlette.middleware.base" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_middleware/test_rate_limit_middleware.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_middleware/test_rate_limit_middleware.py:5:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_middleware/test_rate_limit_middleware.py:6:6 - error: Import "time_machine" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_middleware/test_session/conftest.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_middleware/test_session/conftest.py:4:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_middleware/test_session/test_client_side_backend.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_middleware/test_session/test_client_side_backend.py:8:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_middleware/test_session/test_server_side_backend.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_middleware/test_session/test_server_side_backend.py:4:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_middleware/test_session/test_server_side_backend.py:14:10 - error: Import "time_machine" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_openapi/conftest.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_openapi/conftest.py:4:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_openapi/test_config.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_openapi/test_config.py:3:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_openapi/test_datastructures.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_openapi/test_datastructures.py:5:8 - error: Import "msgspec" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_openapi/test_datastructures.py:6:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_openapi/test_endpoints.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_openapi/test_endpoints.py:4:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_openapi/test_integration.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_openapi/test_integration.py:11:8 - error: Import "msgspec" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_openapi/test_integration.py:12:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_openapi/test_integration.py:188:11 - error: Incorrect keyword arguments for __init_subclass__ method (reportGeneralTypeIssues)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_openapi/test_integration.py:188:37 - error: No parameter named "kw_only" (reportCallIssue)
+/tmp/eval-litestar-oracle-base/tests/unit/test_openapi/test_parameters.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_openapi/test_parameters.py:5:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_openapi/test_path_item.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_openapi/test_path_item.py:11:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_openapi/test_plugins.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_openapi/test_plugins.py:1:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_openapi/test_request_body.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_openapi/test_request_body.py:6:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_openapi/test_responses.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_openapi/test_responses.py:11:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_openapi/test_schema.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_openapi/test_schema.py:24:8 - error: Import "annotated_types" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_openapi/test_schema.py:25:8 - error: Import "msgspec" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_openapi/test_schema.py:26:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_openapi/test_schema.py:27:6 - error: Import "msgspec" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_openapi/test_schema.py:46:70 - error: "OffsetPagination" is unknown import symbol (reportAttributeAccessIssue)
+/tmp/eval-litestar-oracle-base/tests/unit/test_openapi/test_security_schemes.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_openapi/test_security_schemes.py:3:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_openapi/test_spec_generation.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_openapi/test_spec_generation.py:5:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_openapi/test_spec_generation.py:6:6 - error: Import "msgspec" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_openapi/test_spec_generation.py:87:11 - error: Incorrect keyword arguments for __init_subclass__ method (reportGeneralTypeIssues)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_openapi/test_spec_generation.py:87:35 - error: No parameter named "rename" (reportCallIssue)
+/tmp/eval-litestar-oracle-base/tests/unit/test_openapi/test_tags.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_openapi/test_tags.py:3:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_openapi/test_typescript_converter/test_converter.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_openapi/test_typescript_converter/test_converter.py:1:6 - error: Import "polyfactory" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_openapi/test_typescript_converter/test_schema_parsing.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_openapi/test_typescript_converter/test_schema_parsing.py:4:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_openapi/test_typescript_converter/test_typescript_types.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_openapi/test_typescript_converter/test_typescript_types.py:3:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_pagination.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_pagination.py:6:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_pagination.py:19:5 - error: "OffsetPagination" is unknown import symbol (reportAttributeAccessIssue)
+/tmp/eval-litestar-oracle-base/tests/unit/test_params.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_params.py:4:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_parsers.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_parsers.py:4:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_base.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_base.py:7:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_flash.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_flash.py:6:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_htmx/test_htmx_reexports.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_htmx/test_htmx_reexports.py:7:9 - error: "ClientRedirect" is unknown import symbol (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_htmx/test_htmx_reexports.py:10:9 - error: "ClientRefresh" is unknown import symbol (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_htmx/test_htmx_reexports.py:13:9 - error: "EventAfterType" is unknown import symbol (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_htmx/test_htmx_reexports.py:16:9 - error: "HTMXConfig" is unknown import symbol (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_htmx/test_htmx_reexports.py:19:9 - error: "HTMXDetails" is unknown import symbol (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_htmx/test_htmx_reexports.py:22:9 - error: "HTMXHeaders" is unknown import symbol (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_htmx/test_htmx_reexports.py:25:9 - error: "HtmxHeaderType" is unknown import symbol (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_htmx/test_htmx_reexports.py:28:9 - error: "HTMXPlugin" is unknown import symbol (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_htmx/test_htmx_reexports.py:31:9 - error: "HTMXRequest" is unknown import symbol (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_htmx/test_htmx_reexports.py:34:9 - error: "HTMXTemplate" is unknown import symbol (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_htmx/test_htmx_reexports.py:37:9 - error: "HXLocation" is unknown import symbol (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_htmx/test_htmx_reexports.py:40:9 - error: "HXStopPolling" is unknown import symbol (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_htmx/test_htmx_reexports.py:43:9 - error: "LocationType" is unknown import symbol (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_htmx/test_htmx_reexports.py:46:9 - error: "PushUrl" is unknown import symbol (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_htmx/test_htmx_reexports.py:49:9 - error: "PushUrlType" is unknown import symbol (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_htmx/test_htmx_reexports.py:52:9 - error: "ReplaceUrl" is unknown import symbol (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_htmx/test_htmx_reexports.py:55:9 - error: "Reswap" is unknown import symbol (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_htmx/test_htmx_reexports.py:58:9 - error: "ReSwapMethod" is unknown import symbol (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_htmx/test_htmx_reexports.py:61:9 - error: "Retarget" is unknown import symbol (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_htmx/test_htmx_reexports.py:64:9 - error: "TriggerEvent" is unknown import symbol (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_htmx/test_htmx_reexports.py:67:9 - error: "TriggerEventType" is unknown import symbol (reportAttributeAccessIssue)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_htmx/test_htmx_reexports.py:70:9 - error: "_utils" is unknown import symbol (reportAttributeAccessIssue)
+/tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_jinja.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_jinja.py:5:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_mako.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_mako.py:7:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_minijinja.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_minijinja.py:5:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_minijinja.py:6:6 - error: Import "minijinja" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_opentelemetry.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_opentelemetry.py:5:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_opentelemetry.py:6:6 - error: Import "_pytest.fixtures" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_opentelemetry.py:7:6 - error: Import "opentelemetry.metrics" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_opentelemetry.py:8:6 - error: Import "opentelemetry.sdk.metrics._internal" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_opentelemetry.py:9:6 - error: Import "opentelemetry.sdk.metrics._internal.aggregation" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_opentelemetry.py:12:6 - error: Import "opentelemetry.sdk.metrics._internal.export" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_opentelemetry.py:13:6 - error: Import "opentelemetry.sdk.metrics._internal.instrument" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_opentelemetry.py:14:6 - error: Import "opentelemetry.sdk.resources" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_opentelemetry.py:15:6 - error: Import "opentelemetry.sdk.trace" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_opentelemetry.py:16:6 - error: Import "opentelemetry.sdk.trace" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_opentelemetry.py:17:6 - error: Import "opentelemetry.sdk.trace.export" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_opentelemetry.py:18:6 - error: Import "opentelemetry.sdk.trace.export.in_memory_span_exporter" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_opentelemetry.py:19:6 - error: Import "opentelemetry.trace" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_opentelemetry.py:497:10 - error: Import "opentelemetry.trace" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_problem_details.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_problem_details.py:6:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_prometheus.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_prometheus.py:6:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_prometheus.py:7:6 - error: Import "_pytest.monkeypatch" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_prometheus.py:8:6 - error: Import "prometheus_client" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_prometheus.py:9:6 - error: Import "pytest_mock" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/__init__.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/__init__.py:8:12 - error: Import "pydantic" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/conftest.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/conftest.py:7:8 - error: Import "pydantic" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/conftest.py:8:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/conftest.py:9:6 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/models.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/models.py:3:6 - error: Import "pydantic" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/models.py:4:6 - error: Import "pydantic.dataclasses" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_beanie_integration.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_beanie_integration.py:3:8 - error: Import "beanie" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_beanie_integration.py:4:6 - error: Import "pydantic" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_beanie_integration.py:20:83 - error: Argument of type "type[Product]" cannot be assigned to parameter "model_type" of type "Module("pydantic")" in function "generate_field_definitions"
+    Type "type[Product]" is not assignable to type "Module("pydantic")" (reportArgumentType)
+/tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_computed_optional_field.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_computed_optional_field.py:3:8 - error: Import "pydantic" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_dto.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_dto.py:8:8 - error: Import "pydantic" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_dto.py:9:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_dto.py:10:6 - error: Import "pydantic" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_dto.py:23:10 - error: Import "pydantic" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_dto.py:39:36 - error: Argument of type "PydanticAwareDatetimeModel" cannot be assigned to parameter "model" of type "Module("pydantic")" in function "_model_dump"
+    Type "PydanticAwareDatetimeModel" is not assignable to type "Module("pydantic")" (reportArgumentType)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_dto.py:40:41 - error: Argument of type "PydanticAwareDatetimeModel" cannot be assigned to parameter "model" of type "Module("pydantic")" in function "_model_dump_json"
+    Type "PydanticAwareDatetimeModel" is not assignable to type "Module("pydantic")" (reportArgumentType)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_dto.py:72:38 - error: Argument of type "PydanticUser" cannot be assigned to parameter "model" of type "Module("pydantic")" in function "_model_dump_json"
+    Type "PydanticUser" is not assignable to type "Module("pydantic")" (reportArgumentType)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_dto.py:84:59 - error: Argument of type "type[Model]" cannot be assigned to parameter "model_type" of type "Module("pydantic")" in function "generate_field_definitions"
+    Type "type[Model]" is not assignable to type "Module("pydantic")" (reportArgumentType)
+/tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_inject_pydantic.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_inject_pydantic.py:3:8 - error: Import "pydantic" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_inject_pydantic.py:4:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_integration.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_integration.py:6:8 - error: Import "pydantic" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_integration.py:7:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_plugin_serialization.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_plugin_serialization.py:10:8 - error: Import "pydantic" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_plugin_serialization.py:11:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_plugin_serialization.py:12:6 - error: Import "pydantic_extra_types.color" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_plugin_serialization.py:13:6 - error: Import "pydantic_extra_types.payment" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_plugin_serialization.py:128:39 - error: Unnecessary "# type: ignore" comment (reportUnnecessaryTypeIgnoreComment)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_plugin_serialization.py:129:44 - error: Unnecessary "# type: ignore" comment (reportUnnecessaryTypeIgnoreComment)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_plugin_serialization.py:173:45 - error: Argument of type "ModelV2" cannot be assigned to parameter "model" of type "Module("pydantic")" in function "_model_dump"
+    Type "ModelV2" is not assignable to type "Module("pydantic")" (reportArgumentType)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_plugin_serialization.py:178:28 - error: Argument of type "ModelV2" cannot be assigned to parameter "model" of type "Module("pydantic")" in function "_model_dump_json"
+    Type "ModelV2" is not assignable to type "Module("pydantic")" (reportArgumentType)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_plugin_serialization.py:201:37 - error: Argument of type "ModelV2" cannot be assigned to parameter "model" of type "Module("pydantic")" in function "_model_dump_json"
+    Type "ModelV2" is not assignable to type "Module("pydantic")" (reportArgumentType)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_plugin_serialization.py:203:29 - error: Argument of type "ModelV2" cannot be assigned to parameter "model" of type "Module("pydantic")" in function "_model_dump_json"
+    Type "ModelV2" is not assignable to type "Module("pydantic")" (reportArgumentType)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_plugin_serialization.py:208:35 - error: Argument of type "ModelV2" cannot be assigned to parameter "model" of type "Module("pydantic")" in function "_model_dump_json"
+    Type "ModelV2" is not assignable to type "Module("pydantic")" (reportArgumentType)
+/tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_pydantic_dto_factory.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_pydantic_dto_factory.py:10:8 - error: Import "pydantic" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_pydantic_dto_factory.py:11:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_pydantic_dto_factory.py:113:62 - error: Argument of type "type[TestModel]" cannot be assigned to parameter "model_type" of type "Module("pydantic")" in function "generate_field_definitions"
+    Type "type[TestModel]" is not assignable to type "Module("pydantic")" (reportArgumentType)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_pydantic_dto_factory.py:139:55 - error: Argument of type "type[Model]" cannot be assigned to parameter "model_type" of type "Module("pydantic")" in function "generate_field_definitions"
+    Type "type[Model]" is not assignable to type "Module("pydantic")" (reportArgumentType)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_pydantic_dto_factory.py:151:53 - error: Argument of type "type[Model]" cannot be assigned to parameter "model_type" of type "Module("pydantic")" in function "generate_field_definitions"
+    Type "type[Model]" is not assignable to type "Module("pydantic")" (reportArgumentType)
+/tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_schema_plugin.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_schema_plugin.py:5:8 - error: Import "pydantic" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_schema_plugin.py:6:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_schema_plugin.py:125:45 - error: Unnecessary "# pyright: ignore" rule: "reportIncompatibleVariableOverride" (reportUnnecessaryTypeIgnoreComment)
+/tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_utils.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_utils.py:3:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_plugins/test_pydantic/test_utils.py:4:6 - error: Import "pydantic" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_repository/models_bigint.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_repository/models_bigint.py:7:6 - error: Import "advanced_alchemy.base" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_repository/models_bigint.py:8:6 - error: Import "advanced_alchemy.repository" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_repository/models_bigint.py:9:6 - error: Import "sqlalchemy" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_repository/models_bigint.py:10:6 - error: Import "sqlalchemy.orm" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_repository/models_uuid.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_repository/models_uuid.py:8:6 - error: Import "advanced_alchemy" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_repository/models_uuid.py:9:6 - error: Import "advanced_alchemy.repository" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_repository/models_uuid.py:10:6 - error: Import "sqlalchemy" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_repository/models_uuid.py:11:6 - error: Import "sqlalchemy.orm" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_request_class_resolution.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_request_class_resolution.py:3:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_response/test_base_response.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_response/test_base_response.py:4:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_response/test_file_response.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_response/test_file_response.py:13:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_response/test_file_response.py:14:6 - error: Import "fsspec.implementations.local" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_response/test_file_response.py:15:6 - error: Import "pytest_mock" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_response/test_file_response.py:298:107 - error: Unnecessary "# pyright: ignore" rule: "reportArgumentType" (reportUnnecessaryTypeIgnoreComment)
+/tmp/eval-litestar-oracle-base/tests/unit/test_response/test_redirect_response.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_response/test_redirect_response.py:11:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_response/test_response_headers.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_response/test_response_headers.py:1:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_response/test_response_to_asgi_response.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_response/test_response_to_asgi_response.py:8:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_response/test_response_to_asgi_response.py:9:6 - error: Import "starlette.responses" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_response/test_response_to_asgi_response.py:10:6 - error: Import "starlette.responses" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_response/test_serialization.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_response/test_serialization.py:6:8 - error: Import "msgspec" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_response/test_serialization.py:7:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_response/test_serialization.py:8:6 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_response/test_sse.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_response/test_sse.py:6:8 - error: Import "anyio" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_response/test_sse.py:7:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_response/test_sse.py:8:6 - error: Import "httpx_sse" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_response/test_sse.py:9:6 - error: Import "httpx_sse" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_response/test_streaming_response.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_response/test_streaming_response.py:13:8 - error: Import "anyio" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_response/test_type_decoders.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_response/test_type_decoders.py:4:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_response_class_resolution.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_response_class_resolution.py:3:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_security/test_jwt/test_auth.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_security/test_jwt/test_auth.py:12:8 - error: Import "msgspec" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_security/test_jwt/test_auth.py:13:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_security/test_jwt/test_auth.py:14:6 - error: Import "hypothesis" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_security/test_jwt/test_auth.py:15:6 - error: Import "hypothesis.strategies" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_security/test_jwt/test_auth.py:26:10 - error: Import "time_machine" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_security/test_jwt/test_token.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_security/test_jwt/test_token.py:13:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_security/test_jwt/test_token.py:14:6 - error: Import "hypothesis" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_security/test_jwt/test_token.py:15:6 - error: Import "hypothesis.strategies" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_security/test_security.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_security/test_security.py:3:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_security/test_session_auth.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_security/test_session_auth.py:4:8 - error: Import "msgspec" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_security/test_session_auth.py:5:6 - error: Import "starlette.status" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_signature/test_parsing.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_signature/test_parsing.py:9:8 - error: Import "msgspec" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_signature/test_parsing.py:10:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_signature/test_validation.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_signature/test_validation.py:6:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_static_files/conftest.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_static_files/conftest.py:3:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_static_files/conftest.py:4:6 - error: Import "_pytest.fixtures" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_static_files/conftest.py:5:6 - error: Import "fsspec.implementations.local" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_static_files/test_create_static_router.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_static_files/test_create_static_router.py:4:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_static_files/test_file_serving_resolution.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_static_files/test_file_serving_resolution.py:8:8 - error: Import "brotli" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_static_files/test_file_serving_resolution.py:9:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_static_files/test_file_serving_resolution.py:10:6 - error: Import "fsspec.implementations.local" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_static_files/test_file_serving_resolution.py:11:6 - error: Import "pytest_mock" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_static_files/test_static_files_validation.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_static_files/test_static_files_validation.py:3:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_stores.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_stores.py:12:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_stores.py:13:6 - error: Import "_pytest.fixtures" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_stores.py:14:6 - error: Import "pytest_mock" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_stores.py:15:6 - error: Import "time_machine" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_stores.py:25:10 - error: Import "redis.asyncio" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_stores.py:26:10 - error: Import "valkey.asyncio" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_stores.py:579:43 - error: Unnecessary "# pyright: ignore" rule: "reportAttributeAccessIssue" (reportUnnecessaryTypeIgnoreComment)
+/tmp/eval-litestar-oracle-base/tests/unit/test_template/test_built_in.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_template/test_built_in.py:7:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_template/test_builtin_functions.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_template/test_builtin_functions.py:5:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_template/test_context.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_template/test_context.py:4:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_template/test_csrf_token.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_template/test_csrf_token.py:5:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_template/test_template.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_template/test_template.py:9:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_testing/test_import_guard.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_testing/test_import_guard.py:8:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_testing/test_lifespan_handler.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_testing/test_lifespan_handler.py:1:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_testing/test_request_factory.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_testing/test_request_factory.py:7:8 - error: Import "msgspec" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_testing/test_request_factory.py:8:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_testing/test_sub_client/test_subprocess_client.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_testing/test_sub_client/test_subprocess_client.py:8:8 - error: Import "httpx" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_testing/test_sub_client/test_subprocess_client.py:9:8 - error: Import "httpx_sse" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_testing/test_sub_client/test_subprocess_client.py:10:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_testing/test_test_client.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_testing/test_test_client.py:6:8 - error: Import "anyio" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_testing/test_test_client.py:7:6 - error: Import "_pytest.fixtures" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_testing/test_test_client.py:27:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_types/test_protocols.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_types/test_protocols.py:5:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_typing.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_typing.py:7:8 - error: Import "annotated_types" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_typing.py:8:8 - error: Import "msgspec" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_typing.py:9:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_utils/test_dataclass.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_utils/test_dataclass.py:5:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_utils/test_deprecation.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_utils/test_deprecation.py:3:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_utils/test_empty.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_utils/test_empty.py:3:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_utils/test_helpers.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_utils/test_helpers.py:4:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_utils/test_module_loader.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_utils/test_module_loader.py:3:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /tmp/eval-litestar-oracle-base/tests/unit/test_utils/test_module_loader.py:4:6 - error: Import "_pytest.monkeypatch" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_utils/test_path.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_utils/test_path.py:1:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_utils/test_predicates.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_utils/test_predicates.py:17:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_utils/test_signature.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_utils/test_signature.py:12:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_utils/test_typing.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_utils/test_typing.py:8:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_utils/test_version.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_utils/test_version.py:1:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_utils/test_warnings.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_utils/test_warnings.py:4:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/tmp/eval-litestar-oracle-base/tests/unit/test_websocket_class_resolution.py
+  /tmp/eval-litestar-oracle-base/tests/unit/test_websocket_class_resolution.py:3:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+700 errors, 1 warning, 0 informations
+WARNING: there is a new pyright version available (v1.1.408 -> v1.1.414).
+Please install the new version or set PYRIGHT_PYTHON_FORCE_VERSION to `latest`
+
