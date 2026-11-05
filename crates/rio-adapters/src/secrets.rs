@@ -1,7 +1,7 @@
 use anyhow::Result;
 use rio_core::{
     Category, EvidenceLevel, Finding, Location, OccurrenceState, Severity, Source, State,
-    finding_id, secret_matches,
+    finding_id, secret_matches_for_path,
 };
 pub use rio_core::{redact, redact_value, retained_raw, shannon_entropy};
 use rio_git::{Diff, Tree};
@@ -23,7 +23,7 @@ pub fn scan_secrets(diff: &Diff, head: &Tree) -> Result<Vec<Finding>> {
         let Ok(content) = std::str::from_utf8(&entry.content) else {
             continue;
         };
-        for found in secret_matches(content) {
+        for found in secret_matches_for_path(content, &file.path) {
             let line_start = content[..found.start]
                 .bytes()
                 .filter(|&byte| byte == b'\n')

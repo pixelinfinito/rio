@@ -62,6 +62,23 @@ npm, pnpm, yarn classic/node-modules and Python uv/Poetry/exact requirements loc
 
 Secret scanning uses [`modules/adapters/common/secrets.toml`](../modules/adapters/common/secrets.toml) and high-entropy assignments. Renderers and retained tool streams share that catalog's redactor. Source snapshots retain source verbatim. Raw retained streams are capped at 16MiB per stream, preserving head and tail after redaction; parser input is bounded separately by `run.output_limit`.
 
+## Secret value shapes
+
+The complete catalog is audited below. Provider-specific formats can be recognized anywhere; only the generic entropy rule infers credentials from assignments. A sensitive-looking identifier or type name is never enough.
+
+| Rule (`secret/…`) | Required value shape |
+| --- | --- |
+| `aws-access-key` | `AKIA` or `ASIA` followed by exactly 16 uppercase letters/digits, with word boundaries |
+| `github-token` | `gh[pousr]_` plus at least 36 alphanumeric characters, or `github_pat_` plus at least 22 alphanumeric/underscore characters |
+| `gitlab-token` | `glpat-` plus at least 20 letters/digits/underscores/hyphens |
+| `slack-token` | `xox[baprs]-` plus at least 10 letters/digits/hyphens |
+| `stripe-key` | `sk_live_` plus at least 24 alphanumeric characters |
+| `private-key` | A complete PEM private-key block (generic, RSA, EC, OPENSSH or DSA), including matching begin/end marker shapes |
+| `connection-string` | A postgres/postgresql, mysql, mongodb/mongodb+srv or redis URL containing both username and password before `@` |
+| `high-entropy` | A secret/token/password/passwd/API-key/private-key assignment with a complete single- or double-quoted string value, at least 20 bytes and Shannon entropy at least 3.5 bits/byte |
+
+Entropy scanning accepts quoted values in assignments, keyword arguments, dictionary entries and object properties. It rejects identifiers, attribute access, calls, annotations (including `ContextVar[...]`), concatenations and other expressions. Bare values are accepted only as complete configuration entries in `.env`, `.env.*`, `*.env`, `*.ini`, `*.cfg`, `*.conf`, `*.yaml`, `*.yml` and `*.properties` files; optional `export` or YAML list prefixes and trailing comments are supported. Streams without a filename use the quoted-value rule. Provider formats remain detectable in either context.
+
 ## Verification
 
 Add offline recorded-output cases for every supported tool/version and snapshots for syntax/executability. Real-tool tests should confirm cwd isolation, dependency linking, baseline classification, failed-test coverage and process cleanup. Tests call the common `require_tool` helper: a missing tool prints its reason, and `RIO_REQUIRE_TOOLS=1` turns that skip into a failure. No fixture should require credentials or a live OSV service; OSV protocol tests use a local mock server.

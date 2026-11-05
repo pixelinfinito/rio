@@ -37,7 +37,7 @@ static SCANNER: LazyLock<Scanner> = LazyLock::new(|| {
         .collect();
     let names = Regex::new(&catalog.entropy.names).expect("embedded entropy expression is valid");
     let assignment = Regex::new(
-        r#"(?m)(?P<name>[A-Za-z_][A-Za-z0-9_-]*)["']?\s*(?P<separator>[:=])\s*(?P<quote>["']?)(?P<value>[A-Za-z0-9/+_=.-]+)"#,
+        r#"(?m)(?P<name>[A-Za-z_][A-Za-z0-9_-]*)["']?[^\S\r\n]*[:=][^\S\r\n]*(?:"(?P<double>[^"\\\r\n]*)"|'(?P<single>[^'\\\r\n]*)'|(?P<bare>[A-Za-z0-9/+_=.-]+))"#,
     )
     .unwrap();
     Scanner {
@@ -70,6 +70,19 @@ pub fn shannon_entropy(value: &str) -> f64 {
 }
 
 pub fn secret_matches(content: &str) -> Vec<SecretMatch<'_>> {
+    secret_matches_for_path(content, "")
+}
+
+/// Only configuration files have unquoted string values. Source expressions
+/// must never be interpreted as credentials by the assignment entropy rule.
+pub fn secret_matches_for_path<'a>(content: &'a str, path: &str) -> Vec<SecretMatch<'a>> {
+    let name = path.rsplit('/').next().unwrap_or(path);
+    let bare_values = name == ".env"
+        || name.starts_with(".env.")
+        || matches!(
+            name.rsplit('.').next(),
+            Some("env" | "ini" | "cfg" | "conf" | "yaml" | "yml" | "properties")
+        );
     let mut result = Vec::new();
     for (pattern, expression) in SCANNER.catalog.patterns.iter().zip(&SCANNER.patterns) {
         for found in expression.find_iter(content) {
@@ -84,26 +97,29 @@ pub fn secret_matches(content: &str) -> Vec<SecretMatch<'_>> {
         if !SCANNER.names.is_match(&assignment["name"]) {
             continue;
         }
-        let value = assignment.name("value").unwrap();
-        if assignment["quote"].is_empty() {
-            let literal = value.as_str();
-            let identifier = literal
-                .bytes()
-                .all(|byte| byte.is_ascii_alphanumeric() || byte == b'_');
-            // Type annotations, symbolic constants and calls are expressions, not
-            // assigned credential literals. Provider patterns still scan them.
-            if content[value.end()..].trim_start().starts_with(['(', '['])
-                || identifier
-                    && (assignment["separator"] == *":"
-                        && literal.starts_with(char::is_uppercase)
-                        && literal
-                            .bytes()
-                            .all(|byte| byte.is_ascii_alphabetic() || byte == b'_')
-                        || literal.starts_with('_')
-                        || literal.bytes().all(|byte| !byte.is_ascii_lowercase()))
+        let value = assignment
+            .name("double")
+            .or_else(|| assignment.name("single"))
+            .or_else(|| assignment.name("bare"))
+            .unwrap();
+        let matched = assignment.get(0).unwrap();
+        let suffix = &content[matched.end()..];
+        let rest = suffix.lines().next().unwrap_or_default().trim_start();
+        if assignment.name("bare").is_some() {
+            let prefix = content[..matched.start()].rsplit('\n').next().unwrap();
+            if !bare_values
+                || !matches!(prefix.trim(), "" | "export" | "-")
+                || !(rest.is_empty() || rest.starts_with(['#', ';']))
             {
                 continue;
             }
+        } else if !(rest.is_empty()
+            || rest.starts_with([',', ')', ']', '}', ';', '#'])
+            || rest.starts_with("//"))
+        {
+            // A quoted prefix of a concatenation, call or attribute expression
+            // is not a complete literal value either.
+            continue;
         }
         if value.len() >= SCANNER.catalog.entropy.min_length
             && shannon_entropy(value.as_str()) >= SCANNER.catalog.entropy.threshold
