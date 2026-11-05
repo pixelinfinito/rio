@@ -1,0 +1,132 @@
+# Deterministic evaluation methodology v1
+
+This protocol supersedes the per-finding acceptance method in the original
+[v0.1 evaluation](../docs/evaluation/v0.1.md) and the release-acceptance bullet in
+[the design](../openspec/changes/rio-v0-1-local-cli/design.md#d14-testing-strategy).
+Preserve historical reports and verdicts; publish rescoring separately. Freeze this
+protocol, sample, tool versions, profile, and control expectations before a run.
+Changing any of these starts a new cohort; do not mix runs of different binaries
+to improve a score. Verdicts must identify their reviewer and whether they are
+human or automated. Automated results do not claim to meet the PRD's human
+confirmation requirement.
+
+## Eligibility and environment
+
+A PR contributes to release metrics only when baseline classification worked for
+**every applicable typecheck and lint root**: matching successful head and base
+check entries (`passed` or `findings`), both with `dependency_state: verified`.
+A successful cached base counts. A baseline that ran but failed does not count.
+The harness records both `baseline_ran` (any base execution/cache result) and
+`baseline_classification_ran` (all applicable pairs succeeded). No applicable
+pairs is insufficient evidence of a working baseline.
+
+Missing tools, failed checks, unverified/trusted dependencies, lockfile mismatch,
+disabled baseline, or absent baseline evidence make the PR an
+`environment-failure`. Exclude it from precision, recall, false-positive rate,
+and usefulness denominators. Preserve its findings and defects as observations;
+fix setup and rerun the same pinned change. Do not silently replace hard cases.
+List every exclusion and its reason. Repeated failures in one repository are
+correlated evidence, not independent product-quality measurements.
+
+Predeclare applicable checks. A skipped dependency audit in an offline cohort is
+an explicit capability limitation, not proof of safety. An offline audit control
+needs a pinned populated advisory cache and evidence that the audit actually ran;
+otherwise it is an environment failure. Coverage controls require instrumentation
+and successful test execution. Never turn on `trust_installed_dependencies` to
+make a scored run eligible. Rio currently reuses the head installation for its
+base materialization; installing a separate base checkout does not by itself fix
+incompatible base/head lockfiles.
+
+## Finding verdicts
+
+Every emitted top-level `findings` and `risks` entry receives exactly one verdict
+and an evidence-backed reason. Do not count nested copies in `checks` again.
+
+| Class | Meaning |
+| --- | --- |
+| `true-positive` | Correct, change-specific, actionable deterministic issue; an independent reviewer would act on it. |
+| `false-positive` | Incorrect claim, such as an identifier or dummy fixture reported as a leaked credential. Being pre-existing does not make an incorrect claim correct. |
+| `pre-existing-shown` | Valid diagnostic already present on the base, honestly labelled pre-existing or unclassified, but unwanted in this review. Confirm with base evidence; unclassified alone is not proof. |
+| `environment-failure` | Diagnostic attributable to broken setup, or analysis impossible because a check/baseline was unavailable. Skips usually live in environment records rather than synthetic findings. |
+| `out-of-scope` | Requires semantic/agent reasoning beyond the deterministic checks. |
+
+`noise` is not a verdict. Check failures must not be relabelled as product false
+positives. Conversely, dependency trust does not excuse an independently proven
+false credential alert.
+
+## Unit of scoring and deduplication
+
+Score distinct root causes within each PR, using SHA-256 of the canonical JSON
+tuple **[rule_id, message_template, sorted unique file_set]**. Default template:
+collapse whitespace only. Default file set: union of `location.path` and
+`locations[*].path`. Line numbers and symbol paths do not enter the key. A
+reviewer may supply a shared template and file set for diagnostics from one
+proven cause; document why. Do not erase differing types, rules, or independent
+problems merely to reduce counts. Identical keys must have identical verdicts.
+
+Retain every original Rio finding unchanged in its record. Report raw finding
+counts, raw location occurrences (unique locations per finding), and distinct
+causes per class. Multiple findings from one cause count once for precision.
+The same cause recurring in several PRs counts once in each PR's metrics; also
+report unique `(repository, root_cause_key)` counts across the cohort. A broader
+`family` is explanatory only: several rules can share one setup/configuration
+failure but cannot become one scoring key. Render one row per key, with raw
+counts and a record link, rather than one row per diagnostic.
+
+## Misses, controls, and usefulness
+
+Record independently established misses with scope `deterministic` or
+`agent-layer`. Deterministic misses must name a plausible mechanism: type error,
+enabled lint rule, uncovered changed lines, leaked secret, or vulnerable resolved
+dependency. A failing semantic reproduction is not enough to assert that a
+typechecker, linter, or coverage report could detect it. Put semantic misses in
+the **agent-layer backlog**; they never reduce deterministic recall.
+
+Register positive controls before inspecting Rio output. Each expectation has a
+stable ID, mechanism, independent evidence, and matching Rio finding IDs (empty
+means missed). Only `true-positive` findings satisfy expectations. A finding may
+match multiple expectations only when the independent oracle establishes each
+one; reviewers must check this. Dedupe expectations at the underlying bug level,
+not one per changed line. Every deterministic miss in a positive-control PR must
+have an expectation ID. Additional discovered misses must be recorded even if
+they are outside the preregistered recall denominator.
+
+A PR is **useful** if a reviewer would act on at least one true-positive cause,
+OR the report correctly confirms a clean change with working baseline, no false
+positives, no unwanted pre-existing diagnostics, and no deterministic misses.
+The clean branch requires an independent clean-change assessment, not merely
+zero output. An environment failure cannot earn useful or not-useful status.
+Semantic backlog items do not turn a deterministically clean result into a miss.
+
+## Sample and decision rule
+
+Use at least **10 eligible real PRs, 5 independent repositories, both TypeScript
+and Python**, and **N = 10 eligible positive-control changes**, at least 5 per
+language across at least 3 repositories. Controls can be real introducing PRs or
+seeded mutations; mutations are additional cases and do not replace the 10 real
+PRs. Include independently confirmed clean changes as negative controls. Record
+all attempts, seeds, parent PRs, and repeated environments; report by repository
+and language as well as pooled totals. Do not imply that ten mutations in one
+repository are ten independent repositories. See [control selection](positive-controls.md).
+
+For eligible records, with TP and FP measured in **per-PR distinct causes**:
+
+- Precision = TP / (TP + FP), targeting **≥ 0.80**, consistent with the
+  [PRD](../docs/PRD.md#success-metrics). No denominator means `null`, never 100%.
+- Positive-control recall = detected expected bugs / registered expected bugs,
+  targeting **≥ 0.80**. This is an explicit deterministic-layer acceptance floor,
+  not a claim to exceed the PRD's later baseline-tools target. Report the oracle
+  tool outcomes with the controls; agent comparison belongs to a later cohort.
+- False-positive-per-PR rate = FP causes / eligible PRs, targeting **< 0.15**.
+  This is a separately defined operational threshold, not the PRD's per-agent
+  dismissal fraction. Also report the fraction of PRs with any FP.
+- Demonstrate **at least 10 useful real PRs**, retaining the v0.1 exit criterion.
+
+**Go** requires every sample requirement, defined precision and recall, all three
+quality thresholds, and the usefulness requirement. **No-go** means a quality
+threshold failed in an adequate sample. **Insufficient-evidence** means sample
+or denominators are missing; this never authorizes release. Environment failures
+must be repaired before counting their PRs; publish them even if the remaining
+sample suffices. Report uncertainty and correlated cases rather than treating
+these minimum sample sizes as statistical confidence guarantees. Performance
+acceptance (cold/warm p50/p95 over ten runs each) remains a separate gate.
