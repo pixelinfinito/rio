@@ -1,0 +1,112 @@
+{
+  "src/structlog/_native.py": {
+    "added_lines": [
+      16,
+      32,
+      64,
+      65,
+      66,
+      67,
+      70,
+      78,
+      183,
+      184,
+      185,
+      186,
+      189,
+      199,
+      227,
+      228,
+      229,
+      230,
+      233,
+      243,
+      244
+    ],
+    "executed_added_lines": [
+      16,
+      32,
+      65,
+      78,
+      184,
+      199,
+      228,
+      243
+    ],
+    "unexecuted_added_statements": [],
+    "excluded_added_lines": []
+  },
+  "src/structlog/contextvars.py": {
+    "added_lines": [
+      41,
+      42,
+      43,
+      44,
+      45,
+      46
+    ],
+    "executed_added_lines": [
+      43
+    ],
+    "unexecuted_added_statements": [],
+    "excluded_added_lines": []
+  },
+  "src/structlog/processors.py": {
+    "added_lines": [
+      39,
+      787,
+      788,
+      789,
+      790,
+      791,
+      795,
+      796,
+      797,
+      798,
+      799
+    ],
+    "executed_added_lines": [
+      39,
+      787,
+      788,
+      789,
+      791,
+      795,
+      796,
+      797,
+      799
+    ],
+    "unexecuted_added_statements": [],
+    "excluded_added_lines": []
+  },
+  "src/structlog/stdlib.py": {
+    "added_lines": [
+      19,
+      37,
+      38,
+      39,
+      40,
+      41,
+      432,
+      433,
+      434,
+      435,
+      446,
+      645,
+      646,
+      647,
+      648,
+      659
+    ],
+    "executed_added_lines": [
+      19,
+      37,
+      433,
+      446,
+      646,
+      659
+    ],
+    "unexecuted_added_statements": [],
+    "excluded_added_lines": []
+  }
+}

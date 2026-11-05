@@ -1,0 +1,25 @@
+From 50aa6f517262a936224ab1338e244eb5a4dbaefb Mon Sep 17 00:00:00 2001
+From: Rio evaluation <eval@example.invalid>
+Date: Thu, 5 Nov 2026 02:47:00 +0000
+Subject: [PATCH] eval: seed one incompatible annotated assignment
+
+---
+ src/structlog/_output.py | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/structlog/_output.py b/src/structlog/_output.py
+index c976a46..2e571c9 100644
+--- a/src/structlog/_output.py
++++ b/src/structlog/_output.py
+@@ -19,6 +19,8 @@ from sys import stderr, stdout
+ from typing import IO, Any, BinaryIO, TextIO
+ 
+ 
++_EVAL_STRUCTLOG_TYPE_PROBE: int = "rio-eval-seed-20261105"
++
+ WRITE_LOCKS: weakref.WeakKeyDictionary[IO[Any], threading.Lock] = (
+     weakref.WeakKeyDictionary()
+ )
+-- 
+2.43.0
+

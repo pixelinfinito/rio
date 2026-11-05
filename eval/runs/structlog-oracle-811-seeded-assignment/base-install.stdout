@@ -1,0 +1,17 @@
+Obtaining file:///dev/shm/structlog-oracle-811-seeded-assignment-base
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: structlog
+  Building editable for structlog (pyproject.toml): started
+  Building editable for structlog (pyproject.toml): finished with status 'done'
+  Created wheel for structlog: filename=structlog-25.5.1.dev62-py3-none-any.whl size=9100 sha256=b798cf813276ce5d683cdce768ced80ad3926f0c79c9f0d544186a50fcf26327
+  Stored in directory: /dev/shm/pip-ephem-wheel-cache-bppfnnp5/wheels/17/51/28/b536db3c5ad1170923452943b27b2c9e576f4c8b42993c4be5
+Successfully built structlog
+Installing collected packages: structlog
+  Attempting uninstall: structlog
+    Found existing installation: structlog 25.5.1.dev68
+    Uninstalling structlog-25.5.1.dev68:
+      Successfully uninstalled structlog-25.5.1.dev68
+Successfully installed structlog-25.5.1.dev62

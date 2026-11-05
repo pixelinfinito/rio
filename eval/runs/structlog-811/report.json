@@ -1,0 +1,243 @@
+{
+  "checks": [
+    {
+      "findings": [],
+      "kind": "secrets",
+      "language": "common",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 1
+    },
+    {
+      "findings": [],
+      "hint": "Dependency audit needs api.osv.dev",
+      "kind": "dependencies",
+      "language": "common",
+      "outcome": "skipped",
+      "reason": "offline",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 0
+    },
+    {
+      "dependency_state": "trusted",
+      "findings": [],
+      "kind": "lint",
+      "language": "python",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 146
+    },
+    {
+      "dependency_state": "trusted",
+      "findings": [],
+      "kind": "lint",
+      "language": "python",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "base",
+      "wall_time_ms": 134
+    },
+    {
+      "dependency_state": "trusted",
+      "findings": [],
+      "hint": "tool exited with code 4",
+      "kind": "coverage",
+      "language": "python",
+      "outcome": "failed",
+      "reason": "tool_crashed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 1440
+    },
+    {
+      "dependency_state": "trusted",
+      "findings": [],
+      "kind": "typecheck",
+      "language": "python",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 4950
+    },
+    {
+      "dependency_state": "trusted",
+      "findings": [],
+      "kind": "typecheck",
+      "language": "python",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "base",
+      "wall_time_ms": 4369
+    }
+  ],
+  "deferred": [],
+  "excluded": [
+    {
+      "path": "src/structlog/_output.py",
+      "reason": "coverage_not_instrumented"
+    }
+  ],
+  "findings": [],
+  "footer": {
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "lint .: dependencies_trusted: results use unverified dependencies",
+      "typecheck .: dependencies_trusted: results use unverified dependencies",
+      "Graph references use syntax and text; no language server was used",
+      "Offline applies to Rio; tool and test processes were not network-isolated",
+      "dependencies_trusted: results were computed against unverified dependencies"
+    ],
+    "suppressions": [],
+    "tool_versions": {
+      "python:.:coverage": "Coverage.py, version 7.17.1 with C extension",
+      "python:.:mypy": "mypy 2.4.1 (compiled: yes)",
+      "python:.:ruff": "ruff 0.15.12"
+    }
+  },
+  "impact": {
+    "symbols": [
+      {
+        "path": "src/structlog/_output.py",
+        "references_per_hop": [
+          1,
+          0
+        ],
+        "symbol_path": "_output.WriteLogger.__setstate__",
+        "test_referenced": true,
+        "unresolved": 1
+      },
+      {
+        "path": "tests/test_output.py",
+        "references_per_hop": [
+          0,
+          0
+        ],
+        "symbol_path": "test_output.TestBytesLogger.test_pickle",
+        "test_referenced": false,
+        "unresolved": 0
+      },
+      {
+        "path": "tests/test_output.py",
+        "references_per_hop": [
+          0,
+          0
+        ],
+        "symbol_path": "test_output.TestLoggers.test_pickle",
+        "test_referenced": false,
+        "unresolved": 0
+      }
+    ],
+    "truncated": false,
+    "unresolved": 1
+  },
+  "incomplete": [
+    {
+      "findings": [],
+      "hint": "Dependency audit needs api.osv.dev",
+      "kind": "dependencies",
+      "language": "common",
+      "outcome": "skipped",
+      "reason": "offline",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 0
+    },
+    {
+      "dependency_state": "trusted",
+      "findings": [],
+      "hint": "tool exited with code 4",
+      "kind": "coverage",
+      "language": "python",
+      "outcome": "failed",
+      "reason": "tool_crashed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 1440
+    }
+  ],
+  "metrics": {
+    "checks": [
+      {
+        "kind": "secrets",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 1
+      },
+      {
+        "kind": "dependencies",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "kind": "lint",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 146
+      },
+      {
+        "kind": "lint",
+        "root": ".",
+        "version": "base",
+        "wall_time_ms": 134
+      },
+      {
+        "kind": "coverage",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 1440
+      },
+      {
+        "kind": "typecheck",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 4950
+      },
+      {
+        "kind": "typecheck",
+        "root": ".",
+        "version": "base",
+        "wall_time_ms": 4369
+      }
+    ],
+    "tool_versions": {
+      "python:.:coverage": "Coverage.py, version 7.17.1 with C extension",
+      "python:.:mypy": "mypy 2.4.1 (compiled: yes)",
+      "python:.:ruff": "ruff 0.15.12"
+    },
+    "wall_time_ms": 10433
+  },
+  "review": {
+    "base": "de5dcd4127b8c9652ebadf0b6411c4bb9c10f3b7",
+    "chain": [
+      "eval-structlog-trusted",
+      "rio/base"
+    ],
+    "head": "c0ba373b5c4ead7f39630026808bc74418a4460a",
+    "id": "610ef4d7456b2660",
+    "mode": "branch",
+    "profile": "eval-structlog-trusted",
+    "rio_version": "0.1.0",
+    "run_id": "01M6MRYBH6VV4P1SM0CJH3YKMM"
+  },
+  "risks": [],
+  "schema": "rio-report-v1",
+  "status": "incomplete",
+  "summary": {
+    "fixed": 0,
+    "pre_existing": 0,
+    "suppressed": 0
+  }
+}

@@ -1,0 +1,353 @@
+{
+  "checks": [
+    {
+      "findings": [],
+      "kind": "secrets",
+      "language": "common",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 7
+    },
+    {
+      "findings": [],
+      "hint": "Dependency audit needs api.osv.dev",
+      "kind": "dependencies",
+      "language": "common",
+      "outcome": "skipped",
+      "reason": "offline",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 0
+    },
+    {
+      "dependency_state": "trusted",
+      "findings": [],
+      "kind": "lint",
+      "language": "python",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 278
+    },
+    {
+      "dependency_state": "trusted",
+      "findings": [],
+      "kind": "lint",
+      "language": "python",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "base",
+      "wall_time_ms": 198
+    },
+    {
+      "dependency_state": "trusted",
+      "findings": [],
+      "kind": "typecheck",
+      "language": "python",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 10357
+    },
+    {
+      "dependency_state": "trusted",
+      "findings": [],
+      "kind": "typecheck",
+      "language": "python",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "base",
+      "wall_time_ms": 7885
+    },
+    {
+      "dependency_state": "trusted",
+      "findings": [],
+      "kind": "coverage",
+      "language": "python",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 25909
+    }
+  ],
+  "deferred": [],
+  "excluded": [],
+  "findings": [],
+  "footer": {
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "lint .: dependencies_trusted: results use unverified dependencies",
+      "typecheck .: dependencies_trusted: results use unverified dependencies",
+      "Graph references use syntax and text; no language server was used",
+      "Offline applies to Rio; tool and test processes were not network-isolated",
+      "dependencies_trusted: results were computed against unverified dependencies"
+    ],
+    "suppressions": [],
+    "tool_versions": {
+      "python:.:coverage": "Coverage.py, version 7.17.1 with C extension",
+      "python:.:mypy": "mypy 2.4.1 (compiled: yes)",
+      "python:.:ruff": "ruff 0.15.12"
+    }
+  },
+  "impact": {
+    "symbols": [
+      {
+        "path": "src/structlog/_native.py",
+        "references_per_hop": [
+          2,
+          4
+        ],
+        "symbol_path": "",
+        "test_referenced": true,
+        "unresolved": 4
+      },
+      {
+        "path": "src/structlog/_native.py",
+        "references_per_hop": [
+          9,
+          6
+        ],
+        "symbol_path": "_native._make_filtering_bound_logger.alog",
+        "test_referenced": true,
+        "unresolved": 15
+      },
+      {
+        "path": "src/structlog/_native.py",
+        "references_per_hop": [
+          1,
+          1
+        ],
+        "symbol_path": "_native._make_filtering_bound_logger.make_method.ameth",
+        "test_referenced": false,
+        "unresolved": 3
+      },
+      {
+        "path": "src/structlog/_native.py",
+        "references_per_hop": [
+          10,
+          6
+        ],
+        "symbol_path": "_native.aexception",
+        "test_referenced": true,
+        "unresolved": 16
+      },
+      {
+        "path": "src/structlog/contextvars.py",
+        "references_per_hop": [
+          43,
+          71
+        ],
+        "symbol_path": "",
+        "test_referenced": true,
+        "unresolved": 252
+      },
+      {
+        "path": "src/structlog/contextvars.py",
+        "references_per_hop": [
+          14,
+          66
+        ],
+        "symbol_path": "contextvars._ASYNC_CALLING_THREAD",
+        "test_referenced": true,
+        "unresolved": 123
+      },
+      {
+        "path": "src/structlog/processors.py",
+        "references_per_hop": [
+          98,
+          49
+        ],
+        "symbol_path": "",
+        "test_referenced": true,
+        "unresolved": 78
+      },
+      {
+        "path": "src/structlog/processors.py",
+        "references_per_hop": [
+          1,
+          7
+        ],
+        "symbol_path": "processors._get_callsite_thread",
+        "test_referenced": true,
+        "unresolved": 8
+      },
+      {
+        "path": "src/structlog/processors.py",
+        "references_per_hop": [
+          1,
+          7
+        ],
+        "symbol_path": "processors._get_callsite_thread_name",
+        "test_referenced": true,
+        "unresolved": 8
+      },
+      {
+        "path": "src/structlog/stdlib.py",
+        "references_per_hop": [
+          65,
+          36
+        ],
+        "symbol_path": "",
+        "test_referenced": true,
+        "unresolved": 47
+      },
+      {
+        "path": "src/structlog/stdlib.py",
+        "references_per_hop": [
+          17,
+          118
+        ],
+        "symbol_path": "stdlib.AsyncBoundLogger._dispatch_to_sync",
+        "test_referenced": true,
+        "unresolved": 170
+      },
+      {
+        "path": "src/structlog/stdlib.py",
+        "references_per_hop": [
+          17,
+          118
+        ],
+        "symbol_path": "stdlib.BoundLogger._dispatch_to_sync",
+        "test_referenced": true,
+        "unresolved": 170
+      },
+      {
+        "path": "tests/processors/test_processors.py",
+        "references_per_hop": [
+          0,
+          0
+        ],
+        "symbol_path": "",
+        "test_referenced": false,
+        "unresolved": 0
+      },
+      {
+        "path": "tests/processors/test_processors.py",
+        "references_per_hop": [
+          0,
+          0
+        ],
+        "symbol_path": "test_processors.TestCallsiteParameterAdder",
+        "test_referenced": false,
+        "unresolved": 0
+      },
+      {
+        "path": "tests/processors/test_processors.py",
+        "references_per_hop": [
+          0,
+          0
+        ],
+        "symbol_path": "test_processors.TestCallsiteParameterAdder.test_async",
+        "test_referenced": false,
+        "unresolved": 0
+      },
+      {
+        "path": "tests/processors/test_processors.py",
+        "references_per_hop": [
+          0,
+          0
+        ],
+        "symbol_path": "test_processors.TestCallsiteParameterAdder.test_async_native_logger",
+        "test_referenced": false,
+        "unresolved": 0
+      }
+    ],
+    "truncated": false,
+    "unresolved": 894
+  },
+  "incomplete": [
+    {
+      "findings": [],
+      "hint": "Dependency audit needs api.osv.dev",
+      "kind": "dependencies",
+      "language": "common",
+      "outcome": "skipped",
+      "reason": "offline",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 0
+    }
+  ],
+  "metrics": {
+    "checks": [
+      {
+        "kind": "secrets",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 7
+      },
+      {
+        "kind": "dependencies",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "kind": "lint",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 278
+      },
+      {
+        "kind": "lint",
+        "root": ".",
+        "version": "base",
+        "wall_time_ms": 198
+      },
+      {
+        "kind": "typecheck",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 10357
+      },
+      {
+        "kind": "typecheck",
+        "root": ".",
+        "version": "base",
+        "wall_time_ms": 7885
+      },
+      {
+        "kind": "coverage",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 25909
+      }
+    ],
+    "tool_versions": {
+      "python:.:coverage": "Coverage.py, version 7.17.1 with C extension",
+      "python:.:mypy": "mypy 2.4.1 (compiled: yes)",
+      "python:.:ruff": "ruff 0.15.12"
+    },
+    "wall_time_ms": 29405
+  },
+  "review": {
+    "base": "c6e7cad18ffe91febf2b97dac03a465134b1a5d1",
+    "chain": [
+      "eval-structlog-trusted",
+      "rio/base"
+    ],
+    "head": "7d7708fdf39061b6f7515c13ed0404a9bc05fb33",
+    "id": "b4cb85d1658d3c36",
+    "mode": "branch",
+    "profile": "eval-structlog-trusted",
+    "rio_version": "0.1.0",
+    "run_id": "01M6MS3SGB13BZGJ8AVJRTM6HM"
+  },
+  "risks": [],
+  "schema": "rio-report-v1",
+  "status": "incomplete",
+  "summary": {
+    "fixed": 0,
+    "pre_existing": 0,
+    "suppressed": 0
+  }
+}

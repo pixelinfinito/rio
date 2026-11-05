@@ -1,0 +1,15 @@
+Running prepare…
+Finished prepare
+Running checks…
+secrets .: passed
+dependencies .: skipped (offline)
+lint .: passed
+lint .: passed
+typecheck .: findings
+typecheck .: passed
+coverage .: passed
+Finished checks
+Running graph…
+Finished graph
+Running report…
+Finished report

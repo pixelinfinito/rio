@@ -1,0 +1,13 @@
+{
+  "python": "3.12.3",
+  "platform": "Linux-6.8.0-147-generic-x86_64-with-glibc2.39",
+  "binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+  "runtime_environment": {
+    "TMPDIR": "/dev/shm",
+    "PIP_CACHE_DIR": "/dev/shm/structlog-pip-cache",
+    "seed_only_GIT_CONFIG_GLOBAL": "/dev/shm/structlog-seed-gitconfig"
+  },
+  "seed_transport": "Git URL rewrite replaces only https://github.com/hynek/structlog.git with a disposable local clone containing the one synthetic commit. Public base/source is unmodified; head is explicitly synthetic, not a public upstream SHA. Reconstruct by cloning upstream, checking out base, fetching mutation.bundle, and pointing gitconfig.txt to that clone.",
+  "oracle_driver": "eval/runs/structlog-setup/oracle-driver.py",
+  "setup_failure": "Original disk-backed bootstrap blocked in balance_dirty_pages with >80% IO pressure; terminated and recreated on executable /dev/shm tmpfs. Logs retained. First install plan omitted editables==0.5; v2 pins it and succeeds."
+}

@@ -1,0 +1,17 @@
+diff --git a/src/structlog/_output.py b/src/structlog/_output.py
+index c976a46..590114d 100644
+--- a/src/structlog/_output.py
++++ b/src/structlog/_output.py
+@@ -191,0 +192,2 @@ class WriteLogger:
++        self._write = self._file.write
++        self._flush = self._file.flush
+diff --git a/tests/test_output.py b/tests/test_output.py
+index 6727ff4..61ab86d 100644
+--- a/tests/test_output.py
++++ b/tests/test_output.py
+@@ -121,0 +122,2 @@ class TestLoggers:
++        rv.msg("hello")  # doesn't raise an error
++
+@@ -303,0 +306,2 @@ class TestBytesLogger:
++        rv.msg(b"hello")  # doesn't raise an error
++
