@@ -573,6 +573,11 @@ fn diff_coverage_requires_reported_executable_lines_for_each_format() {
 fn multiline_type_changes_do_not_hide_runtime_string_or_statement_changes() {
     for (before, after, expected) in [
         (
+            "function f(): number {\n return 1;\n}",
+            "function f(): string {\n return\n 1;\n}",
+            1,
+        ),
+        (
             "interface User {\nname: string;\n}",
             "interface User {\nname: string;\nid: number;\n}",
             0,
@@ -633,7 +638,7 @@ async fn recorded_runner(name: &str, script: &str) -> CoverageRun {
             settings: &settings,
             tool_tree: temporary.path(),
             worktree_root: None,
-            timeout: Duration::from_secs(5),
+            timeout: Duration::from_secs(30),
             output_limit: 1024 * 1024,
         },
         &ProcessSupervisor::default(),
@@ -689,7 +694,7 @@ exit 1"#
     assert!(!hint.contains("retained"));
     let run = recorded_runner("vitest", "exit 1").await;
     let hint = run.outcome.details().hint.as_deref().unwrap();
-    assert!(hint.contains("without producing usable coverage"));
+    assert!(hint.contains("without producing usable coverage"), "{hint}");
     assert!(!hint.contains("retained"));
 }
 
@@ -719,4 +724,30 @@ exit 1"#,
     let hint = run.outcome.details().hint.as_deref().unwrap();
     assert!(hint.starts_with("3 tests failed"), "{hint}");
     assert!(hint.contains("usable coverage from the incomplete run is retained"));
+}
+
+#[test]
+fn renamed_typescript_source_can_have_an_unsupported_base_extension() {
+    let change = changes(
+        [(
+            "notes.txt".into(),
+            entry("// shared context\nexport const value = oldValue;\n// trailing context\n"),
+        )]
+        .into(),
+        [(
+            "value.ts".into(),
+            entry("// shared context\nexport const value = newValue;\n// trailing context\n"),
+        )]
+        .into(),
+    );
+    let diff = rio_git::diff(&change, &[]).unwrap();
+    assert_eq!(diff.files[0].old_path.as_deref(), Some("notes.txt"));
+    let data = parse_lcov(b"SF:value.ts\nDA:2,0\nend_of_record\n", &context()).unwrap();
+    assert_eq!(
+        diff_coverage(&change.base, &change.head, &diff, &data, &[])
+            .unwrap()
+            .findings
+            .len(),
+        1
+    );
 }

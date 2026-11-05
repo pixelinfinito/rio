@@ -170,26 +170,62 @@ pub struct CoverageFindings {
     pub excluded: Vec<ExcludedFile>,
 }
 
-// Compare parsed tokens rather than deleting `: ...` or `<...>` with a regex:
-// object properties, comparisons and string contents must remain runtime code.
-struct RuntimeTokens<'a> {
-    tokens: Vec<(LineRange, &'a str)>,
-    types: Vec<LineRange>,
+// Remove only parsed type nodes. Preserve the remaining source text, including
+// newlines: an unchanged token sequence can still change automatic semicolons.
+struct TypeErasure<'a> {
+    source: &'a [u8],
+    line_starts: Vec<usize>,
+    ranges: Vec<std::ops::Range<usize>>,
 }
 
-fn typescript_runtime_tokens<'a>(
-    path: &str,
-    source: &'a [u8],
-) -> Result<Option<RuntimeTokens<'a>>> {
+impl TypeErasure<'_> {
+    fn byte_range(&self, lines: LineRange) -> std::ops::Range<usize> {
+        if lines.count == 0 {
+            return 0..0;
+        }
+        let start = lines.start.saturating_sub(1) as usize;
+        self.line_starts
+            .get(start)
+            .copied()
+            .unwrap_or(self.source.len())
+            ..self
+                .line_starts
+                .get(start + lines.count as usize)
+                .copied()
+                .unwrap_or(self.source.len())
+    }
+
+    fn contains_type(&self, range: &std::ops::Range<usize>) -> bool {
+        self.ranges
+            .iter()
+            .any(|erased| erased.start < range.end && range.start < erased.end)
+    }
+
+    fn runtime_text(&self, range: std::ops::Range<usize>) -> String {
+        let mut output = Vec::new();
+        let mut cursor = range.start;
+        for erased in &self.ranges {
+            if erased.end <= range.start || erased.start >= range.end {
+                continue;
+            }
+            let start = erased.start.max(range.start);
+            output.extend_from_slice(&self.source[cursor..start]);
+            cursor = erased.end.min(range.end);
+        }
+        output.extend_from_slice(&self.source[cursor..range.end]);
+        String::from_utf8(output)
+            .expect("type and line boundaries preserve UTF-8")
+            .trim()
+            .to_owned()
+    }
+}
+
+fn typescript_type_erasure<'a>(path: &str, source: &'a [u8]) -> Result<Option<TypeErasure<'a>>> {
     let parsed = crate::parse_source(path, source)?;
     if parsed.root_node().has_error() {
         return Ok(None);
     }
-    fn collect<'a>(node: tree_sitter::Node<'_>, source: &'a [u8], result: &mut RuntimeTokens<'a>) {
-        let range = LineRange {
-            start: node.start_position().row as u32 + 1,
-            count: (node.end_position().row - node.start_position().row) as u32 + 1,
-        };
+    fn collect(node: tree_sitter::Node<'_>, ranges: &mut Vec<std::ops::Range<usize>>) {
         let mut cursor = node.walk();
         let erased = matches!(
             node.kind(),
@@ -208,33 +244,28 @@ fn typescript_runtime_tokens<'a>(
                     )
             });
         if erased {
-            result.types.push(range);
-        } else if node.kind().contains("comment") {
-            // Comments do not change runtime behavior.
-        } else if node.child_count() == 0 {
-            result.tokens.push((
-                range,
-                std::str::from_utf8(&source[node.byte_range()]).unwrap_or_default(),
-            ));
+            ranges.push(node.byte_range());
         } else {
             for child in node.children(&mut cursor) {
-                collect(child, source, result);
+                collect(child, ranges);
             }
         }
     }
-    let mut result = RuntimeTokens {
-        tokens: Vec::new(),
-        types: Vec::new(),
-    };
-    collect(parsed.root_node(), source, &mut result);
-    Ok(Some(result))
-}
-
-fn overlaps(left: LineRange, right: LineRange) -> bool {
-    left.count > 0
-        && right.count > 0
-        && left.start < right.start + right.count
-        && right.start < left.start + left.count
+    let mut ranges = Vec::new();
+    collect(parsed.root_node(), &mut ranges);
+    Ok(Some(TypeErasure {
+        source,
+        line_starts: std::iter::once(0)
+            .chain(
+                source
+                    .iter()
+                    .enumerate()
+                    .filter(|(_, byte)| **byte == b'\n')
+                    .map(|(index, _)| index + 1),
+            )
+            .collect(),
+        ranges,
+    }))
 }
 
 fn type_only_changes(base: &Tree, tree: &Tree, file: &FileDiff) -> Result<BTreeSet<u32>> {
@@ -251,23 +282,16 @@ fn type_only_changes(base: &Tree, tree: &Tree, file: &FileDiff) -> Result<BTreeS
         .map_or(&[][..], |entry| entry.content.as_slice());
     let after = &tree[&file.path].content;
     let (Some(before), Some(after)) = (
-        typescript_runtime_tokens(old_path, before)?,
-        typescript_runtime_tokens(&file.path, after)?,
+        typescript_type_erasure(&file.path, before)?,
+        typescript_type_erasure(&file.path, after)?,
     ) else {
         return Ok(ignored);
     };
     for hunk in &file.hunks {
-        let has_types = before.types.iter().any(|range| overlaps(*range, hunk.base))
-            || after.types.iter().any(|range| overlaps(*range, hunk.head));
-        fn tokens<'a>(tokens: &RuntimeTokens<'a>, range: LineRange) -> Vec<&'a str> {
-            tokens
-                .tokens
-                .iter()
-                .filter(|(lines, _)| overlaps(*lines, range))
-                .map(|(_, text)| *text)
-                .collect::<Vec<_>>()
-        }
-        if has_types && tokens(&before, hunk.base) == tokens(&after, hunk.head) {
+        let old = before.byte_range(hunk.base);
+        let new = after.byte_range(hunk.head);
+        let has_types = before.contains_type(&old) || after.contains_type(&new);
+        if has_types && before.runtime_text(old) == after.runtime_text(new) {
             ignored.extend(hunk.head.start..hunk.head.start + hunk.head.count);
         }
     }
