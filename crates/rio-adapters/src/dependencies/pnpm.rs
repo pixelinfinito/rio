@@ -159,3 +159,33 @@ pub(super) fn parse(content: &str) -> Result<DependencyGraph> {
     }
     Ok(graph)
 }
+/// pnpm 10.12.1 packages/dependency-path and pnpm 12.4.1 deps-path use
+/// this escaping and SHA-256 prefix (not Rust's platform-dependent hashing).
+pub(super) fn dep_path_to_filename(key: &str, max_length: usize) -> String {
+    use sha2::{Digest, Sha256};
+    let mut filename = key
+        .strip_prefix('/')
+        .unwrap_or(key)
+        .replace(['\\', '/', ':', '*', '?', '"', '<', '>', '|', '#'], "+");
+    if filename.contains('(') {
+        if filename.ends_with(')') {
+            filename.pop();
+        }
+        filename = filename.replace(")(", "_").replace(['(', ')'], "_");
+    }
+    if filename.len() > max_length
+        || (filename != filename.to_lowercase() && !filename.starts_with("file+"))
+    {
+        let hash: String = Sha256::digest(filename.as_bytes())
+            .iter()
+            .take(16)
+            .map(|byte| format!("{byte:02x}"))
+            .collect();
+        let prefix: String = filename
+            .chars()
+            .take(max_length.saturating_sub(33))
+            .collect();
+        return format!("{prefix}_{}", &hash[..32]);
+    }
+    filename
+}
