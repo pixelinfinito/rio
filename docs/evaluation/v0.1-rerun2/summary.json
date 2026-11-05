@@ -1,0 +1,1826 @@
+{
+  "schema": "rio-eval-summary-v2",
+  "methodology": "deterministic-v2",
+  "records": [
+    "eval/runs/hono-2081-rerun2-attempt2/record.json",
+    "eval/runs/hono-2085-rerun2-attempt3/record.json",
+    "eval/runs/ky-578-rerun2/record.json",
+    "eval/runs/ky-881-rerun2/record.json",
+    "eval/runs/litestar-5164-seed-f841-rerun2/record.json",
+    "eval/runs/litestar-5178-rerun2-attempt2/record.json",
+    "eval/runs/mitmproxy-8473-rerun2-attempt2/record.json",
+    "eval/runs/mitmproxy-8521-rerun2-attempt2/record.json",
+    "eval/runs/pydantic-14199-rerun2-attempt2/record.json",
+    "eval/runs/pydantic-14213-rerun2/record.json",
+    "eval/runs/pydantic-ai-12540-rerun2-attempt3/record.json",
+    "eval/runs/pydantic-ai-8641-rerun2/record.json",
+    "eval/runs/pydantic-settings-1097-rerun2-attempt2/record.json",
+    "eval/runs/pydantic-settings-1109-rerun2/record.json",
+    "eval/runs/pydantic-settings-708-rerun2/record.json",
+    "eval/runs/structlog-805-rerun2/record.json",
+    "eval/runs/structlog-811-rerun2/record.json",
+    "eval/runs/structlog-811-seeded-assignment-rerun2/record.json",
+    "eval/runs/tanstack-query-11293-rerun2-attempt2/record.json",
+    "eval/runs/tanstack-query-11392-rerun2-attempt2/record.json",
+    "eval/runs/tanstack-query-11522-seeded-rerun2-attempt2/record.json",
+    "eval/runs/trpc-5819-rerun2-attempt2/record.json",
+    "eval/runs/trpc-7903-rerun2-attempt4/record.json",
+    "eval/runs/vue-core-12701-rerun2/record.json.gz",
+    "eval/runs/vue-core-15328-rerun2/record.json.gz",
+    "eval/runs/zod-6085-rerun2/record.json",
+    "eval/runs/zod-6527-rerun2-attempt2/record.json"
+  ],
+  "attempts": 27,
+  "selection": {
+    "policy": "eval/runs/v0.1-rerun2-selection.json",
+    "omitted_records": []
+  },
+  "rio_versions": [
+    "0.1.0@sha256:3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7"
+  ],
+  "mixed_versions": false,
+  "binary_identity_complete": true,
+  "profile_hashes": [
+    "0a3e48da1a7fe123b94ec8cf2de2ee936c05965e15006eb3efc3eddb1029f362",
+    "1049df8bb35d7f36f2982fdce1565c2c50336ce9e898e605f3cac96b7b16b636",
+    "1380ff496ec527d37d98dfb492af75979bb334918a887ca02fb2b9b7b3234850",
+    "3a3138714cdc833eb6047bd4f7bf284e5d9a4c960429e2e40202d3aa5db40831",
+    "440432e9eeec93fd929030912d2e4fce6bdb03387b389204ad11add57637d113",
+    "4fd2f713e5a2934fc48eab474e54bea7f22050e96d1171039b7851a568dca98c",
+    "506e23bf6697e3859e75f0cf37c1c93d58eedca306bddc3fa6c890dfc4ed77c4",
+    "5219d9ae5df5f51623a8052467b4405945bd4f285021dcb9b5d760030d226fe4",
+    "59dacd18956db809562ec9e0a29a384d4208860a83073d8453f0cd7883d4d709",
+    "6e080aeb0758c4aea760d8a46b54427c3695a6a458ec4c5ad71c4639e14dcc77",
+    "6e86d0f73e8c4df00cdb68de9813c82eb0aac4853cfc2a071c23ea3ec6cffbe2",
+    "898abcf93597048f43bda9646c099b63536f651c0ac2895da15fa476afcf63e4",
+    "8beb612ab7385770f6dccc32fd71e598e8a98e62ac1db23cac2ce018f2d15f2c",
+    "92640e5149c4c0761c260f95cd983b548d8a4bb9518557ee573cc3f93394e775",
+    "9622126a53bb6a1072aaa246590f82474089a162a0ec0549df2d64b530949ada",
+    "9e5d7a38e169ccac9ebd79b1ca406d46006031d6492f371699cfac0385d18830",
+    "9fd78ae73ee11bca3f5c2f52ff6afe06c7be141ee55e0ad090436107e649f645",
+    "ae771ff1ff2401f5e3958d3e60f7e90bb9c7189b8a791cd341bd5b71ae5353e1",
+    "b04b3d15d74b905355bd9b17c01567748ebcf528ec276f685a3956194559789e",
+    "cf9820a56028ec27b22a4c9a35f495167763cfd65201eb0d1c31eac3c11ef366",
+    "d004acb9c0875c4dd472cc1e8adc1eaf7431d47b3be995bd5dafe1a465bb1b8d",
+    "d0e7d6042086b6dc7ba4caee1a9e22e24495a1d700ac50d73fc378d4dbcba1f7",
+    "dd32fda56169d0a87c74e076073943b2afd5de9c9722a383a5bf51a5cd98fb5f",
+    "e9d4e8e4f7ecb85202012e99569b6e3f7a3198f27d1b46be208f52a262a71fda",
+    "fc41e9bc3b0fe5c4c816df700d1feb3d537e4ab1994e89bff7ace41951261c28"
+  ],
+  "record_profiles": [
+    {
+      "record_path": "eval/runs/hono-2081-rerun2-attempt2/record.json",
+      "repository": "honojs/hono",
+      "case_id": "2081",
+      "profile": "hono-typescript-verified-all-checks",
+      "profile_sha256": "9fd78ae73ee11bca3f5c2f52ff6afe06c7be141ee55e0ad090436107e649f645",
+      "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+      "dependency_state": "verified",
+      "eligible": true
+    },
+    {
+      "record_path": "eval/runs/hono-2085-rerun2-attempt3/record.json",
+      "repository": "honojs/hono",
+      "case_id": "2085-seeded-type-error-20261105",
+      "profile": "hono-typescript-verified-all-checks",
+      "profile_sha256": "3a3138714cdc833eb6047bd4f7bf284e5d9a4c960429e2e40202d3aa5db40831",
+      "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+      "dependency_state": "verified",
+      "eligible": true
+    },
+    {
+      "record_path": "eval/runs/ky-578-rerun2/record.json",
+      "repository": "sindresorhus/ky",
+      "case_id": "578",
+      "profile": "eval-ky-trusted",
+      "profile_sha256": "6e080aeb0758c4aea760d8a46b54427c3695a6a458ec4c5ad71c4639e14dcc77",
+      "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+      "dependency_state": "trusted",
+      "eligible": true
+    },
+    {
+      "record_path": "eval/runs/ky-881-rerun2/record.json",
+      "repository": "sindresorhus/ky",
+      "case_id": "881",
+      "profile": "eval-ky-trusted",
+      "profile_sha256": "506e23bf6697e3859e75f0cf37c1c93d58eedca306bddc3fa6c890dfc4ed77c4",
+      "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+      "dependency_state": "trusted",
+      "eligible": true
+    },
+    {
+      "record_path": "eval/runs/litestar-5164-seed-f841-rerun2/record.json",
+      "repository": "litestar-org/litestar",
+      "case_id": "5164-seed-f841",
+      "profile": "eval-litestar-b15dc8ff5001",
+      "profile_sha256": "cf9820a56028ec27b22a4c9a35f495167763cfd65201eb0d1c31eac3c11ef366",
+      "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+      "dependency_state": "verified",
+      "eligible": true
+    },
+    {
+      "record_path": "eval/runs/litestar-5178-rerun2-attempt2/record.json",
+      "repository": "litestar-org/litestar",
+      "case_id": "5178",
+      "profile": "eval-litestar-b15dc8ff5001",
+      "profile_sha256": "92640e5149c4c0761c260f95cd983b548d8a4bb9518557ee573cc3f93394e775",
+      "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+      "dependency_state": "verified",
+      "eligible": true
+    },
+    {
+      "record_path": "eval/runs/mitmproxy-8473-rerun2-attempt2/record.json",
+      "repository": "mitmproxy/mitmproxy",
+      "case_id": "8473",
+      "profile": "eval-mitmproxy",
+      "profile_sha256": "dd32fda56169d0a87c74e076073943b2afd5de9c9722a383a5bf51a5cd98fb5f",
+      "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+      "dependency_state": "verified",
+      "eligible": true
+    },
+    {
+      "record_path": "eval/runs/mitmproxy-8521-rerun2-attempt2/record.json",
+      "repository": "mitmproxy/mitmproxy",
+      "case_id": "8521-seeded-unused-import",
+      "profile": "eval-mitmproxy",
+      "profile_sha256": "b04b3d15d74b905355bd9b17c01567748ebcf528ec276f685a3956194559789e",
+      "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+      "dependency_state": "verified",
+      "eligible": true
+    },
+    {
+      "record_path": "eval/runs/pydantic-14199-rerun2-attempt2/record.json",
+      "repository": "pydantic/pydantic",
+      "case_id": "14199",
+      "profile": "eval/pydantic",
+      "profile_sha256": "5219d9ae5df5f51623a8052467b4405945bd4f285021dcb9b5d760030d226fe4",
+      "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+      "dependency_state": "verified",
+      "eligible": true
+    },
+    {
+      "record_path": "eval/runs/pydantic-14213-rerun2/record.json",
+      "repository": "pydantic/pydantic",
+      "case_id": "14213",
+      "profile": "eval/pydantic",
+      "profile_sha256": "4fd2f713e5a2934fc48eab474e54bea7f22050e96d1171039b7851a568dca98c",
+      "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+      "dependency_state": "verified",
+      "eligible": true
+    },
+    {
+      "record_path": "eval/runs/pydantic-ai-12540-rerun2-attempt3/record.json",
+      "repository": "pydantic/pydantic-ai",
+      "case_id": "12540",
+      "profile": "eval-pydantic-ai-static",
+      "profile_sha256": "1380ff496ec527d37d98dfb492af75979bb334918a887ca02fb2b9b7b3234850",
+      "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+      "dependency_state": "mixed",
+      "eligible": false
+    },
+    {
+      "record_path": "eval/runs/pydantic-ai-8641-rerun2/record.json",
+      "repository": "pydantic/pydantic-ai",
+      "case_id": "8641-seeded-unused-import",
+      "profile": "eval-pydantic-ai-static",
+      "profile_sha256": "898abcf93597048f43bda9646c099b63536f651c0ac2895da15fa476afcf63e4",
+      "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+      "dependency_state": "unavailable",
+      "eligible": false
+    },
+    {
+      "record_path": "eval/runs/pydantic-settings-1097-rerun2-attempt2/record.json",
+      "repository": "pydantic/pydantic-settings",
+      "case_id": "1097",
+      "profile": "eval-pydantic-settings",
+      "profile_sha256": "0a3e48da1a7fe123b94ec8cf2de2ee936c05965e15006eb3efc3eddb1029f362",
+      "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+      "dependency_state": "verified",
+      "eligible": true
+    },
+    {
+      "record_path": "eval/runs/pydantic-settings-1109-rerun2/record.json",
+      "repository": "pydantic/pydantic-settings",
+      "case_id": "1109",
+      "profile": "eval-pydantic-settings",
+      "profile_sha256": "6e86d0f73e8c4df00cdb68de9813c82eb0aac4853cfc2a071c23ea3ec6cffbe2",
+      "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+      "dependency_state": "verified",
+      "eligible": true
+    },
+    {
+      "record_path": "eval/runs/pydantic-settings-708-rerun2/record.json",
+      "repository": "pydantic/pydantic-settings",
+      "case_id": "708",
+      "profile": "eval-pydantic-settings",
+      "profile_sha256": "d004acb9c0875c4dd472cc1e8adc1eaf7431d47b3be995bd5dafe1a465bb1b8d",
+      "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+      "dependency_state": "verified",
+      "eligible": true
+    },
+    {
+      "record_path": "eval/runs/structlog-805-rerun2/record.json",
+      "repository": "hynek/structlog",
+      "case_id": "805",
+      "profile": "eval-structlog-trusted",
+      "profile_sha256": "d0e7d6042086b6dc7ba4caee1a9e22e24495a1d700ac50d73fc378d4dbcba1f7",
+      "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+      "dependency_state": "trusted",
+      "eligible": true
+    },
+    {
+      "record_path": "eval/runs/structlog-811-rerun2/record.json",
+      "repository": "hynek/structlog",
+      "case_id": "811",
+      "profile": "eval-structlog-trusted",
+      "profile_sha256": "440432e9eeec93fd929030912d2e4fce6bdb03387b389204ad11add57637d113",
+      "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+      "dependency_state": "trusted",
+      "eligible": true
+    },
+    {
+      "record_path": "eval/runs/structlog-811-seeded-assignment-rerun2/record.json",
+      "repository": "hynek/structlog",
+      "case_id": "811-seeded-assignment",
+      "profile": "eval-structlog-trusted",
+      "profile_sha256": "e9d4e8e4f7ecb85202012e99569b6e3f7a3198f27d1b46be208f52a262a71fda",
+      "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+      "dependency_state": "trusted",
+      "eligible": true
+    },
+    {
+      "record_path": "eval/runs/tanstack-query-11293-rerun2-attempt2/record.json",
+      "repository": "TanStack/query",
+      "case_id": "11293",
+      "profile": "rio/base",
+      "profile_sha256": "1049df8bb35d7f36f2982fdce1565c2c50336ce9e898e605f3cac96b7b16b636",
+      "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+      "dependency_state": "mixed",
+      "eligible": false
+    },
+    {
+      "record_path": "eval/runs/tanstack-query-11392-rerun2-attempt2/record.json",
+      "repository": "TanStack/query",
+      "case_id": "11392",
+      "profile": "rio/base",
+      "profile_sha256": "1049df8bb35d7f36f2982fdce1565c2c50336ce9e898e605f3cac96b7b16b636",
+      "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+      "dependency_state": "verified",
+      "eligible": true
+    },
+    {
+      "record_path": "eval/runs/tanstack-query-11522-seeded-rerun2-attempt2/record.json",
+      "repository": "TanStack/query",
+      "case_id": "11522-seeded-transaction-type-20261105",
+      "profile": "rio/base",
+      "profile_sha256": "1049df8bb35d7f36f2982fdce1565c2c50336ce9e898e605f3cac96b7b16b636",
+      "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+      "dependency_state": "verified",
+      "eligible": true
+    },
+    {
+      "record_path": "eval/runs/trpc-5819-rerun2-attempt2/record.json",
+      "repository": "trpc/trpc",
+      "case_id": "5819",
+      "profile": "trpc-typescript-all-checks",
+      "profile_sha256": "9e5d7a38e169ccac9ebd79b1ca406d46006031d6492f371699cfac0385d18830",
+      "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+      "dependency_state": "verified",
+      "eligible": false
+    },
+    {
+      "record_path": "eval/runs/trpc-7903-rerun2-attempt4/record.json",
+      "repository": "trpc/trpc",
+      "case_id": "7903",
+      "profile": "trpc-typescript-all-checks",
+      "profile_sha256": "8beb612ab7385770f6dccc32fd71e598e8a98e62ac1db23cac2ce018f2d15f2c",
+      "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+      "dependency_state": "verified",
+      "eligible": true
+    },
+    {
+      "record_path": "eval/runs/vue-core-12701-rerun2/record.json.gz",
+      "repository": "vuejs/core",
+      "case_id": "12701",
+      "profile": "eval-vue-workspace",
+      "profile_sha256": "59dacd18956db809562ec9e0a29a384d4208860a83073d8453f0cd7883d4d709",
+      "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+      "dependency_state": "verified",
+      "eligible": false
+    },
+    {
+      "record_path": "eval/runs/vue-core-15328-rerun2/record.json.gz",
+      "repository": "vuejs/core",
+      "case_id": "15328",
+      "profile": "eval-vue-workspace",
+      "profile_sha256": "ae771ff1ff2401f5e3958d3e60f7e90bb9c7189b8a791cd341bd5b71ae5353e1",
+      "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+      "dependency_state": "verified",
+      "eligible": false
+    },
+    {
+      "record_path": "eval/runs/zod-6085-rerun2/record.json",
+      "repository": "colinhacks/zod",
+      "case_id": "6085",
+      "profile": "zod-eval-b15dc8ff5001",
+      "profile_sha256": "fc41e9bc3b0fe5c4c816df700d1feb3d537e4ab1994e89bff7ace41951261c28",
+      "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+      "dependency_state": "verified",
+      "eligible": false
+    },
+    {
+      "record_path": "eval/runs/zod-6527-rerun2-attempt2/record.json",
+      "repository": "colinhacks/zod",
+      "case_id": "6527",
+      "profile": "zod-eval-b15dc8ff5001",
+      "profile_sha256": "9622126a53bb6a1072aaa246590f82474089a162a0ec0549df2d64b530949ada",
+      "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+      "dependency_state": "verified",
+      "eligible": false
+    }
+  ],
+  "observed_raw_counts": {
+    "true-positive": 22,
+    "false-positive": 0,
+    "pre-existing-shown": 1,
+    "environment-failure": 4,
+    "out-of-scope": 0,
+    "pre-existing-hidden": 2043
+  },
+  "observed_occurrence_counts": {
+    "true-positive": 56,
+    "false-positive": 0,
+    "pre-existing-shown": 1,
+    "environment-failure": 5,
+    "out-of-scope": 0,
+    "pre-existing-hidden": 2571
+  },
+  "observed_cause_counts": {
+    "true-positive": 18,
+    "false-positive": 0,
+    "pre-existing-shown": 1,
+    "environment-failure": 4,
+    "out-of-scope": 0,
+    "pre-existing-hidden": 1442
+  },
+  "observed_unique_cause_counts": {
+    "true-positive": 18,
+    "false-positive": 0,
+    "pre-existing-shown": 1,
+    "environment-failure": 4,
+    "out-of-scope": 0,
+    "pre-existing-hidden": 1157
+  },
+  "eligible": {
+    "eligible_prs": 19,
+    "raw_counts": {
+      "true-positive": 12,
+      "false-positive": 0,
+      "pre-existing-shown": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0,
+      "pre-existing-hidden": 22
+    },
+    "occurrence_counts": {
+      "true-positive": 44,
+      "false-positive": 0,
+      "pre-existing-shown": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0,
+      "pre-existing-hidden": 24
+    },
+    "cause_counts": {
+      "true-positive": 10,
+      "false-positive": 0,
+      "pre-existing-shown": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0,
+      "pre-existing-hidden": 6
+    },
+    "unique_cause_counts": {
+      "true-positive": 10,
+      "false-positive": 0,
+      "pre-existing-shown": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0,
+      "pre-existing-hidden": 3
+    },
+    "precision": 1.0,
+    "positive_control_cases": 8,
+    "positive_control_by_kind": {
+      "real-pr": {
+        "cases": 3,
+        "expected": 3,
+        "detected": 2,
+        "recall": 0.6666666666666666
+      },
+      "seeded-mutation": {
+        "cases": 5,
+        "expected": 5,
+        "detected": 5,
+        "recall": 1.0
+      }
+    },
+    "positive_control_expected": 8,
+    "positive_control_detected": 7,
+    "positive_control_recall": 0.875,
+    "false_positive_per_pr": 0.0,
+    "pr_with_false_positive_fraction": 0.0,
+    "useful_prs": 18,
+    "useful_real_prs": 13,
+    "usefulness_fraction": 0.9473684210526315
+  },
+  "verified_only": {
+    "eligible_prs": 14,
+    "raw_counts": {
+      "true-positive": 11,
+      "false-positive": 0,
+      "pre-existing-shown": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0,
+      "pre-existing-hidden": 22
+    },
+    "occurrence_counts": {
+      "true-positive": 43,
+      "false-positive": 0,
+      "pre-existing-shown": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0,
+      "pre-existing-hidden": 24
+    },
+    "cause_counts": {
+      "true-positive": 9,
+      "false-positive": 0,
+      "pre-existing-shown": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0,
+      "pre-existing-hidden": 6
+    },
+    "unique_cause_counts": {
+      "true-positive": 9,
+      "false-positive": 0,
+      "pre-existing-shown": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0,
+      "pre-existing-hidden": 3
+    },
+    "precision": 1.0,
+    "positive_control_cases": 6,
+    "positive_control_by_kind": {
+      "real-pr": {
+        "cases": 2,
+        "expected": 2,
+        "detected": 2,
+        "recall": 1.0
+      },
+      "seeded-mutation": {
+        "cases": 4,
+        "expected": 4,
+        "detected": 4,
+        "recall": 1.0
+      }
+    },
+    "positive_control_expected": 6,
+    "positive_control_detected": 6,
+    "positive_control_recall": 1.0,
+    "false_positive_per_pr": 0.0,
+    "pr_with_false_positive_fraction": 0.0,
+    "useful_prs": 14,
+    "useful_real_prs": 10,
+    "usefulness_fraction": 1.0
+  },
+  "dependency_states": {
+    "mixed": 2,
+    "trusted": 5,
+    "unavailable": 1,
+    "verified": 19
+  },
+  "by_repository": {
+    "TanStack/query": {
+      "eligible_prs": 2,
+      "raw_counts": {
+        "true-positive": 2,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "occurrence_counts": {
+        "true-positive": 3,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "cause_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "unique_cause_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "precision": 1.0,
+      "positive_control_cases": 1,
+      "positive_control_by_kind": {
+        "real-pr": {
+          "cases": 0,
+          "expected": 0,
+          "detected": 0,
+          "recall": null
+        },
+        "seeded-mutation": {
+          "cases": 1,
+          "expected": 1,
+          "detected": 1,
+          "recall": 1.0
+        }
+      },
+      "positive_control_expected": 1,
+      "positive_control_detected": 1,
+      "positive_control_recall": 1.0,
+      "false_positive_per_pr": 0.0,
+      "pr_with_false_positive_fraction": 0.0,
+      "useful_prs": 2,
+      "useful_real_prs": 1,
+      "usefulness_fraction": 1.0
+    },
+    "colinhacks/zod": {
+      "eligible_prs": 0,
+      "raw_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "occurrence_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "cause_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "unique_cause_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "precision": null,
+      "positive_control_cases": 0,
+      "positive_control_by_kind": {
+        "real-pr": {
+          "cases": 0,
+          "expected": 0,
+          "detected": 0,
+          "recall": null
+        },
+        "seeded-mutation": {
+          "cases": 0,
+          "expected": 0,
+          "detected": 0,
+          "recall": null
+        }
+      },
+      "positive_control_expected": 0,
+      "positive_control_detected": 0,
+      "positive_control_recall": null,
+      "false_positive_per_pr": null,
+      "pr_with_false_positive_fraction": null,
+      "useful_prs": 0,
+      "useful_real_prs": 0,
+      "usefulness_fraction": null
+    },
+    "honojs/hono": {
+      "eligible_prs": 2,
+      "raw_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "occurrence_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "cause_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "unique_cause_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "precision": 1.0,
+      "positive_control_cases": 1,
+      "positive_control_by_kind": {
+        "real-pr": {
+          "cases": 0,
+          "expected": 0,
+          "detected": 0,
+          "recall": null
+        },
+        "seeded-mutation": {
+          "cases": 1,
+          "expected": 1,
+          "detected": 1,
+          "recall": 1.0
+        }
+      },
+      "positive_control_expected": 1,
+      "positive_control_detected": 1,
+      "positive_control_recall": 1.0,
+      "false_positive_per_pr": 0.0,
+      "pr_with_false_positive_fraction": 0.0,
+      "useful_prs": 2,
+      "useful_real_prs": 1,
+      "usefulness_fraction": 1.0
+    },
+    "hynek/structlog": {
+      "eligible_prs": 3,
+      "raw_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "occurrence_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "cause_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "unique_cause_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "precision": 1.0,
+      "positive_control_cases": 1,
+      "positive_control_by_kind": {
+        "real-pr": {
+          "cases": 0,
+          "expected": 0,
+          "detected": 0,
+          "recall": null
+        },
+        "seeded-mutation": {
+          "cases": 1,
+          "expected": 1,
+          "detected": 1,
+          "recall": 1.0
+        }
+      },
+      "positive_control_expected": 1,
+      "positive_control_detected": 1,
+      "positive_control_recall": 1.0,
+      "false_positive_per_pr": 0.0,
+      "pr_with_false_positive_fraction": 0.0,
+      "useful_prs": 3,
+      "useful_real_prs": 2,
+      "usefulness_fraction": 1.0
+    },
+    "litestar-org/litestar": {
+      "eligible_prs": 2,
+      "raw_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "occurrence_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "cause_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "unique_cause_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "precision": 1.0,
+      "positive_control_cases": 1,
+      "positive_control_by_kind": {
+        "real-pr": {
+          "cases": 0,
+          "expected": 0,
+          "detected": 0,
+          "recall": null
+        },
+        "seeded-mutation": {
+          "cases": 1,
+          "expected": 1,
+          "detected": 1,
+          "recall": 1.0
+        }
+      },
+      "positive_control_expected": 1,
+      "positive_control_detected": 1,
+      "positive_control_recall": 1.0,
+      "false_positive_per_pr": 0.0,
+      "pr_with_false_positive_fraction": 0.0,
+      "useful_prs": 2,
+      "useful_real_prs": 1,
+      "usefulness_fraction": 1.0
+    },
+    "mitmproxy/mitmproxy": {
+      "eligible_prs": 2,
+      "raw_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "occurrence_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "cause_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "unique_cause_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "precision": 1.0,
+      "positive_control_cases": 1,
+      "positive_control_by_kind": {
+        "real-pr": {
+          "cases": 0,
+          "expected": 0,
+          "detected": 0,
+          "recall": null
+        },
+        "seeded-mutation": {
+          "cases": 1,
+          "expected": 1,
+          "detected": 1,
+          "recall": 1.0
+        }
+      },
+      "positive_control_expected": 1,
+      "positive_control_detected": 1,
+      "positive_control_recall": 1.0,
+      "false_positive_per_pr": 0.0,
+      "pr_with_false_positive_fraction": 0.0,
+      "useful_prs": 2,
+      "useful_real_prs": 1,
+      "usefulness_fraction": 1.0
+    },
+    "pydantic/pydantic": {
+      "eligible_prs": 2,
+      "raw_counts": {
+        "true-positive": 2,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 22
+      },
+      "occurrence_counts": {
+        "true-positive": 9,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 24
+      },
+      "cause_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 6
+      },
+      "unique_cause_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 3
+      },
+      "precision": 1.0,
+      "positive_control_cases": 1,
+      "positive_control_by_kind": {
+        "real-pr": {
+          "cases": 1,
+          "expected": 1,
+          "detected": 1,
+          "recall": 1.0
+        },
+        "seeded-mutation": {
+          "cases": 0,
+          "expected": 0,
+          "detected": 0,
+          "recall": null
+        }
+      },
+      "positive_control_expected": 1,
+      "positive_control_detected": 1,
+      "positive_control_recall": 1.0,
+      "false_positive_per_pr": 0.0,
+      "pr_with_false_positive_fraction": 0.0,
+      "useful_prs": 2,
+      "useful_real_prs": 2,
+      "usefulness_fraction": 1.0
+    },
+    "pydantic/pydantic-ai": {
+      "eligible_prs": 0,
+      "raw_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "occurrence_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "cause_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "unique_cause_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "precision": null,
+      "positive_control_cases": 0,
+      "positive_control_by_kind": {
+        "real-pr": {
+          "cases": 0,
+          "expected": 0,
+          "detected": 0,
+          "recall": null
+        },
+        "seeded-mutation": {
+          "cases": 0,
+          "expected": 0,
+          "detected": 0,
+          "recall": null
+        }
+      },
+      "positive_control_expected": 0,
+      "positive_control_detected": 0,
+      "positive_control_recall": null,
+      "false_positive_per_pr": null,
+      "pr_with_false_positive_fraction": null,
+      "useful_prs": 0,
+      "useful_real_prs": 0,
+      "usefulness_fraction": null
+    },
+    "pydantic/pydantic-settings": {
+      "eligible_prs": 3,
+      "raw_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "occurrence_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "cause_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "unique_cause_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "precision": 1.0,
+      "positive_control_cases": 1,
+      "positive_control_by_kind": {
+        "real-pr": {
+          "cases": 1,
+          "expected": 1,
+          "detected": 1,
+          "recall": 1.0
+        },
+        "seeded-mutation": {
+          "cases": 0,
+          "expected": 0,
+          "detected": 0,
+          "recall": null
+        }
+      },
+      "positive_control_expected": 1,
+      "positive_control_detected": 1,
+      "positive_control_recall": 1.0,
+      "false_positive_per_pr": 0.0,
+      "pr_with_false_positive_fraction": 0.0,
+      "useful_prs": 3,
+      "useful_real_prs": 3,
+      "usefulness_fraction": 1.0
+    },
+    "sindresorhus/ky": {
+      "eligible_prs": 2,
+      "raw_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "occurrence_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "cause_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "unique_cause_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "precision": null,
+      "positive_control_cases": 1,
+      "positive_control_by_kind": {
+        "real-pr": {
+          "cases": 1,
+          "expected": 1,
+          "detected": 0,
+          "recall": 0.0
+        },
+        "seeded-mutation": {
+          "cases": 0,
+          "expected": 0,
+          "detected": 0,
+          "recall": null
+        }
+      },
+      "positive_control_expected": 1,
+      "positive_control_detected": 0,
+      "positive_control_recall": 0.0,
+      "false_positive_per_pr": 0.0,
+      "pr_with_false_positive_fraction": 0.0,
+      "useful_prs": 1,
+      "useful_real_prs": 1,
+      "usefulness_fraction": 0.5
+    },
+    "trpc/trpc": {
+      "eligible_prs": 1,
+      "raw_counts": {
+        "true-positive": 3,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "occurrence_counts": {
+        "true-positive": 27,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "cause_counts": {
+        "true-positive": 3,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "unique_cause_counts": {
+        "true-positive": 3,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "precision": 1.0,
+      "positive_control_cases": 0,
+      "positive_control_by_kind": {
+        "real-pr": {
+          "cases": 0,
+          "expected": 0,
+          "detected": 0,
+          "recall": null
+        },
+        "seeded-mutation": {
+          "cases": 0,
+          "expected": 0,
+          "detected": 0,
+          "recall": null
+        }
+      },
+      "positive_control_expected": 0,
+      "positive_control_detected": 0,
+      "positive_control_recall": null,
+      "false_positive_per_pr": 0.0,
+      "pr_with_false_positive_fraction": 0.0,
+      "useful_prs": 1,
+      "useful_real_prs": 1,
+      "usefulness_fraction": 1.0
+    },
+    "vuejs/core": {
+      "eligible_prs": 0,
+      "raw_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "occurrence_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "cause_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "unique_cause_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "precision": null,
+      "positive_control_cases": 0,
+      "positive_control_by_kind": {
+        "real-pr": {
+          "cases": 0,
+          "expected": 0,
+          "detected": 0,
+          "recall": null
+        },
+        "seeded-mutation": {
+          "cases": 0,
+          "expected": 0,
+          "detected": 0,
+          "recall": null
+        }
+      },
+      "positive_control_expected": 0,
+      "positive_control_detected": 0,
+      "positive_control_recall": null,
+      "false_positive_per_pr": null,
+      "pr_with_false_positive_fraction": null,
+      "useful_prs": 0,
+      "useful_real_prs": 0,
+      "usefulness_fraction": null
+    }
+  },
+  "by_language": {
+    "python": {
+      "eligible_prs": 12,
+      "raw_counts": {
+        "true-positive": 6,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 22
+      },
+      "occurrence_counts": {
+        "true-positive": 13,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 24
+      },
+      "cause_counts": {
+        "true-positive": 5,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 6
+      },
+      "unique_cause_counts": {
+        "true-positive": 5,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 3
+      },
+      "precision": 1.0,
+      "positive_control_cases": 5,
+      "positive_control_by_kind": {
+        "real-pr": {
+          "cases": 2,
+          "expected": 2,
+          "detected": 2,
+          "recall": 1.0
+        },
+        "seeded-mutation": {
+          "cases": 3,
+          "expected": 3,
+          "detected": 3,
+          "recall": 1.0
+        }
+      },
+      "positive_control_expected": 5,
+      "positive_control_detected": 5,
+      "positive_control_recall": 1.0,
+      "false_positive_per_pr": 0.0,
+      "pr_with_false_positive_fraction": 0.0,
+      "useful_prs": 12,
+      "useful_real_prs": 9,
+      "usefulness_fraction": 1.0
+    },
+    "typescript": {
+      "eligible_prs": 7,
+      "raw_counts": {
+        "true-positive": 6,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "occurrence_counts": {
+        "true-positive": 31,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "cause_counts": {
+        "true-positive": 5,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "unique_cause_counts": {
+        "true-positive": 5,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "precision": 1.0,
+      "positive_control_cases": 3,
+      "positive_control_by_kind": {
+        "real-pr": {
+          "cases": 1,
+          "expected": 1,
+          "detected": 0,
+          "recall": 0.0
+        },
+        "seeded-mutation": {
+          "cases": 2,
+          "expected": 2,
+          "detected": 2,
+          "recall": 1.0
+        }
+      },
+      "positive_control_expected": 3,
+      "positive_control_detected": 2,
+      "positive_control_recall": 0.6666666666666666,
+      "false_positive_per_pr": 0.0,
+      "pr_with_false_positive_fraction": 0.0,
+      "useful_prs": 6,
+      "useful_real_prs": 4,
+      "usefulness_fraction": 0.8571428571428571
+    }
+  },
+  "environment_failures": [
+    {
+      "repository": "pydantic/pydantic-ai",
+      "pr": "https://github.com/pydantic/pydantic-ai/pull/12540",
+      "case_id": "12540",
+      "record_path": "eval/runs/pydantic-ai-12540-rerun2-attempt3/record.json",
+      "reasons": [
+        "lint . head: skipped dependency_mismatch uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "lint .: head=skipped, dependency_state=unavailable, base=unavailable",
+        "lint pydantic_ai_slim head: skipped dependency_mismatch uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "lint pydantic_ai_slim: head=skipped, dependency_state=unavailable, base=unavailable",
+        "lint pydantic_evals head: skipped dependency_mismatch uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "lint pydantic_evals: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck . head: skipped dependency_mismatch uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "typecheck .: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck examples head: skipped dependency_mismatch uv.lock: missing ag-ui-protocol at ag-ui-protocol; reinstall dependencies",
+        "typecheck examples: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck pydantic_ai_slim head: skipped dependency_mismatch uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "typecheck pydantic_ai_slim: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck pydantic_evals head: skipped dependency_mismatch uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "typecheck pydantic_evals: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck src/pydantic_ai_harness head: skipped dependency_mismatch uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "typecheck src/pydantic_ai_harness: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck src/pydantic_clai2 head: skipped dependency_mismatch uv.lock: missing fastapi at fastapi; reinstall dependencies",
+        "typecheck src/pydantic_clai2: head=skipped, dependency_state=unavailable, base=unavailable"
+      ]
+    },
+    {
+      "repository": "pydantic/pydantic-ai",
+      "pr": "https://github.com/pydantic/pydantic-ai/pull/8641",
+      "case_id": "8641-seeded-unused-import",
+      "record_path": "eval/runs/pydantic-ai-8641-rerun2/record.json",
+      "reasons": [
+        "lint pydantic_ai_slim head: skipped dependency_mismatch uv.lock: burner-redis: expected burner-redis@0.1.6, installed burner-redis@0.1.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "lint pydantic_ai_slim: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck examples head: skipped dependency_mismatch uv.lock: missing ag-ui-protocol at ag-ui-protocol; reinstall dependencies",
+        "typecheck examples: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck pydantic_ai_slim head: skipped dependency_mismatch uv.lock: burner-redis: expected burner-redis@0.1.6, installed burner-redis@0.1.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "typecheck pydantic_ai_slim: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck pydantic_evals head: skipped dependency_mismatch uv.lock: burner-redis: expected burner-redis@0.1.6, installed burner-redis@0.1.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "typecheck pydantic_evals: head=skipped, dependency_state=unavailable, base=unavailable"
+      ]
+    },
+    {
+      "repository": "TanStack/query",
+      "pr": "https://github.com/TanStack/query/pull/11293",
+      "case_id": "11293",
+      "record_path": "eval/runs/tanstack-query-11293-rerun2-attempt2/record.json",
+      "reasons": [
+        "coverage examples/angular/auto-refetching head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage examples/angular/basic head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage examples/angular/basic-persister head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage examples/angular/devtools-panel head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage examples/angular/infinite-query-with-max-pages head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage examples/angular/optimistic-updates head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage examples/angular/pagination head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage examples/angular/query-options-from-a-service head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage examples/angular/router head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage examples/angular/rxjs head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage examples/angular/simple head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage examples/lit/basic head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage examples/lit/pagination head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage examples/lit/ssr head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage examples/preact/simple head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage examples/react/algolia head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage examples/react/auto-refetching head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage examples/react/basic head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage examples/react/basic-graphql-request head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage examples/react/batching head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage examples/react/chat head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage examples/react/default-query-function head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage examples/react/devtools-panel head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage examples/react/eslint-legacy head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage examples/react/eslint-plugin-demo head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage examples/react/infinite-query-with-max-pages head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage examples/react/load-more-infinite-scroll head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage examples/react/nextjs head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage examples/react/nextjs-app-optimistic-updates head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage examples/react/nextjs-app-prefetching head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage examples/react/nextjs-suspense-streaming head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage examples/react/offline head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage examples/react/pagination head: cancelled timeout",
+        "coverage examples/react/playground head: cancelled timeout",
+        "coverage examples/react/prefetching head: cancelled timeout",
+        "coverage examples/react/react-native head: cancelled timeout",
+        "coverage examples/react/react-router head: cancelled timeout",
+        "coverage examples/react/rick-morty head: cancelled timeout",
+        "coverage examples/react/shadow-dom head: cancelled timeout",
+        "coverage examples/react/simple head: cancelled timeout",
+        "coverage examples/react/star-wars head: cancelled timeout",
+        "coverage examples/react/suspense head: cancelled timeout",
+        "coverage examples/solid/astro head: cancelled timeout",
+        "coverage examples/solid/basic head: cancelled timeout",
+        "coverage examples/solid/basic-graphql-request head: cancelled timeout",
+        "coverage examples/solid/default-query-function head: cancelled timeout",
+        "coverage examples/solid/offline head: cancelled timeout",
+        "coverage examples/solid/simple head: cancelled timeout",
+        "coverage examples/solid/solid-start-streaming head: cancelled timeout",
+        "coverage examples/svelte/auto-refetching head: cancelled timeout",
+        "coverage examples/svelte/basic head: failed tests_failed Test runner exited with code 1 without producing usable coverage: ▲ [WARNING] Cannot find base config file \"./.svelte-kit/tsconfig.json\" [tsconfig.json]",
+        "coverage examples/svelte/load-more-infinite-scroll head: failed tests_failed Test runner exited with code 1 without producing usable coverage: ▲ [WARNING] Cannot find base config file \"./.svelte-kit/tsconfig.json\" [tsconfig.json]",
+        "coverage examples/svelte/optimistic-updates head: failed tests_failed Test runner exited with code 1 without producing usable coverage: ▲ [WARNING] Cannot find base config file \"./.svelte-kit/tsconfig.json\" [tsconfig.json]",
+        "coverage examples/svelte/playground head: failed tests_failed Test runner exited with code 1 without producing usable coverage: ▲ [WARNING] Cannot find base config file \"./.svelte-kit/tsconfig.json\" [tsconfig.json]",
+        "coverage examples/svelte/simple head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage examples/svelte/ssr head: failed tests_failed Test runner exited with code 1 without producing usable coverage: ▲ [WARNING] Cannot find base config file \"./.svelte-kit/tsconfig.json\" [tsconfig.json]",
+        "coverage examples/svelte/star-wars head: failed tests_failed Test runner exited with code 1 without producing usable coverage: ▲ [WARNING] Cannot find base config file \"./.svelte-kit/tsconfig.json\" [tsconfig.json]",
+        "coverage examples/vue/basic head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage examples/vue/dependent-queries head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage examples/vue/persister head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage examples/vue/simple head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage integrations/angular-cli-20 head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage integrations/lit-vite head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage integrations/react-next-14 head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage integrations/react-next-15 head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage integrations/react-next-16 head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage integrations/react-nodenext head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage integrations/react-vite head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage integrations/react-webpack-4 head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage integrations/react-webpack-5 head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage integrations/solid-vite head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage integrations/svelte-vite head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage integrations/vue-declaration-emit head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage integrations/vue-vite head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage packages/angular-query-experimental head: cancelled timeout",
+        "coverage packages/angular-query-persist-client head: cancelled timeout",
+        "coverage packages/lit-query head: cancelled timeout",
+        "coverage packages/preact-query head: cancelled timeout",
+        "coverage packages/preact-query-devtools head: cancelled timeout",
+        "coverage packages/preact-query-persist-client head: cancelled timeout",
+        "coverage packages/query-async-storage-persister head: cancelled timeout",
+        "coverage packages/query-broadcast-client-experimental head: cancelled timeout",
+        "coverage packages/query-core head: cancelled timeout",
+        "coverage packages/query-devtools head: cancelled timeout",
+        "coverage packages/query-persist-client-core head: cancelled timeout",
+        "coverage packages/query-sync-storage-persister head: cancelled timeout",
+        "coverage packages/react-query head: cancelled timeout",
+        "coverage packages/react-query-devtools head: cancelled timeout",
+        "coverage packages/react-query-next-experimental head: cancelled timeout",
+        "coverage packages/react-query-persist-client head: cancelled timeout",
+        "coverage packages/solid-query head: cancelled timeout",
+        "coverage packages/solid-query-devtools head: cancelled timeout",
+        "coverage packages/solid-query-persist-client head: cancelled timeout",
+        "coverage packages/svelte-query head: cancelled timeout",
+        "coverage packages/svelte-query-devtools head: cancelled timeout",
+        "coverage packages/svelte-query-persist-client head: cancelled timeout",
+        "coverage packages/vue-query head: cancelled timeout",
+        "coverage packages/vue-query-devtools head: cancelled timeout",
+        "dependencies . head: cancelled timeout",
+        "lint packages/query-core head: cancelled timeout",
+        "lint packages/query-core: head=cancelled, dependency_state=unavailable, base=unavailable",
+        "secrets . head: cancelled timeout",
+        "typecheck examples/angular/auto-refetching: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/angular/basic-persister: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/angular/basic: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/angular/devtools-panel: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/angular/infinite-query-with-max-pages: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/angular/optimistic-updates: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/angular/pagination: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/angular/query-options-from-a-service: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/angular/router: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/angular/rxjs: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/angular/simple: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/lit/basic: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/lit/pagination: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/lit/ssr: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/preact/simple: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/algolia: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/auto-refetching: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/basic-graphql-request: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/basic: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/batching: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/chat: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/default-query-function: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/devtools-panel: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/eslint-legacy: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/eslint-plugin-demo: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/infinite-query-with-max-pages: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/load-more-infinite-scroll: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/nextjs-app-optimistic-updates: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/nextjs-app-prefetching: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/nextjs-suspense-streaming: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/nextjs: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/offline: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/pagination head: cancelled timeout",
+        "typecheck examples/react/pagination: head=cancelled, dependency_state=verified, base=unavailable",
+        "typecheck examples/react/playground head: cancelled timeout",
+        "typecheck examples/react/playground: head=cancelled, dependency_state=unavailable, base=unavailable",
+        "typecheck examples/react/prefetching head: cancelled timeout",
+        "typecheck examples/react/prefetching: head=cancelled, dependency_state=unavailable, base=unavailable",
+        "typecheck examples/react/react-native head: cancelled timeout",
+        "typecheck examples/react/react-native: head=cancelled, dependency_state=unavailable, base=unavailable",
+        "typecheck examples/react/react-router head: cancelled timeout",
+        "typecheck examples/react/react-router: head=cancelled, dependency_state=unavailable, base=unavailable",
+        "typecheck examples/react/rick-morty head: cancelled timeout",
+        "typecheck examples/react/rick-morty: head=cancelled, dependency_state=unavailable, base=unavailable",
+        "typecheck examples/react/shadow-dom head: cancelled timeout",
+        "typecheck examples/react/shadow-dom: head=cancelled, dependency_state=unavailable, base=unavailable",
+        "typecheck examples/react/simple head: cancelled timeout",
+        "typecheck examples/react/simple: head=cancelled, dependency_state=unavailable, base=unavailable",
+        "typecheck examples/react/star-wars head: cancelled timeout",
+        "typecheck examples/react/star-wars: head=cancelled, dependency_state=unavailable, base=unavailable",
+        "typecheck examples/react/suspense head: cancelled timeout",
+        "typecheck examples/react/suspense: head=cancelled, dependency_state=unavailable, base=unavailable",
+        "typecheck examples/solid/astro head: cancelled timeout",
+        "typecheck examples/solid/astro: head=cancelled, dependency_state=unavailable, base=unavailable",
+        "typecheck examples/solid/basic head: cancelled timeout",
+        "typecheck examples/solid/basic-graphql-request head: cancelled timeout",
+        "typecheck examples/solid/basic-graphql-request: head=cancelled, dependency_state=unavailable, base=unavailable",
+        "typecheck examples/solid/basic: head=cancelled, dependency_state=unavailable, base=unavailable",
+        "typecheck examples/solid/default-query-function head: cancelled timeout",
+        "typecheck examples/solid/default-query-function: head=cancelled, dependency_state=unavailable, base=unavailable",
+        "typecheck examples/solid/offline head: cancelled timeout",
+        "typecheck examples/solid/offline: head=cancelled, dependency_state=unavailable, base=unavailable",
+        "typecheck examples/solid/simple head: cancelled timeout",
+        "typecheck examples/solid/simple: head=cancelled, dependency_state=unavailable, base=unavailable",
+        "typecheck examples/solid/solid-start-streaming head: cancelled timeout",
+        "typecheck examples/solid/solid-start-streaming: head=cancelled, dependency_state=unavailable, base=unavailable",
+        "typecheck examples/svelte/auto-refetching head: cancelled timeout",
+        "typecheck examples/svelte/auto-refetching: head=cancelled, dependency_state=unavailable, base=unavailable",
+        "typecheck examples/svelte/basic head: cancelled timeout",
+        "typecheck examples/svelte/basic: head=cancelled, dependency_state=unavailable, base=unavailable",
+        "typecheck examples/svelte/load-more-infinite-scroll: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/svelte/optimistic-updates: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/svelte/playground: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/svelte/simple: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck examples/svelte/ssr: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/svelte/star-wars: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/vue/basic: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/vue/dependent-queries: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/vue/persister: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/vue/simple: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck integrations/angular-cli-20: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck integrations/lit-vite: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck integrations/react-next-14: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck integrations/react-next-15: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck integrations/react-next-16: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck integrations/react-nodenext: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck integrations/react-vite: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck integrations/react-webpack-4: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck integrations/react-webpack-5: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck integrations/solid-vite: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck integrations/svelte-vite: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck integrations/vue-declaration-emit: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck integrations/vue-vite: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages/angular-query-experimental: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages/angular-query-persist-client: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages/lit-query head: cancelled timeout",
+        "typecheck packages/lit-query: head=cancelled, dependency_state=verified, base=unavailable",
+        "typecheck packages/preact-query head: cancelled timeout",
+        "typecheck packages/preact-query-devtools head: cancelled timeout",
+        "typecheck packages/preact-query-devtools: head=cancelled, dependency_state=unavailable, base=unavailable",
+        "typecheck packages/preact-query-persist-client head: cancelled timeout",
+        "typecheck packages/preact-query-persist-client: head=cancelled, dependency_state=unavailable, base=unavailable",
+        "typecheck packages/preact-query: head=cancelled, dependency_state=unavailable, base=unavailable",
+        "typecheck packages/query-async-storage-persister head: cancelled timeout",
+        "typecheck packages/query-async-storage-persister: head=cancelled, dependency_state=unavailable, base=unavailable",
+        "typecheck packages/query-broadcast-client-experimental head: cancelled timeout",
+        "typecheck packages/query-broadcast-client-experimental: head=cancelled, dependency_state=unavailable, base=unavailable",
+        "typecheck packages/query-core head: cancelled timeout",
+        "typecheck packages/query-core: head=cancelled, dependency_state=unavailable, base=unavailable",
+        "typecheck packages/query-devtools head: cancelled timeout",
+        "typecheck packages/query-devtools: head=cancelled, dependency_state=unavailable, base=unavailable",
+        "typecheck packages/query-persist-client-core head: cancelled timeout",
+        "typecheck packages/query-persist-client-core: head=cancelled, dependency_state=unavailable, base=unavailable",
+        "typecheck packages/query-sync-storage-persister head: cancelled timeout",
+        "typecheck packages/query-sync-storage-persister: head=cancelled, dependency_state=unavailable, base=unavailable",
+        "typecheck packages/react-query head: cancelled timeout",
+        "typecheck packages/react-query-devtools head: cancelled timeout",
+        "typecheck packages/react-query-devtools: head=cancelled, dependency_state=unavailable, base=unavailable",
+        "typecheck packages/react-query-next-experimental head: cancelled timeout",
+        "typecheck packages/react-query-next-experimental: head=cancelled, dependency_state=unavailable, base=unavailable",
+        "typecheck packages/react-query-persist-client head: cancelled timeout",
+        "typecheck packages/react-query-persist-client: head=cancelled, dependency_state=unavailable, base=unavailable",
+        "typecheck packages/react-query: head=cancelled, dependency_state=unavailable, base=unavailable",
+        "typecheck packages/solid-query head: cancelled timeout",
+        "typecheck packages/solid-query-devtools head: cancelled timeout",
+        "typecheck packages/solid-query-devtools: head=cancelled, dependency_state=unavailable, base=unavailable",
+        "typecheck packages/solid-query-persist-client head: cancelled timeout",
+        "typecheck packages/solid-query-persist-client: head=cancelled, dependency_state=unavailable, base=unavailable",
+        "typecheck packages/solid-query: head=cancelled, dependency_state=unavailable, base=unavailable",
+        "typecheck packages/svelte-query head: cancelled timeout",
+        "typecheck packages/svelte-query-devtools head: cancelled timeout",
+        "typecheck packages/svelte-query-devtools: head=cancelled, dependency_state=unavailable, base=unavailable",
+        "typecheck packages/svelte-query-persist-client head: cancelled timeout",
+        "typecheck packages/svelte-query-persist-client: head=cancelled, dependency_state=unavailable, base=unavailable",
+        "typecheck packages/svelte-query: head=cancelled, dependency_state=unavailable, base=unavailable",
+        "typecheck packages/vue-query head: cancelled timeout",
+        "typecheck packages/vue-query-devtools head: cancelled timeout",
+        "typecheck packages/vue-query-devtools: head=cancelled, dependency_state=unavailable, base=unavailable",
+        "typecheck packages/vue-query: head=cancelled, dependency_state=unavailable, base=unavailable"
+      ]
+    },
+    {
+      "repository": "trpc/trpc",
+      "pr": "https://github.com/trpc/trpc/pull/5819",
+      "case_id": "5819",
+      "record_path": "eval/runs/trpc-5819-rerun2-attempt2/record.json",
+      "reasons": [
+        "coverage examples/.experimental/next-app-dir head: skipped no_tests The project's test runner found no tests",
+        "coverage examples/.test/diagnostics-big-router head: skipped no_tests The project's test runner found no tests",
+        "coverage examples/.test/internal-types-export head: skipped no_tests The project's test runner found no tests",
+        "coverage examples/.test/ssg head: skipped no_tests The project's test runner found no tests",
+        "coverage examples/.test/ssg-infinite-serialization head: skipped no_tests The project's test runner found no tests",
+        "coverage examples/bun head: skipped no_tests The project's test runner found no tests",
+        "coverage examples/cloudflare-workers head: skipped no_tests The project's test runner found no tests",
+        "coverage examples/express-minimal head: skipped no_tests The project's test runner found no tests",
+        "coverage examples/express-server head: skipped no_tests The project's test runner found no tests",
+        "coverage examples/fastify-server head: skipped no_tests The project's test runner found no tests",
+        "coverage examples/lambda-api-gateway head: skipped no_tests The project's test runner found no tests",
+        "coverage examples/minimal head: skipped no_tests The project's test runner found no tests",
+        "coverage examples/next-big-router head: skipped no_tests The project's test runner found no tests",
+        "coverage examples/next-edge-runtime head: skipped no_tests The project's test runner found no tests",
+        "coverage examples/next-formdata head: skipped no_tests The project's test runner found no tests",
+        "coverage examples/next-minimal-starter head: skipped no_tests The project's test runner found no tests",
+        "coverage examples/next-prisma-starter head: skipped no_tests The project's test runner found no tests",
+        "coverage examples/next-prisma-todomvc head: skipped no_tests The project's test runner found no tests",
+        "coverage examples/next-prisma-websockets-starter head: skipped no_tests The project's test runner found no tests",
+        "coverage examples/next-sse-chat head: skipped no_tests The project's test runner found no tests",
+        "coverage examples/soa head: skipped no_tests The project's test runner found no tests",
+        "coverage examples/standalone-server head: skipped no_tests The project's test runner found no tests",
+        "coverage examples/vercel-edge-runtime head: skipped no_tests The project's test runner found no tests",
+        "coverage packages/tests head: failed tests_failed Test runner exited with code 1 without producing usable coverage: \u001b[33mThe CJS build of Vite's Node API is deprecated. See https://vitejs.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.\u001b[39m",
+        "coverage www head: skipped no_tests The project's test runner found no tests",
+        "lint examples/next-sse-chat: head=passed, dependency_state=verified, base=unavailable",
+        "lint packages/client: head=passed, dependency_state=verified, base=unavailable",
+        "lint packages/server: head=passed, dependency_state=verified, base=unavailable",
+        "lint packages/tests: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck examples/.experimental/next-app-dir head: failed unparseable_output diagnostic path is outside the repository: /tmp/tmp/rio-rerun2-trpc/rio-eval-etvw3zcb/head/examples/.experimental/next-app-dir/src/trpc/client.ts",
+        "typecheck examples/.experimental/next-app-dir: head=failed, dependency_state=verified, base=unavailable",
+        "typecheck examples/.test/diagnostics-big-router: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/.test/internal-types-export: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/.test/ssg-infinite-serialization: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/.test/ssg: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/bun: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/cloudflare-workers: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/express-minimal: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/express-server: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/fastify-server: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/lambda-api-gateway head: failed unparseable_output diagnostic path is outside the repository: /tmp/tmp/rio-rerun2-trpc/rio-eval-etvw3zcb/head/node_modules/.pnpm/@types+lodash@4.14.190/node_modules/@types/lodash/index.d.ts",
+        "typecheck examples/lambda-api-gateway: head=failed, dependency_state=verified, base=unavailable",
+        "typecheck examples/minimal: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/next-big-router: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/next-edge-runtime: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/next-formdata: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/next-minimal-starter: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/next-prisma-starter: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/next-prisma-todomvc: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/next-prisma-websockets-starter: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/next-sse-chat: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/soa: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/standalone-server: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck examples/vercel-edge-runtime: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages/client: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages/next: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages/react-query: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages/server: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages/tests: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck www: head=findings, dependency_state=verified, base=unavailable"
+      ]
+    },
+    {
+      "repository": "vuejs/core",
+      "pr": "https://github.com/vuejs/core/pull/12701",
+      "case_id": "12701",
+      "record_path": "eval/runs/vue-core-12701-rerun2/record.json.gz",
+      "reasons": [
+        "coverage packages-private/dts-built-test head: skipped no_tests The project's test runner found no tests",
+        "coverage packages-private/dts-test head: skipped no_tests The project's test runner found no tests",
+        "coverage packages-private/sfc-playground head: skipped no_tests The project's test runner found no tests",
+        "coverage packages-private/vite-debug head: skipped no_tests The project's test runner found no tests",
+        "coverage packages/vue head: failed tests_failed Test runner exited with code 1 without producing usable coverage: Vitest  \"environmentMatchGlobs\" is deprecated. Use \"workspace\" to define different configurations instead.",
+        "lint packages/compiler-sfc: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages-private/dts-built-test: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages-private/dts-test: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages-private/sfc-playground: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages-private/vite-debug: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages/compiler-sfc: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages/server-renderer: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages/vue-compat: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages/vue: head=findings, dependency_state=verified, base=unavailable"
+      ]
+    },
+    {
+      "repository": "vuejs/core",
+      "pr": "https://github.com/vuejs/core/pull/15328",
+      "case_id": "15328",
+      "record_path": "eval/runs/vue-core-15328-rerun2/record.json.gz",
+      "reasons": [
+        "coverage packages-private/dts-built-test head: skipped no_tests The project's test runner found no tests",
+        "coverage packages-private/dts-test head: skipped no_tests The project's test runner found no tests",
+        "coverage packages-private/sfc-playground head: skipped no_tests The project's test runner found no tests",
+        "coverage packages-private/vite-debug head: skipped no_tests The project's test runner found no tests",
+        "coverage packages/vue head: failed tests_failed Test runner exited with code 1 without producing usable coverage: ⎯⎯⎯⎯⎯⎯ Failed Suites 11 ⎯⎯⎯⎯⎯⎯",
+        "lint packages/runtime-dom: head=passed, dependency_state=verified, base=unavailable",
+        "lint packages/shared: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages-private/dts-built-test: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages-private/dts-test: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages-private/sfc-playground: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages-private/vite-debug: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages/compiler-core: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages/compiler-dom: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages/compiler-sfc: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages/compiler-ssr: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages/reactivity: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages/runtime-core: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages/runtime-dom: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages/runtime-test: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages/server-renderer: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages/shared: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages/vue-compat: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages/vue: head=passed, dependency_state=verified, base=unavailable"
+      ]
+    },
+    {
+      "repository": "colinhacks/zod",
+      "pr": "https://github.com/colinhacks/zod/pull/6085",
+      "case_id": "6085",
+      "record_path": "eval/runs/zod-6085-rerun2/record.json",
+      "reasons": [
+        "coverage . head: failed tests_failed Test runner exited with code 1 without producing usable coverage: Testing types with tsc and vue-tsc is an experimental feature.",
+        "coverage packages/bench head: failed tests_failed Test runner exited with code 1 without producing usable coverage: Testing types with tsc and vue-tsc is an experimental feature.",
+        "coverage packages/integration head: failed tests_failed Test runner exited with code 1 without producing usable coverage: Testing types with tsc and vue-tsc is an experimental feature.",
+        "coverage packages/resolution head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage packages/treeshake head: failed tests_failed Test runner exited with code 1 without producing usable coverage: Testing types with tsc and vue-tsc is an experimental feature.",
+        "coverage packages/tsc head: failed tests_failed Test runner exited with code 1 without producing usable coverage: Testing types with tsc and vue-tsc is an experimental feature.",
+        "coverage packages/zod head: failed tests_failed Test runner exited with code 1 without producing usable coverage: Testing types with tsc and vue-tsc is an experimental feature.",
+        "lint .: head=findings, dependency_state=verified, base=unavailable",
+        "lint packages/bench: head=passed, dependency_state=verified, base=unavailable",
+        "lint packages/resolution: head=passed, dependency_state=verified, base=unavailable",
+        "lint packages/treeshake head: failed unparseable_output tool exited with diagnostics code 1 but no diagnostics could be parsed",
+        "lint packages/treeshake: head=failed, dependency_state=verified, base=unavailable",
+        "lint packages/zod: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck .: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages/bench: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages/integration: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages/resolution: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages/treeshake: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages/tsc: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages/zod: head=findings, dependency_state=verified, base=unavailable"
+      ]
+    },
+    {
+      "repository": "colinhacks/zod",
+      "pr": "https://github.com/colinhacks/zod/pull/6527",
+      "case_id": "6527",
+      "record_path": "eval/runs/zod-6527-rerun2-attempt2/record.json",
+      "reasons": [
+        "coverage . head: failed tests_failed Test runner exited with code 1 without producing usable coverage: Testing types with tsc and vue-tsc is an experimental feature.",
+        "coverage packages/bench head: failed tests_failed Test runner exited with code 1 without producing usable coverage: Testing types with tsc and vue-tsc is an experimental feature.",
+        "coverage packages/integration head: failed tests_failed Test runner exited with code 1 without producing usable coverage: Testing types with tsc and vue-tsc is an experimental feature.",
+        "coverage packages/mini head: failed tests_failed Test runner exited with code 1 without producing usable coverage: Testing types with tsc and vue-tsc is an experimental feature.",
+        "coverage packages/resolution head: failed tests_failed Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+        "coverage packages/treeshake head: failed tests_failed Test runner exited with code 1 without producing usable coverage: Testing types with tsc and vue-tsc is an experimental feature.",
+        "coverage packages/tsc head: failed tests_failed Test runner exited with code 1 without producing usable coverage: Testing types with tsc and vue-tsc is an experimental feature.",
+        "coverage packages/zod head: failed tests_failed Test runner exited with code 1 without producing usable coverage: Testing types with tsc and vue-tsc is an experimental feature.",
+        "lint packages/zod: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck .: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages/bench: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages/integration: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages/mini: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages/resolution: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages/treeshake: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages/tsc: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages/zod: head=findings, dependency_state=verified, base=unavailable"
+      ]
+    }
+  ],
+  "agent_layer_backlog": [],
+  "deterministic_misses": 3,
+  "sample": {
+    "eligible_real_prs": 14,
+    "repositories": 9,
+    "languages": [
+      "python",
+      "typescript"
+    ],
+    "positive_control_repositories": 8,
+    "positive_controls_by_language": {
+      "typescript": 3,
+      "python": 5
+    },
+    "clean_negative_controls": 10,
+    "real_positive_controls": 3,
+    "seeded_positive_controls": 5,
+    "counted_positive_controls": 6,
+    "adequate": false,
+    "requirements_missing": [
+      "Need at least 10 eligible positive controls after the seeded cap",
+      "Seeded controls must be at most 50% of positive-control cases",
+      "Need at least 5 controls per language"
+    ]
+  },
+  "decision": "insufficient-evidence",
+  "decision_reasons": [
+    "Need at least 10 eligible positive controls after the seeded cap",
+    "Seeded controls must be at most 50% of positive-control cases",
+    "Need at least 5 controls per language"
+  ]
+}
