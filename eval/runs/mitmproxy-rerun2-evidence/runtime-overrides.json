@@ -1,0 +1,37 @@
+{
+  "environment": {
+    "PATH": "/home/ubuntu/.local/share/uv/python/cpython-3.14.10-linux-x86_64-gnu/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg02i4dIb:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+    "UV_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/uv-cache",
+    "TMPDIR": "/dev/shm/rio-rerun2-mitmproxy-tmp",
+    "GIT_CONFIG_COUNT": "1",
+    "GIT_CONFIG_KEY_0": "url./tmp/rio-pydantic-ai-ram/mitmproxy.insteadOf",
+    "GIT_CONFIG_VALUE_0": "https://github.com/mitmproxy/mitmproxy.git"
+  },
+  "negative_PYTEST_ADDOPTS": "test/mitmproxy/test_certs.py",
+  "positive_PYTEST_ADDOPTS": "test/mitmproxy/coretypes/test_multidict.py",
+  "verified_versions": {
+    "/home/ubuntu/rio/target/release/rio --version": "rio 0.1.0 x86_64-unknown-linux-gnu f6e4f87e4c65",
+    "python3 --version": "Python 3.14.10",
+    "uv --version": "uv 0.13.7 (x86_64-unknown-linux-gnu)"
+  },
+  "seed_base_sha": "6debf65b612abc726fe9cabe5c2a1ebb1cb36df4",
+  "seed_head_sha": "986ba556378985647957301e28069e46ee6074ec",
+  "seed_patch_sha256": "1096dd5b71a2f66f6d872bf4593456baef7311432f3be9cb9d0c41b3fd576f4a",
+  "seed": "20261105-unused-itertools-v1",
+  "seed_reproduction": "Original exact commit retained in local Git cache. git diff base head equals preregistered patch byte for byte; no commit reconstruction or SHA change.",
+  "binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+  "initial_disk_space": "Filesystem      Size  Used Avail Use% Mounted on\ntmpfs            20G   15G  4.8G  76% /dev/shm\n/dev/vda1       158G  126G   33G  80% /\n",
+  "runtime_note": "PATH pins managed CPython for runner and plan helpers as well as uv --python 3.14.10 for project installs. Other environment inherited. Temporary runner clones/caches removed automatically; reused source and uv caches remain outside versioned evidence.",
+  "selected_inherited_environment": {
+    "PYTHONPATH": null,
+    "PYTHONHOME": null,
+    "MYPYPATH": null,
+    "PYTEST_ADDOPTS": null,
+    "COVERAGE_FILE": null,
+    "COVERAGE_PROCESS_START": null,
+    "COVERAGE_PROCESS_CONFIG": null,
+    "UV_PYTHON": null,
+    "UV_PROJECT_ENVIRONMENT": null
+  },
+  "saved_seed_commit_object_sha1": "986ba556378985647957301e28069e46ee6074ec"
+}

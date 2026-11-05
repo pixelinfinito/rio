@@ -1,0 +1,60 @@
+{
+  "8473": {
+    "record": "eval/runs/mitmproxy-8473-rerun2-attempt2/record.json",
+    "eligible": true,
+    "dependency_state": "verified",
+    "baseline_ran": true,
+    "baseline_classification_ran": true,
+    "counts_by_verdict": {
+      "true-positive": 0,
+      "false-positive": 0,
+      "pre-existing-shown": 0,
+      "pre-existing-hidden": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0
+    },
+    "counts_by_state": {
+      "new": 0,
+      "worsened": 0,
+      "unclassified": 0,
+      "pre-existing": 0,
+      "fixed": 0
+    },
+    "expected_detected": 0,
+    "expected_missed": 0,
+    "finding_ids": [],
+    "misses": [],
+    "record_verdict": "useful",
+    "remaining_rio_diagnostic_defects": []
+  },
+  "8521": {
+    "record": "eval/runs/mitmproxy-8521-rerun2-attempt2/record.json",
+    "eligible": true,
+    "dependency_state": "verified",
+    "baseline_ran": true,
+    "baseline_classification_ran": true,
+    "counts_by_verdict": {
+      "true-positive": 1,
+      "false-positive": 0,
+      "pre-existing-shown": 0,
+      "pre-existing-hidden": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0
+    },
+    "counts_by_state": {
+      "new": 1,
+      "worsened": 0,
+      "unclassified": 0,
+      "pre-existing": 0,
+      "fixed": 0
+    },
+    "expected_detected": 1,
+    "expected_missed": 0,
+    "finding_ids": [
+      "86aa2b2d6d676dda8042c04d8cc9338614f0336ad15f94a7c7c704dcf6c08820"
+    ],
+    "misses": [],
+    "record_verdict": "useful",
+    "remaining_rio_diagnostic_defects": []
+  }
+}

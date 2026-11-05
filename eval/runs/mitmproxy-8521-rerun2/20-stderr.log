@@ -1,0 +1,6 @@
+Warning: /home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8521-rerun2/profile.yaml:$.steps[3]: rio/triage is deferred locally: no_endpoint
+Warning: /home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8521-rerun2/profile.yaml:$.steps[4]: rio/agents is deferred locally: no_endpoint
+Warning: /home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8521-rerun2/profile.yaml:$.steps[5]: rio/verify is deferred locally: no_endpoint
+Running prepare…
+Finished prepare
+Running checks…

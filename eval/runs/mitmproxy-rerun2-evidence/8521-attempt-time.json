@@ -1,0 +1,38 @@
+{
+  "argv": [
+    "python3",
+    "eval/runner.py",
+    "--repository",
+    "mitmproxy/mitmproxy",
+    "--pr",
+    "8521",
+    "--base",
+    "6debf65b612abc726fe9cabe5c2a1ebb1cb36df4",
+    "--head",
+    "986ba556378985647957301e28069e46ee6074ec",
+    "--languages",
+    "python",
+    "--rio",
+    "/home/ubuntu/rio/target/release/rio",
+    "--out",
+    "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8521-rerun2",
+    "--install-plan",
+    "eval/runs/mitmproxy-8521-seeded/install-plan.json",
+    "--profile",
+    "eval/runs/mitmproxy-8521-seeded/profile.yaml"
+  ],
+  "cwd": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy",
+  "environment": {
+    "PATH": "/home/ubuntu/.local/share/uv/python/cpython-3.14.10-linux-x86_64-gnu/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg02i4dIb:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+    "UV_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/uv-cache",
+    "TMPDIR": "/dev/shm/rio-rerun2-mitmproxy-tmp",
+    "GIT_CONFIG_COUNT": "1",
+    "GIT_CONFIG_KEY_0": "url./tmp/rio-pydantic-ai-ram/mitmproxy.insteadOf",
+    "GIT_CONFIG_VALUE_0": "https://github.com/mitmproxy/mitmproxy.git",
+    "PYTEST_ADDOPTS": "test/mitmproxy/coretypes/test_multidict.py"
+  },
+  "started_utc": "2026-11-05T10:59:00.883187+00:00",
+  "finished_utc": "2026-11-05T11:20:53.290304+00:00",
+  "wall_time_s": 1312.407,
+  "exit_code": 1
+}

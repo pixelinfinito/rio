@@ -1,0 +1,78 @@
+{
+  "8473": {
+    "failures": [
+      "Expecting value: line 1 column 1 (char 0)"
+    ],
+    "review_exit_code": -15,
+    "review_command": {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "review",
+        "--base",
+        "3368a0a06ae6195aad817a1ece1aaeb6fe0353a1",
+        "--format",
+        "json",
+        "--offline",
+        "--profile",
+        "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/profile.yaml"
+      ],
+      "cwd": "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-m_c63c8a/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-m_c63c8a/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-m_c63c8a/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/report.json",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/20-stderr.log",
+      "exit_code": -15,
+      "wall_time_ms": 961400
+    },
+    "report_bytes": 0,
+    "baseline_classification_ran": false,
+    "eligible": false,
+    "dependency_state": "unavailable",
+    "installations_succeeded": {
+      "base": true,
+      "head": true
+    },
+    "intervention": "Evaluator sent SIGTERM to its two Rio review processes (PIDs 949518 and 949521) after minutes of blocked I/O under shared-host memory pressure. Rio had emitted only prepare/checks progress and zero report bytes. No product finding IDs or footer notes available; no schema-valid record can be built. Preserve empty report and command/log evidence. Retry sequentially on disk with identical pins/plan/profile/runtime/test scope.",
+    "observation_not_proven_cause": "ps reported both processes in Dl (uninterruptible I/O). Shared host had 39 GiB RAM, 36 GiB used, 1.0 GiB free, 2.6 GiB available, no swap; /dev/shm 94% used (1.3 GiB free). Resource contention is an environmental observation, not a proved Rio logic defect."
+  },
+  "8521": {
+    "failures": [
+      "Expecting value: line 1 column 1 (char 0)"
+    ],
+    "review_exit_code": -15,
+    "review_command": {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "review",
+        "--base",
+        "6debf65b612abc726fe9cabe5c2a1ebb1cb36df4",
+        "--format",
+        "json",
+        "--offline",
+        "--profile",
+        "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8521-rerun2/profile.yaml"
+      ],
+      "cwd": "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-uksraiqe/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-uksraiqe/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-uksraiqe/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8521-rerun2/report.json",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8521-rerun2/20-stderr.log",
+      "exit_code": -15,
+      "wall_time_ms": 961468
+    },
+    "report_bytes": 0,
+    "baseline_classification_ran": false,
+    "eligible": false,
+    "dependency_state": "unavailable",
+    "installations_succeeded": {
+      "base": true,
+      "head": true
+    },
+    "intervention": "Evaluator sent SIGTERM to its two Rio review processes (PIDs 949518 and 949521) after minutes of blocked I/O under shared-host memory pressure. Rio had emitted only prepare/checks progress and zero report bytes. No product finding IDs or footer notes available; no schema-valid record can be built. Preserve empty report and command/log evidence. Retry sequentially on disk with identical pins/plan/profile/runtime/test scope.",
+    "observation_not_proven_cause": "ps reported both processes in Dl (uninterruptible I/O). Shared host had 39 GiB RAM, 36 GiB used, 1.0 GiB free, 2.6 GiB available, no swap; /dev/shm 94% used (1.3 GiB free). Resource contention is an environmental observation, not a proved Rio logic defect."
+  }
+}
