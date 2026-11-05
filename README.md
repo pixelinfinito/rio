@@ -112,7 +112,7 @@ steps:
 
 Lists replace inherited lists, so this profile explicitly lists all desired steps. [The profile reference](docs/profiles.md) documents inheritance, all schema keys, budgets, exclusions, suppressions and policy.
 
-Rio checks the selected source's lockfile against installed dependency metadata. A stale or incompatible installation skips tool checks with `dependency_mismatch`. If metadata cannot establish compatibility, `with: {trust_installed_dependencies: true}` on `rio/checks` permits using the installed dependencies. This cannot override a known mismatch. Trusted results are labelled `trusted`; their diagnostics remain `unclassified`, and baseline classification is disabled.
+Rio checks the selected source's lockfile against installed dependency metadata. A stale or incompatible installation skips tool checks with `dependency_mismatch`. If metadata cannot establish compatibility, `with: {trust_installed_dependencies: true}` on `rio/checks` permits using the installed dependencies. This cannot override a known mismatch. Trusted results are labelled `trusted`. Rio compares head and base using the same installation unless the base has a known mismatch. When a baseline is unavailable, diagnostics outside changed hunks (with three lines of context) are treated as pre-existing and hidden unless `--show-pre-existing` is set.
 
 ## Exit codes
 

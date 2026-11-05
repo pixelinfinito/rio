@@ -300,7 +300,7 @@ impl Execution {
         let mut targets = check.targets.clone();
         targets.sort();
         let input = serde_json::to_vec(
-            &serde_json::json!({"version":1,"root":check.root,"kind":check.kind,"tool":tool.name,"tool_version":tool.version,"targets":targets,"dependencies":check.dependency_hash,"invocation":"rio-diagnostic-v1"}),
+            &serde_json::json!({"version":1,"root":check.root,"kind":check.kind,"tool":tool.name,"tool_version":tool.version,"targets":targets,"dependencies":check.dependency_hash,"invocation":"rio-diagnostic-v2"}),
         )?;
         let hash = blake3::hash(&input).to_hex().to_string();
         let relative = format!(
@@ -354,6 +354,11 @@ impl Execution {
                 }
                 let (mut head, ran) = self.diagnostic(&check, Version::Head).await?;
                 result.tools_ran |= ran;
+                if let Some(hint) = &check.baseline_hint {
+                    result
+                        .notes
+                        .push(format!("{} {}: {hint}", key(check.kind), check.root));
+                }
                 let baseline = if check.baseline && completed(&head.outcome) {
                     match self.baseline(&check).await {
                         Ok((base, ran)) => {
@@ -388,17 +393,28 @@ impl Execution {
                         }
                     }
                 } else {
-                    if let Some(hint) = &check.baseline_hint {
-                        result
-                            .notes
-                            .push(format!("{} {}: {hint}", key(check.kind), check.root));
-                    }
                     None
                 };
-                let findings = classify_and_group(
+                let findings = classify_and_group_scoped(
                     baseline,
                     head.outcome.details().findings.clone(),
                     |path, line| self.diff.map_line(path, line),
+                    |location| {
+                        self.diff.files.iter().any(|file| {
+                            file.path == location.path
+                                && file.hunks.iter().any(|hunk| {
+                                    // Three context lines on either side, including
+                                    // the surviving boundary of a deletion-only hunk.
+                                    let start = hunk.head.start.saturating_sub(3).max(1);
+                                    let end = hunk
+                                        .head
+                                        .start
+                                        .saturating_add(hunk.head.count.saturating_sub(1))
+                                        .saturating_add(3);
+                                    location.line_start <= end && location.line_end >= start
+                                })
+                        })
+                    },
                 )?;
                 head.outcome.details_mut().findings = findings.clone();
                 result.findings = findings;

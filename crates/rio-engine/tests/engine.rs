@@ -428,62 +428,45 @@ async fn lint_baseline_cache_is_specific_to_changed_targets() {
 }
 #[cfg(unix)]
 #[tokio::test]
-async fn changed_lockfile_and_trusted_dependencies_disable_baseline_classification() {
-    for trusted in [false, true] {
-        let temp = tempfile::tempdir().unwrap();
-        let root = temp.path();
-        let mut profile = diagnostic_fixture(root, false);
-        fs::write(root.join("a.ts"), "const x:number='b';\n").unwrap();
-        if trusted {
-            fs::remove_file(root.join("package-lock.json")).unwrap();
-            profile
-                .profile
-                .steps
-                .iter_mut()
-                .find(|s| s.id == "checks")
-                .unwrap()
-                .options["trust_installed_dependencies"] = serde_json::json!(true);
-        } else {
-            // Model a lockfile update followed by a matching installation. The base needs v1.
-            for path in [
-                "package.json",
-                "package-lock.json",
-                "node_modules/.package-lock.json",
-                "node_modules/example/package.json",
-            ] {
-                let content = fs::read_to_string(root.join(path))
-                    .unwrap()
-                    .replace("1.0.0", "2.0.0");
-                fs::write(root.join(path), content).unwrap();
-            }
-        }
-        let report = review(
-            request(root, profile),
-            ProcessSupervisor::default(),
-            CancellationToken::new(),
-            None,
-        )
-        .await
-        .unwrap();
-        let finding = report
-            .findings
-            .iter()
-            .find(|f| f.rule_id == "typecheck/tsc/TS2322")
-            .unwrap_or_else(|| panic!("{:#?}", report.checks));
-        assert_eq!(finding.state, State::Unclassified);
-        assert!(
-            report
-                .footer
-                .notes
-                .iter()
-                .any(|note| note.contains(if trusted {
-                    "dependencies_trusted"
-                } else {
-                    "baseline_failed"
-                }))
-        );
-        assert!(!report.checks.iter().any(|c| c.version == Version::Base));
+async fn changed_lockfile_disables_baseline_classification() {
+    let temp = tempfile::tempdir().unwrap();
+    let root = temp.path();
+    let profile = diagnostic_fixture(root, false);
+    fs::write(root.join("a.ts"), "const x:number='b';\n").unwrap();
+    // Model a lockfile update followed by a matching installation. The base needs v1.
+    for path in [
+        "package.json",
+        "package-lock.json",
+        "node_modules/.package-lock.json",
+        "node_modules/example/package.json",
+    ] {
+        let content = fs::read_to_string(root.join(path))
+            .unwrap()
+            .replace("1.0.0", "2.0.0");
+        fs::write(root.join(path), content).unwrap();
     }
+    let report = review(
+        request(root, profile),
+        ProcessSupervisor::default(),
+        CancellationToken::new(),
+        None,
+    )
+    .await
+    .unwrap();
+    let finding = report
+        .findings
+        .iter()
+        .find(|f| f.rule_id == "typecheck/tsc/TS2322")
+        .unwrap_or_else(|| panic!("{:#?}", report.checks));
+    assert_eq!(finding.state, State::Unclassified);
+    assert!(
+        report
+            .footer
+            .notes
+            .iter()
+            .any(|note| note.contains("baseline_failed"))
+    );
+    assert!(!report.checks.iter().any(|c| c.version == Version::Base));
 }
 #[cfg(unix)]
 #[tokio::test]
@@ -627,4 +610,158 @@ async fn raw_output_retention_can_be_disabled_without_losing_findings_or_offline
     assert!(path.join("findings.json").exists());
     assert!(!path.join("stdout.txt").exists());
     assert!(!path.join("stderr.txt").exists());
+}
+
+#[cfg(unix)]
+#[tokio::test]
+async fn trusted_dependencies_classify_new_and_pre_existing_with_verified_or_unverified_base() {
+    for unverified_base in [false, true] {
+        let temp = tempfile::tempdir().unwrap();
+        let root = temp.path();
+        let mut profile = diagnostic_fixture(root, false);
+        if unverified_base {
+            fs::remove_file(root.join("package-lock.json")).unwrap();
+            git(root, &["add", "-u"]);
+            git(root, &["commit", "-m", "remove lockfile"]);
+        } else {
+            fs::remove_file(root.join("package-lock.json")).unwrap();
+        }
+        profile
+            .profile
+            .steps
+            .iter_mut()
+            .find(|s| s.id == "checks")
+            .unwrap()
+            .options["trust_installed_dependencies"] = serde_json::json!(true);
+        fs::write(
+            root.join("node_modules/.bin/tsc"),
+            r#"#!/bin/sh
+if [ "$1" = --version ]; then echo 'Version 5.7.3'; exit 0; fi
+echo "a.ts(1,7): error TS2322: Existing error."
+if grep -q regression b.ts; then echo "b.ts(1,7): error TS2345: New error."; fi
+exit 2
+"#,
+        )
+        .unwrap();
+        fs::write(root.join("b.ts"), "const regression = true;\n").unwrap();
+        let report = review(
+            request(root, profile),
+            ProcessSupervisor::default(),
+            CancellationToken::new(),
+            None,
+        )
+        .await
+        .unwrap();
+        assert!(report.checks.iter().any(|c| c.version == Version::Base));
+        for (path, state) in [("a.ts", State::PreExisting), ("b.ts", State::New)] {
+            assert!(
+                report
+                    .findings
+                    .iter()
+                    .any(|f| f.location.path == path && f.state == state),
+                "{report:#?}"
+            );
+        }
+        assert!(
+            report
+                .footer
+                .notes
+                .iter()
+                .any(|n| n.contains("dependencies_trusted: results use unverified dependencies"))
+        );
+    }
+}
+
+#[cfg(unix)]
+#[tokio::test]
+async fn unavailable_baseline_scopes_occurrences_to_changed_hunks_and_context() {
+    for failed_run in [false, true] {
+        let temp = tempfile::tempdir().unwrap();
+        let root = temp.path();
+        let mut profile = diagnostic_fixture(root, false);
+        let original = "const line = 1;\n".repeat(24);
+        fs::write(root.join("a.ts"), &original).unwrap();
+        git(root, &["add", "a.ts"]);
+        git(root, &["commit", "-m", "multiline source"]);
+        profile
+            .profile
+            .steps
+            .iter_mut()
+            .find(|s| s.id == "checks")
+            .unwrap()
+            .options["baseline"] = serde_json::json!(failed_run);
+        fs::write(
+            root.join("node_modules/.bin/tsc"),
+            r#"#!/bin/sh
+if [ "$1" = --version ]; then echo 'Version 5.7.3'; exit 0; fi
+if ! grep -q changed a.ts; then exit 77; fi
+for line in 6 7 10 13 14; do echo "a.ts($line,1): error TS2322: Same error."; done
+echo "b.ts(1,1): error TS2345: Unchanged file."
+exit 2
+"#,
+        )
+        .unwrap();
+        let mut lines: Vec<_> = original.lines().collect();
+        lines[9] = "const changed = 2;";
+        fs::write(root.join("a.ts"), lines.join("\n") + "\n").unwrap();
+        let report = review(
+            request(root, profile),
+            ProcessSupervisor::default(),
+            CancellationToken::new(),
+            None,
+        )
+        .await
+        .unwrap();
+        let changed = report
+            .findings
+            .iter()
+            .find(|f| f.location.path == "a.ts")
+            .unwrap();
+        assert_eq!(changed.state, State::Unclassified);
+        assert_eq!(changed.location.line_start, 7);
+        for location in &changed.locations {
+            assert_eq!(
+                location.occurrence_state,
+                if [7, 10, 13].contains(&location.line_start) {
+                    OccurrenceState::Unclassified
+                } else {
+                    OccurrenceState::PreExisting
+                }
+            );
+        }
+        let unchanged = report
+            .findings
+            .iter()
+            .find(|f| f.location.path == "b.ts")
+            .unwrap();
+        assert_eq!(unchanged.state, State::PreExisting);
+        assert!(
+            unchanged
+                .evidence
+                .iter()
+                .any(|e| e.contains("outside changed hunks, baseline unavailable"))
+        );
+        assert!(changed.evidence.iter().any(|e| e.contains("a.ts:14")));
+        let default = render_markdown(&report, &RenderOptions::default());
+        assert!(!default.contains("Unchanged file."));
+        let expanded = render_markdown(
+            &report,
+            &RenderOptions {
+                show_pre_existing: true,
+                ..Default::default()
+            },
+        );
+        assert!(expanded.contains("Unchanged file."));
+        assert!(
+            report
+                .footer
+                .notes
+                .iter()
+                .any(|n| n.contains(if failed_run {
+                    "baseline_failed"
+                } else {
+                    "baseline disabled"
+                }))
+        );
+    }
 }

@@ -286,22 +286,10 @@ pub async fn plan_review(
                     head.hint().unwrap_or("Installed dependencies do not match"),
                 ));
             }
-            let can_baseline =
-                baseline && head.can_classify_baseline() && base.can_classify_baseline();
-            let baseline_hint = if !baseline {
-                Some("baseline disabled in the profile".into())
-            } else if head.dependency_state() == Some(DependencyState::Trusted) {
-                Some("dependencies_trusted: results use unverified dependencies".into())
-            } else if !base.can_classify_baseline() {
-                Some(format!(
-                    "baseline_failed: {}",
-                    base.hint().unwrap_or("base dependencies do not match")
-                ))
-            } else {
-                None
-            };
-            let dependency_hash = match &base {
-                Compatibility::Verified { hash } => Some(hash.clone()),
+            let (can_baseline, baseline_hint) = baseline_readiness(baseline, &head, &base);
+            let dependency_hash = match (&head, &base) {
+                (Compatibility::Trusted { hash, .. }, _)
+                | (_, Compatibility::Verified { hash }) => Some(hash.clone()),
                 _ => None,
             };
             plan.checks.push(PlannedCheck {
@@ -349,4 +337,81 @@ pub async fn plan_review(
         });
     }
     Ok(plan)
+}
+
+// Both runs link the same installation. Trust permits an unverified base, but
+// cannot override a known mismatch (including linked source differences).
+fn baseline_readiness(
+    enabled: bool,
+    head: &Compatibility,
+    base: &Compatibility,
+) -> (bool, Option<String>) {
+    let trusted = matches!(head, Compatibility::Trusted { .. });
+    let compatible = head.can_classify_baseline() && base.can_classify_baseline()
+        || trusted && !matches!(base, Compatibility::Mismatch { .. });
+    let mut hints = Vec::new();
+    if !enabled {
+        hints.push("baseline disabled in the profile".to_owned());
+    } else if !compatible {
+        let failed = if matches!(head, Compatibility::Mismatch { .. }) {
+            head
+        } else {
+            base
+        };
+        hints.push(format!(
+            "baseline_failed: {}",
+            failed.hint().unwrap_or("dependencies cannot be verified")
+        ));
+    }
+    if trusted {
+        hints.push("dependencies_trusted: results use unverified dependencies".into());
+    }
+    (
+        enabled && compatible,
+        (!hints.is_empty()).then(|| hints.join("; ")),
+    )
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn baseline_requires_verified_dependencies_or_a_shared_trusted_environment() {
+        let states = [
+            Compatibility::Verified {
+                hash: "verified".into(),
+            },
+            Compatibility::Trusted {
+                hash: "trusted".into(),
+                hint: "trusted".into(),
+            },
+            Compatibility::Unverified {
+                hint: "no metadata".into(),
+            },
+            Compatibility::Mismatch {
+                hint: "different package".into(),
+            },
+        ];
+        for (h, head) in states.iter().enumerate() {
+            for (b, base) in states.iter().enumerate() {
+                let (runs, hint) = baseline_readiness(true, head, base);
+                assert_eq!(
+                    runs,
+                    h == 0 && b == 0 || h == 1 && b != 3,
+                    "{head:?}, {base:?}"
+                );
+                if h == 3 || b == 3 {
+                    assert!(hint.as_ref().unwrap().contains("baseline_failed"));
+                }
+                if h == 1 {
+                    assert!(
+                        hint.unwrap()
+                            .contains("dependencies_trusted: results use unverified dependencies")
+                    );
+                }
+                assert!(!baseline_readiness(false, head, base).0);
+            }
+        }
+    }
 }

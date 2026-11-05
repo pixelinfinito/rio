@@ -135,3 +135,35 @@ proptest! {
         prop_assert_eq!(before, after);
     }
 }
+
+#[test]
+fn missing_baseline_scopes_each_occurrence_before_grouping() {
+    use rio_core::classify_and_group_scoped;
+    let head = vec![diagnostic(2), diagnostic(8)];
+    let result =
+        classify_and_group_scoped(None, head.clone(), |_, _| None, |l| l.line_start == 8).unwrap();
+    assert_eq!(result[0].state, State::Unclassified);
+    assert_eq!(result[0].location.line_start, 8);
+    assert_eq!(
+        result[0].locations[0].occurrence_state,
+        OccurrenceState::PreExisting
+    );
+    assert_eq!(
+        result[0].locations[1].occurrence_state,
+        OccurrenceState::Unclassified
+    );
+    assert!(
+        result[0]
+            .evidence
+            .iter()
+            .any(|e| e.contains("baseline unavailable"))
+    );
+    let result = classify_and_group_scoped(None, head.clone(), |_, _| None, |_| false).unwrap();
+    assert_eq!(result[0].state, State::PreExisting);
+    let result = classify_and_group_scoped(Some(vec![]), head, |_, _| None, |_| false).unwrap();
+    assert_eq!(
+        result[0].state,
+        State::New,
+        "a successful baseline retains cross-file regressions"
+    );
+}

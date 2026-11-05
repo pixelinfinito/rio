@@ -3,7 +3,7 @@ use std::{collections::BTreeMap, sync::LazyLock};
 use regex::Regex;
 use thiserror::Error;
 
-use crate::{Finding, OccurrenceState, Source, State};
+use crate::{Finding, Location, OccurrenceState, Source, State};
 
 static LINE_COLUMN: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\(\d+,\s*\d+\)").unwrap());
 static LINE_REFERENCE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\bline \d+\b").unwrap());
@@ -82,6 +82,17 @@ pub fn classify_and_group(
     base: Option<Vec<Finding>>,
     head: Vec<Finding>,
     map_line: impl Fn(&str, u32) -> Option<u32>,
+) -> Result<Vec<Finding>, IdentityError> {
+    classify_and_group_scoped(base, head, map_line, |_| true)
+}
+
+/// With no baseline, retain unclassified occurrences only in the caller's
+/// changed-line scope. Other occurrences are treated as pre-existing.
+pub fn classify_and_group_scoped(
+    base: Option<Vec<Finding>>,
+    head: Vec<Finding>,
+    map_line: impl Fn(&str, u32) -> Option<u32>,
+    in_changed_scope: impl Fn(&Location) -> bool,
 ) -> Result<Vec<Finding>, IdentityError> {
     let baseline_obtained = base.is_some();
     let mut identities: BTreeMap<String, Occurrences> = BTreeMap::new();
@@ -162,7 +173,15 @@ pub fn classify_and_group(
             for (index, head) in occurrences.head.iter().enumerate() {
                 let mut location = head.location.clone();
                 location.occurrence_state = if !baseline_obtained {
-                    OccurrenceState::Unclassified
+                    if in_changed_scope(&location) {
+                        OccurrenceState::Unclassified
+                    } else {
+                        grouped.evidence.push(format!(
+                            "unclassified: outside changed hunks, baseline unavailable ({}:{})",
+                            location.path, location.line_start
+                        ));
+                        OccurrenceState::PreExisting
+                    }
                 } else if used_head[index] {
                     OccurrenceState::PreExisting
                 } else {
@@ -185,7 +204,11 @@ pub fn classify_and_group(
                 .locations
                 .iter()
                 .any(|l| l.occurrence_state == OccurrenceState::PreExisting);
-            grouped.state = if !baseline_obtained {
+            grouped.state = if grouped
+                .locations
+                .iter()
+                .any(|l| l.occurrence_state == OccurrenceState::Unclassified)
+            {
                 State::Unclassified
             } else if any_new && any_existing {
                 State::Worsened
@@ -199,7 +222,12 @@ pub fn classify_and_group(
             grouped.location = grouped
                 .locations
                 .iter()
-                .find(|l| l.occurrence_state == OccurrenceState::New)
+                .find(|l| {
+                    matches!(
+                        l.occurrence_state,
+                        OccurrenceState::New | OccurrenceState::Unclassified
+                    )
+                })
                 .or_else(|| {
                     grouped
                         .locations
