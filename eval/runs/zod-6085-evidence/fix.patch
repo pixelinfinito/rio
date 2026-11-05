@@ -1,0 +1,32 @@
+commit c46eeff050f2a6a2ba8db1d14c2c8247bd7623f2
+Author: pullfrog[bot] <226033991+pullfrog[bot]@users.noreply.github.com>
+Date:   Sat Aug 29 12:52:46 2026 -0700
+
+    chore: narrow blanket biome-ignore comments (#6504)
+    
+    * chore: narrow blanket biome-ignore comments
+    
+    Every `// biome-ignore lint:` and `<explanation>` placeholder in the repo now names the rule it suppresses and why. Two suppressions were unnecessary and are gone: `DATA` in the object bench is never reassigned, and the `noInnerDeclarations` ignore next to it never fired at all. Also drops an unused catch binding in the compile fuzzer that was tripping `noUnusedVariables`.
+    
+    * chore: drop the redundant continue and tighten the suppression reasons
+    
+    The trailing continue in extractDefs was the last statement of the loop body, so deleting it is behavior-identical and removes the need for a suppression at all. The remaining reasons are trimmed to one clause each.
+    
+    ---------
+    
+    Co-authored-by: pullfrog[bot] <226033991+pullfrog[bot]@users.noreply.github.com>
+    Co-authored-by: Colin McDonnell <3084745+colinhacks@users.noreply.github.com>
+
+diff --git a/scripts/compile-fuzz.ts b/scripts/compile-fuzz.ts
+index 5a52aa4e..674184bc 100644
+--- a/scripts/compile-fuzz.ts
++++ b/scripts/compile-fuzz.ts
+@@ -353,7 +353,7 @@ for (let r = 0; r < ROUNDS && failures.length < 5; r++) {
+     let got: any;
+     try {
+       expected = built.schema.safeParse(input);
+-    } catch (e) {
++    } catch {
+       continue; // runtime itself throws (e.g. cyclic); not a compiled-path question
+     }
+     try {

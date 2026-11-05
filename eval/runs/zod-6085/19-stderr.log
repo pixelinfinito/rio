@@ -1,0 +1,33 @@
+Warning: rio/base:$.steps[3]: rio/triage is deferred locally: no_endpoint
+Warning: rio/base:$.steps[4]: rio/agents is deferred locally: no_endpoint
+Warning: rio/base:$.steps[5]: rio/verify is deferred locally: no_endpoint
+Running prepare…
+Finished prepare
+Running checks…
+lint .: skipped (no_project_config)
+coverage .: skipped (dependency_mismatch)
+typecheck .: skipped (dependency_mismatch)
+lint packages/treeshake: skipped (no_project_config)
+lint packages/zod: skipped (no_project_config)
+lint packages/bench: skipped (no_project_config)
+coverage packages/treeshake: failed (tests_failed)
+typecheck packages/tsc: skipped (dependency_mismatch)
+secrets .: passed
+coverage packages/tsc: skipped (dependency_mismatch)
+dependencies .: skipped (offline)
+coverage packages/zod: failed (tests_failed)
+lint packages/resolution: skipped (no_project_config)
+typecheck packages/integration: skipped (dependency_mismatch)
+coverage packages/integration: skipped (dependency_mismatch)
+coverage packages/bench: failed (tests_failed)
+typecheck packages/treeshake: failed (unparseable_output)
+Interrupted; stopping checks and preserving partial results…
+typecheck packages/zod: findings
+coverage packages/resolution: cancelled (interrupted)
+typecheck packages/resolution: cancelled (interrupted)
+typecheck packages/bench: cancelled (interrupted)
+Finished checks
+Running graph…
+Finished graph
+Running report…
+Finished report

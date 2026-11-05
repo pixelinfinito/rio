@@ -1,0 +1,14 @@
+file:///tmp/rio-zod-eval/positive-head/node_modules/.pnpm/vitest@4.1.5_@opentelemetry+api@1.9.0_@types+node@22.13.13_vite@7.3.2_@types+node@22.13_16a806e5e53cf775cc8de614dde74a84/node_modules/vitest/dist/chunks/cac.DJJmV0dT.js:406
+          throw new CACError(`Unknown option \`${name.length > 1 ? `--${name}` : `-${name}`}\``);
+                ^
+
+CACError: Unknown option `--minWorkers`
+    at Command.checkUnknownOptions (file:///tmp/rio-zod-eval/positive-head/node_modules/.pnpm/vitest@4.1.5_@opentelemetry+api@1.9.0_@types+node@22.13.13_vite@7.3.2_@types+node@22.13_16a806e5e53cf775cc8de614dde74a84/node_modules/vitest/dist/chunks/cac.DJJmV0dT.js:406:17)
+    at CAC.runMatchedCommand (file:///tmp/rio-zod-eval/positive-head/node_modules/.pnpm/vitest@4.1.5_@opentelemetry+api@1.9.0_@types+node@22.13.13_vite@7.3.2_@types+node@22.13_16a806e5e53cf775cc8de614dde74a84/node_modules/vitest/dist/chunks/cac.DJJmV0dT.js:606:13)
+    at CAC.parse (file:///tmp/rio-zod-eval/positive-head/node_modules/.pnpm/vitest@4.1.5_@opentelemetry+api@1.9.0_@types+node@22.13.13_vite@7.3.2_@types+node@22.13_16a806e5e53cf775cc8de614dde74a84/node_modules/vitest/dist/chunks/cac.DJJmV0dT.js:547:12)
+    at file:///tmp/rio-zod-eval/positive-head/node_modules/.pnpm/vitest@4.1.5_@opentelemetry+api@1.9.0_@types+node@22.13.13_vite@7.3.2_@types+node@22.13_16a806e5e53cf775cc8de614dde74a84/node_modules/vitest/dist/cli.js:11:13
+    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v22.23.4

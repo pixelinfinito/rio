@@ -1,0 +1,12 @@
+Warning: you are leaving 2 commits behind, not connected to
+any of your branches:
+
+  cbeac941 fix: label the base64url section banner correctly
+  62a82db9 fix: emit a length-aware base64url pattern in toJSONSchema
+
+If you want to keep them by creating a new branch, this may be a good time
+to do so with:
+
+ git branch <new-branch-name> cbeac941
+
+HEAD is now at 60496a09 docs(v4): correct the union throw-parity comment

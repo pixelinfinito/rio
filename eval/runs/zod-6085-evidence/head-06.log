@@ -1,0 +1,16 @@
+./scripts/compile-fuzz.ts:353:14 lint/correctness/noUnusedVariables ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ! This variable is unused.
+  
+    351 │     try {
+    352 │       expected = built.schema.safeParse(input);
+  > 353 │     } catch (e) {
+        │              ^
+    354 │       continue; // runtime itself throws (e.g. cyclic); not a compiled-path question
+    355 │     }
+  
+  i Unused variables usually are result of incomplete refactoring, typos and other source of bugs.
+  
+
+Checked 429 files in 6s. No fixes applied.
+Found 1 warning.

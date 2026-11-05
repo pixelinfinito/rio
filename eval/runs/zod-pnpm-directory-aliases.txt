@@ -1,0 +1,39 @@
+#!/usr/bin/env python3
+"""Preserve pnpm's installation; add compatibility aliases for Rio b15dc8ff5001.
+Run after frozen install. No source or lockfile is changed, and no trust is used.
+Actual names reproduce pnpm 10.12.1 depPathToFilename. Rio removes all closing
+parentheses, which differs for nested peers and uppercase/hash-shortened keys.
+"""
+import hashlib,json,pathlib,re
+root=pathlib.Path.cwd(); store=root/'node_modules/.pnpm'
+text=(store/'lock.yaml').read_text(); snapshots=text.split('\nsnapshots:\n',1)[1]
+rows=[]; missing=[]; oversized=[]; aliases=[]
+for line in snapshots.splitlines():
+    if not re.match(r'^  [^ ].*:$',line): continue
+    key=line.strip()[:-1].strip("'\"")
+    raw=key.lstrip('/'); actual=re.sub(r'[\\/:*?"<>|#]','+',raw)
+    if '(' in actual:
+        actual=re.sub(r'\)$','',actual)
+        actual=re.sub(r'\)\(|\(|\)','_',actual)
+    if len(actual)>120 or (actual!=actual.lower() and not actual.startswith('file+')):
+        actual=actual[:87]+'_'+hashlib.sha256(actual.encode()).hexdigest()[:32]
+    expected=raw.replace('/','+').replace('(','_').replace(')','')
+    if actual==expected: continue
+    name_version=raw.split('(',1)[0]; at=name_version.rfind('@')
+    name,version=name_version[:at],name_version[at+1:]
+    package=store/actual/'node_modules'/name/'package.json'
+    if not package.is_file():
+        missing.append(dict(key=key,actual=actual));continue
+    meta=json.loads(package.read_text())
+    assert meta['name']==name and meta['version']==version,(key,meta['name'],meta['version'])
+    if len(expected.encode())>255:
+        oversized.append(dict(key=key,expected_length=len(expected.encode()),actual=actual));continue
+    link=store/expected
+    if link.is_symlink():
+        assert link.resolve()==(store/actual).resolve(),key
+    elif link.exists():
+        assert (link/'node_modules'/name/'package.json').read_bytes()==package.read_bytes(),key
+    else:
+        link.symlink_to(actual,target_is_directory=True)
+        aliases.append(dict(key=key,alias=expected,target=actual,verified_name=name,verified_version=version))
+print(json.dumps(dict(created=aliases,created_count=len(aliases),not_installed=missing,unrepresentable=oversized),indent=2))

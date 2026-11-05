@@ -1,0 +1,340 @@
+{
+  "schema": "rio-eval-summary-v1",
+  "methodology": "deterministic-v1",
+  "records": [
+    "eval/runs/zod-6085/record.json",
+    "eval/runs/zod-6527/record.json",
+    "eval/runs/zod-6085-retry1/record.json",
+    "eval/runs/zod-6527-retry1/record.json"
+  ],
+  "attempts": 4,
+  "observed_raw_counts": {
+    "true-positive": 7,
+    "false-positive": 0,
+    "pre-existing-shown": 100,
+    "environment-failure": 60,
+    "out-of-scope": 0
+  },
+  "observed_occurrence_counts": {
+    "true-positive": 9,
+    "false-positive": 0,
+    "pre-existing-shown": 104,
+    "environment-failure": 76,
+    "out-of-scope": 0
+  },
+  "observed_cause_counts": {
+    "true-positive": 5,
+    "false-positive": 0,
+    "pre-existing-shown": 100,
+    "environment-failure": 60,
+    "out-of-scope": 0
+  },
+  "observed_unique_cause_counts": {
+    "true-positive": 5,
+    "false-positive": 0,
+    "pre-existing-shown": 41,
+    "environment-failure": 33,
+    "out-of-scope": 0
+  },
+  "eligible": {
+    "eligible_prs": 0,
+    "raw_counts": {
+      "true-positive": 0,
+      "false-positive": 0,
+      "pre-existing-shown": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0
+    },
+    "occurrence_counts": {
+      "true-positive": 0,
+      "false-positive": 0,
+      "pre-existing-shown": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0
+    },
+    "cause_counts": {
+      "true-positive": 0,
+      "false-positive": 0,
+      "pre-existing-shown": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0
+    },
+    "unique_cause_counts": {
+      "true-positive": 0,
+      "false-positive": 0,
+      "pre-existing-shown": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0
+    },
+    "precision": null,
+    "positive_control_cases": 0,
+    "positive_control_expected": 0,
+    "positive_control_detected": 0,
+    "positive_control_recall": null,
+    "false_positive_per_pr": null,
+    "pr_with_false_positive_fraction": null,
+    "useful_prs": 0,
+    "useful_real_prs": 0,
+    "usefulness_fraction": null
+  },
+  "by_repository": {
+    "colinhacks/zod": {
+      "eligible_prs": 0,
+      "raw_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "occurrence_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "cause_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "unique_cause_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "precision": null,
+      "positive_control_cases": 0,
+      "positive_control_expected": 0,
+      "positive_control_detected": 0,
+      "positive_control_recall": null,
+      "false_positive_per_pr": null,
+      "pr_with_false_positive_fraction": null,
+      "useful_prs": 0,
+      "useful_real_prs": 0,
+      "usefulness_fraction": null
+    }
+  },
+  "by_language": {
+    "typescript": {
+      "eligible_prs": 0,
+      "raw_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "occurrence_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "cause_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "unique_cause_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "precision": null,
+      "positive_control_cases": 0,
+      "positive_control_expected": 0,
+      "positive_control_detected": 0,
+      "positive_control_recall": null,
+      "false_positive_per_pr": null,
+      "pr_with_false_positive_fraction": null,
+      "useful_prs": 0,
+      "useful_real_prs": 0,
+      "usefulness_fraction": null
+    }
+  },
+  "environment_failures": [
+    {
+      "repository": "colinhacks/zod",
+      "pr": "https://github.com/colinhacks/zod/pull/6085",
+      "case_id": "6085-attempt1-excluded",
+      "record_path": "eval/runs/zod-6085/record.json",
+      "reasons": [
+        "coverage . head: skipped dependency_mismatch pnpm-lock.yaml: missing @vitest/mocker at @vitest/mocker@4.1.5(vite@7.3.2(@types/node@22.13.13)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.39.0)(tsx@4.19.3)(yaml@2.8.3)); reinstall dependencies",
+        "coverage packages/bench head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/integration head: skipped dependency_mismatch pnpm-lock.yaml: missing drizzle-zod at drizzle-zod@0.8.3(drizzle-orm@0.45.2(@opentelemetry/api@1.9.0))(zod@packages+zod); reinstall dependencies",
+        "coverage packages/resolution head: cancelled interrupted",
+        "coverage packages/treeshake head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/tsc head: skipped dependency_mismatch pnpm-lock.yaml: missing zod at zod@4.0.0-beta.20250420T053007; reinstall dependencies",
+        "coverage packages/zod head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "lint . head: skipped no_project_config lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+        "lint .: head=skipped, dependency_state=unavailable, base=unavailable",
+        "lint packages/bench head: skipped no_project_config lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+        "lint packages/bench: head=skipped, dependency_state=unavailable, base=unavailable",
+        "lint packages/resolution head: skipped no_project_config lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+        "lint packages/resolution: head=skipped, dependency_state=unavailable, base=unavailable",
+        "lint packages/treeshake head: skipped no_project_config lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+        "lint packages/treeshake: head=skipped, dependency_state=unavailable, base=unavailable",
+        "lint packages/zod head: skipped no_project_config lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+        "lint packages/zod: head=skipped, dependency_state=unavailable, base=unavailable",
+        "report status partial cannot establish a complete change review",
+        "typecheck . head: skipped dependency_mismatch pnpm-lock.yaml: missing @vitest/mocker at @vitest/mocker@4.1.5(vite@7.3.2(@types/node@22.13.13)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.39.0)(tsx@4.19.3)(yaml@2.8.3)); reinstall dependencies",
+        "typecheck .: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck packages/bench head: cancelled interrupted",
+        "typecheck packages/bench: head=cancelled, dependency_state=verified, base=unavailable",
+        "typecheck packages/integration head: skipped dependency_mismatch pnpm-lock.yaml: missing drizzle-zod at drizzle-zod@0.8.3(drizzle-orm@0.45.2(@opentelemetry/api@1.9.0))(zod@packages+zod); reinstall dependencies",
+        "typecheck packages/integration: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck packages/resolution head: cancelled interrupted",
+        "typecheck packages/resolution: head=cancelled, dependency_state=verified, base=unavailable",
+        "typecheck packages/treeshake head: failed unparseable_output unrecognized tsc output: error TS6504: File '/tmp/rio-eval-qf5adfy6/cache/053b354deab1a6e4/runs/01M6MSH4ZFMXAZRNE502QMC9KE/tools/tool.tmp-LilfNe/packages/treeshake/rollup.config.js' is a JavaScript file. Did you mean to enable the 'allowJs' option?",
+        "typecheck packages/treeshake: head=failed, dependency_state=verified, base=unavailable",
+        "typecheck packages/tsc head: skipped dependency_mismatch pnpm-lock.yaml: missing zod at zod@4.0.0-beta.20250420T053007; reinstall dependencies",
+        "typecheck packages/tsc: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck packages/zod: head=findings, dependency_state=verified, base=unavailable"
+      ]
+    },
+    {
+      "repository": "colinhacks/zod",
+      "pr": "https://github.com/colinhacks/zod/pull/6527",
+      "case_id": "6527-attempt1-excluded",
+      "record_path": "eval/runs/zod-6527/record.json",
+      "reasons": [
+        "coverage . head: skipped dependency_mismatch pnpm-lock.yaml: missing @vitest/mocker at @vitest/mocker@4.1.5(vite@7.3.2(@types/node@22.13.13)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.39.0)(tsx@4.19.3)(yaml@2.8.3)); reinstall dependencies",
+        "coverage packages/bench head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/integration head: skipped dependency_mismatch pnpm-lock.yaml: missing drizzle-zod at drizzle-zod@0.8.3(drizzle-orm@0.45.2(@opentelemetry/api@1.9.0))(zod@packages+zod); reinstall dependencies",
+        "coverage packages/mini head: cancelled interrupted",
+        "coverage packages/resolution head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/treeshake head: cancelled interrupted",
+        "coverage packages/tsc head: skipped dependency_mismatch pnpm-lock.yaml: missing zod at zod@4.0.0-beta.20250420T053007; reinstall dependencies",
+        "coverage packages/zod head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "lint packages/zod head: skipped no_project_config lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+        "lint packages/zod: head=skipped, dependency_state=unavailable, base=unavailable",
+        "report status partial cannot establish a complete change review",
+        "typecheck . head: skipped dependency_mismatch pnpm-lock.yaml: missing @vitest/mocker at @vitest/mocker@4.1.5(vite@7.3.2(@types/node@22.13.13)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.39.0)(tsx@4.19.3)(yaml@2.8.3)); reinstall dependencies",
+        "typecheck .: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck packages/bench head: cancelled interrupted",
+        "typecheck packages/bench: head=cancelled, dependency_state=verified, base=unavailable",
+        "typecheck packages/integration head: skipped dependency_mismatch pnpm-lock.yaml: missing drizzle-zod at drizzle-zod@0.8.3(drizzle-orm@0.45.2(@opentelemetry/api@1.9.0))(zod@packages+zod); reinstall dependencies",
+        "typecheck packages/integration: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck packages/mini: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages/resolution head: cancelled interrupted",
+        "typecheck packages/resolution: head=cancelled, dependency_state=verified, base=unavailable",
+        "typecheck packages/treeshake head: cancelled interrupted",
+        "typecheck packages/treeshake: head=cancelled, dependency_state=unavailable, base=unavailable",
+        "typecheck packages/tsc head: cancelled interrupted",
+        "typecheck packages/tsc: head=cancelled, dependency_state=unavailable, base=unavailable",
+        "typecheck packages/zod: head=findings, dependency_state=verified, base=unavailable"
+      ]
+    },
+    {
+      "repository": "colinhacks/zod",
+      "pr": "https://github.com/colinhacks/zod/pull/6085",
+      "case_id": "6085",
+      "record_path": "eval/runs/zod-6085-retry1/record.json",
+      "reasons": [
+        "coverage . head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/bench head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/integration head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/resolution head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/treeshake head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/tsc head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/zod head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "lint . head: skipped no_project_config lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+        "lint .: head=skipped, dependency_state=unavailable, base=unavailable",
+        "lint packages/bench head: skipped no_project_config lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+        "lint packages/bench: head=skipped, dependency_state=unavailable, base=unavailable",
+        "lint packages/resolution head: skipped no_project_config lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+        "lint packages/resolution: head=skipped, dependency_state=unavailable, base=unavailable",
+        "lint packages/treeshake head: skipped no_project_config lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+        "lint packages/treeshake: head=skipped, dependency_state=unavailable, base=unavailable",
+        "lint packages/zod head: skipped no_project_config lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+        "lint packages/zod: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck .: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages/bench head: failed unparseable_output unrecognized tsc output: Found 'package.json' at '/dev/shm/rio-eval-tbwag872/cache/053b354deab1a6e4/runs/01M6MT1Q5EAH4J7X1MKR7BH62H/tools/tool.tmp-ZkzS2D/packages/bench/package.json'.",
+        "typecheck packages/bench: head=failed, dependency_state=verified, base=unavailable",
+        "typecheck packages/integration: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages/resolution: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages/treeshake head: failed unparseable_output unrecognized tsc output: error TS6504: File '/dev/shm/rio-eval-tbwag872/cache/053b354deab1a6e4/runs/01M6MT1Q5EAH4J7X1MKR7BH62H/tools/tool.tmp-uTmyrV/packages/treeshake/rollup.config.js' is a JavaScript file. Did you mean to enable the 'allowJs' option?",
+        "typecheck packages/treeshake: head=failed, dependency_state=verified, base=unavailable",
+        "typecheck packages/tsc: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages/zod: head=findings, dependency_state=verified, base=unavailable"
+      ]
+    },
+    {
+      "repository": "colinhacks/zod",
+      "pr": "https://github.com/colinhacks/zod/pull/6527",
+      "case_id": "6527",
+      "record_path": "eval/runs/zod-6527-retry1/record.json",
+      "reasons": [
+        "coverage . head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/bench head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/integration head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/mini head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/resolution head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/treeshake head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/tsc head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "coverage packages/zod head: failed tests_failed Tests failed (see raw output for details); usable coverage from the incomplete run is retained",
+        "lint packages/zod head: skipped no_project_config lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+        "lint packages/zod: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck .: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages/bench head: failed unparseable_output unrecognized tsc output: Found 'package.json' at '/dev/shm/rio-eval-etjh1urj/cache/30311a6b88e34df5/runs/01M6MT63ZFXFQ2T2SMNN4W18WK/tools/tool.tmp-3GDXAP/packages/bench/package.json'.",
+        "typecheck packages/bench: head=failed, dependency_state=verified, base=unavailable",
+        "typecheck packages/integration: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages/mini: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages/resolution: head=findings, dependency_state=verified, base=unavailable",
+        "typecheck packages/treeshake head: failed unparseable_output unrecognized tsc output: error TS6504: File '/dev/shm/rio-eval-etjh1urj/cache/30311a6b88e34df5/runs/01M6MT63ZFXFQ2T2SMNN4W18WK/tools/tool.tmp-WtIVi5/packages/treeshake/rollup.config.js' is a JavaScript file. Did you mean to enable the 'allowJs' option?",
+        "typecheck packages/treeshake: head=failed, dependency_state=verified, base=unavailable",
+        "typecheck packages/tsc: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck packages/zod: head=findings, dependency_state=verified, base=unavailable"
+      ]
+    }
+  ],
+  "agent_layer_backlog": [],
+  "deterministic_misses": 2,
+  "sample": {
+    "eligible_real_prs": 0,
+    "repositories": 0,
+    "languages": [],
+    "positive_control_repositories": 0,
+    "positive_controls_by_language": {
+      "typescript": 0,
+      "python": 0
+    },
+    "clean_negative_controls": 0,
+    "adequate": false,
+    "requirements_missing": [
+      "Need at least 10 eligible real PRs",
+      "Need at least 5 eligible repositories",
+      "Need both languages",
+      "Need at least 10 eligible positive controls",
+      "Need controls across at least 3 repositories",
+      "Need at least 5 controls per language",
+      "Need an independently clean negative control",
+      "Precision denominator is absent",
+      "Recall denominator is absent"
+    ]
+  },
+  "decision": "insufficient-evidence",
+  "decision_reasons": [
+    "Need at least 10 eligible real PRs",
+    "Need at least 5 eligible repositories",
+    "Need both languages",
+    "Need at least 10 eligible positive controls",
+    "Need controls across at least 3 repositories",
+    "Need at least 5 controls per language",
+    "Need an independently clean negative control",
+    "Precision denominator is absent",
+    "Recall denominator is absent",
+    "Need at least 10 useful real PRs"
+  ]
+}

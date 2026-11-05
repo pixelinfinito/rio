@@ -1,0 +1,11 @@
+import json,os,subprocess,time,pathlib,sys
+root=pathlib.Path('/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs')
+case,rev=sys.argv[1:3]; out=root/f'zod-{case}-evidence';out.mkdir(exist_ok=True);cwd=sys.argv[3] if len(sys.argv)>3 else '/tmp/rio-zod-eval/zod'; env=os.environ.copy();env['PATH']='/tmp/rio-zod-eval/node-v24.22.2-linux-x64/bin:'+env['PATH']
+cmds=[['node','--version'],['corepack','pnpm','--version'],['git','rev-parse','HEAD'],['corepack','pnpm','install','--frozen-lockfile'],['corepack','pnpm','exec','tsc','--noEmit','--pretty','false','-p','packages/zod/tsconfig.test.json'],['corepack','pnpm','exec','biome','lint','.'],['corepack','pnpm','exec','vitest','run','--maxWorkers=2']]
+ledger=[]
+for i,cmd in enumerate(cmds):
+ start=time.monotonic(); log=out/f'{rev}-{i+1:02d}.log'
+ with log.open('w') as f:
+  try: p=subprocess.run(cmd,cwd=cwd,env=env,stdout=f,stderr=subprocess.STDOUT,timeout=900);code=p.returncode
+  except subprocess.TimeoutExpired: code=124
+ ledger.append(dict(argv=cmd,cwd=cwd,exit_code=code,wall_time_seconds=round(time.monotonic()-start,3),log=log.name));(out/f'{rev}-commands.json').write_text(json.dumps(ledger,indent=2)+'\n');print(rev,cmd,code,flush=True)

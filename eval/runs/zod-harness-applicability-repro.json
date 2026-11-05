@@ -1,0 +1,105 @@
+{
+  "purpose": "Synthetic harness-only reproduction. Not a Rio run, finding, record, or score. Demonstrates all typecheck pairs can succeed but an inapplicable ESLint slot still prevents classification.",
+  "input": {
+    "status": "incomplete",
+    "footer": {
+      "notes": []
+    },
+    "checks": [
+      {
+        "kind": "typecheck",
+        "language": "typescript",
+        "root": ".",
+        "version": "base",
+        "outcome": "passed",
+        "dependency_state": "verified"
+      },
+      {
+        "kind": "typecheck",
+        "language": "typescript",
+        "root": ".",
+        "version": "head",
+        "outcome": "passed",
+        "dependency_state": "verified"
+      },
+      {
+        "kind": "lint",
+        "language": "typescript",
+        "root": ".",
+        "version": "head",
+        "outcome": "skipped",
+        "reason": "no_project_config",
+        "hint": "No ESLint configuration; project uses Biome."
+      }
+    ]
+  },
+  "output": {
+    "dependency_state": "verified",
+    "baseline_ran": true,
+    "baseline_classification_ran": false,
+    "eligible": false,
+    "reasons": [
+      "lint . head: skipped no_project_config No ESLint configuration; project uses Biome.",
+      "lint .: head=skipped, dependency_state=unavailable, base=unavailable"
+    ],
+    "checks": [
+      {
+        "kind": "typecheck",
+        "language": "typescript",
+        "root": ".",
+        "version": "base",
+        "outcome": "passed",
+        "dependency_state": "verified",
+        "findings": []
+      },
+      {
+        "kind": "typecheck",
+        "language": "typescript",
+        "root": ".",
+        "version": "head",
+        "outcome": "passed",
+        "dependency_state": "verified",
+        "findings": []
+      },
+      {
+        "kind": "lint",
+        "language": "typescript",
+        "root": ".",
+        "version": "head",
+        "outcome": "skipped",
+        "reason": "no_project_config",
+        "hint": "No ESLint configuration; project uses Biome.",
+        "findings": []
+      }
+    ],
+    "notes": []
+  },
+  "typecheck_only_output": {
+    "dependency_state": "verified",
+    "baseline_ran": true,
+    "baseline_classification_ran": true,
+    "eligible": true,
+    "reasons": [],
+    "checks": [
+      {
+        "kind": "typecheck",
+        "language": "typescript",
+        "root": ".",
+        "version": "base",
+        "outcome": "passed",
+        "dependency_state": "verified",
+        "findings": []
+      },
+      {
+        "kind": "typecheck",
+        "language": "typescript",
+        "root": ".",
+        "version": "head",
+        "outcome": "passed",
+        "dependency_state": "verified",
+        "findings": []
+      }
+    ],
+    "notes": []
+  }
+}

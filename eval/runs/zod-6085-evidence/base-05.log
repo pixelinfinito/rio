@@ -1,0 +1,8 @@
+scripts/compile-fuzz.ts internalError/io  INTERNAL  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × No such file or directory (os error 2)
+  
+  ! This diagnostic was derived from an internal Biome error. Potential bug, please report it if necessary.
+  
+
+Checked 0 files in 799µs. No fixes applied.

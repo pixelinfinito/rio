@@ -1,0 +1,15 @@
+packages/zod/src/v3/tests/intersection.test.ts(56,8): error TS6196: '_Cat' is declared but never used.
+packages/zod/src/v3/tests/nativeEnum.test.ts(59,8): error TS6196: '_FruitEnum' is declared but never used.
+packages/zod/src/v3/tests/nativeEnum.test.ts(78,8): error TS6196: '_GreekEnum' is declared but never used.
+packages/zod/src/v3/tests/object.test.ts(428,9): error TS6133: '_Outer' is declared but its value is never read.
+packages/zod/src/v4/classic/tests/assignability.test.ts(301,9): error TS6133: '_a' is declared but its value is never read.
+packages/zod/src/v4/classic/tests/assignability.test.ts(302,9): error TS6133: '_b' is declared but its value is never read.
+packages/zod/src/v4/classic/tests/assignability.test.ts(303,9): error TS6133: '_c' is declared but its value is never read.
+packages/zod/src/v4/classic/tests/assignability.test.ts(304,9): error TS6133: '_d' is declared but its value is never read.
+packages/zod/src/v4/classic/tests/assignability.test.ts(326,8): error TS6196: '_RefinedSchema' is declared but never used.
+packages/zod/src/v4/classic/tests/enum.test.ts(194,8): error TS6196: '_a' is declared but never used.
+packages/zod/src/v4/classic/tests/enum.test.ts(195,8): error TS6196: '_b' is declared but never used.
+packages/zod/src/v4/classic/tests/lazy.test.ts(206,8): error TS6196: '_Category' is declared but never used.
+packages/zod/src/v4/classic/tests/preprocess-types.test.ts(41,9): error TS6133: '_bare' is declared but its value is never read.
+packages/zod/src/v4/classic/tests/preprocess-types.test.ts(42,9): error TS6133: '_bareCore' is declared but its value is never read.
+packages/zod/src/v4/mini/tests/assignability.test.ts(181,8): error TS6196: '_RefinedSchema' is declared but never used.

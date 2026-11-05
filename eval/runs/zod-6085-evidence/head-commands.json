@@ -1,0 +1,105 @@
+[
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "/tmp/rio-zod-eval/positive-head",
+    "exit_code": 0,
+    "wall_time_seconds": 0.005,
+    "log": "head-01.log"
+  },
+  {
+    "argv": [
+      "node",
+      "--version"
+    ],
+    "cwd": "/tmp/rio-zod-eval/positive-head",
+    "exit_code": 0,
+    "wall_time_seconds": 0.033,
+    "log": "head-02.log"
+  },
+  {
+    "argv": [
+      "corepack",
+      "pnpm",
+      "--version"
+    ],
+    "cwd": "/tmp/rio-zod-eval/positive-head",
+    "exit_code": 0,
+    "wall_time_seconds": 3.437,
+    "log": "head-03.log"
+  },
+  {
+    "argv": [
+      "corepack",
+      "pnpm",
+      "install",
+      "--frozen-lockfile"
+    ],
+    "cwd": "/tmp/rio-zod-eval/positive-head",
+    "exit_code": 0,
+    "wall_time_seconds": 110.669,
+    "log": "head-04.log"
+  },
+  {
+    "argv": [
+      "corepack",
+      "pnpm",
+      "exec",
+      "biome",
+      "lint",
+      "--error-on-warnings",
+      "--no-errors-on-unmatched",
+      "scripts/compile-fuzz.ts"
+    ],
+    "cwd": "/tmp/rio-zod-eval/positive-head",
+    "exit_code": 1,
+    "wall_time_seconds": 11.225,
+    "log": "head-05.log"
+  },
+  {
+    "argv": [
+      "corepack",
+      "pnpm",
+      "exec",
+      "biome",
+      "lint",
+      "."
+    ],
+    "cwd": "/tmp/rio-zod-eval/positive-head",
+    "exit_code": 0,
+    "wall_time_seconds": 10.833,
+    "log": "head-06.log"
+  },
+  {
+    "argv": [
+      "corepack",
+      "pnpm",
+      "exec",
+      "tsc",
+      "--noEmit",
+      "--pretty",
+      "false",
+      "-p",
+      "packages/zod/tsconfig.test.json"
+    ],
+    "cwd": "/tmp/rio-zod-eval/positive-head",
+    "exit_code": 0,
+    "wall_time_seconds": 48.716,
+    "log": "head-07.log"
+  },
+  {
+    "argv": [
+      "git",
+      "status",
+      "--porcelain",
+      "--untracked-files=no"
+    ],
+    "cwd": "/tmp/rio-zod-eval/positive-head",
+    "exit_code": 0,
+    "wall_time_seconds": 3.518,
+    "log": "head-08.log"
+  }
+]

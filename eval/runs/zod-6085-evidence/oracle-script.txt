@@ -1,0 +1,8 @@
+import json,os,subprocess,time,pathlib,sys
+rev,cwd=sys.argv[1:];out=pathlib.Path('/home/ubuntu/.t3/worktrees/rio/eval-run-zod/eval/runs/zod-6085-evidence');env=os.environ.copy();env['PATH']='/tmp/rio-zod-eval/node-v22.23.4-linux-x64/bin:'+env['PATH'];ledger=[]
+cmds=[['git','rev-parse','HEAD'],['node','--version'],['corepack','pnpm','--version'],['corepack','pnpm','install','--frozen-lockfile'],['corepack','pnpm','exec','biome','lint','--error-on-warnings','--no-errors-on-unmatched','scripts/compile-fuzz.ts'],['corepack','pnpm','exec','biome','lint','.'],['corepack','pnpm','exec','tsc','--noEmit','--pretty','false','-p','packages/zod/tsconfig.test.json'],['git','status','--porcelain','--untracked-files=no']]
+for i,cmd in enumerate(cmds):
+ t=time.monotonic();log=out/f'{rev}-{i+1:02}.log'
+ with log.open('w') as f:
+  p=subprocess.run(cmd,cwd=cwd,env=env,stdout=f,stderr=subprocess.STDOUT,timeout=900)
+ ledger.append(dict(argv=cmd,cwd=cwd,exit_code=p.returncode,wall_time_seconds=round(time.monotonic()-t,3),log=log.name));(out/f'{rev}-commands.json').write_text(json.dumps(ledger,indent=2)+'\n');print(rev,cmd,p.returncode,flush=True)

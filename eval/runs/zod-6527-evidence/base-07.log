@@ -1,0 +1,60 @@
+Testing types with tsc and vue-tsc is an experimental feature.
+Breaking changes might not follow SemVer, please pin Vitest's version when using it.
+Testing types with tsc and vue-tsc is an experimental feature.
+Breaking changes might not follow SemVer, please pin Vitest's version when using it.
+Testing types with tsc and vue-tsc is an experimental feature.
+Breaking changes might not follow SemVer, please pin Vitest's version when using it.
+Testing types with tsc and vue-tsc is an experimental feature.
+Breaking changes might not follow SemVer, please pin Vitest's version when using it.
+
+ RUN  v4.1.5 /tmp/rio-zod-eval/negative-base
+
+ ❯ |@zod/treeshaking| bundle-size.test.ts (4 tests | 4 skipped) 14ms
+ ❯ |@zod/treeshaking| locale-treeshake.test.ts (6 tests | 6 skipped) 10ms
+ ❯ |@zod/treeshaking| default-locale.test.ts (2 tests | 2 skipped) 8ms
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |@zod/treeshaking| bundle-size.test.ts [ packages/treeshake/bundle-size.test.ts ]
+Error: /tmp/rio-zod-eval/negative-base/packages/treeshake/node_modules/zod/index.js is missing. Run `pnpm build` first.
+ ❯ bundle-size.test.ts:63:11
+     61| beforeAll(() => {
+     62|   if (!existsSync(BUILT_ENTRY)) {
+     63|     throw new Error(`${BUILT_ENTRY} is missing. Run \`pnpm build\` fir…
+       |           ^
+     64|   }
+     65| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  |@zod/treeshaking| default-locale.test.ts [ packages/treeshake/default-locale.test.ts ]
+Error: /tmp/rio-zod-eval/negative-base/packages/zod/v4/index.js is missing. Run `pnpm build` first.
+ ❯ default-locale.test.ts:34:38
+     32|
+     33| beforeAll(() => {
+     34|   if (!existsSync(builtEntry)) throw new Error(`${builtEntry} is missi…
+       |                                      ^
+     35|   if (newestMtime(path.join(zodRoot, "src")) > statSync(builtEntry).mt…
+     36|     throw new Error(`${builtEntry} is older than packages/zod/src. Run…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  |@zod/treeshaking| locale-treeshake.test.ts > locale tree-shaking
+Error: zod is not built — run `pnpm build` first (/tmp/rio-zod-eval/negative-base/packages/treeshake/node_modules/zod/index.js)
+ ❯ locale-treeshake.test.ts:57:41
+     55| describe("locale tree-shaking", () => {
+     56|   beforeAll(() => {
+     57|     if (!existsSync(BUILT_ENTRY)) throw new Error(`zod is not built — …
+       |                                         ^
+     58|   });
+     59|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  3 failed | 572 passed (575)
+      Tests  7843 passed | 12 skipped (7855)
+Type Errors  no errors
+   Start at  02:28:42
+   Duration  612.91s (transform 648.02s, setup 101.45s, import 717.31s, tests 68.78s, environment 95ms, typecheck 97.01s)
+

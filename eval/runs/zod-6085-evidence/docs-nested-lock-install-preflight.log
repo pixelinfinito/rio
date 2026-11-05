@@ -1,0 +1,13 @@
+ ERR_PNPM_OUTDATED_LOCKFILE  Cannot install with "frozen-lockfile" because pnpm-lock.yaml is not up to date with <ROOT>/package.json
+
+Note that in CI environments this setting is true by default. If you still need to run install in such cases, use "pnpm install --no-frozen-lockfile"
+
+  Failure reason:
+  specifiers in the lockfile don't match specifiers in package.json:
+* 9 dependencies were added: @inkeep/cxkit-react@^0.5.117, @radix-ui/react-accordion@^1.2.4, @vercel/analytics@^1.5.0, @vercel/og@^0.6.8, gray-matter@^4.0.3, remark@^15.0.1, remark-gfm@^4.0.1, remark-mdx@^3.1.0, remark-stringify@^11.0.0
+* 4 dependencies are mismatched:
+  - next (lockfile: 15.2.2, manifest: 15.5.15)
+  - @tailwindcss/postcss (lockfile: ^4.0.14, manifest: ^4.2.4)
+  - postcss (lockfile: ^8.5.3, manifest: ^8.5.12)
+  - tailwindcss (lockfile: ^4.0.14, manifest: ^4.2.4)
+
