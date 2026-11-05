@@ -70,7 +70,6 @@ pub(crate) async fn run(
             };
         }
     };
-    let _lock = lock;
     let output = cwd.join(".rio-coverage");
     if let Err(error) = std::fs::create_dir_all(&output) {
         return CoverageRun {
@@ -130,6 +129,15 @@ pub(crate) async fn run(
         .insert("CARGO_LLVM_COV_SETUP".into(), "no".into());
     command.timeout = request.timeout.saturating_sub(started.elapsed());
     command.output_limit = request.output_limit;
+    // Keep an unfinished-run marker across process exit or failed cleanup.
+    // Create it before spawning so an I/O failure cannot leave untracked writers.
+    if let Err(error) = lock.set_len(1) {
+        return CoverageRun {
+            data: CoverageData::new(),
+            processes: Vec::new(),
+            outcome: lock_failure(error.to_string()),
+        };
+    }
     let result = supervisor.run(command, cancellation.clone()).await;
     let stdout = String::from_utf8_lossy(&result.stdout);
     let stderr = String::from_utf8_lossy(&result.stderr);
@@ -224,6 +232,21 @@ pub(crate) async fn run(
             "{count} tests failed; usable coverage from the incomplete run is retained"
         ));
     }
+    if processes.iter().all(|process| process.cleanup_confirmed) {
+        if let Err(error) = lock.set_len(0) {
+            outcome = lock_failure(error.to_string());
+        }
+    } else {
+        let hint = &mut outcome.details_mut().hint;
+        let note = format!(
+            "Shared Rust coverage target quarantined at {}",
+            target.display()
+        );
+        *hint = Some(
+            hint.as_ref()
+                .map_or(note.clone(), |hint| format!("{hint}; {note}")),
+        );
+    }
     CoverageRun {
         data,
         outcome,
@@ -245,6 +268,16 @@ fn configure_output(
         ("CARGO_LLVM_COV_BUILD_DIR", coverage_target),
     ] {
         command.env.insert(name.into(), path.as_os_str().to_owned());
+    }
+}
+
+fn lock_failure(hint: String) -> CheckOutcome {
+    CheckOutcome::Failed {
+        reason: FailureReason::ToolCrashed,
+        details: CheckDetails {
+            hint: Some(format!("Rust coverage lock: {hint}")),
+            ..Default::default()
+        },
     }
 }
 
@@ -289,7 +322,18 @@ async fn coverage_lock(
             });
         }
         match FileExt::try_lock_exclusive(&file) {
-            Ok(true) => return Ok(file),
+            Ok(true) => {
+                let metadata = file
+                    .metadata()
+                    .map_err(|error| lock_failure(error.to_string()))?;
+                if metadata.len() != 0 {
+                    return Err(lock_failure(format!(
+                        "previous process cleanup was not confirmed; after confirming all writers stopped, remove {} before retrying",
+                        target.join(".rio-llvm-cov.lock").display()
+                    )));
+                }
+                return Ok(file);
+            }
             Ok(false) => {}
             Err(error) => {
                 return Err(CheckOutcome::Failed {
@@ -312,6 +356,42 @@ async fn coverage_lock(
 mod tests {
     use super::*;
     use std::time::Duration;
+
+    #[tokio::test]
+    async fn unfinished_coverage_remains_quarantined_after_the_lock_is_released() {
+        let temp = tempfile::tempdir().unwrap();
+        let lock = coverage_lock(
+            temp.path(),
+            Duration::from_secs(1),
+            &CancellationToken::new(),
+        )
+        .await
+        .unwrap();
+        // A writer started, but its cleanup could not be confirmed.
+        lock.set_len(1).unwrap();
+        drop(lock);
+        let next = coverage_lock(
+            temp.path(),
+            Duration::from_secs(1),
+            &CancellationToken::new(),
+        )
+        .await;
+        assert!(
+            matches!(next, Err(CheckOutcome::Failed { reason: FailureReason::ToolCrashed, ref details })
+            if details.hint.as_ref().is_some_and(|hint| hint.contains("cleanup was not confirmed")))
+        );
+        // Recovery is explicit, after the operator verifies that all writers stopped.
+        std::fs::remove_file(temp.path().join(".rio-llvm-cov.lock")).unwrap();
+        assert!(
+            coverage_lock(
+                temp.path(),
+                Duration::from_secs(1),
+                &CancellationToken::new()
+            )
+            .await
+            .is_ok()
+        );
+    }
 
     #[tokio::test]
     async fn shared_target_lock_obeys_deadlines_cancellation_and_release() {

@@ -480,19 +480,15 @@ async fn real_rust_coverage_keeps_failures_and_distinguishes_zero_tests() {
             .write_tree(&tree)
             .unwrap();
         let settings = rust_coverage_settings(&tree, "core").unwrap();
-        let run = run_coverage(
-            CoverageRequest {
-                tool: &tool,
-                settings: &settings,
-                tool_tree: temp.path(),
-                worktree_root: None,
-                timeout: std::time::Duration::from_secs(90),
-                output_limit: 4 * 1024 * 1024,
-            },
-            &supervisor,
-            CancellationToken::new(),
-        )
-        .await;
+        let request = || CoverageRequest {
+            tool: &tool,
+            settings: &settings,
+            tool_tree: temp.path(),
+            worktree_root: None,
+            timeout: std::time::Duration::from_secs(90),
+            output_limit: 4 * 1024 * 1024,
+        };
+        let run = run_coverage(request(), &supervisor, CancellationToken::new()).await;
         // Project configuration must not send cleanup/profile writes outside
         // the output directory protected by Rio's coverage lock.
         assert!(!configured_target.path().join("shared-target").exists());
@@ -523,6 +519,12 @@ async fn real_rust_coverage_keeps_failures_and_distinguishes_zero_tests() {
                         .difference(&run.data["core/src/lib.rs"].executed)
                         .next()
                         .is_some()
+                );
+                let repeated = run_coverage(request(), &supervisor, CancellationToken::new()).await;
+                assert!(
+                    matches!(repeated.outcome, CheckOutcome::Passed { .. }),
+                    "{:?}",
+                    repeated.outcome
                 );
             }
             "failing" => {
