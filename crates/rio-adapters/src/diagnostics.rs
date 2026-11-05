@@ -405,6 +405,33 @@ pub fn parse_ruff(stdout: &[u8], context: &DiagnosticContext<'_>) -> Result<Vec<
         .collect()
 }
 
+// A typed adapter signal lets exit evaluation distinguish an ignored target
+// from malformed output without changing the findings parser API.
+#[derive(Debug)]
+pub(crate) struct BiomeNoFilesProcessed;
+
+impl std::fmt::Display for BiomeNoFilesProcessed {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        formatter.write_str("Biome: No files were processed in the specified paths; targets may be ignored by the project configuration")
+    }
+}
+
+impl std::error::Error for BiomeNoFilesProcessed {}
+
+pub(crate) fn parse_biome_output(
+    stdout: &[u8],
+    stderr: &[u8],
+    context: &DiagnosticContext<'_>,
+) -> Result<Vec<Finding>> {
+    let parsed = parse_biome(stdout, context);
+    if (stdout.iter().all(u8::is_ascii_whitespace) || parsed.as_ref().is_ok_and(Vec::is_empty))
+        && String::from_utf8_lossy(stderr).contains("No files were processed")
+    {
+        return Err(BiomeNoFilesProcessed.into());
+    }
+    parsed
+}
+
 /// Biome 1.x and 2.x JSON reporters serialize diagnostics with byte spans
 /// and sourceCode, rather than ESLint's line/column coordinates.
 pub fn parse_biome(stdout: &[u8], context: &DiagnosticContext<'_>) -> Result<Vec<Finding>> {
@@ -419,6 +446,18 @@ pub fn parse_biome(stdout: &[u8], context: &DiagnosticContext<'_>) -> Result<Vec
     let diagnostics = value["diagnostics"]
         .as_array()
         .context("Biome output has no diagnostics array")?;
+    if !diagnostics.is_empty()
+        && diagnostics.iter().all(|diagnostic| {
+            diagnostic["description"]
+                .as_str()
+                .is_some_and(|text| text.contains("No files were processed"))
+        })
+        && ["changed", "unchanged", "matches"]
+            .iter()
+            .all(|key| value["summary"][*key].as_u64().unwrap_or(0) == 0)
+    {
+        return Err(BiomeNoFilesProcessed.into());
+    }
     let mut syntax = BTreeMap::new();
     let mut findings = Vec::new();
     for diagnostic in diagnostics {

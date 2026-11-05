@@ -229,6 +229,12 @@ pub fn evaluate_exit(
     contract: &ExitCodeContract,
     parsed: Result<Vec<Finding>>,
 ) -> CheckOutcome {
+    // The Biome adapter uses a typed signal because an empty target set has
+    // neither findings nor a successful exit code. Keep this distinct from
+    // malformed output and require a normal, fully cleaned-up exit.
+    let biome_no_files = parsed
+        .as_ref()
+        .is_err_and(|error| error.is::<crate::diagnostics::BiomeNoFilesProcessed>());
     let (findings, parse_error) = match parsed {
         Ok(findings) => (findings, None),
         Err(error) => (Vec::new(), Some(redact(&error.to_string()))),
@@ -276,6 +282,13 @@ pub fn evaluate_exit(
     if let Some(reason) = contract.skipped.get(&code) {
         return CheckOutcome::Skipped {
             reason: *reason,
+            details,
+        };
+    }
+    if biome_no_files && code == 1 && result.cleanup_confirmed {
+        details.hint = parse_error;
+        return CheckOutcome::Skipped {
+            reason: SkipReason::Disabled,
             details,
         };
     }

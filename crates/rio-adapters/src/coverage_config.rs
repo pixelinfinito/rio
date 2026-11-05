@@ -181,6 +181,23 @@ pub fn typescript_coverage_settings(
             if let Some(object) =
                 object.filter(|object| !has_spread(*object) && !syntax.root_node().has_error())
             {
+                if runner == "vitest"
+                    && let Some(test) = property(object, "test", &entry.content)
+                    && test.kind() == "object"
+                    && !has_spread(test)
+                    && let Some(browser) = property(test, "browser", &entry.content)
+                {
+                    settings.vitest_browser_mode = browser.kind() == "true"
+                        || (browser.kind() == "object"
+                            && !has_spread(browser)
+                            && property(browser, "enabled", &entry.content)
+                                .is_some_and(|enabled| enabled.kind() == "true"));
+                    if settings.vitest_browser_mode {
+                        settings
+                            .notes
+                            .push("coverage_unavailable: browser mode".into());
+                    }
+                }
                 let coverage = if runner == "vitest" {
                     property(object, "test", &entry.content)
                         .and_then(|test| property(test, "coverage", &entry.content))

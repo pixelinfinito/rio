@@ -180,6 +180,60 @@ fn npm(worktree: &Path, installation_root: &str, installation: &mut Installation
     Ok(())
 }
 
+fn pnpm_store_max_length(
+    worktree: &Path,
+    installation_root: &str,
+    installation: &mut Installation,
+    modules: &Value,
+) -> Result<usize> {
+    fn number(value: &Value) -> Option<usize> {
+        value
+            .as_u64()
+            .or_else(|| value.as_str()?.trim().parse().ok())
+            .and_then(|value| usize::try_from(value).ok())
+            .filter(|value| *value > 0)
+    }
+    // Installation metadata describes the actual layout, even if project
+    // configuration has changed since the last install.
+    if let Some(length) = number(&modules["virtualStoreDirMaxLength"]) {
+        return Ok(length);
+    }
+    if let Ok(text) = read_metadata(worktree, &join(installation_root, ".npmrc"), installation) {
+        let length = text
+            .lines()
+            .filter_map(|line| {
+                let (key, value) = line.split_once('=')?;
+                if !matches!(
+                    key.trim(),
+                    "virtual-store-dir-max-length" | "virtualStoreDirMaxLength"
+                ) {
+                    return None;
+                }
+                let value = value
+                    .split(['#', ';'])
+                    .next()?
+                    .trim()
+                    .trim_matches(['\'', '"']);
+                number(&Value::String(value.into()))
+            })
+            .next_back();
+        if let Some(length) = length {
+            return Ok(length);
+        }
+    }
+    if let Ok(text) = read_metadata(
+        worktree,
+        &join(installation_root, "pnpm-workspace.yaml"),
+        installation,
+    ) {
+        let workspace: Value = serde_yaml::from_str(&text)?;
+        if let Some(length) = number(&workspace["virtualStoreDirMaxLength"]) {
+            return Ok(length);
+        }
+    }
+    Ok(120)
+}
+
 fn pnpm(worktree: &Path, installation_root: &str, installation: &mut Installation) -> Result<()> {
     let modules = read_metadata(
         worktree,
@@ -190,7 +244,7 @@ fn pnpm(worktree: &Path, installation_root: &str, installation: &mut Installatio
     .map(|text| serde_yaml::from_str::<Value>(&text))
     .transpose()?
     .unwrap_or_default();
-    let max_length = modules["virtualStoreDirMaxLength"].as_u64().unwrap_or(120) as usize;
+    let max_length = pnpm_store_max_length(worktree, installation_root, installation, &modules)?;
     let store = modules["virtualStoreDir"]
         .as_str()
         .map(|path| {

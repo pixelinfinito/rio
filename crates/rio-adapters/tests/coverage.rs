@@ -619,6 +619,7 @@ fn multiline_type_changes_do_not_hide_runtime_string_or_statement_changes() {
 async fn recorded_runner(name: &str, script: &str) -> CoverageRun {
     use std::os::unix::fs::PermissionsExt;
     let temporary = tempfile::tempdir().unwrap();
+    install_recorded_provider(temporary.path(), "v8");
     let path = temporary.path().join("runner");
     std::fs::write(&path, format!("#!/bin/sh\n{script}\n")).unwrap();
     std::fs::set_permissions(&path, std::fs::Permissions::from_mode(0o755)).unwrap();
@@ -833,6 +834,7 @@ fn vitest_discovers_scripts_vite_configs_and_root_workspaces() {
 async fn vitest_workspace_coverage_runs_at_workspace_cwd_and_normalizes_lcov() {
     use std::os::unix::fs::PermissionsExt;
     let root = tempfile::tempdir().unwrap();
+    install_recorded_provider(root.path(), "istanbul");
     std::fs::create_dir_all(root.path().join("packages/a")).unwrap();
     std::fs::write(
         root.path().join("vitest.unit.config.ts"),
@@ -845,6 +847,7 @@ import sys,pathlib
 assert pathlib.Path('vitest.unit.config.ts').is_file(), 'workspace import resolved from wrong cwd'
 assert 'packages/a' in sys.argv
 assert '--minWorkers=1' not in sys.argv
+assert '--coverage.provider=istanbul' in sys.argv
 output=next(arg.split('=',1)[1] for arg in sys.argv if arg.startswith('--coverage.reportsDirectory='))
 pathlib.Path(output, 'lcov.info').write_text('SF:packages/a/index.ts\nDA:1,1\nend_of_record\n')
 "#).unwrap();
@@ -886,4 +889,181 @@ pathlib.Path(output, 'lcov.info').write_text('SF:packages/a/index.ts\nDA:1,1\nen
         run.outcome
     );
     assert!(run.data["packages/a/index.ts"].executed.contains(&1));
+}
+
+#[cfg(unix)]
+fn install_recorded_provider(root: &Path, provider: &str) {
+    let name = format!("@vitest/coverage-{provider}");
+    let directory = root.join("node_modules").join(&name);
+    std::fs::create_dir_all(&directory).unwrap();
+    std::fs::write(
+        directory.join("package.json"),
+        serde_json::json!({"name": name, "version": "2.1.9"}).to_string(),
+    )
+    .unwrap();
+}
+
+#[cfg(unix)]
+#[tokio::test]
+async fn vitest_provider_selection_uses_installed_packages_at_the_execution_root() {
+    use std::os::unix::fs::PermissionsExt;
+    for (version, installed, expected) in [
+        ("1.1.0", vec!["istanbul"], Some("istanbul")),
+        ("2.1.9", vec!["v8"], Some("v8")),
+        ("3.2.4", vec!["istanbul"], Some("istanbul")),
+        ("4.1.5", vec!["v8"], Some("v8")),
+        ("5.0.0", vec!["istanbul"], Some("istanbul")),
+        ("0.31.0", vec!["c8"], Some("c8")),
+        ("4.1.5", vec!["v8", "istanbul"], None),
+        ("4.1.5", vec![], None),
+    ] {
+        let root = tempfile::tempdir().unwrap();
+        let execution = root.path().join("workspace");
+        std::fs::create_dir_all(execution.join("packages/a")).unwrap();
+        for provider in &installed {
+            // Hoisted packages must be found from a nested execution cwd.
+            install_recorded_provider(root.path(), provider);
+        }
+        // A package installed only in the target leaf is not resolvable by a
+        // runner invoked at its workspace root. Neither are unlinked store entries.
+        install_recorded_provider(&execution.join("packages/a"), "istanbul");
+        install_recorded_provider(&execution.join("node_modules/.pnpm/unrelated"), "v8");
+        let path = root.path().join("runner");
+        let script = format!(
+            r#"#!/usr/bin/python3
+import sys,pathlib
+providers=[arg for arg in sys.argv if arg.startswith('--coverage.provider=')]
+assert providers == {expected_args:?}, providers
+assert ('--coverage.all' in sys.argv) == {all}
+output=next(arg.split('=',1)[1] for arg in sys.argv if arg.startswith('--coverage.reportsDirectory='))
+pathlib.Path(output, 'lcov.info').write_text('SF:packages/a/index.ts\nDA:1,1\nend_of_record\n')
+"#,
+            expected_args = expected
+                .map(|provider| format!("--coverage.provider={provider}"))
+                .into_iter()
+                .collect::<Vec<_>>(),
+            all = if vitest_supports_all(version) {
+                "True"
+            } else {
+                "False"
+            }
+        );
+        std::fs::write(&path, script).unwrap();
+        std::fs::set_permissions(&path, std::fs::Permissions::from_mode(0o755)).unwrap();
+        let tool = ResolvedTool {
+            name: "vitest".into(),
+            path,
+            version: version.into(),
+            version_hint: None,
+        };
+        let settings = CoverageSettings {
+            root: "workspace/packages/a".into(),
+            invocation_root: Some("workspace".into()),
+            ..Default::default()
+        };
+        let run = run_coverage(
+            CoverageRequest {
+                tool: &tool,
+                settings: &settings,
+                tool_tree: root.path(),
+                worktree_root: None,
+                timeout: Duration::from_secs(10),
+                output_limit: 1024 * 1024,
+            },
+            &ProcessSupervisor::default(),
+            CancellationToken::new(),
+        )
+        .await;
+        if installed.is_empty() {
+            assert!(
+                matches!(
+                    run.outcome,
+                    CheckOutcome::Skipped {
+                        reason: SkipReason::ToolMissing,
+                        ..
+                    }
+                ),
+                "{:?}",
+                run.outcome
+            );
+            assert!(
+                run.outcome
+                    .details()
+                    .hint
+                    .as_deref()
+                    .unwrap()
+                    .starts_with("coverage_unavailable:")
+            );
+            assert!(run.processes.is_empty());
+            assert!(!execution.join(".rio-coverage").exists());
+        } else {
+            assert!(
+                matches!(run.outcome, CheckOutcome::Passed { .. }),
+                "{:?}",
+                run.outcome
+            );
+            assert_eq!(run.processes.len(), 1);
+        }
+    }
+}
+
+#[tokio::test]
+async fn vitest_static_browser_mode_skips_without_starting_the_runner() {
+    for (browser, enabled) in [
+        ("true", true),
+        ("{ enabled: true, provider: 'playwright' }", true),
+        ("{ 'enabled': true, name: 'chrome' }", true),
+        ("false", false),
+        ("{ enabled: false }", false),
+        ("{ enabled: process.env.BROWSER }", false),
+        ("{ ...options, enabled: true }", false),
+    ] {
+        let tree: Tree = [(
+            "vitest.config.ts".into(),
+            entry(&format!(
+                "export default defineConfig({{test:{{browser:{browser}}}}})"
+            )),
+        )]
+        .into();
+        let settings = typescript_coverage_settings(&tree, ".", "vitest", "4.1.5").unwrap();
+        assert_eq!(settings.vitest_browser_mode, enabled, "{browser}");
+        if enabled {
+            let temporary = tempfile::tempdir().unwrap();
+            let tool = ResolvedTool {
+                name: "vitest".into(),
+                path: temporary.path().join("does-not-exist"),
+                version: "4.1.5".into(),
+                version_hint: None,
+            };
+            let run = run_coverage(
+                CoverageRequest {
+                    tool: &tool,
+                    settings: &settings,
+                    tool_tree: temporary.path(),
+                    worktree_root: None,
+                    timeout: Duration::from_secs(10),
+                    output_limit: 1024,
+                },
+                &ProcessSupervisor::default(),
+                CancellationToken::new(),
+            )
+            .await;
+            assert!(matches!(
+                run.outcome,
+                CheckOutcome::Skipped {
+                    reason: SkipReason::NotSupportedByAdapter,
+                    ..
+                }
+            ));
+            assert!(
+                run.outcome
+                    .details()
+                    .hint
+                    .as_deref()
+                    .unwrap()
+                    .starts_with("coverage_unavailable: browser mode")
+            );
+            assert!(run.processes.is_empty());
+        }
+    }
 }

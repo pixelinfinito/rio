@@ -1,6 +1,5 @@
 use crate::{
-    Adapter, DiagnosticContext, parse_biome, parse_eslint, parse_mypy, parse_pyright, parse_ruff,
-    parse_tsc,
+    Adapter, DiagnosticContext, parse_eslint, parse_mypy, parse_pyright, parse_ruff, parse_tsc,
 };
 use crate::{ResolvedTool, ToolCommand};
 use anyhow::{Context, Result, bail};
@@ -149,13 +148,13 @@ impl Adapter for TypeScriptAdapter {
         &self,
         tool: &str,
         stdout: &[u8],
-        _stderr: &[u8],
+        stderr: &[u8],
         context: &DiagnosticContext<'_>,
     ) -> Result<Vec<Finding>> {
         match tool {
             "tsc" => parse_tsc(stdout, context),
             "eslint" => parse_eslint(stdout, context),
-            "biome" => parse_biome(stdout, context),
+            "biome" => crate::diagnostics::parse_biome_output(stdout, stderr, context),
             _ => bail!("unsupported TypeScript diagnostic tool {tool}"),
         }
     }
