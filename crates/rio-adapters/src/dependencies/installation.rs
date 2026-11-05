@@ -236,7 +236,14 @@ fn pnpm(worktree: &Path, installation_root: &str, installation: &mut Installatio
             }
         } else {
             let directory = super::pnpm::dep_path_to_filename(&key, max_length);
-            let package = store.join(directory).join("node_modules").join(&entry.name);
+            let package_path =
+                |directory: String| store.join(directory).join("node_modules").join(&entry.name);
+            let package = package_path(directory);
+            let package = if package.is_dir() {
+                package
+            } else {
+                package_path(super::pnpm::legacy_dep_path_to_filename(&key))
+            };
             if package.is_dir() {
                 let actual: Value =
                     serde_json::from_slice(&fs::read(package.join("package.json"))?)?;

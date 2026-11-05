@@ -189,3 +189,41 @@ pub(super) fn dep_path_to_filename(key: &str, max_length: usize) -> String {
     }
     filename
 }
+
+/// pnpm 8 (the historical tRPC evidence) used a 26-character base32 MD5
+/// suffix. Only try its exact path when the current SHA-256 path is absent.
+pub(super) fn legacy_dep_path_to_filename(key: &str) -> String {
+    use md5::{Digest, Md5};
+    let mut filename = key
+        .strip_prefix('/')
+        .unwrap_or(key)
+        .replace(['\\', '/', ':', '*', '?', '"', '<', '>', '|'], "+");
+    if filename.contains('(') {
+        if filename.ends_with(')') {
+            filename.pop();
+        }
+        filename = filename.replace(")(", "_").replace(['(', ')'], "_");
+    }
+    if filename.len() <= 120
+        && (filename == filename.to_lowercase() || filename.starts_with("file+"))
+    {
+        return filename;
+    }
+    let digest = Md5::digest(filename.as_bytes());
+    let alphabet = b"abcdefghijklmnopqrstuvwxyz234567";
+    let mut bits = 0u32;
+    let mut count = 0;
+    let mut hash = String::new();
+    for byte in digest {
+        bits = (bits << 8) | u32::from(byte);
+        count += 8;
+        while count >= 5 {
+            count -= 5;
+            hash.push(alphabet[((bits >> count) & 31) as usize] as char);
+        }
+    }
+    if count > 0 {
+        hash.push(alphabet[((bits << (5 - count)) & 31) as usize] as char);
+    }
+    format!("{}_{}", filename.chars().take(93).collect::<String>(), hash)
+}
