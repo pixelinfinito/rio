@@ -158,7 +158,6 @@ pub async fn plan_review_with_progress(
         .unwrap_or(false);
     let baseline = options["baseline"].as_bool().unwrap_or(true);
     let mut versions = BTreeMap::<(String, String, String), Option<ResolvedTool>>::new();
-    let base_source_changes = rio_git::changed_paths(working, &changes.base);
     let scheduled_roots: Vec<_> = scheduled
         .iter()
         .map(|root| root.project.path.clone())
@@ -248,21 +247,10 @@ pub async fn plan_review_with_progress(
         let base = compatibility(&changes.base, base_lock.as_ref(), false, true);
         let canonical_worktree = worktree.canonicalize()?;
         let baseline_remap = matches!(head, Compatibility::Trusted { .. })
-            || installation.links.values().any(|target| {
-                target
-                    .strip_prefix(&canonical_worktree)
-                    .is_ok_and(|relative| {
-                        let path = relative.to_string_lossy().replace('\\', "/");
-                        let prefix = if path.is_empty() {
-                            path
-                        } else {
-                            format!("{path}/")
-                        };
-                        base_source_changes
-                            .iter()
-                            .any(|path| path.starts_with(&prefix))
-                    })
-            });
+            || installation
+                .links
+                .values()
+                .any(|target| target.strip_prefix(&canonical_worktree).is_ok());
         let environment_path = if language == "typescript" {
             Some(worktree.join(&installation_root).join("node_modules"))
         } else {

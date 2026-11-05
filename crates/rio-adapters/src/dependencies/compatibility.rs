@@ -440,18 +440,16 @@ fn compatibility(request: CompatibilityRequest<'_>, remap: bool) -> Compatibilit
         } else {
             format!("{relative}/")
         };
-        if let Some(path) = source_changes.iter().find(|path| path.starts_with(&prefix)) {
-            if !remap {
-                return Compatibility::Mismatch {
-                    hint: format!(
-                        "linked dependency {name} points at changed source {relative}: {path}; make the installed source match the selected head"
-                    ),
-                };
-            }
-            if let Some(hint) = missing_build_output(request.selected, &relative, name) {
-                return Compatibility::Mismatch { hint };
-            }
+        // Missing generated entries are handled in the disposable base overlay,
+        // where source aliases and unchanged artifacts are available.
+        if !remap && let Some(path) = source_changes.iter().find(|path| path.starts_with(&prefix)) {
+            return Compatibility::Mismatch {
+                hint: format!(
+                    "linked dependency {name} points at changed source {relative}: {path}; make the installed source match the selected head"
+                ),
+            };
         }
+
         for (path, entry) in request
             .selected
             .iter()
@@ -550,64 +548,6 @@ fn compatibility(request: CompatibilityRequest<'_>, remap: bool) -> Compatibilit
     Compatibility::Verified {
         hash: hash(&inputs),
     }
-}
-
-// Entry points can be conditional exports or arrays, as well as main/types.
-pub(super) fn missing_build_output(tree: &Tree, root: &str, name: &str) -> Option<String> {
-    let manifest = tree.get(&join(root, "package.json"))?;
-    let manifest: Value = serde_json::from_slice(&manifest.content).ok()?;
-    fn strings(value: &Value, result: &mut Vec<String>) {
-        match value {
-            Value::String(value) => result.push(value.clone()),
-            Value::Array(values) => values.iter().for_each(|value| strings(value, result)),
-            Value::Object(values) => values.values().for_each(|value| strings(value, result)),
-            _ => {}
-        }
-    }
-    let mut entries = Vec::new();
-    for key in [
-        "main",
-        "module",
-        "types",
-        "typings",
-        "exports",
-        "typesVersions",
-    ] {
-        strings(&manifest[key], &mut entries);
-    }
-    for entry in entries {
-        let entry = entry.trim_start_matches("./");
-        let directory = entry.split('/').next()?;
-        if entry.is_empty() || directory == ".." {
-            continue;
-        }
-        let path = join(root, entry);
-        let prefix = format!("{path}/");
-        let present = if path.contains('*') {
-            globset::Glob::new(&path).ok().is_some_and(|glob| {
-                let matcher = glob.compile_matcher();
-                tree.keys().any(|path| matcher.is_match(path))
-            })
-        } else {
-            tree.contains_key(&path) || tree.keys().any(|path| path.starts_with(&prefix))
-        };
-        if !present {
-            if directory == "src" {
-                return Some(format!(
-                    "linked package {name} source entry point {entry} is absent from the base tree; cannot remap"
-                ));
-            }
-            let output = if entry.contains('/') {
-                format!("{directory}/")
-            } else {
-                entry.to_owned()
-            };
-            return Some(format!(
-                "linked package {name} is consumed through build output {output} that is not in the tree; run the build in the base or configure source entry points"
-            ));
-        }
-    }
-    None
 }
 
 fn same_version(actual: &str, expected: &str, ecosystem: Ecosystem) -> bool {

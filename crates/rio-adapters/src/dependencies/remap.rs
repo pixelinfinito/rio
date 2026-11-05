@@ -1,6 +1,6 @@
 //! Private dependency overlays for base runs. Never write through an installation link.
 use std::{
-    collections::BTreeSet,
+    collections::{BTreeMap, BTreeSet},
     fs,
     path::{Path, PathBuf},
 };
@@ -9,6 +9,28 @@ use anyhow::{Context, Result, bail, ensure};
 use rio_git::{DependencyLink, Tree, changed_paths};
 
 use crate::ToolCommand;
+
+/// Resolution changes owned by one disposable base tree.
+#[derive(Debug, Default)]
+pub struct BaseDependencyRemap {
+    pub packages: usize,
+    pub source_paths: BTreeMap<String, Vec<String>>,
+    pub unavailable: Vec<String>,
+    source_root: PathBuf,
+}
+
+impl BaseDependencyRemap {
+    /// Source aliases affect TypeScript only. Linters retain their normal
+    /// configuration and never execute a source file in place of built JS.
+    pub fn configure_typescript(&self, command: &mut ToolCommand) -> Result<()> {
+        ensure!(
+            self.unavailable.is_empty(),
+            "{}",
+            self.unavailable.join("; ")
+        );
+        super::source_entries::configure_typescript(command, &self.source_paths, &self.source_root)
+    }
+}
 
 /// Overlay installation directories inside an already disposable source tree.
 /// The installation's files remain shared, but directory entries and editable
@@ -20,7 +42,7 @@ pub fn remap_base_dependencies(
     working: &Tree,
     base: &Tree,
     stop: &dyn Fn() -> bool,
-) -> Result<usize> {
+) -> Result<BaseDependencyRemap> {
     let worktree = worktree.canonicalize()?;
     let changed = changed_paths(working, base);
     let mut overlay = Overlay {
@@ -29,9 +51,15 @@ pub fn remap_base_dependencies(
         links,
         changed: &changed,
         remapped: BTreeSet::new(),
+        prepared: BTreeSet::new(),
         mapped_sources: BTreeSet::new(),
         required_editables: BTreeSet::new(),
         base,
+        working,
+        resolution: BaseDependencyRemap {
+            source_root: destination.canonicalize()?,
+            ..Default::default()
+        },
         stop,
     };
     for link in links {
@@ -53,7 +81,8 @@ pub fn remap_base_dependencies(
             target.display()
         );
     }
-    Ok(overlay.remapped.len())
+    overlay.resolution.packages = overlay.remapped.len();
+    Ok(overlay.resolution)
 }
 
 struct Overlay<'a> {
@@ -62,9 +91,12 @@ struct Overlay<'a> {
     links: &'a [DependencyLink],
     changed: &'a [String],
     remapped: BTreeSet<PathBuf>,
+    prepared: BTreeSet<PathBuf>,
     mapped_sources: BTreeSet<PathBuf>,
     required_editables: BTreeSet<PathBuf>,
     base: &'a Tree,
+    working: &'a Tree,
+    resolution: BaseDependencyRemap,
     stop: &'a dyn Fn() -> bool,
 }
 
@@ -103,14 +135,19 @@ impl Overlay<'_> {
                 "linked dependency points at changed source {} that is absent from the base tree; cannot remap",
                 relative.display()
             );
-            if let Some(hint) = super::compatibility::missing_build_output(
-                self.base,
-                &relative.to_string_lossy().replace('\\', "/"),
-                &relative.display().to_string(),
-            ) {
-                bail!("{hint}");
-            }
             self.remapped.insert(scope.into());
+        }
+        if target.is_dir() && self.prepared.insert(relative.into()) {
+            self.remapped.insert(relative.into());
+            super::source_entries::prepare_package(
+                self.worktree,
+                self.destination,
+                relative,
+                self.working,
+                self.base,
+                &mut self.resolution,
+                self.stop,
+            )?;
         }
         Ok(self.destination.join(relative))
     }

@@ -754,7 +754,7 @@ exit 2
 
 #[cfg(unix)]
 #[tokio::test]
-async fn unavailable_baseline_scopes_occurrences_to_changed_hunks_and_context() {
+async fn unavailable_baseline_annotates_hunks_but_shows_every_occurrence() {
     for failed_run in [false, true] {
         let temp = tempfile::tempdir().unwrap();
         let root = temp.path();
@@ -798,23 +798,16 @@ exit 2
             .find(|f| f.location.path == "a.ts")
             .unwrap();
         assert_eq!(changed.state, State::Unclassified);
-        assert_eq!(changed.location.line_start, 7);
+        assert_eq!(changed.location.line_start, 6);
         for location in &changed.locations {
-            assert_eq!(
-                location.occurrence_state,
-                if [7, 10, 13].contains(&location.line_start) {
-                    OccurrenceState::Unclassified
-                } else {
-                    OccurrenceState::PreExisting
-                }
-            );
+            assert_eq!(location.occurrence_state, OccurrenceState::Unclassified);
         }
         let unchanged = report
             .findings
             .iter()
             .find(|f| f.location.path == "b.ts")
             .unwrap();
-        assert_eq!(unchanged.state, State::PreExisting);
+        assert_eq!(unchanged.state, State::Unclassified);
         assert!(
             unchanged
                 .evidence
@@ -823,9 +816,9 @@ exit 2
         );
         assert!(changed.evidence.iter().any(|e| e.contains("a.ts:14")));
         let default = render_markdown(&report, &RenderOptions::default());
-        assert!(!default.contains("Unchanged file."));
-        assert!(!default.contains("a.ts:6"));
-        assert!(!default.contains("a.ts:14"));
+        assert!(default.contains("Unchanged file."));
+        assert!(default.contains("a.ts:6"));
+        assert!(default.contains("a.ts:14"));
         let expanded = render_markdown(
             &report,
             &RenderOptions {
@@ -848,6 +841,82 @@ exit 2
                 }))
         );
     }
+}
+
+#[cfg(unix)]
+#[tokio::test]
+async fn successful_baseline_in_one_root_does_not_classify_another_roots_findings() {
+    let temp = tempfile::tempdir().unwrap();
+    let root = temp.path();
+    let profile = diagnostic_fixture(root, false);
+    fs::write(root.join("shared.ts"), "export const shared = 1;\n").unwrap();
+    for name in ["a", "b"] {
+        let package = root.join("packages").join(name);
+        fs::create_dir_all(package.join("node_modules")).unwrap();
+        fs::write(
+            package.join("package.json"),
+            format!("{{\"name\":\"{name}\",\"version\":\"1.0.0\"}}"),
+        )
+        .unwrap();
+        fs::write(package.join("tsconfig.json"), "{\"files\":[\"source.ts\"]}").unwrap();
+        let lock = "{\"lockfileVersion\":3,\"packages\":{\"\":{}}}";
+        fs::write(package.join("package-lock.json"), lock).unwrap();
+        fs::write(package.join("node_modules/.package-lock.json"), lock).unwrap();
+        fs::write(package.join("source.ts"), "export const value = 1;\n").unwrap();
+    }
+    fs::write(
+        root.join("node_modules/.bin/tsc"),
+        r#"#!/bin/sh
+if [ "$1" = --version ]; then echo 'Version 5.7.3'; exit 0; fi
+if [ "$(basename "$PWD")" = b ] && ! grep -q changed source.ts; then exit 77; fi
+if [ "$(basename "$PWD")" = b ]; then sleep 1; fi
+echo 'source.ts(1,1): error TS2322: Same diagnostic in each root.'
+echo '../../shared.ts(1,1): error TS2345: Shared diagnostic from both roots.'
+exit 2
+"#,
+    )
+    .unwrap();
+    git(root, &["add", "."]);
+    git(root, &["commit", "-m", "two check roots"]);
+    for name in ["a", "b"] {
+        fs::write(
+            root.join("packages").join(name).join("source.ts"),
+            "export const value = 2; // changed\n",
+        )
+        .unwrap();
+    }
+    let report = review(
+        request(root, profile),
+        ProcessSupervisor::default(),
+        CancellationToken::new(),
+        None,
+    )
+    .await
+    .unwrap();
+    for (name, expected) in [("a", State::PreExisting), ("b", State::Unclassified)] {
+        let finding = report
+            .findings
+            .iter()
+            .find(|finding| finding.location.path == format!("packages/{name}/source.ts"))
+            .unwrap();
+        assert_eq!(finding.state, expected, "{report:#?}");
+    }
+    let shared = report
+        .findings
+        .iter()
+        .find(|finding| finding.location.path == "shared.ts")
+        .unwrap();
+    assert_eq!(
+        shared.state,
+        State::Unclassified,
+        "a successful root cannot hide another root's unclassified diagnostic"
+    );
+    assert!(report.checks.iter().any(|check| check.root == "packages/a"
+        && check.version == Version::Base
+        && matches!(check.outcome, CheckOutcome::Findings { .. })));
+    assert!(report.checks.iter().any(|check| check.root == "packages/b"
+        && check.version == Version::Base
+        && matches!(check.outcome, CheckOutcome::Failed { .. })));
 }
 
 #[cfg(unix)]

@@ -48,7 +48,38 @@ Mypy preserves explicit `files`, `packages` and `modules` from its project confi
 
 Tools resolve from project and ancestor installations (`node_modules/.bin`, `.venv`/`venv`), then `VIRTUAL_ENV` for Python, then PATH. Runtime resolution never downloads tools. Version probes also use disposable directories and supervision. Missing tools become skips with install hints. Project configuration is read from the selected immutable source, including governing workspace lockfiles; an absent supported configuration becomes `no_project_config`.
 
-Diagnostic parsers normalize temporary absolute paths and workspace links back to repository paths. Each finding identifies its rule, tool/version, normalized message, source symbol and locations. Identity is computed before redaction. Baseline typecheck/lint findings are mapped through the diff at occurrence level; extra identical occurrences yield a grouped `worsened` finding. Failed or incompatible baselines retain `unclassified` diagnostics only within changed hunks and three lines of context; other occurrences become pre-existing, with evidence naming the fallback. The footer explains why the baseline is unavailable. Trusted dependencies permit baseline classification in the same installed environment unless the base has a known mismatch.
+Diagnostic parsers normalize temporary absolute paths and workspace links back to repository paths. Each finding identifies its rule, tool/version, normalized message, source symbol and locations. Identity is computed before redaction. Baseline typecheck/lint findings are mapped through the diff at occurrence level; extra identical occurrences yield a grouped `worsened` finding. Only a successfully parsed, completed base diagnostic run for the same check and project root permits `pre-existing` or `fixed` classification. Failed, disabled or incompatible baselines leave every head occurrence `unclassified`, including diagnostics in unchanged files. Locations outside changed hunks and three lines of context receive an evidence annotation; that annotation never hides a finding. The footer explains why the baseline is unavailable. Trusted dependencies permit baseline classification in the same installed environment unless the base has a known mismatch.
+
+## Linked workspace baselines
+
+Base runs use a private dependency overlay so workspace links and Python editable
+installations resolve to the materialized base source. Missing ignored package
+entry points (`dist/`, `build/`, or root files such as `index.cjs`) are handled
+when that overlay is prepared, rather than rejected by lockfile verification.
+
+For TypeScript, Rio discovers tracked source entries from `source`/`development`
+fields, export conditions (including custom source conditions), `publishConfig`
+source exports, or conventional `src/index.ts`. Named and wildcard export
+subpaths can map to their declared source or `src/<subpath>.ts` and
+`src/<subpath>/index.ts`. A generated per-run tsconfig extends the original,
+merges inherited `paths` using their original path origins, and maps linked
+package names to base source. Unrelated aliases and explicit project references
+are retained. The no-emit source check widens `rootDir` to the materialized tree
+and disables composite file-list restrictions so imported sibling sources can
+replace declarations. Original configs, shared cached trees and HEAD files are
+never edited. These aliases apply only to TypeScript, not runtime loading.
+
+When no source mapping is available, Rio copies existing HEAD build output into
+the private base tree only if a content-and-mode hash of **all tracked package
+inputs** matches base. This includes source additions/deletions and config or
+manifest changes. Artifacts are copied, never shared writable links; symlinked
+artifacts are rejected, and tracked base files take precedence. A missing build
+or changed package without a source entry produces a `baseline_failed` footer
+note naming the package, entry and remedy; its head diagnostics stay visible as
+`unclassified`. An external base checkout's build is not consumed. Rio does not
+run build commands automatically; configurable baseline build commands are not
+implemented. Linked overlay baselines run each invocation instead of reusing a
+diagnostic cache whose key cannot attest untracked artifact contents.
 
 ## Coverage and syntax
 

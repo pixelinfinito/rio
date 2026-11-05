@@ -86,8 +86,8 @@ pub fn classify_and_group(
     classify_and_group_scoped(base, head, map_line, |_| true)
 }
 
-/// With no baseline, retain unclassified occurrences only in the caller's
-/// changed-line scope. Other occurrences are treated as pre-existing.
+/// With no baseline, changed-line scope is an annotation only. Every head
+/// occurrence remains unclassified, including diagnostics in unchanged files.
 pub fn classify_and_group_scoped(
     base: Option<Vec<Finding>>,
     head: Vec<Finding>,
@@ -173,15 +173,13 @@ pub fn classify_and_group_scoped(
             for (index, head) in occurrences.head.iter().enumerate() {
                 let mut location = head.location.clone();
                 location.occurrence_state = if !baseline_obtained {
-                    if in_changed_scope(&location) {
-                        OccurrenceState::Unclassified
-                    } else {
+                    if !in_changed_scope(&location) {
                         grouped.evidence.push(format!(
                             "unclassified: outside changed hunks, baseline unavailable ({}:{})",
                             location.path, location.line_start
                         ));
-                        OccurrenceState::PreExisting
                     }
+                    OccurrenceState::Unclassified
                 } else if used_head[index] {
                     OccurrenceState::PreExisting
                 } else {

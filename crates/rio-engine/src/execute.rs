@@ -256,11 +256,14 @@ impl Execution {
                 &|| self.before().is_some(),
             )?
         } else {
-            0
+            BaseDependencyRemap::default()
         };
         let tool = check.tool.as_ref().context("no diagnostic tool")?;
         let mut command = diagnostic_command(tool, tree, disposable.path(), &check.root, &targets)?;
-        if remapped > 0 {
+        if version == Version::Base && tool.name == "tsc" {
+            remapped.configure_typescript(&mut command)?;
+        }
+        if remapped.packages > 0 {
             configure_base_command(
                 &mut command,
                 &self.request.worktree,
@@ -291,8 +294,11 @@ impl Execution {
         let spec = tool_contract(&adapter.manifest().name, key(check.kind), &tool.name)?;
         let mut outcome = evaluate_exit(&result, &spec.exit_codes, parsed);
         outcome.details_mut().dependency_state = check.dependency_state;
-        if remapped > 0 {
-            let note = format!("baseline: {remapped} linked packages remapped to base");
+        if remapped.packages > 0 {
+            let note = format!(
+                "baseline: {} linked packages remapped to base",
+                remapped.packages
+            );
             let hint = &mut outcome.details_mut().hint;
             *hint = Some(
                 hint.as_ref()
@@ -327,14 +333,16 @@ impl Execution {
     async fn baseline(&self, check: &PlannedCheck) -> Result<(CheckEntry, bool)> {
         // Unverified installation metadata cannot prove that a prior run used
         // this environment. Compare trusted head/base results within this run.
-        if check.dependency_state == Some(DependencyState::Trusted) {
+        // Linked overlays may consume untracked artifacts. Rebuild and run
+        // them per invocation rather than reuse a cache keyed by tracked inputs.
+        if check.dependency_state == Some(DependencyState::Trusted) || check.baseline_remap {
             return self.diagnostic(check, Version::Base).await;
         }
         let tool = check.tool.as_ref().context("no baseline tool")?;
         let mut targets = check.targets.clone();
         targets.sort();
         let input = serde_json::to_vec(
-            &serde_json::json!({"version":1,"root":check.root,"kind":check.kind,"tool":tool.name,"tool_version":tool.version,"targets":targets,"dependencies":check.dependency_hash,"dependency_state":check.dependency_state,"invocation":"rio-diagnostic-v3-remapped"}),
+            &serde_json::json!({"version":1,"root":check.root,"kind":check.kind,"tool":tool.name,"tool_version":tool.version,"targets":targets,"dependencies":check.dependency_hash,"dependency_state":check.dependency_state,"invocation":"rio-diagnostic-v4-source-overlay"}),
         )?;
         let hash = blake3::hash(&input).to_hex().to_string();
         let relative = format!(
@@ -1015,9 +1023,26 @@ pub async fn review(
     Ok(report)
 }
 fn deduplicate(findings: Vec<Finding>) -> Vec<Finding> {
+    // A diagnostic can be reported by several roots with different baseline
+    // availability. Completion order must never let a hidden result discard
+    // an unclassified (or proven introduced) occurrence from another root.
+    fn priority(state: State) -> u8 {
+        match state {
+            State::Worsened => 4,
+            State::New => 3,
+            State::Unclassified => 2,
+            State::PreExisting => 1,
+            State::Fixed => 0,
+        }
+    }
     let mut unique = BTreeMap::new();
     for finding in findings {
-        unique.entry(finding.id.clone()).or_insert(finding);
+        let current = unique
+            .entry(finding.id.clone())
+            .or_insert_with(|| finding.clone());
+        if priority(finding.state) > priority(current.state) {
+            *current = finding;
+        }
     }
     unique.into_values().collect()
 }

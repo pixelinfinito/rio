@@ -581,7 +581,7 @@ fn yarn_classic_workspace_links_are_resolved_using_workspace_manifests() {
 
 #[cfg(unix)]
 #[test]
-fn baseline_remaps_source_but_rejects_untracked_build_entry_points() {
+fn baseline_defers_untracked_build_entry_points_to_private_overlay() {
     use rio_adapters::check_base_compatibility;
     let root = tempfile::tempdir().unwrap();
     let lock = serde_json::json!({"lockfileVersion":3,"packages":{
@@ -624,11 +624,7 @@ fn baseline_remaps_source_but_rejects_untracked_build_entry_points() {
             .graph,
     );
     for field in ["types", "main", "exports"] {
-        for (entry, compiled) in [
-            ("./src/index.ts", false),
-            ("./dist/index.js", true),
-            ("./index.cjs", true),
-        ] {
+        for entry in ["./src/index.ts", "./dist/index.js", "./index.cjs"] {
             let mut selected = base.clone();
             // A tracked placeholder does not make ignored build output usable.
             put(
@@ -660,25 +656,7 @@ fn baseline_remaps_source_but_rejects_untracked_build_entry_points() {
                 environment: &DependencyEnvironment::default(),
                 trust: false,
             });
-            if compiled {
-                assert!(
-                    matches!(result, Compatibility::Mismatch { .. }),
-                    "{result:?}"
-                );
-                assert!(
-                    result
-                        .hint()
-                        .unwrap()
-                        .contains(if entry.starts_with("./dist/") {
-                            "consumed through build output dist/ that is not in the tree"
-                        } else {
-                            "consumed through build output index.cjs that is not in the tree"
-                        })
-                );
-                assert!(!result.hint().unwrap().contains("commit or stash"));
-            } else {
-                assert!(result.can_run(), "{result:?}");
-            }
+            assert!(result.can_run(), "{result:?}");
         }
     }
 }

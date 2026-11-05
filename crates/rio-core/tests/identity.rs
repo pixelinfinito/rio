@@ -137,16 +137,16 @@ proptest! {
 }
 
 #[test]
-fn missing_baseline_scopes_each_occurrence_before_grouping() {
+fn missing_baseline_annotates_scope_without_hiding_any_occurrence() {
     use rio_core::classify_and_group_scoped;
     let head = vec![diagnostic(2), diagnostic(8)];
     let result =
         classify_and_group_scoped(None, head.clone(), |_, _| None, |l| l.line_start == 8).unwrap();
     assert_eq!(result[0].state, State::Unclassified);
-    assert_eq!(result[0].location.line_start, 8);
+    assert_eq!(result[0].location.line_start, 2);
     assert_eq!(
         result[0].locations[0].occurrence_state,
-        OccurrenceState::PreExisting
+        OccurrenceState::Unclassified
     );
     assert_eq!(
         result[0].locations[1].occurrence_state,
@@ -159,7 +159,7 @@ fn missing_baseline_scopes_each_occurrence_before_grouping() {
             .any(|e| e.contains("baseline unavailable"))
     );
     let result = classify_and_group_scoped(None, head.clone(), |_, _| None, |_| false).unwrap();
-    assert_eq!(result[0].state, State::PreExisting);
+    assert_eq!(result[0].state, State::Unclassified);
     let result = classify_and_group_scoped(Some(vec![]), head, |_, _| None, |_| false).unwrap();
     assert_eq!(
         result[0].state,
