@@ -1,0 +1,36 @@
+Resolved 171 packages in 12ms
+Prepared 1 package in 2.01s
+Installed 33 packages in 76ms
+ + ansi2html==1.9.2
+ + asttokens==2.4.1
+ + cfgv==3.4.0
+ + cloudpickle==3.1.2
+ + colorama==0.4.6
+ + devtools==0.12.2
+ + distlib==0.4.4
+ + executing==2.2.0
+ + filelock==3.32.7
+ + greenlet==3.5.6
+ + griffe==1.5.5
+ + hypothesis==6.147.0
+ + identify==2.6.15
+ + inline-snapshot==0.32.2
+ + jinja2==3.1.6
+ + linkify-it-py==2.0.3
+ + markupsafe==3.0.3
+ + maturin==1.16.0
+ + mdit-py-plugins==0.4.2
+ + memray==1.19.3
+ + numpy==2.3.4
+ + pandas==2.3.3
+ + pre-commit==4.4.0
+ + pytest-memray==1.7.0
+ + pytest-timeout==2.4.0
+ + python-discovery==1.6.1
+ + pyyaml==6.0.3
+ + sortedcontainers==2.4.0
+ + sqlalchemy==2.0.37
+ + textual==1.0.0
+ + tzdata==2025.1
+ + uc-micro-py==1.0.3
+ + virtualenv==21.14.9

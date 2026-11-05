@@ -1,0 +1,38 @@
+{
+  "base": [
+    [
+      "uv",
+      "sync",
+      "--locked",
+      "--python",
+      "3.12.12",
+      "--group",
+      "dev",
+      "--group",
+      "linting",
+      "--group",
+      "typechecking",
+      "--group",
+      "coverage",
+      "--all-extras"
+    ]
+  ],
+  "head": [
+    [
+      "uv",
+      "sync",
+      "--locked",
+      "--python",
+      "3.12.12",
+      "--group",
+      "dev",
+      "--group",
+      "linting",
+      "--group",
+      "typechecking",
+      "--group",
+      "coverage",
+      "--all-extras"
+    ]
+  ]
+}

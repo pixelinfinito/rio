@@ -1,0 +1,10 @@
+from pathlib import Path
+import subprocess,json,os,time
+root=Path('/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence')
+for name in ['positive-base','positive-head','negative-base','negative-head']:
+ cwd=Path('/dev/shm/rio-pydantic')/name;out=root/name
+ cmd=['uv','run','--no-sync','pyright','--outputjson','pydantic'];start=time.monotonic()
+ with (out/'package-pyright.stdout.json').open('w') as so,(out/'package-pyright.stderr.log').open('w') as se:
+  code=subprocess.run(cmd,cwd=cwd,stdout=so,stderr=se,env={**os.environ,'UV_CACHE_DIR':'/dev/shm/rio-pydantic/uv-cache'},timeout=600).returncode
+ (out/'package-pyright-command.json').write_text(json.dumps({'argv':cmd,'cwd':str(cwd),'exit_code':code,'wall_time_ms':int((time.monotonic()-start)*1000)},indent=2)+'\n')
+ print(name,code,flush=True)

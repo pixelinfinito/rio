@@ -1,0 +1,29 @@
+680072 execve("/usr/bin/python3", ["python3", "eval/runner.py", "--repository", "pydantic/pydantic", "--pr", "14199", "--base", "a9f3f3fccc180c05190df0478a17487ec9908e4e", "--head", "262700f815672fc37ed637a1604234f6c7cc7ee9", "--languages", "python", "--rio", "/home/ubuntu/rio/target/release/rio", "--install-plan", "eval/runs/pydantic-evidence/install-plan-without-startup-hook.json", "--profile", "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/profile.yaml", "--temp-root", "/dev/shm/rio-pydantic/tmp", "--timeout", "1800", "--out", "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14199"], 0x7fffbc1fb260 /* 48 vars */) = 0
+680080 chdir("/dev/shm/rio-pydantic/tmp/rio-eval-o8jyjmtv") = 0
+680080 execve("/home/ubuntu/.cargo/bin/git", ["git", "clone", "--no-checkout", "https://github.com/pydantic/pydantic.git", "/dev/shm/rio-pydantic/tmp/rio-eval-o8jyjmtv/head"], 0x73137306ed80 /* 48 vars */) = -1 ENOENT (No such file or directory)
+680080 execve("/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path/git", ["git", "clone", "--no-checkout", "https://github.com/pydantic/pydantic.git", "/dev/shm/rio-pydantic/tmp/rio-eval-o8jyjmtv/head"], 0x73137306ed80 /* 48 vars */) = -1 ENOENT (No such file or directory)
+680080 execve("/tmp/rio-acceptance-tools/git", ["git", "clone", "--no-checkout", "https://github.com/pydantic/pydantic.git", "/dev/shm/rio-pydantic/tmp/rio-eval-o8jyjmtv/head"], 0x73137306ed80 /* 48 vars */) = -1 ENOENT (No such file or directory)
+680080 execve("/home/ubuntu/.local/bin/git", ["git", "clone", "--no-checkout", "https://github.com/pydantic/pydantic.git", "/dev/shm/rio-pydantic/tmp/rio-eval-o8jyjmtv/head"], 0x73137306ed80 /* 48 vars */) = -1 ENOENT (No such file or directory)
+680080 execve("/home/ubuntu/.local/bin/git", ["git", "clone", "--no-checkout", "https://github.com/pydantic/pydantic.git", "/dev/shm/rio-pydantic/tmp/rio-eval-o8jyjmtv/head"], 0x73137306ed80 /* 48 vars */) = -1 ENOENT (No such file or directory)
+680080 execve("/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg/git", ["git", "clone", "--no-checkout", "https://github.com/pydantic/pydantic.git", "/dev/shm/rio-pydantic/tmp/rio-eval-o8jyjmtv/head"], 0x73137306ed80 /* 48 vars */) = -1 ENOENT (No such file or directory)
+680080 execve("/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path/git", ["git", "clone", "--no-checkout", "https://github.com/pydantic/pydantic.git", "/dev/shm/rio-pydantic/tmp/rio-eval-o8jyjmtv/head"], 0x73137306ed80 /* 48 vars */) = -1 ENOENT (No such file or directory)
+680080 execve("/home/ubuntu/.local/bin/git", ["git", "clone", "--no-checkout", "https://github.com/pydantic/pydantic.git", "/dev/shm/rio-pydantic/tmp/rio-eval-o8jyjmtv/head"], 0x73137306ed80 /* 48 vars */) = -1 ENOENT (No such file or directory)
+680080 execve("/usr/local/sbin/git", ["git", "clone", "--no-checkout", "https://github.com/pydantic/pydantic.git", "/dev/shm/rio-pydantic/tmp/rio-eval-o8jyjmtv/head"], 0x73137306ed80 /* 48 vars */) = -1 ENOENT (No such file or directory)
+680080 execve("/usr/local/bin/git", ["git", "clone", "--no-checkout", "https://github.com/pydantic/pydantic.git", "/dev/shm/rio-pydantic/tmp/rio-eval-o8jyjmtv/head"], 0x73137306ed80 /* 48 vars */) = -1 ENOENT (No such file or directory)
+680080 execve("/usr/sbin/git", ["git", "clone", "--no-checkout", "https://github.com/pydantic/pydantic.git", "/dev/shm/rio-pydantic/tmp/rio-eval-o8jyjmtv/head"], 0x73137306ed80 /* 48 vars */) = -1 ENOENT (No such file or directory)
+680080 execve("/usr/bin/git", ["git", "clone", "--no-checkout", "https://github.com/pydantic/pydantic.git", "/dev/shm/rio-pydantic/tmp/rio-eval-o8jyjmtv/head"], 0x73137306ed80 /* 48 vars */) = 0
+680081 execve("/usr/lib/git-core/git", ["/usr/lib/git-core/git", "remote-https", "origin", "https://github.com/pydantic/pydantic.git"], 0x5e9a2b0d4d20 /* 50 vars */) = 0
+680082 execve("/usr/lib/git-core/git-remote-https", ["/usr/lib/git-core/git-remote-https", "origin", "https://github.com/pydantic/pydantic.git"], 0x62bcf6a4c480 /* 50 vars */) = 0
+680090 +++ exited with 0 +++
+680180 execve("/usr/lib/git-core/git", ["/usr/lib/git-core/git", "index-pack", "--stdin", "--fix-thin", "--keep=fetch-pack 680080 on vm-team-t3-dev-01", "--check-self-contained-and-connected"], 0x5e9a2b0d4d20 /* 50 vars */) = 0
+680072 --- SIGINT {si_signo=SIGINT, si_code=SI_USER, si_pid=681374, si_uid=1000} ---
+680179 +++ killed by SIGKILL +++
+680080 +++ killed by SIGKILL +++
+680072 --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_KILLED, si_pid=680080, si_uid=1000, si_status=SIGKILL, si_utime=12 /* 0.12 s */, si_stime=161 /* 1.61 s */} ---
+680082 --- SIGPIPE {si_signo=SIGPIPE, si_code=SI_USER, si_pid=680082, si_uid=1000} ---
+680082 +++ killed by SIGPIPE +++
+680081 --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_KILLED, si_pid=680082, si_uid=1000, si_status=SIGPIPE, si_utime=66 /* 0.66 s */, si_stime=169 /* 1.69 s */} ---
+680081 +++ exited with 141 +++
+680072 --- SIGINT {si_signo=SIGINT, si_code=SI_USER, si_pid=680072, si_uid=1000} ---
+680072 +++ killed by SIGINT +++
+680180 +++ exited with 128 +++

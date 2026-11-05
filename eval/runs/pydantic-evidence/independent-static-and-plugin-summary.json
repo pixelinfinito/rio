@@ -1,0 +1,212 @@
+{
+  "positive": {
+    "base_pyright_count": 12,
+    "head_pyright_count": 12,
+    "identical_diagnostics": true,
+    "normalized_diagnostics": [
+      [
+        "tests/test_pipeline.py",
+        109,
+        27,
+        "reportArgumentType",
+        "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\"\n\u00a0\u00a0\"Annotated\" is not assignable to \"TypeForm[Any]\""
+      ],
+      [
+        "tests/test_pipeline.py",
+        137,
+        27,
+        "reportArgumentType",
+        "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\"\n\u00a0\u00a0\"Annotated\" is not assignable to \"TypeForm[Any]\""
+      ],
+      [
+        "tests/test_pipeline.py",
+        164,
+        27,
+        "reportArgumentType",
+        "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\"\n\u00a0\u00a0\"Annotated\" is not assignable to \"TypeForm[Any]\""
+      ],
+      [
+        "tests/test_pipeline.py",
+        235,
+        27,
+        "reportArgumentType",
+        "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\"\n\u00a0\u00a0\"Annotated\" is not assignable to \"TypeForm[Any]\""
+      ],
+      [
+        "tests/test_pipeline.py",
+        300,
+        27,
+        "reportArgumentType",
+        "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\"\n\u00a0\u00a0\"Annotated\" is not assignable to \"TypeForm[Any]\""
+      ],
+      [
+        "tests/test_pipeline.py",
+        449,
+        31,
+        "reportArgumentType",
+        "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n\u00a0\u00a0\"Annotated\" is not assignable to \"TypeForm[int]\""
+      ],
+      [
+        "tests/test_pipeline.py",
+        455,
+        9,
+        "reportArgumentType",
+        "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n\u00a0\u00a0\"Annotated\" is not assignable to \"TypeForm[int]\""
+      ],
+      [
+        "tests/test_pipeline.py",
+        455,
+        86,
+        "reportArgumentType",
+        "Argument of type \"type[float]\" cannot be assigned to parameter \"func\" of type \"(int) -> bool\" in function \"predicate\"\n\u00a0\u00a0Type \"type[float]\" is not assignable to type \"(int) -> bool\"\n\u00a0\u00a0\u00a0\u00a0Function return type \"float\" is incompatible with type \"bool\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"float\" is not assignable to \"bool\""
+      ],
+      [
+        "tests/test_pipeline.py",
+        558,
+        27,
+        "reportArgumentType",
+        "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n\u00a0\u00a0\"Annotated\" is not assignable to \"TypeForm[int]\""
+      ],
+      [
+        "tests/test_pipeline.py",
+        565,
+        27,
+        "reportArgumentType",
+        "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n\u00a0\u00a0\"Annotated\" is not assignable to \"TypeForm[int]\""
+      ],
+      [
+        "tests/test_pipeline.py",
+        572,
+        27,
+        "reportArgumentType",
+        "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n\u00a0\u00a0\"Annotated\" is not assignable to \"TypeForm[int]\""
+      ],
+      [
+        "tests/test_pipeline.py",
+        579,
+        27,
+        "reportArgumentType",
+        "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n\u00a0\u00a0\"Annotated\" is not assignable to \"TypeForm[int]\""
+      ]
+    ],
+    "base_ruff": [],
+    "head_ruff": []
+  },
+  "negative": {
+    "base_pyright_count": 12,
+    "head_pyright_count": 12,
+    "identical_diagnostics": true,
+    "normalized_diagnostics": [
+      [
+        "tests/test_pipeline.py",
+        109,
+        27,
+        "reportArgumentType",
+        "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\"\n\u00a0\u00a0\"Annotated\" is not assignable to \"TypeForm[Any]\""
+      ],
+      [
+        "tests/test_pipeline.py",
+        137,
+        27,
+        "reportArgumentType",
+        "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\"\n\u00a0\u00a0\"Annotated\" is not assignable to \"TypeForm[Any]\""
+      ],
+      [
+        "tests/test_pipeline.py",
+        164,
+        27,
+        "reportArgumentType",
+        "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\"\n\u00a0\u00a0\"Annotated\" is not assignable to \"TypeForm[Any]\""
+      ],
+      [
+        "tests/test_pipeline.py",
+        235,
+        27,
+        "reportArgumentType",
+        "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\"\n\u00a0\u00a0\"Annotated\" is not assignable to \"TypeForm[Any]\""
+      ],
+      [
+        "tests/test_pipeline.py",
+        300,
+        27,
+        "reportArgumentType",
+        "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\"\n\u00a0\u00a0\"Annotated\" is not assignable to \"TypeForm[Any]\""
+      ],
+      [
+        "tests/test_pipeline.py",
+        449,
+        31,
+        "reportArgumentType",
+        "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n\u00a0\u00a0\"Annotated\" is not assignable to \"TypeForm[int]\""
+      ],
+      [
+        "tests/test_pipeline.py",
+        455,
+        9,
+        "reportArgumentType",
+        "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n\u00a0\u00a0\"Annotated\" is not assignable to \"TypeForm[int]\""
+      ],
+      [
+        "tests/test_pipeline.py",
+        455,
+        86,
+        "reportArgumentType",
+        "Argument of type \"type[float]\" cannot be assigned to parameter \"func\" of type \"(int) -> bool\" in function \"predicate\"\n\u00a0\u00a0Type \"type[float]\" is not assignable to type \"(int) -> bool\"\n\u00a0\u00a0\u00a0\u00a0Function return type \"float\" is incompatible with type \"bool\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"float\" is not assignable to \"bool\""
+      ],
+      [
+        "tests/test_pipeline.py",
+        558,
+        27,
+        "reportArgumentType",
+        "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n\u00a0\u00a0\"Annotated\" is not assignable to \"TypeForm[int]\""
+      ],
+      [
+        "tests/test_pipeline.py",
+        565,
+        27,
+        "reportArgumentType",
+        "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n\u00a0\u00a0\"Annotated\" is not assignable to \"TypeForm[int]\""
+      ],
+      [
+        "tests/test_pipeline.py",
+        572,
+        27,
+        "reportArgumentType",
+        "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n\u00a0\u00a0\"Annotated\" is not assignable to \"TypeForm[int]\""
+      ],
+      [
+        "tests/test_pipeline.py",
+        579,
+        27,
+        "reportArgumentType",
+        "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n\u00a0\u00a0\"Annotated\" is not assignable to \"TypeForm[int]\""
+      ]
+    ],
+    "base_ruff": [],
+    "head_ruff": [],
+    "plugin_loader_focused_tests": {
+      "base_passed": 9,
+      "head_passed": 9,
+      "changed_executable_lines": [
+        6,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48
+      ],
+      "unexecuted_changed_lines": [],
+      "head_unexecuted_lines": [
+        32
+      ],
+      "excluded_lines": [
+        9,
+        10
+      ]
+    }
+  }
+}

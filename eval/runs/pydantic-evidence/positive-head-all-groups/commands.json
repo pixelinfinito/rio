@@ -1,0 +1,302 @@
+[
+  {
+    "argv": [
+      "uv",
+      "sync",
+      "--locked",
+      "--python",
+      "3.12.12",
+      "--all-groups",
+      "--all-packages",
+      "--all-extras"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/positive-head",
+    "environment": {
+      "CONTEXT": "eval-pydantic",
+      "PATH": "/home/ubuntu/.cargo/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "UV_CACHE_DIR": "/dev/shm/rio-pydantic/uv-cache",
+      "CARGO_HOME": "/dev/shm/rio-pydantic/cargo",
+      "CARGO_TARGET_DIR": "/dev/shm/rio-pydantic/cargo-target",
+      "CARGO_BUILD_JOBS": "2",
+      "TMPDIR": "/dev/shm/rio-pydantic/tmp",
+      "PYTEST_ADDOPTS": "--ignore=tests/pydantic_core --ignore=tests/benchmarks"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 380,
+    "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-head-all-groups/00-stdout.log",
+    "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-head-all-groups/00-stderr.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "python",
+      "-c",
+      "import pathlib,sysconfig,hashlib; p=pathlib.Path(sysconfig.get_path('purelib'))/'a1_coverage.pth'; assert hashlib.sha256(p.read_bytes()).hexdigest() == 'ef2ed06d19867ec669c09a804060666a9cd5e383af0a9d11aa2de79b77d448e8'; p.unlink(); print('Removed unused conditional coverage startup hook; coverage run instrumentation remains explicit')"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/positive-head",
+    "environment": {
+      "CONTEXT": "eval-pydantic",
+      "PATH": "/home/ubuntu/.cargo/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "UV_CACHE_DIR": "/dev/shm/rio-pydantic/uv-cache",
+      "CARGO_HOME": "/dev/shm/rio-pydantic/cargo",
+      "CARGO_TARGET_DIR": "/dev/shm/rio-pydantic/cargo-target",
+      "CARGO_BUILD_JOBS": "2",
+      "TMPDIR": "/dev/shm/rio-pydantic/tmp",
+      "PYTEST_ADDOPTS": "--ignore=tests/pydantic_core --ignore=tests/benchmarks"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 116,
+    "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-head-all-groups/01-stdout.log",
+    "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-head-all-groups/01-stderr.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "python",
+      "--version"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/positive-head",
+    "environment": {
+      "CONTEXT": "eval-pydantic",
+      "PATH": "/home/ubuntu/.cargo/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "UV_CACHE_DIR": "/dev/shm/rio-pydantic/uv-cache",
+      "CARGO_HOME": "/dev/shm/rio-pydantic/cargo",
+      "CARGO_TARGET_DIR": "/dev/shm/rio-pydantic/cargo-target",
+      "CARGO_BUILD_JOBS": "2",
+      "TMPDIR": "/dev/shm/rio-pydantic/tmp",
+      "PYTEST_ADDOPTS": "--ignore=tests/pydantic_core --ignore=tests/benchmarks"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 35,
+    "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-head-all-groups/02-stdout.log",
+    "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-head-all-groups/02-stderr.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "pyright",
+      "--version"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/positive-head",
+    "environment": {
+      "CONTEXT": "eval-pydantic",
+      "PATH": "/home/ubuntu/.cargo/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "UV_CACHE_DIR": "/dev/shm/rio-pydantic/uv-cache",
+      "CARGO_HOME": "/dev/shm/rio-pydantic/cargo",
+      "CARGO_TARGET_DIR": "/dev/shm/rio-pydantic/cargo-target",
+      "CARGO_BUILD_JOBS": "2",
+      "TMPDIR": "/dev/shm/rio-pydantic/tmp",
+      "PYTEST_ADDOPTS": "--ignore=tests/pydantic_core --ignore=tests/benchmarks"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 819,
+    "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-head-all-groups/03-stdout.log",
+    "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-head-all-groups/03-stderr.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "mypy",
+      "--version"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/positive-head",
+    "environment": {
+      "CONTEXT": "eval-pydantic",
+      "PATH": "/home/ubuntu/.cargo/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "UV_CACHE_DIR": "/dev/shm/rio-pydantic/uv-cache",
+      "CARGO_HOME": "/dev/shm/rio-pydantic/cargo",
+      "CARGO_TARGET_DIR": "/dev/shm/rio-pydantic/cargo-target",
+      "CARGO_BUILD_JOBS": "2",
+      "TMPDIR": "/dev/shm/rio-pydantic/tmp",
+      "PYTEST_ADDOPTS": "--ignore=tests/pydantic_core --ignore=tests/benchmarks"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 328,
+    "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-head-all-groups/04-stdout.log",
+    "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-head-all-groups/04-stderr.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "ruff",
+      "--version"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/positive-head",
+    "environment": {
+      "CONTEXT": "eval-pydantic",
+      "PATH": "/home/ubuntu/.cargo/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "UV_CACHE_DIR": "/dev/shm/rio-pydantic/uv-cache",
+      "CARGO_HOME": "/dev/shm/rio-pydantic/cargo",
+      "CARGO_TARGET_DIR": "/dev/shm/rio-pydantic/cargo-target",
+      "CARGO_BUILD_JOBS": "2",
+      "TMPDIR": "/dev/shm/rio-pydantic/tmp",
+      "PYTEST_ADDOPTS": "--ignore=tests/pydantic_core --ignore=tests/benchmarks"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 34,
+    "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-head-all-groups/05-stdout.log",
+    "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-head-all-groups/05-stderr.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "coverage",
+      "--version"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/positive-head",
+    "environment": {
+      "CONTEXT": "eval-pydantic",
+      "PATH": "/home/ubuntu/.cargo/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "UV_CACHE_DIR": "/dev/shm/rio-pydantic/uv-cache",
+      "CARGO_HOME": "/dev/shm/rio-pydantic/cargo",
+      "CARGO_TARGET_DIR": "/dev/shm/rio-pydantic/cargo-target",
+      "CARGO_BUILD_JOBS": "2",
+      "TMPDIR": "/dev/shm/rio-pydantic/tmp",
+      "PYTEST_ADDOPTS": "--ignore=tests/pydantic_core --ignore=tests/benchmarks"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 316,
+    "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-head-all-groups/06-stdout.log",
+    "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-head-all-groups/06-stderr.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "pyright",
+      "--outputjson"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/positive-head",
+    "environment": {
+      "CONTEXT": "eval-pydantic",
+      "PATH": "/home/ubuntu/.cargo/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "UV_CACHE_DIR": "/dev/shm/rio-pydantic/uv-cache",
+      "CARGO_HOME": "/dev/shm/rio-pydantic/cargo",
+      "CARGO_TARGET_DIR": "/dev/shm/rio-pydantic/cargo-target",
+      "CARGO_BUILD_JOBS": "2",
+      "TMPDIR": "/dev/shm/rio-pydantic/tmp",
+      "PYTEST_ADDOPTS": "--ignore=tests/pydantic_core --ignore=tests/benchmarks"
+    },
+    "exit_code": 1,
+    "wall_time_ms": 33208,
+    "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-head-all-groups/07-stdout.log",
+    "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-head-all-groups/07-stderr.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "ruff",
+      "check",
+      "--output-format",
+      "json",
+      "pydantic",
+      "tests/test_plugin_loader.py"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/positive-head",
+    "environment": {
+      "CONTEXT": "eval-pydantic",
+      "PATH": "/home/ubuntu/.cargo/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "UV_CACHE_DIR": "/dev/shm/rio-pydantic/uv-cache",
+      "CARGO_HOME": "/dev/shm/rio-pydantic/cargo",
+      "CARGO_TARGET_DIR": "/dev/shm/rio-pydantic/cargo-target",
+      "CARGO_BUILD_JOBS": "2",
+      "TMPDIR": "/dev/shm/rio-pydantic/tmp",
+      "PYTEST_ADDOPTS": "--ignore=tests/pydantic_core --ignore=tests/benchmarks"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 116,
+    "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-head-all-groups/08-stdout.log",
+    "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-head-all-groups/08-stderr.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "coverage",
+      "run",
+      "-m",
+      "pytest",
+      "-q"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/positive-head",
+    "environment": {
+      "CONTEXT": "eval-pydantic",
+      "PATH": "/home/ubuntu/.cargo/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "UV_CACHE_DIR": "/dev/shm/rio-pydantic/uv-cache",
+      "CARGO_HOME": "/dev/shm/rio-pydantic/cargo",
+      "CARGO_TARGET_DIR": "/dev/shm/rio-pydantic/cargo-target",
+      "CARGO_BUILD_JOBS": "2",
+      "TMPDIR": "/dev/shm/rio-pydantic/tmp",
+      "PYTEST_ADDOPTS": "--ignore=tests/pydantic_core --ignore=tests/benchmarks"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 131888,
+    "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-head-all-groups/09-stdout.log",
+    "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-head-all-groups/09-stderr.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "coverage",
+      "json",
+      "-o",
+      "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-head-all-groups/coverage.json"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/positive-head",
+    "environment": {
+      "CONTEXT": "eval-pydantic",
+      "PATH": "/home/ubuntu/.cargo/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "UV_CACHE_DIR": "/dev/shm/rio-pydantic/uv-cache",
+      "CARGO_HOME": "/dev/shm/rio-pydantic/cargo",
+      "CARGO_TARGET_DIR": "/dev/shm/rio-pydantic/cargo-target",
+      "CARGO_BUILD_JOBS": "2",
+      "TMPDIR": "/dev/shm/rio-pydantic/tmp",
+      "PYTEST_ADDOPTS": "--ignore=tests/pydantic_core --ignore=tests/benchmarks"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 3915,
+    "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-head-all-groups/10-stdout.log",
+    "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-head-all-groups/10-stderr.log"
+  },
+  {
+    "argv": [
+      "git",
+      "status",
+      "--porcelain",
+      "--untracked-files=no"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/positive-head",
+    "environment": {
+      "CONTEXT": "eval-pydantic",
+      "PATH": "/home/ubuntu/.cargo/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "UV_CACHE_DIR": "/dev/shm/rio-pydantic/uv-cache",
+      "CARGO_HOME": "/dev/shm/rio-pydantic/cargo",
+      "CARGO_TARGET_DIR": "/dev/shm/rio-pydantic/cargo-target",
+      "CARGO_BUILD_JOBS": "2",
+      "TMPDIR": "/dev/shm/rio-pydantic/tmp",
+      "PYTEST_ADDOPTS": "--ignore=tests/pydantic_core --ignore=tests/benchmarks"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 70,
+    "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-head-all-groups/11-stdout.log",
+    "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-head-all-groups/11-stderr.log"
+  }
+]

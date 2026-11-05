@@ -1,0 +1,13 @@
+from pathlib import Path
+import json,datetime,collections
+r=Path('eval/runs');rows=[]
+for p in sorted(r.glob('pydantic-*')):
+ if not p.is_dir() or not (p/'commands.json').exists():continue
+ d=json.loads((p/'commands.json').read_text());report=json.loads((p/'report.json').read_text()) if (p/'report.json').exists() and (p/'report.json').stat().st_size else None;verdict=json.loads((p/'verdicts.json').read_text()) if (p/'verdicts.json').exists() else None
+ elapsed=None
+ if d.get('finished_utc') and d.get('started_utc'):elapsed=round((datetime.datetime.fromisoformat(d['finished_utc'])-datetime.datetime.fromisoformat(d['started_utc'])).total_seconds(),3)
+ row={'attempt':p.name,'started_utc':d.get('started_utc'),'finished_utc':d.get('finished_utc'),'runner_wall_seconds':elapsed,'rio_wall_ms':report['metrics']['wall_time_ms'] if report else None,'baseline_classification_ran':d.get('environment',{}).get('baseline_classification_ran',False),'eligible':d.get('environment',{}).get('eligible',False),'failures':d.get('failures',[]),'raw_verdict_counts':dict(collections.Counter(x['verdict'] for x in verdict['findings'].values())) if verdict else {},'record_path':str(p/'record.json') if (p/'record.json').exists() else None};rows.append(row)
+(r/'pydantic-evidence/attempt-ledger.json').write_text(json.dumps(rows,indent=2)+'\n')
+print('| Attempt | Runner wall seconds | Rio wall ms | Baseline classification | Scored record |')
+print('| --- | ---: | ---: | --- | --- |')
+for x in rows:print(f"| {x['attempt']} | {x['runner_wall_seconds']} | {x['rio_wall_ms']} | {x['baseline_classification_ran']} | {'yes' if x['record_path'] else 'no'} |")

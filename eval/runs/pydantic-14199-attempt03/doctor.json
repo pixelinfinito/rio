@@ -1,0 +1,51 @@
+{
+  "blocking_problems": [
+    "cannot parse tests/typechecking/uv.lock: uv.lock has no package entries"
+  ],
+  "cache": {
+    "free_space": 3884318720,
+    "path": "/dev/shm/rio-pydantic/tmp/rio-eval-4gx6siil/cache",
+    "writable": true
+  },
+  "configuration": {
+    "cache": {
+      "dir": "/dev/shm/rio-pydantic/tmp/rio-eval-4gx6siil/cache",
+      "max_age": {
+        "nanos": 0,
+        "secs": 2592000
+      },
+      "max_size": 5368709120,
+      "retain_raw_output": true
+    },
+    "config_dir": "/dev/shm/rio-pydantic/tmp/rio-eval-4gx6siil/config",
+    "endpoint_url": null,
+    "notices": [],
+    "output_limit": 268435456,
+    "parallelism": 4,
+    "sources": {
+      "cache.dir": "RIO_CACHE_DIR",
+      "cache.max_age": "default",
+      "cache.max_size": "default",
+      "cache.retain_raw_output": "default",
+      "endpoint.url": "default",
+      "run.output_limit": "default",
+      "run.parallelism": "default"
+    }
+  },
+  "endpoint": "No endpoint is available in this version",
+  "head": "262700f815672fc37ed637a1604234f6c7cc7ee9",
+  "plan": null,
+  "profile": {
+    "chain": [
+      "rio/base"
+    ],
+    "name": "rio/base",
+    "valid": true
+  },
+  "repository": "/dev/shm/rio-pydantic/tmp/rio-eval-4gx6siil/head",
+  "warnings": [
+    "rio/base:$.steps[3]: rio/triage is deferred locally: no_endpoint",
+    "rio/base:$.steps[4]: rio/agents is deferred locally: no_endpoint",
+    "rio/base:$.steps[5]: rio/verify is deferred locally: no_endpoint"
+  ]
+}

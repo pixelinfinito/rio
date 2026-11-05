@@ -1,0 +1,493 @@
+{
+  "schema": "rio-eval-runner-v1",
+  "repository": "pydantic/pydantic",
+  "pr": "https://github.com/pydantic/pydantic/pull/14213",
+  "started_utc": "2026-11-05T03:22:34.257859+00:00",
+  "rio_binary": "/home/ubuntu/rio/target/release/rio",
+  "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-checkout",
+        "https://github.com/pydantic/pydantic.git",
+        "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head"
+      ],
+      "cwd": "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/01-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/01-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 63738
+    },
+    {
+      "argv": [
+        "git",
+        "fetch",
+        "origin",
+        "5740091dcd08e4a92940ceae841434a83331cb09",
+        "ef2cb073d6be2ef360d2aedcd5afca0983af2507"
+      ],
+      "cwd": "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/02-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/02-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 3336
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "5740091dcd08e4a92940ceae841434a83331cb09",
+        "ef2cb073d6be2ef360d2aedcd5afca0983af2507"
+      ],
+      "cwd": "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/03-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/03-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 22
+    },
+    {
+      "argv": [
+        "git",
+        "checkout",
+        "--detach",
+        "ef2cb073d6be2ef360d2aedcd5afca0983af2507"
+      ],
+      "cwd": "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/04-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/04-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 1228
+    },
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-hardlinks",
+        "--no-checkout",
+        "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head",
+        "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/base"
+      ],
+      "cwd": "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/05-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/05-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 7007
+    },
+    {
+      "argv": [
+        "git",
+        "checkout",
+        "--detach",
+        "5740091dcd08e4a92940ceae841434a83331cb09"
+      ],
+      "cwd": "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/06-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/06-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 1278
+    },
+    {
+      "argv": [
+        "uv",
+        "sync",
+        "--locked",
+        "--python",
+        "3.12.12",
+        "--all-groups",
+        "--all-packages",
+        "--all-extras",
+        "--no-editable-package",
+        "pydantic"
+      ],
+      "cwd": "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/07-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/07-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 54400
+    },
+    {
+      "argv": [
+        "uv",
+        "run",
+        "--no-sync",
+        "python",
+        "-c",
+        "import pathlib,sysconfig,hashlib; p=pathlib.Path(sysconfig.get_path('purelib'))/'a1_coverage.pth'; assert hashlib.sha256(p.read_bytes()).hexdigest() == 'ef2ed06d19867ec669c09a804060666a9cd5e383af0a9d11aa2de79b77d448e8'; p.unlink(); print('Removed unused conditional coverage startup hook; coverage run instrumentation remains explicit')"
+      ],
+      "cwd": "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/08-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/08-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 430
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "cwd": "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/09-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/09-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 175
+    },
+    {
+      "argv": [
+        "uv",
+        "sync",
+        "--locked",
+        "--python",
+        "3.12.12",
+        "--all-groups",
+        "--all-packages",
+        "--all-extras",
+        "--no-editable-package",
+        "pydantic"
+      ],
+      "cwd": "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/10-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/10-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 51947
+    },
+    {
+      "argv": [
+        "uv",
+        "run",
+        "--no-sync",
+        "python",
+        "-c",
+        "import pathlib,sysconfig,hashlib; p=pathlib.Path(sysconfig.get_path('purelib'))/'a1_coverage.pth'; assert hashlib.sha256(p.read_bytes()).hexdigest() == 'ef2ed06d19867ec669c09a804060666a9cd5e383af0a9d11aa2de79b77d448e8'; p.unlink(); print('Removed unused conditional coverage startup hook; coverage run instrumentation remains explicit')"
+      ],
+      "cwd": "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/11-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/11-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 371
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "cwd": "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/12-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/12-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 674
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "--version"
+      ],
+      "cwd": "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/rio-version.txt",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/13-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 21
+    },
+    {
+      "argv": [
+        "node",
+        "--version"
+      ],
+      "cwd": "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/14-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/14-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 72
+    },
+    {
+      "argv": [
+        "npm",
+        "--version"
+      ],
+      "cwd": "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/15-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/15-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 322
+    },
+    {
+      "argv": [
+        "python3",
+        "--version"
+      ],
+      "cwd": "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/16-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/16-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 17
+    },
+    {
+      "argv": [
+        "uv",
+        "--version"
+      ],
+      "cwd": "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/17-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/17-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 39
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "profile",
+        "show",
+        "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/profile.yaml"
+      ],
+      "cwd": "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/resolved-profile.txt",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/18-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 221
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "doctor",
+        "--format",
+        "json"
+      ],
+      "cwd": "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/doctor.json",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/19-stderr.log",
+      "exit_code": 1,
+      "wall_time_ms": 12590
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "review",
+        "--base",
+        "5740091dcd08e4a92940ceae841434a83331cb09",
+        "--format",
+        "json",
+        "--offline",
+        "--profile",
+        "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/profile.yaml"
+      ],
+      "cwd": "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/report.json",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/20-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 310824
+    }
+  ],
+  "installations": {
+    "base": {
+      "commands": [
+        [
+          "uv",
+          "sync",
+          "--locked",
+          "--python",
+          "3.12.12",
+          "--all-groups",
+          "--all-packages",
+          "--all-extras",
+          "--no-editable-package",
+          "pydantic"
+        ],
+        [
+          "uv",
+          "run",
+          "--no-sync",
+          "python",
+          "-c",
+          "import pathlib,sysconfig,hashlib; p=pathlib.Path(sysconfig.get_path('purelib'))/'a1_coverage.pth'; assert hashlib.sha256(p.read_bytes()).hexdigest() == 'ef2ed06d19867ec669c09a804060666a9cd5e383af0a9d11aa2de79b77d448e8'; p.unlink(); print('Removed unused conditional coverage startup hook; coverage run instrumentation remains explicit')"
+        ]
+      ],
+      "succeeded": true,
+      "lockfiles": {
+        "uv.lock": "c03e0e30ac20ef8285ecbd0c8e55a8ef1d1914160f4ba427c927dc0581886331"
+      }
+    },
+    "head": {
+      "commands": [
+        [
+          "uv",
+          "sync",
+          "--locked",
+          "--python",
+          "3.12.12",
+          "--all-groups",
+          "--all-packages",
+          "--all-extras",
+          "--no-editable-package",
+          "pydantic"
+        ],
+        [
+          "uv",
+          "run",
+          "--no-sync",
+          "python",
+          "-c",
+          "import pathlib,sysconfig,hashlib; p=pathlib.Path(sysconfig.get_path('purelib'))/'a1_coverage.pth'; assert hashlib.sha256(p.read_bytes()).hexdigest() == 'ef2ed06d19867ec669c09a804060666a9cd5e383af0a9d11aa2de79b77d448e8'; p.unlink(); print('Removed unused conditional coverage startup hook; coverage run instrumentation remains explicit')"
+        ]
+      ],
+      "succeeded": true,
+      "lockfiles": {
+        "uv.lock": "c03e0e30ac20ef8285ecbd0c8e55a8ef1d1914160f4ba427c927dc0581886331"
+      }
+    }
+  },
+  "failures": [
+    "Baseline/setup ineligible; fix before scoring"
+  ],
+  "network": "Installers may use network; Rio review uses --offline. Subprocesses are not isolated.",
+  "profile_sha256": "6ece46cdff0eac9d03cf93bdd17b1c0676733bdb32524180d80e381eff35a9e5",
+  "resolution": {
+    "base_sha": "5740091dcd08e4a92940ceae841434a83331cb09",
+    "head_sha": "ef2cb073d6be2ef360d2aedcd5afca0983af2507",
+    "source": "pinned argv"
+  },
+  "disposable_directory": "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_",
+  "base_sha": "5740091dcd08e4a92940ceae841434a83331cb09",
+  "head_sha": "ef2cb073d6be2ef360d2aedcd5afca0983af2507",
+  "removed_environment_keys": [],
+  "resolved_profile_sha256": "a8525502ff1cf1787a60d6426daf5390dd7fb4188c8ecef35886ead7ed0ce1ab",
+  "review_exit_code": 0,
+  "environment": {
+    "dependency_state": "verified",
+    "baseline_ran": false,
+    "baseline_classification_ran": false,
+    "eligible": false,
+    "reasons": [
+      "lint .: head=passed, dependency_state=verified, base=unavailable",
+      "typecheck .: head=findings, dependency_state=verified, base=unavailable"
+    ],
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "lint .: baseline_failed: linked dependency pydantic points at changed source : pydantic/plugin/_loader.py; commit or stash the linked package's changes",
+      "typecheck .: baseline_failed: linked dependency pydantic points at changed source : pydantic/plugin/_loader.py; commit or stash the linked package's changes",
+      "Graph references use syntax and text; no language server was used",
+      "Impact graph truncated at max_nodes",
+      "Offline applies to Rio; tool and test processes were not network-isolated"
+    ]
+  },
+  "finished_utc": "2026-11-05T03:31:13.026580+00:00",
+  "observed_child_invocations": [
+    {
+      "kind": "lint",
+      "pid": 738280,
+      "argv": [
+        "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head/./.venv/bin/ruff",
+        "check",
+        "--output-format",
+        "json",
+        "--",
+        "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/cache/942fce5293eb6bd4/runs/01M6MVVQ3NZGZHVD495H6E1FQW/tools/tool.tmp-aBs9Ho/pydantic/plugin/_loader.py",
+        "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/cache/942fce5293eb6bd4/runs/01M6MVVQ3NZGZHVD495H6E1FQW/tools/tool.tmp-aBs9Ho/tests/test_plugin_loader.py"
+      ],
+      "cwd": "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/cache/942fce5293eb6bd4/runs/01M6MVVQ3NZGZHVD495H6E1FQW/tools/tool.tmp-aBs9Ho/.",
+      "trace_path": "eval/runs/pydantic-evidence/rio-14213--attempt03-exec.log",
+      "trace_line": 1602,
+      "raw_execve": "738280 execve(\"/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head/./.venv/bin/ruff\", [\"/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head/./.venv/bin/ruff\", \"check\", \"--output-format\", \"json\", \"--\", \"/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/cache/942fce5293eb6bd4/runs/01M6MVVQ3NZGZHVD495H6E1FQW/tools/tool.tmp-aBs9Ho/pydantic/plugin/_loader.py\", \"/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/cache/942fce5293eb6bd4/runs/01M6MVVQ3NZGZHVD495H6E1FQW/tools/tool.tmp-aBs9Ho/tests/test_plugin_loader.py\"], 0x7ffdd1a4bcf8 /* 50 vars */) = 0"
+    },
+    {
+      "kind": "typecheck",
+      "pid": 738367,
+      "argv": [
+        "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head/./.venv/bin/pyright",
+        "--outputjson"
+      ],
+      "cwd": "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/cache/942fce5293eb6bd4/runs/01M6MVVQ3NZGZHVD495H6E1FQW/tools/tool.tmp-ifWCIt/.",
+      "trace_path": "eval/runs/pydantic-evidence/rio-14213--attempt03-exec.log",
+      "trace_line": 1638,
+      "raw_execve": "738367 execve(\"/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head/./.venv/bin/pyright\", [\"/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head/./.venv/bin/pyright\", \"--outputjson\"], 0x7ffdd1a4bcf8 /* 50 vars */) = 0"
+    },
+    {
+      "kind": "coverage",
+      "pid": 738856,
+      "argv": [
+        "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head/./.venv/bin/coverage",
+        "run",
+        "-m",
+        "pytest",
+        "-q"
+      ],
+      "cwd": "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/cache/942fce5293eb6bd4/runs/01M6MVVQ3NZGZHVD495H6E1FQW/tools/tool.tmp-aRFuJg/.",
+      "trace_path": "eval/runs/pydantic-evidence/rio-14213--attempt03-exec.log",
+      "trace_line": 1649,
+      "raw_execve": "738856 execve(\"/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head/./.venv/bin/coverage\", [\"/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head/./.venv/bin/coverage\", \"run\", \"-m\", \"pytest\", \"-q\"], 0x7232ccbfa0e0 /* 52 vars */) = 0"
+    },
+    {
+      "kind": "coverage",
+      "pid": 747878,
+      "argv": [
+        "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head/./.venv/bin/coverage",
+        "json",
+        "-o",
+        "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/cache/942fce5293eb6bd4/runs/01M6MVVQ3NZGZHVD495H6E1FQW/tools/tool.tmp-aRFuJg/./.rio-coverage/coverage.json"
+      ],
+      "cwd": "/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/cache/942fce5293eb6bd4/runs/01M6MVVQ3NZGZHVD495H6E1FQW/tools/tool.tmp-aRFuJg/.",
+      "trace_path": "eval/runs/pydantic-evidence/rio-14213--attempt03-exec.log",
+      "trace_line": 3699,
+      "raw_execve": "747878 execve(\"/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head/./.venv/bin/coverage\", [\"/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head/./.venv/bin/coverage\", \"json\", \"-o\", \"/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/cache/942fce5293eb6bd4/runs/01M6MVVQ3NZGZHVD495H6E1FQW/tools/tool.tmp-aRFuJg/./.rio-coverage/coverage.json\"], 0x7232cc41b2e0 /* 51 vars */) = 0"
+    }
+  ],
+  "child_command_capture": "Post-run addition from strace execve/chdir observer; unmodified harness captures only its direct children. No checker wrappers or modified binaries.",
+  "runtime_environment_overrides": {
+    "PATH": ".venv/bin:/home/ubuntu/.cargo/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+    "CONTEXT": "eval-pydantic",
+    "UV_CACHE_DIR": "/dev/shm/rio-pydantic/uv-cache",
+    "CARGO_HOME": "/dev/shm/rio-pydantic/cargo",
+    "CARGO_TARGET_DIR": "/dev/shm/rio-pydantic/cargo-target",
+    "CARGO_BUILD_JOBS": "2",
+    "TMPDIR": "/dev/shm/rio-pydantic/tmp",
+    "PYTEST_ADDOPTS": "--ignore=tests/pydantic_core --ignore=tests/benchmarks"
+  }
+}

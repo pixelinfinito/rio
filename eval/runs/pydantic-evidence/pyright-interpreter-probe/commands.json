@@ -1,0 +1,40 @@
+[
+  {
+    "argv": [
+      "/dev/shm/rio-pydantic/positive-head/.venv/bin/pyright",
+      "--outputjson"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/pyright-probe",
+    "environment": {
+      "PATH": "/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+    },
+    "exit_code": 1,
+    "wall_time_ms": 12250,
+    "summary": {
+      "filesAnalyzed": 55,
+      "errorCount": 291,
+      "warningCount": 0,
+      "informationCount": 0,
+      "timeInSec": 11.312
+    }
+  },
+  {
+    "argv": [
+      "/dev/shm/rio-pydantic/positive-head/.venv/bin/pyright",
+      "--outputjson"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/pyright-probe",
+    "environment": {
+      "PATH": ".venv/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+    },
+    "exit_code": 1,
+    "wall_time_ms": 39539,
+    "summary": {
+      "filesAnalyzed": 55,
+      "errorCount": 12,
+      "warningCount": 0,
+      "informationCount": 0,
+      "timeInSec": 38.595
+    }
+  }
+]

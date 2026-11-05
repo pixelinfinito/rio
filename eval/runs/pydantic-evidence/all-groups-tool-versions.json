@@ -1,0 +1,30 @@
+{
+  "positive-base-all-groups": {
+    "2": "Python 3.12.12",
+    "3": "pyright 1.1.411\nWARNING: there is a new pyright version available (v1.1.411 -> v1.1.414).\nPlease install the new version or set PYRIGHT_PYTHON_FORCE_VERSION to `latest`",
+    "4": "mypy 2.3.0 (compiled: yes)",
+    "5": "ruff 0.17.3",
+    "6": "Coverage.py, version 7.13.5 with C extension\nFull documentation is at https://coverage.readthedocs.io/en/7.13.5"
+  },
+  "positive-head-all-groups": {
+    "2": "Python 3.12.12",
+    "3": "pyright 1.1.411\nWARNING: there is a new pyright version available (v1.1.411 -> v1.1.414).\nPlease install the new version or set PYRIGHT_PYTHON_FORCE_VERSION to `latest`",
+    "4": "mypy 2.3.0 (compiled: yes)",
+    "5": "ruff 0.17.3",
+    "6": "Coverage.py, version 7.13.5 with C extension\nFull documentation is at https://coverage.readthedocs.io/en/7.13.5"
+  },
+  "negative-base-all-groups": {
+    "2": "Python 3.12.12",
+    "3": "pyright 1.1.411\nWARNING: there is a new pyright version available (v1.1.411 -> v1.1.414).\nPlease install the new version or set PYRIGHT_PYTHON_FORCE_VERSION to `latest`",
+    "4": "mypy 2.3.0 (compiled: yes)",
+    "5": "ruff 0.17.3",
+    "6": "Coverage.py, version 7.13.5 with C extension\nFull documentation is at https://coverage.readthedocs.io/en/7.13.5"
+  },
+  "negative-head-all-groups": {
+    "2": "Python 3.12.12",
+    "3": "pyright 1.1.411\nWARNING: there is a new pyright version available (v1.1.411 -> v1.1.414).\nPlease install the new version or set PYRIGHT_PYTHON_FORCE_VERSION to `latest`",
+    "4": "mypy 2.3.0 (compiled: yes)",
+    "5": "ruff 0.17.3",
+    "6": "Coverage.py, version 7.13.5 with C extension\nFull documentation is at https://coverage.readthedocs.io/en/7.13.5"
+  }
+}

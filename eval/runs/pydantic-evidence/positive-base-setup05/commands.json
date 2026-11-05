@@ -1,0 +1,275 @@
+[
+  {
+    "argv": [
+      "uv",
+      "sync",
+      "--locked",
+      "--python",
+      "3.12.12",
+      "--group",
+      "dev",
+      "--group",
+      "linting",
+      "--group",
+      "typechecking",
+      "--group",
+      "coverage",
+      "--all-extras",
+      "--all-packages",
+      "--group",
+      "testing-extra"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/positive-base",
+    "environment": {
+      "CONTEXT": "eval-pydantic",
+      "PATH": "/home/ubuntu/.cargo/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "UV_CACHE_DIR": "/dev/shm/rio-pydantic/uv-cache",
+      "CARGO_HOME": "/dev/shm/rio-pydantic/cargo",
+      "CARGO_TARGET_DIR": "/dev/shm/rio-pydantic/cargo-target",
+      "CARGO_BUILD_JOBS": "2",
+      "TMPDIR": "/dev/shm/rio-pydantic/tmp"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 2180,
+    "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-setup05/00-stdout.log",
+    "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-setup05/00-stderr.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "python",
+      "--version"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/positive-base",
+    "environment": {
+      "CONTEXT": "eval-pydantic",
+      "PATH": "/home/ubuntu/.cargo/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "UV_CACHE_DIR": "/dev/shm/rio-pydantic/uv-cache",
+      "CARGO_HOME": "/dev/shm/rio-pydantic/cargo",
+      "CARGO_TARGET_DIR": "/dev/shm/rio-pydantic/cargo-target",
+      "CARGO_BUILD_JOBS": "2",
+      "TMPDIR": "/dev/shm/rio-pydantic/tmp"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 32,
+    "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-setup05/01-stdout.log",
+    "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-setup05/01-stderr.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "pyright",
+      "--version"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/positive-base",
+    "environment": {
+      "CONTEXT": "eval-pydantic",
+      "PATH": "/home/ubuntu/.cargo/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "UV_CACHE_DIR": "/dev/shm/rio-pydantic/uv-cache",
+      "CARGO_HOME": "/dev/shm/rio-pydantic/cargo",
+      "CARGO_TARGET_DIR": "/dev/shm/rio-pydantic/cargo-target",
+      "CARGO_BUILD_JOBS": "2",
+      "TMPDIR": "/dev/shm/rio-pydantic/tmp"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 1280,
+    "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-setup05/02-stdout.log",
+    "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-setup05/02-stderr.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "mypy",
+      "--version"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/positive-base",
+    "environment": {
+      "CONTEXT": "eval-pydantic",
+      "PATH": "/home/ubuntu/.cargo/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "UV_CACHE_DIR": "/dev/shm/rio-pydantic/uv-cache",
+      "CARGO_HOME": "/dev/shm/rio-pydantic/cargo",
+      "CARGO_TARGET_DIR": "/dev/shm/rio-pydantic/cargo-target",
+      "CARGO_BUILD_JOBS": "2",
+      "TMPDIR": "/dev/shm/rio-pydantic/tmp"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 535,
+    "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-setup05/03-stdout.log",
+    "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-setup05/03-stderr.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "ruff",
+      "--version"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/positive-base",
+    "environment": {
+      "CONTEXT": "eval-pydantic",
+      "PATH": "/home/ubuntu/.cargo/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "UV_CACHE_DIR": "/dev/shm/rio-pydantic/uv-cache",
+      "CARGO_HOME": "/dev/shm/rio-pydantic/cargo",
+      "CARGO_TARGET_DIR": "/dev/shm/rio-pydantic/cargo-target",
+      "CARGO_BUILD_JOBS": "2",
+      "TMPDIR": "/dev/shm/rio-pydantic/tmp"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 66,
+    "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-setup05/04-stdout.log",
+    "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-setup05/04-stderr.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "coverage",
+      "--version"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/positive-base",
+    "environment": {
+      "CONTEXT": "eval-pydantic",
+      "PATH": "/home/ubuntu/.cargo/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "UV_CACHE_DIR": "/dev/shm/rio-pydantic/uv-cache",
+      "CARGO_HOME": "/dev/shm/rio-pydantic/cargo",
+      "CARGO_TARGET_DIR": "/dev/shm/rio-pydantic/cargo-target",
+      "CARGO_BUILD_JOBS": "2",
+      "TMPDIR": "/dev/shm/rio-pydantic/tmp"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 375,
+    "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-setup05/05-stdout.log",
+    "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-setup05/05-stderr.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "pyright",
+      "--outputjson"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/positive-base",
+    "environment": {
+      "CONTEXT": "eval-pydantic",
+      "PATH": "/home/ubuntu/.cargo/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "UV_CACHE_DIR": "/dev/shm/rio-pydantic/uv-cache",
+      "CARGO_HOME": "/dev/shm/rio-pydantic/cargo",
+      "CARGO_TARGET_DIR": "/dev/shm/rio-pydantic/cargo-target",
+      "CARGO_BUILD_JOBS": "2",
+      "TMPDIR": "/dev/shm/rio-pydantic/tmp"
+    },
+    "exit_code": 1,
+    "wall_time_ms": 33865,
+    "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-setup05/06-stdout.log",
+    "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-setup05/06-stderr.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "ruff",
+      "check",
+      "--output-format",
+      "json",
+      "pydantic",
+      "tests/test_plugin_loader.py"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/positive-base",
+    "environment": {
+      "CONTEXT": "eval-pydantic",
+      "PATH": "/home/ubuntu/.cargo/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "UV_CACHE_DIR": "/dev/shm/rio-pydantic/uv-cache",
+      "CARGO_HOME": "/dev/shm/rio-pydantic/cargo",
+      "CARGO_TARGET_DIR": "/dev/shm/rio-pydantic/cargo-target",
+      "CARGO_BUILD_JOBS": "2",
+      "TMPDIR": "/dev/shm/rio-pydantic/tmp"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 119,
+    "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-setup05/07-stdout.log",
+    "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-setup05/07-stderr.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "coverage",
+      "run",
+      "-m",
+      "pytest",
+      "-q"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/positive-base",
+    "environment": {
+      "CONTEXT": "eval-pydantic",
+      "PATH": "/home/ubuntu/.cargo/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "UV_CACHE_DIR": "/dev/shm/rio-pydantic/uv-cache",
+      "CARGO_HOME": "/dev/shm/rio-pydantic/cargo",
+      "CARGO_TARGET_DIR": "/dev/shm/rio-pydantic/cargo-target",
+      "CARGO_BUILD_JOBS": "2",
+      "TMPDIR": "/dev/shm/rio-pydantic/tmp"
+    },
+    "exit_code": 2,
+    "wall_time_ms": 599314,
+    "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-setup05/08-stdout.log",
+    "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-setup05/08-stderr.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "coverage",
+      "json",
+      "-o",
+      "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-setup05/coverage.json"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/positive-base",
+    "environment": {
+      "CONTEXT": "eval-pydantic",
+      "PATH": "/home/ubuntu/.cargo/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "UV_CACHE_DIR": "/dev/shm/rio-pydantic/uv-cache",
+      "CARGO_HOME": "/dev/shm/rio-pydantic/cargo",
+      "CARGO_TARGET_DIR": "/dev/shm/rio-pydantic/cargo-target",
+      "CARGO_BUILD_JOBS": "2",
+      "TMPDIR": "/dev/shm/rio-pydantic/tmp"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 5843,
+    "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-setup05/09-stdout.log",
+    "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-setup05/09-stderr.log"
+  },
+  {
+    "argv": [
+      "git",
+      "status",
+      "--porcelain",
+      "--untracked-files=no"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/positive-base",
+    "environment": {
+      "CONTEXT": "eval-pydantic",
+      "PATH": "/home/ubuntu/.cargo/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "UV_CACHE_DIR": "/dev/shm/rio-pydantic/uv-cache",
+      "CARGO_HOME": "/dev/shm/rio-pydantic/cargo",
+      "CARGO_TARGET_DIR": "/dev/shm/rio-pydantic/cargo-target",
+      "CARGO_BUILD_JOBS": "2",
+      "TMPDIR": "/dev/shm/rio-pydantic/tmp"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 69,
+    "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-setup05/10-stdout.log",
+    "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-setup05/10-stderr.log"
+  }
+]

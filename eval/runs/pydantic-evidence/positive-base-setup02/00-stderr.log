@@ -1,0 +1,18 @@
+Using CPython 3.12.12
+Creating virtual environment at: .venv
+Resolved 171 packages in 6ms
+   Building pydantic @ file:///tmp/eval-pydantic-positive-base
+   Building pydantic-core @ file:///tmp/eval-pydantic-positive-base/pydantic-core
+Downloading ast-serialize (1.2MiB)
+Downloading pyright (5.9MiB)
+Downloading ruff (10.1MiB)
+Downloading pygments (1.2MiB)
+Downloading faker (1.8MiB)
+Downloading pyrefly (13.7MiB)
+Downloading mypy (14.6MiB)
+ Downloaded ast-serialize
+ Downloaded pygments
+ Downloaded faker
+ Downloaded ruff
+      Built pydantic @ file:///tmp/eval-pydantic-positive-base
+ Downloaded pyrefly

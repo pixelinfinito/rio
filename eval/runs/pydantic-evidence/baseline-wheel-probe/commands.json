@@ -1,0 +1,24 @@
+{
+  "argv": [
+    "/home/ubuntu/rio/target/release/rio",
+    "review",
+    "--base",
+    "a9f3f3fccc180c05190df0478a17487ec9908e4e",
+    "--offline",
+    "--format",
+    "json",
+    "--profile",
+    "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/profile-baseline-probe.yaml"
+  ],
+  "cwd": "/dev/shm/rio-pydantic/positive-head",
+  "environment_overrides": {
+    "PATH": ".venv/bin:/home/ubuntu/.cargo/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+    "RIO_CACHE_DIR": "/dev/shm/rio-pydantic/baseline-probe-cache",
+    "RIO_CONFIG_DIR": "/dev/shm/rio-pydantic/baseline-probe-config",
+    "CONTEXT": "eval-pydantic",
+    "PYTEST_ADDOPTS": "--ignore=tests/pydantic_core --ignore=tests/benchmarks"
+  },
+  "exit_code": 0,
+  "wall_time_ms": 105468,
+  "purpose": "Unscored setup probe: same frozen source/binary, coverage disabled only to cheaply confirm own-wheel-file baseline compatibility before full reruns; not part of cohort."
+}

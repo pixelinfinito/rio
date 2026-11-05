@@ -1,0 +1,304 @@
+[
+  {
+    "argv": [
+      "uv",
+      "sync",
+      "--locked",
+      "--python",
+      "3.12.12",
+      "--all-groups",
+      "--all-packages",
+      "--all-extras",
+      "--no-editable-package",
+      "pydantic"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/positive-base",
+    "environment": {
+      "CONTEXT": "eval-pydantic",
+      "PATH": ".venv/bin:/home/ubuntu/.cargo/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "UV_CACHE_DIR": "/dev/shm/rio-pydantic/uv-cache",
+      "CARGO_HOME": "/dev/shm/rio-pydantic/cargo",
+      "CARGO_TARGET_DIR": "/dev/shm/rio-pydantic/cargo-target",
+      "CARGO_BUILD_JOBS": "2",
+      "TMPDIR": "/dev/shm/rio-pydantic/tmp",
+      "PYTEST_ADDOPTS": "--ignore=tests/pydantic_core --ignore=tests/benchmarks"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 65,
+    "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-wheel-final/00-stdout.log",
+    "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-wheel-final/00-stderr.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "python",
+      "-c",
+      "import pathlib,sysconfig,hashlib\np=pathlib.Path(sysconfig.get_path('purelib'))/'a1_coverage.pth'\nif p.exists():\n    assert hashlib.sha256(p.read_bytes()).hexdigest() == 'ef2ed06d19867ec669c09a804060666a9cd5e383af0a9d11aa2de79b77d448e8'\n    p.unlink()\n    print('Removed unused conditional coverage startup hook; explicit coverage run remains')\nelse:\n    print('Conditional startup hook already absent after prior recorded setup; explicit coverage run remains')\n\nimport tempfile,subprocess,importlib.metadata,json,sys\nbefore_dist=importlib.metadata.distribution('pydantic')\ninstalled_root=pathlib.Path(before_dist.locate_file('pydantic'))\ndef package_hashes():\n    return {str(p.relative_to(installed_root)):hashlib.sha256(p.read_bytes()).hexdigest() for p in installed_root.rglob('*') if p.is_file() and '__pycache__' not in p.parts}\nbefore=package_hashes()\nwith tempfile.TemporaryDirectory(prefix='rio-pydantic-wheel-') as wheel_tmp:\n    subprocess.run(['uv','build','--offline','--wheel','--python',sys.executable,'--out-dir',wheel_tmp],check=True)\n    wheels=list(pathlib.Path(wheel_tmp).glob('pydantic-*.whl'))\n    assert len(wheels)==1,wheels\n    wheel=wheels[0]\n    print('Self-package wheel SHA256',hashlib.sha256(wheel.read_bytes()).hexdigest(),flush=True)\n    subprocess.run(['uv','pip','install','--offline','--no-deps','--reinstall','--python',sys.executable,str(wheel)],check=True)\n    assert package_hashes()==before,'Wheel reinstall changed own-package contents'\n    dist=importlib.metadata.distribution('pydantic')\n    direct=json.loads(dist.read_text('direct_url.json'))\n    assert direct['url'].endswith('.whl') and not direct.get('dir_info',{}).get('editable')\n    print('Own package code byte-identical after wheel-file reinstall; metadata:',json.dumps(direct),flush=True)\n"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/positive-base",
+    "environment": {
+      "CONTEXT": "eval-pydantic",
+      "PATH": ".venv/bin:/home/ubuntu/.cargo/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "UV_CACHE_DIR": "/dev/shm/rio-pydantic/uv-cache",
+      "CARGO_HOME": "/dev/shm/rio-pydantic/cargo",
+      "CARGO_TARGET_DIR": "/dev/shm/rio-pydantic/cargo-target",
+      "CARGO_BUILD_JOBS": "2",
+      "TMPDIR": "/dev/shm/rio-pydantic/tmp",
+      "PYTEST_ADDOPTS": "--ignore=tests/pydantic_core --ignore=tests/benchmarks"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 1118,
+    "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-wheel-final/01-stdout.log",
+    "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-wheel-final/01-stderr.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "python",
+      "--version"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/positive-base",
+    "environment": {
+      "CONTEXT": "eval-pydantic",
+      "PATH": ".venv/bin:/home/ubuntu/.cargo/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "UV_CACHE_DIR": "/dev/shm/rio-pydantic/uv-cache",
+      "CARGO_HOME": "/dev/shm/rio-pydantic/cargo",
+      "CARGO_TARGET_DIR": "/dev/shm/rio-pydantic/cargo-target",
+      "CARGO_BUILD_JOBS": "2",
+      "TMPDIR": "/dev/shm/rio-pydantic/tmp",
+      "PYTEST_ADDOPTS": "--ignore=tests/pydantic_core --ignore=tests/benchmarks"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 33,
+    "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-wheel-final/02-stdout.log",
+    "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-wheel-final/02-stderr.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "pyright",
+      "--version"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/positive-base",
+    "environment": {
+      "CONTEXT": "eval-pydantic",
+      "PATH": ".venv/bin:/home/ubuntu/.cargo/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "UV_CACHE_DIR": "/dev/shm/rio-pydantic/uv-cache",
+      "CARGO_HOME": "/dev/shm/rio-pydantic/cargo",
+      "CARGO_TARGET_DIR": "/dev/shm/rio-pydantic/cargo-target",
+      "CARGO_BUILD_JOBS": "2",
+      "TMPDIR": "/dev/shm/rio-pydantic/tmp",
+      "PYTEST_ADDOPTS": "--ignore=tests/pydantic_core --ignore=tests/benchmarks"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 817,
+    "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-wheel-final/03-stdout.log",
+    "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-wheel-final/03-stderr.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "mypy",
+      "--version"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/positive-base",
+    "environment": {
+      "CONTEXT": "eval-pydantic",
+      "PATH": ".venv/bin:/home/ubuntu/.cargo/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "UV_CACHE_DIR": "/dev/shm/rio-pydantic/uv-cache",
+      "CARGO_HOME": "/dev/shm/rio-pydantic/cargo",
+      "CARGO_TARGET_DIR": "/dev/shm/rio-pydantic/cargo-target",
+      "CARGO_BUILD_JOBS": "2",
+      "TMPDIR": "/dev/shm/rio-pydantic/tmp",
+      "PYTEST_ADDOPTS": "--ignore=tests/pydantic_core --ignore=tests/benchmarks"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 366,
+    "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-wheel-final/04-stdout.log",
+    "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-wheel-final/04-stderr.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "ruff",
+      "--version"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/positive-base",
+    "environment": {
+      "CONTEXT": "eval-pydantic",
+      "PATH": ".venv/bin:/home/ubuntu/.cargo/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "UV_CACHE_DIR": "/dev/shm/rio-pydantic/uv-cache",
+      "CARGO_HOME": "/dev/shm/rio-pydantic/cargo",
+      "CARGO_TARGET_DIR": "/dev/shm/rio-pydantic/cargo-target",
+      "CARGO_BUILD_JOBS": "2",
+      "TMPDIR": "/dev/shm/rio-pydantic/tmp",
+      "PYTEST_ADDOPTS": "--ignore=tests/pydantic_core --ignore=tests/benchmarks"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 32,
+    "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-wheel-final/05-stdout.log",
+    "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-wheel-final/05-stderr.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "coverage",
+      "--version"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/positive-base",
+    "environment": {
+      "CONTEXT": "eval-pydantic",
+      "PATH": ".venv/bin:/home/ubuntu/.cargo/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "UV_CACHE_DIR": "/dev/shm/rio-pydantic/uv-cache",
+      "CARGO_HOME": "/dev/shm/rio-pydantic/cargo",
+      "CARGO_TARGET_DIR": "/dev/shm/rio-pydantic/cargo-target",
+      "CARGO_BUILD_JOBS": "2",
+      "TMPDIR": "/dev/shm/rio-pydantic/tmp",
+      "PYTEST_ADDOPTS": "--ignore=tests/pydantic_core --ignore=tests/benchmarks"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 365,
+    "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-wheel-final/06-stdout.log",
+    "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-wheel-final/06-stderr.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "pyright",
+      "--outputjson"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/positive-base",
+    "environment": {
+      "CONTEXT": "eval-pydantic",
+      "PATH": ".venv/bin:/home/ubuntu/.cargo/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "UV_CACHE_DIR": "/dev/shm/rio-pydantic/uv-cache",
+      "CARGO_HOME": "/dev/shm/rio-pydantic/cargo",
+      "CARGO_TARGET_DIR": "/dev/shm/rio-pydantic/cargo-target",
+      "CARGO_BUILD_JOBS": "2",
+      "TMPDIR": "/dev/shm/rio-pydantic/tmp",
+      "PYTEST_ADDOPTS": "--ignore=tests/pydantic_core --ignore=tests/benchmarks"
+    },
+    "exit_code": 1,
+    "wall_time_ms": 29586,
+    "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-wheel-final/07-stdout.log",
+    "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-wheel-final/07-stderr.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "ruff",
+      "check",
+      "--output-format",
+      "json",
+      "pydantic",
+      "tests/test_plugin_loader.py"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/positive-base",
+    "environment": {
+      "CONTEXT": "eval-pydantic",
+      "PATH": ".venv/bin:/home/ubuntu/.cargo/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "UV_CACHE_DIR": "/dev/shm/rio-pydantic/uv-cache",
+      "CARGO_HOME": "/dev/shm/rio-pydantic/cargo",
+      "CARGO_TARGET_DIR": "/dev/shm/rio-pydantic/cargo-target",
+      "CARGO_BUILD_JOBS": "2",
+      "TMPDIR": "/dev/shm/rio-pydantic/tmp",
+      "PYTEST_ADDOPTS": "--ignore=tests/pydantic_core --ignore=tests/benchmarks"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 120,
+    "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-wheel-final/08-stdout.log",
+    "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-wheel-final/08-stderr.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "coverage",
+      "run",
+      "-m",
+      "pytest",
+      "-q"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/positive-base",
+    "environment": {
+      "CONTEXT": "eval-pydantic",
+      "PATH": ".venv/bin:/home/ubuntu/.cargo/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "UV_CACHE_DIR": "/dev/shm/rio-pydantic/uv-cache",
+      "CARGO_HOME": "/dev/shm/rio-pydantic/cargo",
+      "CARGO_TARGET_DIR": "/dev/shm/rio-pydantic/cargo-target",
+      "CARGO_BUILD_JOBS": "2",
+      "TMPDIR": "/dev/shm/rio-pydantic/tmp",
+      "PYTEST_ADDOPTS": "--ignore=tests/pydantic_core --ignore=tests/benchmarks"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 133027,
+    "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-wheel-final/09-stdout.log",
+    "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-wheel-final/09-stderr.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "coverage",
+      "json",
+      "-o",
+      "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-wheel-final/coverage.json"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/positive-base",
+    "environment": {
+      "CONTEXT": "eval-pydantic",
+      "PATH": ".venv/bin:/home/ubuntu/.cargo/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "UV_CACHE_DIR": "/dev/shm/rio-pydantic/uv-cache",
+      "CARGO_HOME": "/dev/shm/rio-pydantic/cargo",
+      "CARGO_TARGET_DIR": "/dev/shm/rio-pydantic/cargo-target",
+      "CARGO_BUILD_JOBS": "2",
+      "TMPDIR": "/dev/shm/rio-pydantic/tmp",
+      "PYTEST_ADDOPTS": "--ignore=tests/pydantic_core --ignore=tests/benchmarks"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 3377,
+    "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-wheel-final/10-stdout.log",
+    "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-wheel-final/10-stderr.log"
+  },
+  {
+    "argv": [
+      "git",
+      "status",
+      "--porcelain",
+      "--untracked-files=no"
+    ],
+    "cwd": "/dev/shm/rio-pydantic/positive-base",
+    "environment": {
+      "CONTEXT": "eval-pydantic",
+      "PATH": ".venv/bin:/home/ubuntu/.cargo/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "UV_CACHE_DIR": "/dev/shm/rio-pydantic/uv-cache",
+      "CARGO_HOME": "/dev/shm/rio-pydantic/cargo",
+      "CARGO_TARGET_DIR": "/dev/shm/rio-pydantic/cargo-target",
+      "CARGO_BUILD_JOBS": "2",
+      "TMPDIR": "/dev/shm/rio-pydantic/tmp",
+      "PYTEST_ADDOPTS": "--ignore=tests/pydantic_core --ignore=tests/benchmarks"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 16,
+    "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-wheel-final/11-stdout.log",
+    "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence/positive-base-wheel-final/11-stderr.log"
+  }
+]

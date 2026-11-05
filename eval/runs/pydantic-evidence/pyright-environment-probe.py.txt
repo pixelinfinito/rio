@@ -1,0 +1,7 @@
+from pathlib import Path
+import subprocess,os,json,time
+root=Path('/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence');cwd=Path('/dev/shm/rio-pydantic/pyright-probe');exe='/dev/shm/rio-pydantic/positive-head/.venv/bin/pyright';out=root/'pyright-interpreter-probe';out.mkdir(exist_ok=True);ledger=[]
+for label,prefix in [('global-path',''),('project-path','.venv/bin:')]:
+ cmd=[exe,'--outputjson'];env={**os.environ,'PATH':prefix+os.environ['PATH']};start=time.monotonic()
+ with (out/f'{label}.stdout.json').open('w') as so,(out/f'{label}.stderr.log').open('w') as se:code=subprocess.run(cmd,cwd=cwd,env=env,stdout=so,stderr=se,timeout=300).returncode
+ d=json.loads((out/f'{label}.stdout.json').read_text());ledger.append({'argv':cmd,'cwd':str(cwd),'environment':{'PATH':env['PATH']},'exit_code':code,'wall_time_ms':int((time.monotonic()-start)*1000),'summary':d['summary']});(out/'commands.json').write_text(json.dumps(ledger,indent=2)+'\n');print(label,d['summary'],flush=True)

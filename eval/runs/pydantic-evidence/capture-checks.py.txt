@@ -1,0 +1,16 @@
+from pathlib import Path
+import json,shutil,sys,datetime,hashlib
+root=Path('/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic');out=root/'eval/runs'/sys.argv[1];d=json.loads((out/'commands.json').read_text());scratch=Path(d['disposable_directory']);files=[]
+for checks in (scratch/'cache').glob('*/runs/*/checks'):
+ for kind in ['lint','typecheck','coverage']:
+  for version in (checks/kind).glob('*/*'):
+   if not (version/('coverage.json' if kind=='coverage' else 'findings.json')).exists():continue
+   for p in version.iterdir():
+    if not p.is_file():continue
+    rel=p.relative_to(checks);target=out/'rio-check-artifacts'/rel;target.parent.mkdir(parents=True,exist_ok=True)
+    try:b=p.read_bytes()
+    except FileNotFoundError:continue
+    target.write_bytes(b);files.append({'source':str(p),'path':str(target.relative_to(root)),'sha256':hashlib.sha256(b).hexdigest(),'bytes':len(b)})
+if files:
+ (out/'rio-check-artifact-capture.json').write_text(json.dumps({'captured_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'note':'Read-only supplemental completed check outputs captured before runner cleanup. Final report establishes baseline eligibility. Each selected directory had findings.json or coverage.json completion artifact.','files':files},indent=2)+'\n')
+print(sys.argv[1],len(files),'completed check files captured')

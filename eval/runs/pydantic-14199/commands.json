@@ -1,0 +1,37 @@
+{
+  "schema": "rio-eval-runner-v1",
+  "repository": "pydantic/pydantic",
+  "pr": "https://github.com/pydantic/pydantic/pull/14199",
+  "started_utc": "2026-11-05T02:58:26.391542+00:00",
+  "rio_binary": "/home/ubuntu/rio/target/release/rio",
+  "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-checkout",
+        "https://github.com/pydantic/pydantic.git",
+        "/dev/shm/rio-pydantic/tmp/rio-eval-o8jyjmtv/head"
+      ],
+      "cwd": "/dev/shm/rio-pydantic/tmp/rio-eval-o8jyjmtv",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14199/01-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14199/01-stderr.log"
+    }
+  ],
+  "installations": {},
+  "failures": [
+    "Evaluator interrupted premature retry before Rio execution; setup diagnosis required all groups rather than only removing the conditional coverage startup hook."
+  ],
+  "network": "Installers may use network; Rio review uses --offline. Subprocesses are not isolated.",
+  "profile_sha256": "6ece46cdff0eac9d03cf93bdd17b1c0676733bdb32524180d80e381eff35a9e5",
+  "resolution": {
+    "base_sha": "a9f3f3fccc180c05190df0478a17487ec9908e4e",
+    "head_sha": "262700f815672fc37ed637a1604234f6c7cc7ee9",
+    "source": "pinned argv"
+  },
+  "disposable_directory": "/dev/shm/rio-pydantic/tmp/rio-eval-o8jyjmtv",
+  "finished_utc": "2026-11-05T02:58:54.244455+00:00",
+  "evaluation_interruption": "Post-run annotation; KeyboardInterrupt traceback saved in pydantic-evidence/aborted-retry.log."
+}

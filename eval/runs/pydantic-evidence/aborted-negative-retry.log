@@ -1,0 +1,28 @@
+Traceback (most recent call last):
+  File "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runner.py", line 208, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runner.py", line 203, in main
+    return run(parser.parse_args())
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runner.py", line 132, in run
+    _, code = command(argv, directory, required=False)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runner.py", line 88, in command
+    proc = subprocess.run(argv, cwd=cwd, env={**os.environ, **(overrides or {})},
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 550, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 1209, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 2141, in _communicate
+    self.wait(timeout=self._remaining_time(endtime))
+  File "/usr/lib/python3.12/subprocess.py", line 1264, in wait
+    return self._wait(timeout=timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 2047, in _wait
+    time.sleep(delay)
+KeyboardInterrupt
+/tmp/pydantic-run-rio.sh: line 16: unexpected EOF while looking for matching `"'

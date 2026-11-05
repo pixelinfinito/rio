@@ -1,0 +1,60 @@
+{
+  "base": [
+    [
+      "uv",
+      "sync",
+      "--locked",
+      "--python",
+      "3.12.12",
+      "--group",
+      "dev",
+      "--group",
+      "linting",
+      "--group",
+      "typechecking",
+      "--group",
+      "coverage",
+      "--all-extras",
+      "--all-packages",
+      "--group",
+      "testing-extra"
+    ],
+    [
+      "uv",
+      "run",
+      "--no-sync",
+      "python",
+      "-c",
+      "import pathlib,sysconfig,hashlib; p=pathlib.Path(sysconfig.get_path('purelib'))/'a1_coverage.pth'; assert hashlib.sha256(p.read_bytes()).hexdigest() == 'ef2ed06d19867ec669c09a804060666a9cd5e383af0a9d11aa2de79b77d448e8'; p.unlink(); print('Removed unused conditional coverage startup hook; coverage run instrumentation remains explicit')"
+    ]
+  ],
+  "head": [
+    [
+      "uv",
+      "sync",
+      "--locked",
+      "--python",
+      "3.12.12",
+      "--group",
+      "dev",
+      "--group",
+      "linting",
+      "--group",
+      "typechecking",
+      "--group",
+      "coverage",
+      "--all-extras",
+      "--all-packages",
+      "--group",
+      "testing-extra"
+    ],
+    [
+      "uv",
+      "run",
+      "--no-sync",
+      "python",
+      "-c",
+      "import pathlib,sysconfig,hashlib; p=pathlib.Path(sysconfig.get_path('purelib'))/'a1_coverage.pth'; assert hashlib.sha256(p.read_bytes()).hexdigest() == 'ef2ed06d19867ec669c09a804060666a9cd5e383af0a9d11aa2de79b77d448e8'; p.unlink(); print('Removed unused conditional coverage startup hook; coverage run instrumentation remains explicit')"
+    ]
+  ]
+}
