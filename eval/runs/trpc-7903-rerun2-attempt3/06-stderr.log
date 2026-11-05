@@ -1,0 +1,13 @@
+Warning: you are leaving 3 commits behind, not connected to
+any of your branches:
+
+  248fb772a fix(monorepo): address second review on grouped release notes
+  dcbb6d04f fix(monorepo): address review on grouped release notes
+  f097da47d chore(monorepo): group GitHub release notes by package, and preview them with `pnpm release notes`
+
+If you want to keep them by creating a new branch, this may be a good time
+to do so with:
+
+ git branch <new-branch-name> 248fb772a
+
+HEAD is now at c869fa107 chore(monorepo): replace lerna-lite with a pnpm publish script, and create GitHub releases (#7832)

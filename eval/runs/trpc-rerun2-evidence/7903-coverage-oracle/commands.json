@@ -1,0 +1,72 @@
+[
+  {
+    "version": "base",
+    "sha": "c869fa1075fc3ce11b38495c5e6044fb97b335d2",
+    "argv": [
+      "git",
+      "checkout",
+      "--detach",
+      "c869fa1075fc3ce11b38495c5e6044fb97b335d2"
+    ],
+    "cwd": "/dev/shm/trpc-eval/source",
+    "started_utc": "2026-11-05T11:39:17.012929+00:00",
+    "exit_code": 0,
+    "wall_time_ms": 170
+  },
+  {
+    "version": "base",
+    "sha": "c869fa1075fc3ce11b38495c5e6044fb97b335d2",
+    "argv": [
+      "node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "--maxWorkers=2",
+      "--testTimeout=30000",
+      "--hookTimeout=30000",
+      "--coverage.enabled",
+      "--coverage.provider=istanbul",
+      "--coverage.reporter=json",
+      "--coverage.reporter=lcov",
+      "--coverage.reportsDirectory=/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-rerun2-evidence/7903-coverage-oracle/base"
+    ],
+    "cwd": "/dev/shm/trpc-eval/source/tooling/release",
+    "started_utc": "2026-11-05T11:39:17.183627+00:00",
+    "exit_code": 1,
+    "wall_time_ms": 12846
+  },
+  {
+    "version": "head",
+    "sha": "248fb772a6d6f7ce2492f8549a8d370ec3df9731",
+    "argv": [
+      "git",
+      "checkout",
+      "--detach",
+      "248fb772a6d6f7ce2492f8549a8d370ec3df9731"
+    ],
+    "cwd": "/dev/shm/trpc-eval/source",
+    "started_utc": "2026-11-05T11:39:30.030946+00:00",
+    "exit_code": 0,
+    "wall_time_ms": 188
+  },
+  {
+    "version": "head",
+    "sha": "248fb772a6d6f7ce2492f8549a8d370ec3df9731",
+    "argv": [
+      "node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "--maxWorkers=2",
+      "--testTimeout=30000",
+      "--hookTimeout=30000",
+      "--coverage.enabled",
+      "--coverage.provider=istanbul",
+      "--coverage.reporter=json",
+      "--coverage.reporter=lcov",
+      "--coverage.reportsDirectory=/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-rerun2-evidence/7903-coverage-oracle/head"
+    ],
+    "cwd": "/dev/shm/trpc-eval/source/tooling/release",
+    "started_utc": "2026-11-05T11:39:30.219456+00:00",
+    "exit_code": 1,
+    "wall_time_ms": 15420
+  }
+]

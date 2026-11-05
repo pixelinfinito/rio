@@ -1,0 +1,13 @@
+
+ RUN  v5.0.0 /dev/shm/trpc-eval/source/tooling/release
+      Coverage enabled with istanbul
+
+ ❯ |release| src/tarballs.test.ts (10 tests | 1 failed) 5278ms
+   ❯ packTarballs (1)
+     × packs the given packages, which readTarballs accepts 227ms
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 25 passed (26)
+   Start at  11:39:19
+   Duration  10.31s (tests 41%, import 34%, transform 24%, worker 1%)
+

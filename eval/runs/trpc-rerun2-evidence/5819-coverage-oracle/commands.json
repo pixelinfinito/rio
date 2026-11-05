@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "corepack",
+    "pnpm",
+    "exec",
+    "vitest",
+    "run",
+    "--coverage",
+    "--coverage.reporter=json",
+    "--coverage.reporter=lcov",
+    "--coverage.reportsDirectory=/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-rerun2-evidence/5819-coverage-oracle/head",
+    "--coverage.all",
+    "--maxWorkers=2",
+    "--minWorkers=1"
+  ],
+  "cwd": "/tmp/rio-rerun2-trpc/rio-eval-etvw3zcb/head/packages/server",
+  "sha": "124440fafb43a33859cd1f5c3232b2d1498742eb",
+  "started_utc": "2026-11-05T11:45:18.955874+00:00",
+  "exit_code": 1,
+  "wall_time_ms": 35736
+}

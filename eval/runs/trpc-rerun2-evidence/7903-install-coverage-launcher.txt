@@ -1,0 +1,10 @@
+from pathlib import Path
+import json,hashlib
+for name in ("node_modules/.bin/vitest", "tooling/release/node_modules/.bin/vitest"):
+    p=Path(name)
+    if not p.is_file(): continue
+    original=p.with_name("vitest.rio-original")
+    original.write_bytes(p.read_bytes()); original.chmod(0o755)
+    print(json.dumps({"launcher":name,"original_sha256":hashlib.sha256(original.read_bytes()).hexdigest()}))
+    p.write_text("#!/usr/bin/env python3\nimport os,sys\nfrom pathlib import Path\nargs=sys.argv[1:]\nif any(a == '--coverage' or a.startswith('--coverage.enabled') for a in args):\n    if not any(a.startswith('--coverage.provider') for a in args): args += ['--coverage.provider=istanbul']\n    args += ['--testTimeout=30000','--hookTimeout=30000']\noriginal=str(Path(__file__).with_name('vitest.rio-original'))\nos.execv(original,[original,*args])\n")
+    p.chmod(0o755)

@@ -1,0 +1,107 @@
+Scope: all 37 workspace projects
+Lockfile is up to date, resolution step is skipped
+Progress: resolved 1, reused 0, downloaded 0, added 0
+Packages: +2632
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Progress: resolved 2632, reused 94, downloaded 0, added 0
+Progress: resolved 2632, reused 315, downloaded 0, added 0
+Progress: resolved 2632, reused 513, downloaded 0, added 0
+Progress: resolved 2632, reused 987, downloaded 0, added 0
+Progress: resolved 2632, reused 2280, downloaded 0, added 0
+Progress: resolved 2632, reused 2623, downloaded 0, added 0
+Progress: resolved 2632, reused 2623, downloaded 0, added 1
+Progress: resolved 2632, reused 2623, downloaded 0, added 169
+Progress: resolved 2632, reused 2623, downloaded 0, added 290
+Progress: resolved 2632, reused 2623, downloaded 0, added 313
+Progress: resolved 2632, reused 2623, downloaded 0, added 461
+Progress: resolved 2632, reused 2623, downloaded 0, added 525
+Progress: resolved 2632, reused 2623, downloaded 0, added 557
+Progress: resolved 2632, reused 2623, downloaded 0, added 858
+Progress: resolved 2632, reused 2623, downloaded 0, added 877
+Progress: resolved 2632, reused 2623, downloaded 0, added 958
+Progress: resolved 2632, reused 2623, downloaded 0, added 1048
+Progress: resolved 2632, reused 2623, downloaded 0, added 1104
+Progress: resolved 2632, reused 2623, downloaded 0, added 1118
+Progress: resolved 2632, reused 2623, downloaded 0, added 1127
+Progress: resolved 2632, reused 2623, downloaded 0, added 1139
+Progress: resolved 2632, reused 2623, downloaded 0, added 1185
+Progress: resolved 2632, reused 2623, downloaded 0, added 1249
+Progress: resolved 2632, reused 2623, downloaded 0, added 1334
+Progress: resolved 2632, reused 2623, downloaded 0, added 1357
+Progress: resolved 2632, reused 2623, downloaded 0, added 1374
+Progress: resolved 2632, reused 2623, downloaded 0, added 1411
+Progress: resolved 2632, reused 2623, downloaded 0, added 1508
+Progress: resolved 2632, reused 2623, downloaded 0, added 1598
+Progress: resolved 2632, reused 2623, downloaded 0, added 1741
+Progress: resolved 2632, reused 2623, downloaded 0, added 1806
+Progress: resolved 2632, reused 2623, downloaded 0, added 1830
+Progress: resolved 2632, reused 2623, downloaded 0, added 1853
+Progress: resolved 2632, reused 2623, downloaded 0, added 1899
+Progress: resolved 2632, reused 2623, downloaded 0, added 2010
+Progress: resolved 2632, reused 2623, downloaded 0, added 2065
+Progress: resolved 2632, reused 2623, downloaded 0, added 2242
+Progress: resolved 2632, reused 2623, downloaded 0, added 2313
+Progress: resolved 2632, reused 2623, downloaded 0, added 2435
+Progress: resolved 2632, reused 2623, downloaded 0, added 2535
+Progress: resolved 2632, reused 2623, downloaded 0, added 2621
+Progress: resolved 2632, reused 2623, downloaded 0, added 2622
+Progress: resolved 2632, reused 2623, downloaded 0, added 2625
+Progress: resolved 2632, reused 2623, downloaded 0, added 2626
+Progress: resolved 2632, reused 2623, downloaded 0, added 2627
+Progress: resolved 2632, reused 2623, downloaded 0, added 2628
+Progress: resolved 2632, reused 2623, downloaded 0, added 2629
+Progress: resolved 2632, reused 2623, downloaded 0, added 2630
+Progress: resolved 2632, reused 2623, downloaded 0, added 2631
+Progress: resolved 2632, reused 2623, downloaded 0, added 2632, done
+
+dependencies:
++ @actions/core 1.10.1
++ @actions/github 6.0.0
++ @ianvs/prettier-plugin-sort-imports 4.0.0
++ @manypkg/cli 0.21.2
++ @rollup/plugin-node-resolve 15.2.3
++ @swc/core 1.3.3
++ @testing-library/dom 10.0.0
++ @testing-library/jest-dom 6.0.0
++ @testing-library/react 16.0.0
++ @testing-library/user-event 14.4.3
++ @types/event-source-polyfill 1.0.5
++ @types/node 20.10.4
++ @types/prettier 2.7.2
++ @typescript-eslint/eslint-plugin 7.7.1
++ @typescript-eslint/parser 7.7.1
++ @vitest/coverage-istanbul 1.5.2
++ @vitest/ui 1.5.2
++ concurrently 8.0.0
++ eslint 8.56.0
++ eslint-config-prettier 8.10.0
++ eslint-plugin-no-only-tests 3.1.0
++ eslint-plugin-react 7.32.2
++ eslint-plugin-react-hooks 4.6.0
++ eslint-plugin-turbo 2.0.3
++ eslint-plugin-unicorn 54.0.0
++ event-source-polyfill 1.0.31
++ express 4.19.2
++ fast-glob 3.2.12
++ hash-sum 2.0.0
++ lerna 8.1.2
++ npm-run-all2 6.1.1
++ prettier 2.8.8
++ prettier-plugin-tailwindcss 0.4.0
++ rollup 4.9.5
++ rollup-plugin-analyzer 4.0.0
++ rollup-plugin-delete 2.0.0
++ rollup-plugin-node-externals 7.0.0
++ rollup-plugin-swc3 0.11.0
++ rollup-plugin-typescript2 0.36.0
++ superjson 1.12.4
++ ts-prune 0.10.3
++ tsx 4.6.2
++ turbo 2.0.3
++ typescript 5.5.2
++ vite 5.1.7
++ vitest 1.5.2
++ vitest-environment-miniflare 2.14.2
++ zod 3.23.8
+
+Done in 4m 55.4s

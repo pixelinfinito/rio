@@ -1,0 +1,15 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |release| src/tarballs.test.ts > packTarballs > packs the given packages, which readTarballs accepts
+PlatformError: NotFound: ChildProcess.spawn (pnpm pack --out /dev/shm/x8AssJ/trpc-client-11.23.0.tgz)
+ ❯ Module.systemError ../../node_modules/.pnpm/effect@4.1.1/node_modules/effect/src/PlatformError.ts:238:22
+ ❯ ../../node_modules/.pnpm/@effect+platform-node-shared@4.1.1_effect@4.1.1/node_modules/@effect/platform-node-shared/src/internal/utils.ts:44:24
+ ❯ toPlatformError ../../node_modules/.pnpm/@effect+platform-node-shared@4.1.1_effect@4.1.1/node_modules/@effect/platform-node-shared/src/NodeChildProcessSpawner.ts:78:54
+ ❯ ChildProcess.<anonymous> ../../node_modules/.pnpm/@effect+platform-node-shared@4.1.1_effect@4.1.1/node_modules/@effect/platform-node-shared/src/NodeChildProcessSpawner.ts:490:28
+
+Caused by: Error: spawn pnpm ENOENT
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { errno: -2, code: 'ENOENT', syscall: 'spawn pnpm', path: 'pnpm', spawnargs: [ 'pack', '--out', '/dev/shm/x8AssJ/trpc-client-11.23.0.tgz' ] }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

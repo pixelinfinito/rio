@@ -1,0 +1,565 @@
+{
+  "checks": [
+    {
+      "findings": [],
+      "kind": "secrets",
+      "language": "common",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 1
+    },
+    {
+      "findings": [],
+      "hint": "Dependency audit needs api.osv.dev",
+      "kind": "dependencies",
+      "language": "common",
+      "outcome": "skipped",
+      "reason": "offline",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 0
+    },
+    {
+      "findings": [],
+      "hint": "lint runs only against the project's own rules; add an ESLint, Biome or Ruff configuration",
+      "kind": "lint",
+      "language": "typescript",
+      "outcome": "skipped",
+      "reason": "no_project_config",
+      "root": "tooling/release",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 0
+    },
+    {
+      "dependency_state": "verified",
+      "findings": [],
+      "hint": "Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+      "kind": "coverage",
+      "language": "typescript",
+      "outcome": "failed",
+      "reason": "tests_failed",
+      "root": "tooling/release",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 1830
+    },
+    {
+      "dependency_state": "verified",
+      "findings": [],
+      "kind": "typecheck",
+      "language": "typescript",
+      "outcome": "passed",
+      "root": "tooling/release",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 2050
+    },
+    {
+      "dependency_state": "verified",
+      "findings": [],
+      "kind": "typecheck",
+      "language": "typescript",
+      "outcome": "passed",
+      "root": "tooling/release",
+      "scheduled_as": "changed",
+      "version": "base",
+      "wall_time_ms": 1947
+    }
+  ],
+  "deferred": [
+    {
+      "reason": "no_endpoint",
+      "step": "triage"
+    },
+    {
+      "reason": "no_endpoint",
+      "step": "agents"
+    },
+    {
+      "reason": "no_endpoint",
+      "step": "verify"
+    }
+  ],
+  "excluded": [
+    {
+      "path": "tooling/release/src/bin/release.ts",
+      "reason": "coverage_not_instrumented"
+    },
+    {
+      "path": "tooling/release/src/notes.ts",
+      "reason": "coverage_not_instrumented"
+    },
+    {
+      "path": "tooling/release/src/release.ts",
+      "reason": "coverage_not_instrumented"
+    }
+  ],
+  "findings": [],
+  "footer": {
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "Graph references use syntax and text; no language server was used",
+      "Offline applies to Rio; tool and test processes were not network-isolated"
+    ],
+    "suppressions": [],
+    "tool_versions": {
+      "typescript:tooling/release:tsc": "Version 7.0.2",
+      "typescript:tooling/release:vitest": "5.0.0"
+    }
+  },
+  "impact": {
+    "symbols": [
+      {
+        "path": "tooling/release/src/bin/release.ts",
+        "references_per_hop": [
+          0,
+          0
+        ],
+        "symbol_path": "",
+        "test_referenced": false,
+        "unresolved": 0
+      },
+      {
+        "path": "tooling/release/src/notes.test.ts",
+        "references_per_hop": [
+          0,
+          0
+        ],
+        "symbol_path": "",
+        "test_referenced": false,
+        "unresolved": 0
+      },
+      {
+        "path": "tooling/release/src/notes.test.ts",
+        "references_per_hop": [
+          3,
+          7
+        ],
+        "symbol_path": "notes.test.change",
+        "test_referenced": true,
+        "unresolved": 0
+      },
+      {
+        "path": "tooling/release/src/notes.test.ts",
+        "references_per_hop": [
+          3,
+          7
+        ],
+        "symbol_path": "notes.test.commit",
+        "test_referenced": true,
+        "unresolved": 0
+      },
+      {
+        "path": "tooling/release/src/notes.test.ts",
+        "references_per_hop": [
+          16,
+          47
+        ],
+        "symbol_path": "notes.test.github",
+        "test_referenced": true,
+        "unresolved": 0
+      },
+      {
+        "path": "tooling/release/src/notes.test.ts",
+        "references_per_hop": [
+          2,
+          1
+        ],
+        "symbol_path": "notes.test.notes",
+        "test_referenced": true,
+        "unresolved": 0
+      },
+      {
+        "path": "tooling/release/src/notes.test.ts",
+        "references_per_hop": [
+          1,
+          0
+        ],
+        "symbol_path": "notes.test.pr",
+        "test_referenced": true,
+        "unresolved": 0
+      },
+      {
+        "path": "tooling/release/src/notes.test.ts",
+        "references_per_hop": [
+          2,
+          0
+        ],
+        "symbol_path": "notes.test.prUrl",
+        "test_referenced": true,
+        "unresolved": 0
+      },
+      {
+        "path": "tooling/release/src/notes.test.ts",
+        "references_per_hop": [
+          14,
+          43
+        ],
+        "symbol_path": "notes.test.write",
+        "test_referenced": true,
+        "unresolved": 68
+      },
+      {
+        "path": "tooling/release/src/notes.ts",
+        "references_per_hop": [
+          8,
+          18
+        ],
+        "symbol_path": "",
+        "test_referenced": true,
+        "unresolved": 0
+      },
+      {
+        "path": "tooling/release/src/notes.ts",
+        "references_per_hop": [
+          5,
+          7
+        ],
+        "symbol_path": "notes.Change",
+        "test_referenced": true,
+        "unresolved": 0
+      },
+      {
+        "path": "tooling/release/src/notes.ts",
+        "references_per_hop": [
+          3,
+          16
+        ],
+        "symbol_path": "notes.GitHubInfo",
+        "test_referenced": true,
+        "unresolved": 0
+      },
+      {
+        "path": "tooling/release/src/notes.ts",
+        "references_per_hop": [
+          2,
+          35
+        ],
+        "symbol_path": "notes.GraphQLAuthor",
+        "test_referenced": true,
+        "unresolved": 0
+      },
+      {
+        "path": "tooling/release/src/notes.ts",
+        "references_per_hop": [
+          2,
+          4
+        ],
+        "symbol_path": "notes.NewContributor",
+        "test_referenced": true,
+        "unresolved": 0
+      },
+      {
+        "path": "tooling/release/src/notes.ts",
+        "references_per_hop": [
+          3,
+          2
+        ],
+        "symbol_path": "notes.NotesEntry",
+        "test_referenced": true,
+        "unresolved": 0
+      },
+      {
+        "path": "tooling/release/src/notes.ts",
+        "references_per_hop": [
+          5,
+          2
+        ],
+        "symbol_path": "notes.NotesPackage",
+        "test_referenced": true,
+        "unresolved": 0
+      },
+      {
+        "path": "tooling/release/src/notes.ts",
+        "references_per_hop": [
+          4,
+          20
+        ],
+        "symbol_path": "notes.PullRequest",
+        "test_referenced": true,
+        "unresolved": 0
+      },
+      {
+        "path": "tooling/release/src/notes.ts",
+        "references_per_hop": [
+          1,
+          2
+        ],
+        "symbol_path": "notes.Section",
+        "test_referenced": true,
+        "unresolved": 0
+      },
+      {
+        "path": "tooling/release/src/notes.ts",
+        "references_per_hop": [
+          0,
+          0
+        ],
+        "symbol_path": "notes.bullet",
+        "test_referenced": false,
+        "unresolved": 0
+      },
+      {
+        "path": "tooling/release/src/notes.ts",
+        "references_per_hop": [
+          3,
+          4
+        ],
+        "symbol_path": "notes.changedPackages",
+        "test_referenced": true,
+        "unresolved": 0
+      },
+      {
+        "path": "tooling/release/src/notes.ts",
+        "references_per_hop": [
+          2,
+          3
+        ],
+        "symbol_path": "notes.changesBetween",
+        "test_referenced": true,
+        "unresolved": 0
+      },
+      {
+        "path": "tooling/release/src/notes.ts",
+        "references_per_hop": [
+          2,
+          4
+        ],
+        "symbol_path": "notes.isReleaseCommit",
+        "test_referenced": true,
+        "unresolved": 0
+      },
+      {
+        "path": "tooling/release/src/notes.ts",
+        "references_per_hop": [
+          31,
+          45
+        ],
+        "symbol_path": "notes.login",
+        "test_referenced": true,
+        "unresolved": 0
+      },
+      {
+        "path": "tooling/release/src/notes.ts",
+        "references_per_hop": [
+          2,
+          2
+        ],
+        "symbol_path": "notes.noteSection",
+        "test_referenced": true,
+        "unresolved": 0
+      },
+      {
+        "path": "tooling/release/src/notes.ts",
+        "references_per_hop": [
+          2,
+          4
+        ],
+        "symbol_path": "notes.notesEntries",
+        "test_referenced": true,
+        "unresolved": 0
+      },
+      {
+        "path": "tooling/release/src/notes.ts",
+        "references_per_hop": [
+          2,
+          3
+        ],
+        "symbol_path": "notes.notesPackages",
+        "test_referenced": true,
+        "unresolved": 0
+      },
+      {
+        "path": "tooling/release/src/notes.ts",
+        "references_per_hop": [
+          2,
+          7
+        ],
+        "symbol_path": "notes.parseNewContributors",
+        "test_referenced": true,
+        "unresolved": 0
+      },
+      {
+        "path": "tooling/release/src/notes.ts",
+        "references_per_hop": [
+          3,
+          8
+        ],
+        "symbol_path": "notes.pullRequestNumber",
+        "test_referenced": true,
+        "unresolved": 0
+      },
+      {
+        "path": "tooling/release/src/notes.ts",
+        "references_per_hop": [
+          3,
+          4
+        ],
+        "symbol_path": "notes.releaseNotes",
+        "test_referenced": true,
+        "unresolved": 0
+      },
+      {
+        "path": "tooling/release/src/notes.ts",
+        "references_per_hop": [
+          2,
+          4
+        ],
+        "symbol_path": "notes.renderNotes",
+        "test_referenced": true,
+        "unresolved": 0
+      },
+      {
+        "path": "tooling/release/src/release.ts",
+        "references_per_hop": [
+          2,
+          0
+        ],
+        "symbol_path": "",
+        "test_referenced": true,
+        "unresolved": 0
+      },
+      {
+        "path": "tooling/release/src/release.ts",
+        "references_per_hop": [
+          2,
+          3
+        ],
+        "symbol_path": "release.githubRelease",
+        "test_referenced": true,
+        "unresolved": 0
+      },
+      {
+        "path": "tooling/release/src/release.ts",
+        "references_per_hop": [
+          1,
+          0
+        ],
+        "symbol_path": "release.printNotes",
+        "test_referenced": false,
+        "unresolved": 0
+      },
+      {
+        "path": "tooling/release/src/release.ts",
+        "references_per_hop": [
+          3,
+          0
+        ],
+        "symbol_path": "release.publishStable",
+        "test_referenced": true,
+        "unresolved": 0
+      }
+    ],
+    "truncated": false,
+    "unresolved": 68
+  },
+  "incomplete": [
+    {
+      "findings": [],
+      "hint": "Dependency audit needs api.osv.dev",
+      "kind": "dependencies",
+      "language": "common",
+      "outcome": "skipped",
+      "reason": "offline",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 0
+    },
+    {
+      "findings": [],
+      "hint": "lint runs only against the project's own rules; add an ESLint, Biome or Ruff configuration",
+      "kind": "lint",
+      "language": "typescript",
+      "outcome": "skipped",
+      "reason": "no_project_config",
+      "root": "tooling/release",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 0
+    },
+    {
+      "dependency_state": "verified",
+      "findings": [],
+      "hint": "Test runner exited with code 1 without producing usable coverage: MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'",
+      "kind": "coverage",
+      "language": "typescript",
+      "outcome": "failed",
+      "reason": "tests_failed",
+      "root": "tooling/release",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 1830
+    }
+  ],
+  "metrics": {
+    "checks": [
+      {
+        "kind": "secrets",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 1
+      },
+      {
+        "kind": "dependencies",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "kind": "lint",
+        "root": "tooling/release",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "kind": "coverage",
+        "root": "tooling/release",
+        "version": "head",
+        "wall_time_ms": 1830
+      },
+      {
+        "kind": "typecheck",
+        "root": "tooling/release",
+        "version": "head",
+        "wall_time_ms": 2050
+      },
+      {
+        "kind": "typecheck",
+        "root": "tooling/release",
+        "version": "base",
+        "wall_time_ms": 1947
+      }
+    ],
+    "tool_versions": {
+      "typescript:tooling/release:tsc": "Version 7.0.2",
+      "typescript:tooling/release:vitest": "5.0.0"
+    },
+    "wall_time_ms": 46042
+  },
+  "review": {
+    "base": "c869fa1075fc3ce11b38495c5e6044fb97b335d2",
+    "chain": [
+      "trpc-typescript-all-checks",
+      "rio/base"
+    ],
+    "head": "248fb772a6d6f7ce2492f8549a8d370ec3df9731",
+    "id": "0a40f039203ae5a0",
+    "mode": "branch",
+    "profile": "trpc-typescript-all-checks",
+    "rio_version": "0.1.0",
+    "run_id": "01M6NQYJKRRDC16CA9RGNA2M0K"
+  },
+  "risks": [],
+  "schema": "rio-report-v1",
+  "status": "incomplete",
+  "summary": {
+    "fixed": 0,
+    "pre_existing": 0,
+    "suppressed": 0
+  }
+}

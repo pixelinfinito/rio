@@ -1,0 +1,2 @@
+{"launcher": "node_modules/.bin/vitest", "original_sha256": "a96f1346c094f577805b6568fa2086e2b60b6d3e4ea70ec54e3b22fca433012b"}
+{"launcher": "tooling/release/node_modules/.bin/vitest", "original_sha256": "5cb5c4097dcab4ce0bfdbe220634ef4fd0dd8b366cb2fe415fa6b06dc3a1be42"}

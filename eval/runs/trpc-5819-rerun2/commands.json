@@ -1,0 +1,1173 @@
+{
+  "schema": "rio-eval-runner-v2",
+  "repository": "trpc/trpc",
+  "pr": "https://github.com/trpc/trpc/pull/5819",
+  "started_utc": "2026-11-05T10:56:53.896516+00:00",
+  "rio_binary": "/home/ubuntu/rio/target/release/rio",
+  "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-checkout",
+        "https://github.com/trpc/trpc.git",
+        "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/head"
+      ],
+      "cwd": "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-5819-rerun2/01-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-5819-rerun2/01-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 32118
+    },
+    {
+      "argv": [
+        "git",
+        "fetch",
+        "origin",
+        "baa9c19679d215c65770e3d066d177703f104371",
+        "124440fafb43a33859cd1f5c3232b2d1498742eb"
+      ],
+      "cwd": "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-5819-rerun2/02-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-5819-rerun2/02-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 4159
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "baa9c19679d215c65770e3d066d177703f104371",
+        "124440fafb43a33859cd1f5c3232b2d1498742eb"
+      ],
+      "cwd": "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-5819-rerun2/03-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-5819-rerun2/03-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 9
+    },
+    {
+      "argv": [
+        "git",
+        "checkout",
+        "--detach",
+        "124440fafb43a33859cd1f5c3232b2d1498742eb"
+      ],
+      "cwd": "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-5819-rerun2/04-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-5819-rerun2/04-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 727
+    },
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-hardlinks",
+        "--no-checkout",
+        "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/head",
+        "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/base"
+      ],
+      "cwd": "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-5819-rerun2/05-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-5819-rerun2/05-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 2409
+    },
+    {
+      "argv": [
+        "git",
+        "checkout",
+        "--detach",
+        "baa9c19679d215c65770e3d066d177703f104371"
+      ],
+      "cwd": "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-5819-rerun2/06-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-5819-rerun2/06-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 1021
+    },
+    {
+      "argv": [
+        "corepack",
+        "pnpm",
+        "install",
+        "--frozen-lockfile",
+        "--ignore-scripts",
+        "--store-dir",
+        "/dev/shm/trpc-eval/pnpm8-store"
+      ],
+      "cwd": "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-5819-rerun2/07-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-5819-rerun2/07-stderr.log",
+      "exit_code": 1,
+      "wall_time_ms": 408529
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "cwd": "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-5819-rerun2/08-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-5819-rerun2/08-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 824002
+    },
+    {
+      "argv": [
+        "corepack",
+        "pnpm",
+        "install",
+        "--frozen-lockfile",
+        "--ignore-scripts",
+        "--store-dir",
+        "/dev/shm/trpc-eval/pnpm8-store"
+      ],
+      "cwd": "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-5819-rerun2/09-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-5819-rerun2/09-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 698852
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "cwd": "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-5819-rerun2/10-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-5819-rerun2/10-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 9822
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/config",
+        "RIO_CACHE_DIR": "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-5819-rerun2/rio-version.txt",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-5819-rerun2/11-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 316
+    },
+    {
+      "argv": [
+        "node",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/config",
+        "RIO_CACHE_DIR": "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-5819-rerun2/12-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-5819-rerun2/12-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 16
+    },
+    {
+      "argv": [
+        "npm",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/config",
+        "RIO_CACHE_DIR": "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-5819-rerun2/13-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-5819-rerun2/13-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 620
+    },
+    {
+      "argv": [
+        "corepack",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/config",
+        "RIO_CACHE_DIR": "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-5819-rerun2/14-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-5819-rerun2/14-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 224
+    },
+    {
+      "argv": [
+        "python3",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/config",
+        "RIO_CACHE_DIR": "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-5819-rerun2/15-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-5819-rerun2/15-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 215
+    },
+    {
+      "argv": [
+        "uv",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/config",
+        "RIO_CACHE_DIR": "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-5819-rerun2/16-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-5819-rerun2/16-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 18
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "profile",
+        "show",
+        "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-5819-rerun2/profile.yaml"
+      ],
+      "cwd": "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/config",
+        "RIO_CACHE_DIR": "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-5819-rerun2/resolved-profile.txt",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-5819-rerun2/17-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 266
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "doctor",
+        "--format",
+        "json"
+      ],
+      "cwd": "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/config",
+        "RIO_CACHE_DIR": "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-5819-rerun2/doctor.json",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-5819-rerun2/18-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 974
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "review",
+        "--base",
+        "baa9c19679d215c65770e3d066d177703f104371",
+        "--format",
+        "json",
+        "--offline",
+        "--profile",
+        "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-5819-rerun2/profile.yaml"
+      ],
+      "cwd": "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/config",
+        "RIO_CACHE_DIR": "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-5819-rerun2/report.json",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-5819-rerun2/19-stderr.log",
+      "exit_code": 4,
+      "wall_time_ms": 599103
+    }
+  ],
+  "installations": {
+    "base": {
+      "commands": [
+        [
+          "corepack",
+          "pnpm",
+          "install",
+          "--frozen-lockfile",
+          "--ignore-scripts",
+          "--store-dir",
+          "/dev/shm/trpc-eval/pnpm8-store"
+        ]
+      ],
+      "succeeded": false,
+      "lockfiles": {
+        "pnpm-lock.yaml": "ddcf4cd116f26623bc26a7093b2cdf45acfc945e51cff2b99d996fd81cb31c8f"
+      }
+    },
+    "head": {
+      "commands": [
+        [
+          "corepack",
+          "pnpm",
+          "install",
+          "--frozen-lockfile",
+          "--ignore-scripts",
+          "--store-dir",
+          "/dev/shm/trpc-eval/pnpm8-store"
+        ]
+      ],
+      "succeeded": true,
+      "lockfiles": {
+        "pnpm-lock.yaml": "ddcf4cd116f26623bc26a7093b2cdf45acfc945e51cff2b99d996fd81cb31c8f"
+      }
+    }
+  },
+  "failures": [
+    "base dependency installation failed (1)",
+    "Baseline/setup ineligible; fix before scoring"
+  ],
+  "network": "Installers may use network; Rio review uses --offline. Subprocesses are not isolated.",
+  "profile_sha256": "59b65f540e1080d4ae2d70404b6f90b6957a3b08d0536238afb1476225d17cc4",
+  "resolution": {
+    "base_sha": "baa9c19679d215c65770e3d066d177703f104371",
+    "head_sha": "124440fafb43a33859cd1f5c3232b2d1498742eb",
+    "source": "pinned argv"
+  },
+  "disposable_directory": "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4",
+  "base_sha": "baa9c19679d215c65770e3d066d177703f104371",
+  "head_sha": "124440fafb43a33859cd1f5c3232b2d1498742eb",
+  "removed_environment_keys": [],
+  "resolved_profile_sha256": "2da58908af111c67533c7c16376410ce8fd687d0f12a65f30b32171683de6ecd",
+  "review_exit_code": 4,
+  "rio_checks": {
+    "source": "report.json#/checks",
+    "child_argv_available": false,
+    "limitation": "Rio report-v1 checks contain no child executable, argv, cwd, or tool version. The v0.1 CLI has no child-argv trace flag or environment hook; runner commands and Rio stderr are retained separately.",
+    "entries": [
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "findings",
+        "root": "examples/.test/diagnostics-big-router",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 34819
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "findings",
+        "root": "examples/.test/internal-types-export",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 3143
+      },
+      {
+        "dependency_state": "verified",
+        "hint": "The project's test runner found no tests",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "no_tests",
+        "root": "examples/.test/diagnostics-big-router",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 37981
+      },
+      {
+        "dependency_state": "verified",
+        "hint": "The project's test runner found no tests",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "no_tests",
+        "root": "examples/.experimental/next-app-dir",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 38278
+      },
+      {
+        "dependency_state": "verified",
+        "hint": "diagnostic path is outside the repository: /tmp/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/head/examples/.experimental/next-app-dir/src/trpc/client.ts",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "unparseable_output",
+        "root": "examples/.experimental/next-app-dir",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 39618
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "findings",
+        "root": "examples/.test/ssg",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 6115
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "findings",
+        "root": "examples/next-prisma-websockets-starter",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 7940
+      },
+      {
+        "dependency_state": "verified",
+        "hint": "The project's test runner found no tests",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "no_tests",
+        "root": "examples/next-prisma-todomvc",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 10727
+      },
+      {
+        "dependency_state": "verified",
+        "hint": "The project's test runner found no tests",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "no_tests",
+        "root": "examples/.test/internal-types-export",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 11058
+      },
+      {
+        "dependency_state": "verified",
+        "hint": "The project's test runner found no tests",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "no_tests",
+        "root": "examples/.test/ssg",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 9056
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "findings",
+        "root": "examples/.test/ssg-infinite-serialization",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 4925
+      },
+      {
+        "dependency_state": "verified",
+        "hint": "The project's test runner found no tests",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "no_tests",
+        "root": "examples/next-prisma-websockets-starter",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 9675
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "findings",
+        "root": "examples/bun",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 2454
+      },
+      {
+        "dependency_state": "verified",
+        "hint": "The project's test runner found no tests",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "no_tests",
+        "root": "examples/.test/ssg-infinite-serialization",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 10091
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "findings",
+        "root": "examples/next-sse-chat",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 16708
+      },
+      {
+        "dependency_state": "verified",
+        "hint": "The project's test runner found no tests",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "no_tests",
+        "root": "examples/next-sse-chat",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 10052
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "findings",
+        "root": "examples/cloudflare-workers",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 2754
+      },
+      {
+        "dependency_state": "verified",
+        "hint": "The project's test runner found no tests",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "no_tests",
+        "root": "examples/bun",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 10284
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "findings",
+        "root": "examples/soa",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 11788
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "lint",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "examples/next-sse-chat",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 27082
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "findings",
+        "root": "examples/standalone-server",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 4539
+      },
+      {
+        "dependency_state": "verified",
+        "hint": "The project's test runner found no tests",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "no_tests",
+        "root": "examples/soa",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 11064
+      },
+      {
+        "dependency_state": "verified",
+        "hint": "The project's test runner found no tests",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "no_tests",
+        "root": "examples/cloudflare-workers",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 10433
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "findings",
+        "root": "examples/vercel-edge-runtime",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 6917
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "findings",
+        "root": "examples/express-minimal",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 11179
+      },
+      {
+        "dependency_state": "verified",
+        "hint": "The project's test runner found no tests",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "no_tests",
+        "root": "examples/standalone-server",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 12498
+      },
+      {
+        "dependency_state": "verified",
+        "hint": "The project's test runner found no tests",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "no_tests",
+        "root": "examples/express-minimal",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 12477
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "findings",
+        "root": "examples/express-server",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 5070
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "findings",
+        "root": "examples/fastify-server",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 5958
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/client",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 7292
+      },
+      {
+        "dependency_state": "verified",
+        "hint": "The project's test runner found no tests",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "no_tests",
+        "root": "examples/vercel-edge-runtime",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 13659
+      },
+      {
+        "dependency_state": "verified",
+        "hint": "The project's test runner found no tests",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "no_tests",
+        "root": "examples/express-server",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 14142
+      },
+      {
+        "dependency_state": "verified",
+        "hint": "The project's test runner found no tests",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "no_tests",
+        "root": "examples/fastify-server",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 12350
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "lint",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/client",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 18787
+      },
+      {
+        "dependency_state": "verified",
+        "hint": "diagnostic path is outside the repository: /tmp/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/head/node_modules/.pnpm/@types+lodash@4.14.190/node_modules/@types/lodash/index.d.ts",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "unparseable_output",
+        "root": "examples/lambda-api-gateway",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 14174
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/client",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 20744
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/next",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 10986
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "findings",
+        "root": "examples/minimal",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 5175
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/react-query",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 8365
+      },
+      {
+        "dependency_state": "verified",
+        "hint": "The project's test runner found no tests",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "no_tests",
+        "root": "examples/lambda-api-gateway",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 14176
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "findings",
+        "root": "examples/next-big-router",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 5855
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/next",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 20486
+      },
+      {
+        "dependency_state": "verified",
+        "hint": "The project's test runner found no tests",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "no_tests",
+        "root": "examples/minimal",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 13877
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "findings",
+        "root": "packages/server",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 10007
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/react-query",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 17110
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "findings",
+        "root": "examples/next-edge-runtime",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 7049
+      },
+      {
+        "dependency_state": "verified",
+        "hint": "The project's test runner found no tests",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "no_tests",
+        "root": "examples/next-big-router",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 14833
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "lint",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/server",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 20736
+      },
+      {
+        "dependency_state": "verified",
+        "hint": "The project's test runner found no tests",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "no_tests",
+        "root": "examples/next-edge-runtime",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 14054
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "findings",
+        "root": "examples/next-formdata",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 10208
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "findings",
+        "root": "packages/tests",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 32570
+      },
+      {
+        "dependency_state": "verified",
+        "hint": "The project's test runner found no tests",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "no_tests",
+        "root": "examples/next-formdata",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 14916
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/server",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 40069
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "lint",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/tests",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 23246
+      },
+      {
+        "hint": "Dependency audit needs api.osv.dev",
+        "kind": "dependencies",
+        "language": "common",
+        "outcome": "skipped",
+        "reason": "offline",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "kind": "secrets",
+        "language": "common",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 1
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "findings",
+        "root": "examples/next-prisma-starter",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 7595
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "findings",
+        "root": "www",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 16297
+      },
+      {
+        "dependency_state": "verified",
+        "hint": "The project's test runner found no tests",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "no_tests",
+        "root": "www",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 16474
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "findings",
+        "root": "examples/next-minimal-starter",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 7359
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "findings",
+        "root": "examples/next-prisma-todomvc",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 8722
+      },
+      {
+        "dependency_state": "verified",
+        "hint": "The project's test runner found no tests",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "no_tests",
+        "root": "examples/next-minimal-starter",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 15080
+      },
+      {
+        "dependency_state": "verified",
+        "hint": "The project's test runner found no tests",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "no_tests",
+        "root": "examples/next-prisma-starter",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 13246
+      },
+      {
+        "dependency_state": "verified",
+        "hint": "Test runner exited with code 1 without producing usable coverage: \u001b[33mThe CJS build of Vite's Node API is deprecated. See https://vitejs.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.\u001b[39m",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "tests_failed",
+        "root": "packages/tests",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 188464
+      }
+    ]
+  },
+  "rio_review_stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-trpc/eval/runs/trpc-5819-rerun2/19-stderr.log",
+  "environment": {
+    "dependency_state": "verified",
+    "baseline_ran": false,
+    "baseline_classification_ran": false,
+    "eligible": false,
+    "reasons": [
+      "coverage examples/.experimental/next-app-dir head: skipped no_tests The project's test runner found no tests",
+      "coverage examples/.test/diagnostics-big-router head: skipped no_tests The project's test runner found no tests",
+      "coverage examples/.test/internal-types-export head: skipped no_tests The project's test runner found no tests",
+      "coverage examples/.test/ssg head: skipped no_tests The project's test runner found no tests",
+      "coverage examples/.test/ssg-infinite-serialization head: skipped no_tests The project's test runner found no tests",
+      "coverage examples/bun head: skipped no_tests The project's test runner found no tests",
+      "coverage examples/cloudflare-workers head: skipped no_tests The project's test runner found no tests",
+      "coverage examples/express-minimal head: skipped no_tests The project's test runner found no tests",
+      "coverage examples/express-server head: skipped no_tests The project's test runner found no tests",
+      "coverage examples/fastify-server head: skipped no_tests The project's test runner found no tests",
+      "coverage examples/lambda-api-gateway head: skipped no_tests The project's test runner found no tests",
+      "coverage examples/minimal head: skipped no_tests The project's test runner found no tests",
+      "coverage examples/next-big-router head: skipped no_tests The project's test runner found no tests",
+      "coverage examples/next-edge-runtime head: skipped no_tests The project's test runner found no tests",
+      "coverage examples/next-formdata head: skipped no_tests The project's test runner found no tests",
+      "coverage examples/next-minimal-starter head: skipped no_tests The project's test runner found no tests",
+      "coverage examples/next-prisma-starter head: skipped no_tests The project's test runner found no tests",
+      "coverage examples/next-prisma-todomvc head: skipped no_tests The project's test runner found no tests",
+      "coverage examples/next-prisma-websockets-starter head: skipped no_tests The project's test runner found no tests",
+      "coverage examples/next-sse-chat head: skipped no_tests The project's test runner found no tests",
+      "coverage examples/soa head: skipped no_tests The project's test runner found no tests",
+      "coverage examples/standalone-server head: skipped no_tests The project's test runner found no tests",
+      "coverage examples/vercel-edge-runtime head: skipped no_tests The project's test runner found no tests",
+      "coverage packages/tests head: failed tests_failed Test runner exited with code 1 without producing usable coverage: \u001b[33mThe CJS build of Vite's Node API is deprecated. See https://vitejs.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.\u001b[39m",
+      "coverage www head: skipped no_tests The project's test runner found no tests",
+      "lint examples/next-sse-chat: head=passed, dependency_state=verified, base=unavailable",
+      "lint packages/client: head=passed, dependency_state=verified, base=unavailable",
+      "lint packages/server: head=passed, dependency_state=verified, base=unavailable",
+      "lint packages/tests: head=passed, dependency_state=verified, base=unavailable",
+      "typecheck examples/.experimental/next-app-dir head: failed unparseable_output diagnostic path is outside the repository: /tmp/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/head/examples/.experimental/next-app-dir/src/trpc/client.ts",
+      "typecheck examples/.experimental/next-app-dir: head=failed, dependency_state=verified, base=unavailable",
+      "typecheck examples/.test/diagnostics-big-router: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck examples/.test/internal-types-export: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck examples/.test/ssg-infinite-serialization: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck examples/.test/ssg: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck examples/bun: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck examples/cloudflare-workers: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck examples/express-minimal: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck examples/express-server: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck examples/fastify-server: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck examples/lambda-api-gateway head: failed unparseable_output diagnostic path is outside the repository: /tmp/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/head/node_modules/.pnpm/@types+lodash@4.14.190/node_modules/@types/lodash/index.d.ts",
+      "typecheck examples/lambda-api-gateway: head=failed, dependency_state=verified, base=unavailable",
+      "typecheck examples/minimal: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck examples/next-big-router: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck examples/next-edge-runtime: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck examples/next-formdata: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck examples/next-minimal-starter: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck examples/next-prisma-starter: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck examples/next-prisma-todomvc: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck examples/next-prisma-websockets-starter: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck examples/next-sse-chat: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck examples/soa: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck examples/standalone-server: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck examples/vercel-edge-runtime: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck packages/client: head=passed, dependency_state=verified, base=unavailable",
+      "typecheck packages/next: head=passed, dependency_state=verified, base=unavailable",
+      "typecheck packages/react-query: head=passed, dependency_state=verified, base=unavailable",
+      "typecheck packages/server: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck packages/tests: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck www: head=findings, dependency_state=verified, base=unavailable"
+    ],
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "typecheck examples/.test/diagnostics-big-router: baseline_failed: linked package examples/.test/diagnostics-big-router::@trpc/client is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck examples/.test/internal-types-export: baseline_failed: linked package examples/.test/internal-types-export::@trpc/client is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck examples/.experimental/next-app-dir: baseline_failed: linked package examples/.experimental/next-app-dir::@trpc/client is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck examples/.test/ssg: baseline_failed: linked package examples/.test/ssg::@trpc/client is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck examples/next-prisma-websockets-starter: baseline_failed: linked package examples/next-prisma-websockets-starter::@trpc/client is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck examples/.test/ssg-infinite-serialization: baseline_failed: linked package examples/.test/ssg-infinite-serialization::@trpc/client is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck examples/bun: baseline_failed: linked package examples/bun::@trpc/client is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck examples/next-sse-chat: baseline_failed: linked package examples/next-sse-chat::@trpc/client is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck examples/cloudflare-workers: baseline_failed: linked package examples/cloudflare-workers::@trpc/client is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck examples/soa: baseline_failed: linked package examples/soa::@trpc/client is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "lint examples/next-sse-chat: baseline_failed: linked package examples/next-sse-chat::@trpc/client is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck examples/standalone-server: baseline_failed: linked package examples/standalone-server::@trpc/client is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck examples/vercel-edge-runtime: baseline_failed: linked package examples/vercel-edge-runtime::@trpc/client is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck examples/express-minimal: baseline_failed: linked package examples/express-minimal::@trpc/client is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck examples/express-server: baseline_failed: linked package examples/express-server::@trpc/client is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck examples/fastify-server: baseline_failed: linked package examples/fastify-server::@trpc/client is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck packages/client: baseline_failed: linked package examples/.experimental/next-app-dir::@trpc/client is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "lint packages/client: baseline_failed: linked package examples/.experimental/next-app-dir::@trpc/client is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck examples/lambda-api-gateway: baseline_failed: linked package examples/lambda-api-gateway::@trpc/client is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck packages/next: baseline_failed: linked package packages/next::@trpc/client is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck examples/minimal: baseline_failed: linked package examples/minimal::@trpc/client is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck packages/react-query: baseline_failed: linked package packages/react-query::@trpc/client is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck examples/next-big-router: baseline_failed: linked package examples/next-big-router::@trpc/client is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck packages/server: baseline_failed: linked package examples/.experimental/next-app-dir::@trpc/server is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck examples/next-edge-runtime: baseline_failed: linked package examples/next-edge-runtime::@trpc/client is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "lint packages/server: baseline_failed: linked package examples/.experimental/next-app-dir::@trpc/server is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck examples/next-formdata: baseline_failed: linked package examples/next-formdata::@trpc/client is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck packages/tests: baseline_failed: linked package packages/tests::@trpc/client is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "lint packages/tests: baseline_failed: linked package packages/tests::@trpc/client is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck examples/next-prisma-starter: baseline_failed: linked package examples/next-prisma-starter::@trpc/client is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck www: baseline_failed: linked package www::@trpc/client is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck examples/next-minimal-starter: baseline_failed: linked package examples/next-minimal-starter::@trpc/client is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck examples/next-prisma-todomvc: baseline_failed: linked package examples/next-prisma-todomvc::@trpc/client is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/head/node_modules/.bin/vitest version could not be captured: Cancelled { reason: Timeout }",
+      "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/head/node_modules/.bin/eslint version could not be captured: Cancelled { reason: Timeout }",
+      "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/head/packages/client/node_modules/.bin/eslint version could not be captured: Cancelled { reason: Timeout }",
+      "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/head/packages/server/node_modules/.bin/eslint version could not be captured: Cancelled { reason: Timeout }",
+      "/tmp/rio-rerun2-trpc/rio-eval-enabk1p4/head/packages/tests/node_modules/.bin/eslint version could not be captured: Cancelled { reason: Timeout }",
+      "Graph references use syntax and text; no language server was used",
+      "Offline applies to Rio; tool and test processes were not network-isolated"
+    ]
+  },
+  "finished_utc": "2026-11-05T11:44:21.258282+00:00"
+}
