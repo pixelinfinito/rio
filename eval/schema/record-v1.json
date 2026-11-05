@@ -1,0 +1,465 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rio.dev/eval/schema/record-v1.json",
+  "title": "Rio evaluation record v1",
+  "type": "object",
+  "properties": {
+    "schema": {
+      "const": "rio-eval-record-v1"
+    },
+    "methodology": {
+      "const": "deterministic-v1"
+    },
+    "repository": {
+      "type": "string",
+      "minLength": 1
+    },
+    "pr": {
+      "type": "string",
+      "pattern": "^https://github.com/[^/]+/[^/]+/pull/[0-9]+$"
+    },
+    "case_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "languages": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "typescript",
+          "python"
+        ]
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "base_sha": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40,64}$"
+    },
+    "head_sha": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40,64}$"
+    },
+    "mode": {
+      "enum": [
+        "working-tree",
+        "staged",
+        "branch"
+      ]
+    },
+    "review_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "run_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "rio_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "profile": {
+      "type": "string",
+      "minLength": 1
+    },
+    "wall_time_ms": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "status": {
+      "enum": [
+        "complete",
+        "incomplete",
+        "partial",
+        "no_changes",
+        "error"
+      ]
+    },
+    "report_path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "reviewer": {
+      "type": "string",
+      "minLength": 1
+    },
+    "verdict_source": {
+      "enum": [
+        "human",
+        "automated"
+      ]
+    },
+    "commands": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "independently_clean": {
+      "type": "boolean"
+    },
+    "positive_control": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "enum": [
+            "none",
+            "real-pr",
+            "seeded-mutation"
+          ]
+        },
+        "expected": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "mechanism": {
+                "enum": [
+                  "type-error",
+                  "lint-rule",
+                  "uncovered-lines",
+                  "leaked-secret",
+                  "vulnerable-dependency"
+                ]
+              },
+              "evidence": {
+                "type": "string",
+                "minLength": 1
+              },
+              "finding_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "required": [
+              "id",
+              "mechanism",
+              "evidence",
+              "finding_ids"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "kind",
+        "expected"
+      ],
+      "additionalProperties": false
+    },
+    "environment": {
+      "type": "object",
+      "properties": {
+        "dependency_state": {
+          "enum": [
+            "verified",
+            "trusted",
+            "mixed",
+            "unavailable"
+          ]
+        },
+        "baseline_ran": {
+          "type": "boolean"
+        },
+        "baseline_classification_ran": {
+          "type": "boolean"
+        },
+        "eligible": {
+          "type": "boolean"
+        },
+        "reasons": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "$ref": "../../schemas/report-v1.json#/$defs/check"
+          }
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "dependency_state",
+        "baseline_ran",
+        "baseline_classification_ran",
+        "eligible",
+        "reasons",
+        "checks",
+        "notes"
+      ],
+      "additionalProperties": false
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "finding": {
+            "$ref": "../../schemas/finding-v1.json"
+          },
+          "verdict": {
+            "enum": [
+              "true-positive",
+              "false-positive",
+              "pre-existing-shown",
+              "environment-failure",
+              "out-of-scope"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          },
+          "message_template": {
+            "type": "string",
+            "minLength": 1
+          },
+          "file_set": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "root_cause_key": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "family": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "finding",
+          "verdict",
+          "reason",
+          "message_template",
+          "file_set",
+          "root_cause_key",
+          "family"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "root_causes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "root_cause_key": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "rule_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "message_template": {
+            "type": "string",
+            "minLength": 1
+          },
+          "file_set": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "verdict": {
+            "enum": [
+              "true-positive",
+              "false-positive",
+              "pre-existing-shown",
+              "environment-failure",
+              "out-of-scope"
+            ]
+          },
+          "finding_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "occurrence_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "finding_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "family": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "root_cause_key",
+          "rule_id",
+          "message_template",
+          "file_set",
+          "verdict",
+          "finding_count",
+          "occurrence_count",
+          "finding_ids",
+          "family"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "misses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "scope_class": {
+            "enum": [
+              "deterministic",
+              "agent-layer"
+            ]
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1
+          },
+          "evidence": {
+            "type": "string",
+            "minLength": 1
+          },
+          "mechanism": {
+            "enum": [
+              "type-error",
+              "lint-rule",
+              "uncovered-lines",
+              "leaked-secret",
+              "vulnerable-dependency"
+            ]
+          },
+          "expectation_id": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "id",
+          "scope_class",
+          "description",
+          "evidence"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "verdict": {
+      "enum": [
+        "useful",
+        "not-useful",
+        "environment-failure"
+      ]
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "schema",
+    "methodology",
+    "repository",
+    "pr",
+    "case_id",
+    "languages",
+    "base_sha",
+    "head_sha",
+    "mode",
+    "review_id",
+    "run_id",
+    "rio_version",
+    "profile",
+    "wall_time_ms",
+    "status",
+    "report_path",
+    "reviewer",
+    "verdict_source",
+    "commands",
+    "notes",
+    "independently_clean",
+    "positive_control",
+    "environment",
+    "findings",
+    "root_causes",
+    "misses",
+    "verdict",
+    "reason"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "counts": {
+      "type": "object",
+      "properties": {
+        "true-positive": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "false-positive": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "pre-existing-shown": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "environment-failure": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "out-of-scope": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "true-positive",
+        "false-positive",
+        "pre-existing-shown",
+        "environment-failure",
+        "out-of-scope"
+      ],
+      "additionalProperties": false
+    }
+  }
+}
