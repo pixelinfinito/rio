@@ -1,0 +1,4 @@
+
+> @3.5.14 lint /tmp/vue-positive-base
+> eslint --cache .
+

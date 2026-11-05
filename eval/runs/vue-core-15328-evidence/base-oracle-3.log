@@ -1,0 +1,10 @@
+
+ RUN  v4.1.10 /tmp/vue-negative-base
+      Coverage enabled with v8
+
+
+ Test Files  1 passed (1)
+      Tests  12 passed (12)
+   Start at  02:34:43
+   Duration  13.18s (transform 369ms, setup 65ms, import 406ms, tests 22ms, environment 2.68s)
+

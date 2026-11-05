@@ -1,0 +1,17 @@
+ Vitest  "environmentMatchGlobs" is deprecated. Use "workspace" to define different configurations instead.
+
+⎯⎯⎯⎯⎯⎯⎯ Startup Error ⎯⎯⎯⎯⎯⎯⎯⎯
+Error: Workspace config file "../../vitest.workspace.ts" references a non-existing file or a directory: /tmp/vue-positive-base/packages/compiler-sfc/vitest.unit.config.ts
+    at resolveTestProjectConfigs (file:///tmp/vue-positive-base/node_modules/.pnpm/vitest@3.1.3_@types+node@22.14.1_jsdom@26.1.0_sass@1.87.0/node_modules/vitest/dist/chunks/cli-api.Bti1vevt.js:8623:12)
+    at resolveWorkspace (file:///tmp/vue-positive-base/node_modules/.pnpm/vitest@3.1.3_@types+node@22.14.1_jsdom@26.1.0_sass@1.87.0/node_modules/vitest/dist/chunks/cli-api.Bti1vevt.js:8401:70)
+    at Vitest.resolveWorkspace (file:///tmp/vue-positive-base/node_modules/.pnpm/vitest@3.1.3_@types+node@22.14.1_jsdom@26.1.0_sass@1.87.0/node_modules/vitest/dist/chunks/cli-api.Bti1vevt.js:9039:10)
+    at async Vitest._setServer (file:///tmp/vue-positive-base/node_modules/.pnpm/vitest@3.1.3_@types+node@22.14.1_jsdom@26.1.0_sass@1.87.0/node_modules/vitest/dist/chunks/cli-api.Bti1vevt.js:8907:20)
+    at async handler (file:///tmp/vue-positive-base/node_modules/.pnpm/vitest@3.1.3_@types+node@22.14.1_jsdom@26.1.0_sass@1.87.0/node_modules/vitest/dist/chunks/cli-api.Bti1vevt.js:9841:6)
+    at async _createServer (file:///tmp/vue-positive-base/node_modules/.pnpm/vite@5.4.18_@types+node@22.14.1_sass@1.87.0/node_modules/vite/dist/node/chunks/dep-DbT5NFX0.js:63271:20)
+    at async createViteServer (file:///tmp/vue-positive-base/node_modules/.pnpm/vitest@3.1.3_@types+node@22.14.1_jsdom@26.1.0_sass@1.87.0/node_modules/vitest/dist/chunks/cli-api.Bti1vevt.js:6874:17)
+    at async createVitest (file:///tmp/vue-positive-base/node_modules/.pnpm/vitest@3.1.3_@types+node@22.14.1_jsdom@26.1.0_sass@1.87.0/node_modules/vitest/dist/chunks/cli-api.Bti1vevt.js:9881:17)
+    at async prepareVitest (file:///tmp/vue-positive-base/node_modules/.pnpm/vitest@3.1.3_@types+node@22.14.1_jsdom@26.1.0_sass@1.87.0/node_modules/vitest/dist/chunks/cli-api.Bti1vevt.js:10272:14)
+    at async startVitest (file:///tmp/vue-positive-base/node_modules/.pnpm/vitest@3.1.3_@types+node@22.14.1_jsdom@26.1.0_sass@1.87.0/node_modules/vitest/dist/chunks/cli-api.Bti1vevt.js:10205:14)
+
+
+

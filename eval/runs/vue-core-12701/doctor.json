@@ -1,0 +1,3730 @@
+{
+  "blocking_problems": [],
+  "cache": {
+    "free_space": 14978162688,
+    "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/cache",
+    "writable": true
+  },
+  "configuration": {
+    "cache": {
+      "dir": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/cache",
+      "max_age": {
+        "nanos": 0,
+        "secs": 2592000
+      },
+      "max_size": 5368709120,
+      "retain_raw_output": true
+    },
+    "config_dir": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/config",
+    "endpoint_url": null,
+    "notices": [],
+    "output_limit": 268435456,
+    "parallelism": 4,
+    "sources": {
+      "cache.dir": "RIO_CACHE_DIR",
+      "cache.max_age": "default",
+      "cache.max_size": "default",
+      "cache.retain_raw_output": "default",
+      "endpoint.url": "default",
+      "run.output_limit": "default",
+      "run.parallelism": "default"
+    }
+  },
+  "endpoint": "No endpoint is available in this version",
+  "head": "cc34f2e4b1490d55a18c9f8e4f83bda855a6e105",
+  "plan": {
+    "checks": [
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: pnpm-lock.yaml: missing @csstools/css-calc at @csstools/css-calc@2.1.1(@csstools/css-parser-algorithms@3.0.4(@csstools/css-tokenizer@3.0.3))(@csstools/css-tokenizer@3.0.3); reinstall dependencies",
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "typecheck",
+        "language": "typescript",
+        "root": ".",
+        "scheduled_as": "changed",
+        "skip": {
+          "findings": [],
+          "hint": "pnpm-lock.yaml: missing @csstools/css-calc at @csstools/css-calc@2.1.1(@csstools/css-parser-algorithms@3.0.4(@csstools/css-tokenizer@3.0.3))(@csstools/css-tokenizer@3.0.3); reinstall dependencies",
+          "outcome": "skipped",
+          "reason": "dependency_mismatch"
+        },
+        "targets": [
+          "eslint.config.js",
+          "packages/global.d.ts",
+          "rollup.config.js",
+          "rollup.dts.config.js",
+          "scripts/aliases.js",
+          "scripts/build.js",
+          "scripts/dev.js",
+          "scripts/inline-enums.js",
+          "scripts/pre-dev-sfc.js",
+          "scripts/release.js",
+          "scripts/setup-vitest.ts",
+          "scripts/size-report.js",
+          "scripts/usage-size.js",
+          "scripts/utils.js",
+          "scripts/verify-commit.js",
+          "scripts/verify-treeshaking.js",
+          "vitest.config.ts",
+          "vitest.e2e.config.ts",
+          "vitest.unit.config.ts",
+          "vitest.workspace.ts"
+        ],
+        "tool": {
+          "name": "tsc",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/./node_modules/.bin/tsc",
+          "version": "Version 5.6.3"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: pnpm-lock.yaml: missing @csstools/css-calc at @csstools/css-calc@2.1.1(@csstools/css-parser-algorithms@3.0.4(@csstools/css-tokenizer@3.0.3))(@csstools/css-tokenizer@3.0.3); reinstall dependencies",
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "lint",
+        "language": "typescript",
+        "root": ".",
+        "scheduled_as": "changed",
+        "skip": {
+          "findings": [],
+          "hint": "pnpm-lock.yaml: missing @csstools/css-calc at @csstools/css-calc@2.1.1(@csstools/css-parser-algorithms@3.0.4(@csstools/css-tokenizer@3.0.3))(@csstools/css-tokenizer@3.0.3); reinstall dependencies",
+          "outcome": "skipped",
+          "reason": "dependency_mismatch"
+        },
+        "targets": [
+          "eslint.config.js",
+          "packages/global.d.ts",
+          "rollup.config.js",
+          "rollup.dts.config.js",
+          "scripts/aliases.js",
+          "scripts/build.js",
+          "scripts/dev.js",
+          "scripts/inline-enums.js",
+          "scripts/pre-dev-sfc.js",
+          "scripts/release.js",
+          "scripts/setup-vitest.ts",
+          "scripts/size-report.js",
+          "scripts/usage-size.js",
+          "scripts/utils.js",
+          "scripts/verify-commit.js",
+          "scripts/verify-treeshaking.js",
+          "vitest.config.ts",
+          "vitest.e2e.config.ts",
+          "vitest.unit.config.ts",
+          "vitest.workspace.ts"
+        ],
+        "tool": {
+          "name": "eslint",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/./node_modules/.bin/eslint",
+          "version": "v9.25.1"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: pnpm-lock.yaml: missing @csstools/css-calc at @csstools/css-calc@2.1.1(@csstools/css-parser-algorithms@3.0.4(@csstools/css-tokenizer@3.0.3))(@csstools/css-tokenizer@3.0.3); reinstall dependencies",
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "coverage",
+        "language": "typescript",
+        "root": ".",
+        "scheduled_as": "changed",
+        "skip": {
+          "findings": [],
+          "hint": "pnpm-lock.yaml: missing @csstools/css-calc at @csstools/css-calc@2.1.1(@csstools/css-parser-algorithms@3.0.4(@csstools/css-tokenizer@3.0.3))(@csstools/css-tokenizer@3.0.3); reinstall dependencies",
+          "outcome": "skipped",
+          "reason": "dependency_mismatch"
+        },
+        "targets": [
+          "eslint.config.js",
+          "packages/global.d.ts",
+          "rollup.config.js",
+          "rollup.dts.config.js",
+          "scripts/aliases.js",
+          "scripts/build.js",
+          "scripts/dev.js",
+          "scripts/inline-enums.js",
+          "scripts/pre-dev-sfc.js",
+          "scripts/release.js",
+          "scripts/setup-vitest.ts",
+          "scripts/size-report.js",
+          "scripts/usage-size.js",
+          "scripts/utils.js",
+          "scripts/verify-commit.js",
+          "scripts/verify-treeshaking.js",
+          "vitest.config.ts",
+          "vitest.e2e.config.ts",
+          "vitest.unit.config.ts",
+          "vitest.workspace.ts"
+        ],
+        "tool": {
+          "name": "vitest",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/./node_modules/.bin/vitest",
+          "version": "vitest/3.1.3 linux-x64 node-v22.14.0"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "typecheck",
+        "language": "typescript",
+        "root": "packages-private",
+        "scheduled_as": "changed",
+        "skip": {
+          "findings": [],
+          "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+          "outcome": "skipped",
+          "reason": "dependency_mismatch"
+        },
+        "targets": [
+          "packages-private/global.d.ts"
+        ],
+        "tool": {
+          "name": "tsc",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/tsc",
+          "version": "Version 5.6.3"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "lint",
+        "language": "typescript",
+        "root": "packages-private",
+        "scheduled_as": "changed",
+        "skip": {
+          "findings": [],
+          "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+          "outcome": "skipped",
+          "reason": "dependency_mismatch"
+        },
+        "targets": [
+          "packages-private/global.d.ts"
+        ],
+        "tool": {
+          "name": "eslint",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/eslint",
+          "version": "v9.25.1"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "coverage",
+        "language": "typescript",
+        "root": "packages-private",
+        "scheduled_as": "changed",
+        "skip": {
+          "findings": [],
+          "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+          "outcome": "skipped",
+          "reason": "dependency_mismatch"
+        },
+        "targets": [
+          "packages-private/global.d.ts"
+        ],
+        "tool": {
+          "name": "vitest",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/vitest",
+          "version": "vitest/3.1.3 linux-x64 node-v22.14.0"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "root": "packages-private/dts-built-test",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages-private/dts-built-test/src/index.ts"
+        ],
+        "tool": {
+          "name": "tsc",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/tsc",
+          "version": "Version 5.6.3"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "lint",
+        "language": "typescript",
+        "root": "packages-private/dts-built-test",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages-private/dts-built-test/src/index.ts"
+        ],
+        "tool": {
+          "name": "eslint",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/eslint",
+          "version": "v9.25.1"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "coverage",
+        "language": "typescript",
+        "root": "packages-private/dts-built-test",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages-private/dts-built-test/src/index.ts"
+        ],
+        "tool": {
+          "name": "vitest",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/vitest",
+          "version": "vitest/3.1.3 linux-x64 node-v22.14.0"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "root": "packages-private/dts-test",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages-private/dts-test/appDirective.test-d.ts",
+          "packages-private/dts-test/appUse.test-d.ts",
+          "packages-private/dts-test/built.test-d.ts",
+          "packages-private/dts-test/compiler.test-d.ts",
+          "packages-private/dts-test/component.test-d.ts",
+          "packages-private/dts-test/componentInstance.test-d.tsx",
+          "packages-private/dts-test/componentTypeExtensions.test-d.tsx",
+          "packages-private/dts-test/defineComponent.test-d.tsx",
+          "packages-private/dts-test/defineCustomElement.test-d.ts",
+          "packages-private/dts-test/directives.test-d.ts",
+          "packages-private/dts-test/extractProps.test-d.ts",
+          "packages-private/dts-test/functionalComponent.test-d.tsx",
+          "packages-private/dts-test/h.test-d.ts",
+          "packages-private/dts-test/inject.test-d.ts",
+          "packages-private/dts-test/reactivity.test-d.ts",
+          "packages-private/dts-test/ref.test-d.ts",
+          "packages-private/dts-test/setupHelpers.test-d.ts",
+          "packages-private/dts-test/tsx.test-d.tsx",
+          "packages-private/dts-test/utils.d.ts",
+          "packages-private/dts-test/watch.test-d.ts"
+        ],
+        "tool": {
+          "name": "tsc",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/tsc",
+          "version": "Version 5.6.3"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "lint",
+        "language": "typescript",
+        "root": "packages-private/dts-test",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages-private/dts-test/appDirective.test-d.ts",
+          "packages-private/dts-test/appUse.test-d.ts",
+          "packages-private/dts-test/built.test-d.ts",
+          "packages-private/dts-test/compiler.test-d.ts",
+          "packages-private/dts-test/component.test-d.ts",
+          "packages-private/dts-test/componentInstance.test-d.tsx",
+          "packages-private/dts-test/componentTypeExtensions.test-d.tsx",
+          "packages-private/dts-test/defineComponent.test-d.tsx",
+          "packages-private/dts-test/defineCustomElement.test-d.ts",
+          "packages-private/dts-test/directives.test-d.ts",
+          "packages-private/dts-test/extractProps.test-d.ts",
+          "packages-private/dts-test/functionalComponent.test-d.tsx",
+          "packages-private/dts-test/h.test-d.ts",
+          "packages-private/dts-test/inject.test-d.ts",
+          "packages-private/dts-test/reactivity.test-d.ts",
+          "packages-private/dts-test/ref.test-d.ts",
+          "packages-private/dts-test/setupHelpers.test-d.ts",
+          "packages-private/dts-test/tsx.test-d.tsx",
+          "packages-private/dts-test/utils.d.ts",
+          "packages-private/dts-test/watch.test-d.ts"
+        ],
+        "tool": {
+          "name": "eslint",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/eslint",
+          "version": "v9.25.1"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "coverage",
+        "language": "typescript",
+        "root": "packages-private/dts-test",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages-private/dts-test/appDirective.test-d.ts",
+          "packages-private/dts-test/appUse.test-d.ts",
+          "packages-private/dts-test/built.test-d.ts",
+          "packages-private/dts-test/compiler.test-d.ts",
+          "packages-private/dts-test/component.test-d.ts",
+          "packages-private/dts-test/componentInstance.test-d.tsx",
+          "packages-private/dts-test/componentTypeExtensions.test-d.tsx",
+          "packages-private/dts-test/defineComponent.test-d.tsx",
+          "packages-private/dts-test/defineCustomElement.test-d.ts",
+          "packages-private/dts-test/directives.test-d.ts",
+          "packages-private/dts-test/extractProps.test-d.ts",
+          "packages-private/dts-test/functionalComponent.test-d.tsx",
+          "packages-private/dts-test/h.test-d.ts",
+          "packages-private/dts-test/inject.test-d.ts",
+          "packages-private/dts-test/reactivity.test-d.ts",
+          "packages-private/dts-test/ref.test-d.ts",
+          "packages-private/dts-test/setupHelpers.test-d.ts",
+          "packages-private/dts-test/tsx.test-d.tsx",
+          "packages-private/dts-test/utils.d.ts",
+          "packages-private/dts-test/watch.test-d.ts"
+        ],
+        "tool": {
+          "name": "vitest",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/vitest",
+          "version": "vitest/3.1.3 linux-x64 node-v22.14.0"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: pnpm-lock.yaml: missing @vitejs/plugin-vue at @vitejs/plugin-vue@5.2.4(vite@5.4.15(@types/node@22.14.1)(sass@1.87.0))(vue@packages+vue); reinstall dependencies",
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "typecheck",
+        "language": "typescript",
+        "root": "packages-private/sfc-playground",
+        "scheduled_as": "changed",
+        "skip": {
+          "findings": [],
+          "hint": "pnpm-lock.yaml: missing @vitejs/plugin-vue at @vitejs/plugin-vue@5.2.4(vite@5.4.15(@types/node@22.14.1)(sass@1.87.0))(vue@packages+vue); reinstall dependencies",
+          "outcome": "skipped",
+          "reason": "dependency_mismatch"
+        },
+        "targets": [
+          "packages-private/sfc-playground/src/download/download.ts",
+          "packages-private/sfc-playground/src/main.ts",
+          "packages-private/sfc-playground/src/vue-dev-proxy-prod.ts",
+          "packages-private/sfc-playground/src/vue-dev-proxy.ts",
+          "packages-private/sfc-playground/src/vue-server-renderer-dev-proxy.ts",
+          "packages-private/sfc-playground/vite.config.ts"
+        ],
+        "tool": {
+          "name": "tsc",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/tsc",
+          "version": "Version 5.6.3"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: pnpm-lock.yaml: missing @vitejs/plugin-vue at @vitejs/plugin-vue@5.2.4(vite@5.4.15(@types/node@22.14.1)(sass@1.87.0))(vue@packages+vue); reinstall dependencies",
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "lint",
+        "language": "typescript",
+        "root": "packages-private/sfc-playground",
+        "scheduled_as": "changed",
+        "skip": {
+          "findings": [],
+          "hint": "pnpm-lock.yaml: missing @vitejs/plugin-vue at @vitejs/plugin-vue@5.2.4(vite@5.4.15(@types/node@22.14.1)(sass@1.87.0))(vue@packages+vue); reinstall dependencies",
+          "outcome": "skipped",
+          "reason": "dependency_mismatch"
+        },
+        "targets": [
+          "packages-private/sfc-playground/src/download/download.ts",
+          "packages-private/sfc-playground/src/main.ts",
+          "packages-private/sfc-playground/src/vue-dev-proxy-prod.ts",
+          "packages-private/sfc-playground/src/vue-dev-proxy.ts",
+          "packages-private/sfc-playground/src/vue-server-renderer-dev-proxy.ts",
+          "packages-private/sfc-playground/vite.config.ts"
+        ],
+        "tool": {
+          "name": "eslint",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/eslint",
+          "version": "v9.25.1"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: pnpm-lock.yaml: missing @vitejs/plugin-vue at @vitejs/plugin-vue@5.2.4(vite@5.4.15(@types/node@22.14.1)(sass@1.87.0))(vue@packages+vue); reinstall dependencies",
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "coverage",
+        "language": "typescript",
+        "root": "packages-private/sfc-playground",
+        "scheduled_as": "changed",
+        "skip": {
+          "findings": [],
+          "hint": "pnpm-lock.yaml: missing @vitejs/plugin-vue at @vitejs/plugin-vue@5.2.4(vite@5.4.15(@types/node@22.14.1)(sass@1.87.0))(vue@packages+vue); reinstall dependencies",
+          "outcome": "skipped",
+          "reason": "dependency_mismatch"
+        },
+        "targets": [
+          "packages-private/sfc-playground/src/download/download.ts",
+          "packages-private/sfc-playground/src/main.ts",
+          "packages-private/sfc-playground/src/vue-dev-proxy-prod.ts",
+          "packages-private/sfc-playground/src/vue-dev-proxy.ts",
+          "packages-private/sfc-playground/src/vue-server-renderer-dev-proxy.ts",
+          "packages-private/sfc-playground/vite.config.ts"
+        ],
+        "tool": {
+          "name": "vitest",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/vitest",
+          "version": "vitest/3.1.3 linux-x64 node-v22.14.0"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "typecheck",
+        "language": "typescript",
+        "root": "packages-private/sfc-playground/src/download/template",
+        "scheduled_as": "changed",
+        "skip": {
+          "findings": [],
+          "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+          "outcome": "skipped",
+          "reason": "dependency_mismatch"
+        },
+        "targets": [
+          "packages-private/sfc-playground/src/download/template/main.js",
+          "packages-private/sfc-playground/src/download/template/vite.config.js"
+        ],
+        "tool": {
+          "name": "tsc",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/tsc",
+          "version": "Version 5.6.3"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "lint",
+        "language": "typescript",
+        "root": "packages-private/sfc-playground/src/download/template",
+        "scheduled_as": "changed",
+        "skip": {
+          "findings": [],
+          "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+          "outcome": "skipped",
+          "reason": "dependency_mismatch"
+        },
+        "targets": [
+          "packages-private/sfc-playground/src/download/template/main.js",
+          "packages-private/sfc-playground/src/download/template/vite.config.js"
+        ],
+        "tool": {
+          "name": "eslint",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/eslint",
+          "version": "v9.25.1"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "coverage",
+        "language": "typescript",
+        "root": "packages-private/sfc-playground/src/download/template",
+        "scheduled_as": "changed",
+        "skip": {
+          "findings": [],
+          "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+          "outcome": "skipped",
+          "reason": "dependency_mismatch"
+        },
+        "targets": [
+          "packages-private/sfc-playground/src/download/template/main.js",
+          "packages-private/sfc-playground/src/download/template/vite.config.js"
+        ],
+        "tool": {
+          "name": "vitest",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/vitest",
+          "version": "vitest/3.1.3 linux-x64 node-v22.14.0"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "root": "packages-private/template-explorer",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages-private/template-explorer/src/index.ts",
+          "packages-private/template-explorer/src/options.ts",
+          "packages-private/template-explorer/src/theme.ts"
+        ],
+        "tool": {
+          "name": "tsc",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/tsc",
+          "version": "Version 5.6.3"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "lint",
+        "language": "typescript",
+        "root": "packages-private/template-explorer",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages-private/template-explorer/src/index.ts",
+          "packages-private/template-explorer/src/options.ts",
+          "packages-private/template-explorer/src/theme.ts"
+        ],
+        "tool": {
+          "name": "eslint",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/eslint",
+          "version": "v9.25.1"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "coverage",
+        "language": "typescript",
+        "root": "packages-private/template-explorer",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages-private/template-explorer/src/index.ts",
+          "packages-private/template-explorer/src/options.ts",
+          "packages-private/template-explorer/src/theme.ts"
+        ],
+        "tool": {
+          "name": "vitest",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/vitest",
+          "version": "vitest/3.1.3 linux-x64 node-v22.14.0"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: pnpm-lock.yaml: missing @vitejs/plugin-vue at @vitejs/plugin-vue@5.2.4(vite@5.4.15(@types/node@22.14.1)(sass@1.87.0))(vue@packages+vue); reinstall dependencies",
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "typecheck",
+        "language": "typescript",
+        "root": "packages-private/vite-debug",
+        "scheduled_as": "changed",
+        "skip": {
+          "findings": [],
+          "hint": "pnpm-lock.yaml: missing @vitejs/plugin-vue at @vitejs/plugin-vue@5.2.4(vite@5.4.15(@types/node@22.14.1)(sass@1.87.0))(vue@packages+vue); reinstall dependencies",
+          "outcome": "skipped",
+          "reason": "dependency_mismatch"
+        },
+        "targets": [
+          "packages-private/vite-debug/main.ts",
+          "packages-private/vite-debug/vite.config.ts"
+        ],
+        "tool": {
+          "name": "tsc",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/tsc",
+          "version": "Version 5.6.3"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: pnpm-lock.yaml: missing @vitejs/plugin-vue at @vitejs/plugin-vue@5.2.4(vite@5.4.15(@types/node@22.14.1)(sass@1.87.0))(vue@packages+vue); reinstall dependencies",
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "lint",
+        "language": "typescript",
+        "root": "packages-private/vite-debug",
+        "scheduled_as": "changed",
+        "skip": {
+          "findings": [],
+          "hint": "pnpm-lock.yaml: missing @vitejs/plugin-vue at @vitejs/plugin-vue@5.2.4(vite@5.4.15(@types/node@22.14.1)(sass@1.87.0))(vue@packages+vue); reinstall dependencies",
+          "outcome": "skipped",
+          "reason": "dependency_mismatch"
+        },
+        "targets": [
+          "packages-private/vite-debug/main.ts",
+          "packages-private/vite-debug/vite.config.ts"
+        ],
+        "tool": {
+          "name": "eslint",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/eslint",
+          "version": "v9.25.1"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: pnpm-lock.yaml: missing @vitejs/plugin-vue at @vitejs/plugin-vue@5.2.4(vite@5.4.15(@types/node@22.14.1)(sass@1.87.0))(vue@packages+vue); reinstall dependencies",
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "coverage",
+        "language": "typescript",
+        "root": "packages-private/vite-debug",
+        "scheduled_as": "changed",
+        "skip": {
+          "findings": [],
+          "hint": "pnpm-lock.yaml: missing @vitejs/plugin-vue at @vitejs/plugin-vue@5.2.4(vite@5.4.15(@types/node@22.14.1)(sass@1.87.0))(vue@packages+vue); reinstall dependencies",
+          "outcome": "skipped",
+          "reason": "dependency_mismatch"
+        },
+        "targets": [
+          "packages-private/vite-debug/main.ts",
+          "packages-private/vite-debug/vite.config.ts"
+        ],
+        "tool": {
+          "name": "vitest",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/vitest",
+          "version": "vitest/3.1.3 linux-x64 node-v22.14.0"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "root": "packages/compiler-core",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages/compiler-core/__tests__/codegen.spec.ts",
+          "packages/compiler-core/__tests__/compile.spec.ts",
+          "packages/compiler-core/__tests__/parse.spec.ts",
+          "packages/compiler-core/__tests__/scopeId.spec.ts",
+          "packages/compiler-core/__tests__/testUtils.ts",
+          "packages/compiler-core/__tests__/transform.spec.ts",
+          "packages/compiler-core/__tests__/transforms/cacheStatic.spec.ts",
+          "packages/compiler-core/__tests__/transforms/noopDirectiveTransform.spec.ts",
+          "packages/compiler-core/__tests__/transforms/transformElement.spec.ts",
+          "packages/compiler-core/__tests__/transforms/transformExpressions.spec.ts",
+          "packages/compiler-core/__tests__/transforms/transformSlotOutlet.spec.ts",
+          "packages/compiler-core/__tests__/transforms/transformText.spec.ts",
+          "packages/compiler-core/__tests__/transforms/vBind.spec.ts",
+          "packages/compiler-core/__tests__/transforms/vFor.spec.ts",
+          "packages/compiler-core/__tests__/transforms/vIf.spec.ts",
+          "packages/compiler-core/__tests__/transforms/vMemo.spec.ts",
+          "packages/compiler-core/__tests__/transforms/vModel.spec.ts",
+          "packages/compiler-core/__tests__/transforms/vOn.spec.ts",
+          "packages/compiler-core/__tests__/transforms/vOnce.spec.ts",
+          "packages/compiler-core/__tests__/transforms/vSlot.spec.ts",
+          "packages/compiler-core/__tests__/utils.spec.ts",
+          "packages/compiler-core/index.js",
+          "packages/compiler-core/src/ast.ts",
+          "packages/compiler-core/src/babelUtils.ts",
+          "packages/compiler-core/src/codegen.ts",
+          "packages/compiler-core/src/compat/compatConfig.ts",
+          "packages/compiler-core/src/compat/transformFilter.ts",
+          "packages/compiler-core/src/compile.ts",
+          "packages/compiler-core/src/errors.ts",
+          "packages/compiler-core/src/index.ts",
+          "packages/compiler-core/src/options.ts",
+          "packages/compiler-core/src/parser.ts",
+          "packages/compiler-core/src/runtimeHelpers.ts",
+          "packages/compiler-core/src/tokenizer.ts",
+          "packages/compiler-core/src/transform.ts",
+          "packages/compiler-core/src/transforms/cacheStatic.ts",
+          "packages/compiler-core/src/transforms/noopDirectiveTransform.ts",
+          "packages/compiler-core/src/transforms/transformElement.ts",
+          "packages/compiler-core/src/transforms/transformExpression.ts",
+          "packages/compiler-core/src/transforms/transformSlotOutlet.ts",
+          "packages/compiler-core/src/transforms/transformText.ts",
+          "packages/compiler-core/src/transforms/vBind.ts",
+          "packages/compiler-core/src/transforms/vFor.ts",
+          "packages/compiler-core/src/transforms/vIf.ts",
+          "packages/compiler-core/src/transforms/vMemo.ts",
+          "packages/compiler-core/src/transforms/vModel.ts",
+          "packages/compiler-core/src/transforms/vOn.ts",
+          "packages/compiler-core/src/transforms/vOnce.ts",
+          "packages/compiler-core/src/transforms/vSlot.ts",
+          "packages/compiler-core/src/utils.ts",
+          "packages/compiler-core/src/validateExpression.ts"
+        ],
+        "tool": {
+          "name": "tsc",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/tsc",
+          "version": "Version 5.6.3"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "lint",
+        "language": "typescript",
+        "root": "packages/compiler-core",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages/compiler-core/__tests__/codegen.spec.ts",
+          "packages/compiler-core/__tests__/compile.spec.ts",
+          "packages/compiler-core/__tests__/parse.spec.ts",
+          "packages/compiler-core/__tests__/scopeId.spec.ts",
+          "packages/compiler-core/__tests__/testUtils.ts",
+          "packages/compiler-core/__tests__/transform.spec.ts",
+          "packages/compiler-core/__tests__/transforms/cacheStatic.spec.ts",
+          "packages/compiler-core/__tests__/transforms/noopDirectiveTransform.spec.ts",
+          "packages/compiler-core/__tests__/transforms/transformElement.spec.ts",
+          "packages/compiler-core/__tests__/transforms/transformExpressions.spec.ts",
+          "packages/compiler-core/__tests__/transforms/transformSlotOutlet.spec.ts",
+          "packages/compiler-core/__tests__/transforms/transformText.spec.ts",
+          "packages/compiler-core/__tests__/transforms/vBind.spec.ts",
+          "packages/compiler-core/__tests__/transforms/vFor.spec.ts",
+          "packages/compiler-core/__tests__/transforms/vIf.spec.ts",
+          "packages/compiler-core/__tests__/transforms/vMemo.spec.ts",
+          "packages/compiler-core/__tests__/transforms/vModel.spec.ts",
+          "packages/compiler-core/__tests__/transforms/vOn.spec.ts",
+          "packages/compiler-core/__tests__/transforms/vOnce.spec.ts",
+          "packages/compiler-core/__tests__/transforms/vSlot.spec.ts",
+          "packages/compiler-core/__tests__/utils.spec.ts",
+          "packages/compiler-core/index.js",
+          "packages/compiler-core/src/ast.ts",
+          "packages/compiler-core/src/babelUtils.ts",
+          "packages/compiler-core/src/codegen.ts",
+          "packages/compiler-core/src/compat/compatConfig.ts",
+          "packages/compiler-core/src/compat/transformFilter.ts",
+          "packages/compiler-core/src/compile.ts",
+          "packages/compiler-core/src/errors.ts",
+          "packages/compiler-core/src/index.ts",
+          "packages/compiler-core/src/options.ts",
+          "packages/compiler-core/src/parser.ts",
+          "packages/compiler-core/src/runtimeHelpers.ts",
+          "packages/compiler-core/src/tokenizer.ts",
+          "packages/compiler-core/src/transform.ts",
+          "packages/compiler-core/src/transforms/cacheStatic.ts",
+          "packages/compiler-core/src/transforms/noopDirectiveTransform.ts",
+          "packages/compiler-core/src/transforms/transformElement.ts",
+          "packages/compiler-core/src/transforms/transformExpression.ts",
+          "packages/compiler-core/src/transforms/transformSlotOutlet.ts",
+          "packages/compiler-core/src/transforms/transformText.ts",
+          "packages/compiler-core/src/transforms/vBind.ts",
+          "packages/compiler-core/src/transforms/vFor.ts",
+          "packages/compiler-core/src/transforms/vIf.ts",
+          "packages/compiler-core/src/transforms/vMemo.ts",
+          "packages/compiler-core/src/transforms/vModel.ts",
+          "packages/compiler-core/src/transforms/vOn.ts",
+          "packages/compiler-core/src/transforms/vOnce.ts",
+          "packages/compiler-core/src/transforms/vSlot.ts",
+          "packages/compiler-core/src/utils.ts",
+          "packages/compiler-core/src/validateExpression.ts"
+        ],
+        "tool": {
+          "name": "eslint",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/eslint",
+          "version": "v9.25.1"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "coverage",
+        "language": "typescript",
+        "root": "packages/compiler-core",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages/compiler-core/__tests__/codegen.spec.ts",
+          "packages/compiler-core/__tests__/compile.spec.ts",
+          "packages/compiler-core/__tests__/parse.spec.ts",
+          "packages/compiler-core/__tests__/scopeId.spec.ts",
+          "packages/compiler-core/__tests__/testUtils.ts",
+          "packages/compiler-core/__tests__/transform.spec.ts",
+          "packages/compiler-core/__tests__/transforms/cacheStatic.spec.ts",
+          "packages/compiler-core/__tests__/transforms/noopDirectiveTransform.spec.ts",
+          "packages/compiler-core/__tests__/transforms/transformElement.spec.ts",
+          "packages/compiler-core/__tests__/transforms/transformExpressions.spec.ts",
+          "packages/compiler-core/__tests__/transforms/transformSlotOutlet.spec.ts",
+          "packages/compiler-core/__tests__/transforms/transformText.spec.ts",
+          "packages/compiler-core/__tests__/transforms/vBind.spec.ts",
+          "packages/compiler-core/__tests__/transforms/vFor.spec.ts",
+          "packages/compiler-core/__tests__/transforms/vIf.spec.ts",
+          "packages/compiler-core/__tests__/transforms/vMemo.spec.ts",
+          "packages/compiler-core/__tests__/transforms/vModel.spec.ts",
+          "packages/compiler-core/__tests__/transforms/vOn.spec.ts",
+          "packages/compiler-core/__tests__/transforms/vOnce.spec.ts",
+          "packages/compiler-core/__tests__/transforms/vSlot.spec.ts",
+          "packages/compiler-core/__tests__/utils.spec.ts",
+          "packages/compiler-core/index.js",
+          "packages/compiler-core/src/ast.ts",
+          "packages/compiler-core/src/babelUtils.ts",
+          "packages/compiler-core/src/codegen.ts",
+          "packages/compiler-core/src/compat/compatConfig.ts",
+          "packages/compiler-core/src/compat/transformFilter.ts",
+          "packages/compiler-core/src/compile.ts",
+          "packages/compiler-core/src/errors.ts",
+          "packages/compiler-core/src/index.ts",
+          "packages/compiler-core/src/options.ts",
+          "packages/compiler-core/src/parser.ts",
+          "packages/compiler-core/src/runtimeHelpers.ts",
+          "packages/compiler-core/src/tokenizer.ts",
+          "packages/compiler-core/src/transform.ts",
+          "packages/compiler-core/src/transforms/cacheStatic.ts",
+          "packages/compiler-core/src/transforms/noopDirectiveTransform.ts",
+          "packages/compiler-core/src/transforms/transformElement.ts",
+          "packages/compiler-core/src/transforms/transformExpression.ts",
+          "packages/compiler-core/src/transforms/transformSlotOutlet.ts",
+          "packages/compiler-core/src/transforms/transformText.ts",
+          "packages/compiler-core/src/transforms/vBind.ts",
+          "packages/compiler-core/src/transforms/vFor.ts",
+          "packages/compiler-core/src/transforms/vIf.ts",
+          "packages/compiler-core/src/transforms/vMemo.ts",
+          "packages/compiler-core/src/transforms/vModel.ts",
+          "packages/compiler-core/src/transforms/vOn.ts",
+          "packages/compiler-core/src/transforms/vOnce.ts",
+          "packages/compiler-core/src/transforms/vSlot.ts",
+          "packages/compiler-core/src/utils.ts",
+          "packages/compiler-core/src/validateExpression.ts"
+        ],
+        "tool": {
+          "name": "vitest",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/vitest",
+          "version": "vitest/3.1.3 linux-x64 node-v22.14.0"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "root": "packages/compiler-dom",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages/compiler-dom/__tests__/decoderHtmlBrowser.spec.ts",
+          "packages/compiler-dom/__tests__/index.spec.ts",
+          "packages/compiler-dom/__tests__/parse.spec.ts",
+          "packages/compiler-dom/__tests__/transforms/Transition.spec.ts",
+          "packages/compiler-dom/__tests__/transforms/ignoreSideEffectTags.spec.ts",
+          "packages/compiler-dom/__tests__/transforms/stringifyStatic.spec.ts",
+          "packages/compiler-dom/__tests__/transforms/transformStyle.spec.ts",
+          "packages/compiler-dom/__tests__/transforms/vHtml.spec.ts",
+          "packages/compiler-dom/__tests__/transforms/vModel.spec.ts",
+          "packages/compiler-dom/__tests__/transforms/vOn.spec.ts",
+          "packages/compiler-dom/__tests__/transforms/vShow.spec.ts",
+          "packages/compiler-dom/__tests__/transforms/vText.spec.ts",
+          "packages/compiler-dom/__tests__/transforms/validateHtmlNesting.spec.ts",
+          "packages/compiler-dom/index.js",
+          "packages/compiler-dom/src/decodeHtmlBrowser.ts",
+          "packages/compiler-dom/src/errors.ts",
+          "packages/compiler-dom/src/htmlNesting.ts",
+          "packages/compiler-dom/src/index.ts",
+          "packages/compiler-dom/src/parserOptions.ts",
+          "packages/compiler-dom/src/runtimeHelpers.ts",
+          "packages/compiler-dom/src/transforms/Transition.ts",
+          "packages/compiler-dom/src/transforms/ignoreSideEffectTags.ts",
+          "packages/compiler-dom/src/transforms/stringifyStatic.ts",
+          "packages/compiler-dom/src/transforms/transformStyle.ts",
+          "packages/compiler-dom/src/transforms/vHtml.ts",
+          "packages/compiler-dom/src/transforms/vModel.ts",
+          "packages/compiler-dom/src/transforms/vOn.ts",
+          "packages/compiler-dom/src/transforms/vShow.ts",
+          "packages/compiler-dom/src/transforms/vText.ts",
+          "packages/compiler-dom/src/transforms/validateHtmlNesting.ts"
+        ],
+        "tool": {
+          "name": "tsc",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/tsc",
+          "version": "Version 5.6.3"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "lint",
+        "language": "typescript",
+        "root": "packages/compiler-dom",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages/compiler-dom/__tests__/decoderHtmlBrowser.spec.ts",
+          "packages/compiler-dom/__tests__/index.spec.ts",
+          "packages/compiler-dom/__tests__/parse.spec.ts",
+          "packages/compiler-dom/__tests__/transforms/Transition.spec.ts",
+          "packages/compiler-dom/__tests__/transforms/ignoreSideEffectTags.spec.ts",
+          "packages/compiler-dom/__tests__/transforms/stringifyStatic.spec.ts",
+          "packages/compiler-dom/__tests__/transforms/transformStyle.spec.ts",
+          "packages/compiler-dom/__tests__/transforms/vHtml.spec.ts",
+          "packages/compiler-dom/__tests__/transforms/vModel.spec.ts",
+          "packages/compiler-dom/__tests__/transforms/vOn.spec.ts",
+          "packages/compiler-dom/__tests__/transforms/vShow.spec.ts",
+          "packages/compiler-dom/__tests__/transforms/vText.spec.ts",
+          "packages/compiler-dom/__tests__/transforms/validateHtmlNesting.spec.ts",
+          "packages/compiler-dom/index.js",
+          "packages/compiler-dom/src/decodeHtmlBrowser.ts",
+          "packages/compiler-dom/src/errors.ts",
+          "packages/compiler-dom/src/htmlNesting.ts",
+          "packages/compiler-dom/src/index.ts",
+          "packages/compiler-dom/src/parserOptions.ts",
+          "packages/compiler-dom/src/runtimeHelpers.ts",
+          "packages/compiler-dom/src/transforms/Transition.ts",
+          "packages/compiler-dom/src/transforms/ignoreSideEffectTags.ts",
+          "packages/compiler-dom/src/transforms/stringifyStatic.ts",
+          "packages/compiler-dom/src/transforms/transformStyle.ts",
+          "packages/compiler-dom/src/transforms/vHtml.ts",
+          "packages/compiler-dom/src/transforms/vModel.ts",
+          "packages/compiler-dom/src/transforms/vOn.ts",
+          "packages/compiler-dom/src/transforms/vShow.ts",
+          "packages/compiler-dom/src/transforms/vText.ts",
+          "packages/compiler-dom/src/transforms/validateHtmlNesting.ts"
+        ],
+        "tool": {
+          "name": "eslint",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/eslint",
+          "version": "v9.25.1"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "coverage",
+        "language": "typescript",
+        "root": "packages/compiler-dom",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages/compiler-dom/__tests__/decoderHtmlBrowser.spec.ts",
+          "packages/compiler-dom/__tests__/index.spec.ts",
+          "packages/compiler-dom/__tests__/parse.spec.ts",
+          "packages/compiler-dom/__tests__/transforms/Transition.spec.ts",
+          "packages/compiler-dom/__tests__/transforms/ignoreSideEffectTags.spec.ts",
+          "packages/compiler-dom/__tests__/transforms/stringifyStatic.spec.ts",
+          "packages/compiler-dom/__tests__/transforms/transformStyle.spec.ts",
+          "packages/compiler-dom/__tests__/transforms/vHtml.spec.ts",
+          "packages/compiler-dom/__tests__/transforms/vModel.spec.ts",
+          "packages/compiler-dom/__tests__/transforms/vOn.spec.ts",
+          "packages/compiler-dom/__tests__/transforms/vShow.spec.ts",
+          "packages/compiler-dom/__tests__/transforms/vText.spec.ts",
+          "packages/compiler-dom/__tests__/transforms/validateHtmlNesting.spec.ts",
+          "packages/compiler-dom/index.js",
+          "packages/compiler-dom/src/decodeHtmlBrowser.ts",
+          "packages/compiler-dom/src/errors.ts",
+          "packages/compiler-dom/src/htmlNesting.ts",
+          "packages/compiler-dom/src/index.ts",
+          "packages/compiler-dom/src/parserOptions.ts",
+          "packages/compiler-dom/src/runtimeHelpers.ts",
+          "packages/compiler-dom/src/transforms/Transition.ts",
+          "packages/compiler-dom/src/transforms/ignoreSideEffectTags.ts",
+          "packages/compiler-dom/src/transforms/stringifyStatic.ts",
+          "packages/compiler-dom/src/transforms/transformStyle.ts",
+          "packages/compiler-dom/src/transforms/vHtml.ts",
+          "packages/compiler-dom/src/transforms/vModel.ts",
+          "packages/compiler-dom/src/transforms/vOn.ts",
+          "packages/compiler-dom/src/transforms/vShow.ts",
+          "packages/compiler-dom/src/transforms/vText.ts",
+          "packages/compiler-dom/src/transforms/validateHtmlNesting.ts"
+        ],
+        "tool": {
+          "name": "vitest",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/vitest",
+          "version": "vitest/3.1.3 linux-x64 node-v22.14.0"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "root": "packages/compiler-sfc",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages/compiler-sfc/__tests__/compileScript.spec.ts",
+          "packages/compiler-sfc/__tests__/compileScript/defineEmits.spec.ts",
+          "packages/compiler-sfc/__tests__/compileScript/defineExpose.spec.ts",
+          "packages/compiler-sfc/__tests__/compileScript/defineModel.spec.ts",
+          "packages/compiler-sfc/__tests__/compileScript/defineOptions.spec.ts",
+          "packages/compiler-sfc/__tests__/compileScript/defineProps.spec.ts",
+          "packages/compiler-sfc/__tests__/compileScript/definePropsDestructure.spec.ts",
+          "packages/compiler-sfc/__tests__/compileScript/defineSlots.spec.ts",
+          "packages/compiler-sfc/__tests__/compileScript/hoistStatic.spec.ts",
+          "packages/compiler-sfc/__tests__/compileScript/importUsageCheck.spec.ts",
+          "packages/compiler-sfc/__tests__/compileScript/resolveType.spec.ts",
+          "packages/compiler-sfc/__tests__/compileStyle.spec.ts",
+          "packages/compiler-sfc/__tests__/compileTemplate.spec.ts",
+          "packages/compiler-sfc/__tests__/cssVars.spec.ts",
+          "packages/compiler-sfc/__tests__/parse.spec.ts",
+          "packages/compiler-sfc/__tests__/rewriteDefault.spec.ts",
+          "packages/compiler-sfc/__tests__/templateTransformAssetUrl.spec.ts",
+          "packages/compiler-sfc/__tests__/templateTransformSrcset.spec.ts",
+          "packages/compiler-sfc/__tests__/templateUtils.spec.ts",
+          "packages/compiler-sfc/__tests__/utils.ts",
+          "packages/compiler-sfc/src/cache.ts",
+          "packages/compiler-sfc/src/compileScript.ts",
+          "packages/compiler-sfc/src/compileStyle.ts",
+          "packages/compiler-sfc/src/compileTemplate.ts",
+          "packages/compiler-sfc/src/index.ts",
+          "packages/compiler-sfc/src/parse.ts",
+          "packages/compiler-sfc/src/rewriteDefault.ts",
+          "packages/compiler-sfc/src/script/analyzeScriptBindings.ts",
+          "packages/compiler-sfc/src/script/context.ts",
+          "packages/compiler-sfc/src/script/defineEmits.ts",
+          "packages/compiler-sfc/src/script/defineExpose.ts",
+          "packages/compiler-sfc/src/script/defineModel.ts",
+          "packages/compiler-sfc/src/script/defineOptions.ts",
+          "packages/compiler-sfc/src/script/defineProps.ts",
+          "packages/compiler-sfc/src/script/definePropsDestructure.ts",
+          "packages/compiler-sfc/src/script/defineSlots.ts",
+          "packages/compiler-sfc/src/script/importUsageCheck.ts",
+          "packages/compiler-sfc/src/script/normalScript.ts",
+          "packages/compiler-sfc/src/script/resolveType.ts",
+          "packages/compiler-sfc/src/script/topLevelAwait.ts",
+          "packages/compiler-sfc/src/script/utils.ts",
+          "packages/compiler-sfc/src/shims.d.ts",
+          "packages/compiler-sfc/src/style/cssVars.ts",
+          "packages/compiler-sfc/src/style/pluginScoped.ts",
+          "packages/compiler-sfc/src/style/pluginTrim.ts",
+          "packages/compiler-sfc/src/style/preprocessors.ts",
+          "packages/compiler-sfc/src/template/templateUtils.ts",
+          "packages/compiler-sfc/src/template/transformAssetUrl.ts",
+          "packages/compiler-sfc/src/template/transformSrcset.ts",
+          "packages/compiler-sfc/src/warn.ts"
+        ],
+        "tool": {
+          "name": "tsc",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/tsc",
+          "version": "Version 5.6.3"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "lint",
+        "language": "typescript",
+        "root": "packages/compiler-sfc",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages/compiler-sfc/__tests__/compileScript.spec.ts",
+          "packages/compiler-sfc/__tests__/compileScript/defineEmits.spec.ts",
+          "packages/compiler-sfc/__tests__/compileScript/defineExpose.spec.ts",
+          "packages/compiler-sfc/__tests__/compileScript/defineModel.spec.ts",
+          "packages/compiler-sfc/__tests__/compileScript/defineOptions.spec.ts",
+          "packages/compiler-sfc/__tests__/compileScript/defineProps.spec.ts",
+          "packages/compiler-sfc/__tests__/compileScript/definePropsDestructure.spec.ts",
+          "packages/compiler-sfc/__tests__/compileScript/defineSlots.spec.ts",
+          "packages/compiler-sfc/__tests__/compileScript/hoistStatic.spec.ts",
+          "packages/compiler-sfc/__tests__/compileScript/importUsageCheck.spec.ts",
+          "packages/compiler-sfc/__tests__/compileScript/resolveType.spec.ts",
+          "packages/compiler-sfc/__tests__/compileStyle.spec.ts",
+          "packages/compiler-sfc/__tests__/compileTemplate.spec.ts",
+          "packages/compiler-sfc/__tests__/cssVars.spec.ts",
+          "packages/compiler-sfc/__tests__/parse.spec.ts",
+          "packages/compiler-sfc/__tests__/rewriteDefault.spec.ts",
+          "packages/compiler-sfc/__tests__/templateTransformAssetUrl.spec.ts",
+          "packages/compiler-sfc/__tests__/templateTransformSrcset.spec.ts",
+          "packages/compiler-sfc/__tests__/templateUtils.spec.ts",
+          "packages/compiler-sfc/__tests__/utils.ts",
+          "packages/compiler-sfc/src/cache.ts",
+          "packages/compiler-sfc/src/compileScript.ts",
+          "packages/compiler-sfc/src/compileStyle.ts",
+          "packages/compiler-sfc/src/compileTemplate.ts",
+          "packages/compiler-sfc/src/index.ts",
+          "packages/compiler-sfc/src/parse.ts",
+          "packages/compiler-sfc/src/rewriteDefault.ts",
+          "packages/compiler-sfc/src/script/analyzeScriptBindings.ts",
+          "packages/compiler-sfc/src/script/context.ts",
+          "packages/compiler-sfc/src/script/defineEmits.ts",
+          "packages/compiler-sfc/src/script/defineExpose.ts",
+          "packages/compiler-sfc/src/script/defineModel.ts",
+          "packages/compiler-sfc/src/script/defineOptions.ts",
+          "packages/compiler-sfc/src/script/defineProps.ts",
+          "packages/compiler-sfc/src/script/definePropsDestructure.ts",
+          "packages/compiler-sfc/src/script/defineSlots.ts",
+          "packages/compiler-sfc/src/script/importUsageCheck.ts",
+          "packages/compiler-sfc/src/script/normalScript.ts",
+          "packages/compiler-sfc/src/script/resolveType.ts",
+          "packages/compiler-sfc/src/script/topLevelAwait.ts",
+          "packages/compiler-sfc/src/script/utils.ts",
+          "packages/compiler-sfc/src/shims.d.ts",
+          "packages/compiler-sfc/src/style/cssVars.ts",
+          "packages/compiler-sfc/src/style/pluginScoped.ts",
+          "packages/compiler-sfc/src/style/pluginTrim.ts",
+          "packages/compiler-sfc/src/style/preprocessors.ts",
+          "packages/compiler-sfc/src/template/templateUtils.ts",
+          "packages/compiler-sfc/src/template/transformAssetUrl.ts",
+          "packages/compiler-sfc/src/template/transformSrcset.ts",
+          "packages/compiler-sfc/src/warn.ts"
+        ],
+        "tool": {
+          "name": "eslint",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/eslint",
+          "version": "v9.25.1"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "coverage",
+        "language": "typescript",
+        "root": "packages/compiler-sfc",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages/compiler-sfc/__tests__/compileScript.spec.ts",
+          "packages/compiler-sfc/__tests__/compileScript/defineEmits.spec.ts",
+          "packages/compiler-sfc/__tests__/compileScript/defineExpose.spec.ts",
+          "packages/compiler-sfc/__tests__/compileScript/defineModel.spec.ts",
+          "packages/compiler-sfc/__tests__/compileScript/defineOptions.spec.ts",
+          "packages/compiler-sfc/__tests__/compileScript/defineProps.spec.ts",
+          "packages/compiler-sfc/__tests__/compileScript/definePropsDestructure.spec.ts",
+          "packages/compiler-sfc/__tests__/compileScript/defineSlots.spec.ts",
+          "packages/compiler-sfc/__tests__/compileScript/hoistStatic.spec.ts",
+          "packages/compiler-sfc/__tests__/compileScript/importUsageCheck.spec.ts",
+          "packages/compiler-sfc/__tests__/compileScript/resolveType.spec.ts",
+          "packages/compiler-sfc/__tests__/compileStyle.spec.ts",
+          "packages/compiler-sfc/__tests__/compileTemplate.spec.ts",
+          "packages/compiler-sfc/__tests__/cssVars.spec.ts",
+          "packages/compiler-sfc/__tests__/parse.spec.ts",
+          "packages/compiler-sfc/__tests__/rewriteDefault.spec.ts",
+          "packages/compiler-sfc/__tests__/templateTransformAssetUrl.spec.ts",
+          "packages/compiler-sfc/__tests__/templateTransformSrcset.spec.ts",
+          "packages/compiler-sfc/__tests__/templateUtils.spec.ts",
+          "packages/compiler-sfc/__tests__/utils.ts",
+          "packages/compiler-sfc/src/cache.ts",
+          "packages/compiler-sfc/src/compileScript.ts",
+          "packages/compiler-sfc/src/compileStyle.ts",
+          "packages/compiler-sfc/src/compileTemplate.ts",
+          "packages/compiler-sfc/src/index.ts",
+          "packages/compiler-sfc/src/parse.ts",
+          "packages/compiler-sfc/src/rewriteDefault.ts",
+          "packages/compiler-sfc/src/script/analyzeScriptBindings.ts",
+          "packages/compiler-sfc/src/script/context.ts",
+          "packages/compiler-sfc/src/script/defineEmits.ts",
+          "packages/compiler-sfc/src/script/defineExpose.ts",
+          "packages/compiler-sfc/src/script/defineModel.ts",
+          "packages/compiler-sfc/src/script/defineOptions.ts",
+          "packages/compiler-sfc/src/script/defineProps.ts",
+          "packages/compiler-sfc/src/script/definePropsDestructure.ts",
+          "packages/compiler-sfc/src/script/defineSlots.ts",
+          "packages/compiler-sfc/src/script/importUsageCheck.ts",
+          "packages/compiler-sfc/src/script/normalScript.ts",
+          "packages/compiler-sfc/src/script/resolveType.ts",
+          "packages/compiler-sfc/src/script/topLevelAwait.ts",
+          "packages/compiler-sfc/src/script/utils.ts",
+          "packages/compiler-sfc/src/shims.d.ts",
+          "packages/compiler-sfc/src/style/cssVars.ts",
+          "packages/compiler-sfc/src/style/pluginScoped.ts",
+          "packages/compiler-sfc/src/style/pluginTrim.ts",
+          "packages/compiler-sfc/src/style/preprocessors.ts",
+          "packages/compiler-sfc/src/template/templateUtils.ts",
+          "packages/compiler-sfc/src/template/transformAssetUrl.ts",
+          "packages/compiler-sfc/src/template/transformSrcset.ts",
+          "packages/compiler-sfc/src/warn.ts"
+        ],
+        "tool": {
+          "name": "vitest",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/vitest",
+          "version": "vitest/3.1.3 linux-x64 node-v22.14.0"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "root": "packages/compiler-ssr",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages/compiler-ssr/__tests__/ssrComponent.spec.ts",
+          "packages/compiler-ssr/__tests__/ssrElement.spec.ts",
+          "packages/compiler-ssr/__tests__/ssrFallthroughAttrs.spec.ts",
+          "packages/compiler-ssr/__tests__/ssrInjectCssVars.spec.ts",
+          "packages/compiler-ssr/__tests__/ssrPortal.spec.ts",
+          "packages/compiler-ssr/__tests__/ssrScopeId.spec.ts",
+          "packages/compiler-ssr/__tests__/ssrSlotOutlet.spec.ts",
+          "packages/compiler-ssr/__tests__/ssrSuspense.spec.ts",
+          "packages/compiler-ssr/__tests__/ssrText.spec.ts",
+          "packages/compiler-ssr/__tests__/ssrTransition.spec.ts",
+          "packages/compiler-ssr/__tests__/ssrTransitionGroup.spec.ts",
+          "packages/compiler-ssr/__tests__/ssrVFor.spec.ts",
+          "packages/compiler-ssr/__tests__/ssrVIf.spec.ts",
+          "packages/compiler-ssr/__tests__/ssrVModel.spec.ts",
+          "packages/compiler-ssr/__tests__/ssrVShow.spec.ts",
+          "packages/compiler-ssr/__tests__/utils.ts",
+          "packages/compiler-ssr/src/errors.ts",
+          "packages/compiler-ssr/src/index.ts",
+          "packages/compiler-ssr/src/runtimeHelpers.ts",
+          "packages/compiler-ssr/src/ssrCodegenTransform.ts",
+          "packages/compiler-ssr/src/transforms/ssrInjectCssVars.ts",
+          "packages/compiler-ssr/src/transforms/ssrInjectFallthroughAttrs.ts",
+          "packages/compiler-ssr/src/transforms/ssrTransformComponent.ts",
+          "packages/compiler-ssr/src/transforms/ssrTransformElement.ts",
+          "packages/compiler-ssr/src/transforms/ssrTransformSlotOutlet.ts",
+          "packages/compiler-ssr/src/transforms/ssrTransformSuspense.ts",
+          "packages/compiler-ssr/src/transforms/ssrTransformTeleport.ts",
+          "packages/compiler-ssr/src/transforms/ssrTransformTransition.ts",
+          "packages/compiler-ssr/src/transforms/ssrTransformTransitionGroup.ts",
+          "packages/compiler-ssr/src/transforms/ssrVFor.ts",
+          "packages/compiler-ssr/src/transforms/ssrVIf.ts",
+          "packages/compiler-ssr/src/transforms/ssrVModel.ts",
+          "packages/compiler-ssr/src/transforms/ssrVShow.ts"
+        ],
+        "tool": {
+          "name": "tsc",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/tsc",
+          "version": "Version 5.6.3"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "lint",
+        "language": "typescript",
+        "root": "packages/compiler-ssr",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages/compiler-ssr/__tests__/ssrComponent.spec.ts",
+          "packages/compiler-ssr/__tests__/ssrElement.spec.ts",
+          "packages/compiler-ssr/__tests__/ssrFallthroughAttrs.spec.ts",
+          "packages/compiler-ssr/__tests__/ssrInjectCssVars.spec.ts",
+          "packages/compiler-ssr/__tests__/ssrPortal.spec.ts",
+          "packages/compiler-ssr/__tests__/ssrScopeId.spec.ts",
+          "packages/compiler-ssr/__tests__/ssrSlotOutlet.spec.ts",
+          "packages/compiler-ssr/__tests__/ssrSuspense.spec.ts",
+          "packages/compiler-ssr/__tests__/ssrText.spec.ts",
+          "packages/compiler-ssr/__tests__/ssrTransition.spec.ts",
+          "packages/compiler-ssr/__tests__/ssrTransitionGroup.spec.ts",
+          "packages/compiler-ssr/__tests__/ssrVFor.spec.ts",
+          "packages/compiler-ssr/__tests__/ssrVIf.spec.ts",
+          "packages/compiler-ssr/__tests__/ssrVModel.spec.ts",
+          "packages/compiler-ssr/__tests__/ssrVShow.spec.ts",
+          "packages/compiler-ssr/__tests__/utils.ts",
+          "packages/compiler-ssr/src/errors.ts",
+          "packages/compiler-ssr/src/index.ts",
+          "packages/compiler-ssr/src/runtimeHelpers.ts",
+          "packages/compiler-ssr/src/ssrCodegenTransform.ts",
+          "packages/compiler-ssr/src/transforms/ssrInjectCssVars.ts",
+          "packages/compiler-ssr/src/transforms/ssrInjectFallthroughAttrs.ts",
+          "packages/compiler-ssr/src/transforms/ssrTransformComponent.ts",
+          "packages/compiler-ssr/src/transforms/ssrTransformElement.ts",
+          "packages/compiler-ssr/src/transforms/ssrTransformSlotOutlet.ts",
+          "packages/compiler-ssr/src/transforms/ssrTransformSuspense.ts",
+          "packages/compiler-ssr/src/transforms/ssrTransformTeleport.ts",
+          "packages/compiler-ssr/src/transforms/ssrTransformTransition.ts",
+          "packages/compiler-ssr/src/transforms/ssrTransformTransitionGroup.ts",
+          "packages/compiler-ssr/src/transforms/ssrVFor.ts",
+          "packages/compiler-ssr/src/transforms/ssrVIf.ts",
+          "packages/compiler-ssr/src/transforms/ssrVModel.ts",
+          "packages/compiler-ssr/src/transforms/ssrVShow.ts"
+        ],
+        "tool": {
+          "name": "eslint",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/eslint",
+          "version": "v9.25.1"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "coverage",
+        "language": "typescript",
+        "root": "packages/compiler-ssr",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages/compiler-ssr/__tests__/ssrComponent.spec.ts",
+          "packages/compiler-ssr/__tests__/ssrElement.spec.ts",
+          "packages/compiler-ssr/__tests__/ssrFallthroughAttrs.spec.ts",
+          "packages/compiler-ssr/__tests__/ssrInjectCssVars.spec.ts",
+          "packages/compiler-ssr/__tests__/ssrPortal.spec.ts",
+          "packages/compiler-ssr/__tests__/ssrScopeId.spec.ts",
+          "packages/compiler-ssr/__tests__/ssrSlotOutlet.spec.ts",
+          "packages/compiler-ssr/__tests__/ssrSuspense.spec.ts",
+          "packages/compiler-ssr/__tests__/ssrText.spec.ts",
+          "packages/compiler-ssr/__tests__/ssrTransition.spec.ts",
+          "packages/compiler-ssr/__tests__/ssrTransitionGroup.spec.ts",
+          "packages/compiler-ssr/__tests__/ssrVFor.spec.ts",
+          "packages/compiler-ssr/__tests__/ssrVIf.spec.ts",
+          "packages/compiler-ssr/__tests__/ssrVModel.spec.ts",
+          "packages/compiler-ssr/__tests__/ssrVShow.spec.ts",
+          "packages/compiler-ssr/__tests__/utils.ts",
+          "packages/compiler-ssr/src/errors.ts",
+          "packages/compiler-ssr/src/index.ts",
+          "packages/compiler-ssr/src/runtimeHelpers.ts",
+          "packages/compiler-ssr/src/ssrCodegenTransform.ts",
+          "packages/compiler-ssr/src/transforms/ssrInjectCssVars.ts",
+          "packages/compiler-ssr/src/transforms/ssrInjectFallthroughAttrs.ts",
+          "packages/compiler-ssr/src/transforms/ssrTransformComponent.ts",
+          "packages/compiler-ssr/src/transforms/ssrTransformElement.ts",
+          "packages/compiler-ssr/src/transforms/ssrTransformSlotOutlet.ts",
+          "packages/compiler-ssr/src/transforms/ssrTransformSuspense.ts",
+          "packages/compiler-ssr/src/transforms/ssrTransformTeleport.ts",
+          "packages/compiler-ssr/src/transforms/ssrTransformTransition.ts",
+          "packages/compiler-ssr/src/transforms/ssrTransformTransitionGroup.ts",
+          "packages/compiler-ssr/src/transforms/ssrVFor.ts",
+          "packages/compiler-ssr/src/transforms/ssrVIf.ts",
+          "packages/compiler-ssr/src/transforms/ssrVModel.ts",
+          "packages/compiler-ssr/src/transforms/ssrVShow.ts"
+        ],
+        "tool": {
+          "name": "vitest",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/vitest",
+          "version": "vitest/3.1.3 linux-x64 node-v22.14.0"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "root": "packages/reactivity",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages/reactivity/__benchmarks__/computed.bench.ts",
+          "packages/reactivity/__benchmarks__/effect.bench.ts",
+          "packages/reactivity/__benchmarks__/reactiveArray.bench.ts",
+          "packages/reactivity/__benchmarks__/reactiveMap.bench.ts",
+          "packages/reactivity/__benchmarks__/reactiveObject.bench.ts",
+          "packages/reactivity/__benchmarks__/ref.bench.ts",
+          "packages/reactivity/__tests__/collections/Map.spec.ts",
+          "packages/reactivity/__tests__/collections/Set.spec.ts",
+          "packages/reactivity/__tests__/collections/WeakMap.spec.ts",
+          "packages/reactivity/__tests__/collections/WeakSet.spec.ts",
+          "packages/reactivity/__tests__/collections/shallowReadonly.spec.ts",
+          "packages/reactivity/__tests__/computed.spec.ts",
+          "packages/reactivity/__tests__/effect.spec.ts",
+          "packages/reactivity/__tests__/effectScope.spec.ts",
+          "packages/reactivity/__tests__/gc.spec.ts",
+          "packages/reactivity/__tests__/reactive.spec.ts",
+          "packages/reactivity/__tests__/reactiveArray.spec.ts",
+          "packages/reactivity/__tests__/readonly.spec.ts",
+          "packages/reactivity/__tests__/ref.spec.ts",
+          "packages/reactivity/__tests__/shallowReactive.spec.ts",
+          "packages/reactivity/__tests__/shallowReadonly.spec.ts",
+          "packages/reactivity/__tests__/watch.spec.ts",
+          "packages/reactivity/index.js",
+          "packages/reactivity/src/arrayInstrumentations.ts",
+          "packages/reactivity/src/baseHandlers.ts",
+          "packages/reactivity/src/collectionHandlers.ts",
+          "packages/reactivity/src/computed.ts",
+          "packages/reactivity/src/constants.ts",
+          "packages/reactivity/src/dep.ts",
+          "packages/reactivity/src/effect.ts",
+          "packages/reactivity/src/effectScope.ts",
+          "packages/reactivity/src/index.ts",
+          "packages/reactivity/src/reactive.ts",
+          "packages/reactivity/src/ref.ts",
+          "packages/reactivity/src/warning.ts",
+          "packages/reactivity/src/watch.ts"
+        ],
+        "tool": {
+          "name": "tsc",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/tsc",
+          "version": "Version 5.6.3"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "lint",
+        "language": "typescript",
+        "root": "packages/reactivity",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages/reactivity/__benchmarks__/computed.bench.ts",
+          "packages/reactivity/__benchmarks__/effect.bench.ts",
+          "packages/reactivity/__benchmarks__/reactiveArray.bench.ts",
+          "packages/reactivity/__benchmarks__/reactiveMap.bench.ts",
+          "packages/reactivity/__benchmarks__/reactiveObject.bench.ts",
+          "packages/reactivity/__benchmarks__/ref.bench.ts",
+          "packages/reactivity/__tests__/collections/Map.spec.ts",
+          "packages/reactivity/__tests__/collections/Set.spec.ts",
+          "packages/reactivity/__tests__/collections/WeakMap.spec.ts",
+          "packages/reactivity/__tests__/collections/WeakSet.spec.ts",
+          "packages/reactivity/__tests__/collections/shallowReadonly.spec.ts",
+          "packages/reactivity/__tests__/computed.spec.ts",
+          "packages/reactivity/__tests__/effect.spec.ts",
+          "packages/reactivity/__tests__/effectScope.spec.ts",
+          "packages/reactivity/__tests__/gc.spec.ts",
+          "packages/reactivity/__tests__/reactive.spec.ts",
+          "packages/reactivity/__tests__/reactiveArray.spec.ts",
+          "packages/reactivity/__tests__/readonly.spec.ts",
+          "packages/reactivity/__tests__/ref.spec.ts",
+          "packages/reactivity/__tests__/shallowReactive.spec.ts",
+          "packages/reactivity/__tests__/shallowReadonly.spec.ts",
+          "packages/reactivity/__tests__/watch.spec.ts",
+          "packages/reactivity/index.js",
+          "packages/reactivity/src/arrayInstrumentations.ts",
+          "packages/reactivity/src/baseHandlers.ts",
+          "packages/reactivity/src/collectionHandlers.ts",
+          "packages/reactivity/src/computed.ts",
+          "packages/reactivity/src/constants.ts",
+          "packages/reactivity/src/dep.ts",
+          "packages/reactivity/src/effect.ts",
+          "packages/reactivity/src/effectScope.ts",
+          "packages/reactivity/src/index.ts",
+          "packages/reactivity/src/reactive.ts",
+          "packages/reactivity/src/ref.ts",
+          "packages/reactivity/src/warning.ts",
+          "packages/reactivity/src/watch.ts"
+        ],
+        "tool": {
+          "name": "eslint",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/eslint",
+          "version": "v9.25.1"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "coverage",
+        "language": "typescript",
+        "root": "packages/reactivity",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages/reactivity/__benchmarks__/computed.bench.ts",
+          "packages/reactivity/__benchmarks__/effect.bench.ts",
+          "packages/reactivity/__benchmarks__/reactiveArray.bench.ts",
+          "packages/reactivity/__benchmarks__/reactiveMap.bench.ts",
+          "packages/reactivity/__benchmarks__/reactiveObject.bench.ts",
+          "packages/reactivity/__benchmarks__/ref.bench.ts",
+          "packages/reactivity/__tests__/collections/Map.spec.ts",
+          "packages/reactivity/__tests__/collections/Set.spec.ts",
+          "packages/reactivity/__tests__/collections/WeakMap.spec.ts",
+          "packages/reactivity/__tests__/collections/WeakSet.spec.ts",
+          "packages/reactivity/__tests__/collections/shallowReadonly.spec.ts",
+          "packages/reactivity/__tests__/computed.spec.ts",
+          "packages/reactivity/__tests__/effect.spec.ts",
+          "packages/reactivity/__tests__/effectScope.spec.ts",
+          "packages/reactivity/__tests__/gc.spec.ts",
+          "packages/reactivity/__tests__/reactive.spec.ts",
+          "packages/reactivity/__tests__/reactiveArray.spec.ts",
+          "packages/reactivity/__tests__/readonly.spec.ts",
+          "packages/reactivity/__tests__/ref.spec.ts",
+          "packages/reactivity/__tests__/shallowReactive.spec.ts",
+          "packages/reactivity/__tests__/shallowReadonly.spec.ts",
+          "packages/reactivity/__tests__/watch.spec.ts",
+          "packages/reactivity/index.js",
+          "packages/reactivity/src/arrayInstrumentations.ts",
+          "packages/reactivity/src/baseHandlers.ts",
+          "packages/reactivity/src/collectionHandlers.ts",
+          "packages/reactivity/src/computed.ts",
+          "packages/reactivity/src/constants.ts",
+          "packages/reactivity/src/dep.ts",
+          "packages/reactivity/src/effect.ts",
+          "packages/reactivity/src/effectScope.ts",
+          "packages/reactivity/src/index.ts",
+          "packages/reactivity/src/reactive.ts",
+          "packages/reactivity/src/ref.ts",
+          "packages/reactivity/src/warning.ts",
+          "packages/reactivity/src/watch.ts"
+        ],
+        "tool": {
+          "name": "vitest",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/vitest",
+          "version": "vitest/3.1.3 linux-x64 node-v22.14.0"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "root": "packages/runtime-core",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages/runtime-core/__tests__/apiAsyncComponent.spec.ts",
+          "packages/runtime-core/__tests__/apiCreateApp.spec.ts",
+          "packages/runtime-core/__tests__/apiExpose.spec.ts",
+          "packages/runtime-core/__tests__/apiInject.spec.ts",
+          "packages/runtime-core/__tests__/apiLifecycle.spec.ts",
+          "packages/runtime-core/__tests__/apiOptions.spec.ts",
+          "packages/runtime-core/__tests__/apiSetupContext.spec.ts",
+          "packages/runtime-core/__tests__/apiSetupHelpers.spec.ts",
+          "packages/runtime-core/__tests__/apiWatch.bench.ts",
+          "packages/runtime-core/__tests__/apiWatch.spec.ts",
+          "packages/runtime-core/__tests__/componentEmits.spec.ts",
+          "packages/runtime-core/__tests__/componentProps.spec.ts",
+          "packages/runtime-core/__tests__/componentPublicInstance.spec.ts",
+          "packages/runtime-core/__tests__/componentSlots.spec.ts",
+          "packages/runtime-core/__tests__/components/BaseTransition.spec.ts",
+          "packages/runtime-core/__tests__/components/KeepAlive.spec.ts",
+          "packages/runtime-core/__tests__/components/Suspense.spec.ts",
+          "packages/runtime-core/__tests__/components/Teleport.spec.ts",
+          "packages/runtime-core/__tests__/directives.spec.ts",
+          "packages/runtime-core/__tests__/errorHandling.spec.ts",
+          "packages/runtime-core/__tests__/h.spec.ts",
+          "packages/runtime-core/__tests__/helpers/createSlots.spec.ts",
+          "packages/runtime-core/__tests__/helpers/renderList.spec.ts",
+          "packages/runtime-core/__tests__/helpers/renderSlot.spec.ts",
+          "packages/runtime-core/__tests__/helpers/resolveAssets.spec.ts",
+          "packages/runtime-core/__tests__/helpers/toHandlers.spec.ts",
+          "packages/runtime-core/__tests__/helpers/useId.spec.ts",
+          "packages/runtime-core/__tests__/helpers/useModel.spec.ts",
+          "packages/runtime-core/__tests__/helpers/useTemplateRef.spec.ts",
+          "packages/runtime-core/__tests__/helpers/withMemo.spec.ts",
+          "packages/runtime-core/__tests__/hmr.spec.ts",
+          "packages/runtime-core/__tests__/hydration.spec.ts",
+          "packages/runtime-core/__tests__/misc.spec.ts",
+          "packages/runtime-core/__tests__/rendererAttrsFallthrough.spec.ts",
+          "packages/runtime-core/__tests__/rendererChildren.spec.ts",
+          "packages/runtime-core/__tests__/rendererComponent.spec.ts",
+          "packages/runtime-core/__tests__/rendererElement.spec.ts",
+          "packages/runtime-core/__tests__/rendererFragment.spec.ts",
+          "packages/runtime-core/__tests__/rendererOptimizedMode.spec.ts",
+          "packages/runtime-core/__tests__/rendererTemplateRef.spec.ts",
+          "packages/runtime-core/__tests__/scheduler.spec.ts",
+          "packages/runtime-core/__tests__/scopeId.spec.ts",
+          "packages/runtime-core/__tests__/vnode.spec.ts",
+          "packages/runtime-core/__tests__/vnodeHooks.spec.ts",
+          "packages/runtime-core/index.js",
+          "packages/runtime-core/src/apiAsyncComponent.ts",
+          "packages/runtime-core/src/apiComputed.ts",
+          "packages/runtime-core/src/apiCreateApp.ts",
+          "packages/runtime-core/src/apiDefineComponent.ts",
+          "packages/runtime-core/src/apiInject.ts",
+          "packages/runtime-core/src/apiLifecycle.ts",
+          "packages/runtime-core/src/apiSetupHelpers.ts",
+          "packages/runtime-core/src/apiWatch.ts",
+          "packages/runtime-core/src/compat/attrsFallthrough.ts",
+          "packages/runtime-core/src/compat/compatConfig.ts",
+          "packages/runtime-core/src/compat/component.ts",
+          "packages/runtime-core/src/compat/componentAsync.ts",
+          "packages/runtime-core/src/compat/componentFunctional.ts",
+          "packages/runtime-core/src/compat/componentVModel.ts",
+          "packages/runtime-core/src/compat/customDirective.ts",
+          "packages/runtime-core/src/compat/data.ts",
+          "packages/runtime-core/src/compat/global.ts",
+          "packages/runtime-core/src/compat/globalConfig.ts",
+          "packages/runtime-core/src/compat/instance.ts",
+          "packages/runtime-core/src/compat/instanceChildren.ts",
+          "packages/runtime-core/src/compat/instanceEventEmitter.ts",
+          "packages/runtime-core/src/compat/instanceListeners.ts",
+          "packages/runtime-core/src/compat/props.ts",
+          "packages/runtime-core/src/compat/renderFn.ts",
+          "packages/runtime-core/src/compat/renderHelpers.ts",
+          "packages/runtime-core/src/component.ts",
+          "packages/runtime-core/src/componentEmits.ts",
+          "packages/runtime-core/src/componentOptions.ts",
+          "packages/runtime-core/src/componentProps.ts",
+          "packages/runtime-core/src/componentPublicInstance.ts",
+          "packages/runtime-core/src/componentRenderContext.ts",
+          "packages/runtime-core/src/componentRenderUtils.ts",
+          "packages/runtime-core/src/componentSlots.ts",
+          "packages/runtime-core/src/components/BaseTransition.ts",
+          "packages/runtime-core/src/components/KeepAlive.ts",
+          "packages/runtime-core/src/components/Suspense.ts",
+          "packages/runtime-core/src/components/Teleport.ts",
+          "packages/runtime-core/src/customFormatter.ts",
+          "packages/runtime-core/src/devtools.ts",
+          "packages/runtime-core/src/directives.ts",
+          "packages/runtime-core/src/enums.ts",
+          "packages/runtime-core/src/errorHandling.ts",
+          "packages/runtime-core/src/featureFlags.ts",
+          "packages/runtime-core/src/h.ts",
+          "packages/runtime-core/src/helpers/createSlots.ts",
+          "packages/runtime-core/src/helpers/renderList.ts",
+          "packages/runtime-core/src/helpers/renderSlot.ts",
+          "packages/runtime-core/src/helpers/resolveAssets.ts",
+          "packages/runtime-core/src/helpers/toHandlers.ts",
+          "packages/runtime-core/src/helpers/useId.ts",
+          "packages/runtime-core/src/helpers/useModel.ts",
+          "packages/runtime-core/src/helpers/useSsrContext.ts",
+          "packages/runtime-core/src/helpers/useTemplateRef.ts",
+          "packages/runtime-core/src/helpers/withMemo.ts",
+          "packages/runtime-core/src/hmr.ts",
+          "packages/runtime-core/src/hydration.ts",
+          "packages/runtime-core/src/hydrationStrategies.ts",
+          "packages/runtime-core/src/index.ts",
+          "packages/runtime-core/src/internalObject.ts",
+          "packages/runtime-core/src/profiling.ts",
+          "packages/runtime-core/src/renderer.ts",
+          "packages/runtime-core/src/rendererTemplateRef.ts",
+          "packages/runtime-core/src/scheduler.ts",
+          "packages/runtime-core/src/vnode.ts",
+          "packages/runtime-core/src/warning.ts",
+          "packages/runtime-core/types/globalComponents.d.ts",
+          "packages/runtime-core/types/scriptSetupHelpers.d.ts"
+        ],
+        "tool": {
+          "name": "tsc",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/tsc",
+          "version": "Version 5.6.3"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "lint",
+        "language": "typescript",
+        "root": "packages/runtime-core",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages/runtime-core/__tests__/apiAsyncComponent.spec.ts",
+          "packages/runtime-core/__tests__/apiCreateApp.spec.ts",
+          "packages/runtime-core/__tests__/apiExpose.spec.ts",
+          "packages/runtime-core/__tests__/apiInject.spec.ts",
+          "packages/runtime-core/__tests__/apiLifecycle.spec.ts",
+          "packages/runtime-core/__tests__/apiOptions.spec.ts",
+          "packages/runtime-core/__tests__/apiSetupContext.spec.ts",
+          "packages/runtime-core/__tests__/apiSetupHelpers.spec.ts",
+          "packages/runtime-core/__tests__/apiWatch.bench.ts",
+          "packages/runtime-core/__tests__/apiWatch.spec.ts",
+          "packages/runtime-core/__tests__/componentEmits.spec.ts",
+          "packages/runtime-core/__tests__/componentProps.spec.ts",
+          "packages/runtime-core/__tests__/componentPublicInstance.spec.ts",
+          "packages/runtime-core/__tests__/componentSlots.spec.ts",
+          "packages/runtime-core/__tests__/components/BaseTransition.spec.ts",
+          "packages/runtime-core/__tests__/components/KeepAlive.spec.ts",
+          "packages/runtime-core/__tests__/components/Suspense.spec.ts",
+          "packages/runtime-core/__tests__/components/Teleport.spec.ts",
+          "packages/runtime-core/__tests__/directives.spec.ts",
+          "packages/runtime-core/__tests__/errorHandling.spec.ts",
+          "packages/runtime-core/__tests__/h.spec.ts",
+          "packages/runtime-core/__tests__/helpers/createSlots.spec.ts",
+          "packages/runtime-core/__tests__/helpers/renderList.spec.ts",
+          "packages/runtime-core/__tests__/helpers/renderSlot.spec.ts",
+          "packages/runtime-core/__tests__/helpers/resolveAssets.spec.ts",
+          "packages/runtime-core/__tests__/helpers/toHandlers.spec.ts",
+          "packages/runtime-core/__tests__/helpers/useId.spec.ts",
+          "packages/runtime-core/__tests__/helpers/useModel.spec.ts",
+          "packages/runtime-core/__tests__/helpers/useTemplateRef.spec.ts",
+          "packages/runtime-core/__tests__/helpers/withMemo.spec.ts",
+          "packages/runtime-core/__tests__/hmr.spec.ts",
+          "packages/runtime-core/__tests__/hydration.spec.ts",
+          "packages/runtime-core/__tests__/misc.spec.ts",
+          "packages/runtime-core/__tests__/rendererAttrsFallthrough.spec.ts",
+          "packages/runtime-core/__tests__/rendererChildren.spec.ts",
+          "packages/runtime-core/__tests__/rendererComponent.spec.ts",
+          "packages/runtime-core/__tests__/rendererElement.spec.ts",
+          "packages/runtime-core/__tests__/rendererFragment.spec.ts",
+          "packages/runtime-core/__tests__/rendererOptimizedMode.spec.ts",
+          "packages/runtime-core/__tests__/rendererTemplateRef.spec.ts",
+          "packages/runtime-core/__tests__/scheduler.spec.ts",
+          "packages/runtime-core/__tests__/scopeId.spec.ts",
+          "packages/runtime-core/__tests__/vnode.spec.ts",
+          "packages/runtime-core/__tests__/vnodeHooks.spec.ts",
+          "packages/runtime-core/index.js",
+          "packages/runtime-core/src/apiAsyncComponent.ts",
+          "packages/runtime-core/src/apiComputed.ts",
+          "packages/runtime-core/src/apiCreateApp.ts",
+          "packages/runtime-core/src/apiDefineComponent.ts",
+          "packages/runtime-core/src/apiInject.ts",
+          "packages/runtime-core/src/apiLifecycle.ts",
+          "packages/runtime-core/src/apiSetupHelpers.ts",
+          "packages/runtime-core/src/apiWatch.ts",
+          "packages/runtime-core/src/compat/attrsFallthrough.ts",
+          "packages/runtime-core/src/compat/compatConfig.ts",
+          "packages/runtime-core/src/compat/component.ts",
+          "packages/runtime-core/src/compat/componentAsync.ts",
+          "packages/runtime-core/src/compat/componentFunctional.ts",
+          "packages/runtime-core/src/compat/componentVModel.ts",
+          "packages/runtime-core/src/compat/customDirective.ts",
+          "packages/runtime-core/src/compat/data.ts",
+          "packages/runtime-core/src/compat/global.ts",
+          "packages/runtime-core/src/compat/globalConfig.ts",
+          "packages/runtime-core/src/compat/instance.ts",
+          "packages/runtime-core/src/compat/instanceChildren.ts",
+          "packages/runtime-core/src/compat/instanceEventEmitter.ts",
+          "packages/runtime-core/src/compat/instanceListeners.ts",
+          "packages/runtime-core/src/compat/props.ts",
+          "packages/runtime-core/src/compat/renderFn.ts",
+          "packages/runtime-core/src/compat/renderHelpers.ts",
+          "packages/runtime-core/src/component.ts",
+          "packages/runtime-core/src/componentEmits.ts",
+          "packages/runtime-core/src/componentOptions.ts",
+          "packages/runtime-core/src/componentProps.ts",
+          "packages/runtime-core/src/componentPublicInstance.ts",
+          "packages/runtime-core/src/componentRenderContext.ts",
+          "packages/runtime-core/src/componentRenderUtils.ts",
+          "packages/runtime-core/src/componentSlots.ts",
+          "packages/runtime-core/src/components/BaseTransition.ts",
+          "packages/runtime-core/src/components/KeepAlive.ts",
+          "packages/runtime-core/src/components/Suspense.ts",
+          "packages/runtime-core/src/components/Teleport.ts",
+          "packages/runtime-core/src/customFormatter.ts",
+          "packages/runtime-core/src/devtools.ts",
+          "packages/runtime-core/src/directives.ts",
+          "packages/runtime-core/src/enums.ts",
+          "packages/runtime-core/src/errorHandling.ts",
+          "packages/runtime-core/src/featureFlags.ts",
+          "packages/runtime-core/src/h.ts",
+          "packages/runtime-core/src/helpers/createSlots.ts",
+          "packages/runtime-core/src/helpers/renderList.ts",
+          "packages/runtime-core/src/helpers/renderSlot.ts",
+          "packages/runtime-core/src/helpers/resolveAssets.ts",
+          "packages/runtime-core/src/helpers/toHandlers.ts",
+          "packages/runtime-core/src/helpers/useId.ts",
+          "packages/runtime-core/src/helpers/useModel.ts",
+          "packages/runtime-core/src/helpers/useSsrContext.ts",
+          "packages/runtime-core/src/helpers/useTemplateRef.ts",
+          "packages/runtime-core/src/helpers/withMemo.ts",
+          "packages/runtime-core/src/hmr.ts",
+          "packages/runtime-core/src/hydration.ts",
+          "packages/runtime-core/src/hydrationStrategies.ts",
+          "packages/runtime-core/src/index.ts",
+          "packages/runtime-core/src/internalObject.ts",
+          "packages/runtime-core/src/profiling.ts",
+          "packages/runtime-core/src/renderer.ts",
+          "packages/runtime-core/src/rendererTemplateRef.ts",
+          "packages/runtime-core/src/scheduler.ts",
+          "packages/runtime-core/src/vnode.ts",
+          "packages/runtime-core/src/warning.ts",
+          "packages/runtime-core/types/globalComponents.d.ts",
+          "packages/runtime-core/types/scriptSetupHelpers.d.ts"
+        ],
+        "tool": {
+          "name": "eslint",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/eslint",
+          "version": "v9.25.1"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "coverage",
+        "language": "typescript",
+        "root": "packages/runtime-core",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages/runtime-core/__tests__/apiAsyncComponent.spec.ts",
+          "packages/runtime-core/__tests__/apiCreateApp.spec.ts",
+          "packages/runtime-core/__tests__/apiExpose.spec.ts",
+          "packages/runtime-core/__tests__/apiInject.spec.ts",
+          "packages/runtime-core/__tests__/apiLifecycle.spec.ts",
+          "packages/runtime-core/__tests__/apiOptions.spec.ts",
+          "packages/runtime-core/__tests__/apiSetupContext.spec.ts",
+          "packages/runtime-core/__tests__/apiSetupHelpers.spec.ts",
+          "packages/runtime-core/__tests__/apiWatch.bench.ts",
+          "packages/runtime-core/__tests__/apiWatch.spec.ts",
+          "packages/runtime-core/__tests__/componentEmits.spec.ts",
+          "packages/runtime-core/__tests__/componentProps.spec.ts",
+          "packages/runtime-core/__tests__/componentPublicInstance.spec.ts",
+          "packages/runtime-core/__tests__/componentSlots.spec.ts",
+          "packages/runtime-core/__tests__/components/BaseTransition.spec.ts",
+          "packages/runtime-core/__tests__/components/KeepAlive.spec.ts",
+          "packages/runtime-core/__tests__/components/Suspense.spec.ts",
+          "packages/runtime-core/__tests__/components/Teleport.spec.ts",
+          "packages/runtime-core/__tests__/directives.spec.ts",
+          "packages/runtime-core/__tests__/errorHandling.spec.ts",
+          "packages/runtime-core/__tests__/h.spec.ts",
+          "packages/runtime-core/__tests__/helpers/createSlots.spec.ts",
+          "packages/runtime-core/__tests__/helpers/renderList.spec.ts",
+          "packages/runtime-core/__tests__/helpers/renderSlot.spec.ts",
+          "packages/runtime-core/__tests__/helpers/resolveAssets.spec.ts",
+          "packages/runtime-core/__tests__/helpers/toHandlers.spec.ts",
+          "packages/runtime-core/__tests__/helpers/useId.spec.ts",
+          "packages/runtime-core/__tests__/helpers/useModel.spec.ts",
+          "packages/runtime-core/__tests__/helpers/useTemplateRef.spec.ts",
+          "packages/runtime-core/__tests__/helpers/withMemo.spec.ts",
+          "packages/runtime-core/__tests__/hmr.spec.ts",
+          "packages/runtime-core/__tests__/hydration.spec.ts",
+          "packages/runtime-core/__tests__/misc.spec.ts",
+          "packages/runtime-core/__tests__/rendererAttrsFallthrough.spec.ts",
+          "packages/runtime-core/__tests__/rendererChildren.spec.ts",
+          "packages/runtime-core/__tests__/rendererComponent.spec.ts",
+          "packages/runtime-core/__tests__/rendererElement.spec.ts",
+          "packages/runtime-core/__tests__/rendererFragment.spec.ts",
+          "packages/runtime-core/__tests__/rendererOptimizedMode.spec.ts",
+          "packages/runtime-core/__tests__/rendererTemplateRef.spec.ts",
+          "packages/runtime-core/__tests__/scheduler.spec.ts",
+          "packages/runtime-core/__tests__/scopeId.spec.ts",
+          "packages/runtime-core/__tests__/vnode.spec.ts",
+          "packages/runtime-core/__tests__/vnodeHooks.spec.ts",
+          "packages/runtime-core/index.js",
+          "packages/runtime-core/src/apiAsyncComponent.ts",
+          "packages/runtime-core/src/apiComputed.ts",
+          "packages/runtime-core/src/apiCreateApp.ts",
+          "packages/runtime-core/src/apiDefineComponent.ts",
+          "packages/runtime-core/src/apiInject.ts",
+          "packages/runtime-core/src/apiLifecycle.ts",
+          "packages/runtime-core/src/apiSetupHelpers.ts",
+          "packages/runtime-core/src/apiWatch.ts",
+          "packages/runtime-core/src/compat/attrsFallthrough.ts",
+          "packages/runtime-core/src/compat/compatConfig.ts",
+          "packages/runtime-core/src/compat/component.ts",
+          "packages/runtime-core/src/compat/componentAsync.ts",
+          "packages/runtime-core/src/compat/componentFunctional.ts",
+          "packages/runtime-core/src/compat/componentVModel.ts",
+          "packages/runtime-core/src/compat/customDirective.ts",
+          "packages/runtime-core/src/compat/data.ts",
+          "packages/runtime-core/src/compat/global.ts",
+          "packages/runtime-core/src/compat/globalConfig.ts",
+          "packages/runtime-core/src/compat/instance.ts",
+          "packages/runtime-core/src/compat/instanceChildren.ts",
+          "packages/runtime-core/src/compat/instanceEventEmitter.ts",
+          "packages/runtime-core/src/compat/instanceListeners.ts",
+          "packages/runtime-core/src/compat/props.ts",
+          "packages/runtime-core/src/compat/renderFn.ts",
+          "packages/runtime-core/src/compat/renderHelpers.ts",
+          "packages/runtime-core/src/component.ts",
+          "packages/runtime-core/src/componentEmits.ts",
+          "packages/runtime-core/src/componentOptions.ts",
+          "packages/runtime-core/src/componentProps.ts",
+          "packages/runtime-core/src/componentPublicInstance.ts",
+          "packages/runtime-core/src/componentRenderContext.ts",
+          "packages/runtime-core/src/componentRenderUtils.ts",
+          "packages/runtime-core/src/componentSlots.ts",
+          "packages/runtime-core/src/components/BaseTransition.ts",
+          "packages/runtime-core/src/components/KeepAlive.ts",
+          "packages/runtime-core/src/components/Suspense.ts",
+          "packages/runtime-core/src/components/Teleport.ts",
+          "packages/runtime-core/src/customFormatter.ts",
+          "packages/runtime-core/src/devtools.ts",
+          "packages/runtime-core/src/directives.ts",
+          "packages/runtime-core/src/enums.ts",
+          "packages/runtime-core/src/errorHandling.ts",
+          "packages/runtime-core/src/featureFlags.ts",
+          "packages/runtime-core/src/h.ts",
+          "packages/runtime-core/src/helpers/createSlots.ts",
+          "packages/runtime-core/src/helpers/renderList.ts",
+          "packages/runtime-core/src/helpers/renderSlot.ts",
+          "packages/runtime-core/src/helpers/resolveAssets.ts",
+          "packages/runtime-core/src/helpers/toHandlers.ts",
+          "packages/runtime-core/src/helpers/useId.ts",
+          "packages/runtime-core/src/helpers/useModel.ts",
+          "packages/runtime-core/src/helpers/useSsrContext.ts",
+          "packages/runtime-core/src/helpers/useTemplateRef.ts",
+          "packages/runtime-core/src/helpers/withMemo.ts",
+          "packages/runtime-core/src/hmr.ts",
+          "packages/runtime-core/src/hydration.ts",
+          "packages/runtime-core/src/hydrationStrategies.ts",
+          "packages/runtime-core/src/index.ts",
+          "packages/runtime-core/src/internalObject.ts",
+          "packages/runtime-core/src/profiling.ts",
+          "packages/runtime-core/src/renderer.ts",
+          "packages/runtime-core/src/rendererTemplateRef.ts",
+          "packages/runtime-core/src/scheduler.ts",
+          "packages/runtime-core/src/vnode.ts",
+          "packages/runtime-core/src/warning.ts",
+          "packages/runtime-core/types/globalComponents.d.ts",
+          "packages/runtime-core/types/scriptSetupHelpers.d.ts"
+        ],
+        "tool": {
+          "name": "vitest",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/vitest",
+          "version": "vitest/3.1.3 linux-x64 node-v22.14.0"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "root": "packages/runtime-dom",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages/runtime-dom/__tests__/createApp.spec.ts",
+          "packages/runtime-dom/__tests__/customElement.spec.ts",
+          "packages/runtime-dom/__tests__/customizedBuiltIn.spec.ts",
+          "packages/runtime-dom/__tests__/directives/vCloak.spec.ts",
+          "packages/runtime-dom/__tests__/directives/vModel.spec.ts",
+          "packages/runtime-dom/__tests__/directives/vOn.spec.ts",
+          "packages/runtime-dom/__tests__/directives/vShow.spec.ts",
+          "packages/runtime-dom/__tests__/helpers/useCssModule.spec.ts",
+          "packages/runtime-dom/__tests__/helpers/useCssVars.spec.ts",
+          "packages/runtime-dom/__tests__/nodeOps.spec.ts",
+          "packages/runtime-dom/__tests__/patchAttrs.spec.ts",
+          "packages/runtime-dom/__tests__/patchClass.spec.ts",
+          "packages/runtime-dom/__tests__/patchEvents.spec.ts",
+          "packages/runtime-dom/__tests__/patchProps.spec.ts",
+          "packages/runtime-dom/__tests__/patchStyle.spec.ts",
+          "packages/runtime-dom/__tests__/rendererStaticNode.spec.ts",
+          "packages/runtime-dom/index.js",
+          "packages/runtime-dom/src/apiCustomElement.ts",
+          "packages/runtime-dom/src/components/Transition.ts",
+          "packages/runtime-dom/src/components/TransitionGroup.ts",
+          "packages/runtime-dom/src/directives/vModel.ts",
+          "packages/runtime-dom/src/directives/vOn.ts",
+          "packages/runtime-dom/src/directives/vShow.ts",
+          "packages/runtime-dom/src/helpers/useCssModule.ts",
+          "packages/runtime-dom/src/helpers/useCssVars.ts",
+          "packages/runtime-dom/src/index.ts",
+          "packages/runtime-dom/src/jsx.ts",
+          "packages/runtime-dom/src/modules/attrs.ts",
+          "packages/runtime-dom/src/modules/class.ts",
+          "packages/runtime-dom/src/modules/events.ts",
+          "packages/runtime-dom/src/modules/props.ts",
+          "packages/runtime-dom/src/modules/style.ts",
+          "packages/runtime-dom/src/nodeOps.ts",
+          "packages/runtime-dom/src/patchProp.ts"
+        ],
+        "tool": {
+          "name": "tsc",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/tsc",
+          "version": "Version 5.6.3"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "lint",
+        "language": "typescript",
+        "root": "packages/runtime-dom",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages/runtime-dom/__tests__/createApp.spec.ts",
+          "packages/runtime-dom/__tests__/customElement.spec.ts",
+          "packages/runtime-dom/__tests__/customizedBuiltIn.spec.ts",
+          "packages/runtime-dom/__tests__/directives/vCloak.spec.ts",
+          "packages/runtime-dom/__tests__/directives/vModel.spec.ts",
+          "packages/runtime-dom/__tests__/directives/vOn.spec.ts",
+          "packages/runtime-dom/__tests__/directives/vShow.spec.ts",
+          "packages/runtime-dom/__tests__/helpers/useCssModule.spec.ts",
+          "packages/runtime-dom/__tests__/helpers/useCssVars.spec.ts",
+          "packages/runtime-dom/__tests__/nodeOps.spec.ts",
+          "packages/runtime-dom/__tests__/patchAttrs.spec.ts",
+          "packages/runtime-dom/__tests__/patchClass.spec.ts",
+          "packages/runtime-dom/__tests__/patchEvents.spec.ts",
+          "packages/runtime-dom/__tests__/patchProps.spec.ts",
+          "packages/runtime-dom/__tests__/patchStyle.spec.ts",
+          "packages/runtime-dom/__tests__/rendererStaticNode.spec.ts",
+          "packages/runtime-dom/index.js",
+          "packages/runtime-dom/src/apiCustomElement.ts",
+          "packages/runtime-dom/src/components/Transition.ts",
+          "packages/runtime-dom/src/components/TransitionGroup.ts",
+          "packages/runtime-dom/src/directives/vModel.ts",
+          "packages/runtime-dom/src/directives/vOn.ts",
+          "packages/runtime-dom/src/directives/vShow.ts",
+          "packages/runtime-dom/src/helpers/useCssModule.ts",
+          "packages/runtime-dom/src/helpers/useCssVars.ts",
+          "packages/runtime-dom/src/index.ts",
+          "packages/runtime-dom/src/jsx.ts",
+          "packages/runtime-dom/src/modules/attrs.ts",
+          "packages/runtime-dom/src/modules/class.ts",
+          "packages/runtime-dom/src/modules/events.ts",
+          "packages/runtime-dom/src/modules/props.ts",
+          "packages/runtime-dom/src/modules/style.ts",
+          "packages/runtime-dom/src/nodeOps.ts",
+          "packages/runtime-dom/src/patchProp.ts"
+        ],
+        "tool": {
+          "name": "eslint",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/eslint",
+          "version": "v9.25.1"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "coverage",
+        "language": "typescript",
+        "root": "packages/runtime-dom",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages/runtime-dom/__tests__/createApp.spec.ts",
+          "packages/runtime-dom/__tests__/customElement.spec.ts",
+          "packages/runtime-dom/__tests__/customizedBuiltIn.spec.ts",
+          "packages/runtime-dom/__tests__/directives/vCloak.spec.ts",
+          "packages/runtime-dom/__tests__/directives/vModel.spec.ts",
+          "packages/runtime-dom/__tests__/directives/vOn.spec.ts",
+          "packages/runtime-dom/__tests__/directives/vShow.spec.ts",
+          "packages/runtime-dom/__tests__/helpers/useCssModule.spec.ts",
+          "packages/runtime-dom/__tests__/helpers/useCssVars.spec.ts",
+          "packages/runtime-dom/__tests__/nodeOps.spec.ts",
+          "packages/runtime-dom/__tests__/patchAttrs.spec.ts",
+          "packages/runtime-dom/__tests__/patchClass.spec.ts",
+          "packages/runtime-dom/__tests__/patchEvents.spec.ts",
+          "packages/runtime-dom/__tests__/patchProps.spec.ts",
+          "packages/runtime-dom/__tests__/patchStyle.spec.ts",
+          "packages/runtime-dom/__tests__/rendererStaticNode.spec.ts",
+          "packages/runtime-dom/index.js",
+          "packages/runtime-dom/src/apiCustomElement.ts",
+          "packages/runtime-dom/src/components/Transition.ts",
+          "packages/runtime-dom/src/components/TransitionGroup.ts",
+          "packages/runtime-dom/src/directives/vModel.ts",
+          "packages/runtime-dom/src/directives/vOn.ts",
+          "packages/runtime-dom/src/directives/vShow.ts",
+          "packages/runtime-dom/src/helpers/useCssModule.ts",
+          "packages/runtime-dom/src/helpers/useCssVars.ts",
+          "packages/runtime-dom/src/index.ts",
+          "packages/runtime-dom/src/jsx.ts",
+          "packages/runtime-dom/src/modules/attrs.ts",
+          "packages/runtime-dom/src/modules/class.ts",
+          "packages/runtime-dom/src/modules/events.ts",
+          "packages/runtime-dom/src/modules/props.ts",
+          "packages/runtime-dom/src/modules/style.ts",
+          "packages/runtime-dom/src/nodeOps.ts",
+          "packages/runtime-dom/src/patchProp.ts"
+        ],
+        "tool": {
+          "name": "vitest",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/vitest",
+          "version": "vitest/3.1.3 linux-x64 node-v22.14.0"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "root": "packages/runtime-test",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages/runtime-test/__tests__/testRuntime.spec.ts",
+          "packages/runtime-test/index.js",
+          "packages/runtime-test/src/index.ts",
+          "packages/runtime-test/src/nodeOps.ts",
+          "packages/runtime-test/src/patchProp.ts",
+          "packages/runtime-test/src/serialize.ts",
+          "packages/runtime-test/src/triggerEvent.ts"
+        ],
+        "tool": {
+          "name": "tsc",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/tsc",
+          "version": "Version 5.6.3"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "lint",
+        "language": "typescript",
+        "root": "packages/runtime-test",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages/runtime-test/__tests__/testRuntime.spec.ts",
+          "packages/runtime-test/index.js",
+          "packages/runtime-test/src/index.ts",
+          "packages/runtime-test/src/nodeOps.ts",
+          "packages/runtime-test/src/patchProp.ts",
+          "packages/runtime-test/src/serialize.ts",
+          "packages/runtime-test/src/triggerEvent.ts"
+        ],
+        "tool": {
+          "name": "eslint",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/eslint",
+          "version": "v9.25.1"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "coverage",
+        "language": "typescript",
+        "root": "packages/runtime-test",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages/runtime-test/__tests__/testRuntime.spec.ts",
+          "packages/runtime-test/index.js",
+          "packages/runtime-test/src/index.ts",
+          "packages/runtime-test/src/nodeOps.ts",
+          "packages/runtime-test/src/patchProp.ts",
+          "packages/runtime-test/src/serialize.ts",
+          "packages/runtime-test/src/triggerEvent.ts"
+        ],
+        "tool": {
+          "name": "vitest",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/vitest",
+          "version": "vitest/3.1.3 linux-x64 node-v22.14.0"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "root": "packages/server-renderer",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages/server-renderer/__tests__/createBuffer.bench.ts",
+          "packages/server-renderer/__tests__/render.spec.ts",
+          "packages/server-renderer/__tests__/ssrAttrFallthrough.spec.ts",
+          "packages/server-renderer/__tests__/ssrCompilerOptions.spec.ts",
+          "packages/server-renderer/__tests__/ssrComputed.spec.ts",
+          "packages/server-renderer/__tests__/ssrDirectives.spec.ts",
+          "packages/server-renderer/__tests__/ssrDynamicComponent.spec.ts",
+          "packages/server-renderer/__tests__/ssrInterpolate.spec.ts",
+          "packages/server-renderer/__tests__/ssrRenderAttrs.spec.ts",
+          "packages/server-renderer/__tests__/ssrRenderList.spec.ts",
+          "packages/server-renderer/__tests__/ssrScopeId.spec.ts",
+          "packages/server-renderer/__tests__/ssrSlot.spec.ts",
+          "packages/server-renderer/__tests__/ssrSuspense.spec.ts",
+          "packages/server-renderer/__tests__/ssrTeleport.spec.ts",
+          "packages/server-renderer/__tests__/ssrVModelHelpers.spec.ts",
+          "packages/server-renderer/__tests__/ssrWatch.spec.ts",
+          "packages/server-renderer/__tests__/unrollBuffer.bench.ts",
+          "packages/server-renderer/__tests__/webStream.spec.ts",
+          "packages/server-renderer/index.js",
+          "packages/server-renderer/src/helpers/ssrCompile.ts",
+          "packages/server-renderer/src/helpers/ssrGetDirectiveProps.ts",
+          "packages/server-renderer/src/helpers/ssrInterpolate.ts",
+          "packages/server-renderer/src/helpers/ssrRenderAttrs.ts",
+          "packages/server-renderer/src/helpers/ssrRenderComponent.ts",
+          "packages/server-renderer/src/helpers/ssrRenderList.ts",
+          "packages/server-renderer/src/helpers/ssrRenderSlot.ts",
+          "packages/server-renderer/src/helpers/ssrRenderSuspense.ts",
+          "packages/server-renderer/src/helpers/ssrRenderTeleport.ts",
+          "packages/server-renderer/src/helpers/ssrVModelHelpers.ts",
+          "packages/server-renderer/src/index.ts",
+          "packages/server-renderer/src/internal.ts",
+          "packages/server-renderer/src/render.ts",
+          "packages/server-renderer/src/renderToStream.ts",
+          "packages/server-renderer/src/renderToString.ts"
+        ],
+        "tool": {
+          "name": "tsc",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/tsc",
+          "version": "Version 5.6.3"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "lint",
+        "language": "typescript",
+        "root": "packages/server-renderer",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages/server-renderer/__tests__/createBuffer.bench.ts",
+          "packages/server-renderer/__tests__/render.spec.ts",
+          "packages/server-renderer/__tests__/ssrAttrFallthrough.spec.ts",
+          "packages/server-renderer/__tests__/ssrCompilerOptions.spec.ts",
+          "packages/server-renderer/__tests__/ssrComputed.spec.ts",
+          "packages/server-renderer/__tests__/ssrDirectives.spec.ts",
+          "packages/server-renderer/__tests__/ssrDynamicComponent.spec.ts",
+          "packages/server-renderer/__tests__/ssrInterpolate.spec.ts",
+          "packages/server-renderer/__tests__/ssrRenderAttrs.spec.ts",
+          "packages/server-renderer/__tests__/ssrRenderList.spec.ts",
+          "packages/server-renderer/__tests__/ssrScopeId.spec.ts",
+          "packages/server-renderer/__tests__/ssrSlot.spec.ts",
+          "packages/server-renderer/__tests__/ssrSuspense.spec.ts",
+          "packages/server-renderer/__tests__/ssrTeleport.spec.ts",
+          "packages/server-renderer/__tests__/ssrVModelHelpers.spec.ts",
+          "packages/server-renderer/__tests__/ssrWatch.spec.ts",
+          "packages/server-renderer/__tests__/unrollBuffer.bench.ts",
+          "packages/server-renderer/__tests__/webStream.spec.ts",
+          "packages/server-renderer/index.js",
+          "packages/server-renderer/src/helpers/ssrCompile.ts",
+          "packages/server-renderer/src/helpers/ssrGetDirectiveProps.ts",
+          "packages/server-renderer/src/helpers/ssrInterpolate.ts",
+          "packages/server-renderer/src/helpers/ssrRenderAttrs.ts",
+          "packages/server-renderer/src/helpers/ssrRenderComponent.ts",
+          "packages/server-renderer/src/helpers/ssrRenderList.ts",
+          "packages/server-renderer/src/helpers/ssrRenderSlot.ts",
+          "packages/server-renderer/src/helpers/ssrRenderSuspense.ts",
+          "packages/server-renderer/src/helpers/ssrRenderTeleport.ts",
+          "packages/server-renderer/src/helpers/ssrVModelHelpers.ts",
+          "packages/server-renderer/src/index.ts",
+          "packages/server-renderer/src/internal.ts",
+          "packages/server-renderer/src/render.ts",
+          "packages/server-renderer/src/renderToStream.ts",
+          "packages/server-renderer/src/renderToString.ts"
+        ],
+        "tool": {
+          "name": "eslint",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/eslint",
+          "version": "v9.25.1"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "coverage",
+        "language": "typescript",
+        "root": "packages/server-renderer",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages/server-renderer/__tests__/createBuffer.bench.ts",
+          "packages/server-renderer/__tests__/render.spec.ts",
+          "packages/server-renderer/__tests__/ssrAttrFallthrough.spec.ts",
+          "packages/server-renderer/__tests__/ssrCompilerOptions.spec.ts",
+          "packages/server-renderer/__tests__/ssrComputed.spec.ts",
+          "packages/server-renderer/__tests__/ssrDirectives.spec.ts",
+          "packages/server-renderer/__tests__/ssrDynamicComponent.spec.ts",
+          "packages/server-renderer/__tests__/ssrInterpolate.spec.ts",
+          "packages/server-renderer/__tests__/ssrRenderAttrs.spec.ts",
+          "packages/server-renderer/__tests__/ssrRenderList.spec.ts",
+          "packages/server-renderer/__tests__/ssrScopeId.spec.ts",
+          "packages/server-renderer/__tests__/ssrSlot.spec.ts",
+          "packages/server-renderer/__tests__/ssrSuspense.spec.ts",
+          "packages/server-renderer/__tests__/ssrTeleport.spec.ts",
+          "packages/server-renderer/__tests__/ssrVModelHelpers.spec.ts",
+          "packages/server-renderer/__tests__/ssrWatch.spec.ts",
+          "packages/server-renderer/__tests__/unrollBuffer.bench.ts",
+          "packages/server-renderer/__tests__/webStream.spec.ts",
+          "packages/server-renderer/index.js",
+          "packages/server-renderer/src/helpers/ssrCompile.ts",
+          "packages/server-renderer/src/helpers/ssrGetDirectiveProps.ts",
+          "packages/server-renderer/src/helpers/ssrInterpolate.ts",
+          "packages/server-renderer/src/helpers/ssrRenderAttrs.ts",
+          "packages/server-renderer/src/helpers/ssrRenderComponent.ts",
+          "packages/server-renderer/src/helpers/ssrRenderList.ts",
+          "packages/server-renderer/src/helpers/ssrRenderSlot.ts",
+          "packages/server-renderer/src/helpers/ssrRenderSuspense.ts",
+          "packages/server-renderer/src/helpers/ssrRenderTeleport.ts",
+          "packages/server-renderer/src/helpers/ssrVModelHelpers.ts",
+          "packages/server-renderer/src/index.ts",
+          "packages/server-renderer/src/internal.ts",
+          "packages/server-renderer/src/render.ts",
+          "packages/server-renderer/src/renderToStream.ts",
+          "packages/server-renderer/src/renderToString.ts"
+        ],
+        "tool": {
+          "name": "vitest",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/vitest",
+          "version": "vitest/3.1.3 linux-x64 node-v22.14.0"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "root": "packages/shared",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages/shared/__tests__/codeframe.spec.ts",
+          "packages/shared/__tests__/escapeHtml.spec.ts",
+          "packages/shared/__tests__/looseEqual.spec.ts",
+          "packages/shared/__tests__/normalizeProp.spec.ts",
+          "packages/shared/__tests__/toDisplayString.spec.ts",
+          "packages/shared/index.js",
+          "packages/shared/src/codeframe.ts",
+          "packages/shared/src/domAttrConfig.ts",
+          "packages/shared/src/domTagConfig.ts",
+          "packages/shared/src/escapeHtml.ts",
+          "packages/shared/src/general.ts",
+          "packages/shared/src/globalsAllowList.ts",
+          "packages/shared/src/index.ts",
+          "packages/shared/src/looseEqual.ts",
+          "packages/shared/src/makeMap.ts",
+          "packages/shared/src/normalizeProp.ts",
+          "packages/shared/src/patchFlags.ts",
+          "packages/shared/src/shapeFlags.ts",
+          "packages/shared/src/slotFlags.ts",
+          "packages/shared/src/toDisplayString.ts",
+          "packages/shared/src/typeUtils.ts"
+        ],
+        "tool": {
+          "name": "tsc",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/tsc",
+          "version": "Version 5.6.3"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "lint",
+        "language": "typescript",
+        "root": "packages/shared",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages/shared/__tests__/codeframe.spec.ts",
+          "packages/shared/__tests__/escapeHtml.spec.ts",
+          "packages/shared/__tests__/looseEqual.spec.ts",
+          "packages/shared/__tests__/normalizeProp.spec.ts",
+          "packages/shared/__tests__/toDisplayString.spec.ts",
+          "packages/shared/index.js",
+          "packages/shared/src/codeframe.ts",
+          "packages/shared/src/domAttrConfig.ts",
+          "packages/shared/src/domTagConfig.ts",
+          "packages/shared/src/escapeHtml.ts",
+          "packages/shared/src/general.ts",
+          "packages/shared/src/globalsAllowList.ts",
+          "packages/shared/src/index.ts",
+          "packages/shared/src/looseEqual.ts",
+          "packages/shared/src/makeMap.ts",
+          "packages/shared/src/normalizeProp.ts",
+          "packages/shared/src/patchFlags.ts",
+          "packages/shared/src/shapeFlags.ts",
+          "packages/shared/src/slotFlags.ts",
+          "packages/shared/src/toDisplayString.ts",
+          "packages/shared/src/typeUtils.ts"
+        ],
+        "tool": {
+          "name": "eslint",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/eslint",
+          "version": "v9.25.1"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "coverage",
+        "language": "typescript",
+        "root": "packages/shared",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages/shared/__tests__/codeframe.spec.ts",
+          "packages/shared/__tests__/escapeHtml.spec.ts",
+          "packages/shared/__tests__/looseEqual.spec.ts",
+          "packages/shared/__tests__/normalizeProp.spec.ts",
+          "packages/shared/__tests__/toDisplayString.spec.ts",
+          "packages/shared/index.js",
+          "packages/shared/src/codeframe.ts",
+          "packages/shared/src/domAttrConfig.ts",
+          "packages/shared/src/domTagConfig.ts",
+          "packages/shared/src/escapeHtml.ts",
+          "packages/shared/src/general.ts",
+          "packages/shared/src/globalsAllowList.ts",
+          "packages/shared/src/index.ts",
+          "packages/shared/src/looseEqual.ts",
+          "packages/shared/src/makeMap.ts",
+          "packages/shared/src/normalizeProp.ts",
+          "packages/shared/src/patchFlags.ts",
+          "packages/shared/src/shapeFlags.ts",
+          "packages/shared/src/slotFlags.ts",
+          "packages/shared/src/toDisplayString.ts",
+          "packages/shared/src/typeUtils.ts"
+        ],
+        "tool": {
+          "name": "vitest",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/vitest",
+          "version": "vitest/3.1.3 linux-x64 node-v22.14.0"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "root": "packages/vue",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages/vue/__tests__/customElementCasing.spec.ts",
+          "packages/vue/__tests__/e2e/Transition.spec.ts",
+          "packages/vue/__tests__/e2e/TransitionGroup.spec.ts",
+          "packages/vue/__tests__/e2e/commits.mock.ts",
+          "packages/vue/__tests__/e2e/commits.spec.ts",
+          "packages/vue/__tests__/e2e/e2eUtils.ts",
+          "packages/vue/__tests__/e2e/grid.spec.ts",
+          "packages/vue/__tests__/e2e/hydrationStrategies.spec.ts",
+          "packages/vue/__tests__/e2e/markdown.spec.ts",
+          "packages/vue/__tests__/e2e/ssr-custom-element.spec.ts",
+          "packages/vue/__tests__/e2e/svg.spec.ts",
+          "packages/vue/__tests__/e2e/todomvc.spec.ts",
+          "packages/vue/__tests__/e2e/tree.spec.ts",
+          "packages/vue/__tests__/e2e/trusted-types.spec.ts",
+          "packages/vue/__tests__/e2e/vModel.spec.ts",
+          "packages/vue/__tests__/index.spec.ts",
+          "packages/vue/__tests__/mathmlNamespace.spec.ts",
+          "packages/vue/__tests__/runtimeCompilerOptions.spec.ts",
+          "packages/vue/__tests__/svgNamespace.spec.ts",
+          "packages/vue/index.js",
+          "packages/vue/index.mjs",
+          "packages/vue/jsx.d.ts",
+          "packages/vue/src/dev.ts",
+          "packages/vue/src/index.ts",
+          "packages/vue/src/runtime.ts"
+        ],
+        "tool": {
+          "name": "tsc",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/packages/vue/node_modules/.bin/tsc",
+          "version": "Version 5.6.3"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "lint",
+        "language": "typescript",
+        "root": "packages/vue",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages/vue/__tests__/customElementCasing.spec.ts",
+          "packages/vue/__tests__/e2e/Transition.spec.ts",
+          "packages/vue/__tests__/e2e/TransitionGroup.spec.ts",
+          "packages/vue/__tests__/e2e/commits.mock.ts",
+          "packages/vue/__tests__/e2e/commits.spec.ts",
+          "packages/vue/__tests__/e2e/e2eUtils.ts",
+          "packages/vue/__tests__/e2e/grid.spec.ts",
+          "packages/vue/__tests__/e2e/hydrationStrategies.spec.ts",
+          "packages/vue/__tests__/e2e/markdown.spec.ts",
+          "packages/vue/__tests__/e2e/ssr-custom-element.spec.ts",
+          "packages/vue/__tests__/e2e/svg.spec.ts",
+          "packages/vue/__tests__/e2e/todomvc.spec.ts",
+          "packages/vue/__tests__/e2e/tree.spec.ts",
+          "packages/vue/__tests__/e2e/trusted-types.spec.ts",
+          "packages/vue/__tests__/e2e/vModel.spec.ts",
+          "packages/vue/__tests__/index.spec.ts",
+          "packages/vue/__tests__/mathmlNamespace.spec.ts",
+          "packages/vue/__tests__/runtimeCompilerOptions.spec.ts",
+          "packages/vue/__tests__/svgNamespace.spec.ts",
+          "packages/vue/index.js",
+          "packages/vue/index.mjs",
+          "packages/vue/jsx.d.ts",
+          "packages/vue/src/dev.ts",
+          "packages/vue/src/index.ts",
+          "packages/vue/src/runtime.ts"
+        ],
+        "tool": {
+          "name": "eslint",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/eslint",
+          "version": "v9.25.1"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "coverage",
+        "language": "typescript",
+        "root": "packages/vue",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages/vue/__tests__/customElementCasing.spec.ts",
+          "packages/vue/__tests__/e2e/Transition.spec.ts",
+          "packages/vue/__tests__/e2e/TransitionGroup.spec.ts",
+          "packages/vue/__tests__/e2e/commits.mock.ts",
+          "packages/vue/__tests__/e2e/commits.spec.ts",
+          "packages/vue/__tests__/e2e/e2eUtils.ts",
+          "packages/vue/__tests__/e2e/grid.spec.ts",
+          "packages/vue/__tests__/e2e/hydrationStrategies.spec.ts",
+          "packages/vue/__tests__/e2e/markdown.spec.ts",
+          "packages/vue/__tests__/e2e/ssr-custom-element.spec.ts",
+          "packages/vue/__tests__/e2e/svg.spec.ts",
+          "packages/vue/__tests__/e2e/todomvc.spec.ts",
+          "packages/vue/__tests__/e2e/tree.spec.ts",
+          "packages/vue/__tests__/e2e/trusted-types.spec.ts",
+          "packages/vue/__tests__/e2e/vModel.spec.ts",
+          "packages/vue/__tests__/index.spec.ts",
+          "packages/vue/__tests__/mathmlNamespace.spec.ts",
+          "packages/vue/__tests__/runtimeCompilerOptions.spec.ts",
+          "packages/vue/__tests__/svgNamespace.spec.ts",
+          "packages/vue/index.js",
+          "packages/vue/index.mjs",
+          "packages/vue/jsx.d.ts",
+          "packages/vue/src/dev.ts",
+          "packages/vue/src/index.ts",
+          "packages/vue/src/runtime.ts"
+        ],
+        "tool": {
+          "name": "vitest",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/vitest",
+          "version": "vitest/3.1.3 linux-x64 node-v22.14.0"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "root": "packages/vue-compat",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages/vue-compat/__tests__/compiler.spec.ts",
+          "packages/vue-compat/__tests__/componentAsync.spec.ts",
+          "packages/vue-compat/__tests__/componentFunctional.spec.ts",
+          "packages/vue-compat/__tests__/componentVModel.spec.ts",
+          "packages/vue-compat/__tests__/filters.spec.ts",
+          "packages/vue-compat/__tests__/global.spec.ts",
+          "packages/vue-compat/__tests__/globalConfig.spec.ts",
+          "packages/vue-compat/__tests__/instance.spec.ts",
+          "packages/vue-compat/__tests__/misc.spec.ts",
+          "packages/vue-compat/__tests__/options.spec.ts",
+          "packages/vue-compat/__tests__/renderFn.spec.ts",
+          "packages/vue-compat/__tests__/utils.ts",
+          "packages/vue-compat/index.js",
+          "packages/vue-compat/src/createCompatVue.ts",
+          "packages/vue-compat/src/dev.ts",
+          "packages/vue-compat/src/esm-index.ts",
+          "packages/vue-compat/src/esm-runtime.ts",
+          "packages/vue-compat/src/index.ts",
+          "packages/vue-compat/src/runtime.ts"
+        ],
+        "tool": {
+          "name": "tsc",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/tsc",
+          "version": "Version 5.6.3"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "lint",
+        "language": "typescript",
+        "root": "packages/vue-compat",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages/vue-compat/__tests__/compiler.spec.ts",
+          "packages/vue-compat/__tests__/componentAsync.spec.ts",
+          "packages/vue-compat/__tests__/componentFunctional.spec.ts",
+          "packages/vue-compat/__tests__/componentVModel.spec.ts",
+          "packages/vue-compat/__tests__/filters.spec.ts",
+          "packages/vue-compat/__tests__/global.spec.ts",
+          "packages/vue-compat/__tests__/globalConfig.spec.ts",
+          "packages/vue-compat/__tests__/instance.spec.ts",
+          "packages/vue-compat/__tests__/misc.spec.ts",
+          "packages/vue-compat/__tests__/options.spec.ts",
+          "packages/vue-compat/__tests__/renderFn.spec.ts",
+          "packages/vue-compat/__tests__/utils.ts",
+          "packages/vue-compat/index.js",
+          "packages/vue-compat/src/createCompatVue.ts",
+          "packages/vue-compat/src/dev.ts",
+          "packages/vue-compat/src/esm-index.ts",
+          "packages/vue-compat/src/esm-runtime.ts",
+          "packages/vue-compat/src/index.ts",
+          "packages/vue-compat/src/runtime.ts"
+        ],
+        "tool": {
+          "name": "eslint",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/eslint",
+          "version": "v9.25.1"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "coverage",
+        "language": "typescript",
+        "root": "packages/vue-compat",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "packages/vue-compat/__tests__/compiler.spec.ts",
+          "packages/vue-compat/__tests__/componentAsync.spec.ts",
+          "packages/vue-compat/__tests__/componentFunctional.spec.ts",
+          "packages/vue-compat/__tests__/componentVModel.spec.ts",
+          "packages/vue-compat/__tests__/filters.spec.ts",
+          "packages/vue-compat/__tests__/global.spec.ts",
+          "packages/vue-compat/__tests__/globalConfig.spec.ts",
+          "packages/vue-compat/__tests__/instance.spec.ts",
+          "packages/vue-compat/__tests__/misc.spec.ts",
+          "packages/vue-compat/__tests__/options.spec.ts",
+          "packages/vue-compat/__tests__/renderFn.spec.ts",
+          "packages/vue-compat/__tests__/utils.ts",
+          "packages/vue-compat/index.js",
+          "packages/vue-compat/src/createCompatVue.ts",
+          "packages/vue-compat/src/dev.ts",
+          "packages/vue-compat/src/esm-index.ts",
+          "packages/vue-compat/src/esm-runtime.ts",
+          "packages/vue-compat/src/index.ts",
+          "packages/vue-compat/src/runtime.ts"
+        ],
+        "tool": {
+          "name": "vitest",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/vitest",
+          "version": "vitest/3.1.3 linux-x64 node-v22.14.0"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "typecheck",
+        "language": "typescript",
+        "root": "packages/vue/compiler-sfc",
+        "scheduled_as": "changed",
+        "skip": {
+          "findings": [],
+          "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+          "outcome": "skipped",
+          "reason": "dependency_mismatch"
+        },
+        "targets": [
+          "packages/vue/compiler-sfc/index.browser.js",
+          "packages/vue/compiler-sfc/index.browser.mjs",
+          "packages/vue/compiler-sfc/index.d.mts",
+          "packages/vue/compiler-sfc/index.d.ts",
+          "packages/vue/compiler-sfc/index.js",
+          "packages/vue/compiler-sfc/index.mjs",
+          "packages/vue/compiler-sfc/register-ts.js"
+        ],
+        "tool": {
+          "name": "tsc",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/packages/vue/node_modules/.bin/tsc",
+          "version": "Version 5.6.3"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "lint",
+        "language": "typescript",
+        "root": "packages/vue/compiler-sfc",
+        "scheduled_as": "changed",
+        "skip": {
+          "findings": [],
+          "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+          "outcome": "skipped",
+          "reason": "dependency_mismatch"
+        },
+        "targets": [
+          "packages/vue/compiler-sfc/index.browser.js",
+          "packages/vue/compiler-sfc/index.browser.mjs",
+          "packages/vue/compiler-sfc/index.d.mts",
+          "packages/vue/compiler-sfc/index.d.ts",
+          "packages/vue/compiler-sfc/index.js",
+          "packages/vue/compiler-sfc/index.mjs",
+          "packages/vue/compiler-sfc/register-ts.js"
+        ],
+        "tool": {
+          "name": "eslint",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/eslint",
+          "version": "v9.25.1"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "coverage",
+        "language": "typescript",
+        "root": "packages/vue/compiler-sfc",
+        "scheduled_as": "changed",
+        "skip": {
+          "findings": [],
+          "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+          "outcome": "skipped",
+          "reason": "dependency_mismatch"
+        },
+        "targets": [
+          "packages/vue/compiler-sfc/index.browser.js",
+          "packages/vue/compiler-sfc/index.browser.mjs",
+          "packages/vue/compiler-sfc/index.d.mts",
+          "packages/vue/compiler-sfc/index.d.ts",
+          "packages/vue/compiler-sfc/index.js",
+          "packages/vue/compiler-sfc/index.mjs",
+          "packages/vue/compiler-sfc/register-ts.js"
+        ],
+        "tool": {
+          "name": "vitest",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/vitest",
+          "version": "vitest/3.1.3 linux-x64 node-v22.14.0"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "typecheck",
+        "language": "typescript",
+        "root": "packages/vue/jsx-runtime",
+        "scheduled_as": "changed",
+        "skip": {
+          "findings": [],
+          "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+          "outcome": "skipped",
+          "reason": "dependency_mismatch"
+        },
+        "targets": [
+          "packages/vue/jsx-runtime/index.d.ts",
+          "packages/vue/jsx-runtime/index.js",
+          "packages/vue/jsx-runtime/index.mjs"
+        ],
+        "tool": {
+          "name": "tsc",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/packages/vue/node_modules/.bin/tsc",
+          "version": "Version 5.6.3"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "lint",
+        "language": "typescript",
+        "root": "packages/vue/jsx-runtime",
+        "scheduled_as": "changed",
+        "skip": {
+          "findings": [],
+          "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+          "outcome": "skipped",
+          "reason": "dependency_mismatch"
+        },
+        "targets": [
+          "packages/vue/jsx-runtime/index.d.ts",
+          "packages/vue/jsx-runtime/index.js",
+          "packages/vue/jsx-runtime/index.mjs"
+        ],
+        "tool": {
+          "name": "eslint",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/eslint",
+          "version": "v9.25.1"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "coverage",
+        "language": "typescript",
+        "root": "packages/vue/jsx-runtime",
+        "scheduled_as": "changed",
+        "skip": {
+          "findings": [],
+          "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+          "outcome": "skipped",
+          "reason": "dependency_mismatch"
+        },
+        "targets": [
+          "packages/vue/jsx-runtime/index.d.ts",
+          "packages/vue/jsx-runtime/index.js",
+          "packages/vue/jsx-runtime/index.mjs"
+        ],
+        "tool": {
+          "name": "vitest",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/vitest",
+          "version": "vitest/3.1.3 linux-x64 node-v22.14.0"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "typecheck",
+        "language": "typescript",
+        "root": "packages/vue/server-renderer",
+        "scheduled_as": "changed",
+        "skip": {
+          "findings": [],
+          "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+          "outcome": "skipped",
+          "reason": "dependency_mismatch"
+        },
+        "targets": [
+          "packages/vue/server-renderer/index.d.mts",
+          "packages/vue/server-renderer/index.d.ts",
+          "packages/vue/server-renderer/index.js",
+          "packages/vue/server-renderer/index.mjs"
+        ],
+        "tool": {
+          "name": "tsc",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/packages/vue/node_modules/.bin/tsc",
+          "version": "Version 5.6.3"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "lint",
+        "language": "typescript",
+        "root": "packages/vue/server-renderer",
+        "scheduled_as": "changed",
+        "skip": {
+          "findings": [],
+          "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+          "outcome": "skipped",
+          "reason": "dependency_mismatch"
+        },
+        "targets": [
+          "packages/vue/server-renderer/index.d.mts",
+          "packages/vue/server-renderer/index.d.ts",
+          "packages/vue/server-renderer/index.js",
+          "packages/vue/server-renderer/index.mjs"
+        ],
+        "tool": {
+          "name": "eslint",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/eslint",
+          "version": "v9.25.1"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "coverage",
+        "language": "typescript",
+        "root": "packages/vue/server-renderer",
+        "scheduled_as": "changed",
+        "skip": {
+          "findings": [],
+          "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+          "outcome": "skipped",
+          "reason": "dependency_mismatch"
+        },
+        "targets": [
+          "packages/vue/server-renderer/index.d.mts",
+          "packages/vue/server-renderer/index.d.ts",
+          "packages/vue/server-renderer/index.js",
+          "packages/vue/server-renderer/index.mjs"
+        ],
+        "tool": {
+          "name": "vitest",
+          "path": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/node_modules/.bin/vitest",
+          "version": "vitest/3.1.3 linux-x64 node-v22.14.0"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": null,
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "secrets",
+        "language": "common",
+        "root": ".",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [],
+        "tool": null
+      },
+      {
+        "baseline": false,
+        "baseline_hint": null,
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "dependencies",
+        "language": "common",
+        "root": ".",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [],
+        "tool": null
+      }
+    ],
+    "layout": {
+      "dependencies": {
+        ".": [],
+        "packages-private": [],
+        "packages-private/dts-built-test": [
+          "packages/reactivity",
+          "packages/shared",
+          "packages/vue"
+        ],
+        "packages-private/dts-test": [
+          "packages-private/dts-built-test",
+          "packages/vue"
+        ],
+        "packages-private/sfc-playground": [
+          "packages/vue"
+        ],
+        "packages-private/sfc-playground/src/download/template": [],
+        "packages-private/template-explorer": [],
+        "packages-private/vite-debug": [
+          "packages/vue"
+        ],
+        "packages/compiler-core": [
+          "packages/shared"
+        ],
+        "packages/compiler-dom": [
+          "packages/compiler-core",
+          "packages/shared"
+        ],
+        "packages/compiler-sfc": [
+          "packages/compiler-core",
+          "packages/compiler-dom",
+          "packages/compiler-ssr",
+          "packages/shared"
+        ],
+        "packages/compiler-ssr": [
+          "packages/compiler-dom",
+          "packages/shared"
+        ],
+        "packages/reactivity": [
+          "packages/shared"
+        ],
+        "packages/runtime-core": [
+          "packages/reactivity",
+          "packages/shared"
+        ],
+        "packages/runtime-dom": [
+          "packages/reactivity",
+          "packages/runtime-core",
+          "packages/shared"
+        ],
+        "packages/runtime-test": [
+          "packages/runtime-core",
+          "packages/shared"
+        ],
+        "packages/server-renderer": [
+          "packages/compiler-ssr",
+          "packages/shared",
+          "packages/vue"
+        ],
+        "packages/shared": [],
+        "packages/vue": [
+          "packages/compiler-dom",
+          "packages/compiler-sfc",
+          "packages/runtime-dom",
+          "packages/server-renderer",
+          "packages/shared"
+        ],
+        "packages/vue-compat": [
+          "packages/vue"
+        ],
+        "packages/vue/compiler-sfc": [],
+        "packages/vue/jsx-runtime": [],
+        "packages/vue/server-renderer": []
+      },
+      "notes": [],
+      "roots": [
+        {
+          "language": "typescript",
+          "manifest": "package.json",
+          "name": null,
+          "path": ".",
+          "workspace": null
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages-private/tsconfig.json",
+          "name": null,
+          "path": "packages-private",
+          "workspace": null
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages-private/dts-built-test/package.json",
+          "name": "dts-built-test",
+          "path": "packages-private/dts-built-test",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages-private/dts-test/package.json",
+          "name": "dts-test",
+          "path": "packages-private/dts-test",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages-private/sfc-playground/package.json",
+          "name": "@vue/sfc-playground",
+          "path": "packages-private/sfc-playground",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages-private/sfc-playground/src/download/template/package.json",
+          "name": "vite-vue-starter",
+          "path": "packages-private/sfc-playground/src/download/template",
+          "workspace": null
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages-private/template-explorer/package.json",
+          "name": "@vue/template-explorer",
+          "path": "packages-private/template-explorer",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages-private/vite-debug/package.json",
+          "name": "vite-debug",
+          "path": "packages-private/vite-debug",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/compiler-core/package.json",
+          "name": "@vue/compiler-core",
+          "path": "packages/compiler-core",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/compiler-dom/package.json",
+          "name": "@vue/compiler-dom",
+          "path": "packages/compiler-dom",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/compiler-sfc/package.json",
+          "name": "@vue/compiler-sfc",
+          "path": "packages/compiler-sfc",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/compiler-ssr/package.json",
+          "name": "@vue/compiler-ssr",
+          "path": "packages/compiler-ssr",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/reactivity/package.json",
+          "name": "@vue/reactivity",
+          "path": "packages/reactivity",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/runtime-core/package.json",
+          "name": "@vue/runtime-core",
+          "path": "packages/runtime-core",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/runtime-dom/package.json",
+          "name": "@vue/runtime-dom",
+          "path": "packages/runtime-dom",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/runtime-test/package.json",
+          "name": "@vue/runtime-test",
+          "path": "packages/runtime-test",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/server-renderer/package.json",
+          "name": "@vue/server-renderer",
+          "path": "packages/server-renderer",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/shared/package.json",
+          "name": "@vue/shared",
+          "path": "packages/shared",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/vue/package.json",
+          "name": "vue",
+          "path": "packages/vue",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/vue-compat/package.json",
+          "name": "@vue/compat",
+          "path": "packages/vue-compat",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/vue/compiler-sfc/package.json",
+          "name": null,
+          "path": "packages/vue/compiler-sfc",
+          "workspace": null
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/vue/jsx-runtime/package.json",
+          "name": null,
+          "path": "packages/vue/jsx-runtime",
+          "workspace": null
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/vue/server-renderer/package.json",
+          "name": null,
+          "path": "packages/vue/server-renderer",
+          "workspace": null
+        }
+      ]
+    },
+    "notes": [],
+    "probes_ran": true,
+    "roots": [
+      {
+        "base": {
+          "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+          "state": "unverified"
+        },
+        "environment": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/./node_modules",
+        "head": {
+          "hint": "pnpm-lock.yaml: missing @csstools/css-calc at @csstools/css-calc@2.1.1(@csstools/css-parser-algorithms@3.0.4(@csstools/css-tokenizer@3.0.3))(@csstools/css-tokenizer@3.0.3); reinstall dependencies",
+          "state": "mismatch"
+        },
+        "installation_root": ".",
+        "lockfile": "pnpm-lock.yaml",
+        "project": {
+          "language": "typescript",
+          "manifest": "package.json",
+          "name": null,
+          "path": ".",
+          "workspace": null
+        }
+      },
+      {
+        "base": {
+          "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+          "state": "unverified"
+        },
+        "environment": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/packages-private/node_modules",
+        "head": {
+          "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+          "state": "unverified"
+        },
+        "installation_root": "packages-private",
+        "lockfile": null,
+        "project": {
+          "language": "typescript",
+          "manifest": "packages-private/tsconfig.json",
+          "name": null,
+          "path": "packages-private",
+          "workspace": null
+        }
+      },
+      {
+        "base": {
+          "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+          "state": "unverified"
+        },
+        "environment": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/./node_modules",
+        "head": {
+          "hash": "da307e3298ee30c3744110490ab0a6ed03fa42586d63b7700f8f951f9fb9e817",
+          "state": "verified"
+        },
+        "installation_root": ".",
+        "lockfile": "pnpm-lock.yaml",
+        "project": {
+          "language": "typescript",
+          "manifest": "packages-private/dts-built-test/package.json",
+          "name": "dts-built-test",
+          "path": "packages-private/dts-built-test",
+          "workspace": "."
+        }
+      },
+      {
+        "base": {
+          "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+          "state": "unverified"
+        },
+        "environment": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/./node_modules",
+        "head": {
+          "hash": "59f7129381d37c496ddf08c24010736e23a0bf50a0f033be5173ab224a79ce30",
+          "state": "verified"
+        },
+        "installation_root": ".",
+        "lockfile": "pnpm-lock.yaml",
+        "project": {
+          "language": "typescript",
+          "manifest": "packages-private/dts-test/package.json",
+          "name": "dts-test",
+          "path": "packages-private/dts-test",
+          "workspace": "."
+        }
+      },
+      {
+        "base": {
+          "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+          "state": "unverified"
+        },
+        "environment": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/./node_modules",
+        "head": {
+          "hint": "pnpm-lock.yaml: missing @vitejs/plugin-vue at @vitejs/plugin-vue@5.2.4(vite@5.4.15(@types/node@22.14.1)(sass@1.87.0))(vue@packages+vue); reinstall dependencies",
+          "state": "mismatch"
+        },
+        "installation_root": ".",
+        "lockfile": "pnpm-lock.yaml",
+        "project": {
+          "language": "typescript",
+          "manifest": "packages-private/sfc-playground/package.json",
+          "name": "@vue/sfc-playground",
+          "path": "packages-private/sfc-playground",
+          "workspace": "."
+        }
+      },
+      {
+        "base": {
+          "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+          "state": "unverified"
+        },
+        "environment": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/packages-private/sfc-playground/src/download/template/node_modules",
+        "head": {
+          "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+          "state": "unverified"
+        },
+        "installation_root": "packages-private/sfc-playground/src/download/template",
+        "lockfile": null,
+        "project": {
+          "language": "typescript",
+          "manifest": "packages-private/sfc-playground/src/download/template/package.json",
+          "name": "vite-vue-starter",
+          "path": "packages-private/sfc-playground/src/download/template",
+          "workspace": null
+        }
+      },
+      {
+        "base": {
+          "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+          "state": "unverified"
+        },
+        "environment": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/./node_modules",
+        "head": {
+          "hash": "afd827671bdfc9cebe858e59e481035b228adc2ca6be83449116b1890f479b29",
+          "state": "verified"
+        },
+        "installation_root": ".",
+        "lockfile": "pnpm-lock.yaml",
+        "project": {
+          "language": "typescript",
+          "manifest": "packages-private/template-explorer/package.json",
+          "name": "@vue/template-explorer",
+          "path": "packages-private/template-explorer",
+          "workspace": "."
+        }
+      },
+      {
+        "base": {
+          "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+          "state": "unverified"
+        },
+        "environment": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/./node_modules",
+        "head": {
+          "hint": "pnpm-lock.yaml: missing @vitejs/plugin-vue at @vitejs/plugin-vue@5.2.4(vite@5.4.15(@types/node@22.14.1)(sass@1.87.0))(vue@packages+vue); reinstall dependencies",
+          "state": "mismatch"
+        },
+        "installation_root": ".",
+        "lockfile": "pnpm-lock.yaml",
+        "project": {
+          "language": "typescript",
+          "manifest": "packages-private/vite-debug/package.json",
+          "name": "vite-debug",
+          "path": "packages-private/vite-debug",
+          "workspace": "."
+        }
+      },
+      {
+        "base": {
+          "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+          "state": "unverified"
+        },
+        "environment": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/./node_modules",
+        "head": {
+          "hash": "d6eb96b4670107bf2bce0b01b049149ab9646f6c076b28b1b02b88753c84d6bb",
+          "state": "verified"
+        },
+        "installation_root": ".",
+        "lockfile": "pnpm-lock.yaml",
+        "project": {
+          "language": "typescript",
+          "manifest": "packages/compiler-core/package.json",
+          "name": "@vue/compiler-core",
+          "path": "packages/compiler-core",
+          "workspace": "."
+        }
+      },
+      {
+        "base": {
+          "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+          "state": "unverified"
+        },
+        "environment": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/./node_modules",
+        "head": {
+          "hash": "a2e7d0a7193b385aeacaae6896144a7a020ae712cec791016dd5ee13c8875257",
+          "state": "verified"
+        },
+        "installation_root": ".",
+        "lockfile": "pnpm-lock.yaml",
+        "project": {
+          "language": "typescript",
+          "manifest": "packages/compiler-dom/package.json",
+          "name": "@vue/compiler-dom",
+          "path": "packages/compiler-dom",
+          "workspace": "."
+        }
+      },
+      {
+        "base": {
+          "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+          "state": "unverified"
+        },
+        "environment": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/./node_modules",
+        "head": {
+          "hash": "a1a8b4d3a04e88d41ef4e380cd0b2e3425744dd64dea46b1e687a3f4deeb0965",
+          "state": "verified"
+        },
+        "installation_root": ".",
+        "lockfile": "pnpm-lock.yaml",
+        "project": {
+          "language": "typescript",
+          "manifest": "packages/compiler-sfc/package.json",
+          "name": "@vue/compiler-sfc",
+          "path": "packages/compiler-sfc",
+          "workspace": "."
+        }
+      },
+      {
+        "base": {
+          "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+          "state": "unverified"
+        },
+        "environment": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/./node_modules",
+        "head": {
+          "hash": "42879e8b940f1832bfc3102df18d3f0d4c0c36e95be24cae53c7f03c8f34f6d5",
+          "state": "verified"
+        },
+        "installation_root": ".",
+        "lockfile": "pnpm-lock.yaml",
+        "project": {
+          "language": "typescript",
+          "manifest": "packages/compiler-ssr/package.json",
+          "name": "@vue/compiler-ssr",
+          "path": "packages/compiler-ssr",
+          "workspace": "."
+        }
+      },
+      {
+        "base": {
+          "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+          "state": "unverified"
+        },
+        "environment": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/./node_modules",
+        "head": {
+          "hash": "e5e22141439341f80e1da84d8a7d0d5f81491d18fcefbd1ac47e740d2dd78622",
+          "state": "verified"
+        },
+        "installation_root": ".",
+        "lockfile": "pnpm-lock.yaml",
+        "project": {
+          "language": "typescript",
+          "manifest": "packages/reactivity/package.json",
+          "name": "@vue/reactivity",
+          "path": "packages/reactivity",
+          "workspace": "."
+        }
+      },
+      {
+        "base": {
+          "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+          "state": "unverified"
+        },
+        "environment": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/./node_modules",
+        "head": {
+          "hash": "71a81b3801d439f28ca085059784c9a9422569aff06e49f7f68d5bfbd49adeb2",
+          "state": "verified"
+        },
+        "installation_root": ".",
+        "lockfile": "pnpm-lock.yaml",
+        "project": {
+          "language": "typescript",
+          "manifest": "packages/runtime-core/package.json",
+          "name": "@vue/runtime-core",
+          "path": "packages/runtime-core",
+          "workspace": "."
+        }
+      },
+      {
+        "base": {
+          "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+          "state": "unverified"
+        },
+        "environment": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/./node_modules",
+        "head": {
+          "hash": "0df7ca0d61e86a477714f0edc4b66e51ab96a35dac8483e2a2f7354d6ff40dc9",
+          "state": "verified"
+        },
+        "installation_root": ".",
+        "lockfile": "pnpm-lock.yaml",
+        "project": {
+          "language": "typescript",
+          "manifest": "packages/runtime-dom/package.json",
+          "name": "@vue/runtime-dom",
+          "path": "packages/runtime-dom",
+          "workspace": "."
+        }
+      },
+      {
+        "base": {
+          "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+          "state": "unverified"
+        },
+        "environment": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/./node_modules",
+        "head": {
+          "hash": "fdec15ba9b3c7bfea14c6a9a9f13537ea2aba58becf180d8c3258002e66cf575",
+          "state": "verified"
+        },
+        "installation_root": ".",
+        "lockfile": "pnpm-lock.yaml",
+        "project": {
+          "language": "typescript",
+          "manifest": "packages/runtime-test/package.json",
+          "name": "@vue/runtime-test",
+          "path": "packages/runtime-test",
+          "workspace": "."
+        }
+      },
+      {
+        "base": {
+          "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+          "state": "unverified"
+        },
+        "environment": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/./node_modules",
+        "head": {
+          "hash": "dccebbb3a173a736cc97a9806a1c2c094c1b5fb583a737c2906a3b453ca9a51a",
+          "state": "verified"
+        },
+        "installation_root": ".",
+        "lockfile": "pnpm-lock.yaml",
+        "project": {
+          "language": "typescript",
+          "manifest": "packages/server-renderer/package.json",
+          "name": "@vue/server-renderer",
+          "path": "packages/server-renderer",
+          "workspace": "."
+        }
+      },
+      {
+        "base": {
+          "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+          "state": "unverified"
+        },
+        "environment": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/./node_modules",
+        "head": {
+          "hash": "981f6e25ea1fa6ec02d35f32a76b92a7d0e7c93fab91ce9637c67dc7603145a2",
+          "state": "verified"
+        },
+        "installation_root": ".",
+        "lockfile": "pnpm-lock.yaml",
+        "project": {
+          "language": "typescript",
+          "manifest": "packages/shared/package.json",
+          "name": "@vue/shared",
+          "path": "packages/shared",
+          "workspace": "."
+        }
+      },
+      {
+        "base": {
+          "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+          "state": "unverified"
+        },
+        "environment": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/./node_modules",
+        "head": {
+          "hash": "eaceb59d5fb670d26875c862b9d606e75bd3161592f31907f899adb8aea19d31",
+          "state": "verified"
+        },
+        "installation_root": ".",
+        "lockfile": "pnpm-lock.yaml",
+        "project": {
+          "language": "typescript",
+          "manifest": "packages/vue/package.json",
+          "name": "vue",
+          "path": "packages/vue",
+          "workspace": "."
+        }
+      },
+      {
+        "base": {
+          "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+          "state": "unverified"
+        },
+        "environment": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/./node_modules",
+        "head": {
+          "hash": "8beac5db84f360e0f8cf0b85efe24ca3082581c483fd787bce4f2d6d35d550b4",
+          "state": "verified"
+        },
+        "installation_root": ".",
+        "lockfile": "pnpm-lock.yaml",
+        "project": {
+          "language": "typescript",
+          "manifest": "packages/vue-compat/package.json",
+          "name": "@vue/compat",
+          "path": "packages/vue-compat",
+          "workspace": "."
+        }
+      },
+      {
+        "base": {
+          "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+          "state": "unverified"
+        },
+        "environment": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/packages/vue/compiler-sfc/node_modules",
+        "head": {
+          "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+          "state": "unverified"
+        },
+        "installation_root": "packages/vue/compiler-sfc",
+        "lockfile": null,
+        "project": {
+          "language": "typescript",
+          "manifest": "packages/vue/compiler-sfc/package.json",
+          "name": null,
+          "path": "packages/vue/compiler-sfc",
+          "workspace": null
+        }
+      },
+      {
+        "base": {
+          "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+          "state": "unverified"
+        },
+        "environment": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/packages/vue/jsx-runtime/node_modules",
+        "head": {
+          "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+          "state": "unverified"
+        },
+        "installation_root": "packages/vue/jsx-runtime",
+        "lockfile": null,
+        "project": {
+          "language": "typescript",
+          "manifest": "packages/vue/jsx-runtime/package.json",
+          "name": null,
+          "path": "packages/vue/jsx-runtime",
+          "workspace": null
+        }
+      },
+      {
+        "base": {
+          "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+          "state": "unverified"
+        },
+        "environment": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/packages/vue/server-renderer/node_modules",
+        "head": {
+          "hint": "no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+          "state": "unverified"
+        },
+        "installation_root": "packages/vue/server-renderer",
+        "lockfile": null,
+        "project": {
+          "language": "typescript",
+          "manifest": "packages/vue/server-renderer/package.json",
+          "name": null,
+          "path": "packages/vue/server-renderer",
+          "workspace": null
+        }
+      }
+    ]
+  },
+  "profile": {
+    "chain": [
+      "rio/base"
+    ],
+    "name": "rio/base",
+    "valid": true
+  },
+  "repository": "/dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head",
+  "warnings": [
+    "rio/base:$.steps[3]: rio/triage is deferred locally: no_endpoint",
+    "rio/base:$.steps[4]: rio/agents is deferred locally: no_endpoint",
+    "rio/base:$.steps[5]: rio/verify is deferred locally: no_endpoint",
+    "typecheck . would skip: skipped (dependency_mismatch) — pnpm-lock.yaml: missing @csstools/css-calc at @csstools/css-calc@2.1.1(@csstools/css-parser-algorithms@3.0.4(@csstools/css-tokenizer@3.0.3))(@csstools/css-tokenizer@3.0.3); reinstall dependencies",
+    "lint . would skip: skipped (dependency_mismatch) — pnpm-lock.yaml: missing @csstools/css-calc at @csstools/css-calc@2.1.1(@csstools/css-parser-algorithms@3.0.4(@csstools/css-tokenizer@3.0.3))(@csstools/css-tokenizer@3.0.3); reinstall dependencies",
+    "coverage . would skip: skipped (dependency_mismatch) — pnpm-lock.yaml: missing @csstools/css-calc at @csstools/css-calc@2.1.1(@csstools/css-parser-algorithms@3.0.4(@csstools/css-tokenizer@3.0.3))(@csstools/css-tokenizer@3.0.3); reinstall dependencies",
+    "typecheck packages-private would skip: skipped (dependency_mismatch) — no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+    "lint packages-private would skip: skipped (dependency_mismatch) — no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+    "coverage packages-private would skip: skipped (dependency_mismatch) — no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+    "typecheck packages-private/sfc-playground would skip: skipped (dependency_mismatch) — pnpm-lock.yaml: missing @vitejs/plugin-vue at @vitejs/plugin-vue@5.2.4(vite@5.4.15(@types/node@22.14.1)(sass@1.87.0))(vue@packages+vue); reinstall dependencies",
+    "lint packages-private/sfc-playground would skip: skipped (dependency_mismatch) — pnpm-lock.yaml: missing @vitejs/plugin-vue at @vitejs/plugin-vue@5.2.4(vite@5.4.15(@types/node@22.14.1)(sass@1.87.0))(vue@packages+vue); reinstall dependencies",
+    "coverage packages-private/sfc-playground would skip: skipped (dependency_mismatch) — pnpm-lock.yaml: missing @vitejs/plugin-vue at @vitejs/plugin-vue@5.2.4(vite@5.4.15(@types/node@22.14.1)(sass@1.87.0))(vue@packages+vue); reinstall dependencies",
+    "typecheck packages-private/sfc-playground/src/download/template would skip: skipped (dependency_mismatch) — no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+    "lint packages-private/sfc-playground/src/download/template would skip: skipped (dependency_mismatch) — no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+    "coverage packages-private/sfc-playground/src/download/template would skip: skipped (dependency_mismatch) — no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+    "typecheck packages-private/vite-debug would skip: skipped (dependency_mismatch) — pnpm-lock.yaml: missing @vitejs/plugin-vue at @vitejs/plugin-vue@5.2.4(vite@5.4.15(@types/node@22.14.1)(sass@1.87.0))(vue@packages+vue); reinstall dependencies",
+    "lint packages-private/vite-debug would skip: skipped (dependency_mismatch) — pnpm-lock.yaml: missing @vitejs/plugin-vue at @vitejs/plugin-vue@5.2.4(vite@5.4.15(@types/node@22.14.1)(sass@1.87.0))(vue@packages+vue); reinstall dependencies",
+    "coverage packages-private/vite-debug would skip: skipped (dependency_mismatch) — pnpm-lock.yaml: missing @vitejs/plugin-vue at @vitejs/plugin-vue@5.2.4(vite@5.4.15(@types/node@22.14.1)(sass@1.87.0))(vue@packages+vue); reinstall dependencies",
+    "typecheck packages/vue/compiler-sfc would skip: skipped (dependency_mismatch) — no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+    "lint packages/vue/compiler-sfc would skip: skipped (dependency_mismatch) — no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+    "coverage packages/vue/compiler-sfc would skip: skipped (dependency_mismatch) — no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+    "typecheck packages/vue/jsx-runtime would skip: skipped (dependency_mismatch) — no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+    "lint packages/vue/jsx-runtime would skip: skipped (dependency_mismatch) — no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+    "coverage packages/vue/jsx-runtime would skip: skipped (dependency_mismatch) — no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+    "typecheck packages/vue/server-renderer would skip: skipped (dependency_mismatch) — no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+    "lint packages/vue/server-renderer would skip: skipped (dependency_mismatch) — no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)",
+    "coverage packages/vue/server-renderer would skip: skipped (dependency_mismatch) — no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)"
+  ]
+}

@@ -1,0 +1,2 @@
+/tmp/vue-positive-head/node_modules/.pnpm/@vitejs+plugin-vue@5.2.4_vite@5.4.15_@types+node@22.14.1_sass@1.87.0__vue@packages+vue/node_modules/@vitejs/plugin-vue/dist/index.cjs
+/tmp/vue-positive-head/node_modules/.pnpm/@vitejs+plugin-vue@5.2.4_vite@5.4.15_@types+node@22.14.1_sass@1.87.0__vue@packages+vue

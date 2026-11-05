@@ -1,0 +1,66 @@
+Scope: all 18 workspace projects
+ WARN  There are cyclic workspace dependencies: /dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/packages/server-renderer, /dev/shm/vue-core-runner/rio-eval-e_4qo7z4/head/packages/vue
+Lockfile is up to date, resolution step is skipped
+Progress: resolved 1, reused 0, downloaded 0, added 0
+Packages: +628
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Progress: resolved 628, reused 174, downloaded 0, added 0
+Progress: resolved 628, reused 628, downloaded 0, added 628, done
+
+devDependencies:
++ @babel/parser 7.27.2
++ @babel/types 7.27.1
++ @rollup/plugin-alias 5.1.1
++ @rollup/plugin-commonjs 28.0.3
++ @rollup/plugin-json 6.1.0
++ @rollup/plugin-node-resolve 16.0.1
++ @rollup/plugin-replace 5.0.4
++ @swc/core 1.11.24
++ @types/hash-sum 1.0.2
++ @types/node 22.14.1
++ @types/semver 7.7.0
++ @types/serve-handler 6.1.4
++ @vitest/coverage-v8 3.1.3
++ @vitest/eslint-plugin 1.1.44
++ @vue/consolidate 1.0.0
++ conventional-changelog-cli 5.0.0
++ enquirer 2.4.1
++ esbuild 0.25.4
++ esbuild-plugin-polyfill-node 0.3.0
++ eslint 9.25.1
++ eslint-plugin-import-x 4.11.0
++ estree-walker 2.0.2
++ jsdom 26.1.0
++ lint-staged 15.5.1
++ lodash 4.17.21
++ magic-string 0.30.17
++ markdown-table 3.0.4
++ marked 13.0.3
++ npm-run-all2 7.0.2
++ picocolors 1.1.1
++ prettier 3.5.3
++ pretty-bytes 6.1.1
++ pug 3.0.3
++ puppeteer 24.8.2
++ rimraf 6.0.1
++ rollup 4.40.2
++ rollup-plugin-dts 6.2.1
++ rollup-plugin-esbuild 6.2.1
++ rollup-plugin-polyfill-node 0.13.0
++ semver 7.7.1
++ serve 14.2.4
++ serve-handler 6.1.6
++ simple-git-hooks 2.13.0
++ todomvc-app-css 2.4.3
++ tslib 2.8.1
++ typescript 5.6.3
++ typescript-eslint 8.31.1
++ vite 5.4.15
++ vitest 3.1.3
+
+. postinstall$ simple-git-hooks
+. postinstall: [INFO] Successfully set the pre-commit with command: pnpm lint-staged && pnpm check
+. postinstall: [INFO] Successfully set the commit-msg with command: node scripts/verify-commit.js
+. postinstall: [INFO] Successfully set all git hooks
+. postinstall: Done
+Done in 12.1s using pnpm v10.9.0

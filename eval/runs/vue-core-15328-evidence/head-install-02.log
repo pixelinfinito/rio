@@ -1,0 +1,187 @@
+Scope: all 18 workspace projects
+? Verifying lockfile against supply-chain policies (620 entries)...
+Lockfile is up to date, resolution step is skipped
+Progress: resolved 1, reused 0, downloaded 0, added 0
+Packages: +503
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Progress: resolved 503, reused 0, downloaded 0, added 0
+Progress: resolved 503, reused 161, downloaded 0, added 0
+Progress: resolved 503, reused 161, downloaded 7, added 0
+Progress: resolved 503, reused 161, downloaded 16, added 0
+Progress: resolved 503, reused 161, downloaded 34, added 0
+Progress: resolved 503, reused 161, downloaded 44, added 0
+Progress: resolved 503, reused 161, downloaded 46, added 0
+Packages are hard linked from the content-addressable store to the virtual store.
+  Content-addressable store is at: /home/ubuntu/.local/share/pnpm/store/v11
+  Virtual store is at:             node_modules/.pnpm
+Progress: resolved 503, reused 161, downloaded 51, added 4
+Progress: resolved 503, reused 161, downloaded 52, added 4
+Progress: resolved 503, reused 161, downloaded 70, added 4
+Progress: resolved 503, reused 161, downloaded 82, added 4
+Progress: resolved 503, reused 161, downloaded 95, added 4
+Progress: resolved 503, reused 161, downloaded 101, added 7
+Progress: resolved 503, reused 161, downloaded 110, added 8
+Progress: resolved 503, reused 161, downloaded 120, added 8
+Progress: resolved 503, reused 161, downloaded 138, added 11
+Progress: resolved 503, reused 161, downloaded 165, added 12
+[WARN] Request took 55340ms: https://registry.npmjs.org/@swc%2Fcore-darwin-arm64
+[WARN] Request took 55335ms: https://registry.npmjs.org/@swc%2Fcore-win32-ia32-msvc
+Progress: resolved 503, reused 161, downloaded 177, added 16
+[WARN] Request took 56296ms: https://registry.npmjs.org/@swc%2Fcore-linux-x64-gnu
+[WARN] Request took 56358ms: https://registry.npmjs.org/@swc%2Fcore-win32-x64-msvc
+[WARN] Request took 56456ms: https://registry.npmjs.org/@swc%2Fcore-linux-x64-musl
+[WARN] Request took 56484ms: https://registry.npmjs.org/@swc%2Fcore-linux-arm64-gnu
+Progress: resolved 503, reused 161, downloaded 203, added 19
+[WARN] GET https://registry.npmjs.org/@swc%2Fcore-darwin-x64 error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@swc%2Fcore-linux-arm-gnueabihf error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@swc%2Fcore-linux-arm64-musl error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@swc%2Fcore-win32-arm64-msvc error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@swc%2Fcore error (23). Will retry in 10 seconds. 2 retries left.
+Progress: resolved 503, reused 161, downloaded 211, added 21
+[WARN] GET https://registry.npmjs.org/@types%2Fnode error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@typescript-eslint%2Feslint-plugin error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@typescript-eslint%2Fparser error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@typescript-eslint%2Fproject-service error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@typescript-eslint%2Fscope-manager error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@typescript-eslint%2Ftsconfig-utils error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@typescript-eslint%2Ftype-utils error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@typescript-eslint%2Ftypes error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@typescript-eslint%2Ftypescript-estree error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@typescript-eslint%2Futils error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@typescript-eslint%2Fvisitor-keys error (23). Will retry in 10 seconds. 2 retries left.
+Progress: resolved 503, reused 161, downloaded 230, added 23
+Progress: resolved 503, reused 161, downloaded 239, added 25
+[WARN] GET https://registry.npmjs.org/devtools-protocol error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/esbuild error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/eslint error (23). Will retry in 10 seconds. 2 retries left.
+Progress: resolved 503, reused 161, downloaded 248, added 28
+Progress: resolved 503, reused 161, downloaded 267, added 32
+Progress: resolved 503, reused 161, downloaded 277, added 34
+Progress: resolved 503, reused 161, downloaded 330, added 38
+[WARN] Request took 21291ms: https://registry.npmjs.org/jsdom
+[WARN] Request took 16110ms: https://registry.npmjs.org/lint-staged
+Progress: resolved 503, reused 161, downloaded 335, added 190
+[WARN] Request took 17197ms: https://registry.npmjs.org/lru-cache
+Progress: resolved 503, reused 161, downloaded 335, added 201
+Progress: resolved 503, reused 161, downloaded 335, added 227
+[WARN] Request took 12493ms: https://registry.npmjs.org/@swc%2Fcore-linux-arm64-musl
+[WARN] Request took 12513ms: https://registry.npmjs.org/@swc%2Fcore-linux-arm-gnueabihf
+[WARN] Request took 12771ms: https://registry.npmjs.org/@swc%2Fcore-darwin-x64
+Progress: resolved 503, reused 161, downloaded 336, added 274
+Progress: resolved 503, reused 161, downloaded 337, added 292
+[WARN] Request took 16874ms: https://registry.npmjs.org/monaco-editor
+[WARN] Request took 12637ms: https://registry.npmjs.org/tldts-core
+Progress: resolved 503, reused 161, downloaded 338, added 324
+[WARN] Request took 12702ms: https://registry.npmjs.org/tldts
+Progress: resolved 503, reused 161, downloaded 338, added 355
+[WARN] Request took 14808ms: https://registry.npmjs.org/puppeteer
+Progress: resolved 503, reused 161, downloaded 338, added 415
+[WARN] Request took 15358ms: https://registry.npmjs.org/esbuild
+[WARN] Request took 15393ms: https://registry.npmjs.org/devtools-protocol
+Progress: resolved 503, reused 161, downloaded 338, added 416
+[WARN] Request took 15053ms: https://registry.npmjs.org/zod
+[WARN] Request took 24279ms: https://registry.npmjs.org/@swc%2Fcore
+Progress: resolved 503, reused 161, downloaded 338, added 500
+[WARN] Request took 17579ms: https://registry.npmjs.org/vite
+[WARN] Request took 23182ms: https://registry.npmjs.org/rollup
+[WARN] Request took 23911ms: https://registry.npmjs.org/@types%2Fnode
+[WARN] Request took 20557ms: https://registry.npmjs.org/typescript-eslint
+Progress: resolved 503, reused 161, downloaded 339, added 500
+Progress: resolved 503, reused 161, downloaded 340, added 502
+[WARN] Request took 27479ms: https://registry.npmjs.org/vitest
+[WARN] Request took 36613ms: https://registry.npmjs.org/@typescript-eslint%2Ftype-utils
+[WARN] Request took 37083ms: https://registry.npmjs.org/@typescript-eslint%2Futils
+[WARN] Request took 22094ms: https://registry.npmjs.org/monaco-editor
+[WARN] Request took 40480ms: https://registry.npmjs.org/@typescript-eslint%2Ftypes
+[WARN] GET https://registry.npmjs.org/@typescript-eslint%2Feslint-plugin error (23). Will retry in 1 minute. 1 retries left.
+[WARN] GET https://registry.npmjs.org/@typescript-eslint%2Fparser error (23). Will retry in 1 minute. 1 retries left.
+[WARN] GET https://registry.npmjs.org/@typescript-eslint%2Fscope-manager error (23). Will retry in 1 minute. 1 retries left.
+[WARN] GET https://registry.npmjs.org/@typescript-eslint%2Ftypescript-estree error (23). Will retry in 1 minute. 1 retries left.
+[WARN] GET https://registry.npmjs.org/@typescript-eslint%2Fvisitor-keys error (23). Will retry in 1 minute. 1 retries left.
+[WARN] GET https://registry.npmjs.org/playwright-core error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/playwright error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/typescript error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 12285ms: https://registry.npmjs.org/playwright-core
+[WARN] Request took 32791ms: https://registry.npmjs.org/typescript
+[WARN] Request took 34566ms: https://registry.npmjs.org/playwright
+[WARN] Request took 22236ms: https://registry.npmjs.org/@typescript-eslint%2Fvisitor-keys
+[WARN] GET https://registry.npmjs.org/typescript error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/typescript error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 88232ms: https://registry.npmjs.org/typescript
+✓ Lockfile passes supply-chain policies (620 entries in 5m 52.9s)
+Progress: resolved 503, reused 161, downloaded 341, added 502
+Progress: resolved 503, reused 161, downloaded 341, added 503, done
+.../node_modules/@swc/core postinstall$ node postinstall.js
+.../node_modules/unrs-resolver postinstall$ napi-postinstall unrs-resolver 1.11.1 check
+.../node_modules/@swc/core postinstall: Done
+.../node_modules/puppeteer postinstall$ node install.mjs
+.../esbuild@0.28.1/node_modules/esbuild postinstall$ node install.js
+.../node_modules/unrs-resolver postinstall: Done
+.../node_modules/simple-git-hooks postinstall$ node ./postinstall.js
+.../esbuild@0.28.1/node_modules/esbuild postinstall: Done
+.../node_modules/simple-git-hooks postinstall: [INFO] Successfully set the pre-commit with command: pnpm lint-staged && pnpm check
+.../node_modules/simple-git-hooks postinstall: [INFO] Successfully set the commit-msg with command: node scripts/verify-commit.js
+.../node_modules/puppeteer postinstall: **INFO** Skipping downloading browsers as instructed.
+.../node_modules/puppeteer postinstall: Done
+.../node_modules/simple-git-hooks postinstall: Done
+
+devDependencies:
++ @babel/parser 7.29.8
++ @babel/types 7.29.8
++ @rollup/plugin-alias 6.0.0
++ @rollup/plugin-commonjs 29.0.3
++ @rollup/plugin-json 6.1.0
++ @rollup/plugin-node-resolve 16.0.3
++ @rollup/plugin-replace 5.0.4
++ @swc/core 1.15.47
++ @types/hash-sum 1.0.2
++ @types/node 24.13.3
++ @types/semver 7.8.0
++ @types/serve-handler 6.1.4
++ @vitest/browser-playwright 4.1.10
++ @vitest/coverage-v8 4.1.10
++ @vitest/eslint-plugin 1.6.26
++ @vue/consolidate 1.0.0
++ conventional-changelog 8.1.0
++ conventional-changelog-angular 9.2.1
++ enquirer 2.4.1
++ esbuild 0.28.1
++ esbuild-plugin-polyfill-node 0.3.0
++ eslint 10.8.0
++ eslint-plugin-import-x 4.17.1
++ estree-walker 2.0.2
++ jsdom 30.0.1
++ lint-staged 17.3.0
++ lodash 4.18.1
++ magic-string 0.30.21
++ markdown-table 3.0.4
++ marked 13.0.3
++ npm-run-all2 9.0.3
++ picocolors 1.1.1
++ playwright 1.62.1
++ prettier 3.9.6
++ pretty-bytes 7.1.1
++ pug 3.0.4
++ puppeteer 25.4.0
++ rimraf 6.1.3
++ rollup 4.62.4
++ rollup-plugin-dts 6.4.1
++ rollup-plugin-esbuild 6.2.1
++ rollup-plugin-polyfill-node 0.13.0
++ semver 7.8.5
++ serve 14.2.6
++ serve-handler 6.1.7
++ simple-git-hooks 2.13.1
++ todomvc-app-css 2.4.3
++ tslib 2.8.1
++ typescript 6.0.3
++ typescript-eslint 8.65.0
++ vite 8.2.0
++ vitest 4.1.10
+
+. postinstall$ simple-git-hooks
+. postinstall: [INFO] Successfully set the pre-commit with command: pnpm lint-staged && pnpm check
+. postinstall: [INFO] Successfully set the commit-msg with command: node scripts/verify-commit.js
+. postinstall: [INFO] Successfully set all git hooks
+. postinstall: Done
+Done in 8m 3.6s using pnpm v11.19.0
