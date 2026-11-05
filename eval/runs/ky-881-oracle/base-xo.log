@@ -1,0 +1,208 @@
+
+  source/utils/merge.ts:206:1
+  ⚠  206:1   Unexpected todo comment: TODO: Make this strongly-typed (no....                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       no-warning-comments
+  ⚠  207:94  Arrow function has a complexity of 41. Maximum allowed is 20.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         complexity
+  ⚠  240:6   Blocks are nested too deeply (5). Maximum allowed is 4.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               max-depth
+  ⚠  258:6   Blocks are nested too deeply (5). Maximum allowed is 4.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               max-depth
+
+  source/core/Ky.ts:182:56
+  ⚠  182:56  Async arrow function has a complexity of 24. Maximum allowed is 20.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   complexity
+
+  source/types/ResponsePromise.ts:21:2
+  ⚠   21:2   Unexpected todo comment: TODO: Use `json<T extends JSONValue>():....                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  no-warning-comments
+
+  test/base-url.ts:undefined:undefined
+  ✖    0:0   Parsing error: ESLint was configured to lint <tsconfigRootDir>/test/base-url.ts with type information from parserOptions.project: <tsconfigRootDir>/node_modules/.cache/xo-linter/tsconfig.xo.json
+However, that TSConfig does not include this file, so type information is not available for it. Either:
+- Change ESLint's list of included files to not include this file
+- Change that TSConfig to include this file
+- Create a new TSConfig that includes this file and include it in your parserOptions.project
+See the typescript-eslint docs for more info: https://tseslint.com/none-of-those-tsconfigs-include-this-file                         
+
+  test/body-size.ts:undefined:undefined
+  ✖    0:0   Parsing error: ESLint was configured to lint <tsconfigRootDir>/test/body-size.ts with type information from parserOptions.project: <tsconfigRootDir>/node_modules/.cache/xo-linter/tsconfig.xo.json
+However, that TSConfig does not include this file, so type information is not available for it. Either:
+- Change ESLint's list of included files to not include this file
+- Change that TSConfig to include this file
+- Create a new TSConfig that includes this file and include it in your parserOptions.project
+See the typescript-eslint docs for more info: https://tseslint.com/none-of-those-tsconfigs-include-this-file                        
+
+  test/browser.ts:undefined:undefined
+  ✖    0:0   Parsing error: ESLint was configured to lint <tsconfigRootDir>/test/browser.ts with type information from parserOptions.project: <tsconfigRootDir>/node_modules/.cache/xo-linter/tsconfig.xo.json
+However, that TSConfig does not include this file, so type information is not available for it. Either:
+- Change ESLint's list of included files to not include this file
+- Change that TSConfig to include this file
+- Create a new TSConfig that includes this file and include it in your parserOptions.project
+See the typescript-eslint docs for more info: https://tseslint.com/none-of-those-tsconfigs-include-this-file                          
+
+  test/bytes.ts:undefined:undefined
+  ✖    0:0   Parsing error: ESLint was configured to lint <tsconfigRootDir>/test/bytes.ts with type information from parserOptions.project: <tsconfigRootDir>/node_modules/.cache/xo-linter/tsconfig.xo.json
+However, that TSConfig does not include this file, so type information is not available for it. Either:
+- Change ESLint's list of included files to not include this file
+- Change that TSConfig to include this file
+- Create a new TSConfig that includes this file and include it in your parserOptions.project
+See the typescript-eslint docs for more info: https://tseslint.com/none-of-those-tsconfigs-include-this-file                            
+
+  test/context.ts:undefined:undefined
+  ✖    0:0   Parsing error: ESLint was configured to lint <tsconfigRootDir>/test/context.ts with type information from parserOptions.project: <tsconfigRootDir>/node_modules/.cache/xo-linter/tsconfig.xo.json
+However, that TSConfig does not include this file, so type information is not available for it. Either:
+- Change ESLint's list of included files to not include this file
+- Change that TSConfig to include this file
+- Create a new TSConfig that includes this file and include it in your parserOptions.project
+See the typescript-eslint docs for more info: https://tseslint.com/none-of-those-tsconfigs-include-this-file                          
+
+  test/fetch.ts:undefined:undefined
+  ✖    0:0   Parsing error: ESLint was configured to lint <tsconfigRootDir>/test/fetch.ts with type information from parserOptions.project: <tsconfigRootDir>/node_modules/.cache/xo-linter/tsconfig.xo.json
+However, that TSConfig does not include this file, so type information is not available for it. Either:
+- Change ESLint's list of included files to not include this file
+- Change that TSConfig to include this file
+- Create a new TSConfig that includes this file and include it in your parserOptions.project
+See the typescript-eslint docs for more info: https://tseslint.com/none-of-those-tsconfigs-include-this-file                            
+
+  test/formdata-searchparams.ts:undefined:undefined
+  ✖    0:0   Parsing error: ESLint was configured to lint <tsconfigRootDir>/test/formdata-searchparams.ts with type information from parserOptions.project: <tsconfigRootDir>/node_modules/.cache/xo-linter/tsconfig.xo.json
+However, that TSConfig does not include this file, so type information is not available for it. Either:
+- Change ESLint's list of included files to not include this file
+- Change that TSConfig to include this file
+- Create a new TSConfig that includes this file and include it in your parserOptions.project
+See the typescript-eslint docs for more info: https://tseslint.com/none-of-those-tsconfigs-include-this-file            
+
+  test/headers.ts:undefined:undefined
+  ✖    0:0   Parsing error: ESLint was configured to lint <tsconfigRootDir>/test/headers.ts with type information from parserOptions.project: <tsconfigRootDir>/node_modules/.cache/xo-linter/tsconfig.xo.json
+However, that TSConfig does not include this file, so type information is not available for it. Either:
+- Change ESLint's list of included files to not include this file
+- Change that TSConfig to include this file
+- Create a new TSConfig that includes this file and include it in your parserOptions.project
+See the typescript-eslint docs for more info: https://tseslint.com/none-of-those-tsconfigs-include-this-file                          
+
+  test/hooks.ts:undefined:undefined
+  ✖    0:0   Parsing error: ESLint was configured to lint <tsconfigRootDir>/test/hooks.ts with type information from parserOptions.project: <tsconfigRootDir>/node_modules/.cache/xo-linter/tsconfig.xo.json
+However, that TSConfig does not include this file, so type information is not available for it. Either:
+- Change ESLint's list of included files to not include this file
+- Change that TSConfig to include this file
+- Create a new TSConfig that includes this file and include it in your parserOptions.project
+See the typescript-eslint docs for more info: https://tseslint.com/none-of-those-tsconfigs-include-this-file                            
+
+  test/http-error.ts:undefined:undefined
+  ✖    0:0   Parsing error: ESLint was configured to lint <tsconfigRootDir>/test/http-error.ts with type information from parserOptions.project: <tsconfigRootDir>/node_modules/.cache/xo-linter/tsconfig.xo.json
+However, that TSConfig does not include this file, so type information is not available for it. Either:
+- Change ESLint's list of included files to not include this file
+- Change that TSConfig to include this file
+- Create a new TSConfig that includes this file and include it in your parserOptions.project
+See the typescript-eslint docs for more info: https://tseslint.com/none-of-those-tsconfigs-include-this-file                       
+
+  test/main.ts:undefined:undefined
+  ✖    0:0   Parsing error: ESLint was configured to lint <tsconfigRootDir>/test/main.ts with type information from parserOptions.project: <tsconfigRootDir>/node_modules/.cache/xo-linter/tsconfig.xo.json
+However, that TSConfig does not include this file, so type information is not available for it. Either:
+- Change ESLint's list of included files to not include this file
+- Change that TSConfig to include this file
+- Create a new TSConfig that includes this file and include it in your parserOptions.project
+See the typescript-eslint docs for more info: https://tseslint.com/none-of-those-tsconfigs-include-this-file                             
+
+  test/memory-leak.ts:undefined:undefined
+  ✖    0:0   Parsing error: ESLint was configured to lint <tsconfigRootDir>/test/memory-leak.ts with type information from parserOptions.project: <tsconfigRootDir>/node_modules/.cache/xo-linter/tsconfig.xo.json
+However, that TSConfig does not include this file, so type information is not available for it. Either:
+- Change ESLint's list of included files to not include this file
+- Change that TSConfig to include this file
+- Create a new TSConfig that includes this file and include it in your parserOptions.project
+See the typescript-eslint docs for more info: https://tseslint.com/none-of-those-tsconfigs-include-this-file                      
+
+  test/methods.ts:undefined:undefined
+  ✖    0:0   Parsing error: ESLint was configured to lint <tsconfigRootDir>/test/methods.ts with type information from parserOptions.project: <tsconfigRootDir>/node_modules/.cache/xo-linter/tsconfig.xo.json
+However, that TSConfig does not include this file, so type information is not available for it. Either:
+- Change ESLint's list of included files to not include this file
+- Change that TSConfig to include this file
+- Create a new TSConfig that includes this file and include it in your parserOptions.project
+See the typescript-eslint docs for more info: https://tseslint.com/none-of-those-tsconfigs-include-this-file                          
+
+  test/prefix.ts:undefined:undefined
+  ✖    0:0   Parsing error: ESLint was configured to lint <tsconfigRootDir>/test/prefix.ts with type information from parserOptions.project: <tsconfigRootDir>/node_modules/.cache/xo-linter/tsconfig.xo.json
+However, that TSConfig does not include this file, so type information is not available for it. Either:
+- Change ESLint's list of included files to not include this file
+- Change that TSConfig to include this file
+- Create a new TSConfig that includes this file and include it in your parserOptions.project
+See the typescript-eslint docs for more info: https://tseslint.com/none-of-those-tsconfigs-include-this-file                           
+
+  test/retry.ts:undefined:undefined
+  ✖    0:0   Parsing error: ESLint was configured to lint <tsconfigRootDir>/test/retry.ts with type information from parserOptions.project: <tsconfigRootDir>/node_modules/.cache/xo-linter/tsconfig.xo.json
+However, that TSConfig does not include this file, so type information is not available for it. Either:
+- Change ESLint's list of included files to not include this file
+- Change that TSConfig to include this file
+- Create a new TSConfig that includes this file and include it in your parserOptions.project
+See the typescript-eslint docs for more info: https://tseslint.com/none-of-those-tsconfigs-include-this-file                            
+
+  test/stream.ts:undefined:undefined
+  ✖    0:0   Parsing error: ESLint was configured to lint <tsconfigRootDir>/test/stream.ts with type information from parserOptions.project: <tsconfigRootDir>/node_modules/.cache/xo-linter/tsconfig.xo.json
+However, that TSConfig does not include this file, so type information is not available for it. Either:
+- Change ESLint's list of included files to not include this file
+- Change that TSConfig to include this file
+- Create a new TSConfig that includes this file and include it in your parserOptions.project
+See the typescript-eslint docs for more info: https://tseslint.com/none-of-those-tsconfigs-include-this-file                           
+
+  test/with-page.ts:undefined:undefined
+  ✖    0:0   Parsing error: ESLint was configured to lint <tsconfigRootDir>/test/with-page.ts with type information from parserOptions.project: <tsconfigRootDir>/node_modules/.cache/xo-linter/tsconfig.xo.json
+However, that TSConfig does not include this file, so type information is not available for it. Either:
+- Change ESLint's list of included files to not include this file
+- Change that TSConfig to include this file
+- Create a new TSConfig that includes this file and include it in your parserOptions.project
+See the typescript-eslint docs for more info: https://tseslint.com/none-of-those-tsconfigs-include-this-file                        
+
+  test-d/normalized-options.ts:undefined:undefined
+  ✖    0:0   Parsing error: ESLint was configured to lint <tsconfigRootDir>/test-d/normalized-options.ts with type information from parserOptions.project: <tsconfigRootDir>/node_modules/.cache/xo-linter/tsconfig.xo.json
+However, that TSConfig does not include this file, so type information is not available for it. Either:
+- Change ESLint's list of included files to not include this file
+- Change that TSConfig to include this file
+- Create a new TSConfig that includes this file and include it in your parserOptions.project
+See the typescript-eslint docs for more info: https://tseslint.com/none-of-those-tsconfigs-include-this-file             
+
+  test/helpers/create-http-test-server.ts:undefined:undefined
+  ✖    0:0   Parsing error: ESLint was configured to lint <tsconfigRootDir>/test/helpers/create-http-test-server.ts with type information from parserOptions.project: <tsconfigRootDir>/node_modules/.cache/xo-linter/tsconfig.xo.json
+However, that TSConfig does not include this file, so type information is not available for it. Either:
+- Change ESLint's list of included files to not include this file
+- Change that TSConfig to include this file
+- Create a new TSConfig that includes this file and include it in your parserOptions.project
+See the typescript-eslint docs for more info: https://tseslint.com/none-of-those-tsconfigs-include-this-file  
+
+  test/helpers/create-large-file.ts:undefined:undefined
+  ✖    0:0   Parsing error: ESLint was configured to lint <tsconfigRootDir>/test/helpers/create-large-file.ts with type information from parserOptions.project: <tsconfigRootDir>/node_modules/.cache/xo-linter/tsconfig.xo.json
+However, that TSConfig does not include this file, so type information is not available for it. Either:
+- Change ESLint's list of included files to not include this file
+- Change that TSConfig to include this file
+- Create a new TSConfig that includes this file and include it in your parserOptions.project
+See the typescript-eslint docs for more info: https://tseslint.com/none-of-those-tsconfigs-include-this-file        
+
+  test/helpers/index.ts:undefined:undefined
+  ✖    0:0   Parsing error: ESLint was configured to lint <tsconfigRootDir>/test/helpers/index.ts with type information from parserOptions.project: <tsconfigRootDir>/node_modules/.cache/xo-linter/tsconfig.xo.json
+However, that TSConfig does not include this file, so type information is not available for it. Either:
+- Change ESLint's list of included files to not include this file
+- Change that TSConfig to include this file
+- Create a new TSConfig that includes this file and include it in your parserOptions.project
+See the typescript-eslint docs for more info: https://tseslint.com/none-of-those-tsconfigs-include-this-file                    
+
+  test/helpers/parse-body.ts:undefined:undefined
+  ✖    0:0   Parsing error: ESLint was configured to lint <tsconfigRootDir>/test/helpers/parse-body.ts with type information from parserOptions.project: <tsconfigRootDir>/node_modules/.cache/xo-linter/tsconfig.xo.json
+However, that TSConfig does not include this file, so type information is not available for it. Either:
+- Change ESLint's list of included files to not include this file
+- Change that TSConfig to include this file
+- Create a new TSConfig that includes this file and include it in your parserOptions.project
+See the typescript-eslint docs for more info: https://tseslint.com/none-of-those-tsconfigs-include-this-file               
+
+  test/helpers/with-page.ts:undefined:undefined
+  ✖    0:0   Parsing error: ESLint was configured to lint <tsconfigRootDir>/test/helpers/with-page.ts with type information from parserOptions.project: <tsconfigRootDir>/node_modules/.cache/xo-linter/tsconfig.xo.json
+However, that TSConfig does not include this file, so type information is not available for it. Either:
+- Change ESLint's list of included files to not include this file
+- Change that TSConfig to include this file
+- Create a new TSConfig that includes this file and include it in your parserOptions.project
+See the typescript-eslint docs for more info: https://tseslint.com/none-of-those-tsconfigs-include-this-file                
+
+  test/helpers/with-performance.ts:undefined:undefined
+  ✖    0:0   Parsing error: ESLint was configured to lint <tsconfigRootDir>/test/helpers/with-performance.ts with type information from parserOptions.project: <tsconfigRootDir>/node_modules/.cache/xo-linter/tsconfig.xo.json
+However, that TSConfig does not include this file, so type information is not available for it. Either:
+- Change ESLint's list of included files to not include this file
+- Change that TSConfig to include this file
+- Create a new TSConfig that includes this file and include it in your parserOptions.project
+See the typescript-eslint docs for more info: https://tseslint.com/none-of-those-tsconfigs-include-this-file         
+
+  6 warnings
+  24 errors
+

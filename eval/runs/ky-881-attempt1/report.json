@@ -1,0 +1,296 @@
+{
+  "checks": [
+    {
+      "findings": [],
+      "kind": "secrets",
+      "language": "common",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 6
+    },
+    {
+      "findings": [],
+      "hint": "Dependency audit needs api.osv.dev",
+      "kind": "dependencies",
+      "language": "common",
+      "outcome": "skipped",
+      "reason": "offline",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 997
+    },
+    {
+      "findings": [],
+      "hint": "lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+      "kind": "lint",
+      "language": "typescript",
+      "outcome": "skipped",
+      "reason": "no_project_config",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 0
+    },
+    {
+      "findings": [],
+      "hint": "Install vitest or jest in the project environment",
+      "kind": "coverage",
+      "language": "typescript",
+      "outcome": "skipped",
+      "reason": "tool_missing",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 0
+    },
+    {
+      "dependency_state": "trusted",
+      "findings": [],
+      "kind": "typecheck",
+      "language": "typescript",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 18898
+    },
+    {
+      "dependency_state": "trusted",
+      "findings": [],
+      "kind": "typecheck",
+      "language": "typescript",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "base",
+      "wall_time_ms": 7707
+    }
+  ],
+  "deferred": [
+    {
+      "reason": "no_endpoint",
+      "step": "triage"
+    },
+    {
+      "reason": "no_endpoint",
+      "step": "agents"
+    },
+    {
+      "reason": "no_endpoint",
+      "step": "verify"
+    }
+  ],
+  "excluded": [
+    {
+      "path": "source/utils/body.ts",
+      "reason": "coverage_not_instrumented"
+    }
+  ],
+  "findings": [],
+  "footer": {
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "typecheck .: dependencies_trusted: results use unverified dependencies",
+      "Graph references use syntax and text; no language server was used",
+      "Offline applies to Rio; tool and test processes were not network-isolated",
+      "dependencies_trusted: results were computed against unverified dependencies"
+    ],
+    "suppressions": [],
+    "tool_versions": {
+      "typescript:.:eslint": "v9.39.5",
+      "typescript:.:tsc": "Version 5.9.3"
+    }
+  },
+  "impact": {
+    "symbols": [
+      {
+        "path": "source/types/options.ts",
+        "references_per_hop": [
+          2,
+          16
+        ],
+        "symbol_path": "options.KyOptions",
+        "test_referenced": false,
+        "unresolved": 1
+      },
+      {
+        "path": "source/types/options.ts",
+        "references_per_hop": [
+          2,
+          31
+        ],
+        "symbol_path": "options.Progress",
+        "test_referenced": true,
+        "unresolved": 0
+      },
+      {
+        "path": "source/utils/body.ts",
+        "references_per_hop": [
+          0,
+          0
+        ],
+        "symbol_path": "body.withProgress.flush",
+        "test_referenced": false,
+        "unresolved": 0
+      },
+      {
+        "path": "test/browser.ts",
+        "references_per_hop": [
+          0,
+          0
+        ],
+        "symbol_path": "",
+        "test_referenced": false,
+        "unresolved": 0
+      },
+      {
+        "path": "test/browser.ts",
+        "references_per_hop": [
+          6,
+          15
+        ],
+        "symbol_path": "browser.onDownloadProgress",
+        "test_referenced": true,
+        "unresolved": 1
+      },
+      {
+        "path": "test/stream.ts",
+        "references_per_hop": [
+          0,
+          0
+        ],
+        "symbol_path": "",
+        "test_referenced": false,
+        "unresolved": 0
+      },
+      {
+        "path": "test/stream.ts",
+        "references_per_hop": [
+          6,
+          15
+        ],
+        "symbol_path": "stream.onDownloadProgress",
+        "test_referenced": true,
+        "unresolved": 1
+      },
+      {
+        "path": "test/stream.ts",
+        "references_per_hop": [
+          6,
+          15
+        ],
+        "symbol_path": "stream.onUploadProgress",
+        "test_referenced": true,
+        "unresolved": 1
+      }
+    ],
+    "truncated": false,
+    "unresolved": 4
+  },
+  "incomplete": [
+    {
+      "findings": [],
+      "hint": "Dependency audit needs api.osv.dev",
+      "kind": "dependencies",
+      "language": "common",
+      "outcome": "skipped",
+      "reason": "offline",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 997
+    },
+    {
+      "findings": [],
+      "hint": "lint runs only against the project's own rules; add an ESLint or Ruff configuration",
+      "kind": "lint",
+      "language": "typescript",
+      "outcome": "skipped",
+      "reason": "no_project_config",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 0
+    },
+    {
+      "findings": [],
+      "hint": "Install vitest or jest in the project environment",
+      "kind": "coverage",
+      "language": "typescript",
+      "outcome": "skipped",
+      "reason": "tool_missing",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 0
+    }
+  ],
+  "metrics": {
+    "checks": [
+      {
+        "kind": "secrets",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 6
+      },
+      {
+        "kind": "dependencies",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 997
+      },
+      {
+        "kind": "lint",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "kind": "coverage",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "kind": "typecheck",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 18898
+      },
+      {
+        "kind": "typecheck",
+        "root": ".",
+        "version": "base",
+        "wall_time_ms": 7707
+      }
+    ],
+    "tool_versions": {
+      "typescript:.:eslint": "v9.39.5",
+      "typescript:.:tsc": "Version 5.9.3"
+    },
+    "wall_time_ms": 124976
+  },
+  "review": {
+    "base": "0bda554d448c1b57c17a5c18114432c02465d467",
+    "chain": [
+      "eval-ky-trusted-capability-probe"
+    ],
+    "head": "db318a71b0ba7ff2c52896ac46682f7914c9a82b",
+    "id": "a0ac92105a08bb9f",
+    "mode": "branch",
+    "profile": "eval-ky-trusted-capability-probe",
+    "rio_version": "0.1.0",
+    "run_id": "01M6MSQNJP1C3N4JNKBP0ZSJ37"
+  },
+  "risks": [],
+  "schema": "rio-report-v1",
+  "status": "incomplete",
+  "summary": {
+    "fixed": 0,
+    "pre_existing": 0,
+    "suppressed": 0
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "repository": "sindresorhus/ky",
+  "pr": "https://github.com/sindresorhus/ky/pull/578",
+  "case_id": "578",
+  "languages": [
+    "typescript"
+  ],
+  "reviewer": "sub-agent eval-ky (automated)",
+  "verdict_source": "automated",
+  "commands": [
+    "cwd=/tmp/rio-eval-ltxwhmcw argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/sindresorhus/ky.git\", \"/tmp/rio-eval-ltxwhmcw/head\"]",
+    "cwd=/tmp/rio-eval-ltxwhmcw/head argv=[\"git\", \"fetch\", \"origin\", \"2d56baf6739a49655cbbe74b5083c0350511bbed\", \"ebfc6f4dad3764086ab4be39ec48f7b83058b7dd\"]",
+    "cwd=/tmp/rio-eval-ltxwhmcw/head argv=[\"git\", \"merge-base\", \"2d56baf6739a49655cbbe74b5083c0350511bbed\", \"ebfc6f4dad3764086ab4be39ec48f7b83058b7dd\"]",
+    "cwd=/tmp/rio-eval-ltxwhmcw/head argv=[\"git\", \"checkout\", \"--detach\", \"ebfc6f4dad3764086ab4be39ec48f7b83058b7dd\"]",
+    "cwd=/tmp/rio-eval-ltxwhmcw argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/tmp/rio-eval-ltxwhmcw/head\", \"/tmp/rio-eval-ltxwhmcw/base\"]",
+    "cwd=/tmp/rio-eval-ltxwhmcw/base argv=[\"git\", \"checkout\", \"--detach\", \"2d56baf6739a49655cbbe74b5083c0350511bbed\"]",
+    "cwd=/tmp/rio-eval-ltxwhmcw/base argv=[\"python3\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-setup/attach-dependencies.py\", \"578\"]",
+    "cwd=/tmp/rio-eval-ltxwhmcw/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/tmp/rio-eval-ltxwhmcw/head argv=[\"python3\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-setup/attach-dependencies.py\", \"578\"]",
+    "cwd=/tmp/rio-eval-ltxwhmcw/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/tmp/rio-eval-ltxwhmcw/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/tmp/rio-eval-ltxwhmcw/head argv=[\"node\", \"--version\"]",
+    "cwd=/tmp/rio-eval-ltxwhmcw/head argv=[\"npm\", \"--version\"]",
+    "cwd=/tmp/rio-eval-ltxwhmcw/head argv=[\"corepack\", \"--version\"]",
+    "cwd=/tmp/rio-eval-ltxwhmcw/head argv=[\"python3\", \"--version\"]",
+    "cwd=/tmp/rio-eval-ltxwhmcw/head argv=[\"uv\", \"--version\"]",
+    "cwd=/tmp/rio-eval-ltxwhmcw/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-578/profile.yaml\"]",
+    "cwd=/tmp/rio-eval-ltxwhmcw/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/tmp/rio-eval-ltxwhmcw/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"2d56baf6739a49655cbbe74b5083c0350511bbed\", \"--format\", \"json\", \"--offline\", \"--profile\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-578/profile.yaml\"]"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-578/commands.json; Rio binary SHA-256: 512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+    "Trusted-dependency observation, excluded from release scoring by the unchanged deterministic-v1 evaluator. Both root typecheck checks passed with dependency_state trusted; see baseline-observation.json. The evaluator flags baseline_classification_ran false both for trusted state and because disabled/unsupported lint is counted as an applicable failed pair.",
+    "The frozen npm installation is attached by symlink to each disposable checkout after manifest and installed metadata hash verification. Both sides have identical manifests; no upstream committed lockfile is claimed. See ../ky-setup/ dependency locks, pins, scripts and install plans.",
+    "XO lint and AVA coverage are unsupported adapter paths. The final profile explicitly disables these; the capability probe retains no_project_config/tool_missing skips. Offline auditing provides no dependency safety claim.",
+    "Independent evidence and all setup/flake attempts are preserved in ../ky-578-oracle or ../ky-881-oracle and ../ky-NOTES.md. No false-positive claim is inferred from a skipped check.",
+    "The positive oracle was preregistered before Rio: ../ky-578-oracle/positive-control-register.json. Original source was restored after the counterfactual; reviewed SHAs are public introducing commits, not a seeded mutation or the fixing PR."
+  ],
+  "independently_clean": false,
+  "positive_control": {
+    "kind": "real-pr",
+    "expected": [
+      {
+        "id": "ky-578-browser-node-namespace",
+        "mechanism": "type-error",
+        "evidence": "Independent TypeScript 5.4.5 browser oracle: tsc --pretty false -p tsconfig.eval-browser.json, extending original tsconfig with types: [] and skipLibCheck: false. Base exit 0 (base-browser-tsc.log); introducing head exit 2, source/types/request.ts(19,4) TS2503 Cannot find namespace NodeJS (head-browser-tsc.log). The only added ambient Node reference is traced by the PR diff and later fix #623. Default repo tsc exits 0 at both SHAs; this expectation tests public browser type compatibility, which requires a consumer configuration Rio may not select.",
+        "finding_ids": []
+      }
+    ]
+  },
+  "misses": [
+    {
+      "id": "miss/ky-578-browser-node-namespace",
+      "scope_class": "deterministic",
+      "mechanism": "type-error",
+      "expectation_id": "ky-578-browser-node-namespace",
+      "description": "Introducing PR #578 adds a NodeJS namespace dependency to exported browser types; no Rio finding reports it.",
+      "evidence": "../ky-578-oracle/base-browser-tsc-reinstalled.log exits 0; head-browser-tsc-reinstalled.log exits 2 with source/types/request.ts(19,4) TS2503. The original default config passes both sides (tsc-reinstalled logs). Applying exactly the later #623 substitution yields exit 0 (head-browser-tsc-fixed.log and counterfactual-fix.diff). Rio report.json has zero findings/risks and successful default-config head/base typechecks. This is a consumer-target/configuration coverage limitation, not a claim that Rio missed a diagnostic emitted by its chosen compiler invocation. Trusted setup remains excluded from recall metrics."
+    }
+  ],
+  "findings": {}
+}

@@ -1,0 +1,20 @@
+{
+  "assessed_utc": "2026-11-05T02:50:37.469028+00:00",
+  "repository": "sindresorhus/ky",
+  "pr": 881,
+  "independently_clean_change": true,
+  "basis": [
+    "Original source reviewed in change.diff: flush always emits final progress with previousChunk or an empty Uint8Array, and documentation/tests are consistent.",
+    "tsc and browser-only tsc pass at both pinned SHAs. Build and test-d type checks pass at both SHAs.",
+    "Sequential XO on all four changed TypeScript files exits 0 at both SHAs (base/head-xo-changed.log). Full XO has one identical pre-existing no-meaningless-void-operator error at untouched test/http-error.ts:218, confirmed by repaired base-xo-serial.log and head-xo.log.",
+    "Non-browser AVA suite: base 557 tests passed, 2 declared known failures (base-node-tests-final.log); head 559 tests passed, 2 declared known failures (head-node-tests-slow.log).",
+    "Focused stream suite: base 17/17, head 19/19, including both new empty-body progress tests.",
+    "Maintainer-authored and merged; published head checks show successful Node.js 22/24/latest CI runs."
+  ],
+  "limitations": [
+    "No local browser engine execution or coverage instrumentation. Browser-only tests were reviewed and type checked; public CI success is supporting evidence, not local test execution.",
+    "Initial full Node suites had cold-start timeouts and a hanging-hook test failure/unhandled rejection on unchanged code at both SHAs. All attempts retained; later unchanged reruns passed.",
+    "This is a clean-change assessment; the entire upstream checkout is not lint-clean under the frozen current transitive dependency resolution.",
+    "Offline OSV audit is not evidence of dependency safety."
+  ]
+}

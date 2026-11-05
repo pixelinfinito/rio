@@ -1,0 +1,31 @@
+
+  source/utils/merge.ts:206:1
+  ⚠   206:1   Unexpected todo comment: TODO: Make this strongly-typed (no....              no-warning-comments
+  ⚠   207:94  Arrow function has a complexity of 41. Maximum allowed is 20.                complexity
+  ⚠   240:6   Blocks are nested too deeply (5). Maximum allowed is 4.                      max-depth
+  ⚠   258:6   Blocks are nested too deeply (5). Maximum allowed is 4.                      max-depth
+
+  test/hooks.ts:1512:1
+  ⚠  1512:1   File has too many lines (5408). Maximum allowed is 1500.                     max-lines
+
+  test/main.ts:1512:1
+  ⚠  1512:1   File has too many lines (2884). Maximum allowed is 1500.                     max-lines
+
+  test/methods.ts:75:3
+  ⚠    75:3   Unexpected todo comment: TODO: Is it correct for this to throw....           no-warning-comments
+
+  test/retry.ts:1515:1
+  ⚠  1515:1   File has too many lines (3196). Maximum allowed is 1500.                     max-lines
+
+  source/core/Ky.ts:182:56
+  ⚠   182:56  Async arrow function has a complexity of 24. Maximum allowed is 20.          complexity
+
+  source/types/ResponsePromise.ts:21:2
+  ⚠    21:2   Unexpected todo comment: TODO: Use `json<T extends JSONValue>():....         no-warning-comments
+
+  test/http-error.ts:218:4
+  ✖   218:4   void operator is useless here; it should only discard a call's return value  @typescript-eslint/no-meaningless-void-operator
+
+  10 warnings
+  1 error
+

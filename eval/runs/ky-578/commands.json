@@ -1,0 +1,358 @@
+{
+  "schema": "rio-eval-runner-v1",
+  "repository": "sindresorhus/ky",
+  "pr": "https://github.com/sindresorhus/ky/pull/578",
+  "started_utc": "2026-11-05T02:48:37.834778+00:00",
+  "rio_binary": "/home/ubuntu/rio/target/release/rio",
+  "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-checkout",
+        "https://github.com/sindresorhus/ky.git",
+        "/tmp/rio-eval-ltxwhmcw/head"
+      ],
+      "cwd": "/tmp/rio-eval-ltxwhmcw",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-578/01-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-578/01-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 19080
+    },
+    {
+      "argv": [
+        "git",
+        "fetch",
+        "origin",
+        "2d56baf6739a49655cbbe74b5083c0350511bbed",
+        "ebfc6f4dad3764086ab4be39ec48f7b83058b7dd"
+      ],
+      "cwd": "/tmp/rio-eval-ltxwhmcw/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-578/02-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-578/02-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 3905
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "2d56baf6739a49655cbbe74b5083c0350511bbed",
+        "ebfc6f4dad3764086ab4be39ec48f7b83058b7dd"
+      ],
+      "cwd": "/tmp/rio-eval-ltxwhmcw/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-578/03-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-578/03-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 10
+    },
+    {
+      "argv": [
+        "git",
+        "checkout",
+        "--detach",
+        "ebfc6f4dad3764086ab4be39ec48f7b83058b7dd"
+      ],
+      "cwd": "/tmp/rio-eval-ltxwhmcw/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-578/04-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-578/04-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 320
+    },
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-hardlinks",
+        "--no-checkout",
+        "/tmp/rio-eval-ltxwhmcw/head",
+        "/tmp/rio-eval-ltxwhmcw/base"
+      ],
+      "cwd": "/tmp/rio-eval-ltxwhmcw",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-578/05-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-578/05-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 419
+    },
+    {
+      "argv": [
+        "git",
+        "checkout",
+        "--detach",
+        "2d56baf6739a49655cbbe74b5083c0350511bbed"
+      ],
+      "cwd": "/tmp/rio-eval-ltxwhmcw/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-578/06-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-578/06-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 1224
+    },
+    {
+      "argv": [
+        "python3",
+        "/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-setup/attach-dependencies.py",
+        "578"
+      ],
+      "cwd": "/tmp/rio-eval-ltxwhmcw/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-578/07-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-578/07-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 166
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "cwd": "/tmp/rio-eval-ltxwhmcw/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-578/08-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-578/08-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 120
+    },
+    {
+      "argv": [
+        "python3",
+        "/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-setup/attach-dependencies.py",
+        "578"
+      ],
+      "cwd": "/tmp/rio-eval-ltxwhmcw/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-578/09-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-578/09-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 128
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "cwd": "/tmp/rio-eval-ltxwhmcw/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-578/10-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-578/10-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 121
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-eval-ltxwhmcw/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-eval-ltxwhmcw/config",
+        "RIO_CACHE_DIR": "/tmp/rio-eval-ltxwhmcw/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-578/rio-version.txt",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-578/11-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 14
+    },
+    {
+      "argv": [
+        "node",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-eval-ltxwhmcw/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-eval-ltxwhmcw/config",
+        "RIO_CACHE_DIR": "/tmp/rio-eval-ltxwhmcw/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-578/12-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-578/12-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 34
+    },
+    {
+      "argv": [
+        "npm",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-eval-ltxwhmcw/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-eval-ltxwhmcw/config",
+        "RIO_CACHE_DIR": "/tmp/rio-eval-ltxwhmcw/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-578/13-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-578/13-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 472
+    },
+    {
+      "argv": [
+        "corepack",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-eval-ltxwhmcw/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-eval-ltxwhmcw/config",
+        "RIO_CACHE_DIR": "/tmp/rio-eval-ltxwhmcw/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-578/14-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-578/14-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 1078
+    },
+    {
+      "argv": [
+        "python3",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-eval-ltxwhmcw/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-eval-ltxwhmcw/config",
+        "RIO_CACHE_DIR": "/tmp/rio-eval-ltxwhmcw/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-578/15-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-578/15-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 11
+    },
+    {
+      "argv": [
+        "uv",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-eval-ltxwhmcw/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-eval-ltxwhmcw/config",
+        "RIO_CACHE_DIR": "/tmp/rio-eval-ltxwhmcw/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-578/16-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-578/16-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 18
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "profile",
+        "show",
+        "/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-578/profile.yaml"
+      ],
+      "cwd": "/tmp/rio-eval-ltxwhmcw/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-eval-ltxwhmcw/config",
+        "RIO_CACHE_DIR": "/tmp/rio-eval-ltxwhmcw/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-578/resolved-profile.txt",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-578/17-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 3329
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "doctor",
+        "--format",
+        "json"
+      ],
+      "cwd": "/tmp/rio-eval-ltxwhmcw/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-eval-ltxwhmcw/config",
+        "RIO_CACHE_DIR": "/tmp/rio-eval-ltxwhmcw/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-578/doctor.json",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-578/18-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 4135
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "review",
+        "--base",
+        "2d56baf6739a49655cbbe74b5083c0350511bbed",
+        "--format",
+        "json",
+        "--offline",
+        "--profile",
+        "/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-578/profile.yaml"
+      ],
+      "cwd": "/tmp/rio-eval-ltxwhmcw/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-eval-ltxwhmcw/config",
+        "RIO_CACHE_DIR": "/tmp/rio-eval-ltxwhmcw/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-578/report.json",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-578/19-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 79039
+    }
+  ],
+  "installations": {
+    "base": {
+      "commands": [
+        [
+          "python3",
+          "/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-setup/attach-dependencies.py",
+          "578"
+        ]
+      ],
+      "succeeded": true,
+      "lockfiles": {}
+    },
+    "head": {
+      "commands": [
+        [
+          "python3",
+          "/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-setup/attach-dependencies.py",
+          "578"
+        ]
+      ],
+      "succeeded": true,
+      "lockfiles": {}
+    }
+  },
+  "failures": [
+    "Baseline/setup ineligible; fix before scoring"
+  ],
+  "network": "Installers may use network; Rio review uses --offline. Subprocesses are not isolated.",
+  "profile_sha256": "8e6eea2525b73db9b76b3d77dec4e471f3a4ed9990cca0a083a9a53e4f8a94e4",
+  "resolution": {
+    "base_sha": "2d56baf6739a49655cbbe74b5083c0350511bbed",
+    "head_sha": "ebfc6f4dad3764086ab4be39ec48f7b83058b7dd",
+    "source": "pinned argv"
+  },
+  "disposable_directory": "/tmp/rio-eval-ltxwhmcw",
+  "base_sha": "2d56baf6739a49655cbbe74b5083c0350511bbed",
+  "head_sha": "ebfc6f4dad3764086ab4be39ec48f7b83058b7dd",
+  "removed_environment_keys": [],
+  "resolved_profile_sha256": "1d410f8d0bc8a1c795ae6548c9e21ff4522c8fc5c8f165ea9ccee898fc1e946e",
+  "review_exit_code": 0,
+  "environment": {
+    "dependency_state": "trusted",
+    "baseline_ran": true,
+    "baseline_classification_ran": false,
+    "eligible": false,
+    "reasons": [
+      "coverage . head: skipped disabled Disabled in the profile",
+      "lint . head: skipped disabled Disabled in the profile",
+      "lint .: head=skipped, dependency_state=unavailable, base=unavailable",
+      "typecheck .: head=passed, dependency_state=trusted, base=passed"
+    ],
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "typecheck .: dependencies_trusted: results use unverified dependencies",
+      "Graph references use syntax and text; no language server was used",
+      "Offline applies to Rio; tool and test processes were not network-isolated",
+      "dependencies_trusted: results were computed against unverified dependencies"
+    ]
+  },
+  "finished_utc": "2026-11-05T02:50:40.595807+00:00"
+}

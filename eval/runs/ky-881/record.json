@@ -1,0 +1,151 @@
+{
+  "schema": "rio-eval-record-v1",
+  "methodology": "deterministic-v1",
+  "repository": "sindresorhus/ky",
+  "pr": "https://github.com/sindresorhus/ky/pull/881",
+  "case_id": "881",
+  "languages": [
+    "typescript"
+  ],
+  "reviewer": "sub-agent eval-ky (automated)",
+  "verdict_source": "automated",
+  "independently_clean": true,
+  "commands": [
+    "cwd=/tmp/rio-eval-jzp9e4r_ argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/sindresorhus/ky.git\", \"/tmp/rio-eval-jzp9e4r_/head\"]",
+    "cwd=/tmp/rio-eval-jzp9e4r_/head argv=[\"git\", \"fetch\", \"origin\", \"0bda554d448c1b57c17a5c18114432c02465d467\", \"db318a71b0ba7ff2c52896ac46682f7914c9a82b\"]",
+    "cwd=/tmp/rio-eval-jzp9e4r_/head argv=[\"git\", \"merge-base\", \"0bda554d448c1b57c17a5c18114432c02465d467\", \"db318a71b0ba7ff2c52896ac46682f7914c9a82b\"]",
+    "cwd=/tmp/rio-eval-jzp9e4r_/head argv=[\"git\", \"checkout\", \"--detach\", \"db318a71b0ba7ff2c52896ac46682f7914c9a82b\"]",
+    "cwd=/tmp/rio-eval-jzp9e4r_ argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/tmp/rio-eval-jzp9e4r_/head\", \"/tmp/rio-eval-jzp9e4r_/base\"]",
+    "cwd=/tmp/rio-eval-jzp9e4r_/base argv=[\"git\", \"checkout\", \"--detach\", \"0bda554d448c1b57c17a5c18114432c02465d467\"]",
+    "cwd=/tmp/rio-eval-jzp9e4r_/base argv=[\"python3\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-setup/attach-dependencies.py\", \"881\"]",
+    "cwd=/tmp/rio-eval-jzp9e4r_/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/tmp/rio-eval-jzp9e4r_/head argv=[\"python3\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-setup/attach-dependencies.py\", \"881\"]",
+    "cwd=/tmp/rio-eval-jzp9e4r_/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/tmp/rio-eval-jzp9e4r_/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/tmp/rio-eval-jzp9e4r_/head argv=[\"node\", \"--version\"]",
+    "cwd=/tmp/rio-eval-jzp9e4r_/head argv=[\"npm\", \"--version\"]",
+    "cwd=/tmp/rio-eval-jzp9e4r_/head argv=[\"corepack\", \"--version\"]",
+    "cwd=/tmp/rio-eval-jzp9e4r_/head argv=[\"python3\", \"--version\"]",
+    "cwd=/tmp/rio-eval-jzp9e4r_/head argv=[\"uv\", \"--version\"]",
+    "cwd=/tmp/rio-eval-jzp9e4r_/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-881/profile.yaml\"]",
+    "cwd=/tmp/rio-eval-jzp9e4r_/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/tmp/rio-eval-jzp9e4r_/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"0bda554d448c1b57c17a5c18114432c02465d467\", \"--format\", \"json\", \"--offline\", \"--profile\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-881/profile.yaml\"]"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-run-ky/eval/runs/ky-881/commands.json; Rio binary SHA-256: 512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+    "Trusted-dependency observation, excluded from release scoring by the unchanged deterministic-v1 evaluator. Both root typecheck checks passed with dependency_state trusted; see baseline-observation.json. The evaluator flags baseline_classification_ran false both for trusted state and because disabled/unsupported lint is counted as an applicable failed pair.",
+    "The frozen npm installation is attached by symlink to each disposable checkout after manifest and installed metadata hash verification. Both sides have identical manifests; no upstream committed lockfile is claimed. See ../ky-setup/ dependency locks, pins, scripts and install plans.",
+    "XO lint and AVA coverage are unsupported adapter paths. The final profile explicitly disables these; the capability probe retains no_project_config/tool_missing skips. Offline auditing provides no dependency safety claim.",
+    "Independent evidence and all setup/flake attempts are preserved in ../ky-578-oracle or ../ky-881-oracle and ../ky-NOTES.md. No false-positive claim is inferred from a skipped check.",
+    "Negative control clean-change evidence: ../ky-881-oracle/clean-assessment.json. Final base/head non-browser tests pass 557/559 tests respectively, with two declared known failures each; stream tests pass 17/19 respectively; changed-file XO exits 0 at both. Full XO has the same independently verified pre-existing untouched error. No local browser-engine or coverage run is claimed.",
+    "This reruns the same pinned PR after the capability probe ../ky-881-attempt1, using explicitly disabled unsupported checks. The remaining runner exit 1 cannot be repaired into scoring eligibility while retaining the requested trusted ky setup; no locks/configs were committed to the upstream source, and no evaluator code was changed."
+  ],
+  "positive_control": {
+    "kind": "none",
+    "expected": []
+  },
+  "base_sha": "0bda554d448c1b57c17a5c18114432c02465d467",
+  "head_sha": "db318a71b0ba7ff2c52896ac46682f7914c9a82b",
+  "mode": "branch",
+  "review_id": "943d47185ec45f91",
+  "run_id": "01M6MSWPSQMRKDC34HDH7BCXK8",
+  "rio_version": "0.1.0",
+  "profile": "eval-ky-trusted",
+  "wall_time_ms": 33483,
+  "status": "incomplete",
+  "report_path": "eval/runs/ky-881/report.json",
+  "environment": {
+    "dependency_state": "trusted",
+    "baseline_ran": true,
+    "baseline_classification_ran": false,
+    "eligible": false,
+    "reasons": [
+      "coverage . head: skipped disabled Disabled in the profile",
+      "lint . head: skipped disabled Disabled in the profile",
+      "lint .: head=skipped, dependency_state=unavailable, base=unavailable",
+      "typecheck .: head=passed, dependency_state=trusted, base=passed"
+    ],
+    "checks": [
+      {
+        "findings": [],
+        "kind": "secrets",
+        "language": "common",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 2
+      },
+      {
+        "findings": [],
+        "hint": "Dependency audit needs api.osv.dev",
+        "kind": "dependencies",
+        "language": "common",
+        "outcome": "skipped",
+        "reason": "offline",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 495
+      },
+      {
+        "findings": [],
+        "hint": "Disabled in the profile",
+        "kind": "lint",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "disabled",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "findings": [],
+        "hint": "Disabled in the profile",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "disabled",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "dependency_state": "trusted",
+        "findings": [],
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 7401
+      },
+      {
+        "dependency_state": "trusted",
+        "findings": [],
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "base",
+        "wall_time_ms": 7903
+      }
+    ],
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "typecheck .: dependencies_trusted: results use unverified dependencies",
+      "Graph references use syntax and text; no language server was used",
+      "Offline applies to Rio; tool and test processes were not network-isolated",
+      "dependencies_trusted: results were computed against unverified dependencies"
+    ]
+  },
+  "findings": [],
+  "root_causes": [],
+  "misses": [],
+  "verdict": "environment-failure",
+  "reason": "Baseline/setup must be repaired before this PR can be scored."
+}

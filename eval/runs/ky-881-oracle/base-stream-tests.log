@@ -1,0 +1,21 @@
+
+  ✔ onDownloadProgress cancels original response body (496ms)
+  ✔ POST JSON with upload progress (732ms)
+  ✔ ReadableStream upload emits stable non-final progress and completes once (716ms)
+  ✔ beforeRequest replacement with smaller body completes upload progress correctly (744ms)
+  ✔ multiple beforeRequest Request hooks do not duplicate upload progress events (760ms)
+  ✔ beforeRequest body replacement followed by header hook keeps progress and headers (756ms)
+  ✔ missing content-length still uses original body size for upload progress (1s)
+  ✔ beforeRequest Request replacement preserves upload progress sizing (1s)
+  ✔ beforeRequest Request replacement with new body preserves upload progress sizing (1s)
+  ✔ beforeRequest replacement with larger body has monotonic upload progress (1s)
+  ✔ forced retry custom request has correct body size for upload progress (1s)
+  ✔ POST FormData with 10MB file upload progress (1s)
+  ✔ retry with beforeRequest body changes tracks per-attempt upload progress (1s)
+  ✔ forced retry custom request keeps upload progress (1s)
+  ✔ beforeRetry override updates upload progress after body change (1s)
+  ✔ forced retry with custom request updates upload progress size (1s)
+  ✔ multiple beforeRequest Request hooks do not duplicate upload progress events across retries (1s)
+  ─
+
+  17 tests passed

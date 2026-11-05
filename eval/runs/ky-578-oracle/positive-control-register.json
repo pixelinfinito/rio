@@ -1,0 +1,33 @@
+{
+  "registered_utc": "2026-11-05T02:47:39.019006+00:00",
+  "repository": "sindresorhus/ky",
+  "pr": "https://github.com/sindresorhus/ky/pull/578",
+  "kind": "real-pr",
+  "base_sha": "2d56baf6739a49655cbbe74b5083c0350511bbed",
+  "head_sha": "ebfc6f4dad3764086ab4be39ec48f7b83058b7dd",
+  "reviewer": "sub-agent eval-ky (automated)",
+  "verdict_source": "automated",
+  "expected": [
+    {
+      "id": "ky-578-browser-node-namespace",
+      "mechanism": "type-error",
+      "evidence": "Independent TypeScript 5.4.5 browser oracle: tsc --pretty false -p tsconfig.eval-browser.json, extending original tsconfig with types: [] and skipLibCheck: false. Base exit 0 (base-browser-tsc.log); introducing head exit 2, source/types/request.ts(19,4) TS2503 Cannot find namespace NodeJS (head-browser-tsc.log). The only added ambient Node reference is traced by the PR diff and later fix #623. Default repo tsc exits 0 at both SHAs; this expectation tests public browser type compatibility, which requires a consumer configuration Rio may not select.",
+      "finding_ids": []
+    }
+  ],
+  "oracle_base_exit": 0,
+  "oracle_head_exit": 2,
+  "profile_sha256": "8e6eea2525b73db9b76b3d77dec4e471f3a4ed9990cca0a083a9a53e4f8a94e4",
+  "dependency_pins": {
+    "external_node_modules": "/tmp/rio-ky-eval/578-head/node_modules",
+    "manifest_sha256": "e2ab9f8685aff494bb4b47d5b5229e55b1cd071f9edf1d4e163d56cb77fe5ad0",
+    "package_lock_sha256": "c5ee19a4a35bab01a56ebeb50dd1c3688d64e2f0ea53e0a055bf1c6ff215ab9b",
+    "installed_lock_sha256": "07dc774822413dbf3965b1957b33825c7ec412cb7fb4310f2d00cfb7936a7394"
+  },
+  "limitations": [
+    "Trusted installs are ineligible under deterministic-v1 methodology.",
+    "The browser consumer config is an independent oracle; Rio uses the original committed default config.",
+    "AVA coverage and XO lint are not supported by the selected Rio adapters."
+  ],
+  "post_reinstall_confirmation": "tsc-reinstalled passes at both SHAs; browser-tsc-reinstalled passes at base and fails TS2503 at head; applying just the later #623 substitution makes browser-tsc-fixed exit 0; original head source restored afterward. See head/base commands ledgers and counterfactual-fix.diff."
+}

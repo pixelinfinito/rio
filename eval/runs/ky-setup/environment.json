@@ -1,0 +1,36 @@
+{
+  "platform": "Linux-6.8.0-147-generic-x86_64-with-glibc2.39",
+  "uname": [
+    "Linux",
+    "vm-team-t3-dev-01",
+    "6.8.0-147-generic",
+    "#147-Ubuntu SMP PREEMPT_DYNAMIC Thu Sep 24 11:33:16 UTC 2026",
+    "x86_64",
+    "x86_64"
+  ],
+  "timezone": "Etc/UTC",
+  "rio_version": "rio 0.1.0 x86_64-unknown-linux-gnu b15dc8ff5001",
+  "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+  "profile_sha256": "8e6eea2525b73db9b76b3d77dec4e471f3a4ed9990cca0a083a9a53e4f8a94e4",
+  "applicable_rio_checks": [
+    "typecheck at root .",
+    "baseline at root .",
+    "secrets on diff",
+    "dependencies (offline; no advisory safety claim)"
+  ],
+  "unsupported_and_disabled": {
+    "lint": "XO package.json config is not recognized as ESLint project config",
+    "coverage": "AVA is not a supported TypeScript coverage runner"
+  },
+  "inherited_environment_whitelist": {},
+  "node_archives": {
+    "node-v18.20.8-linux-x64.tar.xz": {
+      "sha256": "5467ee62d6af1411d46b6a10e3fb5cacc92734dbcef465fea14e7b90993001c9",
+      "verified_against": "node18-SHASUMS256.txt"
+    },
+    "node-v22.20.0-linux-x64.tar.xz": {
+      "sha256": "00bbd05e306ea68b6e13e17360d0e2f680b493ef95f2fea1c4296ff7437530bc",
+      "verified_against": "node22-SHASUMS256.txt"
+    }
+  }
+}

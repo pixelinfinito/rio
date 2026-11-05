@@ -1,0 +1,148 @@
+[
+  {
+    "label": "node",
+    "argv": [
+      "node",
+      "--version"
+    ],
+    "cwd": "/tmp/rio-ky-eval/578-head",
+    "environment": {
+      "PATH": "/tmp/rio-ky-eval/node-v18.20.8-linux-x64/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 1293,
+    "log": "head-node.log"
+  },
+  {
+    "label": "npm",
+    "argv": [
+      "npm",
+      "--version"
+    ],
+    "cwd": "/tmp/rio-ky-eval/578-head",
+    "environment": {
+      "PATH": "/tmp/rio-ky-eval/node-v18.20.8-linux-x64/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 6640,
+    "log": "head-npm.log"
+  },
+  {
+    "label": "versions",
+    "argv": [
+      "npm",
+      "ls",
+      "--depth=0"
+    ],
+    "cwd": "/tmp/rio-ky-eval/578-head",
+    "environment": {
+      "PATH": "/tmp/rio-ky-eval/node-v18.20.8-linux-x64/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 72281,
+    "log": "head-versions.log"
+  },
+  {
+    "label": "tsc",
+    "argv": [
+      "node_modules/.bin/tsc",
+      "--noEmit",
+      "--pretty",
+      "false",
+      "-p",
+      "."
+    ],
+    "cwd": "/tmp/rio-ky-eval/578-head",
+    "environment": {
+      "PATH": "/tmp/rio-ky-eval/node-v18.20.8-linux-x64/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 33654,
+    "log": "head-tsc.log"
+  },
+  {
+    "label": "browser-tsc",
+    "argv": [
+      "node_modules/.bin/tsc",
+      "--pretty",
+      "false",
+      "-p",
+      "tsconfig.eval-browser.json"
+    ],
+    "cwd": "/tmp/rio-ky-eval/578-head",
+    "environment": {
+      "PATH": "/tmp/rio-ky-eval/node-v18.20.8-linux-x64/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+    },
+    "exit_code": 2,
+    "wall_time_ms": 4354,
+    "log": "head-browser-tsc.log"
+  },
+  {
+    "label": "clean",
+    "argv": [
+      "git",
+      "status",
+      "--short",
+      "--untracked-files=no"
+    ],
+    "cwd": "/tmp/rio-ky-eval/578-head",
+    "environment": {
+      "PATH": "/tmp/rio-ky-eval/node-v18.20.8-linux-x64/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 661,
+    "log": "head-clean.log"
+  },
+  {
+    "label": "tsc-reinstalled",
+    "argv": [
+      "node_modules/.bin/tsc",
+      "--noEmit",
+      "--pretty",
+      "false",
+      "-p",
+      "."
+    ],
+    "cwd": "/tmp/rio-ky-eval/578-head",
+    "environment": {
+      "PATH": "/tmp/rio-ky-eval/node-v18.20.8-linux-x64/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 4486,
+    "log": "head-tsc-reinstalled.log"
+  },
+  {
+    "label": "browser-tsc-reinstalled",
+    "argv": [
+      "node_modules/.bin/tsc",
+      "--pretty",
+      "false",
+      "-p",
+      "tsconfig.eval-browser.json"
+    ],
+    "cwd": "/tmp/rio-ky-eval/578-head",
+    "environment": {
+      "PATH": "/tmp/rio-ky-eval/node-v18.20.8-linux-x64/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+    },
+    "exit_code": 2,
+    "wall_time_ms": 3625,
+    "log": "head-browser-tsc-reinstalled.log"
+  },
+  {
+    "label": "browser-tsc-fixed",
+    "argv": [
+      "node_modules/.bin/tsc",
+      "--pretty",
+      "false",
+      "-p",
+      "tsconfig.eval-browser.json"
+    ],
+    "cwd": "/tmp/rio-ky-eval/578-head",
+    "environment": {
+      "PATH": "/tmp/rio-ky-eval/node-v18.20.8-linux-x64/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 3163,
+    "log": "head-browser-tsc-fixed.log"
+  }
+]

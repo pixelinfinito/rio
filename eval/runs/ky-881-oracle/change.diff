@@ -1,0 +1,258 @@
+diff --git a/readme.md b/readme.md
+index a37a55c..cf0468e 100644
+--- a/readme.md
++++ b/readme.md
+@@ -749,8 +749,8 @@ The function receives these arguments:
+ - `progress` is an object with these properties:
+   - `percent` is a number between 0 and 1 representing the progress percentage.
+   - `transferredBytes` is the number of bytes transferred so far.
+-  - `totalBytes` is the total number of bytes to be transferred. This is an estimate and may be 0 if the total size cannot be determined.
+-- `chunk` is an instance of `Uint8Array` containing the data that was received. Note: It's empty for the first call.
++  - `totalBytes` is the total number of bytes to be transferred. This is an estimate and may be 0 for an empty transfer or when the total size cannot be determined.
++- `chunk` is an instance of `Uint8Array` containing the data that was received. When an empty response body stream completes, the callback receives an empty chunk.
+ 
+ ```js
+ import ky from 'ky';
+@@ -758,7 +758,6 @@ import ky from 'ky';
+ const response = await ky('https://example.com', {
+ 	onDownloadProgress: (progress, chunk) => {
+ 		// Example output:
+-		// `0% - 0 of 1271 bytes`
+ 		// `100% - 1271 of 1271 bytes`
+ 		console.log(`${progress.percent * 100}% - ${progress.transferredBytes} of ${progress.totalBytes} bytes`);
+ 	}
+@@ -778,8 +777,8 @@ The function receives these arguments:
+ - `progress` is an object with these properties:
+   - `percent` is a number between 0 and 1 representing the progress percentage.
+   - `transferredBytes` is the number of bytes transferred so far.
+-  - `totalBytes` is the total number of bytes to be transferred. This is an estimate and may be 0 if the total size cannot be determined.
+-- `chunk` is an instance of `Uint8Array` containing the data that was sent. Note: It's empty for the last call.
++  - `totalBytes` is the total number of bytes to be transferred. This is an estimate and may be 0 for an empty transfer or when the total size cannot be determined.
++- `chunk` is an instance of `Uint8Array` containing the data that was sent. When an empty request body stream completes, the callback receives an empty chunk.
+ 
+ ```js
+ import ky from 'ky';
+@@ -788,7 +787,6 @@ const response = await ky.post('https://example.com/upload', {
+ 	body: largeFile,
+ 	onUploadProgress: (progress, chunk) => {
+ 		// Example output:
+-		// `0% - 0 of 1271 bytes`
+ 		// `100% - 1271 of 1271 bytes`
+ 		console.log(`${progress.percent * 100}% - ${progress.transferredBytes} of ${progress.totalBytes} bytes`);
+ 	}
+diff --git a/source/types/options.ts b/source/types/options.ts
+index bd0700c..2fa6e1b 100644
+--- a/source/types/options.ts
++++ b/source/types/options.ts
+@@ -25,7 +25,7 @@ export type Progress = {
+ 	transferredBytes: number;
+ 
+ 	/**
+-	The total number of bytes to be transferred. This is an estimate and may be `0` if the total size cannot be determined.
++	The total number of bytes to be transferred. This is an estimate and may be `0` for an empty transfer or when the total size cannot be determined.
+ 	*/
+ 	totalBytes: number;
+ };
+@@ -256,7 +256,7 @@ export type KyOptions = {
+ 	Download progress event handler.
+ 
+ 	@param progress - Object containing download progress information.
+-	@param chunk - Data that was received. Note: It's empty for the first call.
++	@param chunk - Data that was received. When an empty response body stream completes, the callback receives an empty chunk.
+ 
+ 	@example
+ 	```
+@@ -265,7 +265,6 @@ export type KyOptions = {
+ 	const response = await ky('https://example.com', {
+ 		onDownloadProgress: (progress, chunk) => {
+ 			// Example output:
+-			// `0% - 0 of 1271 bytes`
+ 			// `100% - 1271 of 1271 bytes`
+ 			console.log(`${progress.percent * 100}% - ${progress.transferredBytes} of ${progress.totalBytes} bytes`);
+ 		}
+@@ -280,7 +279,7 @@ export type KyOptions = {
+ 	Note: Requires [request stream support](https://caniuse.com/wf-fetch-request-streams) and HTTP/2 for HTTPS connections (in Chromium-based browsers). In unsupported environments, this handler is silently ignored.
+ 
+ 	@param progress - Object containing upload progress information.
+-	@param chunk - Data that was sent. Note: It's empty for the last call.
++	@param chunk - Data that was sent. When an empty request body stream completes, the callback receives an empty chunk.
+ 
+ 	@example
+ 	```
+@@ -290,7 +289,6 @@ export type KyOptions = {
+ 		body: largeFile,
+ 		onUploadProgress: (progress, chunk) => {
+ 			// Example output:
+-			// `0% - 0 of 1271 bytes`
+ 			// `100% - 1271 of 1271 bytes`
+ 			console.log(`${progress.percent * 100}% - ${progress.transferredBytes} of ${progress.totalBytes} bytes`);
+ 		}
+diff --git a/source/utils/body.ts b/source/utils/body.ts
+index c3ba19c..b83d9a7 100644
+--- a/source/utils/body.ts
++++ b/source/utils/body.ts
+@@ -68,10 +68,9 @@ const withProgress = (stream: ReadableStream<Uint8Array>, totalBytes: number, on
+ 			previousChunk = currentChunk;
+ 		},
+ 		flush() {
+-			if (previousChunk) {
+-				transferredBytes += previousChunk.byteLength;
+-				onProgress?.({percent: 1, totalBytes: Math.max(totalBytes, transferredBytes), transferredBytes}, previousChunk);
+-			}
++			const finalChunk = previousChunk ?? new Uint8Array();
++			transferredBytes += finalChunk.byteLength;
++			onProgress?.({percent: 1, totalBytes: Math.max(totalBytes, transferredBytes), transferredBytes}, finalChunk);
+ 		},
+ 	}));
+ };
+diff --git a/test/browser.ts b/test/browser.ts
+index 6e24676..fcd536f 100644
+--- a/test/browser.ts
++++ b/test/browser.ts
+@@ -194,7 +194,7 @@ defaultBrowsersTest('should copy origin response info when using `onDownloadProg
+ 	});
+ });
+ 
+-defaultBrowsersTest('should not copy response body with 204 status code when using `onDownloadProgress` ', async (t: ExecutionContext, page: Page) => {
++defaultBrowsersTest('should not copy response body with 204 status code when using `onDownloadProgress`', async (t: ExecutionContext, page: Page) => {
+ 	const status = 204;
+ 	const statusText = 'No content';
+ 	server.get('/', (_request, response) => {
+@@ -210,24 +210,20 @@ defaultBrowsersTest('should not copy response body with 204 status code when usi
+ 	await page.goto(server.url);
+ 	await addKyScriptToPage(page);
+ 	const data = await page.evaluate(async (url: string) => {
+-		const progress: any = [];
+-		let totalBytes = 0;
++		const progress: Progress[] = [];
+ 		const response = await globalThis.ky.get(`${url}/test`, {
+ 			onDownloadProgress(progressEvent) {
+ 				progress.push(progressEvent);
+ 			},
+-		}).then(async v => {
+-			totalBytes = Number(v.headers.get('content-length')) || 0;
+-			return ({
+-				headers: v.headers.get('X-ky-Header'),
+-				status: v.status,
+-				statusText: v.statusText,
+-			});
+ 		});
+ 		return {
+-			response,
++			response: {
++				headers: response.headers.get('X-ky-Header'),
++				status: response.status,
++				statusText: response.statusText,
++				text: await response.text(),
++			},
+ 			progress,
+-			totalBytes,
+ 		};
+ 	}, server.url);
+ 
+@@ -235,6 +231,7 @@ defaultBrowsersTest('should not copy response body with 204 status code when usi
+ 		status,
+ 		headers: 'ky',
+ 		statusText,
++		text: '',
+ 	});
+ 	t.deepEqual(data.progress, []);
+ });
+@@ -342,6 +339,36 @@ browserTest('onDownloadProgress works', [chromium, webkit], async (t: ExecutionC
+ 	t.is(result.text, 'meow');
+ });
+ 
++defaultBrowsersTest('onDownloadProgress completes for an empty response body', async (t: ExecutionContext, page: Page) => {
++	server.get('/', (_request, response) => {
++		response.end('meow');
++	});
++
++	server.get('/test', (_request, response) => {
++		response.header('content-length', '0').end();
++	});
++
++	await page.goto(server.url);
++	await addKyScriptToPage(page);
++
++	const result = await page.evaluate(async (url: string) => {
++		const progressEvents: Array<{progress: Progress; chunkLength: number}> = [];
++		const text = await globalThis.ky(`${url}/test`, {
++			onDownloadProgress(progress, chunk) {
++				progressEvents.push({progress, chunkLength: chunk.byteLength});
++			},
++		}).text();
++
++		return {progressEvents, text};
++	}, server.url);
++
++	t.is(result.text, '');
++	t.deepEqual(result.progressEvents, [{
++		progress: {percent: 1, totalBytes: 0, transferredBytes: 0},
++		chunkLength: 0,
++	}]);
++});
++
+ defaultBrowsersTest('throws if onDownloadProgress is not a function', async (t: ExecutionContext, page: Page) => {
+ 	server.get('/', (_request, response) => {
+ 		response.end();
+diff --git a/test/stream.ts b/test/stream.ts
+index b9b5729..5200290 100644
+--- a/test/stream.ts
++++ b/test/stream.ts
+@@ -4,6 +4,29 @@ import {createLargeBlob} from './helpers/create-large-file.js';
+ import {createHttpTestServer} from './helpers/create-http-test-server.js';
+ import {parseRawBody, parseJsonBody} from './helpers/parse-body.js';
+ 
++test('empty request body completes upload progress', async t => {
++	const server = await createHttpTestServer(t, {bodyParser: false});
++	server.post('/', async (request, response) => {
++		response.json({body: await parseRawBody(request)});
++	});
++
++	const progressEvents: Array<{progress: Progress; chunk: Uint8Array}> = [];
++	const response = await ky
++		.post(server.url, {
++			body: '',
++			onUploadProgress(progress, chunk) {
++				progressEvents.push({progress, chunk});
++			},
++		})
++		.json<{body: string}>();
++
++	t.is(response.body, '');
++	t.deepEqual(progressEvents, [{
++		progress: {percent: 1, totalBytes: 0, transferredBytes: 0},
++		chunk: new Uint8Array(),
++	}]);
++});
++
+ test('POST JSON with upload progress', async t => {
+ 	const server = await createHttpTestServer(t, {bodyParser: false});
+ 	server.post('/', async (request, response) => {
+@@ -517,6 +540,26 @@ test('ReadableStream upload emits stable non-final progress and completes once',
+ 	t.is(finalProgress.transferredBytes, response.receivedBytes);
+ });
+ 
++test('empty response body completes download progress', async t => {
++	const server = await createHttpTestServer(t);
++	server.get('/', (_request, response) => {
++		response.header('content-length', '0').end();
++	});
++
++	const progressEvents: Array<{progress: Progress; chunk: Uint8Array}> = [];
++	const responseText = await ky(server.url, {
++		onDownloadProgress(progress, chunk) {
++			progressEvents.push({progress, chunk});
++		},
++	}).text();
++
++	t.is(responseText, '');
++	t.deepEqual(progressEvents, [{
++		progress: {percent: 1, totalBytes: 0, transferredBytes: 0},
++		chunk: new Uint8Array(),
++	}]);
++});
++
+ test('onDownloadProgress cancels original response body', async t => {
+ 	let originalResponse: Response | undefined;
+ 	let didReportProgress = false;

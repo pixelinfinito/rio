@@ -1,0 +1,53 @@
+[
+  {
+    "pr": "881",
+    "command": [
+      "npm",
+      "install",
+      "--package-lock=true",
+      "--ignore-scripts",
+      "--no-audit",
+      "--no-fund"
+    ],
+    "log": "881-resolution-npm-debug.log",
+    "started_utc": "2026-11-05T02:19:44.370Z",
+    "exit_code": 0,
+    "runtime": "Node 22.20.0 / npm 10.9.3"
+  },
+  {
+    "pr": "578",
+    "command": [
+      "npm",
+      "install",
+      "--package-lock=true",
+      "--ignore-scripts",
+      "--no-audit",
+      "--no-fund",
+      "--prefix",
+      "/tmp/rio-ky-eval/578-head"
+    ],
+    "log": "578-resolution-npm-debug.log",
+    "started_utc": "2026-11-05T02:23:02.165Z",
+    "exit_code": 0,
+    "runtime": "Node 26.13.0 / npm 12.2.1 (resolution-only setup error; oracles use Node 18.20.8)"
+  },
+  {
+    "pr": "578",
+    "command": [
+      "npm",
+      "ci",
+      "--ignore-scripts",
+      "--package-lock=true",
+      "--no-audit",
+      "--no-fund",
+      "--prefer-offline"
+    ],
+    "cwd": "/tmp/rio-ky-eval/578-head",
+    "runtime": "Node 18.20.8 / npm 10.8.2",
+    "exit_code": 0,
+    "wall_time": "4m (npm console, rounded)",
+    "log": "578-pinned-reinstall.log",
+    "debug_log": "578-pinned-reinstall-npm-debug.log",
+    "started_utc": "2026-11-05T02:41:27.567Z"
+  }
+]

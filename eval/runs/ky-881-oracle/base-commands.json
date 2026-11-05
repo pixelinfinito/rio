@@ -1,0 +1,237 @@
+[
+  {
+    "label": "node",
+    "argv": [
+      "node",
+      "--version"
+    ],
+    "cwd": "/tmp/rio-ky-eval/881-base",
+    "environment": {
+      "PATH": "/tmp/rio-ky-eval/node-v22.20.0-linux-x64/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 725,
+    "log": "base-node.log"
+  },
+  {
+    "label": "npm",
+    "argv": [
+      "npm",
+      "--version"
+    ],
+    "cwd": "/tmp/rio-ky-eval/881-base",
+    "environment": {
+      "PATH": "/tmp/rio-ky-eval/node-v22.20.0-linux-x64/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 1084,
+    "log": "base-npm.log"
+  },
+  {
+    "label": "versions",
+    "argv": [
+      "npm",
+      "ls",
+      "--depth=0"
+    ],
+    "cwd": "/tmp/rio-ky-eval/881-base",
+    "environment": {
+      "PATH": "/tmp/rio-ky-eval/node-v22.20.0-linux-x64/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 2763,
+    "log": "base-versions.log"
+  },
+  {
+    "label": "tsc",
+    "argv": [
+      "node_modules/.bin/tsc",
+      "--noEmit",
+      "--pretty",
+      "false",
+      "-p",
+      "."
+    ],
+    "cwd": "/tmp/rio-ky-eval/881-base",
+    "environment": {
+      "PATH": "/tmp/rio-ky-eval/node-v22.20.0-linux-x64/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 7442,
+    "log": "base-tsc.log"
+  },
+  {
+    "label": "browser-tsc",
+    "argv": [
+      "node_modules/.bin/tsc",
+      "--pretty",
+      "false",
+      "-p",
+      "tsconfig.eval-browser.json"
+    ],
+    "cwd": "/tmp/rio-ky-eval/881-base",
+    "environment": {
+      "PATH": "/tmp/rio-ky-eval/node-v22.20.0-linux-x64/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 8109,
+    "log": "base-browser-tsc.log"
+  },
+  {
+    "label": "xo",
+    "argv": [
+      "node_modules/.bin/xo"
+    ],
+    "cwd": "/tmp/rio-ky-eval/881-base",
+    "environment": {
+      "PATH": "/tmp/rio-ky-eval/node-v22.20.0-linux-x64/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+    },
+    "exit_code": 1,
+    "wall_time_ms": 217860,
+    "log": "base-xo.log"
+  },
+  {
+    "label": "build",
+    "argv": [
+      "npm",
+      "run",
+      "build"
+    ],
+    "cwd": "/tmp/rio-ky-eval/881-base",
+    "environment": {
+      "PATH": "/tmp/rio-ky-eval/node-v22.20.0-linux-x64/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 41152,
+    "log": "base-build.log"
+  },
+  {
+    "label": "test-types",
+    "argv": [
+      "node_modules/.bin/tsc",
+      "--pretty",
+      "false",
+      "-p",
+      "tsconfig.test.json"
+    ],
+    "cwd": "/tmp/rio-ky-eval/881-base",
+    "environment": {
+      "PATH": "/tmp/rio-ky-eval/node-v22.20.0-linux-x64/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 12221,
+    "log": "base-test-types.log"
+  },
+  {
+    "label": "xo-serial",
+    "argv": [
+      "node_modules/.bin/xo"
+    ],
+    "cwd": "/tmp/rio-ky-eval/881-base",
+    "environment": {
+      "PATH": "/tmp/rio-ky-eval/node-v22.20.0-linux-x64/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+    },
+    "exit_code": 1,
+    "wall_time_ms": 34316,
+    "log": "base-xo-serial.log"
+  },
+  {
+    "label": "xo-changed",
+    "argv": [
+      "node_modules/.bin/xo",
+      "source/types/options.ts",
+      "source/utils/body.ts",
+      "test/browser.ts",
+      "test/stream.ts"
+    ],
+    "cwd": "/tmp/rio-ky-eval/881-base",
+    "environment": {
+      "PATH": "/tmp/rio-ky-eval/node-v22.20.0-linux-x64/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 17089,
+    "log": "base-xo-changed.log"
+  },
+  {
+    "label": "stream-tests",
+    "argv": [
+      "node_modules/.bin/ava",
+      "test/stream.ts",
+      "--timeout=2m",
+      "--concurrency=1"
+    ],
+    "cwd": "/tmp/rio-ky-eval/881-base",
+    "environment": {
+      "PATH": "/tmp/rio-ky-eval/node-v22.20.0-linux-x64/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 7832,
+    "log": "base-stream-tests.log"
+  },
+  {
+    "label": "node-tests-slow",
+    "argv": [
+      "node_modules/.bin/ava",
+      "test/**",
+      "!test/browser.ts",
+      "--timeout=2m",
+      "--concurrency=2"
+    ],
+    "cwd": "/tmp/rio-ky-eval/881-base",
+    "environment": {
+      "PATH": "/tmp/rio-ky-eval/node-v22.20.0-linux-x64/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+    },
+    "exit_code": 1,
+    "wall_time_ms": 54683,
+    "log": "base-node-tests-slow.log"
+  },
+  {
+    "label": "node-tests-final",
+    "argv": [
+      "node_modules/.bin/ava",
+      "test/**",
+      "!test/browser.ts",
+      "--timeout=2m",
+      "--concurrency=2"
+    ],
+    "cwd": "/tmp/rio-ky-eval/881-base",
+    "environment": {
+      "PATH": "/tmp/rio-ky-eval/node-v22.20.0-linux-x64/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 33897,
+    "log": "base-node-tests-final.log"
+  },
+  {
+    "cwd": "/tmp/rio-ky-eval/881-base",
+    "environment": {
+      "PATH": "/tmp/rio-ky-eval/node-v22.20.0-linux-x64/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+    },
+    "label": "node-tests",
+    "argv": [
+      "node_modules/.bin/ava",
+      "test/**",
+      "!test/browser.ts",
+      "--concurrency=2"
+    ],
+    "exit_code": 1,
+    "wall_time_ms": 162075,
+    "log": "base-node-tests.log"
+  },
+  {
+    "cwd": "/tmp/rio-ky-eval/881-base",
+    "environment": {
+      "PATH": "/tmp/rio-ky-eval/node-v22.20.0-linux-x64/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+    },
+    "label": "clean",
+    "argv": [
+      "git",
+      "status",
+      "--short",
+      "--untracked-files=no"
+    ],
+    "exit_code": 0,
+    "wall_time_ms": 131,
+    "log": "base-clean.log"
+  }
+]

@@ -1,0 +1,15 @@
+Warning: you are leaving 5 commits behind, not connected to
+any of your branches:
+
+  db318a7 Strengthen null-body progress coverage
+  075aed9 Clarify zero-byte progress behavior
+  259c6fc Improve empty response progress coverage
+  2c1ca5b Clarify progress callback chunk behavior
+  4a9ea2f Fix progress completion for empty bodies
+
+If you want to keep them by creating a new branch, this may be a good time
+to do so with:
+
+ git branch <new-branch-name> db318a7
+
+HEAD is now at 0bda554 Fix `signal` replacement when extending instances (#880)

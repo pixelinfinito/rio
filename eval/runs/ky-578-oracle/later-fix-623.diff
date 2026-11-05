@@ -1,0 +1,19 @@
+commit 32a720d925dfec076fc8267d8f3d11f1b33cd1af
+Author: Andreas Wiedel <ich@andreas-wiedel.de>
+Date:   Wed Aug 21 16:28:06 2024 +0200
+
+    Fix types for browsers (#623)
+
+diff --git a/source/types/request.ts b/source/types/request.ts
+index 1583b8b..bbaa74b 100644
+--- a/source/types/request.ts
++++ b/source/types/request.ts
+@@ -16,7 +16,7 @@ type UndiciBodyInit =
+ 	| Blob
+ 	| FormData
+ 	| Iterable<Uint8Array>
+-	| NodeJS.ArrayBufferView
++	| ArrayBufferView
+ 	| URLSearchParams
+ 	// eslint-disable-next-line @typescript-eslint/ban-types
+ 	| null
