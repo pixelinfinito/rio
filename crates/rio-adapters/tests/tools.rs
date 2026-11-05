@@ -192,3 +192,37 @@ async fn fake_tool_failures_are_distinguished_from_success_and_findings() {
         }
     ));
 }
+
+#[cfg(unix)]
+#[tokio::test]
+async fn vitest_version_comes_from_resolved_package_metadata() {
+    let root = tempfile::tempdir().unwrap();
+    fake(
+        root.path(),
+        "node_modules/.bin/vitest",
+        "echo vitest/3.0.0",
+        true,
+    );
+    std::fs::create_dir_all(root.path().join("node_modules/vitest")).unwrap();
+    std::fs::write(
+        root.path().join("node_modules/vitest/package.json"),
+        r#"{"name":"vitest","version":"4.1.5"}"#,
+    )
+    .unwrap();
+    let resolver = ToolResolver {
+        repository_root: root.path().into(),
+        search_path: Vec::new(),
+        virtual_env: None,
+    };
+    let tool = resolver
+        .resolve(
+            "vitest",
+            ".",
+            "typescript",
+            &ProcessSupervisor::default(),
+            CancellationToken::new(),
+        )
+        .await
+        .unwrap();
+    assert_eq!(tool.version, "4.1.5");
+}

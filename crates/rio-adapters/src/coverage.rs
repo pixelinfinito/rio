@@ -378,20 +378,7 @@ pub async fn run_coverage(
     let mut command = ToolCommand::new(tool.path.clone(), root.clone());
     let (module, report_path) = match tool.name.as_str() {
         "vitest" => {
-            command.args = vec![
-                "run".into(),
-                "--coverage".into(),
-                "--coverage.reporter=lcov".into(),
-                format!("--coverage.reportsDirectory={}", output.display()).into(),
-            ];
-            if vitest_supports_all(&tool.version) {
-                command.args.push("--coverage.all".into());
-            }
-            // Leave room for concurrent checks and prevent unbounded worker
-            // creation on hosts with many cores.
-            command
-                .args
-                .extend(["--maxWorkers=2".into(), "--minWorkers=1".into()]);
+            command = vitest_coverage_command(tool, &root, &output);
             ("rio/adapter-typescript", output.join("lcov.info"))
         }
         "jest" => {
@@ -573,4 +560,44 @@ pub fn vitest_supports_all(version: &str) -> bool {
         .next()
         .and_then(|part| part.parse::<u64>().ok())
         .is_some_and(|major| major < 4)
+}
+
+/// Version-specific argv is kept together so unsupported flags never reach CAC.
+pub fn vitest_coverage_command(
+    tool: &crate::ResolvedTool,
+    root: &std::path::Path,
+    output: &std::path::Path,
+) -> ToolCommand {
+    let mut command = ToolCommand::new(tool.path.clone(), root.into());
+    command.args = vec![
+        "run".into(),
+        "--coverage.enabled".into(),
+        "--coverage.reporter=lcov".into(),
+        format!("--coverage.reportsDirectory={}", output.display()).into(),
+    ];
+    if vitest_supports_all(&tool.version) {
+        command.args.push("--coverage.all".into());
+    }
+    let major = tool
+        .version
+        .trim_start_matches("vitest/")
+        .split('.')
+        .next()
+        .and_then(|part| part.parse::<u64>().ok());
+    if major == Some(1) {
+        for (name, value) in [
+            ("VITEST_MAX_THREADS", "2"),
+            ("VITEST_MIN_THREADS", "1"),
+            ("VITEST_MAX_FORKS", "2"),
+            ("VITEST_MIN_FORKS", "1"),
+        ] {
+            command.env.insert(name.into(), value.into());
+        }
+    } else {
+        command.args.push("--maxWorkers=2".into());
+        if matches!(major, Some(2 | 3)) {
+            command.args.push("--minWorkers=1".into());
+        }
+    }
+    command
 }

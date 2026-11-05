@@ -400,3 +400,30 @@ async fn python_parallel_coverage_data_is_combined_before_export() {
         assert_eq!(run.processes.len(), 3);
     }
 }
+
+#[test]
+fn vitest_worker_and_coverage_flags_match_installed_major() {
+    for version in ["1.1.0", "2.1.9", "3.2.4", "4.1.5"] {
+        let tool = ResolvedTool {
+            name: "vitest".into(),
+            path: "/bin/vitest".into(),
+            version: version.into(),
+            version_hint: None,
+        };
+        let command =
+            vitest_coverage_command(&tool, Path::new("/repo"), Path::new("/repo/coverage"));
+        let args: Vec<_> = command
+            .args
+            .iter()
+            .map(|arg| arg.to_str().unwrap())
+            .collect();
+        assert!(args.contains(&"--coverage.enabled"));
+        assert_eq!(
+            args.contains(&"--minWorkers=1"),
+            version.starts_with(['2', '3'])
+        );
+        assert_eq!(args.contains(&"--maxWorkers=2"), !version.starts_with('1'));
+        assert_eq!(args.contains(&"--coverage.all"), !version.starts_with('4'));
+        assert_eq!(command.env.is_empty(), !version.starts_with('1'));
+    }
+}
