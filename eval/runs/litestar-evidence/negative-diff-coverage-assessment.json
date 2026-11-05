@@ -1,0 +1,32 @@
+{
+  "litestar/_asgi/asgi_router.py": {
+    "changed_lines": [
+      187,
+      188,
+      189,
+      190,
+      191,
+      192
+    ],
+    "changed_executed_lines": [
+      187
+    ],
+    "changed_missing_lines": [],
+    "changed_excluded_lines": []
+  },
+  "litestar/handlers/asgi_handlers.py": {
+    "changed_lines": [
+      61,
+      62,
+      63,
+      64,
+      152,
+      153,
+      154,
+      155
+    ],
+    "changed_executed_lines": [],
+    "changed_missing_lines": [],
+    "changed_excluded_lines": []
+  }
+}

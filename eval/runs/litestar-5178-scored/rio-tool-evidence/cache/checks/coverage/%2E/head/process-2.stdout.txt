@@ -1,0 +1,1 @@
+Wrote JSON report to /run/user/1000/rio-litestar-eval/rio-eval-3jtmxsbz/cache/d700079437e9a30f/runs/01M6MTTXBHS47PN32H5AMADMJG/tools/tool.tmp-tnckbq/./.rio-coverage/coverage.json

@@ -1,0 +1,138 @@
+{
+  "schema": "rio-eval-record-v1",
+  "methodology": "deterministic-v1",
+  "repository": "litestar-org/litestar",
+  "pr": "https://github.com/litestar-org/litestar/pull/5178",
+  "case_id": "5178-tmpfs-provenance",
+  "languages": [
+    "python"
+  ],
+  "reviewer": "sub-agent eval-litestar (automated)",
+  "verdict_source": "automated",
+  "independently_clean": true,
+  "commands": [
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/litestar-org/litestar.git\", \"/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/head\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/head argv=[\"git\", \"fetch\", \"origin\", \"716f8b023b1c13e6f1e8ab08dfa1938f7923312d\", \"9870dce9dc2688e78fc43bc73e27eed4198893ac\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/head argv=[\"git\", \"merge-base\", \"716f8b023b1c13e6f1e8ab08dfa1938f7923312d\", \"9870dce9dc2688e78fc43bc73e27eed4198893ac\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/head argv=[\"git\", \"checkout\", \"--detach\", \"9870dce9dc2688e78fc43bc73e27eed4198893ac\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/head\", \"/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/base\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/base argv=[\"git\", \"checkout\", \"--detach\", \"716f8b023b1c13e6f1e8ab08dfa1938f7923312d\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/base argv=[\"uv\", \"sync\", \"--locked\", \"--all-groups\", \"--all-extras\", \"--no-editable\", \"--python\", \"3.12.12\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/base argv=[\".venv/bin/python\", \"-I\", \"-c\", \"import hashlib,pathlib,sysconfig; s=pathlib.Path(sysconfig.get_paths()[\\\"purelib\\\"]); names=[\\\"a1_coverage.pth\\\",\\\"_sphinx_jinja2_compat.pth\\\",\\\"sphinxcontrib_jsmath-1.0.1-py3.7-nspkg.pth\\\",\\\"distutils-precedence.pth\\\"]; [(print(str(p),hashlib.sha256(p.read_bytes()).hexdigest(),repr(p.read_text())),p.rename(p.with_suffix(\\\".pth.disabled\\\"))) for n in names if (p:=s/n).exists()]\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/head argv=[\"uv\", \"sync\", \"--locked\", \"--all-groups\", \"--all-extras\", \"--no-editable\", \"--python\", \"3.12.12\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/head argv=[\".venv/bin/python\", \"-I\", \"-c\", \"import hashlib,pathlib,sysconfig; s=pathlib.Path(sysconfig.get_paths()[\\\"purelib\\\"]); names=[\\\"a1_coverage.pth\\\",\\\"_sphinx_jinja2_compat.pth\\\",\\\"sphinxcontrib_jsmath-1.0.1-py3.7-nspkg.pth\\\",\\\"distutils-precedence.pth\\\"]; [(print(str(p),hashlib.sha256(p.read_bytes()).hexdigest(),repr(p.read_text())),p.rename(p.with_suffix(\\\".pth.disabled\\\"))) for n in names if (p:=s/n).exists()]\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/head argv=[\"node\", \"--version\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/head argv=[\"npm\", \"--version\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/head argv=[\"python3\", \"--version\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/head argv=[\"uv\", \"--version\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/profile.yaml\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"716f8b023b1c13e6f1e8ab08dfa1938f7923312d\", \"--format\", \"json\", \"--offline\", \"--profile\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/profile.yaml\"]"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/commands.json; Rio binary SHA-256: 512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+    "EXCLUDED setup attempt: head typecheck/lint dependency_state verified, but baseline_classification_ran=false. Rio misinterprets a non-editable local wheel direct_url.json as a live source link, refusing the base and advising commit/stash even though both reviewed commits are pinned and clean. Exact baseline_failed notes are in report.footer.notes.",
+    "Coverage tests succeeded, but coverage json inherited the repository global fail_under=50 threshold; the intentionally scoped suite covers 39%/41% overall, so JSON export returns 2. Rio labels this tool_crashed with hint tool exited with undeclared code 2. See rio-tool-evidence/cache/checks/coverage/%2E/head/process-{0,1,2}.stdout.txt. Valid JSON and diff-coverage analysis do not make the run eligible when this check failed.",
+    "Same pinned change is rerun in the -final directory, renaming only the verified non-editable root package direct_url.json to .json.disabled (original content/hash logged) and using external coverage-scoped.toml with identical instrumentation/exclusions and only global export fail_under=0. Project source/lockfiles/configuration and lint/type rules stay unchanged; trust stays false.",
+    "Runtime CPython 3.12.12, uv 0.13.7; profile 60m; PYTEST_ADDOPTS=tests/e2e/test_routing/test_path_mounting.py; offline audit excluded. Exact internal mypy invocation and captured config: rio-tool-evidence/commands.json; target is explicit configured packages litestar, tests, docs.examples."
+  ],
+  "positive_control": {
+    "kind": "none",
+    "expected": []
+  },
+  "base_sha": "716f8b023b1c13e6f1e8ab08dfa1938f7923312d",
+  "head_sha": "9870dce9dc2688e78fc43bc73e27eed4198893ac",
+  "mode": "branch",
+  "review_id": "d700079437e9a30f",
+  "run_id": "01M6MTA5BHKPE7GCTWMAH44MBA",
+  "rio_version": "0.1.0",
+  "profile": "eval-litestar-b15dc8ff5001",
+  "wall_time_ms": 95871,
+  "status": "incomplete",
+  "report_path": "eval/runs/litestar-5178-tmpfs/report.json",
+  "environment": {
+    "dependency_state": "verified",
+    "baseline_ran": false,
+    "baseline_classification_ran": false,
+    "eligible": false,
+    "reasons": [
+      "coverage . head: failed tool_crashed tool exited with undeclared code 2",
+      "lint .: head=passed, dependency_state=verified, base=unavailable",
+      "typecheck .: head=passed, dependency_state=verified, base=unavailable"
+    ],
+    "checks": [
+      {
+        "findings": [],
+        "kind": "secrets",
+        "language": "common",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 1
+      },
+      {
+        "findings": [],
+        "hint": "Dependency audit needs api.osv.dev",
+        "kind": "dependencies",
+        "language": "common",
+        "outcome": "skipped",
+        "reason": "offline",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "lint",
+        "language": "python",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 263
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "hint": "tool exited with undeclared code 2",
+        "kind": "coverage",
+        "language": "python",
+        "outcome": "failed",
+        "reason": "tool_crashed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 28063
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "typecheck",
+        "language": "python",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 74041
+      }
+    ],
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "lint .: baseline_failed: linked dependency litestar points at changed source : docs/release-notes/changelog.rst; commit or stash the linked package's changes",
+      "typecheck .: baseline_failed: linked dependency litestar points at changed source : docs/release-notes/changelog.rst; commit or stash the linked package's changes",
+      "Graph references use syntax and text; no language server was used",
+      "Offline applies to Rio; tool and test processes were not network-isolated"
+    ]
+  },
+  "findings": [],
+  "root_causes": [],
+  "misses": [],
+  "verdict": "environment-failure",
+  "reason": "Baseline/setup must be repaired before this PR can be scored."
+}

@@ -1,0 +1,50 @@
+{
+  "base": [
+    [
+      "uv",
+      "sync",
+      "--locked",
+      "--all-groups",
+      "--all-extras",
+      "--no-editable",
+      "--python",
+      "3.12.12"
+    ],
+    [
+      ".venv/bin/python",
+      "-I",
+      "-c",
+      "import hashlib,pathlib,sysconfig; s=pathlib.Path(sysconfig.get_paths()[\"purelib\"]); names=[\"a1_coverage.pth\",\"_sphinx_jinja2_compat.pth\",\"sphinxcontrib_jsmath-1.0.1-py3.7-nspkg.pth\",\"distutils-precedence.pth\"]; [(print(str(p),hashlib.sha256(p.read_bytes()).hexdigest(),repr(p.read_text())),p.rename(p.with_suffix(\".pth.disabled\"))) for n in names if (p:=s/n).exists()]"
+    ],
+    [
+      ".venv/bin/python",
+      "-I",
+      "-c",
+      "import hashlib,json,pathlib,sysconfig; s=pathlib.Path(sysconfig.get_paths()[\"purelib\"]); ps=list(s.glob(\"litestar-*.dist-info/direct_url.json\")); assert len(ps)==1,ps; p=ps[0]; text=p.read_text(); meta=json.loads(text); assert not meta.get(\"dir_info\",{}).get(\"editable\",False),meta; assert meta[\"url\"]==pathlib.Path.cwd().as_uri(),meta; print(str(p),hashlib.sha256(text.encode()).hexdigest(),text); p.rename(p.with_suffix(\".json.disabled\"))"
+    ]
+  ],
+  "head": [
+    [
+      "uv",
+      "sync",
+      "--locked",
+      "--all-groups",
+      "--all-extras",
+      "--no-editable",
+      "--python",
+      "3.12.12"
+    ],
+    [
+      ".venv/bin/python",
+      "-I",
+      "-c",
+      "import hashlib,pathlib,sysconfig; s=pathlib.Path(sysconfig.get_paths()[\"purelib\"]); names=[\"a1_coverage.pth\",\"_sphinx_jinja2_compat.pth\",\"sphinxcontrib_jsmath-1.0.1-py3.7-nspkg.pth\",\"distutils-precedence.pth\"]; [(print(str(p),hashlib.sha256(p.read_bytes()).hexdigest(),repr(p.read_text())),p.rename(p.with_suffix(\".pth.disabled\"))) for n in names if (p:=s/n).exists()]"
+    ],
+    [
+      ".venv/bin/python",
+      "-I",
+      "-c",
+      "import hashlib,json,pathlib,sysconfig; s=pathlib.Path(sysconfig.get_paths()[\"purelib\"]); ps=list(s.glob(\"litestar-*.dist-info/direct_url.json\")); assert len(ps)==1,ps; p=ps[0]; text=p.read_text(); meta=json.loads(text); assert not meta.get(\"dir_info\",{}).get(\"editable\",False),meta; assert meta[\"url\"]==pathlib.Path.cwd().as_uri(),meta; print(str(p),hashlib.sha256(text.encode()).hexdigest(),text); p.rename(p.with_suffix(\".json.disabled\"))"
+    ]
+  ]
+}

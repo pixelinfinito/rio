@@ -1,0 +1,509 @@
+[project]
+authors = [
+  { name = "The Litestar Project", email = "hello@litestar.dev" },
+]
+description = "Litestar - A production-ready, highly performant, extensible ASGI API Framework"
+keywords = ["api", "rest", "asgi", "litestar", "starlite"]
+license = { text = "MIT" }
+name = "litestar"
+readme = "docs/PYPI_README.md"
+requires-python = ">=3.11"
+version = "3.0.0b0"
+
+
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Environment :: Web Environment",
+  "License :: OSI Approved :: MIT License",
+  "Natural Language :: English",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Programming Language :: Python",
+  "Topic :: Internet :: WWW/HTTP",
+  "Topic :: Software Development :: Libraries",
+  "Topic :: Software Development",
+  "Typing :: Typed",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Information Technology",
+  "Intended Audience :: System Administrators",
+  "Topic :: Internet",
+  "Topic :: Internet :: WWW/HTTP :: HTTP Servers",
+  "Topic :: Software Development :: Libraries :: Application Frameworks",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = [
+  "anyio>=3",
+  "msgspec>=0.19.0",
+  "multidict>=6.0.2",
+  "typing-extensions",
+  "multipart>=1.3.1",
+  "sniffio>=1.3.1",
+]
+
+[project.optional-dependencies]
+annotated-types = ["annotated-types"]
+attrs = ["attrs"]
+brotli = ["brotli"]
+zstd = [
+    "backports-zstd>=1.3.0; python_version < '3.14'",
+]
+cli = ["click", "jsbeautifier", "rich>=13.0.0", "rich-click>=1.9.9", "uvicorn[standard]"]
+cryptography = ["cryptography"]
+full = [
+  """litestar[annotated-types, \
+    attrs, \
+    brotli, \
+    cli, \
+    cryptography, \
+    jinja, \
+    jwt, \
+    mako, \
+    minijinja, \
+    opentelemetry, \
+    piccolo, \
+    polyfactory, \
+    prometheus, \
+    pydantic, \
+    redis, \
+    sqlalchemy, \
+    standard, \
+    testing, \
+    valkey, \
+    htmx, \
+    yaml, \
+    zstd]""",
+]
+htmx = ["litestar-htmx>=0.4.0"]
+jinja = ["jinja2>=3.1.2"]
+jwt = ["cryptography", "pyjwt>=2.9.0"]
+mako = ["mako>=1.2.4"]
+minijinja = ["minijinja>=1.0.0"]
+opentelemetry = ["opentelemetry-instrumentation-asgi", "opentelemetry-sdk"]
+piccolo = ["piccolo", "litestar-piccolo"]
+polyfactory = ["polyfactory>=2.6.3"]
+prometheus = ["prometheus-client"]
+pydantic = ["pydantic>=2", "email-validator", "pydantic-extra-types"]
+redis = ["redis[hiredis]>=4.4.4,!=5.3.*"]  # 5.3.0 introduced some issues with the channels plugin; need to investigate
+sqlalchemy = ["advanced-alchemy @ git+https://github.com/litestar-org/advanced-alchemy.git@main"]
+standard = [
+  "litestar[cli]",
+  "jinja2",
+]
+testing = ["httpx>=0.22"]
+valkey = ["valkey[libvalkey]>=6.0.2"]
+yaml = ["pyyaml"]
+
+[project.scripts]
+litestar = "litestar.__main__:run_cli"
+
+[project.urls]
+Blog = "https://blog.litestar.dev"
+Changelog = "https://github.com/litestar-org/litestar/releases/"
+Discord = "https://discord.gg/litestar"
+Discussions = "https://github.com/litestar-org/litestar/discussions"
+Documentation = "https://docs.litestar.dev/"
+Funding = "https://github.com/sponsors/litestar-org"
+Homepage = "https://litestar.dev/"
+"Issue Tracker" = "https://github.com/litestar-org/litestar/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc"
+Reddit = "https://www.reddit.com/r/LitestarAPI"
+Repository = "https://github.com/litestar-org/litestar"
+Twitter = "https://twitter.com/LitestarAPI"
+
+
+[tool.hatch.build.targets.sdist]
+include = ['docs/PYPI_README.md', '/litestar']
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+
+[tool.uv]
+default-groups = ["dev", "linting", "test", "docs"]
+
+[dependency-groups]
+dev = [
+  "litestar[full]",
+  "beanie>=1.21.0",
+  "beautifulsoup4",
+  "fsspec>=2025",
+  "greenlet",
+  "hypothesis",
+  "python-dotenv",
+  "starlette",
+  "trio",
+  "aiosqlite",
+  "duckdb-engine",
+  "asyncpg>=0.29.0",
+  "psycopg[pool,binary]>=3.2.4; python_version < \"3.13\"",
+  "psycopg[pool]>=3.2.4; python_version >= \"3.13\"",
+  "psycopg2-binary",
+  "psutil>=5.9.8",
+  "hypercorn>=0.16.0",
+  "daphne>=4.0.0",
+  "opentelemetry-sdk",
+  "httpx-sse",
+  "structlog",
+]
+
+docs = [
+  "sphinx>=7.1.2,<10",  # 9.x signature parser regression filtered via nitpick_ignore_regex in docs/conf.py; see https://github.com/sphinx-doc/sphinx/issues/14089
+  "sphinx-autobuild>=2021.3.14",
+  "sphinx-copybutton>=0.5.2",
+  "sphinx-toolbox>=3.5.0",
+  "sphinx-design>=0.5.0",
+  "sphinx-click>=4.4.0",
+  "sphinxcontrib-mermaid>=0.9.2",
+  "auto-pytabs[sphinx]>=0.5.0",
+  "sphinx-paramlinks>=0.6.0",
+  #    "litestar-sphinx-theme @ {root:uri}/../litestar-sphinx-theme", # only needed when working on the theme
+  "litestar-sphinx-theme @ git+https://github.com/litestar-org/litestar-sphinx-theme.git@v3",
+  "asyncpg",
+  "psycopg[pool,binary]>=3.2.4; python_version < \"3.13\"",
+  "psycopg[pool]>=3.2.4; python_version >= \"3.13\"",
+]
+linting = [
+  "ruff>=0.11.5",
+  "mypy",
+  "pre-commit",
+  "slotscheck",
+  "codecov-cli",
+  "pyright>=1.1.403",
+  "asyncpg-stubs",
+  "types-beautifulsoup4",
+  "types-pyyaml",
+  "types-redis",
+  "types-psutil",
+]
+test = [
+  "litestar[testing]",
+  "aiohttp>=3.11.14",
+  "covdefaults",
+  "pytest>=8.4",
+  "pytest-asyncio>0.24.0",
+  "pytest-cov",
+  "pytest-lazy-fixtures",
+  "pytest-mock",
+  "pytest-rerunfailures",
+  "pytest-timeout",
+  "pytest-xdist",
+  "time-machine",
+  "zstandard",
+]
+
+[build-system]
+build-backend = "hatchling.build"
+requires = ["hatchling"]
+
+[tool.coverage.run]
+concurrency = ["multiprocessing", "thread"]
+omit = ["*/tests/*", "*/litestar/_kwargs/types.py"]
+parallel = true
+plugins = ["covdefaults"]
+source = ["litestar"]
+
+[tool.coverage.report]
+exclude_lines = ['except ImportError\b', 'if VERSION.startswith("1"):', 'if pydantic.VERSION.startswith("1"):']
+fail_under = 50
+
+[tool.pytest.ini_options]
+addopts = "--strict-markers --strict-config --dist=loadgroup -m 'not server_integration'"
+asyncio_default_fixture_loop_scope = "function"
+asyncio_mode = "auto"
+filterwarnings = [
+  "error",
+  # https://github.com/pytest-dev/pytest-asyncio/issues/724
+  "default:.*socket.socket:pytest.PytestUnraisableExceptionWarning",
+  "ignore::trio.TrioDeprecationWarning:anyio._backends._trio*:",
+  "ignore::DeprecationWarning:pkg_resources.*",
+  "ignore::DeprecationWarning:google.rpc",
+  "ignore::DeprecationWarning:google.gcloud",
+  "ignore::DeprecationWarning:google.iam",
+  "ignore::DeprecationWarning:google",
+  "ignore::DeprecationWarning:sphinxcontrib",
+  "ignore:.*Deprecated in litestar:DeprecationWarning",
+  "ignore:`general_plain_validator_function`:DeprecationWarning::",
+  "ignore: Python Debugger on exception enabled:litestar.exceptions.LitestarWarning:",
+  "ignore: datetime.datetime.utcnow:DeprecationWarning:time_machine",
+  "ignore:Use of deprecated default '__check_model__':DeprecationWarning:polyfactory:",
+  "ignore:Registering routes.*:litestar.exceptions.base_exceptions.LitestarWarning",
+  "ignore::pytest.PytestUnraisableExceptionWarning:", # ignore temporarily until the underlying issue can be fixed, which requires the new async-aware test client
+]
+markers = [
+  "sqlalchemy_integration: SQLAlchemy integration tests",
+  "server_integration: Test integration with ASGI server",
+]
+testpaths = ["tests", "docs/examples/testing"]
+xfail_strict = true
+
+[tool.mypy]
+enable_error_code = [
+  "truthy-bool",
+  "truthy-iterable",
+  "unused-awaitable",
+  "ignore-without-code",
+  "possibly-undefined",
+  "redundant-self",
+]
+packages = ["litestar", "tests", "docs.examples"]
+plugins = ["pydantic.mypy"]
+python_version = "3.11"
+
+disallow_any_generics = false
+local_partial_types = true
+show_error_codes = true
+strict = true
+warn_unreachable = true
+
+[[tool.mypy.overrides]]
+ignore_errors = true
+module = ["tests.examples.*", "tests.docker_service_fixtures"]
+
+[[tool.mypy.overrides]]
+disable_error_code = ["truthy-bool"]
+module = ["tests.*"]
+
+[[tool.mypy.overrides]]
+disable_error_code = ["assignment"]
+module = ["tests.unit.test_logging.*"]
+
+[[tool.mypy.overrides]]
+disallow_untyped_decorators = false
+module = ["tests.unit.test_kwargs.test_reserved_kwargs_injection"]
+
+[[tool.mypy.overrides]]
+disable_error_code = "index, union-attr"
+module = ["tests.unit.test_plugins.test_pydantic.test_openapi"]
+
+[[tool.mypy.overrides]]
+ignore_missing_imports = true
+module = [
+  "brotli.*",
+  "fsspec.*",
+  "jsbeautifier.*",
+  "pytimeparse.*",
+  "importlib_resources",
+  "exceptiongroup",
+  "zstandard",
+  "zstandard.*"
+]
+
+[[tool.mypy.overrides]]
+module = [
+  "litestar.plugins.pydantic.*",
+  "tests.unit.test_logging.test_logging_config",
+  "litestar.openapi.spec.base",
+  "litestar.utils.helpers",
+  "litestar.channels.plugin",
+  "litestar.handlers.http_handlers._utils",
+]
+warn_unused_ignores = false
+
+[[tool.mypy.overrides]]
+disable_error_code = "arg-type"
+module = ["litestar.openapi.spec.base", "litestar._asgi.routin_trie.traversal", "litestar.plugins.pydantic.plugins.int"]
+warn_unused_ignores = false
+
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+warn_required_dynamic_aliases = true
+warn_untyped_fields = true
+
+[tool.pyright]
+disableBytesTypePromotions = true
+exclude = [
+  "test_apps",
+  "tools",
+  "docs",
+  "tests/examples",
+  "tests/docker_service_fixtures.py",
+  "litestar/plugins/pydantic/plugins/di.py",
+  "litestar/plugins/pydantic/plugins/init.py",
+  "litestar/plugins/pydantic/plugins/schema.py",
+  "litestar/plugins/pydantic/dto_factory.py",
+  "tests/unit/test_plugins/test_pydantic/test_openapi.py",
+  "tests/unit/test_repository/test_generic_mock_repository.py",
+  "**/node_modules/**",
+  "**/__pycache__/**",
+  "**/.venv/**",
+  "**/.*"
+]
+include = ["litestar", "tests", "docs/examples"]
+pythonVersion = "3.11"
+reportUnnecessaryTypeIgnoreComment = true
+
+[tool.slotscheck]
+exclude-classes = """
+(
+  # github.com/python/cpython/pull/106771
+  (^litestar.events.emitter:BaseEventEmitterBackend)
+  # review these as time permits
+  |(^litestar.connection.base:ASGIConnection)
+  |(^litestar.datastructures.state:ImmutableState)
+  |(^litestar.datastructures.state:State)
+  |(^litestar.dto.base_dto:AbstractDTO)
+  |(^litestar.dto.data_structures:DTOData)
+  |(^litestar.middleware.session.base:BaseSessionBackend)
+  |(^litestar.pagination:ClassicPagination)
+  |(^litestar.pagination:CursorPagination)
+  |(^litestar.response.base:Response)
+  |(^litestar.testing.client.base:BaseTestClient)
+  |(^litestar.testing.life_span_handler:LifeSpanHandler)
+  |(^litestar.utils.sync:AsyncIteratorWrapper)
+)
+"""
+strict-imports = false
+
+[tool.ruff]
+include = ["{litestar,tests,docs,test_apps,tools}/**/*.{py,pyi}", "pyproject.toml"]
+
+lint.ignore = [
+  "A003",    # flake8-builtins - class attribute {name} is shadowing a python builtin
+  "B010",    # flake8-bugbear - do not call setattr with a constant attribute value
+  "D100",    # pydocstyle - missing docstring in public module
+  "D101",    # pydocstyle - missing docstring in public class
+  "D102",    # pydocstyle - missing docstring in public method
+  "D103",    # pydocstyle - missing docstring in public function
+  "D104",    # pydocstyle - missing docstring in public package
+  "D105",    # pydocstyle - missing docstring in magic method
+  "D106",    # pydocstyle - missing docstring in public nested class
+  "D107",    # pydocstyle - missing docstring in __init__
+  "D202",    # pydocstyle - no blank lines allowed after function docstring
+  "D205",    # pydocstyle - 1 blank line required between summary line and description
+  "D415",    # pydocstyle - first line should end with a period, question mark, or exclamation point
+  "E501",    # pycodestyle line too long, handled by ruff format
+  "PLW2901", # pylint - for loop variable overwritten by assignment target
+  "RUF012",  # Ruff-specific rule - annotated with classvar
+  "ISC001",  # Ruff formatter incompatible
+  "CPY001",  # ruff - copyright notice at the top of the file
+  "SIM108",  # Use ternary operator
+  "A005",    # Module shadows a built-in Python standard library module
+  "PLC0415", # `import` should be at the top-level of a file
+  "PLW1641", # Object does not implement `__hash__` method
+  "SIM103",  # 'Return the condition directly': This is a bit overzealous
+  "UP007",   # Use `X | Y` for type annotations
+  "RET504"   # Unnecessary assignment before `return` statement
+]
+lint.select = [
+  "A",   # flake8-builtins
+  "B",   # flake8-bugbear
+  "BLE", # flake8-blind-except
+  "C4",  # flake8-comprehensions
+  "C90", # mccabe
+  "D",   # pydocstyle
+  "DJ",  # flake8-django
+  "DTZ", # flake8-datetimez
+  "E",   # pycodestyle errors
+  "ERA", # eradicate
+  "EXE", # flake8-executable
+  "F",   # pyflakes
+  "G",   # flake8-logging-format
+  "I",   # isort
+  "ICN", # flake8-import-conventions
+  "ISC", # flake8-implicit-str-concat
+  "N",   # pep8-naming
+  "PIE", # flake8-pie
+  "PLC", # pylint - convention
+  "PLE", # pylint - error
+  "PLW", # pylint - warning
+  "PTH", # flake8-use-pathlib
+  "Q",   # flake8-quotes
+  "RET", # flake8-return
+  "RUF", # Ruff-specific rules
+  "S",   # flake8-bandit
+  "SIM", # flake8-simplify
+  "T10", # flake8-debugger
+  "T20", # flake8-print
+  "TC",  # flake8-type-checking
+  "TID", # flake8-tidy-imports
+  "UP",  # pyupgrade
+  "W",   # pycodestyle - warning
+  "YTT", # flake8-2020
+]
+
+line-length = 120
+src = ["litestar", "tests", "docs/examples"]
+target-version = "py311"
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.mccabe]
+max-complexity = 12
+
+[tool.ruff.lint.pep8-naming]
+classmethod-decorators = [
+  "classmethod",
+  "pydantic.root_validator",
+  "pydantic.validator",
+  "sqlalchemy.ext.declarative.declared_attr",
+  "sqlalchemy.orm.declared_attr.directive",
+  "sqlalchemy.orm.declared_attr",
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["litestar", "tests", "examples"]
+
+[tool.ruff.lint.per-file-ignores]
+"docs/**/*.*" = ["S", "B", "DTZ", "A", "TC", "ERA", "D", "RET"]
+"docs/examples/**" = ["T201"]
+"docs/examples/application_hooks/before_send_hook.py" = ["UP006"]
+"docs/examples/data_transfer_objects**/*.*" = ["UP006"]
+"litestar/_openapi/schema_generation/schema.py" = ["C901"]
+"litestar/exceptions/*.*" = ["N818"]
+"litestar/handlers/**/*.*" = ["N801"]
+"litestar/handlers/websocket_handlers/listener.py" = ["B027"]
+"litestar/params.py" = ["N802"]
+"litestar/utils/predicates.py" = ["UP006", "UP035"]
+"litestar/utils/typing.py" = ["UP006", "UP035"]
+"test_apps/**/*.*" = ["D", "TRY", "EM", "S", "PTH"]
+"tests/**/*.*" = [
+  "A",
+  "ARG",
+  "B",
+  "BLE",
+  "C901",
+  "D",
+  "DTZ",
+  "EM",
+  "FBT",
+  "G",
+  "N",
+  "PGH",
+  "PIE",
+  "PLR",
+  "PLW",
+  "PTH",
+  "RSE",
+  "S",
+  "S101",
+  "SIM",
+  "TC",
+  "TRY",
+  "E721",
+  "UP045",
+  "RUF043",
+]
+"tests/unit/test_openapi/test_typescript_converter/test_converter.py" = ["W293"]
+"tests/unit/test_typing.py" = ["UP006", "UP035"]
+"tools/**/*.*" = ["D", "ARG", "EM", "TRY", "G", "FBT"]
+"tools/prepare_release.py" = ["S603", "S607"]
+"tests/*" = ["PLC0415", "UP045"]
+
+[tool.ruff.format]
+docstring-code-format = true
+docstring-code-line-length = 88
+
+[tool.unasyncd]
+add_editors_note = true
+ruff_fix = true
+
+[tool.unasyncd.files]
+"litestar/repository/abc/_async.py" = "litestar/repository/abc/_sync.py"
+
+[tool.unasyncd.per_file_add_replacements."litestar/repository/abc/_async.py"]
+"AbstractAsyncRepository" = "AbstractSyncRepository"
+"AsyncRepoT" = "SyncRepoT"

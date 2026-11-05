@@ -1,0 +1,60 @@
+{
+  "repository": "litestar-org/litestar",
+  "pr": "https://github.com/litestar-org/litestar/pull/5164",
+  "case_id": "5164-seed-f841-tmpfs-provenance",
+  "languages": [
+    "python"
+  ],
+  "reviewer": "sub-agent eval-litestar (automated)",
+  "verdict_source": "automated",
+  "commands": [
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-yc_a3zkf argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/litestar-org/litestar.git\", \"/run/user/1000/rio-litestar-eval/rio-eval-yc_a3zkf/head\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-yc_a3zkf/head argv=[\"git\", \"fetch\", \"origin\", \"f4f7e9831574ed08f50901e62911019b5e7383ac\", \"fcab0954a74c5f8d340adbbfb9091f94982aa9a2\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-yc_a3zkf/head argv=[\"git\", \"merge-base\", \"f4f7e9831574ed08f50901e62911019b5e7383ac\", \"fcab0954a74c5f8d340adbbfb9091f94982aa9a2\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-yc_a3zkf/head argv=[\"git\", \"checkout\", \"--detach\", \"fcab0954a74c5f8d340adbbfb9091f94982aa9a2\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-yc_a3zkf argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/run/user/1000/rio-litestar-eval/rio-eval-yc_a3zkf/head\", \"/run/user/1000/rio-litestar-eval/rio-eval-yc_a3zkf/base\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-yc_a3zkf/base argv=[\"git\", \"checkout\", \"--detach\", \"f4f7e9831574ed08f50901e62911019b5e7383ac\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-yc_a3zkf/base argv=[\"uv\", \"sync\", \"--locked\", \"--all-groups\", \"--all-extras\", \"--no-editable\", \"--python\", \"3.12.12\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-yc_a3zkf/base argv=[\".venv/bin/python\", \"-I\", \"-c\", \"import hashlib,pathlib,sysconfig; s=pathlib.Path(sysconfig.get_paths()[\\\"purelib\\\"]); names=[\\\"a1_coverage.pth\\\",\\\"_sphinx_jinja2_compat.pth\\\",\\\"sphinxcontrib_jsmath-1.0.1-py3.7-nspkg.pth\\\",\\\"distutils-precedence.pth\\\"]; [(print(str(p),hashlib.sha256(p.read_bytes()).hexdigest(),repr(p.read_text())),p.rename(p.with_suffix(\\\".pth.disabled\\\"))) for n in names if (p:=s/n).exists()]\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-yc_a3zkf/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-yc_a3zkf/head argv=[\"uv\", \"sync\", \"--locked\", \"--all-groups\", \"--all-extras\", \"--no-editable\", \"--python\", \"3.12.12\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-yc_a3zkf/head argv=[\".venv/bin/python\", \"-I\", \"-c\", \"import hashlib,pathlib,sysconfig; s=pathlib.Path(sysconfig.get_paths()[\\\"purelib\\\"]); names=[\\\"a1_coverage.pth\\\",\\\"_sphinx_jinja2_compat.pth\\\",\\\"sphinxcontrib_jsmath-1.0.1-py3.7-nspkg.pth\\\",\\\"distutils-precedence.pth\\\"]; [(print(str(p),hashlib.sha256(p.read_bytes()).hexdigest(),repr(p.read_text())),p.rename(p.with_suffix(\\\".pth.disabled\\\"))) for n in names if (p:=s/n).exists()]\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-yc_a3zkf/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-yc_a3zkf/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-yc_a3zkf/head argv=[\"node\", \"--version\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-yc_a3zkf/head argv=[\"npm\", \"--version\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-yc_a3zkf/head argv=[\"python3\", \"--version\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-yc_a3zkf/head argv=[\"uv\", \"--version\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-yc_a3zkf/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5164-seed-f841-tmpfs/profile.yaml\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-yc_a3zkf/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/run/user/1000/rio-litestar-eval/rio-eval-yc_a3zkf/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"f4f7e9831574ed08f50901e62911019b5e7383ac\", \"--format\", \"json\", \"--offline\", \"--profile\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5164-seed-f841-tmpfs/profile.yaml\"]"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5164-seed-f841-tmpfs/commands.json; Rio binary SHA-256: 512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+    "EXCLUDED setup attempt: head typecheck/lint dependency_state verified, but baseline_classification_ran=false. Rio misinterprets a non-editable local wheel direct_url.json as a live source link, refusing the base and advising commit/stash even though both reviewed commits are pinned and clean. Exact baseline_failed notes are in report.footer.notes.",
+    "Coverage tests succeeded, but coverage json inherited the repository global fail_under=50 threshold; the intentionally scoped suite covers 39%/41% overall, so JSON export returns 2. Rio labels this tool_crashed with hint tool exited with undeclared code 2. See rio-tool-evidence/cache/checks/coverage/%2E/head/process-{0,1,2}.stdout.txt. Valid JSON and diff-coverage analysis do not make the run eligible when this check failed.",
+    "Same pinned change is rerun in the -final directory, renaming only the verified non-editable root package direct_url.json to .json.disabled (original content/hash logged) and using external coverage-scoped.toml with identical instrumentation/exclusions and only global export fail_under=0. Project source/lockfiles/configuration and lint/type rules stay unchanged; trust stays false.",
+    "Runtime CPython 3.12.12, uv 0.13.7; profile 60m; PYTEST_ADDOPTS=tests/e2e/test_routing/test_path_mounting.py; offline audit excluded. Exact internal mypy invocation and captured config: rio-tool-evidence/commands.json; target is explicit configured packages litestar, tests, docs.examples."
+  ],
+  "independently_clean": false,
+  "positive_control": {
+    "kind": "seeded-mutation",
+    "expected": [
+      {
+        "id": "unused-local-normalize-path",
+        "mechanism": "lint-rule",
+        "evidence": "../litestar-evidence/seed-oracle-commands.json and seed-{base,head}-ruff.stdout.log: ruff check . exit 0 at f4f7e9831574ed08f50901e62911019b5e7383ac and exit 1 with exactly F841 at synthetic fcab0954a74c5f8d340adbbfb9091f94982aa9a2, litestar/utils/path.py:24. Registered before Rio in positive-control-register.md.",
+        "finding_ids": [
+          "43d6925de36ee0e0beb788c1be9fd46de7152f1be80230d5085329c5f9911eab"
+        ]
+      }
+    ]
+  },
+  "misses": [],
+  "findings": {
+    "43d6925de36ee0e0beb788c1be9fd46de7152f1be80230d5085329c5f9911eab": {
+      "verdict": "true-positive",
+      "reason": "../litestar-evidence/seed-oracle-commands.json and seed-{base,head}-ruff.stdout.log: ruff check . exit 0 at f4f7e9831574ed08f50901e62911019b5e7383ac and exit 1 with exactly F841 at synthetic fcab0954a74c5f8d340adbbfb9091f94982aa9a2, litestar/utils/path.py:24. Registered before Rio in positive-control-register.md. The independent oracle proves this introduced issue, but the unclassified run is excluded from metrics and receives no scored detection credit."
+    }
+  }
+}

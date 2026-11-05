@@ -1,0 +1,28 @@
+import concurrent.futures,hashlib,json,pathlib,subprocess,time,datetime
+out=pathlib.Path('/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-evidence')
+def run(job):
+ name,cwd,argv=job
+ start=time.monotonic()
+ with (out/(name+'.stdout.log')).open('w') as so,(out/(name+'.stderr.log')).open('w') as se:
+  try: code=subprocess.run(argv,cwd=cwd,stdout=so,stderr=se,timeout=900).returncode
+  except subprocess.TimeoutExpired: code=124
+ return dict(name=name,cwd=cwd,argv=argv,exit_code=code,wall_time_ms=int((time.monotonic()-start)*1000),stdout=name+'.stdout.log',stderr=name+'.stderr.log')
+jobs=[]
+for side in ['base','head']:
+ cwd='/tmp/eval-litestar-oracle-'+side
+ for tool,args in [('mypy',[]),('pyright',[]),('ruff',['check','.']),('coverage',['run','-m','pytest','-q','tests/e2e/test_routing/test_path_mounting.py'])]:
+  jobs.append((side+'-'+tool,cwd,[cwd+'/.venv/bin/'+tool]+args))
+ for tool in ['python','mypy','pyright','ruff','coverage']:
+  jobs.append((side+'-'+tool+'-version',cwd,[cwd+'/.venv/bin/'+tool,'--version']))
+meta={'started_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'commands':[]}
+with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
+ for row in pool.map(run,jobs):
+  meta['commands'].append(row);(out/'oracle-commands.json').write_text(json.dumps(meta,indent=2)+'\n')
+  print(row['name'],row['exit_code'],row['wall_time_ms'],flush=True)
+for side in ['base','head']:
+ cwd='/tmp/eval-litestar-oracle-'+side
+ for tool,args in [('combine',['combine']),('json',['json','--fail-under=0','-o',str(out/(side+'-coverage.json'))])]:
+  row=run((side+'-coverage-'+tool,cwd,[cwd+'/.venv/bin/coverage']+args));meta['commands'].append(row);print(row['name'],row['exit_code'],flush=True)
+ for file in ['uv.lock','pyproject.toml','.pre-commit-config.yaml']:
+  p=pathlib.Path(cwd)/file; (out/(side+'-'+file.replace('/','-'))).write_bytes(p.read_bytes())
+meta['finished_utc']=datetime.datetime.now(datetime.timezone.utc).isoformat();(out/'oracle-commands.json').write_text(json.dumps(meta,indent=2)+'\n')

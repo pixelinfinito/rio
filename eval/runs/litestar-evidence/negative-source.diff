@@ -1,0 +1,34 @@
+diff --git a/litestar/_asgi/asgi_router.py b/litestar/_asgi/asgi_router.py
+index ac582c8a9..8ec374c3a 100644
+--- a/litestar/_asgi/asgi_router.py
++++ b/litestar/_asgi/asgi_router.py
+@@ -187 +187,6 @@ class ASGIRouter:
+-            self._mount_paths_regex = re.compile("|".join(sorted(set(self._mount_routes))))
++            self._mount_paths_regex = re.compile(
++                "|".join(
++                    "/" if path == "/" else rf"{re.escape(path)}(?=/|\Z)"
++                    for path in sorted(self._mount_routes, key=len, reverse=True)
++                )
++            )
+diff --git a/litestar/handlers/asgi_handlers.py b/litestar/handlers/asgi_handlers.py
+index 690e9de4d..1264170e4 100644
+--- a/litestar/handlers/asgi_handlers.py
++++ b/litestar/handlers/asgi_handlers.py
+@@ -61,4 +61,4 @@ class ASGIRouteHandler(BaseRouteHandler):
+-            is_mount: A boolean dictating whether the handler's paths should be regarded as mount paths. Mount path
+-                accept any arbitrary paths that begin with the defined prefixed path. For example, a mount with the path
+-                ``/some-path/`` will accept requests for ``/some-path/`` and any sub path under this, e.g.
+-                ``/some-path/sub-path/`` etc.
++            is_mount: A boolean dictating whether the handler's paths should be regarded as mount paths. A mount path
++                accepts its own path and any sub path under it. For example, a mount with the path ``/some-path/``
++                will accept requests for ``/some-path/`` and any sub path under this, e.g. ``/some-path/sub-path/``
++                etc., but not ``/some-path-other/``.
+@@ -152,4 +152,4 @@ def asgi(
+-        is_mount: A boolean dictating whether the handler's paths should be regarded as mount paths. Mount path
+-            accept any arbitrary paths that begin with the defined prefixed path. For example, a mount with the path
+-            ``/some-path/`` will accept requests for ``/some-path/`` and any sub path under this, e.g.
+-            ``/some-path/sub-path/`` etc.
++        is_mount: A boolean dictating whether the handler's paths should be regarded as mount paths. A mount path
++            accepts its own path and any sub path under it. For example, a mount with the path ``/some-path/`` will
++            accept requests for ``/some-path/`` and any sub path under this, e.g. ``/some-path/sub-path/`` etc., but
++            not ``/some-path-other/``.

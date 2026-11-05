@@ -1,0 +1,406 @@
+{
+  "schema": "rio-eval-runner-v1",
+  "repository": "litestar-org/litestar",
+  "pr": "https://github.com/litestar-org/litestar/pull/5178",
+  "started_utc": "2026-11-05T02:57:51.820188+00:00",
+  "rio_binary": "/home/ubuntu/rio/target/release/rio",
+  "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-checkout",
+        "https://github.com/litestar-org/litestar.git",
+        "/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/head"
+      ],
+      "cwd": "/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/01-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/01-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 469
+    },
+    {
+      "argv": [
+        "git",
+        "fetch",
+        "origin",
+        "716f8b023b1c13e6f1e8ab08dfa1938f7923312d",
+        "9870dce9dc2688e78fc43bc73e27eed4198893ac"
+      ],
+      "cwd": "/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/02-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/02-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 33
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "716f8b023b1c13e6f1e8ab08dfa1938f7923312d",
+        "9870dce9dc2688e78fc43bc73e27eed4198893ac"
+      ],
+      "cwd": "/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/03-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/03-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 4
+    },
+    {
+      "argv": [
+        "git",
+        "checkout",
+        "--detach",
+        "9870dce9dc2688e78fc43bc73e27eed4198893ac"
+      ],
+      "cwd": "/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/04-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/04-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 165
+    },
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-hardlinks",
+        "--no-checkout",
+        "/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/head",
+        "/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/base"
+      ],
+      "cwd": "/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/05-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/05-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 320
+    },
+    {
+      "argv": [
+        "git",
+        "checkout",
+        "--detach",
+        "716f8b023b1c13e6f1e8ab08dfa1938f7923312d"
+      ],
+      "cwd": "/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/06-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/06-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 219
+    },
+    {
+      "argv": [
+        "uv",
+        "sync",
+        "--locked",
+        "--all-groups",
+        "--all-extras",
+        "--no-editable",
+        "--python",
+        "3.12.12"
+      ],
+      "cwd": "/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/07-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/07-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 49130
+    },
+    {
+      "argv": [
+        ".venv/bin/python",
+        "-I",
+        "-c",
+        "import hashlib,pathlib,sysconfig; s=pathlib.Path(sysconfig.get_paths()[\"purelib\"]); names=[\"a1_coverage.pth\",\"_sphinx_jinja2_compat.pth\",\"sphinxcontrib_jsmath-1.0.1-py3.7-nspkg.pth\",\"distutils-precedence.pth\"]; [(print(str(p),hashlib.sha256(p.read_bytes()).hexdigest(),repr(p.read_text())),p.rename(p.with_suffix(\".pth.disabled\"))) for n in names if (p:=s/n).exists()]"
+      ],
+      "cwd": "/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/08-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/08-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 1272
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "cwd": "/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/09-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/09-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 167
+    },
+    {
+      "argv": [
+        "uv",
+        "sync",
+        "--locked",
+        "--all-groups",
+        "--all-extras",
+        "--no-editable",
+        "--python",
+        "3.12.12"
+      ],
+      "cwd": "/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/10-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/10-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 2597
+    },
+    {
+      "argv": [
+        ".venv/bin/python",
+        "-I",
+        "-c",
+        "import hashlib,pathlib,sysconfig; s=pathlib.Path(sysconfig.get_paths()[\"purelib\"]); names=[\"a1_coverage.pth\",\"_sphinx_jinja2_compat.pth\",\"sphinxcontrib_jsmath-1.0.1-py3.7-nspkg.pth\",\"distutils-precedence.pth\"]; [(print(str(p),hashlib.sha256(p.read_bytes()).hexdigest(),repr(p.read_text())),p.rename(p.with_suffix(\".pth.disabled\"))) for n in names if (p:=s/n).exists()]"
+      ],
+      "cwd": "/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/11-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/11-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 1377
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "cwd": "/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/12-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/12-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 119
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "--version"
+      ],
+      "cwd": "/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/config",
+        "RIO_CACHE_DIR": "/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/rio-version.txt",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/13-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 9
+    },
+    {
+      "argv": [
+        "node",
+        "--version"
+      ],
+      "cwd": "/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/config",
+        "RIO_CACHE_DIR": "/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/14-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/14-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 28
+    },
+    {
+      "argv": [
+        "npm",
+        "--version"
+      ],
+      "cwd": "/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/config",
+        "RIO_CACHE_DIR": "/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/15-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/15-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 270
+    },
+    {
+      "argv": [
+        "python3",
+        "--version"
+      ],
+      "cwd": "/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/config",
+        "RIO_CACHE_DIR": "/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/16-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/16-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 6
+    },
+    {
+      "argv": [
+        "uv",
+        "--version"
+      ],
+      "cwd": "/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/config",
+        "RIO_CACHE_DIR": "/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/17-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/17-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 34
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "profile",
+        "show",
+        "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/profile.yaml"
+      ],
+      "cwd": "/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/config",
+        "RIO_CACHE_DIR": "/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/resolved-profile.txt",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/18-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 272
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "doctor",
+        "--format",
+        "json"
+      ],
+      "cwd": "/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/config",
+        "RIO_CACHE_DIR": "/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/doctor.json",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/19-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 1739
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "review",
+        "--base",
+        "716f8b023b1c13e6f1e8ab08dfa1938f7923312d",
+        "--format",
+        "json",
+        "--offline",
+        "--profile",
+        "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/profile.yaml"
+      ],
+      "cwd": "/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/config",
+        "RIO_CACHE_DIR": "/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/report.json",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5178-tmpfs/20-stderr.log",
+      "exit_code": 4,
+      "wall_time_ms": 96476
+    }
+  ],
+  "installations": {
+    "base": {
+      "commands": [
+        [
+          "uv",
+          "sync",
+          "--locked",
+          "--all-groups",
+          "--all-extras",
+          "--no-editable",
+          "--python",
+          "3.12.12"
+        ],
+        [
+          ".venv/bin/python",
+          "-I",
+          "-c",
+          "import hashlib,pathlib,sysconfig; s=pathlib.Path(sysconfig.get_paths()[\"purelib\"]); names=[\"a1_coverage.pth\",\"_sphinx_jinja2_compat.pth\",\"sphinxcontrib_jsmath-1.0.1-py3.7-nspkg.pth\",\"distutils-precedence.pth\"]; [(print(str(p),hashlib.sha256(p.read_bytes()).hexdigest(),repr(p.read_text())),p.rename(p.with_suffix(\".pth.disabled\"))) for n in names if (p:=s/n).exists()]"
+        ]
+      ],
+      "succeeded": true,
+      "lockfiles": {
+        "uv.lock": "8f25baff7a27134191cd7adcb550963aa1212f1081f13196b929e305ff17dfbd"
+      }
+    },
+    "head": {
+      "commands": [
+        [
+          "uv",
+          "sync",
+          "--locked",
+          "--all-groups",
+          "--all-extras",
+          "--no-editable",
+          "--python",
+          "3.12.12"
+        ],
+        [
+          ".venv/bin/python",
+          "-I",
+          "-c",
+          "import hashlib,pathlib,sysconfig; s=pathlib.Path(sysconfig.get_paths()[\"purelib\"]); names=[\"a1_coverage.pth\",\"_sphinx_jinja2_compat.pth\",\"sphinxcontrib_jsmath-1.0.1-py3.7-nspkg.pth\",\"distutils-precedence.pth\"]; [(print(str(p),hashlib.sha256(p.read_bytes()).hexdigest(),repr(p.read_text())),p.rename(p.with_suffix(\".pth.disabled\"))) for n in names if (p:=s/n).exists()]"
+        ]
+      ],
+      "succeeded": true,
+      "lockfiles": {
+        "uv.lock": "8f25baff7a27134191cd7adcb550963aa1212f1081f13196b929e305ff17dfbd"
+      }
+    }
+  },
+  "failures": [
+    "Baseline/setup ineligible; fix before scoring"
+  ],
+  "network": "Installers may use network; Rio review uses --offline. Subprocesses are not isolated.",
+  "profile_sha256": "7f79af17af30fa064a6c7382114fbaca818be229d12e4bfea20ca9678544f4b8",
+  "resolution": {
+    "base_sha": "716f8b023b1c13e6f1e8ab08dfa1938f7923312d",
+    "head_sha": "9870dce9dc2688e78fc43bc73e27eed4198893ac",
+    "source": "pinned argv"
+  },
+  "disposable_directory": "/run/user/1000/rio-litestar-eval/rio-eval-ojjxm37f",
+  "base_sha": "716f8b023b1c13e6f1e8ab08dfa1938f7923312d",
+  "head_sha": "9870dce9dc2688e78fc43bc73e27eed4198893ac",
+  "removed_environment_keys": [],
+  "resolved_profile_sha256": "e937ab667767e6fa4288610e0fac517f491de2e689c5eeb2569f5fa92f27e214",
+  "review_exit_code": 4,
+  "environment": {
+    "dependency_state": "verified",
+    "baseline_ran": false,
+    "baseline_classification_ran": false,
+    "eligible": false,
+    "reasons": [
+      "coverage . head: failed tool_crashed tool exited with undeclared code 2",
+      "lint .: head=passed, dependency_state=verified, base=unavailable",
+      "typecheck .: head=passed, dependency_state=verified, base=unavailable"
+    ],
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "lint .: baseline_failed: linked dependency litestar points at changed source : docs/release-notes/changelog.rst; commit or stash the linked package's changes",
+      "typecheck .: baseline_failed: linked dependency litestar points at changed source : docs/release-notes/changelog.rst; commit or stash the linked package's changes",
+      "Graph references use syntax and text; no language server was used",
+      "Offline applies to Rio; tool and test processes were not network-isolated"
+    ]
+  },
+  "finished_utc": "2026-11-05T03:00:28.223160+00:00"
+}

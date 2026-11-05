@@ -1,0 +1,41 @@
+{
+  "tool": "mypy",
+  "tool_version": "1.19.1",
+  "target_source": "explicit packages in repository pyproject.toml; no inferred positional target",
+  "observations": [
+    {
+      "argv": [
+        "/run/user/1000/rio-litestar-eval/rio-eval-08zd4q_p/head/.venv/bin/python",
+        "/run/user/1000/rio-litestar-eval/rio-eval-08zd4q_p/head/./.venv/bin/mypy",
+        "--output",
+        "json",
+        "--config-file",
+        "/run/user/1000/rio-litestar-eval/rio-eval-08zd4q_p/cache/4fbe7a5f98898db5/runs/01M6MTGZRBCA4GXT7NJX8DJ3EM/tools/tool.tmp-OwPNRe/pyproject.toml"
+      ],
+      "cwd": "/run/user/1000/rio-litestar-eval/rio-eval-08zd4q_p/cache/4fbe7a5f98898db5/runs/01M6MTGZRBCA4GXT7NJX8DJ3EM/tools/tool.tmp-OwPNRe",
+      "packages": [
+        "litestar",
+        "tests",
+        "docs.examples"
+      ],
+      "python_version": "3.11"
+    },
+    {
+      "argv": [
+        "/run/user/1000/rio-litestar-eval/rio-eval-08zd4q_p/head/.venv/bin/python",
+        "/run/user/1000/rio-litestar-eval/rio-eval-08zd4q_p/head/./.venv/bin/mypy",
+        "--output",
+        "json",
+        "--config-file",
+        "/run/user/1000/rio-litestar-eval/rio-eval-08zd4q_p/cache/4fbe7a5f98898db5/runs/01M6MTGZRBCA4GXT7NJX8DJ3EM/tools/tool.tmp-hEpo6b/pyproject.toml"
+      ],
+      "cwd": "/run/user/1000/rio-litestar-eval/rio-eval-08zd4q_p/cache/4fbe7a5f98898db5/runs/01M6MTGZRBCA4GXT7NJX8DJ3EM/tools/tool.tmp-hEpo6b",
+      "packages": [
+        "litestar",
+        "tests",
+        "docs.examples"
+      ],
+      "python_version": "3.11"
+    }
+  ]
+}

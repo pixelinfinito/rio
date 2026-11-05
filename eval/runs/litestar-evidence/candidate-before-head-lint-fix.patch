@@ -1,0 +1,25 @@
+commit 21b836e6dbaa03753e23d5ec0ed715d69f6350f2
+Author: Julien <courtes.julien@gmail.com>
+Date:   Mon Feb 2 14:57:21 2026 +0100
+
+    chore(lint): fix lint errors
+
+diff --git a/litestar/openapi/spec/media_type.py b/litestar/openapi/spec/media_type.py
+index 9e418a6d7..94bd4566d 100644
+--- a/litestar/openapi/spec/media_type.py
++++ b/litestar/openapi/spec/media_type.py
+@@ -1,11 +1,13 @@
+ from __future__ import annotations
+ 
+ from dataclasses import dataclass
+-from typing import TYPE_CHECKING, Any, Mapping
++from typing import TYPE_CHECKING, Any
+ 
+ from litestar.openapi.spec.base import BaseSchemaObject
+ 
+ if TYPE_CHECKING:
++    from collections.abc import Mapping
++
+     from litestar.openapi.spec.encoding import Encoding
+     from litestar.openapi.spec.example import Example
+     from litestar.openapi.spec.reference import Reference

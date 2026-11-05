@@ -1,0 +1,11 @@
+[tool.coverage.run]
+concurrency = ["multiprocessing", "thread"]
+omit = ["*/tests/*", "*/litestar/_kwargs/types.py"]
+parallel = true
+plugins = ["covdefaults"]
+source = ["litestar"]
+
+[tool.coverage.report]
+exclude_lines = ['except ImportError\b', 'if VERSION.startswith("1"):', 'if pydantic.VERSION.startswith("1"):']
+fail_under = 0.01
+

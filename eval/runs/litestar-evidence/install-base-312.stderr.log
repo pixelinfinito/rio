@@ -1,0 +1,86 @@
+Using CPython 3.12.12
+Creating virtual environment at: .venv
+Resolved 227 packages in 4ms
+   Updating https://github.com/litestar-org/litestar-sphinx-theme.git (v3)
+   Updating https://github.com/litestar-org/advanced-alchemy.git (main)
+Downloading brotli (1.4MiB)
+Downloading sphinx-design (2.1MiB)
+Downloading aiohttp (1.8MiB)
+Downloading babel (9.7MiB)
+Downloading twisted (3.1MiB)
+Downloading duckdb (20.4MiB)
+Downloading sqlalchemy (3.2MiB)
+Downloading psycopg-binary (4.9MiB)
+Downloading cryptography (4.5MiB)
+Downloading psycopg2-binary (4.0MiB)
+Downloading uvloop (4.2MiB)
+Downloading zstandard (5.3MiB)
+Downloading virtualenv (5.3MiB)
+Downloading asyncpg (3.4MiB)
+Downloading pydantic-core (2.0MiB)
+Downloading faker (1.9MiB)
+Downloading ruff (10.7MiB)
+Downloading pymongo (1.0MiB)
+Downloading pyright (6.1MiB)
+Downloading mypy (13.0MiB)
+Downloading sphinx (3.7MiB)
+Downloading minijinja (1.1MiB)
+Downloading test-results-parser (1.0MiB)
+Downloading autobahn (2.2MiB)
+   Building litestar @ file:///tmp/eval-litestar-oracle-base
+Downloading twisted (3.1MiB)
+Downloading pymongo (1.0MiB)
+Downloading aiohttp (1.8MiB)
+Downloading babel (9.7MiB)
+Downloading pyright (6.1MiB)
+Downloading asyncpg (3.4MiB)
+Downloading psycopg2-binary (4.0MiB)
+Downloading sqlalchemy (3.2MiB)
+Downloading mypy (13.0MiB)
+Downloading faker (1.9MiB)
+Downloading sphinx (3.7MiB)
+    Updated https://github.com/litestar-org/litestar-sphinx-theme.git (3a2dd24bdb6484c1c0da1116043586ec22a32962)
+   Building litestar-sphinx-theme @ git+https://github.com/litestar-org/litestar-sphinx-theme.git@3a2dd24bdb6484c1c0da1116043586ec22a32962
+ Downloaded minijinja
+ Downloaded test-results-parser
+Downloading psycopg-binary (4.9MiB)
+   Building sphinx-paramlinks==0.6.0
+ Downloaded pydantic-core
+   Building autodocsumm==0.2.6
+ Downloaded brotli
+      Built litestar @ file:///tmp/eval-litestar-oracle-base
+Downloading sphinx-design (2.1MiB)
+ Downloaded pymongo
+Downloading cryptography (4.5MiB)
+Downloading virtualenv (5.3MiB)
+Downloading asyncpg (3.4MiB)
+Downloading psycopg2-binary (4.0MiB)
+Downloading pyright (6.1MiB)
+Downloading ruff (10.7MiB)
+Downloading sphinx-design (2.1MiB)
+Downloading zstandard (5.3MiB)
+Downloading uvloop (4.2MiB)
+Downloading duckdb (20.4MiB)
+Downloading sqlalchemy (3.2MiB)
+Downloading mypy (13.0MiB)
+Downloading aiohttp (1.8MiB)
+Downloading babel (9.7MiB)
+Downloading sphinx (3.7MiB)
+      Built litestar-sphinx-theme @ git+https://github.com/litestar-org/litestar-sphinx-theme.git@3a2dd24bdb6484c1c0da1116043586ec22a32962
+Downloading twisted (3.1MiB)
+Downloading psycopg-binary (4.9MiB)
+Downloading faker (1.9MiB)
+ Downloaded autobahn
+error: Failed to download and build `advanced-alchemy @ git+https://github.com/litestar-org/advanced-alchemy.git@bbe68ddd3a8dd32618c5117a98cf74d269b480fc`
+  cause: Git operation failed
+  cause: failed to clone into: /home/ubuntu/.cache/uv/git-v1/db/6527e564e3382db8
+  cause: failed to fetch commit `bbe68ddd3a8dd32618c5117a98cf74d269b480fc`
+  cause: process didn't exit successfully: `/usr/bin/git fetch --force --update-head-ok 'https://github.com/litestar-org/advanced-alchemy.git' '+bbe68ddd3a8dd32618c5117a98cf74d269b480fc:refs/commit/bbe68ddd3a8dd32618c5117a98cf74d269b480fc'` (exit status: 128)
+         --- stderr
+         error: RPC failed; curl 92 HTTP/2 stream 5 was not closed cleanly: CANCEL (err 8)
+         error: 5 bytes of body are still expected
+         fetch-pack: unexpected disconnect while reading sideband packet
+         fatal: early EOF
+         fatal: fetch-pack: invalid index-pack output
+
+hint: `advanced-alchemy` was included because `litestar[full]` (v3.0.0b0) depends on `advanced-alchemy`

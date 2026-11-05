@@ -1,0 +1,41 @@
+import datetime,json,pathlib,shutil,time,os
+root=pathlib.Path('/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs')
+cases=['litestar-5178','litestar-5164-seed-f841'];seen={c:{} for c in cases};finished=set()
+while len(finished)<len(cases):
+ for case in cases:
+  if case in finished: continue
+  ledger=root/case/'commands.json'
+  try:d=json.loads(ledger.read_text());temp=pathlib.Path(d['disposable_directory'])
+  except (OSError,ValueError,KeyError):continue
+  dest=root/case/'rio-tool-evidence';dest.mkdir(exist_ok=True)
+  for proc in pathlib.Path('/proc').iterdir():
+   if not proc.name.isdigit(): continue
+   try:
+    argv=[a.decode(errors='replace') for a in (proc/'cmdline').read_bytes().split(b'\0') if a];cwd=str((proc/'cwd').resolve())
+    if not argv or not cwd.startswith(str(temp)):continue
+    if not any(x in ' '.join(argv) for x in ['/bin/mypy','/bin/ruff','/bin/coverage','/bin/python','/bin/pytest']):continue
+    key=proc.name+'|'+json.dumps(argv)
+    if key not in seen[case]:
+     row={'pid':int(proc.name),'argv':argv,'cwd':cwd,'observed_utc':datetime.datetime.now(datetime.timezone.utc).isoformat()}
+     env=dict(x.decode(errors='replace').split('=',1) for x in (proc/'environ').read_bytes().split(b'\0') if b'=' in x)
+     row['environment']={k:env[k] for k in ['PATH','VIRTUAL_ENV','PYTEST_ADDOPTS','COVERAGE_FILE','CI'] if k in env}
+     if '--config-file' in argv:
+      config=pathlib.Path(argv[argv.index('--config-file')+1]);row['config_text']=config.read_text()
+     seen[case][key]=row
+     (dest/'commands.json').write_text(json.dumps({'capture':'Linux /proc observation; supplements the unchanged runner commands.json, which records only top-level subprocesses','commands':list(seen[case].values())},indent=2)+'\n')
+   except (OSError,ValueError,IndexError):pass
+  cache=temp/'cache'
+  for run in cache.glob('*/runs/*'):
+   for folder_name,dirs,files in os.walk(run):
+    dirs[:]=[n for n in dirs if n!='tools']
+    folder=pathlib.Path(folder_name)
+    for filename in files:
+     file=folder/filename
+     if file.is_file() and file.suffix in ['.json','.txt','.yaml'] and file.stat().st_size<5_000_000:
+      target=dest/'cache'/file.relative_to(run);target.parent.mkdir(parents=True,exist_ok=True)
+      try:
+       if not target.exists() or target.stat().st_size!=file.stat().st_size:shutil.copyfile(file,target)
+      except OSError:pass
+  if 'finished_utc' in d:
+   finished.add(case);(dest/'capture-finished.json').write_text(json.dumps({'runner_finished_utc':d['finished_utc'],'commands_captured':len(seen[case])},indent=2)+'\n');print(case,len(seen[case]),flush=True)
+ time.sleep(2)

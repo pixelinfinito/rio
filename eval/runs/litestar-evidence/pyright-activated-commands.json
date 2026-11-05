@@ -1,0 +1,28 @@
+[
+  {
+    "side": "base",
+    "argv": [
+      "/tmp/eval-litestar-oracle-base/.venv/bin/pyright"
+    ],
+    "cwd": "/tmp/eval-litestar-oracle-base",
+    "environment": {
+      "VIRTUAL_ENV": "/tmp/eval-litestar-oracle-base/.venv",
+      "PATH": "/tmp/eval-litestar-oracle-base/.venv/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 279589
+  },
+  {
+    "side": "head",
+    "argv": [
+      "/tmp/eval-litestar-oracle-head/.venv/bin/pyright"
+    ],
+    "cwd": "/tmp/eval-litestar-oracle-head",
+    "environment": {
+      "VIRTUAL_ENV": "/tmp/eval-litestar-oracle-head/.venv",
+      "PATH": "/tmp/eval-litestar-oracle-head/.venv/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg0dzsGKg:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+    },
+    "exit_code": 0,
+    "wall_time_ms": 280563
+  }
+]

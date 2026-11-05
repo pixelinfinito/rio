@@ -1,0 +1,17 @@
+Warning: /home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5164-seed-f841/profile.yaml:$.steps[3]: rio/triage is deferred locally: no_endpoint
+Warning: /home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5164-seed-f841/profile.yaml:$.steps[4]: rio/agents is deferred locally: no_endpoint
+Warning: /home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-5164-seed-f841/profile.yaml:$.steps[5]: rio/verify is deferred locally: no_endpoint
+Running prepare…
+Finished prepare
+Running checks…
+secrets .: passed
+dependencies .: skipped (offline)
+lint .: findings
+Interrupted; stopping checks and preserving partial results…
+coverage .: cancelled (interrupted)
+typecheck .: cancelled (interrupted)
+Finished checks
+Running graph…
+Finished graph
+Running report…
+Finished report

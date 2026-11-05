@@ -1,0 +1,282 @@
+{
+  "started_utc": "2026-11-05T02:34:30.902376+00:00",
+  "commands": [
+    {
+      "name": "base-mypy",
+      "cwd": "/tmp/eval-litestar-oracle-base",
+      "argv": [
+        "/tmp/eval-litestar-oracle-base/.venv/bin/mypy"
+      ],
+      "exit_code": 0,
+      "wall_time_ms": 707888,
+      "stdout": "base-mypy.stdout.log",
+      "stderr": "base-mypy.stderr.log"
+    },
+    {
+      "name": "base-pyright",
+      "cwd": "/tmp/eval-litestar-oracle-base",
+      "argv": [
+        "/tmp/eval-litestar-oracle-base/.venv/bin/pyright"
+      ],
+      "exit_code": 1,
+      "wall_time_ms": 177156,
+      "stdout": "base-pyright.stdout.log",
+      "stderr": "base-pyright.stderr.log"
+    },
+    {
+      "name": "base-ruff",
+      "cwd": "/tmp/eval-litestar-oracle-base",
+      "argv": [
+        "/tmp/eval-litestar-oracle-base/.venv/bin/ruff",
+        "check",
+        "."
+      ],
+      "exit_code": 0,
+      "wall_time_ms": 983,
+      "stdout": "base-ruff.stdout.log",
+      "stderr": "base-ruff.stderr.log"
+    },
+    {
+      "name": "base-coverage",
+      "cwd": "/tmp/eval-litestar-oracle-base",
+      "argv": [
+        "/tmp/eval-litestar-oracle-base/.venv/bin/coverage",
+        "run",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/e2e/test_routing/test_path_mounting.py"
+      ],
+      "exit_code": 0,
+      "wall_time_ms": 456070,
+      "stdout": "base-coverage.stdout.log",
+      "stderr": "base-coverage.stderr.log"
+    },
+    {
+      "name": "base-python-version",
+      "cwd": "/tmp/eval-litestar-oracle-base",
+      "argv": [
+        "/tmp/eval-litestar-oracle-base/.venv/bin/python",
+        "--version"
+      ],
+      "exit_code": 0,
+      "wall_time_ms": 4,
+      "stdout": "base-python-version.stdout.log",
+      "stderr": "base-python-version.stderr.log"
+    },
+    {
+      "name": "base-mypy-version",
+      "cwd": "/tmp/eval-litestar-oracle-base",
+      "argv": [
+        "/tmp/eval-litestar-oracle-base/.venv/bin/mypy",
+        "--version"
+      ],
+      "exit_code": 0,
+      "wall_time_ms": 74621,
+      "stdout": "base-mypy-version.stdout.log",
+      "stderr": "base-mypy-version.stderr.log"
+    },
+    {
+      "name": "base-pyright-version",
+      "cwd": "/tmp/eval-litestar-oracle-base",
+      "argv": [
+        "/tmp/eval-litestar-oracle-base/.venv/bin/pyright",
+        "--version"
+      ],
+      "exit_code": 0,
+      "wall_time_ms": 1529,
+      "stdout": "base-pyright-version.stdout.log",
+      "stderr": "base-pyright-version.stderr.log"
+    },
+    {
+      "name": "base-ruff-version",
+      "cwd": "/tmp/eval-litestar-oracle-base",
+      "argv": [
+        "/tmp/eval-litestar-oracle-base/.venv/bin/ruff",
+        "--version"
+      ],
+      "exit_code": 0,
+      "wall_time_ms": 8,
+      "stdout": "base-ruff-version.stdout.log",
+      "stderr": "base-ruff-version.stderr.log"
+    },
+    {
+      "name": "base-coverage-version",
+      "cwd": "/tmp/eval-litestar-oracle-base",
+      "argv": [
+        "/tmp/eval-litestar-oracle-base/.venv/bin/coverage",
+        "--version"
+      ],
+      "exit_code": 0,
+      "wall_time_ms": 2624,
+      "stdout": "base-coverage-version.stdout.log",
+      "stderr": "base-coverage-version.stderr.log"
+    },
+    {
+      "name": "head-mypy",
+      "cwd": "/tmp/eval-litestar-oracle-head",
+      "argv": [
+        "/tmp/eval-litestar-oracle-head/.venv/bin/mypy"
+      ],
+      "exit_code": 0,
+      "wall_time_ms": 604087,
+      "stdout": "head-mypy.stdout.log",
+      "stderr": "head-mypy.stderr.log"
+    },
+    {
+      "name": "head-pyright",
+      "cwd": "/tmp/eval-litestar-oracle-head",
+      "argv": [
+        "/tmp/eval-litestar-oracle-head/.venv/bin/pyright"
+      ],
+      "exit_code": 1,
+      "wall_time_ms": 121644,
+      "stdout": "head-pyright.stdout.log",
+      "stderr": "head-pyright.stderr.log"
+    },
+    {
+      "name": "head-ruff",
+      "cwd": "/tmp/eval-litestar-oracle-head",
+      "argv": [
+        "/tmp/eval-litestar-oracle-head/.venv/bin/ruff",
+        "check",
+        "."
+      ],
+      "exit_code": 0,
+      "wall_time_ms": 7531,
+      "stdout": "head-ruff.stdout.log",
+      "stderr": "head-ruff.stderr.log"
+    },
+    {
+      "name": "head-coverage",
+      "cwd": "/tmp/eval-litestar-oracle-head",
+      "argv": [
+        "/tmp/eval-litestar-oracle-head/.venv/bin/coverage",
+        "run",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/e2e/test_routing/test_path_mounting.py"
+      ],
+      "exit_code": 0,
+      "wall_time_ms": 355433,
+      "stdout": "head-coverage.stdout.log",
+      "stderr": "head-coverage.stderr.log"
+    },
+    {
+      "name": "head-python-version",
+      "cwd": "/tmp/eval-litestar-oracle-head",
+      "argv": [
+        "/tmp/eval-litestar-oracle-head/.venv/bin/python",
+        "--version"
+      ],
+      "exit_code": 0,
+      "wall_time_ms": 1605,
+      "stdout": "head-python-version.stdout.log",
+      "stderr": "head-python-version.stderr.log"
+    },
+    {
+      "name": "head-mypy-version",
+      "cwd": "/tmp/eval-litestar-oracle-head",
+      "argv": [
+        "/tmp/eval-litestar-oracle-head/.venv/bin/mypy",
+        "--version"
+      ],
+      "exit_code": 0,
+      "wall_time_ms": 43067,
+      "stdout": "head-mypy-version.stdout.log",
+      "stderr": "head-mypy-version.stderr.log"
+    },
+    {
+      "name": "head-pyright-version",
+      "cwd": "/tmp/eval-litestar-oracle-head",
+      "argv": [
+        "/tmp/eval-litestar-oracle-head/.venv/bin/pyright",
+        "--version"
+      ],
+      "exit_code": 0,
+      "wall_time_ms": 24006,
+      "stdout": "head-pyright-version.stdout.log",
+      "stderr": "head-pyright-version.stderr.log"
+    },
+    {
+      "name": "head-ruff-version",
+      "cwd": "/tmp/eval-litestar-oracle-head",
+      "argv": [
+        "/tmp/eval-litestar-oracle-head/.venv/bin/ruff",
+        "--version"
+      ],
+      "exit_code": 0,
+      "wall_time_ms": 4475,
+      "stdout": "head-ruff-version.stdout.log",
+      "stderr": "head-ruff-version.stderr.log"
+    },
+    {
+      "name": "head-coverage-version",
+      "cwd": "/tmp/eval-litestar-oracle-head",
+      "argv": [
+        "/tmp/eval-litestar-oracle-head/.venv/bin/coverage",
+        "--version"
+      ],
+      "exit_code": 0,
+      "wall_time_ms": 9251,
+      "stdout": "head-coverage-version.stdout.log",
+      "stderr": "head-coverage-version.stderr.log"
+    },
+    {
+      "name": "base-coverage-combine",
+      "cwd": "/tmp/eval-litestar-oracle-base",
+      "argv": [
+        "/tmp/eval-litestar-oracle-base/.venv/bin/coverage",
+        "combine"
+      ],
+      "exit_code": 0,
+      "wall_time_ms": 1099,
+      "stdout": "base-coverage-combine.stdout.log",
+      "stderr": "base-coverage-combine.stderr.log"
+    },
+    {
+      "name": "base-coverage-json",
+      "cwd": "/tmp/eval-litestar-oracle-base",
+      "argv": [
+        "/tmp/eval-litestar-oracle-base/.venv/bin/coverage",
+        "json",
+        "--fail-under=0",
+        "-o",
+        "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-evidence/base-coverage.json"
+      ],
+      "exit_code": 0,
+      "wall_time_ms": 10671,
+      "stdout": "base-coverage-json.stdout.log",
+      "stderr": "base-coverage-json.stderr.log"
+    },
+    {
+      "name": "head-coverage-combine",
+      "cwd": "/tmp/eval-litestar-oracle-head",
+      "argv": [
+        "/tmp/eval-litestar-oracle-head/.venv/bin/coverage",
+        "combine"
+      ],
+      "exit_code": 0,
+      "wall_time_ms": 1226,
+      "stdout": "head-coverage-combine.stdout.log",
+      "stderr": "head-coverage-combine.stderr.log"
+    },
+    {
+      "name": "head-coverage-json",
+      "cwd": "/tmp/eval-litestar-oracle-head",
+      "argv": [
+        "/tmp/eval-litestar-oracle-head/.venv/bin/coverage",
+        "json",
+        "--fail-under=0",
+        "-o",
+        "/home/ubuntu/.t3/worktrees/rio/eval-run-litestar/eval/runs/litestar-evidence/head-coverage.json"
+      ],
+      "exit_code": 0,
+      "wall_time_ms": 13844,
+      "stdout": "head-coverage-json.stdout.log",
+      "stderr": "head-coverage-json.stderr.log"
+    }
+  ],
+  "finished_utc": "2026-11-05T02:47:09.598976+00:00"
+}
