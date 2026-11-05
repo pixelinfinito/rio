@@ -1,0 +1,2 @@
+[url "/dev/shm/structlog-rerun2-seed-t2np2j6v"]
+    insteadOf = https://github.com/hynek/structlog.git

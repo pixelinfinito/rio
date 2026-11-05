@@ -1,0 +1,19 @@
+version: 1
+name: eval-structlog-trusted
+extends: rio/base
+budget:
+  fast: {wall_time: 300s}
+steps:
+  - id: prepare
+    uses: rio/prepare
+  - id: checks
+    uses: rio/checks
+    needs: [prepare]
+    with:
+      trust_installed_dependencies: true
+  - id: graph
+    uses: rio/graph
+    needs: [prepare]
+  - id: report
+    uses: rio/report
+    needs: [checks, graph]

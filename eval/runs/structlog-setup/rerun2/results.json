@@ -1,0 +1,145 @@
+{
+  "binary_version": "rio 0.1.0 x86_64-unknown-linux-gnu f6e4f87e4c65",
+  "binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+  "cases": [
+    {
+      "case_id": "805",
+      "record": "eval/runs/structlog-805-rerun2/record.json",
+      "previous": "structlog-805-attempt2",
+      "base_sha": "c6e7cad18ffe91febf2b97dac03a465134b1a5d1",
+      "head_sha": "7d7708fdf39061b6f7515c13ed0404a9bc05fb33",
+      "environment": {
+        "baseline_ran": true,
+        "baseline_classification_ran": true,
+        "dependency_state": "trusted",
+        "eligible": true,
+        "reasons": []
+      },
+      "finding_state_counts": {},
+      "verdict_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "pre-existing-hidden": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "previous_finding_state_counts": {},
+      "positive_control": {
+        "kind": "none",
+        "expected": []
+      },
+      "runner_wall_seconds": 1511.285082275048,
+      "rio_review_wall_seconds": 24.761,
+      "rio_exit": 0,
+      "runner_exit": 0,
+      "observed_rio_defects": [],
+      "footer_notes": [
+        "Intent inference is deferred: no_endpoint",
+        "lint .: dependencies_trusted: results use unverified dependencies",
+        "typecheck .: dependencies_trusted: results use unverified dependencies",
+        "Graph references use syntax and text; no language server was used",
+        "Offline applies to Rio; tool and test processes were not network-isolated",
+        "dependencies_trusted: results were computed against unverified dependencies"
+      ],
+      "record_validated": true
+    },
+    {
+      "case_id": "811",
+      "record": "eval/runs/structlog-811-rerun2/record.json",
+      "previous": "structlog-811-attempt2",
+      "base_sha": "de5dcd4127b8c9652ebadf0b6411c4bb9c10f3b7",
+      "head_sha": "c0ba373b5c4ead7f39630026808bc74418a4460a",
+      "environment": {
+        "baseline_ran": true,
+        "baseline_classification_ran": true,
+        "dependency_state": "trusted",
+        "eligible": true,
+        "reasons": []
+      },
+      "finding_state_counts": {},
+      "verdict_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "pre-existing-hidden": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "previous_finding_state_counts": {},
+      "positive_control": {
+        "kind": "none",
+        "expected": []
+      },
+      "runner_wall_seconds": 1511.1736468760064,
+      "rio_review_wall_seconds": 24.484,
+      "rio_exit": 0,
+      "runner_exit": 0,
+      "observed_rio_defects": [],
+      "footer_notes": [
+        "Intent inference is deferred: no_endpoint",
+        "lint .: dependencies_trusted: results use unverified dependencies",
+        "typecheck .: dependencies_trusted: results use unverified dependencies",
+        "Graph references use syntax and text; no language server was used",
+        "Offline applies to Rio; tool and test processes were not network-isolated",
+        "dependencies_trusted: results were computed against unverified dependencies"
+      ],
+      "record_validated": true
+    },
+    {
+      "case_id": "811-seeded-assignment",
+      "record": "eval/runs/structlog-811-seeded-assignment-rerun2/record.json",
+      "previous": "structlog-811-seeded-assignment",
+      "base_sha": "de5dcd4127b8c9652ebadf0b6411c4bb9c10f3b7",
+      "head_sha": "50aa6f517262a936224ab1338e244eb5a4dbaefb",
+      "environment": {
+        "baseline_ran": true,
+        "baseline_classification_ran": true,
+        "dependency_state": "trusted",
+        "eligible": true,
+        "reasons": []
+      },
+      "finding_state_counts": {
+        "new": 1
+      },
+      "verdict_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "pre-existing-hidden": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "previous_finding_state_counts": {
+        "new": 1
+      },
+      "positive_control": {
+        "kind": "seeded-mutation",
+        "expected": [
+          {
+            "id": "seeded-incompatible-assignment",
+            "mechanism": "type-error",
+            "evidence": "Independent mypy 2.4.1, repository strict config and tox command mypy src: base exit 0 (21 files), head exit 1, src/structlog/_output.py:22 assignment str to int. Full base/head oracle logs and ledger in eval/runs/structlog-oracle-811-seeded-assignment. Ruff 0.15.12 and tests clean at both commits.",
+            "finding_ids": [
+              "2238acfbeea4da42971fce566ac2420bad7adefb8130dd42a71e928445457d1a"
+            ]
+          }
+        ]
+      },
+      "runner_wall_seconds": 1212.088596165995,
+      "rio_review_wall_seconds": 23.786,
+      "rio_exit": 1,
+      "runner_exit": 0,
+      "observed_rio_defects": [],
+      "footer_notes": [
+        "Intent inference is deferred: no_endpoint",
+        "lint .: dependencies_trusted: results use unverified dependencies",
+        "typecheck .: dependencies_trusted: results use unverified dependencies",
+        "Graph references use syntax and text; no language server was used",
+        "Offline applies to Rio; tool and test processes were not network-isolated",
+        "dependencies_trusted: results were computed against unverified dependencies"
+      ],
+      "record_validated": true
+    }
+  ]
+}
