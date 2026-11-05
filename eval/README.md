@@ -116,3 +116,9 @@ claiming that historical environment failures are eligible measurements. Rebuild
 it with `python3 eval/rescore_v01.py`. The old
 `scripts/aggregate-evaluation.py` remains a historical formatter using the old
 rubric; use `eval/evaluate.py` for new cohorts.
+
+
+The [v0.1 rerun worked example](../docs/evaluation/v0.1-rerun.md) includes both
+metric views, a canonical selection manifest, blocked monorepos, and a comparison
+with the historical hand summary. Rebuild its records and run aggregate/render
+with the generated narrative using `python3 eval/rerun_v01.py`.

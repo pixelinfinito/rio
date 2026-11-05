@@ -1,0 +1,223 @@
+{
+  "schema": "rio-eval-record-v2",
+  "methodology": "deterministic-v2",
+  "repository": "mitmproxy/mitmproxy",
+  "pr": "https://github.com/mitmproxy/mitmproxy/pull/8521",
+  "case_id": "8521-seeded-unused-import",
+  "languages": [
+    "python"
+  ],
+  "reviewer": "sub-agent eval-pydantic-ai (automated)",
+  "verdict_source": "automated",
+  "independently_clean": false,
+  "commands": [
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-gaqf1e0o argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/mitmproxy/mitmproxy.git\", \"/tmp/rio-pydantic-ai-ram/rio-eval-gaqf1e0o/head\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-gaqf1e0o/head argv=[\"git\", \"fetch\", \"origin\", \"6debf65b612abc726fe9cabe5c2a1ebb1cb36df4\", \"986ba556378985647957301e28069e46ee6074ec\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-gaqf1e0o/head argv=[\"git\", \"merge-base\", \"6debf65b612abc726fe9cabe5c2a1ebb1cb36df4\", \"986ba556378985647957301e28069e46ee6074ec\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-gaqf1e0o/head argv=[\"git\", \"checkout\", \"--detach\", \"986ba556378985647957301e28069e46ee6074ec\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-gaqf1e0o argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/tmp/rio-pydantic-ai-ram/rio-eval-gaqf1e0o/head\", \"/tmp/rio-pydantic-ai-ram/rio-eval-gaqf1e0o/base\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-gaqf1e0o/base argv=[\"git\", \"checkout\", \"--detach\", \"6debf65b612abc726fe9cabe5c2a1ebb1cb36df4\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-gaqf1e0o/base argv=[\"uv\", \"sync\", \"--locked\", \"--python\", \"3.14.10\", \"--all-groups\", \"--all-extras\", \"--no-install-project\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-gaqf1e0o/base argv=[\"python3\", \"-c\", \"from pathlib import Path; names={'a1_coverage.pth','distutils-precedence.pth'}; [(p.unlink(),print('Removed installed bootstrap:',p.name)) for p in Path('.venv/lib').glob('python*/site-packages/*.pth') if p.name in names]\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-gaqf1e0o/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-gaqf1e0o/head argv=[\"uv\", \"sync\", \"--locked\", \"--python\", \"3.14.10\", \"--all-groups\", \"--all-extras\", \"--no-install-project\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-gaqf1e0o/head argv=[\"python3\", \"-c\", \"from pathlib import Path; names={'a1_coverage.pth','distutils-precedence.pth'}; [(p.unlink(),print('Removed installed bootstrap:',p.name)) for p in Path('.venv/lib').glob('python*/site-packages/*.pth') if p.name in names]\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-gaqf1e0o/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-gaqf1e0o/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-gaqf1e0o/head argv=[\"node\", \"--version\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-gaqf1e0o/head argv=[\"npm\", \"--version\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-gaqf1e0o/head argv=[\"python3\", \"--version\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-gaqf1e0o/head argv=[\"uv\", \"--version\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-gaqf1e0o/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8521-seeded/profile.yaml\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-gaqf1e0o/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-gaqf1e0o/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"6debf65b612abc726fe9cabe5c2a1ebb1cb36df4\", \"--format\", \"json\", \"--offline\", \"--profile\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8521-seeded/profile.yaml\"]"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8521-seeded/commands.json; Rio binary SHA-256: 512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+    "Automated adjudication; see eval/runs/mitmproxy-evidence/runtime-overrides.json and eval/runs/mitmproxy-NOTES.md. No advisory safety claim: audit disabled in original pydantic scope or skipped offline in fallback scope.",
+    "commands.json evaluation_annotations preserve scheduled roots and configuration-derived typecheck targets. Rio internal tool argv was not captured by the runner; inferred commands are labelled."
+  ],
+  "positive_control": {
+    "kind": "seeded-mutation",
+    "expected": [
+      {
+        "id": "unused-itertools-import",
+        "mechanism": "lint-rule",
+        "evidence": "Full repo uv run --no-sync ruff check at base exits 0; seeded head exits 1 with exactly F401 at mitmproxy/coretypes/multidict.py:1. Independent mypy passes both; 19 targeted tests pass both with instrumentation. Evidence: mitmproxy-8521-{base,seed}-py314-* logs. Durable evidence directory: eval/runs/mitmproxy-evidence; preregistered patch/seed/pins/profile in positive-control-register.json.",
+        "finding_ids": [
+          "86aa2b2d6d676dda8042c04d8cc9338614f0336ad15f94a7c7c704dcf6c08820"
+        ]
+      }
+    ]
+  },
+  "base_sha": "6debf65b612abc726fe9cabe5c2a1ebb1cb36df4",
+  "head_sha": "986ba556378985647957301e28069e46ee6074ec",
+  "mode": "branch",
+  "review_id": "c49b528eb69cfdef",
+  "run_id": "01M6MTSS7ZCMCSQDZZE2FH4TTF",
+  "rio_version": "0.1.0",
+  "profile": "eval-mitmproxy",
+  "wall_time_ms": 33682,
+  "status": "incomplete",
+  "report_path": "eval/runs/mitmproxy-8521-seeded/report.json",
+  "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+  "profile_sha256": "17f79f8e2e7d33e4e7f5ca914df0ab4c2d1c0dd73294283ca6401c76493d43a8",
+  "environment": {
+    "dependency_state": "verified",
+    "baseline_ran": true,
+    "baseline_classification_ran": true,
+    "eligible": true,
+    "reasons": [],
+    "checks": [
+      {
+        "findings": [],
+        "kind": "secrets",
+        "language": "common",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "findings": [],
+        "hint": "Dependency audit needs api.osv.dev",
+        "kind": "dependencies",
+        "language": "common",
+        "outcome": "skipped",
+        "reason": "offline",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 1
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "lint",
+        "language": "python",
+        "outcome": "findings",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 336
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "lint",
+        "language": "python",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "base",
+        "wall_time_ms": 309
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "coverage",
+        "language": "python",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 9530
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "typecheck",
+        "language": "python",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 15989
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "typecheck",
+        "language": "python",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "base",
+        "wall_time_ms": 15072
+      }
+    ],
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "Graph references use syntax and text; no language server was used",
+      "Offline applies to Rio; tool and test processes were not network-isolated"
+    ]
+  },
+  "findings": [
+    {
+      "finding": {
+        "category": "defect",
+        "evidence": [
+          "ruff diagnostic"
+        ],
+        "evidence_level": "static_proven",
+        "id": "86aa2b2d6d676dda8042c04d8cc9338614f0336ad15f94a7c7c704dcf6c08820",
+        "location": {
+          "column": 8,
+          "line_end": 1,
+          "line_start": 1,
+          "occurrence_state": "new",
+          "path": "mitmproxy/coretypes/multidict.py",
+          "symbol_path": ""
+        },
+        "locations": [
+          {
+            "column": 8,
+            "line_end": 1,
+            "line_start": 1,
+            "occurrence_state": "new",
+            "path": "mitmproxy/coretypes/multidict.py",
+            "symbol_path": ""
+          }
+        ],
+        "message": "`itertools` imported but unused",
+        "rule_id": "lint/ruff/F401",
+        "severity": "error",
+        "source": {
+          "tool": "ruff",
+          "version": "ruff 0.16.9"
+        },
+        "state": "new",
+        "trigger": ""
+      },
+      "verdict": "true-positive",
+      "reason": "Seed patch adds only import itertools at mitmproxy/coretypes/multidict.py:1. Independent full-repository uv run --no-sync ruff check passes at base 6debf65b612abc726fe9cabe5c2a1ebb1cb36df4 and exits 1 with exactly F401 at synthetic head 986ba556378985647957301e28069e46ee6074ec. See eval/runs/mitmproxy-evidence/mitmproxy-8521-{base,seed}-py314-{commands.json,ruff.log}; mypy passes and 19 instrumented tests pass at both pins. Rio matches the same new F401; verified lint/typecheck base/head classification succeeded.",
+      "message_template": "`itertools` imported but unused",
+      "file_set": [
+        "mitmproxy/coretypes/multidict.py"
+      ],
+      "root_cause_key": "eabb01b6dc59d2ec602ad78106d55499cbe07f2aee3e3141f33cc69e0b75cdf7",
+      "family": "lint/ruff/F401"
+    }
+  ],
+  "root_causes": [
+    {
+      "root_cause_key": "eabb01b6dc59d2ec602ad78106d55499cbe07f2aee3e3141f33cc69e0b75cdf7",
+      "rule_id": "lint/ruff/F401",
+      "message_template": "`itertools` imported but unused",
+      "file_set": [
+        "mitmproxy/coretypes/multidict.py"
+      ],
+      "verdict": "true-positive",
+      "family": "lint/ruff/F401",
+      "finding_count": 1,
+      "occurrence_count": 1,
+      "finding_ids": [
+        "86aa2b2d6d676dda8042c04d8cc9338614f0336ad15f94a7c7c704dcf6c08820"
+      ]
+    }
+  ],
+  "misses": [],
+  "verdict": "useful",
+  "reason": "At least one independently confirmed actionable deterministic root cause."
+}

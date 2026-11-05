@@ -7,16 +7,17 @@ Preserve historical reports and verdicts; publish rescoring separately. Freeze t
 protocol, sample, tool versions, profile, and control expectations before a run.
 Profile changes may share a cohort when the binary hash matches; publish every
 profile hash and each record’s profile. Different binaries require separate cohorts
-unless explicitly labelled mixed with `--allow-mixed-versions`. Verdicts must identify their reviewer and whether they are
-human or automated. Automated results do not claim to meet the PRD's human
-confirmation requirement.
+unless explicitly labelled mixed with `--allow-mixed-versions`. Verdicts must
+identify their reviewer and whether they are human or automated. Automated
+results do not claim to meet the PRD's human confirmation requirement.
 
 ## Eligibility and environment
 
 A PR contributes to release metrics only when baseline classification worked for
 **every applicable typecheck and lint root**: matching successful head and base
-check entries (`passed` or `findings`), each with `dependency_state` in `{verified, trusted}`. Disabled checks and
-`no_project_config` skips are inapplicable; missing tools, dependency mismatches,
+check entries (`passed` or `findings`), each with `dependency_state` in
+`{verified, trusted}`. Disabled checks and `no_project_config` skips are
+inapplicable; missing tools, dependency mismatches,
 and failed/cancelled checks still block eligibility. Every root appearing on either
 side needs the matching other side.
 A successful cached base counts. A baseline that ran but failed does not count.
@@ -36,12 +37,13 @@ Predeclare applicable checks. A skipped dependency audit in an offline cohort is
 an explicit capability limitation, not proof of safety. An offline audit control
 needs a pinned populated advisory cache and evidence that the audit actually ran;
 otherwise it is an environment failure. Coverage controls require instrumentation
-and successful test execution. Trust is an explicit environment choice, not dependency verification. Publish
-all-eligible metrics alongside verified-only metrics, excluding any pair with a
+and successful test execution. Trust is an explicit environment choice, not
+dependency verification. Publish all-eligible metrics alongside verified-only
+metrics, excluding any pair with a
 trusted or unavailable dependency state from the latter. Record the combined
 diagnostic dependency state (`verified`, `trusted`, `mixed`, or `unavailable`);
-`mixed` pairs qualify only when every entry is verified or trusted. Rio currently reuses the head installation for its
-base materialization; installing a separate base checkout does not by itself fix
+`mixed` pairs qualify only when every entry is verified or trusted. Rio currently
+reuses the head installation for its base materialization; installing a separate base checkout does not by itself fix
 incompatible base/head lockfiles.
 
 ## Finding verdicts
@@ -52,7 +54,7 @@ and an evidence-backed reason. Do not count nested copies in `checks` again.
 | Class | Meaning |
 | --- | --- |
 | `true-positive` | Correct, change-specific, actionable deterministic issue; an independent reviewer would act on it. |
-| `false-positive` | Incorrect claim, such as an identifier or dummy fixture reported as a leaked credential. Being pre-existing does not make an incorrect claim correct. |
+| `false-positive` | Visible incorrect claim, such as an identifier or dummy fixture reported as a leaked credential. Being pre-existing does not make an incorrect claim correct; hidden states use the informational class below. |
 | `pre-existing-shown` | Valid diagnostic already present on the base but visible by default (`new`, `worsened`, or `unclassified`); unwanted in this review. Confirm with base evidence; unclassified alone is not proof. |
 | `pre-existing-hidden` | Raw state is `pre-existing` or `fixed`; informational and excluded from precision and usefulness. |
 | `environment-failure` | Diagnostic attributable to broken setup, or analysis impossible because a check/baseline was unavailable. Skips usually live in environment records rather than synthetic findings. |
@@ -77,8 +79,9 @@ collapse whitespace only. Default file set: union of `location.path` and
 `locations[*].path`. Line numbers and symbol paths do not enter the key. A
 reviewer may supply a shared template and file set for diagnostics from one
 proven cause; document why. Do not erase differing types, rules, or independent
-problems merely to reduce counts. Identical visible keys must have identical verdicts. Hidden occurrences are
-grouped separately under the same cause hash so they cannot conflict with or
+problems merely to reduce counts. Identical visible keys must have identical
+verdicts. Hidden occurrences are grouped separately under the same cause hash
+so they cannot conflict with or
 add weight to a visible cause.
 
 Retain every original Rio finding unchanged in its record. Report raw finding
