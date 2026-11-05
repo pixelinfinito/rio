@@ -37,7 +37,7 @@ static SCANNER: LazyLock<Scanner> = LazyLock::new(|| {
         .collect();
     let names = Regex::new(&catalog.entropy.names).expect("embedded entropy expression is valid");
     let assignment = Regex::new(
-        r#"(?m)(?P<name>[A-Za-z_][A-Za-z0-9_-]*)["']?\s*(?P<separator>[:=])\s*(?P<quote>["']?)(?P<value>[A-Za-z0-9/+_=.-]+)"#,
+        r#"(?m)(?P<name>[A-Za-z_][A-Za-z0-9_-]*)["']?[^\S\r\n]*[:=][^\S\r\n]*(?:"(?P<double>(?:[^"\\\r\n]|\\[^\r\n])*)"|'(?P<single>(?:[^'\\\r\n]|\\[^\r\n])*)'|(?P<bare>[A-Za-z0-9/+_=.-]+))"#,
     )
     .unwrap();
     Scanner {
@@ -69,10 +69,106 @@ pub fn shannon_entropy(value: &str) -> f64 {
         .sum()
 }
 
+/// Exact dummy values only: substrings such as `password-actual-credential`
+/// must not hide credentials. Provider-specific tokens bypass this allow-list.
+fn placeholder_value(value: &str) -> bool {
+    let lower = value.to_ascii_lowercase();
+    matches!(
+        lower.as_str(),
+        "user"
+            | "username"
+            | "password"
+            | "pass"
+            | "pwd"
+            | "secret"
+            | "test"
+            | "example"
+            | "changeme"
+            | "dummy"
+            | "placeholder"
+    ) || value.len() >= 3 && lower.bytes().all(|byte| byte == b'x')
+        || value.len() >= 3 && value.bytes().all(|byte| byte == b'*')
+        || [("<", ">"), ("${", "}"), ("{{", "}}")]
+            .iter()
+            .any(|(start, end)| {
+                value
+                    .strip_prefix(start)
+                    .and_then(|inner| inner.strip_suffix(end))
+                    .is_some_and(|inner| {
+                        !inner.is_empty() && !inner.contains(['<', '>', '{', '}', '\r', '\n'])
+                    })
+            })
+}
+
+fn placeholder_connection(value: &str) -> bool {
+    let Some((scheme, rest)) = value.split_once("://") else {
+        return false;
+    };
+    if !matches!(
+        scheme.to_ascii_lowercase().as_str(),
+        "postgres" | "postgresql" | "mysql" | "mongodb" | "mongodb+srv" | "redis"
+    ) {
+        return false;
+    }
+    let Some((credentials, address)) = rest.rsplit_once('@') else {
+        return false;
+    };
+    let Some((username, password)) = credentials.split_once(':') else {
+        return false;
+    };
+    let authority = address.split(['/', '?', '#']).next().unwrap_or_default();
+    let (host, port) = if let Some(rest) = authority.strip_prefix("[::1]") {
+        ("[::1]", rest)
+    } else {
+        authority
+            .find(':')
+            .map_or((authority, ""), |index| authority.split_at(index))
+    };
+    if !port.is_empty()
+        && !port
+            .strip_prefix(':')
+            .is_some_and(|port| !port.is_empty() && port.bytes().all(|byte| byte.is_ascii_digit()))
+    {
+        return false;
+    }
+    placeholder_value(username)
+        && placeholder_value(password)
+        && matches!(
+            host.to_ascii_lowercase().as_str(),
+            "localhost"
+                | "127.0.0.1"
+                | "[::1]"
+                | "example.com"
+                | "example.org"
+                | "example.net"
+                | "db"
+                | "postgres"
+                | "mysql"
+                | "mongodb"
+                | "redis"
+        )
+}
+
 pub fn secret_matches(content: &str) -> Vec<SecretMatch<'_>> {
+    secret_matches_for_path(content, "")
+}
+
+/// Only configuration files have unquoted string values. Source expressions
+/// must never be interpreted as credentials by the assignment entropy rule.
+pub fn secret_matches_for_path<'a>(content: &'a str, path: &str) -> Vec<SecretMatch<'a>> {
+    let name = path.rsplit('/').next().unwrap_or(path);
+    let bare_values = name == ".env"
+        || name.starts_with(".env.")
+        || matches!(
+            name.rsplit('.').next(),
+            Some("env" | "ini" | "cfg" | "conf" | "yaml" | "yml" | "properties")
+        );
     let mut result = Vec::new();
     for (pattern, expression) in SCANNER.catalog.patterns.iter().zip(&SCANNER.patterns) {
         for found in expression.find_iter(content) {
+            if pattern.id == "connection-string" && placeholder_connection(found.as_str()) {
+                continue;
+            }
             result.push(SecretMatch {
                 pattern: &pattern.id,
                 start: found.start(),
@@ -84,28 +180,33 @@ pub fn secret_matches(content: &str) -> Vec<SecretMatch<'_>> {
         if !SCANNER.names.is_match(&assignment["name"]) {
             continue;
         }
-        let value = assignment.name("value").unwrap();
-        if assignment["quote"].is_empty() {
-            let literal = value.as_str();
-            let identifier = literal
-                .bytes()
-                .all(|byte| byte.is_ascii_alphanumeric() || byte == b'_');
-            // Type annotations, symbolic constants and calls are expressions, not
-            // assigned credential literals. Provider patterns still scan them.
-            if content[value.end()..].trim_start().starts_with(['(', '['])
-                || identifier
-                    && (assignment["separator"] == *":"
-                        && literal.starts_with(char::is_uppercase)
-                        && literal
-                            .bytes()
-                            .all(|byte| byte.is_ascii_alphabetic() || byte == b'_')
-                        || literal.starts_with('_')
-                        || literal.bytes().all(|byte| !byte.is_ascii_lowercase()))
+        let value = assignment
+            .name("double")
+            .or_else(|| assignment.name("single"))
+            .or_else(|| assignment.name("bare"))
+            .unwrap();
+        let matched = assignment.get(0).unwrap();
+        let suffix = &content[matched.end()..];
+        let rest = suffix.lines().next().unwrap_or_default().trim_start();
+        if assignment.name("bare").is_some() {
+            let prefix = content[..matched.start()].rsplit('\n').next().unwrap();
+            if !bare_values
+                || !matches!(prefix.trim(), "" | "export" | "-")
+                || !(rest.is_empty() || rest.starts_with(['#', ';']))
             {
                 continue;
             }
+        } else if !(rest.is_empty()
+            || rest.starts_with([',', ')', ']', '}', ';', '#'])
+            || rest.starts_with("//"))
+        {
+            // A quoted prefix of a concatenation, call or attribute expression
+            // is not a complete literal value either.
+            continue;
         }
-        if value.len() >= SCANNER.catalog.entropy.min_length
+        if !placeholder_value(value.as_str())
+            && !placeholder_connection(value.as_str())
+            && value.len() >= SCANNER.catalog.entropy.min_length
             && shannon_entropy(value.as_str()) >= SCANNER.catalog.entropy.threshold
             && !result
                 .iter()

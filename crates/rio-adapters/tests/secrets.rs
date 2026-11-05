@@ -1,5 +1,5 @@
 use rio_adapters::{redact, retained_raw, scan_secrets, shannon_entropy};
-use rio_core::{EvidenceLevel, State};
+use rio_core::{EvidenceLevel, State, secret_matches_for_path};
 use rio_git::{ChangeSet, Selection, Tree, TreeEntry, diff};
 
 fn cases() -> Vec<(&'static str, String, &'static str)> {
@@ -92,7 +92,8 @@ fn entropy_requires_a_secret_name_and_sufficient_entropy() {
     }
     for separator in ["=", ":"] {
         let text = format!("api_key {separator} {value}");
-        assert!(!redact(&text).contains(value));
+        assert_eq!(secret_matches_for_path(&text, ".env").len(), 1);
+        assert_eq!(redact(&text), text);
     }
     for text in [
         format!("ordinary = '{value}'"),
@@ -173,4 +174,174 @@ structlog_context_token = ContextVar("structlog_context_tokens")
     let secret = "aB3dE5gH7jK9mN1pQ4sT6vW8xY0zR2";
     let literal = format!("_CONTEXT_TOKEN = '{secret}'");
     assert!(!redact(&literal).contains(secret));
+}
+
+#[test]
+fn entropy_rejects_source_expressions_in_assignments_kwargs_and_properties() {
+    for source in [
+        "privatekey=self.default_privatekey,",
+        "privatekey=self.x,",
+        "token=get_token()",
+        "token=retrieve_a_credential_with_a_long_name()",
+        "password: config.password",
+        "apiKey: process.env.KEY",
+        "password = dynamically_created_password",
+        "{'privatekey': self.default_privatekey}",
+        "{apiKey: process.env.VERY_LONG_CREDENTIAL_NAME}",
+        "password = \"aB3dE5gH7jK9mN1pQ4sT6vW8xY0zR2\" + suffix",
+        "password = 'aB3dE5gH7jK9mN1pQ4sT6vW8xY0zR2'.strip()",
+        "password = \"aB3dE5gH7jK9mN1pQ4sT6vW8xY0zR2'",
+    ] {
+        let change = changes("", source);
+        assert!(
+            scan_secrets(&diff(&change, &[]).unwrap(), &change.head)
+                .unwrap()
+                .is_empty(),
+            "{source}"
+        );
+        assert_eq!(redact(source), source);
+    }
+    let value = "aB3dE5gH7jK9mN1pQ4sT6vW8xY0zR2";
+    for source in [
+        format!("password = \"{value}\""),
+        format!("connect(privatekey='{value}', token=None)"),
+        format!("{{'token': '{value}'}}"),
+        format!("{{apiKey: \"{value}\"}}"),
+        format!(r#"password = "{value}\"suffix""#),
+        format!(r#"password = '{value}\'suffix'"#),
+    ] {
+        let change = changes("", &source);
+        assert_eq!(
+            scan_secrets(&diff(&change, &[]).unwrap(), &change.head)
+                .unwrap()
+                .len(),
+            1,
+            "{source}"
+        );
+    }
+}
+
+#[test]
+fn bare_entropy_values_require_configuration_files_and_complete_values() {
+    let value = "aB3dE5gH7jK9mN1pQ4sT6vW8xY0zR2";
+    for path in [
+        ".env",
+        ".env.local",
+        "settings.ini",
+        "settings.yaml",
+        "settings.yml",
+    ] {
+        let source = format!("password = {value}");
+        let mut change = changes("", &source);
+        let entry = change.head.remove("a.ts").unwrap();
+        change.head.insert(path.into(), entry);
+        assert_eq!(
+            scan_secrets(&diff(&change, &[]).unwrap(), &change.head)
+                .unwrap()
+                .len(),
+            1,
+            "{path}"
+        );
+    }
+    for source in [
+        format!("call(password={value})"),
+        format!("password = {value} + other"),
+    ] {
+        assert!(
+            secret_matches_for_path(&source, ".env").is_empty(),
+            "{source}"
+        );
+    }
+}
+
+#[test]
+fn exact_placeholder_connections_and_generic_values_are_suppressed() {
+    let placeholders = [
+        "user",
+        "username",
+        "password",
+        "pass",
+        "pwd",
+        "secret",
+        "test",
+        "example",
+        "changeme",
+        "dummy",
+        "placeholder",
+        "xxx",
+        "XXXXXXXX",
+        "***",
+        "<database-password-goes-here>",
+        "${DATABASE_CREDENTIAL_VALUE}",
+        "{{database_credential_value}}",
+    ];
+    for value in placeholders {
+        for host in [
+            "localhost",
+            "127.0.0.1:5432",
+            "[::1]:5432",
+            "example.com",
+            "example.org",
+            "example.net",
+            "db",
+            "postgres",
+            "mysql",
+            "mongodb",
+            "redis",
+        ] {
+            let url = format!("postgres://{value}:{value}@{host}/dbname");
+            let source = format!("password = '{url}'\npassword = '{value}'\n");
+            let change = changes("", &source);
+            assert!(
+                scan_secrets(&diff(&change, &[]).unwrap(), &change.head)
+                    .unwrap()
+                    .is_empty(),
+                "{url}"
+            );
+            assert_eq!(redact(&source), source);
+        }
+    }
+    for db in ["dbname", "other"] {
+        let source = format!("PostgresDsn('postgres://user:password@localhost/{db}')");
+        assert_eq!(redact(&source), source);
+    }
+}
+
+#[test]
+fn real_credentials_and_placeholder_substrings_are_kept_even_in_test_files() {
+    for url in [
+        "postgres://user:r3aL-Credential-4f8B@localhost/db",
+        "postgres://actual-user:password@localhost/db",
+        "postgres://user:password@production.internal/db",
+        "postgres://user:password-actual-credential@example.com/db",
+        "postgres://user:password@localhost.attacker.invalid/db",
+        "postgres://user:password@[::1]attacker.invalid/db",
+        "postgres://user:password@localhost:5432@production.internal/db",
+    ] {
+        for path in [
+            "app.py",
+            "tests/test_settings.py",
+            "test_settings.py",
+            "settings.test.ts",
+            "fixtures/settings.py",
+        ] {
+            let mut change = changes("", url);
+            let entry = change.head.remove("a.ts").unwrap();
+            change.head.insert(path.into(), entry);
+            let findings = scan_secrets(&diff(&change, &[]).unwrap(), &change.head).unwrap();
+            assert_eq!(findings.len(), 1, "{path}: {url}");
+            assert_eq!(findings[0].severity, rio_core::Severity::Error);
+            assert_eq!(findings[0].category, rio_core::Category::Defect);
+        }
+    }
+    for value in [
+        "password-actual-credential-4f8B",
+        "dummy-but-actually-a-secret-4f8B",
+        "prefix-${DATABASE_CREDENTIAL_VALUE}",
+    ] {
+        assert!(!redact(&format!("password = '{value}'")).contains(value));
+    }
+    // Even wrapper placeholders cannot hide a provider-shaped credential.
+    let token = cases()[1].1.clone();
+    assert!(!redact(&format!("token = '<{token}>'")).contains(&token));
 }

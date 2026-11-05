@@ -8,7 +8,7 @@ use rio_core::{
     Category, CheckDetails, CheckOutcome, EvidenceLevel, ExcludedFile, FailureReason, Finding,
     Location, OccurrenceState, Severity, Source, State, finding_id,
 };
-use rio_git::{Diff, Tree};
+use rio_git::{Diff, FileDiff, LineRange, Tree};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::{
@@ -170,9 +170,138 @@ pub struct CoverageFindings {
     pub excluded: Vec<ExcludedFile>,
 }
 
+// Remove only parsed type nodes. Preserve the remaining source text, including
+// newlines: an unchanged token sequence can still change automatic semicolons.
+struct TypeErasure<'a> {
+    source: &'a [u8],
+    line_starts: Vec<usize>,
+    ranges: Vec<std::ops::Range<usize>>,
+}
+
+impl TypeErasure<'_> {
+    fn byte_range(&self, lines: LineRange) -> std::ops::Range<usize> {
+        if lines.count == 0 {
+            return 0..0;
+        }
+        let start = lines.start.saturating_sub(1) as usize;
+        self.line_starts
+            .get(start)
+            .copied()
+            .unwrap_or(self.source.len())
+            ..self
+                .line_starts
+                .get(start + lines.count as usize)
+                .copied()
+                .unwrap_or(self.source.len())
+    }
+
+    fn contains_type(&self, range: &std::ops::Range<usize>) -> bool {
+        self.ranges
+            .iter()
+            .any(|erased| erased.start < range.end && range.start < erased.end)
+    }
+
+    fn runtime_text(&self, range: std::ops::Range<usize>) -> String {
+        let mut output = Vec::new();
+        let mut cursor = range.start;
+        for erased in &self.ranges {
+            if erased.end <= range.start || erased.start >= range.end {
+                continue;
+            }
+            let start = erased.start.max(range.start);
+            output.extend_from_slice(&self.source[cursor..start]);
+            cursor = erased.end.min(range.end);
+        }
+        output.extend_from_slice(&self.source[cursor..range.end]);
+        String::from_utf8(output)
+            .expect("type and line boundaries preserve UTF-8")
+            .trim()
+            .to_owned()
+    }
+}
+
+fn typescript_type_erasure<'a>(path: &str, source: &'a [u8]) -> Result<Option<TypeErasure<'a>>> {
+    let parsed = crate::parse_source(path, source)?;
+    if parsed.root_node().has_error() {
+        return Ok(None);
+    }
+    fn collect(node: tree_sitter::Node<'_>, ranges: &mut Vec<std::ops::Range<usize>>) {
+        let mut cursor = node.walk();
+        let erased = matches!(
+            node.kind(),
+            "type_annotation"
+                | "type_arguments"
+                | "type_parameters"
+                | "interface_declaration"
+                | "type_alias_declaration"
+                | "ambient_declaration"
+        ) || matches!(node.kind(), "import_statement" | "export_statement")
+            && node.children(&mut cursor).any(|child| {
+                child.kind() == "type"
+                    || matches!(
+                        child.kind(),
+                        "interface_declaration" | "type_alias_declaration"
+                    )
+            });
+        if erased {
+            ranges.push(node.byte_range());
+        } else {
+            for child in node.children(&mut cursor) {
+                collect(child, ranges);
+            }
+        }
+    }
+    let mut ranges = Vec::new();
+    collect(parsed.root_node(), &mut ranges);
+    Ok(Some(TypeErasure {
+        source,
+        line_starts: std::iter::once(0)
+            .chain(
+                source
+                    .iter()
+                    .enumerate()
+                    .filter(|(_, byte)| **byte == b'\n')
+                    .map(|(index, _)| index + 1),
+            )
+            .collect(),
+        ranges,
+    }))
+}
+
+fn type_only_changes(base: &Tree, tree: &Tree, file: &FileDiff) -> Result<BTreeSet<u32>> {
+    let mut ignored = BTreeSet::new();
+    if !matches!(
+        file.path.rsplit('.').next(),
+        Some("ts" | "tsx" | "mts" | "cts")
+    ) {
+        return Ok(ignored);
+    }
+    let old_path = file.old_path.as_deref().unwrap_or(&file.path);
+    let before = base
+        .get(old_path)
+        .map_or(&[][..], |entry| entry.content.as_slice());
+    let after = &tree[&file.path].content;
+    let (Some(before), Some(after)) = (
+        typescript_type_erasure(&file.path, before)?,
+        typescript_type_erasure(&file.path, after)?,
+    ) else {
+        return Ok(ignored);
+    };
+    for hunk in &file.hunks {
+        let old = before.byte_range(hunk.base);
+        let new = after.byte_range(hunk.head);
+        let has_types = before.contains_type(&old) || after.contains_type(&new);
+        if has_types && before.runtime_text(old) == after.runtime_text(new) {
+            ignored.extend(hunk.head.start..hunk.head.start + hunk.head.count);
+        }
+    }
+    Ok(ignored)
+}
+
 /// Merge every root's data before calling this function. Otherwise a shared
 /// package covered by its consumer can be incorrectly reported as untested.
 pub fn diff_coverage(
+    base: &Tree,
     tree: &Tree,
     diff: &Diff,
     data: &CoverageData,
@@ -196,10 +325,12 @@ pub fn diff_coverage(
             .iter()
             .flat_map(|hunk| hunk.head.start..hunk.head.start + hunk.head.count)
             .collect();
+        let type_only = type_only_changes(base, tree, file)?;
         let instrumented = if let Some(coverage) = data.get(&file.path) {
             coverage
                 .instrumented
                 .difference(&coverage.executed)
+                .filter(|line| !coverage.excluded.contains(line))
                 .copied()
                 .collect::<BTreeSet<_>>()
         } else {
@@ -225,23 +356,19 @@ pub fn diff_coverage(
                 });
                 continue;
             }
-            if syntax.parse_errors
-                || !relevant.iter().any(|settings| {
-                    settings.static_known
-                        && settings.reports_unloaded
-                        && !settings.excludes(&file.path).unwrap_or(true)
-                })
-            {
-                result.excluded.push(ExcludedFile {
-                    path: file.path.clone(),
-                    reason: "coverage_not_instrumented".into(),
-                });
-                continue;
-            }
-            syntax.executable_lines.clone()
+            // A source heuristic cannot prove that a line was instrumented.
+            // Only report entries establish executable lines for diff coverage.
+            result.excluded.push(ExcludedFile {
+                path: file.path.clone(),
+                reason: "coverage_not_instrumented".into(),
+            });
+            continue;
         };
         let mut groups = BTreeMap::<String, BTreeSet<u32>>::new();
         for line in instrumented.intersection(&added) {
+            if type_only.contains(line) {
+                continue;
+            }
             let symbol = syntax
                 .symbols
                 .iter()
@@ -537,13 +664,29 @@ pub async fn run_coverage(
         }
         Err(_) => CoverageData::new(),
     };
-    if matches!(
-        outcome,
-        CheckOutcome::Failed {
-            reason: FailureReason::TestsFailed,
-            ..
-        }
-    ) {
+    let has_coverage = data.values().any(|file| !file.instrumented.is_empty());
+    let runner_exit = processes
+        .first()
+        .and_then(|process| match process.termination {
+            Termination::Exited { code: Some(code) } if code != 0 => Some(code),
+            _ => None,
+        });
+    if !has_coverage && let Some(code) = runner_exit {
+        let stderr = String::from_utf8_lossy(&processes[0].stderr);
+        let first_line = stderr.lines().map(str::trim).find(|line| !line.is_empty());
+        outcome.details_mut().hint = Some(crate::redact(&format!(
+            "Test runner exited with code {code} without producing usable coverage{}",
+            first_line.map_or_else(String::new, |line| format!(": {line}"))
+        )));
+    } else if has_coverage
+        && matches!(
+            outcome,
+            CheckOutcome::Failed {
+                reason: FailureReason::TestsFailed,
+                ..
+            }
+        )
+    {
         let count = processes.first().and_then(|process| {
             let text = String::from_utf8_lossy(&process.stdout);
             regex::Regex::new(r"(\d+) failed")

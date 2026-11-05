@@ -880,6 +880,7 @@ pub async fn review(
                     }
                 }
                 let findings = diff_coverage(
+                    &shared.request.changes.base,
                     &shared.request.changes.head,
                     &shared.diff,
                     &coverage,
