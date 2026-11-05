@@ -1,0 +1,405 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rio.dev/eval/schema/summary-v2.json",
+  "title": "Rio evaluation summary v2",
+  "type": "object",
+  "properties": {
+    "schema": {
+      "const": "rio-eval-summary-v2"
+    },
+    "methodology": {
+      "const": "deterministic-v2"
+    },
+    "records": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "attempts": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "observed_raw_counts": {
+      "$ref": "#/$defs/counts"
+    },
+    "observed_occurrence_counts": {
+      "$ref": "#/$defs/counts"
+    },
+    "observed_cause_counts": {
+      "$ref": "#/$defs/counts"
+    },
+    "observed_unique_cause_counts": {
+      "$ref": "#/$defs/counts"
+    },
+    "eligible": {
+      "$ref": "#/$defs/metrics"
+    },
+    "by_repository": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/metrics"
+      }
+    },
+    "by_language": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/metrics"
+      }
+    },
+    "environment_failures": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "repository": {
+            "type": "string",
+            "minLength": 1
+          },
+          "pr": {
+            "type": "string",
+            "minLength": 1
+          },
+          "case_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "record_path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "required": [
+          "repository",
+          "pr",
+          "case_id",
+          "record_path",
+          "reasons"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "agent_layer_backlog": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "repository": {
+            "type": "string",
+            "minLength": 1
+          },
+          "pr": {
+            "type": "string",
+            "minLength": 1
+          },
+          "record_path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "miss": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "scope_class": {
+                "enum": [
+                  "deterministic",
+                  "agent-layer"
+                ]
+              },
+              "description": {
+                "type": "string",
+                "minLength": 1
+              },
+              "evidence": {
+                "type": "string",
+                "minLength": 1
+              },
+              "mechanism": {
+                "enum": [
+                  "type-error",
+                  "lint-rule",
+                  "uncovered-lines",
+                  "leaked-secret",
+                  "vulnerable-dependency"
+                ]
+              },
+              "expectation_id": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "id",
+              "scope_class",
+              "description",
+              "evidence"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "repository",
+          "pr",
+          "record_path",
+          "miss"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "deterministic_misses": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "sample": {
+      "type": "object",
+      "properties": {
+        "eligible_real_prs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "repositories": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "languages": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "positive_control_repositories": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "positive_controls_by_language": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "clean_negative_controls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "adequate": {
+          "type": "boolean"
+        },
+        "requirements_missing": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "eligible_real_prs",
+        "repositories",
+        "languages",
+        "positive_control_repositories",
+        "positive_controls_by_language",
+        "clean_negative_controls",
+        "adequate",
+        "requirements_missing"
+      ],
+      "additionalProperties": false
+    },
+    "decision": {
+      "enum": [
+        "go",
+        "no-go",
+        "insufficient-evidence"
+      ]
+    },
+    "decision_reasons": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "verified_only": {
+      "$ref": "#/$defs/metrics"
+    },
+    "dependency_states": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
+    }
+  },
+  "required": [
+    "schema",
+    "methodology",
+    "records",
+    "attempts",
+    "observed_raw_counts",
+    "observed_occurrence_counts",
+    "observed_cause_counts",
+    "observed_unique_cause_counts",
+    "eligible",
+    "by_repository",
+    "by_language",
+    "environment_failures",
+    "agent_layer_backlog",
+    "deterministic_misses",
+    "sample",
+    "decision",
+    "decision_reasons",
+    "verified_only",
+    "dependency_states"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "counts": {
+      "type": "object",
+      "properties": {
+        "true-positive": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "false-positive": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "pre-existing-shown": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "environment-failure": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "out-of-scope": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "pre-existing-hidden": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "true-positive",
+        "false-positive",
+        "pre-existing-shown",
+        "environment-failure",
+        "out-of-scope",
+        "pre-existing-hidden"
+      ],
+      "additionalProperties": false
+    },
+    "metrics": {
+      "type": "object",
+      "properties": {
+        "eligible_prs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "raw_counts": {
+          "$ref": "#/$defs/counts"
+        },
+        "occurrence_counts": {
+          "$ref": "#/$defs/counts"
+        },
+        "cause_counts": {
+          "$ref": "#/$defs/counts"
+        },
+        "unique_cause_counts": {
+          "$ref": "#/$defs/counts"
+        },
+        "precision": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "positive_control_cases": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "positive_control_expected": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "positive_control_detected": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "positive_control_recall": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "false_positive_per_pr": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "pr_with_false_positive_fraction": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "useful_prs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "useful_real_prs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "usefulness_fraction": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "required": [
+        "eligible_prs",
+        "raw_counts",
+        "occurrence_counts",
+        "cause_counts",
+        "unique_cause_counts",
+        "precision",
+        "positive_control_cases",
+        "positive_control_expected",
+        "positive_control_detected",
+        "positive_control_recall",
+        "false_positive_per_pr",
+        "pr_with_false_positive_fraction",
+        "useful_prs",
+        "useful_real_prs",
+        "usefulness_fraction"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

@@ -14,7 +14,7 @@ from urllib.parse import unquote
 
 ROOT = Path(__file__).resolve().parents[1]
 CLASSES = ('true-positive', 'false-positive', 'pre-existing-shown',
-           'environment-failure', 'out-of-scope')
+           'environment-failure', 'out-of-scope', 'pre-existing-hidden')
 SUCCESS = {'passed', 'findings'}
 SCHEMA = ROOT / 'eval/schema'
 
@@ -131,7 +131,7 @@ def occurrences(finding):
                  p['symbol_path']) for p in locations})
 
 
-def dedupe(findings, annotations):
+def dedupe(findings, annotations, legacy=False):
     """Exact tuple keys; explicit reviewer templates/file sets permit proven merges."""
     if len({f['id'] for f in findings}) != len(findings):
         raise ValueError('duplicate finding IDs across top-level findings/risks')
@@ -147,6 +147,12 @@ def dedupe(findings, annotations):
             raise ValueError(f'unknown annotation fields: {set(a) - allowed}')
         if a.get('verdict') not in CLASSES or not isinstance(a.get('reason'), str) or not a['reason'].strip():
             raise ValueError('every finding needs a verdict class and nonempty evidence reason')
+        verdict = a['verdict']
+        if not legacy:
+            if finding['state'] in {'pre-existing', 'fixed'}:
+                verdict = 'pre-existing-hidden'
+            elif verdict == 'pre-existing-hidden':
+                raise ValueError('pre-existing-hidden requires a hidden raw finding state')
         actual_files = {p['path'] for p in [finding['location'], *finding.get('locations', [])]}
         declared_files = a.get('file_set', sorted(actual_files))
         if (not isinstance(declared_files, list) or not declared_files
@@ -163,52 +169,63 @@ def dedupe(findings, annotations):
         key = hashlib.sha256(json.dumps(identity, ensure_ascii=False,
                                        separators=(',', ':')).encode()).hexdigest()
         family = a.get('family', finding['rule_id'])
-        entry = {'finding': copy.deepcopy(finding), 'verdict': a['verdict'],
+        entry = {'finding': copy.deepcopy(finding), 'verdict': verdict,
                  'reason': a['reason'], 'message_template': template,
                  'file_set': files, 'root_cause_key': key, 'family': family}
         adjudicated.append(entry)
-        if key not in groups:
-            groups[key] = {'root_cause_key': key, 'rule_id': finding['rule_id'],
+        group_key = key if legacy else (key, verdict == 'pre-existing-hidden')
+        if group_key not in groups:
+            groups[group_key] = {'root_cause_key': key, 'rule_id': finding['rule_id'],
                            'message_template': template, 'file_set': files,
-                           'verdict': a['verdict'], 'family': family,
+                           'verdict': verdict, 'family': family,
                            'finding_count': 0, 'occurrence_count': 0, 'finding_ids': []}
-        g = groups[key]
-        if (g['verdict'], g['family']) != (a['verdict'], family):
+        g = groups[group_key]
+        if (g['verdict'], g['family']) != (verdict, family):
             raise ValueError(f'conflicting verdict/family within root cause {key}')
         g['finding_count'] += 1
         g['occurrence_count'] += occurrences(finding)
         g['finding_ids'].append(finding['id'])
     for g in groups.values():
         g['finding_ids'].sort()
-    return adjudicated, sorted(groups.values(), key=lambda g: g['root_cause_key'])
+    return adjudicated, sorted(groups.values(), key=lambda g: (g['root_cause_key'], g['verdict']))
 
 
-def environment(report):
+def environment(report, legacy=False):
     checks = report['checks']
-    diagnostic = [c for c in checks if c['kind'] in ('typecheck', 'lint')]
+    def inapplicable(c):
+        return (c['outcome'] == 'skipped' and c.get('reason') in
+                {'disabled', 'no_project_config'})
+
+    diagnostic = [c for c in checks if c['kind'] in ('typecheck', 'lint')
+                  and (legacy or not inapplicable(c))]
     bases = {(c['kind'], c['language'], c['root']): c for c in diagnostic if c['version'] == 'base'}
-    heads = [c for c in diagnostic if c['version'] == 'head']
+    heads = {(c['kind'], c['language'], c['root']): c for c in diagnostic if c['version'] == 'head'}
     reasons = []
-    if not heads:
+    roots = set(heads) if legacy else set(heads) | set(bases)
+    if not roots:
         reasons.append('No typecheck/lint baseline pairs establish classification')
-    classification = bool(heads)
-    for h in heads:
-        b = bases.get((h['kind'], h['language'], h['root']))
-        if (h['outcome'] not in SUCCESS or h.get('dependency_state') != 'verified'
-                or not b or b['outcome'] not in SUCCESS or b.get('dependency_state') != 'verified'):
+    classification = bool(roots)
+    allowed_states = {'verified'} if legacy else {'verified', 'trusted'}
+    for key in sorted(roots):
+        h, b = heads.get(key), bases.get(key)
+        if (not h or h['outcome'] not in SUCCESS or h.get('dependency_state') not in allowed_states
+                or not b or b['outcome'] not in SUCCESS or b.get('dependency_state') not in allowed_states):
             classification = False
-            reasons.append(f'{h["kind"]} {h["root"]}: head={h["outcome"]}, '
-                           f'dependency_state={h.get("dependency_state", "unavailable")}, '
+            reasons.append(f'{key[0]} {key[2]}: head={h["outcome"] if h else "unavailable"}, '
+                           f'dependency_state={h.get("dependency_state", "unavailable") if h else "unavailable"}, '
                            f'base={b["outcome"] if b else "unavailable"}')
     for c in checks:
         # An offline cohort explicitly excludes network audits, not tool failures.
         expected_offline = c['kind'] == 'dependencies' and c.get('reason') in ('offline', 'nothing_to_audit')
-        if c['outcome'] not in SUCCESS and not expected_offline:
+        if (c['outcome'] not in SUCCESS and not expected_offline
+                and (legacy or not inapplicable(c))):
             reasons.append(f'{c["kind"]} {c["root"]} {c["version"]}: '
                            f'{c["outcome"]} {c.get("reason", "")} {c.get("hint", "")}'.strip())
     if report['status'] in ('partial', 'error', 'no_changes'):
         reasons.append(f'report status {report["status"]} cannot establish a complete change review')
-    states = {c['dependency_state'] for c in checks if 'dependency_state' in c}
+    state_checks = checks if legacy else diagnostic
+    states = {c.get('dependency_state', 'unavailable') for c in state_checks
+              if not legacy or 'dependency_state' in c}
     state = next(iter(states)) if len(states) == 1 else ('mixed' if states else 'unavailable')
     return {'dependency_state': state, 'baseline_ran': bool(bases),
             'baseline_classification_ran': classification, 'eligible': classification and not reasons,
@@ -226,7 +243,7 @@ def build_record(report, verdicts, report_path):
     findings, causes = dedupe(report['findings'] + report['risks'], verdicts['findings'])
     env = environment(report)
     review = report['review']
-    record = {'schema': 'rio-eval-record-v1', 'methodology': 'deterministic-v1',
+    record = {'schema': 'rio-eval-record-v2', 'methodology': 'deterministic-v2',
               **{k: verdicts[k] for k in ('repository', 'pr', 'case_id', 'languages',
                                          'reviewer', 'verdict_source', 'independently_clean')},
               'commands': verdicts.get('commands', []), 'notes': verdicts.get('notes', []),
@@ -253,6 +270,8 @@ def usefulness(record):
     if not record['environment']['eligible']:
         return 'environment-failure', 'Baseline/setup must be repaired before this PR can be scored.'
     classes = {g['verdict'] for g in record['root_causes']}
+    if record['schema'] != 'rio-eval-record-v1':
+        classes.discard('pre-existing-hidden')
     if 'true-positive' in classes:
         return 'useful', 'At least one independently confirmed actionable deterministic root cause.'
     if (record['independently_clean'] and not classes
@@ -263,17 +282,19 @@ def usefulness(record):
 
 
 def validate_record(record):
-    _validate(record, read_json(SCHEMA / 'record-v1.json'), SCHEMA / 'record-v1.json', '$')
+    legacy = record.get('schema') == 'rio-eval-record-v1'
+    schema = SCHEMA / ('record-v1.json' if legacy else 'record-v2.json')
+    validate(record, schema)
     if record['reviewer'].startswith('TODO'):
         raise ValueError('replace the skeleton reviewer before producing a record')
     findings, causes = dedupe([f['finding'] for f in record['findings']],
                              {f['finding']['id']: {k: f[k] for k in
                               ('verdict', 'reason', 'message_template', 'file_set', 'family')}
-                              for f in record['findings']})
+                              for f in record['findings']}, legacy=legacy)
     if findings != record['findings'] or causes != record['root_causes']:
         raise ValueError('record root causes do not match findings')
     derived_env = environment({'checks': record['environment']['checks'], 'status': record['status'],
-                               'footer': {'notes': record['environment']['notes']}})
+                               'footer': {'notes': record['environment']['notes']}}, legacy=legacy)
     if derived_env != record['environment']:
         raise ValueError('record environment does not match check evidence')
     if (record['verdict'], record['reason']) != usefulness(record):
@@ -314,6 +335,25 @@ def validate_record(record):
                 raise ValueError('miss references absent, detected, or out-of-scope expectation')
             if m['mechanism'] != e['mechanism']:
                 raise ValueError('control miss mechanism differs from expected bug')
+
+
+def current_record(record):
+    """Rescore preserved v1 evidence without rewriting the historical artifact."""
+    validate_record(record)
+    if record['schema'] == 'rio-eval-record-v2':
+        return record
+    updated = copy.deepcopy(record)
+    updated.update(schema='rio-eval-record-v2', methodology='deterministic-v2')
+    updated['findings'], updated['root_causes'] = dedupe(
+        [f['finding'] for f in record['findings']],
+        {f['finding']['id']: {k: f[k] for k in
+         ('verdict', 'reason', 'message_template', 'file_set', 'family')}
+         for f in record['findings']})
+    updated['environment'] = environment({'checks': record['environment']['checks'],
+        'status': record['status'], 'footer': {'notes': record['environment']['notes']}})
+    updated['verdict'], updated['reason'] = usefulness(updated)
+    validate_record(updated)
+    return updated
 
 
 def class_counts(records, unit):
@@ -359,6 +399,7 @@ def metrics(records):
 def aggregate(records, paths):
     if len(records) != len(paths):
         raise ValueError('record/path length mismatch')
+    records = [current_record(r) for r in records]
     seen = set()
     for r in records:
         validate_record(r)
@@ -405,12 +446,16 @@ def aggregate(records, paths):
         (m['useful_real_prs'], lambda x: x >= 10, 'Need at least 10 useful real PRs')]:
         if value is not None and not ok(value):
             failures.append(reason)
-    result = {'schema': 'rio-eval-summary-v1', 'methodology': 'deterministic-v1',
+    result = {'schema': 'rio-eval-summary-v2', 'methodology': 'deterministic-v2',
               'records': list(map(str, paths)), 'attempts': len(records),
               'observed_raw_counts': class_counts(records, 'raw'),
               'observed_occurrence_counts': class_counts(records, 'occurrences'),
               'observed_cause_counts': class_counts(records, 'causes'),
               'observed_unique_cause_counts': unique_counts(records), 'eligible': m,
+              'verified_only': metrics([r for r in eligible
+                                        if r['environment']['dependency_state'] == 'verified']),
+              'dependency_states': dict(sorted(Counter(r['environment']['dependency_state']
+                                                       for r in records).items())),
               'by_repository': {repo: metrics([r for r in eligible if r['repository'] == repo])
                                 for repo in sorted({r['repository'] for r in records})},
               'by_language': {lang: metrics([r for r in eligible if lang in r['languages']])
@@ -430,7 +475,8 @@ def aggregate(records, paths):
 
 
 def validate_summary(summary):
-    validate(summary, SCHEMA / 'summary-v1.json')
+    validate(summary, SCHEMA / ('summary-v1.json' if summary.get('schema') ==
+                              'rio-eval-summary-v1' else 'summary-v2.json'))
 
 
 def cell(value):
@@ -442,15 +488,24 @@ def link(path, output):
 
 
 def render(records, paths, summary, version, output, narrative=None):
+    records = [current_record(r) for r in records]
     m = summary['eligible']
     fmt = lambda x: 'undefined' if x is None else f'{x:.3f}'
     lines = [f'# Rio {version} evaluation', '',
              f'**Decision: {summary["decision"]}.** Release is allowed only by a go decision.', '',
-             'Method: [deterministic-v1](' + link(ROOT / 'eval/METHODOLOGY.md', output) + '). '
+             'Method: [deterministic-v2](' + link(ROOT / 'eval/METHODOLOGY.md', output) + '). '
              'Reviewer identities and human/automated provenance are in each raw record.', '']
     if narrative:
         lines += [narrative.rstrip(), '']
-    lines += [f'{len(records)} attempts; {m["eligible_prs"]} eligible; '
+    strict = summary['verified_only']
+    lines += ['| Metric view | Eligible PRs | TP causes | FP causes | Precision | Controls detected / expected | Useful PRs |',
+              '| --- | ---: | ---: | ---: | ---: | ---: | ---: |']
+    for name, view in [('All eligible', m), ('Verified only', strict)]:
+        lines.append(f'| {name} | {view["eligible_prs"]} | {view["cause_counts"]["true-positive"]} | '
+                     f'{view["cause_counts"]["false-positive"]} | {fmt(view["precision"])} | '
+                     f'{view["positive_control_detected"]} / {view["positive_control_expected"]} | '
+                     f'{view["useful_prs"]} |')
+    lines += ['', f'{len(records)} attempts; {m["eligible_prs"]} eligible; '
               f'{len(summary["environment_failures"])} environment failures. '
               f'Precision: {fmt(m["precision"])}; positive-control recall: '
               f'{fmt(m["positive_control_recall"])}; FP causes/PR: {fmt(m["false_positive_per_pr"])}. '
@@ -475,6 +530,9 @@ def render(records, paths, summary, version, output, narrative=None):
                   f'[PR]({r["pr"]}) · [raw record]({link(path, output)}) · '
                   f'[Rio report]({link(r["report_path"], output)}) · review `{r["review_id"]}` · '
                   f'{r["wall_time_ms"] / 1000:.3f}s · {r["verdict_source"]} ({cell(r["reviewer"])}).', '',
+                  f'Dependencies: `{r["environment"]["dependency_state"]}`; '
+                  f'eligible: `{str(r["environment"]["eligible"]).lower()}`; '
+                  f'baseline classification: `{str(r["environment"]["baseline_classification_ran"]).lower()}`.', '',
                   f'**{r["verdict"]}:** {r["reason"]}', '']
         lines += [cell(note) for note in r['notes']] + ([''] if r['notes'] else [])
         if r['root_causes']:
@@ -542,9 +600,9 @@ def main():
             render(records, args.records, summary, args.version, args.out, narrative)
     elif args.command == 'validate':
         value = read_json(args.path)
-        if value.get('schema') == 'rio-eval-record-v1':
+        if value.get('schema') in ('rio-eval-record-v1', 'rio-eval-record-v2'):
             validate_record(value)
-        elif value.get('schema') == 'rio-eval-summary-v1':
+        elif value.get('schema') in ('rio-eval-summary-v1', 'rio-eval-summary-v2'):
             validate_summary(value)
         else:
             raise ValueError('unknown evaluation schema')

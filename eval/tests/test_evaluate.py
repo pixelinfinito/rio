@@ -164,16 +164,91 @@ class AggregationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'deterministic miss'):
             e.validate_record(r)
 
-    def test_successful_baseline_must_be_verified(self):
+    def test_successful_baseline_accepts_trusted_and_cached(self):
         r = report()
         r['checks'][0]['dependency_state'] = 'trusted'
         env = e.environment(r)
         self.assertTrue(env['baseline_ran'])
-        self.assertFalse(env['baseline_classification_ran'])
-        self.assertFalse(env['eligible'])
+        self.assertTrue(env['baseline_classification_ran'])
+        self.assertTrue(env['eligible'])
+        self.assertEqual(env['dependency_state'], 'mixed')
         r['checks'][0]['dependency_state'] = 'verified'
         r['checks'][0]['cached'] = True
         self.assertTrue(e.environment(r)['eligible'])
+
+    def test_verified_only_metrics_exclude_trusted_and_mixed_pairs(self):
+        verified = record(1, ['true-positive'])
+        trusted = record(2, ['false-positive'])
+        for c in trusted['environment']['checks']:
+            c['dependency_state'] = 'trusted'
+        trusted['environment'] = e.environment({'checks': trusted['environment']['checks'],
+            'status': trusted['status'], 'footer': {'notes': []}})
+        summary = e.aggregate([verified, trusted], ['verified', 'trusted'])
+        self.assertEqual(summary['eligible']['precision'], .5)
+        self.assertEqual(summary['verified_only']['precision'], 1)
+        self.assertEqual(summary['dependency_states'], {'verified': 1, 'trusted': 1})
+        with tempfile.TemporaryDirectory() as tmp:
+            output = Path(tmp) / 'result.md'
+            e.render([verified, trusted], ['verified', 'trusted'], summary, 'test', output)
+            text = output.read_text()
+            self.assertIn('Verified only', text)
+            self.assertIn('Dependencies: `trusted`; eligible: `true`', text)
+
+    def test_every_applicable_root_needs_both_successful_versions(self):
+        for outcome in ('failed', 'cancelled', 'skipped'):
+            r = report()
+            r['checks'][0].update(outcome=outcome, reason='tool_missing')
+            self.assertFalse(e.environment(r)['eligible'])
+        r = report()
+        r['checks'].append({**r['checks'][0], 'root': 'other'})
+        self.assertFalse(e.environment(r)['eligible'])
+        r = report()
+        r['checks'][1]['dependency_state'] = 'unavailable'
+        self.assertFalse(e.environment(r)['eligible'])
+        self.assertFalse(e.environment({'checks': [], 'status': 'complete',
+                                       'footer': {'notes': []}})['eligible'])
+
+    def test_deliberate_disabled_and_unconfigured_checks_are_inapplicable(self):
+        r = report()
+        for reason in ('disabled', 'no_project_config'):
+            r['checks'].append({**r['checks'][1], 'kind': 'lint', 'outcome': 'skipped',
+                                'reason': reason})
+        self.assertTrue(e.environment(r)['eligible'])
+        r['checks'].append({**r['checks'][1], 'kind': 'coverage', 'outcome': 'skipped',
+                            'reason': 'tool_missing'})
+        self.assertFalse(e.environment(r)['eligible'])
+
+    def test_hidden_states_derived_from_report_for_findings_and_risks(self):
+        for state in ('pre-existing', 'fixed'):
+            for collection in ('findings', 'risks'):
+                r = report()
+                f = finding(); f['state'] = state
+                r[collection] = [f]
+                v = e.skeleton(r, 'o/r', 'https://github.com/o/r/pull/1', ['typescript'])
+                v.update(reviewer='oracle', independently_clean=True)
+                v['findings'][f['id']] = {'verdict': 'false-positive', 'reason': 'oracle'}
+                built = e.build_record(r, v, 'raw.json')
+                self.assertEqual(built['findings'][0]['verdict'], 'pre-existing-hidden')
+                self.assertEqual(built['findings'][0]['finding'], f)
+                self.assertEqual(built['verdict'], 'useful')
+                summary = e.aggregate([built], ['record'])
+                self.assertIsNone(summary['eligible']['precision'])
+                self.assertEqual(summary['eligible']['cause_counts']['pre-existing-hidden'], 1)
+        for state in ('new', 'worsened', 'unclassified'):
+            f = finding(); f['state'] = state
+            annotation = {f['id']: {'verdict': 'pre-existing-shown', 'reason': 'base oracle'}}
+            self.assertEqual(e.dedupe([f], annotation)[0][0]['verdict'], 'pre-existing-shown')
+            annotation[f['id']]['verdict'] = 'pre-existing-hidden'
+            with self.assertRaisesRegex(ValueError, 'hidden raw'):
+                e.dedupe([f], annotation)
+
+    def test_same_cause_hidden_occurrences_do_not_conflict_with_visible(self):
+        fs = [finding(1), finding(2)]
+        fs[1]['state'] = 'pre-existing'
+        annotations = {f['id']: {'verdict': 'true-positive', 'reason': 'oracle'} for f in fs}
+        _, causes = e.dedupe(fs, annotations)
+        self.assertEqual({c['verdict'] for c in causes}, {'true-positive', 'pre-existing-hidden'})
+        self.assertEqual(len({c['root_cause_key'] for c in causes}), 1)
 
     def test_schema_rejects_wrong_rio_fields_and_advisory_missing(self):
         r = record(1, ['true-positive'])

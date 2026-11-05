@@ -1,12 +1,13 @@
-# Deterministic evaluation methodology v1
+# Deterministic evaluation methodology v2
 
 This protocol supersedes the per-finding acceptance method in the original
 [v0.1 evaluation](../docs/evaluation/v0.1.md) and the release-acceptance bullet in
 [the design](../openspec/changes/rio-v0-1-local-cli/design.md#d14-testing-strategy).
 Preserve historical reports and verdicts; publish rescoring separately. Freeze this
 protocol, sample, tool versions, profile, and control expectations before a run.
-Changing any of these starts a new cohort; do not mix runs of different binaries
-to improve a score. Verdicts must identify their reviewer and whether they are
+Profile changes may share a cohort when the binary hash matches; publish every
+profile hash and each record’s profile. Different binaries require separate cohorts
+unless explicitly labelled mixed with `--allow-mixed-versions`. Verdicts must identify their reviewer and whether they are
 human or automated. Automated results do not claim to meet the PRD's human
 confirmation requirement.
 
@@ -14,13 +15,16 @@ confirmation requirement.
 
 A PR contributes to release metrics only when baseline classification worked for
 **every applicable typecheck and lint root**: matching successful head and base
-check entries (`passed` or `findings`), both with `dependency_state: verified`.
+check entries (`passed` or `findings`), each with `dependency_state` in `{verified, trusted}`. Disabled checks and
+`no_project_config` skips are inapplicable; missing tools, dependency mismatches,
+and failed/cancelled checks still block eligibility. Every root appearing on either
+side needs the matching other side.
 A successful cached base counts. A baseline that ran but failed does not count.
 The harness records both `baseline_ran` (any base execution/cache result) and
 `baseline_classification_ran` (all applicable pairs succeeded). No applicable
 pairs is insufficient evidence of a working baseline.
 
-Missing tools, failed checks, unverified/trusted dependencies, lockfile mismatch,
+Missing tools, failed checks, unavailable dependencies, lockfile mismatch,
 disabled baseline, or absent baseline evidence make the PR an
 `environment-failure`. Exclude it from precision, recall, false-positive rate,
 and usefulness denominators. Preserve its findings and defects as observations;
@@ -32,8 +36,11 @@ Predeclare applicable checks. A skipped dependency audit in an offline cohort is
 an explicit capability limitation, not proof of safety. An offline audit control
 needs a pinned populated advisory cache and evidence that the audit actually ran;
 otherwise it is an environment failure. Coverage controls require instrumentation
-and successful test execution. Never turn on `trust_installed_dependencies` to
-make a scored run eligible. Rio currently reuses the head installation for its
+and successful test execution. Trust is an explicit environment choice, not dependency verification. Publish
+all-eligible metrics alongside verified-only metrics, excluding any pair with a
+trusted or unavailable dependency state from the latter. Record the combined
+diagnostic dependency state (`verified`, `trusted`, `mixed`, or `unavailable`);
+`mixed` pairs qualify only when every entry is verified or trusted. Rio currently reuses the head installation for its
 base materialization; installing a separate base checkout does not by itself fix
 incompatible base/head lockfiles.
 
@@ -46,9 +53,17 @@ and an evidence-backed reason. Do not count nested copies in `checks` again.
 | --- | --- |
 | `true-positive` | Correct, change-specific, actionable deterministic issue; an independent reviewer would act on it. |
 | `false-positive` | Incorrect claim, such as an identifier or dummy fixture reported as a leaked credential. Being pre-existing does not make an incorrect claim correct. |
-| `pre-existing-shown` | Valid diagnostic already present on the base, honestly labelled pre-existing or unclassified, but unwanted in this review. Confirm with base evidence; unclassified alone is not proof. |
+| `pre-existing-shown` | Valid diagnostic already present on the base but visible by default (`new`, `worsened`, or `unclassified`); unwanted in this review. Confirm with base evidence; unclassified alone is not proof. |
+| `pre-existing-hidden` | Raw state is `pre-existing` or `fixed`; informational and excluded from precision and usefulness. |
 | `environment-failure` | Diagnostic attributable to broken setup, or analysis impossible because a check/baseline was unavailable. Skips usually live in environment records rather than synthetic findings. |
 | `out-of-scope` | Requires semantic/agent reasoning beyond the deterministic checks. |
+
+Visibility is derived from the raw finding state, including risks, using the
+same rule as `rio-core/src/render.rs::visible()`: only `pre-existing` and `fixed`
+are hidden. A hidden raw state overrides the adjudicator’s label; a visible state
+cannot be labelled `pre-existing-hidden`. Preserve the raw finding and evidence
+reason. V2 records and summaries use `deterministic-v2`; v1 artifacts remain
+valid historical evidence and are rescored in memory when aggregated.
 
 `noise` is not a verdict. Check failures must not be relabelled as product false
 positives. Conversely, dependency trust does not excuse an independently proven
@@ -62,7 +77,9 @@ collapse whitespace only. Default file set: union of `location.path` and
 `locations[*].path`. Line numbers and symbol paths do not enter the key. A
 reviewer may supply a shared template and file set for diagnostics from one
 proven cause; document why. Do not erase differing types, rules, or independent
-problems merely to reduce counts. Identical keys must have identical verdicts.
+problems merely to reduce counts. Identical visible keys must have identical verdicts. Hidden occurrences are
+grouped separately under the same cause hash so they cannot conflict with or
+add weight to a visible cause.
 
 Retain every original Rio finding unchanged in its record. Report raw finding
 counts, raw location occurrences (unique locations per finding), and distinct
@@ -93,7 +110,7 @@ they are outside the preregistered recall denominator.
 
 A PR is **useful** if a reviewer would act on at least one true-positive cause,
 OR the report correctly confirms a clean change with working baseline, no false
-positives, no unwanted pre-existing diagnostics, and no deterministic misses.
+positives, no visible unwanted pre-existing diagnostics, and no deterministic misses.
 The clean branch requires an independent clean-change assessment, not merely
 zero output. An environment failure cannot earn useful or not-useful status.
 Semantic backlog items do not turn a deterministically clean result into a miss.

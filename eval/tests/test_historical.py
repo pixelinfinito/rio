@@ -12,7 +12,12 @@ class HistoricalTests(unittest.TestCase):
         directory = e.ROOT / 'docs/evaluation/v0.1-rescored'
         summary = e.read_json(directory / 'summary.json')
         records = [e.read_json(e.ROOT / path) for path in summary['records']]
-        self.assertEqual(e.aggregate(records, summary['records']), summary)
+        e.validate_summary(summary)
+        for record in records:
+            e.validate_record(record)
+        rescored = e.aggregate(records, summary['records'])
+        self.assertEqual(rescored['eligible']['eligible_prs'], 0)
+        self.assertEqual(rescored['schema'], 'rio-eval-summary-v2')
         self.assertEqual(summary['attempts'], 10)
         self.assertEqual(summary['eligible']['eligible_prs'], 0)
         self.assertEqual(len(summary['environment_failures']), 10)
