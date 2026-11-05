@@ -1,0 +1,36 @@
+[
+  {
+    "cell": null,
+    "code": "F841",
+    "end_location": {
+      "column": 20,
+      "row": 24
+    },
+    "filename": "/run/user/1000/litestar-rerun2/rio-eval-dfh7vlrx/cache/4fbe7a5f98898db5/runs/01M6NQKFJT61GVAGVXSMZS1PA4/tools/tool.tmp-qCAVqQ/litestar/utils/path.py",
+    "fix": {
+      "applicability": "unsafe",
+      "edits": [
+        {
+          "content": "",
+          "end_location": {
+            "column": 1,
+            "row": 25
+          },
+          "location": {
+            "column": 1,
+            "row": 24
+          }
+        }
+      ],
+      "message": "Remove assignment to unused variable `rio_eval_unused`"
+    },
+    "location": {
+      "column": 5,
+      "row": 24
+    },
+    "message": "Local variable `rio_eval_unused` is assigned to but never used",
+    "noqa_row": 24,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/unused-variable"
+  }
+]

@@ -1,0 +1,362 @@
+{
+  "checks": [
+    {
+      "findings": [],
+      "kind": "secrets",
+      "language": "common",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 1
+    },
+    {
+      "findings": [],
+      "hint": "Dependency audit needs api.osv.dev",
+      "kind": "dependencies",
+      "language": "common",
+      "outcome": "skipped",
+      "reason": "offline",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 0
+    },
+    {
+      "dependency_state": "verified",
+      "findings": [],
+      "kind": "lint",
+      "language": "python",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 377
+    },
+    {
+      "dependency_state": "verified",
+      "findings": [],
+      "kind": "lint",
+      "language": "python",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "base",
+      "wall_time_ms": 307
+    },
+    {
+      "dependency_state": "verified",
+      "findings": [],
+      "kind": "coverage",
+      "language": "python",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 30336
+    },
+    {
+      "dependency_state": "verified",
+      "findings": [],
+      "kind": "typecheck",
+      "language": "python",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 80194
+    },
+    {
+      "dependency_state": "verified",
+      "findings": [],
+      "kind": "typecheck",
+      "language": "python",
+      "outcome": "passed",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "base",
+      "wall_time_ms": 64425
+    }
+  ],
+  "deferred": [
+    {
+      "reason": "no_endpoint",
+      "step": "triage"
+    },
+    {
+      "reason": "no_endpoint",
+      "step": "agents"
+    },
+    {
+      "reason": "no_endpoint",
+      "step": "verify"
+    }
+  ],
+  "excluded": [],
+  "findings": [],
+  "footer": {
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "Graph references use syntax and text; no language server was used",
+      "Offline applies to Rio; tool and test processes were not network-isolated"
+    ],
+    "suppressions": [],
+    "tool_versions": {
+      "python:.:coverage": "Coverage.py, version 7.13.5 with C extension",
+      "python:.:mypy": "mypy 1.19.1 (compiled: yes)",
+      "python:.:ruff": "ruff 0.15.7"
+    }
+  },
+  "impact": {
+    "symbols": [
+      {
+        "path": "litestar/_asgi/asgi_router.py",
+        "references_per_hop": [
+          2,
+          91
+        ],
+        "symbol_path": "asgi_router.ASGIRouter.construct_routing_trie",
+        "test_referenced": true,
+        "unresolved": 51
+      },
+      {
+        "path": "litestar/handlers/asgi_handlers.py",
+        "references_per_hop": [
+          75,
+          8
+        ],
+        "symbol_path": "asgi_handlers.ASGIRouteHandler.__init__",
+        "test_referenced": true,
+        "unresolved": 2856
+      },
+      {
+        "path": "litestar/handlers/asgi_handlers.py",
+        "references_per_hop": [
+          32,
+          66
+        ],
+        "symbol_path": "asgi_handlers.asgi",
+        "test_referenced": true,
+        "unresolved": 134
+      },
+      {
+        "path": "tests/e2e/test_routing/test_path_mounting.py",
+        "references_per_hop": [
+          0,
+          0
+        ],
+        "symbol_path": "",
+        "test_referenced": false,
+        "unresolved": 0
+      },
+      {
+        "path": "tests/e2e/test_routing/test_path_mounting.py",
+        "references_per_hop": [
+          7,
+          0
+        ],
+        "symbol_path": "test_path_mounting._mount",
+        "test_referenced": true,
+        "unresolved": 7
+      },
+      {
+        "path": "tests/e2e/test_routing/test_path_mounting.py",
+        "references_per_hop": [
+          602,
+          518
+        ],
+        "symbol_path": "test_path_mounting._mount.handler",
+        "test_referenced": true,
+        "unresolved": 17613
+      },
+      {
+        "path": "tests/e2e/test_routing/test_path_mounting.py",
+        "references_per_hop": [
+          0,
+          0
+        ],
+        "symbol_path": "test_path_mounting.test_mount_does_not_match_partial_path_segment",
+        "test_referenced": false,
+        "unresolved": 0
+      },
+      {
+        "path": "tests/e2e/test_routing/test_path_mounting.py",
+        "references_per_hop": [
+          0,
+          0
+        ],
+        "symbol_path": "test_path_mounting.test_mount_does_not_match_partial_path_segment_for_websocket",
+        "test_referenced": false,
+        "unresolved": 0
+      },
+      {
+        "path": "tests/e2e/test_routing/test_path_mounting.py",
+        "references_per_hop": [
+          1,
+          0
+        ],
+        "symbol_path": "test_path_mounting.test_mount_does_not_match_partial_path_segment_for_websocket.mount",
+        "test_referenced": true,
+        "unresolved": 1
+      },
+      {
+        "path": "tests/e2e/test_routing/test_path_mounting.py",
+        "references_per_hop": [
+          0,
+          0
+        ],
+        "symbol_path": "test_path_mounting.test_mount_path_with_regex_metacharacters",
+        "test_referenced": false,
+        "unresolved": 0
+      },
+      {
+        "path": "tests/e2e/test_routing/test_path_mounting.py",
+        "references_per_hop": [
+          0,
+          0
+        ],
+        "symbol_path": "test_path_mounting.test_mount_prefix_sibling_is_reachable",
+        "test_referenced": false,
+        "unresolved": 0
+      },
+      {
+        "path": "tests/e2e/test_routing/test_path_mounting.py",
+        "references_per_hop": [
+          0,
+          0
+        ],
+        "symbol_path": "test_path_mounting.test_mount_under_router_does_not_match_partial_path_segment",
+        "test_referenced": false,
+        "unresolved": 0
+      },
+      {
+        "path": "tests/e2e/test_routing/test_path_mounting.py",
+        "references_per_hop": [
+          0,
+          0
+        ],
+        "symbol_path": "test_path_mounting.test_nested_mounts",
+        "test_referenced": false,
+        "unresolved": 0
+      },
+      {
+        "path": "tests/e2e/test_routing/test_path_mounting.py",
+        "references_per_hop": [
+          0,
+          0
+        ],
+        "symbol_path": "test_path_mounting.test_parametrized_handler_sharing_a_prefix_with_a_mount",
+        "test_referenced": false,
+        "unresolved": 0
+      },
+      {
+        "path": "tests/e2e/test_routing/test_path_mounting.py",
+        "references_per_hop": [
+          5,
+          0
+        ],
+        "symbol_path": "test_path_mounting.test_parametrized_handler_sharing_a_prefix_with_a_mount.regular_handler",
+        "test_referenced": true,
+        "unresolved": 5
+      },
+      {
+        "path": "tests/e2e/test_routing/test_path_mounting.py",
+        "references_per_hop": [
+          0,
+          0
+        ],
+        "symbol_path": "test_path_mounting.test_root_mount_does_not_shadow_other_mounts",
+        "test_referenced": false,
+        "unresolved": 0
+      }
+    ],
+    "truncated": false,
+    "unresolved": 20667
+  },
+  "incomplete": [
+    {
+      "findings": [],
+      "hint": "Dependency audit needs api.osv.dev",
+      "kind": "dependencies",
+      "language": "common",
+      "outcome": "skipped",
+      "reason": "offline",
+      "root": ".",
+      "scheduled_as": "changed",
+      "version": "head",
+      "wall_time_ms": 0
+    }
+  ],
+  "metrics": {
+    "checks": [
+      {
+        "kind": "secrets",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 1
+      },
+      {
+        "kind": "dependencies",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "kind": "lint",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 377
+      },
+      {
+        "kind": "lint",
+        "root": ".",
+        "version": "base",
+        "wall_time_ms": 307
+      },
+      {
+        "kind": "coverage",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 30336
+      },
+      {
+        "kind": "typecheck",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 80194
+      },
+      {
+        "kind": "typecheck",
+        "root": ".",
+        "version": "base",
+        "wall_time_ms": 64425
+      }
+    ],
+    "tool_versions": {
+      "python:.:coverage": "Coverage.py, version 7.13.5 with C extension",
+      "python:.:mypy": "mypy 1.19.1 (compiled: yes)",
+      "python:.:ruff": "ruff 0.15.7"
+    },
+    "wall_time_ms": 167049
+  },
+  "review": {
+    "base": "716f8b023b1c13e6f1e8ab08dfa1938f7923312d",
+    "chain": [
+      "eval-litestar-b15dc8ff5001"
+    ],
+    "head": "9870dce9dc2688e78fc43bc73e27eed4198893ac",
+    "id": "d700079437e9a30f",
+    "mode": "branch",
+    "profile": "eval-litestar-b15dc8ff5001",
+    "rio_version": "0.1.0",
+    "run_id": "01M6NQC9CPYT5W5FMJGJHJTKNG"
+  },
+  "risks": [],
+  "schema": "rio-report-v1",
+  "status": "incomplete",
+  "summary": {
+    "fixed": 0,
+    "pre_existing": 0,
+    "suppressed": 0
+  }
+}

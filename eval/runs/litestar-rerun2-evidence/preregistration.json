@@ -1,0 +1,71 @@
+{
+  "registered_utc": "2026-11-05T10:59:03.058637+00:00",
+  "reviewer": "sub-agent rerun2-litestar (automated)",
+  "binary_version": "rio 0.1.0 x86_64-unknown-linux-gnu f6e4f87e4c65",
+  "binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+  "python": "Python 3.12.12",
+  "uv": "uv 0.13.7 (x86_64-unknown-linux-gnu)",
+  "same_seed": {
+    "kind": "seeded-mutation",
+    "parent_pr": 5164,
+    "seed": "litestar-f841-20261105-v1",
+    "base": "f4f7e9831574ed08f50901e62911019b5e7383ac",
+    "head": "fcab0954a74c5f8d340adbbfb9091f94982aa9a2",
+    "patch_sha256": "2ef92d4ca023bd78f1efbec512a0ff9788d1f0e2dbd957c5f66e9d3802455c4a",
+    "profile_sha256": "7f79af17af30fa064a6c7382114fbaca818be229d12e4bfea20ca9678544f4b8",
+    "lockfile_sha256": "8f25baff7a27134191cd7adcb550963aa1212f1081f13196b929e305ff17dfbd",
+    "registered_utc": "2026-11-05T02:47:33.194318+00:00"
+  },
+  "cases": [
+    {
+      "prior": "eval/runs/litestar-5178-scored",
+      "base": "716f8b023b1c13e6f1e8ab08dfa1938f7923312d",
+      "head": "9870dce9dc2688e78fc43bc73e27eed4198893ac",
+      "profile_sha256": "7f79af17af30fa064a6c7382114fbaca818be229d12e4bfea20ca9678544f4b8",
+      "install_plan_sha256": "6aaf627f402d2112098502124d52f5c47fc1a7e113faa0005ee272700dc72dc8",
+      "positive_control": {
+        "kind": "none",
+        "expected": []
+      }
+    },
+    {
+      "prior": "eval/runs/litestar-5164-seed-f841-scored",
+      "base": "f4f7e9831574ed08f50901e62911019b5e7383ac",
+      "head": "fcab0954a74c5f8d340adbbfb9091f94982aa9a2",
+      "profile_sha256": "7f79af17af30fa064a6c7382114fbaca818be229d12e4bfea20ca9678544f4b8",
+      "install_plan_sha256": "6aaf627f402d2112098502124d52f5c47fc1a7e113faa0005ee272700dc72dc8",
+      "positive_control": {
+        "kind": "seeded-mutation",
+        "expected": [
+          {
+            "id": "unused-local-normalize-path",
+            "mechanism": "lint-rule",
+            "evidence": "Preregistered unused-local-normalize-path: ../litestar-evidence/positive-control-register.md, seed-manifest.json, seed-f841.patch (SHA-256 2ef92d4ca023bd78f1efbec512a0ff9788d1f0e2dbd957c5f66e9d3802455c4a), seed-oracle-commands.json, seed-base-ruff.stdout.log and seed-head-ruff.stdout.log. Independent full .venv/bin/ruff check . exits 0 at public base f4f7e9831574ed08f50901e62911019b5e7383ac and 1 with exactly F841 at synthetic fcab0954a74c5f8d340adbbfb9091f94982aa9a2, litestar/utils/path.py:24.",
+            "finding_ids": [
+              "43d6925de36ee0e0beb788c1be9fd46de7152f1be80230d5085329c5f9911eab"
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "limitations": [
+    "Scoped routing tests only; unchanged external coverage threshold 0.01.",
+    "Offline dependency audit with empty cache is excluded capability.",
+    "Reuse unchanged-SHA independent oracles; recheck actual Rio findings and check outcomes."
+  ],
+  "setup_environment": {
+    "TMPDIR": "/dev/shm",
+    "PYTEST_ADDOPTS": "tests/e2e/test_routing/test_path_mounting.py",
+    "COVERAGE_RCFILE": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-litestar/eval/runs/litestar-evidence/coverage-scoped-threshold.toml",
+    "GIT_CONFIG_COUNT": "2",
+    "GIT_CONFIG_KEY_0": "http.version",
+    "GIT_CONFIG_VALUE_0": "HTTP/1.1",
+    "GIT_CONFIG_KEY_1": "url.file:///tmp/litestar-eval-transport.git.insteadOf",
+    "GIT_CONFIG_VALUE_1": "https://github.com/litestar-org/litestar.git",
+    "PATH_prefix": [
+      "/home/ubuntu/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin",
+      "/tmp/rio-acceptance-tools"
+    ]
+  }
+}

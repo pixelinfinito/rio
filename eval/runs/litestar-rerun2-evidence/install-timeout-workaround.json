@@ -1,0 +1,20 @@
+{
+  "utc": "2026-11-05T11:25:32.820639+00:00",
+  "reason": "Base uv sync timed out after 1200s amid >80% host I/O stall; stop only this attempt head installer to avoid repeating the same blocked shared-disk cache setup. Retry same pinned plan with isolated tmpfs uv cache.",
+  "stopped": [
+    {
+      "pid": 952033,
+      "cwd": "/dev/shm/litestar-rerun2/rio-eval-5t_nix5p/head",
+      "argv": [
+        "uv",
+        "sync",
+        "--locked",
+        "--all-groups",
+        "--all-extras",
+        "--no-editable",
+        "--python",
+        "3.12.12"
+      ]
+    }
+  ]
+}

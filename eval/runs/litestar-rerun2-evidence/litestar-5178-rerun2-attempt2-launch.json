@@ -1,0 +1,47 @@
+{
+  "argv": [
+    "python3",
+    "eval/runner.py",
+    "--repository",
+    "litestar-org/litestar",
+    "--pr",
+    "5178",
+    "--base",
+    "716f8b023b1c13e6f1e8ab08dfa1938f7923312d",
+    "--head",
+    "9870dce9dc2688e78fc43bc73e27eed4198893ac",
+    "--languages",
+    "python",
+    "--rio",
+    "/home/ubuntu/rio/target/release/rio",
+    "--out",
+    "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-litestar/eval/runs/litestar-5178-rerun2-attempt2",
+    "--install-plan",
+    "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-litestar/eval/runs/litestar-5178-scored/install-plan.json",
+    "--profile",
+    "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-litestar/eval/runs/litestar-5178-scored/profile.yaml",
+    "--temp-root",
+    "/run/user/1000/litestar-rerun2"
+  ],
+  "cwd": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-litestar",
+  "environment": {
+    "TMPDIR": "/run/user/1000/litestar-rerun2",
+    "PYTEST_ADDOPTS": "tests/e2e/test_routing/test_path_mounting.py",
+    "COVERAGE_RCFILE": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-litestar/eval/runs/litestar-evidence/coverage-scoped-threshold.toml",
+    "GIT_CONFIG_COUNT": "2",
+    "GIT_CONFIG_KEY_0": "http.version",
+    "GIT_CONFIG_VALUE_0": "HTTP/1.1",
+    "GIT_CONFIG_KEY_1": "url.file:///tmp/litestar-eval-transport.git.insteadOf",
+    "GIT_CONFIG_VALUE_1": "https://github.com/litestar-org/litestar.git",
+    "UV_CACHE_DIR": "/run/user/1000/litestar-rerun2/uv-cache"
+  },
+  "PATH_prefix": [
+    "/home/ubuntu/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin",
+    "/tmp/rio-acceptance-tools"
+  ],
+  "started_utc": "2026-11-05T11:26:19.528413+00:00",
+  "exit_code": 0,
+  "wall_time_ms": 220988,
+  "finished_utc": "2026-11-05T11:30:00.517037+00:00",
+  "commands_captured": 8
+}
