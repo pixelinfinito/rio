@@ -1,0 +1,5 @@
+Using CPython 3.12.12
+Creating virtual environment at: .venv
+Resolved 227 packages in 8ms
+
+Command '['uv', 'sync', '--locked', '--all-groups', '--all-extras', '--no-editable', '--python', '3.12.12']' timed out after 1199.999980972032 seconds

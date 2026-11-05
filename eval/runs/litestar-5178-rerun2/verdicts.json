@@ -1,0 +1,44 @@
+{
+  "repository": "litestar-org/litestar",
+  "pr": "https://github.com/litestar-org/litestar/pull/5178",
+  "case_id": "5178",
+  "languages": [
+    "python"
+  ],
+  "reviewer": "sub-agent rerun2-litestar (automated)",
+  "verdict_source": "automated",
+  "commands": [
+    "cwd=/dev/shm/litestar-rerun2/rio-eval-5t_nix5p argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/litestar-org/litestar.git\", \"/dev/shm/litestar-rerun2/rio-eval-5t_nix5p/head\"]",
+    "cwd=/dev/shm/litestar-rerun2/rio-eval-5t_nix5p/head argv=[\"git\", \"fetch\", \"origin\", \"716f8b023b1c13e6f1e8ab08dfa1938f7923312d\", \"9870dce9dc2688e78fc43bc73e27eed4198893ac\"]",
+    "cwd=/dev/shm/litestar-rerun2/rio-eval-5t_nix5p/head argv=[\"git\", \"merge-base\", \"716f8b023b1c13e6f1e8ab08dfa1938f7923312d\", \"9870dce9dc2688e78fc43bc73e27eed4198893ac\"]",
+    "cwd=/dev/shm/litestar-rerun2/rio-eval-5t_nix5p/head argv=[\"git\", \"checkout\", \"--detach\", \"9870dce9dc2688e78fc43bc73e27eed4198893ac\"]",
+    "cwd=/dev/shm/litestar-rerun2/rio-eval-5t_nix5p argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/dev/shm/litestar-rerun2/rio-eval-5t_nix5p/head\", \"/dev/shm/litestar-rerun2/rio-eval-5t_nix5p/base\"]",
+    "cwd=/dev/shm/litestar-rerun2/rio-eval-5t_nix5p/base argv=[\"git\", \"checkout\", \"--detach\", \"716f8b023b1c13e6f1e8ab08dfa1938f7923312d\"]",
+    "cwd=/dev/shm/litestar-rerun2/rio-eval-5t_nix5p/base argv=[\"uv\", \"sync\", \"--locked\", \"--all-groups\", \"--all-extras\", \"--no-editable\", \"--python\", \"3.12.12\"]",
+    "cwd=/dev/shm/litestar-rerun2/rio-eval-5t_nix5p/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/litestar-rerun2/rio-eval-5t_nix5p/head argv=[\"uv\", \"sync\", \"--locked\", \"--all-groups\", \"--all-extras\", \"--no-editable\", \"--python\", \"3.12.12\"]",
+    "cwd=/dev/shm/litestar-rerun2/rio-eval-5t_nix5p/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/litestar-rerun2/rio-eval-5t_nix5p/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/dev/shm/litestar-rerun2/rio-eval-5t_nix5p/head argv=[\"node\", \"--version\"]",
+    "cwd=/dev/shm/litestar-rerun2/rio-eval-5t_nix5p/head argv=[\"npm\", \"--version\"]",
+    "cwd=/dev/shm/litestar-rerun2/rio-eval-5t_nix5p/head argv=[\"python3\", \"--version\"]",
+    "cwd=/dev/shm/litestar-rerun2/rio-eval-5t_nix5p/head argv=[\"uv\", \"--version\"]",
+    "cwd=/dev/shm/litestar-rerun2/rio-eval-5t_nix5p/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"/home/ubuntu/.t3/worktrees/rio/eval-rerun2-litestar/eval/runs/litestar-5178-rerun2/profile.yaml\"]",
+    "cwd=/dev/shm/litestar-rerun2/rio-eval-5t_nix5p/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/dev/shm/litestar-rerun2/rio-eval-5t_nix5p/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"716f8b023b1c13e6f1e8ab08dfa1938f7923312d\", \"--format\", \"json\", \"--offline\", \"--profile\", \"/home/ubuntu/.t3/worktrees/rio/eval-rerun2-litestar/eval/runs/litestar-5178-rerun2/profile.yaml\"]"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-rerun2-litestar/eval/runs/litestar-5178-rerun2/commands.json; Rio binary SHA-256: 3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+    "Excluded setup attempt: base uv sync timed out after 1200 seconds; matching head installer was stopped with SIGTERM (-15) to retry the same pinned plan using an isolated tmpfs uv cache. See ../litestar-rerun2-evidence/install-timeout-workaround.json. Host /proc/pressure/io some avg10=84.73 avg60=87.52 avg300=93.13 at investigation.",
+    "Baseline did not run or classify; dependency_state unavailable. The incomplete installations never reached the plan steps disabling four executable .pth hooks, and report checks skip as dependency_mismatch. No findings were emitted. This is an environment failure, not a clean Rio result or false-positive finding.",
+    "Independent clean assessment reused only because base 716f8b023b1c13e6f1e8ab08dfa1938f7923312d and head 9870dce9dc2688e78fc43bc73e27eed4198893ac are unchanged: ../litestar-evidence/oracle-commands.json, pyright-activated-commands.json, negative-diff-coverage-assessment.json, base/head-coverage.json. Configured Ruff/mypy and activated Pyright pass both; relevant routing tests pass 4/14 with 3 deselected; no missing changed executable lines. No independently established deterministic miss. Scope: routing tests only; offline audit deliberately excluded.",
+    "Runtime and launch provenance: ../litestar-rerun2-evidence/preregistration.json and litestar-5178-rerun2-launch.json. Required Rio f6e4f87e4c65; pinned CPython 3.12.12 and uv 0.13.7; profile and install plan copied unchanged from litestar-5178-scored."
+  ],
+  "independently_clean": true,
+  "positive_control": {
+    "kind": "none",
+    "expected": []
+  },
+  "misses": [],
+  "findings": {}
+}

@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "/home/ubuntu/rio/target/release/rio",
+    "doctor",
+    "--all-roots",
+    "--base",
+    "716f8b023b1c13e6f1e8ab08dfa1938f7923312d",
+    "--format",
+    "json"
+  ],
+  "cwd": "/dev/shm/litestar-rerun2/rio-eval-5t_nix5p/head",
+  "environment": {
+    "RIO_CONFIG_DIR": "/dev/shm/litestar-rerun2/rio-eval-5t_nix5p/config",
+    "RIO_CACHE_DIR": "/dev/shm/litestar-rerun2/rio-eval-5t_nix5p/cache"
+  },
+  "exit_code": 0,
+  "wall_time_ms": 10302
+}

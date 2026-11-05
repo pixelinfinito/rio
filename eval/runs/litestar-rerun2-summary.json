@@ -1,0 +1,361 @@
+{
+  "schema": "rio-eval-summary-v2",
+  "methodology": "deterministic-v2",
+  "records": [
+    "eval/runs/litestar-5178-rerun2-attempt2/record.json",
+    "eval/runs/litestar-5164-seed-f841-rerun2/record.json"
+  ],
+  "attempts": 2,
+  "selection": {
+    "policy": "eval/runs/litestar-rerun2-selection.json",
+    "omitted_records": [
+      "eval/runs/litestar-5178-rerun2/record.json"
+    ]
+  },
+  "rio_versions": [
+    "0.1.0@sha256:3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7"
+  ],
+  "mixed_versions": false,
+  "binary_identity_complete": true,
+  "profile_hashes": [
+    "92640e5149c4c0761c260f95cd983b548d8a4bb9518557ee573cc3f93394e775",
+    "cf9820a56028ec27b22a4c9a35f495167763cfd65201eb0d1c31eac3c11ef366"
+  ],
+  "record_profiles": [
+    {
+      "record_path": "eval/runs/litestar-5178-rerun2-attempt2/record.json",
+      "repository": "litestar-org/litestar",
+      "case_id": "5178",
+      "profile": "eval-litestar-b15dc8ff5001",
+      "profile_sha256": "92640e5149c4c0761c260f95cd983b548d8a4bb9518557ee573cc3f93394e775",
+      "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+      "dependency_state": "verified",
+      "eligible": true
+    },
+    {
+      "record_path": "eval/runs/litestar-5164-seed-f841-rerun2/record.json",
+      "repository": "litestar-org/litestar",
+      "case_id": "5164-seed-f841",
+      "profile": "eval-litestar-b15dc8ff5001",
+      "profile_sha256": "cf9820a56028ec27b22a4c9a35f495167763cfd65201eb0d1c31eac3c11ef366",
+      "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+      "dependency_state": "verified",
+      "eligible": true
+    }
+  ],
+  "observed_raw_counts": {
+    "true-positive": 1,
+    "false-positive": 0,
+    "pre-existing-shown": 0,
+    "environment-failure": 0,
+    "out-of-scope": 0,
+    "pre-existing-hidden": 0
+  },
+  "observed_occurrence_counts": {
+    "true-positive": 1,
+    "false-positive": 0,
+    "pre-existing-shown": 0,
+    "environment-failure": 0,
+    "out-of-scope": 0,
+    "pre-existing-hidden": 0
+  },
+  "observed_cause_counts": {
+    "true-positive": 1,
+    "false-positive": 0,
+    "pre-existing-shown": 0,
+    "environment-failure": 0,
+    "out-of-scope": 0,
+    "pre-existing-hidden": 0
+  },
+  "observed_unique_cause_counts": {
+    "true-positive": 1,
+    "false-positive": 0,
+    "pre-existing-shown": 0,
+    "environment-failure": 0,
+    "out-of-scope": 0,
+    "pre-existing-hidden": 0
+  },
+  "eligible": {
+    "eligible_prs": 2,
+    "raw_counts": {
+      "true-positive": 1,
+      "false-positive": 0,
+      "pre-existing-shown": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0,
+      "pre-existing-hidden": 0
+    },
+    "occurrence_counts": {
+      "true-positive": 1,
+      "false-positive": 0,
+      "pre-existing-shown": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0,
+      "pre-existing-hidden": 0
+    },
+    "cause_counts": {
+      "true-positive": 1,
+      "false-positive": 0,
+      "pre-existing-shown": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0,
+      "pre-existing-hidden": 0
+    },
+    "unique_cause_counts": {
+      "true-positive": 1,
+      "false-positive": 0,
+      "pre-existing-shown": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0,
+      "pre-existing-hidden": 0
+    },
+    "precision": 1.0,
+    "positive_control_cases": 1,
+    "positive_control_by_kind": {
+      "real-pr": {
+        "cases": 0,
+        "expected": 0,
+        "detected": 0,
+        "recall": null
+      },
+      "seeded-mutation": {
+        "cases": 1,
+        "expected": 1,
+        "detected": 1,
+        "recall": 1.0
+      }
+    },
+    "positive_control_expected": 1,
+    "positive_control_detected": 1,
+    "positive_control_recall": 1.0,
+    "false_positive_per_pr": 0.0,
+    "pr_with_false_positive_fraction": 0.0,
+    "useful_prs": 2,
+    "useful_real_prs": 1,
+    "usefulness_fraction": 1.0
+  },
+  "verified_only": {
+    "eligible_prs": 2,
+    "raw_counts": {
+      "true-positive": 1,
+      "false-positive": 0,
+      "pre-existing-shown": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0,
+      "pre-existing-hidden": 0
+    },
+    "occurrence_counts": {
+      "true-positive": 1,
+      "false-positive": 0,
+      "pre-existing-shown": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0,
+      "pre-existing-hidden": 0
+    },
+    "cause_counts": {
+      "true-positive": 1,
+      "false-positive": 0,
+      "pre-existing-shown": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0,
+      "pre-existing-hidden": 0
+    },
+    "unique_cause_counts": {
+      "true-positive": 1,
+      "false-positive": 0,
+      "pre-existing-shown": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0,
+      "pre-existing-hidden": 0
+    },
+    "precision": 1.0,
+    "positive_control_cases": 1,
+    "positive_control_by_kind": {
+      "real-pr": {
+        "cases": 0,
+        "expected": 0,
+        "detected": 0,
+        "recall": null
+      },
+      "seeded-mutation": {
+        "cases": 1,
+        "expected": 1,
+        "detected": 1,
+        "recall": 1.0
+      }
+    },
+    "positive_control_expected": 1,
+    "positive_control_detected": 1,
+    "positive_control_recall": 1.0,
+    "false_positive_per_pr": 0.0,
+    "pr_with_false_positive_fraction": 0.0,
+    "useful_prs": 2,
+    "useful_real_prs": 1,
+    "usefulness_fraction": 1.0
+  },
+  "dependency_states": {
+    "verified": 2
+  },
+  "by_repository": {
+    "litestar-org/litestar": {
+      "eligible_prs": 2,
+      "raw_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "occurrence_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "cause_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "unique_cause_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "precision": 1.0,
+      "positive_control_cases": 1,
+      "positive_control_by_kind": {
+        "real-pr": {
+          "cases": 0,
+          "expected": 0,
+          "detected": 0,
+          "recall": null
+        },
+        "seeded-mutation": {
+          "cases": 1,
+          "expected": 1,
+          "detected": 1,
+          "recall": 1.0
+        }
+      },
+      "positive_control_expected": 1,
+      "positive_control_detected": 1,
+      "positive_control_recall": 1.0,
+      "false_positive_per_pr": 0.0,
+      "pr_with_false_positive_fraction": 0.0,
+      "useful_prs": 2,
+      "useful_real_prs": 1,
+      "usefulness_fraction": 1.0
+    }
+  },
+  "by_language": {
+    "python": {
+      "eligible_prs": 2,
+      "raw_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "occurrence_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "cause_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "unique_cause_counts": {
+        "true-positive": 1,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0,
+        "pre-existing-hidden": 0
+      },
+      "precision": 1.0,
+      "positive_control_cases": 1,
+      "positive_control_by_kind": {
+        "real-pr": {
+          "cases": 0,
+          "expected": 0,
+          "detected": 0,
+          "recall": null
+        },
+        "seeded-mutation": {
+          "cases": 1,
+          "expected": 1,
+          "detected": 1,
+          "recall": 1.0
+        }
+      },
+      "positive_control_expected": 1,
+      "positive_control_detected": 1,
+      "positive_control_recall": 1.0,
+      "false_positive_per_pr": 0.0,
+      "pr_with_false_positive_fraction": 0.0,
+      "useful_prs": 2,
+      "useful_real_prs": 1,
+      "usefulness_fraction": 1.0
+    }
+  },
+  "environment_failures": [],
+  "agent_layer_backlog": [],
+  "deterministic_misses": 0,
+  "sample": {
+    "eligible_real_prs": 1,
+    "repositories": 1,
+    "languages": [
+      "python"
+    ],
+    "positive_control_repositories": 1,
+    "positive_controls_by_language": {
+      "typescript": 0,
+      "python": 1
+    },
+    "clean_negative_controls": 1,
+    "real_positive_controls": 0,
+    "seeded_positive_controls": 1,
+    "counted_positive_controls": 0,
+    "adequate": false,
+    "requirements_missing": [
+      "Need at least 10 eligible real PRs",
+      "Need at least 5 eligible repositories",
+      "Need both languages",
+      "Need at least 10 eligible positive controls after the seeded cap",
+      "Seeded controls must be at most 50% of positive-control cases",
+      "Need controls across at least 3 repositories",
+      "Need at least 5 controls per language"
+    ]
+  },
+  "decision": "insufficient-evidence",
+  "decision_reasons": [
+    "Need at least 10 eligible real PRs",
+    "Need at least 5 eligible repositories",
+    "Need both languages",
+    "Need at least 10 eligible positive controls after the seeded cap",
+    "Seeded controls must be at most 50% of positive-control cases",
+    "Need controls across at least 3 repositories",
+    "Need at least 5 controls per language",
+    "Need at least 10 useful real PRs"
+  ]
+}

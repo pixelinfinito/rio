@@ -251,3 +251,176 @@ Exact seed oracle and installation timings are in their command ledgers.
 reports **insufficient-evidence** for the full release methodology sample.
 No release decision is inferred. All nine records passed schema and semantic
 validation. Reviewer identity and automated verdict source are explicit.
+
+## Rerun2 (binary f6e4f87e4c65)
+
+Date: **2026-11-05**. Reviewer: **sub-agent rerun2-litestar (automated)**;
+`verdict_source: automated`. Verified before execution:
+`rio 0.1.0 x86_64-unknown-linux-gnu f6e4f87e4c65`, SHA-256
+`3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7`.
+No rebuild, `crates/` edits, or `eval/*.py` edits were performed.
+
+Both preregistered cases retain their exact earlier base/head SHAs:
+
+- #5178: base `716f8b023b1c13e6f1e8ab08dfa1938f7923312d`, head
+  `9870dce9dc2688e78fc43bc73e27eed4198893ac`.
+- `5164-seed-f841`: base `f4f7e9831574ed08f50901e62911019b5e7383ac`,
+  synthetic head `fcab0954a74c5f8d340adbbfb9091f94982aa9a2`. The exact
+  retained Git commit was fetched, not a new mutation. Its one-line patch hash
+  was reverified against the local transport:
+  `2ef92d4ca023bd78f1efbec512a0ff9788d1f0e2dbd957c5f66e9d3802455c4a`.
+  This remains a seeded case on #5164's public base, not its real PR head.
+
+The prior scored `install-plan.json` and `profile.yaml` were copied byte for
+byte. The profile retains its historical name `eval-litestar-b15dc8ff5001`
+intentionally; the binary identity above is the actual rerun identity. Input
+profile SHA-256 remains
+`7f79af17af30fa064a6c7382114fbaca818be229d12e4bfea20ca9678544f4b8`.
+Both cases and both commits retain uv.lock SHA-256
+`8f25baff7a27134191cd7adcb550963aa1212f1081f13196b929e305ff17dfbd`.
+CPython **3.12.12** and uv **0.13.7** were pinned before the runner. Rio selected
+mypy **1.19.1**, Ruff **0.15.7**, and coverage.py **7.13.5**.
+
+The same four startup-hook and non-editable-wheel provenance workarounds remain
+in the install plan, with original contents/hashes logged. Dependency trust
+remains false. The scoped routing suite, external coverage configuration and
+0.01 export threshold are unchanged. OSV audit remains deliberately offline
+with a fresh unpopulated Rio cache; no vulnerability detection or dependency
+safety claim is made. The earlier independent oracles were reused at identical
+SHAs, while actual Rio output, scope, baselines, and coverage were rechecked.
+Preregistration and exact launch environments are in
+`litestar-rerun2-evidence/preregistration.json` and `*-launch.json`.
+
+### Setup failure and retained attempt
+
+Initially `/dev/shm` had about 5.6 GB free. The first #5178 attempt used
+`TMPDIR=/dev/shm` and a tmpfs source/cache directory, but uv's default shared
+cache still used disk. Base `uv sync` hit the harness's 1,200-second timeout
+(measured command wall time 1,272.971 s, exit 124). At investigation,
+`/proc/pressure/io` reported `some avg10=84.73 avg60=87.52 avg300=93.13`.
+The matching head installer alone was stopped with SIGTERM (exit -15) to avoid
+repeating the same stalled setup. No unrelated process was stopped.
+`litestar-5178-rerun2` is retained and validated as an **environment-failure**:
+baseline ran **no**, baseline classification **no**, dependencies **unavailable**,
+zero findings. Its report skips typecheck/lint/coverage with
+`dependency_mismatch` because installation never reached the startup-hook
+workaround. The exact `.pth` paths and note text remain in its raw report and
+`commands.json`; no finding ID exists for these skips. Zero findings here does
+not establish a clean review.
+
+Retry `litestar-5178-rerun2-attempt2` uses the separate 4 GB
+`/run/user/1000` tmpfs for temporary files, source snapshots, and an isolated
+`UV_CACHE_DIR`. The seed then uses the same storage settings. Neither install
+plan nor dependency selection changed. Locked base/head uv sync took
+10.392/3.356 s for the retry and 1.335/1.235 s for the seed. This workaround
+resolved the setup delay. These shared-host observations are not a controlled
+performance benchmark. The installer stop and reason are preserved in
+`litestar-rerun2-evidence/install-timeout-workaround.json`.
+
+### Case results and comparison
+
+- **#5178**: canonical record
+  `litestar-5178-rerun2-attempt2/record.json`. Baseline ran **yes**, baseline
+  classification **yes**; all applicable Python mypy/Ruff head/base entries
+  succeeded with dependency state **verified**. Eligible **yes**, useful **yes**.
+  Findings by raw state: **none**. Verdict counts: true-positive **0**,
+  false-positive **0**, pre-existing-shown **0**, pre-existing-hidden **0**,
+  environment-failure findings **0**, out-of-scope **0**. Negative control:
+  **0 expected bugs**, **0 misses**. Same clean result as `litestar-5178-scored`.
+  Fresh routing tests: **14 passed, 3 deselected**. The changed executable anchor
+  at `asgi_router.py:187` is executed; the handlers edits have no changed
+  executable statements. Current `diff-coverage-assessment.json` confirms this
+  using the captured normalized coverage. No findings, risks, or coverage
+  exclusions were emitted; no newly established deterministic miss.
+- **Seeded #5164**: canonical record
+  `litestar-5164-seed-f841-rerun2/record.json`. Baseline ran **yes**, baseline
+  classification **yes**; all applicable mypy/Ruff head/base entries succeeded
+  with dependencies **verified**. Eligible **yes**, useful **yes**. Findings by
+  state: **new 1**, all other states **0**. Verdict counts: true-positive **1**,
+  false-positive **0**, pre-existing-shown **0**, pre-existing-hidden **0**,
+  environment-failure findings **0**, out-of-scope **0**. Expected
+  `unused-local-normalize-path`: **1 detected, 0 missed**. Exact finding ID:
+  `43d6925de36ee0e0beb788c1be9fd46de7152f1be80230d5085329c5f9911eab`,
+  `lint/ruff/F841`, `new`, `litestar/utils/path.py:24`, symbol
+  `path.normalize_path`. This matches the previous scored result and finding ID.
+  Base Ruff passes; head has exactly this F841. Fresh scoped tests:
+  **4 passed, 3 deselected**. The assignment is instrumented and executed,
+  so it remains a lint control and introduces no uncovered-line expectation.
+  No additional finding, risk, exclusion, or established miss.
+
+Mypy target resolution remains correct for these explicitly configured cases.
+In each successful run, supplemental `/proc` observations capture both actual
+`mypy --output json --config-file <tool-tree>/pyproject.toml` invocations without
+a positional override. The captured configuration selects packages `litestar`,
+`tests`, and `docs.examples`, with Python target `3.11`. Each run preserves
+`typecheck-target.json` and `rio-tool-evidence/commands.json`; both base/head
+typechecks pass. Secret scans pass with zero findings in both cases: no new
+secret-rule false positive was observed on these diffs. The executable-line
+coverage requirement produces neither a false alert nor an established miss
+here. Neither case is a secret or vulnerability positive control.
+
+### Observed Rio and harness defects
+
+1. **New doctor all-roots base-verification discrepancy; no finding ID.**
+   Reproduce in either installed pinned checkout with
+   `rio doctor --base FULL_BASE_SHA --format json`, then add `--all-roots`.
+   Ordinary `--base` verifies both Python head and base and sets the Python
+   typecheck/lint/coverage baseline flags to true. Adding `--all-roots` changes
+   Python base to unverified and all three flags to false, with exact hint:
+   `baseline_failed: no lockfile in the selected tree; installed dependencies cannot be verified (set trust_installed_dependencies to run anyway)`.
+   Both real pinned trees contain the same uv.lock. Both doctor invocations
+   exit 0. Each canonical run retains `doctor-base.json`,
+   `doctor-all-roots.json`, stderr, and exact command/timing records;
+   `litestar-rerun2-evidence/doctor-defect.json` consolidates the repro. Read-only
+   source inspection shows doctor replaces `changes.base` with an empty tree
+   for all-roots discovery and passes it to dependency planning. The successful
+   actual reviews verify and classify their real bases; this doctor diagnostic
+   discrepancy does **not** exclude those reviews. Workaround: use
+   `doctor --base` plus actual review checks for this review's readiness.
+   All-roots also detects standalone JavaScript and warns about missing
+   TypeScript tools; those files are outside these preregistered Python diffs.
+2. **Harness child-command telemetry gap persists; no finding ID.**
+   New `commands.json` explicitly records
+   `rio_checks.child_argv_available=false`; Rio does not serialize complete
+   per-child executable/argv/cwd/version tuples (selected tool versions are in
+   the report footer). The retained external observer
+   `litestar-rerun2-evidence/capture-run.py.txt` captures actual mypy commands,
+   configurations, tool artifacts and supplemental doctors without changing
+   the runner. `/proc` sampling can miss short-lived tools and is not complete
+   child telemetry. The authoritative reports and unchanged harness ledgers
+   remain alongside the supplemental observations.
+
+The earlier startup-hook, local-wheel provenance and scoped coverage-export
+compatibility issues were masked by the mandated unchanged install plan and
+coverage configuration. Their fix status is **not established by this rerun**.
+The initial install timeout is environment evidence, not an emitted Rio false
+positive or a controlled Rio performance defect. No finding-level Rio defect
+was observed in either eligible case.
+
+### Wall times and records
+
+Rio seconds below come from `report.json#/metrics/wall_time_ms`; process seconds
+come from the runner's review command; runner seconds span its recorded
+`started_utc` to `finished_utc` (including installs and cleanup).
+
+| Attempt | Baseline classified | Dependency state | Eligible | Rio s | Review process s | Runner s |
+| --- | --- | --- | --- | ---: | ---: | ---: |
+| `litestar-5178-rerun2` | no | unavailable | no | 35.814 | 36.726 | 1613.334 |
+| `litestar-5178-rerun2-attempt2` | yes | verified | yes | 167.049 | 176.220 | 214.225 |
+| `litestar-5164-seed-f841-rerun2` | yes | verified | yes | 147.820 | 150.471 | 173.048 |
+
+Previous scored Rio times were 152.531 s (#5178) and 139.470 s (seed).
+Different shared-host load and cache placement preclude performance conclusions.
+The wrapper's separate launch durations also include observer startup/final
+capture; exact values are retained in `*-launch.json`.
+
+All three attempts have complete automated verdicts and passed
+`eval/evaluate.py record` and `validate`. `litestar-rerun2-selection.json`
+selects the two eligible canonical records; `litestar-rerun2-summary.json`
+preserves the omitted setup attempt in its selection metadata. Both all-eligible
+and verified-only views contain **2 eligible cases**, **1 detected seeded
+expectation**, **0 missed expectations**, and **0 false positives**. This small
+cohort remains **insufficient-evidence**, not a release decision. Historical
+`litestar-summary.json` and all older attempts remain unchanged. Large
+supplemental JSON graph artifacts are gzipped; no clone, virtualenv, or file
+over 5 MB is included.
