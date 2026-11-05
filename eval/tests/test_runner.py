@@ -61,8 +61,10 @@ class RunnerTests(unittest.TestCase):
             with patch.object(runner.subprocess, 'run', side_effect=local_clone):
                 # The fixture intentionally has incomplete check evidence: preserve, do not score.
                 code = runner.run(args)
-            self.assertIn(code, (0, 1))
+            self.assertEqual(code, 1)
             metadata = e.read_json(out / 'commands.json')
+            self.assertFalse(metadata['environment']['eligible'])
+            self.assertIn('Baseline/setup ineligible; fix before scoring', metadata['failures'])
             self.assertFalse(Path(metadata['disposable_directory']).exists())
             self.assertEqual(metadata['base_sha'], base)
             self.assertEqual(metadata['head_sha'], head)

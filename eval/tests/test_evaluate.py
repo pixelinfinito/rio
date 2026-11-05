@@ -83,6 +83,12 @@ class DedupeTests(unittest.TestCase):
         f['locations'].append({**f['location'], 'line_start': 8, 'line_end': 8})
         self.assertEqual(e.occurrences(f), 2)
 
+    def test_override_cannot_drop_the_actual_file(self):
+        f = finding()
+        annotation = {'verdict': 'true-positive', 'reason': 'oracle', 'file_set': ['other.ts']}
+        with self.assertRaisesRegex(ValueError, 'every finding path'):
+            e.dedupe([f], {f['id']: annotation})
+
 
 class AggregationTests(unittest.TestCase):
     def test_environment_failures_excluded_and_semantic_misses_separate(self):
@@ -146,6 +152,16 @@ class AggregationTests(unittest.TestCase):
         r = record(1, ['false-positive'], control=True)
         r['positive_control']['expected'][0]['finding_ids'] = [r['findings'][0]['finding']['id']]
         with self.assertRaisesRegex(ValueError, 'true-positive'):
+            e.validate_record(r)
+
+    def test_undetected_control_creates_a_scoped_miss(self):
+        r = record(1, control=True)
+        self.assertEqual(len(r['misses']), 1)
+        self.assertEqual(r['misses'][0]['scope_class'], 'deterministic')
+        self.assertEqual(r['misses'][0]['expectation_id'], 'bug-1')
+        self.assertEqual(r['misses'][0]['mechanism'], 'type-error')
+        r['misses'] = []
+        with self.assertRaisesRegex(ValueError, 'deterministic miss'):
             e.validate_record(r)
 
     def test_successful_baseline_must_be_verified(self):

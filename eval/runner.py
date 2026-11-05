@@ -89,13 +89,13 @@ def run(args):
                                       stdout=so, stderr=se, timeout=args.timeout, check=False)
             code = proc.returncode
         except (OSError, subprocess.TimeoutExpired) as error:
-            stderr.write_text(stderr.read_text() + '\n' + str(error))
+            stderr.write_text(stderr.read_text(errors='replace') + '\n' + str(error))
             code = 124 if isinstance(error, subprocess.TimeoutExpired) else 127
         item.update(exit_code=code, wall_time_ms=int((time.monotonic() - started) * 1000))
         e.write_json(out / 'commands.json', metadata)
         if required and code:
             raise ValueError(f'command {number} failed ({code}); see {stderr}')
-        return Path(stdout).read_text(), code
+        return Path(stdout).read_text(errors='replace'), code
 
     try:
         if not args.base:
@@ -142,7 +142,6 @@ def run(args):
                 metadata['installations'][name] = install
             config = temp / 'config'
             config.mkdir()
-            overrides = {'RIO_CONFIG_DIR': str(config), 'RIO_CACHE_DIR': str(temp / 'cache')}
             # Avoid machine-level settings silently changing this cohort.
             metadata['removed_environment_keys'] = sorted(k for k in os.environ if k.startswith('RIO_'))
             # Empty RIO_* values can be invalid; strip inherited machine overrides.
