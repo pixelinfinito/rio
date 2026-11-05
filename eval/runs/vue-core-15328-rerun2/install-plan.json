@@ -1,0 +1,20 @@
+{
+  "base": [
+    [
+      "corepack",
+      "pnpm",
+      "install",
+      "--frozen-lockfile",
+      "--force"
+    ]
+  ],
+  "head": [
+    [
+      "corepack",
+      "pnpm",
+      "install",
+      "--frozen-lockfile",
+      "--force"
+    ]
+  ]
+}

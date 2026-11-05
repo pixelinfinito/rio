@@ -1,0 +1,48 @@
+{
+  "scope": "Independent compiler-sfc unit coverage; same pinned revisions as Rio. This is not a new preregistered control.",
+  "base": {
+    "source": "/tmp/vue-positive-base/packages/compiler-sfc/src/compileScript.ts",
+    "fallback_line": 1029,
+    "statements": [
+      {
+        "statement_id": "1028",
+        "span": {
+          "start": {
+            "line": 1029,
+            "column": 0
+          },
+          "end": {
+            "line": 1029,
+            "column": 20
+          }
+        },
+        "hits": 0
+      }
+    ],
+    "coverage_file": "independent-base-coverage/coverage-final.json",
+    "command": "independent-base-coverage-oracle-command.json"
+  },
+  "head": {
+    "source": "/tmp/vue-positive-head/packages/compiler-sfc/src/compileScript.ts",
+    "fallback_line": 1031,
+    "statements": [
+      {
+        "statement_id": "1030",
+        "span": {
+          "start": {
+            "line": 1031,
+            "column": 0
+          },
+          "end": {
+            "line": 1031,
+            "column": 17
+          }
+        },
+        "hits": 0
+      }
+    ],
+    "coverage_file": "independent-coverage-attempt2/coverage-final.json",
+    "command": "independent-coverage-oracle-attempt2-command.json"
+  },
+  "assessment": "The : undefined fallback for options.sourceMap === false is present at base line 1029 and moved to head line 1031. Both independent full compiler-sfc unit runs succeed; both record zero executions for that fallback. Valid pre-existing coverage gap shown as new, not an introduced gap."
+}

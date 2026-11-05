@@ -1,0 +1,64 @@
+{
+  "captured_utc": "2026-11-05T11:35:51.141562+00:00",
+  "same_pins_installations_and_input_profile": true,
+  "commands": [
+    {
+      "argv": [
+        "python3",
+        "eval/evaluate.py",
+        "validate",
+        "eval/runs/vue-core-12701-rerun2/record.json.gz"
+      ],
+      "exit_code": 0,
+      "stdout": "Valid: eval/runs/vue-core-12701-rerun2/record.json.gz\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "python3",
+        "eval/evaluate.py",
+        "validate",
+        "eval/runs/vue-core-15328-rerun2/record.json.gz"
+      ],
+      "exit_code": 0,
+      "stdout": "Valid: eval/runs/vue-core-15328-rerun2/record.json.gz\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "bash",
+        "-n",
+        "eval/runs/vue-core-rerun2-setup/reproduce.sh"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "records": {
+    "12701": {
+      "path": "eval/runs/vue-core-12701-rerun2/record.json.gz",
+      "sha256": "ec8d61b728a65d1c241518f2c0d0bd6779b5091d10893af05935560e843f5ca6",
+      "whole_record_verdict": "environment-failure",
+      "eligible": false,
+      "dependency_state": "verified",
+      "baseline_classification_ran": false
+    },
+    "15328": {
+      "path": "eval/runs/vue-core-15328-rerun2/record.json.gz",
+      "sha256": "b1166807dc434b261303d10b1ba348c6d0731a14ada4a4a566750b012a693dfb",
+      "whole_record_verdict": "environment-failure",
+      "eligible": false,
+      "dependency_state": "verified",
+      "baseline_classification_ran": false
+    }
+  },
+  "artifact_checks": {
+    "all_evidence_files_staged": true,
+    "no_file_over_5000000_bytes": true,
+    "no_clones_node_modules_or_symlinks": true,
+    "authored_text_whitespace_check_passed": true,
+    "raw_log_whitespace_preserved": "git diff --check flags trailing whitespace/terminal blank lines in the three independent Vitest logs; raw output is intentionally unchanged.",
+    "coverage_evidence_force_added": "Repository-wide coverage/ ignore matches rio-child-output/coverage; these requested evidence files were explicitly staged."
+  }
+}

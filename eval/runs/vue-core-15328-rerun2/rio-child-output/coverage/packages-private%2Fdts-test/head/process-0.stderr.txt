@@ -1,0 +1,29 @@
+No test files found, exiting with code 1
+
+filter: packages-private/dts-test
+
+|unit| 
+
+include: **/*.{test,spec}.?(c|m)[jt]s?(x)
+exclude:  **/node_modules/**, **/.git/**, **/e2e/**, **/{vue,vue-compat,runtime-dom}/**, packages/server-renderer/__tests__/ssrWatch.spec.ts, packages/server-renderer/__tests__/ssrRender.spec.ts
+
+|unit-gc| 
+
+include: packages/server-renderer/__tests__/ssrWatch.spec.ts, packages/server-renderer/__tests__/ssrRender.spec.ts
+exclude:  **/node_modules/**, **/.git/**
+
+|unit-jsdom| 
+
+include: packages/{vue,vue-compat,runtime-dom}/**/*.{test,spec}.*
+exclude:  **/node_modules/**, **/.git/**, **/e2e/**
+
+|e2e| 
+
+include: packages/vue/__tests__/e2e/*.spec.ts
+exclude:  packages/vue/__tests__/e2e/Transition.spec.ts, packages/vue/__tests__/e2e/TransitionGroup.spec.ts
+
+|e2e-browser (chromium)| 
+
+include: packages/vue/__tests__/e2e/Transition.spec.ts, packages/vue/__tests__/e2e/TransitionGroup.spec.ts
+exclude:  **/node_modules/**, **/.git/**
+

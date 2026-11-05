@@ -1,0 +1,15 @@
+Warning: you are leaving 5 commits behind, not connected to
+any of your branches:
+
+  cc34f2e4b Merge branch 'main' into edison/fix/inlineTemplateSourceMap
+  5132463e3 Merge branch 'main' into edison/fix/inlineTemplateSourceMap
+  55e6bf727 Merge branch 'main' into edison/fix/inlineTemplateSourceMap
+  d81b83e53 test: add test case
+  29b4ab76d fix(compile-sfc): handle inline template source map in prod build
+
+If you want to keep them by creating a new branch, this may be a good time
+to do so with:
+
+ git branch <new-branch-name> cc34f2e4b
+
+HEAD is now at 35aeae7fa fix(hydration): handle transition appear hydration edge case (#13339)

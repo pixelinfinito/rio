@@ -1,0 +1,129 @@
+
+ RUN  v3.1.3 /dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/tools/tool.tmp-uTVzX9
+      Coverage enabled with v8
+
+ ✓ |unit| packages/vue-compat/__tests__/instance.spec.ts (21 tests) 186ms
+ ✓ |unit| packages/vue-compat/__tests__/global.spec.ts (30 tests) 189ms
+ ✓ |unit| packages/vue-compat/__tests__/filters.spec.ts (17 tests) 173ms
+ ✓ |unit| packages/vue/__tests__/index.spec.ts (17 tests) 194ms
+ ✓ |unit| packages/vue-compat/__tests__/misc.spec.ts (8 tests) 147ms
+ ✓ |unit| packages/vue-compat/__tests__/renderFn.spec.ts (11 tests) 50ms
+ ✓ |unit| packages/vue-compat/__tests__/compiler.spec.ts (8 tests) 132ms
+ ✓ |unit| packages/vue-compat/__tests__/options.spec.ts (5 tests) 75ms
+ ✓ |unit| packages/vue/__tests__/mathmlNamespace.spec.ts (2 tests) 107ms
+ ✓ |unit| packages/vue/__tests__/runtimeCompilerOptions.spec.ts (8 tests) 93ms
+ ✓ |unit| packages/vue-compat/__tests__/componentFunctional.spec.ts (2 tests) 102ms
+ ✓ |unit| packages/vue/__tests__/svgNamespace.spec.ts (2 tests) 168ms
+ ✓ |unit| packages/vue-compat/__tests__/componentAsync.spec.ts (3 tests) 127ms
+ ✓ |unit| packages/vue-compat/__tests__/globalConfig.spec.ts (4 tests) 140ms
+ ✓ |unit| packages/vue-compat/__tests__/componentVModel.spec.ts (2 tests) 171ms
+ ✓ |unit| packages/vue/__tests__/customElementCasing.spec.ts (1 test) 67ms
+ ❯ |e2e| packages/vue/__tests__/e2e/Transition.spec.ts (49 tests | 49 skipped) 50ms
+   ↓ e2e: Transition > transition with v-if > basic transition
+   ↓ e2e: Transition > transition with v-if > named transition
+   ↓ e2e: Transition > transition with v-if > custom transition classes
+   ↓ e2e: Transition > transition with v-if > transition with dynamic name
+   ↓ e2e: Transition > transition with v-if > transition events without appear
+   ↓ e2e: Transition > transition with v-if > events with arguments
+   ↓ e2e: Transition > transition with v-if > onEnterCancelled
+   ↓ e2e: Transition > transition with v-if > transition on appear
+   ↓ e2e: Transition > transition with v-if > transition events with appear
+   ↓ e2e: Transition > transition with v-if > css: false
+   ↓ e2e: Transition > transition with v-if > no transition detected
+   ↓ e2e: Transition > transition with v-if > animations
+   ↓ e2e: Transition > transition with v-if > explicit transition type
+   ↓ e2e: Transition > transition with v-if > transition on SVG elements
+   ↓ e2e: Transition > transition with v-if > custom transition higher-order component
+   ↓ e2e: Transition > transition with v-if > transition on child components with empty root node
+   ↓ e2e: Transition > transition with v-if > transition with v-if at component root-level
+   ↓ e2e: Transition > transition with v-if > wrapping transition + fallthrough attrs
+   ↓ e2e: Transition > transition with v-if > transition + fallthrough attrs (in-out mode)
+   ↓ e2e: Transition > transition with KeepAlive > unmount innerChild (out-in mode)
+   ↓ e2e: Transition > transition with KeepAlive > switch child then update include (out-in mode)
+   ↓ e2e: Transition > transition with KeepAlive > switch and update child then update include (out-in mode)
+   ↓ e2e: Transition > transition with KeepAlive > unmount children
+   ↓ e2e: Transition > transition with Suspense > async component transition inside Suspense
+   ↓ e2e: Transition > transition with Suspense > static node transition inside Suspense
+   ↓ e2e: Transition > transition with Suspense > out-in mode with Suspense
+   ↓ e2e: Transition > transition with Suspense > Suspense fallback should work with transition
+   ↓ e2e: Transition > transition with Suspense > children mount should be called after html changes
+   ↓ e2e: Transition > transition with Suspense > trigger again when transition is not finished
+   ↓ e2e: Transition > transition with Suspense > trigger again when transition is not finished & correctly anchor
+   ↓ e2e: Transition > transition with Suspense > switch between Async and Sync child when transition is not finished
+   ↓ e2e: Transition > transition with Teleport > apply transition to teleport child
+   ↓ e2e: Transition > transition with v-show > named transition with v-show
+   ↓ e2e: Transition > transition with v-show > transition events with v-show
+   ↓ e2e: Transition > transition with v-show > onLeaveCancelled (v-show only)
+   ↓ e2e: Transition > transition with v-show > transition on appear with v-show
+   ↓ e2e: Transition > transition with v-show > transition events should not call onEnter with v-show false
+   ↓ e2e: Transition > explicit durations > single value
+   ↓ e2e: Transition > explicit durations > enter with explicit durations
+   ↓ e2e: Transition > explicit durations > leave with explicit durations
+   ↓ e2e: Transition > explicit durations > separate enter and leave
+   ↓ e2e: Transition > explicit durations > warn invalid durations
+   ↓ e2e: Transition > reflow after *-leave-from before *-leave-active
+   ↓ e2e: Transition > warn when used on multiple elements
+   ↓ e2e: Transition > warn when invalid transition mode
+   ↓ e2e: Transition > HOC w/ merged hooks
+   ↓ e2e: Transition > should work with dev root fragment
+   ↓ e2e: Transition > not leaking > switching VNodes
+   ↓ e2e: Transition > not leaking > switching deep vnodes edge case
+ ❯ |e2e| packages/vue/__tests__/e2e/TransitionGroup.spec.ts (12 tests | 12 skipped) 6ms
+   ↓ e2e: TransitionGroup > enter
+   ↓ e2e: TransitionGroup > leave
+   ↓ e2e: TransitionGroup > enter + leave
+   ↓ e2e: TransitionGroup > appear
+   ↓ e2e: TransitionGroup > move
+   ↓ e2e: TransitionGroup > dynamic name
+   ↓ e2e: TransitionGroup > events
+   ↓ e2e: TransitionGroup > warn unkeyed children
+   ↓ e2e: TransitionGroup > not warn unkeyed text children w/ whitespace preserve
+   ↓ e2e: TransitionGroup > avoid set transition hooks for comment node
+   ↓ e2e: TransitionGroup > avoid set transition hooks for text node
+   ↓ e2e: TransitionGroup > not leaking after children unmounted
+ ❯ |e2e| packages/vue/__tests__/e2e/todomvc.spec.ts (2 tests | 2 skipped) 4ms
+   ↓ e2e: todomvc > classic
+   ↓ e2e: todomvc > composition
+ ❯ |e2e| packages/vue/__tests__/e2e/hydrationStrategies.spec.ts (11 tests | 11 skipped) 6ms
+   ↓ async component hydration strategies > idle
+   ↓ async component hydration strategies > visible
+   ↓ async component hydration strategies > visible (with rootMargin)
+   ↓ async component hydration strategies > visible (fragment)
+   ↓ async component hydration strategies > visible (root v-if) should not throw error
+   ↓ async component hydration strategies > media query
+   ↓ async component hydration strategies > media query (patched before hydration)
+   ↓ async component hydration strategies > interaction
+   ↓ async component hydration strategies > interaction (fragment)
+   ↓ async component hydration strategies > custom
+   ↓ async component hydration strategies > custom teardown
+ ❯ |e2e| packages/vue/__tests__/e2e/ssr-custom-element.spec.ts (3 tests | 3 skipped) 4ms
+   ↓ ssr custom element hydration
+   ↓ work with Teleport (shadowRoot: false)
+   ↓ pass key to custom element
+ ❯ |e2e| packages/vue/__tests__/e2e/svg.spec.ts (2 tests | 2 skipped) 3ms
+   ↓ e2e: svg > classic
+   ↓ e2e: svg > composition
+ ❯ |e2e| packages/vue/__tests__/e2e/grid.spec.ts (2 tests | 2 skipped) 2ms
+   ↓ e2e: grid > classic
+   ↓ e2e: grid > composition
+ ❯ |e2e| packages/vue/__tests__/e2e/tree.spec.ts (2 tests | 2 skipped) 2ms
+   ↓ e2e: tree > classic
+   ↓ e2e: tree > composition
+ ❯ |e2e| packages/vue/__tests__/e2e/trusted-types.spec.ts (3 tests | 3 skipped) 5ms
+   ↓ e2e: trusted types > should render the hello world app
+   ↓ e2e: trusted types > should render static vnode without error
+   ↓ e2e: trusted types > should accept v-html with custom policy
+ ❯ |e2e| packages/vue/__tests__/e2e/commits.spec.ts (2 tests | 2 skipped) 2ms
+   ↓ e2e: commits > classic
+   ↓ e2e: commits > composition
+ ❯ |e2e| packages/vue/__tests__/e2e/vModel.spec.ts (1 test | 1 skipped) 6ms
+   ↓ checkbox click with v-model
+ ❯ |e2e| packages/vue/__tests__/e2e/markdown.spec.ts (2 tests | 2 skipped) 11ms
+   ↓ e2e: markdown > classic
+   ↓ e2e: markdown > composition
+
+ Test Files  12 failed | 16 passed (28)
+      Tests  141 passed | 91 skipped (232)
+   Start at  10:56:34
+   Duration  46.78s (transform 7.76s, setup 181ms, collect 25.46s, tests 2.22s, environment 20.96s, prepare 4.98s)
+
