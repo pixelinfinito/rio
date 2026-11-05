@@ -1,6 +1,6 @@
 # Rio
 
-Rio reviews local Git changes with TypeScript and Python type checking, linting, secret scanning, diff coverage, dependency auditing, and a bounded impact graph. It runs on your machine. Rio is licensed under Apache-2.0.
+Rio reviews local Git changes with TypeScript, Python and Rust type checking, linting, secret scanning, diff coverage, dependency auditing, and a bounded impact graph. It runs on your machine. Rio is licensed under Apache-2.0.
 
 The original [automated acceptance evaluation](docs/evaluation/v0.1.md) concluded **no-go**. A [methodology-corrected rescoring](docs/evaluation/v0.1-rescored.md) finds **insufficient evidence** because all ten PRs lacked working baseline classification; stable v0.1 release remains blocked. The implementation and release-candidate validation are available; the commands below describe published release installation.
 
@@ -72,7 +72,7 @@ Selection flags are mutually exclusive. Typecheck runs over each affected projec
 
 The first Ctrl-C terminates tool process trees and keeps a partial report. A second Ctrl-C kills remaining process groups or Windows jobs and exits 130 without emitting a JSON or Markdown document. JSON writes one final schema-validated document; progress and warnings go to stderr. Markdown also keeps progress on stderr. Terminal mode streams progress and check outcomes. `NO_COLOR`, `--no-color`, and redirected stdout disable color.
 
-TypeScript tools are `tsc`, ESLint, Vitest or Jest. Python tools are Pyright or mypy, Ruff, pytest and coverage.py. Project-local executables take precedence over PATH. See [adapter details](docs/adapters.md).
+TypeScript tools are `tsc`, ESLint, Vitest or Jest. Python tools are Pyright or mypy, Ruff, pytest and coverage.py. Rust uses installed Cargo/toolchain components for `cargo check`, configured Clippy/rustfmt checks, and optional `cargo llvm-cov` coverage. Rust member changes check each scheduled member and its dependents; workspace-wide changes check the workspace. Project-local executables take precedence over PATH. See [adapter details](docs/adapters.md).
 
 Deterministic checks and the graph run locally. Agent, triage and verifier steps are deferred with `no_endpoint`. `--pr`, `--deep`, `--publish` and `--since-last` require an endpoint and exit 2 in this version. Setting `endpoint.url` only prints a notice.
 

@@ -19,3 +19,6 @@ mod source_entries;
 
 mod scope;
 pub use scope::*;
+
+mod cargo;
+pub use cargo::*;

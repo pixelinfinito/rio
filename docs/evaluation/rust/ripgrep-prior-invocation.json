@@ -1,0 +1,17 @@
+{
+  "command": [
+    "/home/ubuntu/rio/target/debug/rio",
+    "review",
+    "--base",
+    "4c2362d359d9913c7a5e391ccd79cb4da22bc89b",
+    "--profile",
+    "/tmp/rio-rust-acceptance-ripgrep.yaml",
+    "--offline",
+    "--format",
+    "json"
+  ],
+  "cwd": "/tmp/rio-rust-acceptance-ripgrep",
+  "exit_code": 0,
+  "wall_time_ms": 246568,
+  "binary_sha256": "4c9fe91d1c265eb99651d7b7607228789b4b4b62e8dc4c7f501d112f3dd8adf3"
+}

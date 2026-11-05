@@ -53,6 +53,7 @@ fn built_in_manifests_and_base_profile_validate() {
     let paths = [
         "adapters/typescript",
         "adapters/python",
+        "adapters/rust",
         "steps/prepare",
         "steps/checks",
         "steps/graph",

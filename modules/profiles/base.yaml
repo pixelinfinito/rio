@@ -49,3 +49,6 @@ fail_on:
   required_checks: []
 min_evidence: plausible
 max_lines: 1500
+posture: balanced
+rounds: { cap: 3, diff_only_after: 1 }
+always_human: []

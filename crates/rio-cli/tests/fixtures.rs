@@ -408,3 +408,126 @@ fn workspace_build_output_runs_base_checks_and_classifies_consumer_error_as_new(
         );
     }
 }
+
+#[test]
+fn rust_fixture_all_modes_and_formats() {
+    let available = Command::new("cargo")
+        .args(["llvm-cov", "--version"])
+        .output()
+        .is_ok_and(|output| output.status.success());
+    if !require_tool(available, "cargo-llvm-cov") {
+        return;
+    }
+    let source = fixture("rs-sample");
+    let temp = tempfile::tempdir().unwrap();
+    let root = temp.path();
+    let mut tree = read_tree(&source);
+    let original = tree["core/src/lib.rs"].content.clone();
+    let base_errors = tree["cases/base-errors.rs"].content.clone();
+    tree.get_mut("core/src/lib.rs")
+        .unwrap()
+        .content
+        .extend_from_slice(&base_errors);
+    SafeTreeWriter::new(root)
+        .unwrap()
+        .write_tree(&tree)
+        .unwrap();
+    fs::create_dir(root.join("target")).unwrap();
+    fs::write(
+        root.join("profile.yaml"),
+        "version: 1\nname: rust-fixture\nextends: rio/base\nbudget: {fast: {wall_time: 90s}}\n",
+    )
+    .unwrap();
+    git(root, &["init", "-b", "main"]);
+    git(root, &["config", "user.email", "rio@example.invalid"]);
+    git(root, &["config", "user.name", "Rio Test"]);
+    git(root, &["add", "."]);
+    git(root, &["commit", "-m", "base"]);
+    fs::write(
+        root.join("core/src/lib.rs"),
+        [
+            original.as_slice(),
+            tree["cases/head-errors.rs"].content.as_slice(),
+            tree["cases/format.rs"].content.as_slice(),
+        ]
+        .concat(),
+    )
+    .unwrap();
+    for mode in ["working-tree", "staged", "branch"] {
+        if mode == "staged" {
+            git(root, &["add", "."]);
+        }
+        if mode == "branch" {
+            git(root, &["commit", "-m", "head"]);
+        }
+        for format in ["json", "terminal", "md"] {
+            let mut command = Command::new(assert_cmd::cargo::cargo_bin!("rio"));
+            command
+                .current_dir(root)
+                .env("RIO_CONFIG_DIR", root.join("config"))
+                .args([
+                    "review",
+                    "--profile",
+                    "profile.yaml",
+                    "--offline",
+                    "--format",
+                    format,
+                ]);
+            if mode == "staged" {
+                command.arg("--staged");
+            }
+            if mode == "branch" {
+                command.args(["--base", "HEAD~1"]);
+            }
+            let output = command.output().unwrap();
+            assert_eq!(
+                output.status.code(),
+                Some(1),
+                "{mode}/{format}: {}\n{}",
+                String::from_utf8_lossy(&output.stdout),
+                String::from_utf8_lossy(&output.stderr)
+            );
+            if format == "json" {
+                let report: Value = serde_json::from_slice(&output.stdout).unwrap();
+                let findings = report["findings"].as_array().unwrap();
+                assert!(
+                    findings
+                        .iter()
+                        .any(|finding| finding["rule_id"] == "typecheck/rustc/E0308"
+                            && finding["state"] == "new"),
+                    "{report}"
+                );
+                assert!(
+                    findings
+                        .iter()
+                        .any(|finding| finding["state"] == "worsened"),
+                    "{report}"
+                );
+                assert!(
+                    findings
+                        .iter()
+                        .any(|finding| finding["state"] == "pre-existing"),
+                    "{report}"
+                );
+                assert!(
+                    findings
+                        .iter()
+                        .any(|finding| finding["rule_id"] == "lint/rustfmt/format"),
+                    "{report}"
+                );
+                assert!(report["checks"].as_array().unwrap().iter().any(|check| check["root"] == "cli" && check["scheduled_as"] == "dependent"));
+                let run = root
+                    .join(".rio/cache")
+                    .join(report["review"]["id"].as_str().unwrap())
+                    .join("runs")
+                    .join(report["review"]["run_id"].as_str().unwrap());
+                assert!(fs::read_dir(run.join("tools")).unwrap().next().is_none());
+                assert!(root.join("target").is_dir());
+            } else {
+                let text = String::from_utf8(output.stdout).unwrap();
+                assert!(text.contains("typecheck/rustc/E0308"));
+                assert!(text.contains("worsened"));
+            }
+        }
+    }
+}

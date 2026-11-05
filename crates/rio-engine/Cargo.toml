@@ -13,6 +13,7 @@ workspace = true
 anyhow.workspace = true
 serde.workspace = true
 serde_json.workspace = true
+globset.workspace = true
 blake3.workspace = true
 fs4.workspace = true
 ulid.workspace = true

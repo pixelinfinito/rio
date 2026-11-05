@@ -70,6 +70,7 @@ pub fn governing_lockfile(
                 "pnpm-lock.yaml".to_owned(),
                 "yarn.lock".to_owned(),
             ],
+            Ecosystem::CratesIo => vec!["Cargo.lock".into()],
             Ecosystem::PyPi => vec![
                 "uv.lock".to_owned(),
                 "poetry.lock".to_owned(),
@@ -90,7 +91,7 @@ pub fn governing_lockfile(
                     names.sort_by_key(|name| name != preferred);
                 }
             }
-        } else {
+        } else if ecosystem == Ecosystem::PyPi {
             let prefix = if directory.is_empty() || directory == "." {
                 String::new()
             } else {
@@ -122,6 +123,9 @@ pub fn governing_lockfile(
                         graph.unverified(format!("cannot parse {path}: {error:#}"));
                         graph
                     });
+                if graph.format == "cargo" {
+                    super::cargo::annotate_cargo_manifests(&mut graph, tree, directory)?;
+                }
                 if graph.format == "poetry"
                     && let Some(manifest) = tree.get(&join(directory, "pyproject.toml"))
                 {

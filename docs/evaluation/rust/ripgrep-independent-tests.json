@@ -1,0 +1,12 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "-p",
+    "ignore"
+  ],
+  "cwd": "/tmp/rio-rust-acceptance-ripgrep",
+  "exit_code": 0,
+  "wall_time_ms": 1017
+}

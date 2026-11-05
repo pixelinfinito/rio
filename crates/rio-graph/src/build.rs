@@ -42,6 +42,7 @@ fn graph_node(
         match symbol.map(|symbol| symbol.kind) {
             Some(SymbolKind::Function) => NodeKind::Function,
             Some(SymbolKind::Method) => NodeKind::Method,
+            Some(SymbolKind::Test) => NodeKind::Test,
             Some(SymbolKind::Class | SymbolKind::Interface | SymbolKind::Enum) => NodeKind::Class,
             _ => NodeKind::File,
         }
@@ -299,7 +300,9 @@ impl GraphBuilder {
                         queue.push_back(node.id.clone());
                         nodes.insert(node.id.clone(), node.clone());
                     }
-                    let kind = if is_test_path(path) {
+                    let kind = if is_test_path(path)
+                        || symbol.is_some_and(|symbol| symbol.kind == SymbolKind::Test)
+                    {
                         EdgeKind::Tests
                     } else if identifier.call {
                         EdgeKind::Calls

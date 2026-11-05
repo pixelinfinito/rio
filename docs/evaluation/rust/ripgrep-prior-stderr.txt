@@ -1,0 +1,17 @@
+Warning: rio/base:$.steps[3]: rio/triage is deferred locally: no_endpoint
+Warning: rio/base:$.steps[4]: rio/agents is deferred locally: no_endpoint
+Warning: rio/base:$.steps[5]: rio/verify is deferred locally: no_endpoint
+Warning: /tmp/rio-rust-acceptance-ripgrep.yaml:$.posture: posture, max_defects and rounds are recorded for deferred agent steps; deterministic findings are never capped
+Running prepare…
+Finished prepare
+Running checks…
+dependencies .: skipped (offline)
+secrets .: passed
+typecheck .: findings
+typecheck .: findings
+coverage .: passed
+Finished checks
+Running graph…
+Finished graph
+Running report…
+Finished report

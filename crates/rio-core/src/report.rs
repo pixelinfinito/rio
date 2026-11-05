@@ -134,11 +134,35 @@ pub struct ReportError {
     pub details: Vec<String>,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum RiskLevel {
+    Low,
+    Medium,
+    High,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum RiskSource {
+    AlwaysHuman,
+    Triage,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct RiskTier {
+    pub tier: RiskLevel,
+    pub reasons: Vec<String>,
+    pub source: RiskSource,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Report {
     pub schema: String,
     pub status: ReportStatus,
     pub review: ReviewHeader,
+    #[serde(default)]
+    pub risk_tier: Option<RiskTier>,
     pub checks: Vec<CheckEntry>,
     pub impact: ImpactSummary,
     pub findings: Vec<Finding>,
@@ -159,6 +183,7 @@ impl Report {
             schema: "rio-report-v1".into(),
             status,
             review: ReviewHeader::default(),
+            risk_tier: None,
             checks: Vec::new(),
             impact: ImpactSummary::default(),
             findings: Vec::new(),

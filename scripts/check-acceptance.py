@@ -16,7 +16,8 @@ prs = record.get('pull_requests', [])
 errors = []
 if len({pr.get('pr') for pr in prs}) < 10: errors.append('at least ten complete PR records required')
 if len({pr.get('repository') for pr in prs}) < 3: errors.append('at least three repositories required')
-if not {'typescript', 'python'} <= {language for pr in prs for language in pr.get('languages', [])}: errors.append('both TypeScript and Python required')
+if not {'typescript', 'python', 'rust'} <= {language for pr in prs for language in pr.get('languages', [])}: errors.append('TypeScript, Python and Rust required')
+if not any(pr.get('repository') == 'pixelinfinito/rio' and 'rust' in pr.get('languages', []) for pr in prs): errors.append('Rio itself must be a Rust acceptance source')
 for index, pr in enumerate(prs):
     for key in ['repository', 'pr', 'mode', 'review_id', 'wall_time_ms', 'findings', 'misses', 'verdict', 'reason', 'reviewer']:
         if key not in pr or pr[key] is None or pr[key] == '': errors.append(f'PR {index + 1}: missing {key}')

@@ -34,5 +34,6 @@
     "code": "not_a_repository",
     "message": "A git repository is required",
     "details": []
-  }
+  },
+  "risk_tier": null
 }

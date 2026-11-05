@@ -288,6 +288,13 @@ fn header(report: &Report) -> Vec<String> {
             h.chain.as_deref().unwrap_or_default().join(" -> ")
         ));
     }
+    if let Some(risk) = &report.risk_tier {
+        lines.push(format!(
+            "Risk tier: {} ({})",
+            label(&risk.tier),
+            risk.reasons.join("; ")
+        ));
+    }
     if let Some(summary) = classification_summary(report) {
         lines.push(summary);
     }

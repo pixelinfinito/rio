@@ -225,6 +225,45 @@
         "url"
       ],
       "additionalProperties": false
+    },
+    "round": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "first_posted_in": {
+      "type": "string",
+      "minLength": 1
+    },
+    "author_response": {
+      "type": "object",
+      "properties": {
+        "reason": {
+          "enum": [
+            "fixed",
+            "wrong",
+            "intentional",
+            "irrelevant",
+            "style"
+          ]
+        },
+        "actor": {
+          "type": "string",
+          "minLength": 1
+        },
+        "at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "note": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "reason",
+        "actor",
+        "at"
+      ],
+      "additionalProperties": false
     }
   },
   "required": [

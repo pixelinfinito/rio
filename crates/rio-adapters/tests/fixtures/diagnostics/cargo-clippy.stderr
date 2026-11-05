@@ -1,0 +1,6 @@
+   Compiling autocfg v1.5.1
+   Compiling num-traits v0.2.19
+    Checking num-integer v0.1.47
+    Checking chrono v0.4.19
+    Checking sample-core v0.1.0 (/recorded/workspace/core)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.29s

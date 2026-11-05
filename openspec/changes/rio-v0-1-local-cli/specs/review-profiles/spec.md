@@ -12,7 +12,7 @@ A profile given as an existing file path SHALL be loaded from that path. A profi
 - **THEN** the repo file is used
 
 ### Requirement: Schema version 1
-A profile SHALL declare `version: 1`. The top-level keys SHALL be `version`, `name`, `extends`, `budget`, `models`, `steps`, `suppress`, `publish`, `fail_on`, `min_evidence`, `max_lines`. Unknown top-level keys SHALL be rejected. The schema SHALL be published as `schemas/profile-v1.json` and the engine's validation SHALL accept exactly the documents that schema accepts, plus the semantic rules below.
+A profile SHALL declare `version: 1`. The top-level keys SHALL be `version`, `name`, `extends`, `budget`, `models`, `steps`, `suppress`, `publish`, `fail_on`, `min_evidence`, `max_lines`, `posture`, `max_defects`, `rounds`, `always_human`. Unknown top-level keys SHALL be rejected. `posture`, `max_defects`, `rounds` and `always_human` are optional with defaults, so a document without them validates. The schema SHALL be published as `schemas/profile-v1.json` and the engine's validation SHALL accept exactly the documents that schema accepts, plus the semantic rules below.
 
 #### Scenario: Unknown key rejected
 - **WHEN** a profile contains a top-level `agents:` key
@@ -21,6 +21,29 @@ A profile SHALL declare `version: 1`. The top-level keys SHALL be `version`, `na
 #### Scenario: Wrong version rejected
 - **WHEN** a profile declares `version: 2`
 - **THEN** validation fails stating that only version 1 is supported
+
+### Requirement: Posture and reserved convergence keys
+`posture` SHALL be one of `critical-only`, `balanced` (default), `thorough`. Resolution SHALL derive from it, in this order of precedence (explicit key in the same resolved document first, then posture, then schema default): `min_evidence` (`reproduced`, `static_proven`, `plausible`), `max_defects` (3, 5, 15), the severity floor for defects (`error`, `warning`, `info`) and whether `plausible` risks render (no; yes up to `max_defects`; yes uncapped). An explicit `max_defects` SHALL be a positive integer, default 5. `rounds` SHALL have `cap` (positive integer, default 3) and `diff_only_after` (non-negative integer below `cap`, default 1). `always_human` SHALL be a list of globs relative to the repository root, default `[]`. The derived values SHALL be written to the resolved profile so they are part of the review id. In this version `always_human` is the only consumed key: when a changed file matches one of its globs, the report's `risk_tier` SHALL be `high` with a reason naming the glob. `max_defects` and the severity floor SHALL never apply to deterministic findings, and the footer SHALL note that `posture`, `max_defects` and `rounds` are recorded for agent steps that are deferred.
+
+#### Scenario: Posture derives the evidence floor
+- **WHEN** a profile sets `posture: critical-only` and no `min_evidence`
+- **THEN** the resolved profile has `min_evidence: reproduced`, `max_defects: 3`, and `plausible` risks are marked as not rendered
+
+#### Scenario: Explicit key wins over posture
+- **WHEN** a profile sets `posture: critical-only` and `max_defects: 8`
+- **THEN** the resolved profile has `max_defects: 8` and `min_evidence: reproduced`
+
+#### Scenario: Posture cannot breach the floor
+- **WHEN** a profile sets `posture: thorough`
+- **THEN** the resolved `min_evidence` is `plausible`, which is the floor; no posture value or explicit key resolves below it
+
+#### Scenario: Always-human path sets the risk tier
+- **WHEN** a profile sets `always_human: [".github/workflows/**", "scripts/install.*"]` and a change edits `.github/workflows/release.yml`
+- **THEN** the report's `risk_tier` is `{ tier: high, reasons: ["always_human: .github/workflows/**"], source: always_human }`
+
+#### Scenario: Deterministic findings are never capped
+- **WHEN** `max_defects` is 3 and the type check reports seven new errors
+- **THEN** all seven findings are rendered
 
 ### Requirement: Single inheritance
 A profile MAY declare one `extends` referencing another profile by name or path. A relative path SHALL be resolved against the directory of the file that declares it, not against the current directory. A name SHALL be resolved with the discovery order. Resolution SHALL deep-merge mappings, child over parent, and SHALL replace lists wholesale when the child declares them. Inheritance cycles SHALL be rejected. The resolved profile SHALL record the full chain.
@@ -42,7 +65,7 @@ A profile MAY declare one `extends` referencing another profile by name or path.
 - **THEN** validation fails and names the cycle
 
 ### Requirement: Semantic validation
-Beyond the schema, validation SHALL reject: step ids that are not unique; `needs` referencing unknown steps or forming a cycle; `uses` references that do not resolve to a built-in `rio/*` module (third-party refs are rejected with a message saying they are not supported in this version); `with` blocks that fail the referenced module's own schema; non-positive budgets; `models.verifier` equal to `models.default` when both are set; rule expressions that do not parse; and `min_evidence` below `plausible`.
+Beyond the schema, validation SHALL reject: step ids that are not unique; `needs` referencing unknown steps or forming a cycle; `uses` references that do not resolve to a built-in `rio/*` module (third-party refs are rejected with a message saying they are not supported in this version); `with` blocks that fail the referenced module's own schema; non-positive budgets; `models.verifier` equal to `models.default` when both are set; rule expressions that do not parse; `min_evidence` below `plausible`; `posture` outside its enum; non-positive `max_defects` or `rounds.cap`; `rounds.diff_only_after` not below `rounds.cap`; and `always_human` entries that are not valid globs.
 
 #### Scenario: Verifier model must differ
 - **WHEN** a profile sets `models.default: anthropic/claude-sonnet-5-5` and `models.verifier: anthropic/claude-sonnet-5-5`

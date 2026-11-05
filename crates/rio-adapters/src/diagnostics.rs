@@ -513,3 +513,136 @@ pub fn parse_biome(stdout: &[u8], context: &DiagnosticContext<'_>) -> Result<Vec
     }
     Ok(findings)
 }
+
+#[derive(Debug, Default)]
+pub struct CargoDiagnostics {
+    pub findings: Vec<Finding>,
+    pub outside_repository: usize,
+}
+
+pub fn parse_cargo(stdout: &[u8], context: &DiagnosticContext<'_>) -> Result<CargoDiagnostics> {
+    let mut result = CargoDiagnostics::default();
+    let mut syntax = BTreeMap::new();
+    let mut seen = std::collections::BTreeSet::new();
+    for line in std::str::from_utf8(stdout)?
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+    {
+        let record: Value = serde_json::from_str(line).context("invalid cargo JSON record")?;
+        if record["reason"] != "compiler-message" {
+            continue;
+        }
+        let message = &record["message"];
+        let severity = match message["level"].as_str() {
+            Some("error") => Severity::Error,
+            Some("warning") => Severity::Warning,
+            _ => continue,
+        };
+        let spans = message["spans"]
+            .as_array()
+            .context("cargo diagnostic has no spans array")?;
+        let span = spans
+            .iter()
+            .find(|span| span["is_primary"] == true)
+            .or_else(|| spans.first());
+        let path = span
+            .and_then(|span| span["file_name"].as_str())
+            .or_else(|| record["target"]["src_path"].as_str())
+            .unwrap_or("src/lib.rs");
+        if normalized_path(path, context).is_err() {
+            result.outside_repository += 1;
+            continue;
+        }
+        let code = message["code"]["code"].as_str().unwrap_or("uncoded");
+        let (kind, tool, code) = code
+            .strip_prefix("clippy::")
+            .map_or(("typecheck", "rustc", code), |code| {
+                ("lint", "clippy", code)
+            });
+        let line = span
+            .map(|span| number(&span["line_start"], 1))
+            .transpose()?
+            .unwrap_or(1);
+        let end = span
+            .map(|span| number(&span["line_end"], line))
+            .transpose()?
+            .unwrap_or(line);
+        let column = span
+            .map(|span| number(&span["column_start"], 1))
+            .transpose()?;
+        let summary = message["message"]
+            .as_str()
+            .context("cargo diagnostic missing message")?;
+        let mut finding = finding(
+            Diagnostic {
+                tool,
+                kind,
+                code,
+                path,
+                line,
+                end,
+                column,
+                message: summary,
+                severity,
+            },
+            context,
+            &mut syntax,
+        )?;
+        // Identity uses the semantic summary, not rendered source excerpts whose
+        // line numbers and code frames change when an occurrence moves.
+        let mut body = message["rendered"].as_str().unwrap_or(summary).to_owned();
+        for child in message["children"].as_array().into_iter().flatten() {
+            if let Some(text) = child["message"]
+                .as_str()
+                .filter(|text| !body.contains(text))
+            {
+                body.push_str(&format!(
+                    "\n{}: {text}",
+                    child["level"].as_str().unwrap_or("note")
+                ));
+            }
+        }
+        finding.message = redact(&body);
+        if seen.insert((
+            finding.rule_id.clone(),
+            finding.location.path.clone(),
+            line,
+            column,
+            summary.to_owned(),
+        )) {
+            result.findings.push(finding);
+        }
+    }
+    Ok(result)
+}
+
+pub fn parse_rustfmt(stdout: &[u8], context: &DiagnosticContext<'_>) -> Result<Vec<Finding>> {
+    let pattern = Regex::new(r"(?m)^Diff in (.+?)(?: at line |:)(\d+):\s*$")?;
+    let text = std::str::from_utf8(stdout)?;
+    let mut syntax = BTreeMap::new();
+    let mut seen = std::collections::BTreeSet::new();
+    let mut result = Vec::new();
+    for capture in pattern.captures_iter(text) {
+        let path = capture[1].trim();
+        if normalized_path(path, context).is_err() || !seen.insert(path.to_owned()) {
+            continue;
+        }
+        let line = capture[2].parse()?;
+        result.push(finding(
+            Diagnostic {
+                tool: "rustfmt",
+                kind: "lint",
+                code: "format",
+                path,
+                line,
+                end: line,
+                column: None,
+                message: "File differs from the project's rustfmt configuration",
+                severity: Severity::Warning,
+            },
+            context,
+            &mut syntax,
+        )?);
+    }
+    Ok(result)
+}

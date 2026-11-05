@@ -45,6 +45,7 @@ pub fn dependency_audit_plan(base: &Tree, head: &Tree, diff: &Diff) -> Result<Au
                 | "uv.lock"
                 | "poetry.lock"
                 | "Pipfile.lock"
+                | "Cargo.lock"
         ) && !(name.starts_with("requirements") && name.ends_with(".txt"))
         {
             continue;
@@ -487,7 +488,7 @@ pub fn advisory_severity(record: &Value) -> AdvisorySeverity {
 
 fn greater(ecosystem: Ecosystem, a: &str, b: &str) -> Option<bool> {
     match ecosystem {
-        Ecosystem::Npm => {
+        Ecosystem::Npm | Ecosystem::CratesIo => {
             Some(node_semver::Version::parse(a).ok()? > node_semver::Version::parse(b).ok()?)
         }
         Ecosystem::PyPi => {

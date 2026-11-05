@@ -16,8 +16,14 @@ pub struct PlannedCheck {
     pub kind: CheckKind,
     pub language: String,
     pub root: String,
+    #[serde(default)]
+    pub workspace_wide: bool,
     pub scheduled_as: ScheduledAs,
     pub tool: Option<ResolvedTool>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub additional_tools: Vec<ResolvedTool>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub tool_skips: Vec<CheckOutcome>,
     pub skip: Option<CheckOutcome>,
     pub targets: Vec<String>,
     pub dependency_state: Option<DependencyState>,
@@ -144,11 +150,46 @@ pub async fn plan_review_with_progress(
         profile,
         resolver,
     } = request;
-    let layout = detect_repository(&changes.head, diff)?;
+    let mut layout = detect_repository(&changes.head, diff)?;
+    let rust_workspaces: std::collections::BTreeSet<_> = layout
+        .roots
+        .iter()
+        .filter(|root| root.language == "rust")
+        .map(|root| root.workspace.clone().unwrap_or_else(|| root.path.clone()))
+        .collect();
+    let rust_probes =
+        !rust_workspaces.is_empty() && resolver.locate("rustup", ".", "rust").is_some();
+    for root in rust_workspaces {
+        if let Some(cargo) = rust_cargo(
+            resolver,
+            &changes.head,
+            &root,
+            supervisor,
+            cancellation.clone(),
+        )
+        .await?
+        {
+            match rust_metadata(
+                &changes.head,
+                &root,
+                &cargo,
+                supervisor,
+                cancellation.clone(),
+            )
+            .await
+            {
+                Ok(metadata) => apply_rust_metadata(&mut layout, &metadata),
+                Err(error) => layout
+                    .notes
+                    .push(format!("Rust workspace discovery: {error:#}")),
+            }
+        }
+    }
     let scheduled = layout.schedule(diff);
     let mut plan = ReviewPlan {
         notes: layout.notes.clone(),
         layout,
+        probes_ran: rust_probes,
         ..Default::default()
     };
     let options = profile
@@ -170,15 +211,39 @@ pub async fn plan_review_with_progress(
         let language = &project.language;
         let root = &project.path;
         progress(root);
-        let ecosystem = if language == "typescript" {
-            Ecosystem::Npm
-        } else {
-            Ecosystem::PyPi
+        let ecosystem = match language.as_str() {
+            "typescript" => Ecosystem::Npm,
+            "rust" => Ecosystem::CratesIo,
+            _ => Ecosystem::PyPi,
         };
         let mut lock =
             governing_lockfile(&changes.head, root, project.workspace.as_deref(), ecosystem)?;
         let mut base_lock =
             governing_lockfile(&changes.base, root, project.workspace.as_deref(), ecosystem)?;
+        if language == "rust"
+            && let Some(lock) = &lock
+        {
+            for note in &lock.graph.notes {
+                let note = format!("{}: {note}", lock.path);
+                if !plan.notes.contains(&note) {
+                    plan.notes.push(note);
+                }
+            }
+        }
+        if language == "rust" && scheduled.workspace_wide {
+            for lock in [&mut lock, &mut base_lock].into_iter().flatten() {
+                let dependencies = lock
+                    .graph
+                    .importers
+                    .values()
+                    .flat_map(|importer| importer.dependencies.clone())
+                    .collect();
+                lock.importer = "__rio_workspace".into();
+                lock.graph
+                    .importers
+                    .insert(lock.importer.clone(), Importer { dependencies });
+            }
+        }
         let installation_root = lock
             .as_ref()
             .map(|lock| lock.root.clone())
@@ -194,7 +259,11 @@ pub async fn plan_review_with_progress(
                     "requirements"
                 })
             });
-        let mut installation = read_installation(worktree, &installation_root, &installed_graph);
+        let mut installation = if language == "rust" {
+            Installation::default()
+        } else {
+            read_installation(worktree, &installation_root, &installed_graph)
+        };
         if let Some(lock) = &mut lock {
             scope_pnpm_importers(
                 &mut lock.graph,
@@ -246,15 +315,43 @@ pub async fn plan_review_with_progress(
                 trust,
             })
         };
-        let head = compatibility(&changes.head, lock.as_ref(), trust, false);
-        let base = compatibility(&changes.base, base_lock.as_ref(), false, true);
+        let cargo = if language == "rust" {
+            rust_cargo(
+                resolver,
+                &changes.head,
+                root,
+                supervisor,
+                cancellation.clone(),
+            )
+            .await?
+        } else {
+            None
+        };
+        let (head, base) = if language == "rust" {
+            cargo_compatibility(
+                lock.as_ref(),
+                base_lock.as_ref(),
+                cargo.is_some(),
+                rust_toolchain(&changes.head, root)?
+                    .as_deref()
+                    .unwrap_or("default"),
+                trust,
+            )
+        } else {
+            (
+                compatibility(&changes.head, lock.as_ref(), trust, false),
+                compatibility(&changes.base, base_lock.as_ref(), false, true),
+            )
+        };
         let canonical_worktree = worktree.canonicalize()?;
         let baseline_remap = matches!(head, Compatibility::Trusted { .. })
             || installation
                 .links
                 .values()
                 .any(|target| target.strip_prefix(&canonical_worktree).is_ok());
-        let environment_path = if language == "typescript" {
+        let environment_path = if language == "rust" {
+            Some(worktree.join(&installation_root).join("target"))
+        } else if language == "typescript" {
             Some(worktree.join(&installation_root).join("node_modules"))
         } else {
             [
@@ -270,6 +367,11 @@ pub async fn plan_review_with_progress(
             let mut skipped =
                 (!enabled).then(|| skip(SkipReason::Disabled, "Disabled in the profile"));
             let tool_name = match kind {
+                CheckKind::Typecheck if language == "rust" => Some("cargo-check"),
+                CheckKind::Lint if language == "rust" => {
+                    rust_lint_tools(&changes.head, root).first().copied()
+                }
+                CheckKind::Coverage if language == "rust" => Some("cargo-llvm-cov"),
                 CheckKind::Typecheck if language == "typescript" => Some("tsc"),
                 CheckKind::Typecheck => python_typechecker(&changes.head, root, |name| {
                     resolver.locate(name, root, language).is_some()
@@ -285,13 +387,30 @@ pub async fn plan_review_with_progress(
                 CheckKind::Coverage => Some("coverage"),
                 _ => None,
             };
-            let tool = if enabled {
+            let mut tool = if enabled {
                 if let Some(name) = tool_name {
                     let key = (root.clone(), language.clone(), name.into());
                     if !versions.contains_key(&key) {
-                        let tool = resolver
-                            .resolve(name, root, language, supervisor, cancellation.clone())
-                            .await;
+                        let tool = if language == "rust" {
+                            match &cargo {
+                                Some(cargo) => {
+                                    rust_subcommand(
+                                        cargo,
+                                        name,
+                                        &changes.head,
+                                        root,
+                                        supervisor,
+                                        cancellation.clone(),
+                                    )
+                                    .await?
+                                }
+                                None => None,
+                            }
+                        } else {
+                            resolver
+                                .resolve(name, root, language, supervisor, cancellation.clone())
+                                .await
+                        };
                         plan.probes_ran |= tool.is_some();
                         versions.insert(key.clone(), tool);
                     }
@@ -302,13 +421,57 @@ pub async fn plan_review_with_progress(
             } else {
                 None
             };
+            let mut additional_tools = Vec::new();
+            let mut tool_skips = Vec::new();
+            if enabled
+                && language == "rust"
+                && kind == CheckKind::Lint
+                && let Some(cargo) = &cargo
+            {
+                for name in rust_lint_tools(&changes.head, root).into_iter().skip(1) {
+                    if let Some(tool) = rust_subcommand(
+                        cargo,
+                        name,
+                        &changes.head,
+                        root,
+                        supervisor,
+                        cancellation.clone(),
+                    )
+                    .await?
+                    {
+                        additional_tools.push(tool);
+                    } else {
+                        tool_skips.push(skip(
+                            SkipReason::ToolMissing,
+                            format!("Install the {name} component for the selected Rust toolchain"),
+                        ));
+                    }
+                }
+            }
+            if enabled
+                && language == "rust"
+                && kind == CheckKind::Lint
+                && tool.is_none()
+                && let Some(available) = additional_tools.pop()
+            {
+                tool = Some(available);
+                tool_skips.push(skip(
+                    SkipReason::ToolMissing,
+                    format!(
+                        "Install {} for the selected Rust toolchain",
+                        tool_name.unwrap_or("clippy")
+                    ),
+                ));
+            }
             if skipped.is_none() {
                 skipped = diagnostic_config_skip(kind, language, &changes.head, root);
             }
             if skipped.is_none() && tool.is_none() {
                 skipped = Some(skip(
                     SkipReason::ToolMissing,
-                    if language == "python" && kind == CheckKind::Typecheck {
+                    if language == "rust" && kind == CheckKind::Coverage {
+                        "Install cargo-llvm-cov with cargo install cargo-llvm-cov and llvm-tools-preview with rustup component add llvm-tools-preview for the selected toolchain".into()
+                    } else if language == "python" && kind == CheckKind::Typecheck {
                         "Install pyright or mypy in the project environment".into()
                     } else {
                         format!(
@@ -359,8 +522,11 @@ pub async fn plan_review_with_progress(
                 kind,
                 language: language.clone(),
                 root: root.clone(),
+                workspace_wide: scheduled.workspace_wide,
                 scheduled_as: scheduled.scheduled_as,
                 tool,
+                additional_tools,
+                tool_skips,
                 skip: skipped,
                 targets: scheduled
                     .changed_files
@@ -390,8 +556,11 @@ pub async fn plan_review_with_progress(
             kind,
             language: "common".into(),
             root: ".".into(),
+            workspace_wide: false,
             scheduled_as: ScheduledAs::Changed,
             tool: None,
+            additional_tools: Vec::new(),
+            tool_skips: Vec::new(),
             skip: (!check_enabled(profile, kind))
                 .then(|| skip(SkipReason::Disabled, "Disabled in the profile")),
             targets: Vec::new(),

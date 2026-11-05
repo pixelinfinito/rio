@@ -1,0 +1,108 @@
+---
+source: crates/rio-graph/tests/graph.rs
+expression: slices.head
+---
+{
+  "nodes": [
+    {
+      "id": "386cc5a58c8ece5f4f7b2541fd69b783b1a1944fb0ab7879b8601fa073a04ebe",
+      "kind": "file",
+      "path": "cli/src/main.rs",
+      "symbol_path": "",
+      "name": "main.rs",
+      "line_start": 1,
+      "line_end": 3,
+      "version": "head",
+      "seed": false,
+      "hop": 1,
+      "content_hash": "f935dd0c3c1de4d59d3a93df0f27f86f8c645c6450f0c2bb10d4b6b0fd5736a7"
+    },
+    {
+      "id": "f2161dd5296729fb96267e273a2bec7f7a8da52b5fa8973b82c839f953f631b8",
+      "kind": "function",
+      "path": "cli/src/main.rs",
+      "symbol_path": "main.main",
+      "name": "main",
+      "line_start": 2,
+      "line_end": 2,
+      "version": "head",
+      "seed": false,
+      "hop": 1,
+      "content_hash": "c97cd71047a204017a48400847e4da4ae85722f11724607dd30800070ca696c0"
+    },
+    {
+      "id": "1370e7c3a1730e852d877d8de17303ac4ed076818a5249494ff9f1ce0a1b5cde",
+      "kind": "function",
+      "path": "core/src/nested/mod.rs",
+      "symbol_path": "mod.nested_call",
+      "name": "nested_call",
+      "line_start": 2,
+      "line_end": 2,
+      "version": "head",
+      "seed": false,
+      "hop": 1,
+      "content_hash": "732c756d9c5ea16c200ce9f65964d342e110f54ec9bfc82adcc5b6e0599c1cb9"
+    },
+    {
+      "id": "c1de6cc0093fadd83756c9dd1e043a5d8b10c0b91f86d8ae51b7a8f3756843ae",
+      "kind": "function",
+      "path": "core/src/util.rs",
+      "symbol_path": "util.helper",
+      "name": "helper",
+      "line_start": 1,
+      "line_end": 3,
+      "version": "head",
+      "seed": true,
+      "hop": 0,
+      "content_hash": "6b7240109baf872d22f02dfca76febe1599d9c52c46e2861d69d6f17620ac04b"
+    },
+    {
+      "id": "ffd2d0b8fe3be8abc8f7fd3fe1df1a55eba2126cca192e9b243324bc6104a452",
+      "kind": "test",
+      "path": "core/src/util.rs",
+      "symbol_path": "util.tests.calls_helper",
+      "name": "calls_helper",
+      "line_start": 9,
+      "line_end": 9,
+      "version": "head",
+      "seed": false,
+      "hop": 1,
+      "content_hash": "06c1a90b6c1e833766c15f7e68df72a1b749cde39e18bdb13750b83f1734794f"
+    }
+  ],
+  "edges": [
+    {
+      "from": "1370e7c3a1730e852d877d8de17303ac4ed076818a5249494ff9f1ce0a1b5cde",
+      "to": "c1de6cc0093fadd83756c9dd1e043a5d8b10c0b91f86d8ae51b7a8f3756843ae",
+      "kind": "calls",
+      "source": "tree-sitter",
+      "confidence": "resolved",
+      "version": "head"
+    },
+    {
+      "from": "386cc5a58c8ece5f4f7b2541fd69b783b1a1944fb0ab7879b8601fa073a04ebe",
+      "to": "c1de6cc0093fadd83756c9dd1e043a5d8b10c0b91f86d8ae51b7a8f3756843ae",
+      "kind": "references",
+      "source": "tree-sitter",
+      "confidence": "resolved",
+      "version": "head"
+    },
+    {
+      "from": "f2161dd5296729fb96267e273a2bec7f7a8da52b5fa8973b82c839f953f631b8",
+      "to": "c1de6cc0093fadd83756c9dd1e043a5d8b10c0b91f86d8ae51b7a8f3756843ae",
+      "kind": "references",
+      "source": "tree-sitter",
+      "confidence": "resolved",
+      "version": "head"
+    },
+    {
+      "from": "ffd2d0b8fe3be8abc8f7fd3fe1df1a55eba2126cca192e9b243324bc6104a452",
+      "to": "c1de6cc0093fadd83756c9dd1e043a5d8b10c0b91f86d8ae51b7a8f3756843ae",
+      "kind": "tests",
+      "source": "tree-sitter",
+      "confidence": "resolved",
+      "version": "head"
+    }
+  ],
+  "truncated": false
+}

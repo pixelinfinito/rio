@@ -1,0 +1,8 @@
+error: failed to load manifest for workspace member `/recorded/workspace/missing`
+referenced by workspace at `/recorded/workspace/Cargo.toml`
+
+Caused by:
+  failed to read `/recorded/workspace/missing/Cargo.toml`
+
+Caused by:
+  No such file or directory (os error 2)

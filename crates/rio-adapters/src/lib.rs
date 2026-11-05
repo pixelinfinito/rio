@@ -22,3 +22,11 @@ mod coverage_config;
 pub use coverage_config::*;
 mod audit;
 pub use audit::*;
+
+mod rust_syntax;
+
+mod rust;
+pub use rust::*;
+
+mod rust_coverage;
+pub use rust_coverage::rust_coverage_settings;

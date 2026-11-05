@@ -5,11 +5,15 @@ The finding model is the single representation every check, renderer and later a
 ## ADDED Requirements
 
 ### Requirement: Finding model
-A finding SHALL have: `id` (stable identity), `rule_id`, `category` (`defect` or `risk`), `evidence_level`, `severity` (`error`, `warning`, `info`), `state` (`new`, `worsened`, `pre-existing`, `fixed`, `unclassified`), `location` (repository-relative path, line range, optional column, enclosing symbol path), `message`, `trigger` (the condition under which the problem manifests), optional `impact`, optional `suggested_fix`, `evidence` (references to artifacts in the review cache), `source` (tool and version, or agent name), `locations` for every occurrence merged by root cause, each with its own line range and `occurrence_state` (`new`, `pre-existing`, `fixed` or `unclassified`), and, for `dependency/*` findings, an `advisory` block (`id`, `aliases`, `severity` from `critical`, `high`, `moderate`, `low`, `unknown`, `fixed_version` or `unknown`, `url`). The JSON form SHALL validate against `schemas/finding-v1.json`.
+A finding SHALL have: `id` (stable identity), `rule_id`, `category` (`defect` or `risk`), `evidence_level`, `severity` (`error`, `warning`, `info`), `state` (`new`, `worsened`, `pre-existing`, `fixed`, `unclassified`), `location` (repository-relative path, line range, optional column, enclosing symbol path), `message`, `trigger` (the condition under which the problem manifests), optional `impact`, optional `suggested_fix`, `evidence` (references to artifacts in the review cache), `source` (tool and version, or agent name), `locations` for every occurrence merged by root cause, each with its own line range and `occurrence_state` (`new`, `pre-existing`, `fixed` or `unclassified`), and, for `dependency/*` findings, an `advisory` block (`id`, `aliases`, `severity` from `critical`, `high`, `moderate`, `low`, `unknown`, `fixed_version` or `unknown`, `url`). The schema SHALL also define the optional keys `round` (positive integer: the review round within a head lineage that produced the finding), `first_posted_in` (the head SHA or snapshot key of the round in which the finding was first posted) and `author_response` (`{ reason: fixed | wrong | intentional | irrelevant | style, actor, at, note }`); this version never emits them, and their absence SHALL be valid. The JSON form SHALL validate against `schemas/finding-v1.json`.
 
 #### Scenario: JSON validates against the schema
 - **WHEN** a review is rendered as JSON
 - **THEN** every finding in the document validates against `schemas/finding-v1.json`
+
+#### Scenario: Reserved keys validate
+- **WHEN** a hand-written finding document carries `round: 2`, `first_posted_in: "3f2a…"` and `author_response: { reason: intentional, actor: "octocat", at: "2026-11-05T10:00:00Z" }`
+- **THEN** it validates against `schemas/finding-v1.json`, and a document with `author_response.reason: known` is rejected
 
 ### Requirement: Evidence levels
 `evidence_level` SHALL be one of `reproduced`, `static_proven`, `plausible`, `refuted`, ordered from strongest to weakest. A finding SHALL NEVER carry a numeric confidence. Findings below `plausible` SHALL never be rendered. Deterministic checks SHALL emit `static_proven`.

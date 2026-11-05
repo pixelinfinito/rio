@@ -1,0 +1,45 @@
+[
+  {
+    "category": "defect",
+    "evidence": [
+      "rustc diagnostic"
+    ],
+    "evidence_level": "static_proven",
+    "id": "1f4ab2e37599ba3260b907b55316c2d99663beb1c1494b632bc07bc2fc6ea3ce",
+    "location": {
+      "column": 1,
+      "line_end": 5,
+      "line_start": 5,
+      "occurrence_state": "pre-existing",
+      "path": "crates/globset/benches/bench.rs",
+      "symbol_path": ""
+    },
+    "locations": [
+      {
+        "column": 1,
+        "line_end": 5,
+        "line_start": 5,
+        "occurrence_state": "pre-existing",
+        "path": "crates/globset/benches/bench.rs",
+        "symbol_path": ""
+      }
+    ],
+    "message": "error[E0554]: `#![feature]` may not be used on the stable release channel\n --> crates/globset/benches/bench.rs:5:1\n  |\n5 | #![feature(test)]\n  | ^^^^^^^^^^^^^^^^^\n\n",
+    "rule_id": "typecheck/rustc/E0554",
+    "severity": "error",
+    "source": {
+      "tool": "rustc",
+      "version": "cargo 1.99.1 (5f94df478 2026-08-27)"
+    },
+    "state": "pre-existing",
+    "trigger": "",
+    "verdict": "noise",
+    "reviewer": "sub-agent rust_acceptance",
+    "verdict_source": "automated",
+    "reason": "Unchanged globset nightly-only benchmark emits E0554 on the installed stable toolchain in both base and head. It does not identify a PR regression; parent fixed unnecessary workspace-wide dependent scheduling before the final rerun.",
+    "independent_evidence": {
+      "exact_source_line": "#![feature(test)]",
+      "present_in_base_and_head": true
+    }
+  }
+]

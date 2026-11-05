@@ -19,6 +19,7 @@ pub fn read_tree(root: &Path) -> Tree {
             let entry = entry.unwrap();
             if [
                 "node_modules",
+                "target",
                 ".venv",
                 "venv",
                 ".git",

@@ -20,7 +20,7 @@ jobs:
       - uses: dtolnay/rust-toolchain@master
         with:
           toolchain: '1.99.1'
-          components: rustfmt, clippy
+          components: rustfmt, clippy, llvm-tools-preview
       - uses: Swatinem/rust-cache@v2
       - uses: actions/setup-node@v4
         with:
@@ -38,6 +38,9 @@ jobs:
           npm ci --prefix tests/fixtures/ts-sample
           pnpm --dir tests/fixtures/monorepo-sample install --frozen-lockfile
           uv sync --project tests/fixtures/py-sample --frozen
+          cargo install cargo-llvm-cov --version 0.9.1 --locked
+          cargo llvm-cov --version
+          cargo test --locked --manifest-path tests/fixtures/rs-sample/Cargo.toml
           ruff --version
           pyright --version
       - run: cargo fmt --all --check
@@ -54,6 +57,15 @@ jobs:
           trap 'mv tests/fixtures/py-sample/.venv/bin/ruff.saved tests/fixtures/py-sample/.venv/bin/ruff' EXIT
           if cargo test -p rio-cli --test fixtures python_fixture_all_modes_and_formats; then
             echo 'Missing Ruff was incorrectly allowed under RIO_REQUIRE_TOOLS=1' >&2
+            exit 1
+          fi
+      - name: Require the installed Rust coverage tool
+        run: |
+          tool_path=$(command -v cargo-llvm-cov)
+          mv "$tool_path" "$tool_path.saved"
+          trap 'mv "$tool_path.saved" "$tool_path"' EXIT
+          if cargo test -p rio-adapters --test rust real_rust_coverage_keeps_failures_and_distinguishes_zero_tests; then
+            echo 'Missing cargo-llvm-cov was incorrectly allowed under RIO_REQUIRE_TOOLS=1' >&2
             exit 1
           fi
       - name: Unix installer

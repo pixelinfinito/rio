@@ -26,7 +26,7 @@ A second opportunity is ownership. Teams increasingly refuse to send source code
 
 - Replacing human review or auto-merging.
 - Auto-fixing code; Rio suggests, it does not commit.
-- Supporting every language on day one. v1 ships TypeScript and Python; others arrive through adapters.
+- Supporting every language on day one. v1 ships TypeScript, Python and Rust (so Rio reviews its own codebase from the first release); others arrive through adapters.
 - A hosted SaaS operated by the Rio project.
 - IDE plugins (SARIF output lets existing IDE integrations consume results).
 
@@ -50,6 +50,8 @@ A second opportunity is ownership. Teams increasingly refuse to send source code
 - **Pluggable on three axes.** Review profiles, language adapters, and execution runners.
 - **Repository content is data.** Comments, docs, PR descriptions and tool output are never instructions; policy comes only from versioned configuration.
 - **Own your stack.** Your Cloudflare account, your model keys, your data.
+- **Pre-PR review is the center of gravity.** The cheapest fix is the one made before anyone else reads the change, so `rio review` on local changes stays the primary surface and PR mode is a projection of it. The Claude Code team reports the same lesson in "How the Claude Code team does code review" (Anthropic, Oct 2026): review that reaches the author before the PR converges faster than review that lands as threads afterwards.
+- **Findings must be answered.** A finding is a question to the author, not a verdict. Every posted finding is either fixed or dismissed with a reason, the reasons feed evaluation, and Rio never posts the same finding twice.
 
 ## Core experience: the `rio review` command
 
@@ -69,8 +71,9 @@ rio review --since-last             # only what changed since the last run
 rio init                            # wizard: Cloudflare account, deploy, first profile
 rio profile list|show|validate
 rio status <review-id>
-rio feedback <issue-id> --dismiss <reason>
+rio feedback <issue-id> --dismiss <reason>   # fixed | wrong | intentional | irrelevant | style
 rio doctor
+rio eval import-incident <pr> <fix-pr>      # turn a revert or fix-forward into a labeled eval case
 ```
 
 **What the user sees, in order:**
@@ -82,7 +85,7 @@ rio doctor
 5. Plausible risks flagged for human judgment, clearly separated from defects.
 6. A footer listing what could not be analyzed (missing adapters, unresolved references).
 
-Every run is pinned to immutable versions: commits, or a content-hashed snapshot for local changes. Two explicit budgets exist, **fast** (a few minutes) and **deep**; the numbers live in the profile.
+Every run is pinned to immutable versions: commits, or a content-hashed snapshot for local changes. Two explicit budgets exist, **fast** (a few minutes) and **deep**; the numbers live in the profile. Orthogonal to budget, a profile sets a **posture** (`critical-only`, `balanced`, `thorough`) that decides how many findings are worth the reader's attention. The three presets a user meets are combinations of the two: **Quick** is `critical-only` on the fast budget, **Standard** is `balanced` on the fast budget, and **Deep** (`--deep`) is `thorough` on the deep budget.
 
 ## Functional requirements
 
@@ -92,11 +95,11 @@ P0 = required for v0.2 (first usable release with backend); P1 = v0.3; P2 = late
 | --- | --- | --- |
 | R1 | Review local, staged, branch and PR changes from the CLI | P0 |
 | R2 | Infer the intent of the change and let the author confirm it | P0 |
-| R3 | Run deterministic checks: compile, types, lint, secrets, diff coverage, dependency vulnerabilities | P0 |
+| R3 | Run deterministic checks: compile, types, lint, secrets, diff coverage, dependency vulnerabilities. TypeScript: `tsc`, `eslint`, `vitest`/`jest` coverage, npm/pnpm/yarn lockfile audit. Python: `pyright`/`mypy`, `ruff`, `pytest` with `coverage.py`, `uv`/`poetry`/`pip` lockfile audit. Rust: `cargo check` (workspace-aware), `cargo clippy` when the project configures it, `cargo fmt --check` as a formatting group, `cargo llvm-cov` diff coverage, `Cargo.lock` audit against the `crates.io` OSV ecosystem | P0 |
 | R4 | Build a lazy impact graph (changed symbols + N hops) for both versions of the code | P0 |
 | R5 | Activate agents by triage rules defined in the profile | P0 |
 | R6 | Correctness and intent agents | P0 |
-| R7 | Independent verifier with a different model, able to run code and compare both versions | P0 |
+| R7 | Independent verifier, able to run code and compare both versions; a quorum of same-class voters by default, a different model as an option | P0 |
 | R8 | Evidence levels on every finding; configurable minimum, never below plausible | P0 |
 | R9 | One finding per root cause; style only when it matches a project rule; old issues separated from regressions | P0 |
 | R10 | YAML profiles with inheritance, validation and a published JSON schema | P0 |
@@ -113,6 +116,14 @@ P0 = required for v0.2 (first usable release with backend); P1 = v0.3; P2 = late
 | R21 | GitHub Actions runner; community module registry | P2 |
 | R22 | Large-PR handling: review by logical parts or recommend splitting | P2 |
 | R23 | Optional merge-blocking, gated on demonstrated evaluation quality | P2 |
+| R24 | Posture dial (`critical-only`, `balanced`, `thorough`) and a defect cap per review, so precision and recall are one explicit choice | P0 |
+| R25 | Risk tier per change (`low`, `medium`, `high`) with reasons, plus `always_human` paths; exposed in JSON and SARIF for branch protection. Rio never approves | P0 |
+| R26 | Owner guidance: `REVIEW.md`, `CLAUDE.md` and `AGENTS.md` read per directory and given to agents and the verifier as data; contradictions and stale lines are flagged | P0 |
+| R27 | Review convergence: round cap per PR head lineage, diff-only re-review after the first round, class-level findings for repeated patterns, no re-posting of a posted finding | P0 |
+| R28 | Standardized dismissal reasons recorded on the finding; auto-resolution when a later commit removes the code; reasons are the feedback signal | P1 |
+| R29 | Security as its own step with its own posture and `fail_on` | P1 |
+| R30 | Council step for selected findings: five members from different model families and vendors, one structured exchange round, deterministic aggregation | P1 |
+| R31 | Noise measurement on known-clean PRs and incident import (`rio eval import-incident`) feeding the evaluation set | P1 |
 
 **Non-functional requirements**
 
@@ -154,7 +165,7 @@ A team can share one endpoint: the Worker supports multiple CLI tokens with scop
 
 ## Success metrics
 
-Acceptance rate alone rewards a tool that reports nothing, so recall is measured separately on a reference set of historical PRs with known bugs plus synthetic bug injection.
+Acceptance rate alone rewards a tool that reports nothing, so recall is measured separately on a reference set of historical PRs with known bugs plus synthetic bug injection. Production incidents are the strongest labels: a revert or fix-forward PR is imported as a case (`rio eval import-incident`), and the full set is rerun on every prompt, tool or model change. The evaluation record template carries, per finding, the rounds it took the PR to pass, the author's response, and whether CI or a human would have caught the issue anyway.
 
 | Metric | Target for v1.0 | How it is measured |
 | --- | --- | --- |
@@ -164,6 +175,13 @@ Acceptance rate alone rewards a tool that reports nothing, so recall is measured
 | Fast-mode wall time | ≤ 4 min (300-line diff, mid-size repo) | p50 and p95 per run |
 | Cost per fast review | known and shown to the user | Tokens and runner time per run |
 | Verifier calibration | plausible findings that prove real vs. refuted later | Tracked per repo |
+| Rounds to pass | median ≤ 2 rounds per PR head lineage | Rounds posted before a review has no open defects, per repository |
+| Author-response ratio | ≥ 70 % of posted findings answered `fixed` | Share of findings dismissed `fixed` versus `wrong`, `intentional`, `irrelevant`, `style`; per repository, shown in the report footer |
+| Harmful-change rate | 0 on known-clean PRs | Nightly run on PRs known to be correct; findings that would lead to a harmful change are counted |
+| Counterfactual catch | reported per finding | Whether CI or a human reviewer would have caught the issue anyway, recorded in the evaluation record |
+| Council disagreement rate | > 5 % (otherwise the step is removed) | Share of council-reviewed findings where members disagree on "real" or "introduced" |
+| Council promotion accuracy | above the verifier-only baseline on the `plausible` bucket | `plausible` findings promoted to `reproduced` or `refuted` by the council, checked against later outcomes, A/B against verifier-only |
+| Cost per council finding | known and shown | Members × rounds × experiments, tokens and runner time |
 | Time to first review after `rio init` | ≤ 15 min | Wizard telemetry, opt-in |
 | Retention | teams still running Rio after 30 days | Opt-in telemetry, self-reported |
 
@@ -171,9 +189,9 @@ Acceptance rate alone rewards a tool that reports nothing, so recall is measured
 
 | Version | Scope | Exit criterion |
 | --- | --- | --- |
-| v0.1 | Local-only CLI: deterministic checks, lazy reference graph, terminal report; TypeScript and Python | Deterministic layer useful on its own in 10 real PRs |
-| v0.2 | Cloudflare endpoint and `rio init`; profile engine with `rio/*` modules; intent and correctness agents; verifier; Sandbox and self-hosted runners | Precision ≥ 80 % on the reference set; known cost per fast review |
-| v0.3 | Contracts and security agents; PR mode with GitHub App; finding state across runs; SARIF; feedback with reasons | False positives per agent < 15 % |
+| v0.1 | Local-only CLI: deterministic checks, lazy reference graph, terminal report; TypeScript, Python and Rust; profile, finding and report contracts carry posture, rounds, risk tier and author response for later releases | Deterministic layer useful on its own in 10 real PRs |
+| v0.2 | Cloudflare endpoint and `rio init`; profile engine with `rio/*` modules; intent and correctness agents; verifier quorum with blind re-derivation; posture and risk tier; review convergence rules; owner guidance; Sandbox and self-hosted runners | Precision ≥ 80 % on the reference set; known cost per fast review |
+| v0.3 | Contracts agent; security step; PR mode with GitHub App applying the convergence rules to threads; finding state across runs; SARIF; feedback with standardized reasons; council step for selected findings; noise measurement and incident import | False positives per agent < 15 %; council beats verifier-only on the `plausible` bucket or is removed |
 | v0.4 | Full background graph; data/concurrency and supply-chain agents; GitHub Actions runner; community module registry | Recall by bug injection above baseline |
 | v1.0 | Community profiles, external language adapters, sophisticated `--deep` reproduction, optional merge-blocking | Demonstrated evaluation quality |
 

@@ -1,0 +1,22 @@
+Diff in /recorded/workspace/core/src/lib.rs:13:
+ }
+ 
+ pub fn untested(value: u32) -> u32 {
+-    if value > 10 {
+-        value * 2
+-    } else {
+-        value + 1
+-    }
++    if value > 10 { value * 2 } else { value + 1 }
+ }
+ 
+ pub fn clippy_example() -> bool {
+Diff in /recorded/workspace/core/src/lib.rs:49:
+ pub fn unchanged_error() -> u32 {
+     "existing"
+ }
+-pub fn formatting( )->u32{42}
++pub fn formatting() -> u32 {
++    42
++}
+ 

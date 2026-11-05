@@ -333,3 +333,56 @@ async fn cancellation_during_network_retry_is_prompt_and_visible() {
     ));
     assert!(started.elapsed() < Duration::from_secs(1));
 }
+
+#[tokio::test]
+async fn rust_sample_lock_queries_crates_io_and_retains_real_chrono_advisory() {
+    let head = read_tree(&fixture("rs-sample"));
+    let mut base = head.clone();
+    base.remove("Cargo.lock");
+    let selected = changes(base.clone(), head.clone());
+    let diff = diff(&selected, &[]).unwrap();
+    let plan = dependency_audit_plan(&base, &head, &diff).unwrap();
+    assert!(
+        plan.notes
+            .iter()
+            .any(|note| note.contains("unauditable") && note.contains("sample-core"))
+    );
+    let chrono = plan
+        .packages
+        .into_iter()
+        .find(|package| package.name == "chrono")
+        .unwrap();
+    assert_eq!(chrono.ecosystem, Ecosystem::CratesIo);
+    assert_eq!(chrono.version, "0.4.19");
+    let detail: Value =
+        serde_json::from_str(include_str!("fixtures/chrono-advisory.json")).unwrap();
+    let server = Server::new(move |path, body, _| match path {
+        "/v1/querybatch" => {
+            assert_eq!(body["queries"][0]["package"]["ecosystem"], "crates.io");
+            assert_eq!(body["queries"][0]["package"]["name"], "chrono");
+            (
+                200,
+                json!({"results":[{"vulns":[{"id":"RUSTSEC-2020-0159","modified":detail["modified"]}]}]}),
+            )
+        }
+        "/v1/vulns/RUSTSEC-2020-0159" => (200, detail.clone()),
+        _ => (404, json!({})),
+    });
+    let cache = tempfile::tempdir().unwrap();
+    let client = OsvClient::with_base(cache.path().into(), server.base.clone()).unwrap();
+    let result = client
+        .audit(&[chrono], false, CancellationToken::new())
+        .await;
+    assert!(
+        matches!(result, CheckOutcome::Findings { .. }),
+        "{result:?}"
+    );
+    let finding = &result.details().findings[0];
+    let advisory = finding.advisory.as_ref().unwrap();
+    assert!(
+        advisory.id == "RUSTSEC-2020-0159"
+            || advisory.aliases.iter().any(|id| id == "RUSTSEC-2020-0159")
+    );
+    assert_eq!(advisory.fixed_version, "0.4.20");
+    assert_eq!(finding.location.path, "Cargo.lock");
+}

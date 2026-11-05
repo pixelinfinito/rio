@@ -1,0 +1,11 @@
+[package]
+name = "sample-core"
+version = "0.1.0"
+edition = "2024"
+
+[lints]
+workspace = true
+
+[dependencies]
+# Deliberately vulnerable advisory fixture (RUSTSEC-2020-0159).
+chrono = { version = "=0.4.19", default-features = false }

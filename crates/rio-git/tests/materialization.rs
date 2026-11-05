@@ -14,7 +14,7 @@ fn staged_materialization_is_exact_and_tool_writes_cannot_mutate_cached_sources(
     write(
         root.path(),
         ".gitignore",
-        "node_modules/\n.venv/\n__pycache__/\n",
+        "node_modules/\n.venv/\n__pycache__/\ntarget/\n",
     );
     write(root.path(), "src/a.ts", "export const a = 1;\n");
     write(root.path(), "deleted.ts", "delete me\n");
@@ -31,6 +31,11 @@ fn staged_materialization_is_exact_and_tool_writes_cannot_mutate_cached_sources(
     );
     write(root.path(), ".venv/pyvenv.cfg", "python environment\n");
     write(root.path(), "__pycache__/a.pyc", "skip\n");
+    write(
+        root.path(),
+        "target/debug/build-artifact",
+        "cached Rust artifact\n",
+    );
     let before = git(
         root.path(),
         &["status", "--porcelain=v1", "--untracked-files=all"],
@@ -38,7 +43,7 @@ fn staged_materialization_is_exact_and_tool_writes_cannot_mutate_cached_sources(
     let repo = GixRepo::discover(root.path()).unwrap();
     let selected = select(&repo, Selection::Staged).unwrap();
     let cache_root = tempfile::tempdir().unwrap();
-    let cache = MaterializationCache::new(cache_root.path().into(), Duration::from_secs(2));
+    let cache = MaterializationCache::new(cache_root.path().into(), Duration::from_secs(10));
     let trees = cache.materialize(&selected).unwrap();
     assert!(!trees.base.reused && !trees.head.reused);
     assert_eq!(
@@ -53,10 +58,11 @@ fn staged_materialization_is_exact_and_tool_writes_cannot_mutate_cached_sources(
     assert!(!trees.head.path.join("deleted.ts").exists());
     assert!(!trees.head.path.join("untracked.ts").exists());
     let links = discover_dependency_links(root.path(), &[".".into()]).unwrap();
-    assert_eq!(links.len(), 2);
+    assert_eq!(links.len(), 3);
     for tree in [&trees.base, &trees.head] {
         assert!(!tree.path.join("node_modules").exists());
         assert!(!tree.path.join(".venv").exists());
+        assert!(!tree.path.join("target").exists());
         assert!(!tree.path.join("__pycache__").exists());
     }
     let tool = ToolTree::create(&trees.head, &cache_root.path().join("runs/one"), &links).unwrap();
@@ -66,6 +72,16 @@ fn staged_materialization_is_exact_and_tool_writes_cannot_mutate_cached_sources(
     );
     assert!(
         fs::symlink_metadata(tool.path().join("node_modules"))
+            .unwrap()
+            .file_type()
+            .is_symlink()
+    );
+    assert_eq!(
+        fs::read_to_string(tool.path().join("target/debug/build-artifact")).unwrap(),
+        "cached Rust artifact\n"
+    );
+    assert!(
+        fs::symlink_metadata(tool.path().join("target"))
             .unwrap()
             .file_type()
             .is_symlink()
@@ -108,7 +124,7 @@ fn worktrees_share_pure_sources_and_get_separate_dependency_links() {
     );
     write(&other, "node_modules/package/index.js", "installation two");
     let cache_root = tempfile::tempdir().unwrap();
-    let cache = MaterializationCache::new(cache_root.path().into(), Duration::from_secs(2));
+    let cache = MaterializationCache::new(cache_root.path().into(), Duration::from_secs(10));
     let a = cache
         .materialize(&select(&GixRepo::discover(root.path()).unwrap(), Selection::Staged).unwrap())
         .unwrap();
@@ -195,8 +211,10 @@ fn concurrent_materializers_publish_one_complete_entry() {
             .map(|_| {
                 scope.spawn(|| {
                     barrier.wait();
-                    let cache =
-                        MaterializationCache::new(cache_root.path().into(), Duration::from_secs(2));
+                    let cache = MaterializationCache::new(
+                        cache_root.path().into(),
+                        Duration::from_secs(10),
+                    );
                     cache.materialize(&selected).unwrap()
                 })
             })
@@ -217,7 +235,7 @@ fn disposable_tree_preserves_leaf_links_and_refuses_dependency_symlink_parents()
     std::os::unix::fs::symlink("outside", root.path().join("parent")).unwrap();
     commit(root.path(), "base");
     let cache_root = tempfile::tempdir().unwrap();
-    let cache = MaterializationCache::new(cache_root.path().into(), Duration::from_secs(2));
+    let cache = MaterializationCache::new(cache_root.path().into(), Duration::from_secs(10));
     let trees = cache
         .materialize(&select(&GixRepo::discover(root.path()).unwrap(), Selection::Staged).unwrap())
         .unwrap();

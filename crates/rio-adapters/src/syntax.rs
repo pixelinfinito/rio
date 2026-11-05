@@ -76,6 +76,7 @@ impl SyntaxTable {
 pub fn syntax_language(path: &str) -> Result<Language> {
     Ok(match crate::language_for_path(path) {
         Some("python") => tree_sitter_python::LANGUAGE.into(),
+        Some("rust") => tree_sitter_rust::LANGUAGE.into(),
         Some("typescript") if path.ends_with(".tsx") || path.ends_with(".jsx") => {
             tree_sitter_typescript::LANGUAGE_TSX.into()
         }
@@ -325,7 +326,7 @@ fn identifiers(node: Node<'_>, source: &[u8], result: &mut SyntaxTable) {
     }
 }
 
-fn parameter_binding(node: Node<'_>, source: &[u8]) -> bool {
+pub(crate) fn parameter_binding(node: Node<'_>, source: &[u8]) -> bool {
     if node.kind() == "property_identifier"
         || node.parent().is_some_and(|parent| {
             parent.kind() == "attribute"
@@ -367,6 +368,9 @@ fn parameter_binding(node: Node<'_>, source: &[u8]) -> bool {
 }
 
 pub fn analyze_source(path: &str, source: &[u8]) -> Result<SyntaxTable> {
+    if crate::language_for_path(path) == Some("rust") {
+        return crate::rust_syntax::analyze_rust(path, source);
+    }
     let tree = parse_source(path, source)?;
     let language = syntax_language(path)?;
     let python = crate::language_for_path(path) == Some("python");

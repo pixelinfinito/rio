@@ -1,0 +1,16 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "-p",
+    "ignore",
+    "hidden_with_trailing_dot",
+    "--",
+    "--exact",
+    "walk::tests::hidden_with_trailing_dot"
+  ],
+  "variant": "PR head regression test with base pathutil.rs implementation",
+  "exit_code": 101,
+  "expected_failure": true
+}

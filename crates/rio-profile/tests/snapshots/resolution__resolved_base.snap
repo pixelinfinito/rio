@@ -77,6 +77,12 @@ fail_on:
   required_checks: []
 min_evidence: plausible
 max_lines: 1500
+posture: balanced
+max_defects: 5
+rounds:
+  cap: 3
+  diff_only_after: 1
+always_human: []
 chain:
 - rio/base
 modules:
@@ -88,3 +94,7 @@ modules:
   rio/triage: 0.1.0
   rio/verify: 0.1.0
 engine_version: 0.1.0
+posture_policy:
+  defect_severity_floor: warning
+  render_plausible_risks: true
+  plausible_risk_limit: 5

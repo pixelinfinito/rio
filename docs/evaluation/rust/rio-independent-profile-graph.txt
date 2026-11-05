@@ -1,0 +1,85 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.50s
+     Running unittests src/lib.rs (target/debug/deps/rio_graph-8842db9679b2b3e3)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/graph.rs (target/debug/deps/graph-c768520c1b5ca07b)
+
+running 5 tests
+test deleted_symbols_stay_in_base_file_level_seeds_and_node_caps_are_explicit ... ok
+test imports_aliases_scope_filtering_two_hop_expansion_and_test_references ... ok
+test python_relative_imports_typescript_path_mappings_and_unresolved_confidence ... ok
+test real_fixture_diffs_seed_both_languages_with_nested_symbol_paths ... ok
+test unrelated_unresolved_default_and_namespace_imports_do_not_connect_every_symbol ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.21s
+
+     Running unittests src/lib.rs (target/debug/deps/rio_profile-2ad0b146908c0626)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/discovery.rs (target/debug/deps/discovery-4fdfa5ce3ad5a68b)
+
+running 3 tests
+test discovery_resolves_explicit_repo_personal_and_embedded_profiles ... ok
+test listing_keeps_shadowed_profiles_and_marks_only_the_actual_default ... ok
+test profiles_work_without_a_repository_and_builtin_assets_are_embedded ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/documentation.rs (target/debug/deps/documentation-95ea8432ee3c2e58)
+
+running 2 tests
+test documented_adapter_manifest_validates ... ok
+test readme_profile_example_is_valid ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.49s
+
+     Running tests/resolution.rs (target/debug/deps/resolution-63cd0e296858e450)
+
+running 8 tests
+test duration_units_are_positive_and_overflow_is_rejected ... ok
+test every_validation_rule_rejects_its_failing_fixture ... ok
+test inheritance_cycles_are_canonicalized_and_name_the_cycle ... ok
+test merging_an_empty_child_preserves_any_parent_mapping ... ok
+test nested_mappings_merge_but_all_lists_replace ... ok
+test relative_inheritance_uses_declaring_file_even_from_a_subdirectory ... ok
+test resolved_base_has_pinned_modules_stable_hash_and_writes_exact_document ... ok
+test semantic_and_schema_diagnostics_point_to_the_declaring_file_and_yaml_path ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.85s
+
+     Running tests/rules.rs (target/debug/deps/rules-452b1b0d9e01202c)
+
+running 3 tests
+test boolean_precedence_and_parentheses_are_preserved ... ok
+test every_predicate_and_action_parses ... ok
+test invalid_syntax_and_unknown_names_are_rejected_with_offsets ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/schema.rs (target/debug/deps/schema-e96da81a21c0698c)
+
+running 3 tests
+test built_in_manifests_and_base_profile_validate ... ok
+test module_contract_requires_exit_codes_and_kind_specific_fields ... ok
+test profile_fixtures ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.57s
+
+   Doc-tests rio_graph
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rio_profile
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.13s
+

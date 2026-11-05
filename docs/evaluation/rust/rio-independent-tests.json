@@ -1,0 +1,20 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "-p",
+    "rio-core",
+    "-p",
+    "rio-profile",
+    "-p",
+    "rio-git",
+    "-p",
+    "rio-graph",
+    "--",
+    "--test-threads=1"
+  ],
+  "cwd": "/tmp/rio-rust-acceptance-self",
+  "exit_code": 101,
+  "wall_time_ms": 8103
+}

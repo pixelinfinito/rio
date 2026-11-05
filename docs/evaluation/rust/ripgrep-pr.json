@@ -1,0 +1,11 @@
+{
+  "html_url": "https://github.com/BurntSushi/ripgrep/pull/3564",
+  "title": "ignore: treat dotfiles ending in a dot as hidden",
+  "body": "A file whose name starts and ends with a `.`, like `.foo.`, is not treated as hidden. It shows up in `rg --files` without `--hidden`, and so does everything inside a directory with a name like that:\n\n    $ mkdir /tmp/t && cd /tmp/t && touch .a. .b x.\n    $ rg --files\n    .a.\n    x.\n\n`.b` is hidden as expected. With this change only `x.` is listed, and `--hidden` still lists all three.\n\nThe cause is `file_name()` in `crates/ignore/src/pathutil.rs`. On Unix it returns `None` for any path whose last byte is `.`. That is meant to cover the `.` and `..` components, but it also matches real names that end in a dot. `is_hidden_path_only` then sees no file name and returns false. The non-Unix version defers to `std` and is not affected.\n\nNow it returns `None` only when the final component is exactly `.` or `..`.\n\nI added unit tests for `file_name` and the hidden check, and a walker test that creates a few of these names and checks the default and `--hidden` results. The walker test fails without the change. It is Unix-only because Windows can't create names that end in a dot. The tests in the `ignore` crate pass.",
+  "merged_at": "2026-10-23T15:32:52Z",
+  "changed_files": 2,
+  "additions": 89,
+  "deletions": 7,
+  "base": "4c2362d359d9913c7a5e391ccd79cb4da22bc89b",
+  "head": "e1b91d0b988c47360279a8a2dce1a9cac50ab5a9"
+}

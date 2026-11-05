@@ -44,7 +44,11 @@ The Markdown renderer SHALL produce a document with stable headings for each sec
 - **THEN** both use the same heading text for the same sections
 
 ### Requirement: JSON renderer
-The JSON renderer SHALL emit a single document `{ "schema": "rio-report-v1", "status": "...", "review": {...}, "checks": [...], "impact": {...}, "findings": [...], "risks": [...], "incomplete": [...], "deferred": [...], "excluded": [...], "metrics": {...}, "error": {...} }` that validates against `schemas/report-v1.json`. `status` takes the values defined by the review CLI capability, and `error` is present only when `status` is `error`. Each `checks` entry SHALL carry kind, language, root, version, whether the root was scheduled as `changed` or `dependent`, outcome, reason, hint, `dependency_state` (`verified` or `trusted`) and wall time. `incomplete` lists the checks whose outcome is `failed`, `skipped` or `cancelled`. Findings use the finding-v1 form, and `metrics` includes per-check wall time and tool versions. For `no_changes` and `error`, the arrays SHALL be present and empty when nothing ran.
+The JSON renderer SHALL emit a single document `{ "schema": "rio-report-v1", "status": "...", "review": {...}, "risk_tier": {...} | null, "checks": [...], "impact": {...}, "findings": [...], "risks": [...], "incomplete": [...], "deferred": [...], "excluded": [...], "metrics": {...}, "error": {...} }` that validates against `schemas/report-v1.json`. `risk_tier` is `{ tier: low | medium | high, reasons: [string], source: always_human | triage }`; in this version it is non-null only when a changed file matches a profile `always_human` glob, and it is never an approval. `status` takes the values defined by the review CLI capability, and `error` is present only when `status` is `error`. Each `checks` entry SHALL carry kind, language, root, version, whether the root was scheduled as `changed` or `dependent`, outcome, reason, hint, `dependency_state` (`verified` or `trusted`) and wall time. `incomplete` lists the checks whose outcome is `failed`, `skipped` or `cancelled`. Findings use the finding-v1 form, and `metrics` includes per-check wall time and tool versions. For `no_changes` and `error`, the arrays SHALL be present and empty when nothing ran.
+
+#### Scenario: Risk tier from an always-human path
+- **WHEN** a change edits a file matching the profile's `always_human` globs and the review is rendered as JSON
+- **THEN** `risk_tier.tier` is `high`, `risk_tier.source` is `always_human`, and the terminal header shows the tier with its reason
 
 #### Scenario: Metrics present
 - **WHEN** a review is rendered as JSON
@@ -58,7 +62,7 @@ The footer SHALL always list: each `failed`, `skipped` or `cancelled` check with
 - **THEN** the footer lists `triage`, `agents` and `verify` as deferred with reason `no_endpoint`
 
 ### Requirement: Review cache
-Each run SHALL write its record to `<cache>/<review-id>/runs/<run-id>/`. The record contains `report.json`, `profile.resolved.yaml`, `graph/{base,head,delta}.json`, and `checks/<kind>/<root>/`, which holds the raw tool output and the parsed findings. When the run finishes, it SHALL atomically replace `<cache>/<review-id>/latest` so that the file names the newest finished run. `<cache>` is the configured cache directory (default `.rio/cache`). Snapshots SHALL be stored under `<cache>/snapshots/`, base materializations and baseline results under `<cache>/baselines/`, head materializations under `<cache>/heads/`, and OSV advisory records under `<cache>/osv/`. The system SHALL create `<cache>/.gitignore` containing `*` so the cache is never committed.
+Each run SHALL write its record to `<cache>/<review-id>/runs/<run-id>/`. The record contains `report.json`, `profile.resolved.yaml`, `graph/{base,head,delta}.json`, `owner_guidance.json` (every `REVIEW.md`, `CLAUDE.md` and `AGENTS.md` between the repository root and each changed file's directory, as `[{path, scope_dir, content_hash, lines[]}]`, stored as data and not interpreted in this version), and `checks/<kind>/<root>/`, which holds the raw tool output and the parsed findings. When the run finishes, it SHALL atomically replace `<cache>/<review-id>/latest` so that the file names the newest finished run. `<cache>` is the configured cache directory (default `.rio/cache`). Snapshots SHALL be stored under `<cache>/snapshots/`, base materializations and baseline results under `<cache>/baselines/`, head materializations under `<cache>/heads/`, and OSV advisory records under `<cache>/osv/`. The system SHALL create `<cache>/.gitignore` containing `*` so the cache is never committed.
 
 The cache SHALL be safe under concurrent runs and interruption:
 - every entry is written under a temporary name in the same directory and published by an atomic rename. A reader never sees a partially written entry. When a content-addressed entry already exists, the run discards its own copy and uses the existing one;
@@ -89,6 +93,10 @@ Cached evidence holds copies of source code and tool output, so the cache direct
 #### Scenario: Secret in raw tool output
 - **WHEN** a test prints a value that matches the AWS access key pattern
 - **THEN** the stored raw output shows only the value's first four characters
+
+#### Scenario: Owner guidance recorded
+- **WHEN** the repository has a root `AGENTS.md` and `crates/core/REVIEW.md`, and a change edits `crates/core/src/lib.rs`
+- **THEN** the run's `owner_guidance.json` lists both files in path order with their content hashes, and no finding or exclusion is derived from their content
 
 #### Scenario: Raw output retained
 - **WHEN** a type check runs

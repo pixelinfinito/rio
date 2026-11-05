@@ -1,0 +1,14 @@
+{
+  "rio": {
+    "checkout": "/tmp/rio-rust-acceptance-self",
+    "head": "d3c1509392ab56de9da64d0f667fa6ec401fa3b5",
+    "tracked_and_untracked_status": "",
+    "tracked_diff_exit_code": 0
+  },
+  "ripgrep": {
+    "checkout": "/tmp/rio-rust-acceptance-ripgrep",
+    "head": "e1b91d0b988c47360279a8a2dce1a9cac50ab5a9",
+    "tracked_and_untracked_status": "",
+    "tracked_diff_exit_code": 0
+  }
+}

@@ -5,7 +5,7 @@ use std::{
     time::Duration,
 };
 
-use rio_core::{EvidenceLevel, FailOn, Suppression};
+use rio_core::{EvidenceLevel, FailOn, Severity, Suppression};
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 
@@ -77,6 +77,53 @@ fn default_max_lines() -> u64 {
     1500
 }
 
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum Posture {
+    CriticalOnly,
+    #[default]
+    Balanced,
+    Thorough,
+}
+
+impl Posture {
+    fn defaults(self) -> (EvidenceLevel, u64, Severity, bool) {
+        match self {
+            Self::CriticalOnly => (EvidenceLevel::Reproduced, 3, Severity::Error, false),
+            Self::Balanced => (EvidenceLevel::StaticProven, 5, Severity::Warning, true),
+            Self::Thorough => (EvidenceLevel::Plausible, 15, Severity::Info, true),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(default)]
+pub struct Rounds {
+    pub cap: u64,
+    pub diff_only_after: u64,
+}
+
+impl Default for Rounds {
+    fn default() -> Self {
+        Self {
+            cap: 3,
+            diff_only_after: 1,
+        }
+    }
+}
+
+/// Reserved agent policy; deterministic findings never use these limits.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct PosturePolicy {
+    pub defect_severity_floor: Severity,
+    pub render_plausible_risks: bool,
+    pub plausible_risk_limit: Option<u64>,
+}
+
+fn default_max_defects() -> u64 {
+    5
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Profile {
     pub version: u32,
@@ -99,6 +146,14 @@ pub struct Profile {
     pub min_evidence: EvidenceLevel,
     #[serde(default = "default_max_lines")]
     pub max_lines: u64,
+    #[serde(default)]
+    pub posture: Posture,
+    #[serde(default = "default_max_defects")]
+    pub max_defects: u64,
+    #[serde(default)]
+    pub rounds: Rounds,
+    #[serde(default)]
+    pub always_human: Vec<String>,
 }
 
 impl Profile {
@@ -116,6 +171,7 @@ pub struct ResolvedProfile {
     pub chain: Vec<String>,
     pub modules: BTreeMap<String, String>,
     pub engine_version: String,
+    pub posture_policy: PosturePolicy,
     #[serde(skip)]
     pub sources: Vec<ProfileSource>,
     #[serde(skip)]
@@ -298,6 +354,18 @@ impl ProfileLoader {
         let source = self.discover(reference)?;
         let mut document = self.document(source, &mut Vec::new())?;
         document.value.as_object_mut().unwrap().remove("extends");
+        let posture: Posture = serde_json::from_value(
+            document
+                .value
+                .get("posture")
+                .cloned()
+                .unwrap_or(json!("balanced")),
+        )
+        .expect("posture was schema validated");
+        let (evidence, max_defects, severity_floor, render_risks) = posture.defaults();
+        let values = document.value.as_object_mut().unwrap();
+        values.entry("min_evidence").or_insert(json!(evidence));
+        values.entry("max_defects").or_insert(json!(max_defects));
         let mut diagnostics = Vec::new();
         let mut warnings = Vec::new();
         let mut modules = BTreeMap::new();
@@ -314,7 +382,11 @@ impl ProfileLoader {
                 }
             }
         };
-        if let Some(steps) = document.value["steps"].as_array_mut() {
+        if let Some(steps) = document
+            .value
+            .get_mut("steps")
+            .and_then(Value::as_array_mut)
+        {
             for (index, step) in steps.iter_mut().enumerate() {
                 let pointer = format!("/steps/{index}");
                 match resolve_module(step["uses"].as_str().unwrap()) {
@@ -403,6 +475,17 @@ impl ProfileLoader {
                 "min_evidence must be at least plausible".into(),
             );
         }
+        if profile.rounds.diff_only_after >= profile.rounds.cap {
+            add(
+                "/rounds/diff_only_after",
+                "diff_only_after must be below rounds.cap".into(),
+            );
+        }
+        for (index, pattern) in profile.always_human.iter().enumerate() {
+            if let Err(error) = globset::Glob::new(pattern) {
+                add(&format!("/always_human/{index}"), error.to_string());
+            }
+        }
         for (name, budget) in [
             ("fast", Some(&profile.budget.fast)),
             ("deep", profile.budget.deep.as_ref()),
@@ -471,12 +554,27 @@ impl ProfileLoader {
         if !diagnostics.is_empty() {
             return Err(ProfileErrors { diagnostics });
         }
+        warnings.push(Diagnostic {
+            source: document.sources[0].label(),
+            path: "$.posture".into(),
+            message: "posture, max_defects and rounds are recorded for deferred agent steps; deterministic findings are never capped".into(),
+        });
+        let posture_policy = PosturePolicy {
+            defect_severity_floor: severity_floor,
+            render_plausible_risks: render_risks,
+            plausible_risk_limit: match posture {
+                Posture::CriticalOnly => Some(0),
+                Posture::Balanced => Some(profile.max_defects),
+                Posture::Thorough => None,
+            },
+        };
         Ok(ResolvedProfile {
             profile,
             chain: document.chain,
             sources: document.sources,
             modules,
             engine_version: env!("CARGO_PKG_VERSION").into(),
+            posture_policy,
             warnings,
         })
     }

@@ -1,0 +1,24 @@
+   Compiling ignore v0.4.33 (/tmp/rio-rust-acceptance-ripgrep/crates/ignore)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.04s
+     Running unittests src/lib.rs (target/debug/deps/ignore-7ca98cadb321f6cc)
+
+running 1 test
+test walk::tests::hidden_with_trailing_dot ... FAILED
+
+failures:
+
+---- walk::tests::hidden_with_trailing_dot stdout ----
+
+thread 'walk::tests::hidden_with_trailing_dot' (1193177) panicked at crates/ignore/src/walk.rs:2289:9:
+assertion `left == right` failed: single threaded
+  left: ["...", ".dir.", ".dir./inner", ".hidden.", ".hidden..", "visible."]
+ right: ["visible."]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    walk::tests::hidden_with_trailing_dot
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 187 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p ignore --lib`

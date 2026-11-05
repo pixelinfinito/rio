@@ -1,0 +1,62 @@
+Warning: rio/base:$.steps[3]: rio/triage is deferred locally: no_endpoint
+Warning: rio/base:$.steps[4]: rio/agents is deferred locally: no_endpoint
+Warning: rio/base:$.steps[5]: rio/verify is deferred locally: no_endpoint
+Warning: /tmp/rio-rust-acceptance-rio.yaml:$.posture: posture, max_defects and rounds are recorded for deferred agent steps; deterministic findings are never capped
+Running prepare…
+Finished prepare
+Running checks…
+lint .: cancelled (timeout)
+typecheck .: cancelled (timeout)
+typecheck eval/runs/structlog-setup: cancelled (timeout)
+coverage .: cancelled (timeout)
+typecheck tests/fixtures/build-output-workspace/packages/shared: cancelled (timeout)
+coverage tests/fixtures/build-output-workspace/packages/consumer: cancelled (timeout)
+typecheck .: cancelled (timeout)
+lint eval/runs/structlog-setup: cancelled (timeout)
+lint tests/fixtures/build-output-workspace/packages/shared: cancelled (timeout)
+coverage tests/fixtures/build-output-workspace/packages/shared: cancelled (timeout)
+lint .: cancelled (timeout)
+coverage eval/runs/structlog-setup: cancelled (timeout)
+lint tests/fixtures/monorepo-sample: cancelled (timeout)
+typecheck tests/fixtures/monorepo-sample: cancelled (timeout)
+typecheck tests/fixtures/build-output-workspace: cancelled (timeout)
+coverage .: cancelled (timeout)
+coverage tests/fixtures/monorepo-sample: cancelled (timeout)
+typecheck tests/fixtures/monorepo-sample/packages/api: cancelled (timeout)
+lint tests/fixtures/build-output-workspace: cancelled (timeout)
+typecheck .: cancelled (timeout)
+lint tests/fixtures/monorepo-sample/packages/api: cancelled (timeout)
+coverage tests/fixtures/build-output-workspace: cancelled (timeout)
+coverage tests/fixtures/monorepo-sample/packages/api: cancelled (timeout)
+lint .: cancelled (timeout)
+typecheck tests/fixtures/monorepo-sample/packages/shared: cancelled (timeout)
+typecheck tests/fixtures/build-output-workspace/packages/consumer: cancelled (timeout)
+lint tests/fixtures/monorepo-sample/packages/shared: cancelled (timeout)
+coverage tests/fixtures/monorepo-sample/packages/shared: cancelled (timeout)
+coverage .: cancelled (timeout)
+lint tests/fixtures/build-output-workspace/packages/consumer: cancelled (timeout)
+typecheck tests/fixtures/monorepo-sample/packages/web: cancelled (timeout)
+typecheck eval/runs/pydantic-rerun2-evidence/pydantic-14199-rerun2: cancelled (timeout)
+lint tests/fixtures/monorepo-sample/packages/web: cancelled (timeout)
+coverage tests/fixtures/monorepo-sample/packages/web: cancelled (timeout)
+lint eval/runs/pydantic-rerun2-evidence/pydantic-14199-rerun2: cancelled (timeout)
+typecheck tests/fixtures/py-sample: cancelled (timeout)
+secrets .: cancelled (timeout)
+coverage tests/fixtures/ts-sample: cancelled (timeout)
+lint tests/fixtures/py-sample: cancelled (timeout)
+coverage eval/runs/pydantic-rerun2-evidence/pydantic-14199-rerun2: cancelled (timeout)
+dependencies .: cancelled (timeout)
+coverage tests/fixtures/py-sample: cancelled (timeout)
+typecheck tests/fixtures/ts-sample: cancelled (timeout)
+lint tests/fixtures/ts-sample: cancelled (timeout)
+coverage eval/runs/pydantic-rerun2-evidence/pydantic-14199-rerun2-attempt2: cancelled (timeout)
+typecheck eval/runs/pydantic-rerun2-evidence/pydantic-14199-rerun2-attempt2: cancelled (timeout)
+lint eval/runs/pydantic-rerun2-evidence/pydantic-14199-rerun2-attempt2: cancelled (timeout)
+lint eval/runs/pydantic-rerun2-evidence/pydantic-14213-rerun2: cancelled (timeout)
+typecheck eval/runs/pydantic-rerun2-evidence/pydantic-14213-rerun2: cancelled (timeout)
+coverage eval/runs/pydantic-rerun2-evidence/pydantic-14213-rerun2: cancelled (timeout)
+Finished checks
+Running graph…
+Finished graph
+Running report…
+Finished report
