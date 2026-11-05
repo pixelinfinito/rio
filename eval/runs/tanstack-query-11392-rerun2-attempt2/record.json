@@ -1,0 +1,159 @@
+{
+  "schema": "rio-eval-record-v2",
+  "methodology": "deterministic-v2",
+  "repository": "TanStack/query",
+  "pr": "https://github.com/TanStack/query/pull/11392",
+  "case_id": "11392",
+  "languages": [
+    "typescript"
+  ],
+  "reviewer": "sub-agent rerun2-tanstack-query (automated)",
+  "verdict_source": "automated",
+  "independently_clean": true,
+  "commands": [
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-3m4was1g argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/TanStack/query.git\", \"/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/head\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/head argv=[\"git\", \"fetch\", \"origin\", \"fc51e96045d729a98bc784e1bb11ea16d7d7a4c1\", \"0a73db4c255eb44e1889696f8d5a9ddf57934229\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/head argv=[\"git\", \"merge-base\", \"fc51e96045d729a98bc784e1bb11ea16d7d7a4c1\", \"0a73db4c255eb44e1889696f8d5a9ddf57934229\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/head argv=[\"git\", \"checkout\", \"--detach\", \"0a73db4c255eb44e1889696f8d5a9ddf57934229\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-3m4was1g argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/head\", \"/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/base\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/base argv=[\"git\", \"checkout\", \"--detach\", \"fc51e96045d729a98bc784e1bb11ea16d7d7a4c1\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/base argv=[\"corepack\", \"pnpm\", \"install\", \"--frozen-lockfile\", \"--trust-lockfile\", \"--ignore-scripts\", \"--config.virtual-store-dir-max-length=250\", \"--config.confirmModulesPurge=false\", \"--package-import-method=hardlink\", \"--store-dir\", \"/dev/shm/rio-tanstack-tools/pnpm-store\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/base argv=[\"python3\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-tanstack-query/eval/runs/tanstack-query-11392-evidence/prepare-installation-02.py\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/base argv=[\"node\", \"node_modules/typescript/lib/tsc.js\", \"-b\", \"packages/query-core\", \"packages/query-test-utils\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/base argv=[\"python3\", \"/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-rerun2-evidence/prepare-pnpm-string-length.py\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/head argv=[\"corepack\", \"pnpm\", \"install\", \"--frozen-lockfile\", \"--trust-lockfile\", \"--ignore-scripts\", \"--config.virtual-store-dir-max-length=250\", \"--config.confirmModulesPurge=false\", \"--package-import-method=hardlink\", \"--store-dir\", \"/dev/shm/rio-tanstack-tools/pnpm-store\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/head argv=[\"python3\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-tanstack-query/eval/runs/tanstack-query-11392-evidence/prepare-installation-02.py\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/head argv=[\"node\", \"node_modules/typescript/lib/tsc.js\", \"-b\", \"packages/query-core\", \"packages/query-test-utils\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/head argv=[\"python3\", \"/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-rerun2-evidence/prepare-pnpm-string-length.py\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/head argv=[\"node\", \"--version\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/head argv=[\"npm\", \"--version\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/head argv=[\"corepack\", \"--version\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/head argv=[\"python3\", \"--version\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/head argv=[\"uv\", \"--version\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"rio/base\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"fc51e96045d729a98bc784e1bb11ea16d7d7a4c1\", \"--format\", \"json\", \"--offline\", \"--profile\", \"rio/base\"]",
+    "Independent commands and original logs reused at unchanged commits: ../tanstack-query-11392-evidence/oracle-{base,head}/commands.json."
+  ],
+  "notes": [
+    "Rio f6e4f87e4c65; binary and pinned toolchain provenance: ../tanstack-query-rerun2-evidence/execution-attempt2.json. Same preregistered base/head SHAs and unchanged lockfiles.",
+    "Original full frozen install plan preserved as a prefix. Supplemental prepare-pnpm-string-length.py creates aliases for Rio fallback-120 names pointing to the installed max-length-250 directories; no metadata, manifests, lockfiles or package content changed. See ../tanstack-query-rerun2-evidence/pnpm-string-length-defect.json.",
+    "Baseline classification ran: base/head typecheck and lint all passed with dependency_state=verified. Coverage passed with Vitest 4.1.2; secrets passed. Offline OSV audit intentionally excluded; no vulnerability-free claim. Report status incomplete reflects deferred agent endpoints/offline audit, while eval.environment reports eligible=true.",
+    "Independent unchanged-SHA clean assessment: ../tanstack-query-11392-evidence/independent-assessment.json and oracle-{base,head}/commands.json. Independent compiler and ESLint pass; instrumented Vitest has 11 base / 13 head passing tests; changed executable lines 178 and 179 have 2 and 1 executions. This contributor-authored PR was maintainer-merged. No established deterministic or agent-layer misses."
+  ],
+  "positive_control": {
+    "kind": "none",
+    "expected": []
+  },
+  "base_sha": "fc51e96045d729a98bc784e1bb11ea16d7d7a4c1",
+  "head_sha": "0a73db4c255eb44e1889696f8d5a9ddf57934229",
+  "mode": "branch",
+  "review_id": "59e87521bb81050b",
+  "run_id": "01M6NQK598VDG458KSS36J3XHR",
+  "rio_version": "0.1.0",
+  "profile": "rio/base",
+  "wall_time_ms": 33168,
+  "status": "incomplete",
+  "report_path": "eval/runs/tanstack-query-11392-rerun2-attempt2/report.json",
+  "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+  "profile_sha256": "1049df8bb35d7f36f2982fdce1565c2c50336ce9e898e605f3cac96b7b16b636",
+  "environment": {
+    "dependency_state": "verified",
+    "baseline_ran": true,
+    "baseline_classification_ran": true,
+    "eligible": true,
+    "reasons": [],
+    "checks": [
+      {
+        "findings": [],
+        "kind": "secrets",
+        "language": "common",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "findings": [],
+        "hint": "Dependency audit needs api.osv.dev",
+        "kind": "dependencies",
+        "language": "common",
+        "outcome": "skipped",
+        "reason": "offline",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/query-broadcast-client-experimental",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 7120
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/query-broadcast-client-experimental",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 8724
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/query-broadcast-client-experimental",
+        "scheduled_as": "changed",
+        "version": "base",
+        "wall_time_ms": 7325
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "lint",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/query-broadcast-client-experimental",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 13863
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "lint",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/query-broadcast-client-experimental",
+        "scheduled_as": "changed",
+        "version": "base",
+        "wall_time_ms": 10448
+      }
+    ],
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "Graph references use syntax and text; no language server was used",
+      "Offline applies to Rio; tool and test processes were not network-isolated"
+    ]
+  },
+  "findings": [],
+  "root_causes": [],
+  "misses": [],
+  "verdict": "useful",
+  "reason": "Independently clean change confirmed with working baseline and no unwanted findings."
+}

@@ -1,0 +1,12 @@
+Warning: you are leaving 2 commits behind, not connected to
+any of your branches:
+
+  370ed5845 ref: do the cheap thing first
+  58f2cc053 fix(query-core): Avoid scheduling stale timeouts for disabled query observers.
+
+If you want to keep them by creating a new branch, this may be a good time
+to do so with:
+
+ git branch <new-branch-name> 370ed5845
+
+HEAD is now at d09cf1d60 docs(preact-query): backtick bare code-symbol references in JSDoc ('QueryClient', 'suspense', 'throwOnError') (#11290)

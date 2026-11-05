@@ -1,0 +1,9 @@
+src/main.ts(6,8): error TS2307: Cannot find module '@tanstack/lit-query' or its corresponding type declarations.
+src/main.ts(19,10): error TS2339: Property 'client' does not exist on type 'LitQueryProvider'.
+src/main.ts(22,22): error TS4112: This member cannot have an 'override' modifier because its containing class 'LitQueryProvider' does not extend another class.
+src/main.ts(23,5): error TS2322: Type 'this' is not assignable to type 'HTMLElement | DocumentFragment'.
+  Type 'LitQueryProvider' is not assignable to type 'HTMLElement | DocumentFragment'.
+    Type 'this' is not assignable to type 'DocumentFragment'.
+      Type 'LitQueryProvider' is missing the following properties from type 'DocumentFragment': ownerDocument, getElementById, baseURI, childNodes, and 56 more.
+src/main.ts(55,45): error TS2345: Argument of type 'typeof LitQueryProvider' is not assignable to parameter of type 'CustomElementConstructor'.
+  Type 'LitQueryProvider' is missing the following properties from type 'HTMLElement': accessKey, accessKeyLabel, autocapitalize, dir, and 303 more.

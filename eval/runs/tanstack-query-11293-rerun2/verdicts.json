@@ -1,0 +1,24 @@
+{
+  "repository": "TanStack/query",
+  "pr": "https://github.com/TanStack/query/pull/11293",
+  "case_id": "11293",
+  "languages": [
+    "typescript"
+  ],
+  "reviewer": "sub-agent rerun2-tanstack-query (automated)",
+  "verdict_source": "automated",
+  "commands": [
+    "See commands.json and ../tanstack-query-rerun2-evidence/execution.json."
+  ],
+  "notes": [
+    "Capture failure: Rio review exceeded the 900-second per-command limit and produced zero bytes in report.json. The ledger records exit 124 and wall_time_ms=1354174; total runner wall=1445.4s on the overloaded shared host. No finding IDs or baseline metadata were emitted.",
+    "The unmodified runner then failed JSON parsing: Expecting value: line 1 column 1 (char 0). This attempt cannot produce a schema-valid record without inventing a Rio report. Retained in the attempt ledger; retry uses the same pins and frozen install commands plus directory aliases."
+  ],
+  "independently_clean": true,
+  "positive_control": {
+    "kind": "none",
+    "expected": []
+  },
+  "misses": [],
+  "findings": {}
+}

@@ -1,0 +1,2 @@
+src/main.ts(2,32): error TS2307: Cannot find module '@tanstack/vue-query' or its corresponding type declarations.
+src/main.ts(3,44): error TS2307: Cannot find module '@tanstack/vue-query' or its corresponding type declarations.

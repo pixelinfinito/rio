@@ -1,0 +1,6 @@
+src/app/app.config.ts(9,8): error TS2307: Cannot find module '@tanstack/angular-query-experimental' or its corresponding type declarations.
+src/app/app.config.ts(10,30): error TS2307: Cannot find module '@tanstack/angular-query-experimental/devtools' or its corresponding type declarations.
+src/app/components/example.component.ts(7,37): error TS2307: Cannot find module '@tanstack/angular-query-experimental' or its corresponding type declarations.
+src/app/components/example.component.ts(23,17): error TS7031: Binding element 'pageParam' implicitly has an 'any' type.
+src/app/components/example.component.ts(27,28): error TS7006: Parameter 'firstPage' implicitly has an 'any' type.
+src/app/components/example.component.ts(28,24): error TS7006: Parameter 'lastPage' implicitly has an 'any' type.

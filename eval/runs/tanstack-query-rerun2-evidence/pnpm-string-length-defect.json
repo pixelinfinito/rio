@@ -1,0 +1,136 @@
+{
+  "binary": "rio 0.1.0 x86_64-unknown-linux-gnu f6e4f87e4c65",
+  "affected_check_ids": [],
+  "finding_ids": [],
+  "note": "Check metadata only; no finding IDs emitted.",
+  "modules_path": "/dev/shm/rio-tanstack-work/negative-head/node_modules/.modules.yaml",
+  "modules_value": "250",
+  "modules_value_type": "string",
+  "rio_fallback_limit": 120,
+  "package": {
+    "name": "@testing-library/react",
+    "version": "16.3.2",
+    "description": "Simple and complete React DOM testing utilities that encourage good testing practices.",
+    "main": "dist/index.js",
+    "types": "types/index.d.ts",
+    "module": "dist/@testing-library/react.esm.js",
+    "engines": {
+      "node": ">=18"
+    },
+    "scripts": {
+      "prebuild": "rimraf dist",
+      "build": "npm-run-all --parallel build:main build:bundle:main build:bundle:pure",
+      "build:bundle:main": "dotenv -e .bundle.main.env kcd-scripts build -- --bundle --no-clean --no-ts-defs",
+      "build:bundle:pure": "dotenv -e .bundle.main.env -e .bundle.pure.env kcd-scripts build -- --bundle --no-clean --no-ts-defs",
+      "build:main": "kcd-scripts build --no-clean --no-ts-defs",
+      "format": "kcd-scripts format",
+      "install:csb": "npm install",
+      "lint": "kcd-scripts lint",
+      "setup": "npm install && npm run validate -s",
+      "test": "kcd-scripts test",
+      "test:update": "npm test -- --updateSnapshot --coverage",
+      "typecheck": "tsc --project tsconfig.json",
+      "validate": "kcd-scripts validate"
+    },
+    "files": [
+      "dist",
+      "dont-cleanup-after-each.js",
+      "pure.js",
+      "pure.d.ts",
+      "types/*.d.ts"
+    ],
+    "keywords": [
+      "testing",
+      "react",
+      "ui",
+      "dom",
+      "jsdom",
+      "unit",
+      "integration",
+      "functional",
+      "end-to-end",
+      "e2e"
+    ],
+    "author": "Kent C. Dodds <me@kentcdodds.com> (https://kentcdodds.com)",
+    "license": "MIT",
+    "dependencies": {
+      "@babel/runtime": "^7.12.5"
+    },
+    "devDependencies": {
+      "@testing-library/dom": "^10.0.0",
+      "@testing-library/jest-dom": "^5.11.6",
+      "@types/react": "^19.0.0",
+      "@types/react-dom": "^19.0.0",
+      "chalk": "^4.1.2",
+      "dotenv-cli": "^4.0.0",
+      "jest-diff": "^29.7.0",
+      "kcd-scripts": "^13.0.0",
+      "npm-run-all2": "^6.2.6",
+      "react": "^19.0.0",
+      "react-dom": "^19.0.0",
+      "rimraf": "^3.0.2",
+      "typescript": "^5.9.3"
+    },
+    "peerDependencies": {
+      "@testing-library/dom": "^10.0.0",
+      "@types/react": "^18.0.0 || ^19.0.0",
+      "@types/react-dom": "^18.0.0 || ^19.0.0",
+      "react": "^18.0.0 || ^19.0.0",
+      "react-dom": "^18.0.0 || ^19.0.0"
+    },
+    "peerDependenciesMeta": {
+      "@types/react": {
+        "optional": true
+      },
+      "@types/react-dom": {
+        "optional": true
+      }
+    },
+    "eslintConfig": {
+      "extends": "./node_modules/kcd-scripts/eslint.js",
+      "parserOptions": {
+        "ecmaVersion": 2022
+      },
+      "globals": {
+        "globalThis": "readonly"
+      },
+      "rules": {
+        "react/prop-types": "off",
+        "react/no-adjacent-inline-elements": "off",
+        "import/no-unassigned-import": "off",
+        "import/named": "off",
+        "testing-library/no-container": "off",
+        "testing-library/no-debugging-utils": "off",
+        "testing-library/no-dom-import": "off",
+        "testing-library/no-unnecessary-act": "off",
+        "testing-library/prefer-explicit-assert": "off",
+        "testing-library/prefer-find-by": "off",
+        "testing-library/prefer-user-event": "off"
+      }
+    },
+    "eslintIgnore": [
+      "node_modules",
+      "coverage",
+      "dist",
+      "*.d.ts"
+    ],
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/testing-library/react-testing-library"
+    },
+    "bugs": {
+      "url": "https://github.com/testing-library/react-testing-library/issues"
+    },
+    "homepage": "https://github.com/testing-library/react-testing-library#readme"
+  },
+  "package_json_sha256": "67974b165512b3f03785a70ce8228c1df0ab84408f02d2185aafac171621ed6e",
+  "paths": {
+    "key": "@testing-library/react@16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)",
+    "rio_fallback_120": "@testing-library+react@16.3.2_@testing-library+dom@10.4.1_@types+react-dom@19.2.3_@type_893f466751a7d66081fd06e9edb9241a",
+    "installed_250": "@testing-library+react@16.3.2_@testing-library+dom@10.4.1_@types+react-dom@19.2.3_@types+react@19.2.14__@types+react@19.2.14_react-dom@19.2.4_react@19.2.4__react@19.2.4"
+  },
+  "package_path": "/dev/shm/rio-tanstack-work/negative-head/node_modules/.pnpm/@testing-library+react@16.3.2_@testing-library+dom@10.4.1_@types+react-dom@19.2.3_@types+react@19.2.14__@types+react@19.2.14_react-dom@19.2.4_react@19.2.4__react@19.2.4/node_modules/@testing-library/react/package.json",
+  "package_exists": true,
+  "workaround": "Append prepare-pnpm-string-length.py after the exact original install plan; it adds aliases and leaves metadata and dependency content unchanged.",
+  "repro": "Use the commands/environment in execution.json for #11392 (baseline_classification_ran=false), then execution-attempt2.json with the original plan plus aliases. Rio installation.rs pnpm max_length uses Value::as_u64().unwrap_or(120), which rejects the string generated by pnpm 11.9.0."
+}

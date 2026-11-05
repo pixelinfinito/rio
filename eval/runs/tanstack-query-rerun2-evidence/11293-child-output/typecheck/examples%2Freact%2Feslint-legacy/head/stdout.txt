@@ -1,0 +1,5 @@
+src/index.tsx(3,55): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+src/index.tsx(4,44): error TS2307: Cannot find module '@tanstack/react-query-persist-client' or its corresponding type declarations.
+src/index.tsx(5,45): error TS2307: Cannot find module '@tanstack/query-async-storage-persister' or its corresponding type declarations.
+src/index.tsx(6,36): error TS2307: Cannot find module '@tanstack/react-query-devtools' or its corresponding type declarations.
+src/index.tsx(55,26): error TS7006: Parameter 'post' implicitly has an 'any' type.

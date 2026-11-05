@@ -1,0 +1,122 @@
+[
+  {
+    "previous": "tanstack-query-11293",
+    "mirror": "/dev/shm/rio-tanstack-work/maintainer-mirror",
+    "pins": {
+      "base": {
+        "sha": "d09cf1d605c81238934f6f91a4982f5629065732",
+        "files": {
+          ".nvmrc": {
+            "sha256": "2722b61f414f07f08be7f1f1316012813818f26f1c40d6a24a748686cec7d2ff",
+            "value": "24.16.0"
+          },
+          "package.json": {
+            "sha256": "1d3c76d06226e337da97a8104da82a64d4876267920a299315a950bbc510c155",
+            "packageManager": "pnpm@11.9.0"
+          },
+          "pnpm-lock.yaml": {
+            "sha256": "960e754ef12259ba484cfb5794ddc6ba94c131589da524805291215a2e15c106"
+          }
+        }
+      },
+      "head": {
+        "sha": "370ed5845530a928fcb5374162de67326724a7d1",
+        "files": {
+          ".nvmrc": {
+            "sha256": "2722b61f414f07f08be7f1f1316012813818f26f1c40d6a24a748686cec7d2ff",
+            "value": "24.16.0"
+          },
+          "package.json": {
+            "sha256": "1d3c76d06226e337da97a8104da82a64d4876267920a299315a950bbc510c155",
+            "packageManager": "pnpm@11.9.0"
+          },
+          "pnpm-lock.yaml": {
+            "sha256": "960e754ef12259ba484cfb5794ddc6ba94c131589da524805291215a2e15c106"
+          }
+        }
+      }
+    },
+    "previous_profile_sha256": "1049df8bb35d7f36f2982fdce1565c2c50336ce9e898e605f3cac96b7b16b636",
+    "rerun_profile_sha256": "1049df8bb35d7f36f2982fdce1565c2c50336ce9e898e605f3cac96b7b16b636"
+  },
+  {
+    "previous": "tanstack-query-11392-attempt3",
+    "mirror": "/dev/shm/rio-tanstack-work/negative-head",
+    "pins": {
+      "base": {
+        "sha": "fc51e96045d729a98bc784e1bb11ea16d7d7a4c1",
+        "files": {
+          ".nvmrc": {
+            "sha256": "2722b61f414f07f08be7f1f1316012813818f26f1c40d6a24a748686cec7d2ff",
+            "value": "24.16.0"
+          },
+          "package.json": {
+            "sha256": "1d3c76d06226e337da97a8104da82a64d4876267920a299315a950bbc510c155",
+            "packageManager": "pnpm@11.9.0"
+          },
+          "pnpm-lock.yaml": {
+            "sha256": "701001c386e07047b105642089c2f44ab917bafbd606bca7f37b488a05243e57"
+          }
+        }
+      },
+      "head": {
+        "sha": "0a73db4c255eb44e1889696f8d5a9ddf57934229",
+        "files": {
+          ".nvmrc": {
+            "sha256": "2722b61f414f07f08be7f1f1316012813818f26f1c40d6a24a748686cec7d2ff",
+            "value": "24.16.0"
+          },
+          "package.json": {
+            "sha256": "1d3c76d06226e337da97a8104da82a64d4876267920a299315a950bbc510c155",
+            "packageManager": "pnpm@11.9.0"
+          },
+          "pnpm-lock.yaml": {
+            "sha256": "701001c386e07047b105642089c2f44ab917bafbd606bca7f37b488a05243e57"
+          }
+        }
+      }
+    },
+    "previous_profile_sha256": "1049df8bb35d7f36f2982fdce1565c2c50336ce9e898e605f3cac96b7b16b636",
+    "rerun_profile_sha256": "1049df8bb35d7f36f2982fdce1565c2c50336ce9e898e605f3cac96b7b16b636"
+  },
+  {
+    "previous": "tanstack-query-11522-seeded-attempt2",
+    "mirror": "/dev/shm/rio-tanstack-work/seed-head",
+    "pins": {
+      "base": {
+        "sha": "8a28904aaccb6bc26398b751400a181c0f6d7f0e",
+        "files": {
+          ".nvmrc": {
+            "sha256": "2722b61f414f07f08be7f1f1316012813818f26f1c40d6a24a748686cec7d2ff",
+            "value": "24.16.0"
+          },
+          "package.json": {
+            "sha256": "b090d575d2f32e748dbfc002f015481a25cf47fd2b2b624eec461f94b369500e",
+            "packageManager": "pnpm@11.9.0"
+          },
+          "pnpm-lock.yaml": {
+            "sha256": "483779678b9d83eb1e330b9fb68257692bd933311f925f44ad24633f5c243d0f"
+          }
+        }
+      },
+      "head": {
+        "sha": "b32480cc923994ee2c859203a47b78a173e6bf20",
+        "files": {
+          ".nvmrc": {
+            "sha256": "2722b61f414f07f08be7f1f1316012813818f26f1c40d6a24a748686cec7d2ff",
+            "value": "24.16.0"
+          },
+          "package.json": {
+            "sha256": "b090d575d2f32e748dbfc002f015481a25cf47fd2b2b624eec461f94b369500e",
+            "packageManager": "pnpm@11.9.0"
+          },
+          "pnpm-lock.yaml": {
+            "sha256": "483779678b9d83eb1e330b9fb68257692bd933311f925f44ad24633f5c243d0f"
+          }
+        }
+      }
+    },
+    "previous_profile_sha256": "1049df8bb35d7f36f2982fdce1565c2c50336ce9e898e605f3cac96b7b16b636",
+    "rerun_profile_sha256": "1049df8bb35d7f36f2982fdce1565c2c50336ce9e898e605f3cac96b7b16b636"
+  }
+]

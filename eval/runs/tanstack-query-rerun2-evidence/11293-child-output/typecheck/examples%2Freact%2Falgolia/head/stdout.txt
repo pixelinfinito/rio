@@ -1,0 +1,6 @@
+src/App.tsx(1,50): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+src/SearchResults.tsx(42,23): error TS7006: Parameter 'product' implicitly has an 'any' type.
+src/useAlgolia.ts(1,45): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+src/useAlgolia.ts(22,12): error TS7031: Binding element 'pageParam' implicitly has an 'any' type.
+src/useAlgolia.ts(26,24): error TS7006: Parameter 'lastPage' implicitly has an 'any' type.
+src/useAlgolia.ts(31,43): error TS7006: Parameter 'page' implicitly has an 'any' type.

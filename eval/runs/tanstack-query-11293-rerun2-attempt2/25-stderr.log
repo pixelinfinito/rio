@@ -1,0 +1,210 @@
+Warning: rio/base:$.steps[3]: rio/triage is deferred locally: no_endpoint
+Warning: rio/base:$.steps[4]: rio/agents is deferred locally: no_endpoint
+Warning: rio/base:$.steps[5]: rio/verify is deferred locally: no_endpoint
+Running prepare…
+Finished prepare
+Running checks…
+coverage examples/angular/auto-refetching: failed (tests_failed)
+coverage examples/angular/basic: failed (tests_failed)
+coverage examples/svelte/basic: failed (tests_failed)
+typecheck examples/angular/basic: findings
+typecheck examples/angular/auto-refetching: findings
+coverage examples/angular/basic-persister: failed (tests_failed)
+coverage examples/angular/devtools-panel: failed (tests_failed)
+typecheck examples/svelte/load-more-infinite-scroll: findings
+typecheck examples/angular/basic-persister: findings
+typecheck examples/angular/devtools-panel: findings
+coverage examples/angular/infinite-query-with-max-pages: failed (tests_failed)
+coverage examples/svelte/load-more-infinite-scroll: failed (tests_failed)
+coverage examples/angular/optimistic-updates: failed (tests_failed)
+typecheck examples/angular/infinite-query-with-max-pages: findings
+coverage examples/angular/pagination: failed (tests_failed)
+typecheck examples/angular/optimistic-updates: findings
+typecheck examples/svelte/optimistic-updates: findings
+coverage examples/angular/query-options-from-a-service: failed (tests_failed)
+typecheck examples/angular/pagination: findings
+coverage examples/angular/router: failed (tests_failed)
+coverage examples/svelte/optimistic-updates: failed (tests_failed)
+typecheck examples/angular/query-options-from-a-service: findings
+coverage examples/angular/rxjs: failed (tests_failed)
+typecheck examples/angular/router: findings
+typecheck examples/svelte/playground: findings
+coverage examples/svelte/playground: failed (tests_failed)
+typecheck examples/angular/rxjs: findings
+coverage examples/angular/simple: failed (tests_failed)
+coverage examples/svelte/simple: failed (tests_failed)
+typecheck examples/angular/simple: findings
+typecheck examples/svelte/simple: passed
+coverage examples/lit/basic: failed (tests_failed)
+typecheck examples/lit/basic: findings
+typecheck examples/svelte/ssr: findings
+coverage examples/svelte/ssr: failed (tests_failed)
+coverage examples/lit/pagination: failed (tests_failed)
+typecheck examples/lit/pagination: findings
+typecheck examples/svelte/star-wars: findings
+coverage examples/svelte/star-wars: failed (tests_failed)
+coverage examples/lit/ssr: failed (tests_failed)
+coverage examples/vue/basic: failed (tests_failed)
+typecheck examples/lit/ssr: findings
+typecheck examples/vue/basic: findings
+coverage examples/preact/simple: failed (tests_failed)
+coverage examples/vue/dependent-queries: failed (tests_failed)
+typecheck examples/preact/simple: findings
+coverage examples/react/algolia: failed (tests_failed)
+coverage examples/vue/persister: failed (tests_failed)
+typecheck examples/react/algolia: findings
+typecheck examples/vue/persister: findings
+coverage examples/react/auto-refetching: failed (tests_failed)
+coverage examples/vue/simple: failed (tests_failed)
+typecheck examples/vue/dependent-queries: findings
+typecheck examples/react/auto-refetching: findings
+coverage examples/react/basic: failed (tests_failed)
+typecheck integrations/angular-cli-20: findings
+typecheck examples/react/basic: findings
+coverage integrations/angular-cli-20: failed (tests_failed)
+coverage examples/react/basic-graphql-request: failed (tests_failed)
+typecheck examples/vue/simple: findings
+coverage integrations/lit-vite: failed (tests_failed)
+typecheck integrations/lit-vite: findings
+typecheck examples/react/basic-graphql-request: findings
+coverage examples/react/batching: failed (tests_failed)
+coverage integrations/react-next-14: failed (tests_failed)
+typecheck integrations/react-next-14: findings
+typecheck examples/react/batching: findings
+typecheck examples/react/chat: findings
+coverage examples/react/chat: failed (tests_failed)
+typecheck integrations/react-next-15: findings
+coverage integrations/react-next-15: failed (tests_failed)
+coverage integrations/react-next-16: failed (tests_failed)
+coverage examples/react/default-query-function: failed (tests_failed)
+typecheck integrations/react-next-16: findings
+typecheck examples/react/default-query-function: findings
+coverage integrations/react-nodenext: failed (tests_failed)
+coverage examples/react/devtools-panel: failed (tests_failed)
+typecheck examples/react/devtools-panel: findings
+coverage integrations/react-vite: failed (tests_failed)
+typecheck integrations/react-nodenext: findings
+coverage examples/react/eslint-legacy: failed (tests_failed)
+typecheck integrations/react-vite: passed
+typecheck examples/react/eslint-legacy: findings
+coverage integrations/react-webpack-4: failed (tests_failed)
+typecheck integrations/react-webpack-4: passed
+coverage examples/react/eslint-plugin-demo: failed (tests_failed)
+typecheck examples/react/eslint-plugin-demo: findings
+coverage integrations/react-webpack-5: failed (tests_failed)
+coverage examples/react/infinite-query-with-max-pages: failed (tests_failed)
+typecheck integrations/react-webpack-5: passed
+typecheck examples/react/infinite-query-with-max-pages: findings
+typecheck integrations/solid-vite: passed
+coverage integrations/solid-vite: failed (tests_failed)
+coverage examples/react/load-more-infinite-scroll: failed (tests_failed)
+typecheck examples/react/load-more-infinite-scroll: findings
+typecheck integrations/svelte-vite: passed
+coverage integrations/svelte-vite: failed (tests_failed)
+coverage examples/react/nextjs: failed (tests_failed)
+coverage integrations/vue-declaration-emit: failed (tests_failed)
+typecheck examples/react/nextjs: findings
+coverage examples/react/nextjs-app-optimistic-updates: failed (tests_failed)
+typecheck integrations/vue-declaration-emit: passed
+coverage integrations/vue-vite: failed (tests_failed)
+coverage examples/react/nextjs-app-prefetching: failed (tests_failed)
+typecheck examples/react/nextjs-app-optimistic-updates: findings
+typecheck integrations/vue-vite: findings
+typecheck examples/react/nextjs-app-prefetching: findings
+coverage examples/react/nextjs-suspense-streaming: failed (tests_failed)
+typecheck examples/react/nextjs-suspense-streaming: findings
+typecheck examples/react/offline: findings
+typecheck packages/angular-query-experimental: findings
+typecheck packages/angular-query-persist-client: passed
+coverage examples/react/offline: failed (tests_failed)
+typecheck packages/vue-query-devtools: cancelled (timeout)
+typecheck examples/solid/astro: cancelled (timeout)
+coverage packages/lit-query: cancelled (timeout)
+coverage examples/react/pagination: cancelled (timeout)
+typecheck packages/preact-query: cancelled (timeout)
+typecheck examples/react/playground: cancelled (timeout)
+coverage packages/preact-query: cancelled (timeout)
+coverage examples/react/playground: cancelled (timeout)
+typecheck packages/preact-query-devtools: cancelled (timeout)
+typecheck examples/react/prefetching: cancelled (timeout)
+coverage packages/preact-query-devtools: cancelled (timeout)
+coverage examples/react/prefetching: cancelled (timeout)
+typecheck packages/preact-query-persist-client: cancelled (timeout)
+typecheck examples/react/react-native: cancelled (timeout)
+coverage packages/preact-query-persist-client: cancelled (timeout)
+coverage examples/react/react-native: cancelled (timeout)
+typecheck packages/query-async-storage-persister: cancelled (timeout)
+typecheck examples/react/react-router: cancelled (timeout)
+coverage packages/query-async-storage-persister: cancelled (timeout)
+coverage examples/react/react-router: cancelled (timeout)
+typecheck packages/query-broadcast-client-experimental: cancelled (timeout)
+typecheck examples/react/rick-morty: cancelled (timeout)
+coverage packages/query-broadcast-client-experimental: cancelled (timeout)
+coverage examples/react/rick-morty: cancelled (timeout)
+typecheck packages/query-core: cancelled (timeout)
+typecheck examples/react/shadow-dom: cancelled (timeout)
+lint packages/query-core: cancelled (timeout)
+coverage examples/react/shadow-dom: cancelled (timeout)
+coverage packages/query-core: cancelled (timeout)
+typecheck examples/react/simple: cancelled (timeout)
+typecheck packages/query-devtools: cancelled (timeout)
+coverage examples/react/simple: cancelled (timeout)
+coverage packages/query-devtools: cancelled (timeout)
+typecheck examples/react/star-wars: cancelled (timeout)
+typecheck packages/query-persist-client-core: cancelled (timeout)
+coverage examples/react/star-wars: cancelled (timeout)
+coverage packages/query-persist-client-core: cancelled (timeout)
+typecheck examples/react/suspense: cancelled (timeout)
+typecheck packages/query-sync-storage-persister: cancelled (timeout)
+coverage examples/react/suspense: cancelled (timeout)
+coverage packages/query-sync-storage-persister: cancelled (timeout)
+typecheck packages/react-query: cancelled (timeout)
+coverage examples/solid/astro: cancelled (timeout)
+coverage packages/react-query: cancelled (timeout)
+typecheck examples/solid/basic: cancelled (timeout)
+typecheck packages/react-query-devtools: cancelled (timeout)
+coverage examples/solid/basic: cancelled (timeout)
+coverage packages/react-query-devtools: cancelled (timeout)
+typecheck examples/solid/basic-graphql-request: cancelled (timeout)
+typecheck packages/react-query-next-experimental: cancelled (timeout)
+coverage examples/solid/basic-graphql-request: cancelled (timeout)
+coverage packages/react-query-next-experimental: cancelled (timeout)
+typecheck examples/solid/default-query-function: cancelled (timeout)
+typecheck packages/react-query-persist-client: cancelled (timeout)
+coverage examples/solid/default-query-function: cancelled (timeout)
+coverage packages/react-query-persist-client: cancelled (timeout)
+typecheck examples/solid/offline: cancelled (timeout)
+typecheck packages/solid-query: cancelled (timeout)
+coverage examples/solid/offline: cancelled (timeout)
+coverage packages/solid-query: cancelled (timeout)
+typecheck examples/solid/simple: cancelled (timeout)
+typecheck packages/solid-query-devtools: cancelled (timeout)
+coverage examples/solid/simple: cancelled (timeout)
+coverage packages/solid-query-devtools: cancelled (timeout)
+typecheck examples/solid/solid-start-streaming: cancelled (timeout)
+typecheck packages/solid-query-persist-client: cancelled (timeout)
+coverage examples/solid/solid-start-streaming: cancelled (timeout)
+coverage packages/solid-query-persist-client: cancelled (timeout)
+typecheck examples/svelte/auto-refetching: cancelled (timeout)
+typecheck packages/svelte-query: cancelled (timeout)
+coverage examples/svelte/auto-refetching: cancelled (timeout)
+coverage packages/svelte-query: cancelled (timeout)
+typecheck examples/svelte/basic: cancelled (timeout)
+typecheck packages/svelte-query-devtools: cancelled (timeout)
+coverage packages/svelte-query-devtools: cancelled (timeout)
+typecheck packages/svelte-query-persist-client: cancelled (timeout)
+coverage packages/svelte-query-persist-client: cancelled (timeout)
+coverage packages/vue-query-devtools: cancelled (timeout)
+typecheck packages/vue-query: cancelled (timeout)
+secrets .: cancelled (timeout)
+coverage packages/vue-query: cancelled (timeout)
+dependencies .: cancelled (timeout)
+coverage packages/angular-query-persist-client: cancelled (timeout)
+typecheck examples/react/pagination: cancelled (timeout)
+typecheck packages/lit-query: cancelled (timeout)
+coverage packages/angular-query-experimental: cancelled (timeout)
+Finished checks
+Running graph…
+Finished graph
+Running report…
+Finished report

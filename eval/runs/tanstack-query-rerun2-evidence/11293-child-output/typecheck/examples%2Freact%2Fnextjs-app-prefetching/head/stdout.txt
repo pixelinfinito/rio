@@ -1,0 +1,7 @@
+app/get-query-client.ts(5,8): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+app/get-query-client.ts(15,32): error TS7006: Parameter 'query' implicitly has an 'any' type.
+app/page.tsx(2,52): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+app/pokemon-info.tsx(4,34): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+app/pokemon.ts(1,30): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+app/providers.tsx(2,37): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+app/providers.tsx(3,36): error TS2307: Cannot find module '@tanstack/react-query-devtools' or its corresponding type declarations.

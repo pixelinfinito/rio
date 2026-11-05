@@ -1,0 +1,1250 @@
+{
+  "blocking_problems": [],
+  "cache": {
+    "free_space": 4831109120,
+    "path": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/cache",
+    "writable": true
+  },
+  "configuration": {
+    "cache": {
+      "dir": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/cache",
+      "max_age": {
+        "nanos": 0,
+        "secs": 2592000
+      },
+      "max_size": 5368709120,
+      "retain_raw_output": true
+    },
+    "config_dir": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/config",
+    "endpoint_url": null,
+    "notices": [],
+    "output_limit": 268435456,
+    "parallelism": 4,
+    "sources": {
+      "cache.dir": "RIO_CACHE_DIR",
+      "cache.max_age": "default",
+      "cache.max_size": "default",
+      "cache.retain_raw_output": "default",
+      "endpoint.url": "default",
+      "run.output_limit": "default",
+      "run.parallelism": "default"
+    }
+  },
+  "endpoint": "No endpoint is available in this version",
+  "head": "0a73db4c255eb44e1889696f8d5a9ddf57934229",
+  "plan": {
+    "checks": [
+      {
+        "baseline": false,
+        "baseline_hint": null,
+        "baseline_remap": false,
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "secrets",
+        "language": "common",
+        "root": ".",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [],
+        "tool": null
+      },
+      {
+        "baseline": false,
+        "baseline_hint": null,
+        "baseline_remap": false,
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "dependencies",
+        "language": "common",
+        "root": ".",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [],
+        "tool": null
+      }
+    ],
+    "layout": {
+      "dependencies": {
+        ".": [],
+        "examples/angular/auto-refetching": [
+          "packages/angular-query-experimental"
+        ],
+        "examples/angular/basic": [
+          "packages/angular-query-experimental"
+        ],
+        "examples/angular/basic-persister": [
+          "packages/angular-query-experimental",
+          "packages/angular-query-persist-client",
+          "packages/query-async-storage-persister"
+        ],
+        "examples/angular/devtools-panel": [
+          "packages/angular-query-experimental"
+        ],
+        "examples/angular/infinite-query-with-max-pages": [
+          "packages/angular-query-experimental"
+        ],
+        "examples/angular/optimistic-updates": [
+          "packages/angular-query-experimental"
+        ],
+        "examples/angular/pagination": [
+          "packages/angular-query-experimental"
+        ],
+        "examples/angular/query-options-from-a-service": [
+          "packages/angular-query-experimental"
+        ],
+        "examples/angular/router": [
+          "packages/angular-query-experimental"
+        ],
+        "examples/angular/rxjs": [
+          "packages/angular-query-experimental"
+        ],
+        "examples/angular/simple": [
+          "packages/angular-query-experimental"
+        ],
+        "examples/lit/basic": [
+          "packages/lit-query",
+          "packages/query-core"
+        ],
+        "examples/lit/pagination": [
+          "packages/lit-query",
+          "packages/query-core"
+        ],
+        "examples/lit/ssr": [
+          "packages/lit-query",
+          "packages/query-core"
+        ],
+        "examples/preact/simple": [
+          "packages/preact-query"
+        ],
+        "examples/react/algolia": [
+          "packages/eslint-plugin-query",
+          "packages/react-query",
+          "packages/react-query-devtools"
+        ],
+        "examples/react/auto-refetching": [
+          "packages/react-query",
+          "packages/react-query-devtools"
+        ],
+        "examples/react/basic": [
+          "packages/eslint-plugin-query",
+          "packages/query-async-storage-persister",
+          "packages/react-query",
+          "packages/react-query-devtools",
+          "packages/react-query-persist-client"
+        ],
+        "examples/react/basic-graphql-request": [
+          "packages/react-query",
+          "packages/react-query-devtools"
+        ],
+        "examples/react/batching": [
+          "packages/eslint-plugin-query",
+          "packages/react-query",
+          "packages/react-query-devtools"
+        ],
+        "examples/react/chat": [
+          "packages/react-query",
+          "packages/react-query-devtools"
+        ],
+        "examples/react/default-query-function": [
+          "packages/react-query",
+          "packages/react-query-devtools"
+        ],
+        "examples/react/devtools-panel": [
+          "packages/react-query",
+          "packages/react-query-devtools"
+        ],
+        "examples/react/eslint-legacy": [
+          "packages/eslint-plugin-query",
+          "packages/query-async-storage-persister",
+          "packages/react-query",
+          "packages/react-query-devtools",
+          "packages/react-query-persist-client"
+        ],
+        "examples/react/eslint-plugin-demo": [
+          "packages/eslint-plugin-query",
+          "packages/react-query"
+        ],
+        "examples/react/infinite-query-with-max-pages": [
+          "packages/react-query",
+          "packages/react-query-devtools"
+        ],
+        "examples/react/load-more-infinite-scroll": [
+          "packages/react-query",
+          "packages/react-query-devtools"
+        ],
+        "examples/react/nextjs": [
+          "packages/react-query",
+          "packages/react-query-devtools"
+        ],
+        "examples/react/nextjs-app-optimistic-updates": [
+          "packages/react-query",
+          "packages/react-query-devtools"
+        ],
+        "examples/react/nextjs-app-prefetching": [
+          "packages/react-query",
+          "packages/react-query-devtools"
+        ],
+        "examples/react/nextjs-suspense-streaming": [
+          "packages/react-query",
+          "packages/react-query-devtools",
+          "packages/react-query-next-experimental"
+        ],
+        "examples/react/offline": [
+          "packages/query-async-storage-persister",
+          "packages/react-query",
+          "packages/react-query-devtools",
+          "packages/react-query-persist-client"
+        ],
+        "examples/react/pagination": [
+          "packages/react-query",
+          "packages/react-query-devtools"
+        ],
+        "examples/react/playground": [
+          "packages/react-query",
+          "packages/react-query-devtools"
+        ],
+        "examples/react/prefetching": [
+          "packages/react-query",
+          "packages/react-query-devtools"
+        ],
+        "examples/react/react-native": [
+          "packages/react-query",
+          "packages/react-query-devtools"
+        ],
+        "examples/react/react-router": [
+          "packages/react-query",
+          "packages/react-query-devtools"
+        ],
+        "examples/react/rick-morty": [
+          "packages/react-query",
+          "packages/react-query-devtools"
+        ],
+        "examples/react/shadow-dom": [
+          "packages/react-query",
+          "packages/react-query-devtools"
+        ],
+        "examples/react/simple": [
+          "packages/react-query",
+          "packages/react-query-devtools"
+        ],
+        "examples/react/star-wars": [
+          "packages/react-query",
+          "packages/react-query-devtools"
+        ],
+        "examples/react/suspense": [
+          "packages/react-query",
+          "packages/react-query-devtools"
+        ],
+        "examples/solid/astro": [
+          "packages/solid-query",
+          "packages/solid-query-devtools"
+        ],
+        "examples/solid/basic": [
+          "packages/solid-query",
+          "packages/solid-query-devtools"
+        ],
+        "examples/solid/basic-graphql-request": [
+          "packages/solid-query",
+          "packages/solid-query-devtools"
+        ],
+        "examples/solid/default-query-function": [
+          "packages/solid-query",
+          "packages/solid-query-devtools"
+        ],
+        "examples/solid/offline": [
+          "packages/query-async-storage-persister",
+          "packages/solid-query",
+          "packages/solid-query-devtools",
+          "packages/solid-query-persist-client"
+        ],
+        "examples/solid/simple": [
+          "packages/eslint-plugin-query",
+          "packages/solid-query",
+          "packages/solid-query-devtools"
+        ],
+        "examples/solid/solid-start-streaming": [
+          "packages/solid-query",
+          "packages/solid-query-devtools"
+        ],
+        "examples/svelte/auto-refetching": [
+          "packages/svelte-query",
+          "packages/svelte-query-devtools"
+        ],
+        "examples/svelte/basic": [
+          "packages/query-async-storage-persister",
+          "packages/svelte-query",
+          "packages/svelte-query-devtools",
+          "packages/svelte-query-persist-client"
+        ],
+        "examples/svelte/load-more-infinite-scroll": [
+          "packages/svelte-query",
+          "packages/svelte-query-devtools"
+        ],
+        "examples/svelte/optimistic-updates": [
+          "packages/svelte-query",
+          "packages/svelte-query-devtools"
+        ],
+        "examples/svelte/playground": [
+          "packages/svelte-query",
+          "packages/svelte-query-devtools"
+        ],
+        "examples/svelte/simple": [
+          "packages/svelte-query",
+          "packages/svelte-query-devtools"
+        ],
+        "examples/svelte/ssr": [
+          "packages/svelte-query",
+          "packages/svelte-query-devtools"
+        ],
+        "examples/svelte/star-wars": [
+          "packages/svelte-query",
+          "packages/svelte-query-devtools"
+        ],
+        "examples/vue/2.6-basic": [],
+        "examples/vue/2.7-basic": [],
+        "examples/vue/basic": [
+          "packages/vue-query",
+          "packages/vue-query-devtools"
+        ],
+        "examples/vue/dependent-queries": [
+          "packages/vue-query"
+        ],
+        "examples/vue/nuxt3": [],
+        "examples/vue/persister": [
+          "packages/query-core",
+          "packages/query-persist-client-core",
+          "packages/query-sync-storage-persister",
+          "packages/vue-query"
+        ],
+        "examples/vue/simple": [
+          "packages/vue-query",
+          "packages/vue-query-devtools"
+        ],
+        "integrations/angular-cli-20": [
+          "packages/angular-query-experimental"
+        ],
+        "integrations/lit-vite": [
+          "packages/lit-query",
+          "packages/query-core"
+        ],
+        "integrations/react-next-14": [
+          "packages/react-query",
+          "packages/react-query-devtools"
+        ],
+        "integrations/react-next-15": [
+          "packages/react-query",
+          "packages/react-query-devtools"
+        ],
+        "integrations/react-next-16": [
+          "packages/react-query",
+          "packages/react-query-devtools"
+        ],
+        "integrations/react-nodenext": [
+          "packages/react-query"
+        ],
+        "integrations/react-vite": [
+          "packages/react-query",
+          "packages/react-query-devtools"
+        ],
+        "integrations/react-webpack-4": [
+          "packages/react-query",
+          "packages/react-query-devtools"
+        ],
+        "integrations/react-webpack-5": [
+          "packages/react-query",
+          "packages/react-query-devtools"
+        ],
+        "integrations/solid-vite": [
+          "packages/solid-query",
+          "packages/solid-query-devtools"
+        ],
+        "integrations/svelte-vite": [
+          "packages/svelte-query",
+          "packages/svelte-query-devtools"
+        ],
+        "integrations/vue-declaration-emit": [
+          "packages/vue-query"
+        ],
+        "integrations/vue-vite": [
+          "packages/vue-query"
+        ],
+        "packages/angular-query-experimental": [
+          "packages/query-core",
+          "packages/query-devtools",
+          "packages/query-test-utils"
+        ],
+        "packages/angular-query-persist-client": [
+          "packages/angular-query-experimental",
+          "packages/query-persist-client-core",
+          "packages/query-test-utils"
+        ],
+        "packages/eslint-plugin-query": [],
+        "packages/eslint-plugin-query/src/__tests__/ts-fixture": [],
+        "packages/lit-query": [
+          "packages/query-core",
+          "packages/query-test-utils"
+        ],
+        "packages/preact-query": [
+          "packages/query-core",
+          "packages/query-persist-client-core",
+          "packages/query-test-utils"
+        ],
+        "packages/preact-query-devtools": [
+          "packages/preact-query",
+          "packages/query-devtools"
+        ],
+        "packages/preact-query-persist-client": [
+          "packages/preact-query",
+          "packages/query-persist-client-core",
+          "packages/query-test-utils"
+        ],
+        "packages/query-async-storage-persister": [
+          "packages/query-core",
+          "packages/query-persist-client-core",
+          "packages/query-test-utils"
+        ],
+        "packages/query-broadcast-client-experimental": [
+          "packages/query-core",
+          "packages/query-test-utils"
+        ],
+        "packages/query-codemods": [],
+        "packages/query-core": [
+          "packages/query-test-utils"
+        ],
+        "packages/query-devtools": [
+          "packages/query-core"
+        ],
+        "packages/query-persist-client-core": [
+          "packages/query-core",
+          "packages/query-test-utils"
+        ],
+        "packages/query-sync-storage-persister": [
+          "packages/query-core",
+          "packages/query-persist-client-core",
+          "packages/query-test-utils"
+        ],
+        "packages/query-test-utils": [],
+        "packages/react-query": [
+          "packages/query-core",
+          "packages/query-persist-client-core",
+          "packages/query-test-utils"
+        ],
+        "packages/react-query-devtools": [
+          "packages/query-devtools",
+          "packages/react-query"
+        ],
+        "packages/react-query-next-experimental": [
+          "packages/react-query"
+        ],
+        "packages/react-query-persist-client": [
+          "packages/query-persist-client-core",
+          "packages/query-test-utils",
+          "packages/react-query"
+        ],
+        "packages/solid-query": [
+          "packages/query-core",
+          "packages/query-test-utils"
+        ],
+        "packages/solid-query-devtools": [
+          "packages/query-devtools",
+          "packages/solid-query"
+        ],
+        "packages/solid-query-persist-client": [
+          "packages/query-persist-client-core",
+          "packages/query-test-utils",
+          "packages/solid-query"
+        ],
+        "packages/svelte-query": [
+          "packages/query-core",
+          "packages/query-test-utils"
+        ],
+        "packages/svelte-query-devtools": [
+          "packages/query-devtools",
+          "packages/svelte-query"
+        ],
+        "packages/svelte-query-persist-client": [
+          "packages/query-persist-client-core",
+          "packages/query-test-utils",
+          "packages/svelte-query"
+        ],
+        "packages/vue-query": [
+          "packages/query-core",
+          "packages/query-test-utils"
+        ],
+        "packages/vue-query-devtools": [
+          "packages/query-devtools",
+          "packages/vue-query"
+        ],
+        "scripts": []
+      },
+      "notes": [],
+      "roots": [
+        {
+          "language": "typescript",
+          "manifest": "package.json",
+          "name": "root",
+          "path": ".",
+          "workspace": null
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/angular/auto-refetching/package.json",
+          "name": "@tanstack/query-example-angular-auto-refetching",
+          "path": "examples/angular/auto-refetching",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/angular/basic/package.json",
+          "name": "@tanstack/query-example-angular-basic",
+          "path": "examples/angular/basic",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/angular/basic-persister/package.json",
+          "name": "@tanstack/query-example-angular-basic-persister",
+          "path": "examples/angular/basic-persister",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/angular/devtools-panel/package.json",
+          "name": "@tanstack/query-example-angular-devtools-panel",
+          "path": "examples/angular/devtools-panel",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/angular/infinite-query-with-max-pages/package.json",
+          "name": "@tanstack/query-example-angular-infinite-query-with-max-pages",
+          "path": "examples/angular/infinite-query-with-max-pages",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/angular/optimistic-updates/package.json",
+          "name": "@tanstack/query-example-angular-optimistic-updates",
+          "path": "examples/angular/optimistic-updates",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/angular/pagination/package.json",
+          "name": "@tanstack/query-example-angular-pagination",
+          "path": "examples/angular/pagination",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/angular/query-options-from-a-service/package.json",
+          "name": "@tanstack/query-example-angular-query-options-from-a-service",
+          "path": "examples/angular/query-options-from-a-service",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/angular/router/package.json",
+          "name": "@tanstack/query-example-angular-router",
+          "path": "examples/angular/router",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/angular/rxjs/package.json",
+          "name": "@tanstack/query-example-angular-rxjs",
+          "path": "examples/angular/rxjs",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/angular/simple/package.json",
+          "name": "@tanstack/query-example-angular-simple",
+          "path": "examples/angular/simple",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/lit/basic/package.json",
+          "name": "@tanstack/query-example-lit-basic",
+          "path": "examples/lit/basic",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/lit/pagination/package.json",
+          "name": "@tanstack/query-example-lit-pagination",
+          "path": "examples/lit/pagination",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/lit/ssr/package.json",
+          "name": "@tanstack/query-example-lit-ssr",
+          "path": "examples/lit/ssr",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/preact/simple/package.json",
+          "name": "@tanstack/query-example-preact-simple",
+          "path": "examples/preact/simple",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/react/algolia/package.json",
+          "name": "@tanstack/query-example-react-algolia",
+          "path": "examples/react/algolia",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/react/auto-refetching/package.json",
+          "name": "@tanstack/query-example-react-auto-refetching",
+          "path": "examples/react/auto-refetching",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/react/basic/package.json",
+          "name": "@tanstack/query-example-react-basic",
+          "path": "examples/react/basic",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/react/basic-graphql-request/package.json",
+          "name": "@tanstack/query-example-react-basic-graphql-request",
+          "path": "examples/react/basic-graphql-request",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/react/batching/package.json",
+          "name": "@tanstack/query-example-react-batching",
+          "path": "examples/react/batching",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/react/chat/package.json",
+          "name": "@tanstack/query-example-chat",
+          "path": "examples/react/chat",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/react/default-query-function/package.json",
+          "name": "@tanstack/query-example-react-default-query-function",
+          "path": "examples/react/default-query-function",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/react/devtools-panel/package.json",
+          "name": "@tanstack/query-example-react-devtools-panel",
+          "path": "examples/react/devtools-panel",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/react/eslint-legacy/package.json",
+          "name": "@tanstack/query-example-eslint-legacy",
+          "path": "examples/react/eslint-legacy",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/react/eslint-plugin-demo/package.json",
+          "name": "@tanstack/query-example-eslint-plugin-demo",
+          "path": "examples/react/eslint-plugin-demo",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/react/infinite-query-with-max-pages/package.json",
+          "name": "@tanstack/query-example-react-infinite-query-with-max-pages",
+          "path": "examples/react/infinite-query-with-max-pages",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/react/load-more-infinite-scroll/package.json",
+          "name": "@tanstack/query-example-react-load-more-infinite-scroll",
+          "path": "examples/react/load-more-infinite-scroll",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/react/nextjs/package.json",
+          "name": "@tanstack/query-example-react-nextjs",
+          "path": "examples/react/nextjs",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/react/nextjs-app-optimistic-updates/package.json",
+          "name": "@tanstack/query-example-react-nextjs-app-optimistic-updates",
+          "path": "examples/react/nextjs-app-optimistic-updates",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/react/nextjs-app-prefetching/package.json",
+          "name": "@tanstack/query-example-react-nextjs-app-prefetching",
+          "path": "examples/react/nextjs-app-prefetching",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/react/nextjs-suspense-streaming/package.json",
+          "name": "@tanstack/query-example-nextjs-suspense-streaming",
+          "path": "examples/react/nextjs-suspense-streaming",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/react/offline/package.json",
+          "name": "@tanstack/query-example-react-offline",
+          "path": "examples/react/offline",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/react/pagination/package.json",
+          "name": "@tanstack/query-example-react-pagination",
+          "path": "examples/react/pagination",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/react/playground/package.json",
+          "name": "@tanstack/query-example-react-playground",
+          "path": "examples/react/playground",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/react/prefetching/package.json",
+          "name": "@tanstack/query-example-react-prefetching",
+          "path": "examples/react/prefetching",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/react/react-native/package.json",
+          "name": "@tanstack/query-example-react-react-native",
+          "path": "examples/react/react-native",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/react/react-router/package.json",
+          "name": "@tanstack/query-example-react-router",
+          "path": "examples/react/react-router",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/react/rick-morty/package.json",
+          "name": "@tanstack/query-example-react-rick-morty",
+          "path": "examples/react/rick-morty",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/react/shadow-dom/package.json",
+          "name": "@tanstack/query-example-react-shadow-dom",
+          "path": "examples/react/shadow-dom",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/react/simple/package.json",
+          "name": "@tanstack/query-example-react-simple",
+          "path": "examples/react/simple",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/react/star-wars/package.json",
+          "name": "@tanstack/query-example-react-star-wars",
+          "path": "examples/react/star-wars",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/react/suspense/package.json",
+          "name": "@tanstack/query-example-react-suspense",
+          "path": "examples/react/suspense",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/solid/astro/package.json",
+          "name": "@tanstack/query-example-solid-astro",
+          "path": "examples/solid/astro",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/solid/basic/package.json",
+          "name": "@tanstack/query-example-solid-basic",
+          "path": "examples/solid/basic",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/solid/basic-graphql-request/package.json",
+          "name": "@tanstack/query-example-solid-basic-graphql-request",
+          "path": "examples/solid/basic-graphql-request",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/solid/default-query-function/package.json",
+          "name": "@tanstack/query-example-solid-default-query-function",
+          "path": "examples/solid/default-query-function",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/solid/offline/package.json",
+          "name": "@tanstack/query-example-solid-offline",
+          "path": "examples/solid/offline",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/solid/simple/package.json",
+          "name": "@tanstack/query-example-solid-simple",
+          "path": "examples/solid/simple",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/solid/solid-start-streaming/package.json",
+          "name": "@tanstack/query-example-solid-start-streaming",
+          "path": "examples/solid/solid-start-streaming",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/svelte/auto-refetching/package.json",
+          "name": "@tanstack/query-example-svelte-auto-refetching",
+          "path": "examples/svelte/auto-refetching",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/svelte/basic/package.json",
+          "name": "@tanstack/query-example-svelte-basic",
+          "path": "examples/svelte/basic",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/svelte/load-more-infinite-scroll/package.json",
+          "name": "@tanstack/query-example-svelte-load-more-infinite-scroll",
+          "path": "examples/svelte/load-more-infinite-scroll",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/svelte/optimistic-updates/package.json",
+          "name": "@tanstack/query-example-svelte-optimistic-updates",
+          "path": "examples/svelte/optimistic-updates",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/svelte/playground/package.json",
+          "name": "@tanstack/query-example-svelte-playground",
+          "path": "examples/svelte/playground",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/svelte/simple/package.json",
+          "name": "@tanstack/query-example-svelte-simple",
+          "path": "examples/svelte/simple",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/svelte/ssr/package.json",
+          "name": "@tanstack/query-example-svelte-ssr",
+          "path": "examples/svelte/ssr",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/svelte/star-wars/package.json",
+          "name": "@tanstack/query-example-svelte-star-wars",
+          "path": "examples/svelte/star-wars",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/vue/2.6-basic/package.json",
+          "name": "@tanstack/query-example-vue-2.6-basic",
+          "path": "examples/vue/2.6-basic",
+          "workspace": null
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/vue/2.7-basic/package.json",
+          "name": "@tanstack/query-example-vue-2.7-basic",
+          "path": "examples/vue/2.7-basic",
+          "workspace": null
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/vue/basic/package.json",
+          "name": "@tanstack/query-example-vue-basic",
+          "path": "examples/vue/basic",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/vue/dependent-queries/package.json",
+          "name": "@tanstack/query-example-vue-dependent-queries",
+          "path": "examples/vue/dependent-queries",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/vue/nuxt3/package.json",
+          "name": "@tanstack/query-example-vue-nuxt3",
+          "path": "examples/vue/nuxt3",
+          "workspace": null
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/vue/persister/package.json",
+          "name": "@tanstack/query-example-vue-persister",
+          "path": "examples/vue/persister",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "examples/vue/simple/package.json",
+          "name": "@tanstack/query-example-vue-simple",
+          "path": "examples/vue/simple",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "integrations/angular-cli-20/package.json",
+          "name": "angular-cli-20",
+          "path": "integrations/angular-cli-20",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "integrations/lit-vite/package.json",
+          "name": "lit-vite",
+          "path": "integrations/lit-vite",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "integrations/react-next-14/package.json",
+          "name": "react-next-14",
+          "path": "integrations/react-next-14",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "integrations/react-next-15/package.json",
+          "name": "react-next-15",
+          "path": "integrations/react-next-15",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "integrations/react-next-16/package.json",
+          "name": "react-next-16",
+          "path": "integrations/react-next-16",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "integrations/react-nodenext/package.json",
+          "name": "react-nodenext",
+          "path": "integrations/react-nodenext",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "integrations/react-vite/package.json",
+          "name": "react-vite",
+          "path": "integrations/react-vite",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "integrations/react-webpack-4/package.json",
+          "name": "react-webpack-4",
+          "path": "integrations/react-webpack-4",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "integrations/react-webpack-5/package.json",
+          "name": "react-webpack-5",
+          "path": "integrations/react-webpack-5",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "integrations/solid-vite/package.json",
+          "name": "solid-vite",
+          "path": "integrations/solid-vite",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "integrations/svelte-vite/package.json",
+          "name": "svelte-vite",
+          "path": "integrations/svelte-vite",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "integrations/vue-declaration-emit/package.json",
+          "name": "vue-declaration-emit",
+          "path": "integrations/vue-declaration-emit",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "integrations/vue-vite/package.json",
+          "name": "vue-vite",
+          "path": "integrations/vue-vite",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/angular-query-experimental/package.json",
+          "name": "@tanstack/angular-query-experimental",
+          "path": "packages/angular-query-experimental",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/angular-query-persist-client/package.json",
+          "name": "@tanstack/angular-query-persist-client",
+          "path": "packages/angular-query-persist-client",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/eslint-plugin-query/package.json",
+          "name": "@tanstack/eslint-plugin-query",
+          "path": "packages/eslint-plugin-query",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/eslint-plugin-query/src/__tests__/ts-fixture/tsconfig.json",
+          "name": null,
+          "path": "packages/eslint-plugin-query/src/__tests__/ts-fixture",
+          "workspace": null
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/lit-query/package.json",
+          "name": "@tanstack/lit-query",
+          "path": "packages/lit-query",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/preact-query/package.json",
+          "name": "@tanstack/preact-query",
+          "path": "packages/preact-query",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/preact-query-devtools/package.json",
+          "name": "@tanstack/preact-query-devtools",
+          "path": "packages/preact-query-devtools",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/preact-query-persist-client/package.json",
+          "name": "@tanstack/preact-query-persist-client",
+          "path": "packages/preact-query-persist-client",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/query-async-storage-persister/package.json",
+          "name": "@tanstack/query-async-storage-persister",
+          "path": "packages/query-async-storage-persister",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/query-broadcast-client-experimental/package.json",
+          "name": "@tanstack/query-broadcast-client-experimental",
+          "path": "packages/query-broadcast-client-experimental",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/query-codemods/package.json",
+          "name": "@tanstack/query-codemods",
+          "path": "packages/query-codemods",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/query-core/package.json",
+          "name": "@tanstack/query-core",
+          "path": "packages/query-core",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/query-devtools/package.json",
+          "name": "@tanstack/query-devtools",
+          "path": "packages/query-devtools",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/query-persist-client-core/package.json",
+          "name": "@tanstack/query-persist-client-core",
+          "path": "packages/query-persist-client-core",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/query-sync-storage-persister/package.json",
+          "name": "@tanstack/query-sync-storage-persister",
+          "path": "packages/query-sync-storage-persister",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/query-test-utils/package.json",
+          "name": "@tanstack/query-test-utils",
+          "path": "packages/query-test-utils",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/react-query/package.json",
+          "name": "@tanstack/react-query",
+          "path": "packages/react-query",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/react-query-devtools/package.json",
+          "name": "@tanstack/react-query-devtools",
+          "path": "packages/react-query-devtools",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/react-query-next-experimental/package.json",
+          "name": "@tanstack/react-query-next-experimental",
+          "path": "packages/react-query-next-experimental",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/react-query-persist-client/package.json",
+          "name": "@tanstack/react-query-persist-client",
+          "path": "packages/react-query-persist-client",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/solid-query/package.json",
+          "name": "@tanstack/solid-query",
+          "path": "packages/solid-query",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/solid-query-devtools/package.json",
+          "name": "@tanstack/solid-query-devtools",
+          "path": "packages/solid-query-devtools",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/solid-query-persist-client/package.json",
+          "name": "@tanstack/solid-query-persist-client",
+          "path": "packages/solid-query-persist-client",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/svelte-query/package.json",
+          "name": "@tanstack/svelte-query",
+          "path": "packages/svelte-query",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/svelte-query-devtools/package.json",
+          "name": "@tanstack/svelte-query-devtools",
+          "path": "packages/svelte-query-devtools",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/svelte-query-persist-client/package.json",
+          "name": "@tanstack/svelte-query-persist-client",
+          "path": "packages/svelte-query-persist-client",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/vue-query/package.json",
+          "name": "@tanstack/vue-query",
+          "path": "packages/vue-query",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "packages/vue-query-devtools/package.json",
+          "name": "@tanstack/vue-query-devtools",
+          "path": "packages/vue-query-devtools",
+          "workspace": "."
+        },
+        {
+          "language": "typescript",
+          "manifest": "scripts/tsconfig.json",
+          "name": null,
+          "path": "scripts",
+          "workspace": null
+        }
+      ]
+    },
+    "notes": [],
+    "probes_ran": false,
+    "roots": []
+  },
+  "profile": {
+    "chain": [
+      "rio/base"
+    ],
+    "name": "rio/base",
+    "valid": true
+  },
+  "repository": "/dev/shm/rio-tanstack-work/rio-eval-3m4was1g/head",
+  "warnings": [
+    "rio/base:$.steps[3]: rio/triage is deferred locally: no_endpoint",
+    "rio/base:$.steps[4]: rio/agents is deferred locally: no_endpoint",
+    "rio/base:$.steps[5]: rio/verify is deferred locally: no_endpoint"
+  ]
+}
