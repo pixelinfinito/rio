@@ -1,0 +1,38 @@
+[
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "ruff",
+      "check"
+    ],
+    "cwd": "/tmp/rio-pydantic-ai-ram/oracle",
+    "exit_code": 1,
+    "wall_time_s": 0.281,
+    "output": "8641-seed-ruff.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "mypy"
+    ],
+    "cwd": "/tmp/rio-pydantic-ai-ram/oracle",
+    "exit_code": 0,
+    "wall_time_s": 15.025,
+    "output": "8641-seed-mypy-configured.log"
+  },
+  {
+    "argv": [
+      "/tmp/rio-pydantic-ai-ram/oracle/.venv/bin/mypy",
+      "--config-file",
+      "/tmp/rio-pydantic-ai-ram/oracle/pyproject.toml"
+    ],
+    "cwd": "/tmp/rio-pydantic-ai-ram/oracle/pydantic_ai_slim",
+    "exit_code": 2,
+    "wall_time_s": 0.254,
+    "output": "8641-seed-nested-mypy-repro.log"
+  }
+]

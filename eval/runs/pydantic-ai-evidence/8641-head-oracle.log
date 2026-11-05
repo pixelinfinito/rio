@@ -1,0 +1,2 @@
+/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-evidence/output_spec_oracle.py:10: error: Returning Any from function declared to return "T"  [no-any-return]
+Found 1 error in 1 file (checked 1 source file)

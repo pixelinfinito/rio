@@ -1,0 +1,75 @@
+[
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "mypy"
+    ],
+    "cwd": "/tmp/rio-pydantic-ai-ram/mitmproxy",
+    "exit_code": 0,
+    "wall_time_s": 18.951,
+    "output": "mitmproxy-8473-base-mypy.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "ruff",
+      "check"
+    ],
+    "cwd": "/tmp/rio-pydantic-ai-ram/mitmproxy",
+    "exit_code": 0,
+    "wall_time_s": 0.12,
+    "output": "mitmproxy-8473-base-ruff.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "coverage",
+      "run",
+      "--source=mitmproxy",
+      "-m",
+      "pytest",
+      "-q",
+      "test/mitmproxy/test_certs.py"
+    ],
+    "cwd": "/tmp/rio-pydantic-ai-ram/mitmproxy",
+    "exit_code": 0,
+    "wall_time_s": 5.866,
+    "output": "mitmproxy-8473-base-pytest-coverage.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "coverage",
+      "json",
+      "--fail-under=0",
+      "-o",
+      "/tmp/rio-pydantic-ai-ram/evidence/mitmproxy-8473-base-coverage.json"
+    ],
+    "cwd": "/tmp/rio-pydantic-ai-ram/mitmproxy",
+    "exit_code": 0,
+    "wall_time_s": 3.809,
+    "output": "mitmproxy-8473-base-coverage-json.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "python",
+      "-c",
+      "import importlib.metadata as m,sys; print(sys.version); print({n:m.version(n) for n in [\"mypy\",\"ruff\",\"coverage\",\"pytest\"]})"
+    ],
+    "cwd": "/tmp/rio-pydantic-ai-ram/mitmproxy",
+    "exit_code": 0,
+    "wall_time_s": 0.187,
+    "output": "mitmproxy-8473-base-versions.log"
+  }
+]

@@ -1,0 +1,24 @@
+{
+  "registered_utc": "2026-11-05T02:48:21.480400+00:00",
+  "repository": "pydantic/pydantic-ai",
+  "parent_pr": "https://github.com/pydantic/pydantic-ai/pull/8641",
+  "case_id": "8641-seeded-unused-import",
+  "kind": "seeded-mutation",
+  "base_sha": "8ed5b18b4133d85252de924d1c65a24fb295589c",
+  "head_sha": "c9841c796bb6a8fbfd5492bdcc532f2410518e2c",
+  "seed": "20261105-unused-itertools-v1",
+  "patch": "8641-seed.patch",
+  "patch_sha256": "f807200ad614afd9498c760192d48694f2b7e42170508c733ec072bce846339b",
+  "profile_sha256": "5cf706f6a702198395e3d4f0d188fa339102c201e509f8d1dda2be9e7373299a",
+  "expected": [
+    {
+      "id": "unused-itertools-import",
+      "mechanism": "lint-rule",
+      "evidence": "uv run --no-sync ruff check: full repository base exit 0, seeded head exit 1 with F401 for pydantic_ai_slim/pydantic_ai/output.py:4. Logs: 8641-base-ruff.log and 8641-seed-ruff.log.",
+      "finding_ids": []
+    }
+  ],
+  "reviewer": "sub-agent eval-pydantic-ai (automated)",
+  "verdict_source": "automated",
+  "scope": "Baseline typecheck, repository Ruff and secrets. Coverage and audit disabled."
+}

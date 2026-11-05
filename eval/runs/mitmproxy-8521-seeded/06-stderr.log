@@ -1,0 +1,11 @@
+Warning: you are leaving 1 commit behind, not connected to
+any of your branches:
+
+  986ba5563 Seed unused itertools import for deterministic Ruff evaluation
+
+If you want to keep it by creating a new branch, this may be a good time
+to do so with:
+
+ git branch <new-branch-name> 986ba5563
+
+HEAD is now at 6debf65b6 Refresh expiration dates for empty-valued cookies during replay (#8520)

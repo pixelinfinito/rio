@@ -1,0 +1,116 @@
+[
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "mypy"
+    ],
+    "cwd": "/tmp/rio-pydantic-ai-ram/negative-oracle",
+    "exit_code": 0,
+    "wall_time_s": 60.496,
+    "output": "12540-head-mypy-configured.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "ruff",
+      "check"
+    ],
+    "cwd": "/tmp/rio-pydantic-ai-ram/negative-oracle",
+    "exit_code": 0,
+    "wall_time_s": 0.186,
+    "output": "12540-head-ruff.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "pyright",
+      "pydantic_ai_slim/pydantic_ai/_utils.py",
+      "pydantic_graph/pydantic_graph/_utils.py",
+      "pydantic_evals/pydantic_evals/_utils.py"
+    ],
+    "cwd": "/tmp/rio-pydantic-ai-ram/negative-oracle",
+    "exit_code": 0,
+    "wall_time_s": 12.007,
+    "output": "12540-head-pyright-utils.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "coverage",
+      "erase"
+    ],
+    "cwd": "/tmp/rio-pydantic-ai-ram/negative-oracle",
+    "exit_code": 0,
+    "wall_time_s": 0.203,
+    "output": "12540-head-coverage-erase.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "coverage",
+      "run",
+      "-m",
+      "pytest",
+      "-q",
+      "tests/test_utils.py",
+      "tests/evals/test_utils.py"
+    ],
+    "cwd": "/tmp/rio-pydantic-ai-ram/negative-oracle",
+    "exit_code": 0,
+    "wall_time_s": 34.006,
+    "output": "12540-head-pytest-coverage.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "coverage",
+      "combine"
+    ],
+    "cwd": "/tmp/rio-pydantic-ai-ram/negative-oracle",
+    "exit_code": 0,
+    "wall_time_s": 0.305,
+    "output": "12540-head-coverage-combine.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "coverage",
+      "json",
+      "--fail-under=0",
+      "-o",
+      "/tmp/rio-pydantic-ai-ram/evidence/12540-head-coverage.json"
+    ],
+    "cwd": "/tmp/rio-pydantic-ai-ram/negative-oracle",
+    "exit_code": 0,
+    "wall_time_s": 13.638,
+    "output": "12540-head-coverage-json.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "python",
+      "-c",
+      "import importlib.metadata as m,sys; print(sys.version); print({n:m.version(n) for n in [\"mypy\",\"pyright\",\"ruff\",\"coverage\",\"pytest\"]})"
+    ],
+    "cwd": "/tmp/rio-pydantic-ai-ram/negative-oracle",
+    "exit_code": 0,
+    "wall_time_s": 0.237,
+    "output": "12540-head-versions.log"
+  }
+]

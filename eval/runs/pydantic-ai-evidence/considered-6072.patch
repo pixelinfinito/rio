@@ -1,0 +1,1074 @@
+diff --git a/docs/agent.md b/docs/agent.md
+index 3ed31ce91db..e012e7533cd 100644
+--- a/docs/agent.md
++++ b/docs/agent.md
+@@ -1093,7 +1093,7 @@ Validation errors from both function tool parameter validation and [structured o
+ 
+ You can also raise [`ModelRetry`][pydantic_ai.exceptions.ModelRetry] from within a [tool](tools.md) or [output function](output.md#output-functions) to tell the model it should retry generating a response.
+ 
+-- The default retry count is **1** but can be altered for the [entire agent][pydantic_ai.agent.Agent.__init__] with `retries` or [`AgentRetries`][pydantic_ai.agent.AgentRetries], a [specific tool][pydantic_ai.agent.Agent.tool], or [outputs][pydantic_ai.agent.Agent.__init__]. The output side of the agent retry budget can also be overridden per run via `agent.run(retries={'output': ...})` and friends.
++- The default retry count is **1** but can be altered for the [entire agent][pydantic_ai.agent.Agent.__init__] with `retries` or [`AgentRetries`][pydantic_ai.agent.AgentRetries], a [specific tool][pydantic_ai.agent.Agent.tool], or [outputs][pydantic_ai.agent.Agent.__init__]. Both the tool and output sides of the agent retry budget can also be overridden per run via `agent.run(retries={'tools': ..., 'output': ...})` and friends (or for a block of runs via [`agent.override()`][pydantic_ai.agent.Agent.override]). At these call sites a bare `int` overrides both budgets, just like at construction — pass a dict such as `retries={'tools': ...}` to override just one. The tool-retry default and its per-run override apply to function tools and output tools; MCP tools used through a durable-exec wrapper ([`TemporalAgent`][pydantic_ai.durable_exec.temporal.TemporalAgent] / [`DBOSAgent`][pydantic_ai.durable_exec.dbos.DBOSAgent]) do not yet honor them and fall back to their toolset-level `max_retries` (default `1`); see [pydantic-ai#5180](https://github.com/pydantic/pydantic-ai/issues/5180).
+ - You can access the current retry count from within a tool, output validator, or output function via [`ctx.retry`][pydantic_ai.tools.RunContext.retry].
+ 
+ ### How output retries are enforced
+diff --git a/docs/tools-advanced.md b/docs/tools-advanced.md
+index 74315ba32b4..1f2a0226307 100644
+--- a/docs/tools-advanced.md
++++ b/docs/tools-advanced.md
+@@ -485,9 +485,28 @@ def my_flaky_tool(query: str) -> str:
+     return 'Success!'
+ ```
+ 
+-Raising `ModelRetry` also generates a `RetryPromptPart` containing the exception message, which is sent back to the LLM to guide its next attempt. Both `ValidationError` and `ModelRetry` respect the configured retry limit — set per-tool via [`Tool(max_retries=N)`][pydantic_ai.tools.Tool] (or `@agent.tool(retries=N)`), per-toolset via [`FunctionToolset(max_retries=N)`][pydantic_ai.toolsets.FunctionToolset], or agent-wide via [`Agent(retries={'tools': N})`][pydantic_ai.agent.Agent.__init__], applied in that order of precedence.
++Raising `ModelRetry` also generates a `RetryPromptPart` containing the exception message, which is sent back to the LLM to guide its next attempt. Both `ValidationError` and `ModelRetry` respect the configured retry limit — set per-tool via [`Tool(max_retries=N)`][pydantic_ai.tools.Tool] (or `@agent.tool(retries=N)`), per-toolset via [`FunctionToolset(max_retries=N)`][pydantic_ai.toolsets.FunctionToolset], or agent-wide via [`Agent(retries={'tools': N})`][pydantic_ai.agent.Agent.__init__], applied in that order of precedence. The agent-wide default can also be overridden per run via [`agent.run(retries={'tools': N})`][pydantic_ai.agent.Agent.run] (and `run_sync`/`run_stream`/`iter`, or for a block of runs via [`agent.override()`][pydantic_ai.agent.Agent.override]); a per-run value replaces the agent-wide default at the bottom of the precedence chain, so explicit per-tool and per-toolset limits still win. A bare `int` at these run-time call sites overrides both budgets (matching construction) — pass a dict such as `retries={'tools': N}` or `retries={'output': N}` to change just one.
+ 
+-Tool retries are tracked **per tool**: every function tool has its own counter, with no global 'tool call' budget shared across the run. When a tool raises `ModelRetry` or its arguments fail validation, only that tool's counter advances. Inside a tool function, [`ctx.max_retries`][pydantic_ai.tools.RunContext.max_retries] reflects that tool's enforcement limit and [`ctx.retry`][pydantic_ai.tools.RunContext.retry] is that tool's own counter. When a tool exhausts its counter, the run raises [`UnexpectedModelBehavior`][pydantic_ai.exceptions.UnexpectedModelBehavior] with message `'Tool {name!r} exceeded max retries count of {N}. Consider raising the retry limit, or see the docs on tool retries: https://ai.pydantic.dev/tools-advanced/#tool-retries'`. User-provided toolsets inherit `Agent(retries={'tools': ...})` as their default when no per-toolset value is set.
++Tool retries are tracked **per tool**: every function tool has its own counter, with no global 'tool call' budget shared across the run. When a tool raises `ModelRetry` or its arguments fail validation, only that tool's counter advances. Inside a tool function, [`ctx.max_retries`][pydantic_ai.tools.RunContext.max_retries] reflects that tool's enforcement limit and [`ctx.retry`][pydantic_ai.tools.RunContext.retry] is that tool's own counter. When a tool exhausts its counter, the run raises [`UnexpectedModelBehavior`][pydantic_ai.exceptions.UnexpectedModelBehavior] with message `'Tool {name!r} exceeded max retries count of {N}. Consider raising the retry limit, or see the docs on tool retries: https://ai.pydantic.dev/tools-advanced/#tool-retries'`. User-provided toolsets inherit the agent-wide tool-retry default — or its per-run override — as their default when no per-toolset value is set.
++
++!!! note
++    The agent-wide default and its per-run override apply to function tools and output tools. MCP tools registered through a durable-exec wrapper ([`TemporalAgent`][pydantic_ai.durable_exec.temporal.TemporalAgent] / [`DBOSAgent`][pydantic_ai.durable_exec.dbos.DBOSAgent]) do not yet honor them and fall back to their toolset-level `max_retries` (default `1`); see [pydantic-ai#5180](https://github.com/pydantic/pydantic-ai/issues/5180).
++
++### Which retry limit wins
++
++Two independent budgets — the **tool** budget (per function/output tool) and the **output** budget (output validation) — each resolve through the same layered precedence. The first layer that sets a value wins; unset layers fall through to the next:
++
++| Precedence (highest first) | How to set it | Budget it sets |
++|----------------------------|---------------|----------------|
++| 1. Per-tool limit | `@agent.tool(retries=N)` / [`Tool(max_retries=N)`][pydantic_ai.tools.Tool]; [`ToolOutput(max_retries=N)`][pydantic_ai.output.ToolOutput.max_retries] for an output tool | that one tool |
++| 2. Per-toolset limit | [`FunctionToolset(max_retries=N)`][pydantic_ai.toolsets.FunctionToolset] | tools in that toolset |
++| 3. Override block | [`agent.override(retries=...)`][pydantic_ai.agent.Agent.override] | tool and/or output |
++| 4. Per-run argument | [`agent.run(retries=...)`][pydantic_ai.agent.Agent.run] (and `run_sync`/`run_stream`/`iter`) | tool and/or output |
++| 5. Per-run spec | `agent.run(spec={'retries': ...})` | tool and/or output |
++| 6. Agent-wide default | [`Agent(retries=...)`][pydantic_ai.agent.Agent.__init__] | tool and/or output |
++| 7. Built-in default | — | `1` |
++
++At layers 3–6, a bare `int` sets **both** budgets to that value, while an [`AgentRetries`][pydantic_ai.agent.AgentRetries] dict sets only the keys it names (`{'tools': N}`, `{'output': N}`, or both). Layers 3–5 override the agent-wide default (layer 6) but never a more specific per-tool (layer 1) or per-toolset (layer 2) limit.
+ 
+ ### Tool Timeout
+ 
+diff --git a/pydantic_ai_slim/pydantic_ai/.agents/skills/building-pydantic-ai-agents/references/TOOLS-ADVANCED.md b/pydantic_ai_slim/pydantic_ai/.agents/skills/building-pydantic-ai-agents/references/TOOLS-ADVANCED.md
+index a4288805c9d..cce2983c70b 100644
+--- a/pydantic_ai_slim/pydantic_ai/.agents/skills/building-pydantic-ai-agents/references/TOOLS-ADVANCED.md
++++ b/pydantic_ai_slim/pydantic_ai/.agents/skills/building-pydantic-ai-agents/references/TOOLS-ADVANCED.md
+@@ -61,6 +61,8 @@ def get_user_by_name(ctx: RunContext[dict[str, int]], name: str) -> int:
+ 
+ Use retries for recoverable model mistakes, not application crashes.
+ 
++Set the agent-wide tool-retry default with `Agent(retries={'tools': N})`, and override it for a single run (or `iter`) with `agent.run(retries={'tools': N})` — explicit per-tool `retries=` and per-toolset `FunctionToolset(max_retries=N)` still win. A bare `int` at run time overrides both budgets (matching construction), so pass a dict like `{'tools': N}` or `{'output': N}` to change just one.
++
+ ## Validate or Require Approval Before Tool Execution
+ 
+ Use `args_validator=` when arguments are structurally valid but still need business-rule validation before execution or approval.
+diff --git a/pydantic_ai_slim/pydantic_ai/agent/__init__.py b/pydantic_ai_slim/pydantic_ai/agent/__init__.py
+index 8ec066b1665..0faa826237f 100644
+--- a/pydantic_ai_slim/pydantic_ai/agent/__init__.py
++++ b/pydantic_ai_slim/pydantic_ai/agent/__init__.py
+@@ -162,21 +162,15 @@ def _normalize_agent_retries(retries: AgentRetries, *, default: int = 1) -> _Res
+     return _ResolvedAgentRetries(tools=retries.get('tools', default), output=retries.get('output', default))
+ 
+ 
+-def _normalize_agent_retry_overrides(
+-    retries: int | AgentRetries | None,
+-    *,
+-    int_means: Literal['both', 'output'] = 'both',
+-) -> AgentRetries:
++def _normalize_agent_retry_overrides(retries: int | AgentRetries | None) -> AgentRetries:
+     """Normalize retry input without filling missing keys.
+ 
+-    This is used while merging layered configuration. At run/override time, `int_means='output'`
+-    treats `retries=N` as an output-budget override only.
++    Used while merging layered configuration. A bare `int` sets both the `tools` and `output`
++    budgets — the same shorthand at every call site (construction, run, override, spec).
+     """
+     if retries is None:
+         return {}
+     if isinstance(retries, int):
+-        if int_means == 'output':
+-            return {'output': retries}
+         return {'tools': retries, 'output': retries}
+     return retries.copy()
+ 
+@@ -197,6 +191,7 @@ class _ResolvedSpec:
+     metadata: dict[str, Any] | None
+     name: str | None
+     output_retries: int | None
++    tool_retries: int | None
+ 
+ 
+ @dataclasses.dataclass(init=False)
+@@ -391,7 +386,8 @@ def __init__(
+                 On the text path, `output` is a global budget shared across all output-validation retries
+                 in a run; on the tool path it is the default per-tool `max_retries` for each output tool,
+                 overridable via [`ToolOutput(max_retries=...)`][pydantic_ai.output.ToolOutput.max_retries].
+-                The `output` budget can be overridden per run via `agent.run(retries=...)` (and friends).
++                Both budgets can be overridden per run via `agent.run(retries=...)` (and friends), passing
++                an `AgentRetries` dict (e.g. `retries={'tools': 3}`) for per-category control.
+                 For model request retries, see the [HTTP Request Retries](../models/http-request-retries.md) documentation.
+             validation_context: Pydantic [validation context](https://docs.pydantic.dev/latest/concepts/validators/#validation-context) used to validate tool arguments and outputs.
+             tools: Tools to register with the agent, you can also register tools via the decorators
+@@ -476,9 +472,13 @@ def __init__(
+         if self._output_toolset and self._output_toolset.max_retries is None:
+             self._output_toolset.max_retries = self._max_output_retries
+ 
++        # Leave `max_retries=None` so the agent-level tool-retry default resolves per-run via
++        # `ToolManager.default_max_retries` -> `RunContext.max_retries` (overridable at `run`/`iter`/`override`)
++        # rather than baked onto each tool; explicit per-tool/per-toolset budgets still win through the
++        # `tool.max_retries -> toolset.max_retries -> ctx.max_retries` fallback chain.
+         self._function_toolset = _AgentFunctionToolset(
+             tools,
+-            max_retries=self._max_tool_retries,
++            max_retries=None,
+             timeout=self._tool_timeout,
+             output_schema=self._output_schema,
+         )
+@@ -523,6 +523,7 @@ def __init__(
+         self._override_output_retries: ContextVar[_utils.Option[int]] = ContextVar(
+             '_override_output_retries', default=None
+         )
++        self._override_tool_retries: ContextVar[_utils.Option[int]] = ContextVar('_override_tool_retries', default=None)
+         self._override_root_capability: ContextVar[_utils.Option[CombinedCapability[AgentDepsT]]] = ContextVar(
+             '_override_root_capability', default=None
+         )
+@@ -1080,10 +1081,9 @@ async def main():
+             usage: Optional usage to start with, useful for resuming a conversation or agents used in tools.
+             metadata: Optional metadata to attach to this run. Accepts a dictionary or a callable taking
+                 [`RunContext`][pydantic_ai.tools.RunContext]; merged with the agent's configured metadata.
+-            retries: Override the agent-level retry budgets for this run. Pass an `int` to override the
+-                output-validation budget (`AgentRetries(output=...)` equivalent), or an
+-                [`AgentRetries`][pydantic_ai.AgentRetries] dict for finer control. Tool retries cannot
+-                be overridden per run. See
++            retries: Override the agent-level retry budgets for this run. Pass an `int` to override both
++                the tool-retry and output budgets, or an [`AgentRetries`][pydantic_ai.AgentRetries] dict to
++                override just one (e.g. `retries={'tools': 3}`). See
+                 [`Agent.__init__`][pydantic_ai.agent.Agent.__init__] for semantics of the two enforcement paths.
+             infer_name: Whether to try to infer the agent name from the call frame if it's not set.
+             toolsets: Optional additional toolsets for this run.
+@@ -1096,15 +1096,9 @@ async def main():
+         if infer_name and self.name is None:
+             self._infer_name(inspect.currentframe())
+ 
+-        # Tool retries cannot be overridden per run: `int` is treated as the output budget. An explicit
+-        # `retries={'tools': ...}` is rejected so the value isn't silently dropped.
+-        retry_overrides = _normalize_agent_retry_overrides(retries, int_means='output')
+-        if 'tools' in retry_overrides:
+-            raise exceptions.UserError(
+-                'Per-run `retries` cannot set tool retries: tool retries can only be configured at agent '
+-                "construction time. Use `retries={'output': ...}` (or `retries=<int>` to override the output "
+-                'budget) here, and `Agent(retries=...)` for tool retries.'
+-            )
++        # A bare `int` overrides both budgets; a partial `retries={'tools': ...}` / `{'output': ...}`
++        # dict overrides only the named budget for this run (riding `ToolManager.default_max_retries`).
++        retry_overrides = _normalize_agent_retry_overrides(retries)
+ 
+         # Resolve the root capability (override > agent default) up front: it's needed both for the
+         # capability-supplied model fallback below and for run-time capability assembly further down.
+@@ -1115,6 +1109,7 @@ async def main():
+         resolved = self._resolve_spec(spec)
+ 
+         effective_output_retries = retry_overrides.get('output')
++        effective_tool_retries = retry_overrides.get('tools')
+         if resolved is not None:
+             # Model: spec as fallback (run param > spec > agent)
+             if model is None and resolved.model is not None:
+@@ -1122,6 +1117,9 @@ async def main():
+             # Output retries: run param > spec > agent default
+             if effective_output_retries is None and resolved.output_retries is not None:
+                 effective_output_retries = resolved.output_retries
++            # Tool retries: run param > spec > agent default
++            if effective_tool_retries is None and resolved.tool_retries is not None:
++                effective_tool_retries = resolved.tool_retries
+             # Instructions: spec instructions are additional
+             if resolved.instructions:
+                 extra = resolved.instructions
+@@ -1159,6 +1157,14 @@ def _merged_meta(ctx: RunContext[AgentDepsT]) -> dict[str, Any]:
+         override_output_retries = self._override_output_retries.get()
+         if override_output_retries is not None:
+             effective_output_retries = override_output_retries.value
++        override_tool_retries = self._override_tool_retries.get()
++        if override_tool_retries is not None:
++            effective_tool_retries = override_tool_retries.value
++
++        # Resolve the effective tool-retry default: override > run arg > spec > agent init default.
++        effective_tool_retries_resolved = (
++            effective_tool_retries if effective_tool_retries is not None else self._max_tool_retries
++        )
+ 
+         deps = self._get_deps(deps)
+         usage = usage or _usage.RunUsage()
+@@ -1477,7 +1483,7 @@ def get_model_settings(run_context: RunContext[AgentDepsT]) -> ModelSettings | N
+         )
+         toolset = await toolset.for_run(initial_ctx)
+         tool_manager = ToolManager[AgentDepsT](
+-            toolset, root_capability=run_capability, default_max_retries=self._max_tool_retries
++            toolset, root_capability=run_capability, default_max_retries=effective_tool_retries_resolved
+         )
+ 
+         # Build instructions with per-run capability contributions
+@@ -1839,12 +1845,6 @@ def _resolve_spec(
+         combined = CombinedCapability(capabilities) if capabilities else None
+ 
+         retry_overrides = _retry_overrides_from_spec(validated_spec)
+-        if 'tools' in retry_overrides:
+-            warnings.warn(
+-                "AgentSpec retry field 'tools' is not supported at run/override time and will be ignored",
+-                UserWarning,
+-                stacklevel=3,
+-            )
+ 
+         # Warn for unsupported fields with non-default values. Read via `__dict__` to avoid
+         # triggering pydantic deprecation warnings on deprecated spec fields.
+@@ -1869,6 +1869,7 @@ def _resolve_spec(
+             metadata=validated_spec.metadata,
+             name=validated_spec.name,
+             output_retries=retry_overrides.get('output'),
++            tool_retries=retry_overrides.get('tools'),
+         )
+ 
+     @contextmanager
+@@ -1907,27 +1908,26 @@ def override(  # noqa: C901
+             model_settings: The model settings to use instead of the model settings passed to the agent constructor.
+                 When set, any per-run `model_settings` argument is ignored.
+             retries: The retry budgets to use instead of the agent-level configuration. Pass an `int` to
+-                override the output-validation budget, or an [`AgentRetries`][pydantic_ai.AgentRetries]
+-                dict for finer control. When set, any per-run `retries` argument is ignored. Tool retries
+-                cannot be overridden via `override()`.
++                override both the tool-retry and output budgets, or an [`AgentRetries`][pydantic_ai.AgentRetries]
++                dict to override just one (e.g. `retries={'tools': 3}`).
++                When set, any per-run `retries` argument is ignored.
+             spec: Optional agent spec providing defaults for override. Explicit params take precedence
+                 over spec values. When the spec includes `capabilities`, they replace (not merge with)
+                 the agent's existing capabilities. To add capabilities without replacing, pass `spec`
+                 to `run()` or `iter()` instead.
+         """
+-        # Tool retries cannot be overridden via `override()`. An int means "override output only".
++        # A bare `int` overrides both budgets; a partial `retries={'tools': ...}` / `{'output': ...}`
++        # dict overrides only the named budget, so an unset budget still falls through to the run
++        # kwarg, spec, or agent default.
+         override_output_retries: int | _utils.Unset
++        override_tool_retries: int | _utils.Unset
+         if _utils.is_set(retries):
+-            retry_overrides = _normalize_agent_retry_overrides(retries, int_means='output')
+-            if 'tools' in retry_overrides:
+-                raise exceptions.UserError(
+-                    '`agent.override(retries=...)` cannot set tool retries: tool retries can only be '
+-                    "configured at agent construction time. Use `retries={'output': ...}` (or "
+-                    '`retries=<int>` to override the output budget) here.'
+-                )
++            retry_overrides = _normalize_agent_retry_overrides(retries)
+             override_output_retries = retry_overrides.get('output', _utils.UNSET)
++            override_tool_retries = retry_overrides.get('tools', _utils.UNSET)
+         else:
+             override_output_retries = _utils.UNSET
++            override_tool_retries = _utils.UNSET
+ 
+         resolved = self._resolve_spec(spec)
+ 
+@@ -1957,6 +1957,8 @@ def override(  # noqa: C901
+                 metadata = resolved.metadata
+             if not _utils.is_set(override_output_retries) and resolved.output_retries is not None:
+                 override_output_retries = resolved.output_retries
++            if not _utils.is_set(override_tool_retries) and resolved.tool_retries is not None:
++                override_tool_retries = resolved.tool_retries
+ 
+         if _utils.is_set(name):
+             name_token = self._override_name.set(_utils.Some(name))
+@@ -2013,6 +2015,11 @@ def override(  # noqa: C901
+         else:
+             output_retries_token = None
+ 
++        if _utils.is_set(override_tool_retries):
++            tool_retries_token = self._override_tool_retries.set(_utils.Some(override_tool_retries))
++        else:
++            tool_retries_token = None
++
+         # Set capability from spec, replacing the agent's existing root capability.
+         # Auto-inject infrastructure capabilities since the override replaces
+         # (not merges with) the agent's root capability.
+@@ -2044,6 +2051,8 @@ def override(  # noqa: C901
+                 self._override_model_settings.reset(model_settings_token)
+             if output_retries_token is not None:
+                 self._override_output_retries.reset(output_retries_token)
++            if tool_retries_token is not None:
++                self._override_tool_retries.reset(tool_retries_token)
+             if cap_token is not None:
+                 self._override_root_capability.reset(cap_token)
+ 
+@@ -2871,9 +2880,11 @@ def _build_toolset_list(
+         toolsets: list[AbstractToolset[AgentDepsT]] = []
+ 
+         if some_tools := self._override_tools.get():
++            # `max_retries=None` for the same reason as the agent's own function toolset: the
++            # tool-retry default rides `ToolManager.default_max_retries` rather than being baked here.
+             function_toolset = _AgentFunctionToolset(
+                 some_tools.value,
+-                max_retries=self._max_tool_retries,
++                max_retries=None,
+                 timeout=self._tool_timeout,
+                 output_schema=self._output_schema,
+             )
+diff --git a/pydantic_ai_slim/pydantic_ai/agent/abstract.py b/pydantic_ai_slim/pydantic_ai/agent/abstract.py
+index 43b212ddac4..c40e4da300b 100644
+--- a/pydantic_ai_slim/pydantic_ai/agent/abstract.py
++++ b/pydantic_ai_slim/pydantic_ai/agent/abstract.py
+@@ -96,17 +96,14 @@ class AgentRetries(TypedDict, total=False):
+ 
+     Pass to `Agent(retries=...)` as a dict to set different budgets per category.
+ 
+-    `int` semantics differ by call site:
+-
+-    - At `Agent(retries=N)` construction time, an `int` sets both `tools` and `output`
+-      to `N`.
+-    - At `run()` / `iter()` / `override()` time, an `int` overrides only the `output`
+-      budget. Tool retries cannot be overridden per run or via `override()` — passing
+-      `retries={'tools': ...}` at those call sites raises a `UserError`, since the tool
+-      manager is built once at agent construction.
++    A bare `int` is shorthand for setting both `tools` and `output` to that value — the same at
++    every call site (`Agent(retries=N)`, `run()`, `iter()`, `override()`, and a run-time `spec`).
++    To set only one budget, pass a dict, e.g. `retries={'tools': ...}` or `retries={'output': ...}`.
+ 
+     Keys:
+-        tools: Default number of retries for tool calls before raising an error.
++        tools: Default number of retries for tool calls before raising an error. Applies to function
++            tools and output tools; MCP tools registered through a durable-exec wrapper do not yet
++            honor it (see [#5180](https://github.com/pydantic/pydantic-ai/issues/5180)).
+         output: Maximum number of retries for output validation. On the text path
+             this is a global per-run budget; on the tool path it is the default
+             per-tool `max_retries` for each output tool, overridable via
+@@ -466,10 +463,9 @@ async def main():
+             usage: Optional usage to start with, useful for resuming a conversation or agents used in tools.
+             metadata: Optional metadata to attach to this run. Accepts a dictionary or a callable taking
+                 [`RunContext`][pydantic_ai.tools.RunContext]; merged with the agent's configured metadata.
+-            retries: Override the agent-level retry budgets for this run. Pass an `int` to override the
+-                output-validation budget (`AgentRetries(output=...)` equivalent), or an
+-                [`AgentRetries`][pydantic_ai.AgentRetries] dict for finer control. Tool retries cannot
+-                be overridden per run. See
++            retries: Override the agent-level retry budgets for this run. Pass an `int` to override both
++                the tool-retry and output budgets, or an [`AgentRetries`][pydantic_ai.AgentRetries] dict to
++                override just one (e.g. `retries={'tools': 3}`). See
+                 [`Agent.__init__`][pydantic_ai.agent.Agent.__init__] for semantics of the two enforcement paths.
+             infer_name: Whether to try to infer the agent name from the call frame if it's not set.
+             toolsets: Optional additional toolsets for this run.
+@@ -655,10 +651,9 @@ def run_sync(
+             usage: Optional usage to start with, useful for resuming a conversation or agents used in tools.
+             metadata: Optional metadata to attach to this run. Accepts a dictionary or a callable taking
+                 [`RunContext`][pydantic_ai.tools.RunContext]; merged with the agent's configured metadata.
+-            retries: Override the agent-level retry budgets for this run. Pass an `int` to override the
+-                output-validation budget (`AgentRetries(output=...)` equivalent), or an
+-                [`AgentRetries`][pydantic_ai.AgentRetries] dict for finer control. Tool retries cannot
+-                be overridden per run. See
++            retries: Override the agent-level retry budgets for this run. Pass an `int` to override both
++                the tool-retry and output budgets, or an [`AgentRetries`][pydantic_ai.AgentRetries] dict to
++                override just one (e.g. `retries={'tools': 3}`). See
+                 [`Agent.__init__`][pydantic_ai.agent.Agent.__init__] for semantics of the two enforcement paths.
+             infer_name: Whether to try to infer the agent name from the call frame if it's not set.
+             toolsets: Optional additional toolsets for this run.
+@@ -807,10 +802,9 @@ async def main():
+             usage: Optional usage to start with, useful for resuming a conversation or agents used in tools.
+             metadata: Optional metadata to attach to this run. Accepts a dictionary or a callable taking
+                 [`RunContext`][pydantic_ai.tools.RunContext]; merged with the agent's configured metadata.
+-            retries: Override the agent-level retry budgets for this run. Pass an `int` to override the
+-                output-validation budget (`AgentRetries(output=...)` equivalent), or an
+-                [`AgentRetries`][pydantic_ai.AgentRetries] dict for finer control. Tool retries cannot
+-                be overridden per run. See
++            retries: Override the agent-level retry budgets for this run. Pass an `int` to override both
++                the tool-retry and output budgets, or an [`AgentRetries`][pydantic_ai.AgentRetries] dict to
++                override just one (e.g. `retries={'tools': 3}`). See
+                 [`Agent.__init__`][pydantic_ai.agent.Agent.__init__] for semantics of the two enforcement paths.
+             infer_name: Whether to try to infer the agent name from the call frame if it's not set.
+             toolsets: Optional additional toolsets for this run.
+@@ -1109,10 +1103,9 @@ def main():
+             usage: Optional usage to start with, useful for resuming a conversation or agents used in tools.
+             metadata: Optional metadata to attach to this run. Accepts a dictionary or a callable taking
+                 [`RunContext`][pydantic_ai.tools.RunContext]; merged with the agent's configured metadata.
+-            retries: Override the agent-level retry budgets for this run. Pass an `int` to override the
+-                output-validation budget (`AgentRetries(output=...)` equivalent), or an
+-                [`AgentRetries`][pydantic_ai.AgentRetries] dict for finer control. Tool retries cannot
+-                be overridden per run. See
++            retries: Override the agent-level retry budgets for this run. Pass an `int` to override both
++                the tool-retry and output budgets, or an [`AgentRetries`][pydantic_ai.AgentRetries] dict to
++                override just one (e.g. `retries={'tools': 3}`). See
+                 [`Agent.__init__`][pydantic_ai.agent.Agent.__init__] for semantics of the two enforcement paths.
+             infer_name: Whether to try to infer the agent name from the call frame if it's not set.
+             toolsets: Optional additional toolsets for this run.
+@@ -1277,10 +1270,9 @@ async def main():
+             usage: Optional usage to start with, useful for resuming a conversation or agents used in tools.
+             metadata: Optional metadata to attach to this run. Accepts a dictionary or a callable taking
+                 [`RunContext`][pydantic_ai.tools.RunContext]; merged with the agent's configured metadata.
+-            retries: Override the agent-level retry budgets for this run. Pass an `int` to override the
+-                output-validation budget (`AgentRetries(output=...)` equivalent), or an
+-                [`AgentRetries`][pydantic_ai.AgentRetries] dict for finer control. Tool retries cannot
+-                be overridden per run. See
++            retries: Override the agent-level retry budgets for this run. Pass an `int` to override both
++                the tool-retry and output budgets, or an [`AgentRetries`][pydantic_ai.AgentRetries] dict to
++                override just one (e.g. `retries={'tools': 3}`). See
+                 [`Agent.__init__`][pydantic_ai.agent.Agent.__init__] for semantics of the two enforcement paths.
+             infer_name: Whether to try to infer the agent name from the call frame if it's not set.
+             toolsets: Optional additional toolsets for this run.
+@@ -1467,10 +1459,9 @@ async def main():
+             usage: Optional usage to start with, useful for resuming a conversation or agents used in tools.
+             metadata: Optional metadata to attach to this run. Accepts a dictionary or a callable taking
+                 [`RunContext`][pydantic_ai.tools.RunContext]; merged with the agent's configured metadata.
+-            retries: Override the agent-level retry budgets for this run. Pass an `int` to override the
+-                output-validation budget (`AgentRetries(output=...)` equivalent), or an
+-                [`AgentRetries`][pydantic_ai.AgentRetries] dict for finer control. Tool retries cannot
+-                be overridden per run. See
++            retries: Override the agent-level retry budgets for this run. Pass an `int` to override both
++                the tool-retry and output budgets, or an [`AgentRetries`][pydantic_ai.AgentRetries] dict to
++                override just one (e.g. `retries={'tools': 3}`). See
+                 [`Agent.__init__`][pydantic_ai.agent.Agent.__init__] for semantics of the two enforcement paths.
+             infer_name: Whether to try to infer the agent name from the call frame if it's not set.
+             toolsets: Optional additional toolsets for this run.
+@@ -1515,9 +1506,9 @@ def override(
+             model_settings: The model settings to use instead of the model settings passed to the agent constructor.
+                 When set, any per-run `model_settings` argument is ignored.
+             retries: The retry budgets to use instead of the agent-level configuration. Pass an `int` to
+-                override the output-validation budget, or an [`AgentRetries`][pydantic_ai.AgentRetries]
+-                dict for finer control. When set, any per-run `retries` argument is ignored. Tool retries
+-                cannot be overridden via `override()`.
++                override both the tool-retry and output budgets, or an [`AgentRetries`][pydantic_ai.AgentRetries]
++                dict to override just one (e.g. `retries={'tools': 3}`).
++                When set, any per-run `retries` argument is ignored.
+             spec: Optional agent spec providing defaults for override.
+         """
+         raise NotImplementedError
+diff --git a/pydantic_ai_slim/pydantic_ai/agent/wrapper.py b/pydantic_ai_slim/pydantic_ai/agent/wrapper.py
+index b982d515386..270e08c843d 100644
+--- a/pydantic_ai_slim/pydantic_ai/agent/wrapper.py
++++ b/pydantic_ai_slim/pydantic_ai/agent/wrapper.py
+@@ -254,10 +254,9 @@ async def main():
+             usage_limits: Optional limits on model request count or token usage.
+             usage: Optional usage to start with, useful for resuming a conversation or agents used in tools.
+             metadata: Optional metadata to attach to this run.
+-            retries: Override the agent-level retry budgets for this run. Pass an `int` to override the
+-                output-validation budget (`AgentRetries(output=...)` equivalent), or an
+-                [`AgentRetries`][pydantic_ai.AgentRetries] dict for finer control. Tool retries cannot
+-                be overridden per run. See
++            retries: Override the agent-level retry budgets for this run. Pass an `int` to override both the
++                tool-retry and output budgets, or an [`AgentRetries`][pydantic_ai.AgentRetries] dict to override
++                just one (e.g. `retries={'tools': 3}`). See
+                 [`Agent.__init__`][pydantic_ai.agent.Agent.__init__] for semantics of the two enforcement paths.
+             infer_name: Whether to try to infer the agent name from the call frame if it's not set.
+             toolsets: Optional additional toolsets for this run.
+@@ -319,8 +318,8 @@ def override(
+             model_settings: The model settings to use instead of the model settings passed to the agent constructor.
+                 When set, any per-run `model_settings` argument is ignored.
+             retries: The retry budgets to use instead of the agent-level configuration. Pass an `int` to
+-                override the output-validation budget, or an [`AgentRetries`][pydantic_ai.AgentRetries]
+-                dict for finer control. When set, any per-run `retries` argument is ignored.
++                override both the tool-retry and output budgets, or an [`AgentRetries`][pydantic_ai.AgentRetries]
++                dict to override just one (e.g. `retries={'tools': 3}`). When set, any per-run `retries` argument is ignored.
+             spec: Optional agent spec to apply as overrides.
+         """
+         forward_kwargs: dict[str, Any] = {}
+diff --git a/pydantic_ai_slim/pydantic_ai/durable_exec/dbos/_agent.py b/pydantic_ai_slim/pydantic_ai/durable_exec/dbos/_agent.py
+index 58ef3a7f900..cb0c5925e19 100644
+--- a/pydantic_ai_slim/pydantic_ai/durable_exec/dbos/_agent.py
++++ b/pydantic_ai_slim/pydantic_ai/durable_exec/dbos/_agent.py
+@@ -432,9 +432,9 @@ async def main():
+             usage: Optional usage to start with, useful for resuming a conversation or agents used in tools.
+             metadata: Optional metadata to attach to this run. Accepts a dictionary or a callable taking
+                 [`RunContext`][pydantic_ai.tools.RunContext]; merged with the agent's configured metadata.
+-            retries: Override the agent-level retry budgets for this run. Pass an `int` to override the
+-                output-validation budget, or an [`AgentRetries`][pydantic_ai.AgentRetries] dict for finer
+-                control. Tool retries cannot be overridden per run. See
++            retries: Override the agent-level retry budgets for this run. Pass an `int` to override both the
++                tool-retry and output budgets, or an [`AgentRetries`][pydantic_ai.AgentRetries] dict to override
++                just one (e.g. `retries={'tools': 3}`). See
+                 [`Agent.__init__`][pydantic_ai.agent.Agent.__init__] for semantics of the two enforcement paths.
+             infer_name: Whether to try to infer the agent name from the call frame if it's not set.
+             toolsets: Optional additional toolsets for this run.
+@@ -572,9 +572,9 @@ def run_sync(
+             usage: Optional usage to start with, useful for resuming a conversation or agents used in tools.
+             metadata: Optional metadata to attach to this run. Accepts a dictionary or a callable taking
+                 [`RunContext`][pydantic_ai.tools.RunContext]; merged with the agent's configured metadata.
+-            retries: Override the agent-level retry budgets for this run. Pass an `int` to override the
+-                output-validation budget, or an [`AgentRetries`][pydantic_ai.AgentRetries] dict for finer
+-                control. Tool retries cannot be overridden per run. See
++            retries: Override the agent-level retry budgets for this run. Pass an `int` to override both the
++                tool-retry and output budgets, or an [`AgentRetries`][pydantic_ai.AgentRetries] dict to override
++                just one (e.g. `retries={'tools': 3}`). See
+                 [`Agent.__init__`][pydantic_ai.agent.Agent.__init__] for semantics of the two enforcement paths.
+             infer_name: Whether to try to infer the agent name from the call frame if it's not set.
+             toolsets: Optional additional toolsets for this run.
+@@ -711,9 +711,9 @@ async def main():
+             usage: Optional usage to start with, useful for resuming a conversation or agents used in tools.
+             metadata: Optional metadata to attach to this run. Accepts a dictionary or a callable taking
+                 [`RunContext`][pydantic_ai.tools.RunContext]; merged with the agent's configured metadata.
+-            retries: Override the agent-level retry budgets for this run. Pass an `int` to override the
+-                output-validation budget, or an [`AgentRetries`][pydantic_ai.AgentRetries] dict for finer
+-                control. Tool retries cannot be overridden per run. See
++            retries: Override the agent-level retry budgets for this run. Pass an `int` to override both the
++                tool-retry and output budgets, or an [`AgentRetries`][pydantic_ai.AgentRetries] dict to override
++                just one (e.g. `retries={'tools': 3}`). See
+                 [`Agent.__init__`][pydantic_ai.agent.Agent.__init__] for semantics of the two enforcement paths.
+             infer_name: Whether to try to infer the agent name from the call frame if it's not set.
+             toolsets: Optional additional toolsets for this run.
+@@ -871,9 +871,9 @@ async def main():
+             usage: Optional usage to start with, useful for resuming a conversation or agents used in tools.
+             metadata: Optional metadata to attach to this run. Accepts a dictionary or a callable taking
+                 [`RunContext`][pydantic_ai.tools.RunContext]; merged with the agent's configured metadata.
+-            retries: Override the agent-level retry budgets for this run. Pass an `int` to override the
+-                output-validation budget, or an [`AgentRetries`][pydantic_ai.AgentRetries] dict for finer
+-                control. Tool retries cannot be overridden per run. See
++            retries: Override the agent-level retry budgets for this run. Pass an `int` to override both the
++                tool-retry and output budgets, or an [`AgentRetries`][pydantic_ai.AgentRetries] dict to override
++                just one (e.g. `retries={'tools': 3}`). See
+                 [`Agent.__init__`][pydantic_ai.agent.Agent.__init__] for semantics of the two enforcement paths.
+             infer_name: Whether to try to infer the agent name from the call frame if it's not set.
+             toolsets: Optional additional toolsets for this run.
+@@ -1043,9 +1043,9 @@ async def main():
+             usage: Optional usage to start with, useful for resuming a conversation or agents used in tools.
+             metadata: Optional metadata to attach to this run. Accepts a dictionary or a callable taking
+                 [`RunContext`][pydantic_ai.tools.RunContext]; merged with the agent's configured metadata.
+-            retries: Override the agent-level retry budgets for this run. Pass an `int` to override the
+-                output-validation budget, or an [`AgentRetries`][pydantic_ai.AgentRetries] dict for finer
+-                control. Tool retries cannot be overridden per run. See
++            retries: Override the agent-level retry budgets for this run. Pass an `int` to override both the
++                tool-retry and output budgets, or an [`AgentRetries`][pydantic_ai.AgentRetries] dict to override
++                just one (e.g. `retries={'tools': 3}`). See
+                 [`Agent.__init__`][pydantic_ai.agent.Agent.__init__] for semantics of the two enforcement paths.
+             infer_name: Whether to try to infer the agent name from the call frame if it's not set.
+             toolsets: Optional additional toolsets for this run.
+@@ -1114,8 +1114,8 @@ def override(
+             model_settings: The model settings to use instead of the model settings passed to the agent constructor.
+                 When set, any per-run `model_settings` argument is ignored.
+             retries: The retry budgets to use instead of the agent-level configuration. Pass an `int` to
+-                override the output-validation budget, or an [`AgentRetries`][pydantic_ai.AgentRetries]
+-                dict for finer control. When set, any per-run `retries` argument is ignored.
++                override both the tool-retry and output budgets, or an [`AgentRetries`][pydantic_ai.AgentRetries]
++                dict to override just one (e.g. `retries={'tools': 3}`). When set, any per-run `retries` argument is ignored.
+             spec: Optional agent spec to apply as overrides.
+         """
+         if _utils.is_set(model) and not isinstance(model, (DBOSModel)):
+diff --git a/pydantic_ai_slim/pydantic_ai/durable_exec/prefect/_agent.py b/pydantic_ai_slim/pydantic_ai/durable_exec/prefect/_agent.py
+index 16d364cb680..22473e15a00 100644
+--- a/pydantic_ai_slim/pydantic_ai/durable_exec/prefect/_agent.py
++++ b/pydantic_ai_slim/pydantic_ai/durable_exec/prefect/_agent.py
+@@ -309,9 +309,9 @@ async def main():
+             usage: Optional usage to start with, useful for resuming a conversation or agents used in tools.
+             metadata: Optional metadata to attach to this run. Accepts a dictionary or a callable taking
+                 [`RunContext`][pydantic_ai.tools.RunContext]; merged with the agent's configured metadata.
+-            retries: Override the agent-level retry budgets for this run. Pass an `int` to override the
+-                output-validation budget, or an [`AgentRetries`][pydantic_ai.AgentRetries] dict for finer
+-                control. Tool retries cannot be overridden per run. See
++            retries: Override the agent-level retry budgets for this run. Pass an `int` to override both the
++                tool-retry and output budgets, or an [`AgentRetries`][pydantic_ai.AgentRetries] dict to override
++                just one (e.g. `retries={'tools': 3}`). See
+                 [`Agent.__init__`][pydantic_ai.agent.Agent.__init__] for semantics of the two enforcement paths.
+             infer_name: Whether to try to infer the agent name from the call frame if it's not set.
+             toolsets: Optional additional toolsets for this run.
+@@ -459,9 +459,9 @@ def run_sync(
+             usage: Optional usage to start with, useful for resuming a conversation or agents used in tools.
+             metadata: Optional metadata to attach to this run. Accepts a dictionary or a callable taking
+                 [`RunContext`][pydantic_ai.tools.RunContext]; merged with the agent's configured metadata.
+-            retries: Override the agent-level retry budgets for this run. Pass an `int` to override the
+-                output-validation budget, or an [`AgentRetries`][pydantic_ai.AgentRetries] dict for finer
+-                control. Tool retries cannot be overridden per run. See
++            retries: Override the agent-level retry budgets for this run. Pass an `int` to override both the
++                tool-retry and output budgets, or an [`AgentRetries`][pydantic_ai.AgentRetries] dict to override
++                just one (e.g. `retries={'tools': 3}`). See
+                 [`Agent.__init__`][pydantic_ai.agent.Agent.__init__] for semantics of the two enforcement paths.
+             infer_name: Whether to try to infer the agent name from the call frame if it's not set.
+             toolsets: Optional additional toolsets for this run.
+@@ -611,9 +611,9 @@ async def main():
+             usage: Optional usage to start with, useful for resuming a conversation or agents used in tools.
+             metadata: Optional metadata to attach to this run. Accepts a dictionary or a callable taking
+                 [`RunContext`][pydantic_ai.tools.RunContext]; merged with the agent's configured metadata.
+-            retries: Override the agent-level retry budgets for this run. Pass an `int` to override the
+-                output-validation budget, or an [`AgentRetries`][pydantic_ai.AgentRetries] dict for finer
+-                control. Tool retries cannot be overridden per run. See
++            retries: Override the agent-level retry budgets for this run. Pass an `int` to override both the
++                tool-retry and output budgets, or an [`AgentRetries`][pydantic_ai.AgentRetries] dict to override
++                just one (e.g. `retries={'tools': 3}`). See
+                 [`Agent.__init__`][pydantic_ai.agent.Agent.__init__] for semantics of the two enforcement paths.
+             infer_name: Whether to try to infer the agent name from the call frame if it's not set.
+             toolsets: Optional additional toolsets for this run.
+@@ -771,9 +771,9 @@ async def main():
+             usage: Optional usage to start with, useful for resuming a conversation or agents used in tools.
+             metadata: Optional metadata to attach to this run. Accepts a dictionary or a callable taking
+                 [`RunContext`][pydantic_ai.tools.RunContext]; merged with the agent's configured metadata.
+-            retries: Override the agent-level retry budgets for this run. Pass an `int` to override the
+-                output-validation budget, or an [`AgentRetries`][pydantic_ai.AgentRetries] dict for finer
+-                control. Tool retries cannot be overridden per run. See
++            retries: Override the agent-level retry budgets for this run. Pass an `int` to override both the
++                tool-retry and output budgets, or an [`AgentRetries`][pydantic_ai.AgentRetries] dict to override
++                just one (e.g. `retries={'tools': 3}`). See
+                 [`Agent.__init__`][pydantic_ai.agent.Agent.__init__] for semantics of the two enforcement paths.
+             infer_name: Whether to try to infer the agent name from the call frame if it's not set.
+             toolsets: Optional additional toolsets for this run.
+@@ -966,9 +966,9 @@ async def main():
+             usage: Optional usage to start with, useful for resuming a conversation or agents used in tools.
+             metadata: Optional metadata to attach to this run. Accepts a dictionary or a callable taking
+                 [`RunContext`][pydantic_ai.tools.RunContext]; merged with the agent's configured metadata.
+-            retries: Override the agent-level retry budgets for this run. Pass an `int` to override the
+-                output-validation budget, or an [`AgentRetries`][pydantic_ai.AgentRetries] dict for finer
+-                control. Tool retries cannot be overridden per run. See
++            retries: Override the agent-level retry budgets for this run. Pass an `int` to override both the
++                tool-retry and output budgets, or an [`AgentRetries`][pydantic_ai.AgentRetries] dict to override
++                just one (e.g. `retries={'tools': 3}`). See
+                 [`Agent.__init__`][pydantic_ai.agent.Agent.__init__] for semantics of the two enforcement paths.
+             infer_name: Whether to try to infer the agent name from the call frame if it's not set.
+             toolsets: Optional additional toolsets for this run.
+@@ -1037,8 +1037,8 @@ def override(
+             model_settings: The model settings to use instead of the model settings passed to the agent constructor.
+                 When set, any per-run `model_settings` argument is ignored.
+             retries: The retry budgets to use instead of the agent-level configuration. Pass an `int` to
+-                override the output-validation budget, or an [`AgentRetries`][pydantic_ai.AgentRetries]
+-                dict for finer control. When set, any per-run `retries` argument is ignored.
++                override both the tool-retry and output budgets, or an [`AgentRetries`][pydantic_ai.AgentRetries]
++                dict to override just one (e.g. `retries={'tools': 3}`). When set, any per-run `retries` argument is ignored.
+             spec: Optional agent spec to apply as overrides.
+         """
+         if _utils.is_set(model) and not isinstance(model, PrefectModel):
+diff --git a/pydantic_ai_slim/pydantic_ai/durable_exec/temporal/_agent.py b/pydantic_ai_slim/pydantic_ai/durable_exec/temporal/_agent.py
+index 7a1632e6bc9..4622cb30340 100644
+--- a/pydantic_ai_slim/pydantic_ai/durable_exec/temporal/_agent.py
++++ b/pydantic_ai_slim/pydantic_ai/durable_exec/temporal/_agent.py
+@@ -419,9 +419,9 @@ async def main():
+             usage: Optional usage to start with, useful for resuming a conversation or agents used in tools.
+             metadata: Optional metadata to attach to this run. Accepts a dictionary or a callable taking
+                 [`RunContext`][pydantic_ai.tools.RunContext]; merged with the agent's configured metadata.
+-            retries: Override the agent-level retry budgets for this run. Pass an `int` to override the
+-                output-validation budget, or an [`AgentRetries`][pydantic_ai.AgentRetries] dict for finer
+-                control. Tool retries cannot be overridden per run. See
++            retries: Override the agent-level retry budgets for this run. Pass an `int` to override both the
++                tool-retry and output budgets, or an [`AgentRetries`][pydantic_ai.AgentRetries] dict to override
++                just one (e.g. `retries={'tools': 3}`). See
+                 [`Agent.__init__`][pydantic_ai.agent.Agent.__init__] for semantics of the two enforcement paths.
+             infer_name: Whether to try to infer the agent name from the call frame if it's not set.
+             toolsets: Optional additional toolsets for this run.
+@@ -564,9 +564,9 @@ def run_sync(
+             usage: Optional usage to start with, useful for resuming a conversation or agents used in tools.
+             metadata: Optional metadata to attach to this run. Accepts a dictionary or a callable taking
+                 [`RunContext`][pydantic_ai.tools.RunContext]; merged with the agent's configured metadata.
+-            retries: Override the agent-level retry budgets for this run. Pass an `int` to override the
+-                output-validation budget, or an [`AgentRetries`][pydantic_ai.AgentRetries] dict for finer
+-                control. Tool retries cannot be overridden per run. See
++            retries: Override the agent-level retry budgets for this run. Pass an `int` to override both the
++                tool-retry and output budgets, or an [`AgentRetries`][pydantic_ai.AgentRetries] dict to override
++                just one (e.g. `retries={'tools': 3}`). See
+                 [`Agent.__init__`][pydantic_ai.agent.Agent.__init__] for semantics of the two enforcement paths.
+             infer_name: Whether to try to infer the agent name from the call frame if it's not set.
+             toolsets: Optional additional toolsets for this run.
+@@ -703,9 +703,9 @@ async def main():
+             usage: Optional usage to start with, useful for resuming a conversation or agents used in tools.
+             metadata: Optional metadata to attach to this run. Accepts a dictionary or a callable taking
+                 [`RunContext`][pydantic_ai.tools.RunContext]; merged with the agent's configured metadata.
+-            retries: Override the agent-level retry budgets for this run. Pass an `int` to override the
+-                output-validation budget, or an [`AgentRetries`][pydantic_ai.AgentRetries] dict for finer
+-                control. Tool retries cannot be overridden per run. See
++            retries: Override the agent-level retry budgets for this run. Pass an `int` to override both the
++                tool-retry and output budgets, or an [`AgentRetries`][pydantic_ai.AgentRetries] dict to override
++                just one (e.g. `retries={'tools': 3}`). See
+                 [`Agent.__init__`][pydantic_ai.agent.Agent.__init__] for semantics of the two enforcement paths.
+             infer_name: Whether to try to infer the agent name from the call frame if it's not set.
+             toolsets: Optional additional toolsets for this run.
+@@ -863,9 +863,9 @@ async def main():
+             usage: Optional usage to start with, useful for resuming a conversation or agents used in tools.
+             metadata: Optional metadata to attach to this run. Accepts a dictionary or a callable taking
+                 [`RunContext`][pydantic_ai.tools.RunContext]; merged with the agent's configured metadata.
+-            retries: Override the agent-level retry budgets for this run. Pass an `int` to override the
+-                output-validation budget, or an [`AgentRetries`][pydantic_ai.AgentRetries] dict for finer
+-                control. Tool retries cannot be overridden per run. See
++            retries: Override the agent-level retry budgets for this run. Pass an `int` to override both the
++                tool-retry and output budgets, or an [`AgentRetries`][pydantic_ai.AgentRetries] dict to override
++                just one (e.g. `retries={'tools': 3}`). See
+                 [`Agent.__init__`][pydantic_ai.agent.Agent.__init__] for semantics of the two enforcement paths.
+             infer_name: Whether to try to infer the agent name from the call frame if it's not set.
+             toolsets: Optional additional toolsets for this run.
+@@ -1057,9 +1057,9 @@ async def main():
+             usage: Optional usage to start with, useful for resuming a conversation or agents used in tools.
+             metadata: Optional metadata to attach to this run. Accepts a dictionary or a callable taking
+                 [`RunContext`][pydantic_ai.tools.RunContext]; merged with the agent's configured metadata.
+-            retries: Override the agent-level retry budgets for this run. Pass an `int` to override the
+-                output-validation budget, or an [`AgentRetries`][pydantic_ai.AgentRetries] dict for finer
+-                control. Tool retries cannot be overridden per run. See
++            retries: Override the agent-level retry budgets for this run. Pass an `int` to override both the
++                tool-retry and output budgets, or an [`AgentRetries`][pydantic_ai.AgentRetries] dict to override
++                just one (e.g. `retries={'tools': 3}`). See
+                 [`Agent.__init__`][pydantic_ai.agent.Agent.__init__] for semantics of the two enforcement paths.
+             infer_name: Whether to try to infer the agent name from the call frame if it's not set.
+             toolsets: Optional additional toolsets for this run.
+@@ -1143,8 +1143,8 @@ def override(
+             model_settings: The model settings to use instead of the model settings passed to the agent constructor.
+                 When set, any per-run `model_settings` argument is ignored.
+             retries: The retry budgets to use instead of the agent-level configuration. Pass an `int` to
+-                override the output-validation budget, or an [`AgentRetries`][pydantic_ai.AgentRetries]
+-                dict for finer control. When set, any per-run `retries` argument is ignored.
++                override both the tool-retry and output budgets, or an [`AgentRetries`][pydantic_ai.AgentRetries]
++                dict to override just one (e.g. `retries={'tools': 3}`). When set, any per-run `retries` argument is ignored.
+             spec: Optional agent spec to apply as overrides.
+         """
+         if workflow.in_workflow():
+diff --git a/pydantic_ai_slim/pydantic_ai/tool_manager.py b/pydantic_ai_slim/pydantic_ai/tool_manager.py
+index 02e59f5264a..cd957309302 100644
+--- a/pydantic_ai_slim/pydantic_ai/tool_manager.py
++++ b/pydantic_ai_slim/pydantic_ai/tool_manager.py
+@@ -174,7 +174,9 @@ def get_tool_def(self, name: str) -> ToolDefinition | None:
+     def _check_max_retries(self, name: str, max_retries: int, error: Exception) -> None:
+         """Raise UnexpectedModelBehavior if the tool has exceeded its max retries."""
+         assert self.ctx is not None
+-        if self.ctx.retries.get(name, 0) == max_retries:
++        # `>=` rather than `==` so a negative budget raises immediately instead of looping forever
++        # (the count starts at 0 and only ever grows, so it would never equal a negative target).
++        if self.ctx.retries.get(name, 0) >= max_retries:
+             raise UnexpectedModelBehavior(
+                 f'Tool {name!r} exceeded max retries count of {max_retries}. Consider raising the retry '
+                 'limit, or see the docs on tool retries: https://ai.pydantic.dev/tools-advanced/#tool-retries'
+@@ -622,7 +624,7 @@ async def execute_output_tool_call(
+         # Output validators see the *global* output-retry budget (`max_output_retries`), so the same
+         # validator stays consistent across the text path and across multiple `ToolOutput`s. Output
+         # functions, by contrast, see the *per-tool* `tool.max_retries` (the post-https://github.com/pydantic/pydantic-ai/issues/4687 override) on
+-        # `validated.ctx`. Termination on the tool path checks `retries[name] == tool.max_retries`
++        # `validated.ctx`. Termination on the tool path checks `retries[name] >= tool.max_retries`
+         # (see `_check_max_retries` below), so when `ToolOutput(max_retries=N)` exceeds
+         # `max_output_retries`, the validator's `ctx.last_attempt` can fire before the run actually
+         # terminates. Tracked in https://github.com/pydantic/pydantic-ai/issues/5238 — revisiting cleanly needs broader thought about
+diff --git a/tests/test_agent.py b/tests/test_agent.py
+index b44cb692901..f4ceaa740b1 100644
+--- a/tests/test_agent.py
++++ b/tests/test_agent.py
+@@ -18,6 +18,7 @@
+ from pydantic_ai import (
+     AbstractToolset,
+     Agent,
++    AgentRetries,
+     AudioUrl,
+     BinaryContent,
+     BinaryImage,
+@@ -48,6 +49,7 @@
+     ToolReturn,
+     ToolReturnPart,
+     UnexpectedModelBehavior,
++    UsageLimits,
+     UserError,
+     UserPromptPart,
+     VideoUrl,
+@@ -13010,19 +13012,227 @@ def plain_tool(x: int) -> str:
+     assert tool_call_count == 3
+ 
+ 
+-def test_run_retries_cannot_override_tool_budget():
+-    agent = Agent(TestModel())
++@dataclass(kw_only=True)
++class ToolRetryBudgetCase:
++    """One row in the tool-retry budget precedence matrix.
+ 
+-    with pytest.raises(UserError, match=r'Per-run `retries` cannot set tool retries'):
+-        agent.run_sync('Hello', retries={'tools': 1})
++    `init`/`override`/`run` flow into `Agent(...)`, `agent.override(...)`, and `agent.run_sync(...)`.
++    A tool with no explicit `retries=` always raises `ModelRetry`, so the test exhausts the resolved
++    budget and asserts the tool function was called `expected_budget + 1` times (initial + retries)
++    and the exhaustion error reports the expected budget.
++    """
+ 
++    id: str
++    init: dict[str, Any]
++    override: dict[str, Any] | None
++    run: dict[str, Any]
++    expected_budget: int
+ 
+-def test_override_retries_cannot_override_tool_budget():
+-    agent = Agent(TestModel())
+ 
+-    with pytest.raises(UserError, match=r'agent\.override\(retries=\.\.\.\)` cannot set tool retries'):
+-        with agent.override(retries={'tools': 1}):
+-            pass
++TOOL_RETRY_BUDGET_CASES = [
++    ToolRetryBudgetCase(
++        id='run-dict-overrides-agent-default',
++        init={'retries': {'tools': 1}},
++        override=None,
++        run={'retries': {'tools': 3}},
++        expected_budget=3,
++    ),
++    ToolRetryBudgetCase(
++        id='run-dict-beats-spec',
++        init={'retries': {'tools': 1}},
++        override=None,
++        run={'retries': {'tools': 3}, 'spec': {'retries': {'tools': 5}}},
++        expected_budget=3,
++    ),
++    ToolRetryBudgetCase(
++        id='spec-only-beats-agent-default',
++        init={'retries': {'tools': 1}},
++        override=None,
++        run={'spec': {'retries': {'tools': 2}}},
++        expected_budget=2,
++    ),
++    ToolRetryBudgetCase(
++        id='override-dict-beats-agent-default',
++        init={'retries': {'tools': 1}},
++        override={'retries': {'tools': 2}},
++        run={},
++        expected_budget=2,
++    ),
++    ToolRetryBudgetCase(
++        id='override-spec-honored',
++        init={'retries': {'tools': 1}},
++        override={'spec': {'retries': {'tools': 2}}},
++        run={},
++        expected_budget=2,
++    ),
++    ToolRetryBudgetCase(
++        id='override-beats-run-arg',
++        init={'retries': {'tools': 1}},
++        override={'retries': {'tools': 1}},
++        run={'retries': {'tools': 10}},
++        expected_budget=1,
++    ),
++    # A bare `int` overrides both budgets at every run-time call site (kwarg, spec, override),
++    # matching construction-time `Agent(retries=N)` — so it lifts the tool budget too.
++    ToolRetryBudgetCase(
++        id='int-run-arg-overrides-tool-budget',
++        init={'retries': {'tools': 2}},
++        override=None,
++        run={'retries': 9},
++        expected_budget=9,
++    ),
++    ToolRetryBudgetCase(
++        id='int-spec-overrides-tool-budget',
++        init={'retries': {'tools': 2}},
++        override=None,
++        run={'spec': {'retries': 9}},
++        expected_budget=9,
++    ),
++    ToolRetryBudgetCase(
++        id='int-override-overrides-tool-budget',
++        init={'retries': {'tools': 2}},
++        override={'retries': 9},
++        run={},
++        expected_budget=9,
++    ),
++    # A `0` budget must survive resolution as "no retries", not be dropped as falsy and fall back to
++    # the agent default (the zero-as-falsy footgun): once via the run arg, once via `override()`.
++    ToolRetryBudgetCase(
++        id='run-dict-zero-overrides-agent-default',
++        init={'retries': {'tools': 5}},
++        override=None,
++        run={'retries': {'tools': 0}},
++        expected_budget=0,
++    ),
++    ToolRetryBudgetCase(
++        id='override-dict-zero-overrides-agent-default',
++        init={'retries': {'tools': 5}},
++        override={'retries': {'tools': 0}},
++        run={},
++        expected_budget=0,
++    ),
++]
++
++
++@pytest.mark.parametrize('case', TOOL_RETRY_BUDGET_CASES, ids=lambda c: c.id)
++def test_tool_retry_budget_resolution(case: ToolRetryBudgetCase):
++    """Effective tool-retry budget = override > run arg > spec > agent default.
++
++    A bare `int` at run/override/spec time overrides both budgets, so it lifts the tool budget too
++    (the `int-*-overrides-tool-budget` cases).
++    """
++    call_count = 0
++
++    def model_fn(messages: list[ModelMessage], info: AgentInfo) -> ModelResponse:
++        return ModelResponse(parts=[ToolCallPart('flaky', {})])
++
++    agent = Agent(FunctionModel(model_fn), **case.init)
++
++    @agent.tool_plain
++    def flaky() -> str:
++        nonlocal call_count
++        call_count += 1
++        raise ModelRetry('again')
++
++    expected_msg = rf"Tool 'flaky' exceeded max retries count of {case.expected_budget}"
++    override_ctx = agent.override(**case.override) if case.override is not None else nullcontext()
++
++    with override_ctx:
++        with pytest.raises(UnexpectedModelBehavior, match=expected_msg):
++            agent.run_sync('Hello', **case.run)
++
++    assert call_count == case.expected_budget + 1
++
++
++@pytest.mark.parametrize('retries', [-1, {'tools': -1}], ids=['int', 'dict'])
++def test_negative_tool_retries_raises_immediately(retries: int | AgentRetries):
++    """A negative tool-retry budget stops on the first failure instead of looping forever.
++
++    The counter starts at 0 and only grows, so an `== budget` check would never fire on a negative
++    target; the `>=` check raises immediately. `request_limit` is a safety net so a regression that
++    reintroduced the loop fails fast rather than hanging.
++    """
++    call_count = 0
++
++    def model_fn(messages: list[ModelMessage], info: AgentInfo) -> ModelResponse:
++        return ModelResponse(parts=[ToolCallPart('flaky', {})])
++
++    agent = Agent(FunctionModel(model_fn), retries=retries)
++
++    @agent.tool_plain
++    def flaky() -> str:
++        nonlocal call_count
++        call_count += 1
++        raise ModelRetry('again')
++
++    with pytest.raises(UnexpectedModelBehavior, match=r"Tool 'flaky' exceeded max retries count of -1"):
++        agent.run_sync('Hello', usage_limits=UsageLimits(request_limit=10))
++
++    assert call_count == 1
++
++
++def test_run_level_tool_retry_override_preserves_explicit_budgets():
++    """A run-level `retries={'tools': N}` overrides the agent default for a tool with no explicit
++    budget — including one on a user-provided `FunctionToolset()` that itself sets no `max_retries`
++    (the inheritance path) — but does NOT clobber an explicit per-tool `@agent.tool(retries=...)` or
++    per-toolset `FunctionToolset(max_retries=...)` budget."""
++    counts = {'default_tool': 0, 'explicit_tool': 0, 'toolset_tool': 0, 'inheriting_toolset_tool': 0}
++    target = ''
++
++    def model_fn(messages: list[ModelMessage], info: AgentInfo) -> ModelResponse:
++        return ModelResponse(parts=[ToolCallPart(target, {})])
++
++    explicit_toolset = FunctionToolset[object](max_retries=4)
++
++    @explicit_toolset.tool_plain
++    def toolset_tool() -> str:
++        counts['toolset_tool'] += 1
++        raise ModelRetry('again')
++
++    inheriting_toolset = FunctionToolset[object]()
++
++    @inheriting_toolset.tool_plain
++    def inheriting_toolset_tool() -> str:
++        counts['inheriting_toolset_tool'] += 1
++        raise ModelRetry('again')
++
++    agent = Agent(FunctionModel(model_fn), toolsets=[explicit_toolset, inheriting_toolset], retries={'tools': 1})
++
++    @agent.tool_plain
++    def default_tool() -> str:
++        counts['default_tool'] += 1
++        raise ModelRetry('again')
++
++    @agent.tool_plain(retries=5)
++    def explicit_tool() -> str:
++        counts['explicit_tool'] += 1
++        raise ModelRetry('again')
++
++    # No explicit budget → the run override (3) applies, beating the agent default (1).
++    target = 'default_tool'
++    with pytest.raises(UnexpectedModelBehavior, match=r"Tool 'default_tool' exceeded max retries count of 3"):
++        agent.run_sync('Hello', retries={'tools': 3})
++    assert counts['default_tool'] == 4
++
++    # Explicit per-tool budget (5) is enforced regardless of the run override (3).
++    target = 'explicit_tool'
++    with pytest.raises(UnexpectedModelBehavior, match=r"Tool 'explicit_tool' exceeded max retries count of 5"):
++        agent.run_sync('Hello', retries={'tools': 3})
++    assert counts['explicit_tool'] == 6
++
++    # Explicit per-toolset budget (4) is enforced regardless of the run override (3).
++    target = 'toolset_tool'
++    with pytest.raises(UnexpectedModelBehavior, match=r"Tool 'toolset_tool' exceeded max retries count of 4"):
++        agent.run_sync('Hello', retries={'tools': 3})
++    assert counts['toolset_tool'] == 5
++
++    # A user toolset with no explicit budget inherits the run override (3) via `ToolManager.default_max_retries`.
++    target = 'inheriting_toolset_tool'
++    with pytest.raises(
++        UnexpectedModelBehavior, match=r"Tool 'inheriting_toolset_tool' exceeded max retries count of 3"
++    ):
++        agent.run_sync('Hello', retries={'tools': 3})
++    assert counts['inheriting_toolset_tool'] == 4
+ 
+ 
+ def test_wrapper_override_forwards_retries():
+diff --git a/tests/test_capabilities.py b/tests/test_capabilities.py
+index 6af00ca615b..3866cdef379 100644
+--- a/tests/test_capabilities.py
++++ b/tests/test_capabilities.py
+@@ -8644,18 +8644,26 @@ async def test_spec_unsupported_fields_warns(self):
+         with pytest.warns(UserWarning, match='end_strategy'):
+             await agent.run('hello', spec={'end_strategy': 'exhaustive'})
+ 
+-    async def test_spec_tool_retry_override_warns(self):
+-        """Run-time specs can only override the output retry budget."""
++    async def test_spec_tool_retry_override(self):
++        """A run-time spec's tool-retry budget replaces the agent default (3 here, not the agent's 1)."""
++        call_count = 0
+ 
+         def model_fn(messages: list[ModelMessage], info: AgentInfo) -> ModelResponse:
+-            return make_text_response('ok')
++            return ModelResponse(parts=[ToolCallPart('flaky', {})])
+ 
+-        agent = Agent(FunctionModel(model_fn))
++        agent = Agent(FunctionModel(model_fn), retries={'tools': 1})
++
++        @agent.tool_plain
++        def flaky() -> str:
++            nonlocal call_count
++            call_count += 1
++            raise ModelRetry('again')
+ 
+-        with pytest.warns(UserWarning, match=r"retry field 'tools'.*ignored"):
+-            result = await agent.run('hello', spec={'retries': {'tools': 5}})
++        with pytest.raises(UnexpectedModelBehavior, match=r"Tool 'flaky' exceeded max retries count of 3"):
++            await agent.run('hello', spec={'retries': {'tools': 3}})
+ 
+-        assert result.output == 'ok'
++        # initial call + 3 retries, following the spec budget (3), not the agent default (1)
++        assert call_count == 4
+ 
+ 
+ @dataclass
+diff --git a/tests/test_tools.py b/tests/test_tools.py
+index e4e957d9cb8..ce66b35086a 100644
+--- a/tests/test_tools.py
++++ b/tests/test_tools.py
+@@ -672,14 +672,16 @@ def plain_tool(x: int) -> int:
+     assert result.output == snapshot('{"plain_tool":1}')
+     assert call_args == snapshot([0])
+     assert agent._function_toolset.tools['plain_tool'].takes_ctx is False
+-    assert agent._function_toolset.tools['plain_tool'].max_retries == 7
++    # No explicit per-tool budget, so the agent default resolves per-run via `RunContext.max_retries`
++    # rather than baked onto the tool (contrast `test_init_tool_ctx`, where explicit `max_retries=3` wins).
++    assert agent._function_toolset.tools['plain_tool'].max_retries is None
+ 
+     agent_infer = Agent('test', tools=[plain_tool], retries={'tools': 7, 'output': 7})
+     result = agent_infer.run_sync('foobar')
+     assert result.output == snapshot('{"plain_tool":1}')
+     assert call_args == snapshot([0, 0])
+     assert agent_infer._function_toolset.tools['plain_tool'].takes_ctx is False
+-    assert agent_infer._function_toolset.tools['plain_tool'].max_retries == 7
++    assert agent_infer._function_toolset.tools['plain_tool'].max_retries is None
+ 
+ 
+ def ctx_tool(ctx: RunContext[int], x: int) -> int:
+@@ -1393,7 +1395,8 @@ def function(*args: Any, **kwargs: Any) -> str:
+     result = agent.run_sync('foobar')
+     assert result.output == snapshot('{"foobar":"I like being called like this"}')
+     assert agent._function_toolset.tools['foobar'].takes_ctx is False
+-    assert agent._function_toolset.tools['foobar'].max_retries == 0
++    # The agent default resolves per-run via `RunContext.max_retries`, so it isn't baked onto the tool.
++    assert agent._function_toolset.tools['foobar'].max_retries is None
+ 
+ 
+ def test_function_tool_from_schema_with_ctx():
+@@ -1422,7 +1425,8 @@ def function(ctx: RunContext[str], *args: Any, **kwargs: Any) -> str:
+     result = agent.run_sync('foobar', deps='Hello, ')
+     assert result.output == snapshot('{"foobar":"Hello, I like being called like this"}')
+     assert agent._function_toolset.tools['foobar'].takes_ctx is True
+-    assert agent._function_toolset.tools['foobar'].max_retries == 0
++    # The agent default resolves per-run via `RunContext.max_retries`, so it isn't baked onto the tool.
++    assert agent._function_toolset.tools['foobar'].max_retries is None
+ 
+ 
+ def test_function_tool_inconsistent_with_schema():
+@@ -1469,7 +1473,8 @@ async def function(*args: Any, **kwargs: Any) -> str:
+     result = agent.run_sync('foobar')
+     assert result.output == snapshot('{"foobar":"I like being called like this"}')
+     assert agent._function_toolset.tools['foobar'].takes_ctx is False
+-    assert agent._function_toolset.tools['foobar'].max_retries == 0
++    # The agent default resolves per-run via `RunContext.max_retries`, so it isn't baked onto the tool.
++    assert agent._function_toolset.tools['foobar'].max_retries is None
+ 
+ 
+ @pytest.mark.anyio

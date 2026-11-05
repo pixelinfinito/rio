@@ -1,0 +1,6 @@
+........................................................................ [ 56%]
+.......................................................                  [100%]
+collection of 127 tests took 2.1s
+slowest test modules to collect: tests/test_utils.py (1.62s), tests/evals/test_utils.py (0.27s)
+Results (12.64s):
+       127 passed

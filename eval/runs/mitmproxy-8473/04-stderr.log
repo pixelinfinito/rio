@@ -1,0 +1,2 @@
+Previous HEAD position was 3368a0a06 Fix Basic auth passwords containing colons (#8469)
+HEAD is now at be9f49d24 do not add empty SAN extensions

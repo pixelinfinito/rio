@@ -1,0 +1,166 @@
+diff --git a/pydantic_ai_slim/pydantic_ai/_utils.py b/pydantic_ai_slim/pydantic_ai/_utils.py
+index 99c1c8a837d..347db816a0c 100644
+--- a/pydantic_ai_slim/pydantic_ai/_utils.py
++++ b/pydantic_ai_slim/pydantic_ai/_utils.py
+@@ -11,6 +11,7 @@
+ import textwrap
+ import time
+ import uuid
++import warnings
+ from builtins import BaseExceptionGroup as BaseExceptionGroup
+ from collections.abc import (
+     AsyncGenerator,
+@@ -1245,7 +1246,12 @@ def get_union_args(tp: Any, *, unwrap_members: bool = True) -> tuple[Any, ...]:
+ 
+ def get_event_loop() -> asyncio.AbstractEventLoop:
+     try:
+-        event_loop = asyncio.get_event_loop()
++        with warnings.catch_warnings():
++            # With no current loop in the main thread, Python 3.12 and 3.13 create one and warn that this will
++            # change; 3.14 raises `RuntimeError` instead, handled below. Either way, the loop handling here stays
++            # the same.
++            warnings.simplefilter('ignore', DeprecationWarning)
++            event_loop = asyncio.get_event_loop()
+     except RuntimeError:
+         event_loop = None
+ 
+diff --git a/pydantic_evals/pydantic_evals/_utils.py b/pydantic_evals/pydantic_evals/_utils.py
+index 7043e718014..e6d59f36b0f 100644
+--- a/pydantic_evals/pydantic_evals/_utils.py
++++ b/pydantic_evals/pydantic_evals/_utils.py
+@@ -105,7 +105,12 @@ def get_function_serialization_name(func: Callable[..., Any]) -> str | None:
+ 
+ def get_event_loop() -> asyncio.AbstractEventLoop:
+     try:
+-        event_loop = asyncio.get_event_loop()
++        with warnings.catch_warnings():
++            # With no current loop in the main thread, Python 3.12 and 3.13 create one and warn that this will
++            # change; 3.14 raises `RuntimeError` instead, handled below. Either way, the loop handling here stays
++            # the same.
++            warnings.simplefilter('ignore', DeprecationWarning)
++            event_loop = asyncio.get_event_loop()
+     except RuntimeError:
+         event_loop = None
+ 
+diff --git a/pydantic_graph/pydantic_graph/_utils.py b/pydantic_graph/pydantic_graph/_utils.py
+index 802fb68b190..bf362e77c6d 100644
+--- a/pydantic_graph/pydantic_graph/_utils.py
++++ b/pydantic_graph/pydantic_graph/_utils.py
+@@ -64,7 +64,12 @@ def _implements_run_until_complete(loop: asyncio.AbstractEventLoop) -> bool:
+ 
+ def get_event_loop() -> asyncio.AbstractEventLoop:
+     try:
+-        event_loop = asyncio.get_event_loop()
++        with warnings.catch_warnings():
++            # With no current loop in the main thread, Python 3.12 and 3.13 create one and warn that this will
++            # change; 3.14 raises `RuntimeError` instead, handled below. Either way, the loop handling here stays
++            # the same.
++            warnings.simplefilter('ignore', DeprecationWarning)
++            event_loop = asyncio.get_event_loop()
+     except RuntimeError:
+         event_loop = None
+ 
+diff --git a/tests/conftest.py b/tests/conftest.py
+index 6a6432c51ce..359408d0539 100644
+--- a/tests/conftest.py
++++ b/tests/conftest.py
+@@ -778,6 +778,25 @@ class UndrivableEventLoop(asyncio.AbstractEventLoop):
+     """
+ 
+ 
++@pytest.fixture
++def fresh_event_loop_policy() -> Iterator[None]:
++    """A policy with no current loop, as in a fresh interpreter's main thread, restoring the previous one after.
++
++    Policies are deprecated from Python 3.14, where the tests using this are skipped.
++    """
++    previous = asyncio.get_event_loop_policy()  # pyright: ignore[reportDeprecated]
++    policy = asyncio.DefaultEventLoopPolicy()
++    asyncio.set_event_loop_policy(policy)  # pyright: ignore[reportDeprecated]
++    try:
++        yield
++    finally:
++        # The loop the run set on the policy; asyncio keeps it in a private thread-local.
++        loop: asyncio.AbstractEventLoop | None = getattr(getattr(policy, '_local'), '_loop')
++        if loop is not None:  # pragma: no branch
++            loop.close()
++        asyncio.set_event_loop_policy(previous)  # pyright: ignore[reportDeprecated]
++
++
+ @contextmanager
+ def undrivable_event_loop() -> Generator[None]:
+     """Make the current event loop one that can't be driven by the caller."""
+diff --git a/tests/evals/test_utils.py b/tests/evals/test_utils.py
+index a35fa7af5a3..1f5eab8efb2 100644
+--- a/tests/evals/test_utils.py
++++ b/tests/evals/test_utils.py
+@@ -2,6 +2,8 @@
+ 
+ import asyncio
+ import functools
++import sys
++import warnings
+ from collections.abc import Callable
+ from functools import partial
+ from typing import Any
+@@ -230,3 +232,12 @@ async def test_running_on_asyncio_without_sniffio(monkeypatch: pytest.MonkeyPatc
+     monkeypatch.setattr('pydantic_evals._utils._sniffio', None)
+     assert running_on_asyncio()
+     assert not await anyio.to_thread.run_sync(running_on_asyncio)
++
++
++@pytest.mark.skipif(sys.version_info >= (3, 14), reason='Python 3.14 raises instead of warning, which is handled')
++@pytest.mark.usefixtures('fresh_event_loop_policy')
++def test_get_event_loop_does_not_warn_without_a_current_loop():
++    """On Python 3.12 and 3.13, `evaluate_sync` in a script used to warn `There is no current event loop` (#1196)."""
++    with warnings.catch_warnings():
++        warnings.simplefilter('error', DeprecationWarning)
++        get_event_loop()
+diff --git a/tests/test_utils.py b/tests/test_utils.py
+index f4fe2745c62..188251d18a3 100644
+--- a/tests/test_utils.py
++++ b/tests/test_utils.py
+@@ -10,7 +10,8 @@
+ import os
+ import sys
+ import threading
+-from collections.abc import AsyncIterator
++import warnings
++from collections.abc import AsyncIterator, Callable
+ from concurrent.futures import ThreadPoolExecutor
+ from dataclasses import dataclass, field
+ from importlib.metadata import distributions
+@@ -1548,3 +1549,33 @@ async def body() -> int:
+     with pytest.raises(ValueError, match='boom') as exc_info:
+         awaiter.result()
+     assert exc_info.value.__context__ is None
++
++
++def _run_sync() -> None:
++    Agent(TestModel()).run_sync('hello')
++
++
++def _run_stream_sync() -> None:
++    with Agent(TestModel()).run_stream_sync('hello') as result:
++        result.get_output()
++
++
++@pytest.mark.skipif(sys.version_info >= (3, 14), reason='Python 3.14 raises instead of warning, which is handled')
++@pytest.mark.parametrize(
++    'entry_point',
++    [
++        pytest.param(_run_sync, id='run_sync'),
++        pytest.param(_run_stream_sync, id='run_stream_sync'),
++    ],
++)
++def test_sync_entry_point_does_not_warn_about_a_missing_event_loop(
++    fresh_event_loop_policy: None, entry_point: Callable[[], None]
++):
++    """On Python 3.12 and 3.13, a sync run in a script used to warn `There is no current event loop` (#1196).
++
++    The warning fires when the policy has never had a loop set, as in a fresh interpreter's main thread, which the
++    `fresh_event_loop_policy` fixture recreates.
++    """
++    with warnings.catch_warnings():
++        warnings.simplefilter('error', DeprecationWarning)
++        entry_point()

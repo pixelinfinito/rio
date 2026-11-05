@@ -1,0 +1,11 @@
+Warning: you are leaving 1 commit behind, not connected to
+any of your branches:
+
+  c9841c796 Seed unused itertools import for deterministic Ruff control
+
+If you want to keep it by creating a new branch, this may be a good time
+to do so with:
+
+ git branch <new-branch-name> c9841c796
+
+HEAD is now at 8ed5b18b4 Read the whole banner back from the pty in the terminal-width test (#8611)

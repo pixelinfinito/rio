@@ -1,0 +1,484 @@
+{
+  "schema": "rio-eval-runner-v1",
+  "repository": "pydantic/pydantic-ai",
+  "pr": "https://github.com/pydantic/pydantic-ai/pull/8641",
+  "started_utc": "2026-11-05T02:48:47.387995+00:00",
+  "rio_binary": "/home/ubuntu/rio/target/release/rio",
+  "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-checkout",
+        "https://github.com/pydantic/pydantic-ai.git",
+        "/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/head"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/01-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/01-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 533
+    },
+    {
+      "argv": [
+        "git",
+        "fetch",
+        "origin",
+        "8ed5b18b4133d85252de924d1c65a24fb295589c",
+        "c9841c796bb6a8fbfd5492bdcc532f2410518e2c"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/02-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/02-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 221
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "8ed5b18b4133d85252de924d1c65a24fb295589c",
+        "c9841c796bb6a8fbfd5492bdcc532f2410518e2c"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/03-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/03-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 419
+    },
+    {
+      "argv": [
+        "git",
+        "checkout",
+        "--detach",
+        "c9841c796bb6a8fbfd5492bdcc532f2410518e2c"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/04-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/04-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 3888
+    },
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-hardlinks",
+        "--no-checkout",
+        "/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/head",
+        "/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/base"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/05-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/05-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 68
+    },
+    {
+      "argv": [
+        "git",
+        "checkout",
+        "--detach",
+        "8ed5b18b4133d85252de924d1c65a24fb295589c"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/06-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/06-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 2978
+    },
+    {
+      "argv": [
+        "uv",
+        "sync",
+        "--locked",
+        "--python",
+        "3.13.9",
+        "--group",
+        "lint"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/07-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/07-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 17282
+    },
+    {
+      "argv": [
+        "python3",
+        "-c",
+        "from pathlib import Path; files=list(Path('.venv/lib').glob('python*/site-packages/a1_coverage.pth')); [(p.unlink(),print('Removed coverage subprocess bootstrap:',p)) for p in files]"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/08-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/08-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 118
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/09-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/09-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 22
+    },
+    {
+      "argv": [
+        "uv",
+        "sync",
+        "--locked",
+        "--python",
+        "3.13.9",
+        "--group",
+        "lint"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/10-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/10-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 13372
+    },
+    {
+      "argv": [
+        "python3",
+        "-c",
+        "from pathlib import Path; files=list(Path('.venv/lib').glob('python*/site-packages/a1_coverage.pth')); [(p.unlink(),print('Removed coverage subprocess bootstrap:',p)) for p in files]"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/11-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/11-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 116
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/12-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/12-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 214
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/config",
+        "RIO_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/rio-version.txt",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/13-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 1118
+    },
+    {
+      "argv": [
+        "node",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/config",
+        "RIO_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/14-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/14-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 119
+    },
+    {
+      "argv": [
+        "npm",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/config",
+        "RIO_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/15-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/15-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 268
+    },
+    {
+      "argv": [
+        "python3",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/config",
+        "RIO_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/16-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/16-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 918
+    },
+    {
+      "argv": [
+        "uv",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/config",
+        "RIO_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/17-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/17-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 16
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "profile",
+        "show",
+        "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/profile.yaml"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/config",
+        "RIO_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/resolved-profile.txt",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/18-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 322
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "doctor",
+        "--format",
+        "json"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/config",
+        "RIO_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/doctor.json",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/19-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 16537
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "review",
+        "--base",
+        "8ed5b18b4133d85252de924d1c65a24fb295589c",
+        "--format",
+        "json",
+        "--offline",
+        "--profile",
+        "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/profile.yaml"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/config",
+        "RIO_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/report.json",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/20-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 44282
+    }
+  ],
+  "installations": {
+    "base": {
+      "commands": [
+        [
+          "uv",
+          "sync",
+          "--locked",
+          "--python",
+          "3.13.9",
+          "--group",
+          "lint"
+        ],
+        [
+          "python3",
+          "-c",
+          "from pathlib import Path; files=list(Path('.venv/lib').glob('python*/site-packages/a1_coverage.pth')); [(p.unlink(),print('Removed coverage subprocess bootstrap:',p)) for p in files]"
+        ]
+      ],
+      "succeeded": true,
+      "lockfiles": {
+        "uv.lock": "4a6da7a9f00464f6ea9431628a94a757dd646a6d0841d5e1ffa1250156f0c488"
+      }
+    },
+    "head": {
+      "commands": [
+        [
+          "uv",
+          "sync",
+          "--locked",
+          "--python",
+          "3.13.9",
+          "--group",
+          "lint"
+        ],
+        [
+          "python3",
+          "-c",
+          "from pathlib import Path; files=list(Path('.venv/lib').glob('python*/site-packages/a1_coverage.pth')); [(p.unlink(),print('Removed coverage subprocess bootstrap:',p)) for p in files]"
+        ]
+      ],
+      "succeeded": true,
+      "lockfiles": {
+        "uv.lock": "4a6da7a9f00464f6ea9431628a94a757dd646a6d0841d5e1ffa1250156f0c488"
+      }
+    }
+  },
+  "failures": [
+    "Baseline/setup ineligible; fix before scoring"
+  ],
+  "network": "Installers may use network; Rio review uses --offline. Subprocesses are not isolated.",
+  "profile_sha256": "5cf706f6a702198395e3d4f0d188fa339102c201e509f8d1dda2be9e7373299a",
+  "resolution": {
+    "base_sha": "8ed5b18b4133d85252de924d1c65a24fb295589c",
+    "head_sha": "c9841c796bb6a8fbfd5492bdcc532f2410518e2c",
+    "source": "pinned argv"
+  },
+  "disposable_directory": "/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x",
+  "base_sha": "8ed5b18b4133d85252de924d1c65a24fb295589c",
+  "head_sha": "c9841c796bb6a8fbfd5492bdcc532f2410518e2c",
+  "removed_environment_keys": [],
+  "resolved_profile_sha256": "9206000554b4c5db8bf0be2f8baabefb4cdcbb0b0a325be235632493368966a7",
+  "review_exit_code": 0,
+  "environment": {
+    "dependency_state": "unavailable",
+    "baseline_ran": false,
+    "baseline_classification_ran": false,
+    "eligible": false,
+    "reasons": [
+      "coverage examples head: skipped disabled Disabled in the profile",
+      "coverage pydantic_ai_slim head: skipped disabled Disabled in the profile",
+      "coverage pydantic_evals head: skipped disabled Disabled in the profile",
+      "dependencies . head: skipped disabled Disabled in the profile",
+      "lint pydantic_ai_slim head: skipped dependency_mismatch uv.lock: burner-redis: expected burner-redis@0.1.6, installed burner-redis@0.1.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+      "lint pydantic_ai_slim: head=skipped, dependency_state=unavailable, base=unavailable",
+      "typecheck examples head: skipped dependency_mismatch uv.lock: missing ag-ui-protocol at ag-ui-protocol; reinstall dependencies",
+      "typecheck examples: head=skipped, dependency_state=unavailable, base=unavailable",
+      "typecheck pydantic_ai_slim head: skipped dependency_mismatch uv.lock: burner-redis: expected burner-redis@0.1.6, installed burner-redis@0.1.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+      "typecheck pydantic_ai_slim: head=skipped, dependency_state=unavailable, base=unavailable",
+      "typecheck pydantic_evals head: skipped dependency_mismatch uv.lock: burner-redis: expected burner-redis@0.1.6, installed burner-redis@0.1.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+      "typecheck pydantic_evals: head=skipped, dependency_state=unavailable, base=unavailable"
+    ],
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "Graph references use syntax and text; no language server was used",
+      "Impact graph truncated at max_nodes",
+      "Offline applies to Rio; tool and test processes were not network-isolated"
+    ]
+  },
+  "finished_utc": "2026-11-05T02:50:40.761468+00:00",
+  "evaluation_annotations": {
+    "author": "sub-agent eval-pydantic-ai (automated)",
+    "provenance": "Post-run evaluation annotation. Scheduling/outcomes copied from report.json; tool selection from report tool_versions. Targets and template argv derived from pinned pyproject.toml and crates/rio-adapters/src/languages.rs + python_targets.rs. Not a subprocess trace.",
+    "internal_tool_argv_captured": false,
+    "typechecks": [
+      {
+        "root": "examples",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "outcome": "skipped",
+        "reason": "dependency_mismatch",
+        "hint": "uv.lock: missing ag-ui-protocol at ag-ui-protocol; reinstall dependencies",
+        "selected_tool": "mypy",
+        "inherited_config": "pyproject.toml",
+        "configured_targets": [
+          "tests/typed_agent.py"
+        ],
+        "template_argv_inferred": [
+          "<venv>/bin/mypy",
+          "--output",
+          "json",
+          "--config-file",
+          "<materialized-tree>/pyproject.toml"
+        ],
+        "target_arguments": [],
+        "execution_confirmed_by_report": false,
+        "cwd_note": "Adapter uses package root; inherited files resolves relative to cwd. Attempt3 setup wrapper anchors cwd to config parent; skipped checks did not resolve or execute targets."
+      },
+      {
+        "root": "pydantic_ai_slim",
+        "scheduled_as": "changed",
+        "version": "head",
+        "outcome": "skipped",
+        "reason": "dependency_mismatch",
+        "hint": "uv.lock: burner-redis: expected burner-redis@0.1.6, installed burner-redis@0.1.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "selected_tool": "mypy",
+        "inherited_config": "pyproject.toml",
+        "configured_targets": [
+          "tests/typed_agent.py"
+        ],
+        "template_argv_inferred": [
+          "<venv>/bin/mypy",
+          "--output",
+          "json",
+          "--config-file",
+          "<materialized-tree>/pyproject.toml"
+        ],
+        "target_arguments": [],
+        "execution_confirmed_by_report": false,
+        "cwd_note": "Adapter uses package root; inherited files resolves relative to cwd. Attempt3 setup wrapper anchors cwd to config parent; skipped checks did not resolve or execute targets."
+      },
+      {
+        "root": "pydantic_evals",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "outcome": "skipped",
+        "reason": "dependency_mismatch",
+        "hint": "uv.lock: burner-redis: expected burner-redis@0.1.6, installed burner-redis@0.1.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "selected_tool": "mypy",
+        "inherited_config": "pyproject.toml",
+        "configured_targets": [
+          "tests/typed_agent.py"
+        ],
+        "template_argv_inferred": [
+          "<venv>/bin/mypy",
+          "--output",
+          "json",
+          "--config-file",
+          "<materialized-tree>/pyproject.toml"
+        ],
+        "target_arguments": [],
+        "execution_confirmed_by_report": false,
+        "cwd_note": "Adapter uses package root; inherited files resolves relative to cwd. Attempt3 setup wrapper anchors cwd to config parent; skipped checks did not resolve or execute targets."
+      }
+    ],
+    "dependent_roots_handled": false,
+    "dependent_roots_note": "Dependent typecheck roots scheduled but skipped; no successful baseline for any dependent root."
+  }
+}

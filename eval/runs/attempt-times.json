@@ -1,0 +1,72 @@
+[
+  {
+    "attempt": "mitmproxy-8473",
+    "started_utc": "2026-11-05T03:04:38.566989+00:00",
+    "finished_utc": "2026-11-05T03:05:19.190558+00:00",
+    "runner_wall_s": 40.624,
+    "uv_sync_sum_s": 4.679,
+    "rio_review_process_wall_s": 28.056,
+    "baseline_classification_ran": false,
+    "eligible": false
+  },
+  {
+    "attempt": "mitmproxy-8473-attempt2",
+    "started_utc": "2026-11-05T03:07:15.156430+00:00",
+    "finished_utc": "2026-11-05T03:07:58.515264+00:00",
+    "runner_wall_s": 43.359,
+    "uv_sync_sum_s": 0.434,
+    "rio_review_process_wall_s": 37.016,
+    "baseline_classification_ran": true,
+    "eligible": true
+  },
+  {
+    "attempt": "mitmproxy-8521-seeded",
+    "started_utc": "2026-11-05T03:07:16.323834+00:00",
+    "finished_utc": "2026-11-05T03:07:57.312009+00:00",
+    "runner_wall_s": 40.988,
+    "uv_sync_sum_s": 0.431,
+    "rio_review_process_wall_s": 35.113,
+    "baseline_classification_ran": true,
+    "eligible": true
+  },
+  {
+    "attempt": "pydantic-ai-12540",
+    "started_utc": "2026-11-05T02:49:59.181208+00:00",
+    "finished_utc": "2026-11-05T02:50:11.279984+00:00",
+    "runner_wall_s": 12.099,
+    "uv_sync_sum_s": 0.0,
+    "rio_review_process_wall_s": null,
+    "baseline_classification_ran": false,
+    "eligible": false
+  },
+  {
+    "attempt": "pydantic-ai-12540-attempt2",
+    "started_utc": "2026-11-05T02:59:02.915732+00:00",
+    "finished_utc": "2026-11-05T02:59:14.031944+00:00",
+    "runner_wall_s": 11.116,
+    "uv_sync_sum_s": 0.0,
+    "rio_review_process_wall_s": null,
+    "baseline_classification_ran": false,
+    "eligible": false
+  },
+  {
+    "attempt": "pydantic-ai-12540-attempt3",
+    "started_utc": "2026-11-05T03:00:08.798783+00:00",
+    "finished_utc": "2026-11-05T03:04:54.693375+00:00",
+    "runner_wall_s": 285.895,
+    "uv_sync_sum_s": 33.345,
+    "rio_review_process_wall_s": 217.624,
+    "baseline_classification_ran": false,
+    "eligible": false
+  },
+  {
+    "attempt": "pydantic-ai-8641-seeded-attempt1",
+    "started_utc": "2026-11-05T02:48:47.387995+00:00",
+    "finished_utc": "2026-11-05T02:50:40.761468+00:00",
+    "runner_wall_s": 113.373,
+    "uv_sync_sum_s": 30.654,
+    "rio_review_process_wall_s": 44.282,
+    "baseline_classification_ran": false,
+    "eligible": false
+  }
+]
