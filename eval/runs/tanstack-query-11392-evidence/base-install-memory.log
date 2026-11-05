@@ -1,0 +1,347 @@
+Scope: 4 of 102 workspace projects
+? Verifying lockfile against supply-chain policies (3111 entries)...
+Lockfile is up to date, resolution step is skipped
+Progress: resolved 1, reused 0, downloaded 0, added 0
+.                                        | +879 ++++++++++++++++++++++++++++++++
+Progress: resolved 879, reused 1, downloaded 0, added 0
+Progress: resolved 879, reused 1, downloaded 1, added 0
+Progress: resolved 879, reused 1, downloaded 33, added 1
+Progress: resolved 879, reused 1, downloaded 149, added 20
+Progress: resolved 879, reused 1, downloaded 375, added 116
+Progress: resolved 879, reused 1, downloaded 548, added 466
+Progress: resolved 879, reused 1, downloaded 701, added 701
+Progress: resolved 879, reused 1, downloaded 814, added 815
+Progress: resolved 879, reused 1, downloaded 864, added 837
+[WARN] Request took 14152ms: https://registry.npmjs.org/@astrojs%2Fmarkdown-remark
+[WARN] Request took 10909ms: https://registry.npmjs.org/@babel%2Fcompat-data
+Progress: resolved 879, reused 1, downloaded 877, added 878
+Progress: resolved 879, reused 1, downloaded 878, added 879, done
+[WARN] Request took 17307ms: https://registry.npmjs.org/@algolia%2Frecommend
+[WARN] Request took 17329ms: https://registry.npmjs.org/@algolia%2Fclient-personalization
+[WARN] Request took 10969ms: https://registry.npmjs.org/@babel%2Fhelper-member-expression-to-functions
+[WARN] Request took 17356ms: https://registry.npmjs.org/@astrojs%2Flanguage-server
+[WARN] Request took 13417ms: https://registry.npmjs.org/@babel%2Fgenerator
+[WARN] Request took 14159ms: https://registry.npmjs.org/@algolia%2Fclient-insights
+[WARN] Request took 11099ms: https://registry.npmjs.org/@babel%2Fhelper-compilation-targets
+[WARN] Request took 18883ms: https://registry.npmjs.org/@algolia%2Fclient-common
+[WARN] Request took 18891ms: https://registry.npmjs.org/@astrojs%2Fvercel
+[WARN] Request took 19298ms: https://registry.npmjs.org/@algolia%2Fclient-search
+[WARN] Request took 19314ms: https://registry.npmjs.org/@algolia%2Frequester-node-http
+[WARN] Request took 19335ms: https://registry.npmjs.org/@algolia%2Frequester-browser-xhr
+[WARN] Request took 20347ms: https://registry.npmjs.org/@algolia%2Fclient-analytics
+[WARN] Request took 21589ms: https://registry.npmjs.org/@babel%2Fcore
+[WARN] Request took 13562ms: https://registry.npmjs.org/@babel%2Fhelper-module-transforms
+[WARN] Request took 20881ms: https://registry.npmjs.org/@algolia%2Fmonitoring
+[WARN] Request took 24987ms: https://registry.npmjs.org/@angular%2Fbuild
+[WARN] Request took 26765ms: https://registry.npmjs.org/@astrojs%2Fcompiler
+[WARN] Request took 14894ms: https://registry.npmjs.org/@babel%2Fhelper-create-class-features-plugin
+[WARN] Request took 10883ms: https://registry.npmjs.org/@babel%2Fplugin-transform-block-scoped-functions
+[WARN] Request took 17307ms: https://registry.npmjs.org/@babel%2Fplugin-proposal-class-properties
+[WARN] Request took 16885ms: https://registry.npmjs.org/@babel%2Fplugin-transform-class-properties
+[WARN] Request took 19135ms: https://registry.npmjs.org/@babel%2Fplugin-transform-arrow-functions
+[WARN] Request took 16298ms: https://registry.npmjs.org/@babel%2Fplugin-transform-duplicate-named-capturing-groups-regex
+[WARN] Request took 28467ms: https://registry.npmjs.org/@babel%2Fplugin-transform-async-to-generator
+[WARN] Request took 27040ms: https://registry.npmjs.org/@babel%2Fplugin-transform-class-static-block
+[WARN] Request took 29955ms: https://registry.npmjs.org/@babel%2Fplugin-transform-explicit-resource-management
+[WARN] Request took 32851ms: https://registry.npmjs.org/@babel%2Fplugin-transform-export-namespace-from
+[WARN] Request took 32938ms: https://registry.npmjs.org/@babel%2Fplugin-transform-dynamic-import
+[WARN] GET https://registry.npmjs.org/@angular-devkit%2Farchitect error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@angular-devkit%2Fcore error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@angular-devkit%2Fschematics error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@angular%2Fanimations error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@angular%2Fcli error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@angular%2Fcommon error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@angular%2Fcompiler-cli error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@angular%2Fcompiler error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@angular%2Fcore error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@angular%2Fforms error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@angular%2Fplatform-browser error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@angular%2Frouter error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 32093ms: https://registry.npmjs.org/@babel%2Fplugin-transform-json-strings
+[WARN] Request took 39389ms: https://registry.npmjs.org/@babel%2Fplugin-syntax-jsx
+[WARN] Request took 21116ms: https://registry.npmjs.org/@babel%2Fplugin-transform-logical-assignment-operators
+[WARN] Request took 58911ms: https://registry.npmjs.org/@asamuzakjp%2Fdom-selector
+[WARN] Request took 39136ms: https://registry.npmjs.org/@babel%2Fplugin-transform-dotall-regex
+[WARN] Request took 39101ms: https://registry.npmjs.org/@babel%2Fplugin-transform-duplicate-keys
+[WARN] Request took 46280ms: https://registry.npmjs.org/@babel%2Fhelpers
+[WARN] GET https://registry.npmjs.org/@algolia%2Fclient-abtesting error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@algolia%2Fclient-query-suggestions error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@algolia%2Fingestion error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@algolia%2Frequester-fetch error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 39689ms: https://registry.npmjs.org/@babel%2Fplugin-transform-computed-properties
+[WARN] Request took 39177ms: https://registry.npmjs.org/@babel%2Fplugin-transform-async-generator-functions
+[WARN] Request took 14220ms: https://registry.npmjs.org/@babel%2Fplugin-transform-class-properties
+[WARN] GET https://registry.npmjs.org/@babel%2Fparser error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 45685ms: https://registry.npmjs.org/@babel%2Fplugin-transform-function-name
+[WARN] Request took 45722ms: https://registry.npmjs.org/@babel%2Fplugin-transform-exponentiation-operator
+[WARN] Request took 37710ms: https://registry.npmjs.org/@babel%2Fplugin-transform-literals
+[WARN] Request took 15856ms: https://registry.npmjs.org/@babel%2Fplugin-transform-class-static-block
+[WARN] Request took 46777ms: https://registry.npmjs.org/@babel%2Fplugin-transform-flow-strip-types
+[WARN] Request took 12852ms: https://registry.npmjs.org/@babel%2Fplugin-transform-export-namespace-from
+[WARN] Request took 47661ms: https://registry.npmjs.org/@babel%2Fplugin-transform-for-of
+[WARN] Request took 32428ms: https://registry.npmjs.org/@babel%2Fplugin-transform-member-expression-literals
+[WARN] GET https://registry.npmjs.org/@astrojs%2Fmarkdown-remark error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 12791ms: https://registry.npmjs.org/@babel%2Fplugin-transform-dynamic-import
+[WARN] Request took 50080ms: https://registry.npmjs.org/@babel%2Fplugin-transform-destructuring
+[WARN] Request took 55222ms: https://registry.npmjs.org/@babel%2Fplugin-proposal-decorators
+[WARN] Request took 51653ms: https://registry.npmjs.org/@babel%2Fplugin-transform-block-scoping
+[WARN] Request took 13651ms: https://registry.npmjs.org/@babel%2Fplugin-transform-json-strings
+[WARN] GET https://registry.npmjs.org/@algolia%2Frecommend error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@algolia%2Fclient-personalization error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@astrojs%2Flanguage-server error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 53505ms: https://registry.npmjs.org/@babel%2Fplugin-transform-classes
+[WARN] GET https://registry.npmjs.org/@algolia%2Fclient-common error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 54029ms: https://registry.npmjs.org/@babel%2Fplugin-syntax-typescript
+[WARN] GET https://registry.npmjs.org/@astrojs%2Fvercel error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 16513ms: https://registry.npmjs.org/@babel%2Fplugin-transform-logical-assignment-operators
+[WARN] GET https://registry.npmjs.org/@algolia%2Fclient-search error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@algolia%2Frequester-node-http error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@algolia%2Frequester-browser-xhr error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 38712ms: https://registry.npmjs.org/@babel%2Fplugin-transform-block-scoped-functions
+[WARN] Request took 29317ms: https://registry.npmjs.org/@babel%2Fplugin-transform-arrow-functions
+[WARN] Request took 17734ms: https://registry.npmjs.org/@babel%2Fplugin-transform-modules-amd
+[WARN] Request took 15217ms: https://registry.npmjs.org/@babel%2Fplugin-transform-new-target
+[WARN] Request took 24335ms: https://registry.npmjs.org/@babel%2Fplugin-transform-async-to-generator
+[WARN] GET https://registry.npmjs.org/@algolia%2Fclient-analytics error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@babel%2Fcore error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 20110ms: https://registry.npmjs.org/@babel%2Fplugin-transform-dotall-regex
+[WARN] GET https://registry.npmjs.org/@babel%2Fcore error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 20142ms: https://registry.npmjs.org/@babel%2Fplugin-transform-computed-properties
+[WARN] GET https://registry.npmjs.org/@angular%2Fbuild error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 21830ms: https://registry.npmjs.org/@babel%2Fplugin-transform-named-capturing-groups-regex
+[WARN] Request took 22686ms: https://registry.npmjs.org/@babel%2Fplugin-transform-modules-umd
+[WARN] Request took 24231ms: https://registry.npmjs.org/@babel%2Fplugin-transform-duplicate-keys
+[WARN] Request took 15678ms: https://registry.npmjs.org/@babel%2Fplugin-transform-literals
+[WARN] Request took 11208ms: https://registry.npmjs.org/@babel%2Fplugin-transform-classes
+[WARN] Request took 16469ms: https://registry.npmjs.org/@babel%2Fplugin-transform-exponentiation-operator
+[WARN] Request took 16998ms: https://registry.npmjs.org/@babel%2Fplugin-transform-function-name
+[WARN] Request took 16249ms: https://registry.npmjs.org/@babel%2Fplugin-transform-member-expression-literals
+[WARN] Request took 27282ms: https://registry.npmjs.org/@babel%2Fplugin-transform-modules-commonjs
+[WARN] Request took 26656ms: https://registry.npmjs.org/@babel%2Fplugin-transform-modules-systemjs
+[WARN] Request took 59191ms: https://registry.npmjs.org/@astrojs%2Fcompiler
+[WARN] Request took 19597ms: https://registry.npmjs.org/@babel%2Fplugin-transform-flow-strip-types
+[WARN] Request took 11139ms: https://registry.npmjs.org/@babel%2Fplugin-transform-parameters
+[WARN] Request took 13369ms: https://registry.npmjs.org/@astrojs%2Fmarkdown-remark
+[WARN] Request took 10957ms: https://registry.npmjs.org/@babel%2Fplugin-transform-regenerator
+[WARN] Request took 12557ms: https://registry.npmjs.org/@babel%2Fplugin-transform-typescript
+[WARN] Request took 10659ms: https://registry.npmjs.org/@babel%2Fplugin-transform-template-literals
+[WARN] Request took 11094ms: https://registry.npmjs.org/@babel%2Fplugin-transform-reserved-words
+[WARN] Request took 16496ms: https://registry.npmjs.org/@astrojs%2Flanguage-server
+[WARN] Request took 10267ms: https://registry.npmjs.org/@babel%2Fruntime
+[WARN] Request took 12334ms: https://registry.npmjs.org/@babel%2Fplugin-transform-spread
+[WARN] Request took 14140ms: https://registry.npmjs.org/@babel%2Fplugin-transform-modules-systemjs
+[WARN] Request took 22386ms: https://registry.npmjs.org/@babel%2Fparser
+[WARN] Request took 14291ms: https://registry.npmjs.org/@babel%2Fplugin-transform-modules-commonjs
+[WARN] Request took 10237ms: https://registry.npmjs.org/@babel%2Ftraverse
+[WARN] Request took 21540ms: https://registry.npmjs.org/@algolia%2Frecommend
+[WARN] Request took 14204ms: https://registry.npmjs.org/@babel%2Fplugin-transform-runtime
+[WARN] Request took 40934ms: https://registry.npmjs.org/@angular-devkit%2Fcore
+[WARN] Request took 41330ms: https://registry.npmjs.org/@angular-devkit%2Farchitect
+[WARN] Request took 11473ms: https://registry.npmjs.org/@babel%2Fpreset-react
+[WARN] Request took 25648ms: https://registry.npmjs.org/@algolia%2Fclient-common
+[WARN] Request took 14615ms: https://registry.npmjs.org/@babel%2Fplugin-transform-typescript
+[WARN] Request took 27847ms: https://registry.npmjs.org/@algolia%2Frequester-node-http
+[WARN] Request took 29685ms: https://registry.npmjs.org/@astrojs%2Fvercel
+[WARN] Request took 10576ms: https://registry.npmjs.org/@cspell%2Fcspell-performance-monitor
+[WARN] Request took 12624ms: https://registry.npmjs.org/@cspell%2Fcspell-service-bus
+[WARN] Request took 31006ms: https://registry.npmjs.org/@algolia%2Frequester-browser-xhr
+[WARN] Request took 22954ms: https://registry.npmjs.org/@babel%2Ftypes
+[WARN] Request took 16099ms: https://registry.npmjs.org/@changesets%2Fget-release-plan
+[WARN] Request took 30385ms: https://registry.npmjs.org/@babel%2Fcore
+[WARN] Request took 12678ms: https://registry.npmjs.org/@cspell%2Fdict-en_us
+[WARN] Request took 18692ms: https://registry.npmjs.org/@cspell%2Fcspell-pipe
+[WARN] Request took 36884ms: https://registry.npmjs.org/@algolia%2Fclient-search
+[WARN] Request took 57767ms: https://registry.npmjs.org/@angular%2Fcompiler-cli
+[WARN] Request took 35441ms: https://registry.npmjs.org/@babel%2Fcore
+[WARN] GET https://registry.npmjs.org/@angular-devkit%2Fschematics error (23). Will retry in 1 minute. 1 retries left.
+[WARN] Request took 38528ms: https://registry.npmjs.org/@babel%2Fpreset-env
+[WARN] Request took 13120ms: https://registry.npmjs.org/@cspell%2Fdict-en-common-misspellings
+[WARN] GET https://registry.npmjs.org/@angular%2Fanimations error (23). Will retry in 1 minute. 1 retries left.
+[WARN] GET https://registry.npmjs.org/@angular%2Fcli error (23). Will retry in 1 minute. 1 retries left.
+[WARN] GET https://registry.npmjs.org/@angular%2Fcommon error (23). Will retry in 1 minute. 1 retries left.
+[WARN] GET https://registry.npmjs.org/@angular%2Fcompiler error (23). Will retry in 1 minute. 1 retries left.
+[WARN] GET https://registry.npmjs.org/@angular%2Fcore error (23). Will retry in 1 minute. 1 retries left.
+[WARN] GET https://registry.npmjs.org/@angular%2Fforms error (23). Will retry in 1 minute. 1 retries left.
+[WARN] GET https://registry.npmjs.org/@angular%2Fplatform-browser error (23). Will retry in 1 minute. 1 retries left.
+[WARN] GET https://registry.npmjs.org/@angular%2Frouter error (23). Will retry in 1 minute. 1 retries left.
+[WARN] Request took 39156ms: https://registry.npmjs.org/@algolia%2Fclient-analytics
+[WARN] Request took 16340ms: https://registry.npmjs.org/@cspell%2Fdict-companies
+[WARN] Request took 18737ms: https://registry.npmjs.org/@cspell%2Fdict-cpp
+[WARN] Request took 18819ms: https://registry.npmjs.org/@babel%2Fregister
+[WARN] GET https://registry.npmjs.org/@algolia%2Fclient-abtesting error (23). Will retry in 1 minute. 1 retries left.
+[WARN] GET https://registry.npmjs.org/@algolia%2Fclient-query-suggestions error (23). Will retry in 1 minute. 1 retries left.
+[WARN] GET https://registry.npmjs.org/@algolia%2Fingestion error (23). Will retry in 1 minute. 1 retries left.
+[WARN] GET https://registry.npmjs.org/@algolia%2Frequester-fetch error (23). Will retry in 1 minute. 1 retries left.
+[WARN] Request took 10951ms: https://registry.npmjs.org/@cspell%2Fdict-python
+[WARN] Request took 17258ms: https://registry.npmjs.org/@cspell%2Fdict-java
+[WARN] Request took 11520ms: https://registry.npmjs.org/@cspell%2Fdict-node
+[WARN] Request took 20351ms: https://registry.npmjs.org/@cspell%2Fdict-html
+[WARN] Request took 31001ms: https://registry.npmjs.org/@changesets%2Fcli
+[WARN] Request took 10826ms: https://registry.npmjs.org/@cspell%2Fdict-terraform
+[WARN] Request took 48426ms: https://registry.npmjs.org/@angular%2Fbuild
+[WARN] Request took 37456ms: https://registry.npmjs.org/@cspell%2Fcspell-types
+[WARN] Request took 13922ms: https://registry.npmjs.org/@cspell%2Furl
+[WARN] GET https://registry.npmjs.org/@algolia%2Fclient-personalization error (23). Will retry in 1 minute. 1 retries left.
+[WARN] Request took 22142ms: https://registry.npmjs.org/@cspell%2Fdict-markdown
+[WARN] Request took 12298ms: https://registry.npmjs.org/@cspell%2Frpc
+[WARN] Request took 37189ms: https://registry.npmjs.org/@cspell%2Fcspell-resolver
+[WARN] Request took 23861ms: https://registry.npmjs.org/@cspell%2Fdict-typescript
+[WARN] Request took 43391ms: https://registry.npmjs.org/@babel%2Ftraverse
+[WARN] Request took 20790ms: https://registry.npmjs.org/@cspell%2Fdynamic-import
+[WARN] Request took 20646ms: https://registry.npmjs.org/@cspell%2Fdict-sql
+[WARN] Request took 12799ms: https://registry.npmjs.org/@emmetio%2Fcss-abbreviation
+[WARN] Request took 14205ms: https://registry.npmjs.org/@deno%2Fshim-deno
+[WARN] Request took 34792ms: https://registry.npmjs.org/@cspell%2Fdict-en-gb-mit
+[WARN] Request took 14445ms: https://registry.npmjs.org/@cspell%2Fdict-java
+[WARN] Request took 14279ms: https://registry.npmjs.org/@emmetio%2Fabbreviation
+[WARN] Request took 21582ms: https://registry.npmjs.org/@cspell%2Fdict-html
+[WARN] Request took 14606ms: https://registry.npmjs.org/@csstools%2Fcolor-helpers
+[WARN] Request took 10418ms: https://registry.npmjs.org/@emmetio%2Fstream-reader-utils
+[WARN] Request took 10386ms: https://registry.npmjs.org/@emmetio%2Fcss-parser
+[WARN] Request took 34310ms: https://registry.npmjs.org/@cspell%2Fdict-php
+[WARN] Request took 34357ms: https://registry.npmjs.org/@cspell%2Fdict-software-terms
+[WARN] Request took 31085ms: https://registry.npmjs.org/@cspell%2Fstrong-weak-map
+[WARN] Request took 11956ms: https://registry.npmjs.org/@emmetio%2Fscanner
+[WARN] Request took 10464ms: https://registry.npmjs.org/@emmetio%2Fstream-reader
+[WARN] Request took 21530ms: https://registry.npmjs.org/@egjs%2Fhammerjs
+[WARN] Request took 34461ms: https://registry.npmjs.org/@cspell%2Fdict-powershell
+[WARN] Request took 38993ms: https://registry.npmjs.org/@cspell%2Fdict-en_us
+[WARN] Request took 11745ms: https://registry.npmjs.org/@cspell%2Fdict-typescript
+[WARN] Request took 13921ms: https://registry.npmjs.org/@discoveryjs%2Fjson-ext
+[WARN] Request took 12047ms: https://registry.npmjs.org/@csstools%2Fcss-parser-algorithms
+[WARN] GET https://registry.npmjs.org/@babel%2Fruntime error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@cspell%2Fcspell-bundled-dicts error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 15815ms: https://registry.npmjs.org/@csstools%2Fcss-calc
+[WARN] Request took 10741ms: https://registry.npmjs.org/@emmetio%2Fcss-abbreviation
+[WARN] Request took 25492ms: https://registry.npmjs.org/@cspell%2Fdict-python
+[WARN] Request took 11053ms: https://registry.npmjs.org/@csstools%2Fcss-syntax-patches-for-csstree
+[WARN] Request took 26546ms: https://registry.npmjs.org/@cspell%2Ffiletypes
+[WARN] Request took 19287ms: https://registry.npmjs.org/@csstools%2Fcss-color-parser
+[WARN] Request took 14657ms: https://registry.npmjs.org/@emmetio%2Fhtml-matcher
+[WARN] GET https://registry.npmjs.org/@angular-devkit%2Farchitect error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@angular-devkit%2Fcore error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 39654ms: https://registry.npmjs.org/@cspell%2Fdict-npm
+[WARN] Request took 18751ms: https://registry.npmjs.org/@es-joy%2Fjsdoccomment
+[WARN] Request took 27608ms: https://registry.npmjs.org/@cspell%2Furl
+[WARN] Request took 25063ms: https://registry.npmjs.org/@cspell%2Fdynamic-import
+[WARN] GET https://registry.npmjs.org/@cspell%2Fcspell-service-bus error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 14970ms: https://registry.npmjs.org/@emnapi%2Fruntime
+[WARN] Request took 11826ms: https://registry.npmjs.org/@esbuild%2Ffreebsd-x64
+[WARN] Request took 12223ms: https://registry.npmjs.org/@esbuild%2Fdarwin-x64
+[WARN] Request took 11883ms: https://registry.npmjs.org/@esbuild%2Ffreebsd-arm64
+[WARN] Request took 12271ms: https://registry.npmjs.org/@esbuild%2Fdarwin-arm64
+[WARN] Request took 52744ms: https://registry.npmjs.org/@cspell%2Feslint-plugin
+[WARN] Request took 23117ms: https://registry.npmjs.org/@cspell%2Fstrong-weak-map
+[WARN] GET https://registry.npmjs.org/@cspell%2Fcspell-pipe error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@angular%2Fcompiler-cli error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 11448ms: https://registry.npmjs.org/@eslint-community%2Feslint-utils
+[WARN] Request took 16728ms: https://registry.npmjs.org/@esbuild%2Fnetbsd-x64
+[WARN] Request took 14429ms: https://registry.npmjs.org/@esbuild%2Fsunos-x64
+[WARN] Request took 14273ms: https://registry.npmjs.org/@esbuild%2Fwin32-ia32
+[WARN] Request took 14284ms: https://registry.npmjs.org/@esbuild%2Fwin32-arm64
+[WARN] Request took 20173ms: https://registry.npmjs.org/@esbuild%2Fandroid-arm
+[WARN] GET https://registry.npmjs.org/@babel%2Fpreset-env error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 10110ms: https://registry.npmjs.org/@expo%2Fcode-signing-certificates
+[WARN] Request took 34597ms: https://registry.npmjs.org/@cspell%2Fdict-software-terms
+[WARN] Request took 12546ms: https://registry.npmjs.org/@eslint%2Fjs
+[WARN] Request took 10084ms: https://registry.npmjs.org/@eslint%2Fplugin-kit
+[WARN] Request took 11430ms: https://registry.npmjs.org/@expo%2Fenv
+[WARN] Request took 12389ms: https://registry.npmjs.org/@eslint%2Feslintrc
+[WARN] Request took 14929ms: https://registry.npmjs.org/@expo%2Fconfig-types
+[WARN] Request took 12521ms: https://registry.npmjs.org/@exodus%2Fbytes
+[WARN] Request took 33145ms: https://registry.npmjs.org/@esbuild%2Fandroid-x64
+[WARN] Request took 34944ms: https://registry.npmjs.org/@esbuild%2Flinux-arm
+[WARN] Request took 34927ms: https://registry.npmjs.org/@esbuild%2Flinux-mips64el
+[WARN] Request took 34940ms: https://registry.npmjs.org/@esbuild%2Flinux-arm64
+[WARN] Request took 11612ms: https://registry.npmjs.org/@expo%2Ffingerprint
+[WARN] Request took 35388ms: https://registry.npmjs.org/@esbuild%2Flinux-riscv64
+[WARN] Request took 11593ms: https://registry.npmjs.org/@expo%2Fimage-utils
+[WARN] Request took 30584ms: https://registry.npmjs.org/@esbuild%2Fwin32-x64
+[WARN] Request took 21302ms: https://registry.npmjs.org/@expo%2Fconfig-plugins
+[WARN] Request took 36387ms: https://registry.npmjs.org/@esbuild%2Flinux-ia32
+[WARN] Request took 36684ms: https://registry.npmjs.org/@esbuild%2Flinux-ppc64
+[WARN] Request took 36695ms: https://registry.npmjs.org/@esbuild%2Flinux-s390x
+[WARN] Request took 31314ms: https://registry.npmjs.org/@esbuild%2Fopenbsd-x64
+[WARN] Request took 36713ms: https://registry.npmjs.org/@esbuild%2Flinux-x64
+[WARN] Request took 37955ms: https://registry.npmjs.org/@esbuild%2Flinux-loong64
+[WARN] Request took 18739ms: https://registry.npmjs.org/@expo%2Fconfig
+[WARN] Request took 24477ms: https://registry.npmjs.org/@cspell%2Feslint-plugin
+[WARN] GET https://registry.npmjs.org/@cspell%2Fcspell-types error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 20580ms: https://registry.npmjs.org/@cspell%2Fcspell-service-bus
+[WARN] Request took 13454ms: https://registry.npmjs.org/@expo%2Fmetro-config
+[WARN] Request took 14693ms: https://registry.npmjs.org/@cspell%2Fcspell-pipe
+[WARN] Request took 31602ms: https://registry.npmjs.org/@es-joy%2Fjsdoccomment
+[WARN] Request took 34879ms: https://registry.npmjs.org/@cspell%2Fcspell-bundled-dicts
+[WARN] Request took 41939ms: https://registry.npmjs.org/@eslint-react%2Feff
+[WARN] Request took 13320ms: https://registry.npmjs.org/@expo%2Fconfig-types
+[WARN] Request took 12125ms: https://registry.npmjs.org/@expo%2Fjson-file
+[WARN] Request took 27917ms: https://registry.npmjs.org/@angular%2Fcompiler
+[WARN] Request took 12373ms: https://registry.npmjs.org/@expo%2Ffingerprint
+[WARN] Request took 12414ms: https://registry.npmjs.org/@expo%2Fimage-utils
+[WARN] Request took 29913ms: https://registry.npmjs.org/@angular-devkit%2Fschematics
+[WARN] Request took 24138ms: https://registry.npmjs.org/@algolia%2Fingestion
+[WARN] Request took 27483ms: https://registry.npmjs.org/@algolia%2Fclient-abtesting
+[WARN] Request took 26132ms: https://registry.npmjs.org/@algolia%2Fclient-query-suggestions
+[WARN] Request took 12649ms: https://registry.npmjs.org/@expo%2Fpackage-manager
+[WARN] Request took 20832ms: https://registry.npmjs.org/@babel%2Fpreset-env
+[WARN] Request took 31099ms: https://registry.npmjs.org/@angular%2Fcommon
+[WARN] Request took 15247ms: https://registry.npmjs.org/@expo%2Fosascript
+[WARN] Request took 31623ms: https://registry.npmjs.org/@angular%2Frouter
+[WARN] Request took 31646ms: https://registry.npmjs.org/@angular%2Fforms
+[WARN] Request took 40339ms: https://registry.npmjs.org/@expo%2Fcli
+[WARN] Request took 33121ms: https://registry.npmjs.org/@angular%2Fcore
+[WARN] Request took 33238ms: https://registry.npmjs.org/@angular%2Fplatform-browser
+[WARN] Request took 31010ms: https://registry.npmjs.org/@algolia%2Frequester-fetch
+[WARN] Request took 35550ms: https://registry.npmjs.org/@angular%2Fcli
+[WARN] GET https://registry.npmjs.org/@eslint-react%2Fast error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@eslint-react%2Fcore error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 49106ms: https://registry.npmjs.org/@angular-devkit%2Farchitect
+[WARN] Request took 40482ms: https://registry.npmjs.org/@angular%2Fanimations
+[WARN] Request took 21884ms: https://registry.npmjs.org/@expo%2Fconfig
+[WARN] Request took 16400ms: https://registry.npmjs.org/@cspell%2Fcspell-bundled-dicts
+[WARN] Request took 23715ms: https://registry.npmjs.org/@algolia%2Fclient-personalization
+[WARN] Request took 49430ms: https://registry.npmjs.org/@angular-devkit%2Fcore
+[WARN] Request took 21405ms: https://registry.npmjs.org/@expo%2Fprebuild-config
+[WARN] Request took 26534ms: https://registry.npmjs.org/@expo%2Fconfig-plugins
+[WARN] Request took 13155ms: https://registry.npmjs.org/@cspell%2Fcspell-types
+[WARN] Request took 54557ms: https://registry.npmjs.org/@eslint-react%2Fvar
+[WARN] Request took 13727ms: https://registry.npmjs.org/@internationalized%2Fdate
+[WARN] GET https://registry.npmjs.org/@eslint-react%2Feslint-plugin error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 60027ms: https://registry.npmjs.org/@eslint-react%2Fshared
+[WARN] Request took 14370ms: https://registry.npmjs.org/@internationalized%2Fnumber
+[WARN] Request took 25538ms: https://registry.npmjs.org/@expo%2Fmetro-config
+[WARN] Request took 40830ms: https://registry.npmjs.org/@angular%2Fcompiler-cli
+[WARN] GET https://registry.npmjs.org/@babel%2Fruntime error (23). Will retry in 1 minute. 1 retries left.
+[WARN] Request took 20585ms: https://registry.npmjs.org/@angular-devkit%2Fschematics
+[WARN] Request took 17444ms: https://registry.npmjs.org/@angular%2Fforms
+[WARN] Request took 11195ms: https://registry.npmjs.org/@angular-devkit%2Farchitect
+[WARN] Request took 18559ms: https://registry.npmjs.org/@expo%2Fcli
+[WARN] Request took 20869ms: https://registry.npmjs.org/@angular%2Frouter
+[WARN] Request took 28602ms: https://registry.npmjs.org/@eslint-react%2Feff
+[WARN] Request took 19924ms: https://registry.npmjs.org/@angular%2Fcore
+[WARN] Request took 11241ms: https://registry.npmjs.org/@angular-devkit%2Fcore
+[WARN] Request took 22574ms: https://registry.npmjs.org/@angular%2Fplatform-browser
+[WARN] Request took 25403ms: https://registry.npmjs.org/@angular%2Fcommon
+[WARN] Request took 33271ms: https://registry.npmjs.org/@angular%2Fcompiler
+[WARN] Request took 21357ms: https://registry.npmjs.org/@angular%2Fanimations
+[WARN] Request took 11440ms: https://registry.npmjs.org/@npmcli%2Frun-script
+[WARN] Request took 12274ms: https://registry.npmjs.org/@oxc-parser%2Fbinding-darwin-arm64
+[WARN] Request took 12993ms: https://registry.npmjs.org/@oxc-parser%2Fbinding-darwin-x64
+[WARN] Request took 13621ms: https://registry.npmjs.org/@oxc-parser%2Fbinding-linux-arm-musleabihf
+[WARN] Request took 13613ms: https://registry.npmjs.org/@oxc-parser%2Fbinding-freebsd-x64
+[WARN] Request took 13634ms: https://registry.npmjs.org/@oxc-parser%2Fbinding-linux-x64-gnu
+[WARN] Request took 12891ms: https://registry.npmjs.org/@oxc-parser%2Fbinding-linux-ppc64-gnu
+[WARN] Request took 12898ms: https://registry.npmjs.org/@oxc-parser%2Fbinding-linux-riscv64-musl
+[WARN] Request took 15263ms: https://registry.npmjs.org/@oxc-parser%2Fbinding-linux-arm-gnueabihf
+[WARN] Request took 38454ms: https://registry.npmjs.org/@internationalized%2Fdate
+[WARN] Request took 13006ms: https://registry.npmjs.org/@oxc-parser%2Fbinding-linux-x64-musl
+[WARN] Request took 13372ms: https://registry.npmjs.org/@oxc-parser%2Fbinding-linux-s390x-gnu
+[WARN] Request took 13381ms: https://registry.npmjs.org/@oxc-parser%2Fbinding-linux-riscv64-gnu
+[WARN] Request took 10494ms: https://registry.npmjs.org/@oxc-parser%2Fbinding-openharmony-arm64
+[WARN] Request took 21505ms: https://registry.npmjs.org/@oxc-parser%2Fbinding-darwin-arm64
+[WARN] Request took 10496ms: https://registry.npmjs.org/@oxc-parser%2Fbinding-win32-x64-msvc
+[WARN] Request took 20662ms: https://registry.npmjs.org/@oxc-parser%2Fbinding-darwin-x64
+[WARN] Request took 20664ms: https://registry.npmjs.org/@oxc-parser%2Fbinding-linux-arm64-musl
+[WARN] Request took 20689ms: https://registry.npmjs.org/@oxc-parser%2Fbinding-linux-arm64-gnu
+[WARN] Request took 13401ms: https://registry.npmjs.org/@oxc-parser%2Fbinding-linux-x64-gnu
+[WARN] Request took 46630ms: https://registry.npmjs.org/@internationalized%2Fnumber

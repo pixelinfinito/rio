@@ -1,0 +1,81 @@
+[
+  {
+    "path": "eval/runs/tanstack-query-11522-seeded-evidence/oracle-02/commands.json",
+    "commands": 6,
+    "total_wall_time_seconds": 51.357,
+    "exit_codes": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      2
+    ],
+    "valid_setup": true
+  },
+  {
+    "path": "eval/runs/tanstack-query-11522-seeded-evidence/oracle/commands.json",
+    "commands": 5,
+    "total_wall_time_seconds": 21.547,
+    "exit_codes": [
+      0,
+      1,
+      2,
+      1,
+      2
+    ],
+    "valid_setup": false
+  },
+  {
+    "path": "eval/runs/tanstack-query-11293-evidence/oracle-head/commands.json",
+    "commands": 6,
+    "total_wall_time_seconds": 70.355,
+    "exit_codes": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "valid_setup": true
+  },
+  {
+    "path": "eval/runs/tanstack-query-11293-evidence/oracle-base/commands.json",
+    "commands": 6,
+    "total_wall_time_seconds": 71.545,
+    "exit_codes": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "valid_setup": true
+  },
+  {
+    "path": "eval/runs/tanstack-query-11392-evidence/oracle-head/commands.json",
+    "commands": 4,
+    "total_wall_time_seconds": 44.581,
+    "exit_codes": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "valid_setup": true
+  },
+  {
+    "path": "eval/runs/tanstack-query-11392-evidence/oracle-base/commands.json",
+    "commands": 4,
+    "total_wall_time_seconds": 42.869,
+    "exit_codes": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "valid_setup": true
+  }
+]

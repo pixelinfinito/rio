@@ -1,0 +1,87 @@
+[
+  {
+    "label": "install-0",
+    "argv": [
+      "corepack",
+      "pnpm",
+      "install",
+      "--frozen-lockfile",
+      "--trust-lockfile",
+      "--ignore-scripts",
+      "--config.virtual-store-dir-max-length=250",
+      "--config.confirmModulesPurge=false",
+      "--package-import-method=hardlink",
+      "--store-dir",
+      "/dev/shm/rio-tanstack-tools/pnpm-store"
+    ],
+    "cwd": "/dev/shm/rio-tanstack-work/maintainer-base",
+    "exit_code": 0,
+    "wall_time_seconds": 12.301161371986382
+  },
+  {
+    "label": "install-1",
+    "argv": [
+      "python3",
+      "/home/ubuntu/.t3/worktrees/rio/eval-run-tanstack-query/eval/runs/tanstack-query-11392-evidence/prepare-installation-02.py"
+    ],
+    "cwd": "/dev/shm/rio-tanstack-work/maintainer-base",
+    "exit_code": 0,
+    "wall_time_seconds": 0.6862058159895241
+  },
+  {
+    "label": "install-2",
+    "argv": [
+      "node",
+      "node_modules/typescript/lib/tsc.js",
+      "-b",
+      "packages/query-core",
+      "packages/query-test-utils"
+    ],
+    "cwd": "/dev/shm/rio-tanstack-work/maintainer-base",
+    "exit_code": 0,
+    "wall_time_seconds": 13.661716095986776
+  },
+  {
+    "label": "types",
+    "argv": [
+      "/dev/shm/rio-tanstack-tools/node-v24.16.0-linux-x64/bin/node",
+      "node_modules/typescript/lib/tsc.js",
+      "--noEmit",
+      "--pretty",
+      "false",
+      "-p",
+      "packages/query-core"
+    ],
+    "cwd": "/dev/shm/rio-tanstack-work/maintainer-base",
+    "exit_code": 0,
+    "wall_time_seconds": 3.2031214939197525
+  },
+  {
+    "label": "eslint",
+    "argv": [
+      "/dev/shm/rio-tanstack-tools/node-v24.16.0-linux-x64/bin/node",
+      "/dev/shm/rio-tanstack-work/maintainer-base/node_modules/eslint/bin/eslint.js",
+      "--format",
+      "json",
+      "./src"
+    ],
+    "cwd": "/dev/shm/rio-tanstack-work/maintainer-base/packages/query-core",
+    "exit_code": 0,
+    "wall_time_seconds": 15.061330153024755
+  },
+  {
+    "label": "coverage",
+    "argv": [
+      "/dev/shm/rio-tanstack-tools/node-v24.16.0-linux-x64/bin/node",
+      "/dev/shm/rio-tanstack-work/maintainer-base/node_modules/vitest/vitest.mjs",
+      "run",
+      "--coverage",
+      "--coverage.reporter=lcov",
+      "--coverage.reportsDirectory=/home/ubuntu/.t3/worktrees/rio/eval-run-tanstack-query/eval/runs/tanstack-query-11293-evidence/oracle-base/coverage",
+      "--maxWorkers=2"
+    ],
+    "cwd": "/dev/shm/rio-tanstack-work/maintainer-base/packages/query-core",
+    "exit_code": 0,
+    "wall_time_seconds": 26.631800428032875
+  }
+]

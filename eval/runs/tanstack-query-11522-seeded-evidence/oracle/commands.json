@@ -1,0 +1,79 @@
+[
+  {
+    "label": "head-install",
+    "argv": [
+      "corepack",
+      "pnpm",
+      "--filter",
+      "root",
+      "--filter",
+      "@tanstack/query-broadcast-client-experimental...",
+      "install",
+      "--frozen-lockfile",
+      "--trust-lockfile",
+      "--offline",
+      "--ignore-scripts",
+      "--store-dir",
+      "/dev/shm/rio-tanstack-tools/pnpm-store"
+    ],
+    "cwd": "/dev/shm/rio-tanstack-work/seed-head",
+    "exit_code": 0,
+    "wall_time_seconds": 4.930363173014484
+  },
+  {
+    "label": "base-compile-dependencies",
+    "argv": [
+      "/dev/shm/rio-tanstack-tools/node-v24.16.0-linux-x64/bin/node",
+      "node_modules/typescript/lib/tsc.js",
+      "-b",
+      "packages/query-core",
+      "packages/query-test-utils"
+    ],
+    "cwd": "/dev/shm/rio-tanstack-work/seed-base",
+    "exit_code": 1,
+    "wall_time_seconds": 5.59665916999802
+  },
+  {
+    "label": "base-types",
+    "argv": [
+      "/dev/shm/rio-tanstack-tools/node-v24.16.0-linux-x64/bin/node",
+      "node_modules/typescript/lib/tsc.js",
+      "--noEmit",
+      "--pretty",
+      "false",
+      "-p",
+      "packages/query-broadcast-client-experimental"
+    ],
+    "cwd": "/dev/shm/rio-tanstack-work/seed-base",
+    "exit_code": 2,
+    "wall_time_seconds": 2.632973425090313
+  },
+  {
+    "label": "head-compile-dependencies",
+    "argv": [
+      "/dev/shm/rio-tanstack-tools/node-v24.16.0-linux-x64/bin/node",
+      "node_modules/typescript/lib/tsc.js",
+      "-b",
+      "packages/query-core",
+      "packages/query-test-utils"
+    ],
+    "cwd": "/dev/shm/rio-tanstack-work/seed-head",
+    "exit_code": 1,
+    "wall_time_seconds": 5.344936295994557
+  },
+  {
+    "label": "head-types",
+    "argv": [
+      "/dev/shm/rio-tanstack-tools/node-v24.16.0-linux-x64/bin/node",
+      "node_modules/typescript/lib/tsc.js",
+      "--noEmit",
+      "--pretty",
+      "false",
+      "-p",
+      "packages/query-broadcast-client-experimental"
+    ],
+    "cwd": "/dev/shm/rio-tanstack-work/seed-head",
+    "exit_code": 2,
+    "wall_time_seconds": 3.041783789987676
+  }
+]

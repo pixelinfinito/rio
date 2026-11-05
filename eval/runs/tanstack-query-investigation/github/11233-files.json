@@ -1,0 +1,38 @@
+[
+  {
+    "sha": "1ddea685d0cace3e267bbad668fdf67d9bf2ee4b",
+    "filename": ".changeset/true-cobras-wait.md",
+    "status": "added",
+    "additions": 6,
+    "deletions": 0,
+    "changes": 6,
+    "blob_url": "https://github.com/TanStack/query/blob/8aeaa35fcd4845077e1e7a52eee0624fec4a1681/.changeset%2Ftrue-cobras-wait.md",
+    "raw_url": "https://github.com/TanStack/query/raw/8aeaa35fcd4845077e1e7a52eee0624fec4a1681/.changeset%2Ftrue-cobras-wait.md",
+    "contents_url": "https://api.github.com/repos/TanStack/query/contents/.changeset%2Ftrue-cobras-wait.md?ref=8aeaa35fcd4845077e1e7a52eee0624fec4a1681",
+    "patch": "@@ -0,0 +1,6 @@\n+---\n+'@tanstack/preact-query': patch\n+'@tanstack/react-query': patch\n+---\n+\n+remove unused experimental_beforeQuery and experimental_afterQuery hooks"
+  },
+  {
+    "sha": "beeeec69a06981ea5b7ae103fd598a6c22880ff3",
+    "filename": "packages/preact-query/src/useBaseQuery.ts",
+    "status": "modified",
+    "additions": 0,
+    "deletions": 9,
+    "changes": 9,
+    "blob_url": "https://github.com/TanStack/query/blob/8aeaa35fcd4845077e1e7a52eee0624fec4a1681/packages%2Fpreact-query%2Fsrc%2FuseBaseQuery.ts",
+    "raw_url": "https://github.com/TanStack/query/raw/8aeaa35fcd4845077e1e7a52eee0624fec4a1681/packages%2Fpreact-query%2Fsrc%2FuseBaseQuery.ts",
+    "contents_url": "https://api.github.com/repos/TanStack/query/contents/packages%2Fpreact-query%2Fsrc%2FuseBaseQuery.ts?ref=8aeaa35fcd4845077e1e7a52eee0624fec4a1681",
+    "patch": "@@ -54,10 +54,6 @@ export function useBaseQuery<\n   const client = useQueryClient(queryClient)\n   const defaultedOptions = client.defaultQueryOptions(options)\n \n-  ;(client.getDefaultOptions().queries as any)?._experimental_beforeQuery?.(\n-    defaultedOptions,\n-  )\n-\n   if (process.env.NODE_ENV !== 'production') {\n     if (!defaultedOptions.queryFn) {\n       console.error(\n@@ -140,11 +136,6 @@ export function useBaseQuery<\n     throw result.error\n   }\n \n-  ;(client.getDefaultOptions().queries as any)?._experimental_afterQuery?.(\n-    defaultedOptions,\n-    result,\n-  )\n-\n   if (\n     defaultedOptions.experimental_prefetchInRender &&\n     !environmentManager.isServer() &&"
+  },
+  {
+    "sha": "c2e2c693e19be546819776cd474ef2a26f0a3b54",
+    "filename": "packages/react-query/src/useBaseQuery.ts",
+    "status": "modified",
+    "additions": 0,
+    "deletions": 8,
+    "changes": 8,
+    "blob_url": "https://github.com/TanStack/query/blob/8aeaa35fcd4845077e1e7a52eee0624fec4a1681/packages%2Freact-query%2Fsrc%2FuseBaseQuery.ts",
+    "raw_url": "https://github.com/TanStack/query/raw/8aeaa35fcd4845077e1e7a52eee0624fec4a1681/packages%2Freact-query%2Fsrc%2FuseBaseQuery.ts",
+    "contents_url": "https://api.github.com/repos/TanStack/query/contents/packages%2Freact-query%2Fsrc%2FuseBaseQuery.ts?ref=8aeaa35fcd4845077e1e7a52eee0624fec4a1681",
+    "patch": "@@ -53,9 +53,6 @@ export function useBaseQuery<\n   const errorResetBoundary = useQueryErrorResetBoundary()\n   const client = useQueryClient(queryClient)\n   const defaultedOptions = client.defaultQueryOptions(options)\n-  ;(client.getDefaultOptions().queries as any)?._experimental_beforeQuery?.(\n-    defaultedOptions,\n-  )\n \n   const query = client\n     .getQueryCache()\n@@ -145,11 +142,6 @@ export function useBaseQuery<\n     throw result.error\n   }\n \n-  ;(client.getDefaultOptions().queries as any)?._experimental_afterQuery?.(\n-    defaultedOptions,\n-    result,\n-  )\n-\n   if (\n     defaultedOptions.experimental_prefetchInRender &&\n     !environmentManager.isServer() &&"
+  }
+]

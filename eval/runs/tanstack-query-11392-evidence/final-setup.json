@@ -1,0 +1,19 @@
+{
+  "date": "2026-11-05",
+  "node": "v24.16.0",
+  "pnpm": "11.9.0",
+  "corepack": "0.35.0 (bundled with pinned Node)",
+  "rio_binary": "/home/ubuntu/rio/target/release/rio",
+  "rio_version": "rio 0.1.0 x86_64-unknown-linux-gnu b15dc8ff5001",
+  "source_mirror": "/tmp/rio-tanstack-query-search",
+  "mirror_origin": "https://github.com/TanStack/query.git",
+  "environment": {
+    "COREPACK_HOME": "/dev/shm/rio-tanstack-tools/corepack-cache",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "TMPDIR": "/dev/shm/rio-tanstack-work",
+    "pnpm_store": "/dev/shm/rio-tanstack-tools/pnpm-store"
+  },
+  "profile": "rio/base",
+  "trust_installed_dependencies": false,
+  "offline_audit": "Not executed; explicit capability limitation; no vulnerability-control expectation."
+}

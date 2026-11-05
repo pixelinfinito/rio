@@ -1,0 +1,56 @@
+{
+  "repository": "TanStack/query",
+  "pr": "https://github.com/TanStack/query/pull/11392",
+  "case_id": "11392",
+  "languages": [
+    "typescript"
+  ],
+  "reviewer": "sub-agent eval-tanstack-query (automated)",
+  "verdict_source": "automated",
+  "commands": [
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-x2buu898 argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/TanStack/query.git\", \"/dev/shm/rio-tanstack-work/rio-eval-x2buu898/head\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-x2buu898/head argv=[\"git\", \"fetch\", \"origin\", \"fc51e96045d729a98bc784e1bb11ea16d7d7a4c1\", \"0a73db4c255eb44e1889696f8d5a9ddf57934229\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-x2buu898/head argv=[\"git\", \"merge-base\", \"fc51e96045d729a98bc784e1bb11ea16d7d7a4c1\", \"0a73db4c255eb44e1889696f8d5a9ddf57934229\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-x2buu898/head argv=[\"git\", \"checkout\", \"--detach\", \"0a73db4c255eb44e1889696f8d5a9ddf57934229\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-x2buu898 argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/dev/shm/rio-tanstack-work/rio-eval-x2buu898/head\", \"/dev/shm/rio-tanstack-work/rio-eval-x2buu898/base\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-x2buu898/base argv=[\"git\", \"checkout\", \"--detach\", \"fc51e96045d729a98bc784e1bb11ea16d7d7a4c1\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-x2buu898/base argv=[\"corepack\", \"pnpm\", \"--filter\", \"root\", \"--filter\", \"@tanstack/query-broadcast-client-experimental...\", \"install\", \"--frozen-lockfile\", \"--trust-lockfile\", \"--ignore-scripts\", \"--store-dir\", \"/dev/shm/rio-tanstack-tools/pnpm-store\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-x2buu898/base argv=[\"node\", \"node_modules/typescript/lib/tsc.js\", \"-b\", \"packages/query-core\", \"packages/query-test-utils\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-x2buu898/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-x2buu898/head argv=[\"corepack\", \"pnpm\", \"--filter\", \"root\", \"--filter\", \"@tanstack/query-broadcast-client-experimental...\", \"install\", \"--frozen-lockfile\", \"--trust-lockfile\", \"--ignore-scripts\", \"--store-dir\", \"/dev/shm/rio-tanstack-tools/pnpm-store\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-x2buu898/head argv=[\"node\", \"node_modules/typescript/lib/tsc.js\", \"-b\", \"packages/query-core\", \"packages/query-test-utils\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-x2buu898/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-x2buu898/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-x2buu898/head argv=[\"node\", \"--version\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-x2buu898/head argv=[\"npm\", \"--version\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-x2buu898/head argv=[\"corepack\", \"--version\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-x2buu898/head argv=[\"python3\", \"--version\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-x2buu898/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"rio/base\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-x2buu898/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-x2buu898/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"fc51e96045d729a98bc784e1bb11ea16d7d7a4c1\", \"--format\", \"json\", \"--offline\", \"--profile\", \"rio/base\"]",
+    "Independent oracle base: cwd=/dev/shm/rio-tanstack-work/negative-base argv=[\"/dev/shm/rio-tanstack-tools/node-v24.16.0-linux-x64/bin/node\", \"node_modules/typescript/lib/tsc.js\", \"-b\", \"packages/query-core\", \"packages/query-test-utils\"] exit=0",
+    "Independent oracle base: cwd=/dev/shm/rio-tanstack-work/negative-base argv=[\"/dev/shm/rio-tanstack-tools/node-v24.16.0-linux-x64/bin/node\", \"node_modules/typescript/lib/tsc.js\", \"-b\", \"packages/query-broadcast-client-experimental\"] exit=0",
+    "Independent oracle base: cwd=/dev/shm/rio-tanstack-work/negative-base/packages/query-broadcast-client-experimental argv=[\"/dev/shm/rio-tanstack-tools/node-v24.16.0-linux-x64/bin/node\", \"/dev/shm/rio-tanstack-work/negative-base/node_modules/eslint/bin/eslint.js\", \"--format\", \"json\", \"./src\"] exit=0",
+    "Independent oracle base: cwd=/dev/shm/rio-tanstack-work/negative-base/packages/query-broadcast-client-experimental argv=[\"/dev/shm/rio-tanstack-tools/node-v24.16.0-linux-x64/bin/node\", \"/dev/shm/rio-tanstack-work/negative-base/node_modules/vitest/vitest.mjs\", \"run\", \"--coverage\", \"--coverage.reporter=lcov\", \"--coverage.reportsDirectory=/dev/shm/rio-tanstack-work/oracle-base/coverage\", \"--maxWorkers=2\"] exit=0",
+    "Independent oracle head: cwd=/dev/shm/rio-tanstack-work/negative-head argv=[\"/dev/shm/rio-tanstack-tools/node-v24.16.0-linux-x64/bin/node\", \"node_modules/typescript/lib/tsc.js\", \"-b\", \"packages/query-core\", \"packages/query-test-utils\"] exit=0",
+    "Independent oracle head: cwd=/dev/shm/rio-tanstack-work/negative-head argv=[\"/dev/shm/rio-tanstack-tools/node-v24.16.0-linux-x64/bin/node\", \"node_modules/typescript/lib/tsc.js\", \"-b\", \"packages/query-broadcast-client-experimental\"] exit=0",
+    "Independent oracle head: cwd=/dev/shm/rio-tanstack-work/negative-head/packages/query-broadcast-client-experimental argv=[\"/dev/shm/rio-tanstack-tools/node-v24.16.0-linux-x64/bin/node\", \"/dev/shm/rio-tanstack-work/negative-head/node_modules/eslint/bin/eslint.js\", \"--format\", \"json\", \"./src\"] exit=0",
+    "Independent oracle head: cwd=/dev/shm/rio-tanstack-work/negative-head/packages/query-broadcast-client-experimental argv=[\"/dev/shm/rio-tanstack-tools/node-v24.16.0-linux-x64/bin/node\", \"/dev/shm/rio-tanstack-work/negative-head/node_modules/vitest/vitest.mjs\", \"run\", \"--coverage\", \"--coverage.reporter=lcov\", \"--coverage.reportsDirectory=/dev/shm/rio-tanstack-work/oracle-head/coverage\", \"--maxWorkers=2\"] exit=0"
+  ],
+  "notes": [
+    "Runner provenance: tanstack-query-11392/commands.json; binary SHA-256 512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2.",
+    "Frozen profile rio/base; resolved profile SHA-256 1049df8bb35d7f36f2982fdce1565c2c50336ce9e898e605f3cac96b7b16b636; Rio dependency trust remains false.",
+    "Offline OSV audit is an explicit excluded capability; no vulnerability-free conclusion.",
+    "See ../tanstack-query-NOTES.md for every setup attempt, installer helper hashes, exclusions and monorepo limitations.",
+    "Coverage skipped because Rio misses root-declared Vitest plus package vite.config.ts; independent instrumented tests pass for the negative case. This makes the final records ineligible even when baseline classification succeeds.",
+    "Independent clean assessment: ../tanstack-query-11392-evidence/independent-assessment.json. Separate base/head tsc builds and ESLint pass with no messages; Istanbul Vitest: 11 base tests, 13 head tests; changed executable lines 178 and 179 have 2 and 1 hits. Public maintainer TkDodo merged this contributor-authored PR; it is not maintainer-authored.",
+    "UNCLASSIFIED FAILED SETUP: preserved for audit only; do not score this attempt. Final repaired classified attempt is retained in a separate directory."
+  ],
+  "independently_clean": true,
+  "positive_control": {
+    "kind": "none",
+    "expected": []
+  },
+  "misses": [],
+  "findings": {}
+}

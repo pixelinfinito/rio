@@ -1,0 +1,9 @@
+diff --git a/packages/query-broadcast-client-experimental/src/index.ts b/packages/query-broadcast-client-experimental/src/index.ts
+index b1f16fb41..9e357a711 100644
+--- a/packages/query-broadcast-client-experimental/src/index.ts
++++ b/packages/query-broadcast-client-experimental/src/index.ts
+@@ -178 +178,3 @@ export function broadcastQueryClient({
+-          query.setState(state)
++          if (query.state.data === undefined) {
++            query.setState(state)
++          }

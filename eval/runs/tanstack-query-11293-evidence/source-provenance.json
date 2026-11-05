@@ -1,0 +1,16 @@
+[
+  {
+    "sha": "d09cf1d605c81238934f6f91a4982f5629065732",
+    "url": "https://codeload.github.com/TanStack/query/tar.gz/d09cf1d605c81238934f6f91a4982f5629065732",
+    "archive_sha256": "aa069a8ab412b8bf1edf24214d643ec337614d87304a5f438d5a19414450b966",
+    "restored_blobs": 307,
+    "wall_time_seconds": 8.112675457028672
+  },
+  {
+    "sha": "370ed5845530a928fcb5374162de67326724a7d1",
+    "url": "https://codeload.github.com/TanStack/query/tar.gz/370ed5845530a928fcb5374162de67326724a7d1",
+    "archive_sha256": "9932e5b4bb868edcc049f27ee63061d6c74d971ad9225c559d9af6b674ce1201",
+    "restored_blobs": 3,
+    "wall_time_seconds": 4.286767920013517
+  }
+]

@@ -1,0 +1,50 @@
+[
+  {
+    "sha": "173b2bd5782c7b70c54e2fd4843b4fc94917788a",
+    "filename": ".changeset/modern-llamas-warn.md",
+    "status": "added",
+    "additions": 5,
+    "deletions": 0,
+    "changes": 5,
+    "blob_url": "https://github.com/TanStack/query/blob/ba8a7925f3b3120a40922a8d0ee5275b19812acf/.changeset%2Fmodern-llamas-warn.md",
+    "raw_url": "https://github.com/TanStack/query/raw/ba8a7925f3b3120a40922a8d0ee5275b19812acf/.changeset%2Fmodern-llamas-warn.md",
+    "contents_url": "https://api.github.com/repos/TanStack/query/contents/.changeset%2Fmodern-llamas-warn.md?ref=ba8a7925f3b3120a40922a8d0ee5275b19812acf",
+    "patch": "@@ -0,0 +1,5 @@\n+---\n+\"@tanstack/eslint-plugin-query\": patch\n+---\n+\n+Fix stable-query-client detection for arrow functions, function expressions, and clients created directly in JSX. Keep state initializers and nested helper functions valid."
+  },
+  {
+    "sha": "341280f2f4a77d78136a5400febafff7d1d63536",
+    "filename": "docs/eslint/stable-query-client.md",
+    "status": "modified",
+    "additions": 2,
+    "deletions": 0,
+    "changes": 2,
+    "blob_url": "https://github.com/TanStack/query/blob/ba8a7925f3b3120a40922a8d0ee5275b19812acf/docs%2Feslint%2Fstable-query-client.md",
+    "raw_url": "https://github.com/TanStack/query/raw/ba8a7925f3b3120a40922a8d0ee5275b19812acf/docs%2Feslint%2Fstable-query-client.md",
+    "contents_url": "https://api.github.com/repos/TanStack/query/contents/docs%2Feslint%2Fstable-query-client.md?ref=ba8a7925f3b3120a40922a8d0ee5275b19812acf",
+    "patch": "@@ -9,6 +9,8 @@ The QueryClient contains the QueryCache, so you'd only want to create one instan\n \n ## Rule Details\n \n+This rule checks function declarations, function expressions, and arrow functions used as React components or custom hooks. It also reports clients created directly in JSX. Automatic fixes are available when the client is assigned to a variable.\n+\n Examples of **incorrect** code for this rule:\n \n ```tsx"
+  },
+  {
+    "sha": "acd1dbefb797df6165fe6ce24705dc6fb1ce033e",
+    "filename": "packages/eslint-plugin-query/src/__tests__/stable-query-client.test.ts",
+    "status": "modified",
+    "additions": 34,
+    "deletions": 0,
+    "changes": 34,
+    "blob_url": "https://github.com/TanStack/query/blob/ba8a7925f3b3120a40922a8d0ee5275b19812acf/packages%2Feslint-plugin-query%2Fsrc%2F__tests__%2Fstable-query-client.test.ts",
+    "raw_url": "https://github.com/TanStack/query/raw/ba8a7925f3b3120a40922a8d0ee5275b19812acf/packages%2Feslint-plugin-query%2Fsrc%2F__tests__%2Fstable-query-client.test.ts",
+    "contents_url": "https://api.github.com/repos/TanStack/query/contents/packages%2Feslint-plugin-query%2Fsrc%2F__tests__%2Fstable-query-client.test.ts?ref=ba8a7925f3b3120a40922a8d0ee5275b19812acf",
+    "patch": "@@ -6,6 +6,19 @@ const ruleTester = new RuleTester()\n \n ruleTester.run('stable-query-client', rule, {\n   valid: [\n+    ...[\n+      'const Component = () => { const [client] = React.useState(() => new QueryClient()); return client; }',\n+      'const useClient = () => React.useState(() => new QueryClient());',\n+      'const Component = function() { const [client] = React.useState(() => new QueryClient()); return client; }',\n+      'function Component() { const [client] = React.useState(() => { const client = new QueryClient(); return client; }); return client; }',\n+      'const Component = () => { const [client] = React.useState(() => { const client = new QueryClient(); return client; }); return client; }',\n+      'function Component() { function createClient() { const client = new QueryClient(); return client; } return createClient; }',\n+      'const createClient = () => { const client = new QueryClient(); return client; }',\n+      'const ServerComponent = async () => { const client = new QueryClient(); return client; }',\n+      'const client = new QueryClient();',\n+    ].map((code) => ({\n+      code: `import { QueryClient } from \"@tanstack/react-query\";\\n${code}`,\n+    })),\n     {\n       name: 'QueryClient is stable when wrapped in React.useState',\n       code: normalizeIndent`\n@@ -119,6 +132,27 @@ ruleTester.run('stable-query-client', rule, {\n     },\n   ],\n   invalid: [\n+    ...['Component', 'useClient'].flatMap((name) =>\n+      ['() =>', 'function()'].map((fn) => ({\n+        code: `import { QueryClient } from \"@tanstack/react-query\";\n+const ${name} = ${fn} { const client = new QueryClient(); return client; }`,\n+        output: `import { QueryClient } from \"@tanstack/react-query\";\n+const ${name} = ${fn} { const [client] = React.useState(() => new QueryClient()); return client; }`,\n+        errors: [{ messageId: 'unstable' as const }],\n+      })),\n+    ),\n+    ...[\n+      'function Component() { return <QueryClientProvider client={new QueryClient()} />; }',\n+      'const Component = () => { return <QueryClientProvider client={new QueryClient()} />; }',\n+      'const Component = () => <QueryClientProvider client={new QueryClient()} />;',\n+      'const useClient = () => new QueryClient();',\n+    ].map((code) => ({\n+      filename: 'test.tsx',\n+      languageOptions: { parserOptions: { ecmaFeatures: { jsx: true } } },\n+      code: `import { QueryClient, QueryClientProvider } from \"@tanstack/react-query\";\\n${code}`,\n+      output: null,\n+      errors: [{ messageId: 'unstable' as const }],\n+    })),\n     {\n       name: 'QueryClient is not stable when it is not wrapped in React.useState in component',\n       code: normalizeIndent`"
+  },
+  {
+    "sha": "58592c56a48db5da5d2455596809555f80f416cd",
+    "filename": "packages/eslint-plugin-query/src/rules/stable-query-client/stable-query-client.rule.ts",
+    "status": "modified",
+    "additions": 24,
+    "deletions": 8,
+    "changes": 32,
+    "blob_url": "https://github.com/TanStack/query/blob/ba8a7925f3b3120a40922a8d0ee5275b19812acf/packages%2Feslint-plugin-query%2Fsrc%2Frules%2Fstable-query-client%2Fstable-query-client.rule.ts",
+    "raw_url": "https://github.com/TanStack/query/raw/ba8a7925f3b3120a40922a8d0ee5275b19812acf/packages%2Feslint-plugin-query%2Fsrc%2Frules%2Fstable-query-client%2Fstable-query-client.rule.ts",
+    "contents_url": "https://api.github.com/repos/TanStack/query/contents/packages%2Feslint-plugin-query%2Fsrc%2Frules%2Fstable-query-client%2Fstable-query-client.rule.ts?ref=ba8a7925f3b3120a40922a8d0ee5275b19812acf",
+    "patch": "@@ -36,7 +36,6 @@ export const rule = createRule({\n         if (\n           node.callee.type !== AST_NODE_TYPES.Identifier ||\n           node.callee.name !== 'QueryClient' ||\n-          node.parent.type !== AST_NODE_TYPES.VariableDeclarator ||\n           !helpers.isSpecificTanstackQueryImport(\n             node.callee,\n             '@tanstack/react-query',\n@@ -45,26 +44,43 @@ export const rule = createRule({\n           return\n         }\n \n-        const fnAncestor = ASTUtils.getFunctionAncestor(\n-          context.sourceCode,\n-          node,\n-        )\n+        const fnAncestor = context.sourceCode\n+          .getAncestors(node)\n+          .reverse()\n+          .find((ancestor) =>\n+            ASTUtils.isNodeOfOneOf(ancestor, [\n+              AST_NODE_TYPES.FunctionDeclaration,\n+              AST_NODE_TYPES.FunctionExpression,\n+              AST_NODE_TYPES.ArrowFunctionExpression,\n+            ]),\n+          )\n+        const fnName =\n+          fnAncestor?.parent.type === AST_NODE_TYPES.VariableDeclarator &&\n+          fnAncestor.parent.id.type === AST_NODE_TYPES.Identifier\n+            ? fnAncestor.parent.id\n+            : fnAncestor?.id\n         const isReactServerComponent = fnAncestor?.async === true\n \n         if (\n-          !ASTUtils.isValidReactComponentOrHookName(fnAncestor?.id) ||\n+          !ASTUtils.isValidReactComponentOrHookName(fnName) ||\n           isReactServerComponent\n         ) {\n           return\n         }\n \n         context.report({\n-          node: node.parent,\n+          node:\n+            node.parent.type === AST_NODE_TYPES.VariableDeclarator\n+              ? node.parent\n+              : node,\n           messageId: 'unstable',\n           fix: (() => {\n             const { parent } = node\n \n-            if (parent.id.type !== AST_NODE_TYPES.Identifier) {\n+            if (\n+              parent.type !== AST_NODE_TYPES.VariableDeclarator ||\n+              parent.id.type !== AST_NODE_TYPES.Identifier\n+            ) {\n               return\n             }\n "
+  }
+]

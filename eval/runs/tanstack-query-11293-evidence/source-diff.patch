@@ -1,0 +1,96 @@
+diff --git a/.changeset/quiet-timers-rest.md b/.changeset/quiet-timers-rest.md
+new file mode 100644
+index 000000000..64ba646af
+--- /dev/null
++++ b/.changeset/quiet-timers-rest.md
+@@ -0,0 +1,5 @@
++---
++'@tanstack/query-core': patch
++---
++
++Avoid scheduling stale timeouts for disabled query observers.
+diff --git a/packages/query-core/src/__tests__/queryObserver.test.tsx b/packages/query-core/src/__tests__/queryObserver.test.tsx
+index f3cc66c26..7c649089c 100644
+--- a/packages/query-core/src/__tests__/queryObserver.test.tsx
++++ b/packages/query-core/src/__tests__/queryObserver.test.tsx
+@@ -8,7 +8,7 @@ import {
+   vi,
+ } from 'vitest'
+ import { queryKey, sleep } from '@tanstack/query-test-utils'
+-import { QueryClient, QueryObserver, focusManager } from '..'
++import { QueryClient, QueryObserver, focusManager, timeoutManager } from '..'
+ import type { QueryObserverResult } from '..'
+ 
+ describe('queryObserver', () => {
+@@ -1405,6 +1405,26 @@ describe('queryObserver', () => {
+     expect(result.isStale).toBe(false)
+   })
+ 
++  it('should not schedule a stale timeout for disabled observers', () => {
++    const key = queryKey()
++    queryClient.setQueryData(key, 'data', {
++      updatedAt: Date.now() - 20,
++    })
++
++    const observer = new QueryObserver(queryClient, {
++      queryKey: key,
++      enabled: false,
++      staleTime: 10,
++    })
++    const setTimeoutSpy = vi.spyOn(timeoutManager, 'setTimeout')
++
++    const unsubscribe = observer.subscribe(vi.fn())
++
++    expect(setTimeoutSpy).not.toHaveBeenCalled()
++
++    unsubscribe()
++  })
++
+   it('should allow staleTime as a function', async () => {
+     const key = queryKey()
+     const observer = new QueryObserver(queryClient, {
+diff --git a/packages/query-core/src/queryObserver.ts b/packages/query-core/src/queryObserver.ts
+index 36ab6e9ef..105a3b376 100644
+--- a/packages/query-core/src/queryObserver.ts
++++ b/packages/query-core/src/queryObserver.ts
+@@ -369,6 +369,14 @@ export class QueryObserver<
+     return promise
+   }
+ 
++  #shouldScheduleTimer(timeout: unknown): timeout is number {
++    return (
++      !environmentManager.isServer() &&
++      resolveQueryBoolean(this.options.enabled, this.#currentQuery) !== false &&
++      isValidTimeout(timeout)
++    )
++  }
++
+   #updateStaleTimeout(): void {
+     this.#clearStaleTimeout()
+     const staleTime = resolveStaleTime(
+@@ -376,11 +384,7 @@ export class QueryObserver<
+       this.#currentQuery,
+     )
+ 
+-    if (
+-      environmentManager.isServer() ||
+-      this.#currentResult.isStale ||
+-      !isValidTimeout(staleTime)
+-    ) {
++    if (this.#currentResult.isStale || !this.#shouldScheduleTimer(staleTime)) {
+       return
+     }
+ 
+@@ -411,10 +415,8 @@ export class QueryObserver<
+     this.#currentRefetchInterval = nextInterval
+ 
+     if (
+-      environmentManager.isServer() ||
+-      resolveQueryBoolean(this.options.enabled, this.#currentQuery) === false ||
+-      !isValidTimeout(this.#currentRefetchInterval) ||
+-      this.#currentRefetchInterval === 0
++      this.#currentRefetchInterval === 0 ||
++      !this.#shouldScheduleTimer(this.#currentRefetchInterval)
+     ) {
+       return
+     }

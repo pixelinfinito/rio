@@ -1,0 +1,307 @@
+packages/query-core/eslint.config.js(3,24): error TS2307: Cannot find module './root.eslint.config.js' or its corresponding type declarations.
+packages/query-core/src/__tests__/OmitKeyof.test-d.ts(2,15): error TS2305: Module '".."' has no exported member 'DistributiveOmit'.
+packages/query-core/src/__tests__/OmitKeyof.test-d.ts(2,33): error TS2305: Module '".."' has no exported member 'OmitKeyof'.
+packages/query-core/src/__tests__/OmitKeyof.test-d.ts(27,9): error TS2578: Unused '@ts-expect-error' directive.
+packages/query-core/src/__tests__/OmitKeyof.test-d.ts(35,9): error TS2578: Unused '@ts-expect-error' directive.
+packages/query-core/src/__tests__/OmitKeyof.test-d.ts(46,9): error TS2578: Unused '@ts-expect-error' directive.
+packages/query-core/src/__tests__/OmitKeyof.test-d.ts(82,9): error TS2578: Unused '@ts-expect-error' directive.
+packages/query-core/src/__tests__/OmitKeyof.test-d.ts(90,9): error TS2578: Unused '@ts-expect-error' directive.
+packages/query-core/src/__tests__/OmitKeyof.test-d.ts(101,9): error TS2578: Unused '@ts-expect-error' directive.
+packages/query-core/src/__tests__/OmitKeyof.test-d.ts(143,9): error TS2578: Unused '@ts-expect-error' directive.
+packages/query-core/src/__tests__/OmitKeyof.test-d.ts(151,9): error TS2578: Unused '@ts-expect-error' directive.
+packages/query-core/src/__tests__/OmitKeyof.test-d.ts(162,9): error TS2578: Unused '@ts-expect-error' directive.
+packages/query-core/src/__tests__/OmitKeyof.test-d.ts(191,9): error TS2578: Unused '@ts-expect-error' directive.
+packages/query-core/src/__tests__/OmitKeyof.test-d.ts(209,9): error TS2578: Unused '@ts-expect-error' directive.
+packages/query-core/src/__tests__/OmitKeyof.test-d.ts(229,9): error TS2578: Unused '@ts-expect-error' directive.
+packages/query-core/src/__tests__/OmitKeyof.test-d.ts(268,9): error TS2578: Unused '@ts-expect-error' directive.
+packages/query-core/src/__tests__/OmitKeyof.test-d.ts(322,9): error TS2578: Unused '@ts-expect-error' directive.
+packages/query-core/src/__tests__/environmentManager.test-d.ts(3,26): error TS2307: Cannot find module '../environmentManager' or its corresponding type declarations.
+packages/query-core/src/__tests__/environmentManager.test-d.ts(4,36): error TS2307: Cannot find module '../environmentManager' or its corresponding type declarations.
+packages/query-core/src/__tests__/environmentManager.test-d.ts(13,7): error TS2578: Unused '@ts-expect-error' directive.
+packages/query-core/src/__tests__/environmentManager.test-d.ts(20,7): error TS2578: Unused '@ts-expect-error' directive.
+packages/query-core/src/__tests__/environmentManager.test-d.ts(43,9): error TS2344: Type '"isServer" | "setIsServer"' does not satisfy the constraint '"Expected: literal string: isServer, Actual: string" | "Expected: literal string: isServer, Actual: number" | "Expected: literal string: isServer, Actual: ..." | "Expected: literal string: setIsServer, Actual: string" | "Expected: literal string: setIsServer, Actual: number" | "Expected: literal string: setIsServer,...'.
+  Type '"isServer"' is not assignable to type '"Expected: literal string: isServer, Actual: string" | "Expected: literal string: isServer, Actual: number" | "Expected: literal string: isServer, Actual: ..." | "Expected: literal string: setIsServer, Actual: string" | "Expected: literal string: setIsServer, Actual: number" | "Expected: literal string: setIsServer,...'.
+packages/query-core/src/__tests__/focusManager.test-d.tsx(13,9): error TS2344: Type '"subscribe" | "hasListeners" | "setEventListener" | "setFocused" | "onFocus" | "isFocused"' does not satisfy the constraint '"Expected: literal string: subscribe, Actual: string" | "Expected: literal string: subscribe, Actual: number" | "Expected: literal string: subscribe, Actual: ..." | ... 14 more ... | "Expected: literal string: isFocused, Actual: ..."'.
+  Type '"subscribe"' is not assignable to type '"Expected: literal string: subscribe, Actual: string" | "Expected: literal string: subscribe, Actual: number" | "Expected: literal string: subscribe, Actual: ..." | ... 14 more ... | "Expected: literal string: isFocused, Actual: ..."'.
+packages/query-core/src/__tests__/focusManager.test-d.tsx(32,7): error TS2578: Unused '@ts-expect-error' directive.
+packages/query-core/src/__tests__/focusManager.test-d.tsx(63,31): error TS2344: Type 'unknown' does not satisfy the constraint '(...args: any) => any'.
+packages/query-core/src/__tests__/focusManager.test-d.tsx(64,9): error TS2344: Type '(focused?: boolean | undefined) => void' does not satisfy the constraint '"Expected: function, Actual: never"'.
+packages/query-core/src/__tests__/focusManager.test-d.tsx(66,42): error TS2344: Type 'unknown' does not satisfy the constraint '(...args: any) => any'.
+packages/query-core/src/__tests__/focusManager.test-d.tsx(67,9): error TS2344: Type '0 | 1' does not satisfy the constraint '"Expected: literal number: 0, Actual: never" | "Expected: literal number: 1, Actual: never"'.
+  Type '0' is not assignable to type '"Expected: literal number: 0, Actual: never" | "Expected: literal number: 1, Actual: never"'.
+packages/query-core/src/__tests__/focusManager.test-d.tsx(74,31): error TS2344: Type 'unknown' does not satisfy the constraint '(...args: any) => any'.
+packages/query-core/src/__tests__/focusManager.test-d.tsx(75,9): error TS2344: Type '(() => void) | undefined' does not satisfy the constraint 'never'.
+  Type 'undefined' is not assignable to type 'never'.
+packages/query-core/src/__tests__/focusManager.test-d.tsx(91,25): error TS2344: Type '0 | 1' does not satisfy the constraint '"Expected: literal number: 0, Actual: number" | "Expected: literal number: 1, Actual: number"'.
+  Type '0' is not assignable to type '"Expected: literal number: 0, Actual: number" | "Expected: literal number: 1, Actual: number"'.
+packages/query-core/src/__tests__/focusManager.test.tsx(2,30): error TS2307: Cannot find module '../focusManager' or its corresponding type declarations.
+packages/query-core/src/__tests__/hydration.test.tsx(2,33): error TS2307: Cannot find module '@tanstack/query-test-utils' or its corresponding type declarations.
+packages/query-core/src/__tests__/hydration.test.tsx(3,29): error TS2307: Cannot find module '../queryClient' or its corresponding type declarations.
+packages/query-core/src/__tests__/hydration.test.tsx(4,28): error TS2307: Cannot find module '../queryCache' or its corresponding type declarations.
+packages/query-core/src/__tests__/hydration.test.tsx(5,36): error TS2307: Cannot find module '../hydration' or its corresponding type declarations.
+packages/query-core/src/__tests__/hydration.test.tsx(7,31): error TS2307: Cannot find module '../mutationCache' or its corresponding type declarations.
+packages/query-core/src/__tests__/hydration.test.tsx(8,22): error TS2307: Cannot find module '../utils' or its corresponding type declarations.
+packages/query-core/src/__tests__/hydration.test.tsx(325,37): error TS7006: Parameter 'mutation' implicitly has an 'any' type.
+packages/query-core/src/__tests__/hydration.test.tsx(471,30): error TS7006: Parameter 'query' implicitly has an 'any' type.
+packages/query-core/src/__tests__/hydration.test.tsx(477,8): error TS7006: Parameter 'query' implicitly has an 'any' type.
+packages/query-core/src/__tests__/hydration.test.tsx(778,32): error TS7006: Parameter 'q' implicitly has an 'any' type.
+packages/query-core/src/__tests__/hydration.test.tsx(818,32): error TS7006: Parameter 'q' implicitly has an 'any' type.
+packages/query-core/src/__tests__/hydration.test.tsx(825,32): error TS7006: Parameter 'q' implicitly has an 'any' type.
+packages/query-core/src/__tests__/hydration.test.tsx(832,12): error TS7006: Parameter 'q' implicitly has an 'any' type.
+packages/query-core/src/__tests__/hydration.test.tsx(931,32): error TS7006: Parameter 'q' implicitly has an 'any' type.
+packages/query-core/src/__tests__/hydration.test.tsx(1096,27): error TS7006: Parameter 'data' implicitly has an 'any' type.
+packages/query-core/src/__tests__/hydration.test.tsx(1114,29): error TS7006: Parameter 'data' implicitly has an 'any' type.
+packages/query-core/src/__tests__/hydration.test.tsx(1134,27): error TS7006: Parameter 'data' implicitly has an 'any' type.
+packages/query-core/src/__tests__/hydration.test.tsx(1152,29): error TS7006: Parameter 'data' implicitly has an 'any' type.
+packages/query-core/src/__tests__/hydration.test.tsx(1170,29): error TS7006: Parameter 'data' implicitly has an 'any' type.
+packages/query-core/src/__tests__/hydration.test.tsx(1190,27): error TS7006: Parameter 'data' implicitly has an 'any' type.
+packages/query-core/src/__tests__/hydration.test.tsx(1542,21): error TS7031: Binding element 'pageParam' implicitly has an 'any' type.
+packages/query-core/src/__tests__/hydration.test.tsx(1560,8): error TS7006: Parameter 'q' implicitly has an 'any' type.
+packages/query-core/src/__tests__/hydration.test.tsx(1583,21): error TS7031: Binding element 'pageParam' implicitly has an 'any' type.
+packages/query-core/src/__tests__/hydration.test.tsx(1604,19): error TS7031: Binding element 'pageParam' implicitly has an 'any' type.
+packages/query-core/src/__tests__/hydration.test.tsx(1627,21): error TS7031: Binding element 'pageParam' implicitly has an 'any' type.
+packages/query-core/src/__tests__/hydration.test.tsx(1643,8): error TS7006: Parameter 'q' implicitly has an 'any' type.
+packages/query-core/src/__tests__/hydration.test.tsx(1664,21): error TS7031: Binding element 'pageParam' implicitly has an 'any' type.
+packages/query-core/src/__tests__/hydration.test.tsx(1692,19): error TS7031: Binding element 'pageParam' implicitly has an 'any' type.
+packages/query-core/src/__tests__/hydration.test.tsx(1717,21): error TS7031: Binding element 'pageParam' implicitly has an 'any' type.
+packages/query-core/src/__tests__/hydration.test.tsx(1750,21): error TS7031: Binding element 'pageParam' implicitly has an 'any' type.
+packages/query-core/src/__tests__/hydration.test.tsx(1779,21): error TS7031: Binding element 'pageParam' implicitly has an 'any' type.
+packages/query-core/src/__tests__/hydration.test.tsx(1838,7): error TS2578: Unused '@ts-expect-error' directive.
+packages/query-core/src/__tests__/hydration.test.tsx(1894,7): error TS2578: Unused '@ts-expect-error' directive.
+packages/query-core/src/__tests__/hydration.test.tsx(1902,70): error TS7006: Parameter 'event' implicitly has an 'any' type.
+packages/query-core/src/__tests__/hydration.test.tsx(1951,7): error TS2578: Unused '@ts-expect-error' directive.
+packages/query-core/src/__tests__/hydration.test.tsx(1961,70): error TS7006: Parameter 'event' implicitly has an 'any' type.
+packages/query-core/src/__tests__/hydration.test.tsx(2013,7): error TS2578: Unused '@ts-expect-error' directive.
+packages/query-core/src/__tests__/hydration.test.tsx(2057,7): error TS2578: Unused '@ts-expect-error' directive.
+packages/query-core/src/__tests__/infiniteQueryBehavior.test.tsx(2,33): error TS2307: Cannot find module '@tanstack/query-test-utils' or its corresponding type declarations.
+packages/query-core/src/__tests__/infiniteQueryBehavior.test.tsx(5,15): error TS2305: Module '".."' has no exported member 'InfiniteData'.
+packages/query-core/src/__tests__/infiniteQueryBehavior.test.tsx(5,29): error TS2724: '".."' has no exported member named 'InfiniteQueryObserverResult'. Did you mean 'InfiniteQueryObserver'?
+packages/query-core/src/__tests__/infiniteQueryBehavior.test.tsx(63,26): error TS7006: Parameter 'lastPage' implicitly has an 'any' type.
+packages/query-core/src/__tests__/infiniteQueryBehavior.test.tsx(64,30): error TS7006: Parameter 'firstPage' implicitly has an 'any' type.
+packages/query-core/src/__tests__/infiniteQueryBehavior.test.tsx(173,20): error TS2339: Property 'refetch' does not exist on type 'InfiniteQueryObserver<number, DefaultError, InfiniteData<TQueryFnData>, QueryKey, unknown>'.
+packages/query-core/src/__tests__/infiniteQueryBehavior.test.tsx(212,26): error TS7006: Parameter 'lastPage' implicitly has an 'any' type.
+packages/query-core/src/__tests__/infiniteQueryBehavior.test.tsx(213,30): error TS7006: Parameter 'firstPage' implicitly has an 'any' type.
+packages/query-core/src/__tests__/infiniteQueryBehavior.test.tsx(225,28): error TS2339: Property 'getCurrentQuery' does not exist on type 'InfiniteQueryObserver<number, DefaultError, InfiniteData<TQueryFnData>, QueryKey, unknown>'.
+packages/query-core/src/__tests__/infiniteQueryBehavior.test.tsx(263,26): error TS7006: Parameter 'lastPage' implicitly has an 'any' type.
+packages/query-core/src/__tests__/infiniteQueryBehavior.test.tsx(264,30): error TS7006: Parameter 'firstPage' implicitly has an 'any' type.
+packages/query-core/src/__tests__/infiniteQueryBehavior.test.tsx(311,14): error TS2339: Property 'refetch' does not exist on type 'InfiniteQueryObserver<number, DefaultError, InfiniteData<TQueryFnData>, QueryKey, unknown>'.
+packages/query-core/src/__tests__/infiniteQueryBehavior.test.tsx(318,28): error TS2339: Property 'getCurrentQuery' does not exist on type 'InfiniteQueryObserver<number, DefaultError, InfiniteData<TQueryFnData>, QueryKey, unknown>'.
+packages/query-core/src/__tests__/infiniteQueryBehavior.test.tsx(417,26): error TS7006: Parameter 'lastPage' implicitly has an 'any' type.
+packages/query-core/src/__tests__/infiniteQueryBehavior.test.tsx(418,19): error TS7031: Binding element 'pageParam' implicitly has an 'any' type.
+packages/query-core/src/__tests__/infiniteQueryBehavior.test.tsx(482,19): error TS7031: Binding element 'pageParam' implicitly has an 'any' type.
+packages/query-core/src/__tests__/infiniteQueryBehavior.test.tsx(483,26): error TS7006: Parameter 'lastPage' implicitly has an 'any' type.
+packages/query-core/src/__tests__/infiniteQueryBehavior.test.tsx(520,19): error TS7031: Binding element 'pageParam' implicitly has an 'any' type.
+packages/query-core/src/__tests__/infiniteQueryBehavior.test.tsx(521,26): error TS7006: Parameter 'lastPage' implicitly has an 'any' type.
+packages/query-core/src/__tests__/infiniteQueryObserver.test.tsx(2,33): error TS2307: Cannot find module '@tanstack/query-test-utils' or its corresponding type declarations.
+packages/query-core/src/__tests__/infiniteQueryObserver.test.tsx(7,8): error TS2307: Cannot find module '../types' or its corresponding type declarations.
+packages/query-core/src/__tests__/infiniteQueryObserver.test.tsx(28,16): error TS7006: Parameter 'data' implicitly has an 'any' type.
+packages/query-core/src/__tests__/infiniteQueryObserver.test.tsx(29,32): error TS7006: Parameter 'x' implicitly has an 'any' type.
+packages/query-core/src/__tests__/infiniteQueryObserver.test.tsx(57,16): error TS7006: Parameter 'data' implicitly has an 'any' type.
+packages/query-core/src/__tests__/infiniteQueryObserver.test.tsx(58,32): error TS7006: Parameter 'x' implicitly has an 'any' type.
+packages/query-core/src/__tests__/infiniteQueryObserver.test.tsx(82,19): error TS7031: Binding element 'pageParam' implicitly has an 'any' type.
+packages/query-core/src/__tests__/infiniteQueryObserver.test.tsx(84,26): error TS7006: Parameter '_' implicitly has an 'any' type.
+packages/query-core/src/__tests__/infiniteQueryObserver.test.tsx(84,29): error TS7006: Parameter '__' implicitly has an 'any' type.
+packages/query-core/src/__tests__/infiniteQueryObserver.test.tsx(84,33): error TS7006: Parameter 'lastPageParam' implicitly has an 'any' type.
+packages/query-core/src/__tests__/infiniteQueryObserver.test.tsx(84,48): error TS7006: Parameter 'allPageParams' implicitly has an 'any' type.
+packages/query-core/src/__tests__/infiniteQueryObserver.test.tsx(89,30): error TS7006: Parameter '_' implicitly has an 'any' type.
+packages/query-core/src/__tests__/infiniteQueryObserver.test.tsx(89,33): error TS7006: Parameter '__' implicitly has an 'any' type.
+packages/query-core/src/__tests__/infiniteQueryObserver.test.tsx(89,37): error TS7006: Parameter 'firstPageParam' implicitly has an 'any' type.
+packages/query-core/src/__tests__/infiniteQueryObserver.test.tsx(89,53): error TS7006: Parameter 'allPageParams' implicitly has an 'any' type.
+packages/query-core/src/__tests__/infiniteQueryObserver.test.tsx(108,14): error TS2339: Property 'refetch' does not exist on type 'InfiniteQueryObserver<unknown, DefaultError, InfiniteData<TQueryFnData>, QueryKey, unknown>'.
+packages/query-core/src/__tests__/infiniteQueryObserver.test.tsx(123,19): error TS7031: Binding element 'pageParam' implicitly has an 'any' type.
+packages/query-core/src/__tests__/infiniteQueryObserver.test.tsx(170,14): error TS2339: Property 'refetch' does not exist on type 'InfiniteQueryObserver<unknown, DefaultError, InfiniteData<TQueryFnData>, QueryKey, unknown>'.
+packages/query-core/src/__tests__/infiniteQueryObserver.test.tsx(202,14): error TS2339: Property 'refetch' does not exist on type 'InfiniteQueryObserver<unknown, DefaultError, InfiniteData<TQueryFnData>, QueryKey, unknown>'.
+packages/query-core/src/__tests__/mutation.test.tsx(1,33): error TS2307: Cannot find module '@tanstack/query-test-utils' or its corresponding type declarations.
+packages/query-core/src/__tests__/mutation.test.tsx(4,34): error TS2307: Cannot find module '../mutationObserver' or its corresponding type declarations.
+packages/query-core/src/__tests__/mutation.test.tsx(6,36): error TS2307: Cannot find module '../mutation' or its corresponding type declarations.
+packages/query-core/src/__tests__/mutation.test.tsx(66,18): error TS7006: Parameter 'text' implicitly has an 'any' type.
+packages/query-core/src/__tests__/mutation.test.tsx(89,25): error TS7006: Parameter 'state' implicitly has an 'any' type.
+packages/query-core/src/__tests__/mutation.test.tsx(160,18): error TS7006: Parameter 'text' implicitly has an 'any' type.
+packages/query-core/src/__tests__/mutation.test.tsx(167,25): error TS7006: Parameter 'state' implicitly has an 'any' type.
+packages/query-core/src/__tests__/mutation.test.tsx(341,50): error TS7006: Parameter 'event' implicitly has an 'any' type.
+packages/query-core/src/__tests__/mutation.test.tsx(761,23): error TS7006: Parameter '_data' implicitly has an 'any' type.
+packages/query-core/src/__tests__/mutation.test.tsx(761,30): error TS7006: Parameter '_error' implicitly has an 'any' type.
+packages/query-core/src/__tests__/mutation.test.tsx(761,38): error TS7006: Parameter '_variables' implicitly has an 'any' type.
+packages/query-core/src/__tests__/mutation.test.tsx(761,50): error TS7006: Parameter 'onMutateResult' implicitly has an 'any' type.
+packages/query-core/src/__tests__/mutation.test.tsx(813,23): error TS7006: Parameter '_data' implicitly has an 'any' type.
+packages/query-core/src/__tests__/mutation.test.tsx(813,30): error TS7006: Parameter '_error' implicitly has an 'any' type.
+packages/query-core/src/__tests__/mutation.test.tsx(813,38): error TS7006: Parameter '_variables' implicitly has an 'any' type.
+packages/query-core/src/__tests__/mutation.test.tsx(813,50): error TS7006: Parameter 'onMutateResult' implicitly has an 'any' type.
+packages/query-core/src/__tests__/mutation.test.tsx(822,16): error TS7006: Parameter 'error' implicitly has an 'any' type.
+packages/query-core/src/__tests__/mutation.test.tsx(883,16): error TS7006: Parameter 'error' implicitly has an 'any' type.
+packages/query-core/src/__tests__/mutation.test.tsx(932,16): error TS7006: Parameter 'error' implicitly has an 'any' type.
+packages/query-core/src/__tests__/mutation.test.tsx(1000,16): error TS7006: Parameter 'error' implicitly has an 'any' type.
+packages/query-core/src/__tests__/mutation.test.tsx(1065,16): error TS7006: Parameter 'error' implicitly has an 'any' type.
+packages/query-core/src/__tests__/mutation.test.tsx(1144,16): error TS7006: Parameter 'error' implicitly has an 'any' type.
+packages/query-core/src/__tests__/mutationCache.test.tsx(2,33): error TS2307: Cannot find module '@tanstack/query-test-utils' or its corresponding type declarations.
+packages/query-core/src/__tests__/mutationCache.test.tsx(302,23): error TS7006: Parameter 'm' implicitly has an 'any' type.
+packages/query-core/src/__tests__/mutationCache.test.tsx(346,23): error TS7006: Parameter 'm' implicitly has an 'any' type.
+packages/query-core/src/__tests__/mutationObserver.test.tsx(2,33): error TS2307: Cannot find module '@tanstack/query-test-utils' or its corresponding type declarations.
+packages/query-core/src/__tests__/onlineManager.test-d.tsx(13,9): error TS2344: Type '"subscribe" | "hasListeners" | "setEventListener" | "isOnline" | "setOnline"' does not satisfy the constraint '"Expected: literal string: subscribe, Actual: string" | "Expected: literal string: subscribe, Actual: number" | "Expected: literal string: subscribe, Actual: ..." | ... 11 more ... | "Expected: literal string: setOnline, Actual: ..."'.
+  Type '"subscribe"' is not assignable to type '"Expected: literal string: subscribe, Actual: string" | "Expected: literal string: subscribe, Actual: number" | "Expected: literal string: subscribe, Actual: ..." | ... 11 more ... | "Expected: literal string: setOnline, Actual: ..."'.
+packages/query-core/src/__tests__/onlineManager.test-d.tsx(31,7): error TS2578: Unused '@ts-expect-error' directive.
+packages/query-core/src/__tests__/onlineManager.test-d.tsx(62,31): error TS2344: Type 'unknown' does not satisfy the constraint '(...args: any) => any'.
+packages/query-core/src/__tests__/onlineManager.test-d.tsx(63,9): error TS2344: Type '(online: boolean) => void' does not satisfy the constraint '"Expected: function, Actual: never"'.
+packages/query-core/src/__tests__/onlineManager.test-d.tsx(66,31): error TS2344: Type 'unknown' does not satisfy the constraint '(...args: any) => any'.
+packages/query-core/src/__tests__/onlineManager.test-d.tsx(67,25): error TS2344: Type '1' does not satisfy the constraint '"Expected: literal number: 1, Actual: never"'.
+packages/query-core/src/__tests__/onlineManager.test-d.tsx(73,31): error TS2344: Type 'unknown' does not satisfy the constraint '(...args: any) => any'.
+packages/query-core/src/__tests__/onlineManager.test-d.tsx(74,9): error TS2344: Type '(() => void) | undefined' does not satisfy the constraint 'never'.
+  Type 'undefined' is not assignable to type 'never'.
+packages/query-core/src/__tests__/onlineManager.test-d.tsx(90,25): error TS2344: Type '1' does not satisfy the constraint '"Expected: literal number: 1, Actual: number"'.
+packages/query-core/src/__tests__/onlineManager.test.tsx(2,31): error TS2307: Cannot find module '../onlineManager' or its corresponding type declarations.
+packages/query-core/src/__tests__/queriesObserver.test.tsx(2,33): error TS2307: Cannot find module '@tanstack/query-test-utils' or its corresponding type declarations.
+packages/query-core/src/__tests__/queriesObserver.test.tsx(4,15): error TS2724: '".."' has no exported member named 'QueryObserverResult'. Did you mean 'QueryObserver'?
+packages/query-core/src/__tests__/queriesObserver.test.tsx(30,45): error TS7006: Parameter 'result' implicitly has an 'any' type.
+packages/query-core/src/__tests__/queriesObserver.test.tsx(74,45): error TS7006: Parameter 'result' implicitly has an 'any' type.
+packages/query-core/src/__tests__/queriesObserver.test.tsx(142,45): error TS7006: Parameter 'result' implicitly has an 'any' type.
+packages/query-core/src/__tests__/queriesObserver.test.tsx(193,45): error TS7006: Parameter 'result' implicitly has an 'any' type.
+packages/query-core/src/__tests__/queriesObserver.test.tsx(243,45): error TS7006: Parameter 'result' implicitly has an 'any' type.
+packages/query-core/src/__tests__/queriesObserver.test.tsx(349,45): error TS7006: Parameter 'result' implicitly has an 'any' type.
+packages/query-core/src/__tests__/queriesObserver.test.tsx(827,45): error TS7006: Parameter 'result' implicitly has an 'any' type.
+packages/query-core/src/__tests__/query.test.tsx(6,8): error TS2307: Cannot find module '@tanstack/query-test-utils' or its corresponding type declarations.
+packages/query-core/src/__tests__/query.test.tsx(17,39): error TS2307: Cannot find module '../utils' or its corresponding type declarations.
+packages/query-core/src/__tests__/query.test.tsx(19,15): error TS2305: Module '".."' has no exported member 'QueryFunctionContext'.
+packages/query-core/src/__tests__/query.test.tsx(19,37): error TS2305: Module '".."' has no exported member 'QueryKey'.
+packages/query-core/src/__tests__/query.test.tsx(19,47): error TS2724: '".."' has no exported member named 'QueryObserverResult'. Did you mean 'QueryObserver'?
+packages/query-core/src/__tests__/query.test.tsx(88,19): error TS7006: Parameter 'data' implicitly has an 'any' type.
+packages/query-core/src/__tests__/query.test.tsx(134,19): error TS7006: Parameter 'data' implicitly has an 'any' type.
+packages/query-core/src/__tests__/query.test.tsx(201,33): error TS7031: Binding element '_signal' implicitly has an 'any' type.
+packages/query-core/src/__tests__/query.test.tsx(252,19): error TS7031: Binding element 'signal' implicitly has an 'any' type.
+packages/query-core/src/__tests__/query.test.tsx(328,21): error TS7031: Binding element 'signal' implicitly has an 'any' type.
+packages/query-core/src/__tests__/query.test.tsx(383,20): error TS7006: Parameter 'e' implicitly has an 'any' type.
+packages/query-core/src/__tests__/query.test.tsx(425,20): error TS7006: Parameter 'e' implicitly has an 'any' type.
+packages/query-core/src/__tests__/query.test.tsx(457,15): error TS7006: Parameter 'e' implicitly has an 'any' type.
+packages/query-core/src/__tests__/query.test.tsx(563,19): error TS7006: Parameter '_data' implicitly has an 'any' type.
+packages/query-core/src/__tests__/query.test.tsx(563,26): error TS7006: Parameter 'query' implicitly has an 'any' type.
+packages/query-core/src/__tests__/query.test.tsx(910,64): error TS7006: Parameter 'event' implicitly has an 'any' type.
+packages/query-core/src/__tests__/query.test.tsx(965,45): error TS7006: Parameter 'result' implicitly has an 'any' type.
+packages/query-core/src/__tests__/query.test.tsx(1137,30): error TS7031: Binding element 'data' implicitly has an 'any' type.
+packages/query-core/src/__tests__/removable.test.tsx(3,56): error TS2307: Cannot find module '../timeoutManager' or its corresponding type declarations.
+packages/query-core/src/__tests__/removable.test.tsx(5,38): error TS2307: Cannot find module '../timeoutManager' or its corresponding type declarations.
+packages/query-core/src/__tests__/streamedQuery.test-d.tsx(2,31): error TS2307: Cannot find module '../streamedQuery' or its corresponding type declarations.
+packages/query-core/src/__tests__/streamedQuery.test-d.tsx(3,28): error TS2305: Module '".."' has no exported member 'QueryFunction'.
+packages/query-core/src/__tests__/streamedQuery.test-d.tsx(3,43): error TS2305: Module '".."' has no exported member 'QueryKey'.
+packages/query-core/src/__tests__/streamedQuery.test-d.tsx(3,53): error TS2305: Module '".."' has no exported member 'QueryMeta'.
+packages/query-core/src/__tests__/streamedQuery.test-d.tsx(73,18): error TS7006: Parameter 'context' implicitly has an 'any' type.
+packages/query-core/src/__tests__/streamedQuery.test-d.tsx(89,5): error TS2578: Unused '@ts-expect-error' directive.
+packages/query-core/src/__tests__/streamedQuery.test-d.tsx(105,9): error TS2578: Unused '@ts-expect-error' directive.
+packages/query-core/src/__tests__/streamedQuery.test-d.tsx(118,9): error TS2344: Type '"streamFn" | "refetchMode" | "reducer" | "initialValue"' does not satisfy the constraint '"Expected: literal string: streamFn, Actual: string" | "Expected: literal string: streamFn, Actual: number" | "Expected: literal string: streamFn, Actual: ..." | "Expected: literal string: refetchMode, Actual: string" | ... 7 more ... | "Expected: literal string: initialValue, Actual: ..."'.
+  Type '"streamFn"' is not assignable to type '"Expected: literal string: streamFn, Actual: string" | "Expected: literal string: streamFn, Actual: number" | "Expected: literal string: streamFn, Actual: ..." | "Expected: literal string: refetchMode, Actual: string" | ... 7 more ... | "Expected: literal string: initialValue, Actual: ..."'.
+packages/query-core/src/__tests__/streamedQuery.test-d.tsx(124,9): error TS2344: Type '"streamFn" | "refetchMode" | "reducer" | "initialValue"' does not satisfy the constraint '"Expected: literal string: streamFn, Actual: string" | "Expected: literal string: streamFn, Actual: number" | "Expected: literal string: streamFn, Actual: ..." | "Expected: literal string: refetchMode, Actual: string" | ... 7 more ... | "Expected: literal string: initialValue, Actual: ..."'.
+  Type '"streamFn"' is not assignable to type '"Expected: literal string: streamFn, Actual: string" | "Expected: literal string: streamFn, Actual: number" | "Expected: literal string: streamFn, Actual: ..." | "Expected: literal string: refetchMode, Actual: string" | ... 7 more ... | "Expected: literal string: initialValue, Actual: ..."'.
+packages/query-core/src/__tests__/streamedQuery.test-d.tsx(131,62): error TS2344: Type '{ streamFn: (context: unknown) => AsyncIterable<number> | Promise<AsyncIterable<number>>; }' does not satisfy the constraint '{ streamFn: never; }'.
+  Types of property 'streamFn' are incompatible.
+    Type '(context: unknown) => AsyncIterable<number> | Promise<AsyncIterable<number>>' is not assignable to type 'never'.
+packages/query-core/src/__tests__/streamedQuery.test-d.tsx(136,65): error TS2344: Type '{ refetchMode?: "reset" | "append" | "replace" | undefined; }' does not satisfy the constraint '{ refetchMode?: undefined; }'.
+  Types of property 'refetchMode' are incompatible.
+    Type '"reset" | "append" | "replace" | undefined' is not assignable to type 'undefined'.
+      Type '"reset"' is not assignable to type 'undefined'.
+packages/query-core/src/__tests__/streamedQuery.test-d.tsx(141,25): error TS2344: Type '{ reducer: (acc: string, chunk: number) => string; initialValue: string; }' does not satisfy the constraint '{ reducer: never; initialValue: never; }'.
+  Types of property 'reducer' are incompatible.
+    Type '(acc: string, chunk: number) => string' is not assignable to type 'never'.
+packages/query-core/src/__tests__/streamedQuery.test-d.tsx(152,21): error TS7006: Parameter 'acc' implicitly has an 'any' type.
+packages/query-core/src/__tests__/streamedQuery.test-d.tsx(152,26): error TS7006: Parameter 'chunk' implicitly has an 'any' type.
+packages/query-core/src/__tests__/streamedQuery.test-d.tsx(161,7): error TS2578: Unused '@ts-expect-error' directive.
+packages/query-core/src/__tests__/streamedQuery.test-d.tsx(171,20): error TS7006: Parameter 'context' implicitly has an 'any' type.
+packages/query-core/src/__tests__/streamedQuery.test-d.tsx(172,56): error TS2344: Type '["stream", number]' does not satisfy the constraint 'never'.
+packages/query-core/src/__tests__/streamedQuery.test-d.tsx(174,54): error TS2344: Type 'AbortSignal' does not satisfy the constraint 'never'.
+packages/query-core/src/__tests__/streamedQuery.test-d.tsx(176,57): error TS2344: Type 'unknown' does not satisfy the constraint '"Expected: unknown, Actual: never"'.
+packages/query-core/src/__tests__/streamedQuery.test-d.tsx(177,57): error TS2344: Type 'unknown' does not satisfy the constraint '"Expected: unknown, Actual: never"'.
+packages/query-core/src/__tests__/streamedQuery.test-d.tsx(185,9): error TS2578: Unused '@ts-expect-error' directive.
+packages/query-core/src/__tests__/streamedQuery.test-d.tsx(198,9): error TS2578: Unused '@ts-expect-error' directive.
+packages/query-core/src/__tests__/streamedQuery.test-d.tsx(218,9): error TS2578: Unused '@ts-expect-error' directive.
+packages/query-core/src/__tests__/streamedQuery.test-d.tsx(247,9): error TS2578: Unused '@ts-expect-error' directive.
+packages/query-core/src/__tests__/streamedQuery.test-d.tsx(263,19): error TS7006: Parameter 'acc' implicitly has an 'any' type.
+packages/query-core/src/__tests__/streamedQuery.test-d.tsx(263,24): error TS7006: Parameter 'chunk' implicitly has an 'any' type.
+packages/query-core/src/__tests__/streamedQuery.test-d.tsx(264,43): error TS2344: Type 'string' does not satisfy the constraint 'never'.
+packages/query-core/src/__tests__/streamedQuery.test-d.tsx(265,45): error TS2344: Type 'number' does not satisfy the constraint 'never'.
+packages/query-core/src/__tests__/streamedQuery.test-d.tsx(283,21): error TS7006: Parameter '_acc' implicitly has an 'any' type.
+packages/query-core/src/__tests__/streamedQuery.test-d.tsx(283,27): error TS7006: Parameter 'chunk' implicitly has an 'any' type.
+packages/query-core/src/__tests__/streamedQuery.test-d.tsx(294,9): error TS2578: Unused '@ts-expect-error' directive.
+packages/query-core/src/__tests__/streamedQuery.test-d.tsx(310,19): error TS7006: Parameter 'acc' implicitly has an 'any' type.
+packages/query-core/src/__tests__/streamedQuery.test-d.tsx(310,24): error TS7006: Parameter 'chunk' implicitly has an 'any' type.
+packages/query-core/src/__tests__/streamedQuery.test-d.tsx(311,9): error TS2578: Unused '@ts-expect-error' directive.
+packages/query-core/src/__tests__/streamedQuery.test-d.tsx(318,21): error TS7006: Parameter 'acc' implicitly has an 'any' type.
+packages/query-core/src/__tests__/streamedQuery.test-d.tsx(318,26): error TS7006: Parameter 'chunk' implicitly has an 'any' type.
+packages/query-core/src/__tests__/timeoutManager.test-d.tsx(3,62): error TS2307: Cannot find module '../timeoutManager' or its corresponding type declarations.
+packages/query-core/src/__tests__/timeoutManager.test-d.tsx(26,9): error TS2344: Type '0 | 1' does not satisfy the constraint '"Expected: literal number: 0, Actual: number" | "Expected: literal number: 1, Actual: number"'.
+  Type '0' is not assignable to type '"Expected: literal number: 0, Actual: number" | "Expected: literal number: 1, Actual: number"'.
+packages/query-core/src/__tests__/timeoutManager.test-d.tsx(31,7): error TS2578: Unused '@ts-expect-error' directive.
+packages/query-core/src/__tests__/timeoutManager.test-d.tsx(34,29): error TS2349: This expression is not callable.
+  Type 'ExpectFunction<TimeoutCallback>' has no call signatures.
+packages/query-core/src/__tests__/timeoutManager.test-d.tsx(35,52): error TS2349: This expression is not callable.
+  Type 'ExpectVoid<unknown>' has no call signatures.
+packages/query-core/src/__tests__/timeoutManager.test-d.tsx(36,65): error TS2344: Type 'void' does not satisfy the constraint 'never'.
+packages/query-core/src/__tests__/timeoutManager.test-d.tsx(55,7): error TS2578: Unused '@ts-expect-error' directive.
+packages/query-core/src/__tests__/timeoutManager.test-d.tsx(61,55): error TS2554: Expected 1 arguments, but got 0.
+packages/query-core/src/__tests__/timeoutManager.test-d.tsx(133,47): error TS2349: This expression is not callable.
+  Type 'ExpectObject<TimeoutProvider<number>>' has no call signatures.
+packages/query-core/src/__tests__/timeoutManager.test-d.tsx(138,9): error TS2344: Type '"clearInterval" | "clearTimeout" | "setInterval" | "setTimeout"' does not satisfy the constraint '"Expected: literal string: clearInterval, Actual: string" | "Expected: literal string: clearInterval, Actual: number" | "Expected: literal string: clearInterval, Actual: ..." | ... 8 more ... | "Expected: literal string: setTimeout, Actual: ..."'.
+  Type '"clearInterval"' is not assignable to type '"Expected: literal string: clearInterval, Actual: string" | "Expected: literal string: clearInterval, Actual: number" | "Expected: literal string: clearInterval, Actual: ..." | ... 8 more ... | "Expected: literal string: setTimeout, Actual: ..."'.
+packages/query-core/src/__tests__/timeoutManager.test-d.tsx(178,9): error TS2578: Unused '@ts-expect-error' directive.
+packages/query-core/src/__tests__/timeoutManager.test-d.tsx(183,26): error TS7006: Parameter '_callback' implicitly has an 'any' type.
+packages/query-core/src/__tests__/timeoutManager.test-d.tsx(183,37): error TS7006: Parameter '_delay' implicitly has an 'any' type.
+packages/query-core/src/__tests__/timeoutManager.test-d.tsx(184,28): error TS7006: Parameter '_timeoutId' implicitly has an 'any' type.
+packages/query-core/src/__tests__/timeoutManager.test-d.tsx(185,27): error TS7006: Parameter '_callback' implicitly has an 'any' type.
+packages/query-core/src/__tests__/timeoutManager.test-d.tsx(185,38): error TS7006: Parameter '_delay' implicitly has an 'any' type.
+packages/query-core/src/__tests__/timeoutManager.test-d.tsx(186,29): error TS7006: Parameter '_intervalId' implicitly has an 'any' type.
+packages/query-core/src/__tests__/timeoutManager.test-d.tsx(193,24): error TS7006: Parameter 'callback' implicitly has an 'any' type.
+packages/query-core/src/__tests__/timeoutManager.test-d.tsx(193,34): error TS7006: Parameter 'delay' implicitly has an 'any' type.
+packages/query-core/src/__tests__/timeoutManager.test-d.tsx(195,47): error TS2344: Type 'number' does not satisfy the constraint 'never'.
+packages/query-core/src/__tests__/timeoutManager.test-d.tsx(198,26): error TS7006: Parameter 'timeoutId' implicitly has an 'any' type.
+packages/query-core/src/__tests__/timeoutManager.test-d.tsx(200,51): error TS2344: Type '1 | undefined' does not satisfy the constraint 'never'.
+  Type 'undefined' is not assignable to type 'never'.
+packages/query-core/src/__tests__/timeoutManager.test-d.tsx(202,25): error TS7006: Parameter '_callback' implicitly has an 'any' type.
+packages/query-core/src/__tests__/timeoutManager.test-d.tsx(202,36): error TS7006: Parameter '_delay' implicitly has an 'any' type.
+packages/query-core/src/__tests__/timeoutManager.test-d.tsx(203,27): error TS7006: Parameter '_intervalId' implicitly has an 'any' type.
+packages/query-core/src/__tests__/timeoutManager.test-d.tsx(216,9): error TS2578: Unused '@ts-expect-error' directive.
+packages/query-core/src/__tests__/timeoutManager.test-d.tsx(255,9): error TS2344: Type '"clearInterval" | "clearTimeout" | "setInterval" | "setTimeout" | "setTimeoutProvider"' does not satisfy the constraint '"Expected: literal string: clearInterval, Actual: string" | "Expected: literal string: clearInterval, Actual: number" | "Expected: literal string: clearInterval, Actual: ..." | ... 11 more ... | "Expected: literal string: setTimeoutProvider, Actual: ..."'.
+  Type '"clearInterval"' is not assignable to type '"Expected: literal string: clearInterval, Actual: string" | "Expected: literal string: clearInterval, Actual: number" | "Expected: literal string: clearInterval, Actual: ..." | ... 11 more ... | "Expected: literal string: setTimeoutProvider, Actual: ..."'.
+packages/query-core/src/__tests__/timeoutManager.test-d.tsx(272,7): error TS2578: Unused '@ts-expect-error' directive.
+packages/query-core/src/__tests__/timeoutManager.test-d.tsx(279,7): error TS2578: Unused '@ts-expect-error' directive.
+packages/query-core/src/__tests__/timeoutManager.test.tsx(7,8): error TS2307: Cannot find module '../timeoutManager' or its corresponding type declarations.
+packages/query-core/src/__tests__/utils.ts(4,15): error TS2305: Module '".."' has no exported member 'MutationOptions'.
+packages/query-core/src/index.ts(3,30): error TS2307: Cannot find module './focusManager' or its corresponding type declarations.
+packages/query-core/src/index.ts(4,35): error TS2307: Cannot find module './focusManager' or its corresponding type declarations.
+packages/query-core/src/index.ts(5,36): error TS2307: Cannot find module './environmentManager' or its corresponding type declarations.
+packages/query-core/src/index.ts(12,8): error TS2307: Cannot find module './hydration' or its corresponding type declarations.
+packages/query-core/src/index.ts(14,31): error TS2307: Cannot find module './mutationCache' or its corresponding type declarations.
+packages/query-core/src/index.ts(15,47): error TS2307: Cannot find module './mutationCache' or its corresponding type declarations.
+packages/query-core/src/index.ts(16,34): error TS2307: Cannot find module './mutationObserver' or its corresponding type declarations.
+packages/query-core/src/index.ts(17,49): error TS2307: Cannot find module './notifyManager' or its corresponding type declarations.
+packages/query-core/src/index.ts(18,31): error TS2307: Cannot find module './onlineManager' or its corresponding type declarations.
+packages/query-core/src/index.ts(19,36): error TS2307: Cannot find module './onlineManager' or its corresponding type declarations.
+packages/query-core/src/index.ts(20,33): error TS2307: Cannot find module './queriesObserver' or its corresponding type declarations.
+packages/query-core/src/index.ts(21,28): error TS2307: Cannot find module './queryCache' or its corresponding type declarations.
+packages/query-core/src/index.ts(22,44): error TS2307: Cannot find module './queryCache' or its corresponding type declarations.
+packages/query-core/src/index.ts(23,29): error TS2307: Cannot find module './queryClient' or its corresponding type declarations.
+packages/query-core/src/index.ts(24,31): error TS2307: Cannot find module './queryObserver' or its corresponding type declarations.
+packages/query-core/src/index.ts(25,50): error TS2307: Cannot find module './retryer' or its corresponding type declarations.
+packages/query-core/src/index.ts(32,8): error TS2307: Cannot find module './timeoutManager' or its corresponding type declarations.
+packages/query-core/src/index.ts(44,8): error TS2307: Cannot find module './utils' or its corresponding type declarations.
+packages/query-core/src/index.ts(45,72): error TS2307: Cannot find module './utils' or its corresponding type declarations.
+packages/query-core/src/index.ts(47,61): error TS2307: Cannot find module './streamedQuery' or its corresponding type declarations.
+packages/query-core/src/index.ts(54,8): error TS2307: Cannot find module './hydration' or its corresponding type declarations.
+packages/query-core/src/index.ts(55,26): error TS2307: Cannot find module './mutation' or its corresponding type declarations.
+packages/query-core/src/index.ts(56,36): error TS2307: Cannot find module './mutation' or its corresponding type declarations.
+packages/query-core/src/index.ts(57,42): error TS2307: Cannot find module './mutationCache' or its corresponding type declarations.
+packages/query-core/src/index.ts(58,45): error TS2307: Cannot find module './queriesObserver' or its corresponding type declarations.
+packages/query-core/src/index.ts(59,23): error TS2307: Cannot find module './query' or its corresponding type declarations.
+packages/query-core/src/index.ts(60,33): error TS2307: Cannot find module './query' or its corresponding type declarations.
+packages/query-core/src/index.ts(61,39): error TS2307: Cannot find module './queryCache' or its corresponding type declarations.
+packages/query-core/src/index.ts(62,15): error TS2307: Cannot find module './types' or its corresponding type declarations.
+packages/query-core/src/infiniteQueryBehavior.ts(6,8): error TS2307: Cannot find module './utils' or its corresponding type declarations.
+packages/query-core/src/infiniteQueryBehavior.ts(7,36): error TS2307: Cannot find module './query' or its corresponding type declarations.
+packages/query-core/src/infiniteQueryBehavior.ts(14,8): error TS2307: Cannot find module './types' or its corresponding type declarations.
+packages/query-core/src/infiniteQueryBehavior.ts(20,15): error TS7006: Parameter 'context' implicitly has an 'any' type.
+packages/query-core/src/infiniteQueryBehavior.ts(20,24): error TS7006: Parameter 'query' implicitly has an 'any' type.
+packages/query-core/src/infiniteQueryObserver.ts(1,31): error TS2307: Cannot find module './queryObserver' or its corresponding type declarations.
+packages/query-core/src/infiniteQueryObserver.ts(14,8): error TS2307: Cannot find module './types' or its corresponding type declarations.
+packages/query-core/src/infiniteQueryObserver.ts(15,34): error TS2307: Cannot find module './queryClient' or its corresponding type declarations.
+packages/query-core/src/infiniteQueryObserver.ts(16,28): error TS2307: Cannot find module './query' or its corresponding type declarations.
+packages/query-core/src/removable.ts(1,32): error TS2307: Cannot find module './timeoutManager' or its corresponding type declarations.
+packages/query-core/src/removable.ts(2,49): error TS2307: Cannot find module './environmentManager' or its corresponding type declarations.
+packages/query-core/src/removable.ts(3,32): error TS2307: Cannot find module './utils' or its corresponding type declarations.
+packages/query-core/src/removable.ts(4,37): error TS2307: Cannot find module './timeoutManager' or its corresponding type declarations.
+packages/query-core/vite.config.ts(3,25): error TS2307: Cannot find module './package.json' or its corresponding type declarations.
+packages/query-test-utils/eslint.config.js(3,24): error TS2307: Cannot find module './root.eslint.config.js' or its corresponding type declarations.

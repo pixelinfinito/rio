@@ -1,0 +1,26 @@
+{
+  "base": "fc51e96045d729a98bc784e1bb11ea16d7d7a4c1",
+  "head": "0a73db4c255eb44e1889696f8d5a9ddf57934229",
+  "repository": "TanStack/query",
+  "pr": "https://github.com/TanStack/query/pull/11392",
+  "selection": "Maintainer-merged substantive single-package correctness fix; independent base/head types, lint and coverage required before review.",
+  "kind": "none",
+  "node": "24.16.0",
+  "pnpm": "11.9.0",
+  "profile": "rio/base",
+  "rio_version": "rio 0.1.0 x86_64-unknown-linux-gnu b15dc8ff5001",
+  "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+  "environment": {
+    "PATH_prefix": "/dev/shm/rio-tanstack-tools/node-v24.16.0-linux-x64/bin",
+    "COREPACK_HOME": "/dev/shm/rio-tanstack-tools/corepack-cache",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "GIT_CONFIG_COUNT": "1",
+    "GIT_CONFIG_KEY_0": "url./tmp/rio-tanstack-query-search.insteadOf",
+    "GIT_CONFIG_VALUE_0": "https://github.com/TanStack/query.git"
+  },
+  "notes": [
+    "Git URL rewrite uses public-origin object mirror to avoid repeated clone transfer; pinned tree blobs hydrated; no upstream changes.",
+    "pnpm --trust-lockfile bypasses re-checking release-age/provenance for the pinned public lockfile, while --frozen-lockfile preserves resolution; Rio trust_installed_dependencies remains false.",
+    "--ignore-scripts avoids unrelated workspace native postinstalls."
+  ]
+}

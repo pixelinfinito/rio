@@ -1,0 +1,74 @@
+[
+  {
+    "sha": "c22bd07dd4495aa0dc523b34b3a250869aaf83c8",
+    "filename": ".changeset/perky-jars-flow.md",
+    "status": "added",
+    "additions": 5,
+    "deletions": 0,
+    "changes": 5,
+    "blob_url": "https://github.com/TanStack/query/blob/aec923a17312bc9b9518c10bbb63f137eabeea80/.changeset%2Fperky-jars-flow.md",
+    "raw_url": "https://github.com/TanStack/query/raw/aec923a17312bc9b9518c10bbb63f137eabeea80/.changeset%2Fperky-jars-flow.md",
+    "contents_url": "https://api.github.com/repos/TanStack/query/contents/.changeset%2Fperky-jars-flow.md?ref=aec923a17312bc9b9518c10bbb63f137eabeea80",
+    "patch": "@@ -0,0 +1,5 @@\n+---\n+'@tanstack/query-core': patch\n+---\n+\n+ref(hydration): remove outdated dehydratedAt fallback"
+  },
+  {
+    "sha": "c4b02dcbc484d520d907b667df24735da60ce884",
+    "filename": "packages/preact-query-persist-client/src/__tests__/use-queries-with-persist.test.tsx",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 0,
+    "changes": 1,
+    "blob_url": "https://github.com/TanStack/query/blob/aec923a17312bc9b9518c10bbb63f137eabeea80/packages%2Fpreact-query-persist-client%2Fsrc%2F__tests__%2Fuse-queries-with-persist.test.tsx",
+    "raw_url": "https://github.com/TanStack/query/raw/aec923a17312bc9b9518c10bbb63f137eabeea80/packages%2Fpreact-query-persist-client%2Fsrc%2F__tests__%2Fuse-queries-with-persist.test.tsx",
+    "contents_url": "https://api.github.com/repos/TanStack/query/contents/packages%2Fpreact-query-persist-client%2Fsrc%2F__tests__%2Fuse-queries-with-persist.test.tsx?ref=aec923a17312bc9b9518c10bbb63f137eabeea80",
+    "patch": "@@ -85,6 +85,7 @@ describe('useQueries with persist and memoized combine (preact)', () => {\n         queries: [1, 2, 3].map((id) => ({\n           queryHash: `[\"post\",${id}]`,\n           queryKey: ['post', id],\n+          dehydratedAt: Date.now(),\n           state: {\n             data: id,\n             dataUpdateCount: 1,"
+  },
+  {
+    "sha": "f9cf967b06960308f609ff89e9ae23155933c745",
+    "filename": "packages/preact-query/src/HydrationBoundary.tsx",
+    "status": "modified",
+    "additions": 0,
+    "deletions": 1,
+    "changes": 1,
+    "blob_url": "https://github.com/TanStack/query/blob/aec923a17312bc9b9518c10bbb63f137eabeea80/packages%2Fpreact-query%2Fsrc%2FHydrationBoundary.tsx",
+    "raw_url": "https://github.com/TanStack/query/raw/aec923a17312bc9b9518c10bbb63f137eabeea80/packages%2Fpreact-query%2Fsrc%2FHydrationBoundary.tsx",
+    "contents_url": "https://api.github.com/repos/TanStack/query/contents/packages%2Fpreact-query%2Fsrc%2FHydrationBoundary.tsx?ref=aec923a17312bc9b9518c10bbb63f137eabeea80",
+    "patch": "@@ -138,7 +138,6 @@ export const HydrationBoundary = ({\n             (dehydratedQuery.promise &&\n               existingQuery.state.status !== 'pending' &&\n               existingQuery.state.fetchStatus !== 'fetching' &&\n-              dehydratedQuery.dehydratedAt !== undefined &&\n               dehydratedQuery.dehydratedAt > existingQuery.state.dataUpdatedAt)\n \n           if (hydrationIsNewer) {"
+  },
+  {
+    "sha": "a796c574f952890118022aedbfd49c8551142212",
+    "filename": "packages/query-core/src/hydration.ts",
+    "status": "modified",
+    "additions": 5,
+    "deletions": 12,
+    "changes": 17,
+    "blob_url": "https://github.com/TanStack/query/blob/aec923a17312bc9b9518c10bbb63f137eabeea80/packages%2Fquery-core%2Fsrc%2Fhydration.ts",
+    "raw_url": "https://github.com/TanStack/query/raw/aec923a17312bc9b9518c10bbb63f137eabeea80/packages%2Fquery-core%2Fsrc%2Fhydration.ts",
+    "contents_url": "https://api.github.com/repos/TanStack/query/contents/packages%2Fquery-core%2Fsrc%2Fhydration.ts?ref=aec923a17312bc9b9518c10bbb63f137eabeea80",
+    "patch": "@@ -61,13 +61,10 @@ interface DehydratedQuery {\n   queryHash: string\n   queryKey: QueryKey\n   state: QueryState\n+  dehydratedAt: number\n   promise?: Promise<unknown>\n   meta?: QueryMeta\n   queryType?: 'infinite'\n-  // This is only optional because older versions of Query might have dehydrated\n-  // without it which we need to handle for backwards compatibility.\n-  // This should be changed to required in the future.\n-  dehydratedAt?: number\n }\n \n export interface DehydratedState {\n@@ -240,11 +237,7 @@ export function hydrate(\n       // Do not hydrate if an existing query exists with newer data\n       if (query) {\n         const hasNewerSyncData =\n-          syncData &&\n-          // We only need this undefined check to handle older dehydration\n-          // payloads that might not have dehydratedAt\n-          dehydratedAt !== undefined &&\n-          dehydratedAt > query.state.dataUpdatedAt\n+          syncData && dehydratedAt > query.state.dataUpdatedAt\n         if (\n           state.dataUpdatedAt > query.state.dataUpdatedAt ||\n           hasNewerSyncData\n@@ -262,7 +255,7 @@ export function hydrate(\n             ...(state.status === 'pending' &&\n               data !== undefined && {\n                 status: 'success' as const,\n-                dataUpdatedAt: dehydratedAt ?? Date.now(),\n+                dataUpdatedAt: dehydratedAt,\n                 // Preserve existing fetchStatus if the existing query is actively fetching.\n                 ...(!existingQueryIsFetching && {\n                   fetchStatus: 'idle' as const,\n@@ -296,7 +289,7 @@ export function hydrate(\n                 : state.status,\n             ...(state.status === 'pending' &&\n               data !== undefined && {\n-                dataUpdatedAt: dehydratedAt ?? Date.now(),\n+                dataUpdatedAt: dehydratedAt,\n               }),\n           },\n         )\n@@ -311,7 +304,7 @@ export function hydrate(\n         !existingQueryIsFetching &&\n         // Only hydrate if dehydration is newer than any existing data,\n         // this is always true for new queries\n-        (dehydratedAt === undefined || dehydratedAt > query.state.dataUpdatedAt)\n+        dehydratedAt > query.state.dataUpdatedAt\n       ) {\n         // This doesn't actually fetch - it just creates a retryer\n         // which will re-use the passed `initialPromise`"
+  },
+  {
+    "sha": "545f77f7ecd9939704e1c4d34960cc042b68cb70",
+    "filename": "packages/react-query-persist-client/src/__tests__/use-queries-with-persist.test.tsx",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 0,
+    "changes": 1,
+    "blob_url": "https://github.com/TanStack/query/blob/aec923a17312bc9b9518c10bbb63f137eabeea80/packages%2Freact-query-persist-client%2Fsrc%2F__tests__%2Fuse-queries-with-persist.test.tsx",
+    "raw_url": "https://github.com/TanStack/query/raw/aec923a17312bc9b9518c10bbb63f137eabeea80/packages%2Freact-query-persist-client%2Fsrc%2F__tests__%2Fuse-queries-with-persist.test.tsx",
+    "contents_url": "https://api.github.com/repos/TanStack/query/contents/packages%2Freact-query-persist-client%2Fsrc%2F__tests__%2Fuse-queries-with-persist.test.tsx?ref=aec923a17312bc9b9518c10bbb63f137eabeea80",
+    "patch": "@@ -73,6 +73,7 @@ describe('useQueries with persist and memoized combine', () => {\n         queries: [1, 2, 3].map((id) => ({\n           queryHash: `[\"post\",${id}]`,\n           queryKey: ['post', id],\n+          dehydratedAt: Date.now(),\n           state: {\n             data: id,\n             dataUpdateCount: 1,"
+  },
+  {
+    "sha": "ce03eb40c830cacd49e0763b28c5ae417731f8ef",
+    "filename": "packages/react-query/src/HydrationBoundary.tsx",
+    "status": "modified",
+    "additions": 0,
+    "deletions": 1,
+    "changes": 1,
+    "blob_url": "https://github.com/TanStack/query/blob/aec923a17312bc9b9518c10bbb63f137eabeea80/packages%2Freact-query%2Fsrc%2FHydrationBoundary.tsx",
+    "raw_url": "https://github.com/TanStack/query/raw/aec923a17312bc9b9518c10bbb63f137eabeea80/packages%2Freact-query%2Fsrc%2FHydrationBoundary.tsx",
+    "contents_url": "https://api.github.com/repos/TanStack/query/contents/packages%2Freact-query%2Fsrc%2FHydrationBoundary.tsx?ref=aec923a17312bc9b9518c10bbb63f137eabeea80",
+    "patch": "@@ -139,7 +139,6 @@ export const HydrationBoundary = ({\n               (dehydratedQuery.promise &&\n                 existingQuery.state.status !== 'pending' &&\n                 existingQuery.state.fetchStatus !== 'fetching' &&\n-                dehydratedQuery.dehydratedAt !== undefined &&\n                 dehydratedQuery.dehydratedAt >\n                   existingQuery.state.dataUpdatedAt)\n "
+  }
+]

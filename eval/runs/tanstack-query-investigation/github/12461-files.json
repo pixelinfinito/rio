@@ -1,0 +1,14 @@
+[
+  {
+    "sha": "da9090e0008a0a6ebf11854cb367d773e0a8e66b",
+    "filename": "examples/vue/algolia/src/services/products/types.ts",
+    "status": "modified",
+    "additions": 1,
+    "deletions": 3,
+    "changes": 4,
+    "blob_url": "https://github.com/TanStack/query/blob/f8ebac7b3ce64053b778bdbbdfa1e3e8beca683e/examples%2Fvue%2Falgolia%2Fsrc%2Fservices%2Fproducts%2Ftypes.ts",
+    "raw_url": "https://github.com/TanStack/query/raw/f8ebac7b3ce64053b778bdbbdfa1e3e8beca683e/examples%2Fvue%2Falgolia%2Fsrc%2Fservices%2Fproducts%2Ftypes.ts",
+    "contents_url": "https://api.github.com/repos/TanStack/query/contents/examples%2Fvue%2Falgolia%2Fsrc%2Fservices%2Fproducts%2Ftypes.ts?ref=f8ebac7b3ce64053b778bdbbdfa1e3e8beca683e",
+    "patch": "@@ -1,5 +1,3 @@\n-import type { Hit } from '@algolia/client-search'\n-\n export type SearchOptions = {\n   indexName: string\n   query: string\n@@ -8,6 +6,6 @@ export type SearchOptions = {\n }\n \n export type SearchResponse<TData> = {\n-  hits: Array<Hit<TData>>\n+  hits: Array<TData & { objectID: string }>\n   nbPages: number\n }"
+  }
+]
