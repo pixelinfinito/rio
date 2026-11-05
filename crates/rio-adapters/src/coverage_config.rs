@@ -88,34 +88,41 @@ fn config_value<'a>(value: Node<'a>, source: &[u8]) -> Option<Node<'a>> {
 }
 
 pub fn typescript_test_runner(tree: &Tree, root: &str) -> Option<&'static str> {
-    if let Some(path) = ancestor_config(tree, root, &["package.json"])
-        && let Some(value) = tree
-            .get(&path)
-            .and_then(|entry| serde_json::from_slice::<Value>(&entry.content).ok())
-    {
-        for runner in ["vitest", "jest"] {
-            if ["dependencies", "devDependencies"]
-                .iter()
-                .any(|key| value[*key].get(runner).is_some())
-            {
-                return Some(runner);
+    let mut directory = root.to_owned();
+    loop {
+        if let Some(path) = ancestor_config(tree, &directory, &["package.json"])
+            && let Some(value) = tree
+                .get(&path)
+                .and_then(|entry| serde_json::from_slice::<Value>(&entry.content).ok())
+        {
+            for runner in ["vitest", "jest"] {
+                if ["dependencies", "devDependencies"]
+                    .iter()
+                    .any(|key| value[*key].get(runner).is_some())
+                    || value["scripts"].as_object().is_some_and(|scripts| {
+                        scripts.values().any(|script| {
+                            script.as_str().is_some_and(|script| {
+                                script.split_whitespace().any(|word| word == runner)
+                            })
+                        })
+                    })
+                {
+                    return Some(runner);
+                }
             }
+            let parent = path.rsplit_once('/').map_or("", |(dir, _)| dir);
+            if parent.is_empty() {
+                break;
+            }
+            directory = parent
+                .rsplit_once('/')
+                .map_or(".", |(dir, _)| dir)
+                .to_owned();
+        } else {
+            break;
         }
     }
-    if ancestor_config(
-        tree,
-        root,
-        &[
-            "vitest.config.ts",
-            "vitest.config.js",
-            "vitest.config.mts",
-            "vitest.config.mjs",
-            "vitest.config.cts",
-            "vitest.config.cjs",
-        ],
-    )
-    .is_some()
-    {
+    if ancestor_config(tree, root, VITEST_CONFIGS).is_some() {
         Some("vitest")
     } else if ancestor_config(
         tree,
@@ -149,17 +156,7 @@ pub fn typescript_coverage_settings(
         ..Default::default()
     };
     let names = if runner == "vitest" {
-        vec![
-            "vitest.config.ts",
-            "vitest.config.js",
-            "vitest.config.mts",
-            "vitest.config.mjs",
-            "vitest.config.cts",
-            "vitest.config.cjs",
-            "vite.config.ts",
-            "vite.config.js",
-            "vite.config.mjs",
-        ]
+        VITEST_CONFIGS.to_vec()
     } else {
         vec![
             "jest.config.ts",
@@ -247,6 +244,11 @@ pub fn typescript_coverage_settings(
         settings.include = value["jest"]
             .get("collectCoverageFrom")
             .and_then(|value| serde_json::from_value(value.clone()).ok());
+    }
+    if runner == "vitest" {
+        let (cwd, args) = vitest_execution(tree, root);
+        settings.invocation_root = Some(cwd);
+        settings.runner_args = args;
     }
     settings.reports_unloaded = settings.static_known
         && if runner == "vitest" {
@@ -373,4 +375,83 @@ pub fn python_coverage_settings(tree: &Tree, root: &str) -> Result<CoverageSetti
         settings.reports_unloaded = false;
     }
     Ok(settings)
+}
+
+const VITEST_CONFIGS: &[&str] = &[
+    "vitest.config.ts",
+    "vitest.config.js",
+    "vitest.config.mts",
+    "vitest.config.mjs",
+    "vitest.config.cts",
+    "vitest.config.cjs",
+    "vite.config.ts",
+    "vite.config.js",
+    "vite.config.mts",
+    "vite.config.mjs",
+    "vite.config.cts",
+    "vite.config.cjs",
+    "vitest.workspace.ts",
+    "vitest.workspace.js",
+    "vitest.workspace.mts",
+    "vitest.workspace.mjs",
+    "vitest.workspace.cts",
+    "vitest.workspace.cjs",
+    "vitest.workspace.json",
+];
+
+/// Keep workspace imports and relative project paths anchored to their config.
+/// File filters limit a root workspace run when no static project name exists.
+pub fn vitest_execution(tree: &Tree, root: &str) -> (String, Vec<String>) {
+    let workspace = ancestor_config(
+        tree,
+        root,
+        &VITEST_CONFIGS
+            .iter()
+            .copied()
+            .filter(|name| name.starts_with("vitest.workspace"))
+            .collect::<Vec<_>>(),
+    );
+    let mut directory = root.to_owned();
+    let mut projects = None;
+    loop {
+        if let Some(config) = ancestor_config(tree, &directory, VITEST_CONFIGS) {
+            let entry = &tree[&config];
+            if let Ok(syntax) = parse_source(&config, &entry.content)
+                && let Some(object) = exported_object(syntax.root_node(), &entry.content)
+                && property(object, "test", &entry.content)
+                    .is_some_and(|test| property(test, "projects", &entry.content).is_some())
+            {
+                projects = Some(config.clone());
+                break;
+            }
+            let parent = config.rsplit_once('/').map_or("", |(dir, _)| dir);
+            if parent.is_empty() {
+                break;
+            }
+            directory = parent
+                .rsplit_once('/')
+                .map_or(".", |(dir, _)| dir)
+                .to_owned();
+        } else {
+            break;
+        }
+    }
+    let config = projects
+        .or(workspace)
+        .or_else(|| ancestor_config(tree, root, VITEST_CONFIGS));
+    let Some(config) = config else {
+        return (root.into(), Vec::new());
+    };
+    let cwd = config
+        .rsplit_once('/')
+        .map_or(".", |(parent, _)| parent)
+        .to_owned();
+    let mut args = Vec::new();
+    if !config.contains("vitest.workspace.") {
+        args.extend(["--config".into(), config.rsplit('/').next().unwrap().into()]);
+    }
+    if cwd != root && root != "." {
+        args.push(root.strip_prefix(&format!("{cwd}/")).unwrap_or(root).into());
+    }
+    (cwd, args)
 }

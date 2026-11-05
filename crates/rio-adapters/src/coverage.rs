@@ -110,6 +110,10 @@ pub fn parse_python_coverage(
 pub struct CoverageSettings {
     pub root: String,
     pub language: String,
+    #[serde(default)]
+    pub invocation_root: Option<String>,
+    #[serde(default)]
+    pub runner_args: Vec<String>,
     pub include: Option<Vec<String>>,
     pub exclude: Vec<String>,
     /// False when configuration uses computed expressions we cannot evaluate.
@@ -345,7 +349,12 @@ pub async fn run_coverage(
 ) -> CoverageRun {
     let started = Instant::now();
     let tool = request.tool;
-    let root = request.tool_tree.join(&request.settings.root);
+    let execution_root = request
+        .settings
+        .invocation_root
+        .as_deref()
+        .unwrap_or(&request.settings.root);
+    let root = request.tool_tree.join(execution_root);
     let output = root.join(".rio-coverage");
     let failure = |message: String, processes| CoverageRun {
         data: CoverageData::new(),
@@ -379,6 +388,9 @@ pub async fn run_coverage(
     let (module, report_path) = match tool.name.as_str() {
         "vitest" => {
             command = vitest_coverage_command(tool, &root, &output);
+            command
+                .args
+                .extend(request.settings.runner_args.iter().map(Into::into));
             ("rio/adapter-typescript", output.join("lcov.info"))
         }
         "jest" => {
@@ -503,7 +515,7 @@ pub async fn run_coverage(
     }
     let context = DiagnosticContext {
         repository_root: request.tool_tree,
-        project_root: &request.settings.root,
+        project_root: execution_root,
         tool_version: &tool.version,
         worktree_root: request.worktree_root,
         sources: None,

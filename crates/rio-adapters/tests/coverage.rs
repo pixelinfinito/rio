@@ -427,3 +427,52 @@ fn vitest_worker_and_coverage_flags_match_installed_major() {
         assert_eq!(command.env.is_empty(), !version.starts_with('1'));
     }
 }
+
+#[test]
+fn vitest_discovers_scripts_vite_configs_and_root_workspaces() {
+    let mut tree: Tree = [
+        (
+            "package.json".into(),
+            entry(r#"{"devDependencies":{"vitest":"^4"}}"#),
+        ),
+        (
+            "packages/a/package.json".into(),
+            entry(r#"{"scripts":{"test:lib":"vitest"}}"#),
+        ),
+        (
+            "packages/a/vite.config.ts".into(),
+            entry("export default {test:{name:'a'}}"),
+        ),
+    ]
+    .into();
+    assert_eq!(typescript_test_runner(&tree, "packages/a"), Some("vitest"));
+    assert_eq!(
+        vitest_execution(&tree, "packages/a"),
+        (
+            "packages/a".into(),
+            vec!["--config".into(), "vite.config.ts".into()]
+        )
+    );
+    tree.insert(
+        "vitest.workspace.ts".into(),
+        entry("export default ['vitest.unit.config.ts']"),
+    );
+    assert_eq!(
+        vitest_execution(&tree, "packages/a"),
+        (".".into(), vec!["packages/a".into()])
+    );
+    tree.remove("vitest.workspace.ts");
+    tree.insert(
+        "vitest.config.ts".into(),
+        entry("export default {test:{projects:['packages/*']}}"),
+    );
+    let settings = typescript_coverage_settings(&tree, "packages/a", "vitest", "4.1.5").unwrap();
+    assert_eq!(settings.invocation_root.as_deref(), Some("."));
+    assert_eq!(
+        settings.runner_args,
+        ["--config", "vitest.config.ts", "packages/a"]
+    );
+    tree.remove("packages/a/vite.config.ts");
+    tree.insert("packages/a/package.json".into(), entry("{}"));
+    assert_eq!(typescript_test_runner(&tree, "packages/a"), Some("vitest"));
+}
