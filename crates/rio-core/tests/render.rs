@@ -84,3 +84,94 @@ fn progress_reports_completed_outcomes() {
         .contains("cancelled (timeout)")
     );
 }
+
+#[test]
+fn dependency_and_baseline_headers_count_unclassified_findings_and_name_a_remedy() {
+    for (reason, hint, note, expected) in [
+        (
+            Some(SkipReason::DependencyMismatch),
+            "installed example differs",
+            "",
+            "0 unclassified: dependency_mismatch; install from lockfile.",
+        ),
+        (
+            Some(SkipReason::DependencyMismatch),
+            "no lockfile (set trust_installed_dependencies to run anyway)",
+            "",
+            "0 unclassified: dependency_mismatch; set trust_installed_dependencies.",
+        ),
+        (
+            None,
+            "",
+            "baseline_failed: base dependencies differ",
+            "1 unclassified: baseline_failed; check base tools; install from base lockfile.",
+        ),
+        (
+            None,
+            "",
+            "baseline disabled in the profile",
+            "1 unclassified: baseline disabled; enable baseline in profile.",
+        ),
+        (
+            None,
+            "",
+            "",
+            "1 unclassified: baseline unavailable; check baseline hint in footer.",
+        ),
+    ] {
+        let mut report = fixture("complete");
+        report.risks.clear();
+        report.findings.truncate(1);
+        report.findings[0].state = if reason.is_some() {
+            State::PreExisting
+        } else {
+            State::Unclassified
+        };
+        report.checks.truncate(1);
+        report.incomplete.clear();
+        report.footer.notes = if note.is_empty() {
+            Vec::new()
+        } else {
+            vec![note.into()]
+        };
+        if let Some(reason) = reason {
+            report.checks[0].outcome = CheckOutcome::Skipped {
+                reason,
+                details: CheckDetails {
+                    hint: Some(hint.into()),
+                    ..Default::default()
+                },
+            };
+        }
+        for output in [
+            render_terminal(&report, &RenderOptions::default()),
+            render_markdown(&report, &RenderOptions::default()),
+        ] {
+            assert!(
+                output.lines().take(8).any(|line| line.trim() == expected),
+                "{output}"
+            );
+        }
+    }
+}
+
+#[test]
+fn trusted_results_with_a_baseline_do_not_claim_to_be_unclassified() {
+    let mut report = fixture("complete");
+    report
+        .findings
+        .iter_mut()
+        .for_each(|f| f.state = State::New);
+    report.risks.clear();
+    report
+        .footer
+        .notes
+        .push("dependencies_trusted: results use unverified dependencies".into());
+    for output in [
+        render_terminal(&report, &RenderOptions::default()),
+        render_markdown(&report, &RenderOptions::default()),
+    ] {
+        assert!(!output.contains("unclassified:"));
+        assert!(output.contains("dependencies_trusted"));
+    }
+}

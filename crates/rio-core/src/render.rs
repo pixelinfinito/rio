@@ -202,6 +202,71 @@ fn title(report: &Report) -> String {
         label(&report.status)
     )
 }
+fn classification_summary(report: &Report) -> Option<String> {
+    let count = report
+        .findings
+        .iter()
+        .chain(&report.risks)
+        .filter(|finding| finding.state == State::Unclassified)
+        .count();
+    let mismatches: Vec<_> = report
+        .checks
+        .iter()
+        .chain(&report.incomplete)
+        .filter(|check| {
+            matches!(
+                check.outcome,
+                CheckOutcome::Skipped {
+                    reason: SkipReason::DependencyMismatch,
+                    ..
+                }
+            )
+        })
+        .collect();
+    let baseline_failed = report
+        .footer
+        .notes
+        .iter()
+        .any(|note| note.contains("baseline_failed"));
+    let baseline_disabled = report
+        .footer
+        .notes
+        .iter()
+        .any(|note| note.contains("baseline disabled"));
+    let (reason, action) = if !mismatches.is_empty() {
+        // Trust is appropriate only for unverifiable metadata. Never recommend
+        // bypassing a known mismatch; its remedy is a matching installation.
+        let unverified_only = mismatches.iter().all(|check| {
+            check
+                .outcome
+                .details()
+                .hint
+                .as_deref()
+                .is_some_and(|hint| hint.contains("set trust_installed_dependencies"))
+        });
+        (
+            "dependency_mismatch",
+            if unverified_only {
+                "set trust_installed_dependencies"
+            } else {
+                "install from lockfile"
+            },
+        )
+    } else if baseline_failed {
+        (
+            "baseline_failed",
+            "check base tools; install from base lockfile",
+        )
+    } else if baseline_disabled {
+        ("baseline disabled", "enable baseline in profile")
+    } else if count > 0 {
+        ("baseline unavailable", "check baseline hint in footer")
+    } else {
+        return None;
+    };
+    Some(format!("{count} unclassified: {reason}; {action}."))
+}
+
 fn header(report: &Report) -> Vec<String> {
     let h = &report.review;
     let mut lines = vec![format!(
@@ -222,6 +287,9 @@ fn header(report: &Report) -> Vec<String> {
             "Profile: {profile}  Chain: {}",
             h.chain.as_deref().unwrap_or_default().join(" -> ")
         ));
+    }
+    if let Some(summary) = classification_summary(report) {
+        lines.push(summary);
     }
     lines
 }
@@ -339,7 +407,11 @@ pub fn render_markdown(report: &Report, options: &RenderOptions<'_>) -> String {
                 if failing { " **FAIL**" } else { "" },
                 safe(&finding.message)
             ));
-            for loc in &finding.locations {
+            for loc in finding.locations.iter().filter(|loc| {
+                options.show_pre_existing
+                    || finding.state != State::Unclassified
+                    || loc.occurrence_state != OccurrenceState::PreExisting
+            }) {
                 out.push_str(&format!(
                     "  - {} [{}]\n",
                     code(&location(loc)),
@@ -443,7 +515,11 @@ pub fn render_terminal(report: &Report, options: &RenderOptions<'_>) -> String {
                 }
             ));
             // Locations get their own lines so messages never wrap paths.
-            for loc in &finding.locations {
+            for loc in finding.locations.iter().filter(|loc| {
+                options.show_pre_existing
+                    || finding.state != State::Unclassified
+                    || loc.occurrence_state != OccurrenceState::PreExisting
+            }) {
                 lines.push(format!(
                     "    {} [{}]",
                     location(loc),
