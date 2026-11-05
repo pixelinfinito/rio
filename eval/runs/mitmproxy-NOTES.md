@@ -67,3 +67,155 @@ For positive, restore the registered one-line patch as a synthetic commit on its
 Start/end timestamps are in attempt-times.json and each commands.json. Two final independent oracle ledgers take 68.752s total for the negative base/head, 41.853s for positive base/head (command sums; source operations and parallel runs excluded). These are warm tmpfs runs, not cold performance benchmarks. Setup/research elapsed time includes the documented earlier 45-minute pydantic investigation.
 
 All five report-bearing attempts have fully adjudicated verdicts, normalized records and successful `eval/evaluate.py validate`. Two earlier clone failures have command evidence only. Required harness unit tests were also run; their result is recorded in validation.log. Files over 5 MB, disposable clones and virtual environments are excluded from the commit; large coverage JSON evidence is gzip-compressed. No code in crates/ or eval/*.py changed.
+
+## Rerun2 (binary f6e4f87e4c65)
+
+Date: 2026-11-05 UTC. Reviewer: `sub-agent rerun2-mitmproxy (automated)`;
+verdict_source: `automated`. Verified the supplied release binary before execution:
+`rio 0.1.0 x86_64-unknown-linux-gnu f6e4f87e4c65`, SHA-256
+`3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7`.
+No rebuild and no changes to `crates/` or `eval/*.py`.
+
+The cases retain their original PRs and exact commits:
+
+- #8473: base `3368a0a06ae6195aad817a1ece1aaeb6fe0353a1`, head
+  `be9f49d248a0142ae30f8bd412ad45060d0ee25e`.
+- #8521 seeded: base `6debf65b612abc726fe9cabe5c2a1ebb1cb36df4`, synthetic head
+  `986ba556378985647957301e28069e46ee6074ec`, seed
+  `20261105-unused-itertools-v1`. The original synthetic commit still exists in
+  the local Git cache; its diff matches the preregistered patch byte for byte
+  (SHA-256 `1096dd5b71a2f66f6d872bf4593456baef7311432f3be9cb9d0c41b3fd576f4a`).
+  [Saved commit object](mitmproxy-rerun2-evidence/seed-commit.txt) hashes back to
+  the exact original synthetic SHA. This reviews only the unused import, not
+  the public parent's actual head.
+
+Both use managed CPython 3.14.10, uv 0.13.7, the byte-identical previous
+`install-plan.json` and `profile.yaml` (profile SHA-256
+`6676975243f9501c30ecc15792d0ba479e5b98545dae56042e09f911a7b7de07`). The
+plan installs locked dependencies with `--no-install-project` and removes only
+`a1_coverage.pth` and `distutils-precedence.pth`; there is no trust override.
+`PYTEST_ADDOPTS` still selects `test/mitmproxy/test_certs.py` or
+`test/mitmproxy/coretypes/test_multidict.py`. Independent oracle evidence is reused
+at unchanged SHAs: [original oracle ledgers](mitmproxy-evidence/oracle-driver.txt)
+and [executable changed-line coverage](mitmproxy-evidence/independent-diff-coverage.json).
+Fresh Rio findings, check outcomes, states and control matches are adjudicated
+again. Full source/root mypy and Ruff are in scope; coverage is targeted, not
+full-suite coverage. Offline OSV audit is a declared capability limitation.
+[Runtime provenance](mitmproxy-rerun2-evidence/runtime-overrides.json) and per-attempt
+timing ledgers preserve the inherited environment and exact outer invocations.
+
+The first two attempts (`mitmproxy-8473-rerun2` and `mitmproxy-8521-rerun2`)
+ran concurrently on tmpfs after checking 5.6 GiB free. Other evaluations were
+active on the same host. During the stall `/dev/shm` reached 94% usage (1.3 GiB
+free); memory observations were 39 GiB total, 36 GiB used, 1.0 GiB free, 2.6 GiB
+available, no swap. Both Rio processes were observed in `Dl` (uninterruptible I/O)
+and had emitted only prepare/check progress. The evaluator sent SIGTERM to its
+own Rio PIDs 949518/949521. Both installers had succeeded, but reports remained
+zero bytes and no baseline classification evidence was available: baseline ran
+is **not established**, classification **no**, dependency state **unavailable**,
+eligible **no**. These are environmental interruptions, not evidence of a Rio
+logic defect or missed control. No findings can be counted from absent reports.
+
+The runner preserved `review_exit_code: -15` and failure text
+`Expecting value: line 1 column 1 (char 0)`; it produced neither verdict skeleton
+nor schema-valid report/record. No finding IDs or footer notes exist for these
+attempts. This is the harness's generic empty-JSON error after an interrupted
+review, not an adjudicable finding. Reproduction: run the corresponding argv and
+environment in `8473-attempt-time.json` or `8521-attempt-time.json` under the
+[rerun evidence directory](mitmproxy-rerun2-evidence), choose a fresh output
+path, terminate Rio during checks, and inspect the empty report and final
+`commands.json`. Resource pressure itself is not asserted reproducible.
+[Interruption evidence](mitmproxy-rerun2-evidence/interrupted-attempts.json) preserves
+the exact review commands, exit codes and limitations. Both original directories
+are retained without inventing reports or verdicts.
+
+The repair runs sequentially with disk-backed
+`TMPDIR=/tmp/rio-rerun2-mitmproxy-disk`, otherwise identical pins, runtime,
+install plan, profile and test scope. uv reports its hardlink-to-copy fallback
+between the tmpfs package cache and disk checkout; this changes installation
+cost, not resolved dependencies. [Retry driver](mitmproxy-rerun2-evidence/rerun-driver.txt)
+and the `*-attempt2-time.json` files preserve the complete retry reproduction
+(use fresh `--out` paths when repeating).
+
+Final selected records:
+
+| Case | Record | Baseline classification | Dependency state | TP | FP | Pre-existing shown | Pre-existing hidden | Environment findings | Out of scope | Controls detected / missed |
+| --- | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| #8473 negative | [record](mitmproxy-8473-rerun2-attempt2/record.json) | yes | verified | 0 | 0 | 0 | 0 | 0 | 0 | 0 / 0 |
+| #8521 seeded | [record](mitmproxy-8521-rerun2-attempt2/record.json) | yes | verified | 1 | 0 | 0 | 0 | 0 | 0 | 1 / 0 |
+
+Both final cases have baseline ran **yes**, successful typecheck and lint pairs
+for root `.`, and verified dependency states on every applicable pair. #8473
+passes both checks on both pins. #8521 has head Ruff findings/base Ruff passed,
+and mypy passed on both pins. Coverage passes with verified dependencies in both
+cases. Tool versions remain mypy 1.20.2, Ruff 0.16.9 and Coverage.py 7.13.2.
+Both reports are `incomplete` solely because the dependency audit is offline;
+this explicit limitation does not block classification eligibility under the
+methodology. Footer notes are exactly `Intent inference is deferred: no_endpoint`,
+`Graph references use syntax and text; no language server was used`, and
+`Offline applies to Rio; tool and test processes were not network-isolated`.
+
+Raw state counts: #8473 has zero findings/risks in every state; #8521 has exactly
+one `new` finding, zero `worsened`, `unclassified`, `pre-existing`, or `fixed`,
+and zero risks. Raw finding/location counts and distinct cause counts coincide
+(0 and 1 respectively). There are no deterministic or agent-layer misses recorded.
+The negative has a reused independent clean assessment; both final records are
+useful under methodology v2 (clean confirmation and actionable control).
+
+Comparison with the previous runs:
+
+- #8473: previous report had the hidden `pre-existing` alert
+  `49a4254e92e57f4a7a9a3cf017c64d89abdba6c11b56ebbf413bc3475c805562`,
+  `secret/high-entropy`, certs.py:723, with message
+  `Potential high-entropy credential: self[REDACTED]`. It is **absent** now,
+  not merely suppressed or hidden: the secrets check passes, its findings list
+  and report suppressions are empty, and no secret finding appears at top level.
+  The source is still the nonliteral `privatekey=self.default_privatekey`
+  (independent AST `Attribute` evidence is unchanged). The historical notes/v1
+  verdict labelled it FP; v2 treats its raw `pre-existing` state as
+  `pre-existing-hidden` and excludes it from precision. The observed fix is
+  removal of an incorrect raw diagnostic, not removal of a previously visible
+  false positive under the current visibility rule. No new or wrong finding.
+- #8521: expected `unused-itertools-import` remains detected as
+  `86aa2b2d6d676dda8042c04d8cc9338614f0336ad15f94a7c7c704dcf6c08820`,
+  `lint/ruff/F401`, `new`, multidict.py:1:8, message
+  `` `itertools` imported but unused ``. Exactly the same finding ID, rule,
+  location, message and state as before. No secret finding before or now, no
+  new findings, and no coverage false alarm on the executed added import.
+
+Remaining observed Rio diagnostic defects: **none in these two completed
+cases**. The mypy target-resolution changes did not introduce a failure at these
+explicit-config targets. Diff coverage passes and agrees with the reused
+independent executable-line oracle: certs.py added executable lines 356/357/359
+are covered; seeded multidict.py import line 1 is covered. These cases do not
+establish behavior for inferred targets or uninstrumented changed files.
+The offline audit skip remains `reason: offline`,
+`hint: Dependency audit needs api.osv.dev`; it is not a vulnerability miss.
+Rio child argv/cwd remains unavailable in the report/harness, as documented by
+each `commands.json#/rio_checks`; independent oracle commands are not claimed
+to be Rio subprocess traces. Initial resource interruptions and the generic
+empty-report runner error are recorded above, with no invented finding IDs.
+
+Wall times (seconds; warm caches, shared-host contention, not performance gates):
+
+| Attempt | Outer runner elapsed | uv sync summed | Rio review process | Rio reported |
+| --- | ---: | ---: | ---: | ---: |
+| 8473 initial interrupted | 1312.742 | 2.716 | 961.400 | no report |
+| 8473 disk retry | 1055.553 | 804.963 | 226.883 | 224.912 |
+| 8521 initial interrupted | 1312.407 | 2.675 | 961.468 | no report |
+| 8521 disk retry | 514.631 | 304.459 | 201.288 | 199.97 |
+
+The two initial attempts overlap; successful retries run sequentially. The
+previous #8473 repaired/#8521 seeded outer wall times were 43.359/40.988s and
+Rio reported times 35.667/33.682s. Resource pressure, cross-filesystem dependency
+copying and shared I/O make this rerun's elapsed times unsuitable for attributing
+a binary performance regression. Exact per-command times and UTC timestamps
+are retained in every attempt's commands ledger and the outer timing files.
+
+`eval/evaluate.py record` and `validate` succeeded for both final records;
+[validation log](mitmproxy-rerun2-evidence/validation.log). All 30 harness unit
+tests passed ([test log](mitmproxy-rerun2-evidence/harness-tests.log)). Raw reports,
+completed verdicts and normalized v2 records are preserved; the two interrupted
+attempts have command/log evidence only because their reports are empty.
+No new evidence file exceeds 5 MB; no clone, virtual environment or package cache
+is committed. No push or PR.

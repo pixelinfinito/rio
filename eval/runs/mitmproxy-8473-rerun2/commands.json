@@ -1,0 +1,384 @@
+{
+  "schema": "rio-eval-runner-v2",
+  "repository": "mitmproxy/mitmproxy",
+  "pr": "https://github.com/mitmproxy/mitmproxy/pull/8473",
+  "started_utc": "2026-11-05T10:59:05.211056+00:00",
+  "rio_binary": "/home/ubuntu/rio/target/release/rio",
+  "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-checkout",
+        "https://github.com/mitmproxy/mitmproxy.git",
+        "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-m_c63c8a/head"
+      ],
+      "cwd": "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-m_c63c8a",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/01-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/01-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 1492
+    },
+    {
+      "argv": [
+        "git",
+        "fetch",
+        "origin",
+        "3368a0a06ae6195aad817a1ece1aaeb6fe0353a1",
+        "be9f49d248a0142ae30f8bd412ad45060d0ee25e"
+      ],
+      "cwd": "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-m_c63c8a/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/02-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/02-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 67
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "3368a0a06ae6195aad817a1ece1aaeb6fe0353a1",
+        "be9f49d248a0142ae30f8bd412ad45060d0ee25e"
+      ],
+      "cwd": "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-m_c63c8a/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/03-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/03-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 117
+    },
+    {
+      "argv": [
+        "git",
+        "checkout",
+        "--detach",
+        "be9f49d248a0142ae30f8bd412ad45060d0ee25e"
+      ],
+      "cwd": "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-m_c63c8a/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/04-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/04-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 1334
+    },
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-hardlinks",
+        "--no-checkout",
+        "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-m_c63c8a/head",
+        "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-m_c63c8a/base"
+      ],
+      "cwd": "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-m_c63c8a",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/05-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/05-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 366
+    },
+    {
+      "argv": [
+        "git",
+        "checkout",
+        "--detach",
+        "3368a0a06ae6195aad817a1ece1aaeb6fe0353a1"
+      ],
+      "cwd": "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-m_c63c8a/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/06-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/06-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 982
+    },
+    {
+      "argv": [
+        "uv",
+        "sync",
+        "--locked",
+        "--python",
+        "3.14.10",
+        "--all-groups",
+        "--all-extras",
+        "--no-install-project"
+      ],
+      "cwd": "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-m_c63c8a/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/07-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/07-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 1743
+    },
+    {
+      "argv": [
+        "python3",
+        "-c",
+        "from pathlib import Path; names={'a1_coverage.pth','distutils-precedence.pth'}; [(p.unlink(),print('Removed installed bootstrap:',p.name)) for p in Path('.venv/lib').glob('python*/site-packages/*.pth') if p.name in names]"
+      ],
+      "cwd": "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-m_c63c8a/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/08-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/08-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 525
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "cwd": "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-m_c63c8a/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/09-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/09-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 319
+    },
+    {
+      "argv": [
+        "uv",
+        "sync",
+        "--locked",
+        "--python",
+        "3.14.10",
+        "--all-groups",
+        "--all-extras",
+        "--no-install-project"
+      ],
+      "cwd": "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-m_c63c8a/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/10-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/10-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 973
+    },
+    {
+      "argv": [
+        "python3",
+        "-c",
+        "from pathlib import Path; names={'a1_coverage.pth','distutils-precedence.pth'}; [(p.unlink(),print('Removed installed bootstrap:',p.name)) for p in Path('.venv/lib').glob('python*/site-packages/*.pth') if p.name in names]"
+      ],
+      "cwd": "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-m_c63c8a/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/11-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/11-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 779
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "cwd": "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-m_c63c8a/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/12-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/12-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 178
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "--version"
+      ],
+      "cwd": "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-m_c63c8a/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-m_c63c8a/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-m_c63c8a/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/rio-version.txt",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/13-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 8
+    },
+    {
+      "argv": [
+        "node",
+        "--version"
+      ],
+      "cwd": "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-m_c63c8a/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-m_c63c8a/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-m_c63c8a/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/14-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/14-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 4128
+    },
+    {
+      "argv": [
+        "npm",
+        "--version"
+      ],
+      "cwd": "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-m_c63c8a/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-m_c63c8a/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-m_c63c8a/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/15-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/15-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 318408
+    },
+    {
+      "argv": [
+        "python3",
+        "--version"
+      ],
+      "cwd": "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-m_c63c8a/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-m_c63c8a/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-m_c63c8a/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/16-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/16-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 1129
+    },
+    {
+      "argv": [
+        "uv",
+        "--version"
+      ],
+      "cwd": "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-m_c63c8a/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-m_c63c8a/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-m_c63c8a/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/17-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/17-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 3253
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "profile",
+        "show",
+        "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/profile.yaml"
+      ],
+      "cwd": "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-m_c63c8a/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-m_c63c8a/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-m_c63c8a/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/resolved-profile.txt",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/18-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 330
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "doctor",
+        "--format",
+        "json"
+      ],
+      "cwd": "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-m_c63c8a/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-m_c63c8a/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-m_c63c8a/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/doctor.json",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/19-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 1752
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "review",
+        "--base",
+        "3368a0a06ae6195aad817a1ece1aaeb6fe0353a1",
+        "--format",
+        "json",
+        "--offline",
+        "--profile",
+        "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/profile.yaml"
+      ],
+      "cwd": "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-m_c63c8a/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-m_c63c8a/config",
+        "RIO_CACHE_DIR": "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-m_c63c8a/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/report.json",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2/20-stderr.log",
+      "exit_code": -15,
+      "wall_time_ms": 961400
+    }
+  ],
+  "installations": {
+    "base": {
+      "commands": [
+        [
+          "uv",
+          "sync",
+          "--locked",
+          "--python",
+          "3.14.10",
+          "--all-groups",
+          "--all-extras",
+          "--no-install-project"
+        ],
+        [
+          "python3",
+          "-c",
+          "from pathlib import Path; names={'a1_coverage.pth','distutils-precedence.pth'}; [(p.unlink(),print('Removed installed bootstrap:',p.name)) for p in Path('.venv/lib').glob('python*/site-packages/*.pth') if p.name in names]"
+        ]
+      ],
+      "succeeded": true,
+      "lockfiles": {
+        "uv.lock": "3c77ab66dc1e2163647516c4b2c20d5103df4e0a3813a65fd2d42c7717ebec54"
+      }
+    },
+    "head": {
+      "commands": [
+        [
+          "uv",
+          "sync",
+          "--locked",
+          "--python",
+          "3.14.10",
+          "--all-groups",
+          "--all-extras",
+          "--no-install-project"
+        ],
+        [
+          "python3",
+          "-c",
+          "from pathlib import Path; names={'a1_coverage.pth','distutils-precedence.pth'}; [(p.unlink(),print('Removed installed bootstrap:',p.name)) for p in Path('.venv/lib').glob('python*/site-packages/*.pth') if p.name in names]"
+        ]
+      ],
+      "succeeded": true,
+      "lockfiles": {
+        "uv.lock": "3c77ab66dc1e2163647516c4b2c20d5103df4e0a3813a65fd2d42c7717ebec54"
+      }
+    }
+  },
+  "failures": [
+    "Expecting value: line 1 column 1 (char 0)"
+  ],
+  "network": "Installers may use network; Rio review uses --offline. Subprocesses are not isolated.",
+  "profile_sha256": "6676975243f9501c30ecc15792d0ba479e5b98545dae56042e09f911a7b7de07",
+  "resolution": {
+    "base_sha": "3368a0a06ae6195aad817a1ece1aaeb6fe0353a1",
+    "head_sha": "be9f49d248a0142ae30f8bd412ad45060d0ee25e",
+    "source": "pinned argv"
+  },
+  "disposable_directory": "/dev/shm/rio-rerun2-mitmproxy-tmp/rio-eval-m_c63c8a",
+  "base_sha": "3368a0a06ae6195aad817a1ece1aaeb6fe0353a1",
+  "head_sha": "be9f49d248a0142ae30f8bd412ad45060d0ee25e",
+  "removed_environment_keys": [],
+  "resolved_profile_sha256": "2a51acd02aa785120b9ffbeaa10f5f1e239a3e47be932291fa5d9d687b323a17",
+  "review_exit_code": -15,
+  "finished_utc": "2026-11-05T11:20:52.680501+00:00"
+}

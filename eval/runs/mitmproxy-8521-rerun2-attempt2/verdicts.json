@@ -1,0 +1,61 @@
+{
+  "repository": "mitmproxy/mitmproxy",
+  "pr": "https://github.com/mitmproxy/mitmproxy/pull/8521",
+  "case_id": "8521-seeded-unused-import",
+  "languages": [
+    "python"
+  ],
+  "reviewer": "sub-agent rerun2-mitmproxy (automated)",
+  "verdict_source": "automated",
+  "commands": [
+    "cwd=/tmp/rio-rerun2-mitmproxy-disk/rio-eval-7hlsfuun argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/mitmproxy/mitmproxy.git\", \"/tmp/rio-rerun2-mitmproxy-disk/rio-eval-7hlsfuun/head\"]",
+    "cwd=/tmp/rio-rerun2-mitmproxy-disk/rio-eval-7hlsfuun/head argv=[\"git\", \"fetch\", \"origin\", \"6debf65b612abc726fe9cabe5c2a1ebb1cb36df4\", \"986ba556378985647957301e28069e46ee6074ec\"]",
+    "cwd=/tmp/rio-rerun2-mitmproxy-disk/rio-eval-7hlsfuun/head argv=[\"git\", \"merge-base\", \"6debf65b612abc726fe9cabe5c2a1ebb1cb36df4\", \"986ba556378985647957301e28069e46ee6074ec\"]",
+    "cwd=/tmp/rio-rerun2-mitmproxy-disk/rio-eval-7hlsfuun/head argv=[\"git\", \"checkout\", \"--detach\", \"986ba556378985647957301e28069e46ee6074ec\"]",
+    "cwd=/tmp/rio-rerun2-mitmproxy-disk/rio-eval-7hlsfuun argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/tmp/rio-rerun2-mitmproxy-disk/rio-eval-7hlsfuun/head\", \"/tmp/rio-rerun2-mitmproxy-disk/rio-eval-7hlsfuun/base\"]",
+    "cwd=/tmp/rio-rerun2-mitmproxy-disk/rio-eval-7hlsfuun/base argv=[\"git\", \"checkout\", \"--detach\", \"6debf65b612abc726fe9cabe5c2a1ebb1cb36df4\"]",
+    "cwd=/tmp/rio-rerun2-mitmproxy-disk/rio-eval-7hlsfuun/base argv=[\"uv\", \"sync\", \"--locked\", \"--python\", \"3.14.10\", \"--all-groups\", \"--all-extras\", \"--no-install-project\"]",
+    "cwd=/tmp/rio-rerun2-mitmproxy-disk/rio-eval-7hlsfuun/base argv=[\"python3\", \"-c\", \"from pathlib import Path; names={'a1_coverage.pth','distutils-precedence.pth'}; [(p.unlink(),print('Removed installed bootstrap:',p.name)) for p in Path('.venv/lib').glob('python*/site-packages/*.pth') if p.name in names]\"]",
+    "cwd=/tmp/rio-rerun2-mitmproxy-disk/rio-eval-7hlsfuun/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/tmp/rio-rerun2-mitmproxy-disk/rio-eval-7hlsfuun/head argv=[\"uv\", \"sync\", \"--locked\", \"--python\", \"3.14.10\", \"--all-groups\", \"--all-extras\", \"--no-install-project\"]",
+    "cwd=/tmp/rio-rerun2-mitmproxy-disk/rio-eval-7hlsfuun/head argv=[\"python3\", \"-c\", \"from pathlib import Path; names={'a1_coverage.pth','distutils-precedence.pth'}; [(p.unlink(),print('Removed installed bootstrap:',p.name)) for p in Path('.venv/lib').glob('python*/site-packages/*.pth') if p.name in names]\"]",
+    "cwd=/tmp/rio-rerun2-mitmproxy-disk/rio-eval-7hlsfuun/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/tmp/rio-rerun2-mitmproxy-disk/rio-eval-7hlsfuun/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/tmp/rio-rerun2-mitmproxy-disk/rio-eval-7hlsfuun/head argv=[\"node\", \"--version\"]",
+    "cwd=/tmp/rio-rerun2-mitmproxy-disk/rio-eval-7hlsfuun/head argv=[\"npm\", \"--version\"]",
+    "cwd=/tmp/rio-rerun2-mitmproxy-disk/rio-eval-7hlsfuun/head argv=[\"python3\", \"--version\"]",
+    "cwd=/tmp/rio-rerun2-mitmproxy-disk/rio-eval-7hlsfuun/head argv=[\"uv\", \"--version\"]",
+    "cwd=/tmp/rio-rerun2-mitmproxy-disk/rio-eval-7hlsfuun/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8521-rerun2-attempt2/profile.yaml\"]",
+    "cwd=/tmp/rio-rerun2-mitmproxy-disk/rio-eval-7hlsfuun/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/tmp/rio-rerun2-mitmproxy-disk/rio-eval-7hlsfuun/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"6debf65b612abc726fe9cabe5c2a1ebb1cb36df4\", \"--format\", \"json\", \"--offline\", \"--profile\", \"/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8521-rerun2-attempt2/profile.yaml\"]"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8521-rerun2-attempt2/commands.json; Rio binary SHA-256: 3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+    "Rerun2 uses binary f6e4f87e4c65, CPython 3.14.10, uv 0.13.7, byte-identical original install plan/profile and exact original base/synthetic head. The original cache commit was reused: seed patch is byte-identical to the preregistered seed 20261105-unused-itertools-v1. See eval/runs/mitmproxy-rerun2-evidence/{runtime-overrides.json,seed-commit.txt,8521-seed.patch,8521-attempt2-time.json} and original eval/runs/mitmproxy-evidence/positive-control-register.json.",
+    "Independent oracle reused at unchanged SHAs: full-repository Ruff passes base and emits exactly F401 at seeded head; mypy passes both; 19 targeted committed multidict tests pass both with instrumentation. Added import line 1 is executable and covered; no missing executable added lines. Original evidence: eval/runs/mitmproxy-evidence/mitmproxy-8521-{base,seed}-py314-{commands.json,ruff.log,mypy.log,pytest-coverage.log,coverage.json.gz} and independent-diff-coverage.json. Test scope is targeted, not full suite.",
+    "Fresh report confirms the original F401 finding ID and new state at mitmproxy/coretypes/multidict.py:1:8; head lint findings/base lint passed; head/base mypy passed; all classification pairs dependency_state verified. Head coverage and secrets passed. No additional finding/risk, secret alert, scoped deterministic miss, or Rio diagnostic defect observed. Current configured mypy targets remain the explicit pyproject files: mitmproxy, examples/addons, release/*.py; successful checks are execution evidence, not a child argv trace.",
+    "Offline OSV audit skipped: reason offline, hint Dependency audit needs api.osv.dev; no advisory cache/safety claim. Triage/agents/verify deferred no_endpoint as expected. Rio check metadata does not expose child executable/argv/cwd; do not infer exact child invocations from independent oracle commands.",
+    "Initial tmpfs attempt retained in eval/runs/mitmproxy-8521-rerun2: evaluator SIGTERM under shared resource contention, empty report, no established baseline evidence; see eval/runs/mitmproxy-rerun2-evidence/interrupted-attempts.json. This disk-backed sequential retry succeeded without changing pins/seed/install plan/profile/test scope."
+  ],
+  "independently_clean": false,
+  "positive_control": {
+    "kind": "seeded-mutation",
+    "expected": [
+      {
+        "id": "unused-itertools-import",
+        "mechanism": "lint-rule",
+        "evidence": "Full repo uv run --no-sync ruff check at base exits 0; seeded head exits 1 with exactly F401 at mitmproxy/coretypes/multidict.py:1. Independent mypy passes both; 19 targeted tests pass both with instrumentation. Evidence: mitmproxy-8521-{base,seed}-py314-* logs. Durable evidence directory: eval/runs/mitmproxy-evidence; preregistered patch/seed/pins/profile in positive-control-register.json.",
+        "finding_ids": [
+          "86aa2b2d6d676dda8042c04d8cc9338614f0336ad15f94a7c7c704dcf6c08820"
+        ]
+      }
+    ]
+  },
+  "misses": [],
+  "findings": {
+    "86aa2b2d6d676dda8042c04d8cc9338614f0336ad15f94a7c7c704dcf6c08820": {
+      "verdict": "true-positive",
+      "reason": "Seed patch adds only import itertools at mitmproxy/coretypes/multidict.py:1. Independent full-repository uv run --no-sync ruff check passes at base 6debf65b612abc726fe9cabe5c2a1ebb1cb36df4 and exits 1 with exactly F401 at synthetic head 986ba556378985647957301e28069e46ee6074ec. See eval/runs/mitmproxy-evidence/mitmproxy-8521-{base,seed}-py314-{commands.json,ruff.log}; mypy passes and 19 instrumented tests pass at both pins. Rio matches the same new F401; verified lint/typecheck base/head classification succeeded."
+    }
+  }
+}

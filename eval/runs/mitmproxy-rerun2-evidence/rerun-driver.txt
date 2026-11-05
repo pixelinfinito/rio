@@ -1,0 +1,17 @@
+import json,os,subprocess,time
+from datetime import datetime,timezone
+from pathlib import Path
+root=Path.cwd(); evidence=root/'eval/runs/mitmproxy-rerun2-evidence'
+common=json.load(open(evidence/'runtime-overrides.json'))['environment']
+common['TMPDIR']='/tmp/rio-rerun2-mitmproxy-disk'
+for pr,old,test in [('8473','mitmproxy-8473-attempt2','test/mitmproxy/test_certs.py'),('8521','mitmproxy-8521-seeded','test/mitmproxy/coretypes/test_multidict.py')]:
+    previous=json.load(open(root/'eval/runs'/old/'commands.json'))
+    env={**os.environ,**common,'PYTEST_ADDOPTS':test}
+    argv=['python3','eval/runner.py','--repository','mitmproxy/mitmproxy','--pr',pr,'--base',previous['base_sha'],'--head',previous['head_sha'],'--languages','python','--rio','/home/ubuntu/rio/target/release/rio','--out',str(root/f'eval/runs/mitmproxy-{pr}-rerun2-attempt2'),'--install-plan',f'eval/runs/{old}/install-plan.json','--profile',f'eval/runs/{old}/profile.yaml']
+    started=datetime.now(timezone.utc).isoformat(); tick=time.monotonic()
+    with open(evidence/f'{pr}-attempt2-runner.log','w') as log:
+        result=subprocess.run(argv,env=env,stdout=log,stderr=subprocess.STDOUT)
+    data={'argv':argv,'cwd':str(root),'environment':{**common,'PYTEST_ADDOPTS':test},'started_utc':started,'finished_utc':datetime.now(timezone.utc).isoformat(),'wall_time_s':round(time.monotonic()-tick,3),'exit_code':result.returncode}
+    (evidence/f'{pr}-attempt2-time.json').write_text(json.dumps(data,indent=2)+'\n')
+    print(pr,'exit',result.returncode,'seconds',data['wall_time_s'],flush=True)
+    print((evidence/f'{pr}-attempt2-runner.log').read_text(),flush=True)

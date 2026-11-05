@@ -1,0 +1,6 @@
+$ python3 eval/evaluate.py record --report eval/runs/mitmproxy-8473-rerun2-attempt2/report.json --verdicts eval/runs/mitmproxy-8473-rerun2-attempt2/verdicts.json --out eval/runs/mitmproxy-8473-rerun2-attempt2/record.json
+$ python3 eval/evaluate.py validate eval/runs/mitmproxy-8473-rerun2-attempt2/record.json
+Valid: eval/runs/mitmproxy-8473-rerun2-attempt2/record.json
+$ python3 eval/evaluate.py record --report eval/runs/mitmproxy-8521-rerun2-attempt2/report.json --verdicts eval/runs/mitmproxy-8521-rerun2-attempt2/verdicts.json --out eval/runs/mitmproxy-8521-rerun2-attempt2/record.json
+$ python3 eval/evaluate.py validate eval/runs/mitmproxy-8521-rerun2-attempt2/record.json
+Valid: eval/runs/mitmproxy-8521-rerun2-attempt2/record.json

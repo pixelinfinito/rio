@@ -1,0 +1,6 @@
+tree 73ade86ea8298a30d68e5ce6c4cd5e47fb35be4d
+parent 6debf65b612abc726fe9cabe5c2a1ebb1cb36df4
+author Rio automated evaluation <rio-eval@example.invalid> 1793847904 +0000
+committer Rio automated evaluation <rio-eval@example.invalid> 1793847904 +0000
+
+Seed unused itertools import for deterministic Ruff evaluation

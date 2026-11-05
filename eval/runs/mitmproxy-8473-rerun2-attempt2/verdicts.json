@@ -1,0 +1,47 @@
+{
+  "repository": "mitmproxy/mitmproxy",
+  "pr": "https://github.com/mitmproxy/mitmproxy/pull/8473",
+  "case_id": "8473",
+  "languages": [
+    "python"
+  ],
+  "reviewer": "sub-agent rerun2-mitmproxy (automated)",
+  "verdict_source": "automated",
+  "commands": [
+    "cwd=/tmp/rio-rerun2-mitmproxy-disk/rio-eval-lc7ut138 argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/mitmproxy/mitmproxy.git\", \"/tmp/rio-rerun2-mitmproxy-disk/rio-eval-lc7ut138/head\"]",
+    "cwd=/tmp/rio-rerun2-mitmproxy-disk/rio-eval-lc7ut138/head argv=[\"git\", \"fetch\", \"origin\", \"3368a0a06ae6195aad817a1ece1aaeb6fe0353a1\", \"be9f49d248a0142ae30f8bd412ad45060d0ee25e\"]",
+    "cwd=/tmp/rio-rerun2-mitmproxy-disk/rio-eval-lc7ut138/head argv=[\"git\", \"merge-base\", \"3368a0a06ae6195aad817a1ece1aaeb6fe0353a1\", \"be9f49d248a0142ae30f8bd412ad45060d0ee25e\"]",
+    "cwd=/tmp/rio-rerun2-mitmproxy-disk/rio-eval-lc7ut138/head argv=[\"git\", \"checkout\", \"--detach\", \"be9f49d248a0142ae30f8bd412ad45060d0ee25e\"]",
+    "cwd=/tmp/rio-rerun2-mitmproxy-disk/rio-eval-lc7ut138 argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/tmp/rio-rerun2-mitmproxy-disk/rio-eval-lc7ut138/head\", \"/tmp/rio-rerun2-mitmproxy-disk/rio-eval-lc7ut138/base\"]",
+    "cwd=/tmp/rio-rerun2-mitmproxy-disk/rio-eval-lc7ut138/base argv=[\"git\", \"checkout\", \"--detach\", \"3368a0a06ae6195aad817a1ece1aaeb6fe0353a1\"]",
+    "cwd=/tmp/rio-rerun2-mitmproxy-disk/rio-eval-lc7ut138/base argv=[\"uv\", \"sync\", \"--locked\", \"--python\", \"3.14.10\", \"--all-groups\", \"--all-extras\", \"--no-install-project\"]",
+    "cwd=/tmp/rio-rerun2-mitmproxy-disk/rio-eval-lc7ut138/base argv=[\"python3\", \"-c\", \"from pathlib import Path; names={'a1_coverage.pth','distutils-precedence.pth'}; [(p.unlink(),print('Removed installed bootstrap:',p.name)) for p in Path('.venv/lib').glob('python*/site-packages/*.pth') if p.name in names]\"]",
+    "cwd=/tmp/rio-rerun2-mitmproxy-disk/rio-eval-lc7ut138/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/tmp/rio-rerun2-mitmproxy-disk/rio-eval-lc7ut138/head argv=[\"uv\", \"sync\", \"--locked\", \"--python\", \"3.14.10\", \"--all-groups\", \"--all-extras\", \"--no-install-project\"]",
+    "cwd=/tmp/rio-rerun2-mitmproxy-disk/rio-eval-lc7ut138/head argv=[\"python3\", \"-c\", \"from pathlib import Path; names={'a1_coverage.pth','distutils-precedence.pth'}; [(p.unlink(),print('Removed installed bootstrap:',p.name)) for p in Path('.venv/lib').glob('python*/site-packages/*.pth') if p.name in names]\"]",
+    "cwd=/tmp/rio-rerun2-mitmproxy-disk/rio-eval-lc7ut138/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/tmp/rio-rerun2-mitmproxy-disk/rio-eval-lc7ut138/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/tmp/rio-rerun2-mitmproxy-disk/rio-eval-lc7ut138/head argv=[\"node\", \"--version\"]",
+    "cwd=/tmp/rio-rerun2-mitmproxy-disk/rio-eval-lc7ut138/head argv=[\"npm\", \"--version\"]",
+    "cwd=/tmp/rio-rerun2-mitmproxy-disk/rio-eval-lc7ut138/head argv=[\"python3\", \"--version\"]",
+    "cwd=/tmp/rio-rerun2-mitmproxy-disk/rio-eval-lc7ut138/head argv=[\"uv\", \"--version\"]",
+    "cwd=/tmp/rio-rerun2-mitmproxy-disk/rio-eval-lc7ut138/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2-attempt2/profile.yaml\"]",
+    "cwd=/tmp/rio-rerun2-mitmproxy-disk/rio-eval-lc7ut138/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/tmp/rio-rerun2-mitmproxy-disk/rio-eval-lc7ut138/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"3368a0a06ae6195aad817a1ece1aaeb6fe0353a1\", \"--format\", \"json\", \"--offline\", \"--profile\", \"/home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2-attempt2/profile.yaml\"]"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-rerun2-mitmproxy/eval/runs/mitmproxy-8473-rerun2-attempt2/commands.json; Rio binary SHA-256: 3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+    "Rerun2: binary f6e4f87e4c65, managed CPython 3.14.10 and uv 0.13.7. Exact prior base/head SHAs, byte-identical install plan/profile, source-only dependencies, no trust override. Explicit runtime/test/Git-cache overrides and outer timing: eval/runs/mitmproxy-rerun2-evidence/runtime-overrides.json and 8473-attempt2-time.json.",
+    "Independent clean assessment reused at unchanged pins: configured mypy and full-repository Ruff pass both; 37 committed certificate-module tests pass both with coverage. Only executable added lines 356/357/359 exist in coverage data, all executed. Evidence: eval/runs/mitmproxy-evidence/mitmproxy-8473-{base,head}-py314-{commands.json,mypy.log,ruff.log,pytest-coverage.log,coverage.json.gz} and independent-diff-coverage.json. This is targeted certificate coverage, not full-suite or dependency-audit safety.",
+    "Fresh Rio report rechecked: root . head/base mypy and Ruff passed with dependency_state verified; instrumented head coverage passed; secrets passed with no findings/risks. Old secret/high-entropy ID 49a4254e92e57f4a7a9a3cf017c64d89abdba6c11b56ebbf413bc3475c805562 at certs.py:723 (privatekey=self.default_privatekey) is absent, not merely hidden. Previous raw state was pre-existing: under methodology v2 that historical occurrence is pre-existing-hidden regardless of its old false-positive annotation. The scanner claim had been independently disproved by AST Attribute evidence in eval/runs/mitmproxy-evidence/secret-false-positive-evidence.json.",
+    "Capabilities: offline dependency audit skipped with reason offline and hint Dependency audit needs api.osv.dev; no populated advisory cache and no audit safety claim. Deferred triage/agents/verify with no_endpoint is outside this deterministic cohort. Rio child argv/cwd/version trace remains unavailable; report tool versions and check outcomes are preserved, not an inferred child invocation.",
+    "Initial tmpfs attempt retained in eval/runs/mitmproxy-8473-rerun2: evaluator interrupted resource-stalled Rio with SIGTERM; empty report/no baseline evidence. See eval/runs/mitmproxy-rerun2-evidence/interrupted-attempts.json. This disk-backed sequential retry succeeded without changing install plan/profile/pins. No observed new deterministic miss or remaining Rio diagnostic defect in this case."
+  ],
+  "independently_clean": true,
+  "positive_control": {
+    "kind": "none",
+    "expected": []
+  },
+  "misses": [],
+  "findings": {}
+}
