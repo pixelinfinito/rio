@@ -337,6 +337,15 @@ async fn real_rust_diagnostics_parse_compile_clippy_format_and_internal_errors()
 #[tokio::test]
 async fn real_rust_coverage_keeps_failures_and_distinguishes_zero_tests() {
     let mut tree = read_tree(&fixture("rs-sample"));
+    let configured_target = tempfile::tempdir().unwrap();
+    tree.insert(
+        ".cargo/config.toml".into(),
+        entry(&format!(
+            "[build]\ntarget-dir = {}\nbuild-dir = {}\n",
+            serde_json::to_string(&configured_target.path().join("shared-target")).unwrap(),
+            serde_json::to_string(&configured_target.path().join("shared-build")).unwrap()
+        )),
+    );
     let supervisor = ProcessSupervisor::default();
     let cargo = rust_cargo(
         &ToolResolver::from_environment(fixture("rs-sample")),
@@ -402,6 +411,10 @@ async fn real_rust_coverage_keeps_failures_and_distinguishes_zero_tests() {
             CancellationToken::new(),
         )
         .await;
+        // Project configuration must not send cleanup/profile writes outside
+        // the output directory protected by Rio's coverage lock.
+        assert!(!configured_target.path().join("shared-target").exists());
+        assert!(!configured_target.path().join("shared-build").exists());
         match case {
             "passing" => {
                 let diff = git_diff(&changes(base.clone(), tree.clone()), &[]).unwrap();

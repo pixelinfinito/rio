@@ -40,7 +40,7 @@ pub(crate) async fn run(
     let cwd = request.tool_tree.join(root);
     // Cargo locks compilation, but llvm-cov also cleans/exports profile data.
     // Hold a cross-process lock for that complete sequence across linked targets.
-    let target = std::env::var_os("CARGO_TARGET_DIR")
+    let cargo_target = std::env::var_os("CARGO_TARGET_DIR")
         .map(std::path::PathBuf::from)
         .map(|path| {
             if path.is_absolute() {
@@ -50,6 +50,16 @@ pub(crate) async fn run(
             }
         })
         .unwrap_or_else(|| cwd.join("target"));
+    let target = std::env::var_os("CARGO_LLVM_COV_TARGET_DIR")
+        .map(std::path::PathBuf::from)
+        .map(|path| {
+            if path.is_absolute() {
+                path
+            } else {
+                cwd.join(path)
+            }
+        })
+        .unwrap_or_else(|| cargo_target.join("llvm-cov-target"));
     let lock = match coverage_lock(&target, request.timeout, &cancellation).await {
         Ok(lock) => lock,
         Err(outcome) => {
@@ -114,6 +124,7 @@ pub(crate) async fn run(
         }
     }
     let _ = configure_cargo(&mut command, &tree, &request.settings.root);
+    configure_output(&mut command, &cargo_target, &target);
     command
         .env
         .insert("CARGO_LLVM_COV_SETUP".into(), "no".into());
@@ -178,6 +189,7 @@ pub(crate) async fn run(
             .args
             .extend(request.settings.runner_args.iter().map(Into::into));
         let _ = configure_cargo(&mut export, &tree, &request.settings.root);
+        configure_output(&mut export, &cargo_target, &target);
         export
             .env
             .insert("CARGO_LLVM_COV_SETUP".into(), "no".into());
@@ -216,6 +228,23 @@ pub(crate) async fn run(
         data,
         outcome,
         processes,
+    }
+}
+
+/// Pin metadata, build artifacts and profiles to the directories guarded by
+/// the coverage lock, overriding project/global Cargo output configuration.
+fn configure_output(
+    command: &mut ToolCommand,
+    cargo_target: &std::path::Path,
+    coverage_target: &std::path::Path,
+) {
+    for (name, path) in [
+        ("CARGO_TARGET_DIR", cargo_target),
+        ("CARGO_BUILD_BUILD_DIR", coverage_target),
+        ("CARGO_LLVM_COV_TARGET_DIR", coverage_target),
+        ("CARGO_LLVM_COV_BUILD_DIR", coverage_target),
+    ] {
+        command.env.insert(name.into(), path.as_os_str().to_owned());
     }
 }
 
