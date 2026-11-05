@@ -15,3 +15,6 @@ pub use compatibility::*;
 
 mod remap;
 pub use remap::*;
+
+mod scope;
+pub use scope::*;

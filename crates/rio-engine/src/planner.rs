@@ -149,6 +149,11 @@ pub async fn plan_review(
         .unwrap_or(false);
     let baseline = options["baseline"].as_bool().unwrap_or(true);
     let mut versions = BTreeMap::<(String, String, String), Option<ResolvedTool>>::new();
+    let base_source_changes = rio_git::changed_paths(working, &changes.base);
+    let scheduled_roots: Vec<_> = scheduled
+        .iter()
+        .map(|root| root.project.path.clone())
+        .collect();
     for scheduled in scheduled {
         let project = &scheduled.project;
         let language = &project.language;
@@ -158,9 +163,9 @@ pub async fn plan_review(
         } else {
             Ecosystem::PyPi
         };
-        let lock =
+        let mut lock =
             governing_lockfile(&changes.head, root, project.workspace.as_deref(), ecosystem)?;
-        let base_lock =
+        let mut base_lock =
             governing_lockfile(&changes.base, root, project.workspace.as_deref(), ecosystem)?;
         let installation_root = lock
             .as_ref()
@@ -177,7 +182,25 @@ pub async fn plan_review(
                     "requirements"
                 })
             });
-        let installation = read_installation(worktree, &installation_root, &installed_graph);
+        let mut installation = read_installation(worktree, &installation_root, &installed_graph);
+        if let Some(lock) = &mut lock {
+            scope_pnpm_importers(
+                &mut lock.graph,
+                Some(&mut installation),
+                worktree,
+                &installation_root,
+                &scheduled_roots,
+            );
+        }
+        if let Some(lock) = &mut base_lock {
+            scope_pnpm_importers(
+                &mut lock.graph,
+                None,
+                worktree,
+                &installation_root,
+                &scheduled_roots,
+            );
+        }
         let mut environment = DependencyEnvironment::default();
         if language == "python"
             && [CheckKind::Typecheck, CheckKind::Lint, CheckKind::Coverage]
@@ -224,7 +247,7 @@ pub async fn plan_review(
                     } else {
                         format!("{path}/")
                     };
-                    rio_git::changed_paths(working, &changes.base)
+                    base_source_changes
                         .iter()
                         .any(|path| path.starts_with(&prefix))
                 })

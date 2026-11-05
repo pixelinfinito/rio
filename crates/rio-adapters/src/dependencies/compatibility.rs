@@ -307,7 +307,12 @@ fn compare_yarn(
         };
         let actual = &installation.nodes[&location];
         if actual.name != expected.package.name
-            || (expected.package.link.is_none() && actual.version != expected.package.version)
+            || (expected.package.link.is_none()
+                && !same_version(
+                    &actual.version,
+                    &expected.package.version,
+                    expected.package.ecosystem,
+                ))
         {
             return Some(format!(
                 "{location}: expected {}@{}, installed {}@{}; reinstall dependencies",
@@ -381,6 +386,7 @@ fn compatibility(request: CompatibilityRequest<'_>, remap: bool) -> Compatibilit
         .worktree
         .canonicalize()
         .unwrap_or_else(|_| request.worktree.to_path_buf());
+    let source_changes = changed_paths(request.working, request.selected);
     for (name, target) in &request.installation.links {
         let Ok(relative) = target.strip_prefix(&canonical_worktree) else {
             continue;
@@ -422,10 +428,7 @@ fn compatibility(request: CompatibilityRequest<'_>, remap: bool) -> Compatibilit
         } else {
             format!("{relative}/")
         };
-        if let Some(path) = changed_paths(request.working, request.selected)
-            .into_iter()
-            .find(|path| path.starts_with(&prefix))
-        {
+        if let Some(path) = source_changes.iter().find(|path| path.starts_with(&prefix)) {
             if !remap {
                 return Compatibility::Mismatch {
                     hint: format!(
@@ -470,7 +473,11 @@ fn compatibility(request: CompatibilityRequest<'_>, remap: bool) -> Compatibilit
                 Some(actual)
                     if actual.name != expected.package.name
                         || (expected.package.link.is_none()
-                            && actual.version != expected.package.version) =>
+                            && !same_version(
+                                &actual.version,
+                                &expected.package.version,
+                                expected.package.ecosystem,
+                            )) =>
                 {
                     mismatch = Some(format!(
                         "{key}: expected {}@{}, installed {}@{}; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
@@ -570,4 +577,11 @@ pub(super) fn missing_build_output(tree: &Tree, root: &str, name: &str) -> Optio
         }
     }
     None
+}
+
+fn same_version(actual: &str, expected: &str, ecosystem: Ecosystem) -> bool {
+    actual == expected
+        || ecosystem == Ecosystem::Npm
+            && actual.strip_prefix('v').unwrap_or(actual)
+                == expected.strip_prefix('v').unwrap_or(expected)
 }
