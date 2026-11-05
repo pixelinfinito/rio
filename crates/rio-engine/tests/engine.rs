@@ -1201,8 +1201,11 @@ async fn committed_workspace_change_classifies_errors_in_dependent_package() {
 #[tokio::test]
 async fn committed_python_editables_resolve_base_source_without_changing_head() {
     use std::os::unix::fs::PermissionsExt;
-    for finder in 0..3 {
+    for (finder, external) in
+        (0..3).flat_map(|finder| [false, true].map(move |external| (finder, external)))
+    {
         let temp = tempfile::tempdir().unwrap();
+        let environment = tempfile::tempdir().unwrap();
         let real_root = temp.path().join("real");
         fs::create_dir(&real_root).unwrap();
         let alias = temp.path().join("alias");
@@ -1211,10 +1214,17 @@ async fn committed_python_editables_resolve_base_source_without_changing_head() 
         init(root);
         let status = std::process::Command::new("python3")
             .args(["-m", "venv", "--without-pip"])
-            .arg(root.join(".venv"))
+            .arg(if external {
+                environment.path().to_path_buf()
+            } else {
+                root.join(".venv")
+            })
             .status()
             .unwrap();
         assert!(status.success());
+        if external {
+            std::os::unix::fs::symlink(environment.path(), root.join(".venv")).unwrap();
+        }
         let site = fs::read_dir(root.join(".venv/lib"))
             .unwrap()
             .next()
@@ -1243,9 +1253,10 @@ async fn committed_python_editables_resolve_base_source_without_changing_head() 
         fs::write(root.join("existing.py"), "old: int = 'old'\n").unwrap();
         fs::write(root.join("pyproject.toml"), "[project]\nname='shared'\nversion='1.0.0'\n[tool.mypy]\nfiles=['caller.py','existing.py']\n").unwrap();
         fs::write(root.join("requirements.txt"), "shared==1.0.0\n").unwrap();
+        // A trailing slash would ignore directories but leave the venv symlink tracked.
         fs::write(
             root.join(".gitignore"),
-            ".venv/\n.rio/cache/\n__pycache__/\n",
+            ".venv\n.rio/cache/\n__pycache__/\n",
         )
         .unwrap();
         fs::create_dir_all(site.join("shared-1.0.0.dist-info")).unwrap();

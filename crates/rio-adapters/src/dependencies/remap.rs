@@ -352,7 +352,7 @@ pub fn configure_base_command(
     let environment_link = links
         .iter()
         .filter(|link| !link.path.ends_with("node_modules"))
-        .find(|link| program.starts_with(worktree.join(&link.path)))
+        .find(|link| program.starts_with(&link.target))
         .or_else(|| {
             python_checker
                 .then(|| {
@@ -370,7 +370,7 @@ pub fn configure_base_command(
                 .flatten()
         });
     if let Some(link) = environment_link {
-        let original = worktree.join(&link.path);
+        let original = &link.target;
         let environment = destination.join(&link.path);
         let interpreter = environment.join(if cfg!(windows) {
             "Scripts/python.exe"
@@ -399,7 +399,7 @@ pub fn configure_base_command(
                 .env
                 .insert("PYTHONPATH".into(), std::env::join_paths(paths)?);
         }
-        if let Ok(relative) = program.strip_prefix(&original) {
+        if let Ok(relative) = program.strip_prefix(original) {
             let program = environment.join(relative);
             if fs::read(&command.program).is_ok_and(|bytes| bytes.starts_with(b"#!")) {
                 ensure!(

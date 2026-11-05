@@ -92,7 +92,7 @@ class RunnerTests(unittest.TestCase):
             self.assertTrue(metadata['installations']['head']['succeeded'])
             self.assertEqual(metadata['rio_binary_sha256'], runner.file_hash(binary))
             commands = [c['argv'] for c in metadata['commands']]
-            self.assertIn([str(binary), 'review', '--base', base, '--format', 'json', '--offline',
+            self.assertIn([str(binary.resolve()), 'review', '--base', base, '--format', 'json', '--offline',
                            '--profile', 'rio/base'], commands)
             self.assertTrue((out / 'report.json').exists())
             skeleton = e.read_json(out / 'verdicts.json')
