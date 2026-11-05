@@ -3,6 +3,7 @@ use super::{
     lockfiles::{node, strings},
 };
 use anyhow::{Context, Result};
+use serde::Deserialize;
 use serde_json::Value;
 
 fn split_key(key: &str) -> Option<(String, String)> {
@@ -41,7 +42,15 @@ fn target(graph: &mut DependencyGraph, importer: &str, name: &str, raw: &Value) 
 }
 
 pub(super) fn parse(content: &str) -> Result<DependencyGraph> {
-    let value: Value = serde_yaml::from_str(content)?;
+    // pnpm 11/12 prepend an environment/bootstrap lock; the second
+    // document is the project graph (pnpm lockfile yaml_documents.rs).
+    let mut documents = serde_yaml::Deserializer::from_str(content.trim_start_matches('\u{feff}'));
+    let first = documents.next().context("empty pnpm lockfile")?;
+    let first = Value::deserialize(first)?;
+    let value = match documents.next() {
+        Some(main) => Value::deserialize(main)?,
+        None => first,
+    };
     value
         .get("lockfileVersion")
         .context("pnpm lockfile has no version")?;

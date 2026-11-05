@@ -578,3 +578,28 @@ fn yarn_classic_workspace_links_are_resolved_using_workspace_manifests() {
     let result = check(root.path(), &tree, &tree, Some(&lock), &installed, false);
     assert!(result.can_run(), "{result:?}");
 }
+
+#[test]
+fn malformed_lock_is_unverified_with_parse_hint() {
+    let mut tree = Tree::new();
+    put(&mut tree, "pnpm-lock.yaml", "lockfileVersion: [broken");
+    let lock = governing_lockfile(&tree, ".", None, Ecosystem::Npm)
+        .unwrap()
+        .unwrap();
+    assert!(!lock.graph.complete);
+    assert!(lock.graph.notes[0].contains("cannot parse pnpm-lock.yaml"));
+    let root = tempfile::tempdir().unwrap();
+    let result = check(
+        root.path(),
+        &tree,
+        &tree,
+        Some(&lock),
+        &Installation::default(),
+        false,
+    );
+    assert!(
+        matches!(result, Compatibility::Unverified { .. }),
+        "{result:?}"
+    );
+    assert!(result.hint().unwrap().contains("parse"));
+}

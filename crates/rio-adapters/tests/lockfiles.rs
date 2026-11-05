@@ -384,3 +384,16 @@ markers = {dev = "sys_platform == 'win32'"}
     assert!(effective.nodes.contains_key("child==2.2.0"));
     assert!(!effective.nodes.contains_key("child==3.1.0"));
 }
+
+#[test]
+fn pnpm_bootstrap_document_does_not_replace_project_dependencies() {
+    let lock = "---\nlockfileVersion: '9.0'\nimporters: {.: {configDependencies: {}}}\n---\nlockfileVersion: '9.0'\nimporters: {.: {dependencies: {foo: {version: 1.0.0}}}}\npackages: {foo@1.0.0: {}}\nsnapshots: {foo@1.0.0: {}}\n";
+    for content in [
+        lock.to_owned(),
+        format!("\u{feff}{}", lock.replace('\n', "\r\n")),
+    ] {
+        let graph = rio_adapters::parse_lockfile("pnpm-lock.yaml", &content).unwrap();
+        assert!(graph.complete);
+        assert_eq!(graph.importers["."].dependencies[0].target, "foo@1.0.0");
+    }
+}
