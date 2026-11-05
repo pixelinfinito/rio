@@ -1,0 +1,282 @@
+[
+  {
+    "argv": [
+      "git",
+      "clone",
+      "--no-hardlinks",
+      "/tmp/structlog-eval-oracle",
+      "/dev/shm/structlog-oracle-786-base"
+    ],
+    "cwd": "/dev/shm",
+    "exit_code": 0,
+    "wall_time_ms": 919,
+    "stdout": "base-clone.stdout",
+    "stderr": "base-clone.stderr"
+  },
+  {
+    "argv": [
+      "git",
+      "checkout",
+      "--detach",
+      "2796b22ee1b5eed48cf1d25113d43bcf971711a4"
+    ],
+    "cwd": "/dev/shm/structlog-oracle-786-base",
+    "exit_code": 0,
+    "wall_time_ms": 85,
+    "stdout": "base-checkout.stdout",
+    "stderr": "base-checkout.stderr"
+  },
+  {
+    "argv": [
+      "/dev/shm/structlog-eval-venv/bin/pip",
+      "install",
+      "--no-deps",
+      "--no-build-isolation",
+      "-e",
+      "."
+    ],
+    "cwd": "/dev/shm/structlog-oracle-786-base",
+    "exit_code": 0,
+    "wall_time_ms": 3376,
+    "stdout": "base-install.stdout",
+    "stderr": "base-install.stderr"
+  },
+  {
+    "argv": [
+      "/dev/shm/structlog-eval-venv/bin/pip",
+      "list",
+      "--format=json"
+    ],
+    "cwd": "/dev/shm/structlog-oracle-786-base",
+    "exit_code": 0,
+    "wall_time_ms": 850,
+    "stdout": "base-versions.stdout",
+    "stderr": "base-versions.stderr"
+  },
+  {
+    "argv": [
+      "/dev/shm/structlog-eval-venv/bin/mypy",
+      "src"
+    ],
+    "cwd": "/dev/shm/structlog-oracle-786-base",
+    "exit_code": 0,
+    "wall_time_ms": 8112,
+    "stdout": "base-mypy-src.stdout",
+    "stderr": "base-mypy-src.stderr"
+  },
+  {
+    "argv": [
+      "/dev/shm/structlog-eval-venv/bin/mypy",
+      "tests/typing"
+    ],
+    "cwd": "/dev/shm/structlog-oracle-786-base",
+    "exit_code": 0,
+    "wall_time_ms": 934,
+    "stdout": "base-mypy-api.stdout",
+    "stderr": "base-mypy-api.stderr"
+  },
+  {
+    "argv": [
+      "/dev/shm/structlog-eval-venv/bin/ruff",
+      "check",
+      ".",
+      "--output-format=json"
+    ],
+    "cwd": "/dev/shm/structlog-oracle-786-base",
+    "exit_code": 0,
+    "wall_time_ms": 704,
+    "stdout": "base-ruff.stdout",
+    "stderr": "base-ruff.stderr"
+  },
+  {
+    "argv": [
+      "/dev/shm/structlog-eval-venv/bin/coverage",
+      "run",
+      "-m",
+      "pytest",
+      "-q"
+    ],
+    "cwd": "/dev/shm/structlog-oracle-786-base",
+    "exit_code": 0,
+    "wall_time_ms": 22229,
+    "stdout": "base-pytest.stdout",
+    "stderr": "base-pytest.stderr"
+  },
+  {
+    "argv": [
+      "/dev/shm/structlog-eval-venv/bin/coverage",
+      "combine"
+    ],
+    "cwd": "/dev/shm/structlog-oracle-786-base",
+    "exit_code": 0,
+    "wall_time_ms": 2050,
+    "stdout": "base-coverage-combine.stdout",
+    "stderr": "base-coverage-combine.stderr"
+  },
+  {
+    "argv": [
+      "/dev/shm/structlog-eval-venv/bin/coverage",
+      "json",
+      "-o",
+      "/home/ubuntu/.t3/worktrees/rio/eval-run-structlog/eval/runs/structlog-oracle-786/base-coverage.json"
+    ],
+    "cwd": "/dev/shm/structlog-oracle-786-base",
+    "exit_code": 0,
+    "wall_time_ms": 6968,
+    "stdout": "base-coverage-json.stdout",
+    "stderr": "base-coverage-json.stderr"
+  },
+  {
+    "argv": [
+      "git",
+      "status",
+      "--porcelain",
+      "--untracked-files=no"
+    ],
+    "cwd": "/dev/shm/structlog-oracle-786-base",
+    "exit_code": 0,
+    "wall_time_ms": 15,
+    "stdout": "base-status.stdout",
+    "stderr": "base-status.stderr"
+  },
+  {
+    "argv": [
+      "git",
+      "clone",
+      "--no-hardlinks",
+      "/tmp/structlog-eval-oracle",
+      "/dev/shm/structlog-oracle-786-head"
+    ],
+    "cwd": "/dev/shm",
+    "exit_code": 0,
+    "wall_time_ms": 1400,
+    "stdout": "head-clone.stdout",
+    "stderr": "head-clone.stderr"
+  },
+  {
+    "argv": [
+      "git",
+      "checkout",
+      "--detach",
+      "0f230f3ef1894c5b99e562e2950eeea814b8b5d5"
+    ],
+    "cwd": "/dev/shm/structlog-oracle-786-head",
+    "exit_code": 0,
+    "wall_time_ms": 120,
+    "stdout": "head-checkout.stdout",
+    "stderr": "head-checkout.stderr"
+  },
+  {
+    "argv": [
+      "/dev/shm/structlog-eval-venv/bin/pip",
+      "install",
+      "--no-deps",
+      "--no-build-isolation",
+      "-e",
+      "."
+    ],
+    "cwd": "/dev/shm/structlog-oracle-786-head",
+    "exit_code": 0,
+    "wall_time_ms": 3101,
+    "stdout": "head-install.stdout",
+    "stderr": "head-install.stderr"
+  },
+  {
+    "argv": [
+      "/dev/shm/structlog-eval-venv/bin/pip",
+      "list",
+      "--format=json"
+    ],
+    "cwd": "/dev/shm/structlog-oracle-786-head",
+    "exit_code": 0,
+    "wall_time_ms": 952,
+    "stdout": "head-versions.stdout",
+    "stderr": "head-versions.stderr"
+  },
+  {
+    "argv": [
+      "/dev/shm/structlog-eval-venv/bin/mypy",
+      "src"
+    ],
+    "cwd": "/dev/shm/structlog-oracle-786-head",
+    "exit_code": 0,
+    "wall_time_ms": 9269,
+    "stdout": "head-mypy-src.stdout",
+    "stderr": "head-mypy-src.stderr"
+  },
+  {
+    "argv": [
+      "/dev/shm/structlog-eval-venv/bin/mypy",
+      "tests/typing"
+    ],
+    "cwd": "/dev/shm/structlog-oracle-786-head",
+    "exit_code": 0,
+    "wall_time_ms": 1706,
+    "stdout": "head-mypy-api.stdout",
+    "stderr": "head-mypy-api.stderr"
+  },
+  {
+    "argv": [
+      "/dev/shm/structlog-eval-venv/bin/ruff",
+      "check",
+      ".",
+      "--output-format=json"
+    ],
+    "cwd": "/dev/shm/structlog-oracle-786-head",
+    "exit_code": 0,
+    "wall_time_ms": 198,
+    "stdout": "head-ruff.stdout",
+    "stderr": "head-ruff.stderr"
+  },
+  {
+    "argv": [
+      "/dev/shm/structlog-eval-venv/bin/coverage",
+      "run",
+      "-m",
+      "pytest",
+      "-q"
+    ],
+    "cwd": "/dev/shm/structlog-oracle-786-head",
+    "exit_code": 0,
+    "wall_time_ms": 23281,
+    "stdout": "head-pytest.stdout",
+    "stderr": "head-pytest.stderr"
+  },
+  {
+    "argv": [
+      "/dev/shm/structlog-eval-venv/bin/coverage",
+      "combine"
+    ],
+    "cwd": "/dev/shm/structlog-oracle-786-head",
+    "exit_code": 0,
+    "wall_time_ms": 2609,
+    "stdout": "head-coverage-combine.stdout",
+    "stderr": "head-coverage-combine.stderr"
+  },
+  {
+    "argv": [
+      "/dev/shm/structlog-eval-venv/bin/coverage",
+      "json",
+      "-o",
+      "/home/ubuntu/.t3/worktrees/rio/eval-run-structlog/eval/runs/structlog-oracle-786/head-coverage.json"
+    ],
+    "cwd": "/dev/shm/structlog-oracle-786-head",
+    "exit_code": 0,
+    "wall_time_ms": 3294,
+    "stdout": "head-coverage-json.stdout",
+    "stderr": "head-coverage-json.stderr"
+  },
+  {
+    "argv": [
+      "git",
+      "status",
+      "--porcelain",
+      "--untracked-files=no"
+    ],
+    "cwd": "/dev/shm/structlog-oracle-786-head",
+    "exit_code": 0,
+    "wall_time_ms": 16,
+    "stdout": "head-status.stdout",
+    "stderr": "head-status.stderr"
+  }
+]

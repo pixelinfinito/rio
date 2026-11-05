@@ -1,0 +1,44 @@
+[
+  {
+    "argv": [
+      "git",
+      "clone",
+      "--no-hardlinks",
+      "/tmp/structlog-eval-oracle",
+      "/dev/shm/structlog-oracle-811-base"
+    ],
+    "cwd": "/dev/shm",
+    "exit_code": 0,
+    "wall_time_ms": 458,
+    "stdout": "base-clone.stdout",
+    "stderr": "base-clone.stderr"
+  },
+  {
+    "argv": [
+      "git",
+      "checkout",
+      "--detach",
+      "de5dcd4127b8c9652ebadf0b6411c4bb9c10f3b7"
+    ],
+    "cwd": "/dev/shm/structlog-oracle-811-base",
+    "exit_code": 0,
+    "wall_time_ms": 42,
+    "stdout": "base-checkout.stdout",
+    "stderr": "base-checkout.stderr"
+  },
+  {
+    "argv": [
+      "/dev/shm/structlog-eval-venv/bin/pip",
+      "install",
+      "--no-deps",
+      "--no-build-isolation",
+      "-e",
+      "."
+    ],
+    "cwd": "/dev/shm/structlog-oracle-811-base",
+    "exit_code": 1,
+    "wall_time_ms": 2494,
+    "stdout": "base-install.stdout",
+    "stderr": "base-install.stderr"
+  }
+]

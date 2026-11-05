@@ -1,0 +1,14 @@
+{
+  "src/structlog/_output.py": {
+    "added_lines": [
+      192,
+      193
+    ],
+    "executed_added_lines": [
+      192,
+      193
+    ],
+    "unexecuted_added_statements": [],
+    "excluded_added_lines": []
+  }
+}

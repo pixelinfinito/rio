@@ -1,0 +1,5 @@
+Obtaining file:///dev/shm/rio-eval-0sihimt6/base
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'error'

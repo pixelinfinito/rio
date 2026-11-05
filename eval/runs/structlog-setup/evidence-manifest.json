@@ -1,0 +1,2442 @@
+[
+  {
+    "path": "eval/runs/structlog-805/01-stderr.log",
+    "bytes": 50,
+    "sha256": "99421128d2293a611de4b97668496b95bfd6f9b0f38ad513bd139e3db1552a8f"
+  },
+  {
+    "path": "eval/runs/structlog-805/01-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805/02-stderr.log",
+    "bytes": 192,
+    "sha256": "1e8bd574dc4d57fe38661be3c2a93bc3c12392c71319b62a089098923a236df0"
+  },
+  {
+    "path": "eval/runs/structlog-805/02-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805/03-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805/03-stdout.log",
+    "bytes": 41,
+    "sha256": "7b086b80e583e14110f5e1babd6d6da4197b9c73e91ae4de774463c608abdd10"
+  },
+  {
+    "path": "eval/runs/structlog-805/04-stderr.log",
+    "bytes": 51,
+    "sha256": "0b06e8bea79e9d0ccce7f31d6aecab2c8443def946ccc9bb87a1869d956d2e08"
+  },
+  {
+    "path": "eval/runs/structlog-805/04-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805/05-stderr.log",
+    "bytes": 56,
+    "sha256": "ab5d1bdf4a462592d838c788e8a83a33f3bea991769f4bbf81c9dad5040ccd7b"
+  },
+  {
+    "path": "eval/runs/structlog-805/05-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805/06-stderr.log",
+    "bytes": 559,
+    "sha256": "84b8125b485ba212f870a955db660ed0c9c038faae8ac6994de5950b36a08456"
+  },
+  {
+    "path": "eval/runs/structlog-805/06-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805/07-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805/07-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805/08-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805/08-stdout.log",
+    "bytes": 7855,
+    "sha256": "a0fec5349f16fd5d8660023c8f1a08c508171e7e39df79c31abe09b76194eb50"
+  },
+  {
+    "path": "eval/runs/structlog-805/09-stderr.log",
+    "bytes": 3205,
+    "sha256": "5843cb0d9825534bdba8485d2c21b931d76b32a549ef1a0318746b1f69c65fc4"
+  },
+  {
+    "path": "eval/runs/structlog-805/09-stdout.log",
+    "bytes": 324,
+    "sha256": "c27160bda873e7399c4476c56da34b0bfb5c8fbb954ee3adc00ecdf2c8aa6a51"
+  },
+  {
+    "path": "eval/runs/structlog-805/10-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805/10-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805/11-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805/11-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805/12-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805/12-stdout.log",
+    "bytes": 7855,
+    "sha256": "a0fec5349f16fd5d8660023c8f1a08c508171e7e39df79c31abe09b76194eb50"
+  },
+  {
+    "path": "eval/runs/structlog-805/13-stderr.log",
+    "bytes": 3205,
+    "sha256": "129231aecf995f76778bc865f9d17b34a434e086207c2756d83da37859e1bef5"
+  },
+  {
+    "path": "eval/runs/structlog-805/13-stdout.log",
+    "bytes": 324,
+    "sha256": "95c1bca7d90c6067228f203a943f84a8630d21bc03a20fe328901782e4ac99ab"
+  },
+  {
+    "path": "eval/runs/structlog-805/14-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805/14-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805/15-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805/16-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805/16-stdout.log",
+    "bytes": 9,
+    "sha256": "d4b8a831ea4925f1c54be7746ec0b846cb04bbc35295b64ccdb2101bfcf5d70c"
+  },
+  {
+    "path": "eval/runs/structlog-805/17-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805/17-stdout.log",
+    "bytes": 7,
+    "sha256": "93c2fd80da7cdb77acd039b274dafd5c1af0d86c9e66db478a35a2f256df29f7"
+  },
+  {
+    "path": "eval/runs/structlog-805/18-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805/18-stdout.log",
+    "bytes": 14,
+    "sha256": "5b3e43dc38ca01e3f5a7854ba50d4330864b0c1e0f646650b2c78cf072acc366"
+  },
+  {
+    "path": "eval/runs/structlog-805/19-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805/19-stdout.log",
+    "bytes": 37,
+    "sha256": "a818fb9c737b68643250e71a91736da811c2c6b2bcc9619044d505b7b5891764"
+  },
+  {
+    "path": "eval/runs/structlog-805/20-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805/21-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805/22-stderr.log",
+    "bytes": 292,
+    "sha256": "6408d8ffed511847fe1e34a558a77dd70b9262c30eafc4d81d3d0214dcc03b40"
+  },
+  {
+    "path": "eval/runs/structlog-805/commands.json",
+    "bytes": 19223,
+    "sha256": "7ae6ac1208c5ad19bb47a447f8ec3f82c1ccb4726bf753ab48886693dba2c00a"
+  },
+  {
+    "path": "eval/runs/structlog-805/doctor.json",
+    "bytes": 2343,
+    "sha256": "ddf1637fb123daefca6a0e1b9ef6dc1072753e76a75a90f13da23c47f01b8d38"
+  },
+  {
+    "path": "eval/runs/structlog-805/install-plan.json",
+    "bytes": 2723,
+    "sha256": "704e49786362f6beb51dfe55a0ddfcdb966637ae896bbe4eb8aef790fa250348"
+  },
+  {
+    "path": "eval/runs/structlog-805/profile.yaml",
+    "bytes": 363,
+    "sha256": "ce27b33c524faa91315c411fe98f12276cdd542ac4dfa8bc4dd1115bfeb0a624"
+  },
+  {
+    "path": "eval/runs/structlog-805/record.json",
+    "bytes": 9168,
+    "sha256": "60fe702b095bdedd637dcaa02f8c35e52b508b2869af5be6e8303c2c81da8257"
+  },
+  {
+    "path": "eval/runs/structlog-805/report.json",
+    "bytes": 9367,
+    "sha256": "231487c4fd6f037a6a0ac5a956a09b6b3220b9caec721c7316c9dab091ab2bf1"
+  },
+  {
+    "path": "eval/runs/structlog-805/resolved-profile.txt",
+    "bytes": 1145,
+    "sha256": "cf2e4d51172bfc918179e528990008451615e6be51804b273e8f96b37e19a9fb"
+  },
+  {
+    "path": "eval/runs/structlog-805/rio-version.txt",
+    "bytes": 48,
+    "sha256": "150b610135ade894d2b7a5934e27687c6eb80eef9fefd2634644de5067651b1b"
+  },
+  {
+    "path": "eval/runs/structlog-805/verdicts.json",
+    "bytes": 5678,
+    "sha256": "a7b284a6473cd1d0faa6fd81962e3a5e57a473ccedde58eba1e3ce4af16f5965"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/01-stderr.log",
+    "bytes": 50,
+    "sha256": "5ef308f233b54cb93caaf9c2c62c1c2ff967b1b42126d5587a8e1d54c8c012fc"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/01-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/02-stderr.log",
+    "bytes": 192,
+    "sha256": "1e8bd574dc4d57fe38661be3c2a93bc3c12392c71319b62a089098923a236df0"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/02-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/03-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/03-stdout.log",
+    "bytes": 41,
+    "sha256": "7b086b80e583e14110f5e1babd6d6da4197b9c73e91ae4de774463c608abdd10"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/04-stderr.log",
+    "bytes": 51,
+    "sha256": "0b06e8bea79e9d0ccce7f31d6aecab2c8443def946ccc9bb87a1869d956d2e08"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/04-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/05-stderr.log",
+    "bytes": 56,
+    "sha256": "681db63571abdab4df0d1fdf9d33f1e43b49d0ed6973d5c7a808d5d6307499ce"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/05-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/06-stderr.log",
+    "bytes": 559,
+    "sha256": "84b8125b485ba212f870a955db660ed0c9c038faae8ac6994de5950b36a08456"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/06-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/07-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/07-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/08-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/08-stdout.log",
+    "bytes": 8023,
+    "sha256": "995eba661108a87441a5c1b6cf96331ab673840ab29ed8d80a6cf0e3b5d5c39d"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/09-stderr.log",
+    "bytes": 164,
+    "sha256": "1add7870689b33125c1d6111f1c770ccc1a7096cc6b2e6faf13a0613e8f44da4"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/09-stdout.log",
+    "bytes": 921,
+    "sha256": "1be2d4eca84db7b859f6be8cc4baa7747415821b7bc3a8589ca7762d71b1cdfb"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/10-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/10-stdout.log",
+    "bytes": 796,
+    "sha256": "6d8e498081dda53fe30708a860d3743928b45927c7328bcda703731c0448e9c4"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/11-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/11-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/12-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/12-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/13-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/13-stdout.log",
+    "bytes": 8023,
+    "sha256": "995eba661108a87441a5c1b6cf96331ab673840ab29ed8d80a6cf0e3b5d5c39d"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/14-stderr.log",
+    "bytes": 164,
+    "sha256": "e0e4af0ab3fa1d09ea116a3755229097466f098ef0c05597355501813882fac2"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/14-stdout.log",
+    "bytes": 921,
+    "sha256": "fdac9b8c024a71e2fa10f616232e200807bcc4eb30cd5c104e14a350a8d08e45"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/15-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/15-stdout.log",
+    "bytes": 796,
+    "sha256": "8afab8b16c369f91a4b674e51e5b7be5632729176909d96bd53334c274c9a783"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/16-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/16-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/17-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/18-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/18-stdout.log",
+    "bytes": 9,
+    "sha256": "d4b8a831ea4925f1c54be7746ec0b846cb04bbc35295b64ccdb2101bfcf5d70c"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/19-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/19-stdout.log",
+    "bytes": 7,
+    "sha256": "93c2fd80da7cdb77acd039b274dafd5c1af0d86c9e66db478a35a2f256df29f7"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/20-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/20-stdout.log",
+    "bytes": 14,
+    "sha256": "5b3e43dc38ca01e3f5a7854ba50d4330864b0c1e0f646650b2c78cf072acc366"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/21-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/21-stdout.log",
+    "bytes": 37,
+    "sha256": "a818fb9c737b68643250e71a91736da811c2c6b2bcc9619044d505b7b5891764"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/22-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/23-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/24-stderr.log",
+    "bytes": 277,
+    "sha256": "e8ec18b846e87719eefd3a4edb87ed48e4714cb36b4ca40d2453c561998e194d"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/commands.json",
+    "bytes": 20481,
+    "sha256": "31697394d120bb064e6b20b41ed820b884aa06170ccda3f1234f1554d7603760"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/doctor.json",
+    "bytes": 2343,
+    "sha256": "40abcf54df1fb0f583cc2bb367b35beaea392e0837cc4d06c0134942cf2328be"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/install-plan.json",
+    "bytes": 2771,
+    "sha256": "e4206245d5d4f29b6718f76f011281d5f204693a510a728875e72d3a8f37d89b"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/profile.yaml",
+    "bytes": 363,
+    "sha256": "ce27b33c524faa91315c411fe98f12276cdd542ac4dfa8bc4dd1115bfeb0a624"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/record.json",
+    "bytes": 9225,
+    "sha256": "52d328b9f30a3499031d8490beb007ad2bbd34e73d12e496d7354c01424f3d4d"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/report.json",
+    "bytes": 8564,
+    "sha256": "f6dd39b3d3627ad044b771edd28de3ad9b2c86673881ddadb2f3d2dafd6666cb"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/resolved-profile.txt",
+    "bytes": 1154,
+    "sha256": "eaca167be2da69b2c37bc21dff8489804967020a92f485bb9b068236b2d88508"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/rio-version.txt",
+    "bytes": 48,
+    "sha256": "150b610135ade894d2b7a5934e27687c6eb80eef9fefd2634644de5067651b1b"
+  },
+  {
+    "path": "eval/runs/structlog-805-attempt2/verdicts.json",
+    "bytes": 5871,
+    "sha256": "8399bda4719bb96bff9474112ddf4f1a60e75d5c6e78037d7e9a559e7f9d3124"
+  },
+  {
+    "path": "eval/runs/structlog-811/01-stderr.log",
+    "bytes": 50,
+    "sha256": "1f43e07ff91de00aa35916e76ae76063545ac05658ac7875aab2214ef0edb7a5"
+  },
+  {
+    "path": "eval/runs/structlog-811/01-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811/02-stderr.log",
+    "bytes": 192,
+    "sha256": "dfebe5ae81c1e70775a15415509646ee45c258302526a3ca00517b41dcc2c347"
+  },
+  {
+    "path": "eval/runs/structlog-811/02-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811/03-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811/03-stdout.log",
+    "bytes": 41,
+    "sha256": "d9e2d7c990deb19069b6b7230d1c6bfceea8876db1aa1164ac5e88a0250937de"
+  },
+  {
+    "path": "eval/runs/structlog-811/04-stderr.log",
+    "bytes": 54,
+    "sha256": "5a4eefd7682d2f2eab59c7773cf62dd58699d88aaa77ea49d60ac95da6f89dcf"
+  },
+  {
+    "path": "eval/runs/structlog-811/04-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811/05-stderr.log",
+    "bytes": 56,
+    "sha256": "160b50cc4823dc6c8c39993bc28d5d55ea4992e5de36b9b15ba473af40df7270"
+  },
+  {
+    "path": "eval/runs/structlog-811/05-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811/06-stderr.log",
+    "bytes": 331,
+    "sha256": "a6ac797a7d65a6845c69a0279442a382c654542a9c755000cdcad8d4a18304c7"
+  },
+  {
+    "path": "eval/runs/structlog-811/06-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811/07-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811/07-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811/08-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811/08-stdout.log",
+    "bytes": 7855,
+    "sha256": "a0fec5349f16fd5d8660023c8f1a08c508171e7e39df79c31abe09b76194eb50"
+  },
+  {
+    "path": "eval/runs/structlog-811/09-stderr.log",
+    "bytes": 3205,
+    "sha256": "6fa5ee6fef2913a27f913ac241a018d301fa9d4219a904fcb92c6d52295afe8c"
+  },
+  {
+    "path": "eval/runs/structlog-811/09-stdout.log",
+    "bytes": 324,
+    "sha256": "2a177efd83a14aa9fed87d6ba44749a860113614d977dbbabb50a6b2c54430b1"
+  },
+  {
+    "path": "eval/runs/structlog-811/10-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811/10-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811/11-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811/11-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811/12-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811/12-stdout.log",
+    "bytes": 7855,
+    "sha256": "a0fec5349f16fd5d8660023c8f1a08c508171e7e39df79c31abe09b76194eb50"
+  },
+  {
+    "path": "eval/runs/structlog-811/13-stderr.log",
+    "bytes": 3205,
+    "sha256": "8c4c9decb93decec0ff5be5a98229824a78500520f815c2ae11a63ee3b678296"
+  },
+  {
+    "path": "eval/runs/structlog-811/13-stdout.log",
+    "bytes": 324,
+    "sha256": "24a7ef3313bc3968e8ac9fc2bb0e2ae908787ab04acb1c5199e6ed6307ab006f"
+  },
+  {
+    "path": "eval/runs/structlog-811/14-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811/14-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811/15-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811/16-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811/16-stdout.log",
+    "bytes": 9,
+    "sha256": "d4b8a831ea4925f1c54be7746ec0b846cb04bbc35295b64ccdb2101bfcf5d70c"
+  },
+  {
+    "path": "eval/runs/structlog-811/17-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811/17-stdout.log",
+    "bytes": 7,
+    "sha256": "93c2fd80da7cdb77acd039b274dafd5c1af0d86c9e66db478a35a2f256df29f7"
+  },
+  {
+    "path": "eval/runs/structlog-811/18-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811/18-stdout.log",
+    "bytes": 14,
+    "sha256": "5b3e43dc38ca01e3f5a7854ba50d4330864b0c1e0f646650b2c78cf072acc366"
+  },
+  {
+    "path": "eval/runs/structlog-811/19-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811/19-stdout.log",
+    "bytes": 37,
+    "sha256": "a818fb9c737b68643250e71a91736da811c2c6b2bcc9619044d505b7b5891764"
+  },
+  {
+    "path": "eval/runs/structlog-811/20-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811/21-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811/22-stderr.log",
+    "bytes": 292,
+    "sha256": "6408d8ffed511847fe1e34a558a77dd70b9262c30eafc4d81d3d0214dcc03b40"
+  },
+  {
+    "path": "eval/runs/structlog-811/commands.json",
+    "bytes": 19222,
+    "sha256": "3bd1166f718b52b1985fc8405810be2f5044137458e488930abb5ce3266e09d9"
+  },
+  {
+    "path": "eval/runs/structlog-811/doctor.json",
+    "bytes": 2343,
+    "sha256": "4cc4ef6fbdd51c5a76b96c22f2aff6ae180cfae00dc81884b185e31f10cda8a3"
+  },
+  {
+    "path": "eval/runs/structlog-811/install-plan.json",
+    "bytes": 2723,
+    "sha256": "704e49786362f6beb51dfe55a0ddfcdb966637ae896bbe4eb8aef790fa250348"
+  },
+  {
+    "path": "eval/runs/structlog-811/profile.yaml",
+    "bytes": 363,
+    "sha256": "ce27b33c524faa91315c411fe98f12276cdd542ac4dfa8bc4dd1115bfeb0a624"
+  },
+  {
+    "path": "eval/runs/structlog-811/record.json",
+    "bytes": 9177,
+    "sha256": "4d72b00e399bf364cb524afe7a379e4308e7c38f98040730fea4fe93603a14fe"
+  },
+  {
+    "path": "eval/runs/structlog-811/report.json",
+    "bytes": 5851,
+    "sha256": "92f99bfb0184ec28d9c372a086d3af7c0036ee70c25fb3b103763fbb048ef75c"
+  },
+  {
+    "path": "eval/runs/structlog-811/resolved-profile.txt",
+    "bytes": 1145,
+    "sha256": "0add5a173ad664d2d84e062dbe46a9e44a4556e28dbcaadace89efc936f53681"
+  },
+  {
+    "path": "eval/runs/structlog-811/rio-version.txt",
+    "bytes": 48,
+    "sha256": "150b610135ade894d2b7a5934e27687c6eb80eef9fefd2634644de5067651b1b"
+  },
+  {
+    "path": "eval/runs/structlog-811/verdicts.json",
+    "bytes": 5687,
+    "sha256": "563bb67256b51e0527ff07d42d4e86e52505353ba40cdbd6f6383213dd11234c"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/01-stderr.log",
+    "bytes": 50,
+    "sha256": "7476581d2dbe610b8bc8dc8cd7cd9b597ca5010648b079ab7bc708ea6ba69563"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/01-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/02-stderr.log",
+    "bytes": 192,
+    "sha256": "dfebe5ae81c1e70775a15415509646ee45c258302526a3ca00517b41dcc2c347"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/02-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/03-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/03-stdout.log",
+    "bytes": 41,
+    "sha256": "d9e2d7c990deb19069b6b7230d1c6bfceea8876db1aa1164ac5e88a0250937de"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/04-stderr.log",
+    "bytes": 54,
+    "sha256": "5a4eefd7682d2f2eab59c7773cf62dd58699d88aaa77ea49d60ac95da6f89dcf"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/04-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/05-stderr.log",
+    "bytes": 56,
+    "sha256": "29cbf5c40e4f259a435b8aed7462cfdb0356702c0b81fe55a71b3e9219a04b7e"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/05-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/06-stderr.log",
+    "bytes": 331,
+    "sha256": "a6ac797a7d65a6845c69a0279442a382c654542a9c755000cdcad8d4a18304c7"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/06-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/07-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/07-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/08-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/08-stdout.log",
+    "bytes": 8023,
+    "sha256": "995eba661108a87441a5c1b6cf96331ab673840ab29ed8d80a6cf0e3b5d5c39d"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/09-stderr.log",
+    "bytes": 164,
+    "sha256": "ad08cd45553b0313e781694ce4a54f66a4dadc6425402318513f1aa4c7200a3f"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/09-stdout.log",
+    "bytes": 921,
+    "sha256": "8e5b632dd325264f509b24fe958c0de9d4e792d8610759eedfb8198108f4fa51"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/10-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/10-stdout.log",
+    "bytes": 796,
+    "sha256": "28fdf4f80bcac2439efce9b8ebe240f26ac86ac84488c9eec47aa8fea05f83e6"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/11-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/11-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/12-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/12-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/13-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/13-stdout.log",
+    "bytes": 8023,
+    "sha256": "995eba661108a87441a5c1b6cf96331ab673840ab29ed8d80a6cf0e3b5d5c39d"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/14-stderr.log",
+    "bytes": 164,
+    "sha256": "a4aa3a5071b0b94c0e4b9934b4b88fed6fa1ff80d984e78f27b5f9d6a1f4c496"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/14-stdout.log",
+    "bytes": 921,
+    "sha256": "66932867d434681fe5241c10b0cf860042d8a173c8ed0e0f38b3f432619e0b7b"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/15-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/15-stdout.log",
+    "bytes": 796,
+    "sha256": "e4e3713682a880981e15815349ee72af5783a6cb37d901cae09cbe83685fa4ad"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/16-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/16-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/17-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/18-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/18-stdout.log",
+    "bytes": 9,
+    "sha256": "d4b8a831ea4925f1c54be7746ec0b846cb04bbc35295b64ccdb2101bfcf5d70c"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/19-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/19-stdout.log",
+    "bytes": 7,
+    "sha256": "93c2fd80da7cdb77acd039b274dafd5c1af0d86c9e66db478a35a2f256df29f7"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/20-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/20-stdout.log",
+    "bytes": 14,
+    "sha256": "5b3e43dc38ca01e3f5a7854ba50d4330864b0c1e0f646650b2c78cf072acc366"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/21-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/21-stdout.log",
+    "bytes": 37,
+    "sha256": "a818fb9c737b68643250e71a91736da811c2c6b2bcc9619044d505b7b5891764"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/22-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/23-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/24-stderr.log",
+    "bytes": 277,
+    "sha256": "e8ec18b846e87719eefd3a4edb87ed48e4714cb36b4ca40d2453c561998e194d"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/commands.json",
+    "bytes": 20483,
+    "sha256": "cb4bedeeffd91a09e61b814cfd60bc3107e51854f131e6504cdb63caa7df0517"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/doctor.json",
+    "bytes": 2343,
+    "sha256": "9f1fd1a5d32d1ca25ad9df9748664e9bb220f22b85ead958b45ff40b17009bf1"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/install-plan.json",
+    "bytes": 2771,
+    "sha256": "e4206245d5d4f29b6718f76f011281d5f204693a510a728875e72d3a8f37d89b"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/profile.yaml",
+    "bytes": 363,
+    "sha256": "ce27b33c524faa91315c411fe98f12276cdd542ac4dfa8bc4dd1115bfeb0a624"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/record.json",
+    "bytes": 9252,
+    "sha256": "fa1125172600c1f45ab7a227f504b00cb94e11dd688653b78feb09b971808c00"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/report.json",
+    "bytes": 5351,
+    "sha256": "bd5daf640b875b88e3760fc3c7a646bf589b57b6df6d7acd65fe7941f5575c15"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/resolved-profile.txt",
+    "bytes": 1154,
+    "sha256": "619289e7d8dbb511fb63d6f7c1f4ac6795871b9f6da196763a508603fcdf9276"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/rio-version.txt",
+    "bytes": 48,
+    "sha256": "150b610135ade894d2b7a5934e27687c6eb80eef9fefd2634644de5067651b1b"
+  },
+  {
+    "path": "eval/runs/structlog-811-attempt2/verdicts.json",
+    "bytes": 5898,
+    "sha256": "0d52fba8bea050b757afaf954e954883ddc6892981fb4ff86042dffd01f39e1b"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/01-stderr.log",
+    "bytes": 56,
+    "sha256": "8575a6f6ec35b9a8ed8f0d4aebc4d349d01e6f2a3b157a2b386555ce0f968c11"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/01-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/02-stderr.log",
+    "bytes": 186,
+    "sha256": "a09e7ddac3afef2cc95411e604946fafdd90c5a98edfcbac50aa42de2f9208df"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/02-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/03-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/03-stdout.log",
+    "bytes": 41,
+    "sha256": "d9e2d7c990deb19069b6b7230d1c6bfceea8876db1aa1164ac5e88a0250937de"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/04-stderr.log",
+    "bytes": 72,
+    "sha256": "6b8440cec07a2c41c70e60409f981df309448aa1af978941d662340e814f6719"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/04-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/05-stderr.log",
+    "bytes": 56,
+    "sha256": "110df7551bdbf9dcfd39e1d81f16c815512f629ae452ceea735b950622e90aa6"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/05-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/06-stderr.log",
+    "bytes": 79,
+    "sha256": "f78197733bf992bb66e494bdc92ada5ffef16b82c78d476544c4bc704babcc33"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/06-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/07-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/07-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/08-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/08-stdout.log",
+    "bytes": 8023,
+    "sha256": "995eba661108a87441a5c1b6cf96331ab673840ab29ed8d80a6cf0e3b5d5c39d"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/09-stderr.log",
+    "bytes": 164,
+    "sha256": "48446be13883b17042f21af914678a1cf714249c288c742ffb6b5b437f539a5d"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/09-stdout.log",
+    "bytes": 921,
+    "sha256": "40a66e8ded82ab0ccd6457ac7173ab75750e817f4a883a2003c27a9c9befd4eb"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/10-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/10-stdout.log",
+    "bytes": 796,
+    "sha256": "ff47655a685c93115b82b75ab568de24348d7dfd3cf68a9baae0b12182bbcb5f"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/11-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/11-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/12-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/12-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/13-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/13-stdout.log",
+    "bytes": 8023,
+    "sha256": "995eba661108a87441a5c1b6cf96331ab673840ab29ed8d80a6cf0e3b5d5c39d"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/14-stderr.log",
+    "bytes": 164,
+    "sha256": "b2b9ae3a65288475832cf99799583894c347873308287f4cebea381b1a238da4"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/14-stdout.log",
+    "bytes": 921,
+    "sha256": "4b33d840e820bfd0ba773fd0bc2a6e2108e355cd33c6a225bfb3aa0aaa5beb92"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/15-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/15-stdout.log",
+    "bytes": 796,
+    "sha256": "7d0fbc5c0a2a80bbd3e135d75bd331fe702b9423b1fb465a8198be76a811fa35"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/16-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/16-stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/17-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/18-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/18-stdout.log",
+    "bytes": 9,
+    "sha256": "d4b8a831ea4925f1c54be7746ec0b846cb04bbc35295b64ccdb2101bfcf5d70c"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/19-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/19-stdout.log",
+    "bytes": 7,
+    "sha256": "93c2fd80da7cdb77acd039b274dafd5c1af0d86c9e66db478a35a2f256df29f7"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/20-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/20-stdout.log",
+    "bytes": 14,
+    "sha256": "5b3e43dc38ca01e3f5a7854ba50d4330864b0c1e0f646650b2c78cf072acc366"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/21-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/21-stdout.log",
+    "bytes": 37,
+    "sha256": "a818fb9c737b68643250e71a91736da811c2c6b2bcc9619044d505b7b5891764"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/22-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/23-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/24-stderr.log",
+    "bytes": 279,
+    "sha256": "692819e706b9b116c377a2c059cfcbba0b75e0244b096c78011977fa7b5faa11"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/commands.json",
+    "bytes": 20925,
+    "sha256": "ddcba13231f796fdaaa86dd2ded8109ba35f70e2074cb74a7ad05b94682b9ee1"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/doctor.json",
+    "bytes": 2342,
+    "sha256": "bf5069a053bd935bca560dc31ba808a8ccde5d8ede72af1be76082e664006ff4"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/install-plan.json",
+    "bytes": 2771,
+    "sha256": "e4206245d5d4f29b6718f76f011281d5f204693a510a728875e72d3a8f37d89b"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/profile.yaml",
+    "bytes": 363,
+    "sha256": "ce27b33c524faa91315c411fe98f12276cdd542ac4dfa8bc4dd1115bfeb0a624"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/record.json",
+    "bytes": 13241,
+    "sha256": "be9bdf849b8176660620706d73bfba324074f54278e609af92b47a726d564c45"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/report.json",
+    "bytes": 7325,
+    "sha256": "724e1ec72052a90e3262155ef0cf85fd12699596302b1cae614604bf99b24256"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/resolved-profile.txt",
+    "bytes": 1163,
+    "sha256": "2af7e0e0e785812a0ed542b95a536486883a26bc269a2c085ded7f3e438717a4"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/rio-version.txt",
+    "bytes": 48,
+    "sha256": "150b610135ade894d2b7a5934e27687c6eb80eef9fefd2634644de5067651b1b"
+  },
+  {
+    "path": "eval/runs/structlog-811-seeded-assignment/verdicts.json",
+    "bytes": 7914,
+    "sha256": "d3fc06fa954a31535275c03056cd34e7f998f83146cc2f7c826e460e1349e2aa"
+  },
+  {
+    "path": "eval/runs/structlog-NOTES.md",
+    "bytes": 17840,
+    "sha256": "af1560db825ea4b8421d4016533ad18d71601ed42a89c801e6ea5e02e3661fbc"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/base-checkout.stderr",
+    "bytes": 99,
+    "sha256": "eada77697f92da28c967f650f4afc243c94dffcb59d2c4df7165090ddde383c2"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/base-checkout.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/base-clone.stderr",
+    "bytes": 59,
+    "sha256": "adf33805feac48e5fcea6ed70a4b2fa507a66b1b9daf5e9167b8cedfd9c68712"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/base-clone.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/base-coverage-combine.stderr",
+    "bytes": 16,
+    "sha256": "ab66d9c0c2c0b0b9d837f4b5e3f9615bbf8311eac5eea5654cb08af752d9a02b"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/base-coverage-combine.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/base-coverage-json.stderr",
+    "bytes": 121,
+    "sha256": "acc8a60ea62fc3f375417a23df88851dfeebc70690dcbb3ad9b5b2bffcc4f934"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/base-coverage-json.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/base-coverage.json.gz",
+    "bytes": 18345,
+    "sha256": "0b096e86c85a9b38fa98c31a915a7c2ca7322765ae638a2f1df1b685e9200b9f"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/base-install.stderr",
+    "bytes": 155,
+    "sha256": "cb9afbd6a8ca71c1ff712df1072eb0b43a07125fd7e813a5008d0d56d262b0f9"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/base-install.stdout",
+    "bytes": 1109,
+    "sha256": "c744b3923937d260bf3266ff36d3a0b9a6e8873e4350f3999dc1c314932d1e88"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/base-mypy-api.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/base-mypy-api.stdout",
+    "bytes": 42,
+    "sha256": "5d4b6d285b77932e3d08212c3b4974d0a803f98ec60408ac6ccf6a063fa6c19e"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/base-mypy-src.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/base-mypy-src.stdout",
+    "bytes": 44,
+    "sha256": "3253c7a5a8535995ce0dc8b25611174b1763d2c9ff1bbb0a29e2e90cca3ca91e"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/base-pytest.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/base-pytest.stdout",
+    "bytes": 11913,
+    "sha256": "4ba6d560f940337c24f4352ba4a6dcb5345687fe9aaa1a7b08dd3719b01a13b9"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/base-ruff.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/base-ruff.stdout",
+    "bytes": 2,
+    "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/base-status.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/base-status.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/base-versions.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/base-versions.stdout",
+    "bytes": 1801,
+    "sha256": "e17377239c66218272fd41269e08ce3b86df77e43b0a7aecacd102a78eab0107"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/commands.json",
+    "bytes": 6560,
+    "sha256": "17456f6c500c3ce72c702603cae00a5c9eccd6f2487a812454f2bfc9e90b535a"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/diff-coverage-summary.json",
+    "bytes": 690,
+    "sha256": "9387284ffbf656ec19599efd801deabf9c14986b1c35eaee83a9dd4c8766a22b"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/head-checkout.stderr",
+    "bytes": 38,
+    "sha256": "30555d904d64bf30d1e2b42403a023e6cf913b59bb604ffd6278ed12232e611e"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/head-checkout.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/head-clone.stderr",
+    "bytes": 59,
+    "sha256": "59ec735cc92149dba15d59e78f7802f3ef93331cd91f379eaffff0007bb3f614"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/head-clone.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/head-coverage-combine.stderr",
+    "bytes": 16,
+    "sha256": "ab66d9c0c2c0b0b9d837f4b5e3f9615bbf8311eac5eea5654cb08af752d9a02b"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/head-coverage-combine.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/head-coverage-json.stderr",
+    "bytes": 121,
+    "sha256": "0f965d292283c2ad03ea52daa07a865bbb7bbe4c5f1943ab0472087bad731b9e"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/head-coverage-json.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/head-coverage.json.gz",
+    "bytes": 18369,
+    "sha256": "363d4f411b363b39e52cb8eb9f2028c3c5a0c25c1dcb72c0c42138301c808b0d"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/head-install.stderr",
+    "bytes": 155,
+    "sha256": "cb9afbd6a8ca71c1ff712df1072eb0b43a07125fd7e813a5008d0d56d262b0f9"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/head-install.stdout",
+    "bytes": 1109,
+    "sha256": "0c7fdf48dbeef0df9997a922b957674ad3576929bf5172e7bcf42e05096b3489"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/head-mypy-api.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/head-mypy-api.stdout",
+    "bytes": 42,
+    "sha256": "5d4b6d285b77932e3d08212c3b4974d0a803f98ec60408ac6ccf6a063fa6c19e"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/head-mypy-src.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/head-mypy-src.stdout",
+    "bytes": 44,
+    "sha256": "3253c7a5a8535995ce0dc8b25611174b1763d2c9ff1bbb0a29e2e90cca3ca91e"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/head-pytest.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/head-pytest.stdout",
+    "bytes": 11993,
+    "sha256": "54e9ce75a29256fbe83faf11ddf3936b4fefe21982634ac2e1160102b97f7b46"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/head-ruff.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/head-ruff.stdout",
+    "bytes": 2,
+    "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/head-status.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/head-status.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/head-versions.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/head-versions.stdout",
+    "bytes": 1801,
+    "sha256": "d8808b797e8e57bfeedd59d767962ec7fcd5ed158b3052af170adfb93cabc119"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-786/reviewed.diff",
+    "bytes": 6061,
+    "sha256": "38e5c4bfcdefd3f86a6e87b4bca7e4e78f82a746d00931363da3a8ad7bad4729"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/base-checkout.stderr",
+    "bytes": 61,
+    "sha256": "6fa176ba75dec8e530669c6b347b71719c80679aa95e35daeb1877c5e33b9d47"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/base-checkout.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/base-clone.stderr",
+    "bytes": 59,
+    "sha256": "0e8aa827dab9a54f15512e60852949b0cecfc1b1da6521b4785a959ede641772"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/base-clone.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/base-coverage-combine.stderr",
+    "bytes": 16,
+    "sha256": "ab66d9c0c2c0b0b9d837f4b5e3f9615bbf8311eac5eea5654cb08af752d9a02b"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/base-coverage-combine.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/base-coverage-json.stderr",
+    "bytes": 121,
+    "sha256": "0eb9f1ccd9bdfc36c34162bf669be3d3b6ca8a3ee6e4cea9e1347be7ab18f622"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/base-coverage-json.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/base-coverage.json.gz",
+    "bytes": 18380,
+    "sha256": "c3b74344970610c095b0bfd41ded20d1ee5b5c6af6d7858688ff3b666333846c"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/base-install.stderr",
+    "bytes": 155,
+    "sha256": "cb9afbd6a8ca71c1ff712df1072eb0b43a07125fd7e813a5008d0d56d262b0f9"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/base-install.stdout",
+    "bytes": 1109,
+    "sha256": "be508367a4bed129dccbe85fba152d2065b2d76f8cbf0011d99795b8c58d72fb"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/base-mypy-api.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/base-mypy-api.stdout",
+    "bytes": 42,
+    "sha256": "5d4b6d285b77932e3d08212c3b4974d0a803f98ec60408ac6ccf6a063fa6c19e"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/base-mypy-src.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/base-mypy-src.stdout",
+    "bytes": 44,
+    "sha256": "3253c7a5a8535995ce0dc8b25611174b1763d2c9ff1bbb0a29e2e90cca3ca91e"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/base-pytest.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/base-pytest.stdout",
+    "bytes": 11993,
+    "sha256": "2c738000904d7fc202c7f9c8e499bb813f07242fe803c109f9eeaa89e364ce7d"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/base-ruff.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/base-ruff.stdout",
+    "bytes": 2,
+    "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/base-status.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/base-status.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/base-versions.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/base-versions.stdout",
+    "bytes": 1801,
+    "sha256": "b943bf9ebad253096ae7f4719c82f1331d395df2f43e1d08f189f7ffba253c3d"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/commands.json",
+    "bytes": 6563,
+    "sha256": "d92c5ba356ede0c7880560493640cf8797ee952d32f964b53426c4dbd558309a"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/diff-coverage-summary.json",
+    "bytes": 1518,
+    "sha256": "d61dc8ffddee3e104e1575cdaa9d82bbcd41289c38dbed6cb54f7b44f20d20a9"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/head-checkout.stderr",
+    "bytes": 51,
+    "sha256": "0b06e8bea79e9d0ccce7f31d6aecab2c8443def946ccc9bb87a1869d956d2e08"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/head-checkout.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/head-clone.stderr",
+    "bytes": 59,
+    "sha256": "4b6b545b9a40c714dadacf0dc554b52eb21d2c15049943009488952dfa1b4c5e"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/head-clone.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/head-coverage-combine.stderr",
+    "bytes": 16,
+    "sha256": "ab66d9c0c2c0b0b9d837f4b5e3f9615bbf8311eac5eea5654cb08af752d9a02b"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/head-coverage-combine.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/head-coverage-json.stderr",
+    "bytes": 121,
+    "sha256": "cc16c48d90b07e26b19bbecec6d7475fd55f485fcbf8ee7ef2d305769db6039e"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/head-coverage-json.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/head-coverage.json.gz",
+    "bytes": 18461,
+    "sha256": "7bf3df370475732a214be98a102b5c97ea3d34886c3ea34d46c6c7c574d3316e"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/head-install.stderr",
+    "bytes": 155,
+    "sha256": "cb9afbd6a8ca71c1ff712df1072eb0b43a07125fd7e813a5008d0d56d262b0f9"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/head-install.stdout",
+    "bytes": 1109,
+    "sha256": "0ed5fd0be3ac2cc360360dcdcef32339f3eace100275b2d2655d1fb3d3ff176e"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/head-mypy-api.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/head-mypy-api.stdout",
+    "bytes": 42,
+    "sha256": "5d4b6d285b77932e3d08212c3b4974d0a803f98ec60408ac6ccf6a063fa6c19e"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/head-mypy-src.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/head-mypy-src.stdout",
+    "bytes": 44,
+    "sha256": "3253c7a5a8535995ce0dc8b25611174b1763d2c9ff1bbb0a29e2e90cca3ca91e"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/head-pytest.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/head-pytest.stdout",
+    "bytes": 11992,
+    "sha256": "7abf3bda3ff983526e3aa22ca0757dc347989f3b9244256eaae45c0badb56bf8"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/head-ruff.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/head-ruff.stdout",
+    "bytes": 2,
+    "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/head-status.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/head-status.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/head-versions.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/head-versions.stdout",
+    "bytes": 1801,
+    "sha256": "0eeab564086b86dbe90d56730b88170b50acb717dbdec014ac044ed40595e306"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-805/reviewed.diff",
+    "bytes": 6439,
+    "sha256": "ec2626c97cd96fbf6aa3fb726473200e8e7ff15ed1e8870ccab684a48de12d5d"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811/base-checkout.stderr",
+    "bytes": 79,
+    "sha256": "f78197733bf992bb66e494bdc92ada5ffef16b82c78d476544c4bc704babcc33"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811/base-checkout.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811/base-clone.stderr",
+    "bytes": 59,
+    "sha256": "988fc557d46b0fe214957dba585ef3b657e17bbfdd50bc148b322dd7b15b95e0"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811/base-clone.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811/base-install.stderr",
+    "bytes": 3127,
+    "sha256": "b54a0c12defbbb3de844ce41131e0bd3da0fd6d4b3afcff496c1352115a4b4f3"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811/base-install.stdout",
+    "bytes": 327,
+    "sha256": "57730b330f0954c44600b01c2d936397becb1285487b2e835dffd77345519ec2"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811/commands.json",
+    "bytes": 929,
+    "sha256": "e0e4e1699bbff84377a2eabf23059e97097162218bf8ee1b6466985b50c5f845"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/base-checkout.stderr",
+    "bytes": 79,
+    "sha256": "f78197733bf992bb66e494bdc92ada5ffef16b82c78d476544c4bc704babcc33"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/base-checkout.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/base-clone.stderr",
+    "bytes": 59,
+    "sha256": "988fc557d46b0fe214957dba585ef3b657e17bbfdd50bc148b322dd7b15b95e0"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/base-clone.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/base-coverage-combine.stderr",
+    "bytes": 16,
+    "sha256": "ab66d9c0c2c0b0b9d837f4b5e3f9615bbf8311eac5eea5654cb08af752d9a02b"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/base-coverage-combine.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/base-coverage-json.stderr",
+    "bytes": 130,
+    "sha256": "3034bb91d252f9d09230f8898184dd45949057f1d77e0cfda0b061cad5620379"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/base-coverage-json.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/base-coverage.json.gz",
+    "bytes": 18368,
+    "sha256": "93002b57245764d9af934926165ef17c2da6775cd0717ebcd8ba276c77ef1491"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/base-install.stderr",
+    "bytes": 155,
+    "sha256": "cb9afbd6a8ca71c1ff712df1072eb0b43a07125fd7e813a5008d0d56d262b0f9"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/base-install.stdout",
+    "bytes": 924,
+    "sha256": "e20d577df177fd337066aee12a580f6c10dcb0d7ac47dff2c46ca45435e6f78b"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/base-mypy-api.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/base-mypy-api.stdout",
+    "bytes": 42,
+    "sha256": "5d4b6d285b77932e3d08212c3b4974d0a803f98ec60408ac6ccf6a063fa6c19e"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/base-mypy-src.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/base-mypy-src.stdout",
+    "bytes": 44,
+    "sha256": "3253c7a5a8535995ce0dc8b25611174b1763d2c9ff1bbb0a29e2e90cca3ca91e"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/base-pytest.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/base-pytest.stdout",
+    "bytes": 11993,
+    "sha256": "8e13908665f68cdde1f3798023085be20c9e5a3ac3c92d3239340e9d0c266ce1"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/base-ruff.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/base-ruff.stdout",
+    "bytes": 2,
+    "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/base-status.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/base-status.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/base-versions.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/base-versions.stdout",
+    "bytes": 1801,
+    "sha256": "1972bb475c64775ae7558327e6e6d459edaf52f035d3f7203181bee356cc87ec"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/commands.json",
+    "bytes": 6574,
+    "sha256": "e635f1d5901ea3bba157349379d5c0c4522cc175f1ed7858d9085a565caa8905"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/diff-coverage-summary.json",
+    "bytes": 217,
+    "sha256": "fa0a3031786d16b25d1a644cd33ca7b714b22622e01abd5dc2a8350d5b7768fc"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/head-checkout.stderr",
+    "bytes": 54,
+    "sha256": "5a4eefd7682d2f2eab59c7773cf62dd58699d88aaa77ea49d60ac95da6f89dcf"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/head-checkout.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/head-clone.stderr",
+    "bytes": 59,
+    "sha256": "1e822ab1298535268f9929bbe684fa3100be26caef6f0b61584fda910aec9c28"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/head-clone.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/head-coverage-combine.stderr",
+    "bytes": 16,
+    "sha256": "ab66d9c0c2c0b0b9d837f4b5e3f9615bbf8311eac5eea5654cb08af752d9a02b"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/head-coverage-combine.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/head-coverage-json.stderr",
+    "bytes": 130,
+    "sha256": "268319808fb44e981b4feec062d8d69dc44a04296316c7ea764c824d39a8001c"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/head-coverage-json.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/head-coverage.json.gz",
+    "bytes": 18381,
+    "sha256": "fcd7d271aa19aa1211a635e8af5683a9302503ad91ec3531b2301cffe17d4c3a"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/head-install.stderr",
+    "bytes": 155,
+    "sha256": "cb9afbd6a8ca71c1ff712df1072eb0b43a07125fd7e813a5008d0d56d262b0f9"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/head-install.stdout",
+    "bytes": 1109,
+    "sha256": "b13cfcdf1fedc25d33149835cfa7434c4af40f9b257bf21a1b06a4966c0163c5"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/head-mypy-api.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/head-mypy-api.stdout",
+    "bytes": 42,
+    "sha256": "5d4b6d285b77932e3d08212c3b4974d0a803f98ec60408ac6ccf6a063fa6c19e"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/head-mypy-src.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/head-mypy-src.stdout",
+    "bytes": 44,
+    "sha256": "3253c7a5a8535995ce0dc8b25611174b1763d2c9ff1bbb0a29e2e90cca3ca91e"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/head-pytest.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/head-pytest.stdout",
+    "bytes": 11993,
+    "sha256": "2f18ae80db4a7ea15ce500f1eaee2ac8ba3bcbb478a782f917f78bb589777d5d"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/head-ruff.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/head-ruff.stdout",
+    "bytes": 2,
+    "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/head-status.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/head-status.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/head-versions.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/head-versions.stdout",
+    "bytes": 1801,
+    "sha256": "3eb50a8a7e89dde965c262a2c46285d282b7f9a4af3759cd09cf1ba636d54a0c"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-attempt2/reviewed.diff",
+    "bytes": 606,
+    "sha256": "36dbae4fa921f0031d76d3bfc0e3867bec9492bdff39e09d3871a09d89402470"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/base-checkout.stderr",
+    "bytes": 79,
+    "sha256": "f78197733bf992bb66e494bdc92ada5ffef16b82c78d476544c4bc704babcc33"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/base-checkout.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/base-clone.stderr",
+    "bytes": 77,
+    "sha256": "ef5f39140b6e2ead914d9d4132874d0aac89a4caf170154b633ae74f3f7343f7"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/base-clone.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/base-coverage-combine.stderr",
+    "bytes": 16,
+    "sha256": "ab66d9c0c2c0b0b9d837f4b5e3f9615bbf8311eac5eea5654cb08af752d9a02b"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/base-coverage-combine.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/base-coverage-json.stderr",
+    "bytes": 139,
+    "sha256": "d07ad7da3d596f1f21ad2a224c867e5ac4e542e4e6f8efaf6bac0710f91d9cfc"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/base-coverage-json.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/base-coverage.json.gz",
+    "bytes": 18369,
+    "sha256": "a861936feac539b803ff705735dec4b123bb76857b13887b44771635a41d73ce"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/base-install.stderr",
+    "bytes": 155,
+    "sha256": "cb9afbd6a8ca71c1ff712df1072eb0b43a07125fd7e813a5008d0d56d262b0f9"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/base-install.stdout",
+    "bytes": 1127,
+    "sha256": "aad482cfb62a159f4f143bbf245799882c90ef4bbb59e3809c65915d6d215a31"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/base-mypy-api.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/base-mypy-api.stdout",
+    "bytes": 42,
+    "sha256": "5d4b6d285b77932e3d08212c3b4974d0a803f98ec60408ac6ccf6a063fa6c19e"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/base-mypy-src.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/base-mypy-src.stdout",
+    "bytes": 44,
+    "sha256": "3253c7a5a8535995ce0dc8b25611174b1763d2c9ff1bbb0a29e2e90cca3ca91e"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/base-pytest.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/base-pytest.stdout",
+    "bytes": 11993,
+    "sha256": "bc03d9c50307df2c02fac41b9bca99cce3afc8b17d66f4c3b4b6e853a2242bf6"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/base-ruff.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/base-ruff.stdout",
+    "bytes": 2,
+    "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/base-status.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/base-status.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/base-versions.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/base-versions.stdout",
+    "bytes": 1819,
+    "sha256": "a6548929a019771735320d055dd1b2f50d65df487261fd3c594bf666b6ee210a"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/commands.json",
+    "bytes": 6992,
+    "sha256": "f7912a9bd1fd76d56ab77df82f073352c8a97709be0284076ac1773a04325c61"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/head-checkout.stderr",
+    "bytes": 72,
+    "sha256": "6b8440cec07a2c41c70e60409f981df309448aa1af978941d662340e814f6719"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/head-checkout.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/head-clone.stderr",
+    "bytes": 77,
+    "sha256": "d2236dd7aaee3337b74cbf47201c5f0a40790b5cdb7ba763930b0350d2eadb28"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/head-clone.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/head-coverage-combine.stderr",
+    "bytes": 16,
+    "sha256": "ab66d9c0c2c0b0b9d837f4b5e3f9615bbf8311eac5eea5654cb08af752d9a02b"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/head-coverage-combine.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/head-coverage-json.stderr",
+    "bytes": 139,
+    "sha256": "d298fc83213cb492dfb7075396372518ee4d499c6e482256fb7672c243645040"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/head-coverage-json.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/head-coverage.json.gz",
+    "bytes": 18370,
+    "sha256": "1b36c57b9839327f13828eca4b5e6f9aba3bf2a0f1e980564861a97d58ba0767"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/head-install.stderr",
+    "bytes": 155,
+    "sha256": "cb9afbd6a8ca71c1ff712df1072eb0b43a07125fd7e813a5008d0d56d262b0f9"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/head-install.stdout",
+    "bytes": 1127,
+    "sha256": "269daf5b70bb6cd4261997cb9beccf57a1475c7ee0bd6e6375693862b8a5353f"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/head-mypy-api.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/head-mypy-api.stdout",
+    "bytes": 42,
+    "sha256": "5d4b6d285b77932e3d08212c3b4974d0a803f98ec60408ac6ccf6a063fa6c19e"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/head-mypy-src.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/head-mypy-src.stdout",
+    "bytes": 312,
+    "sha256": "d408dfb893fa897c4b9409081740749eb34561c82d9546d46621c3d761e4a067"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/head-pytest.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/head-pytest.stdout",
+    "bytes": 11993,
+    "sha256": "bb6320eda0c791ca6907e3fd5840ddb3f1c7c7af45d4a34583cac29071786e19"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/head-ruff.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/head-ruff.stdout",
+    "bytes": 2,
+    "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/head-status.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/head-status.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/head-versions.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "eval/runs/structlog-oracle-811-seeded-assignment/head-versions.stdout",
+    "bytes": 1819,
+    "sha256": "713b4fbfd3688e1566aac7850e9fd1efa6475921831784baa8a01e733e0b7e0a"
+  },
+  {
+    "path": "eval/runs/structlog-seed-evidence/gitconfig.txt",
+    "bytes": 92,
+    "sha256": "10865e9e76595bc70eb32e05382f69072c3038e8b0696a2ca95578fe74dbeba9"
+  },
+  {
+    "path": "eval/runs/structlog-seed-evidence/mutation.bundle",
+    "bytes": 678,
+    "sha256": "7208ad911d4c54e88c0409ce952ea44bcbd146641d3663997e754a174805b93d"
+  },
+  {
+    "path": "eval/runs/structlog-seed-evidence/mutation.patch",
+    "bytes": 725,
+    "sha256": "6a442cab1e8704005adffd7b7494eed736bb7a56a76dd5d886aad424263c4e9a"
+  },
+  {
+    "path": "eval/runs/structlog-seed-evidence/registration.json",
+    "bytes": 2486,
+    "sha256": "cd42848303620fbc5de455b29d1ba0d3e84abf0ec7a781c03027e1cec0acce42"
+  },
+  {
+    "path": "eval/runs/structlog-setup/bootstrap-retry.log",
+    "bytes": 8273,
+    "sha256": "19cb8106e983476cc7658b9a391ad571fe913feb84b53665af93a37b7f4582e9"
+  },
+  {
+    "path": "eval/runs/structlog-setup/bootstrap.log",
+    "bytes": 8082,
+    "sha256": "840a6ffd95c36b16a5913b8ec9ef380d3d8dfd69a645e6d1623ca58361fe5e56"
+  },
+  {
+    "path": "eval/runs/structlog-setup/editables-install.log",
+    "bytes": 374,
+    "sha256": "d017e2647e18bb42f0c689c245b0bb57bd9176533024c3b8588b824080f41f71"
+  },
+  {
+    "path": "eval/runs/structlog-setup/environment.json",
+    "bytes": 1037,
+    "sha256": "374e848d73f9aa3492c9716bc447534dc7a673c8602e72da5d4e85757cda4460"
+  },
+  {
+    "path": "eval/runs/structlog-setup/history-coverage-search.txt",
+    "bytes": 3238,
+    "sha256": "ab2b42e4997c6cd604ea6e27c402cd16395c9d3dfdad8bc061601553b82a17cb"
+  },
+  {
+    "path": "eval/runs/structlog-setup/history-typing-search.txt",
+    "bytes": 3197,
+    "sha256": "84d9f7266038ff8c0d75e0c811ad0e00fc1d4a67a452201e46a84e2ee93c26b9"
+  },
+  {
+    "path": "eval/runs/structlog-setup/install-plan-v2.json",
+    "bytes": 2771,
+    "sha256": "e4206245d5d4f29b6718f76f011281d5f204693a510a728875e72d3a8f37d89b"
+  },
+  {
+    "path": "eval/runs/structlog-setup/install-plan.json",
+    "bytes": 2723,
+    "sha256": "704e49786362f6beb51dfe55a0ddfcdb966637ae896bbe4eb8aef790fa250348"
+  },
+  {
+    "path": "eval/runs/structlog-setup/lint-pr-search.json",
+    "bytes": 8655,
+    "sha256": "1e642f05b33fc2cf3f73184f50563e4738d874988a6ed95f9660c31b8ab87a8a"
+  },
+  {
+    "path": "eval/runs/structlog-setup/mypy-issue-search.json",
+    "bytes": 21818,
+    "sha256": "705cf31eee68e34c752efe339bedb12accbe0bc0bf615576c54ad9c3890d6609"
+  },
+  {
+    "path": "eval/runs/structlog-setup/oracle-driver.py",
+    "bytes": 2441,
+    "sha256": "e8f0d88773879d0394e7adc8db3390e6e164cc613f83618357f627bb9498b0e3"
+  },
+  {
+    "path": "eval/runs/structlog-setup/pr-786-check-runs.json",
+    "bytes": 45066,
+    "sha256": "9fb8b1263f62772d2282f9f62f11c73e2bec31fefa8941d57ea4f516aab0fe00"
+  },
+  {
+    "path": "eval/runs/structlog-setup/pr-786.json",
+    "bytes": 17933,
+    "sha256": "8ff8413b24ae43bc90b6a4e591931448c1f4a5d148f68223e743ed06952df2bc"
+  },
+  {
+    "path": "eval/runs/structlog-setup/pr-805.json",
+    "bytes": 17944,
+    "sha256": "d5a9fe4b76cf7382fa83e74349d1d80dc9c5359d0832d8b9feb8c35c252bd08c"
+  },
+  {
+    "path": "eval/runs/structlog-setup/pr-811-check-runs.json",
+    "bytes": 45066,
+    "sha256": "e9e8a61333cd6889f785d4757dce27fcd160d498ed1b0ecaace0abaf596ff91e"
+  },
+  {
+    "path": "eval/runs/structlog-setup/pr-811.json",
+    "bytes": 16057,
+    "sha256": "c88a7db6679de9e30c105a548ffa71725b94c73545c61ef34a805dabf1866821"
+  },
+  {
+    "path": "eval/runs/structlog-setup/pr-search.json",
+    "bytes": 1894085,
+    "sha256": "3478f4ff688c1a005fe0dcd24ffa78c19761e81abe91f28530b92b2e7497fb40"
+  },
+  {
+    "path": "eval/runs/structlog-setup/profile.yaml",
+    "bytes": 363,
+    "sha256": "ce27b33c524faa91315c411fe98f12276cdd542ac4dfa8bc4dd1115bfeb0a624"
+  },
+  {
+    "path": "eval/runs/structlog-setup/regression-comparison.json",
+    "bytes": 2822,
+    "sha256": "81b0778ab8a2b09f067f34cdac2010b69c67398a93f2d97a941af86c7213d8d7"
+  },
+  {
+    "path": "eval/runs/structlog-setup/regression.html",
+    "bytes": 1444,
+    "sha256": "8a62d4d613665d84da226eb0b4a2f1c37ddcca4ac0d4a90106128ae4a2dc5a03"
+  },
+  {
+    "path": "eval/runs/structlog-setup/requirements-v2.txt",
+    "bytes": 695,
+    "sha256": "f59f25201113da43ace8861d771f96fabcbd693e776499ccc9fde5a324e6ed10"
+  },
+  {
+    "path": "eval/runs/structlog-setup/requirements.txt",
+    "bytes": 680,
+    "sha256": "4a49bfe325150a1c25632c949d3e7aa68f071cde61e8d5d0c788331336ea05df"
+  },
+  {
+    "path": "eval/runs/structlog-setup/results.json",
+    "bytes": 3506,
+    "sha256": "9f0302303b48d73282e6d95bc734ef250236167967fdbbb38f6841814b05c756"
+  },
+  {
+    "path": "eval/runs/structlog-setup/typing-pr-search.json",
+    "bytes": 317606,
+    "sha256": "8125c2f780d1cd97800737becccfe3faf62208be9a22f3eb81d1ddc2a320d97b"
+  },
+  {
+    "path": "eval/runs/structlog-setup/validation.json",
+    "bytes": 1245,
+    "sha256": "29fa4cd004a11820f357bfd87be877735bfa5ae2c71c1a77292ffbf11118f022"
+  }
+]

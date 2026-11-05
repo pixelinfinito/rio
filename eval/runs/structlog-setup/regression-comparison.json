@@ -1,0 +1,82 @@
+{
+  "805": {
+    "before": {
+      "visible_findings": 13,
+      "finding_states": {
+        "unclassified": 11,
+        "worsened": 2
+      },
+      "secret_findings": [
+        "3546bf6ef41f8d6042ee14d590c3c99bfd6efb61a7afae062dc7336435e625ff",
+        "6793e5b8a3fbb6001c32ab4ce830b9b1e594c4f0335667aa655729916fd0d00d"
+      ],
+      "baseline_ran": false,
+      "successful_trusted_or_verified_pairs": false,
+      "wall_time_ms": 68991
+    },
+    "after": {
+      "visible_findings": 0,
+      "finding_states": {},
+      "secret_findings": [],
+      "baseline_ran": true,
+      "successful_trusted_or_verified_pairs": true,
+      "wall_time_ms": 29405
+    },
+    "after_evaluator_environment": {
+      "dependency_state": "trusted",
+      "baseline_ran": true,
+      "baseline_classification_ran": false,
+      "eligible": false,
+      "reasons": [
+        "lint .: head=passed, dependency_state=trusted, base=passed",
+        "typecheck .: head=passed, dependency_state=trusted, base=passed"
+      ],
+      "notes": [
+        "Intent inference is deferred: no_endpoint",
+        "lint .: dependencies_trusted: results use unverified dependencies",
+        "typecheck .: dependencies_trusted: results use unverified dependencies",
+        "Graph references use syntax and text; no language server was used",
+        "Offline applies to Rio; tool and test processes were not network-isolated",
+        "dependencies_trusted: results were computed against unverified dependencies"
+      ]
+    }
+  },
+  "811": {
+    "before": {
+      "visible_findings": 5,
+      "finding_states": {
+        "unclassified": 5
+      },
+      "secret_findings": [],
+      "baseline_ran": false,
+      "successful_trusted_or_verified_pairs": false,
+      "wall_time_ms": 32710
+    },
+    "after": {
+      "visible_findings": 0,
+      "finding_states": {},
+      "secret_findings": [],
+      "baseline_ran": true,
+      "successful_trusted_or_verified_pairs": true,
+      "wall_time_ms": 28927
+    },
+    "after_evaluator_environment": {
+      "dependency_state": "trusted",
+      "baseline_ran": true,
+      "baseline_classification_ran": false,
+      "eligible": false,
+      "reasons": [
+        "lint .: head=passed, dependency_state=trusted, base=passed",
+        "typecheck .: head=passed, dependency_state=trusted, base=passed"
+      ],
+      "notes": [
+        "Intent inference is deferred: no_endpoint",
+        "lint .: dependencies_trusted: results use unverified dependencies",
+        "typecheck .: dependencies_trusted: results use unverified dependencies",
+        "Graph references use syntax and text; no language server was used",
+        "Offline applies to Rio; tool and test processes were not network-isolated",
+        "dependencies_trusted: results were computed against unverified dependencies"
+      ]
+    }
+  }
+}

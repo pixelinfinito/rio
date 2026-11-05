@@ -1,0 +1,13 @@
+Obtaining file:///dev/shm/structlog-oracle-811-base
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: structlog
+  Building editable for structlog (pyproject.toml): started
+  Building editable for structlog (pyproject.toml): finished with status 'done'
+  Created wheel for structlog: filename=structlog-25.5.1.dev62-py3-none-any.whl size=9087 sha256=777f800c069c419cf6d0614915b68fc4a0c1746589af6cfa58b679131836e362
+  Stored in directory: /dev/shm/pip-ephem-wheel-cache-q8ybakh5/wheels/78/e1/04/43638815735bec9c44de3e78f41acc44428908ba0a6de67b4b
+Successfully built structlog
+Installing collected packages: structlog
+Successfully installed structlog-25.5.1.dev62

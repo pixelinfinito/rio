@@ -1,0 +1,139 @@
+..................................................s..................... [  7%]
+........................................................................ [ 15%]
+........................................................................ [ 22%]
+........................................................................ [ 30%]
+........................................................................ [ 38%]
+........................................................................ [ 45%]
+...............................s.......sss...........s.................. [ 53%]
+............s...........s............................................... [ 61%]
+........................................................................ [ 68%]
+........................................................................ [ 76%]
+...................................................s....ss..........s.s. [ 83%]
+.s.....s.ss.s....ss..................................................... [ 91%]
+........................................................................ [ 99%]
+........                                                                 [100%]
+=============================== warnings summary ===============================
+../structlog-eval-venv/lib/python3.12/site-packages/_pytest/python.py:144
+  /dev/shm/structlog-eval-venv/lib/python3.12/site-packages/_pytest/python.py:144: PytestRemovedIn10Warning: Passing a non-Collection iterable to parametrize is deprecated.
+  Test: tests/processors/test_processors.py::TestCallsiteParameterAdder::test_processor, argvalues type: product
+  Please convert to a list or tuple.
+  See https://docs.pytest.org/en/stable/deprecations.html#parametrize-iterators
+    metafunc.parametrize(*marker.args, **marker.kwargs, _param_mark=marker)
+
+../structlog-eval-venv/lib/python3.12/site-packages/_pytest/python.py:144
+  /dev/shm/structlog-eval-venv/lib/python3.12/site-packages/_pytest/python.py:144: PytestRemovedIn10Warning: Passing a non-Collection iterable to parametrize is deprecated.
+  Test: tests/processors/test_processors.py::TestCallsiteParameterAdder::test_e2e, argvalues type: product
+  Please convert to a list or tuple.
+  See https://docs.pytest.org/en/stable/deprecations.html#parametrize-iterators
+    metafunc.parametrize(*marker.args, **marker.kwargs, _param_mark=marker)
+
+tests/test_output.py::TestBytesLogger::test_pickle_not_stdout_stderr[1]
+  /dev/shm/structlog-eval-venv/lib/python3.12/site-packages/_pytest/python.py:187: ResourceWarning: unclosed file <_io.TextIOWrapper name='/dev/shm/pytest-of-ubuntu/pytest-0/test_pickle_not_stdout_stderr_0/file.log' mode='r' encoding='UTF-8'>
+    result = testfunction(**testargs)
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/test_output.py::TestBytesLogger::test_pickle_not_stdout_stderr[0]
+  /dev/shm/structlog-eval-venv/lib/python3.12/site-packages/_pytest/python.py:187: ResourceWarning: unclosed file <_io.TextIOWrapper name='/dev/shm/pytest-of-ubuntu/pytest-0/test_pickle_not_stdout_stderr_1/file.log' mode='r' encoding='UTF-8'>
+    result = testfunction(**testargs)
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/test_output.py::TestBytesLogger::test_pickle_not_stdout_stderr[2]
+  /dev/shm/structlog-eval-venv/lib/python3.12/site-packages/_pytest/python.py:187: ResourceWarning: unclosed file <_io.TextIOWrapper name='/dev/shm/pytest-of-ubuntu/pytest-0/test_pickle_not_stdout_stderr_2/file.log' mode='r' encoding='UTF-8'>
+    result = testfunction(**testargs)
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/test_output.py::TestBytesLogger::test_pickle_not_stdout_stderr[3]
+  /dev/shm/structlog-eval-venv/lib/python3.12/site-packages/_pytest/python.py:187: ResourceWarning: unclosed file <_io.TextIOWrapper name='/dev/shm/pytest-of-ubuntu/pytest-0/test_pickle_not_stdout_stderr_3/file.log' mode='r' encoding='UTF-8'>
+    result = testfunction(**testargs)
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/test_output.py::TestBytesLogger::test_pickle_not_stdout_stderr[5]
+  /dev/shm/structlog-eval-venv/lib/python3.12/site-packages/_pytest/python.py:187: ResourceWarning: unclosed file <_io.TextIOWrapper name='/dev/shm/pytest-of-ubuntu/pytest-0/test_pickle_not_stdout_stderr_4/file.log' mode='r' encoding='UTF-8'>
+    result = testfunction(**testargs)
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/test_output.py::TestBytesLogger::test_pickle_not_stdout_stderr[4]
+  /dev/shm/structlog-eval-venv/lib/python3.12/site-packages/_pytest/python.py:187: ResourceWarning: unclosed file <_io.TextIOWrapper name='/dev/shm/pytest-of-ubuntu/pytest-0/test_pickle_not_stdout_stderr_5/file.log' mode='r' encoding='UTF-8'>
+    result = testfunction(**testargs)
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/test_output.py::TestLoggers::test_pickle_not_stdout_stderr[WriteLogger-3]
+  /dev/shm/structlog-eval-venv/lib/python3.12/site-packages/_pytest/python.py:187: ResourceWarning: unclosed file <_io.TextIOWrapper name='/dev/shm/pytest-of-ubuntu/pytest-0/test_pickle_not_stdout_stderr_6/file.log' mode='r' encoding='UTF-8'>
+    result = testfunction(**testargs)
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/test_output.py::TestLoggers::test_pickle_not_stdout_stderr[WriteLogger-2]
+  /dev/shm/structlog-eval-venv/lib/python3.12/site-packages/_pytest/python.py:187: ResourceWarning: unclosed file <_io.TextIOWrapper name='/dev/shm/pytest-of-ubuntu/pytest-0/test_pickle_not_stdout_stderr_7/file.log' mode='r' encoding='UTF-8'>
+    result = testfunction(**testargs)
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/test_output.py::TestLoggers::test_pickle_not_stdout_stderr[WriteLogger-0]
+  /dev/shm/structlog-eval-venv/lib/python3.12/site-packages/_pytest/python.py:187: ResourceWarning: unclosed file <_io.TextIOWrapper name='/dev/shm/pytest-of-ubuntu/pytest-0/test_pickle_not_stdout_stderr_8/file.log' mode='r' encoding='UTF-8'>
+    result = testfunction(**testargs)
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/test_output.py::TestLoggers::test_pickle_not_stdout_stderr[WriteLogger-1]
+  /dev/shm/structlog-eval-venv/lib/python3.12/site-packages/_pytest/python.py:187: ResourceWarning: unclosed file <_io.TextIOWrapper name='/dev/shm/pytest-of-ubuntu/pytest-0/test_pickle_not_stdout_stderr_9/file.log' mode='r' encoding='UTF-8'>
+    result = testfunction(**testargs)
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/test_output.py::TestLoggers::test_pickle_not_stdout_stderr[WriteLogger-4]
+  /dev/shm/structlog-eval-venv/lib/python3.12/site-packages/_pytest/python.py:187: ResourceWarning: unclosed file <_io.TextIOWrapper name='/dev/shm/pytest-of-ubuntu/pytest-0/test_pickle_not_stdout_stderr_10/file.log' mode='r' encoding='UTF-8'>
+    result = testfunction(**testargs)
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/test_output.py::TestLoggers::test_pickle_not_stdout_stderr[WriteLogger-5]
+  /dev/shm/structlog-eval-venv/lib/python3.12/site-packages/_pytest/python.py:187: ResourceWarning: unclosed file <_io.TextIOWrapper name='/dev/shm/pytest-of-ubuntu/pytest-0/test_pickle_not_stdout_stderr_11/file.log' mode='r' encoding='UTF-8'>
+    result = testfunction(**testargs)
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/test_output.py::TestLoggers::test_pickle_not_stdout_stderr[PrintLogger-4]
+  /dev/shm/structlog-eval-venv/lib/python3.12/site-packages/_pytest/python.py:187: ResourceWarning: unclosed file <_io.TextIOWrapper name='/dev/shm/pytest-of-ubuntu/pytest-0/test_pickle_not_stdout_stderr_12/file.log' mode='r' encoding='UTF-8'>
+    result = testfunction(**testargs)
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/test_output.py::TestLoggers::test_pickle_not_stdout_stderr[PrintLogger-5]
+  /dev/shm/structlog-eval-venv/lib/python3.12/site-packages/_pytest/python.py:187: ResourceWarning: unclosed file <_io.TextIOWrapper name='/dev/shm/pytest-of-ubuntu/pytest-0/test_pickle_not_stdout_stderr_13/file.log' mode='r' encoding='UTF-8'>
+    result = testfunction(**testargs)
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/test_output.py::TestLoggers::test_pickle_not_stdout_stderr[PrintLogger-0]
+  /dev/shm/structlog-eval-venv/lib/python3.12/site-packages/_pytest/python.py:187: ResourceWarning: unclosed file <_io.TextIOWrapper name='/dev/shm/pytest-of-ubuntu/pytest-0/test_pickle_not_stdout_stderr_14/file.log' mode='r' encoding='UTF-8'>
+    result = testfunction(**testargs)
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/test_output.py::TestLoggers::test_pickle_not_stdout_stderr[PrintLogger-1]
+  /dev/shm/structlog-eval-venv/lib/python3.12/site-packages/_pytest/python.py:187: ResourceWarning: unclosed file <_io.TextIOWrapper name='/dev/shm/pytest-of-ubuntu/pytest-0/test_pickle_not_stdout_stderr_15/file.log' mode='r' encoding='UTF-8'>
+    result = testfunction(**testargs)
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/test_output.py::TestLoggers::test_pickle_not_stdout_stderr[PrintLogger-3]
+  /dev/shm/structlog-eval-venv/lib/python3.12/site-packages/_pytest/python.py:187: ResourceWarning: unclosed file <_io.TextIOWrapper name='/dev/shm/pytest-of-ubuntu/pytest-0/test_pickle_not_stdout_stderr_16/file.log' mode='r' encoding='UTF-8'>
+    result = testfunction(**testargs)
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/test_output.py::TestLoggers::test_pickle_not_stdout_stderr[PrintLogger-2]
+  /dev/shm/structlog-eval-venv/lib/python3.12/site-packages/_pytest/python.py:187: ResourceWarning: unclosed file <_io.TextIOWrapper name='/dev/shm/pytest-of-ubuntu/pytest-0/test_pickle_not_stdout_stderr_17/file.log' mode='r' encoding='UTF-8'>
+    result = testfunction(**testargs)
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+924 passed, 20 skipped, 20 warnings in 11.34s

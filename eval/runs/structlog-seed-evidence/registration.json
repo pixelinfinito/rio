@@ -1,0 +1,39 @@
+{
+  "registered_utc": "2026-11-05T02:46:57.106886+00:00",
+  "control_id": "structlog-811-seeded-assignment",
+  "repository": "hynek/structlog",
+  "parent_pr": "https://github.com/hynek/structlog/pull/811",
+  "base_sha": "de5dcd4127b8c9652ebadf0b6411c4bb9c10f3b7",
+  "head_sha": "50aa6f517262a936224ab1338e244eb5a4dbaefb",
+  "kind": "seeded-mutation",
+  "seed": "structlog-incompatible-assignment-20261105",
+  "mutation_patch": "eval/runs/structlog-seed-evidence/mutation.patch",
+  "patch_sha256": "6a442cab1e8704005adffd7b7494eed736bb7a56a76dd5d886aad424263c4e9a",
+  "profile_sha256": "ce27b33c524faa91315c411fe98f12276cdd542ac4dfa8bc4dd1115bfeb0a624",
+  "install_plan_sha256": "e4206245d5d4f29b6718f76f011281d5f204693a510a728875e72d3a8f37d89b",
+  "expected": [
+    {
+      "id": "seeded-incompatible-assignment",
+      "mechanism": "type-error",
+      "description": "Module-level variable annotated int is assigned str in src/structlog/_output.py. Strict mypy should emit exactly one new assignment error.",
+      "finding_ids": [
+        "2238acfbeea4da42971fce566ac2420bad7adefb8130dd42a71e928445457d1a"
+      ],
+      "evidence": "Independent mypy 2.4.1, repository strict config and tox command mypy src: base exit 0 (21 files), head exit 1, src/structlog/_output.py:22 assignment str to int. Full base/head oracle logs and ledger in eval/runs/structlog-oracle-811-seeded-assignment. Ruff 0.15.12 and tests clean at both commits."
+    }
+  ],
+  "oracle": "mypy src; mypy tests/typing; ruff check . --output-format=json; coverage run -m pytest -q; coverage combine; coverage json",
+  "oracle_evidence": "eval/runs/structlog-oracle-811-seeded-assignment",
+  "oracle_status": "complete before Rio: base source/API mypy and Ruff pass; head source mypy emits exactly one assignment error, API mypy and Ruff pass; base/head 924 tests pass; seeded line instrumented and executed",
+  "reviewer": "sub-agent eval-structlog (automated)",
+  "verdict_source": "automated",
+  "rationale": "No qualifying final introducing public PR established after approximately half an hour of history, issue, CI, and independent-oracle investigation; use authorized fallback. No credentials introduced.",
+  "oracle_completed_utc": "2026-11-05T02:48:18.072124+00:00",
+  "adjudicated_utc": "2026-11-05T02:51:22.281997+00:00",
+  "rio_result": {
+    "finding_id": "2238acfbeea4da42971fce566ac2420bad7adefb8130dd42a71e928445457d1a",
+    "state": "new",
+    "detected_expected": 1,
+    "missed_expected": 0
+  }
+}

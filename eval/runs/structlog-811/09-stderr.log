@@ -1,0 +1,47 @@
+  error: subprocess-exited-with-error
+  
+  × Preparing editable metadata (pyproject.toml) did not run successfully.
+  │ exit code: 1
+  ╰─> [29 lines of output]
+      Traceback (most recent call last):
+        File "/dev/shm/rio-eval-0sihimt6/base/.venv/lib/python3.12/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py", line 195, in prepare_metadata_for_build_editable
+          hook = backend.prepare_metadata_for_build_editable
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      AttributeError: module 'hatchling.build' has no attribute 'prepare_metadata_for_build_editable'
+      
+      During handling of the above exception, another exception occurred:
+      
+      Traceback (most recent call last):
+        File "/dev/shm/rio-eval-0sihimt6/base/.venv/lib/python3.12/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py", line 389, in <module>
+          main()
+        File "/dev/shm/rio-eval-0sihimt6/base/.venv/lib/python3.12/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py", line 373, in main
+          json_out["return_val"] = hook(**hook_input["kwargs"])
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "/dev/shm/rio-eval-0sihimt6/base/.venv/lib/python3.12/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py", line 204, in prepare_metadata_for_build_editable
+          whl_basename = build_hook(metadata_directory, config_settings)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "/dev/shm/rio-eval-0sihimt6/base/.venv/lib/python3.12/site-packages/hatchling/build.py", line 83, in build_editable
+          return os.path.basename(next(builder.build(directory=wheel_directory, versions=["editable"])))
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "/dev/shm/rio-eval-0sihimt6/base/.venv/lib/python3.12/site-packages/hatchling/builders/plugin/interface.py", line 157, in build
+          artifact = version_api[version](directory, **build_data)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "/dev/shm/rio-eval-0sihimt6/base/.venv/lib/python3.12/site-packages/hatchling/builders/wheel.py", line 539, in build_editable
+          return self.build_editable_detection(directory, **build_data)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "/dev/shm/rio-eval-0sihimt6/base/.venv/lib/python3.12/site-packages/hatchling/builders/wheel.py", line 542, in build_editable_detection
+          from editables import EditableProject
+      ModuleNotFoundError: No module named 'editables'
+      [end of output]
+  
+  note: This error originates from a subprocess, and is likely not a problem with pip.
+
+[notice] A new release of pip is available: 26.1.2 -> 26.3
+[notice] To update, run: /dev/shm/rio-eval-0sihimt6/base/.venv/bin/python3 -m pip install --upgrade pip
+error: metadata-generation-failed
+
+× Encountered error while generating package metadata.
+╰─> from file:///dev/shm/rio-eval-0sihimt6/base
+
+note: This is an issue with the package mentioned above, not pip.
+hint: See above for details.

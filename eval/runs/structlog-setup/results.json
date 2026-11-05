@@ -1,0 +1,107 @@
+{
+  "records": [
+    {
+      "path": "eval/runs/structlog-805/record.json",
+      "case_id": "805-attempt1",
+      "positive_control_kind": "none",
+      "dependency_state": "trusted",
+      "rio_successful_baseline_pairs": true,
+      "evaluator_baseline_classification_ran": false,
+      "evaluator_eligible": false,
+      "finding_verdict_counts": {},
+      "rio_wall_time_ms": 12123,
+      "runner_wall_seconds": 150.435,
+      "runner_exit_code": 1,
+      "rio_exit_code": 4,
+      "failures": [
+        "base dependency installation failed (1)",
+        "head dependency installation failed (1)",
+        "Baseline/setup ineligible; fix before scoring"
+      ]
+    },
+    {
+      "path": "eval/runs/structlog-811/record.json",
+      "case_id": "811-attempt1",
+      "positive_control_kind": "none",
+      "dependency_state": "trusted",
+      "rio_successful_baseline_pairs": true,
+      "evaluator_baseline_classification_ran": false,
+      "evaluator_eligible": false,
+      "finding_verdict_counts": {},
+      "rio_wall_time_ms": 10433,
+      "runner_wall_seconds": 154.639,
+      "runner_exit_code": 1,
+      "rio_exit_code": 4,
+      "failures": [
+        "base dependency installation failed (1)",
+        "head dependency installation failed (1)",
+        "Baseline/setup ineligible; fix before scoring"
+      ]
+    },
+    {
+      "path": "eval/runs/structlog-805-attempt2/record.json",
+      "case_id": "805",
+      "positive_control_kind": "none",
+      "dependency_state": "trusted",
+      "rio_successful_baseline_pairs": true,
+      "evaluator_baseline_classification_ran": false,
+      "evaluator_eligible": false,
+      "finding_verdict_counts": {},
+      "rio_wall_time_ms": 29405,
+      "runner_wall_seconds": 192.115,
+      "runner_exit_code": 1,
+      "rio_exit_code": 0,
+      "failures": [
+        "Baseline/setup ineligible; fix before scoring"
+      ]
+    },
+    {
+      "path": "eval/runs/structlog-811-attempt2/record.json",
+      "case_id": "811",
+      "positive_control_kind": "none",
+      "dependency_state": "trusted",
+      "rio_successful_baseline_pairs": true,
+      "evaluator_baseline_classification_ran": false,
+      "evaluator_eligible": false,
+      "finding_verdict_counts": {},
+      "rio_wall_time_ms": 28927,
+      "runner_wall_seconds": 187.569,
+      "runner_exit_code": 1,
+      "rio_exit_code": 0,
+      "failures": [
+        "Baseline/setup ineligible; fix before scoring"
+      ]
+    },
+    {
+      "path": "eval/runs/structlog-811-seeded-assignment/record.json",
+      "case_id": "811-seeded-assignment",
+      "positive_control_kind": "seeded-mutation",
+      "dependency_state": "trusted",
+      "rio_successful_baseline_pairs": true,
+      "evaluator_baseline_classification_ran": false,
+      "evaluator_eligible": false,
+      "finding_verdict_counts": {
+        "true-positive": 1
+      },
+      "rio_wall_time_ms": 14628,
+      "runner_wall_seconds": 137.488,
+      "runner_exit_code": 1,
+      "rio_exit_code": 1,
+      "failures": [
+        "Baseline/setup ineligible; fix before scoring"
+      ]
+    }
+  ],
+  "observed_finding_verdicts": {
+    "true-positive": 1,
+    "false-positive": 0,
+    "pre-existing-shown": 0,
+    "environment-failure": 0,
+    "out-of-scope": 0
+  },
+  "observed_expected_detected": 1,
+  "observed_expected_missed": 0,
+  "release_scored_records": 0,
+  "binary_defects_observed": [],
+  "harness_limitation": "eval/evaluate.py rejects successful trusted baseline pairs because it requires dependency_state verified."
+}
