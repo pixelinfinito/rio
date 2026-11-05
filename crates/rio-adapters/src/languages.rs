@@ -1,5 +1,6 @@
 use crate::{
-    Adapter, DiagnosticContext, parse_eslint, parse_mypy, parse_pyright, parse_ruff, parse_tsc,
+    Adapter, DiagnosticContext, parse_biome, parse_eslint, parse_mypy, parse_pyright, parse_ruff,
+    parse_tsc,
 };
 use crate::{ResolvedTool, ToolCommand};
 use anyhow::{Context, Result, bail};
@@ -28,25 +29,47 @@ pub fn diagnostic_command(
     let args: Vec<String> = match tool.name.as_str() {
         "tsc" => {
             let mut args = vec!["--noEmit".into(), "--pretty".into(), "false".into()];
-            let config = if root == "." {
-                "tsconfig.json".into()
-            } else {
-                format!("{root}/tsconfig.json")
-            };
-            if tree.contains_key(&config) {
-                args.extend(["-p".into(), ".".into()]);
-            } else {
-                args.extend(
-                    tree.keys()
+            let config = typescript_config(tree, root);
+            let config = match config {
+                Some(config) if !typescript_solution_config(tree, &config) => {
+                    tool_tree.join(config)
+                }
+                config => {
+                    // Files never accompany command-line compiler options. This
+                    // works with TS6's TS5112 restriction and preserves inherited
+                    // options when a solution/base config cannot be run directly.
+                    let files: Vec<_> = tree
+                        .keys()
                         .filter(|path| {
                             crate::language_for_path(path) == Some("typescript")
                                 && (root == "." || path.starts_with(&format!("{root}/")))
                         })
-                        .map(|path| tool_tree.join(path).to_string_lossy().into_owned()),
-                );
-            }
+                        .map(|path| tool_tree.join(path))
+                        .collect();
+                    let mut value =
+                        serde_json::json!({"files": files, "include": [], "exclude": []});
+                    if let Some(config) = config {
+                        value["extends"] = serde_json::json!(tool_tree.join(config));
+                    } else {
+                        value["compilerOptions"] = serde_json::json!({"allowJs": true});
+                    }
+                    let file = tempfile::Builder::new()
+                        .prefix(".rio-tsconfig-")
+                        .suffix(".json")
+                        .tempfile_in(tool_tree.join(root))?;
+                    serde_json::to_writer(&file, &value)?;
+                    // The enclosing disposable tool tree owns cleanup.
+                    file.keep()?.1
+                }
+            };
+            args.extend(["-p".into(), config.to_string_lossy().into_owned()]);
             args
         }
+        "biome" => vec![
+            "lint".into(),
+            "--reporter=json".into(),
+            "--max-diagnostics=none".into(),
+        ],
         "eslint" => vec!["-f".into(), "json".into()],
         "ruff" => vec!["check".into(), "--output-format".into(), "json".into()],
         "pyright" => vec!["--outputjson".into()],
@@ -76,7 +99,7 @@ pub fn diagnostic_command(
         _ => bail!("unsupported diagnostic tool {}", tool.name),
     };
     command.args = args.into_iter().map(Into::into).collect();
-    if matches!(tool.name.as_str(), "eslint" | "ruff") {
+    if matches!(tool.name.as_str(), "eslint" | "biome" | "ruff") {
         command.args.push("--".into());
         command.args.extend(
             targets
@@ -103,12 +126,12 @@ pub fn diagnostic_config_skip(
 ) -> Option<CheckOutcome> {
     if kind == CheckKind::Lint
         && if language == "typescript" {
-            eslint_config(tree, root).is_none()
+            eslint_config(tree, root).is_none() && biome_config(tree, root).is_none()
         } else {
             ruff_config(tree, root).is_none()
         }
     {
-        Some(CheckOutcome::Skipped { reason: SkipReason::NoProjectConfig, details: CheckDetails { hint: Some("lint runs only against the project's own rules; add an ESLint or Ruff configuration".into()), ..Default::default() } })
+        Some(CheckOutcome::Skipped { reason: SkipReason::NoProjectConfig, details: CheckDetails { hint: Some("lint runs only against the project's own rules; add an ESLint, Biome or Ruff configuration".into()), ..Default::default() } })
     } else {
         None
     }
@@ -132,6 +155,7 @@ impl Adapter for TypeScriptAdapter {
         match tool {
             "tsc" => parse_tsc(stdout, context),
             "eslint" => parse_eslint(stdout, context),
+            "biome" => parse_biome(stdout, context),
             _ => bail!("unsupported TypeScript diagnostic tool {tool}"),
         }
     }
@@ -307,5 +331,88 @@ pub fn python_typechecker(
         Some("mypy")
     } else {
         None
+    }
+}
+
+fn config_json(tree: &Tree, path: &str) -> Option<serde_json::Value> {
+    json5::from_str(std::str::from_utf8(&tree.get(path)?.content).ok()?).ok()
+}
+
+fn typescript_solution_config(tree: &Tree, config: &str) -> bool {
+    config_json(tree, config).is_some_and(|value| {
+        value["files"].as_array().is_some_and(Vec::is_empty) && value.get("include").is_none()
+    })
+}
+
+/// Prefer the nearest runnable config, including references into a package.
+/// Extends remains TypeScript's responsibility, preserving its path semantics.
+pub fn typescript_config(tree: &Tree, root: &str) -> Option<String> {
+    let nearest = ancestor_config(
+        tree,
+        root,
+        &["tsconfig.json", "tsconfig.build.json", "tsconfig.base.json"],
+    )?;
+    let mut queue = vec![nearest.clone()];
+    let mut seen = std::collections::BTreeSet::new();
+    let mut best = None;
+    while let Some(config) = queue.pop() {
+        if !seen.insert(config.clone()) {
+            continue;
+        }
+        let directory = config.rsplit_once('/').map_or("", |(dir, _)| dir);
+        if config != nearest
+            && (directory == root || root.starts_with(&format!("{directory}/")))
+            && best
+                .as_ref()
+                .is_none_or(|previous: &String| previous.len() < config.len())
+        {
+            best = Some(config.clone());
+        }
+        if let Some(value) = config_json(tree, &config)
+            && let Some(references) = value["references"].as_array()
+        {
+            for reference in references {
+                let Some(path) = reference["path"].as_str() else {
+                    continue;
+                };
+                let joined = Path::new(directory).join(path);
+                let mut parts = Vec::new();
+                for part in joined.components() {
+                    match part {
+                        std::path::Component::Normal(value) => {
+                            parts.push(value.to_string_lossy().into_owned())
+                        }
+                        std::path::Component::ParentDir => {
+                            parts.pop();
+                        }
+                        _ => {}
+                    }
+                }
+                let path = parts.join("/");
+                for candidate in [
+                    path.clone(),
+                    format!("{path}/tsconfig.json"),
+                    format!("{path}/tsconfig.build.json"),
+                ] {
+                    if tree.contains_key(&candidate) {
+                        queue.push(candidate);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    best.or(Some(nearest))
+}
+
+pub fn biome_config(tree: &Tree, root: &str) -> Option<String> {
+    ancestor_config(tree, root, &["biome.json", "biome.jsonc"])
+}
+
+pub fn typescript_linter(tree: &Tree, root: &str) -> &'static str {
+    if eslint_config(tree, root).is_none() && biome_config(tree, root).is_some() {
+        "biome"
+    } else {
+        "eslint"
     }
 }

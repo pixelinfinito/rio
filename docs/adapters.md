@@ -38,7 +38,7 @@ tools:
 | Language | Capability | Invocation and contract |
 | --- | --- | --- |
 | TypeScript/JavaScript | Typecheck | `tsc --noEmit --pretty false -p <root>`; 0 clean; 1/2 diagnostics |
-| TypeScript/JavaScript | Lint | ESLint JSON over changed files; 0 clean; 1 diagnostics; 2 configuration failure |
+| TypeScript/JavaScript | Lint | ESLint JSON over changed files; 0 clean; 1 diagnostics; 2 configuration failure. With `biome.json`/`biome.jsonc` and no ESLint config, `biome lint --reporter=json --max-diagnostics=none <files>`; 0 clean/warnings; 1 diagnostics |
 | TypeScript/JavaScript | Coverage | Vitest or Jest with LCOV output; failed tests retain usable coverage |
 | Python | Typecheck | Pyright JSON when configured/available, otherwise mypy without pretty output and with error codes; 0 clean; 1 diagnostics; mypy 2 is configuration failure |
 | Python | Lint | Ruff JSON over changed files; 0 clean; 1 diagnostics; 2 configuration failure |
@@ -90,3 +90,5 @@ A connection URL is suppressed only when **both** username and password are plac
 ## Verification
 
 Add offline recorded-output cases for every supported tool/version and snapshots for syntax/executability. Real-tool tests should confirm cwd isolation, dependency linking, baseline classification, failed-test coverage and process cleanup. Tests call the common `require_tool` helper: a missing tool prints its reason, and `RIO_REQUIRE_TOOLS=1` turns that skip into a failure. No fixture should require credentials or a live OSV service; OSV protocol tests use a local mock server.
+
+Biome 1.x and 2.x JSON diagnostics use byte spans and embedded source text; Rio converts them to repository locations and rules such as `lint/biome/correctness/noUnusedVariables`. Warnings remain findings even when Biome exits 0. Biome uses the same changed-file targeting, disposable trees and baseline classification as ESLint. When both configurations exist, ESLint takes precedence.

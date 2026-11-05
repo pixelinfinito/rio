@@ -751,3 +751,139 @@ fn renamed_typescript_source_can_have_an_unsupported_base_extension() {
         1
     );
 }
+
+#[test]
+fn vitest_worker_and_coverage_flags_match_installed_major() {
+    for version in ["1.1.0", "2.1.9", "3.2.4", "4.1.5"] {
+        let tool = ResolvedTool {
+            name: "vitest".into(),
+            path: "/bin/vitest".into(),
+            version: version.into(),
+            version_hint: None,
+        };
+        let command =
+            vitest_coverage_command(&tool, Path::new("/repo"), Path::new("/repo/coverage"));
+        let args: Vec<_> = command
+            .args
+            .iter()
+            .map(|arg| arg.to_str().unwrap())
+            .collect();
+        assert!(args.contains(&"--coverage.enabled"));
+        assert_eq!(
+            args.contains(&"--minWorkers=1"),
+            version.starts_with(['2', '3'])
+        );
+        assert_eq!(args.contains(&"--maxWorkers=2"), !version.starts_with('1'));
+        assert_eq!(args.contains(&"--coverage.all"), !version.starts_with('4'));
+        assert_eq!(command.env.is_empty(), !version.starts_with('1'));
+    }
+}
+
+#[test]
+fn vitest_discovers_scripts_vite_configs_and_root_workspaces() {
+    let mut tree: Tree = [
+        (
+            "package.json".into(),
+            entry(r#"{"devDependencies":{"vitest":"^4"}}"#),
+        ),
+        (
+            "packages/a/package.json".into(),
+            entry(r#"{"scripts":{"test:lib":"vitest"}}"#),
+        ),
+        (
+            "packages/a/vite.config.ts".into(),
+            entry("export default {test:{name:'a'}}"),
+        ),
+    ]
+    .into();
+    assert_eq!(typescript_test_runner(&tree, "packages/a"), Some("vitest"));
+    assert_eq!(
+        vitest_execution(&tree, "packages/a"),
+        (
+            "packages/a".into(),
+            vec!["--config".into(), "vite.config.ts".into()]
+        )
+    );
+    tree.insert(
+        "vitest.workspace.ts".into(),
+        entry("export default ['vitest.unit.config.ts']"),
+    );
+    assert_eq!(
+        vitest_execution(&tree, "packages/a"),
+        (".".into(), vec!["packages/a".into()])
+    );
+    tree.remove("vitest.workspace.ts");
+    tree.insert(
+        "vitest.config.ts".into(),
+        entry("export default {test:{projects:['packages/*']}}"),
+    );
+    let settings = typescript_coverage_settings(&tree, "packages/a", "vitest", "4.1.5").unwrap();
+    assert_eq!(settings.invocation_root.as_deref(), Some("."));
+    assert_eq!(
+        settings.runner_args,
+        ["--config", "vitest.config.ts", "packages/a"]
+    );
+    tree.remove("packages/a/vite.config.ts");
+    tree.insert("packages/a/package.json".into(), entry("{}"));
+    assert_eq!(typescript_test_runner(&tree, "packages/a"), Some("vitest"));
+}
+
+#[cfg(unix)]
+#[tokio::test]
+async fn vitest_workspace_coverage_runs_at_workspace_cwd_and_normalizes_lcov() {
+    use std::os::unix::fs::PermissionsExt;
+    let root = tempfile::tempdir().unwrap();
+    std::fs::create_dir_all(root.path().join("packages/a")).unwrap();
+    std::fs::write(
+        root.path().join("vitest.unit.config.ts"),
+        "export default {};",
+    )
+    .unwrap();
+    let executable = root.path().join("vitest");
+    std::fs::write(&executable, r#"#!/usr/bin/python3
+import sys,pathlib
+assert pathlib.Path('vitest.unit.config.ts').is_file(), 'workspace import resolved from wrong cwd'
+assert 'packages/a' in sys.argv
+assert '--minWorkers=1' not in sys.argv
+output=next(arg.split('=',1)[1] for arg in sys.argv if arg.startswith('--coverage.reportsDirectory='))
+pathlib.Path(output, 'lcov.info').write_text('SF:packages/a/index.ts\nDA:1,1\nend_of_record\n')
+"#).unwrap();
+    std::fs::set_permissions(&executable, std::fs::Permissions::from_mode(0o755)).unwrap();
+    let tree: Tree = [
+        (
+            "vitest.workspace.ts".into(),
+            entry("export default ['vitest.unit.config.ts']"),
+        ),
+        (
+            "packages/a/index.ts".into(),
+            entry("export const value = 1;"),
+        ),
+    ]
+    .into();
+    let settings = typescript_coverage_settings(&tree, "packages/a", "vitest", "4.1.5").unwrap();
+    let tool = ResolvedTool {
+        name: "vitest".into(),
+        path: executable,
+        version: "4.1.5".into(),
+        version_hint: None,
+    };
+    let run = run_coverage(
+        CoverageRequest {
+            tool: &tool,
+            settings: &settings,
+            tool_tree: root.path(),
+            worktree_root: None,
+            timeout: Duration::from_secs(10),
+            output_limit: 1024 * 1024,
+        },
+        &ProcessSupervisor::default(),
+        CancellationToken::new(),
+    )
+    .await;
+    assert!(
+        matches!(run.outcome, CheckOutcome::Passed { .. }),
+        "{:?}",
+        run.outcome
+    );
+    assert!(run.data["packages/a/index.ts"].executed.contains(&1));
+}

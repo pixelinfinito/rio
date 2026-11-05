@@ -153,7 +153,7 @@ parallelism = 2
 output_limit = "128MiB"
 ```
 
-`rio doctor --format json` shows effective values and their sources, project roots, tools, dependency compatibility, the shared review plan, cache writability and free space. It exits 1 for blocking configuration, profile, repository or cache problems; missing tools are warnings.
+`rio doctor --format json` shows effective values and their sources, the roots scheduled for the current diff, tools, dependency compatibility, the shared review plan, cache writability and free space. A clean diff schedules no root probes. Use `rio doctor --all-roots` to inspect every project; progress for each root is printed to stderr. It exits 1 for blocking configuration, profile, repository or cache problems; missing tools are warnings.
 
 ## Cache and supported Git states
 

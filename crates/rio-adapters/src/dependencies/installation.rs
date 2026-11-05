@@ -181,9 +181,36 @@ fn npm(worktree: &Path, installation_root: &str, installation: &mut Installation
 }
 
 fn pnpm(worktree: &Path, installation_root: &str, installation: &mut Installation) -> Result<()> {
+    let modules = read_metadata(
+        worktree,
+        &join(installation_root, "node_modules/.modules.yaml"),
+        installation,
+    )
+    .ok()
+    .map(|text| serde_yaml::from_str::<Value>(&text))
+    .transpose()?
+    .unwrap_or_default();
+    let max_length = modules["virtualStoreDirMaxLength"].as_u64().unwrap_or(120) as usize;
+    let store = modules["virtualStoreDir"]
+        .as_str()
+        .map(|path| {
+            let path = Path::new(path);
+            if path.is_absolute() {
+                path.to_path_buf()
+            } else {
+                worktree
+                    .join(join(installation_root, "node_modules"))
+                    .join(path)
+            }
+        })
+        .unwrap_or_else(|| worktree.join(join(installation_root, "node_modules/.pnpm")));
+    installation.omit_dev = modules["included"]["devDependencies"].as_bool() == Some(false);
     let text = read_metadata(
         worktree,
-        &join(installation_root, "node_modules/.pnpm/lock.yaml"),
+        &store
+            .join("lock.yaml")
+            .strip_prefix(worktree)?
+            .to_string_lossy(),
         installation,
     )?;
     let graph = parse_lockfile("pnpm-lock.yaml", &text)?;
@@ -208,18 +235,15 @@ fn pnpm(worktree: &Path, installation_root: &str, installation: &mut Installatio
                 installation.nodes.insert(key, entry);
             }
         } else {
-            let directory = key
-                .trim_start_matches('/')
-                .replace('/', "+")
-                .replace('(', "_")
-                .replace(')', "");
-            let package = worktree.join(join(
-                installation_root,
-                &format!(
-                    "node_modules/.pnpm/{directory}/node_modules/{name}",
-                    name = entry.name
-                ),
-            ));
+            let directory = super::pnpm::dep_path_to_filename(&key, max_length);
+            let package_path =
+                |directory: String| store.join(directory).join("node_modules").join(&entry.name);
+            let package = package_path(directory);
+            let package = if package.is_dir() {
+                package
+            } else {
+                package_path(super::pnpm::legacy_dep_path_to_filename(&key))
+            };
             if package.is_dir() {
                 let actual: Value =
                     serde_json::from_slice(&fs::read(package.join("package.json"))?)?;
@@ -235,14 +259,6 @@ fn pnpm(worktree: &Path, installation_root: &str, installation: &mut Installatio
                 installation.nodes.insert(key, installed);
             }
         }
-    }
-    if let Ok(text) = read_metadata(
-        worktree,
-        &join(installation_root, "node_modules/.modules.yaml"),
-        installation,
-    ) {
-        let modules: Value = serde_yaml::from_str(&text)?;
-        installation.omit_dev = modules["included"]["devDependencies"].as_bool() == Some(false);
     }
     Ok(())
 }

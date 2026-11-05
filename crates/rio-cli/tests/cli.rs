@@ -786,3 +786,101 @@ fn concurrent_cli_processes_publish_two_runs_and_share_the_baseline() {
         assert!(path.join("graph/base.json").is_file());
     }
 }
+
+#[test]
+fn doctor_limits_clean_and_changed_monorepos_and_all_roots_is_explicit() {
+    let temp = repository();
+    let root = temp.path();
+    for package in ["a", "b"] {
+        let directory = root.join("packages").join(package);
+        fs::create_dir_all(&directory).unwrap();
+        fs::write(
+            directory.join("package.json"),
+            format!(r#"{{"name":"{package}"}}"#),
+        )
+        .unwrap();
+        fs::write(directory.join("index.ts"), "export const value = 1;\n").unwrap();
+    }
+    git(root, &["add", "."]);
+    git(root, &["commit", "-m", "monorepo"]);
+    let output = rio(root)
+        .args(["doctor", "--format", "json"])
+        .assert()
+        .success()
+        .get_output()
+        .clone();
+    let document: Value = serde_json::from_slice(&output.stdout).unwrap();
+    assert!(document["plan"]["roots"].as_array().unwrap().is_empty());
+    assert!(!String::from_utf8_lossy(&output.stderr).contains("Checking root"));
+    let output = rio(root)
+        .args(["doctor", "--all-roots", "--format", "json"])
+        .assert()
+        .success()
+        .get_output()
+        .clone();
+    let document: Value = serde_json::from_slice(&output.stdout).unwrap();
+    assert_eq!(document["plan"]["roots"].as_array().unwrap().len(), 2);
+    for package in ["a", "b"] {
+        assert!(
+            String::from_utf8_lossy(&output.stderr)
+                .contains(&format!("Checking root packages/{package}"))
+        );
+    }
+    fs::write(
+        root.join("packages/a/index.ts"),
+        "export const value = 2;\n",
+    )
+    .unwrap();
+    let output = rio(root)
+        .args(["doctor", "--format", "json"])
+        .assert()
+        .success()
+        .get_output()
+        .clone();
+    let document: Value = serde_json::from_slice(&output.stdout).unwrap();
+    let roots = document["plan"]["roots"].as_array().unwrap();
+    assert_eq!(roots.len(), 1);
+    assert_eq!(roots[0]["project"]["path"], "packages/a");
+    assert!(String::from_utf8_lossy(&output.stderr).contains("Checking root packages/a"));
+}
+
+#[test]
+fn malformed_lockfile_reports_unverified_dependencies_without_internal_error() {
+    let temp = repository();
+    let root = temp.path();
+    fs::write(root.join("package.json"), "{}").unwrap();
+    fs::write(root.join("pnpm-lock.yaml"), "lockfileVersion: [broken").unwrap();
+    fs::write(root.join("index.ts"), "export const n = 1;\n").unwrap();
+    let output = rio(root)
+        .args(["doctor", "--format", "json"])
+        .assert()
+        .success()
+        .get_output()
+        .clone();
+    let document: Value = serde_json::from_slice(&output.stdout).unwrap();
+    assert!(document["blocking_problems"].as_array().unwrap().is_empty());
+    assert_eq!(document["plan"]["roots"][0]["head"]["state"], "unverified");
+    assert!(
+        document["plan"]["roots"][0]["head"]["hint"]
+            .as_str()
+            .unwrap()
+            .contains("cannot parse pnpm-lock.yaml")
+    );
+    let output = rio(root)
+        .args(["review", "--offline", "--format", "json"])
+        .output()
+        .unwrap();
+    assert_ne!(
+        output.status.code(),
+        Some(3),
+        "{}",
+        String::from_utf8_lossy(&output.stdout)
+    );
+    assert!(!String::from_utf8_lossy(&output.stdout).contains("internal_error"));
+    let report = json_report(&output);
+    assert!(report["checks"].as_array().unwrap().iter().any(|check| {
+        check["hint"]
+            .as_str()
+            .is_some_and(|hint| hint.contains("cannot parse pnpm-lock.yaml"))
+    }));
+}

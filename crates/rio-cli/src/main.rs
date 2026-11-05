@@ -3,7 +3,7 @@ use clap::{Args, Parser, Subcommand, ValueEnum};
 use config::MachineConfig;
 use rio_adapters::{ProcessSupervisor, ToolResolver};
 use rio_core::*;
-use rio_engine::{PlanRequest, ReviewRequest, plan_review, profile_excludes, review};
+use rio_engine::{PlanRequest, ReviewRequest, plan_review_with_progress, profile_excludes, review};
 use rio_git::{GixRepo, Repo, Selection, diff, select};
 use rio_profile::{ProfileLoader, ProfileSource};
 use serde_json::json;
@@ -101,6 +101,9 @@ enum ProfileCommand {
 }
 #[derive(Args)]
 struct DoctorArgs {
+    /// Inspect every detected project, including roots outside the current diff.
+    #[arg(long)]
+    all_roots: bool,
     #[command(flatten)]
     selection: SelectionArgs,
     #[arg(long, value_enum, default_value = "terminal")]
@@ -502,15 +505,15 @@ async fn run_doctor(args: DoctorArgs) -> u8 {
                     document["head"] = json!(repo.head_id().ok().flatten());
                     let result = async {
                         let mut changes = select(repo, args.selection.selection())?;
-                        // A clean repository still needs capability and readiness diagnostics.
+                        // Full-repository readiness probes are explicitly opt-in.
                         let mut delta = diff(&changes, &profile_excludes(&profile))?;
-                        if delta.files.is_empty() {
+                        if args.all_roots {
                             changes.base = rio_git::Tree::new();
                             delta = diff(&changes, &profile_excludes(&profile))?;
                         }
                         let working = repo.working_tree()?;
                         let resolver = ToolResolver::from_environment(repo.root().into());
-                        plan_review(
+                        plan_review_with_progress(
                             PlanRequest {
                                 worktree: repo.root(),
                                 working: &working,
@@ -521,6 +524,7 @@ async fn run_doctor(args: DoctorArgs) -> u8 {
                             },
                             &ProcessSupervisor::default(),
                             CancellationToken::new(),
+                            &|root| eprintln!("Checking root {root}..."),
                         )
                         .await
                     }

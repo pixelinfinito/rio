@@ -3,6 +3,7 @@ use super::{
     lockfiles::{node, strings},
 };
 use anyhow::{Context, Result};
+use serde::Deserialize;
 use serde_json::Value;
 
 fn split_key(key: &str) -> Option<(String, String)> {
@@ -41,7 +42,15 @@ fn target(graph: &mut DependencyGraph, importer: &str, name: &str, raw: &Value) 
 }
 
 pub(super) fn parse(content: &str) -> Result<DependencyGraph> {
-    let value: Value = serde_yaml::from_str(content)?;
+    // pnpm 11/12 prepend an environment/bootstrap lock; the second
+    // document is the project graph (pnpm lockfile yaml_documents.rs).
+    let mut documents = serde_yaml::Deserializer::from_str(content.trim_start_matches('\u{feff}'));
+    let first = documents.next().context("empty pnpm lockfile")?;
+    let first = Value::deserialize(first)?;
+    let value = match documents.next() {
+        Some(main) => Value::deserialize(main)?,
+        None => first,
+    };
     value
         .get("lockfileVersion")
         .context("pnpm lockfile has no version")?;
@@ -149,4 +158,72 @@ pub(super) fn parse(content: &str) -> Result<DependencyGraph> {
         }
     }
     Ok(graph)
+}
+/// pnpm 10.12.1 packages/dependency-path and pnpm 12.4.1 deps-path use
+/// this escaping and SHA-256 prefix (not Rust's platform-dependent hashing).
+pub(super) fn dep_path_to_filename(key: &str, max_length: usize) -> String {
+    use sha2::{Digest, Sha256};
+    let mut filename = key
+        .strip_prefix('/')
+        .unwrap_or(key)
+        .replace(['\\', '/', ':', '*', '?', '"', '<', '>', '|', '#'], "+");
+    if filename.contains('(') {
+        if filename.ends_with(')') {
+            filename.pop();
+        }
+        filename = filename.replace(")(", "_").replace(['(', ')'], "_");
+    }
+    if filename.len() > max_length
+        || (filename != filename.to_lowercase() && !filename.starts_with("file+"))
+    {
+        let hash: String = Sha256::digest(filename.as_bytes())
+            .iter()
+            .take(16)
+            .map(|byte| format!("{byte:02x}"))
+            .collect();
+        let prefix: String = filename
+            .chars()
+            .take(max_length.saturating_sub(33))
+            .collect();
+        return format!("{prefix}_{}", &hash[..32]);
+    }
+    filename
+}
+
+/// pnpm 8 (the historical tRPC evidence) used a 26-character base32 MD5
+/// suffix. Only try its exact path when the current SHA-256 path is absent.
+pub(super) fn legacy_dep_path_to_filename(key: &str) -> String {
+    use md5::{Digest, Md5};
+    let mut filename = key
+        .strip_prefix('/')
+        .unwrap_or(key)
+        .replace(['\\', '/', ':', '*', '?', '"', '<', '>', '|'], "+");
+    if filename.contains('(') {
+        if filename.ends_with(')') {
+            filename.pop();
+        }
+        filename = filename.replace(")(", "_").replace(['(', ')'], "_");
+    }
+    if filename.len() <= 120
+        && (filename == filename.to_lowercase() || filename.starts_with("file+"))
+    {
+        return filename;
+    }
+    let digest = Md5::digest(filename.as_bytes());
+    let alphabet = b"abcdefghijklmnopqrstuvwxyz234567";
+    let mut bits = 0u32;
+    let mut count = 0;
+    let mut hash = String::new();
+    for byte in digest {
+        bits = (bits << 8) | u32::from(byte);
+        count += 8;
+        while count >= 5 {
+            count -= 5;
+            hash.push(alphabet[((bits >> count) & 31) as usize] as char);
+        }
+    }
+    if count > 0 {
+        hash.push(alphabet[((bits << (5 - count)) & 31) as usize] as char);
+    }
+    format!("{}_{}", filename.chars().take(93).collect::<String>(), hash)
 }

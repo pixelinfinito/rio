@@ -773,3 +773,63 @@ fn unresolved_required_workspace_importer_is_never_ignored_by_filtered_install_s
             .any(|note| note.contains("packages/required"))
     );
 }
+
+#[test]
+fn malformed_lock_is_unverified_with_parse_hint() {
+    let mut tree = Tree::new();
+    put(&mut tree, "pnpm-lock.yaml", "lockfileVersion: [broken");
+    let lock = governing_lockfile(&tree, ".", None, Ecosystem::Npm)
+        .unwrap()
+        .unwrap();
+    assert!(!lock.graph.complete);
+    assert!(lock.graph.notes[0].contains("cannot parse pnpm-lock.yaml"));
+    let root = tempfile::tempdir().unwrap();
+    let result = check(
+        root.path(),
+        &tree,
+        &tree,
+        Some(&lock),
+        &Installation::default(),
+        false,
+    );
+    assert!(
+        matches!(result, Compatibility::Unverified { .. }),
+        "{result:?}"
+    );
+    assert!(result.hint().unwrap().contains("parse"));
+}
+#[test]
+fn pnpm_installed_lock_and_modules_resolve_recorded_store_names() {
+    let mut rows: Vec<serde_json::Value> =
+        serde_json::from_str(include_str!("fixtures/lockfiles/pnpm-store-names.json")).unwrap();
+    rows.push(json!({"key":"@vitejs/plugin-vue@5.2.4(vite@5.4.15(@types/node@22.14.1)(sass@1.87.0))(vue@packages/vue)", "directory":"@vitejs+plugin-vue@5.2.4_vite@5.4.15_@types+node@22.14.1_sass@1.87.0__vue@packages+vue", "max_length":120}));
+    for row in rows {
+        let root = tempfile::tempdir().unwrap();
+        let key = row["key"].as_str().unwrap();
+        let base = key.split('(').next().unwrap();
+        let (name, version) = base.rsplit_once('@').unwrap();
+        let lock = format!(
+            "lockfileVersion: '9.0'\nimporters: {{.: {{dependencies: {{'{name}': {{version: '{}'}}}}}}}}\npackages: {{'{base}': {{}}}}\nsnapshots: {{'{key}': {{}}}}\n",
+            &key[name.len() + 1..]
+        );
+        write(root.path(), "node_modules/.pnpm/lock.yaml", &lock);
+        write(
+            root.path(),
+            "node_modules/.modules.yaml",
+            &json!({"virtualStoreDirMaxLength":row["max_length"]}).to_string(),
+        );
+        package(
+            root.path(),
+            &format!(
+                "node_modules/.pnpm/{}/node_modules/{name}",
+                row["directory"].as_str().unwrap()
+            ),
+            name,
+            version,
+        );
+        let graph = rio_adapters::parse_lockfile("pnpm-lock.yaml", &lock).unwrap();
+        let installation = read_installation(root.path(), ".", &graph);
+        assert!(installation.complete, "{:?}", installation.notes);
+        assert!(installation.nodes.contains_key(key), "missing {key}");
+    }
+}

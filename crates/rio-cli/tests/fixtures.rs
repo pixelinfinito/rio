@@ -149,7 +149,7 @@ fn run_fixture(name: &str) {
             let result = command.output().unwrap();
             assert_eq!(
                 result.status.code(),
-                Some(if name == "monorepo-sample" { 0 } else { 1 }),
+                Some(1),
                 "{name} {mode} {format}: {}\n{}",
                 String::from_utf8_lossy(&result.stdout),
                 String::from_utf8_lossy(&result.stderr)
@@ -164,29 +164,17 @@ fn run_fixture(name: &str) {
                         .is_valid(&report)
                 );
                 if name == "monorepo-sample" {
-                    // The shared workspace source cannot be baselined through
-                    // installation links. Its unchanged caller is outside the
-                    // fallback hunks and remains available as pre-existing.
+                    // The shared workspace source is remapped into the
+                    // materialized base tree, so the dependent package's new
+                    // errors are classified against a real baseline.
                     let findings = report["findings"].as_array().unwrap();
                     assert!(!findings.is_empty());
                     for finding in findings {
-                        assert_eq!(finding["state"], "pre-existing");
+                        assert_eq!(finding["state"], "new");
                         assert_eq!(finding["location"]["path"], "packages/api/src/index.ts");
-                        assert!(
-                            finding["evidence"]
-                                .as_array()
-                                .unwrap()
-                                .iter()
-                                .any(|evidence| {
-                                    evidence
-                                        .as_str()
-                                        .unwrap()
-                                        .contains("outside changed hunks, baseline unavailable")
-                                })
-                        );
                     }
                     assert!(
-                        report["footer"]["notes"]
+                        !report["footer"]["notes"]
                             .as_array()
                             .unwrap()
                             .iter()
@@ -268,15 +256,11 @@ fn run_fixture(name: &str) {
                     assert!(text.contains("## Findings"));
                 }
                 if name == "monorepo-sample" {
-                    assert!(text.contains("0 unclassified: baseline_failed"));
-                    assert!(!text.contains("Argument of type"));
-                    if mode == "working" {
-                        let expanded = command.arg("--show-pre-existing").output().unwrap();
-                        assert_eq!(expanded.status.code(), Some(0));
-                        let text = String::from_utf8_lossy(&expanded.stdout);
-                        assert!(text.contains("pre-existing"));
-                        assert!(text.contains("Argument of type"));
-                    }
+                    // The dependent package's new error is classified against
+                    // the remapped base and shown by default.
+                    assert!(!text.contains("baseline_failed"));
+                    assert!(text.contains("Argument of type"));
+                    assert!(text.contains("new"));
                 }
             }
         }

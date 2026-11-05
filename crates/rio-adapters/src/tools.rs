@@ -185,7 +185,7 @@ impl ToolResolver {
             .find(|line| !line.trim().is_empty())
             .map(str::trim)
             .map(str::to_owned);
-        let (version, mut version_hint) = match (&result.termination, version) {
+        let (mut version, mut version_hint) = match (&result.termination, version) {
             (Termination::Exited { code: Some(0) }, Some(version)) if result.cleanup_confirmed => {
                 (redact(&version), None)
             }
@@ -198,6 +198,14 @@ impl ToolResolver {
                 )),
             ),
         };
+        // Package metadata is authoritative for JS CLIs; launcher output may
+        // include platform text or belong to a workspace shim.
+        if language == "typescript"
+            && let Some(installed) =
+                installed_package_version(&path, &self.repository_root.join(project_root), name)
+        {
+            version = installed;
+        }
         if !result.cleanup_confirmed {
             let preserved = probe_tree.keep();
             version_hint = Some(format!(
@@ -323,4 +331,26 @@ pub fn tool_contract(module: &str, capability: &str, tool: &str) -> Result<ToolS
         .into_iter()
         .find(|spec| spec.name == tool)
         .context("tool is not declared by the adapter")
+}
+
+fn installed_package_version(executable: &Path, project: &Path, name: &str) -> Option<String> {
+    let canonical = executable.canonicalize().ok();
+    let direct = canonical
+        .as_deref()
+        .into_iter()
+        .flat_map(Path::ancestors)
+        .map(|directory| directory.join("package.json"));
+    let local = project.ancestors().map(|directory| {
+        directory
+            .join("node_modules")
+            .join(name)
+            .join("package.json")
+    });
+    direct.chain(local).find_map(|manifest| {
+        let value: serde_json::Value =
+            serde_json::from_slice(&std::fs::read(manifest).ok()?).ok()?;
+        (value["name"].as_str() == Some(name))
+            .then(|| value["version"].as_str().map(str::to_owned))
+            .flatten()
+    })
 }

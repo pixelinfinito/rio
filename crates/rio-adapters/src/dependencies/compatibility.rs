@@ -110,9 +110,18 @@ pub fn governing_lockfile(
         for name in names {
             let path = join(directory, &name);
             if let Some(entry) = tree.get(&path) {
-                let text = std::str::from_utf8(&entry.content)?;
-                let mut graph =
-                    parse_lockfile(&name, text).with_context(|| format!("cannot parse {path}"))?;
+                let mut graph = std::str::from_utf8(&entry.content)
+                    .map_err(anyhow::Error::from)
+                    .and_then(|text| parse_lockfile(&name, text))
+                    .unwrap_or_else(|error| {
+                        let mut graph = DependencyGraph::new(if name == "pnpm-lock.yaml" {
+                            "pnpm"
+                        } else {
+                            "unknown"
+                        });
+                        graph.unverified(format!("cannot parse {path}: {error:#}"));
+                        graph
+                    });
                 if graph.format == "poetry"
                     && let Some(manifest) = tree.get(&join(directory, "pyproject.toml"))
                 {
@@ -376,6 +385,9 @@ fn compatibility(request: CompatibilityRequest<'_>, remap: bool) -> Compatibilit
         .extras
         .extend(request.installation.extras.clone());
     inputs.insert("platform".into(), format!("{environment:?}").into_bytes());
+    if !lockfile.graph.complete && lockfile.graph.importers.is_empty() {
+        return unknown(lockfile.graph.notes.join("; "), &inputs);
+    }
     let effective = match lockfile.graph.effective(&lockfile.importer, &environment) {
         Ok(effective) => effective,
         Err(error) => return unknown(format!("{}: {error}", lockfile.path), &inputs),

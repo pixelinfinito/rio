@@ -124,6 +124,15 @@ pub async fn plan_review(
     supervisor: &ProcessSupervisor,
     cancellation: CancellationToken,
 ) -> Result<ReviewPlan> {
+    plan_review_with_progress(request, supervisor, cancellation, &|_| {}).await
+}
+
+pub async fn plan_review_with_progress(
+    request: PlanRequest<'_>,
+    supervisor: &ProcessSupervisor,
+    cancellation: CancellationToken,
+    progress: &(dyn Fn(&str) + Sync),
+) -> Result<ReviewPlan> {
     let PlanRequest {
         worktree,
         working,
@@ -158,6 +167,7 @@ pub async fn plan_review(
         let project = &scheduled.project;
         let language = &project.language;
         let root = &project.path;
+        progress(root);
         let ecosystem = if language == "typescript" {
             Ecosystem::Npm
         } else {
@@ -274,7 +284,7 @@ pub async fn plan_review(
                     resolver.locate(name, root, language).is_some()
                 }),
                 CheckKind::Lint => Some(if language == "typescript" {
-                    "eslint"
+                    typescript_linter(&changes.head, root)
                 } else {
                     "ruff"
                 }),
@@ -332,6 +342,21 @@ pub async fn plan_review(
                     SkipReason::DependencyMismatch,
                     head.hint().unwrap_or("Installed dependencies do not match"),
                 ));
+            }
+            // Preserve source-lock parse failures even when an earlier readiness
+            // check (such as a missing tool) also prevents execution.
+            if let Some(outcome) = &mut skipped
+                && let Some(problem) = lock.as_ref().and_then(|lock| {
+                    lock.graph
+                        .notes
+                        .iter()
+                        .find(|note| note.starts_with("cannot parse "))
+                })
+            {
+                let hint = outcome.details_mut().hint.get_or_insert_default();
+                if !hint.contains(problem) {
+                    *hint = format!("{hint}; {problem}");
+                }
             }
             let (can_baseline, baseline_hint) = baseline_readiness(baseline, &head, &base);
             let dependency_hash = match (&head, &base) {
