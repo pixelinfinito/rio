@@ -122,6 +122,15 @@ pub async fn plan_review(
     supervisor: &ProcessSupervisor,
     cancellation: CancellationToken,
 ) -> Result<ReviewPlan> {
+    plan_review_with_progress(request, supervisor, cancellation, &|_| {}).await
+}
+
+pub async fn plan_review_with_progress(
+    request: PlanRequest<'_>,
+    supervisor: &ProcessSupervisor,
+    cancellation: CancellationToken,
+    progress: &(dyn Fn(&str) + Sync),
+) -> Result<ReviewPlan> {
     let PlanRequest {
         worktree,
         working,
@@ -151,6 +160,7 @@ pub async fn plan_review(
         let project = &scheduled.project;
         let language = &project.language;
         let root = &project.path;
+        progress(root);
         let ecosystem = if language == "typescript" {
             Ecosystem::Npm
         } else {
