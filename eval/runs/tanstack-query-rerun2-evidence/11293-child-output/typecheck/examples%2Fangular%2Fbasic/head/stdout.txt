@@ -1,0 +1,5 @@
+src/app/app.config.ts(5,8): error TS2307: Cannot find module '@tanstack/angular-query-experimental' or its corresponding type declarations.
+src/app/app.config.ts(6,30): error TS2307: Cannot find module '@tanstack/angular-query-experimental/devtools' or its corresponding type declarations.
+src/app/components/post.component.ts(8,29): error TS2307: Cannot find module '@tanstack/angular-query-experimental' or its corresponding type declarations.
+src/app/components/post.component.ts(26,15): error TS7006: Parameter 'context' implicitly has an 'any' type.
+src/app/components/posts.component.ts(7,42): error TS2307: Cannot find module '@tanstack/angular-query-experimental' or its corresponding type declarations.

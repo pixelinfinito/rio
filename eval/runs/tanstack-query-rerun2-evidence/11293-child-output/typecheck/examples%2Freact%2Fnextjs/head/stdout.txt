@@ -1,0 +1,14 @@
+src/components/Header.tsx(19,14): error TS2322: Type '{ children: string; jsx: true; }' is not assignable to type 'DetailedHTMLProps<StyleHTMLAttributes<HTMLStyleElement>, HTMLStyleElement>'.
+  Property 'jsx' does not exist on type 'DetailedHTMLProps<StyleHTMLAttributes<HTMLStyleElement>, HTMLStyleElement>'.
+src/components/InfoBox.tsx(5,12): error TS2322: Type '{ children: string; jsx: true; }' is not assignable to type 'DetailedHTMLProps<StyleHTMLAttributes<HTMLStyleElement>, HTMLStyleElement>'.
+  Property 'jsx' does not exist on type 'DetailedHTMLProps<StyleHTMLAttributes<HTMLStyleElement>, HTMLStyleElement>'.
+src/components/Layout.tsx(7,14): error TS2322: Type '{ children: string; jsx: true; global: true; }' is not assignable to type 'DetailedHTMLProps<StyleHTMLAttributes<HTMLStyleElement>, HTMLStyleElement>'.
+  Property 'jsx' does not exist on type 'DetailedHTMLProps<StyleHTMLAttributes<HTMLStyleElement>, HTMLStyleElement>'.
+src/components/PostList.tsx(13,21): error TS7006: Parameter 'post' implicitly has an 'any' type.
+src/components/PostList.tsx(13,27): error TS7006: Parameter 'index' implicitly has an 'any' type.
+src/components/PostList.tsx(27,14): error TS2322: Type '{ children: string; jsx: true; }' is not assignable to type 'DetailedHTMLProps<StyleHTMLAttributes<HTMLStyleElement>, HTMLStyleElement>'.
+  Property 'jsx' does not exist on type 'DetailedHTMLProps<StyleHTMLAttributes<HTMLStyleElement>, HTMLStyleElement>'.
+src/hooks/usePosts.ts(1,26): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+src/pages/_app.tsx(6,8): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+src/pages/_app.tsx(7,36): error TS2307: Cannot find module '@tanstack/react-query-devtools' or its corresponding type declarations.
+src/pages/index.tsx(2,46): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.

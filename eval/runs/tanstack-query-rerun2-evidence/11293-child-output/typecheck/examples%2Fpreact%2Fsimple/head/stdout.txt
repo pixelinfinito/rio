@@ -1,0 +1,1 @@
+src/index.tsx(6,8): error TS2307: Cannot find module '@tanstack/preact-query' or its corresponding type declarations.

@@ -1,0 +1,557 @@
+{
+  "aliases": [
+    {
+      "rio": "@angular+animations@20.3.18_@angular+core@20.3.18_@angular+compiler@20.3.18_rxjs@7.8.2_zone.js@0.15.0",
+      "actual": "@angular+animations@20.3.18_@angular+core@20.3.18_@angular+compiler@20.3.18_rxjs@7.8.2_zone.js@0.15.0_"
+    },
+    {
+      "rio": "@angular+common@20.3.18_@angular+core@20.3.18_@angular+compiler@20.3.18_rxjs@7.8.2_zone.js@0.15.0_rxjs@7.8.2",
+      "actual": "@angular+common@20.3.18_@angular+core@20.3.18_@angular+compiler@20.3.18_rxjs@7.8.2_zone.js@0.15.0__rxjs@7.8.2"
+    },
+    {
+      "rio": "@astrojs+node@9.5.5_astro@5.18.1_@types+node@22.19.15_@vercel+functions@2.2.13_db0@0.3.4_idb-keyval@6.2.2_ioredis@5.10.1_jiti@1.21.7_lightningcss@1.32.0_rollup@4.60.1_sass@1.90.0_terser@5.46.1_tsx@4.21.0_typescript@5.8.3_yaml@2.9.0",
+      "actual": "@astrojs+node@9.5.5_astro@5.18.1_@types+node@22.19.15_@vercel+functions@2.2.13_db0@0.3.4_idb-keyval@6.2.2_ioredis@5.10.1_jiti@1.21.7_lightningcss@1.32.0_rollup@4.60.1_sass@1.90.0_terser@5.46.1_tsx@4.21.0_typescript@5.8.3_yaml@2.9.0_"
+    },
+    {
+      "rio": "@babel+eslint-parser@7.28.6_@babel+core@7.29.7_eslint@9.39.4_jiti@2.7.0",
+      "actual": "@babel+eslint-parser@7.28.6_@babel+core@7.29.7_eslint@9.39.4_jiti@2.7.0_"
+    },
+    {
+      "rio": "@cspell+eslint-plugin@9.7.0_eslint@9.39.4_jiti@2.7.0",
+      "actual": "@cspell+eslint-plugin@9.7.0_eslint@9.39.4_jiti@2.7.0_"
+    },
+    {
+      "rio": "@csstools+css-calc@2.1.4_@csstools+css-parser-algorithms@3.0.5_@csstools+css-tokenizer@3.0.4_@csstools+css-tokenizer@3.0.4",
+      "actual": "@csstools+css-calc@2.1.4_@csstools+css-parser-algorithms@3.0.5_@csstools+css-tokenizer@3.0.4__@csstools+css-tokenizer@3.0.4"
+    },
+    {
+      "rio": "@csstools+css-calc@3.1.1_@csstools+css-parser-algorithms@4.0.0_@csstools+css-tokenizer@4.0.0_@csstools+css-tokenizer@4.0.0",
+      "actual": "@csstools+css-calc@3.1.1_@csstools+css-parser-algorithms@4.0.0_@csstools+css-tokenizer@4.0.0__@csstools+css-tokenizer@4.0.0"
+    },
+    {
+      "rio": "@csstools+css-color-parser@3.1.0_@csstools+css-parser-algorithms@3.0.5_@csstools+css-tokenizer@3.0.4_@csstools+css-tokenizer@3.0.4",
+      "actual": "@csstools+css-color-parser@3.1.0_@csstools+css-parser-algorithms@3.0.5_@csstools+css-tokenizer@3.0.4__@csstools+css-tokenizer@3.0.4"
+    },
+    {
+      "rio": "@csstools+css-color-parser@4.0.2_@csstools+css-parser-algorithms@4.0.0_@csstools+css-tokenizer@4.0.0_@csstools+css-tokenizer@4.0.0",
+      "actual": "@csstools+css-color-parser@4.0.2_@csstools+css-parser-algorithms@4.0.0_@csstools+css-tokenizer@4.0.0__@csstools+css-tokenizer@4.0.0"
+    },
+    {
+      "rio": "@eslint-community+eslint-utils@4.9.1_eslint@9.39.4_jiti@2.7.0",
+      "actual": "@eslint-community+eslint-utils@4.9.1_eslint@9.39.4_jiti@2.7.0_"
+    },
+    {
+      "rio": "@eslint-react+ast@2.13.0_eslint@9.39.4_jiti@2.7.0_typescript@6.0.3",
+      "actual": "@eslint-react+ast@2.13.0_eslint@9.39.4_jiti@2.7.0__typescript@6.0.3"
+    },
+    {
+      "rio": "@eslint-react+core@2.13.0_eslint@9.39.4_jiti@2.7.0_typescript@6.0.3",
+      "actual": "@eslint-react+core@2.13.0_eslint@9.39.4_jiti@2.7.0__typescript@6.0.3"
+    },
+    {
+      "rio": "@eslint-react+eslint-plugin@2.13.0_eslint@9.39.4_jiti@2.7.0_typescript@6.0.3",
+      "actual": "@eslint-react+eslint-plugin@2.13.0_eslint@9.39.4_jiti@2.7.0__typescript@6.0.3"
+    },
+    {
+      "rio": "@eslint-react+shared@2.13.0_eslint@9.39.4_jiti@2.7.0_typescript@6.0.3",
+      "actual": "@eslint-react+shared@2.13.0_eslint@9.39.4_jiti@2.7.0__typescript@6.0.3"
+    },
+    {
+      "rio": "@eslint-react+var@2.13.0_eslint@9.39.4_jiti@2.7.0_typescript@6.0.3",
+      "actual": "@eslint-react+var@2.13.0_eslint@9.39.4_jiti@2.7.0__typescript@6.0.3"
+    },
+    {
+      "rio": "@listr2+prompt-adapter-inquirer@3.0.1_@inquirer+prompts@7.8.2_@types+node@22.19.15_@types+node@22.19.15_listr2@9.0.1",
+      "actual": "@listr2+prompt-adapter-inquirer@3.0.1_@inquirer+prompts@7.8.2_@types+node@22.19.15__@types+node@22.19.15_listr2@9.0.1"
+    },
+    {
+      "rio": "@preact+preset-vite@2.10.5_@babel+core@7.29.7_preact@10.29.0_rollup@4.60.1_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0",
+      "actual": "@preact+preset-vite@2.10.5_@babel+core@7.29.7_preact@10.29.0_rollup@4.60.1_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_"
+    },
+    {
+      "rio": "@prefresh+vite@2.4.12_preact@10.29.0_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0",
+      "actual": "@prefresh+vite@2.4.12_preact@10.29.0_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_"
+    },
+    {
+      "rio": "@react-native-community+netinfo@11.5.2_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7_@types+react@19.2.14_react@19.2.4_react@19.2.4",
+      "actual": "@react-native-community+netinfo@11.5.2_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7__@types+react@19.2.14_react@19.2.4__react@19.2.4"
+    },
+    {
+      "rio": "@react-native+babel-plugin-codegen@0.76.9_@babel+preset-env@7.29.2_@babel+core@7.29.7",
+      "actual": "@react-native+babel-plugin-codegen@0.76.9_@babel+preset-env@7.29.2_@babel+core@7.29.7_"
+    },
+    {
+      "rio": "@react-native+babel-preset@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7",
+      "actual": "@react-native+babel-preset@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7_"
+    },
+    {
+      "rio": "@react-native+codegen@0.76.9_@babel+preset-env@7.29.2_@babel+core@7.29.7",
+      "actual": "@react-native+codegen@0.76.9_@babel+preset-env@7.29.2_@babel+core@7.29.7_"
+    },
+    {
+      "rio": "@react-native+community-cli-plugin@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7",
+      "actual": "@react-native+community-cli-plugin@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7_"
+    },
+    {
+      "rio": "@react-native+metro-babel-transformer@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7",
+      "actual": "@react-native+metro-babel-transformer@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7_"
+    },
+    {
+      "rio": "@react-native+virtualized-lists@0.76.9_@types+react@19.2.14_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7_@types+react@19.2.14_react@19.2.4_react@19.2.4",
+      "actual": "@react-native+virtualized-lists@0.76.9_@types+react@19.2.14_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7__@types+react@19.2.14_react@19.2.4__react@19.2.4"
+    },
+    {
+      "rio": "@react-navigation+native@6.1.18_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7_@types+react@19.2.14_react@19.2.4_react@19.2.4",
+      "actual": "@react-navigation+native@6.1.18_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7__@types+react@19.2.14_react@19.2.4__react@19.2.4"
+    },
+    {
+      "rio": "@size-limit+esbuild@12.0.1_size-limit@12.0.1_jiti@2.7.0",
+      "actual": "@size-limit+esbuild@12.0.1_size-limit@12.0.1_jiti@2.7.0_"
+    },
+    {
+      "rio": "@size-limit+file@12.0.1_size-limit@12.0.1_jiti@2.7.0",
+      "actual": "@size-limit+file@12.0.1_size-limit@12.0.1_jiti@2.7.0_"
+    },
+    {
+      "rio": "@size-limit+preset-small-lib@12.0.1_size-limit@12.0.1_jiti@2.7.0",
+      "actual": "@size-limit+preset-small-lib@12.0.1_size-limit@12.0.1_jiti@2.7.0_"
+    },
+    {
+      "rio": "@solidjs+testing-library@0.8.10_@solidjs+router@0.15.4_solid-js@1.9.12_solid-js@1.9.12",
+      "actual": "@solidjs+testing-library@0.8.10_@solidjs+router@0.15.4_solid-js@1.9.12__solid-js@1.9.12"
+    },
+    {
+      "rio": "@stylistic+eslint-plugin@5.10.0_eslint@9.39.4_jiti@2.7.0",
+      "actual": "@stylistic+eslint-plugin@5.10.0_eslint@9.39.4_jiti@2.7.0_"
+    },
+    {
+      "rio": "@sveltejs+vite-plugin-svelte@5.1.1_svelte@5.55.1_vite@6.4.1_@types+node@22.19.15_jiti@1.21.7_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0",
+      "actual": "@sveltejs+vite-plugin-svelte@5.1.1_svelte@5.55.1_vite@6.4.1_@types+node@22.19.15_jiti@1.21.7_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_"
+    },
+    {
+      "rio": "@sveltejs+vite-plugin-svelte@5.1.1_svelte@5.55.1_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0",
+      "actual": "@sveltejs+vite-plugin-svelte@5.1.1_svelte@5.55.1_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_"
+    },
+    {
+      "rio": "@tailwindcss+vite@4.2.2_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0",
+      "actual": "@tailwindcss+vite@4.2.2_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_"
+    },
+    {
+      "rio": "@tanstack+directive-functions-plugin@1.121.21_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0",
+      "actual": "@tanstack+directive-functions-plugin@1.121.21_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_"
+    },
+    {
+      "rio": "@tanstack+eslint-config@0.3.2_@typescript-eslint+utils@8.58.1_eslint@9.39.4_jiti@2.7.0_typescript@6.0.3_eslint@9.39.4_jiti@2.7.0_typescript@6.0.3",
+      "actual": "@tanstack+eslint-config@0.3.2_@typescript-eslint+utils@8.58.1_eslint@9.39.4_jiti@2.7.0__typescript@6.0.3__eslint@9.39.4_jiti@2.7.0__typescript@6.0.3"
+    },
+    {
+      "rio": "@tanstack+react-location@3.7.4_react-dom@19.2.4_react@19.2.4_react@19.2.4",
+      "actual": "@tanstack+react-location@3.7.4_react-dom@19.2.4_react@19.2.4__react@19.2.4"
+    },
+    {
+      "rio": "@tanstack+react-pacer@0.22.1_react-dom@19.2.4_react@19.2.4_react@19.2.4",
+      "actual": "@tanstack+react-pacer@0.22.1_react-dom@19.2.4_react@19.2.4__react@19.2.4"
+    },
+    {
+      "rio": "@tanstack+react-store@0.11.0_react-dom@19.2.4_react@19.2.4_react@19.2.4",
+      "actual": "@tanstack+react-store@0.11.0_react-dom@19.2.4_react@19.2.4__react@19.2.4"
+    },
+    {
+      "rio": "@tanstack+server-functions-plugin@1.121.21_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0",
+      "actual": "@tanstack+server-functions-plugin@1.121.21_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_"
+    },
+    {
+      "rio": "@tanstack+vite-config@0.4.3_@types+node@22.19.15_rollup@4.60.1_typescript@6.0.3_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0",
+      "actual": "@tanstack+vite-config@0.4.3_@types+node@22.19.15_rollup@4.60.1_typescript@6.0.3_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_"
+    },
+    {
+      "rio": "@testing-library+react-render-stream@2.0.2_@jest+globals@30.3.0_@types+react-dom@19.2.3_@types+react@19.2.14_@types+react@19.2.14_expect@30.3.0_react-dom@19.2.4_react@19.2.4_react@19.2.4",
+      "actual": "@testing-library+react-render-stream@2.0.2_@jest+globals@30.3.0_@types+react-dom@19.2.3_@types+react@19.2.14__@types+react@19.2.14_expect@30.3.0_react-dom@19.2.4_react@19.2.4__react@19.2.4"
+    },
+    {
+      "rio": "@testing-library+react@16.3.2_@testing-library+dom@10.4.1_@types+react-dom@19.2.3_@types+react@19.2.14_@types+react@19.2.14_react-dom@19.2.4_react@19.2.4_react@19.2.4",
+      "actual": "@testing-library+react@16.3.2_@testing-library+dom@10.4.1_@types+react-dom@19.2.3_@types+react@19.2.14__@types+react@19.2.14_react-dom@19.2.4_react@19.2.4__react@19.2.4"
+    },
+    {
+      "rio": "@typescript-eslint+eslint-plugin@8.58.1_@typescript-eslint+parser@8.58.1_eslint@9.39.4_jiti@2.7.0_typescript@5.8.3_eslint@9.39.4_jiti@2.7.0_typescript@5.8.3",
+      "actual": "@typescript-eslint+eslint-plugin@8.58.1_@typescript-eslint+parser@8.58.1_eslint@9.39.4_jiti@2.7.0__typescript@5.8.3__eslint@9.39.4_jiti@2.7.0__typescript@5.8.3"
+    },
+    {
+      "rio": "@typescript-eslint+eslint-plugin@8.58.1_@typescript-eslint+parser@8.58.1_eslint@9.39.4_jiti@2.7.0_typescript@6.0.3_eslint@9.39.4_jiti@2.7.0_typescript@6.0.3",
+      "actual": "@typescript-eslint+eslint-plugin@8.58.1_@typescript-eslint+parser@8.58.1_eslint@9.39.4_jiti@2.7.0__typescript@6.0.3__eslint@9.39.4_jiti@2.7.0__typescript@6.0.3"
+    },
+    {
+      "rio": "@typescript-eslint+parser@8.58.1_eslint@9.39.4_jiti@2.7.0_typescript@5.8.3",
+      "actual": "@typescript-eslint+parser@8.58.1_eslint@9.39.4_jiti@2.7.0__typescript@5.8.3"
+    },
+    {
+      "rio": "@typescript-eslint+parser@8.58.1_eslint@9.39.4_jiti@2.7.0_typescript@5.9.3",
+      "actual": "@typescript-eslint+parser@8.58.1_eslint@9.39.4_jiti@2.7.0__typescript@5.9.3"
+    },
+    {
+      "rio": "@typescript-eslint+parser@8.58.1_eslint@9.39.4_jiti@2.7.0_typescript@6.0.3",
+      "actual": "@typescript-eslint+parser@8.58.1_eslint@9.39.4_jiti@2.7.0__typescript@6.0.3"
+    },
+    {
+      "rio": "@typescript-eslint+parser@8.58.1_eslint@9.39.4_jiti@2.7.0_typescript@7.0.2",
+      "actual": "@typescript-eslint+parser@8.58.1_eslint@9.39.4_jiti@2.7.0__typescript@7.0.2"
+    },
+    {
+      "rio": "@typescript-eslint+rule-tester@8.58.1_eslint@9.39.4_jiti@2.7.0_typescript@5.9.3",
+      "actual": "@typescript-eslint+rule-tester@8.58.1_eslint@9.39.4_jiti@2.7.0__typescript@5.9.3"
+    },
+    {
+      "rio": "@typescript-eslint+type-utils@8.58.1_eslint@9.39.4_jiti@2.7.0_typescript@5.8.3",
+      "actual": "@typescript-eslint+type-utils@8.58.1_eslint@9.39.4_jiti@2.7.0__typescript@5.8.3"
+    },
+    {
+      "rio": "@typescript-eslint+type-utils@8.58.1_eslint@9.39.4_jiti@2.7.0_typescript@6.0.3",
+      "actual": "@typescript-eslint+type-utils@8.58.1_eslint@9.39.4_jiti@2.7.0__typescript@6.0.3"
+    },
+    {
+      "rio": "@typescript-eslint+utils@8.58.1_eslint@9.39.4_jiti@2.7.0_typescript@5.8.3",
+      "actual": "@typescript-eslint+utils@8.58.1_eslint@9.39.4_jiti@2.7.0__typescript@5.8.3"
+    },
+    {
+      "rio": "@typescript-eslint+utils@8.58.1_eslint@9.39.4_jiti@2.7.0_typescript@5.9.3",
+      "actual": "@typescript-eslint+utils@8.58.1_eslint@9.39.4_jiti@2.7.0__typescript@5.9.3"
+    },
+    {
+      "rio": "@typescript-eslint+utils@8.58.1_eslint@9.39.4_jiti@2.7.0_typescript@6.0.3",
+      "actual": "@typescript-eslint+utils@8.58.1_eslint@9.39.4_jiti@2.7.0__typescript@6.0.3"
+    },
+    {
+      "rio": "@urql+exchange-retry@1.3.2_@urql+core@5.2.0_graphql@16.13.2",
+      "actual": "@urql+exchange-retry@1.3.2_@urql+core@5.2.0_graphql@16.13.2_"
+    },
+    {
+      "rio": "@vitejs+plugin-basic-ssl@2.1.0_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0",
+      "actual": "@vitejs+plugin-basic-ssl@2.1.0_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_"
+    },
+    {
+      "rio": "@vitejs+plugin-react@4.7.0_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0",
+      "actual": "@vitejs+plugin-react@4.7.0_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_"
+    },
+    {
+      "rio": "@vitejs+plugin-vue@5.2.4_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_vue@3.5.31_typescript@5.8.3",
+      "actual": "@vitejs+plugin-vue@5.2.4_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0__vue@3.5.31_typescript@5.8.3_"
+    },
+    {
+      "rio": "@vitejs+plugin-vue@5.2.4_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_vue@3.5.31_typescript@7.0.2",
+      "actual": "@vitejs+plugin-vue@5.2.4_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0__vue@3.5.31_typescript@7.0.2_"
+    },
+    {
+      "rio": "@vitest+coverage-istanbul@4.0.6_vitest@4.1.2_@types+node@22.19.15_jsdom@27.4.0_msw@2.12.14_@types+node@22.19.15_typescript@6.0.3_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0",
+      "actual": "@vitest+coverage-istanbul@4.0.6_vitest@4.1.2_@types+node@22.19.15_jsdom@27.4.0_msw@2.12.14_@types+node@22.19.15_typescript@6.0.3__vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0__"
+    },
+    {
+      "rio": "@vitest+mocker@4.1.2_msw@2.12.14_@types+node@22.19.15_typescript@5.9.3_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0",
+      "actual": "@vitest+mocker@4.1.2_msw@2.12.14_@types+node@22.19.15_typescript@5.9.3__vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_"
+    },
+    {
+      "rio": "@vitest+mocker@4.1.2_msw@2.12.14_@types+node@22.19.15_typescript@6.0.3_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0",
+      "actual": "@vitest+mocker@4.1.2_msw@2.12.14_@types+node@22.19.15_typescript@6.0.3__vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_"
+    },
+    {
+      "rio": "@vue+composition-api@1.7.2_vue@3.5.31_typescript@7.0.2",
+      "actual": "@vue+composition-api@1.7.2_vue@3.5.31_typescript@7.0.2_"
+    },
+    {
+      "rio": "@vue+server-renderer@3.5.31_vue@3.5.31_typescript@5.8.3",
+      "actual": "@vue+server-renderer@3.5.31_vue@3.5.31_typescript@5.8.3_"
+    },
+    {
+      "rio": "@vue+server-renderer@3.5.31_vue@3.5.31_typescript@7.0.2",
+      "actual": "@vue+server-renderer@3.5.31_vue@3.5.31_typescript@7.0.2_"
+    },
+    {
+      "rio": "babel-preset-expo@12.0.12_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7",
+      "actual": "babel-preset-expo@12.0.12_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7_"
+    },
+    {
+      "rio": "eslint-compat-utils@0.5.1_eslint@9.39.4_jiti@2.7.0",
+      "actual": "eslint-compat-utils@0.5.1_eslint@9.39.4_jiti@2.7.0_"
+    },
+    {
+      "rio": "eslint-config-preact@2.0.0_eslint@9.39.4_jiti@2.7.0",
+      "actual": "eslint-config-preact@2.0.0_eslint@9.39.4_jiti@2.7.0_"
+    },
+    {
+      "rio": "eslint-plugin-compat@6.2.1_eslint@9.39.4_jiti@2.7.0",
+      "actual": "eslint-plugin-compat@6.2.1_eslint@9.39.4_jiti@2.7.0_"
+    },
+    {
+      "rio": "eslint-plugin-es-x@7.8.0_eslint@9.39.4_jiti@2.7.0",
+      "actual": "eslint-plugin-es-x@7.8.0_eslint@9.39.4_jiti@2.7.0_"
+    },
+    {
+      "rio": "eslint-plugin-import-x@4.16.2_@typescript-eslint+utils@8.58.1_eslint@9.39.4_jiti@2.7.0_typescript@6.0.3_eslint@9.39.4_jiti@2.7.0",
+      "actual": "eslint-plugin-import-x@4.16.2_@typescript-eslint+utils@8.58.1_eslint@9.39.4_jiti@2.7.0__typescript@6.0.3__eslint@9.39.4_jiti@2.7.0_"
+    },
+    {
+      "rio": "eslint-plugin-jsdoc@50.8.0_eslint@9.39.4_jiti@2.7.0",
+      "actual": "eslint-plugin-jsdoc@50.8.0_eslint@9.39.4_jiti@2.7.0_"
+    },
+    {
+      "rio": "eslint-plugin-n@17.24.0_eslint@9.39.4_jiti@2.7.0_typescript@6.0.3",
+      "actual": "eslint-plugin-n@17.24.0_eslint@9.39.4_jiti@2.7.0__typescript@6.0.3"
+    },
+    {
+      "rio": "eslint-plugin-react-dom@2.13.0_eslint@9.39.4_jiti@2.7.0_typescript@6.0.3",
+      "actual": "eslint-plugin-react-dom@2.13.0_eslint@9.39.4_jiti@2.7.0__typescript@6.0.3"
+    },
+    {
+      "rio": "eslint-plugin-react-hooks-extra@2.13.0_eslint@9.39.4_jiti@2.7.0_typescript@6.0.3",
+      "actual": "eslint-plugin-react-hooks-extra@2.13.0_eslint@9.39.4_jiti@2.7.0__typescript@6.0.3"
+    },
+    {
+      "rio": "eslint-plugin-react-hooks@5.2.0_eslint@9.39.4_jiti@2.7.0",
+      "actual": "eslint-plugin-react-hooks@5.2.0_eslint@9.39.4_jiti@2.7.0_"
+    },
+    {
+      "rio": "eslint-plugin-react-hooks@6.1.1_eslint@9.39.4_jiti@2.7.0",
+      "actual": "eslint-plugin-react-hooks@6.1.1_eslint@9.39.4_jiti@2.7.0_"
+    },
+    {
+      "rio": "eslint-plugin-react-naming-convention@2.13.0_eslint@9.39.4_jiti@2.7.0_typescript@6.0.3",
+      "actual": "eslint-plugin-react-naming-convention@2.13.0_eslint@9.39.4_jiti@2.7.0__typescript@6.0.3"
+    },
+    {
+      "rio": "eslint-plugin-react-rsc@2.13.0_eslint@9.39.4_jiti@2.7.0_typescript@6.0.3",
+      "actual": "eslint-plugin-react-rsc@2.13.0_eslint@9.39.4_jiti@2.7.0__typescript@6.0.3"
+    },
+    {
+      "rio": "eslint-plugin-react-web-api@2.13.0_eslint@9.39.4_jiti@2.7.0_typescript@6.0.3",
+      "actual": "eslint-plugin-react-web-api@2.13.0_eslint@9.39.4_jiti@2.7.0__typescript@6.0.3"
+    },
+    {
+      "rio": "eslint-plugin-react-x@2.13.0_eslint@9.39.4_jiti@2.7.0_typescript@6.0.3",
+      "actual": "eslint-plugin-react-x@2.13.0_eslint@9.39.4_jiti@2.7.0__typescript@6.0.3"
+    },
+    {
+      "rio": "eslint-plugin-react@7.37.5_eslint@9.39.4_jiti@2.7.0",
+      "actual": "eslint-plugin-react@7.37.5_eslint@9.39.4_jiti@2.7.0_"
+    },
+    {
+      "rio": "eslint-plugin-svelte@3.16.0_eslint@9.39.4_jiti@2.7.0_svelte@5.55.1",
+      "actual": "eslint-plugin-svelte@3.16.0_eslint@9.39.4_jiti@2.7.0__svelte@5.55.1"
+    },
+    {
+      "rio": "eslint-plugin-vue@10.8.0_@stylistic+eslint-plugin@5.10.0_eslint@9.39.4_jiti@2.7.0_@typescript-eslint+parser@8.58.1_eslint@9.39.4_jiti@2.7.0_typescript@5.8.3_eslint@9.39.4_jiti@2.7.0_vue-eslint-parser@10.4.0_eslint@9.39.4_jiti@2.7.0",
+      "actual": "eslint-plugin-vue@10.8.0_@stylistic+eslint-plugin@5.10.0_eslint@9.39.4_jiti@2.7.0___@typescript-eslint+parser@8.58.1_eslint@9.39.4_jiti@2.7.0__typescript@5.8.3__eslint@9.39.4_jiti@2.7.0__vue-eslint-parser@10.4.0_eslint@9.39.4_jiti@2.7.0__"
+    },
+    {
+      "rio": "eslint-plugin-vue@10.8.0_@stylistic+eslint-plugin@5.10.0_eslint@9.39.4_jiti@2.7.0_@typescript-eslint+parser@8.58.1_eslint@9.39.4_jiti@2.7.0_typescript@7.0.2_eslint@9.39.4_jiti@2.7.0_vue-eslint-parser@10.4.0_eslint@9.39.4_jiti@2.7.0",
+      "actual": "eslint-plugin-vue@10.8.0_@stylistic+eslint-plugin@5.10.0_eslint@9.39.4_jiti@2.7.0___@typescript-eslint+parser@8.58.1_eslint@9.39.4_jiti@2.7.0__typescript@7.0.2__eslint@9.39.4_jiti@2.7.0__vue-eslint-parser@10.4.0_eslint@9.39.4_jiti@2.7.0__"
+    },
+    {
+      "rio": "expo-font@13.0.4_expo@52.0.49_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7_graphql@16.13.2_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7_@types+react@19.2.14_react@19.2.4_react@19.2.4_react@19.2.4",
+      "actual": "expo-font@13.0.4_expo@52.0.49_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7__graphql@16.13.2_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7__@types+react@19.2.14_re_731363d87430ea4a0c7eecf43ab12a0f"
+    },
+    {
+      "rio": "expo-status-bar@2.2.3_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7_@types+react@19.2.14_react@19.2.4_react@19.2.4",
+      "actual": "expo-status-bar@2.2.3_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7__@types+react@19.2.14_react@19.2.4__react@19.2.4"
+    },
+    {
+      "rio": "expo@52.0.49_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7_graphql@16.13.2_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7_@types+react@19.2.14_react@19.2.4_react@19.2.4",
+      "actual": "expo@52.0.49_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7__graphql@16.13.2_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7__@types+react@19.2.14_react@19.2.4__react@19.2.4"
+    },
+    {
+      "rio": "is-immutable-type@5.0.1_eslint@9.39.4_jiti@2.7.0_typescript@6.0.3",
+      "actual": "is-immutable-type@5.0.1_eslint@9.39.4_jiti@2.7.0__typescript@6.0.3"
+    },
+    {
+      "rio": "jscodeshift@0.14.0_@babel+preset-env@7.29.2_@babel+core@7.29.7",
+      "actual": "jscodeshift@0.14.0_@babel+preset-env@7.29.2_@babel+core@7.29.7_"
+    },
+    {
+      "rio": "jscodeshift@17.3.0_@babel+preset-env@7.29.2_@babel+core@7.29.7",
+      "actual": "jscodeshift@17.3.0_@babel+preset-env@7.29.2_@babel+core@7.29.7_"
+    },
+    {
+      "rio": "next@14.2.35_react-dom@18.3.1_react@18.3.1_react@18.3.1_sass@1.90.0",
+      "actual": "next@14.2.35_react-dom@18.3.1_react@18.3.1__react@18.3.1_sass@1.90.0"
+    },
+    {
+      "rio": "next@15.5.14_react-dom@19.2.4_react@19.2.4_react@19.2.4_sass@1.90.0",
+      "actual": "next@15.5.14_react-dom@19.2.4_react@19.2.4__react@19.2.4_sass@1.90.0"
+    },
+    {
+      "rio": "next@16.2.2_react-dom@19.2.4_react@19.2.4_react@19.2.4_sass@1.90.0",
+      "actual": "next@16.2.2_react-dom@19.2.4_react@19.2.4__react@19.2.4_sass@1.90.0"
+    },
+    {
+      "rio": "nitropack@2.13.2_@vercel+functions@2.2.13_idb-keyval@6.2.2_rolldown@1.2.4_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_webpack@5.105.4_esbuild@0.27.4",
+      "actual": "nitropack@2.13.2_@vercel+functions@2.2.13_idb-keyval@6.2.2_rolldown@1.2.4_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0__webpack@5.105.4_esbuild@0.27.4_"
+    },
+    {
+      "rio": "react-hot-toast@2.6.0_react-dom@19.2.4_react@19.2.4_react@19.2.4",
+      "actual": "react-hot-toast@2.6.0_react-dom@19.2.4_react@19.2.4__react@19.2.4"
+    },
+    {
+      "rio": "react-intersection-observer@9.16.0_react-dom@19.2.4_react@19.2.4_react@19.2.4",
+      "actual": "react-intersection-observer@9.16.0_react-dom@19.2.4_react@19.2.4__react@19.2.4"
+    },
+    {
+      "rio": "react-native-edge-to-edge@1.6.0_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7_@types+react@19.2.14_react@19.2.4_react@19.2.4",
+      "actual": "react-native-edge-to-edge@1.6.0_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7__@types+react@19.2.14_react@19.2.4__react@19.2.4"
+    },
+    {
+      "rio": "react-native-gesture-handler@2.30.1_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7_@types+react@19.2.14_react@19.2.4_react@19.2.4",
+      "actual": "react-native-gesture-handler@2.30.1_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7__@types+react@19.2.14_react@19.2.4__react@19.2.4"
+    },
+    {
+      "rio": "react-native-is-edge-to-edge@1.1.7_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7_@types+react@19.2.14_react@19.2.4_react@19.2.4",
+      "actual": "react-native-is-edge-to-edge@1.1.7_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7__@types+react@19.2.14_react@19.2.4__react@19.2.4"
+    },
+    {
+      "rio": "react-native-is-edge-to-edge@1.3.1_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7_@types+react@19.2.14_react@19.2.4_react@19.2.4",
+      "actual": "react-native-is-edge-to-edge@1.3.1_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7__@types+react@19.2.14_react@19.2.4__react@19.2.4"
+    },
+    {
+      "rio": "react-native-reanimated@3.19.5_@babel+core@7.29.7_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7_@types+react@19.2.14_react@19.2.4_react@19.2.4",
+      "actual": "react-native-reanimated@3.19.5_@babel+core@7.29.7_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7__@types+react@19.2.14_react@19.2.4__react@19.2.4"
+    },
+    {
+      "rio": "react-native-safe-area-context@4.14.1_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7_@types+react@19.2.14_react@19.2.4_react@19.2.4",
+      "actual": "react-native-safe-area-context@4.14.1_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7__@types+react@19.2.14_react@19.2.4__react@19.2.4"
+    },
+    {
+      "rio": "react-native-screens@4.24.0_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7_@types+react@19.2.14_react@19.2.4_react@19.2.4",
+      "actual": "react-native-screens@4.24.0_react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7__@types+react@19.2.14_react@19.2.4__react@19.2.4"
+    },
+    {
+      "rio": "react-native-web@0.19.13_react-dom@19.2.4_react@19.2.4_react@19.2.4",
+      "actual": "react-native-web@0.19.13_react-dom@19.2.4_react@19.2.4__react@19.2.4"
+    },
+    {
+      "rio": "react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7_@types+react@19.2.14_react@19.2.4",
+      "actual": "react-native@0.76.9_@babel+core@7.29.7_@babel+preset-env@7.29.2_@babel+core@7.29.7__@types+react@19.2.14_react@19.2.4"
+    },
+    {
+      "rio": "react-router-dom@6.30.3_react-dom@19.2.4_react@19.2.4_react@19.2.4",
+      "actual": "react-router-dom@6.30.3_react-dom@19.2.4_react@19.2.4__react@19.2.4"
+    },
+    {
+      "rio": "rooks@8.4.0_react-dom@19.2.4_react@19.2.4_react@19.2.4",
+      "actual": "rooks@8.4.0_react-dom@19.2.4_react@19.2.4__react@19.2.4"
+    },
+    {
+      "rio": "terser-webpack-plugin@5.4.0_esbuild@0.27.4_webpack@5.105.4_esbuild@0.27.4",
+      "actual": "terser-webpack-plugin@5.4.0_esbuild@0.27.4_webpack@5.105.4_esbuild@0.27.4_"
+    },
+    {
+      "rio": "typedoc-plugin-frontmatter@1.3.0_typedoc-plugin-markdown@4.9.0_typedoc@0.28.14_typescript@6.0.3",
+      "actual": "typedoc-plugin-frontmatter@1.3.0_typedoc-plugin-markdown@4.9.0_typedoc@0.28.14_typescript@6.0.3__"
+    },
+    {
+      "rio": "typedoc-plugin-markdown@4.9.0_typedoc@0.28.14_typescript@6.0.3",
+      "actual": "typedoc-plugin-markdown@4.9.0_typedoc@0.28.14_typescript@6.0.3_"
+    },
+    {
+      "rio": "typescript-eslint@8.58.1_eslint@9.39.4_jiti@2.7.0_typescript@5.8.3",
+      "actual": "typescript-eslint@8.58.1_eslint@9.39.4_jiti@2.7.0__typescript@5.8.3"
+    },
+    {
+      "rio": "typescript-eslint@8.58.1_eslint@9.39.4_jiti@2.7.0_typescript@6.0.3",
+      "actual": "typescript-eslint@8.58.1_eslint@9.39.4_jiti@2.7.0__typescript@6.0.3"
+    },
+    {
+      "rio": "unimport@6.0.2_esbuild@0.27.4_rolldown@1.2.4_rollup@4.60.1_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_webpack@5.105.4_esbuild@0.27.4",
+      "actual": "unimport@6.0.2_esbuild@0.27.4_rolldown@1.2.4_rollup@4.60.1_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0__webpack@5.105.4_esbuild@0.27.4_"
+    },
+    {
+      "rio": "unplugin-solid@2.0.0_@testing-library+jest-dom@6.9.1_esbuild@0.27.4_rolldown@1.2.4_rollup@4.60.1_solid-js@1.9.12_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_webpack@5.105.4_esbuild@0.27.4",
+      "actual": "unplugin-solid@2.0.0_@testing-library+jest-dom@6.9.1_esbuild@0.27.4_rolldown@1.2.4_rollup@4.60.1_solid-js@1.9.12_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml_db3164f41d4f8a56d5c88a930e880a30"
+    },
+    {
+      "rio": "unplugin@3.3.0_esbuild@0.27.4_rolldown@1.2.4_rollup@4.60.1_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_webpack@5.105.4_esbuild@0.27.4",
+      "actual": "unplugin@3.3.0_esbuild@0.27.4_rolldown@1.2.4_rollup@4.60.1_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0__webpack@5.105.4_esbuild@0.27.4_"
+    },
+    {
+      "rio": "vinxi@0.5.11_@types+node@22.19.15_@vercel+functions@2.2.13_db0@0.3.4_idb-keyval@6.2.2_ioredis@5.10.1_jiti@2.7.0_lightningcss@1.32.0_rolldown@1.2.4_sass@1.90.0_terser@5.46.1_tsx@4.21.0_webpack@5.105.4_esbuild@0.27.4_yaml@2.9.0",
+      "actual": "vinxi@0.5.11_@types+node@22.19.15_@vercel+functions@2.2.13_db0@0.3.4_idb-keyval@6.2.2_ioredis@5.10.1_jiti@2.7.0_lightningcss@1.32.0_rolldown@1.2.4_sass@1.90.0_terser@5.46.1_tsx@4.21.0_webpack@5.105.4_esbuild@0.27.4__yaml@2.9.0"
+    },
+    {
+      "rio": "vite-plugin-dts@4.2.3_@types+node@22.19.15_rollup@4.60.1_typescript@6.0.3_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0",
+      "actual": "vite-plugin-dts@4.2.3_@types+node@22.19.15_rollup@4.60.1_typescript@6.0.3_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_"
+    },
+    {
+      "rio": "vite-plugin-externalize-deps@0.10.0_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0",
+      "actual": "vite-plugin-externalize-deps@0.10.0_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_"
+    },
+    {
+      "rio": "vite-plugin-externalize-deps@0.9.0_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0",
+      "actual": "vite-plugin-externalize-deps@0.9.0_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_"
+    },
+    {
+      "rio": "vite-plugin-solid@2.11.11_@testing-library+jest-dom@6.9.1_solid-js@1.9.12_vite@6.4.1_@types+node@22.19.15_jiti@1.21.7_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0",
+      "actual": "vite-plugin-solid@2.11.11_@testing-library+jest-dom@6.9.1_solid-js@1.9.12_vite@6.4.1_@types+node@22.19.15_jiti@1.21.7_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_"
+    },
+    {
+      "rio": "vite-plugin-solid@2.11.11_@testing-library+jest-dom@6.9.1_solid-js@1.9.12_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0",
+      "actual": "vite-plugin-solid@2.11.11_@testing-library+jest-dom@6.9.1_solid-js@1.9.12_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_"
+    },
+    {
+      "rio": "vite-prerender-plugin@0.5.13_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0",
+      "actual": "vite-prerender-plugin@0.5.13_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_"
+    },
+    {
+      "rio": "vite-tsconfig-paths@5.1.4_typescript@6.0.3_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0",
+      "actual": "vite-tsconfig-paths@5.1.4_typescript@6.0.3_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_"
+    },
+    {
+      "rio": "vitefu@1.1.3_vite@6.4.1_@types+node@22.19.15_jiti@1.21.7_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0",
+      "actual": "vitefu@1.1.3_vite@6.4.1_@types+node@22.19.15_jiti@1.21.7_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_"
+    },
+    {
+      "rio": "vitefu@1.1.3_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0",
+      "actual": "vitefu@1.1.3_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_"
+    },
+    {
+      "rio": "vitest@4.1.2_@types+node@22.19.15_jsdom@27.4.0_msw@2.12.14_@types+node@22.19.15_typescript@5.9.3_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0",
+      "actual": "vitest@4.1.2_@types+node@22.19.15_jsdom@27.4.0_msw@2.12.14_@types+node@22.19.15_typescript@5.9.3__vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_"
+    },
+    {
+      "rio": "vitest@4.1.2_@types+node@22.19.15_jsdom@27.4.0_msw@2.12.14_@types+node@22.19.15_typescript@6.0.3_vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0",
+      "actual": "vitest@4.1.2_@types+node@22.19.15_jsdom@27.4.0_msw@2.12.14_@types+node@22.19.15_typescript@6.0.3__vite@6.4.1_@types+node@22.19.15_jiti@2.7.0_lightningcss@1.32.0_sass@1.90.0_terser@5.46.1_tsx@4.21.0_yaml@2.9.0_"
+    },
+    {
+      "rio": "vue-demi@0.14.10_@vue+composition-api@1.7.2_vue@3.5.31_typescript@7.0.2_vue@3.5.31_typescript@7.0.2",
+      "actual": "vue-demi@0.14.10_@vue+composition-api@1.7.2_vue@3.5.31_typescript@7.0.2___vue@3.5.31_typescript@7.0.2_"
+    },
+    {
+      "rio": "vue-eslint-parser@10.4.0_eslint@9.39.4_jiti@2.7.0",
+      "actual": "vue-eslint-parser@10.4.0_eslint@9.39.4_jiti@2.7.0_"
+    }
+  ],
+  "unrepresentable_keys": [
+    "@angular/build@20.3.22(@angular/compiler-cli@20.3.18(@angular/compiler@20.3.18)(typescript@5.8.3))(@angular/compiler@20.3.18)(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@20.3.18(@angular/animations@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@types/node@22.19.15)(chokidar@5.0.0)(jiti@2.7.0)(lightningcss@1.32.0)(postcss@8.5.8)(tailwindcss@4.2.2)(terser@5.46.1)(tslib@2.8.1)(tsx@4.21.0)(typescript@5.8.3)(vitest@4.1.2(@types/node@22.19.15)(jsdom@27.4.0)(msw@2.12.14(@types/node@22.19.15)(typescript@6.0.3))(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(yaml@2.9.0)",
+    "@angular/forms@20.3.18(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@20.3.18(@angular/animations@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(rxjs@7.8.2)",
+    "@angular/platform-browser@20.3.18(@angular/animations@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))",
+    "@angular/router@20.3.18(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@20.3.18(@angular/animations@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.15.0)))(rxjs@7.8.2)",
+    "@astrojs/tailwind@6.0.2(astro@5.18.1(@types/node@22.19.15)(@vercel/functions@2.2.13)(db0@0.3.4)(idb-keyval@6.2.2)(ioredis@5.10.1)(jiti@1.21.7)(lightningcss@1.32.0)(rollup@4.60.1)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(typescript@5.8.3)(yaml@2.9.0))(tailwindcss@3.4.19(tsx@4.21.0)(yaml@2.9.0))",
+    "@astrojs/vercel@8.2.11(@sveltejs/kit@2.57.1(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.55.1)(vite@6.4.1(@types/node@22.19.15)(jiti@1.21.7)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(svelte@5.55.1)(typescript@5.8.3)(vite@6.4.1(@types/node@22.19.15)(jiti@1.21.7)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(astro@5.18.1(@types/node@22.19.15)(@vercel/functions@2.2.13)(db0@0.3.4)(idb-keyval@6.2.2)(ioredis@5.10.1)(jiti@1.21.7)(lightningcss@1.32.0)(rollup@4.60.1)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(typescript@5.8.3)(yaml@2.9.0))(next@16.2.2(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(sass@1.90.0))(react@19.2.4)(rollup@4.60.1)(svelte@5.55.1)(vue@3.5.31(typescript@5.8.3))",
+    "@react-navigation/elements@1.3.31(@react-navigation/native@6.1.18(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native-safe-area-context@4.14.1(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(@types/react@19.2.14)(react@19.2.4))(react@19.2.4)",
+    "@react-navigation/stack@6.4.1(@react-navigation/native@6.1.18(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native-gesture-handler@2.30.1(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native-safe-area-context@4.14.1(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native-screens@4.24.0(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(@types/react@19.2.14)(react@19.2.4))(react@19.2.4)",
+    "@solidjs/start@1.3.2(@testing-library/jest-dom@6.9.1)(solid-js@1.9.12)(vinxi@0.5.11(@types/node@22.19.15)(@vercel/functions@2.2.13)(db0@0.3.4)(idb-keyval@6.2.2)(ioredis@5.10.1)(jiti@2.7.0)(lightningcss@1.32.0)(rolldown@1.2.4)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(webpack@5.105.4(esbuild@0.27.4))(yaml@2.9.0))(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))",
+    "@sveltejs/adapter-auto@6.1.1(@sveltejs/kit@2.57.1(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.55.1)(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(svelte@5.55.1)(typescript@5.8.3)(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))",
+    "@sveltejs/kit@2.57.1(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.55.1)(vite@6.4.1(@types/node@22.19.15)(jiti@1.21.7)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(svelte@5.55.1)(typescript@5.8.3)(vite@6.4.1(@types/node@22.19.15)(jiti@1.21.7)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))",
+    "@sveltejs/kit@2.57.1(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.55.1)(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(svelte@5.55.1)(typescript@5.8.3)(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))",
+    "@sveltejs/vite-plugin-svelte-inspector@4.0.1(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.55.1)(vite@6.4.1(@types/node@22.19.15)(jiti@1.21.7)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(svelte@5.55.1)(vite@6.4.1(@types/node@22.19.15)(jiti@1.21.7)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))",
+    "@sveltejs/vite-plugin-svelte-inspector@4.0.1(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.55.1)(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(svelte@5.55.1)(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))",
+    "@testing-library/svelte@5.3.1(svelte@5.55.1)(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))(vitest@4.1.2(@types/node@22.19.15)(jsdom@27.4.0)(msw@2.12.14(@types/node@22.19.15)(typescript@5.9.3))(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))",
+    "@vercel/analytics@1.6.1(@sveltejs/kit@2.57.1(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.55.1)(vite@6.4.1(@types/node@22.19.15)(jiti@1.21.7)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(svelte@5.55.1)(typescript@5.8.3)(vite@6.4.1(@types/node@22.19.15)(jiti@1.21.7)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))(next@16.2.2(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(sass@1.90.0))(react@19.2.4)(svelte@5.55.1)(vue@3.5.31(typescript@5.8.3))",
+    "@vinxi/plugin-directives@0.5.1(vinxi@0.5.11(@types/node@22.19.15)(@vercel/functions@2.2.13)(db0@0.3.4)(idb-keyval@6.2.2)(ioredis@5.10.1)(jiti@2.7.0)(lightningcss@1.32.0)(rolldown@1.2.4)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(webpack@5.105.4(esbuild@0.27.4))(yaml@2.9.0))",
+    "@vinxi/server-components@0.5.1(vinxi@0.5.11(@types/node@22.19.15)(@vercel/functions@2.2.13)(db0@0.3.4)(idb-keyval@6.2.2)(ioredis@5.10.1)(jiti@2.7.0)(lightningcss@1.32.0)(rolldown@1.2.4)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(webpack@5.105.4(esbuild@0.27.4))(yaml@2.9.0))",
+    "@vitest/eslint-plugin@1.6.14(@typescript-eslint/eslint-plugin@8.58.1(@typescript-eslint/parser@8.58.1(eslint@9.39.4(jiti@2.7.0))(typescript@6.0.3))(eslint@9.39.4(jiti@2.7.0))(typescript@6.0.3))(eslint@9.39.4(jiti@2.7.0))(typescript@6.0.3)(vitest@4.1.2(@types/node@22.19.15)(jsdom@27.4.0)(msw@2.12.14(@types/node@22.19.15)(typescript@6.0.3))(vite@6.4.1(@types/node@22.19.15)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)))",
+    "expo-asset@11.0.5(expo@52.0.49(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(graphql@16.13.2)(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(@types/react@19.2.14)(react@19.2.4))(react@19.2.4)",
+    "expo-constants@17.0.8(expo@52.0.49(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(graphql@16.13.2)(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(@types/react@19.2.14)(react@19.2.4))",
+    "expo-constants@17.1.8(expo@52.0.49(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(graphql@16.13.2)(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(@types/react@19.2.14)(react@19.2.4))",
+    "expo-file-system@18.0.12(expo@52.0.49(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(graphql@16.13.2)(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(@types/react@19.2.14)(react@19.2.4))",
+    "expo-keep-awake@14.0.3(expo@52.0.49(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(graphql@16.13.2)(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react@19.2.4)",
+    "react-native-paper@5.15.0(react-native-safe-area-context@4.14.1(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.2(@babel/core@7.29.7))(@types/react@19.2.14)(react@19.2.4))(react@19.2.4)"
+  ],
+  "virtual_store_dir_max_length": 250,
+  "tsc": "node_modules/typescript/bin/tsc"
+}

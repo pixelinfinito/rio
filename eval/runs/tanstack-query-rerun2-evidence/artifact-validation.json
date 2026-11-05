@@ -1,0 +1,37 @@
+{
+  "staged_files_checked": 786,
+  "total_bytes": 4322521,
+  "largest_files": [
+    {
+      "path": "eval/runs/tanstack-query-11293-rerun2-attempt2/record.json",
+      "bytes": 898096
+    },
+    {
+      "path": "eval/runs/tanstack-query-11293-rerun2-attempt2/report.json",
+      "bytes": 842508
+    },
+    {
+      "path": "eval/runs/tanstack-query-11293-rerun2-attempt2/verdicts.json",
+      "bytes": 229957
+    },
+    {
+      "path": "eval/runs/tanstack-query-11293-rerun2-attempt2/commands.json",
+      "bytes": 131098
+    },
+    {
+      "path": "eval/runs/tanstack-query-rerun2-evidence/11293-child-output-manifest.json",
+      "bytes": 92119
+    }
+  ],
+  "only_eval_runs": true,
+  "no_dependency_trees_or_git_clones": true,
+  "files_over_5mb": [],
+  "authored_whitespace_exit": 0,
+  "raw_whitespace_exit": 2,
+  "raw_whitespace_note": "Any whitespace warnings in preserved raw output retain original bytes; see raw-whitespace-check.txt.",
+  "validated_records": 5,
+  "capture_failures_without_record": 1,
+  "binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+  "reviewer": "sub-agent rerun2-tanstack-query (automated)",
+  "verdict_source": "automated"
+}

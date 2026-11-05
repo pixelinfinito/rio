@@ -1,0 +1,166 @@
+{
+  "binary_version": "rio 0.1.0 x86_64-unknown-linux-gnu f6e4f87e4c65",
+  "binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+  "date_utc": "2026-11-05T10:56:46.737070+00:00",
+  "environment": {
+    "PATH": "/dev/shm/rio-tanstack-tools/node-v24.16.0-linux-x64/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg02i4dIb:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+    "COREPACK_HOME": "/dev/shm/rio-tanstack-tools/corepack-cache",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "TMPDIR": "/dev/shm/rio-tanstack-work"
+  },
+  "doctor_limit_seconds": 120,
+  "command_timeout_seconds": 900,
+  "cases": [
+    {
+      "case": "11293",
+      "previous": "tanstack-query-11293",
+      "base_sha": "d09cf1d605c81238934f6f91a4982f5629065732",
+      "head_sha": "370ed5845530a928fcb5374162de67326724a7d1",
+      "argv": [
+        "python3",
+        "eval/runner.py",
+        "--repository",
+        "TanStack/query",
+        "--pr",
+        "11293",
+        "--base",
+        "d09cf1d605c81238934f6f91a4982f5629065732",
+        "--head",
+        "370ed5845530a928fcb5374162de67326724a7d1",
+        "--languages",
+        "typescript",
+        "--rio",
+        "/home/ubuntu/rio/target/release/rio",
+        "--out",
+        "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11293-rerun2",
+        "--install-plan",
+        "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11293/install-plan.json",
+        "--timeout",
+        "900"
+      ],
+      "git_environment": {
+        "GIT_CONFIG_COUNT": "1",
+        "GIT_CONFIG_KEY_0": "url./dev/shm/rio-tanstack-work/maintainer-mirror.insteadOf",
+        "GIT_CONFIG_VALUE_0": "https://github.com/TanStack/query.git"
+      },
+      "install_plan_sha256": "db5dcae52ff771796bd5c9528337cfeeed7fecf67bf3cd11dc385e70c5b478a3",
+      "helper_sha256": "7b194844ce2a04ef67b796c54b6eee72174ed30251760748be94266c40e1ac36",
+      "doctor_interruptions": [],
+      "started_utc": "2026-11-05T10:56:48.688574+00:00",
+      "exit_code": 1,
+      "elapsed_seconds": 1445.4073383740615,
+      "finished_utc": "2026-11-05T11:20:54.096825+00:00"
+    },
+    {
+      "case": "11392",
+      "previous": "tanstack-query-11392-attempt3",
+      "base_sha": "fc51e96045d729a98bc784e1bb11ea16d7d7a4c1",
+      "head_sha": "0a73db4c255eb44e1889696f8d5a9ddf57934229",
+      "argv": [
+        "python3",
+        "eval/runner.py",
+        "--repository",
+        "TanStack/query",
+        "--pr",
+        "11392",
+        "--base",
+        "fc51e96045d729a98bc784e1bb11ea16d7d7a4c1",
+        "--head",
+        "0a73db4c255eb44e1889696f8d5a9ddf57934229",
+        "--languages",
+        "typescript",
+        "--rio",
+        "/home/ubuntu/rio/target/release/rio",
+        "--out",
+        "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-rerun2",
+        "--install-plan",
+        "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11392-attempt3/install-plan.json",
+        "--timeout",
+        "900"
+      ],
+      "git_environment": {
+        "GIT_CONFIG_COUNT": "1",
+        "GIT_CONFIG_KEY_0": "url./dev/shm/rio-tanstack-work/negative-head.insteadOf",
+        "GIT_CONFIG_VALUE_0": "https://github.com/TanStack/query.git"
+      },
+      "install_plan_sha256": "db5dcae52ff771796bd5c9528337cfeeed7fecf67bf3cd11dc385e70c5b478a3",
+      "helper_sha256": "7b194844ce2a04ef67b796c54b6eee72174ed30251760748be94266c40e1ac36",
+      "doctor_interruptions": [],
+      "started_utc": "2026-11-05T11:20:55.484247+00:00",
+      "exit_code": 1,
+      "elapsed_seconds": 217.18338277295697,
+      "finished_utc": "2026-11-05T11:24:32.668321+00:00"
+    },
+    {
+      "case": "11522-seeded",
+      "previous": "tanstack-query-11522-seeded-attempt2",
+      "base_sha": "8a28904aaccb6bc26398b751400a181c0f6d7f0e",
+      "head_sha": "b32480cc923994ee2c859203a47b78a173e6bf20",
+      "argv": [
+        "python3",
+        "eval/runner.py",
+        "--repository",
+        "TanStack/query",
+        "--pr",
+        "11522",
+        "--base",
+        "8a28904aaccb6bc26398b751400a181c0f6d7f0e",
+        "--head",
+        "b32480cc923994ee2c859203a47b78a173e6bf20",
+        "--languages",
+        "typescript",
+        "--rio",
+        "/home/ubuntu/rio/target/release/rio",
+        "--out",
+        "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11522-seeded-rerun2",
+        "--install-plan",
+        "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-tanstack-query/eval/runs/tanstack-query-11522-seeded-attempt2/install-plan.json",
+        "--timeout",
+        "900",
+        "--case-id",
+        "11522-seeded-transaction-type-20261105"
+      ],
+      "git_environment": {
+        "GIT_CONFIG_COUNT": "1",
+        "GIT_CONFIG_KEY_0": "url./dev/shm/rio-tanstack-work/seed-head.insteadOf",
+        "GIT_CONFIG_VALUE_0": "https://github.com/TanStack/query.git"
+      },
+      "install_plan_sha256": "db5dcae52ff771796bd5c9528337cfeeed7fecf67bf3cd11dc385e70c5b478a3",
+      "helper_sha256": "7b194844ce2a04ef67b796c54b6eee72174ed30251760748be94266c40e1ac36",
+      "doctor_interruptions": [],
+      "started_utc": "2026-11-05T11:24:32.919250+00:00",
+      "exit_code": 1,
+      "elapsed_seconds": 127.23866550298408,
+      "finished_utc": "2026-11-05T11:26:41.244287+00:00"
+    }
+  ],
+  "toolchain": [
+    {
+      "argv": [
+        "node",
+        "--version"
+      ],
+      "stdout": "v24.16.0\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "corepack",
+        "prepare",
+        "pnpm@11.9.0",
+        "--activate"
+      ],
+      "stdout": "Preparing pnpm@11.9.0 for immediate activation...\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "corepack",
+        "pnpm",
+        "--version"
+      ],
+      "stdout": "11.9.0\n",
+      "stderr": ""
+    }
+  ]
+}

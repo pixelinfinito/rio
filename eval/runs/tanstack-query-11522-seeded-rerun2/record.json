@@ -1,0 +1,160 @@
+{
+  "schema": "rio-eval-record-v2",
+  "methodology": "deterministic-v2",
+  "repository": "TanStack/query",
+  "pr": "https://github.com/TanStack/query/pull/11522",
+  "case_id": "11522-seeded-transaction-type-20261105",
+  "languages": [
+    "typescript"
+  ],
+  "reviewer": "sub-agent rerun2-tanstack-query (automated)",
+  "verdict_source": "automated",
+  "independently_clean": false,
+  "commands": [
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-k2614zpf argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/TanStack/query.git\", \"/dev/shm/rio-tanstack-work/rio-eval-k2614zpf/head\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-k2614zpf/head argv=[\"git\", \"fetch\", \"origin\", \"8a28904aaccb6bc26398b751400a181c0f6d7f0e\", \"b32480cc923994ee2c859203a47b78a173e6bf20\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-k2614zpf/head argv=[\"git\", \"merge-base\", \"8a28904aaccb6bc26398b751400a181c0f6d7f0e\", \"b32480cc923994ee2c859203a47b78a173e6bf20\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-k2614zpf/head argv=[\"git\", \"checkout\", \"--detach\", \"b32480cc923994ee2c859203a47b78a173e6bf20\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-k2614zpf argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/dev/shm/rio-tanstack-work/rio-eval-k2614zpf/head\", \"/dev/shm/rio-tanstack-work/rio-eval-k2614zpf/base\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-k2614zpf/base argv=[\"git\", \"checkout\", \"--detach\", \"8a28904aaccb6bc26398b751400a181c0f6d7f0e\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-k2614zpf/base argv=[\"corepack\", \"pnpm\", \"install\", \"--frozen-lockfile\", \"--trust-lockfile\", \"--ignore-scripts\", \"--config.virtual-store-dir-max-length=250\", \"--config.confirmModulesPurge=false\", \"--package-import-method=hardlink\", \"--store-dir\", \"/dev/shm/rio-tanstack-tools/pnpm-store\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-k2614zpf/base argv=[\"python3\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-tanstack-query/eval/runs/tanstack-query-11392-evidence/prepare-installation-02.py\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-k2614zpf/base argv=[\"node\", \"node_modules/typescript/lib/tsc.js\", \"-b\", \"packages/query-core\", \"packages/query-test-utils\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-k2614zpf/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-k2614zpf/head argv=[\"corepack\", \"pnpm\", \"install\", \"--frozen-lockfile\", \"--trust-lockfile\", \"--ignore-scripts\", \"--config.virtual-store-dir-max-length=250\", \"--config.confirmModulesPurge=false\", \"--package-import-method=hardlink\", \"--store-dir\", \"/dev/shm/rio-tanstack-tools/pnpm-store\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-k2614zpf/head argv=[\"python3\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-tanstack-query/eval/runs/tanstack-query-11392-evidence/prepare-installation-02.py\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-k2614zpf/head argv=[\"node\", \"node_modules/typescript/lib/tsc.js\", \"-b\", \"packages/query-core\", \"packages/query-test-utils\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-k2614zpf/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-k2614zpf/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-k2614zpf/head argv=[\"node\", \"--version\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-k2614zpf/head argv=[\"npm\", \"--version\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-k2614zpf/head argv=[\"corepack\", \"--version\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-k2614zpf/head argv=[\"python3\", \"--version\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-k2614zpf/head argv=[\"uv\", \"--version\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-k2614zpf/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"rio/base\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-k2614zpf/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/dev/shm/rio-tanstack-work/rio-eval-k2614zpf/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"8a28904aaccb6bc26398b751400a181c0f6d7f0e\", \"--format\", \"json\", \"--offline\", \"--profile\", \"rio/base\"]",
+    "Unchanged-SHA independent oracle evidence: ../tanstack-query-11522-seeded-evidence/"
+  ],
+  "notes": [
+    "Rio f6e4f87e4c65; exact original install plan, SHAs, Node 24.16.0 and pnpm 11.9.0. Runtime/mirror provenance: ../tanstack-query-rerun2-evidence/execution.json.",
+    "Baseline classification did not run; dependency_state=unavailable. All type/lint/coverage checks skip dependency_mismatch before execution. No emitted finding or risk exists to adjudicate.",
+    "Rio reads the JSON string virtualStoreDirMaxLength=\"250\" as absent and falls back to 120. The original install and helper expose actual 250-layout names; package metadata exists. See ../tanstack-query-rerun2-evidence/pnpm-string-length-repro.json and prepare-pnpm-string-length.py for the directory-only workaround used in the next attempt.",
+    "Offline OSV audit is an explicit excluded capability; no dependency-safety conclusion. Independent oracle evidence is reused only because both commits and locks are unchanged."
+  ],
+  "positive_control": {
+    "kind": "seeded-mutation",
+    "expected": [
+      {
+        "id": "broadcast-transaction-string-type",
+        "mechanism": "type-error",
+        "evidence": "Preregistered in ../tanstack-query-11522-seeded-evidence/preregistered-control.json before Rio. Base 8a28904aaccb6bc26398b751400a181c0f6d7f0e, mutation head b32480cc923994ee2c859203a47b78a173e6bf20; seed 20261105; patch SHA-256 2765417edba59265b5a80ba4a4c2d4ae9513939b59bafdbb751cc1796709dc4f. Independent node node_modules/typescript/lib/tsc.js --noEmit --pretty false -p packages/query-broadcast-client-experimental: base exit 0/no diagnostics; head exit 2/TS2322 at 55,57,66. Exact argv, outputs, and wall times: ../tanstack-query-11522-seeded-evidence/oracle-02/. These are one incorrect annotation.",
+        "finding_ids": []
+      }
+    ]
+  },
+  "base_sha": "8a28904aaccb6bc26398b751400a181c0f6d7f0e",
+  "head_sha": "b32480cc923994ee2c859203a47b78a173e6bf20",
+  "mode": "branch",
+  "review_id": "ee72fcf25e49229e",
+  "run_id": "01M6NQBHQH9584CV02V8VJ97ZH",
+  "rio_version": "0.1.0",
+  "profile": "rio/base",
+  "wall_time_ms": 9813,
+  "status": "incomplete",
+  "report_path": "eval/runs/tanstack-query-11522-seeded-rerun2/report.json",
+  "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+  "profile_sha256": "1049df8bb35d7f36f2982fdce1565c2c50336ce9e898e605f3cac96b7b16b636",
+  "environment": {
+    "dependency_state": "unavailable",
+    "baseline_ran": false,
+    "baseline_classification_ran": false,
+    "eligible": false,
+    "reasons": [
+      "coverage packages/query-broadcast-client-experimental head: skipped dependency_mismatch pnpm-lock.yaml: missing @testing-library/react at @testing-library/react@16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4); reinstall dependencies",
+      "lint packages/query-broadcast-client-experimental head: skipped dependency_mismatch pnpm-lock.yaml: missing @testing-library/react at @testing-library/react@16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4); reinstall dependencies",
+      "lint packages/query-broadcast-client-experimental: head=skipped, dependency_state=unavailable, base=unavailable",
+      "typecheck packages/query-broadcast-client-experimental head: skipped dependency_mismatch pnpm-lock.yaml: missing @testing-library/react at @testing-library/react@16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4); reinstall dependencies",
+      "typecheck packages/query-broadcast-client-experimental: head=skipped, dependency_state=unavailable, base=unavailable"
+    ],
+    "checks": [
+      {
+        "findings": [],
+        "kind": "secrets",
+        "language": "common",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "findings": [],
+        "hint": "Dependency audit needs api.osv.dev",
+        "kind": "dependencies",
+        "language": "common",
+        "outcome": "skipped",
+        "reason": "offline",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "findings": [],
+        "hint": "pnpm-lock.yaml: missing @testing-library/react at @testing-library/react@16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4); reinstall dependencies",
+        "kind": "lint",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "dependency_mismatch",
+        "root": "packages/query-broadcast-client-experimental",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "findings": [],
+        "hint": "pnpm-lock.yaml: missing @testing-library/react at @testing-library/react@16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4); reinstall dependencies",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "dependency_mismatch",
+        "root": "packages/query-broadcast-client-experimental",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "findings": [],
+        "hint": "pnpm-lock.yaml: missing @testing-library/react at @testing-library/react@16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4); reinstall dependencies",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "dependency_mismatch",
+        "root": "packages/query-broadcast-client-experimental",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      }
+    ],
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "Graph references use syntax and text; no language server was used",
+      "Offline applies to Rio; tool and test processes were not network-isolated"
+    ]
+  },
+  "findings": [],
+  "root_causes": [],
+  "misses": [
+    {
+      "id": "broadcast-transaction-string-type-not-observed",
+      "scope_class": "deterministic",
+      "mechanism": "type-error",
+      "expectation_id": "broadcast-transaction-string-type",
+      "description": "Registered transaction annotation error was not observed: the typecheck was skipped before baseline classification.",
+      "evidence": "report.json#/checks: typecheck skipped dependency_mismatch, no base entries; unchanged independent base-pass/head-TS2322 oracle in ../tanstack-query-11522-seeded-evidence/oracle-02/. This ineligible attempt does not contribute to recall."
+    }
+  ],
+  "verdict": "environment-failure",
+  "reason": "Baseline/setup must be repaired before this PR can be scored."
+}

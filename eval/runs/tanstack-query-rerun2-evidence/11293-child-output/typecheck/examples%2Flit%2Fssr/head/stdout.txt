@@ -1,0 +1,4 @@
+src/api.ts(1,41): error TS2307: Cannot find module '@tanstack/lit-query' or its corresponding type declarations.
+src/api.ts(54,23): error TS7031: Binding element 'signal' implicitly has an 'any' type.
+src/app.ts(6,8): error TS2307: Cannot find module '@tanstack/lit-query' or its corresponding type declarations.
+src/main.ts(3,60): error TS2307: Cannot find module '@tanstack/lit-query' or its corresponding type declarations.

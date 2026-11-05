@@ -1,0 +1,9 @@
+src/pages/api/projects.ts(4,27): error TS2345: Argument of type 'string | string[] | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/pages/index.tsx(8,8): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+src/pages/index.tsx(9,36): error TS2307: Cannot find module '@tanstack/react-query-devtools' or its corresponding type declarations.
+src/pages/index.tsx(38,7): error TS7031: Binding element 'pageParam' implicitly has an 'any' type.
+src/pages/index.tsx(48,28): error TS7006: Parameter 'firstPage' implicitly has an 'any' type.
+src/pages/index.tsx(49,24): error TS7006: Parameter 'lastPage' implicitly has an 'any' type.
+src/pages/index.tsx(79,28): error TS7006: Parameter 'page' implicitly has an 'any' type.
+src/pages/index.tsx(81,31): error TS7006: Parameter 'project' implicitly has an 'any' type.

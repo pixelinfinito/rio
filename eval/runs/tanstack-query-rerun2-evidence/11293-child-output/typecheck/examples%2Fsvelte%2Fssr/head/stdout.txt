@@ -1,0 +1,14 @@
+error TS5083: Cannot read file '/dev/shm/rio-tanstack-work/rio-eval-oziz3umg/cache/3ae3cd247a42615c/runs/01M6NQVZDGBBG2S9QVF9E2APT3/tools/tool.tmp-IgSTXe/examples/svelte/ssr/.svelte-kit/tsconfig.json'.
+src/routes/+layout.ts(1,29): error TS2307: Cannot find module '@tanstack/svelte-query' or its corresponding type declarations.
+src/routes/+layout.ts(2,33): error TS2307: Cannot find module './$types' or its corresponding type declarations.
+src/routes/+page.ts(1,22): error TS2307: Cannot find module '@tanstack/svelte-query' or its corresponding type declarations.
+src/routes/+page.ts(2,31): error TS2307: Cannot find module './$types' or its corresponding type declarations.
+src/routes/+page.ts(3,21): error TS2307: Cannot find module '$lib/api' or its corresponding type declarations.
+src/routes/+page.ts(5,40): error TS7031: Binding element 'parent' implicitly has an 'any' type.
+src/routes/+page.ts(5,48): error TS7031: Binding element 'fetch' implicitly has an 'any' type.
+src/routes/[postId]/+page.ts(1,22): error TS2307: Cannot find module '@tanstack/svelte-query' or its corresponding type declarations.
+src/routes/[postId]/+page.ts(2,31): error TS2307: Cannot find module './$types' or its corresponding type declarations.
+src/routes/[postId]/+page.ts(3,21): error TS2307: Cannot find module '$lib/api' or its corresponding type declarations.
+src/routes/[postId]/+page.ts(5,40): error TS7031: Binding element 'parent' implicitly has an 'any' type.
+src/routes/[postId]/+page.ts(5,48): error TS7031: Binding element 'fetch' implicitly has an 'any' type.
+src/routes/[postId]/+page.ts(5,55): error TS7031: Binding element 'params' implicitly has an 'any' type.
