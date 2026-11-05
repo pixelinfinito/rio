@@ -1,0 +1,206 @@
+{
+    "version": "1.1.411",
+    "time": "1793846129532",
+    "generalDiagnostics": [
+        {
+            "file": "/dev/shm/rio-pydantic/positive-base/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[Any]\"",
+            "range": {
+                "start": {
+                    "line": 108,
+                    "character": 26
+                },
+                "end": {
+                    "line": 108,
+                    "character": 52
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/positive-base/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[Any]\"",
+            "range": {
+                "start": {
+                    "line": 136,
+                    "character": 26
+                },
+                "end": {
+                    "line": 136,
+                    "character": 52
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/positive-base/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[Any]\"",
+            "range": {
+                "start": {
+                    "line": 163,
+                    "character": 26
+                },
+                "end": {
+                    "line": 163,
+                    "character": 52
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/positive-base/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[Any]\"",
+            "range": {
+                "start": {
+                    "line": 234,
+                    "character": 26
+                },
+                "end": {
+                    "line": 234,
+                    "character": 52
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/positive-base/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[Any]\"",
+            "range": {
+                "start": {
+                    "line": 299,
+                    "character": 26
+                },
+                "end": {
+                    "line": 299,
+                    "character": 52
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/positive-base/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[int]\"",
+            "range": {
+                "start": {
+                    "line": 448,
+                    "character": 30
+                },
+                "end": {
+                    "line": 448,
+                    "character": 97
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/positive-base/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[int]\"",
+            "range": {
+                "start": {
+                    "line": 454,
+                    "character": 8
+                },
+                "end": {
+                    "line": 454,
+                    "character": 92
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/positive-base/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Argument of type \"type[float]\" cannot be assigned to parameter \"func\" of type \"(int) -> bool\" in function \"predicate\"\n  Type \"type[float]\" is not assignable to type \"(int) -> bool\"\n    Function return type \"float\" is incompatible with type \"bool\"\n      \"float\" is not assignable to \"bool\"",
+            "range": {
+                "start": {
+                    "line": 454,
+                    "character": 85
+                },
+                "end": {
+                    "line": 454,
+                    "character": 90
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/positive-base/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[int]\"",
+            "range": {
+                "start": {
+                    "line": 557,
+                    "character": 26
+                },
+                "end": {
+                    "line": 557,
+                    "character": 75
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/positive-base/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[int]\"",
+            "range": {
+                "start": {
+                    "line": 564,
+                    "character": 26
+                },
+                "end": {
+                    "line": 564,
+                    "character": 71
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/positive-base/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[int]\"",
+            "range": {
+                "start": {
+                    "line": 571,
+                    "character": 26
+                },
+                "end": {
+                    "line": 571,
+                    "character": 87
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/positive-base/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[int]\"",
+            "range": {
+                "start": {
+                    "line": 578,
+                    "character": 26
+                },
+                "end": {
+                    "line": 578,
+                    "character": 84
+                }
+            },
+            "rule": "reportArgumentType"
+        }
+    ],
+    "summary": {
+        "filesAnalyzed": 54,
+        "errorCount": 12,
+        "warningCount": 0,
+        "informationCount": 0,
+        "timeInSec": 32.807
+    }
+}
+

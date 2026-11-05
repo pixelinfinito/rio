@@ -1,0 +1,42 @@
+{
+  "captured_utc": "2026-11-05T02:24:42.041947+00:00",
+  "platform": "Linux-6.8.0-147-generic-x86_64-with-glibc2.39",
+  "os_release": "PRETTY_NAME=\"Ubuntu 24.04.5 LTS\"\nNAME=\"Ubuntu\"\nVERSION_ID=\"24.04\"\nVERSION=\"24.04.5 LTS (Noble Numbat)\"\nVERSION_CODENAME=noble\nID=ubuntu\nID_LIKE=debian\nHOME_URL=\"https://www.ubuntu.com/\"\nSUPPORT_URL=\"https://help.ubuntu.com/\"\nBUG_REPORT_URL=\"https://bugs.launchpad.net/ubuntu/\"\nPRIVACY_POLICY_URL=\"https://www.ubuntu.com/legal/terms-and-policies/privacy-policy\"\nUBUNTU_CODENAME=noble\nLOGO=ubuntu-logo\n",
+  "uv": "uv 0.13.7 (x86_64-unknown-linux-gnu)",
+  "binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+  "runtime_overrides": {
+    "CONTEXT": "eval-pydantic",
+    "PATH_prefix": "/home/ubuntu/.cargo/bin",
+    "UV_CACHE_DIR": "/dev/shm/rio-pydantic/uv-cache",
+    "CARGO_HOME": "/dev/shm/rio-pydantic/cargo",
+    "CARGO_TARGET_DIR": "/dev/shm/rio-pydantic/cargo-target",
+    "CARGO_BUILD_JOBS": "2",
+    "TMPDIR": "/dev/shm/rio-pydantic/tmp",
+    "PYTEST_ADDOPTS": "--ignore=tests/pydantic_core --ignore=tests/benchmarks"
+  },
+  "pins": {
+    "positive-base": {
+      "sha": "a9f3f3fccc180c05190df0478a17487ec9908e4e",
+      "uv_lock_sha256": "c03e0e30ac20ef8285ecbd0c8e55a8ef1d1914160f4ba427c927dc0581886331",
+      "pyproject_sha256": "baffecd054ac8446bea41f2f63119278b76d1a96bccde98d844885f23aec541f"
+    },
+    "positive-head": {
+      "sha": "262700f815672fc37ed637a1604234f6c7cc7ee9",
+      "uv_lock_sha256": "c03e0e30ac20ef8285ecbd0c8e55a8ef1d1914160f4ba427c927dc0581886331",
+      "pyproject_sha256": "baffecd054ac8446bea41f2f63119278b76d1a96bccde98d844885f23aec541f"
+    },
+    "negative-base": {
+      "sha": "5740091dcd08e4a92940ceae841434a83331cb09",
+      "uv_lock_sha256": "c03e0e30ac20ef8285ecbd0c8e55a8ef1d1914160f4ba427c927dc0581886331",
+      "pyproject_sha256": "baffecd054ac8446bea41f2f63119278b76d1a96bccde98d844885f23aec541f"
+    },
+    "negative-head": {
+      "sha": "ef2cb073d6be2ef360d2aedcd5afca0983af2507",
+      "uv_lock_sha256": "c03e0e30ac20ef8285ecbd0c8e55a8ef1d1914160f4ba427c927dc0581886331",
+      "pyproject_sha256": "baffecd054ac8446bea41f2f63119278b76d1a96bccde98d844885f23aec541f"
+    }
+  },
+  "final_install_plan": "install-plan-all-groups.json",
+  "coverage_startup_hook": "hash-checked unused conditional startup .pth removed from installed venv only",
+  "repo_source_commit_for_inspection": "b15dc8ff50012f1f7971296e4330abd9dd3d85df"
+}

@@ -1,0 +1,11 @@
+from pathlib import Path
+import subprocess,json,os,time
+root=Path('/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-evidence')
+for name in ['negative-base','negative-head']:
+ cwd=Path('/dev/shm/rio-pydantic')/name;out=root/name;cmd=['uv','run','--no-sync','coverage','run','--data-file=.coverage.plugin','-m','pytest','-q','tests/test_plugin_loader.py'];start=time.monotonic()
+ env={**os.environ,'UV_CACHE_DIR':'/dev/shm/rio-pydantic/uv-cache','TMPDIR':'/dev/shm/rio-pydantic/tmp','CONTEXT':'eval-pydantic'}
+ with (out/'plugin-tests.stdout.log').open('w') as so,(out/'plugin-tests.stderr.log').open('w') as se:
+  code=subprocess.run(cmd,cwd=cwd,stdout=so,stderr=se,env=env,timeout=300).returncode
+ d=[{'argv':cmd,'cwd':str(cwd),'environment':{k:env[k] for k in ['UV_CACHE_DIR','TMPDIR','CONTEXT']},'exit_code':code,'wall_time_ms':int((time.monotonic()-start)*1000)}]
+ cmd=['uv','run','--no-sync','coverage','json','--data-file=.coverage.plugin','-o',str(out/'plugin-coverage.json')];r=subprocess.run(cmd,cwd=cwd,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True,env=env);d.append({'argv':cmd,'exit_code':r.returncode,'stdout':r.stdout,'stderr':r.stderr});(out/'plugin-commands.json').write_text(json.dumps(d,indent=2)+'\n')
+ print(name,code,flush=True)

@@ -1,0 +1,25 @@
+test_clean_confirmation_and_actionable_definition (test_evaluate.AggregationTests.test_clean_confirmation_and_actionable_definition) ... ok
+test_duplicate_cohort_and_tampered_records_rejected (test_evaluate.AggregationTests.test_duplicate_cohort_and_tampered_records_rejected) ... ok
+test_empty_denominators_and_all_excluded (test_evaluate.AggregationTests.test_empty_denominators_and_all_excluded) ... ok
+test_environment_failures_excluded_and_semantic_misses_separate (test_evaluate.AggregationTests.test_environment_failures_excluded_and_semantic_misses_separate) ... ok
+test_false_positive_cannot_satisfy_positive_control (test_evaluate.AggregationTests.test_false_positive_cannot_satisfy_positive_control) ... ok
+test_full_sample_go_and_threshold_no_go (test_evaluate.AggregationTests.test_full_sample_go_and_threshold_no_go) ... ok
+test_raw_multiplicity_does_not_weight_precision (test_evaluate.AggregationTests.test_raw_multiplicity_does_not_weight_precision) ... ok
+test_renderer_compacts_root_causes_and_links_records (test_evaluate.AggregationTests.test_renderer_compacts_root_causes_and_links_records) ... ok
+test_schema_rejects_wrong_rio_fields_and_advisory_missing (test_evaluate.AggregationTests.test_schema_rejects_wrong_rio_fields_and_advisory_missing) ... ok
+test_successful_baseline_must_be_verified (test_evaluate.AggregationTests.test_successful_baseline_must_be_verified) ... ok
+test_undetected_control_creates_a_scoped_miss (test_evaluate.AggregationTests.test_undetected_control_creates_a_scoped_miss) ... ok
+test_conflicting_verdicts_and_missing_ids_rejected (test_evaluate.DedupeTests.test_conflicting_verdicts_and_missing_ids_rejected) ... ok
+test_locations_are_not_counted_twice (test_evaluate.DedupeTests.test_locations_are_not_counted_twice) ... ok
+test_override_cannot_drop_the_actual_file (test_evaluate.DedupeTests.test_override_cannot_drop_the_actual_file) ... ok
+test_repeated_lines_collapse_but_file_rule_and_message_remain_distinct (test_evaluate.DedupeTests.test_repeated_lines_collapse_but_file_rule_and_message_remain_distinct) ... ok
+test_reviewed_template_file_set_and_order_stability (test_evaluate.DedupeTests.test_reviewed_template_file_set_and_order_stability) ... ok
+test_checked_in_summary_matches_records_and_preserved_reports (test_historical.HistoricalTests.test_checked_in_summary_matches_records_and_preserved_reports) ... ok
+test_end_to_end_pinned_run_preserves_evidence_and_removes_clones (test_runner.RunnerTests.test_end_to_end_pinned_run_preserves_evidence_and_removes_clones) ... ok
+test_lockfile_installers_do_not_fall_back_to_unlocked_installs (test_runner.RunnerTests.test_lockfile_installers_do_not_fall_back_to_unlocked_installs) ... ok
+
+----------------------------------------------------------------------
+Ran 19 tests in 5.709s
+
+OK
+Raw report and verdict skeleton: /tmp/tmpa3q6sejl/artifacts

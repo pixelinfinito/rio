@@ -1,0 +1,100 @@
+{
+  "repository": "pydantic/pydantic",
+  "pr": "https://github.com/pydantic/pydantic/pull/14213",
+  "case_id": "14213",
+  "languages": [
+    "python"
+  ],
+  "reviewer": "sub-agent eval-pydantic (automated)",
+  "verdict_source": "automated",
+  "commands": [
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_ argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/pydantic/pydantic.git\", \"/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head argv=[\"git\", \"fetch\", \"origin\", \"5740091dcd08e4a92940ceae841434a83331cb09\", \"ef2cb073d6be2ef360d2aedcd5afca0983af2507\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head argv=[\"git\", \"merge-base\", \"5740091dcd08e4a92940ceae841434a83331cb09\", \"ef2cb073d6be2ef360d2aedcd5afca0983af2507\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head argv=[\"git\", \"checkout\", \"--detach\", \"ef2cb073d6be2ef360d2aedcd5afca0983af2507\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_ argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head\", \"/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/base\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/base argv=[\"git\", \"checkout\", \"--detach\", \"5740091dcd08e4a92940ceae841434a83331cb09\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/base argv=[\"uv\", \"sync\", \"--locked\", \"--python\", \"3.12.12\", \"--all-groups\", \"--all-packages\", \"--all-extras\", \"--no-editable-package\", \"pydantic\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/base argv=[\"uv\", \"run\", \"--no-sync\", \"python\", \"-c\", \"import pathlib,sysconfig,hashlib; p=pathlib.Path(sysconfig.get_path('purelib'))/'a1_coverage.pth'; assert hashlib.sha256(p.read_bytes()).hexdigest() == 'ef2ed06d19867ec669c09a804060666a9cd5e383af0a9d11aa2de79b77d448e8'; p.unlink(); print('Removed unused conditional coverage startup hook; coverage run instrumentation remains explicit')\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head argv=[\"uv\", \"sync\", \"--locked\", \"--python\", \"3.12.12\", \"--all-groups\", \"--all-packages\", \"--all-extras\", \"--no-editable-package\", \"pydantic\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head argv=[\"uv\", \"run\", \"--no-sync\", \"python\", \"-c\", \"import pathlib,sysconfig,hashlib; p=pathlib.Path(sysconfig.get_path('purelib'))/'a1_coverage.pth'; assert hashlib.sha256(p.read_bytes()).hexdigest() == 'ef2ed06d19867ec669c09a804060666a9cd5e383af0a9d11aa2de79b77d448e8'; p.unlink(); print('Removed unused conditional coverage startup hook; coverage run instrumentation remains explicit')\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head argv=[\"node\", \"--version\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head argv=[\"npm\", \"--version\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head argv=[\"python3\", \"--version\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head argv=[\"uv\", \"--version\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/profile.yaml\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"5740091dcd08e4a92940ceae841434a83331cb09\", \"--format\", \"json\", \"--offline\", \"--profile\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/profile.yaml\"]",
+    "Independent oracle ledger: eval/runs/pydantic-evidence/negative-base-noneditable/commands.json",
+    "Independent oracle ledger: eval/runs/pydantic-evidence/negative-head-noneditable/commands.json",
+    "Observed Rio lint child: cwd=/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/cache/942fce5293eb6bd4/runs/01M6MVVQ3NZGZHVD495H6E1FQW/tools/tool.tmp-aBs9Ho/. argv=[\"/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head/./.venv/bin/ruff\", \"check\", \"--output-format\", \"json\", \"--\", \"/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/cache/942fce5293eb6bd4/runs/01M6MVVQ3NZGZHVD495H6E1FQW/tools/tool.tmp-aBs9Ho/pydantic/plugin/_loader.py\", \"/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/cache/942fce5293eb6bd4/runs/01M6MVVQ3NZGZHVD495H6E1FQW/tools/tool.tmp-aBs9Ho/tests/test_plugin_loader.py\"]",
+    "Observed Rio typecheck child: cwd=/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/cache/942fce5293eb6bd4/runs/01M6MVVQ3NZGZHVD495H6E1FQW/tools/tool.tmp-ifWCIt/. argv=[\"/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head/./.venv/bin/pyright\", \"--outputjson\"]",
+    "Observed Rio coverage child: cwd=/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/cache/942fce5293eb6bd4/runs/01M6MVVQ3NZGZHVD495H6E1FQW/tools/tool.tmp-aRFuJg/. argv=[\"/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head/./.venv/bin/coverage\", \"run\", \"-m\", \"pytest\", \"-q\"]",
+    "Observed Rio coverage child: cwd=/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/cache/942fce5293eb6bd4/runs/01M6MVVQ3NZGZHVD495H6E1FQW/tools/tool.tmp-aRFuJg/. argv=[\"/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/head/./.venv/bin/coverage\", \"json\", \"-o\", \"/dev/shm/rio-pydantic/tmp/rio-eval-y58at9f_/cache/942fce5293eb6bd4/runs/01M6MVVQ3NZGZHVD495H6E1FQW/tools/tool.tmp-aRFuJg/./.rio-coverage/coverage.json\"]"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14213-attempt03/commands.json; Rio binary SHA-256: 512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+    "Authoritative independent evidence: eval/runs/pydantic-evidence/noneditable-oracle-summary.json and *-noneditable command/output files. Independent assessment is automated; no human confirmation claimed.",
+    "Locked Python 3.12.12, uv 0.13.7, Pyright 1.1.411, mypy 2.3.0, Ruff 0.17.3, pytest 9.1.1, coverage 7.13.5. Final noneditable-root plan installs all locked groups/packages/extras; hash-checked unused conditional coverage startup hook removed. Relative .venv/bin prepended to PATH; all external environment overrides retained in commands.json.",
+    "PYTEST_ADDOPTS=--ignore=tests/pydantic_core --ignore=tests/benchmarks was declared before Rio; all Pydantic functional/docs tests retained, no changed source excluded. Offline audit lacks advisory cache; no dependency safety claim. Lockfiles unchanged.",
+    "Rio selects native Pyright rather than mypy: venv pyright --outputjson, without a dot target. Root native include covers pydantic and tests/test_pipeline.py, with explicit excludes and strict test config; see typecheck-scope.json. Test-file diagnostics are real pre-existing native-tool output, not a new change-specific type error.",
+    "Failed/interrupted attempts are preserved and excluded from scoring. Setup defects and exact reproductions, finding IDs, limitations and timings: eval/runs/pydantic-NOTES.md.",
+    "Independent clean-change assessment: merged maintainer plugin entry-point refactor with updated tests; base/head selected suites each 10936 passed, 247 skipped, 28 xfailed. Ruff clean; native Pyright unchanged12; supplemental package-only Pyright clean. All changed executable loader lines 6,40-48 executed; missing line32 unchanged. No changes to lockfiles or credential material. This does not claim the entire repository has zero baseline diagnostics.",
+    "UNSCORED failed-baseline attempt: no normalized record and no score. Own noneditable local-directory direct_url provenance still triggered linked-source refusal. See commands.json/footer and pydantic-NOTES.md."
+  ],
+  "independently_clean": true,
+  "positive_control": {
+    "kind": "none",
+    "expected": []
+  },
+  "misses": [],
+  "findings": {
+    "0c708dac1e6dedabbb1b19dcf3ad2415b4836ed5a6906498f63381f00bd3bec0": {
+      "verdict": "pre-existing-shown",
+      "reason": "Each path/line/rule/message occurrence exactly matches independent negative-base-noneditable/07-stdout.log and negative-head-noneditable/07-stdout.log; source tests/test_pipeline.py is unchanged. The same 12 native Pyright diagnostics existed at both pinned revisions. Rio labels this pre-existing/unclassified, but this failed attempt has no verified Rio base; independent oracles establish preexistence, and the attempt remains unscored. No introduced type error is inferred."
+    },
+    "1a803673bad9618fd43791bc7adc556e8d1e696b7dbd134adfff4f9c21059ac8": {
+      "verdict": "pre-existing-shown",
+      "reason": "Each path/line/rule/message occurrence exactly matches independent negative-base-noneditable/07-stdout.log and negative-head-noneditable/07-stdout.log; source tests/test_pipeline.py is unchanged. The same 12 native Pyright diagnostics existed at both pinned revisions. Rio labels this pre-existing/unclassified, but this failed attempt has no verified Rio base; independent oracles establish preexistence, and the attempt remains unscored. No introduced type error is inferred."
+    },
+    "48f69a41503d45aea55d0e2a3e2d91130a6c6a34705743c50b72f7d2c3af6918": {
+      "verdict": "pre-existing-shown",
+      "reason": "Each path/line/rule/message occurrence exactly matches independent negative-base-noneditable/07-stdout.log and negative-head-noneditable/07-stdout.log; source tests/test_pipeline.py is unchanged. The same 12 native Pyright diagnostics existed at both pinned revisions. Rio labels this pre-existing/unclassified, but this failed attempt has no verified Rio base; independent oracles establish preexistence, and the attempt remains unscored. No introduced type error is inferred."
+    },
+    "49598139263956107b9b2cd14cb2f95aaf69d59bc3bd1125a069815e84dd91fd": {
+      "verdict": "pre-existing-shown",
+      "reason": "Each path/line/rule/message occurrence exactly matches independent negative-base-noneditable/07-stdout.log and negative-head-noneditable/07-stdout.log; source tests/test_pipeline.py is unchanged. The same 12 native Pyright diagnostics existed at both pinned revisions. Rio labels this pre-existing/unclassified, but this failed attempt has no verified Rio base; independent oracles establish preexistence, and the attempt remains unscored. No introduced type error is inferred."
+    },
+    "71b669da4712e3bd059697e56570f5cf832c93a181675985b63dfea46fb9865c": {
+      "verdict": "pre-existing-shown",
+      "reason": "Each path/line/rule/message occurrence exactly matches independent negative-base-noneditable/07-stdout.log and negative-head-noneditable/07-stdout.log; source tests/test_pipeline.py is unchanged. The same 12 native Pyright diagnostics existed at both pinned revisions. Rio labels this pre-existing/unclassified, but this failed attempt has no verified Rio base; independent oracles establish preexistence, and the attempt remains unscored. No introduced type error is inferred."
+    },
+    "7386b2e65818cec7fd89937b5a41e46bfc6e4064d8931e8a5b53df4e3551bad5": {
+      "verdict": "pre-existing-shown",
+      "reason": "Each path/line/rule/message occurrence exactly matches independent negative-base-noneditable/07-stdout.log and negative-head-noneditable/07-stdout.log; source tests/test_pipeline.py is unchanged. The same 12 native Pyright diagnostics existed at both pinned revisions. Rio labels this pre-existing/unclassified, but this failed attempt has no verified Rio base; independent oracles establish preexistence, and the attempt remains unscored. No introduced type error is inferred."
+    },
+    "b11996621272e200847b2bba76a44497a6bc5154e3f96d81c95cac3b5eee3e79": {
+      "verdict": "pre-existing-shown",
+      "reason": "Each path/line/rule/message occurrence exactly matches independent negative-base-noneditable/07-stdout.log and negative-head-noneditable/07-stdout.log; source tests/test_pipeline.py is unchanged. The same 12 native Pyright diagnostics existed at both pinned revisions. Rio labels this pre-existing/unclassified, but this failed attempt has no verified Rio base; independent oracles establish preexistence, and the attempt remains unscored. No introduced type error is inferred."
+    },
+    "be44da13aa704d8f01f98cbf1ea5fb0aa346406f66d34e95d33cc5cc1e97c2e1": {
+      "verdict": "pre-existing-shown",
+      "reason": "Each path/line/rule/message occurrence exactly matches independent negative-base-noneditable/07-stdout.log and negative-head-noneditable/07-stdout.log; source tests/test_pipeline.py is unchanged. The same 12 native Pyright diagnostics existed at both pinned revisions. Rio labels this pre-existing/unclassified, but this failed attempt has no verified Rio base; independent oracles establish preexistence, and the attempt remains unscored. No introduced type error is inferred."
+    },
+    "c42835821e2dc02d633be779782444c12004e13735365ff779955561c1f338f2": {
+      "verdict": "pre-existing-shown",
+      "reason": "Each path/line/rule/message occurrence exactly matches independent negative-base-noneditable/07-stdout.log and negative-head-noneditable/07-stdout.log; source tests/test_pipeline.py is unchanged. The same 12 native Pyright diagnostics existed at both pinned revisions. Rio labels this pre-existing/unclassified, but this failed attempt has no verified Rio base; independent oracles establish preexistence, and the attempt remains unscored. No introduced type error is inferred."
+    },
+    "c9acdbb504e6af1a7f99ed69fba4d4592136338312bb46e685e9ced5e6c53c6f": {
+      "verdict": "pre-existing-shown",
+      "reason": "Each path/line/rule/message occurrence exactly matches independent negative-base-noneditable/07-stdout.log and negative-head-noneditable/07-stdout.log; source tests/test_pipeline.py is unchanged. The same 12 native Pyright diagnostics existed at both pinned revisions. Rio labels this pre-existing/unclassified, but this failed attempt has no verified Rio base; independent oracles establish preexistence, and the attempt remains unscored. No introduced type error is inferred."
+    },
+    "f25b838ed1947c06e450711653c2c1b51cb7d8fa819b58ccc6712275129c6212": {
+      "verdict": "pre-existing-shown",
+      "reason": "Each path/line/rule/message occurrence exactly matches independent negative-base-noneditable/07-stdout.log and negative-head-noneditable/07-stdout.log; source tests/test_pipeline.py is unchanged. The same 12 native Pyright diagnostics existed at both pinned revisions. Rio labels this pre-existing/unclassified, but this failed attempt has no verified Rio base; independent oracles establish preexistence, and the attempt remains unscored. No introduced type error is inferred."
+    }
+  }
+}

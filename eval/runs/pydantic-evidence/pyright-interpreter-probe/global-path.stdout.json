@@ -1,0 +1,4670 @@
+{
+    "version": "1.1.411",
+    "time": "1793848664613",
+    "generalDiagnostics": [
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/__init__.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 11,
+                    "character": 11
+                },
+                "end": {
+                    "line": 11,
+                    "character": 24
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/__init__.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core.core_schema\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 12,
+                    "character": 9
+                },
+                "end": {
+                    "line": 12,
+                    "character": 34
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/_internal/_config.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 11,
+                    "character": 5
+                },
+                "end": {
+                    "line": 11,
+                    "character": 18
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/_internal/_core_utils.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 6,
+                    "character": 5
+                },
+                "end": {
+                    "line": 6,
+                    "character": 18
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/_internal/_dataclasses.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 11,
+                    "character": 5
+                },
+                "end": {
+                    "line": 11,
+                    "character": 18
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/_internal/_decorators.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 14,
+                    "character": 5
+                },
+                "end": {
+                    "line": 14,
+                    "character": 18
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/_internal/_discriminated_union.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 4,
+                    "character": 5
+                },
+                "end": {
+                    "line": 4,
+                    "character": 18
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/_internal/_fields.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 12,
+                    "character": 5
+                },
+                "end": {
+                    "line": 12,
+                    "character": 18
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/_internal/_fields.py",
+            "severity": "error",
+            "message": "Import \"typing_inspection\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 14,
+                    "character": 5
+                },
+                "end": {
+                    "line": 14,
+                    "character": 22
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/_internal/_fields.py",
+            "severity": "error",
+            "message": "Import \"typing_inspection.introspection\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 15,
+                    "character": 5
+                },
+                "end": {
+                    "line": 15,
+                    "character": 36
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/_internal/_fields.py",
+            "severity": "error",
+            "message": "Import \"annotated_types\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 29,
+                    "character": 9
+                },
+                "end": {
+                    "line": 29,
+                    "character": 24
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/_internal/_fields.py",
+            "severity": "error",
+            "message": "Import \"annotated_types\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 96,
+                    "character": 9
+                },
+                "end": {
+                    "line": 96,
+                    "character": 24
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/_internal/_generate_schema.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 40,
+                    "character": 5
+                },
+                "end": {
+                    "line": 40,
+                    "character": 18
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/_internal/_generate_schema.py",
+            "severity": "error",
+            "message": "Import \"typing_inspection\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 57,
+                    "character": 5
+                },
+                "end": {
+                    "line": 57,
+                    "character": 22
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/_internal/_generate_schema.py",
+            "severity": "error",
+            "message": "Import \"typing_inspection.introspection\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 58,
+                    "character": 5
+                },
+                "end": {
+                    "line": 58,
+                    "character": 36
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/_internal/_generate_schema.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"__supertype__\" for class \"type[object]\"\n  Attribute \"__supertype__\" is unknown",
+            "range": {
+                "start": {
+                    "line": 1164,
+                    "character": 48
+                },
+                "end": {
+                    "line": 1164,
+                    "character": 61
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/_internal/_generics.py",
+            "severity": "error",
+            "message": "Import \"typing_inspection\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 16,
+                    "character": 5
+                },
+                "end": {
+                    "line": 16,
+                    "character": 22
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/_internal/_generics.py",
+            "severity": "error",
+            "message": "Import \"typing_inspection.introspection\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 17,
+                    "character": 5
+                },
+                "end": {
+                    "line": 17,
+                    "character": 36
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/_internal/_known_annotated_metadata.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 8,
+                    "character": 5
+                },
+                "end": {
+                    "line": 8,
+                    "character": 18
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/_internal/_known_annotated_metadata.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 9,
+                    "character": 5
+                },
+                "end": {
+                    "line": 9,
+                    "character": 18
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/_internal/_known_annotated_metadata.py",
+            "severity": "error",
+            "message": "Import \"annotated_types\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 160,
+                    "character": 11
+                },
+                "end": {
+                    "line": 160,
+                    "character": 26
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/_internal/_known_annotated_metadata.py",
+            "severity": "error",
+            "message": "Import \"annotated_types\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 193,
+                    "character": 11
+                },
+                "end": {
+                    "line": 193,
+                    "character": 26
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/_internal/_mock_val_ser.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 5,
+                    "character": 5
+                },
+                "end": {
+                    "line": 5,
+                    "character": 18
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/_internal/_model_construction.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 15,
+                    "character": 5
+                },
+                "end": {
+                    "line": 15,
+                    "character": 18
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/_internal/_repr.py",
+            "severity": "error",
+            "message": "Import \"typing_inspection\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 9,
+                    "character": 5
+                },
+                "end": {
+                    "line": 9,
+                    "character": 22
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/_internal/_repr.py",
+            "severity": "error",
+            "message": "Import \"typing_inspection.introspection\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 10,
+                    "character": 5
+                },
+                "end": {
+                    "line": 10,
+                    "character": 36
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/_internal/_schema_gather.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core._pydantic_core\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 4,
+                    "character": 5
+                },
+                "end": {
+                    "line": 4,
+                    "character": 33
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/_internal/_schema_gather.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core.core_schema\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 5,
+                    "character": 5
+                },
+                "end": {
+                    "line": 5,
+                    "character": 30
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/_internal/_schema_generation_shared.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 7,
+                    "character": 5
+                },
+                "end": {
+                    "line": 7,
+                    "character": 18
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/_internal/_serializers.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 7,
+                    "character": 5
+                },
+                "end": {
+                    "line": 7,
+                    "character": 18
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/_internal/_signature.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 7,
+                    "character": 5
+                },
+                "end": {
+                    "line": 7,
+                    "character": 18
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/_internal/_typing_extra.py",
+            "severity": "error",
+            "message": "Import \"typing_inspection\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 16,
+                    "character": 5
+                },
+                "end": {
+                    "line": 16,
+                    "character": 22
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/_internal/_typing_extra.py",
+            "severity": "error",
+            "message": "Import \"typing_inspection.introspection\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 17,
+                    "character": 5
+                },
+                "end": {
+                    "line": 17,
+                    "character": 36
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/_internal/_utils.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 19,
+                    "character": 5
+                },
+                "end": {
+                    "line": 19,
+                    "character": 18
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/_internal/_validate_call.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 8,
+                    "character": 7
+                },
+                "end": {
+                    "line": 8,
+                    "character": 20
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/_internal/_validators.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 18,
+                    "character": 5
+                },
+                "end": {
+                    "line": 18,
+                    "character": 18
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/_internal/_validators.py",
+            "severity": "error",
+            "message": "Import \"typing_inspection\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 20,
+                    "character": 5
+                },
+                "end": {
+                    "line": 20,
+                    "character": 22
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/aliases.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 8,
+                    "character": 5
+                },
+                "end": {
+                    "line": 8,
+                    "character": 18
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/annotated_handlers.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 6,
+                    "character": 5
+                },
+                "end": {
+                    "line": 6,
+                    "character": 18
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/errors.py",
+            "severity": "error",
+            "message": "Import \"typing_inspection.introspection\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 7,
+                    "character": 5
+                },
+                "end": {
+                    "line": 7,
+                    "character": 36
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/arguments_schema.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 7,
+                    "character": 5
+                },
+                "end": {
+                    "line": 7,
+                    "character": 18
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Import \"annotated_types\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 15,
+                    "character": 7
+                },
+                "end": {
+                    "line": 15,
+                    "character": 22
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 21,
+                    "character": 5
+                },
+                "end": {
+                    "line": 21,
+                    "character": 18
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 22,
+                    "character": 5
+                },
+                "end": {
+                    "line": 22,
+                    "character": 18
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Overload 2 for \"constrain\" will never be used because its parameters overlap overload 1",
+            "range": {
+                "start": {
+                    "line": 176,
+                    "character": 8
+                },
+                "end": {
+                    "line": 176,
+                    "character": 17
+                }
+            },
+            "rule": "reportOverlappingOverload"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Overload 3 for \"constrain\" will never be used because its parameters overlap overload 1",
+            "range": {
+                "start": {
+                    "line": 179,
+                    "character": 8
+                },
+                "end": {
+                    "line": 179,
+                    "character": 17
+                }
+            },
+            "rule": "reportOverlappingOverload"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Overload 4 for \"constrain\" will never be used because its parameters overlap overload 1",
+            "range": {
+                "start": {
+                    "line": 182,
+                    "character": 8
+                },
+                "end": {
+                    "line": 182,
+                    "character": 17
+                }
+            },
+            "rule": "reportOverlappingOverload"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Overload 5 for \"constrain\" will never be used because its parameters overlap overload 1",
+            "range": {
+                "start": {
+                    "line": 185,
+                    "character": 8
+                },
+                "end": {
+                    "line": 185,
+                    "character": 17
+                }
+            },
+            "rule": "reportOverlappingOverload"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Overload 6 for \"constrain\" will never be used because its parameters overlap overload 1",
+            "range": {
+                "start": {
+                    "line": 190,
+                    "character": 8
+                },
+                "end": {
+                    "line": 190,
+                    "character": 17
+                }
+            },
+            "rule": "reportOverlappingOverload"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Overload 7 for \"constrain\" will never be used because its parameters overlap overload 1",
+            "range": {
+                "start": {
+                    "line": 195,
+                    "character": 8
+                },
+                "end": {
+                    "line": 195,
+                    "character": 17
+                }
+            },
+            "rule": "reportOverlappingOverload"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Overload 8 for \"constrain\" will never be used because its parameters overlap overload 1",
+            "range": {
+                "start": {
+                    "line": 200,
+                    "character": 8
+                },
+                "end": {
+                    "line": 200,
+                    "character": 17
+                }
+            },
+            "rule": "reportOverlappingOverload"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Overload 9 for \"constrain\" will never be used because its parameters overlap overload 1",
+            "range": {
+                "start": {
+                    "line": 203,
+                    "character": 8
+                },
+                "end": {
+                    "line": 203,
+                    "character": 17
+                }
+            },
+            "rule": "reportOverlappingOverload"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Overload 10 for \"constrain\" will never be used because its parameters overlap overload 1",
+            "range": {
+                "start": {
+                    "line": 208,
+                    "character": 8
+                },
+                "end": {
+                    "line": 208,
+                    "character": 17
+                }
+            },
+            "rule": "reportOverlappingOverload"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Overload 11 for \"constrain\" will never be used because its parameters overlap overload 1",
+            "range": {
+                "start": {
+                    "line": 211,
+                    "character": 8
+                },
+                "end": {
+                    "line": 211,
+                    "character": 17
+                }
+            },
+            "rule": "reportOverlappingOverload"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Overload 12 for \"constrain\" will never be used because its parameters overlap overload 1",
+            "range": {
+                "start": {
+                    "line": 214,
+                    "character": 8
+                },
+                "end": {
+                    "line": 214,
+                    "character": 17
+                }
+            },
+            "rule": "reportOverlappingOverload"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Overload 13 for \"constrain\" will never be used because its parameters overlap overload 1",
+            "range": {
+                "start": {
+                    "line": 217,
+                    "character": 8
+                },
+                "end": {
+                    "line": 217,
+                    "character": 17
+                }
+            },
+            "rule": "reportOverlappingOverload"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Overload 14 for \"constrain\" will never be used because its parameters overlap overload 1",
+            "range": {
+                "start": {
+                    "line": 220,
+                    "character": 8
+                },
+                "end": {
+                    "line": 220,
+                    "character": 17
+                }
+            },
+            "rule": "reportOverlappingOverload"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Overload 2 for \"multiple_of\" will never be used because its parameters overlap overload 1",
+            "range": {
+                "start": {
+                    "line": 260,
+                    "character": 8
+                },
+                "end": {
+                    "line": 260,
+                    "character": 19
+                }
+            },
+            "rule": "reportOverlappingOverload"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Object of type \"None\" is not subscriptable",
+            "range": {
+                "start": {
+                    "line": 463,
+                    "character": 12
+                },
+                "end": {
+                    "line": 463,
+                    "character": 13
+                }
+            },
+            "rule": "reportOptionalSubscript"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Object of type \"None\" is not subscriptable",
+            "range": {
+                "start": {
+                    "line": 467,
+                    "character": 12
+                },
+                "end": {
+                    "line": 467,
+                    "character": 13
+                }
+            },
+            "rule": "reportOptionalSubscript"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Object of type \"None\" is not subscriptable",
+            "range": {
+                "start": {
+                    "line": 471,
+                    "character": 12
+                },
+                "end": {
+                    "line": 471,
+                    "character": 13
+                }
+            },
+            "rule": "reportOptionalSubscript"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"gt\" for class \"_Eq\"\n  Attribute \"gt\" is unknown",
+            "range": {
+                "start": {
+                    "line": 492,
+                    "character": 24
+                },
+                "end": {
+                    "line": 492,
+                    "character": 26
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"gt\" for class \"_NotEq\"\n  Attribute \"gt\" is unknown",
+            "range": {
+                "start": {
+                    "line": 492,
+                    "character": 24
+                },
+                "end": {
+                    "line": 492,
+                    "character": 26
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"gt\" for class \"_In\"\n  Attribute \"gt\" is unknown",
+            "range": {
+                "start": {
+                    "line": 492,
+                    "character": 24
+                },
+                "end": {
+                    "line": 492,
+                    "character": 26
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"gt\" for class \"_NotIn\"\n  Attribute \"gt\" is unknown",
+            "range": {
+                "start": {
+                    "line": 492,
+                    "character": 24
+                },
+                "end": {
+                    "line": 492,
+                    "character": 26
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"gt\" for class \"Pattern[str]\"\n  Attribute \"gt\" is unknown",
+            "range": {
+                "start": {
+                    "line": 492,
+                    "character": 24
+                },
+                "end": {
+                    "line": 492,
+                    "character": 26
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Object of type \"None\" is not subscriptable",
+            "range": {
+                "start": {
+                    "line": 495,
+                    "character": 12
+                },
+                "end": {
+                    "line": 495,
+                    "character": 13
+                }
+            },
+            "rule": "reportOptionalSubscript"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"ge\" for class \"_Eq\"\n  Attribute \"ge\" is unknown",
+            "range": {
+                "start": {
+                    "line": 503,
+                    "character": 24
+                },
+                "end": {
+                    "line": 503,
+                    "character": 26
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"ge\" for class \"_NotEq\"\n  Attribute \"ge\" is unknown",
+            "range": {
+                "start": {
+                    "line": 503,
+                    "character": 24
+                },
+                "end": {
+                    "line": 503,
+                    "character": 26
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"ge\" for class \"_In\"\n  Attribute \"ge\" is unknown",
+            "range": {
+                "start": {
+                    "line": 503,
+                    "character": 24
+                },
+                "end": {
+                    "line": 503,
+                    "character": 26
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"ge\" for class \"_NotIn\"\n  Attribute \"ge\" is unknown",
+            "range": {
+                "start": {
+                    "line": 503,
+                    "character": 24
+                },
+                "end": {
+                    "line": 503,
+                    "character": 26
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"ge\" for class \"Pattern[str]\"\n  Attribute \"ge\" is unknown",
+            "range": {
+                "start": {
+                    "line": 503,
+                    "character": 24
+                },
+                "end": {
+                    "line": 503,
+                    "character": 26
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Object of type \"None\" is not subscriptable",
+            "range": {
+                "start": {
+                    "line": 506,
+                    "character": 12
+                },
+                "end": {
+                    "line": 506,
+                    "character": 13
+                }
+            },
+            "rule": "reportOptionalSubscript"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"lt\" for class \"_Eq\"\n  Attribute \"lt\" is unknown",
+            "range": {
+                "start": {
+                    "line": 514,
+                    "character": 24
+                },
+                "end": {
+                    "line": 514,
+                    "character": 26
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"lt\" for class \"_NotEq\"\n  Attribute \"lt\" is unknown",
+            "range": {
+                "start": {
+                    "line": 514,
+                    "character": 24
+                },
+                "end": {
+                    "line": 514,
+                    "character": 26
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"lt\" for class \"_In\"\n  Attribute \"lt\" is unknown",
+            "range": {
+                "start": {
+                    "line": 514,
+                    "character": 24
+                },
+                "end": {
+                    "line": 514,
+                    "character": 26
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"lt\" for class \"_NotIn\"\n  Attribute \"lt\" is unknown",
+            "range": {
+                "start": {
+                    "line": 514,
+                    "character": 24
+                },
+                "end": {
+                    "line": 514,
+                    "character": 26
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"lt\" for class \"Pattern[str]\"\n  Attribute \"lt\" is unknown",
+            "range": {
+                "start": {
+                    "line": 514,
+                    "character": 24
+                },
+                "end": {
+                    "line": 514,
+                    "character": 26
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Object of type \"None\" is not subscriptable",
+            "range": {
+                "start": {
+                    "line": 517,
+                    "character": 12
+                },
+                "end": {
+                    "line": 517,
+                    "character": 13
+                }
+            },
+            "rule": "reportOptionalSubscript"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"le\" for class \"_Eq\"\n  Attribute \"le\" is unknown",
+            "range": {
+                "start": {
+                    "line": 525,
+                    "character": 24
+                },
+                "end": {
+                    "line": 525,
+                    "character": 26
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"le\" for class \"_NotEq\"\n  Attribute \"le\" is unknown",
+            "range": {
+                "start": {
+                    "line": 525,
+                    "character": 24
+                },
+                "end": {
+                    "line": 525,
+                    "character": 26
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"le\" for class \"_In\"\n  Attribute \"le\" is unknown",
+            "range": {
+                "start": {
+                    "line": 525,
+                    "character": 24
+                },
+                "end": {
+                    "line": 525,
+                    "character": 26
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"le\" for class \"_NotIn\"\n  Attribute \"le\" is unknown",
+            "range": {
+                "start": {
+                    "line": 525,
+                    "character": 24
+                },
+                "end": {
+                    "line": 525,
+                    "character": 26
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"le\" for class \"Pattern[str]\"\n  Attribute \"le\" is unknown",
+            "range": {
+                "start": {
+                    "line": 525,
+                    "character": 24
+                },
+                "end": {
+                    "line": 525,
+                    "character": 26
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Object of type \"None\" is not subscriptable",
+            "range": {
+                "start": {
+                    "line": 528,
+                    "character": 12
+                },
+                "end": {
+                    "line": 528,
+                    "character": 13
+                }
+            },
+            "rule": "reportOptionalSubscript"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"min_length\" for class \"_Eq\"\n  Attribute \"min_length\" is unknown",
+            "range": {
+                "start": {
+                    "line": 536,
+                    "character": 29
+                },
+                "end": {
+                    "line": 536,
+                    "character": 39
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"min_length\" for class \"_NotEq\"\n  Attribute \"min_length\" is unknown",
+            "range": {
+                "start": {
+                    "line": 536,
+                    "character": 29
+                },
+                "end": {
+                    "line": 536,
+                    "character": 39
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"min_length\" for class \"_In\"\n  Attribute \"min_length\" is unknown",
+            "range": {
+                "start": {
+                    "line": 536,
+                    "character": 29
+                },
+                "end": {
+                    "line": 536,
+                    "character": 39
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"min_length\" for class \"_NotIn\"\n  Attribute \"min_length\" is unknown",
+            "range": {
+                "start": {
+                    "line": 536,
+                    "character": 29
+                },
+                "end": {
+                    "line": 536,
+                    "character": 39
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"min_length\" for class \"Pattern[str]\"\n  Attribute \"min_length\" is unknown",
+            "range": {
+                "start": {
+                    "line": 536,
+                    "character": 29
+                },
+                "end": {
+                    "line": 536,
+                    "character": 39
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"max_length\" for class \"_Eq\"\n  Attribute \"max_length\" is unknown",
+            "range": {
+                "start": {
+                    "line": 537,
+                    "character": 29
+                },
+                "end": {
+                    "line": 537,
+                    "character": 39
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"max_length\" for class \"_NotEq\"\n  Attribute \"max_length\" is unknown",
+            "range": {
+                "start": {
+                    "line": 537,
+                    "character": 29
+                },
+                "end": {
+                    "line": 537,
+                    "character": 39
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"max_length\" for class \"_In\"\n  Attribute \"max_length\" is unknown",
+            "range": {
+                "start": {
+                    "line": 537,
+                    "character": 29
+                },
+                "end": {
+                    "line": 537,
+                    "character": 39
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"max_length\" for class \"_NotIn\"\n  Attribute \"max_length\" is unknown",
+            "range": {
+                "start": {
+                    "line": 537,
+                    "character": 29
+                },
+                "end": {
+                    "line": 537,
+                    "character": 39
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"max_length\" for class \"Pattern[str]\"\n  Attribute \"max_length\" is unknown",
+            "range": {
+                "start": {
+                    "line": 537,
+                    "character": 29
+                },
+                "end": {
+                    "line": 537,
+                    "character": 39
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Object of type \"None\" is not subscriptable",
+            "range": {
+                "start": {
+                    "line": 542,
+                    "character": 16
+                },
+                "end": {
+                    "line": 542,
+                    "character": 17
+                }
+            },
+            "rule": "reportOptionalSubscript"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Object of type \"None\" is not subscriptable",
+            "range": {
+                "start": {
+                    "line": 544,
+                    "character": 16
+                },
+                "end": {
+                    "line": 544,
+                    "character": 17
+                }
+            },
+            "rule": "reportOptionalSubscript"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"multiple_of\" for class \"_Eq\"\n  Attribute \"multiple_of\" is unknown",
+            "range": {
+                "start": {
+                    "line": 558,
+                    "character": 33
+                },
+                "end": {
+                    "line": 558,
+                    "character": 44
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"multiple_of\" for class \"_NotEq\"\n  Attribute \"multiple_of\" is unknown",
+            "range": {
+                "start": {
+                    "line": 558,
+                    "character": 33
+                },
+                "end": {
+                    "line": 558,
+                    "character": 44
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"multiple_of\" for class \"_In\"\n  Attribute \"multiple_of\" is unknown",
+            "range": {
+                "start": {
+                    "line": 558,
+                    "character": 33
+                },
+                "end": {
+                    "line": 558,
+                    "character": 44
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"multiple_of\" for class \"_NotIn\"\n  Attribute \"multiple_of\" is unknown",
+            "range": {
+                "start": {
+                    "line": 558,
+                    "character": 33
+                },
+                "end": {
+                    "line": 558,
+                    "character": 44
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"multiple_of\" for class \"Pattern[str]\"\n  Attribute \"multiple_of\" is unknown",
+            "range": {
+                "start": {
+                    "line": 558,
+                    "character": 33
+                },
+                "end": {
+                    "line": 558,
+                    "character": 44
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Object of type \"None\" is not subscriptable",
+            "range": {
+                "start": {
+                    "line": 561,
+                    "character": 12
+                },
+                "end": {
+                    "line": 561,
+                    "character": 13
+                }
+            },
+            "rule": "reportOptionalSubscript"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"tz\" for class \"_Eq\"\n  Attribute \"tz\" is unknown",
+            "range": {
+                "start": {
+                    "line": 569,
+                    "character": 24
+                },
+                "end": {
+                    "line": 569,
+                    "character": 26
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"tz\" for class \"_NotEq\"\n  Attribute \"tz\" is unknown",
+            "range": {
+                "start": {
+                    "line": 569,
+                    "character": 24
+                },
+                "end": {
+                    "line": 569,
+                    "character": 26
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"tz\" for class \"_In\"\n  Attribute \"tz\" is unknown",
+            "range": {
+                "start": {
+                    "line": 569,
+                    "character": 24
+                },
+                "end": {
+                    "line": 569,
+                    "character": 26
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"tz\" for class \"_NotIn\"\n  Attribute \"tz\" is unknown",
+            "range": {
+                "start": {
+                    "line": 569,
+                    "character": 24
+                },
+                "end": {
+                    "line": 569,
+                    "character": 26
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"tz\" for class \"Pattern[str]\"\n  Attribute \"tz\" is unknown",
+            "range": {
+                "start": {
+                    "line": 569,
+                    "character": 24
+                },
+                "end": {
+                    "line": 569,
+                    "character": 26
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Object of type \"None\" is not subscriptable",
+            "range": {
+                "start": {
+                    "line": 574,
+                    "character": 16
+                },
+                "end": {
+                    "line": 574,
+                    "character": 17
+                }
+            },
+            "rule": "reportOptionalSubscript"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Object of type \"None\" is not subscriptable",
+            "range": {
+                "start": {
+                    "line": 585,
+                    "character": 16
+                },
+                "end": {
+                    "line": 585,
+                    "character": 17
+                }
+            },
+            "rule": "reportOptionalSubscript"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"ge\" for class \"_Eq\"\n  Attribute \"ge\" is unknown",
+            "range": {
+                "start": {
+                    "line": 596,
+                    "character": 22
+                },
+                "end": {
+                    "line": 596,
+                    "character": 24
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"ge\" for class \"_NotEq\"\n  Attribute \"ge\" is unknown",
+            "range": {
+                "start": {
+                    "line": 596,
+                    "character": 22
+                },
+                "end": {
+                    "line": 596,
+                    "character": 24
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"ge\" for class \"_In\"\n  Attribute \"ge\" is unknown",
+            "range": {
+                "start": {
+                    "line": 596,
+                    "character": 22
+                },
+                "end": {
+                    "line": 596,
+                    "character": 24
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"ge\" for class \"_NotIn\"\n  Attribute \"ge\" is unknown",
+            "range": {
+                "start": {
+                    "line": 596,
+                    "character": 22
+                },
+                "end": {
+                    "line": 596,
+                    "character": 24
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"ge\" for class \"Pattern[str]\"\n  Attribute \"ge\" is unknown",
+            "range": {
+                "start": {
+                    "line": 596,
+                    "character": 22
+                },
+                "end": {
+                    "line": 596,
+                    "character": 24
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"ge\" for class \"_Eq\"\n  Attribute \"ge\" is unknown",
+            "range": {
+                "start": {
+                    "line": 597,
+                    "character": 67
+                },
+                "end": {
+                    "line": 597,
+                    "character": 69
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"ge\" for class \"_NotEq\"\n  Attribute \"ge\" is unknown",
+            "range": {
+                "start": {
+                    "line": 597,
+                    "character": 67
+                },
+                "end": {
+                    "line": 597,
+                    "character": 69
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"ge\" for class \"_In\"\n  Attribute \"ge\" is unknown",
+            "range": {
+                "start": {
+                    "line": 597,
+                    "character": 67
+                },
+                "end": {
+                    "line": 597,
+                    "character": 69
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"ge\" for class \"_NotIn\"\n  Attribute \"ge\" is unknown",
+            "range": {
+                "start": {
+                    "line": 597,
+                    "character": 67
+                },
+                "end": {
+                    "line": 597,
+                    "character": 69
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"ge\" for class \"Pattern[str]\"\n  Attribute \"ge\" is unknown",
+            "range": {
+                "start": {
+                    "line": 597,
+                    "character": 67
+                },
+                "end": {
+                    "line": 597,
+                    "character": 69
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"gt\" for class \"_Eq\"\n  Attribute \"gt\" is unknown",
+            "range": {
+                "start": {
+                    "line": 598,
+                    "character": 22
+                },
+                "end": {
+                    "line": 598,
+                    "character": 24
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"gt\" for class \"_NotEq\"\n  Attribute \"gt\" is unknown",
+            "range": {
+                "start": {
+                    "line": 598,
+                    "character": 22
+                },
+                "end": {
+                    "line": 598,
+                    "character": 24
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"gt\" for class \"_In\"\n  Attribute \"gt\" is unknown",
+            "range": {
+                "start": {
+                    "line": 598,
+                    "character": 22
+                },
+                "end": {
+                    "line": 598,
+                    "character": 24
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"gt\" for class \"_NotIn\"\n  Attribute \"gt\" is unknown",
+            "range": {
+                "start": {
+                    "line": 598,
+                    "character": 22
+                },
+                "end": {
+                    "line": 598,
+                    "character": 24
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"gt\" for class \"Pattern[str]\"\n  Attribute \"gt\" is unknown",
+            "range": {
+                "start": {
+                    "line": 598,
+                    "character": 22
+                },
+                "end": {
+                    "line": 598,
+                    "character": 24
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"gt\" for class \"_Eq\"\n  Attribute \"gt\" is unknown",
+            "range": {
+                "start": {
+                    "line": 599,
+                    "character": 67
+                },
+                "end": {
+                    "line": 599,
+                    "character": 69
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"gt\" for class \"_NotEq\"\n  Attribute \"gt\" is unknown",
+            "range": {
+                "start": {
+                    "line": 599,
+                    "character": 67
+                },
+                "end": {
+                    "line": 599,
+                    "character": 69
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"gt\" for class \"_In\"\n  Attribute \"gt\" is unknown",
+            "range": {
+                "start": {
+                    "line": 599,
+                    "character": 67
+                },
+                "end": {
+                    "line": 599,
+                    "character": 69
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"gt\" for class \"_NotIn\"\n  Attribute \"gt\" is unknown",
+            "range": {
+                "start": {
+                    "line": 599,
+                    "character": 67
+                },
+                "end": {
+                    "line": 599,
+                    "character": 69
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"gt\" for class \"Pattern[str]\"\n  Attribute \"gt\" is unknown",
+            "range": {
+                "start": {
+                    "line": 599,
+                    "character": 67
+                },
+                "end": {
+                    "line": 599,
+                    "character": 69
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"le\" for class \"_Eq\"\n  Attribute \"le\" is unknown",
+            "range": {
+                "start": {
+                    "line": 600,
+                    "character": 22
+                },
+                "end": {
+                    "line": 600,
+                    "character": 24
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"le\" for class \"_NotEq\"\n  Attribute \"le\" is unknown",
+            "range": {
+                "start": {
+                    "line": 600,
+                    "character": 22
+                },
+                "end": {
+                    "line": 600,
+                    "character": 24
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"le\" for class \"_In\"\n  Attribute \"le\" is unknown",
+            "range": {
+                "start": {
+                    "line": 600,
+                    "character": 22
+                },
+                "end": {
+                    "line": 600,
+                    "character": 24
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"le\" for class \"_NotIn\"\n  Attribute \"le\" is unknown",
+            "range": {
+                "start": {
+                    "line": 600,
+                    "character": 22
+                },
+                "end": {
+                    "line": 600,
+                    "character": 24
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"le\" for class \"Pattern[str]\"\n  Attribute \"le\" is unknown",
+            "range": {
+                "start": {
+                    "line": 600,
+                    "character": 22
+                },
+                "end": {
+                    "line": 600,
+                    "character": 24
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"le\" for class \"_Eq\"\n  Attribute \"le\" is unknown",
+            "range": {
+                "start": {
+                    "line": 601,
+                    "character": 67
+                },
+                "end": {
+                    "line": 601,
+                    "character": 69
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"le\" for class \"_NotEq\"\n  Attribute \"le\" is unknown",
+            "range": {
+                "start": {
+                    "line": 601,
+                    "character": 67
+                },
+                "end": {
+                    "line": 601,
+                    "character": 69
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"le\" for class \"_In\"\n  Attribute \"le\" is unknown",
+            "range": {
+                "start": {
+                    "line": 601,
+                    "character": 67
+                },
+                "end": {
+                    "line": 601,
+                    "character": 69
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"le\" for class \"_NotIn\"\n  Attribute \"le\" is unknown",
+            "range": {
+                "start": {
+                    "line": 601,
+                    "character": 67
+                },
+                "end": {
+                    "line": 601,
+                    "character": 69
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"le\" for class \"Pattern[str]\"\n  Attribute \"le\" is unknown",
+            "range": {
+                "start": {
+                    "line": 601,
+                    "character": 67
+                },
+                "end": {
+                    "line": 601,
+                    "character": 69
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"lt\" for class \"_Eq\"\n  Attribute \"lt\" is unknown",
+            "range": {
+                "start": {
+                    "line": 602,
+                    "character": 22
+                },
+                "end": {
+                    "line": 602,
+                    "character": 24
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"lt\" for class \"_NotEq\"\n  Attribute \"lt\" is unknown",
+            "range": {
+                "start": {
+                    "line": 602,
+                    "character": 22
+                },
+                "end": {
+                    "line": 602,
+                    "character": 24
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"lt\" for class \"_In\"\n  Attribute \"lt\" is unknown",
+            "range": {
+                "start": {
+                    "line": 602,
+                    "character": 22
+                },
+                "end": {
+                    "line": 602,
+                    "character": 24
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"lt\" for class \"_NotIn\"\n  Attribute \"lt\" is unknown",
+            "range": {
+                "start": {
+                    "line": 602,
+                    "character": 22
+                },
+                "end": {
+                    "line": 602,
+                    "character": 24
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"lt\" for class \"Pattern[str]\"\n  Attribute \"lt\" is unknown",
+            "range": {
+                "start": {
+                    "line": 602,
+                    "character": 22
+                },
+                "end": {
+                    "line": 602,
+                    "character": 24
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"lt\" for class \"_Eq\"\n  Attribute \"lt\" is unknown",
+            "range": {
+                "start": {
+                    "line": 603,
+                    "character": 67
+                },
+                "end": {
+                    "line": 603,
+                    "character": 69
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"lt\" for class \"_NotEq\"\n  Attribute \"lt\" is unknown",
+            "range": {
+                "start": {
+                    "line": 603,
+                    "character": 67
+                },
+                "end": {
+                    "line": 603,
+                    "character": 69
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"lt\" for class \"_In\"\n  Attribute \"lt\" is unknown",
+            "range": {
+                "start": {
+                    "line": 603,
+                    "character": 67
+                },
+                "end": {
+                    "line": 603,
+                    "character": 69
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"lt\" for class \"_NotIn\"\n  Attribute \"lt\" is unknown",
+            "range": {
+                "start": {
+                    "line": 603,
+                    "character": 67
+                },
+                "end": {
+                    "line": 603,
+                    "character": 69
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"lt\" for class \"Pattern[str]\"\n  Attribute \"lt\" is unknown",
+            "range": {
+                "start": {
+                    "line": 603,
+                    "character": 67
+                },
+                "end": {
+                    "line": 603,
+                    "character": 69
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"func\" for class \"_Eq\"\n  Attribute \"func\" is unknown",
+            "range": {
+                "start": {
+                    "line": 606,
+                    "character": 26
+                },
+                "end": {
+                    "line": 606,
+                    "character": 30
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"func\" for class \"_NotEq\"\n  Attribute \"func\" is unknown",
+            "range": {
+                "start": {
+                    "line": 606,
+                    "character": 26
+                },
+                "end": {
+                    "line": 606,
+                    "character": 30
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"func\" for class \"_In\"\n  Attribute \"func\" is unknown",
+            "range": {
+                "start": {
+                    "line": 606,
+                    "character": 26
+                },
+                "end": {
+                    "line": 606,
+                    "character": 30
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"func\" for class \"_NotIn\"\n  Attribute \"func\" is unknown",
+            "range": {
+                "start": {
+                    "line": 606,
+                    "character": 26
+                },
+                "end": {
+                    "line": 606,
+                    "character": 30
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"func\" for class \"Pattern[str]\"\n  Attribute \"func\" is unknown",
+            "range": {
+                "start": {
+                    "line": 606,
+                    "character": 26
+                },
+                "end": {
+                    "line": 606,
+                    "character": 30
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/experimental/pipeline.py",
+            "severity": "error",
+            "message": "Object of type \"None\" is not subscriptable",
+            "range": {
+                "start": {
+                    "line": 654,
+                    "character": 12
+                },
+                "end": {
+                    "line": 654,
+                    "character": 13
+                }
+            },
+            "rule": "reportOptionalSubscript"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/fields.py",
+            "severity": "error",
+            "message": "Import \"annotated_types\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 16,
+                    "character": 7
+                },
+                "end": {
+                    "line": 16,
+                    "character": 22
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/fields.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 17,
+                    "character": 5
+                },
+                "end": {
+                    "line": 17,
+                    "character": 18
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/fields.py",
+            "severity": "error",
+            "message": "Import \"typing_inspection\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 26,
+                    "character": 5
+                },
+                "end": {
+                    "line": 26,
+                    "character": 22
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/fields.py",
+            "severity": "error",
+            "message": "Import \"typing_inspection.introspection\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 27,
+                    "character": 5
+                },
+                "end": {
+                    "line": 27,
+                    "character": 36
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/functional_serializers.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 9,
+                    "character": 5
+                },
+                "end": {
+                    "line": 9,
+                    "character": 18
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/functional_serializers.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core.core_schema\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 10,
+                    "character": 5
+                },
+                "end": {
+                    "line": 10,
+                    "character": 30
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/functional_validators.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 11,
+                    "character": 5
+                },
+                "end": {
+                    "line": 11,
+                    "character": 18
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/json_schema.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 36,
+                    "character": 7
+                },
+                "end": {
+                    "line": 36,
+                    "character": 20
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/json_schema.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 37,
+                    "character": 5
+                },
+                "end": {
+                    "line": 37,
+                    "character": 18
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/json_schema.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core.core_schema\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 38,
+                    "character": 5
+                },
+                "end": {
+                    "line": 38,
+                    "character": 30
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/json_schema.py",
+            "severity": "error",
+            "message": "Import \"typing_inspection.introspection\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 40,
+                    "character": 5
+                },
+                "end": {
+                    "line": 40,
+                    "character": 36
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/json_schema.py",
+            "severity": "error",
+            "message": "Variable not allowed in type expression",
+            "range": {
+                "start": {
+                    "line": 326,
+                    "character": 14
+                },
+                "end": {
+                    "line": 326,
+                    "character": 35
+                }
+            },
+            "rule": "reportInvalidTypeForm"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/json_schema.py",
+            "severity": "error",
+            "message": "Variable not allowed in type expression",
+            "range": {
+                "start": {
+                    "line": 335,
+                    "character": 22
+                },
+                "end": {
+                    "line": 335,
+                    "character": 43
+                }
+            },
+            "rule": "reportInvalidTypeForm"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/json_schema.py",
+            "severity": "error",
+            "message": "Variable not allowed in type expression",
+            "range": {
+                "start": {
+                    "line": 336,
+                    "character": 32
+                },
+                "end": {
+                    "line": 336,
+                    "character": 53
+                }
+            },
+            "rule": "reportInvalidTypeForm"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/main.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 25,
+                    "character": 5
+                },
+                "end": {
+                    "line": 25,
+                    "character": 18
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/main.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 53,
+                    "character": 9
+                },
+                "end": {
+                    "line": 53,
+                    "character": 22
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/networks.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 44,
+                    "character": 5
+                },
+                "end": {
+                    "line": 44,
+                    "character": 18
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/networks.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 51,
+                    "character": 5
+                },
+                "end": {
+                    "line": 51,
+                    "character": 18
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/networks.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 52,
+                    "character": 5
+                },
+                "end": {
+                    "line": 52,
+                    "character": 18
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/networks.py",
+            "severity": "error",
+            "message": "Import \"email_validator\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 63,
+                    "character": 11
+                },
+                "end": {
+                    "line": 63,
+                    "character": 26
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/networks.py",
+            "severity": "error",
+            "message": "Import \"email_validator\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 1038,
+                    "character": 15
+                },
+                "end": {
+                    "line": 1038,
+                    "character": 30
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/plugin/__init__.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 7,
+                    "character": 5
+                },
+                "end": {
+                    "line": 7,
+                    "character": 18
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/plugin/_schema_validator.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 8,
+                    "character": 5
+                },
+                "end": {
+                    "line": 8,
+                    "character": 18
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/root_model.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 8,
+                    "character": 5
+                },
+                "end": {
+                    "line": 8,
+                    "character": 18
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/type_adapter.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 18,
+                    "character": 5
+                },
+                "end": {
+                    "line": 18,
+                    "character": 18
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/types.py",
+            "severity": "error",
+            "message": "Import \"annotated_types\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 28,
+                    "character": 7
+                },
+                "end": {
+                    "line": 28,
+                    "character": 22
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/types.py",
+            "severity": "error",
+            "message": "Import \"annotated_types\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 29,
+                    "character": 5
+                },
+                "end": {
+                    "line": 29,
+                    "character": 20
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/types.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 30,
+                    "character": 5
+                },
+                "end": {
+                    "line": 30,
+                    "character": 18
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/version.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 6,
+                    "character": 5
+                },
+                "end": {
+                    "line": 6,
+                    "character": 18
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/pydantic/version.py",
+            "severity": "error",
+            "message": "Import \"pydantic_core._pydantic_core\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 38,
+                    "character": 11
+                },
+                "end": {
+                    "line": 38,
+                    "character": 39
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Import \"pytest\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 11,
+                    "character": 7
+                },
+                "end": {
+                    "line": 11,
+                    "character": 13
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Import \"annotated_types\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 13,
+                    "character": 5
+                },
+                "end": {
+                    "line": 13,
+                    "character": 20
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"Interval\" is unknown",
+            "range": {
+                "start": {
+                    "line": 13,
+                    "character": 28
+                },
+                "end": {
+                    "line": 13,
+                    "character": 36
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"Len\" is unknown",
+            "range": {
+                "start": {
+                    "line": 13,
+                    "character": 38
+                },
+                "end": {
+                    "line": 13,
+                    "character": 41
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"ValidationError\" is unknown",
+            "range": {
+                "start": {
+                    "line": 15,
+                    "character": 34
+                },
+                "end": {
+                    "line": 15,
+                    "character": 49
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"mark\" is unknown",
+            "range": {
+                "start": {
+                    "line": 19,
+                    "character": 1
+                },
+                "end": {
+                    "line": 19,
+                    "character": 12
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"parametrize\" is unknown",
+            "range": {
+                "start": {
+                    "line": 19,
+                    "character": 1
+                },
+                "end": {
+                    "line": 19,
+                    "character": 24
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Untyped function decorator obscures type of function; ignoring decorator",
+            "range": {
+                "start": {
+                    "line": 19,
+                    "character": 1
+                },
+                "end": {
+                    "line": 19,
+                    "character": 114
+                }
+            },
+            "rule": "reportUntypedFunctionDecorator"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"raises\" is unknown",
+            "range": {
+                "start": {
+                    "line": 28,
+                    "character": 9
+                },
+                "end": {
+                    "line": 28,
+                    "character": 22
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"constrain\" is partially unknown\n  Type of \"constrain\" is \"Overload[(constraint: Unknown) -> _Pipeline[Any, str], (constraint: Unknown) -> _Pipeline[Any, str], (constraint: Unknown) -> _Pipeline[Any, str], (constraint: Unknown) -> _Pipeline[Any, str], (constraint: Unknown) -> _Pipeline[Any, str], (constraint: Unknown) -> _Pipeline[Any, str], (constraint: Unknown) -> _Pipeline[Any, str], (constraint: Unknown) -> _Pipeline[Any, str], (constraint: _Eq) -> _Pipeline[Any, str], (constraint: _NotEq) -> _Pipeline[Any, str], (constraint: _In) -> _Pipeline[Any, str], (constraint: _NotIn) -> _Pipeline[Any, str], (constraint: Pattern[str]) -> _Pipeline[Any, str]]\"",
+            "range": {
+                "start": {
+                    "line": 33,
+                    "character": 47
+                },
+                "end": {
+                    "line": 33,
+                    "character": 73
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"raises\" is unknown",
+            "range": {
+                "start": {
+                    "line": 35,
+                    "character": 9
+                },
+                "end": {
+                    "line": 35,
+                    "character": 22
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"constrain\" is partially unknown\n  Type of \"constrain\" is \"Overload[(constraint: Unknown) -> _Pipeline[Any, str], (constraint: Unknown) -> _Pipeline[Any, str], (constraint: Unknown) -> _Pipeline[Any, str], (constraint: Unknown) -> _Pipeline[Any, str], (constraint: Unknown) -> _Pipeline[Any, str], (constraint: Unknown) -> _Pipeline[Any, str], (constraint: Unknown) -> _Pipeline[Any, str], (constraint: Unknown) -> _Pipeline[Any, str], (constraint: _Eq) -> _Pipeline[Any, str], (constraint: _NotEq) -> _Pipeline[Any, str], (constraint: _In) -> _Pipeline[Any, str], (constraint: _NotIn) -> _Pipeline[Any, str], (constraint: Pattern[str]) -> _Pipeline[Any, str]]\"",
+            "range": {
+                "start": {
+                    "line": 39,
+                    "character": 44
+                },
+                "end": {
+                    "line": 39,
+                    "character": 70
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"mark\" is unknown",
+            "range": {
+                "start": {
+                    "line": 43,
+                    "character": 1
+                },
+                "end": {
+                    "line": 43,
+                    "character": 12
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"parametrize\" is unknown",
+            "range": {
+                "start": {
+                    "line": 43,
+                    "character": 1
+                },
+                "end": {
+                    "line": 43,
+                    "character": 24
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Untyped function decorator obscures type of function; ignoring decorator",
+            "range": {
+                "start": {
+                    "line": 43,
+                    "character": 1
+                },
+                "end": {
+                    "line": 104,
+                    "character": 1
+                }
+            },
+            "rule": "reportUntypedFunctionDecorator"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[Any]\"",
+            "range": {
+                "start": {
+                    "line": 108,
+                    "character": 26
+                },
+                "end": {
+                    "line": 108,
+                    "character": 52
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"raises\" is unknown",
+            "range": {
+                "start": {
+                    "line": 112,
+                    "character": 13
+                },
+                "end": {
+                    "line": 112,
+                    "character": 26
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"mark\" is unknown",
+            "range": {
+                "start": {
+                    "line": 116,
+                    "character": 1
+                },
+                "end": {
+                    "line": 116,
+                    "character": 12
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"parametrize\" is unknown",
+            "range": {
+                "start": {
+                    "line": 116,
+                    "character": 1
+                },
+                "end": {
+                    "line": 116,
+                    "character": 24
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Untyped function decorator obscures type of function; ignoring decorator",
+            "range": {
+                "start": {
+                    "line": 116,
+                    "character": 1
+                },
+                "end": {
+                    "line": 134,
+                    "character": 1
+                }
+            },
+            "rule": "reportUntypedFunctionDecorator"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "No overloads for \"multiple_of\" match the provided arguments",
+            "range": {
+                "start": {
+                    "line": 122,
+                    "character": 18
+                },
+                "end": {
+                    "line": 122,
+                    "character": 53
+                }
+            },
+            "rule": "reportCallIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "No overloads for \"multiple_of\" match the provided arguments",
+            "range": {
+                "start": {
+                    "line": 123,
+                    "character": 14
+                },
+                "end": {
+                    "line": 123,
+                    "character": 47
+                }
+            },
+            "rule": "reportCallIssue"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[Any]\"",
+            "range": {
+                "start": {
+                    "line": 136,
+                    "character": 26
+                },
+                "end": {
+                    "line": 136,
+                    "character": 52
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"raises\" is unknown",
+            "range": {
+                "start": {
+                    "line": 140,
+                    "character": 13
+                },
+                "end": {
+                    "line": 140,
+                    "character": 26
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"mark\" is unknown",
+            "range": {
+                "start": {
+                    "line": 144,
+                    "character": 1
+                },
+                "end": {
+                    "line": 144,
+                    "character": 12
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"parametrize\" is unknown",
+            "range": {
+                "start": {
+                    "line": 144,
+                    "character": 1
+                },
+                "end": {
+                    "line": 144,
+                    "character": 24
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Untyped function decorator obscures type of function; ignoring decorator",
+            "range": {
+                "start": {
+                    "line": 144,
+                    "character": 1
+                },
+                "end": {
+                    "line": 161,
+                    "character": 1
+                }
+            },
+            "rule": "reportUntypedFunctionDecorator"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"constrain\" is partially unknown\n  Type of \"constrain\" is \"Overload[(constraint: Unknown) -> _Pipeline[Any, int], (constraint: Unknown) -> _Pipeline[Any, int], (constraint: Unknown) -> _Pipeline[Any, int], (constraint: Unknown) -> _Pipeline[Any, int], (constraint: Unknown) -> _Pipeline[Any, int], (constraint: Unknown) -> _Pipeline[Any, int], (constraint: Unknown) -> _Pipeline[Any, int], (constraint: _Eq) -> _Pipeline[Any, int], (constraint: _NotEq) -> _Pipeline[Any, int], (constraint: _In) -> _Pipeline[Any, int], (constraint: _NotIn) -> _Pipeline[Any, int], (constraint: Pattern[str]) -> _Pipeline[Any, int]]\"",
+            "range": {
+                "start": {
+                    "line": 147,
+                    "character": 14
+                },
+                "end": {
+                    "line": 147,
+                    "character": 40
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Argument type is unknown\n  Argument corresponds to parameter \"constraint\" in function \"constrain\"",
+            "range": {
+                "start": {
+                    "line": 147,
+                    "character": 41
+                },
+                "end": {
+                    "line": 147,
+                    "character": 62
+                }
+            },
+            "rule": "reportUnknownArgumentType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"constrain\" is partially unknown\n  Type of \"constrain\" is \"Overload[(constraint: Unknown) -> _Pipeline[Any, float], (constraint: Unknown) -> _Pipeline[Any, float], (constraint: Unknown) -> _Pipeline[Any, float], (constraint: Unknown) -> _Pipeline[Any, float], (constraint: Unknown) -> _Pipeline[Any, float], (constraint: Unknown) -> _Pipeline[Any, float], (constraint: Unknown) -> _Pipeline[Any, float], (constraint: _Eq) -> _Pipeline[Any, float], (constraint: _NotEq) -> _Pipeline[Any, float], (constraint: _In) -> _Pipeline[Any, float], (constraint: _NotIn) -> _Pipeline[Any, float], (constraint: Pattern[str]) -> _Pipeline[Any, float]]\"",
+            "range": {
+                "start": {
+                    "line": 148,
+                    "character": 16
+                },
+                "end": {
+                    "line": 148,
+                    "character": 44
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Argument type is unknown\n  Argument corresponds to parameter \"constraint\" in function \"constrain\"",
+            "range": {
+                "start": {
+                    "line": 148,
+                    "character": 45
+                },
+                "end": {
+                    "line": 148,
+                    "character": 70
+                }
+            },
+            "rule": "reportUnknownArgumentType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"constrain\" is partially unknown\n  Type of \"constrain\" is \"Overload[(constraint: Unknown) -> _Pipeline[Any, int], (constraint: Unknown) -> _Pipeline[Any, int], (constraint: Unknown) -> _Pipeline[Any, int], (constraint: Unknown) -> _Pipeline[Any, int], (constraint: Unknown) -> _Pipeline[Any, int], (constraint: Unknown) -> _Pipeline[Any, int], (constraint: Unknown) -> _Pipeline[Any, int], (constraint: _Eq) -> _Pipeline[Any, int], (constraint: _NotEq) -> _Pipeline[Any, int], (constraint: _In) -> _Pipeline[Any, int], (constraint: _NotIn) -> _Pipeline[Any, int], (constraint: Pattern[str]) -> _Pipeline[Any, int]]\"",
+            "range": {
+                "start": {
+                    "line": 149,
+                    "character": 14
+                },
+                "end": {
+                    "line": 149,
+                    "character": 40
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Argument type is unknown\n  Argument corresponds to parameter \"constraint\" in function \"constrain\"",
+            "range": {
+                "start": {
+                    "line": 149,
+                    "character": 41
+                },
+                "end": {
+                    "line": 149,
+                    "character": 55
+                }
+            },
+            "rule": "reportUnknownArgumentType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"constrain\" is partially unknown\n  Type of \"constrain\" is \"Overload[(constraint: Unknown) -> _Pipeline[Any, int], (constraint: Unknown) -> _Pipeline[Any, int], (constraint: Unknown) -> _Pipeline[Any, int], (constraint: Unknown) -> _Pipeline[Any, int], (constraint: Unknown) -> _Pipeline[Any, int], (constraint: Unknown) -> _Pipeline[Any, int], (constraint: Unknown) -> _Pipeline[Any, int], (constraint: _Eq) -> _Pipeline[Any, int], (constraint: _NotEq) -> _Pipeline[Any, int], (constraint: _In) -> _Pipeline[Any, int], (constraint: _NotIn) -> _Pipeline[Any, int], (constraint: Pattern[str]) -> _Pipeline[Any, int]]\"",
+            "range": {
+                "start": {
+                    "line": 150,
+                    "character": 14
+                },
+                "end": {
+                    "line": 150,
+                    "character": 40
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Argument type is unknown\n  Argument corresponds to parameter \"constraint\" in function \"constrain\"",
+            "range": {
+                "start": {
+                    "line": 150,
+                    "character": 41
+                },
+                "end": {
+                    "line": 150,
+                    "character": 55
+                }
+            },
+            "rule": "reportUnknownArgumentType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"constrain\" is partially unknown\n  Type of \"constrain\" is \"Overload[(constraint: Unknown) -> _Pipeline[Any, int], (constraint: Unknown) -> _Pipeline[Any, int], (constraint: Unknown) -> _Pipeline[Any, int], (constraint: Unknown) -> _Pipeline[Any, int], (constraint: Unknown) -> _Pipeline[Any, int], (constraint: Unknown) -> _Pipeline[Any, int], (constraint: Unknown) -> _Pipeline[Any, int], (constraint: _Eq) -> _Pipeline[Any, int], (constraint: _NotEq) -> _Pipeline[Any, int], (constraint: _In) -> _Pipeline[Any, int], (constraint: _NotIn) -> _Pipeline[Any, int], (constraint: Pattern[str]) -> _Pipeline[Any, int]]\"",
+            "range": {
+                "start": {
+                    "line": 151,
+                    "character": 14
+                },
+                "end": {
+                    "line": 151,
+                    "character": 40
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Argument type is unknown\n  Argument corresponds to parameter \"constraint\" in function \"constrain\"",
+            "range": {
+                "start": {
+                    "line": 151,
+                    "character": 41
+                },
+                "end": {
+                    "line": 151,
+                    "character": 55
+                }
+            },
+            "rule": "reportUnknownArgumentType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"constrain\" is partially unknown\n  Type of \"constrain\" is \"Overload[(constraint: Unknown) -> _Pipeline[Any, Decimal], (constraint: Unknown) -> _Pipeline[Any, Decimal], (constraint: Unknown) -> _Pipeline[Any, Decimal], (constraint: Unknown) -> _Pipeline[Any, Decimal], (constraint: Unknown) -> _Pipeline[Any, Decimal], (constraint: Unknown) -> _Pipeline[Any, Decimal], (constraint: Unknown) -> _Pipeline[Any, Decimal], (constraint: _Eq) -> _Pipeline[Any, Decimal], (constraint: _NotEq) -> _Pipeline[Any, Decimal], (constraint: _In) -> _Pipeline[Any, Decimal], (constraint: _NotIn) -> _Pipeline[Any, Decimal], (constraint: Pattern[str]) -> _Pipeline[Any, Decimal]]\"",
+            "range": {
+                "start": {
+                    "line": 154,
+                    "character": 12
+                },
+                "end": {
+                    "line": 154,
+                    "character": 42
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Argument type is unknown\n  Argument corresponds to parameter \"constraint\" in function \"constrain\"",
+            "range": {
+                "start": {
+                    "line": 154,
+                    "character": 43
+                },
+                "end": {
+                    "line": 154,
+                    "character": 90
+                }
+            },
+            "rule": "reportUnknownArgumentType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"constrain\" is partially unknown\n  Type of \"constrain\" is \"Overload[(constraint: Unknown) -> _Pipeline[Any, int], (constraint: Unknown) -> _Pipeline[Any, int], (constraint: Unknown) -> _Pipeline[Any, int], (constraint: Unknown) -> _Pipeline[Any, int], (constraint: Unknown) -> _Pipeline[Any, int], (constraint: Unknown) -> _Pipeline[Any, int], (constraint: Unknown) -> _Pipeline[Any, int], (constraint: _Eq) -> _Pipeline[Any, int], (constraint: _NotEq) -> _Pipeline[Any, int], (constraint: _In) -> _Pipeline[Any, int], (constraint: _NotIn) -> _Pipeline[Any, int], (constraint: Pattern[str]) -> _Pipeline[Any, int]]\"",
+            "range": {
+                "start": {
+                    "line": 158,
+                    "character": 14
+                },
+                "end": {
+                    "line": 158,
+                    "character": 40
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Argument type is unknown\n  Argument corresponds to parameter \"constraint\" in function \"constrain\"",
+            "range": {
+                "start": {
+                    "line": 158,
+                    "character": 41
+                },
+                "end": {
+                    "line": 158,
+                    "character": 61
+                }
+            },
+            "rule": "reportUnknownArgumentType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"constrain\" is partially unknown\n  Type of \"constrain\" is \"Overload[(constraint: Unknown) -> _Pipeline[Any, float], (constraint: Unknown) -> _Pipeline[Any, float], (constraint: Unknown) -> _Pipeline[Any, float], (constraint: Unknown) -> _Pipeline[Any, float], (constraint: Unknown) -> _Pipeline[Any, float], (constraint: Unknown) -> _Pipeline[Any, float], (constraint: Unknown) -> _Pipeline[Any, float], (constraint: _Eq) -> _Pipeline[Any, float], (constraint: _NotEq) -> _Pipeline[Any, float], (constraint: _In) -> _Pipeline[Any, float], (constraint: _NotIn) -> _Pipeline[Any, float], (constraint: Pattern[str]) -> _Pipeline[Any, float]]\"",
+            "range": {
+                "start": {
+                    "line": 159,
+                    "character": 16
+                },
+                "end": {
+                    "line": 159,
+                    "character": 44
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Argument type is unknown\n  Argument corresponds to parameter \"constraint\" in function \"constrain\"",
+            "range": {
+                "start": {
+                    "line": 159,
+                    "character": 45
+                },
+                "end": {
+                    "line": 159,
+                    "character": 69
+                }
+            },
+            "rule": "reportUnknownArgumentType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[Any]\"",
+            "range": {
+                "start": {
+                    "line": 163,
+                    "character": 26
+                },
+                "end": {
+                    "line": 163,
+                    "character": 52
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"raises\" is unknown",
+            "range": {
+                "start": {
+                    "line": 167,
+                    "character": 13
+                },
+                "end": {
+                    "line": 167,
+                    "character": 26
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"mark\" is unknown",
+            "range": {
+                "start": {
+                    "line": 171,
+                    "character": 1
+                },
+                "end": {
+                    "line": 171,
+                    "character": 12
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"parametrize\" is unknown",
+            "range": {
+                "start": {
+                    "line": 171,
+                    "character": 1
+                },
+                "end": {
+                    "line": 171,
+                    "character": 24
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Untyped function decorator obscures type of function; ignoring decorator",
+            "range": {
+                "start": {
+                    "line": 171,
+                    "character": 1
+                },
+                "end": {
+                    "line": 232,
+                    "character": 1
+                }
+            },
+            "rule": "reportUntypedFunctionDecorator"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[Any]\"",
+            "range": {
+                "start": {
+                    "line": 234,
+                    "character": 26
+                },
+                "end": {
+                    "line": 234,
+                    "character": 52
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"raises\" is unknown",
+            "range": {
+                "start": {
+                    "line": 238,
+                    "character": 13
+                },
+                "end": {
+                    "line": 238,
+                    "character": 26
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"raises\" is unknown",
+            "range": {
+                "start": {
+                    "line": 244,
+                    "character": 9
+                },
+                "end": {
+                    "line": 244,
+                    "character": 22
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"exc_info\" is unknown",
+            "range": {
+                "start": {
+                    "line": 244,
+                    "character": 43
+                },
+                "end": {
+                    "line": 244,
+                    "character": 51
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"value\" is unknown",
+            "range": {
+                "start": {
+                    "line": 246,
+                    "character": 11
+                },
+                "end": {
+                    "line": 246,
+                    "character": 25
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"errors\" is unknown",
+            "range": {
+                "start": {
+                    "line": 246,
+                    "character": 11
+                },
+                "end": {
+                    "line": 246,
+                    "character": 32
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"raises\" is unknown",
+            "range": {
+                "start": {
+                    "line": 249,
+                    "character": 9
+                },
+                "end": {
+                    "line": 249,
+                    "character": 22
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"exc_info\" is unknown",
+            "range": {
+                "start": {
+                    "line": 249,
+                    "character": 43
+                },
+                "end": {
+                    "line": 249,
+                    "character": 51
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"value\" is unknown",
+            "range": {
+                "start": {
+                    "line": 251,
+                    "character": 11
+                },
+                "end": {
+                    "line": 251,
+                    "character": 25
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"errors\" is unknown",
+            "range": {
+                "start": {
+                    "line": 251,
+                    "character": 11
+                },
+                "end": {
+                    "line": 251,
+                    "character": 32
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"constrain\" is partially unknown\n  Type of \"constrain\" is \"Overload[(constraint: Unknown) -> _Pipeline[Any, Iterable[int]], (constraint: Unknown) -> _Pipeline[Any, Iterable[int]], (constraint: Unknown) -> _Pipeline[Any, Iterable[int]], (constraint: Unknown) -> _Pipeline[Any, Iterable[int]], (constraint: Unknown) -> _Pipeline[Any, Iterable[int]], (constraint: Unknown) -> _Pipeline[Any, Iterable[int]], (constraint: Unknown) -> _Pipeline[Any, Iterable[int]], (constraint: _Eq) -> _Pipeline[Any, Iterable[int]], (constraint: _NotEq) -> _Pipeline[Any, Iterable[int]], (constraint: _In) -> _Pipeline[Any, Iterable[int]], (constraint: _NotIn) -> _Pipeline[Any, Iterable[int]], (constraint: Pattern[str]) -> _Pipeline[Any, Iterable[int]]]\"",
+            "range": {
+                "start": {
+                    "line": 255,
+                    "character": 61
+                },
+                "end": {
+                    "line": 255,
+                    "character": 97
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Argument type is unknown\n  Argument corresponds to parameter \"constraint\" in function \"constrain\"",
+            "range": {
+                "start": {
+                    "line": 255,
+                    "character": 98
+                },
+                "end": {
+                    "line": 255,
+                    "character": 107
+                }
+            },
+            "rule": "reportUnknownArgumentType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"raises\" is unknown",
+            "range": {
+                "start": {
+                    "line": 258,
+                    "character": 9
+                },
+                "end": {
+                    "line": 258,
+                    "character": 22
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"raises\" is unknown",
+            "range": {
+                "start": {
+                    "line": 260,
+                    "character": 9
+                },
+                "end": {
+                    "line": 260,
+                    "character": 22
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"mark\" is unknown",
+            "range": {
+                "start": {
+                    "line": 264,
+                    "character": 1
+                },
+                "end": {
+                    "line": 264,
+                    "character": 12
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"parametrize\" is unknown",
+            "range": {
+                "start": {
+                    "line": 264,
+                    "character": 1
+                },
+                "end": {
+                    "line": 264,
+                    "character": 24
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Untyped function decorator obscures type of function; ignoring decorator",
+            "range": {
+                "start": {
+                    "line": 264,
+                    "character": 1
+                },
+                "end": {
+                    "line": 296,
+                    "character": 1
+                }
+            },
+            "rule": "reportUntypedFunctionDecorator"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[Any]\"",
+            "range": {
+                "start": {
+                    "line": 299,
+                    "character": 26
+                },
+                "end": {
+                    "line": 299,
+                    "character": 52
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"schema\" is unknown",
+            "range": {
+                "start": {
+                    "line": 300,
+                    "character": 4
+                },
+                "end": {
+                    "line": 300,
+                    "character": 10
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"core_schema\" is unknown",
+            "range": {
+                "start": {
+                    "line": 300,
+                    "character": 13
+                },
+                "end": {
+                    "line": 300,
+                    "character": 27
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"get\" is unknown",
+            "range": {
+                "start": {
+                    "line": 302,
+                    "character": 15
+                },
+                "end": {
+                    "line": 302,
+                    "character": 25
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"raises\" is unknown",
+            "range": {
+                "start": {
+                    "line": 315,
+                    "character": 9
+                },
+                "end": {
+                    "line": 315,
+                    "character": 22
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"raises\" is unknown",
+            "range": {
+                "start": {
+                    "line": 326,
+                    "character": 9
+                },
+                "end": {
+                    "line": 326,
+                    "character": 22
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"mark\" is unknown",
+            "range": {
+                "start": {
+                    "line": 379,
+                    "character": 1
+                },
+                "end": {
+                    "line": 379,
+                    "character": 12
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"parametrize\" is unknown",
+            "range": {
+                "start": {
+                    "line": 379,
+                    "character": 1
+                },
+                "end": {
+                    "line": 379,
+                    "character": 24
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Untyped function decorator obscures type of function; ignoring decorator",
+            "range": {
+                "start": {
+                    "line": 379,
+                    "character": 1
+                },
+                "end": {
+                    "line": 394,
+                    "character": 1
+                }
+            },
+            "rule": "reportUntypedFunctionDecorator"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"raises\" is unknown",
+            "range": {
+                "start": {
+                    "line": 407,
+                    "character": 9
+                },
+                "end": {
+                    "line": 407,
+                    "character": 22
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"raises\" is unknown",
+            "range": {
+                "start": {
+                    "line": 411,
+                    "character": 9
+                },
+                "end": {
+                    "line": 411,
+                    "character": 22
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"raises\" is unknown",
+            "range": {
+                "start": {
+                    "line": 415,
+                    "character": 9
+                },
+                "end": {
+                    "line": 415,
+                    "character": 22
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"raises\" is unknown",
+            "range": {
+                "start": {
+                    "line": 423,
+                    "character": 9
+                },
+                "end": {
+                    "line": 423,
+                    "character": 22
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"raises\" is unknown",
+            "range": {
+                "start": {
+                    "line": 428,
+                    "character": 9
+                },
+                "end": {
+                    "line": 428,
+                    "character": 22
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"raises\" is unknown",
+            "range": {
+                "start": {
+                    "line": 430,
+                    "character": 9
+                },
+                "end": {
+                    "line": 430,
+                    "character": 22
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"raises\" is unknown",
+            "range": {
+                "start": {
+                    "line": 438,
+                    "character": 9
+                },
+                "end": {
+                    "line": 438,
+                    "character": 22
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"raises\" is unknown",
+            "range": {
+                "start": {
+                    "line": 445,
+                    "character": 9
+                },
+                "end": {
+                    "line": 445,
+                    "character": 22
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[int]\"",
+            "range": {
+                "start": {
+                    "line": 448,
+                    "character": 30
+                },
+                "end": {
+                    "line": 448,
+                    "character": 97
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"raises\" is unknown",
+            "range": {
+                "start": {
+                    "line": 450,
+                    "character": 9
+                },
+                "end": {
+                    "line": 450,
+                    "character": 22
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[int]\"",
+            "range": {
+                "start": {
+                    "line": 454,
+                    "character": 8
+                },
+                "end": {
+                    "line": 454,
+                    "character": 92
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Argument of type \"type[float]\" cannot be assigned to parameter \"func\" of type \"(int) -> bool\" in function \"predicate\"\n  Type \"type[float]\" is not assignable to type \"(int) -> bool\"\n    Function return type \"float\" is incompatible with type \"bool\"\n      \"float\" is not assignable to \"bool\"",
+            "range": {
+                "start": {
+                    "line": 454,
+                    "character": 85
+                },
+                "end": {
+                    "line": 454,
+                    "character": 90
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"mark\" is unknown",
+            "range": {
+                "start": {
+                    "line": 459,
+                    "character": 1
+                },
+                "end": {
+                    "line": 459,
+                    "character": 12
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"parametrize\" is unknown",
+            "range": {
+                "start": {
+                    "line": 459,
+                    "character": 1
+                },
+                "end": {
+                    "line": 459,
+                    "character": 24
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Untyped function decorator obscures type of function; ignoring decorator",
+            "range": {
+                "start": {
+                    "line": 459,
+                    "character": 1
+                },
+                "end": {
+                    "line": 537,
+                    "character": 1
+                }
+            },
+            "rule": "reportUntypedFunctionDecorator"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"constrain\" is partially unknown\n  Type of \"constrain\" is \"Overload[(constraint: Unknown) -> _Pipeline[Any, int], (constraint: Unknown) -> _Pipeline[Any, int], (constraint: Unknown) -> _Pipeline[Any, int], (constraint: Unknown) -> _Pipeline[Any, int], (constraint: Unknown) -> _Pipeline[Any, int], (constraint: Unknown) -> _Pipeline[Any, int], (constraint: Unknown) -> _Pipeline[Any, int], (constraint: _Eq) -> _Pipeline[Any, int], (constraint: _NotEq) -> _Pipeline[Any, int], (constraint: _In) -> _Pipeline[Any, int], (constraint: _NotIn) -> _Pipeline[Any, int], (constraint: Pattern[str]) -> _Pipeline[Any, int]]\"",
+            "range": {
+                "start": {
+                    "line": 498,
+                    "character": 27
+                },
+                "end": {
+                    "line": 498,
+                    "character": 53
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Argument type is unknown\n  Argument corresponds to parameter \"constraint\" in function \"constrain\"",
+            "range": {
+                "start": {
+                    "line": 498,
+                    "character": 54
+                },
+                "end": {
+                    "line": 498,
+                    "character": 76
+                }
+            },
+            "rule": "reportUnknownArgumentType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[int]\"",
+            "range": {
+                "start": {
+                    "line": 557,
+                    "character": 26
+                },
+                "end": {
+                    "line": 557,
+                    "character": 75
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"raises\" is unknown",
+            "range": {
+                "start": {
+                    "line": 559,
+                    "character": 9
+                },
+                "end": {
+                    "line": 559,
+                    "character": 22
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[int]\"",
+            "range": {
+                "start": {
+                    "line": 564,
+                    "character": 26
+                },
+                "end": {
+                    "line": 564,
+                    "character": 71
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"raises\" is unknown",
+            "range": {
+                "start": {
+                    "line": 566,
+                    "character": 9
+                },
+                "end": {
+                    "line": 566,
+                    "character": 22
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[int]\"",
+            "range": {
+                "start": {
+                    "line": 571,
+                    "character": 26
+                },
+                "end": {
+                    "line": 571,
+                    "character": 87
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"raises\" is unknown",
+            "range": {
+                "start": {
+                    "line": 573,
+                    "character": 9
+                },
+                "end": {
+                    "line": 573,
+                    "character": 22
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[int]\"",
+            "range": {
+                "start": {
+                    "line": 578,
+                    "character": 26
+                },
+                "end": {
+                    "line": 578,
+                    "character": 84
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"raises\" is unknown",
+            "range": {
+                "start": {
+                    "line": 580,
+                    "character": 9
+                },
+                "end": {
+                    "line": 580,
+                    "character": 22
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"raises\" is unknown",
+            "range": {
+                "start": {
+                    "line": 588,
+                    "character": 9
+                },
+                "end": {
+                    "line": 588,
+                    "character": 22
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"raises\" is unknown",
+            "range": {
+                "start": {
+                    "line": 593,
+                    "character": 9
+                },
+                "end": {
+                    "line": 593,
+                    "character": 22
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"raises\" is unknown",
+            "range": {
+                "start": {
+                    "line": 595,
+                    "character": 9
+                },
+                "end": {
+                    "line": 595,
+                    "character": 22
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"raises\" is unknown",
+            "range": {
+                "start": {
+                    "line": 621,
+                    "character": 9
+                },
+                "end": {
+                    "line": 621,
+                    "character": 22
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"raises\" is unknown",
+            "range": {
+                "start": {
+                    "line": 636,
+                    "character": 9
+                },
+                "end": {
+                    "line": 636,
+                    "character": 22
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/dev/shm/rio-pydantic/pyright-probe/tests/test_pipeline.py",
+            "severity": "error",
+            "message": "Type of \"raises\" is unknown",
+            "range": {
+                "start": {
+                    "line": 640,
+                    "character": 9
+                },
+                "end": {
+                    "line": 640,
+                    "character": 22
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        }
+    ],
+    "summary": {
+        "filesAnalyzed": 55,
+        "errorCount": 291,
+        "warningCount": 0,
+        "informationCount": 0,
+        "timeInSec": 11.312
+    }
+}
+

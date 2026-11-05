@@ -1,0 +1,3 @@
+Conditional startup hook already absent after prior recorded setup; explicit coverage run remains
+Self-package wheel SHA256 a948dc695e38aaf50f9f13778a209349b6561062adb762bbe3620c5a4f5b9460
+Own package code byte-identical after wheel-file reinstall; metadata: {"url": "file:///dev/shm/rio-pydantic/tmp/rio-pydantic-wheel-6dwspcil/pydantic-2.15.0a0+dev-py3-none-any.whl", "archive_info": {}}

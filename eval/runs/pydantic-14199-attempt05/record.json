@@ -1,0 +1,883 @@
+{
+  "schema": "rio-eval-record-v1",
+  "methodology": "deterministic-v1",
+  "repository": "pydantic/pydantic",
+  "pr": "https://github.com/pydantic/pydantic/pull/14199",
+  "case_id": "14199",
+  "languages": [
+    "python"
+  ],
+  "reviewer": "sub-agent eval-pydantic (automated)",
+  "verdict_source": "automated",
+  "independently_clean": false,
+  "commands": [
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/pydantic/pydantic.git\", \"/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/head\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/head argv=[\"git\", \"fetch\", \"origin\", \"a9f3f3fccc180c05190df0478a17487ec9908e4e\", \"262700f815672fc37ed637a1604234f6c7cc7ee9\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/head argv=[\"git\", \"merge-base\", \"a9f3f3fccc180c05190df0478a17487ec9908e4e\", \"262700f815672fc37ed637a1604234f6c7cc7ee9\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/head argv=[\"git\", \"checkout\", \"--detach\", \"262700f815672fc37ed637a1604234f6c7cc7ee9\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/head\", \"/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/base\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/base argv=[\"git\", \"checkout\", \"--detach\", \"a9f3f3fccc180c05190df0478a17487ec9908e4e\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/base argv=[\"uv\", \"sync\", \"--locked\", \"--python\", \"3.12.12\", \"--all-groups\", \"--all-packages\", \"--all-extras\", \"--no-editable-package\", \"pydantic\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/base argv=[\"uv\", \"run\", \"--no-sync\", \"python\", \"-c\", \"import pathlib,sysconfig,hashlib\\np=pathlib.Path(sysconfig.get_path('purelib'))/'a1_coverage.pth'\\nif p.exists():\\n    assert hashlib.sha256(p.read_bytes()).hexdigest() == 'ef2ed06d19867ec669c09a804060666a9cd5e383af0a9d11aa2de79b77d448e8'\\n    p.unlink()\\n    print('Removed unused conditional coverage startup hook; explicit coverage run remains')\\nelse:\\n    print('Conditional startup hook already absent after prior recorded setup; explicit coverage run remains')\\n\\nimport tempfile,subprocess,importlib.metadata,json,sys\\nbefore_dist=importlib.metadata.distribution('pydantic')\\ninstalled_root=pathlib.Path(before_dist.locate_file('pydantic'))\\ndef package_hashes():\\n    return {str(p.relative_to(installed_root)):hashlib.sha256(p.read_bytes()).hexdigest() for p in installed_root.rglob('*') if p.is_file() and '__pycache__' not in p.parts}\\nbefore=package_hashes()\\nwith tempfile.TemporaryDirectory(prefix='rio-pydantic-wheel-') as wheel_tmp:\\n    subprocess.run(['uv','build','--offline','--wheel','--python',sys.executable,'--out-dir',wheel_tmp],check=True)\\n    wheels=list(pathlib.Path(wheel_tmp).glob('pydantic-*.whl'))\\n    assert len(wheels)==1,wheels\\n    wheel=wheels[0]\\n    print('Self-package wheel SHA256',hashlib.sha256(wheel.read_bytes()).hexdigest(),flush=True)\\n    subprocess.run(['uv','pip','install','--offline','--no-deps','--reinstall','--python',sys.executable,str(wheel)],check=True)\\n    assert package_hashes()==before,'Wheel reinstall changed own-package contents'\\n    dist=importlib.metadata.distribution('pydantic')\\n    direct=json.loads(dist.read_text('direct_url.json'))\\n    assert direct['url'].endswith('.whl') and not direct.get('dir_info',{}).get('editable')\\n    print('Own package code byte-identical after wheel-file reinstall; metadata:',json.dumps(direct),flush=True)\\n\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/head argv=[\"uv\", \"sync\", \"--locked\", \"--python\", \"3.12.12\", \"--all-groups\", \"--all-packages\", \"--all-extras\", \"--no-editable-package\", \"pydantic\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/head argv=[\"uv\", \"run\", \"--no-sync\", \"python\", \"-c\", \"import pathlib,sysconfig,hashlib\\np=pathlib.Path(sysconfig.get_path('purelib'))/'a1_coverage.pth'\\nif p.exists():\\n    assert hashlib.sha256(p.read_bytes()).hexdigest() == 'ef2ed06d19867ec669c09a804060666a9cd5e383af0a9d11aa2de79b77d448e8'\\n    p.unlink()\\n    print('Removed unused conditional coverage startup hook; explicit coverage run remains')\\nelse:\\n    print('Conditional startup hook already absent after prior recorded setup; explicit coverage run remains')\\n\\nimport tempfile,subprocess,importlib.metadata,json,sys\\nbefore_dist=importlib.metadata.distribution('pydantic')\\ninstalled_root=pathlib.Path(before_dist.locate_file('pydantic'))\\ndef package_hashes():\\n    return {str(p.relative_to(installed_root)):hashlib.sha256(p.read_bytes()).hexdigest() for p in installed_root.rglob('*') if p.is_file() and '__pycache__' not in p.parts}\\nbefore=package_hashes()\\nwith tempfile.TemporaryDirectory(prefix='rio-pydantic-wheel-') as wheel_tmp:\\n    subprocess.run(['uv','build','--offline','--wheel','--python',sys.executable,'--out-dir',wheel_tmp],check=True)\\n    wheels=list(pathlib.Path(wheel_tmp).glob('pydantic-*.whl'))\\n    assert len(wheels)==1,wheels\\n    wheel=wheels[0]\\n    print('Self-package wheel SHA256',hashlib.sha256(wheel.read_bytes()).hexdigest(),flush=True)\\n    subprocess.run(['uv','pip','install','--offline','--no-deps','--reinstall','--python',sys.executable,str(wheel)],check=True)\\n    assert package_hashes()==before,'Wheel reinstall changed own-package contents'\\n    dist=importlib.metadata.distribution('pydantic')\\n    direct=json.loads(dist.read_text('direct_url.json'))\\n    assert direct['url'].endswith('.whl') and not direct.get('dir_info',{}).get('editable')\\n    print('Own package code byte-identical after wheel-file reinstall; metadata:',json.dumps(direct),flush=True)\\n\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/head argv=[\"node\", \"--version\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/head argv=[\"npm\", \"--version\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/head argv=[\"python3\", \"--version\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/head argv=[\"uv\", \"--version\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14199-attempt05/profile.yaml\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"a9f3f3fccc180c05190df0478a17487ec9908e4e\", \"--format\", \"json\", \"--offline\", \"--profile\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14199-attempt05/profile.yaml\"]",
+    "Independent oracle ledger: eval/runs/pydantic-evidence/positive-base-wheel-final/commands.json",
+    "Independent oracle ledger: eval/runs/pydantic-evidence/positive-head-wheel-final/commands.json",
+    "Observed Rio lint child: cwd=/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/cache/623e84ab5476264e/runs/01M6MWMQ7VJMNF29JMCBVP3R5W/tools/tool.tmp-7ErWPw/. argv=[\"/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/head/./.venv/bin/ruff\", \"check\", \"--output-format\", \"json\", \"--\", \"/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/cache/623e84ab5476264e/runs/01M6MWMQ7VJMNF29JMCBVP3R5W/tools/tool.tmp-7ErWPw/pydantic/_internal/_config.py\", \"/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/cache/623e84ab5476264e/runs/01M6MWMQ7VJMNF29JMCBVP3R5W/tools/tool.tmp-7ErWPw/pydantic/_internal/_contextlib.py\", \"/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/cache/623e84ab5476264e/runs/01M6MWMQ7VJMNF29JMCBVP3R5W/tools/tool.tmp-7ErWPw/pydantic/_internal/_dataclasses.py\", \"/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/cache/623e84ab5476264e/runs/01M6MWMQ7VJMNF29JMCBVP3R5W/tools/tool.tmp-7ErWPw/pydantic/_internal/_generate_schema.py\", \"/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/cache/623e84ab5476264e/runs/01M6MWMQ7VJMNF29JMCBVP3R5W/tools/tool.tmp-7ErWPw/pydantic/_internal/_generics.py\", \"/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/cache/623e84ab5476264e/runs/01M6MWMQ7VJMNF29JMCBVP3R5W/tools/tool.tmp-7ErWPw/pydantic/_internal/_namespace_utils.py\"]",
+    "Observed Rio typecheck child: cwd=/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/cache/623e84ab5476264e/runs/01M6MWMQ7VJMNF29JMCBVP3R5W/tools/tool.tmp-wQjOrX/. argv=[\"/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/head/./.venv/bin/pyright\", \"--outputjson\"]",
+    "Observed Rio coverage child: cwd=/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/cache/623e84ab5476264e/runs/01M6MWMQ7VJMNF29JMCBVP3R5W/tools/tool.tmp-JSqQM9/. argv=[\"/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/head/./.venv/bin/coverage\", \"run\", \"-m\", \"pytest\", \"-q\"]",
+    "Observed Rio lint child: cwd=/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/cache/623e84ab5476264e/runs/01M6MWMQ7VJMNF29JMCBVP3R5W/tools/tool.tmp-sXSENN/. argv=[\"/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/head/./.venv/bin/ruff\", \"check\", \"--output-format\", \"json\", \"--\", \"/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/cache/623e84ab5476264e/runs/01M6MWMQ7VJMNF29JMCBVP3R5W/tools/tool.tmp-sXSENN/pydantic/_internal/_config.py\", \"/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/cache/623e84ab5476264e/runs/01M6MWMQ7VJMNF29JMCBVP3R5W/tools/tool.tmp-sXSENN/pydantic/_internal/_dataclasses.py\", \"/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/cache/623e84ab5476264e/runs/01M6MWMQ7VJMNF29JMCBVP3R5W/tools/tool.tmp-sXSENN/pydantic/_internal/_generate_schema.py\", \"/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/cache/623e84ab5476264e/runs/01M6MWMQ7VJMNF29JMCBVP3R5W/tools/tool.tmp-sXSENN/pydantic/_internal/_generics.py\", \"/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/cache/623e84ab5476264e/runs/01M6MWMQ7VJMNF29JMCBVP3R5W/tools/tool.tmp-sXSENN/pydantic/_internal/_namespace_utils.py\"]",
+    "Observed Rio typecheck child: cwd=/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/cache/623e84ab5476264e/runs/01M6MWMQ7VJMNF29JMCBVP3R5W/tools/tool.tmp-OhbieE/. argv=[\"/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/head/./.venv/bin/pyright\", \"--outputjson\"]",
+    "Observed Rio coverage child: cwd=/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/cache/623e84ab5476264e/runs/01M6MWMQ7VJMNF29JMCBVP3R5W/tools/tool.tmp-JSqQM9/. argv=[\"/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/head/./.venv/bin/coverage\", \"json\", \"-o\", \"/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/cache/623e84ab5476264e/runs/01M6MWMQ7VJMNF29JMCBVP3R5W/tools/tool.tmp-JSqQM9/./.rio-coverage/coverage.json\"]"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-run-pydantic/eval/runs/pydantic-14199-attempt05/commands.json; Rio binary SHA-256: 512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+    "Authoritative independent evidence: eval/runs/pydantic-evidence/wheel-oracle-summary.json and *-wheel-final command/output files. Independent assessment is automated; no human confirmation claimed.",
+    "Locked Python 3.12.12, uv 0.13.7, Pyright 1.1.411, mypy 2.3.0, Ruff 0.17.3, pytest 9.1.1, coverage 7.13.5. Final wheel-file plan installs all locked groups/packages/extras, then reinstalls only own pydantic from a built wheel file with byte-identical package content assertion; hash-checked unused conditional coverage startup hook removed. Relative .venv/bin prepended to PATH; all external environment overrides retained in commands.json.",
+    "PYTEST_ADDOPTS=--ignore=tests/pydantic_core --ignore=tests/benchmarks was declared before Rio; all Pydantic functional/docs tests retained, no changed source excluded. Offline audit lacks advisory cache; no dependency safety claim. Lockfiles unchanged.",
+    "Rio selects native Pyright rather than mypy: venv pyright --outputjson, without a dot target. Root native include covers pydantic and tests/test_pipeline.py, with explicit excludes and strict test config; see typecheck-scope.json. Test-file diagnostics are real pre-existing native-tool output, not a new change-specific type error.",
+    "Failed/interrupted attempts are preserved and excluded from scoring. Setup defects and exact reproductions, finding IDs, limitations and timings: eval/runs/pydantic-NOTES.md."
+  ],
+  "positive_control": {
+    "kind": "real-pr",
+    "expected": [
+      {
+        "id": "contextmanager-uncovered-error-paths",
+        "mechanism": "uncovered-lines",
+        "evidence": "Preregistered in pydantic-evidence/control-register.json before Rio. Public introducing PR 14199 head 262700f815672fc37ed637a1604234f6c7cc7ee9 vs base a9f3f3fccc180c05190df0478a17487ec9908e4e. Independent positive-base/head-wheel-final commands.json and coverage.json.gz: base file absent; head 49 executable, 35 executed, missing 30,38,39,41,47,52,60,61,62,63,68,71,72,74, zero exclusions, both 6560 tests passed. See wheel-oracle-summary.json. Follow-up 14202 excludes error/suppression paths. One expected testing gap.",
+        "finding_ids": [
+          "118c18a4b17e4c34b05d5a4a882b58df6e4e1e888c7dca2e28da3d76c95d9001",
+          "e7fa463a43044b607c2f933410131203ec164611cc22c7828e682002fefafe89"
+        ]
+      }
+    ]
+  },
+  "base_sha": "a9f3f3fccc180c05190df0478a17487ec9908e4e",
+  "head_sha": "262700f815672fc37ed637a1604234f6c7cc7ee9",
+  "mode": "branch",
+  "review_id": "623e84ab5476264e",
+  "run_id": "01M6MWMQ7VJMNF29JMCBVP3R5W",
+  "rio_version": "0.1.0",
+  "profile": "eval/pydantic",
+  "wall_time_ms": 249863,
+  "status": "incomplete",
+  "report_path": "eval/runs/pydantic-14199-attempt05/report.json",
+  "environment": {
+    "dependency_state": "verified",
+    "baseline_ran": true,
+    "baseline_classification_ran": true,
+    "eligible": true,
+    "reasons": [],
+    "checks": [
+      {
+        "findings": [],
+        "kind": "secrets",
+        "language": "common",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 2
+      },
+      {
+        "findings": [],
+        "hint": "Dependency audit needs api.osv.dev",
+        "kind": "dependencies",
+        "language": "common",
+        "outcome": "skipped",
+        "reason": "offline",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 6
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "lint",
+        "language": "python",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 7564
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "lint",
+        "language": "python",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "base",
+        "wall_time_ms": 11518
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "typecheck",
+        "language": "python",
+        "outcome": "findings",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 44309
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "typecheck",
+        "language": "python",
+        "outcome": "findings",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "base",
+        "wall_time_ms": 41097
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "coverage",
+        "language": "python",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 188858
+      }
+    ],
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "Graph references use syntax and text; no language server was used",
+      "Impact graph truncated at max_nodes",
+      "Offline applies to Rio; tool and test processes were not network-isolated"
+    ]
+  },
+  "findings": [
+    {
+      "finding": {
+        "category": "defect",
+        "evidence": [
+          "pyright diagnostic"
+        ],
+        "evidence_level": "static_proven",
+        "id": "0c708dac1e6dedabbb1b19dcf3ad2415b4836ed5a6906498f63381f00bd3bec0",
+        "location": {
+          "column": 27,
+          "line_end": 558,
+          "line_start": 558,
+          "occurrence_state": "pre-existing",
+          "path": "tests/test_pipeline.py",
+          "symbol_path": "test_pipeline.test_not_eq"
+        },
+        "locations": [
+          {
+            "column": 27,
+            "line_end": 558,
+            "line_start": 558,
+            "occurrence_state": "pre-existing",
+            "path": "tests/test_pipeline.py",
+            "symbol_path": "test_pipeline.test_not_eq"
+          }
+        ],
+        "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[int]\"",
+        "rule_id": "typecheck/pyright/reportArgumentType",
+        "severity": "error",
+        "source": {
+          "tool": "pyright",
+          "version": "pyright 1.1.411"
+        },
+        "state": "pre-existing",
+        "trigger": ""
+      },
+      "verdict": "pre-existing-shown",
+      "reason": "Each path/line/rule/message occurrence exactly matches independent positive-base-wheel-final/07-stdout.log and positive-head-wheel-final/07-stdout.log; source tests/test_pipeline.py is unchanged. The same 12 native Pyright diagnostics existed at both pinned revisions. Rio successfully ran a verified base and honestly labels this pre-existing. No introduced type error is inferred.",
+      "message_template": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\" \"Annotated\" is not assignable to \"TypeForm[int]\"",
+      "file_set": [
+        "tests/test_pipeline.py"
+      ],
+      "root_cause_key": "f71210715ed387e09a0a4d5f02bae6f7301464bad00d0122afe5e1e0ac3064c7",
+      "family": "typecheck/pyright/reportArgumentType"
+    },
+    {
+      "finding": {
+        "category": "defect",
+        "evidence": [
+          "pyright diagnostic"
+        ],
+        "evidence_level": "static_proven",
+        "id": "1a803673bad9618fd43791bc7adc556e8d1e696b7dbd134adfff4f9c21059ac8",
+        "location": {
+          "column": 27,
+          "line_end": 137,
+          "line_start": 137,
+          "occurrence_state": "pre-existing",
+          "path": "tests/test_pipeline.py",
+          "symbol_path": "test_pipeline.test_parse_multipleOf"
+        },
+        "locations": [
+          {
+            "column": 27,
+            "line_end": 137,
+            "line_start": 137,
+            "occurrence_state": "pre-existing",
+            "path": "tests/test_pipeline.py",
+            "symbol_path": "test_pipeline.test_parse_multipleOf"
+          }
+        ],
+        "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[Any]\"",
+        "rule_id": "typecheck/pyright/reportArgumentType",
+        "severity": "error",
+        "source": {
+          "tool": "pyright",
+          "version": "pyright 1.1.411"
+        },
+        "state": "pre-existing",
+        "trigger": ""
+      },
+      "verdict": "pre-existing-shown",
+      "reason": "Each path/line/rule/message occurrence exactly matches independent positive-base-wheel-final/07-stdout.log and positive-head-wheel-final/07-stdout.log; source tests/test_pipeline.py is unchanged. The same 12 native Pyright diagnostics existed at both pinned revisions. Rio successfully ran a verified base and honestly labels this pre-existing. No introduced type error is inferred.",
+      "message_template": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\" \"Annotated\" is not assignable to \"TypeForm[Any]\"",
+      "file_set": [
+        "tests/test_pipeline.py"
+      ],
+      "root_cause_key": "0a54c00ce0b54fd6c829896c258b92640e8389710128fd2acc28dc1232cf3c15",
+      "family": "typecheck/pyright/reportArgumentType"
+    },
+    {
+      "finding": {
+        "category": "defect",
+        "evidence": [
+          "pyright diagnostic"
+        ],
+        "evidence_level": "static_proven",
+        "id": "48f69a41503d45aea55d0e2a3e2d91130a6c6a34705743c50b72f7d2c3af6918",
+        "location": {
+          "column": 27,
+          "line_end": 109,
+          "line_start": 109,
+          "occurrence_state": "pre-existing",
+          "path": "tests/test_pipeline.py",
+          "symbol_path": "test_pipeline.test_ge_le_gt_lt"
+        },
+        "locations": [
+          {
+            "column": 27,
+            "line_end": 109,
+            "line_start": 109,
+            "occurrence_state": "pre-existing",
+            "path": "tests/test_pipeline.py",
+            "symbol_path": "test_pipeline.test_ge_le_gt_lt"
+          }
+        ],
+        "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[Any]\"",
+        "rule_id": "typecheck/pyright/reportArgumentType",
+        "severity": "error",
+        "source": {
+          "tool": "pyright",
+          "version": "pyright 1.1.411"
+        },
+        "state": "pre-existing",
+        "trigger": ""
+      },
+      "verdict": "pre-existing-shown",
+      "reason": "Each path/line/rule/message occurrence exactly matches independent positive-base-wheel-final/07-stdout.log and positive-head-wheel-final/07-stdout.log; source tests/test_pipeline.py is unchanged. The same 12 native Pyright diagnostics existed at both pinned revisions. Rio successfully ran a verified base and honestly labels this pre-existing. No introduced type error is inferred.",
+      "message_template": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\" \"Annotated\" is not assignable to \"TypeForm[Any]\"",
+      "file_set": [
+        "tests/test_pipeline.py"
+      ],
+      "root_cause_key": "0a54c00ce0b54fd6c829896c258b92640e8389710128fd2acc28dc1232cf3c15",
+      "family": "typecheck/pyright/reportArgumentType"
+    },
+    {
+      "finding": {
+        "category": "defect",
+        "evidence": [
+          "pyright diagnostic"
+        ],
+        "evidence_level": "static_proven",
+        "id": "49598139263956107b9b2cd14cb2f95aaf69d59bc3bd1125a069815e84dd91fd",
+        "location": {
+          "column": 86,
+          "line_end": 455,
+          "line_start": 455,
+          "occurrence_state": "pre-existing",
+          "path": "tests/test_pipeline.py",
+          "symbol_path": "test_pipeline.test_predicates"
+        },
+        "locations": [
+          {
+            "column": 86,
+            "line_end": 455,
+            "line_start": 455,
+            "occurrence_state": "pre-existing",
+            "path": "tests/test_pipeline.py",
+            "symbol_path": "test_pipeline.test_predicates"
+          }
+        ],
+        "message": "Argument of type \"type[float]\" cannot be assigned to parameter \"func\" of type \"(int) -> bool\" in function \"predicate\"\n  Type \"type[float]\" is not assignable to type \"(int) -> bool\"\n    Function return type \"float\" is incompatible with type \"bool\"\n      \"float\" is not assignable to \"bool\"",
+        "rule_id": "typecheck/pyright/reportArgumentType",
+        "severity": "error",
+        "source": {
+          "tool": "pyright",
+          "version": "pyright 1.1.411"
+        },
+        "state": "pre-existing",
+        "trigger": ""
+      },
+      "verdict": "pre-existing-shown",
+      "reason": "Each path/line/rule/message occurrence exactly matches independent positive-base-wheel-final/07-stdout.log and positive-head-wheel-final/07-stdout.log; source tests/test_pipeline.py is unchanged. The same 12 native Pyright diagnostics existed at both pinned revisions. Rio successfully ran a verified base and honestly labels this pre-existing. No introduced type error is inferred.",
+      "message_template": "Argument of type \"type[float]\" cannot be assigned to parameter \"func\" of type \"(int) -> bool\" in function \"predicate\" Type \"type[float]\" is not assignable to type \"(int) -> bool\" Function return type \"float\" is incompatible with type \"bool\" \"float\" is not assignable to \"bool\"",
+      "file_set": [
+        "tests/test_pipeline.py"
+      ],
+      "root_cause_key": "6a89cb950ddd4ed8bc7a73755d4c866558e1f85a83981474efc591708d2d87bc",
+      "family": "typecheck/pyright/reportArgumentType"
+    },
+    {
+      "finding": {
+        "category": "defect",
+        "evidence": [
+          "pyright diagnostic"
+        ],
+        "evidence_level": "static_proven",
+        "id": "71b669da4712e3bd059697e56570f5cf832c93a181675985b63dfea46fb9865c",
+        "location": {
+          "column": 31,
+          "line_end": 449,
+          "line_start": 449,
+          "occurrence_state": "pre-existing",
+          "path": "tests/test_pipeline.py",
+          "symbol_path": "test_pipeline.test_predicates"
+        },
+        "locations": [
+          {
+            "column": 31,
+            "line_end": 449,
+            "line_start": 449,
+            "occurrence_state": "pre-existing",
+            "path": "tests/test_pipeline.py",
+            "symbol_path": "test_pipeline.test_predicates"
+          },
+          {
+            "column": 9,
+            "line_end": 455,
+            "line_start": 455,
+            "occurrence_state": "pre-existing",
+            "path": "tests/test_pipeline.py",
+            "symbol_path": "test_pipeline.test_predicates"
+          }
+        ],
+        "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[int]\"",
+        "rule_id": "typecheck/pyright/reportArgumentType",
+        "severity": "error",
+        "source": {
+          "tool": "pyright",
+          "version": "pyright 1.1.411"
+        },
+        "state": "pre-existing",
+        "trigger": ""
+      },
+      "verdict": "pre-existing-shown",
+      "reason": "Each path/line/rule/message occurrence exactly matches independent positive-base-wheel-final/07-stdout.log and positive-head-wheel-final/07-stdout.log; source tests/test_pipeline.py is unchanged. The same 12 native Pyright diagnostics existed at both pinned revisions. Rio successfully ran a verified base and honestly labels this pre-existing. No introduced type error is inferred.",
+      "message_template": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\" \"Annotated\" is not assignable to \"TypeForm[int]\"",
+      "file_set": [
+        "tests/test_pipeline.py"
+      ],
+      "root_cause_key": "f71210715ed387e09a0a4d5f02bae6f7301464bad00d0122afe5e1e0ac3064c7",
+      "family": "typecheck/pyright/reportArgumentType"
+    },
+    {
+      "finding": {
+        "category": "defect",
+        "evidence": [
+          "pyright diagnostic"
+        ],
+        "evidence_level": "static_proven",
+        "id": "7386b2e65818cec7fd89937b5a41e46bfc6e4064d8931e8a5b53df4e3551bad5",
+        "location": {
+          "column": 27,
+          "line_end": 164,
+          "line_start": 164,
+          "occurrence_state": "pre-existing",
+          "path": "tests/test_pipeline.py",
+          "symbol_path": "test_pipeline.test_interval_constraints"
+        },
+        "locations": [
+          {
+            "column": 27,
+            "line_end": 164,
+            "line_start": 164,
+            "occurrence_state": "pre-existing",
+            "path": "tests/test_pipeline.py",
+            "symbol_path": "test_pipeline.test_interval_constraints"
+          }
+        ],
+        "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[Any]\"",
+        "rule_id": "typecheck/pyright/reportArgumentType",
+        "severity": "error",
+        "source": {
+          "tool": "pyright",
+          "version": "pyright 1.1.411"
+        },
+        "state": "pre-existing",
+        "trigger": ""
+      },
+      "verdict": "pre-existing-shown",
+      "reason": "Each path/line/rule/message occurrence exactly matches independent positive-base-wheel-final/07-stdout.log and positive-head-wheel-final/07-stdout.log; source tests/test_pipeline.py is unchanged. The same 12 native Pyright diagnostics existed at both pinned revisions. Rio successfully ran a verified base and honestly labels this pre-existing. No introduced type error is inferred.",
+      "message_template": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\" \"Annotated\" is not assignable to \"TypeForm[Any]\"",
+      "file_set": [
+        "tests/test_pipeline.py"
+      ],
+      "root_cause_key": "0a54c00ce0b54fd6c829896c258b92640e8389710128fd2acc28dc1232cf3c15",
+      "family": "typecheck/pyright/reportArgumentType"
+    },
+    {
+      "finding": {
+        "category": "defect",
+        "evidence": [
+          "pyright diagnostic"
+        ],
+        "evidence_level": "static_proven",
+        "id": "b11996621272e200847b2bba76a44497a6bc5154e3f96d81c95cac3b5eee3e79",
+        "location": {
+          "column": 27,
+          "line_end": 235,
+          "line_start": 235,
+          "occurrence_state": "pre-existing",
+          "path": "tests/test_pipeline.py",
+          "symbol_path": "test_pipeline.test_len_constraints"
+        },
+        "locations": [
+          {
+            "column": 27,
+            "line_end": 235,
+            "line_start": 235,
+            "occurrence_state": "pre-existing",
+            "path": "tests/test_pipeline.py",
+            "symbol_path": "test_pipeline.test_len_constraints"
+          }
+        ],
+        "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[Any]\"",
+        "rule_id": "typecheck/pyright/reportArgumentType",
+        "severity": "error",
+        "source": {
+          "tool": "pyright",
+          "version": "pyright 1.1.411"
+        },
+        "state": "pre-existing",
+        "trigger": ""
+      },
+      "verdict": "pre-existing-shown",
+      "reason": "Each path/line/rule/message occurrence exactly matches independent positive-base-wheel-final/07-stdout.log and positive-head-wheel-final/07-stdout.log; source tests/test_pipeline.py is unchanged. The same 12 native Pyright diagnostics existed at both pinned revisions. Rio successfully ran a verified base and honestly labels this pre-existing. No introduced type error is inferred.",
+      "message_template": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\" \"Annotated\" is not assignable to \"TypeForm[Any]\"",
+      "file_set": [
+        "tests/test_pipeline.py"
+      ],
+      "root_cause_key": "0a54c00ce0b54fd6c829896c258b92640e8389710128fd2acc28dc1232cf3c15",
+      "family": "typecheck/pyright/reportArgumentType"
+    },
+    {
+      "finding": {
+        "category": "defect",
+        "evidence": [
+          "pyright diagnostic"
+        ],
+        "evidence_level": "static_proven",
+        "id": "be44da13aa704d8f01f98cbf1ea5fb0aa346406f66d34e95d33cc5cc1e97c2e1",
+        "location": {
+          "column": 27,
+          "line_end": 572,
+          "line_start": 572,
+          "occurrence_state": "pre-existing",
+          "path": "tests/test_pipeline.py",
+          "symbol_path": "test_pipeline.test_not_in"
+        },
+        "locations": [
+          {
+            "column": 27,
+            "line_end": 572,
+            "line_start": 572,
+            "occurrence_state": "pre-existing",
+            "path": "tests/test_pipeline.py",
+            "symbol_path": "test_pipeline.test_not_in"
+          }
+        ],
+        "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[int]\"",
+        "rule_id": "typecheck/pyright/reportArgumentType",
+        "severity": "error",
+        "source": {
+          "tool": "pyright",
+          "version": "pyright 1.1.411"
+        },
+        "state": "pre-existing",
+        "trigger": ""
+      },
+      "verdict": "pre-existing-shown",
+      "reason": "Each path/line/rule/message occurrence exactly matches independent positive-base-wheel-final/07-stdout.log and positive-head-wheel-final/07-stdout.log; source tests/test_pipeline.py is unchanged. The same 12 native Pyright diagnostics existed at both pinned revisions. Rio successfully ran a verified base and honestly labels this pre-existing. No introduced type error is inferred.",
+      "message_template": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\" \"Annotated\" is not assignable to \"TypeForm[int]\"",
+      "file_set": [
+        "tests/test_pipeline.py"
+      ],
+      "root_cause_key": "f71210715ed387e09a0a4d5f02bae6f7301464bad00d0122afe5e1e0ac3064c7",
+      "family": "typecheck/pyright/reportArgumentType"
+    },
+    {
+      "finding": {
+        "category": "defect",
+        "evidence": [
+          "pyright diagnostic"
+        ],
+        "evidence_level": "static_proven",
+        "id": "c42835821e2dc02d633be779782444c12004e13735365ff779955561c1f338f2",
+        "location": {
+          "column": 27,
+          "line_end": 579,
+          "line_start": 579,
+          "occurrence_state": "pre-existing",
+          "path": "tests/test_pipeline.py",
+          "symbol_path": "test_pipeline.test_in"
+        },
+        "locations": [
+          {
+            "column": 27,
+            "line_end": 579,
+            "line_start": 579,
+            "occurrence_state": "pre-existing",
+            "path": "tests/test_pipeline.py",
+            "symbol_path": "test_pipeline.test_in"
+          }
+        ],
+        "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[int]\"",
+        "rule_id": "typecheck/pyright/reportArgumentType",
+        "severity": "error",
+        "source": {
+          "tool": "pyright",
+          "version": "pyright 1.1.411"
+        },
+        "state": "pre-existing",
+        "trigger": ""
+      },
+      "verdict": "pre-existing-shown",
+      "reason": "Each path/line/rule/message occurrence exactly matches independent positive-base-wheel-final/07-stdout.log and positive-head-wheel-final/07-stdout.log; source tests/test_pipeline.py is unchanged. The same 12 native Pyright diagnostics existed at both pinned revisions. Rio successfully ran a verified base and honestly labels this pre-existing. No introduced type error is inferred.",
+      "message_template": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\" \"Annotated\" is not assignable to \"TypeForm[int]\"",
+      "file_set": [
+        "tests/test_pipeline.py"
+      ],
+      "root_cause_key": "f71210715ed387e09a0a4d5f02bae6f7301464bad00d0122afe5e1e0ac3064c7",
+      "family": "typecheck/pyright/reportArgumentType"
+    },
+    {
+      "finding": {
+        "category": "defect",
+        "evidence": [
+          "pyright diagnostic"
+        ],
+        "evidence_level": "static_proven",
+        "id": "c9acdbb504e6af1a7f99ed69fba4d4592136338312bb46e685e9ced5e6c53c6f",
+        "location": {
+          "column": 27,
+          "line_end": 565,
+          "line_start": 565,
+          "occurrence_state": "pre-existing",
+          "path": "tests/test_pipeline.py",
+          "symbol_path": "test_pipeline.test_eq"
+        },
+        "locations": [
+          {
+            "column": 27,
+            "line_end": 565,
+            "line_start": 565,
+            "occurrence_state": "pre-existing",
+            "path": "tests/test_pipeline.py",
+            "symbol_path": "test_pipeline.test_eq"
+          }
+        ],
+        "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[int]\"",
+        "rule_id": "typecheck/pyright/reportArgumentType",
+        "severity": "error",
+        "source": {
+          "tool": "pyright",
+          "version": "pyright 1.1.411"
+        },
+        "state": "pre-existing",
+        "trigger": ""
+      },
+      "verdict": "pre-existing-shown",
+      "reason": "Each path/line/rule/message occurrence exactly matches independent positive-base-wheel-final/07-stdout.log and positive-head-wheel-final/07-stdout.log; source tests/test_pipeline.py is unchanged. The same 12 native Pyright diagnostics existed at both pinned revisions. Rio successfully ran a verified base and honestly labels this pre-existing. No introduced type error is inferred.",
+      "message_template": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\" \"Annotated\" is not assignable to \"TypeForm[int]\"",
+      "file_set": [
+        "tests/test_pipeline.py"
+      ],
+      "root_cause_key": "f71210715ed387e09a0a4d5f02bae6f7301464bad00d0122afe5e1e0ac3064c7",
+      "family": "typecheck/pyright/reportArgumentType"
+    },
+    {
+      "finding": {
+        "category": "defect",
+        "evidence": [
+          "pyright diagnostic"
+        ],
+        "evidence_level": "static_proven",
+        "id": "f25b838ed1947c06e450711653c2c1b51cb7d8fa819b58ccc6712275129c6212",
+        "location": {
+          "column": 27,
+          "line_end": 300,
+          "line_start": 300,
+          "occurrence_state": "pre-existing",
+          "path": "tests/test_pipeline.py",
+          "symbol_path": "test_pipeline.test_constraints_applied_on_core_schema"
+        },
+        "locations": [
+          {
+            "column": 27,
+            "line_end": 300,
+            "line_start": 300,
+            "occurrence_state": "pre-existing",
+            "path": "tests/test_pipeline.py",
+            "symbol_path": "test_pipeline.test_constraints_applied_on_core_schema"
+          }
+        ],
+        "message": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\"\n  \"Annotated\" is not assignable to \"TypeForm[Any]\"",
+        "rule_id": "typecheck/pyright/reportArgumentType",
+        "severity": "error",
+        "source": {
+          "tool": "pyright",
+          "version": "pyright 1.1.411"
+        },
+        "state": "pre-existing",
+        "trigger": ""
+      },
+      "verdict": "pre-existing-shown",
+      "reason": "Each path/line/rule/message occurrence exactly matches independent positive-base-wheel-final/07-stdout.log and positive-head-wheel-final/07-stdout.log; source tests/test_pipeline.py is unchanged. The same 12 native Pyright diagnostics existed at both pinned revisions. Rio successfully ran a verified base and honestly labels this pre-existing. No introduced type error is inferred.",
+      "message_template": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\" \"Annotated\" is not assignable to \"TypeForm[Any]\"",
+      "file_set": [
+        "tests/test_pipeline.py"
+      ],
+      "root_cause_key": "0a54c00ce0b54fd6c829896c258b92640e8389710128fd2acc28dc1232cf3c15",
+      "family": "typecheck/pyright/reportArgumentType"
+    },
+    {
+      "finding": {
+        "category": "risk",
+        "evidence": [
+          "merged coverage"
+        ],
+        "evidence_level": "static_proven",
+        "id": "118c18a4b17e4c34b05d5a4a882b58df6e4e1e888c7dca2e28da3d76c95d9001",
+        "location": {
+          "line_end": 30,
+          "line_start": 30,
+          "occurrence_state": "new",
+          "path": "pydantic/_internal/_contextlib.py",
+          "symbol_path": "_contextlib._GeneratorContextManager.__enter__"
+        },
+        "locations": [
+          {
+            "line_end": 30,
+            "line_start": 30,
+            "occurrence_state": "new",
+            "path": "pydantic/_internal/_contextlib.py",
+            "symbol_path": "_contextlib._GeneratorContextManager.__enter__"
+          }
+        ],
+        "message": "Changed executable lines are not covered by tests: 30",
+        "rule_id": "coverage/untested_change",
+        "severity": "warning",
+        "source": {
+          "tool": "coverage",
+          "version": "merged"
+        },
+        "state": "new",
+        "suggested_fix": "Add a test that executes the changed behavior",
+        "trigger": "execution reaches the changed lines"
+      },
+      "verdict": "true-positive",
+      "reason": "Independent positive-base-wheel-final coverage has no _contextlib.py; positive-head-wheel-final/coverage.json.gz instruments the added module (49 executable, 35 executed, 14 missing, no exclusions) after 6560 tests pass. Every reported line matches independent missing executable lines. Follow-up PR 14202 adds coverage exclusions. This is the preregistered testing gap, not an asserted runtime semantic bug. Both method findings share one root-cause template/file set because they partition the same new context-manager module error/suppression-path coverage gap.",
+      "message_template": "New internal context-manager error and suppression paths lack executed tests",
+      "file_set": [
+        "pydantic/_internal/_contextlib.py"
+      ],
+      "root_cause_key": "d7638fb5d83ddd36381e0067388753f990455adf2bb9bcc7a5f312c88e457c09",
+      "family": "contextmanager-uncovered-error-paths"
+    },
+    {
+      "finding": {
+        "category": "risk",
+        "evidence": [
+          "merged coverage"
+        ],
+        "evidence_level": "static_proven",
+        "id": "e7fa463a43044b607c2f933410131203ec164611cc22c7828e682002fefafe89",
+        "location": {
+          "line_end": 39,
+          "line_start": 38,
+          "occurrence_state": "new",
+          "path": "pydantic/_internal/_contextlib.py",
+          "symbol_path": "_contextlib._GeneratorContextManager.__exit__"
+        },
+        "locations": [
+          {
+            "line_end": 39,
+            "line_start": 38,
+            "occurrence_state": "new",
+            "path": "pydantic/_internal/_contextlib.py",
+            "symbol_path": "_contextlib._GeneratorContextManager.__exit__"
+          },
+          {
+            "line_end": 41,
+            "line_start": 41,
+            "occurrence_state": "new",
+            "path": "pydantic/_internal/_contextlib.py",
+            "symbol_path": "_contextlib._GeneratorContextManager.__exit__"
+          },
+          {
+            "line_end": 47,
+            "line_start": 47,
+            "occurrence_state": "new",
+            "path": "pydantic/_internal/_contextlib.py",
+            "symbol_path": "_contextlib._GeneratorContextManager.__exit__"
+          },
+          {
+            "line_end": 52,
+            "line_start": 52,
+            "occurrence_state": "new",
+            "path": "pydantic/_internal/_contextlib.py",
+            "symbol_path": "_contextlib._GeneratorContextManager.__exit__"
+          },
+          {
+            "line_end": 63,
+            "line_start": 60,
+            "occurrence_state": "new",
+            "path": "pydantic/_internal/_contextlib.py",
+            "symbol_path": "_contextlib._GeneratorContextManager.__exit__"
+          },
+          {
+            "line_end": 68,
+            "line_start": 68,
+            "occurrence_state": "new",
+            "path": "pydantic/_internal/_contextlib.py",
+            "symbol_path": "_contextlib._GeneratorContextManager.__exit__"
+          },
+          {
+            "line_end": 72,
+            "line_start": 71,
+            "occurrence_state": "new",
+            "path": "pydantic/_internal/_contextlib.py",
+            "symbol_path": "_contextlib._GeneratorContextManager.__exit__"
+          },
+          {
+            "line_end": 74,
+            "line_start": 74,
+            "occurrence_state": "new",
+            "path": "pydantic/_internal/_contextlib.py",
+            "symbol_path": "_contextlib._GeneratorContextManager.__exit__"
+          }
+        ],
+        "message": "Changed executable lines are not covered by tests: 38-39, 41, 47, 52, 60-63, 68, 71-72, 74",
+        "rule_id": "coverage/untested_change",
+        "severity": "warning",
+        "source": {
+          "tool": "coverage",
+          "version": "merged"
+        },
+        "state": "new",
+        "suggested_fix": "Add a test that executes the changed behavior",
+        "trigger": "execution reaches the changed lines"
+      },
+      "verdict": "true-positive",
+      "reason": "Independent positive-base-wheel-final coverage has no _contextlib.py; positive-head-wheel-final/coverage.json.gz instruments the added module (49 executable, 35 executed, 14 missing, no exclusions) after 6560 tests pass. Every reported line matches independent missing executable lines. Follow-up PR 14202 adds coverage exclusions. This is the preregistered testing gap, not an asserted runtime semantic bug. Both method findings share one root-cause template/file set because they partition the same new context-manager module error/suppression-path coverage gap.",
+      "message_template": "New internal context-manager error and suppression paths lack executed tests",
+      "file_set": [
+        "pydantic/_internal/_contextlib.py"
+      ],
+      "root_cause_key": "d7638fb5d83ddd36381e0067388753f990455adf2bb9bcc7a5f312c88e457c09",
+      "family": "contextmanager-uncovered-error-paths"
+    }
+  ],
+  "root_causes": [
+    {
+      "root_cause_key": "0a54c00ce0b54fd6c829896c258b92640e8389710128fd2acc28dc1232cf3c15",
+      "rule_id": "typecheck/pyright/reportArgumentType",
+      "message_template": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[Any]\" in function \"__init__\" \"Annotated\" is not assignable to \"TypeForm[Any]\"",
+      "file_set": [
+        "tests/test_pipeline.py"
+      ],
+      "verdict": "pre-existing-shown",
+      "family": "typecheck/pyright/reportArgumentType",
+      "finding_count": 5,
+      "occurrence_count": 5,
+      "finding_ids": [
+        "1a803673bad9618fd43791bc7adc556e8d1e696b7dbd134adfff4f9c21059ac8",
+        "48f69a41503d45aea55d0e2a3e2d91130a6c6a34705743c50b72f7d2c3af6918",
+        "7386b2e65818cec7fd89937b5a41e46bfc6e4064d8931e8a5b53df4e3551bad5",
+        "b11996621272e200847b2bba76a44497a6bc5154e3f96d81c95cac3b5eee3e79",
+        "f25b838ed1947c06e450711653c2c1b51cb7d8fa819b58ccc6712275129c6212"
+      ]
+    },
+    {
+      "root_cause_key": "6a89cb950ddd4ed8bc7a73755d4c866558e1f85a83981474efc591708d2d87bc",
+      "rule_id": "typecheck/pyright/reportArgumentType",
+      "message_template": "Argument of type \"type[float]\" cannot be assigned to parameter \"func\" of type \"(int) -> bool\" in function \"predicate\" Type \"type[float]\" is not assignable to type \"(int) -> bool\" Function return type \"float\" is incompatible with type \"bool\" \"float\" is not assignable to \"bool\"",
+      "file_set": [
+        "tests/test_pipeline.py"
+      ],
+      "verdict": "pre-existing-shown",
+      "family": "typecheck/pyright/reportArgumentType",
+      "finding_count": 1,
+      "occurrence_count": 1,
+      "finding_ids": [
+        "49598139263956107b9b2cd14cb2f95aaf69d59bc3bd1125a069815e84dd91fd"
+      ]
+    },
+    {
+      "root_cause_key": "d7638fb5d83ddd36381e0067388753f990455adf2bb9bcc7a5f312c88e457c09",
+      "rule_id": "coverage/untested_change",
+      "message_template": "New internal context-manager error and suppression paths lack executed tests",
+      "file_set": [
+        "pydantic/_internal/_contextlib.py"
+      ],
+      "verdict": "true-positive",
+      "family": "contextmanager-uncovered-error-paths",
+      "finding_count": 2,
+      "occurrence_count": 9,
+      "finding_ids": [
+        "118c18a4b17e4c34b05d5a4a882b58df6e4e1e888c7dca2e28da3d76c95d9001",
+        "e7fa463a43044b607c2f933410131203ec164611cc22c7828e682002fefafe89"
+      ]
+    },
+    {
+      "root_cause_key": "f71210715ed387e09a0a4d5f02bae6f7301464bad00d0122afe5e1e0ac3064c7",
+      "rule_id": "typecheck/pyright/reportArgumentType",
+      "message_template": "Argument of type \"Annotated\" cannot be assigned to parameter \"type\" of type \"TypeForm[int]\" in function \"__init__\" \"Annotated\" is not assignable to \"TypeForm[int]\"",
+      "file_set": [
+        "tests/test_pipeline.py"
+      ],
+      "verdict": "pre-existing-shown",
+      "family": "typecheck/pyright/reportArgumentType",
+      "finding_count": 5,
+      "occurrence_count": 6,
+      "finding_ids": [
+        "0c708dac1e6dedabbb1b19dcf3ad2415b4836ed5a6906498f63381f00bd3bec0",
+        "71b669da4712e3bd059697e56570f5cf832c93a181675985b63dfea46fb9865c",
+        "be44da13aa704d8f01f98cbf1ea5fb0aa346406f66d34e95d33cc5cc1e97c2e1",
+        "c42835821e2dc02d633be779782444c12004e13735365ff779955561c1f338f2",
+        "c9acdbb504e6af1a7f99ed69fba4d4592136338312bb46e685e9ced5e6c53c6f"
+      ]
+    }
+  ],
+  "misses": [],
+  "verdict": "useful",
+  "reason": "At least one independently confirmed actionable deterministic root cause."
+}

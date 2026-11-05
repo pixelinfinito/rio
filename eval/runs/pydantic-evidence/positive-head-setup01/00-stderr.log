@@ -1,0 +1,6 @@
+Using CPython 3.12.12
+Creating virtual environment at: .venv
+Resolved 171 packages in 6ms
+   Building pydantic @ file:///tmp/eval-pydantic-positive-head
+   Building pydantic-core @ file:///tmp/eval-pydantic-positive-head/pydantic-core
+      Built pydantic @ file:///tmp/eval-pydantic-positive-head

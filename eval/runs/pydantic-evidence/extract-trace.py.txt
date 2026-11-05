@@ -1,0 +1,18 @@
+from pathlib import Path
+import json,re,sys,os
+case=sys.argv[1];suffix=sys.argv[2];root=Path('/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic');out=root/'eval/runs'/f'pydantic-{case}{suffix}';trace=root/'eval/runs/pydantic-evidence'/f'rio-{case}-{suffix}-exec.log'
+items=[];cwd={}
+for number,line in enumerate(trace.read_text().splitlines(),1):
+ m=re.match(r'(\d+)\s+chdir\((".*")\)\s+= 0',line)
+ if m:
+  try:cwd[m[1]]=json.loads(m[2])
+  except json.JSONDecodeError:pass
+ m=re.match(r'(\d+)\s+execve\(("[^"]+"), (\[.*\]),',line)
+ if not m:continue
+ try:exe=json.loads(m[2]);argv=json.loads(m[3])
+ except json.JSONDecodeError:continue
+ name=Path(exe).name
+ kind='typecheck' if name in ['pyright','mypy'] and '--version' not in argv else 'lint' if name=='ruff' and 'check' in argv and '--output-format' in argv else 'coverage' if name=='coverage' and len(argv)>1 and argv[1] in ['run','json'] else None
+ if kind:items.append({'kind':kind,'pid':int(m[1]),'argv':argv,'cwd':cwd.get(m[1]),'trace_path':str(trace.relative_to(root)),'trace_line':number,'raw_execve':line})
+d=json.loads((out/'commands.json').read_text());d['observed_child_invocations']=items;d['child_command_capture']='Post-run addition from strace execve/chdir observer; unmodified harness captures only its direct children. No checker wrappers or modified binaries.';d['runtime_environment_overrides']={'PATH':('' if len(sys.argv)>3 and sys.argv[3]=='legacy' else '.venv/bin:')+'/home/ubuntu/.cargo/bin:'+os.environ['PATH'],'CONTEXT':'eval-pydantic','UV_CACHE_DIR':'/dev/shm/rio-pydantic/uv-cache','CARGO_HOME':'/dev/shm/rio-pydantic/cargo','CARGO_TARGET_DIR':'/dev/shm/rio-pydantic/cargo-target','CARGO_BUILD_JOBS':'2','TMPDIR':'/dev/shm/rio-pydantic/tmp','PYTEST_ADDOPTS':'--ignore=tests/pydantic_core --ignore=tests/benchmarks'}
+(out/'commands.json').write_text(json.dumps(d,indent=2)+'\n');(out/'observed-tool-invocations.json').write_text(json.dumps(items,indent=2)+'\n');print(case,suffix,'observed',len(items),'invocations');print([(v['kind'],v['argv'],v['cwd']) for v in items if v['kind']=='typecheck'])

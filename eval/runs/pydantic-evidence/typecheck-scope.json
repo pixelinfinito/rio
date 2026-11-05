@@ -1,0 +1,78 @@
+{
+  "positive-base": {
+    "commit": "a9f3f3fccc180c05190df0478a17487ec9908e4e",
+    "pyproject_sha256": "baffecd054ac8446bea41f2f63119278b76d1a96bccde98d844885f23aec541f",
+    "pyright": {
+      "include": [
+        "pydantic",
+        "tests/test_pipeline.py"
+      ],
+      "exclude": [
+        "pydantic/_hypothesis_plugin.py",
+        "pydantic/mypy.py"
+      ],
+      "strict": [
+        "tests/test_pipeline.py"
+      ],
+      "enableExperimentalFeatures": true
+    },
+    "mypy": null
+  },
+  "positive-head": {
+    "commit": "262700f815672fc37ed637a1604234f6c7cc7ee9",
+    "pyproject_sha256": "baffecd054ac8446bea41f2f63119278b76d1a96bccde98d844885f23aec541f",
+    "pyright": {
+      "include": [
+        "pydantic",
+        "tests/test_pipeline.py"
+      ],
+      "exclude": [
+        "pydantic/_hypothesis_plugin.py",
+        "pydantic/mypy.py"
+      ],
+      "strict": [
+        "tests/test_pipeline.py"
+      ],
+      "enableExperimentalFeatures": true
+    },
+    "mypy": null
+  },
+  "negative-base": {
+    "commit": "5740091dcd08e4a92940ceae841434a83331cb09",
+    "pyproject_sha256": "baffecd054ac8446bea41f2f63119278b76d1a96bccde98d844885f23aec541f",
+    "pyright": {
+      "include": [
+        "pydantic",
+        "tests/test_pipeline.py"
+      ],
+      "exclude": [
+        "pydantic/_hypothesis_plugin.py",
+        "pydantic/mypy.py"
+      ],
+      "strict": [
+        "tests/test_pipeline.py"
+      ],
+      "enableExperimentalFeatures": true
+    },
+    "mypy": null
+  },
+  "negative-head": {
+    "commit": "ef2cb073d6be2ef360d2aedcd5afca0983af2507",
+    "pyproject_sha256": "baffecd054ac8446bea41f2f63119278b76d1a96bccde98d844885f23aec541f",
+    "pyright": {
+      "include": [
+        "pydantic",
+        "tests/test_pipeline.py"
+      ],
+      "exclude": [
+        "pydantic/_hypothesis_plugin.py",
+        "pydantic/mypy.py"
+      ],
+      "strict": [
+        "tests/test_pipeline.py"
+      ],
+      "enableExperimentalFeatures": true
+    },
+    "mypy": null
+  }
+}

@@ -1,0 +1,23 @@
+from pathlib import Path
+import json,hashlib,datetime,gzip,sys
+r=Path('eval/runs/pydantic-evidence');summary={};canonical=[]
+names=['positive-base','positive-head','negative-base','negative-head'] if len(sys.argv)<2 else [sys.argv[1]+'-base',sys.argv[1]+'-head']
+for case in names:
+ p=r/(case+'-wheel-final');l=json.loads((p/'commands.json').read_text());assert len(l)==12,(case,len(l));assert [x['exit_code'] for x in l]==[0,0,0,0,0,0,0,1,0,0,0,0]
+ assert not (p/'11-stdout.log').read_text().strip();assert json.loads((p/'08-stdout.log').read_text())==[]
+ d=json.loads((p/'07-stdout.log').read_text());norm=[{**x,'file':x['file'].split('/'+case+'/')[-1]} for x in d['generalDiagnostics']];canonical.append(norm)
+ cp=p/'coverage.json';cov=json.loads(cp.read_text() if cp.exists() else gzip.decompress(Path(str(cp)+'.gz').read_bytes()));file='pydantic/_internal/_contextlib.py' if case.startswith('positive') else 'pydantic/plugin/_loader.py';data=cov['files'].get(file)
+ summary[case]={'evidence_directory':str(p),'commands':str(p/'commands.json'),'exit_codes':[x['exit_code'] for x in l],'wall_time_ms':[x['wall_time_ms'] for x in l],'pyright_summary':d['summary'],'pyright_diagnostics':norm,'ruff_findings':[],'pytest_tail':(p/'09-stdout.log').read_text()[-300:],'coverage_file':file,'coverage':data,'tracked_status':'','wheel_installation_evidence':(p/'01-stdout.log').read_text()}
+assert all(x==canonical[0] for x in canonical);assert len(canonical[0])==12
+if 'positive-base' in names:
+ assert summary['positive-base']['coverage'] is None
+ assert summary['positive-head']['coverage']['missing_lines']==[30,38,39,41,47,52,60,61,62,63,68,71,72,74]
+if 'negative-head' in names:assert set([6,*range(40,49)])<=set(summary['negative-head']['coverage']['executed_lines'])
+p=r/'wheel-oracle-summary.json';old=json.loads(p.read_text()) if p.exists() else {};old.update(summary);p.write_text(json.dumps(old,indent=2)+'\n')
+p=r/'control-register.json';d=json.loads(p.read_text());d['final_install_plan_sha256']=hashlib.sha256((r/'install-plan-wheel-file.json').read_bytes()).hexdigest();d['final_independent_evidence']='wheel-oracle-summary.json and *-wheel-final/{commands.json,07-stdout.log,08-stdout.log,09-stdout.log,coverage.json.gz}';d['wheel_independent_confirmed_utc_'+('all' if len(sys.argv)<2 else sys.argv[1])]=datetime.datetime.now(datetime.timezone.utc).isoformat();p.write_text(json.dumps(d,indent=2)+'\n')
+manifest=json.loads((r/'archive-manifest.json').read_text())
+for case in names:
+ p=r/(case+'-wheel-final')/'coverage.json'
+ if not p.exists():continue
+ b=p.read_bytes();a=Path(str(p)+'.gz');a.write_bytes(gzip.compress(b,mtime=0));manifest.append({'original_path':str(p),'archived_path':str(a),'uncompressed_bytes':len(b),'uncompressed_sha256':hashlib.sha256(b).hexdigest(),'archive_bytes':a.stat().st_size});p.unlink()
+(r/'archive-manifest.json').write_text(json.dumps(manifest,indent=2)+'\n');print('Validated wheel oracles:',names)

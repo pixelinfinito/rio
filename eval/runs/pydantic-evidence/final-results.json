@@ -1,0 +1,108 @@
+[
+  {
+    "pr": "https://github.com/pydantic/pydantic/pull/14199",
+    "kind": "real-pr",
+    "record_path": "eval/runs/pydantic-14199-attempt05/record.json",
+    "baseline_classification_ran": true,
+    "eligible": true,
+    "raw_verdict_counts": {
+      "true-positive": 2,
+      "false-positive": 0,
+      "pre-existing-shown": 11,
+      "environment-failure": 0,
+      "out-of-scope": 0
+    },
+    "root_cause_counts": {
+      "true-positive": 1,
+      "false-positive": 0,
+      "pre-existing-shown": 3,
+      "environment-failure": 0,
+      "out-of-scope": 0
+    },
+    "expected_bugs": 1,
+    "detected_expected_bugs": 1,
+    "missed_expected_bugs": 0,
+    "deterministic_misses": 0,
+    "usefulness": "useful",
+    "rio_wall_time_ms": 249863,
+    "typecheck_commands": [
+      {
+        "kind": "typecheck",
+        "pid": 756545,
+        "argv": [
+          "/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/head/./.venv/bin/pyright",
+          "--outputjson"
+        ],
+        "cwd": "/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/cache/623e84ab5476264e/runs/01M6MWMQ7VJMNF29JMCBVP3R5W/tools/tool.tmp-wQjOrX/.",
+        "trace_path": "eval/runs/pydantic-evidence/rio-14199--attempt05-exec.log",
+        "trace_line": 1794,
+        "raw_execve": "756545 execve(\"/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/head/./.venv/bin/pyright\", [\"/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/head/./.venv/bin/pyright\", \"--outputjson\"], 0x7fffdcf98c28 /* 50 vars */) = 0"
+      },
+      {
+        "kind": "typecheck",
+        "pid": 756948,
+        "argv": [
+          "/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/head/./.venv/bin/pyright",
+          "--outputjson"
+        ],
+        "cwd": "/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/cache/623e84ab5476264e/runs/01M6MWMQ7VJMNF29JMCBVP3R5W/tools/tool.tmp-OhbieE/.",
+        "trace_path": "eval/runs/pydantic-evidence/rio-14199--attempt05-exec.log",
+        "trace_line": 1904,
+        "raw_execve": "756948 execve(\"/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/head/./.venv/bin/pyright\", [\"/dev/shm/rio-pydantic/tmp/rio-eval-m16v82ac/head/./.venv/bin/pyright\", \"--outputjson\"], 0x7fffdcf98c28 /* 50 vars */) = 0"
+      }
+    ]
+  },
+  {
+    "pr": "https://github.com/pydantic/pydantic/pull/14213",
+    "kind": "none",
+    "record_path": "eval/runs/pydantic-14213-attempt04/record.json",
+    "baseline_classification_ran": true,
+    "eligible": true,
+    "raw_verdict_counts": {
+      "true-positive": 0,
+      "false-positive": 0,
+      "pre-existing-shown": 11,
+      "environment-failure": 0,
+      "out-of-scope": 0
+    },
+    "root_cause_counts": {
+      "true-positive": 0,
+      "false-positive": 0,
+      "pre-existing-shown": 3,
+      "environment-failure": 0,
+      "out-of-scope": 0
+    },
+    "expected_bugs": 0,
+    "detected_expected_bugs": 0,
+    "missed_expected_bugs": 0,
+    "deterministic_misses": 0,
+    "usefulness": "not-useful",
+    "rio_wall_time_ms": 288125,
+    "typecheck_commands": [
+      {
+        "kind": "typecheck",
+        "pid": 758590,
+        "argv": [
+          "/dev/shm/rio-pydantic/tmp/rio-eval-diul7ije/head/./.venv/bin/pyright",
+          "--outputjson"
+        ],
+        "cwd": "/dev/shm/rio-pydantic/tmp/rio-eval-diul7ije/cache/942fce5293eb6bd4/runs/01M6MWS6FRQFY6JAFD6X03P2SC/tools/tool.tmp-4FXTqG/.",
+        "trace_path": "eval/runs/pydantic-evidence/rio-14213--attempt04-exec.log",
+        "trace_line": 1758,
+        "raw_execve": "758590 execve(\"/dev/shm/rio-pydantic/tmp/rio-eval-diul7ije/head/./.venv/bin/pyright\", [\"/dev/shm/rio-pydantic/tmp/rio-eval-diul7ije/head/./.venv/bin/pyright\", \"--outputjson\"], 0x7fffb7a23f68 /* 50 vars */) = 0"
+      },
+      {
+        "kind": "typecheck",
+        "pid": 758710,
+        "argv": [
+          "/dev/shm/rio-pydantic/tmp/rio-eval-diul7ije/head/./.venv/bin/pyright",
+          "--outputjson"
+        ],
+        "cwd": "/dev/shm/rio-pydantic/tmp/rio-eval-diul7ije/cache/942fce5293eb6bd4/runs/01M6MWS6FRQFY6JAFD6X03P2SC/tools/tool.tmp-ZAsyzZ/.",
+        "trace_path": "eval/runs/pydantic-evidence/rio-14213--attempt04-exec.log",
+        "trace_line": 1904,
+        "raw_execve": "758710 execve(\"/dev/shm/rio-pydantic/tmp/rio-eval-diul7ije/head/./.venv/bin/pyright\", [\"/dev/shm/rio-pydantic/tmp/rio-eval-diul7ije/head/./.venv/bin/pyright\", \"--outputjson\"], 0x7fffb7a23f68 /* 50 vars */) = 0"
+      }
+    ]
+  }
+]

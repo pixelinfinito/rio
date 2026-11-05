@@ -1,0 +1,1 @@
+error: Workspace member `/tmp/eval-pydantic-positive-base/pydantic-core` is missing a `pyproject.toml` (matches: `pydantic-core`)
