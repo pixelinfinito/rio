@@ -1,0 +1,163 @@
+{
+  "schema": "rio-eval-record-v2",
+  "methodology": "deterministic-v2",
+  "repository": "pydantic/pydantic-settings",
+  "pr": "https://github.com/pydantic/pydantic-settings/pull/1109",
+  "case_id": "1109",
+  "languages": [
+    "python"
+  ],
+  "reviewer": "sub-agent rerun2-pydantic-settings (automated)",
+  "verdict_source": "automated",
+  "independently_clean": true,
+  "commands": [
+    "cwd=/dev/shm/pydantic-settings-rerun2-eval/rio-eval-3hdr8k6l argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/pydantic/pydantic-settings.git\", \"/dev/shm/pydantic-settings-rerun2-eval/rio-eval-3hdr8k6l/head\"]",
+    "cwd=/dev/shm/pydantic-settings-rerun2-eval/rio-eval-3hdr8k6l/head argv=[\"git\", \"fetch\", \"origin\", \"7e2dacb6db07b41abb0c80d0608e46e197265554\", \"74c01ae3e84f9c8f2b04ec269e67813abd96cf9a\"]",
+    "cwd=/dev/shm/pydantic-settings-rerun2-eval/rio-eval-3hdr8k6l/head argv=[\"git\", \"merge-base\", \"7e2dacb6db07b41abb0c80d0608e46e197265554\", \"74c01ae3e84f9c8f2b04ec269e67813abd96cf9a\"]",
+    "cwd=/dev/shm/pydantic-settings-rerun2-eval/rio-eval-3hdr8k6l/head argv=[\"git\", \"checkout\", \"--detach\", \"74c01ae3e84f9c8f2b04ec269e67813abd96cf9a\"]",
+    "cwd=/dev/shm/pydantic-settings-rerun2-eval/rio-eval-3hdr8k6l argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/dev/shm/pydantic-settings-rerun2-eval/rio-eval-3hdr8k6l/head\", \"/dev/shm/pydantic-settings-rerun2-eval/rio-eval-3hdr8k6l/base\"]",
+    "cwd=/dev/shm/pydantic-settings-rerun2-eval/rio-eval-3hdr8k6l/base argv=[\"git\", \"checkout\", \"--detach\", \"7e2dacb6db07b41abb0c80d0608e46e197265554\"]",
+    "cwd=/dev/shm/pydantic-settings-rerun2-eval/rio-eval-3hdr8k6l/base argv=[\"uv\", \"sync\", \"--locked\", \"--all-groups\", \"--all-extras\", \"--no-install-project\"]",
+    "cwd=/dev/shm/pydantic-settings-rerun2-eval/rio-eval-3hdr8k6l/base argv=[\"uv\", \"run\", \"--no-sync\", \"python\", \"-c\", \"import pathlib, sysconfig; p = pathlib.Path(sysconfig.get_path('purelib')) / 'a1_coverage.pth'; print(str(p)); print(p.read_text() if p.exists() else 'absent'); p.unlink(missing_ok=True)\"]",
+    "cwd=/dev/shm/pydantic-settings-rerun2-eval/rio-eval-3hdr8k6l/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/pydantic-settings-rerun2-eval/rio-eval-3hdr8k6l/head argv=[\"uv\", \"sync\", \"--locked\", \"--all-groups\", \"--all-extras\", \"--no-install-project\"]",
+    "cwd=/dev/shm/pydantic-settings-rerun2-eval/rio-eval-3hdr8k6l/head argv=[\"uv\", \"run\", \"--no-sync\", \"python\", \"-c\", \"import pathlib, sysconfig; p = pathlib.Path(sysconfig.get_path('purelib')) / 'a1_coverage.pth'; print(str(p)); print(p.read_text() if p.exists() else 'absent'); p.unlink(missing_ok=True)\"]",
+    "cwd=/dev/shm/pydantic-settings-rerun2-eval/rio-eval-3hdr8k6l/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/pydantic-settings-rerun2-eval/rio-eval-3hdr8k6l/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/dev/shm/pydantic-settings-rerun2-eval/rio-eval-3hdr8k6l/head argv=[\"node\", \"--version\"]",
+    "cwd=/dev/shm/pydantic-settings-rerun2-eval/rio-eval-3hdr8k6l/head argv=[\"npm\", \"--version\"]",
+    "cwd=/dev/shm/pydantic-settings-rerun2-eval/rio-eval-3hdr8k6l/head argv=[\"python3\", \"--version\"]",
+    "cwd=/dev/shm/pydantic-settings-rerun2-eval/rio-eval-3hdr8k6l/head argv=[\"uv\", \"--version\"]",
+    "cwd=/dev/shm/pydantic-settings-rerun2-eval/rio-eval-3hdr8k6l/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-settings/eval/runs/pydantic-settings-1109-rerun2/profile.yaml\"]",
+    "cwd=/dev/shm/pydantic-settings-rerun2-eval/rio-eval-3hdr8k6l/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/dev/shm/pydantic-settings-rerun2-eval/rio-eval-3hdr8k6l/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"7e2dacb6db07b41abb0c80d0608e46e197265554\", \"--format\", \"json\", \"--offline\", \"--profile\", \"/home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-settings/eval/runs/pydantic-settings-1109-rerun2/profile.yaml\"]",
+    "Observed successful execve (not independent oracle): [\"/dev/shm/pydantic-settings-rerun2-eval/rio-eval-3hdr8k6l/head/./.venv/bin/mypy\", \"--output\", \"json\", \"--config-file\", \"/dev/shm/pydantic-settings-rerun2-eval/rio-eval-3hdr8k6l/cache/d1c8882c886b285a/runs/01M6NQMQN1JA32QE0ZGVH0QD1Y/tools/tool.tmp-w71aXY/pyproject.toml\", \"pydantic_settings\"]",
+    "Observed successful execve (not independent oracle): [\"/dev/shm/pydantic-settings-rerun2-eval/rio-eval-3hdr8k6l/head/./.venv/bin/ruff\", \"check\", \"--output-format\", \"json\", \"--\", \"/dev/shm/pydantic-settings-rerun2-eval/rio-eval-3hdr8k6l/cache/d1c8882c886b285a/runs/01M6NQMQN1JA32QE0ZGVH0QD1Y/tools/tool.tmp-iJ3oeL/pydantic_settings/sources/providers/env.py\", \"/dev/shm/pydantic-settings-rerun2-eval/rio-eval-3hdr8k6l/cache/d1c8882c886b285a/runs/01M6NQMQN1JA32QE0ZGVH0QD1Y/tools/tool.tmp-iJ3oeL/tests/test_settings.py\"]",
+    "Observed successful execve (not independent oracle): [\"/dev/shm/pydantic-settings-rerun2-eval/rio-eval-3hdr8k6l/head/./.venv/bin/coverage\", \"run\", \"-m\", \"pytest\", \"-q\"]",
+    "Observed successful execve (not independent oracle): [\"/dev/shm/pydantic-settings-rerun2-eval/rio-eval-3hdr8k6l/head/./.venv/bin/ruff\", \"check\", \"--output-format\", \"json\", \"--\", \"/dev/shm/pydantic-settings-rerun2-eval/rio-eval-3hdr8k6l/cache/d1c8882c886b285a/runs/01M6NQMQN1JA32QE0ZGVH0QD1Y/tools/tool.tmp-QLJJXB/pydantic_settings/sources/providers/env.py\", \"/dev/shm/pydantic-settings-rerun2-eval/rio-eval-3hdr8k6l/cache/d1c8882c886b285a/runs/01M6NQMQN1JA32QE0ZGVH0QD1Y/tools/tool.tmp-QLJJXB/tests/test_settings.py\"]",
+    "Observed successful execve (not independent oracle): [\"/dev/shm/pydantic-settings-rerun2-eval/rio-eval-3hdr8k6l/head/./.venv/bin/mypy\", \"--output\", \"json\", \"--config-file\", \"/dev/shm/pydantic-settings-rerun2-eval/rio-eval-3hdr8k6l/cache/d1c8882c886b285a/runs/01M6NQMQN1JA32QE0ZGVH0QD1Y/tools/tool.tmp-okcOP4/pyproject.toml\", \"pydantic_settings\"]",
+    "Observed successful execve (not independent oracle): [\"/dev/shm/pydantic-settings-rerun2-eval/rio-eval-3hdr8k6l/head/./.venv/bin/coverage\", \"json\", \"-o\", \"/dev/shm/pydantic-settings-rerun2-eval/rio-eval-3hdr8k6l/cache/d1c8882c886b285a/runs/01M6NQMQN1JA32QE0ZGVH0QD1Y/tools/tool.tmp-Pp6vAI/./.rio-coverage/coverage.json\"]"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-rerun2-pydantic-settings/eval/runs/pydantic-settings-1109-rerun2/commands.json; Rio binary SHA-256: 3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+    "Same original PR base 7e2dacb6db07b41abb0c80d0608e46e197265554 and head 74c01ae3e84f9c8f2b04ec269e67813abd96cf9a; exact install-plan.json and profile.yaml copied from ../pydantic-settings-1109-attempt4. Binary f6e4f87e4c65, SHA256 3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7; no rebuild.",
+    "CPython 3.13.9 and uv 0.13.7 pinned. Byte-identical Python runtime copy in executable tmpfs; UV_PYTHON selects /dev/shm/pydantic-settings-rerun2-eval/cpython-3.13.9-linux-x86_64-gnu/bin/python3.13, PATH prepends its bin. TMPDIR and UV_CACHE_DIR under /dev/shm/pydantic-settings-rerun2-eval. See ../pydantic-settings-rerun2-evidence/setup.json and retry-setup.json; this avoids shared-host disk import stalls without changing dependencies.",
+    "Reused independent clean assessment at identical SHAs: ../pydantic-settings-evidence/1109-base and 1109-head retain passing mypy pydantic_settings, Ruff, format and full pytest+coverage (1365 passed/5 skipped base, 1375 passed/5 skipped head). 1109-independent-diff-coverage.json shows changed library lines 281-284 instrumented and executed, no changed missing statements. Prior review inspected dictionary recognition before type-argument descent, with ten additional nested container/wrapper/model-key regression cases. Hashes in ../pydantic-settings-rerun2-evidence/oracle-reuse.json. No new independent oracle run claimed.",
+    "Rechecked current Rio output: head/base mypy and Ruff passed with dependency_state=verified; instrumented coverage passed, baseline_ran=true, baseline_classification_ran=true and eligible=true. Zero top-level findings/risks, visible and hidden counts both zero, no deterministic misses established.",
+    "Prior secret/connection-string ID f59b1964321361d6f49fa60104f8329ceb09f12e8748ffa4f82f26b48026e658 is absent from raw output, rather than merely hidden. Historical ledger said 1408 visible, but its state breakdown has 1407 unclassified plus one pre-existing; the last rerun has one pre-existing raw finding and all six occurrences pre-existing. Under deterministic-v2 these are 1407 historical visible and zero last-rerun visible. Current raw/visible totals are both zero. Legacy v1 false-positive verdict and summary remain historical, not rewritten.",
+    "Observed successful execve mypy commands in observed/commands.json target pydantic_settings for head/base, agreeing with the pinned Makefile and avoiding the historical mypy . expansion into tests. Full trace in observed/execve.log.gz. No Rio crash or newly established product defect observed.",
+    "OSV dependency audit intentionally offline without populated cache; no audit-safety conclusion. Semantic steps deferred no_endpoint. Existing coverage-hook and editable-install limitations were avoided by the unchanged install plan, not retested as fixed."
+  ],
+  "positive_control": {
+    "kind": "none",
+    "expected": []
+  },
+  "base_sha": "7e2dacb6db07b41abb0c80d0608e46e197265554",
+  "head_sha": "74c01ae3e84f9c8f2b04ec269e67813abd96cf9a",
+  "mode": "branch",
+  "review_id": "d1c8882c886b285a",
+  "run_id": "01M6NQMQN1JA32QE0ZGVH0QD1Y",
+  "rio_version": "0.1.0",
+  "profile": "eval-pydantic-settings",
+  "wall_time_ms": 78155,
+  "status": "incomplete",
+  "report_path": "eval/runs/pydantic-settings-1109-rerun2/report.json",
+  "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+  "profile_sha256": "6e86d0f73e8c4df00cdb68de9813c82eb0aac4853cfc2a071c23ea3ec6cffbe2",
+  "environment": {
+    "dependency_state": "verified",
+    "baseline_ran": true,
+    "baseline_classification_ran": true,
+    "eligible": true,
+    "reasons": [],
+    "checks": [
+      {
+        "findings": [],
+        "kind": "secrets",
+        "language": "common",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 3
+      },
+      {
+        "findings": [],
+        "hint": "Dependency audit needs api.osv.dev",
+        "kind": "dependencies",
+        "language": "common",
+        "outcome": "skipped",
+        "reason": "offline",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 3
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "lint",
+        "language": "python",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 993
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "lint",
+        "language": "python",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "base",
+        "wall_time_ms": 3405
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "typecheck",
+        "language": "python",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 19260
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "typecheck",
+        "language": "python",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "base",
+        "wall_time_ms": 30699
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "coverage",
+        "language": "python",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 71945
+      }
+    ],
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "Graph references use syntax and text; no language server was used",
+      "Offline applies to Rio; tool and test processes were not network-isolated"
+    ]
+  },
+  "findings": [],
+  "root_causes": [],
+  "misses": [],
+  "verdict": "useful",
+  "reason": "Independently clean change confirmed with working baseline and no unwanted findings."
+}

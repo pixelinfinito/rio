@@ -1,0 +1,19 @@
+{
+  "utc": "2026-11-05T11:27:38.403940+00:00",
+  "runtime_copy_command": [
+    "cp",
+    "-a",
+    "/home/ubuntu/.local/share/uv/python/cpython-3.13.9-linux-x86_64-gnu",
+    "/dev/shm/pydantic-settings-rerun2-eval/cpython-3.13.9-linux-x86_64-gnu"
+  ],
+  "python_version": "3.13.9 (main, Nov 19 2025, 22:47:49) [Clang 21.1.4 ]",
+  "python_binary_sha256": "6b0b5932e322f730ef5c31820df7ead292af44904bb72f46e025237b7762cbb2",
+  "copied_interpreter_equals_original": true,
+  "environment_overrides": {
+    "PATH": "/dev/shm/pydantic-settings-rerun2-eval/cpython-3.13.9-linux-x86_64-gnu/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg02i4dIb:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+    "UV_PYTHON": "/dev/shm/pydantic-settings-rerun2-eval/cpython-3.13.9-linux-x86_64-gnu/bin/python3.13",
+    "TMPDIR": "/dev/shm/pydantic-settings-rerun2-eval",
+    "UV_CACHE_DIR": "/dev/shm/pydantic-settings-rerun2-eval/uv-cache"
+  },
+  "reason": "Retry after disk-backed interpreter/stdlib coverage process blocked in folio_wait_bit_common and coverage timeout under severe shared host I/O pressure. Same CPython 3.13.9 runtime byte copy; same PR SHAs, install plans and profiles."
+}

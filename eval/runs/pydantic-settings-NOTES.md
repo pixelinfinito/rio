@@ -341,3 +341,145 @@ python3 eval/runner.py --repository pydantic/pydantic-settings --pr NUMBER \
 Reproduce independent checks with `oracle.py --source CLONE --sha SHA --out
 NEW_EVIDENCE_DIRECTORY`; clone/fetch the public PR heads first. The retained
 coverage gate consumes the resulting `coverage.json.gz`.
+
+## Rerun2 (binary f6e4f87e4c65)
+
+Date: 2026-11-05 UTC. Reviewer: `sub-agent rerun2-pydantic-settings (automated)`;
+`verdict_source=automated`. Verified the existing binary with `--version` before
+execution and again before each retry/subsequent case:
+`rio 0.1.0 x86_64-unknown-linux-gnu f6e4f87e4c65`, SHA-256
+`3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7`.
+No rebuild or changes to `crates/` or `eval/*.py` were made.
+
+All original full base/head SHAs, install-plan bytes and input profile bytes
+were retained. Input profile SHA-256 remains
+`64e6ce34ac0cf189c92e8aac8e336f4d83a91f6aa456126c420214d9976c1dde`.
+The resolved profile payload is also unchanged from the previous runs. The
+runner's resolved-profile hashes differ because it hashes the absolute
+`# Source:` comment as well as the profile. Raw hashes remain untouched;
+[comparison.json](pydantic-settings-rerun2-evidence/comparison.json) records them
+and verifies equal payloads after excluding comments. The original
+[summary](pydantic-settings-SUMMARY.json) is preserved; the separate
+[rerun2 summary](pydantic-settings-rerun2-SUMMARY.json) uses only the three
+eligible records in the [selection manifest](pydantic-settings-rerun2-selection.json).
+
+CPython 3.13.9 and uv 0.13.7 were pinned before installation. The unchanged
+install plan still uses locked all-groups/all-extras dependencies, skips the
+editable self-install and removes only the optional coverage startup hook.
+Dependency trust remains disabled. Fresh per-run Rio configuration/cache and
+stripped inherited `RIO_*` overrides are recorded in each ledger. All tests
+and explicit coverage instrumentation ran for the selected records. OSV audit
+remains explicitly skipped offline without a populated advisory cache;
+dependency safety and audit recall are unassessed. Semantic steps remain
+deferred with `no_endpoint`.
+
+`/dev/shm` initially had 5.7 GiB free, so disposable checkouts and uv/Rio caches
+were placed under `/dev/shm/pydantic-settings-rerun2-eval`. After the first
+coverage timeout, the identical 108 MB CPython runtime was copied there with
+`cp -a` and its executable SHA-256 checked against the original.
+`UV_PYTHON` selected the copied interpreter's full path and `PATH` prepended
+its `bin`; the interpreter version, dependency versions, plan and profile
+were unchanged. This avoided disk-backed interpreter/stdlib reads on the busy
+shared host. Exact environment and copy command are retained in
+[setup.json](pydantic-settings-rerun2-evidence/setup.json) and
+[retry-setup.json](pydantic-settings-rerun2-evidence/retry-setup.json).
+
+Independent oracle evidence was reused because every SHA and install plan is
+identical. The original clean assessments for #1097/#1109 and preregistered
+`aws-version-id-uncovered` expectation for #708 were retained. Oracle artifact
+hashes are in [oracle-reuse.json](pydantic-settings-rerun2-evidence/oracle-reuse.json).
+All claims depending on current Rio output were rechecked, including findings,
+risks, raw states, baseline pairs, coverage outcomes and observed child argv.
+No new independent oracle execution is claimed.
+
+| Case / record | Baseline ran / classification | Eligible / dependencies | Raw states | TP | FP | Pre-existing shown | Pre-existing hidden | Environment findings | Out-of-scope | Expected detected / missed |
+| --- | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| [#1097 retry](pydantic-settings-1097-rerun2-attempt2/record.json) | Yes / yes | Yes / verified | None | 0 | 0 | 0 | 0 | 0 | 0 | None registered |
+| [#1109](pydantic-settings-1109-rerun2/record.json) | Yes / yes | Yes / verified | None | 0 | 0 | 0 | 0 | 0 | 0 | None registered |
+| [#708](pydantic-settings-708-rerun2/record.json) | Yes / yes | Yes / verified | `new`: 1 | 1 | 0 | 0 | 0 | 0 | 0 | 1 / 0 |
+| [#1097 first attempt, excluded](pydantic-settings-1097-rerun2/record.json) | Yes / yes | No / verified; coverage timeout | None | 0 | 0 | 0 | 0 | 0 | 0 | None registered |
+
+Counts include both top-level arrays exactly once. Raw findings, occurrences
+and distinct causes are identical here: one for #708 and zero otherwise.
+There are no established deterministic misses. The three eligible records are
+useful under deterministic-v2: #708 supplies an actionable coverage risk and
+the two independent clean assessments are confirmed without visible noise.
+The excluded attempt has an environment-failure **record verdict**, not a
+synthetic environment finding. All four attempts have complete adjudications
+and validated records.
+
+Comparison with the previous eligible attempts:
+
+- **#1097:** previous raw total 1, state `pre-existing`, six pre-existing
+  locations; current raw/visible/hidden totals are all 0. The recurring
+  `secret/connection-string` ID
+  `f59b1964321361d6f49fa60104f8329ceb09f12e8748ffa4f82f26b48026e658`
+  is absent from both rerun2 reports, rather than merely hidden.
+- **#1109 regression:** historical ledger total 1,408, previous eligible raw
+  total 1, current raw total 0. Current head/base mypy commands still end in
+  `pydantic_settings`, and both pass without diagnostics. The same connection
+  string ID is absent. The historical ledger called all 1,408 findings visible,
+  but its breakdown includes one `pre-existing` finding: deterministic-v2
+  visibility is 1,407 historical, 0 previous eligible, and 0 current. Likewise,
+  the legacy v1 FP labels and summary for the two negative cases must not be
+  read as visible FP counts under v2; those old raw states were already hidden.
+- **#708:** unchanged one `new` coverage risk, ID
+  `9fef2a2d9e8b5202043d7425de33cae2f3aa38091bad992b3086e7ab3ed1c489`,
+  rule `coverage/untested_change`, AWS line 66. It still detects
+  `aws-version-id-uncovered` after the executable-line requirement change.
+  The retained coverage oracle establishes that line 66 is instrumented and
+  missing at head, with branch 65→66 missing; the base file has no missing
+  statements. The matching current risk and expectation ID are in verdicts
+  and record. There are zero defect findings or secret alerts. Coverage check
+  `passed` and Rio exit 0 are expected for successful tests with a risk excluded
+  from the profile's defect failure gate.
+
+No newly established Rio product defect or crash appeared in these runs. No
+secret positive control was registered, so absence of alerts establishes no
+secret-recall claim or isolated causal attribution to the scanner fixes. The
+historical startup-hook and editable-install limitations were avoided by the
+same plan, not retested as fixed.
+
+The remaining observed setup/provenance limitations are precise:
+
+1. **First #1097 attempt timed out under severe shared I/O pressure.** No
+   finding ID exists. `coverage`, root `.`, version `head`, outcome `cancelled`,
+   reason `timeout`, check wall 1,310.272 seconds; Rio exit 4, runner exit 1.
+   Exact footer note: `Impact graph truncated at the review deadline`.
+   Contrary to the usual baseline-failure interpretation of runner exit 1,
+   `baseline_ran=true` and `baseline_classification_ran=true` here: every
+   typecheck/lint pair passed verified. The cancellation alone made the run
+   ineligible. The coverage Python process was observed in `D` state at
+   `folio_wait_bit_common`; host I/O pressure reached `some avg60=97.91` and
+   `full avg60=94.96`. See
+   [system-pressure.json](pydantic-settings-rerun2-evidence/system-pressure.json)
+   and the first attempt's report/commands/stderr. Reproduction is the first
+   exact argv in [attempt-ledger.json](pydantic-settings-rerun2-evidence/attempt-ledger.json),
+   with disk-backed Python, the captured environment and equivalent shared I/O
+   contention; a deterministic Rio failure on an idle machine is not claimed.
+   The runtime-copy retry completed successfully without changing scope or
+   budget. Both attempts remain retained.
+2. **Child argv is still not emitted by the harness/Rio report.** No finding
+   ID exists. Each `commands.json` preserves `rio_checks.entries`, review stderr
+   and `child_argv_available=false`. Reproduce by running any ledger argv and
+   inspecting those fields. Workaround: launch the unchanged runner under
+   `strace -f -e trace=execve -s 8192`, then use the existing
+   `pydantic-settings-evidence/extract_commands.py`. Every attempt retains
+   `observed/commands.json` and `observed/execve.log.gz`, without environment
+   values. Both actual mypy invocations in every attempt target
+   `pydantic_settings`; independent oracle argv is labelled separately.
+
+| Attempt | Runner wall seconds | Rio command wall seconds | Rio report wall seconds | Selection |
+| --- | ---: | ---: | ---: | --- |
+| `pydantic-settings-1097-rerun2` | 1405.813 | 1320.011 | 1316.668 | Excluded: coverage timeout |
+| `pydantic-settings-1097-rerun2-attempt2` | 209.122 | 92.760 | 84.969 | Eligible retry |
+| `pydantic-settings-1109-rerun2` | 102.532 | 78.983 | 78.155 | Eligible |
+| `pydantic-settings-708-rerun2` | 174.910 | 53.170 | 43.801 | Eligible control |
+
+These are shared-host observations, not controlled cold/warm performance
+comparisons. All records were built with `eval/evaluate.py record`; all four
+records and the selected aggregate were checked with `validate`. The exact
+verification commands/results are in
+[validation.log](pydantic-settings-rerun2-evidence/validation.log). Only
+`eval/runs/**` evidence and these appended notes are committed; no source clone,
+virtual environment, cache or file over 5 MB is included.
