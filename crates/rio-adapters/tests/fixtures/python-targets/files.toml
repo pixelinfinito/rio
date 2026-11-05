@@ -1,0 +1,3 @@
+[tool.mypy]
+files = ["custom", "tests/typecheck.py"]
+exclude = ["generated/", "legacy/"]

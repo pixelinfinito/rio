@@ -44,9 +44,11 @@ tools:
 | Python | Lint | Ruff JSON over changed files; 0 clean; 1 diagnostics; 2 configuration failure |
 | Python | Coverage | `coverage run -m pytest`, then JSON export; pytest 5 is `no_tests`, failed tests retain usable coverage |
 
+Mypy preserves explicit `files`, `packages` and `modules` from its project configuration, including INI `files` and `exclude` rules. Otherwise Rio targets build-backend packages (setuptools, Hatch, Poetry or Flit), then a package matching `project.name`, then top-level Python packages excluding tests, docs, examples, scripts, benchmarks and build directories. Only projects with no inferred package fall back to `.`. Pyright retains its native `include`/`exclude` selection.
+
 Tools resolve from project and ancestor installations (`node_modules/.bin`, `.venv`/`venv`), then `VIRTUAL_ENV` for Python, then PATH. Runtime resolution never downloads tools. Version probes also use disposable directories and supervision. Missing tools become skips with install hints. Project configuration is read from the selected immutable source, including governing workspace lockfiles; an absent supported configuration becomes `no_project_config`.
 
-Diagnostic parsers normalize temporary absolute paths and workspace links back to repository paths. Each finding identifies its rule, tool/version, normalized message, source symbol and locations. Identity is computed before redaction. Baseline typecheck/lint findings are mapped through the diff at occurrence level; extra identical occurrences yield a grouped `worsened` finding. Failed or incompatible baselines leave head diagnostics `unclassified` with an explanatory note. Trusted dependencies also disable baseline classification.
+Diagnostic parsers normalize temporary absolute paths and workspace links back to repository paths. Each finding identifies its rule, tool/version, normalized message, source symbol and locations. Identity is computed before redaction. Baseline typecheck/lint findings are mapped through the diff at occurrence level; extra identical occurrences yield a grouped `worsened` finding. Failed or incompatible baselines retain `unclassified` diagnostics only within changed hunks and three lines of context; other occurrences become pre-existing, with evidence naming the fallback. The footer explains why the baseline is unavailable. Trusted dependencies permit baseline classification in the same installed environment unless the base has a known mismatch.
 
 ## Coverage and syntax
 

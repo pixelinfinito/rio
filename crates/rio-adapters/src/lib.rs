@@ -10,6 +10,7 @@ pub use tools::*;
 mod diagnostics;
 pub use diagnostics::*;
 mod languages;
+mod python_targets;
 pub use languages::*;
 mod detection;
 pub use detection::*;

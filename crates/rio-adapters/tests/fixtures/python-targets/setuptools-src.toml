@@ -1,0 +1,3 @@
+[tool.setuptools]
+packages = ["custom"]
+package-dir = {"" = "src"}

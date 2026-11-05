@@ -61,21 +61,15 @@ pub fn diagnostic_command(
                     "--no-pretty".into(),
                 ]
             };
-            // Respect configured target files instead of overriding them with
-            // the root (which may also pull in unrelated scripts and tests).
-            let configured_files = ancestor_config(tree, root, &["pyproject.toml"])
-                .and_then(|path| tree.get(&path))
-                .and_then(|entry| std::str::from_utf8(&entry.content).ok())
-                .and_then(|text| toml::from_str::<toml::Value>(text).ok())
-                .is_some_and(|value| {
-                    value
-                        .get("tool")
-                        .and_then(|value| value.get("mypy"))
-                        .and_then(|value| value.get("files"))
-                        .is_some()
-                });
-            if !configured_files {
-                args.push(".".into());
+            let config = crate::python_targets::mypy_config(tree, root);
+            if let Some((path, _)) = &config {
+                args.extend([
+                    "--config-file".into(),
+                    tool_tree.join(path).to_string_lossy().into_owned(),
+                ]);
+            }
+            if !config.is_some_and(|(_, explicit)| explicit) {
+                args.extend(crate::python_targets::python_package_targets(tree, root));
             }
             args
         }
