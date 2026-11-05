@@ -1,0 +1,1 @@
+Wrote JSON report to /dev/shm/rio-pydantic/tmp/rio-eval-aa93hczd/cache/623e84ab5476264e/runs/01M6NRCK79TY5VEM9BPYS2GX0D/tools/tool.tmp-4B7kEN/./.rio-coverage/coverage.json

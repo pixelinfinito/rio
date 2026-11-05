@@ -1,0 +1,15 @@
+["python3", "eval/evaluate.py", "record", "--report", "eval/runs/pydantic-14199-rerun2/report.json", "--verdicts", "eval/runs/pydantic-14199-rerun2/verdicts.json", "--out", "eval/runs/pydantic-14199-rerun2/record.json"]
+exit_code=0
+["python3", "eval/evaluate.py", "validate", "eval/runs/pydantic-14199-rerun2/record.json"]
+Valid: eval/runs/pydantic-14199-rerun2/record.json
+exit_code=0
+["python3", "eval/evaluate.py", "record", "--report", "eval/runs/pydantic-14199-rerun2-attempt2/report.json", "--verdicts", "eval/runs/pydantic-14199-rerun2-attempt2/verdicts.json", "--out", "eval/runs/pydantic-14199-rerun2-attempt2/record.json"]
+exit_code=0
+["python3", "eval/evaluate.py", "validate", "eval/runs/pydantic-14199-rerun2-attempt2/record.json"]
+Valid: eval/runs/pydantic-14199-rerun2-attempt2/record.json
+exit_code=0
+["python3", "eval/evaluate.py", "record", "--report", "eval/runs/pydantic-14213-rerun2/report.json", "--verdicts", "eval/runs/pydantic-14213-rerun2/verdicts.json", "--out", "eval/runs/pydantic-14213-rerun2/record.json"]
+exit_code=0
+["python3", "eval/evaluate.py", "validate", "eval/runs/pydantic-14213-rerun2/record.json"]
+Valid: eval/runs/pydantic-14213-rerun2/record.json
+exit_code=0

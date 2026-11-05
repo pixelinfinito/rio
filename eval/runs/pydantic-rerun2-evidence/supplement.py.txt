@@ -1,0 +1,75 @@
+"""Observe completed artifacts and run supplemental doctor probes before cleanup."""
+import datetime, gzip, hashlib, json, os, pathlib, subprocess, sys, time
+
+root = pathlib.Path.cwd()
+case = sys.argv[1]
+out = root / 'eval/runs' / case
+evidence = root / 'eval/runs/pydantic-rerun2-evidence' / case
+evidence.mkdir(exist_ok=True)
+ledger = []
+files = {}
+doctor_done = False
+while True:
+    try:
+        metadata = json.loads((out/'commands.json').read_text())
+    except (FileNotFoundError, json.JSONDecodeError):
+        time.sleep(2)
+        continue
+    scratch = pathlib.Path(metadata['disposable_directory'])
+    if not scratch.exists():
+        break
+    try:
+        doctor = json.loads((out/'doctor.json').read_text())
+    except (FileNotFoundError, json.JSONDecodeError):
+        doctor = None
+    if doctor is not None and not doctor_done:
+        env = dict(os.environ)
+        previous = root / 'eval/runs' / ('pydantic-14199-attempt05' if '14199' in case else 'pydantic-14213-attempt04')
+        env.update(json.loads((previous/'commands.json').read_text())['runtime_environment_overrides'])
+        env['PATH'] = '.venv/bin:/home/ubuntu/.cargo/bin:/home/ubuntu/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin:/tmp/rio-acceptance-tools:' + os.environ['PATH']
+        env.update(RIO_CONFIG_DIR=str(scratch/'config'), RIO_CACHE_DIR=str(scratch/'supplement-cache'))
+        for key in ['COVERAGE_CORE','COVERAGE_PROCESS_START']:
+            env.pop(key,None)
+        commands = [
+            ('doctor-base', ['/home/ubuntu/rio/target/release/rio','doctor','--base',metadata['base_sha'],'--format','json']),
+            ('doctor-all-roots', ['/home/ubuntu/rio/target/release/rio','doctor','--all-roots','--format','json']),
+            ('source-diff', ['git','diff',metadata['base_sha'],metadata['head_sha'],'--']),
+            ('tool-versions', ['uv','run','--no-sync','python','-c', 'import sys,importlib.metadata,json; print(json.dumps({"python":sys.version,"packages":{p:importlib.metadata.version(p) for p in ["pyright","mypy","ruff","pytest","coverage"]}},indent=2))']),
+        ]
+        for name, argv in commands:
+            start = time.monotonic()
+            with (evidence/(name+'.stdout.log')).open('w') as so, (evidence/(name+'.stderr.log')).open('w') as se:
+                proc = subprocess.run(argv,cwd=scratch/'head',env=env,stdout=so,stderr=se)
+            ledger.append(dict(argv=argv,cwd=str(scratch/'head'),environment={k:env[k] for k in ['PATH','RIO_CONFIG_DIR','RIO_CACHE_DIR']},exit_code=proc.returncode,wall_time_ms=round((time.monotonic()-start)*1000),stdout=str((evidence/(name+'.stdout.log')).relative_to(root)),stderr=str((evidence/(name+'.stderr.log')).relative_to(root))))
+            (evidence/'commands.json').write_text(json.dumps(ledger,indent=2)+'\n')
+        for name in ['pyproject.toml','tests/typechecking/pyproject.toml','tests/typechecking/uv.lock']:
+            source = scratch/'head'/name
+            if source.exists():
+                (evidence/name.replace('/','-')).write_bytes(source.read_bytes())
+        doctor_done = True
+    for checks in (scratch/'cache').glob('*/runs/*/checks'):
+        for kind in ['lint','typecheck','coverage']:
+            for directory in (checks/kind).glob('*/*'):
+                if not (directory/('coverage.json' if kind=='coverage' else 'findings.json')).exists():
+                    continue
+                for source in directory.iterdir():
+                    if not source.is_file():
+                        continue
+                    relative = str(source.relative_to(checks))
+                    if relative in files:
+                        continue
+                    try:
+                        data = source.read_bytes()
+                    except FileNotFoundError:
+                        continue
+                    target = evidence/'check-artifacts'/relative
+                    target.parent.mkdir(parents=True,exist_ok=True)
+                    if len(data) > 1_000_000:
+                        target = target.with_name(target.name+'.gz')
+                        target.write_bytes(gzip.compress(data,mtime=0))
+                    else:
+                        target.write_bytes(data)
+                    files[relative] = dict(source=str(source),path=str(target.relative_to(root)),original_bytes=len(data),sha256=hashlib.sha256(data).hexdigest())
+        (evidence/'artifact-manifest.json').write_text(json.dumps(dict(captured_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),note='Supplementary read-only copies of completed checker outputs before automatic runner cleanup; may be partial. Final report establishes outcomes.',files=list(files.values())),indent=2)+'\n')
+    time.sleep(3)
+print(case, 'supplement complete', len(files), 'files')

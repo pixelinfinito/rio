@@ -1,0 +1,122 @@
+{
+  "blocking_problems": [],
+  "cache": {
+    "free_space": 5270745088,
+    "path": "/dev/shm/rio-pydantic/tmp/rio-eval-px614x8m/cache",
+    "writable": true
+  },
+  "configuration": {
+    "cache": {
+      "dir": "/dev/shm/rio-pydantic/tmp/rio-eval-px614x8m/cache",
+      "max_age": {
+        "nanos": 0,
+        "secs": 2592000
+      },
+      "max_size": 5368709120,
+      "retain_raw_output": true
+    },
+    "config_dir": "/dev/shm/rio-pydantic/tmp/rio-eval-px614x8m/config",
+    "endpoint_url": null,
+    "notices": [],
+    "output_limit": 268435456,
+    "parallelism": 4,
+    "sources": {
+      "cache.dir": "RIO_CACHE_DIR",
+      "cache.max_age": "default",
+      "cache.max_size": "default",
+      "cache.retain_raw_output": "default",
+      "endpoint.url": "default",
+      "run.output_limit": "default",
+      "run.parallelism": "default"
+    }
+  },
+  "endpoint": "No endpoint is available in this version",
+  "head": "ef2cb073d6be2ef360d2aedcd5afca0983af2507",
+  "plan": {
+    "checks": [
+      {
+        "baseline": false,
+        "baseline_hint": null,
+        "baseline_remap": false,
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "secrets",
+        "language": "common",
+        "root": ".",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [],
+        "tool": null
+      },
+      {
+        "baseline": false,
+        "baseline_hint": null,
+        "baseline_remap": false,
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "dependencies",
+        "language": "common",
+        "root": ".",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [],
+        "tool": null
+      }
+    ],
+    "layout": {
+      "dependencies": {
+        ".": [],
+        "pydantic-core": [],
+        "tests/plugin": [],
+        "tests/typechecking": []
+      },
+      "notes": [],
+      "roots": [
+        {
+          "language": "python",
+          "manifest": "pyproject.toml",
+          "name": "pydantic",
+          "path": ".",
+          "workspace": null
+        },
+        {
+          "language": "python",
+          "manifest": "pydantic-core/pyproject.toml",
+          "name": "pydantic_core",
+          "path": "pydantic-core",
+          "workspace": "."
+        },
+        {
+          "language": "python",
+          "manifest": "tests/plugin/pyproject.toml",
+          "name": "example_plugin",
+          "path": "tests/plugin",
+          "workspace": null
+        },
+        {
+          "language": "python",
+          "manifest": "tests/typechecking/pyproject.toml",
+          "name": null,
+          "path": "tests/typechecking",
+          "workspace": null
+        }
+      ]
+    },
+    "notes": [],
+    "probes_ran": false,
+    "roots": []
+  },
+  "profile": {
+    "chain": [
+      "rio/base"
+    ],
+    "name": "rio/base",
+    "valid": true
+  },
+  "repository": "/dev/shm/rio-pydantic/tmp/rio-eval-px614x8m/head",
+  "warnings": [
+    "rio/base:$.steps[3]: rio/triage is deferred locally: no_endpoint",
+    "rio/base:$.steps[4]: rio/agents is deferred locally: no_endpoint",
+    "rio/base:$.steps[5]: rio/verify is deferred locally: no_endpoint"
+  ]
+}
