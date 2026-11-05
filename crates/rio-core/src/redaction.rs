@@ -37,7 +37,7 @@ static SCANNER: LazyLock<Scanner> = LazyLock::new(|| {
         .collect();
     let names = Regex::new(&catalog.entropy.names).expect("embedded entropy expression is valid");
     let assignment = Regex::new(
-        r#"(?m)(?P<name>[A-Za-z_][A-Za-z0-9_-]*)["']?[^\S\r\n]*[:=][^\S\r\n]*(?:"(?P<double>[^"\\\r\n]*)"|'(?P<single>[^'\\\r\n]*)'|(?P<bare>[A-Za-z0-9/+_=.-]+))"#,
+        r#"(?m)(?P<name>[A-Za-z_][A-Za-z0-9_-]*)["']?[^\S\r\n]*[:=][^\S\r\n]*(?:"(?P<double>(?:[^"\\\r\n]|\\[^\r\n])*)"|'(?P<single>(?:[^'\\\r\n]|\\[^\r\n])*)'|(?P<bare>[A-Za-z0-9/+_=.-]+))"#,
     )
     .unwrap();
     Scanner {

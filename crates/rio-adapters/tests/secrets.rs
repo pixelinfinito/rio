@@ -207,6 +207,8 @@ fn entropy_rejects_source_expressions_in_assignments_kwargs_and_properties() {
         format!("connect(privatekey='{value}', token=None)"),
         format!("{{'token': '{value}'}}"),
         format!("{{apiKey: \"{value}\"}}"),
+        format!(r#"password = "{value}\"suffix""#),
+        format!(r#"password = '{value}\'suffix'"#),
     ] {
         let change = changes("", &source);
         assert_eq!(
