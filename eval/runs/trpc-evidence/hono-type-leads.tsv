@@ -1,0 +1,20 @@
+5427	fix(accepts): preserve exact media type quality over subtype wildcards	2026-09-22T07:56:18Z
+5449	fix(utils/mime,ssg): match media types case-insensitively	2026-09-25T15:32:59Z
+5609	fix(client): detect the JSON media type with whitespace before a parameter	2026-11-04T06:20:30Z
+2940	chore(utils/http-status): remove deprecated export types and fix format of jsdoc	2024-06-08T13:09:28Z
+5485	fix(build): keep internal types private in bundled d.ts and avoid a self-referencing JSX.IntrinsicElements	2026-09-30T06:29:58Z
+5446	fix(types): allow returning a Blob as a response body	2026-09-25T07:32:49Z
+5426	fix(lambda-edge): sync content type detection with aws-lambda	2026-09-21T16:31:35Z
+5424	fix(aws-lambda): treat binary +xml archive media types as binary	2026-09-21T10:07:29Z
+5376	fix(accepts): match media types and language tags case-insensitively	2026-09-12T17:27:44Z
+5366	fix(request): keep the request media type when reusing a cached body	2026-09-12T08:45:38Z
+5300	fix(types): allow symbol keys in Context<any> get and set fallbacks	2026-08-25T21:50:43Z
+5255	fix(accepts): support wildcard media types and specificity ordering in defaultMatch	2026-08-17T17:29:45Z
+5142	fix(aws-lambda): add jwt and lambda authorizer types for API Gateway v2	2026-07-20T01:52:32Z
+5136	test(validator): fix misspelled identifier in transform type test	2026-07-18T23:08:22Z
+5103	fix(types): strip extra properties from array types in JSONParsed	2026-07-10T08:38:22Z
+5067	fix(utils/body,validator): normalize Content-Type media type for case-insensitive matching	2026-07-01T09:39:48Z
+5037	fix(jsx): make merged context-isolation tests pass tsc type check	2026-06-23T02:39:27Z
+5036	fix(jsx): cast awaitedFallback through unknown to fix Deno type check	2026-06-23T02:22:04Z
+5013	fix(lambda-edge): satisfy Deno lib types for Content-Length body encoding	2026-06-09T03:55:46Z
+4912	fix(mime): specify charset parameter per MIME type instead of mechanical detection	2026-05-07T00:35:23Z

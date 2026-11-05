@@ -1,0 +1,60 @@
+{
+  "finding_id": "8209408388ac70a93c3b324ac9d336488c03bae27b3ccfb971f0369f406803a8",
+  "base": "4ec3a9bf41ec3de004836e84757c07ec2b7b4156",
+  "head": "310c8733dbde15f6b279863798e740953a4341dd",
+  "reported_path": "deno_dist/helper/factory/index.ts",
+  "reported_line": 273,
+  "actual_added_line": 273,
+  "zero_context_diff": "diff --git a/deno_dist/helper/factory/index.ts b/deno_dist/helper/factory/index.ts\nindex 93b13e26..91290f88 100644\n--- a/deno_dist/helper/factory/index.ts\n+++ b/deno_dist/helper/factory/index.ts\n@@ -273 +273 @@ export const createMiddleware = <E extends Env = any, P extends string = any, I\n-  middleware: MiddlewareHandler\n+  middleware: MiddlewareHandler<E, P, I>\n",
+  "source_lines": {
+    "base": {
+      "270": "export const createFactory = <E extends Env = any, P extends string = any>() => new Factory<E, P>()",
+      "271": "",
+      "272": "export const createMiddleware = <E extends Env = any, P extends string = any, I extends Input = {}>(",
+      "273": "  middleware: MiddlewareHandler",
+      "274": ") => createFactory<E, P>().createMiddleware<I>(middleware)"
+    },
+    "head": {
+      "270": "export const createFactory = <E extends Env = any, P extends string = any>() => new Factory<E, P>()",
+      "271": "",
+      "272": "export const createMiddleware = <E extends Env = any, P extends string = any, I extends Input = {}>(",
+      "273": "  middleware: MiddlewareHandler<E, P, I>",
+      "274": ") => createFactory<E, P>().createMiddleware<I>(middleware)"
+    }
+  },
+  "instrumented_statements_covering_273": {
+    "base": [
+      {
+        "id": "272",
+        "mapping": {
+          "start": {
+            "line": 273,
+            "column": 0
+          },
+          "end": {
+            "line": 273,
+            "column": 31
+          }
+        },
+        "count": 0
+      }
+    ],
+    "head": [
+      {
+        "id": "272",
+        "mapping": {
+          "start": {
+            "line": 273,
+            "column": 0
+          },
+          "end": {
+            "line": 273,
+            "column": 40
+          }
+        },
+        "count": 0
+      }
+    ]
+  },
+  "interpretation": "Reported line273 is the changed parameter type annotation, not a function-body context line. Only generic type parameters are added. TypeScript5.3.3 transpilation erases the annotation and produces byte-identical production JS base/head. V8 coverage.all associates an unexecuted synthetic statement counter with the erased type line in the generated Deno mirror; this does not establish new executable behavior."
+}

@@ -1,0 +1,9 @@
+{
+  "registered_utc": "2026-11-05T03:21:08.324857+00:00",
+  "negative_pr": 2085,
+  "positive_parent_pr": 2081,
+  "rationale": "Jan2025 retained yarn lock gives unresolved required selectors under Rio. Jan2024 before official Bun migration has active complete Yarn lock; static selector cross-check reports zero unresolved required descriptors. This is setup compatibility selection, with identical type-error mutation mechanism, before reviewing either new case with Rio.",
+  "negative_author": "MEMBER/usualoma; substantive single-package core dispatch change with regression tests, mirrored generated deno_dist source.",
+  "recency_deviation": "January2024, not recent. Preserve Jan2025 attempts excluded.",
+  "profile": "profile.yaml unchanged from Jan2025 verified profile; same binary"
+}

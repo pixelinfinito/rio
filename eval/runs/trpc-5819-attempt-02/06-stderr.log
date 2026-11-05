@@ -1,0 +1,15 @@
+Warning: you are leaving 14 commits behind, not connected to
+any of your branches:
+
+  124440faf cool
+  b0079984b cool
+  e20230bee cool
+  aa040ef58 cool
+ ... and 10 more.
+
+If you want to keep them by creating a new branch, this may be a good time
+to do so with:
+
+ git branch <new-branch-name> 124440faf
+
+HEAD is now at baa9c1967 chore: rm diagnostics (#5818)

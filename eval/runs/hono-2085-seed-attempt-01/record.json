@@ -1,0 +1,224 @@
+{
+  "schema": "rio-eval-record-v1",
+  "methodology": "deterministic-v1",
+  "repository": "honojs/hono",
+  "pr": "https://github.com/honojs/hono/pull/2085",
+  "case_id": "2085-seeded-type-error-20261105",
+  "languages": [
+    "typescript"
+  ],
+  "reviewer": "sub-agent eval-trpc (automated)",
+  "verdict_source": "automated",
+  "independently_clean": false,
+  "commands": [
+    "cwd=/dev/shm/trpc-eval/rio-eval-r4tr5fuz argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/honojs/hono.git\", \"/dev/shm/trpc-eval/rio-eval-r4tr5fuz/head\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-r4tr5fuz/head argv=[\"git\", \"fetch\", \"origin\", \"b23cf8d65d851de9726d6388b45dda39e6fdb9ab\", \"94d2dcbf315dd3ac969d321b532fb0049b1a7c36\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-r4tr5fuz/head argv=[\"git\", \"merge-base\", \"b23cf8d65d851de9726d6388b45dda39e6fdb9ab\", \"94d2dcbf315dd3ac969d321b532fb0049b1a7c36\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-r4tr5fuz/head argv=[\"git\", \"checkout\", \"--detach\", \"94d2dcbf315dd3ac969d321b532fb0049b1a7c36\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-r4tr5fuz argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/dev/shm/trpc-eval/rio-eval-r4tr5fuz/head\", \"/dev/shm/trpc-eval/rio-eval-r4tr5fuz/base\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-r4tr5fuz/base argv=[\"git\", \"checkout\", \"--detach\", \"b23cf8d65d851de9726d6388b45dda39e6fdb9ab\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-r4tr5fuz/base argv=[\"corepack\", \"yarn@1.22.22\", \"install\", \"--frozen-lockfile\", \"--non-interactive\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-r4tr5fuz/base argv=[\"python3\", \"-c\", \"from pathlib import Path; import hashlib; p=Path('node_modules/.bin/vitest'); assert p.is_symlink(); target=p.resolve(); original=target.read_bytes(); p.unlink(); p.write_text(\\\"#!/usr/bin/env python3\\\\n# Vitest 1.1 CLI compatibility only; package files and test selection are unchanged.\\\\nimport os\\\\nfrom pathlib import Path\\\\nimport sys\\\\nargs = []\\\\nfor arg in sys.argv[1:]:\\\\n    if arg == '--coverage':\\\\n        args.append('--coverage.enabled')\\\\n    elif arg.startswith('--maxWorkers='):\\\\n        value = arg.split('=', 1)[1]\\\\n        os.environ['VITEST_MAX_THREADS'] = value\\\\n        os.environ['VITEST_MAX_FORKS'] = value\\\\n    elif arg.startswith('--minWorkers='):\\\\n        value = arg.split('=', 1)[1]\\\\n        os.environ['VITEST_MIN_THREADS'] = value\\\\n        os.environ['VITEST_MIN_FORKS'] = value\\\\n    else:\\\\n        args.append(arg)\\\\nentry = Path(__file__).absolute().parent.parent / 'vitest' / 'vitest.mjs'\\\\nos.execvp('node', ['node', str(entry), *args])\\\\n\\\"); p.chmod(0o755); print('Original entry:',target,'SHA256:',hashlib.sha256(original).hexdigest()); print('CLI compatibility shim SHA256:',hashlib.sha256(p.read_bytes()).hexdigest())\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-r4tr5fuz/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-r4tr5fuz/head argv=[\"corepack\", \"yarn@1.22.22\", \"install\", \"--frozen-lockfile\", \"--non-interactive\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-r4tr5fuz/head argv=[\"python3\", \"-c\", \"from pathlib import Path; import hashlib; p=Path('node_modules/.bin/vitest'); assert p.is_symlink(); target=p.resolve(); original=target.read_bytes(); p.unlink(); p.write_text(\\\"#!/usr/bin/env python3\\\\n# Vitest 1.1 CLI compatibility only; package files and test selection are unchanged.\\\\nimport os\\\\nfrom pathlib import Path\\\\nimport sys\\\\nargs = []\\\\nfor arg in sys.argv[1:]:\\\\n    if arg == '--coverage':\\\\n        args.append('--coverage.enabled')\\\\n    elif arg.startswith('--maxWorkers='):\\\\n        value = arg.split('=', 1)[1]\\\\n        os.environ['VITEST_MAX_THREADS'] = value\\\\n        os.environ['VITEST_MAX_FORKS'] = value\\\\n    elif arg.startswith('--minWorkers='):\\\\n        value = arg.split('=', 1)[1]\\\\n        os.environ['VITEST_MIN_THREADS'] = value\\\\n        os.environ['VITEST_MIN_FORKS'] = value\\\\n    else:\\\\n        args.append(arg)\\\\nentry = Path(__file__).absolute().parent.parent / 'vitest' / 'vitest.mjs'\\\\nos.execvp('node', ['node', str(entry), *args])\\\\n\\\"); p.chmod(0o755); print('Original entry:',target,'SHA256:',hashlib.sha256(original).hexdigest()); print('CLI compatibility shim SHA256:',hashlib.sha256(p.read_bytes()).hexdigest())\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-r4tr5fuz/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-r4tr5fuz/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-r4tr5fuz/head argv=[\"node\", \"--version\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-r4tr5fuz/head argv=[\"npm\", \"--version\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-r4tr5fuz/head argv=[\"corepack\", \"--version\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-r4tr5fuz/head argv=[\"python3\", \"--version\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-r4tr5fuz/head argv=[\"uv\", \"--version\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-r4tr5fuz/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2085-seed-attempt-01/profile.yaml\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-r4tr5fuz/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/dev/shm/trpc-eval/rio-eval-r4tr5fuz/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"b23cf8d65d851de9726d6388b45dda39e6fdb9ab\", \"--format\", \"json\", \"--offline\", \"--profile\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2085-seed-attempt-01/profile.yaml\"]"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/hono-2085-seed-attempt-01/commands.json; Rio binary SHA-256: 512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+    "January2024 compatible Hono substitute after >45minutes tRPC setup. This is a seeded mutation on public PR2085 base, not that real PR head; local git transport override/pins/patch/bundle in ../hono-evidence/2085-seed-pins.json.",
+    "Tool compatibility shim pinned SHA256 b2ebab9622ac05f2c944f95bc305e7017dde151141efe6b071b368838f759b19 in install-plan translates only coverage enablement and max/min worker options for locked Vitest1.1.0. Original Vitest package entry remains unchanged. No dependency trust.",
+    "Inherited NO_COLOR removed. Independent oracle worker env and toolchain hashes in ../hono-evidence/2085-positive-registration.json. Offline dependency audit skipped by declared cohort; no vulnerability detection claim.",
+    "Report status incomplete reflects explicitly deferred agent steps and offline audit; all deterministic checks except declared offline audit execute successfully. Eligibility must be read from record.environment."
+  ],
+  "positive_control": {
+    "kind": "seeded-mutation",
+    "expected": [
+      {
+        "id": "seeded-url-export-type-mismatch",
+        "mechanism": "type-error",
+        "evidence": "../hono-2085-seed-oracle/: original locked TypeScript5.3.3 tsc --noEmit --pretty false, base b23cf8d65d851de9726d6388b45dda39e6fdb9ab exit0; seeded head 94d2dcbf315dd3ac969d321b532fb0049b1a7c36 exit2 with exactly TS2322 src/utils/url.ts:267:14 string not assignable to number. Lint and 15 instrumented URL tests pass both. Exact patch/hash in 2085-seed.patch and 2085-seed-pins.json.",
+        "finding_ids": [
+          "61519345c86a98b40bcf228e8c5bcea888770a6b79ee55a392217a938457659c"
+        ]
+      }
+    ]
+  },
+  "base_sha": "b23cf8d65d851de9726d6388b45dda39e6fdb9ab",
+  "head_sha": "94d2dcbf315dd3ac969d321b532fb0049b1a7c36",
+  "mode": "branch",
+  "review_id": "db03c31db037905c",
+  "run_id": "01M6MW2B8EDQJE3M7PD8AZWPA7",
+  "rio_version": "0.1.0",
+  "profile": "hono-typescript-verified-all-checks",
+  "wall_time_ms": 34789,
+  "status": "incomplete",
+  "report_path": "eval/runs/hono-2085-seed-attempt-01/report.json",
+  "environment": {
+    "dependency_state": "verified",
+    "baseline_ran": true,
+    "baseline_classification_ran": true,
+    "eligible": true,
+    "reasons": [],
+    "checks": [
+      {
+        "findings": [],
+        "kind": "secrets",
+        "language": "common",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "findings": [],
+        "hint": "Dependency audit needs api.osv.dev",
+        "kind": "dependencies",
+        "language": "common",
+        "outcome": "skipped",
+        "reason": "offline",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "lint",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 2433
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "lint",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "base",
+        "wall_time_ms": 2518
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 24545
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "findings",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 13241
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "base",
+        "wall_time_ms": 13134
+      }
+    ],
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "Graph references use syntax and text; no language server was used",
+      "Offline applies to Rio; tool and test processes were not network-isolated"
+    ]
+  },
+  "findings": [
+    {
+      "finding": {
+        "category": "defect",
+        "evidence": [
+          "tsc diagnostic"
+        ],
+        "evidence_level": "static_proven",
+        "id": "61519345c86a98b40bcf228e8c5bcea888770a6b79ee55a392217a938457659c",
+        "location": {
+          "column": 14,
+          "line_end": 267,
+          "line_start": 267,
+          "occurrence_state": "new",
+          "path": "src/utils/url.ts",
+          "symbol_path": "url.rioEvalTypeControl"
+        },
+        "locations": [
+          {
+            "column": 14,
+            "line_end": 267,
+            "line_start": 267,
+            "occurrence_state": "new",
+            "path": "src/utils/url.ts",
+            "symbol_path": "url.rioEvalTypeControl"
+          }
+        ],
+        "message": "Type 'string' is not assignable to type 'number'.",
+        "rule_id": "typecheck/tsc/TS2322",
+        "severity": "error",
+        "source": {
+          "tool": "tsc",
+          "version": "Version 5.3.3"
+        },
+        "state": "new",
+        "trigger": ""
+      },
+      "verdict": "true-positive",
+      "reason": "Exact independent oracle match: ../hono-2085-seed-oracle/base-typecheck.stdout.log has no errors and base command exits0; head-typecheck.stdout.log has exactly TS2322 string not assignable to number at src/utils/url.ts267:14 and exits2. The preserved single-change patch adds this mismatched numeric export. Rio correctly labels it new; base/head typecheck and lint are dependency_state verified. This is one underlying seeded type bug.",
+      "message_template": "Type 'string' is not assignable to type 'number'.",
+      "file_set": [
+        "src/utils/url.ts"
+      ],
+      "root_cause_key": "e4a15967e2f8d196bb4d2b169534d2c63be691eec3c93f7c4ffa2632fbf15c38",
+      "family": "typecheck/tsc/TS2322"
+    }
+  ],
+  "root_causes": [
+    {
+      "root_cause_key": "e4a15967e2f8d196bb4d2b169534d2c63be691eec3c93f7c4ffa2632fbf15c38",
+      "rule_id": "typecheck/tsc/TS2322",
+      "message_template": "Type 'string' is not assignable to type 'number'.",
+      "file_set": [
+        "src/utils/url.ts"
+      ],
+      "verdict": "true-positive",
+      "family": "typecheck/tsc/TS2322",
+      "finding_count": 1,
+      "occurrence_count": 1,
+      "finding_ids": [
+        "61519345c86a98b40bcf228e8c5bcea888770a6b79ee55a392217a938457659c"
+      ]
+    }
+  ],
+  "misses": [],
+  "verdict": "useful",
+  "reason": "At least one independently confirmed actionable deterministic root cause."
+}

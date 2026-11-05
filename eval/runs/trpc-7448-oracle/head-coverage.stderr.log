@@ -1,0 +1,18 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Startup Error ⎯⎯⎯⎯⎯⎯⎯⎯
+Error: No projects were found. Make sure your configuration is correct. The projects definition: [
+    "./packages/*"
+].
+    at resolveProjects (file:///dev/shm/trpc-eval/7448-oracle/node_modules/.pnpm/vitest@4.0.18_@edge-runtime+vm@2.0.2_@types+node@22.17.0_@vitest+ui@4.0.18_jiti@2.6.1_j_59bd4498275017ad5433c3a9aa2933a2/node_modules/vitest/dist/chunks/cli-api.B7PN_QUv.js:10386:37)
+    at Vitest._setServer (file:///dev/shm/trpc-eval/7448-oracle/node_modules/.pnpm/vitest@4.0.18_@edge-runtime+vm@2.0.2_@types+node@22.17.0_@vitest+ui@4.0.18_jiti@2.6.1_j_59bd4498275017ad5433c3a9aa2933a2/node_modules/vitest/dist/chunks/cli-api.B7PN_QUv.js:12227:20)
+    at handler (file:///dev/shm/trpc-eval/7448-oracle/node_modules/.pnpm/vitest@4.0.18_@edge-runtime+vm@2.0.2_@types+node@22.17.0_@vitest+ui@4.0.18_jiti@2.6.1_j_59bd4498275017ad5433c3a9aa2933a2/node_modules/vitest/dist/chunks/cli-api.B7PN_QUv.js:13158:6)
+    at _createServer (file:///dev/shm/trpc-eval/7448-oracle/node_modules/.pnpm/vite@6.4.1_@types+node@22.17.0_jiti@2.6.1_lightningcss@1.28.2_terser@5.34.0_tsx@4.19.3_yaml@2.8.2/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:38686:20)
+    at createViteServer (file:///dev/shm/trpc-eval/7448-oracle/node_modules/.pnpm/vitest@4.0.18_@edge-runtime+vm@2.0.2_@types+node@22.17.0_@vitest+ui@4.0.18_jiti@2.6.1_j_59bd4498275017ad5433c3a9aa2933a2/node_modules/vitest/dist/chunks/cli-api.B7PN_QUv.js:9870:17)
+    at createVitest (file:///dev/shm/trpc-eval/7448-oracle/node_modules/.pnpm/vitest@4.0.18_@edge-runtime+vm@2.0.2_@types+node@22.17.0_@vitest+ui@4.0.18_jiti@2.6.1_j_59bd4498275017ad5433c3a9aa2933a2/node_modules/vitest/dist/chunks/cli-api.B7PN_QUv.js:13186:17)
+    at prepareVitest (file:///dev/shm/trpc-eval/7448-oracle/node_modules/.pnpm/vitest@4.0.18_@edge-runtime+vm@2.0.2_@types+node@22.17.0_@vitest+ui@4.0.18_jiti@2.6.1_j_59bd4498275017ad5433c3a9aa2933a2/node_modules/vitest/dist/chunks/cli-api.B7PN_QUv.js:13548:14)
+    at startVitest (file:///dev/shm/trpc-eval/7448-oracle/node_modules/.pnpm/vitest@4.0.18_@edge-runtime+vm@2.0.2_@types+node@22.17.0_@vitest+ui@4.0.18_jiti@2.6.1_j_59bd4498275017ad5433c3a9aa2933a2/node_modules/vitest/dist/chunks/cli-api.B7PN_QUv.js:13494:14)
+    at start (file:///dev/shm/trpc-eval/7448-oracle/node_modules/.pnpm/vitest@4.0.18_@edge-runtime+vm@2.0.2_@types+node@22.17.0_@vitest+ui@4.0.18_jiti@2.6.1_j_59bd4498275017ad5433c3a9aa2933a2/node_modules/vitest/dist/chunks/cac.DVeoLl0M.js:1360:15)
+    at CAC.run (file:///dev/shm/trpc-eval/7448-oracle/node_modules/.pnpm/vitest@4.0.18_@edge-runtime+vm@2.0.2_@types+node@22.17.0_@vitest+ui@4.0.18_jiti@2.6.1_j_59bd4498275017ad5433c3a9aa2933a2/node_modules/vitest/dist/chunks/cac.DVeoLl0M.js:1338:2)
+
+
+

@@ -1,0 +1,24 @@
+
+ RUN  v5.0.0 /dev/shm/trpc-eval/source/tooling/release
+
+package: @trpc/client@11.23.0
+Tarball Contents
+package.json
+Tarball Details
+/tmp/cZLGP9/trpc-client-11.23.0.tgz
+package: @trpc/server@11.23.0
+Tarball Contents
+package.json
+Tarball Details
+/tmp/cZLGP9/trpc-server-11.23.0.tgz
+ ❯ |release| src/release.test.ts (8 tests | 2 failed) 15805ms
+   ❯ branchMoved (1)
+     × tells whether the remote branch has commits HEAD lacks 5045ms
+   ❯ the release guards (2)
+     × publishes a stable release only from the branch 5007ms
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  2 failed | 24 passed (26)
+   Start at  02:36:38
+   Duration  29.44s (tests 86%, import 8%, transform 6%)
+

@@ -1,0 +1,17 @@
+{
+  "captured_utc": "2026-11-05T02:43:30.494261+00:00",
+  "files": {
+    "/home/ubuntu/rio/target/release/rio": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+    "/dev/shm/trpc-eval/node-v24.22.2-linux-x64/bin/node": "904a6d3484241d466989f9df9ba3aab822b1496191bdb28230eb491a55c32a52",
+    "/dev/shm/trpc-eval/old-tools/node-v20.10.0-linux-x64/bin/node": "d9cbc20cbf39eba838b077d3358d3203d549ae1f71e8085c6451d3bd712610ae",
+    "/tmp/trpc-eval/toolchain/corepack/node_modules/corepack/package.json": "6f431b9a91afe6b4757f4b5a3855e2f79e2f366dd4242fd397713932aa3a2714",
+    "/home/ubuntu/.cache/node/corepack/v1/pnpm/12.4.1/pnpm-native": "0c0587f40bfec00e9d7029967de69a8b66f18e8986582f5c85d1a0b9374ddbdb",
+    "/dev/shm/trpc-eval/source/pnpm-lock.yaml": "a7a979fdaca731b777daea6c3730e4d4f11977d1109cf95a3277bc175ddd0eb9",
+    "/dev/shm/trpc-eval/5819-oracle/pnpm-lock.yaml": "ddcf4cd116f26623bc26a7093b2cdf45acfc945e51cff2b99d996fd81cb31c8f"
+  },
+  "runtime_notes": [
+    "Linux x86_64; no RIO trust override. Temporary clones and package stores moved to /dev/shm due severe disk contention.",
+    "pnpm 12.4.1 --trust-lockfile skips registry supply-chain policy rechecks only; frozen lock/resolutions remain unchanged. Rio trust_installed_dependencies is false.",
+    "First 7903 oracle failed because shared oxlint plugin dependency was not selected and /tmp-based git fixture tests timed out. Corrected by selecting @tooling/oxlint-plugin, TMPDIR=/dev/shm/trpc-eval/test-tmp, --testTimeout=30000 --hookTimeout=30000; corrected base/head pass."
+  ]
+}

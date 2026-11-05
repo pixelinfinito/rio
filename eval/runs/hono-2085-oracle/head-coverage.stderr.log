@@ -1,0 +1,12 @@
+file:///dev/shm/trpc-eval/hono-2085-oracle/node_modules/vitest/dist/cli.js:85
+  throw new Error(error);
+        ^
+
+Error: A boolean argument "--coverage" was used with dot notation arguments "--coverage.all --coverage.reporter=json --coverage.reporter=text-summary".
+Please specify the "--coverage" argument with dot notation as well: "--coverage.enabled"
+    at file:///dev/shm/trpc-eval/hono-2085-oracle/node_modules/vitest/dist/cli.js:85:9
+    at ModuleJob.run (node:internal/modules/esm/module_job:218:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:329:24)
+    at async main (file:///dev/shm/trpc-eval/hono-2085-oracle/node_modules/vitest/dist/cli-wrapper.js:45:5)
+
+Node.js v20.10.0

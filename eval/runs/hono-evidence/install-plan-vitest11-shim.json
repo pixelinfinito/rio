@@ -1,0 +1,30 @@
+{
+  "base": [
+    [
+      "corepack",
+      "yarn@1.22.22",
+      "install",
+      "--frozen-lockfile",
+      "--non-interactive"
+    ],
+    [
+      "python3",
+      "-c",
+      "from pathlib import Path; import hashlib; p=Path('node_modules/.bin/vitest'); assert p.is_symlink(); target=p.resolve(); original=target.read_bytes(); p.unlink(); p.write_text(\"#!/usr/bin/env python3\\n# Vitest 1.1 CLI compatibility only; package files and test selection are unchanged.\\nimport os\\nfrom pathlib import Path\\nimport sys\\nargs = []\\nfor arg in sys.argv[1:]:\\n    if arg == '--coverage':\\n        args.append('--coverage.enabled')\\n    elif arg.startswith('--maxWorkers='):\\n        value = arg.split('=', 1)[1]\\n        os.environ['VITEST_MAX_THREADS'] = value\\n        os.environ['VITEST_MAX_FORKS'] = value\\n    elif arg.startswith('--minWorkers='):\\n        value = arg.split('=', 1)[1]\\n        os.environ['VITEST_MIN_THREADS'] = value\\n        os.environ['VITEST_MIN_FORKS'] = value\\n    else:\\n        args.append(arg)\\nentry = Path(__file__).absolute().parent.parent / 'vitest' / 'vitest.mjs'\\nos.execvp('node', ['node', str(entry), *args])\\n\"); p.chmod(0o755); print('Original entry:',target,'SHA256:',hashlib.sha256(original).hexdigest()); print('CLI compatibility shim SHA256:',hashlib.sha256(p.read_bytes()).hexdigest())"
+    ]
+  ],
+  "head": [
+    [
+      "corepack",
+      "yarn@1.22.22",
+      "install",
+      "--frozen-lockfile",
+      "--non-interactive"
+    ],
+    [
+      "python3",
+      "-c",
+      "from pathlib import Path; import hashlib; p=Path('node_modules/.bin/vitest'); assert p.is_symlink(); target=p.resolve(); original=target.read_bytes(); p.unlink(); p.write_text(\"#!/usr/bin/env python3\\n# Vitest 1.1 CLI compatibility only; package files and test selection are unchanged.\\nimport os\\nfrom pathlib import Path\\nimport sys\\nargs = []\\nfor arg in sys.argv[1:]:\\n    if arg == '--coverage':\\n        args.append('--coverage.enabled')\\n    elif arg.startswith('--maxWorkers='):\\n        value = arg.split('=', 1)[1]\\n        os.environ['VITEST_MAX_THREADS'] = value\\n        os.environ['VITEST_MAX_FORKS'] = value\\n    elif arg.startswith('--minWorkers='):\\n        value = arg.split('=', 1)[1]\\n        os.environ['VITEST_MIN_THREADS'] = value\\n        os.environ['VITEST_MIN_FORKS'] = value\\n    else:\\n        args.append(arg)\\nentry = Path(__file__).absolute().parent.parent / 'vitest' / 'vitest.mjs'\\nos.execvp('node', ['node', str(entry), *args])\\n\"); p.chmod(0o755); print('Original entry:',target,'SHA256:',hashlib.sha256(original).hexdigest()); print('CLI compatibility shim SHA256:',hashlib.sha256(p.read_bytes()).hexdigest())"
+    ]
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "base": [
+    [
+      "corepack",
+      "pnpm",
+      "--filter",
+      "root",
+      "--filter",
+      "@trpc/upgrade",
+      "install",
+      "--frozen-lockfile",
+      "--ignore-scripts",
+      "--store-dir",
+      "/dev/shm/trpc-eval/pnpm10-store"
+    ]
+  ],
+  "head": [
+    [
+      "corepack",
+      "pnpm",
+      "--filter",
+      "root",
+      "--filter",
+      "@trpc/upgrade",
+      "install",
+      "--frozen-lockfile",
+      "--ignore-scripts",
+      "--store-dir",
+      "/dev/shm/trpc-eval/pnpm10-store"
+    ]
+  ]
+}

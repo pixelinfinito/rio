@@ -1,0 +1,21 @@
+#!/usr/bin/env python3
+# Vitest 1.1 CLI compatibility only; package files and test selection are unchanged.
+import os
+from pathlib import Path
+import sys
+args = []
+for arg in sys.argv[1:]:
+    if arg == '--coverage':
+        args.append('--coverage.enabled')
+    elif arg.startswith('--maxWorkers='):
+        value = arg.split('=', 1)[1]
+        os.environ['VITEST_MAX_THREADS'] = value
+        os.environ['VITEST_MAX_FORKS'] = value
+    elif arg.startswith('--minWorkers='):
+        value = arg.split('=', 1)[1]
+        os.environ['VITEST_MIN_THREADS'] = value
+        os.environ['VITEST_MIN_FORKS'] = value
+    else:
+        args.append(arg)
+entry = Path(__file__).absolute().parent.parent / 'vitest' / 'vitest.mjs'
+os.execvp('node', ['node', str(entry), *args])

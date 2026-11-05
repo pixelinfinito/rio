@@ -1,0 +1,75 @@
+Warning: /home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-5819-attempt-01/profile.yaml:$.steps[3]: rio/triage is deferred locally: no_endpoint
+Warning: /home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-5819-attempt-01/profile.yaml:$.steps[4]: rio/agents is deferred locally: no_endpoint
+Warning: /home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-5819-attempt-01/profile.yaml:$.steps[5]: rio/verify is deferred locally: no_endpoint
+Running prepare…
+Finished prepare
+Running checks…
+coverage examples/.experimental/next-app-dir: skipped (disabled)
+coverage examples/.test/ssg: skipped (disabled)
+typecheck examples/.test/diagnostics-big-router: findings
+coverage examples/.test/diagnostics-big-router: skipped (disabled)
+typecheck examples/.test/ssg: findings
+coverage examples/.test/internal-types-export: skipped (disabled)
+coverage examples/next-prisma-websockets-starter: skipped (disabled)
+typecheck examples/.test/ssg-infinite-serialization: findings
+lint examples/next-sse-chat: skipped (disabled)
+coverage examples/next-sse-chat: skipped (disabled)
+typecheck examples/.test/internal-types-export: findings
+coverage examples/soa: skipped (disabled)
+typecheck examples/.experimental/next-app-dir: findings
+typecheck examples/standalone-server: findings
+coverage examples/standalone-server: skipped (disabled)
+typecheck examples/vercel-edge-runtime: findings
+coverage examples/vercel-edge-runtime: skipped (disabled)
+typecheck examples/soa: findings
+lint packages/client: skipped (disabled)
+coverage packages/client: skipped (disabled)
+coverage packages/react-query: skipped (disabled)
+coverage examples/.test/ssg-infinite-serialization: skipped (disabled)
+typecheck examples/next-sse-chat: findings
+coverage examples/bun: skipped (disabled)
+typecheck packages/react-query: passed
+coverage examples/cloudflare-workers: skipped (disabled)
+typecheck examples/bun: findings
+typecheck examples/cloudflare-workers: findings
+coverage examples/express-minimal: skipped (disabled)
+typecheck packages/client: passed
+coverage examples/express-server: skipped (disabled)
+typecheck examples/express-minimal: findings
+coverage examples/fastify-server: skipped (disabled)
+typecheck examples/express-server: findings
+lint packages/server: skipped (disabled)
+coverage examples/lambda-api-gateway: skipped (disabled)
+typecheck examples/fastify-server: findings
+coverage examples/minimal: skipped (disabled)
+typecheck packages/server: findings
+coverage examples/next-big-router: skipped (disabled)
+typecheck examples/minimal: findings
+coverage examples/next-edge-runtime: skipped (disabled)
+coverage packages/server: skipped (disabled)
+typecheck examples/next-big-router: findings
+coverage examples/next-formdata: skipped (disabled)
+typecheck examples/next-edge-runtime: findings
+coverage examples/next-minimal-starter: skipped (disabled)
+typecheck examples/lambda-api-gateway: findings
+coverage examples/next-prisma-starter: skipped (disabled)
+typecheck examples/next-formdata: findings
+coverage packages/next: skipped (disabled)
+typecheck packages/tests: skipped (dependency_mismatch)
+typecheck examples/next-minimal-starter: findings
+lint packages/tests: skipped (disabled)
+coverage examples/next-prisma-todomvc: skipped (disabled)
+coverage packages/tests: skipped (disabled)
+typecheck examples/next-prisma-starter: findings
+typecheck www: skipped (dependency_mismatch)
+coverage www: skipped (disabled)
+secrets .: passed
+dependencies .: skipped (disabled)
+typecheck examples/next-prisma-todomvc: findings
+typecheck examples/next-prisma-websockets-starter: findings
+typecheck packages/next: passed
+Finished checks
+Running graph…
+Finished graph
+Running report…
+Finished report

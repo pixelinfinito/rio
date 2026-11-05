@@ -1,0 +1,29 @@
+
+ RUN  v5.0.0 /dev/shm/trpc-eval/source/tooling/release
+
+ ❯ |release| src/notes.test.ts (16 tests | 2 failed) 10101ms
+   ❯ changesBetween (1)
+     × lists first-parent commits with their files, oldest first 5047ms
+   ❯ notesPackages (1)
+     × reads the public packages at a revision, not the working tree 5004ms
+package: @trpc/client@11.23.0
+Tarball Contents
+package.json
+Tarball Details
+/tmp/ICu4zr/trpc-client-11.23.0.tgz
+ ❯ |release| src/release.test.ts (8 tests | 2 failed) 19259ms
+   ❯ branchMoved (1)
+     × tells whether the remote branch has commits HEAD lacks 5025ms
+   ❯ the release guards (2)
+     × publishes a stable release only from the branch 5002ms
+package: @trpc/server@11.23.0
+Tarball Contents
+package.json
+Tarball Details
+/tmp/ICu4zr/trpc-server-11.23.0.tgz
+
+ Test Files  2 failed | 2 passed (4)
+      Tests  4 failed | 38 passed (42)
+   Start at  02:37:16
+   Duration  46.24s (tests 74%, transform 17%, import 10%)
+

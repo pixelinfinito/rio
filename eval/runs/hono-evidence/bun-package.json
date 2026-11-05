@@ -1,0 +1,16 @@
+{
+  "bin": {
+    "bun": "bin/bun.exe",
+    "bunx": "bin/bun.exe"
+  },
+  "optionalDependencies": {
+    "@oven/bun-linux-x64": "1.1.33",
+    "@oven/bun-darwin-x64": "1.1.33",
+    "@oven/bun-windows-x64": "1.1.33",
+    "@oven/bun-linux-aarch64": "1.1.33",
+    "@oven/bun-darwin-aarch64": "1.1.33",
+    "@oven/bun-linux-x64-baseline": "1.1.33",
+    "@oven/bun-darwin-x64-baseline": "1.1.33",
+    "@oven/bun-windows-x64-baseline": "1.1.33"
+  }
+}

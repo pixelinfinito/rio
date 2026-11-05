@@ -1,0 +1,19 @@
+{
+  "recorded_utc": "2026-11-05T03:12:26.553555+00:00",
+  "oracle_attempt_1": "hono-3856-oracle",
+  "problems": [
+    "Yarn1 exec strips unseparated flags: actual Vitest stderr reports Arguments: run, not requested coverage/worker arguments. Coverage nevertheless enabled by upstream config; TypeScript command compiled using tsconfig rather than noEmit.",
+    "Inherited NO_COLOR=1 causes ten color/logger/dev test failures at base; inspect src/utils/color.ts and base-coverage.stderr.log."
+  ],
+  "corrections": [
+    "Use direct node_modules/.bin executables for independent checks.",
+    "Unset NO_COLOR for independent checks and runner; do not modify project source.",
+    "Pin maxWorkers=2/minWorkers=1 for independent Vitest, matching Rio adapter behavior."
+  ],
+  "environment_for_all_hono_runs": {
+    "NO_COLOR": "UNSET",
+    "COREPACK_ENABLE_AUTO_PIN": "0",
+    "PATH_prefix": "/dev/shm/trpc-eval/old-tools/node-v20.10.0-linux-x64/bin:/tmp/trpc-eval/toolchain/corepack/node_modules/.bin"
+  },
+  "dependency_trust": false
+}

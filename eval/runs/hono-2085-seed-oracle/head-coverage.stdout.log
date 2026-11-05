@@ -1,0 +1,19 @@
+
+ RUN  v1.1.0 /dev/shm/trpc-eval/hono-2081-seed
+      Coverage enabled with v8
+
+ ✓ src/utils/url.test.ts  (15 tests) 52ms
+
+ Test Files  1 passed (1)
+      Tests  15 passed (15)
+   Start at  03:28:23
+   Duration  659ms (transform 131ms, setup 47ms, collect 85ms, tests 52ms, environment 0ms, prepare 138ms)
+
+ % Coverage report from v8
+
+=============================== Coverage summary ===============================
+Statements   : 1.27% ( 264/20759 )
+Branches     : 27.49% ( 91/331 )
+Functions    : 5.17% ( 13/251 )
+Lines        : 1.27% ( 264/20759 )
+================================================================================

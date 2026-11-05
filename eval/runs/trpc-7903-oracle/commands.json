@@ -1,0 +1,110 @@
+[
+  {
+    "label": "base",
+    "sha": "c869fa1075fc3ce11b38495c5e6044fb97b335d2",
+    "argv": [
+      "corepack",
+      "pnpm",
+      "exec",
+      "tsc",
+      "--noEmit",
+      "--pretty",
+      "false"
+    ],
+    "cwd": "/dev/shm/trpc-eval/source/tooling/release",
+    "started_utc": "2026-11-05T02:36:27.628015+00:00",
+    "stdout": "base-typecheck.stdout.log",
+    "stderr": "base-typecheck.stderr.log",
+    "exit_code": 0,
+    "wall_time_ms": 3819
+  },
+  {
+    "label": "base",
+    "sha": "c869fa1075fc3ce11b38495c5e6044fb97b335d2",
+    "argv": [
+      "corepack",
+      "pnpm",
+      "exec",
+      "oxlint",
+      "."
+    ],
+    "cwd": "/dev/shm/trpc-eval/source/tooling/release",
+    "started_utc": "2026-11-05T02:36:32.362859+00:00",
+    "stdout": "base-lint.stdout.log",
+    "stderr": "base-lint.stderr.log",
+    "exit_code": 1,
+    "wall_time_ms": 2709
+  },
+  {
+    "label": "base",
+    "sha": "c869fa1075fc3ce11b38495c5e6044fb97b335d2",
+    "argv": [
+      "corepack",
+      "pnpm",
+      "exec",
+      "vitest",
+      "run",
+      "--maxWorkers=2"
+    ],
+    "cwd": "/dev/shm/trpc-eval/source/tooling/release",
+    "started_utc": "2026-11-05T02:36:35.312753+00:00",
+    "stdout": "base-tests.stdout.log",
+    "stderr": "base-tests.stderr.log",
+    "exit_code": 1,
+    "wall_time_ms": 32638
+  },
+  {
+    "label": "head",
+    "sha": "248fb772a6d6f7ce2492f8549a8d370ec3df9731",
+    "argv": [
+      "corepack",
+      "pnpm",
+      "exec",
+      "tsc",
+      "--noEmit",
+      "--pretty",
+      "false"
+    ],
+    "cwd": "/dev/shm/trpc-eval/source/tooling/release",
+    "started_utc": "2026-11-05T02:37:08.773440+00:00",
+    "stdout": "head-typecheck.stdout.log",
+    "stderr": "head-typecheck.stderr.log",
+    "exit_code": 0,
+    "wall_time_ms": 3645
+  },
+  {
+    "label": "head",
+    "sha": "248fb772a6d6f7ce2492f8549a8d370ec3df9731",
+    "argv": [
+      "corepack",
+      "pnpm",
+      "exec",
+      "oxlint",
+      "."
+    ],
+    "cwd": "/dev/shm/trpc-eval/source/tooling/release",
+    "started_utc": "2026-11-05T02:37:13.161796+00:00",
+    "stdout": "head-lint.stdout.log",
+    "stderr": "head-lint.stderr.log",
+    "exit_code": 1,
+    "wall_time_ms": 1031
+  },
+  {
+    "label": "head",
+    "sha": "248fb772a6d6f7ce2492f8549a8d370ec3df9731",
+    "argv": [
+      "corepack",
+      "pnpm",
+      "exec",
+      "vitest",
+      "run",
+      "--maxWorkers=2"
+    ],
+    "cwd": "/dev/shm/trpc-eval/source/tooling/release",
+    "started_utc": "2026-11-05T02:37:14.466954+00:00",
+    "stdout": "head-tests.stdout.log",
+    "stderr": "head-tests.stderr.log",
+    "exit_code": 1,
+    "wall_time_ms": 48829
+  }
+]

@@ -1,0 +1,202 @@
+../client/src/__tests__/testClientResource.ts(11,27): error TS2307: Cannot find module 'ws' or its corresponding type declarations.
+../client/src/getFetch.ts(14,14): error TS2304: Cannot find name 'window'.
+../client/src/getFetch.ts(14,51): error TS2304: Cannot find name 'window'.
+../client/src/getFetch.ts(15,12): error TS2304: Cannot find name 'window'.
+../client/src/internals/types.ts(9,10): error TS2552: Cannot find name 'RequestInfo'. Did you mean 'RequestInit'?
+../client/src/links/httpLink.ts(51,24): error TS2322: Type 'FormData' is not assignable to type 'string | Blob | FormData | Uint8Array<ArrayBuffer> | File | null | undefined'.
+  Type 'FormData' is not assignable to type 'Blob | FormData | File'.
+    Type 'import("/dev/shm/trpc-eval/7448-oracle/node_modules/.pnpm/undici-types@6.21.0/node_modules/undici-types/formdata").FormData' is not assignable to type 'FormData'.
+      The types returned by 'entries()' are incompatible between these types.
+        Type 'SpecIterableIterator<[string, FormDataEntryValue]>' is missing the following properties from type 'FormDataIterator<[string, FormDataEntryValue]>': map, filter, take, drop, and 9 more.
+../client/src/links/loggerLink.ts(220,31): error TS2304: Cannot find name 'window'.
+../react-query/src/createTRPCReact.tsx(12,8): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+../react-query/src/internals/context.tsx(17,8): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+../react-query/src/internals/getQueryKey.ts(1,27): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+../react-query/src/internals/trpcResult.ts(1,34): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+../react-query/src/internals/useQueries.ts(6,8): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+../react-query/src/shared/hooks/createHooksInternal.tsx(15,8): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+../react-query/src/shared/hooks/createHooksInternal.tsx(186,14): error TS2304: Cannot find name 'window'.
+../react-query/src/shared/hooks/createHooksInternal.tsx(189,14): error TS4111: Property 'enabled' comes from an index signature, so it must be accessed with ['enabled'].
+../react-query/src/shared/hooks/createHooksInternal.tsx(209,20): error TS7006: Parameter 'queryFunctionContext' implicitly has an 'any' type.
+../react-query/src/shared/hooks/createHooksInternal.tsx(264,12): error TS7006: Parameter 'queryFunctionContext' implicitly has an 'any' type.
+../react-query/src/shared/hooks/createHooksInternal.tsx(296,19): error TS7006: Parameter 'queryFunctionContext' implicitly has an 'any' type.
+../react-query/src/shared/hooks/createHooksInternal.tsx(336,22): error TS7006: Parameter 'input' implicitly has an 'any' type.
+../react-query/src/shared/hooks/createHooksInternal.tsx(339,19): error TS7019: Rest parameter 'args' implicitly has an 'any[]' type.
+../react-query/src/shared/hooks/createHooksInternal.tsx(341,19): error TS2339: Property 'onSuccess' does not exist on type 'UseTRPCMutationOptions<unknown, TRPCClientErrorLike<TRouter>, unknown, unknown>'.
+../react-query/src/shared/hooks/createHooksInternal.tsx(346,25): error TS2339: Property 'meta' does not exist on type 'UseTRPCMutationOptions<unknown, TRPCClientErrorLike<TRouter>, unknown, unknown>'.
+../react-query/src/shared/hooks/createHooksInternal.tsx(543,14): error TS2304: Cannot find name 'window'.
+../react-query/src/shared/hooks/createHooksInternal.tsx(546,14): error TS4111: Property 'enabled' comes from an index signature, so it must be accessed with ['enabled'].
+../react-query/src/shared/hooks/createHooksInternal.tsx(565,25): error TS4111: Property 'persister' comes from an index signature, so it must be accessed with ['persister'].
+../react-query/src/shared/hooks/createHooksInternal.tsx(569,14): error TS7006: Parameter 'queryFunctionContext' implicitly has an 'any' type.
+../react-query/src/shared/hooks/createHooksInternal.tsx(625,12): error TS7006: Parameter 'queryFunctionContext' implicitly has an 'any' type.
+../react-query/src/shared/hooks/createHooksInternal.tsx(670,19): error TS7006: Parameter 'queryFunctionContext' implicitly has an 'any' type.
+../react-query/src/shared/hooks/createHooksInternal.tsx(707,16): error TS2304: Cannot find name 'window'.
+../react-query/src/shared/hooks/createHooksInternal.tsx(744,26): error TS4111: Property 'queryFn' comes from an index signature, so it must be accessed with ['queryFn'].
+../react-query/src/shared/hooks/createHooksInternal.tsx(751,23): error TS7006: Parameter 'h' implicitly has an 'any' type.
+../react-query/src/shared/hooks/types.ts(20,8): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+../react-query/src/shared/proxy/useQueriesProxy.ts(1,35): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+../react-query/src/shared/proxy/utilsProxy.ts(15,8): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+../react-query/src/shared/proxy/utilsProxy.ts(366,53): error TS2339: Property 'mutationFn' does not exist on type 'InferMutationOptions<TRoot, TProcedure>'.
+../react-query/src/shared/queryClient.ts(1,40): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+../react-query/src/shared/queryClient.ts(2,29): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+../react-query/src/shared/types.ts(11,8): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+../react-query/src/utils/createUtilityFunctions.ts(1,43): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+../react-query/src/utils/createUtilityFunctions.ts(7,8): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+../react-query/src/utils/createUtilityFunctions.ts(76,30): error TS4111: Property 'initialData' comes from an index signature, so it must be accessed with ['initialData'].
+../react-query/src/utils/createUtilityFunctions.ts(115,30): error TS4111: Property 'initialData' comes from an index signature, so it must be accessed with ['initialData'].
+../react-query/src/utils/createUtilityFunctions.ts(139,21): error TS7031: Binding element 'pageParam' implicitly has an 'any' type.
+../react-query/src/utils/createUtilityFunctions.ts(139,32): error TS7031: Binding element 'direction' implicitly has an 'any' type.
+../react-query/src/utils/createUtilityFunctions.ts(160,21): error TS7031: Binding element 'pageParam' implicitly has an 'any' type.
+../react-query/src/utils/createUtilityFunctions.ts(160,32): error TS7031: Binding element 'direction' implicitly has an 'any' type.
+../server/src/__tests__/trpcServerResource.ts(12,33): error TS2307: Cannot find module 'ws' or its corresponding type declarations.
+../server/src/adapters/node-http/incomingMessageToRequest.ts(115,3): error TS2322: Type 'import("/dev/shm/trpc-eval/7448-oracle/node_modules/.pnpm/undici-types@6.21.0/node_modules/undici-types/fetch").Headers' is not assignable to type 'Headers'.
+  The types returned by 'entries()' are incompatible between these types.
+    Type 'SpecIterableIterator<[string, string]>' is missing the following properties from type 'HeadersIterator<[string, string]>': map, filter, take, drop, and 9 more.
+../server/src/adapters/node-http/incomingMessageToRequest.ts(160,5): error TS2578: Unused '@ts-expect-error' directive.
+../server/src/adapters/ws.ts(2,21): error TS2307: Cannot find module 'ws' or its corresponding type declarations.
+../server/src/adapters/ws.ts(452,27): error TS7006: Parameter 'rawData' implicitly has an 'any' type.
+../server/src/adapters/ws.ts(452,36): error TS7006: Parameter 'isBinary' implicitly has an 'any' type.
+../server/src/adapters/ws.ts(552,25): error TS7006: Parameter 'cause' implicitly has an 'any' type.
+../server/src/adapters/ws.ts(619,30): error TS7006: Parameter 'client' implicitly has an 'any' type.
+../server/src/adapters/ws.ts(619,38): error TS7006: Parameter 'req' implicitly has an 'any' type.
+../server/src/unstable-core-do-not-import/http/contentType.ts(200,31): error TS2345: Argument of type 'import("/dev/shm/trpc-eval/7448-oracle/node_modules/.pnpm/undici-types@6.21.0/node_modules/undici-types/fetch").Headers' is not assignable to parameter of type 'Headers'.
+  The types returned by 'entries()' are incompatible between these types.
+    Type 'SpecIterableIterator<[string, string]>' is missing the following properties from type 'HeadersIterator<[string, string]>': map, filter, take, drop, and 9 more.
+../server/src/unstable-core-do-not-import/http/resolveResponse.ts(249,11): error TS2322: Type 'import("/dev/shm/trpc-eval/7448-oracle/node_modules/.pnpm/undici-types@6.21.0/node_modules/undici-types/fetch").Headers' is not assignable to type 'Headers'.
+  The types returned by 'entries()' are incompatible between these types.
+    Type 'SpecIterableIterator<[string, string]>' is missing the following properties from type 'HeadersIterator<[string, string]>': map, filter, take, drop, and 9 more.
+../server/src/unstable-core-do-not-import/http/resolveResponse.ts(305,40): error TS2345: Argument of type 'import("/dev/shm/trpc-eval/7448-oracle/node_modules/.pnpm/undici-types@6.21.0/node_modules/undici-types/fetch").Headers' is not assignable to parameter of type 'Headers'.
+  The types returned by 'entries()' are incompatible between these types.
+    Type 'SpecIterableIterator<[string, string]>' is missing the following properties from type 'HeadersIterator<[string, string]>': map, filter, take, drop, and 9 more.
+../server/src/unstable-core-do-not-import/http/resolveResponse.ts(447,13): error TS2322: Type 'import("/dev/shm/trpc-eval/7448-oracle/node_modules/.pnpm/undici-types@6.21.0/node_modules/undici-types/fetch").Headers' is not assignable to type 'Headers'.
+  The types returned by 'entries()' are incompatible between these types.
+    Type 'SpecIterableIterator<[string, string]>' is missing the following properties from type 'HeadersIterator<[string, string]>': map, filter, take, drop, and 9 more.
+../server/src/unstable-core-do-not-import/http/resolveResponse.ts(530,13): error TS2322: Type 'import("/dev/shm/trpc-eval/7448-oracle/node_modules/.pnpm/undici-types@6.21.0/node_modules/undici-types/fetch").Headers' is not assignable to type 'Headers'.
+  The types returned by 'entries()' are incompatible between these types.
+    Type 'SpecIterableIterator<[string, string]>' is missing the following properties from type 'HeadersIterator<[string, string]>': map, filter, take, drop, and 9 more.
+../server/src/unstable-core-do-not-import/http/resolveResponse.ts(582,9): error TS2322: Type 'import("/dev/shm/trpc-eval/7448-oracle/node_modules/.pnpm/undici-types@6.21.0/node_modules/undici-types/fetch").Headers' is not assignable to type 'Headers'.
+  The types returned by 'entries()' are incompatible between these types.
+    Type 'SpecIterableIterator<[string, string]>' is missing the following properties from type 'HeadersIterator<[string, string]>': map, filter, take, drop, and 9 more.
+../server/src/unstable-core-do-not-import/http/resolveResponse.ts(735,7): error TS2322: Type 'import("/dev/shm/trpc-eval/7448-oracle/node_modules/.pnpm/undici-types@6.21.0/node_modules/undici-types/fetch").Headers' is not assignable to type 'Headers'.
+  The types returned by 'entries()' are incompatible between these types.
+    Type 'SpecIterableIterator<[string, string]>' is missing the following properties from type 'HeadersIterator<[string, string]>': map, filter, take, drop, and 9 more.
+../server/src/unstable-core-do-not-import/http/resolveResponse.ts(767,7): error TS2322: Type 'import("/dev/shm/trpc-eval/7448-oracle/node_modules/.pnpm/undici-types@6.21.0/node_modules/undici-types/fetch").Headers' is not assignable to type 'Headers'.
+  The types returned by 'entries()' are incompatible between these types.
+    Type 'SpecIterableIterator<[string, string]>' is missing the following properties from type 'HeadersIterator<[string, string]>': map, filter, take, drop, and 9 more.
+../server/src/unstable-core-do-not-import/rootConfig.ts(21,10): error TS2304: Cannot find name 'window'.
+../server/src/unstable-core-do-not-import/rootConfig.ts(22,13): error TS2304: Cannot find name 'window'.
+../tanstack-react-query/src/internals/Context.tsx(1,34): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+../tanstack-react-query/src/internals/createOptionsProxy.ts(1,57): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+../tanstack-react-query/src/internals/infiniteQueryOptions.ts(9,8): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+../tanstack-react-query/src/internals/infiniteQueryOptions.ts(10,49): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+../tanstack-react-query/src/internals/infiniteQueryOptions.ts(268,14): error TS7006: Parameter 'queryFnContext' implicitly has an 'any' type.
+../tanstack-react-query/src/internals/mutationOptions.ts(5,8): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+../tanstack-react-query/src/internals/mutationOptions.ts(123,47): error TS7006: Parameter 'input' implicitly has an 'any' type.
+../tanstack-react-query/src/internals/mutationOptions.ts(134,5): error TS2322: Type '{ mutationKey: TRPCMutationKey<TFeatureFlags["keyPrefix"]>; mutationFn: MutationFunction; onSuccess(...args: any[]): MaybePromise<void>; trpc: { path: string; }; } | { ...; } | { ...; }' is not assignable to type 'AnyTRPCMutationOptionsOut<TFeatureFlags>'.
+  Object literal may only specify known properties, and 'mutationFn' does not exist in type 'TRPCMutationOptionsOut<unknown, unknown, unknown, unknown, TFeatureFlags>'.
+../tanstack-react-query/src/internals/mutationOptions.ts(135,15): error TS7019: Rest parameter 'args' implicitly has an 'any[]' type.
+../tanstack-react-query/src/internals/mutationOptions.ts(137,15): error TS4111: Property 'onSuccess' comes from an index signature, so it must be accessed with ['onSuccess'].
+../tanstack-react-query/src/internals/mutationOptions.ts(142,21): error TS4111: Property 'meta' comes from an index signature, so it must be accessed with ['meta'].
+../tanstack-react-query/src/internals/queryOptions.ts(9,8): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+../tanstack-react-query/src/internals/queryOptions.ts(10,41): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+../tanstack-react-query/src/internals/queryOptions.ts(236,14): error TS7006: Parameter 'queryFnContext' implicitly has an 'any' type.
+../tanstack-react-query/src/internals/subscriptionOptions.ts(1,32): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+../tanstack-react-query/src/internals/subscriptionOptions.ts(2,36): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+../tanstack-react-query/src/internals/types.ts(1,35): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+../tanstack-react-query/src/internals/utils.ts(1,45): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+src/lib/git.ts(24,52): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'LogMessageOptions | undefined'.
+src/transforms/provider.ts(23,26): error TS18048: 'declaration' is possibly 'undefined'.
+src/transforms/provider.ts(23,38): error TS2339: Property 'id' does not exist on type 'VariableDeclarator | IdentifierKind'.
+  Property 'id' does not exist on type 'Identifier'.
+src/transforms/provider.ts(24,7): error TS18048: 'declaration' is possibly 'undefined'.
+src/transforms/provider.ts(24,19): error TS2339: Property 'id' does not exist on type 'VariableDeclarator | IdentifierKind'.
+  Property 'id' does not exist on type 'Identifier'.
+src/transforms/provider.ts(27,32): error TS18048: 'declaration' is possibly 'undefined'.
+src/transforms/provider.ts(27,44): error TS2339: Property 'init' does not exist on type 'VariableDeclarator | IdentifierKind'.
+  Property 'init' does not exist on type 'Identifier'.
+src/transforms/provider.ts(28,28): error TS18048: 'declaration' is possibly 'undefined'.
+src/transforms/provider.ts(28,40): error TS2339: Property 'init' does not exist on type 'VariableDeclarator | IdentifierKind'.
+  Property 'init' does not exist on type 'Identifier'.
+src/transforms/provider.ts(29,9): error TS18048: 'declaration' is possibly 'undefined'.
+src/transforms/provider.ts(29,21): error TS2339: Property 'init' does not exist on type 'VariableDeclarator | IdentifierKind'.
+  Property 'init' does not exist on type 'Identifier'.
+src/transforms/provider.ts(33,11): error TS18048: 'declaration' is possibly 'undefined'.
+src/transforms/provider.ts(33,23): error TS2339: Property 'init' does not exist on type 'VariableDeclarator | IdentifierKind'.
+  Property 'init' does not exist on type 'Identifier'.
+src/transforms/provider.ts(37,9): error TS18048: 'declaration' is possibly 'undefined'.
+src/transforms/provider.ts(37,21): error TS2339: Property 'init' does not exist on type 'VariableDeclarator | IdentifierKind'.
+  Property 'init' does not exist on type 'Identifier'.
+src/transforms/provider.ts(40,9): error TS18048: 'declaration' is possibly 'undefined'.
+src/transforms/provider.ts(40,21): error TS2339: Property 'id' does not exist on type 'VariableDeclarator | IdentifierKind'.
+  Property 'id' does not exist on type 'Identifier'.
+test/__fixtures__/hooks/basic.spec.tsx(11,9): error TS2304: Cannot find name 'vi'.
+test/__fixtures__/hooks/basic.tsx(5,18): error TS2554: Expected 1-2 arguments, but got 0.
+test/__fixtures__/hooks/basic.tsx(6,16): error TS2554: Expected 1-2 arguments, but got 0.
+test/__fixtures__/hooks/existingRqMix.snap.tsx(18,5): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(options: DefinedInitialDataInfiniteOptions<unknown, Error, InfiniteData<unknown, unknown>, readonly unknown[], unknown>, queryClient?: QueryClient | undefined): DefinedUseInfiniteQueryResult<...>', gave the following error.
+    Argument of type 'DefinedTRPCInfiniteQueryOptionsOut<{ cursor?: number | undefined; }, { items: string[]; nextCursor: number; }, { items: string[]; nextCursor: number; }, TRPCClientErrorLike<{ transformer: false; errorShape: DefaultErrorShape; }>, { ...; }>' is not assignable to parameter of type 'DefinedInitialDataInfiniteOptions<unknown, Error, InfiniteData<unknown, unknown>, readonly unknown[], unknown>'.
+      Property 'getNextPageParam' is missing in type 'DefinedTRPCInfiniteQueryOptionsOut<{ cursor?: number | undefined; }, { items: string[]; nextCursor: number; }, { items: string[]; nextCursor: number; }, TRPCClientErrorLike<{ transformer: false; errorShape: DefaultErrorShape; }>, { ...; }>' but required in type 'UseInfiniteQueryOptions<unknown, Error, InfiniteData<unknown, unknown>, readonly unknown[], unknown>'.
+  Overload 2 of 3, '(options: UndefinedInitialDataInfiniteOptions<unknown, Error, InfiniteData<unknown, unknown>, readonly unknown[], unknown>, queryClient?: QueryClient | undefined): UseInfiniteQueryResult<...>', gave the following error.
+    Argument of type 'DefinedTRPCInfiniteQueryOptionsOut<{ cursor?: number | undefined; }, { items: string[]; nextCursor: number; }, { items: string[]; nextCursor: number; }, TRPCClientErrorLike<{ transformer: false; errorShape: DefaultErrorShape; }>, { ...; }>' is not assignable to parameter of type 'UndefinedInitialDataInfiniteOptions<unknown, Error, InfiniteData<unknown, unknown>, readonly unknown[], unknown>'.
+      Property 'getNextPageParam' is missing in type 'DefinedTRPCInfiniteQueryOptionsOut<{ cursor?: number | undefined; }, { items: string[]; nextCursor: number; }, { items: string[]; nextCursor: number; }, TRPCClientErrorLike<{ transformer: false; errorShape: DefaultErrorShape; }>, { ...; }>' but required in type 'UseInfiniteQueryOptions<unknown, Error, InfiniteData<unknown, unknown>, readonly unknown[], unknown>'.
+  Overload 3 of 3, '(options: UseInfiniteQueryOptions<unknown, Error, InfiniteData<unknown, unknown>, readonly unknown[], unknown>, queryClient?: QueryClient | undefined): UseInfiniteQueryResult<...>', gave the following error.
+    Argument of type 'DefinedTRPCInfiniteQueryOptionsOut<{ cursor?: number | undefined; }, { items: string[]; nextCursor: number; }, { items: string[]; nextCursor: number; }, TRPCClientErrorLike<{ transformer: false; errorShape: DefaultErrorShape; }>, { ...; }>' is not assignable to parameter of type 'UseInfiniteQueryOptions<unknown, Error, InfiniteData<unknown, unknown>, readonly unknown[], unknown>'.
+      Property 'getNextPageParam' is missing in type 'DefinedTRPCInfiniteQueryOptionsOut<{ cursor?: number | undefined; }, { items: string[]; nextCursor: number; }, { items: string[]; nextCursor: number; }, TRPCClientErrorLike<{ transformer: false; errorShape: DefaultErrorShape; }>, { ...; }>' but required in type 'UseInfiniteQueryOptions<unknown, Error, InfiniteData<unknown, unknown>, readonly unknown[], unknown>'.
+test/__fixtures__/hooks/existingRqMix.snap.tsx(21,28): error TS7006: Parameter 'lastPage' implicitly has an 'any' type.
+test/__fixtures__/hooks/existingRqMix.spec.tsx(11,9): error TS2304: Cannot find name 'vi'.
+test/__fixtures__/hooks/existingRqMix.tsx(14,26): error TS7006: Parameter 'lastPage' implicitly has an 'any' type.
+test/__fixtures__/hooks/multipleFunctions.spec.tsx(11,9): error TS2304: Cannot find name 'vi'.
+test/__fixtures__/hooks/multipleFunctions.tsx(4,18): error TS2554: Expected 1-2 arguments, but got 0.
+test/__fixtures__/hooks/multipleFunctions.tsx(5,16): error TS2554: Expected 1-2 arguments, but got 0.
+test/__fixtures__/hooks/multipleFunctions.tsx(11,18): error TS2554: Expected 1-2 arguments, but got 0.
+test/__fixtures__/hooks/multipleFunctions.tsx(12,16): error TS2554: Expected 1-2 arguments, but got 0.
+test/__fixtures__/hooks/optimistic-update.snap.tsx(10,22): error TS7006: Parameter 'newPost' implicitly has an 'any' type.
+test/__fixtures__/hooks/optimistic-update.snap.tsx(15,14): error TS2488: Type '{}' must have a '[Symbol.iterator]()' method that returns an iterator.
+test/__fixtures__/hooks/optimistic-update.snap.tsx(21,15): error TS7006: Parameter '_err' implicitly has an 'any' type.
+test/__fixtures__/hooks/optimistic-update.snap.tsx(21,21): error TS7006: Parameter '_newPost' implicitly has an 'any' type.
+test/__fixtures__/hooks/optimistic-update.snap.tsx(21,31): error TS7006: Parameter 'ctx' implicitly has an 'any' type.
+test/__fixtures__/hooks/optimistic-update.snap.tsx(36,42): error TS2345: Argument of type '{ title: string; }' is not assignable to parameter of type 'void'.
+test/__fixtures__/hooks/optimistic-update.snap.tsx(39,33): error TS2339: Property 'length' does not exist on type '{}'.
+test/__fixtures__/hooks/optimistic-update.snap.tsx(40,20): error TS2339: Property 'map' does not exist on type '{}'.
+test/__fixtures__/hooks/optimistic-update.snap.tsx(40,25): error TS7006: Parameter 'post' implicitly has an 'any' type.
+test/__fixtures__/hooks/optimistic-update.snap.tsx(40,31): error TS7006: Parameter 'i' implicitly has an 'any' type.
+test/__fixtures__/hooks/optimistic-update.tsx(7,11): error TS2353: Object literal may only specify known properties, and 'onMutate' does not exist in type 'UseTRPCMutationOptions<{ title: string; }, TRPCClientErrorLike<{ input: { title: string; }; output: string; transformer: false; errorShape: DefaultErrorShape; }>, string, unknown>'.
+test/__fixtures__/hooks/optimistic-update.tsx(7,20): error TS7006: Parameter 'newPost' implicitly has an 'any' type.
+test/__fixtures__/hooks/optimistic-update.tsx(11,43): error TS7006: Parameter 'old' implicitly has an 'any' type.
+test/__fixtures__/hooks/optimistic-update.tsx(18,13): error TS7006: Parameter '_err' implicitly has an 'any' type.
+test/__fixtures__/hooks/optimistic-update.tsx(18,19): error TS7006: Parameter '_newPost' implicitly has an 'any' type.
+test/__fixtures__/hooks/optimistic-update.tsx(18,29): error TS7006: Parameter 'ctx' implicitly has an 'any' type.
+test/__fixtures__/hooks/optimistic-update.tsx(26,32): error TS2554: Expected 1-2 arguments, but got 0.
+test/__fixtures__/hooks/optimistic-update.tsx(36,25): error TS7006: Parameter 'post' implicitly has an 'any' type.
+test/__fixtures__/hooks/optimistic-update.tsx(36,31): error TS7006: Parameter 'i' implicitly has an 'any' type.
+test/__fixtures__/hooks/reactContext.spec.tsx(11,9): error TS2304: Cannot find name 'vi'.
+test/__fixtures__/hooks/suspenseDestructuring.snap.tsx(19,5): error TS2345: Argument of type 'DefinedTRPCInfiniteQueryOptionsOut<{ channelId: string; cursor?: number | undefined; }, { nextCursor: number; items: string[]; }, { nextCursor: number; items: string[]; }, TRPCClientErrorLike<{ transformer: false; errorShape: DefaultErrorShape; }>, { ...; }>' is not assignable to parameter of type 'UseSuspenseInfiniteQueryOptions<unknown, Error, InfiniteData<unknown, unknown>, readonly unknown[], unknown>'.
+  Property 'getNextPageParam' is missing in type 'DefinedTRPCInfiniteQueryOptionsOut<{ channelId: string; cursor?: number | undefined; }, { nextCursor: number; items: string[]; }, { nextCursor: number; items: string[]; }, TRPCClientErrorLike<{ transformer: false; errorShape: DefaultErrorShape; }>, { ...; }>' but required in type 'UseSuspenseInfiniteQueryOptions<unknown, Error, InfiniteData<unknown, unknown>, readonly unknown[], unknown>'.
+test/__fixtures__/hooks/suspenseDestructuring.snap.tsx(22,28): error TS7006: Parameter 'd' implicitly has an 'any' type.
+test/__fixtures__/hooks/suspenseDestructuring.snap.tsx(32,5): error TS2345: Argument of type 'DefinedTRPCInfiniteQueryOptionsOut<{ channelId: string; cursor?: number | undefined; }, { nextCursor: number; items: string[]; }, { nextCursor: number; items: string[]; }, TRPCClientErrorLike<{ transformer: false; errorShape: DefaultErrorShape; }>, { ...; }>' is not assignable to parameter of type 'UseSuspenseInfiniteQueryOptions<unknown, Error, InfiniteData<unknown, unknown>, readonly unknown[], unknown>'.
+  Property 'getNextPageParam' is missing in type 'DefinedTRPCInfiniteQueryOptionsOut<{ channelId: string; cursor?: number | undefined; }, { nextCursor: number; items: string[]; }, { nextCursor: number; items: string[]; }, TRPCClientErrorLike<{ transformer: false; errorShape: DefaultErrorShape; }>, { ...; }>' but required in type 'UseSuspenseInfiniteQueryOptions<unknown, Error, InfiniteData<unknown, unknown>, readonly unknown[], unknown>'.
+test/__fixtures__/hooks/suspenseDestructuring.snap.tsx(35,28): error TS7006: Parameter 'd' implicitly has an 'any' type.
+test/__fixtures__/hooks/suspenseDestructuring.snap.tsx(43,5): error TS2345: Argument of type 'DefinedTRPCInfiniteQueryOptionsOut<{ channelId: string; cursor?: number | undefined; }, { nextCursor: number; items: string[]; }, { nextCursor: number; items: string[]; }, TRPCClientErrorLike<{ transformer: false; errorShape: DefaultErrorShape; }>, { ...; }>' is not assignable to parameter of type 'UseSuspenseInfiniteQueryOptions<unknown, Error, InfiniteData<unknown, unknown>, readonly unknown[], unknown>'.
+  Property 'getNextPageParam' is missing in type 'DefinedTRPCInfiniteQueryOptionsOut<{ channelId: string; cursor?: number | undefined; }, { nextCursor: number; items: string[]; }, { nextCursor: number; items: string[]; }, TRPCClientErrorLike<{ transformer: false; errorShape: DefaultErrorShape; }>, { ...; }>' but required in type 'UseSuspenseInfiniteQueryOptions<unknown, Error, InfiniteData<unknown, unknown>, readonly unknown[], unknown>'.
+test/__fixtures__/hooks/suspenseDestructuring.snap.tsx(46,28): error TS7006: Parameter 'd' implicitly has an 'any' type.
+test/__fixtures__/hooks/suspenseDestructuring.snap.tsx(54,5): error TS2345: Argument of type 'DefinedTRPCInfiniteQueryOptionsOut<{ channelId: string; cursor?: number | undefined; }, { nextCursor: number; items: string[]; }, { nextCursor: number; items: string[]; }, TRPCClientErrorLike<{ transformer: false; errorShape: DefaultErrorShape; }>, { ...; }>' is not assignable to parameter of type 'UseSuspenseInfiniteQueryOptions<unknown, Error, InfiniteData<unknown, unknown>, readonly unknown[], unknown>'.
+  Property 'getNextPageParam' is missing in type 'DefinedTRPCInfiniteQueryOptionsOut<{ channelId: string; cursor?: number | undefined; }, { nextCursor: number; items: string[]; }, { nextCursor: number; items: string[]; }, TRPCClientErrorLike<{ transformer: false; errorShape: DefaultErrorShape; }>, { ...; }>' but required in type 'UseSuspenseInfiniteQueryOptions<unknown, Error, InfiniteData<unknown, unknown>, readonly unknown[], unknown>'.
+test/__fixtures__/hooks/suspenseDestructuring.snap.tsx(57,28): error TS7006: Parameter 'd' implicitly has an 'any' type.
+test/__fixtures__/hooks/suspenseDestructuring.spec.tsx(11,9): error TS2304: Cannot find name 'vi'.
+test/__fixtures__/hooks/suspenseDestructuring.tsx(14,26): error TS7006: Parameter 'd' implicitly has an 'any' type.
+test/__fixtures__/hooks/suspenseDestructuring.tsx(25,26): error TS7006: Parameter 'd' implicitly has an 'any' type.
+test/__fixtures__/hooks/suspenseDestructuring.tsx(32,26): error TS7006: Parameter 'd' implicitly has an 'any' type.
+test/__fixtures__/hooks/suspenseDestructuring.tsx(39,26): error TS7006: Parameter 'd' implicitly has an 'any' type.
+test/__fixtures__/hooks/utilities.snap.tsx(20,24): error TS2554: Expected 2 arguments, but got 1.
+test/__fixtures__/hooks/utilities.snap.tsx(26,24): error TS2554: Expected 2 arguments, but got 1.
+test/__fixtures__/hooks/utilities.snap.tsx(41,8): error TS2488: Type '{}' must have a '[Symbol.iterator]()' method that returns an iterator.
+test/__fixtures__/hooks/utilities.snap.tsx(63,32): error TS2339: Property 'pageParams' does not exist on type '{}'.
+test/__fixtures__/hooks/utilities.snap.tsx(65,21): error TS2339: Property 'pages' does not exist on type '{}'.
+test/__fixtures__/hooks/utilities.tsx(34,39): error TS7006: Parameter 'old' implicitly has an 'any' type.
+test/__fixtures__/hooks/utilities.tsx(40,39): error TS7006: Parameter 'old' implicitly has an 'any' type.
+test/__fixtures__/hooks/utilities.tsx(53,55): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+test/__fixtures__/hooks/withInvalidate.snap.tsx(33,25): error TS7006: Parameter 'query' implicitly has an 'any' type.
+test/__fixtures__/hooks/withInvalidate.snap.tsx(41,65): error TS2345: Argument of type '{ id: number; }' is not assignable to parameter of type 'void'.
+test/__fixtures__/hooks/withInvalidate.spec.tsx(11,9): error TS2304: Cannot find name 'vi'.
+test/__fixtures__/hooks/withInvalidate.tsx(8,5): error TS2353: Object literal may only specify known properties, and 'onSettled' does not exist in type 'UseTRPCMutationOptions<{ id: number; }, TRPCClientErrorLike<{ input: { id: number; }; output: { id: number; }; transformer: false; errorShape: DefaultErrorShape; }>, { id: number; }, unknown>'.
+test/__fixtures__/hooks/withInvalidate.tsx(25,21): error TS7006: Parameter 'query' implicitly has an 'any' type.

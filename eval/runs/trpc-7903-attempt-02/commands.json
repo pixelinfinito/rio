@@ -1,0 +1,379 @@
+{
+  "schema": "rio-eval-runner-v1",
+  "repository": "trpc/trpc",
+  "pr": "https://github.com/trpc/trpc/pull/7903",
+  "started_utc": "2026-11-05T03:01:38.444471+00:00",
+  "rio_binary": "/home/ubuntu/rio/target/release/rio",
+  "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-checkout",
+        "https://github.com/trpc/trpc.git",
+        "/dev/shm/trpc-eval/rio-eval-j616h0u1/head"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-j616h0u1",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-7903-attempt-02/01-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-7903-attempt-02/01-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 16991
+    },
+    {
+      "argv": [
+        "git",
+        "fetch",
+        "origin",
+        "c869fa1075fc3ce11b38495c5e6044fb97b335d2",
+        "248fb772a6d6f7ce2492f8549a8d370ec3df9731"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-j616h0u1/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-7903-attempt-02/02-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-7903-attempt-02/02-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 3136
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "c869fa1075fc3ce11b38495c5e6044fb97b335d2",
+        "248fb772a6d6f7ce2492f8549a8d370ec3df9731"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-j616h0u1/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-7903-attempt-02/03-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-7903-attempt-02/03-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 8
+    },
+    {
+      "argv": [
+        "git",
+        "checkout",
+        "--detach",
+        "248fb772a6d6f7ce2492f8549a8d370ec3df9731"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-j616h0u1/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-7903-attempt-02/04-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-7903-attempt-02/04-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 165
+    },
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-hardlinks",
+        "--no-checkout",
+        "/dev/shm/trpc-eval/rio-eval-j616h0u1/head",
+        "/dev/shm/trpc-eval/rio-eval-j616h0u1/base"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-j616h0u1",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-7903-attempt-02/05-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-7903-attempt-02/05-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 265
+    },
+    {
+      "argv": [
+        "git",
+        "checkout",
+        "--detach",
+        "c869fa1075fc3ce11b38495c5e6044fb97b335d2"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-j616h0u1/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-7903-attempt-02/06-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-7903-attempt-02/06-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 216
+    },
+    {
+      "argv": [
+        "corepack",
+        "pnpm",
+        "--filter",
+        "@tooling/release",
+        "--filter",
+        "@tooling/oxlint-plugin",
+        "install",
+        "--frozen-lockfile",
+        "--ignore-scripts",
+        "--store-dir",
+        "/dev/shm/trpc-eval/pnpm-store",
+        "--trust-lockfile"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-j616h0u1/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-7903-attempt-02/07-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-7903-attempt-02/07-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 869
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-j616h0u1/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-7903-attempt-02/08-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-7903-attempt-02/08-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 120
+    },
+    {
+      "argv": [
+        "corepack",
+        "pnpm",
+        "--filter",
+        "@tooling/release",
+        "--filter",
+        "@tooling/oxlint-plugin",
+        "install",
+        "--frozen-lockfile",
+        "--ignore-scripts",
+        "--store-dir",
+        "/dev/shm/trpc-eval/pnpm-store",
+        "--trust-lockfile"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-j616h0u1/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-7903-attempt-02/09-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-7903-attempt-02/09-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 829
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-j616h0u1/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-7903-attempt-02/10-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-7903-attempt-02/10-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 115
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "--version"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-j616h0u1/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/trpc-eval/rio-eval-j616h0u1/config",
+        "RIO_CACHE_DIR": "/dev/shm/trpc-eval/rio-eval-j616h0u1/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-7903-attempt-02/rio-version.txt",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-7903-attempt-02/11-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 8
+    },
+    {
+      "argv": [
+        "node",
+        "--version"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-j616h0u1/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/trpc-eval/rio-eval-j616h0u1/config",
+        "RIO_CACHE_DIR": "/dev/shm/trpc-eval/rio-eval-j616h0u1/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-7903-attempt-02/12-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-7903-attempt-02/12-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 17
+    },
+    {
+      "argv": [
+        "npm",
+        "--version"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-j616h0u1/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/trpc-eval/rio-eval-j616h0u1/config",
+        "RIO_CACHE_DIR": "/dev/shm/trpc-eval/rio-eval-j616h0u1/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-7903-attempt-02/13-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-7903-attempt-02/13-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 269
+    },
+    {
+      "argv": [
+        "corepack",
+        "--version"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-j616h0u1/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/trpc-eval/rio-eval-j616h0u1/config",
+        "RIO_CACHE_DIR": "/dev/shm/trpc-eval/rio-eval-j616h0u1/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-7903-attempt-02/14-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-7903-attempt-02/14-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 165
+    },
+    {
+      "argv": [
+        "python3",
+        "--version"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-j616h0u1/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/trpc-eval/rio-eval-j616h0u1/config",
+        "RIO_CACHE_DIR": "/dev/shm/trpc-eval/rio-eval-j616h0u1/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-7903-attempt-02/15-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-7903-attempt-02/15-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 5
+    },
+    {
+      "argv": [
+        "uv",
+        "--version"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-j616h0u1/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/trpc-eval/rio-eval-j616h0u1/config",
+        "RIO_CACHE_DIR": "/dev/shm/trpc-eval/rio-eval-j616h0u1/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-7903-attempt-02/16-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-7903-attempt-02/16-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 19
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "profile",
+        "show",
+        "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-7903-attempt-02/profile.yaml"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-j616h0u1/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/trpc-eval/rio-eval-j616h0u1/config",
+        "RIO_CACHE_DIR": "/dev/shm/trpc-eval/rio-eval-j616h0u1/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-7903-attempt-02/resolved-profile.txt",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-7903-attempt-02/17-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 266
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "doctor",
+        "--format",
+        "json"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-j616h0u1/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/trpc-eval/rio-eval-j616h0u1/config",
+        "RIO_CACHE_DIR": "/dev/shm/trpc-eval/rio-eval-j616h0u1/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-7903-attempt-02/doctor.json",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-7903-attempt-02/18-stderr.log",
+      "exit_code": 1,
+      "wall_time_ms": 1152
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "review",
+        "--base",
+        "c869fa1075fc3ce11b38495c5e6044fb97b335d2",
+        "--format",
+        "json",
+        "--offline",
+        "--profile",
+        "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-7903-attempt-02/profile.yaml"
+      ],
+      "cwd": "/dev/shm/trpc-eval/rio-eval-j616h0u1/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/trpc-eval/rio-eval-j616h0u1/config",
+        "RIO_CACHE_DIR": "/dev/shm/trpc-eval/rio-eval-j616h0u1/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-7903-attempt-02/report.json",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-7903-attempt-02/19-stderr.log",
+      "exit_code": 3,
+      "wall_time_ms": 2534
+    }
+  ],
+  "installations": {
+    "base": {
+      "commands": [
+        [
+          "corepack",
+          "pnpm",
+          "--filter",
+          "@tooling/release",
+          "--filter",
+          "@tooling/oxlint-plugin",
+          "install",
+          "--frozen-lockfile",
+          "--ignore-scripts",
+          "--store-dir",
+          "/dev/shm/trpc-eval/pnpm-store",
+          "--trust-lockfile"
+        ]
+      ],
+      "succeeded": true,
+      "lockfiles": {
+        "pnpm-lock.yaml": "a7a979fdaca731b777daea6c3730e4d4f11977d1109cf95a3277bc175ddd0eb9"
+      }
+    },
+    "head": {
+      "commands": [
+        [
+          "corepack",
+          "pnpm",
+          "--filter",
+          "@tooling/release",
+          "--filter",
+          "@tooling/oxlint-plugin",
+          "install",
+          "--frozen-lockfile",
+          "--ignore-scripts",
+          "--store-dir",
+          "/dev/shm/trpc-eval/pnpm-store",
+          "--trust-lockfile"
+        ]
+      ],
+      "succeeded": true,
+      "lockfiles": {
+        "pnpm-lock.yaml": "a7a979fdaca731b777daea6c3730e4d4f11977d1109cf95a3277bc175ddd0eb9"
+      }
+    }
+  },
+  "failures": [
+    "Rio reviewed different commits than the pinned change"
+  ],
+  "network": "Installers may use network; Rio review uses --offline. Subprocesses are not isolated.",
+  "profile_sha256": "59b65f540e1080d4ae2d70404b6f90b6957a3b08d0536238afb1476225d17cc4",
+  "resolution": {
+    "base_sha": "c869fa1075fc3ce11b38495c5e6044fb97b335d2",
+    "head_sha": "248fb772a6d6f7ce2492f8549a8d370ec3df9731",
+    "source": "pinned argv"
+  },
+  "disposable_directory": "/dev/shm/trpc-eval/rio-eval-j616h0u1",
+  "base_sha": "c869fa1075fc3ce11b38495c5e6044fb97b335d2",
+  "head_sha": "248fb772a6d6f7ce2492f8549a8d370ec3df9731",
+  "removed_environment_keys": [],
+  "resolved_profile_sha256": "8f27883a4af896ff443bd99d60237b7af4dc3db58bc2b4977cfb7073b706a202",
+  "review_exit_code": 3,
+  "finished_utc": "2026-11-05T03:02:06.890989+00:00"
+}

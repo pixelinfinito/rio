@@ -1,0 +1,15 @@
+{
+  "kind": "seeded-mutation",
+  "repository": "honojs/hono",
+  "parent_pr": "https://github.com/honojs/hono/pull/2081",
+  "case_id": "2081-seeded-type-error-20261105",
+  "base": "4ec3a9bf41ec3de004836e84757c07ec2b7b4156",
+  "head": "e962abd5a76563b3e409e1b875d76fe061fdf01e",
+  "seed": "rio-eval-trpc-20261105",
+  "patch": "2081-seed.patch",
+  "patch_sha256": "8f8a2a9bf2defa96158c9b3102ce8b35f64a9996428174e73d5ba367dd4d7b6b",
+  "created_utc": "2026-11-05T03:24:40.901940+00:00",
+  "transport": "GIT_CONFIG_COUNT=1; GIT_CONFIG_KEY_0=url.file:///dev/shm/trpc-eval/hono-2081-seed.insteadOf; GIT_CONFIG_VALUE_0=https://github.com/honojs/hono.git",
+  "oracle": "pending; register exact expectation before Rio review",
+  "profile_sha256": "6fc8403032b9ed8c47cbe10b8c4e8140350c4a92367eb7db34086daf4925a7d4"
+}

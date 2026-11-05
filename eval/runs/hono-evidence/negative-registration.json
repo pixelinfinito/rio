@@ -1,0 +1,28 @@
+{
+  "registered_utc": "2026-11-05T03:17:02.708146+00:00",
+  "repository": "honojs/hono",
+  "pr": "https://github.com/honojs/hono/pull/3856",
+  "kind": "none",
+  "base": "ecf5a0b2aeaf29c26ffe1eaf41520f867510cb17",
+  "requested_api_base": "d75e9ec60518d042e3e67416ab9f0555046c3168",
+  "head": "a682b1b55e37f104a3d6593a91b8d59d018cfc20",
+  "independently_clean": true,
+  "evidence": "../hono-3856-oracle-02/: base/head tsc exit0; full repo ESLint exit0 (same single pre-existing unused client warning in perf-measures); default Vitest coverage 107/107 files, base2442/head2443 tests passed,12 skipped each; tracked status clean. Adapter coverage counters retained. The change improves generic Bindings type and adds a typecheck assertion test.",
+  "recency_deviation": "Jan2025, deliberately older compatible fallback; not a recent PR.",
+  "toolchain": {
+    "typescript": "5.6.2",
+    "eslint": "9.11.1",
+    "vitest": "2.1.1",
+    "@vitest/coverage-v8": "2.1.1",
+    "@hono/eslint-config": "1.0.2",
+    "lockfile_sha256": "a89d2d600641ea61d445c8ea2c2358acfbe047d6114dcd45fd49613fad69e5b0",
+    "node": "20.10.0",
+    "yarn": "1.22.22",
+    "corepack": "0.36.0",
+    "profile_sha256": "6fc8403032b9ed8c47cbe10b8c4e8140350c4a92367eb7db34086daf4925a7d4",
+    "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+    "rio_version": "rio 0.1.0 x86_64-unknown-linux-gnu b15dc8ff5001"
+  },
+  "reviewer": "sub-agent eval-trpc (automated)",
+  "verdict_source": "automated"
+}

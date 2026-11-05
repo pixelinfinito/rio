@@ -1,0 +1,7 @@
+diff --git a/deno_dist/helper/factory/index.ts b/deno_dist/helper/factory/index.ts
+index 93b13e26..91290f88 100644
+--- a/deno_dist/helper/factory/index.ts
++++ b/deno_dist/helper/factory/index.ts
+@@ -273 +273 @@ export const createMiddleware = <E extends Env = any, P extends string = any, I
+-  middleware: MiddlewareHandler
++  middleware: MiddlewareHandler<E, P, I>

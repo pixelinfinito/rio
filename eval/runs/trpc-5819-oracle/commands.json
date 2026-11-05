@@ -1,0 +1,34 @@
+[
+  {
+    "label": "base",
+    "sha": "baa9c19679d215c65770e3d066d177703f104371",
+    "argv": [
+      "corepack",
+      "pnpm",
+      "exec",
+      "tsc",
+      "--noEmit",
+      "--pretty",
+      "false"
+    ],
+    "cwd": "/dev/shm/trpc-eval/5819-oracle/packages/server",
+    "exit_code": 0,
+    "wall_time_ms": 10087
+  },
+  {
+    "label": "head",
+    "sha": "124440fafb43a33859cd1f5c3232b2d1498742eb",
+    "argv": [
+      "corepack",
+      "pnpm",
+      "exec",
+      "tsc",
+      "--noEmit",
+      "--pretty",
+      "false"
+    ],
+    "cwd": "/dev/shm/trpc-eval/5819-oracle/packages/server",
+    "exit_code": 2,
+    "wall_time_ms": 9667
+  }
+]

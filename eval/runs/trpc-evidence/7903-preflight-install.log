@@ -1,0 +1,3 @@
+? Verifying lockfile against supply-chain policies (3293 entries)...
+[WARN] Request took 10917ms: https://registry.npmjs.org/@aws-sdk%2Fregion-config-resolver
+[WARN] Request took 13067ms: https://registry.npmjs.org/@aws-sdk%2Fquerystring-parser

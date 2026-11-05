@@ -1,0 +1,7 @@
+Warning: /home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-7903-attempt-01/profile.yaml:$.steps[3]: rio/triage is deferred locally: no_endpoint
+Warning: /home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-7903-attempt-01/profile.yaml:$.steps[4]: rio/agents is deferred locally: no_endpoint
+Warning: /home/ubuntu/.t3/worktrees/rio/eval-run-trpc/eval/runs/trpc-7903-attempt-01/profile.yaml:$.steps[5]: rio/verify is deferred locally: no_endpoint
+Running prepare…
+Finished prepare
+Running checks…
+cannot parse pnpm-lock.yaml: deserializing from YAML containing more than one document is not supported
