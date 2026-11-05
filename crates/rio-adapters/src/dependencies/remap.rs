@@ -349,16 +349,24 @@ pub fn configure_base_command(
             |(parent, name)| parent.join(name),
         );
     let python_checker = matches!(tool_name, "mypy" | "pyright");
+    let is_environment = |link: &&DependencyLink| {
+        matches!(
+            Path::new(&link.path)
+                .file_name()
+                .and_then(|name| name.to_str()),
+            Some(".venv" | "venv")
+        )
+    };
     let environment_link = links
         .iter()
-        .filter(|link| !link.path.ends_with("node_modules"))
+        .filter(is_environment)
         .find(|link| program.starts_with(&link.target))
         .or_else(|| {
             python_checker
                 .then(|| {
                     links
                         .iter()
-                        .filter(|link| !link.path.ends_with("node_modules"))
+                        .filter(is_environment)
                         .filter(|link| {
                             destination
                                 .join(&link.path)

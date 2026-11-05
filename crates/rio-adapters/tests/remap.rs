@@ -1,5 +1,5 @@
 #![cfg(unix)]
-use rio_adapters::remap_base_dependencies;
+use rio_adapters::{ToolCommand, configure_base_command, remap_base_dependencies};
 use rio_git::{DependencyLink, Tree, TreeEntry};
 use std::{fs, path::Path};
 
@@ -18,6 +18,53 @@ fn tree(path: &str, text: &str) -> Tree {
         },
     )]
     .into()
+}
+
+#[test]
+fn global_python_checkers_select_the_nearest_venv_among_mixed_language_links() {
+    for name in [".venv", "venv"] {
+        for checker in ["mypy", "pyright"] {
+            let repo = tempfile::tempdir().unwrap();
+            let base = tempfile::tempdir().unwrap();
+            let global = tempfile::tempdir().unwrap();
+            let environment = format!("packages/api/{name}");
+            let paths = [
+                ".venv",
+                "target",
+                "node_modules",
+                environment.as_str(),
+                "packages/api/target",
+                "packages/api/node_modules",
+            ];
+            let links: Vec<_> = paths
+                .iter()
+                .map(|path| {
+                    fs::create_dir_all(repo.path().join(path)).unwrap();
+                    fs::create_dir_all(base.path().join(path)).unwrap();
+                    DependencyLink {
+                        path: (*path).into(),
+                        target: repo.path().join(path).canonicalize().unwrap(),
+                    }
+                })
+                .collect();
+            write(base.path(), &format!("{environment}/bin/python"), "");
+            write(global.path(), checker, "");
+            let program = global.path().join(checker);
+            let mut command = ToolCommand::new(program.clone(), base.path().join("packages/api"));
+            configure_base_command(&mut command, repo.path(), base.path(), &links, checker)
+                .unwrap();
+            let private_environment = base.path().canonicalize().unwrap().join(environment);
+            assert_eq!(
+                command.env[std::ffi::OsStr::new("VIRTUAL_ENV")],
+                private_environment.as_os_str()
+            );
+            assert_eq!(
+                command.args.last().unwrap(),
+                private_environment.join("bin/python").as_os_str()
+            );
+            assert_eq!(command.program, program);
+        }
+    }
 }
 
 #[test]
