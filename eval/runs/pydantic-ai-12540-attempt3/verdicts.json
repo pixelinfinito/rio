@@ -1,0 +1,53 @@
+{
+  "repository": "pydantic/pydantic-ai",
+  "pr": "https://github.com/pydantic/pydantic-ai/pull/12540",
+  "case_id": "12540",
+  "languages": [
+    "python"
+  ],
+  "reviewer": "sub-agent eval-pydantic-ai (automated)",
+  "verdict_source": "automated",
+  "commands": [
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-d_xp1gvj argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/pydantic/pydantic-ai.git\", \"/tmp/rio-pydantic-ai-ram/rio-eval-d_xp1gvj/head\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-d_xp1gvj/head argv=[\"git\", \"fetch\", \"origin\", \"2f0e98cbb7b60e12dcd0edc397f6df11c5cc1c56\", \"17c4ab5539f8a38aa86b2af69a783cb595269d27\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-d_xp1gvj/head argv=[\"git\", \"merge-base\", \"2f0e98cbb7b60e12dcd0edc397f6df11c5cc1c56\", \"17c4ab5539f8a38aa86b2af69a783cb595269d27\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-d_xp1gvj/head argv=[\"git\", \"checkout\", \"--detach\", \"17c4ab5539f8a38aa86b2af69a783cb595269d27\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-d_xp1gvj argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/tmp/rio-pydantic-ai-ram/rio-eval-d_xp1gvj/head\", \"/tmp/rio-pydantic-ai-ram/rio-eval-d_xp1gvj/base\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-d_xp1gvj/base argv=[\"git\", \"checkout\", \"--detach\", \"2f0e98cbb7b60e12dcd0edc397f6df11c5cc1c56\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-d_xp1gvj/base argv=[\"uv\", \"sync\", \"--locked\", \"--python\", \"3.13.9\", \"--group\", \"lint\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-d_xp1gvj/base argv=[\"python3\", \"-c\", \"from pathlib import Path; files=list(Path('.venv/lib').glob('python*/site-packages/a1_coverage.pth')); [(p.unlink(),print('Removed coverage subprocess bootstrap:',p)) for p in files]\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-d_xp1gvj/base argv=[\"python3\", \"-c\", \"from pathlib import Path; p=Path('.venv/bin/mypy'); p.write_text('#!/usr/bin/env python3\\\\n\\\"\\\"\\\"Evaluation setup workaround: anchor inherited mypy targets to their config directory.\\\"\\\"\\\"\\\\nimport os\\\\nfrom pathlib import Path\\\\nimport sys\\\\nargs = sys.argv[1:]\\\\nif \\\\'--config-file\\\\' in args:\\\\n    config = Path(args[args.index(\\\\'--config-file\\\\') + 1]).resolve()\\\\n    os.chdir(config.parent)\\\\npython = str(Path(__file__).resolve().parent / \\\\'python\\\\')\\\\nos.execv(python, [python, \\\\'-m\\\\', \\\\'mypy\\\\', *args])\\\\n'); p.chmod(0o755); print('Installed evaluation mypy config-directory wrapper')\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-d_xp1gvj/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-d_xp1gvj/head argv=[\"uv\", \"sync\", \"--locked\", \"--python\", \"3.13.9\", \"--group\", \"lint\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-d_xp1gvj/head argv=[\"python3\", \"-c\", \"from pathlib import Path; files=list(Path('.venv/lib').glob('python*/site-packages/a1_coverage.pth')); [(p.unlink(),print('Removed coverage subprocess bootstrap:',p)) for p in files]\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-d_xp1gvj/head argv=[\"python3\", \"-c\", \"from pathlib import Path; p=Path('.venv/bin/mypy'); p.write_text('#!/usr/bin/env python3\\\\n\\\"\\\"\\\"Evaluation setup workaround: anchor inherited mypy targets to their config directory.\\\"\\\"\\\"\\\\nimport os\\\\nfrom pathlib import Path\\\\nimport sys\\\\nargs = sys.argv[1:]\\\\nif \\\\'--config-file\\\\' in args:\\\\n    config = Path(args[args.index(\\\\'--config-file\\\\') + 1]).resolve()\\\\n    os.chdir(config.parent)\\\\npython = str(Path(__file__).resolve().parent / \\\\'python\\\\')\\\\nos.execv(python, [python, \\\\'-m\\\\', \\\\'mypy\\\\', *args])\\\\n'); p.chmod(0o755); print('Installed evaluation mypy config-directory wrapper')\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-d_xp1gvj/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-d_xp1gvj/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-d_xp1gvj/head argv=[\"node\", \"--version\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-d_xp1gvj/head argv=[\"npm\", \"--version\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-d_xp1gvj/head argv=[\"python3\", \"--version\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-d_xp1gvj/head argv=[\"uv\", \"--version\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-d_xp1gvj/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-12540-attempt3/profile.yaml\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-d_xp1gvj/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-d_xp1gvj/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"2f0e98cbb7b60e12dcd0edc397f6df11c5cc1c56\", \"--format\", \"json\", \"--offline\", \"--profile\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-12540-attempt3/profile.yaml\"]"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-12540-attempt3/commands.json; Rio binary SHA-256: 512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+    "Automated adjudication; see eval/runs/pydantic-ai-evidence/runtime-overrides.json and eval/runs/pydantic-ai-NOTES.md. No advisory safety claim: audit disabled in original pydantic scope or skipped offline in fallback scope.",
+    "commands.json evaluation_annotations preserve scheduled roots and configuration-derived typecheck targets. Rio internal tool argv was not captured by the runner; inferred commands are labelled.",
+    "Independent clean assessment: configured mypy and full Ruff pass both pins; focused Pyright passes on three changed utils files; tests/test_utils.py and tests/evals/test_utils.py pass (124 base, 127 head) under coverage. All instrumented changed executable lines covered; see eval/runs/pydantic-ai-evidence/12540-*-commands.json and 12540-independent-diff-coverage.json.gz. Rio baseline unavailable, so this independent assessment does not make the record eligible.",
+    "EXCLUDED: baseline_classification_ran=false. Setup failure observations retained; no precision, recall, false-positive-rate or usefulness score claimed. coverage . head: skipped disabled Disabled in the profile; coverage examples head: skipped disabled Disabled in the profile; coverage pydantic_ai_slim head: skipped disabled Disabled in the profile; coverage pydantic_evals head: skipped disabled Disabled in the profile; coverage pydantic_graph head: skipped disabled Disabled in the profile; coverage src/pydantic_ai_harness head: skipped disabled Disabled in the profile; coverage src/pydantic_clai2 head: skipped disabled Disabled in the profile; dependencies . head: skipped disabled Disabled in the profile; lint . head: skipped dependency_mismatch uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command); lint .: head=skipped, dependency_state=unavailable, base=unavailable; lint pydantic_ai_slim head: skipped dependency_mismatch uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command); lint pydantic_ai_slim: head=skipped, dependency_state=unavailable, base=unavailable; lint pydantic_evals head: skipped dependency_mismatch uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command); lint pydantic_evals: head=skipped, dependency_state=unavailable, base=unavailable; lint pydantic_graph: head=passed, dependency_state=verified, base=unavailable; typecheck . head: skipped dependency_mismatch uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command); typecheck .: head=skipped, dependency_state=unavailable, base=unavailable; typecheck examples head: skipped dependency_mismatch uv.lock: missing ag-ui-protocol at ag-ui-protocol; reinstall dependencies; typecheck examples: head=skipped, dependency_state=unavailable, base=unavailable; typecheck pydantic_ai_slim head: skipped dependency_mismatch uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command); typecheck pydantic_ai_slim: head=skipped, dependency_state=unavailable, base=unavailable; typecheck pydantic_evals head: skipped dependency_mismatch uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command); typecheck pydantic_evals: head=skipped, dependency_state=unavailable, base=unavailable; typecheck pydantic_graph: head=passed, dependency_state=verified, base=unavailable; typecheck src/pydantic_ai_harness head: skipped dependency_mismatch uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command); typecheck src/pydantic_ai_harness: head=skipped, dependency_state=unavailable, base=unavailable; typecheck src/pydantic_clai2 head: skipped dependency_mismatch uv.lock: missing fastapi at fastapi; reinstall dependencies; typecheck src/pydantic_clai2: head=skipped, dependency_state=unavailable, base=unavailable"
+  ],
+  "independently_clean": true,
+  "positive_control": {
+    "kind": "none",
+    "expected": []
+  },
+  "misses": [],
+  "findings": {
+    "e6161a78e91e93a541f261f3c38ca2945416fd5a54ede6acf8e3fbbb6b78516e": {
+      "verdict": "false-positive",
+      "reason": "Independent AST/source inspection at both pins identifies an unchanged os.getenv AWS_ACCESS_KEY_ID test-fixture fallback, shaped as AKIA plus sixteen repeated digit 6 characters, with a sibling dummy secret of forty repeated 6 characters. It is an inert placeholder, not a committed credential. See eval/runs/pydantic-ai-evidence/secret-false-positive-evidence.json (base line 1574, head line 1593). Rio honestly labels it pre-existing, but the credential claim and rotate recommendation are incorrect."
+    }
+  }
+}

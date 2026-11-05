@@ -1,0 +1,23 @@
+{
+  "registered_utc": "2026-11-05T03:06:46.668830+00:00",
+  "repository": "mitmproxy/mitmproxy",
+  "parent_pr": "https://github.com/mitmproxy/mitmproxy/pull/8521",
+  "case_id": "8521-seeded-unused-import",
+  "kind": "seeded-mutation",
+  "base_sha": "6debf65b612abc726fe9cabe5c2a1ebb1cb36df4",
+  "head_sha": "986ba556378985647957301e28069e46ee6074ec",
+  "seed": "20261105-unused-itertools-v1",
+  "patch": "8521-seed.patch",
+  "patch_sha256": "1096dd5b71a2f66f6d872bf4593456baef7311432f3be9cb9d0c41b3fd576f4a",
+  "profile_sha256": "6676975243f9501c30ecc15792d0ba479e5b98545dae56042e09f911a7b7de07",
+  "expected": [
+    {
+      "id": "unused-itertools-import",
+      "mechanism": "lint-rule",
+      "evidence": "Full repo uv run --no-sync ruff check at base exits 0; seeded head exits 1 with exactly F401 at mitmproxy/coretypes/multidict.py:1. Independent mypy passes both; 19 targeted tests pass both with instrumentation. Evidence: mitmproxy-8521-{base,seed}-py314-* logs.",
+      "finding_ids": []
+    }
+  ],
+  "reviewer": "sub-agent eval-pydantic-ai (automated)",
+  "verdict_source": "automated"
+}

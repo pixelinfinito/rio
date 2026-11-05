@@ -1,0 +1,10 @@
+{
+  "UV_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/uv-cache",
+  "TMPDIR": "/tmp/rio-pydantic-ai-ram/tmp",
+  "GIT_CONFIG_COUNT": "1",
+  "GIT_CONFIG_KEY_0": "url./tmp/rio-pydantic-ai-ram/mitmproxy.insteadOf",
+  "GIT_CONFIG_VALUE_0": "https://github.com/mitmproxy/mitmproxy.git",
+  "negative_PYTEST_ADDOPTS": "test/mitmproxy/test_certs.py",
+  "positive_PYTEST_ADDOPTS": "test/mitmproxy/coretypes/test_multidict.py",
+  "note": "Git cache contains exact fetched public pins and a separately labelled synthetic seed. The runner inherits these explicit overrides; no trust override. Full checks enabled; targeted committed tests executed for coverage."
+}

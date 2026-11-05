@@ -1,0 +1,56 @@
+[
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "mypy",
+      "--strict",
+      "--follow-imports=silent",
+      "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-evidence/output_spec_oracle.py"
+    ],
+    "cwd": "/tmp/rio-pydantic-ai-ram/oracle",
+    "exit_code": 0,
+    "wall_time_s": 84.969,
+    "output": "8641-base-oracle.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "mypy"
+    ],
+    "cwd": "/tmp/rio-pydantic-ai-ram/oracle",
+    "exit_code": 0,
+    "wall_time_s": 62.506,
+    "output": "8641-base-mypy-configured.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "ruff",
+      "check"
+    ],
+    "cwd": "/tmp/rio-pydantic-ai-ram/oracle",
+    "exit_code": 0,
+    "wall_time_s": 0.476,
+    "output": "8641-base-ruff.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "python",
+      "-c",
+      "import importlib.metadata as m,sys; print(sys.version); print({n:m.version(n) for n in [\"mypy\",\"pyright\",\"ruff\",\"coverage\",\"pytest\"]})"
+    ],
+    "cwd": "/tmp/rio-pydantic-ai-ram/oracle",
+    "exit_code": 0,
+    "wall_time_s": 0.328,
+    "output": "8641-base-versions.log"
+  }
+]

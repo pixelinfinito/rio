@@ -1,0 +1,16 @@
+F401 [*] `itertools` imported but unused
+ --> mitmproxy/coretypes/multidict.py:1:8
+  |
+1 | import itertools
+  |        ^^^^^^^^^
+2 | from abc import ABCMeta
+3 | from abc import abstractmethod
+  |
+help: Remove unused import: `itertools`
+  |
+  - import itertools
+1 | from abc import ABCMeta
+  |
+
+Found 1 error.
+[*] 1 fixable with the `--fix` option.

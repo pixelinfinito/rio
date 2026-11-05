@@ -1,0 +1,430 @@
+{
+  "schema": "rio-eval-runner-v1",
+  "repository": "mitmproxy/mitmproxy",
+  "pr": "https://github.com/mitmproxy/mitmproxy/pull/8473",
+  "started_utc": "2026-11-05T03:04:38.566989+00:00",
+  "rio_binary": "/home/ubuntu/rio/target/release/rio",
+  "rio_binary_sha256": "512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-checkout",
+        "https://github.com/mitmproxy/mitmproxy.git",
+        "/tmp/rio-pydantic-ai-ram/rio-eval-rd4x7nlk/head"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/rio-eval-rd4x7nlk",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473/01-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473/01-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 65
+    },
+    {
+      "argv": [
+        "git",
+        "fetch",
+        "origin",
+        "3368a0a06ae6195aad817a1ece1aaeb6fe0353a1",
+        "be9f49d248a0142ae30f8bd412ad45060d0ee25e"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/rio-eval-rd4x7nlk/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473/02-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473/02-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 74
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "3368a0a06ae6195aad817a1ece1aaeb6fe0353a1",
+        "be9f49d248a0142ae30f8bd412ad45060d0ee25e"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/rio-eval-rd4x7nlk/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473/03-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473/03-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 11
+    },
+    {
+      "argv": [
+        "git",
+        "checkout",
+        "--detach",
+        "be9f49d248a0142ae30f8bd412ad45060d0ee25e"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/rio-eval-rd4x7nlk/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473/04-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473/04-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 539
+    },
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-hardlinks",
+        "--no-checkout",
+        "/tmp/rio-pydantic-ai-ram/rio-eval-rd4x7nlk/head",
+        "/tmp/rio-pydantic-ai-ram/rio-eval-rd4x7nlk/base"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/rio-eval-rd4x7nlk",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473/05-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473/05-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 316
+    },
+    {
+      "argv": [
+        "git",
+        "checkout",
+        "--detach",
+        "3368a0a06ae6195aad817a1ece1aaeb6fe0353a1"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/rio-eval-rd4x7nlk/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473/06-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473/06-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 526
+    },
+    {
+      "argv": [
+        "uv",
+        "sync",
+        "--locked",
+        "--python",
+        "3.14.10",
+        "--all-groups",
+        "--all-extras"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/rio-eval-rd4x7nlk/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473/07-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473/07-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 2389
+    },
+    {
+      "argv": [
+        "python3",
+        "-c",
+        "from pathlib import Path; names={'a1_coverage.pth','distutils-precedence.pth'}; [(p.unlink(),print('Removed installed bootstrap:',p.name)) for p in Path('.venv/lib').glob('python*/site-packages/*.pth') if p.name in names]"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/rio-eval-rd4x7nlk/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473/08-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473/08-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 71
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/rio-eval-rd4x7nlk/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473/09-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473/09-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 427
+    },
+    {
+      "argv": [
+        "uv",
+        "sync",
+        "--locked",
+        "--python",
+        "3.14.10",
+        "--all-groups",
+        "--all-extras"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/rio-eval-rd4x7nlk/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473/10-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473/10-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 2290
+    },
+    {
+      "argv": [
+        "python3",
+        "-c",
+        "from pathlib import Path; names={'a1_coverage.pth','distutils-precedence.pth'}; [(p.unlink(),print('Removed installed bootstrap:',p.name)) for p in Path('.venv/lib').glob('python*/site-packages/*.pth') if p.name in names]"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/rio-eval-rd4x7nlk/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473/11-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473/11-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 121
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/rio-eval-rd4x7nlk/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473/12-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473/12-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 421
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/rio-eval-rd4x7nlk/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-pydantic-ai-ram/rio-eval-rd4x7nlk/config",
+        "RIO_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/rio-eval-rd4x7nlk/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473/rio-version.txt",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473/13-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 10
+    },
+    {
+      "argv": [
+        "node",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/rio-eval-rd4x7nlk/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-pydantic-ai-ram/rio-eval-rd4x7nlk/config",
+        "RIO_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/rio-eval-rd4x7nlk/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473/14-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473/14-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 34
+    },
+    {
+      "argv": [
+        "npm",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/rio-eval-rd4x7nlk/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-pydantic-ai-ram/rio-eval-rd4x7nlk/config",
+        "RIO_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/rio-eval-rd4x7nlk/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473/15-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473/15-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 481
+    },
+    {
+      "argv": [
+        "python3",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/rio-eval-rd4x7nlk/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-pydantic-ai-ram/rio-eval-rd4x7nlk/config",
+        "RIO_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/rio-eval-rd4x7nlk/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473/16-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473/16-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 4
+    },
+    {
+      "argv": [
+        "uv",
+        "--version"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/rio-eval-rd4x7nlk/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-pydantic-ai-ram/rio-eval-rd4x7nlk/config",
+        "RIO_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/rio-eval-rd4x7nlk/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473/17-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473/17-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 19
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "profile",
+        "show",
+        "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473/profile.yaml"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/rio-eval-rd4x7nlk/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-pydantic-ai-ram/rio-eval-rd4x7nlk/config",
+        "RIO_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/rio-eval-rd4x7nlk/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473/resolved-profile.txt",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473/18-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 373
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "doctor",
+        "--format",
+        "json"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/rio-eval-rd4x7nlk/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-pydantic-ai-ram/rio-eval-rd4x7nlk/config",
+        "RIO_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/rio-eval-rd4x7nlk/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473/doctor.json",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473/19-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 3212
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "review",
+        "--base",
+        "3368a0a06ae6195aad817a1ece1aaeb6fe0353a1",
+        "--format",
+        "json",
+        "--offline",
+        "--profile",
+        "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473/profile.yaml"
+      ],
+      "cwd": "/tmp/rio-pydantic-ai-ram/rio-eval-rd4x7nlk/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/tmp/rio-pydantic-ai-ram/rio-eval-rd4x7nlk/config",
+        "RIO_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/rio-eval-rd4x7nlk/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473/report.json",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473/20-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 28056
+    }
+  ],
+  "installations": {
+    "base": {
+      "commands": [
+        [
+          "uv",
+          "sync",
+          "--locked",
+          "--python",
+          "3.14.10",
+          "--all-groups",
+          "--all-extras"
+        ],
+        [
+          "python3",
+          "-c",
+          "from pathlib import Path; names={'a1_coverage.pth','distutils-precedence.pth'}; [(p.unlink(),print('Removed installed bootstrap:',p.name)) for p in Path('.venv/lib').glob('python*/site-packages/*.pth') if p.name in names]"
+        ]
+      ],
+      "succeeded": true,
+      "lockfiles": {
+        "uv.lock": "3c77ab66dc1e2163647516c4b2c20d5103df4e0a3813a65fd2d42c7717ebec54"
+      }
+    },
+    "head": {
+      "commands": [
+        [
+          "uv",
+          "sync",
+          "--locked",
+          "--python",
+          "3.14.10",
+          "--all-groups",
+          "--all-extras"
+        ],
+        [
+          "python3",
+          "-c",
+          "from pathlib import Path; names={'a1_coverage.pth','distutils-precedence.pth'}; [(p.unlink(),print('Removed installed bootstrap:',p.name)) for p in Path('.venv/lib').glob('python*/site-packages/*.pth') if p.name in names]"
+        ]
+      ],
+      "succeeded": true,
+      "lockfiles": {
+        "uv.lock": "3c77ab66dc1e2163647516c4b2c20d5103df4e0a3813a65fd2d42c7717ebec54"
+      }
+    }
+  },
+  "failures": [
+    "Baseline/setup ineligible; fix before scoring"
+  ],
+  "network": "Installers may use network; Rio review uses --offline. Subprocesses are not isolated.",
+  "profile_sha256": "6676975243f9501c30ecc15792d0ba479e5b98545dae56042e09f911a7b7de07",
+  "resolution": {
+    "base_sha": "3368a0a06ae6195aad817a1ece1aaeb6fe0353a1",
+    "head_sha": "be9f49d248a0142ae30f8bd412ad45060d0ee25e",
+    "source": "pinned argv"
+  },
+  "disposable_directory": "/tmp/rio-pydantic-ai-ram/rio-eval-rd4x7nlk",
+  "base_sha": "3368a0a06ae6195aad817a1ece1aaeb6fe0353a1",
+  "head_sha": "be9f49d248a0142ae30f8bd412ad45060d0ee25e",
+  "removed_environment_keys": [],
+  "resolved_profile_sha256": "d0d1d6a413747067b776429bb8781fd0bdb23a82a59fa010da96a139fc586a7d",
+  "review_exit_code": 0,
+  "environment": {
+    "dependency_state": "verified",
+    "baseline_ran": false,
+    "baseline_classification_ran": false,
+    "eligible": false,
+    "reasons": [
+      "lint .: head=passed, dependency_state=verified, base=unavailable",
+      "typecheck .: head=passed, dependency_state=verified, base=unavailable"
+    ],
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "lint .: baseline_failed: linked dependency mitmproxy points at changed source : mitmproxy/certs.py; commit or stash the linked package's changes",
+      "typecheck .: baseline_failed: linked dependency mitmproxy points at changed source : mitmproxy/certs.py; commit or stash the linked package's changes",
+      "Graph references use syntax and text; no language server was used",
+      "Offline applies to Rio; tool and test processes were not network-isolated"
+    ]
+  },
+  "finished_utc": "2026-11-05T03:05:19.190558+00:00",
+  "evaluation_annotations": {
+    "author": "sub-agent eval-pydantic-ai (automated)",
+    "provenance": "Post-run evaluation annotation. Scheduling/outcomes copied from report.json; tool selection from report tool_versions. Targets and template argv derived from pinned pyproject.toml and crates/rio-adapters/src/languages.rs + python_targets.rs. Not a subprocess trace.",
+    "internal_tool_argv_captured": false,
+    "typechecks": [
+      {
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "outcome": "passed",
+        "dependency_state": "verified",
+        "selected_tool": "mypy",
+        "inherited_config": "pyproject.toml",
+        "configured_targets": [
+          "mitmproxy",
+          "examples/addons",
+          "release/*.py"
+        ],
+        "template_argv_inferred": [
+          "<venv>/bin/mypy",
+          "--output",
+          "json",
+          "--config-file",
+          "<materialized-tree>/pyproject.toml"
+        ],
+        "target_arguments": [],
+        "execution_confirmed_by_report": true,
+        "cwd_note": "Single root .; explicit mypy files config supplies targets."
+      }
+    ],
+    "dependent_roots_handled": null,
+    "dependent_roots_note": "Single Python root; no dependent roots scheduled."
+  }
+}

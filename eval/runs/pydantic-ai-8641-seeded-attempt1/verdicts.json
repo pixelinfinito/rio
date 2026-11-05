@@ -1,0 +1,61 @@
+{
+  "repository": "pydantic/pydantic-ai",
+  "pr": "https://github.com/pydantic/pydantic-ai/pull/8641",
+  "case_id": "8641-seeded-unused-import",
+  "languages": [
+    "python"
+  ],
+  "reviewer": "sub-agent eval-pydantic-ai (automated)",
+  "verdict_source": "automated",
+  "commands": [
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/pydantic/pydantic-ai.git\", \"/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/head\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/head argv=[\"git\", \"fetch\", \"origin\", \"8ed5b18b4133d85252de924d1c65a24fb295589c\", \"c9841c796bb6a8fbfd5492bdcc532f2410518e2c\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/head argv=[\"git\", \"merge-base\", \"8ed5b18b4133d85252de924d1c65a24fb295589c\", \"c9841c796bb6a8fbfd5492bdcc532f2410518e2c\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/head argv=[\"git\", \"checkout\", \"--detach\", \"c9841c796bb6a8fbfd5492bdcc532f2410518e2c\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/head\", \"/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/base\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/base argv=[\"git\", \"checkout\", \"--detach\", \"8ed5b18b4133d85252de924d1c65a24fb295589c\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/base argv=[\"uv\", \"sync\", \"--locked\", \"--python\", \"3.13.9\", \"--group\", \"lint\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/base argv=[\"python3\", \"-c\", \"from pathlib import Path; files=list(Path('.venv/lib').glob('python*/site-packages/a1_coverage.pth')); [(p.unlink(),print('Removed coverage subprocess bootstrap:',p)) for p in files]\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/head argv=[\"uv\", \"sync\", \"--locked\", \"--python\", \"3.13.9\", \"--group\", \"lint\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/head argv=[\"python3\", \"-c\", \"from pathlib import Path; files=list(Path('.venv/lib').glob('python*/site-packages/a1_coverage.pth')); [(p.unlink(),print('Removed coverage subprocess bootstrap:',p)) for p in files]\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/head argv=[\"node\", \"--version\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/head argv=[\"npm\", \"--version\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/head argv=[\"python3\", \"--version\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/head argv=[\"uv\", \"--version\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/profile.yaml\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-2arq3g6x/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"8ed5b18b4133d85252de924d1c65a24fb295589c\", \"--format\", \"json\", \"--offline\", \"--profile\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/profile.yaml\"]"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/pydantic-ai-8641-seeded-attempt1/commands.json; Rio binary SHA-256: 512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+    "Automated adjudication; see eval/runs/pydantic-ai-evidence/runtime-overrides.json and eval/runs/pydantic-ai-NOTES.md. No advisory safety claim: audit disabled in original pydantic scope or skipped offline in fallback scope.",
+    "commands.json evaluation_annotations preserve scheduled roots and configuration-derived typecheck targets. Rio internal tool argv was not captured by the runner; inferred commands are labelled.",
+    "EXCLUDED: baseline_classification_ran=false. Setup failure observations retained; no precision, recall, false-positive-rate or usefulness score claimed. coverage examples head: skipped disabled Disabled in the profile; coverage pydantic_ai_slim head: skipped disabled Disabled in the profile; coverage pydantic_evals head: skipped disabled Disabled in the profile; dependencies . head: skipped disabled Disabled in the profile; lint pydantic_ai_slim head: skipped dependency_mismatch uv.lock: burner-redis: expected burner-redis@0.1.6, installed burner-redis@0.1.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command); lint pydantic_ai_slim: head=skipped, dependency_state=unavailable, base=unavailable; typecheck examples head: skipped dependency_mismatch uv.lock: missing ag-ui-protocol at ag-ui-protocol; reinstall dependencies; typecheck examples: head=skipped, dependency_state=unavailable, base=unavailable; typecheck pydantic_ai_slim head: skipped dependency_mismatch uv.lock: burner-redis: expected burner-redis@0.1.6, installed burner-redis@0.1.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command); typecheck pydantic_ai_slim: head=skipped, dependency_state=unavailable, base=unavailable; typecheck pydantic_evals head: skipped dependency_mismatch uv.lock: burner-redis: expected burner-redis@0.1.6, installed burner-redis@0.1.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command); typecheck pydantic_evals: head=skipped, dependency_state=unavailable, base=unavailable"
+  ],
+  "independently_clean": false,
+  "positive_control": {
+    "kind": "seeded-mutation",
+    "expected": [
+      {
+        "id": "unused-itertools-import",
+        "mechanism": "lint-rule",
+        "evidence": "uv run --no-sync ruff check: full repository base exit 0, seeded head exit 1 with F401 for pydantic_ai_slim/pydantic_ai/output.py:4. Logs: 8641-base-ruff.log and 8641-seed-ruff.log. Durable evidence directory: eval/runs/pydantic-ai-evidence; preregistered patch/seed/pins/profile in positive-control-register.json.",
+        "finding_ids": []
+      }
+    ]
+  },
+  "misses": [
+    {
+      "id": "environment-blocked-unused-import",
+      "scope_class": "deterministic",
+      "mechanism": "lint-rule",
+      "expectation_id": "unused-itertools-import",
+      "description": "Registered F401 was not emitted because lint never ran. This excluded environment failure is not a scored recall miss.",
+      "evidence": "eval/runs/pydantic-ai-evidence/8641-base-ruff.log passes; 8641-seed-ruff.log reports exactly F401 at output.py:4. report.json lint head skipped dependency_mismatch (burner-redis 0.1.6 expected vs installed 0.1.7); no base. baseline_classification_ran=false."
+    }
+  ],
+  "findings": {}
+}

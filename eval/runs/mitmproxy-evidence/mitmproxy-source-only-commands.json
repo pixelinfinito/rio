@@ -1,0 +1,30 @@
+[
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "mypy"
+    ],
+    "cwd": "/tmp/rio-pydantic-ai-ram/mitmproxy-negative-head",
+    "exit_code": 0,
+    "wall_time_s": 0.531
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "coverage",
+      "run",
+      "--source=mitmproxy",
+      "-m",
+      "pytest",
+      "-q",
+      "test/mitmproxy/test_certs.py"
+    ],
+    "cwd": "/tmp/rio-pydantic-ai-ram/mitmproxy-negative-head",
+    "exit_code": 0,
+    "wall_time_s": 2.446
+  }
+]

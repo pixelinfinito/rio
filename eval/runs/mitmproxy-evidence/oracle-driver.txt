@@ -1,0 +1,25 @@
+import json, os, pathlib, subprocess, sys, time
+root = pathlib.Path(sys.argv[1]).resolve()
+label, test = sys.argv[2:4]
+out = pathlib.Path('/tmp/rio-pydantic-ai-ram/evidence')
+env = {**os.environ, 'UV_CACHE_DIR': '/tmp/rio-pydantic-ai-ram/uv-cache'}
+cmds = [
+ ('install', ['uv','sync','--locked','--python','3.14.10','--all-groups','--all-extras']),
+ ('mypy', ['uv','run','--no-sync','mypy']),
+ ('ruff', ['uv','run','--no-sync','ruff','check']),
+ ('coverage-erase', ['uv','run','--no-sync','coverage','erase']),
+ ('pytest-coverage', ['uv','run','--no-sync','coverage','run','--source=mitmproxy','-m','pytest','-q',test]),
+ ('coverage-json', ['uv','run','--no-sync','coverage','json','--fail-under=0','-o',str(out/(label+'-coverage.json'))]),
+ ('versions', ['uv','run','--no-sync','python','-c','import importlib.metadata as m,sys; print(sys.version); print({n:m.version(n) for n in ["mypy","ruff","coverage","pytest"]})']),
+ ('tracked-status', ['git','status','--porcelain','--untracked-files=no']),
+ ('pin', ['git','rev-parse','HEAD']),
+]
+ledger = []
+for name, cmd in cmds:
+ started = time.monotonic()
+ p = subprocess.run(cmd, cwd=root, env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=1200)
+ (out/(label+'-'+name+'.log')).write_bytes(p.stdout)
+ ledger.append({'argv':cmd,'cwd':str(root),'environment':{'UV_CACHE_DIR':env['UV_CACHE_DIR']},'exit_code':p.returncode,'wall_time_s':round(time.monotonic()-started,3),'output':label+'-'+name+'.log'})
+ (out/(label+'-commands.json')).write_text(json.dumps(ledger,indent=2)+'\n')
+ print(label,name,p.returncode,flush=True)
+ if name == 'install' and p.returncode:break

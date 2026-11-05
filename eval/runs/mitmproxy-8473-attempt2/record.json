@@ -1,0 +1,215 @@
+{
+  "schema": "rio-eval-record-v1",
+  "methodology": "deterministic-v1",
+  "repository": "mitmproxy/mitmproxy",
+  "pr": "https://github.com/mitmproxy/mitmproxy/pull/8473",
+  "case_id": "8473",
+  "languages": [
+    "python"
+  ],
+  "reviewer": "sub-agent eval-pydantic-ai (automated)",
+  "verdict_source": "automated",
+  "independently_clean": true,
+  "commands": [
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-uuw28tbc argv=[\"git\", \"clone\", \"--no-checkout\", \"https://github.com/mitmproxy/mitmproxy.git\", \"/tmp/rio-pydantic-ai-ram/rio-eval-uuw28tbc/head\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-uuw28tbc/head argv=[\"git\", \"fetch\", \"origin\", \"3368a0a06ae6195aad817a1ece1aaeb6fe0353a1\", \"be9f49d248a0142ae30f8bd412ad45060d0ee25e\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-uuw28tbc/head argv=[\"git\", \"merge-base\", \"3368a0a06ae6195aad817a1ece1aaeb6fe0353a1\", \"be9f49d248a0142ae30f8bd412ad45060d0ee25e\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-uuw28tbc/head argv=[\"git\", \"checkout\", \"--detach\", \"be9f49d248a0142ae30f8bd412ad45060d0ee25e\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-uuw28tbc argv=[\"git\", \"clone\", \"--no-hardlinks\", \"--no-checkout\", \"/tmp/rio-pydantic-ai-ram/rio-eval-uuw28tbc/head\", \"/tmp/rio-pydantic-ai-ram/rio-eval-uuw28tbc/base\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-uuw28tbc/base argv=[\"git\", \"checkout\", \"--detach\", \"3368a0a06ae6195aad817a1ece1aaeb6fe0353a1\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-uuw28tbc/base argv=[\"uv\", \"sync\", \"--locked\", \"--python\", \"3.14.10\", \"--all-groups\", \"--all-extras\", \"--no-install-project\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-uuw28tbc/base argv=[\"python3\", \"-c\", \"from pathlib import Path; names={'a1_coverage.pth','distutils-precedence.pth'}; [(p.unlink(),print('Removed installed bootstrap:',p.name)) for p in Path('.venv/lib').glob('python*/site-packages/*.pth') if p.name in names]\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-uuw28tbc/base argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-uuw28tbc/head argv=[\"uv\", \"sync\", \"--locked\", \"--python\", \"3.14.10\", \"--all-groups\", \"--all-extras\", \"--no-install-project\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-uuw28tbc/head argv=[\"python3\", \"-c\", \"from pathlib import Path; names={'a1_coverage.pth','distutils-precedence.pth'}; [(p.unlink(),print('Removed installed bootstrap:',p.name)) for p in Path('.venv/lib').glob('python*/site-packages/*.pth') if p.name in names]\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-uuw28tbc/head argv=[\"git\", \"status\", \"--porcelain\", \"--untracked-files=no\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-uuw28tbc/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"--version\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-uuw28tbc/head argv=[\"node\", \"--version\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-uuw28tbc/head argv=[\"npm\", \"--version\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-uuw28tbc/head argv=[\"python3\", \"--version\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-uuw28tbc/head argv=[\"uv\", \"--version\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-uuw28tbc/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"profile\", \"show\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473-attempt2/profile.yaml\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-uuw28tbc/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"doctor\", \"--format\", \"json\"]",
+    "cwd=/tmp/rio-pydantic-ai-ram/rio-eval-uuw28tbc/head argv=[\"/home/ubuntu/rio/target/release/rio\", \"review\", \"--base\", \"3368a0a06ae6195aad817a1ece1aaeb6fe0353a1\", \"--format\", \"json\", \"--offline\", \"--profile\", \"/home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473-attempt2/profile.yaml\"]"
+  ],
+  "notes": [
+    "Runner provenance: /home/ubuntu/.t3/worktrees/rio/eval-run-pydantic-ai/eval/runs/mitmproxy-8473-attempt2/commands.json; Rio binary SHA-256: 512d123450bb93a62f03dc74bbe5057e24abeac70f365acb418f02933904e3f2",
+    "Automated adjudication; see eval/runs/mitmproxy-evidence/runtime-overrides.json and eval/runs/mitmproxy-NOTES.md. No advisory safety claim: audit disabled in original pydantic scope or skipped offline in fallback scope.",
+    "commands.json evaluation_annotations preserve scheduled roots and configuration-derived typecheck targets. Rio internal tool argv was not captured by the runner; inferred commands are labelled.",
+    "Independent clean assessment: configured mypy and full Ruff pass both pins; 37 certificate tests pass at both pins with coverage, with no missing changed executable lines. See eval/runs/mitmproxy-evidence/mitmproxy-8473-{base,head}-py314-* and independent-diff-coverage.json. Coverage cohort runs the committed certificate module, not the full test suite."
+  ],
+  "positive_control": {
+    "kind": "none",
+    "expected": []
+  },
+  "base_sha": "3368a0a06ae6195aad817a1ece1aaeb6fe0353a1",
+  "head_sha": "be9f49d248a0142ae30f8bd412ad45060d0ee25e",
+  "mode": "branch",
+  "review_id": "5cf3fcc642f39480",
+  "run_id": "01M6MTSRNNPJ6V901RA9G3BCSH",
+  "rio_version": "0.1.0",
+  "profile": "eval-mitmproxy",
+  "wall_time_ms": 35667,
+  "status": "incomplete",
+  "report_path": "eval/runs/mitmproxy-8473-attempt2/report.json",
+  "environment": {
+    "dependency_state": "verified",
+    "baseline_ran": true,
+    "baseline_classification_ran": true,
+    "eligible": true,
+    "reasons": [],
+    "checks": [
+      {
+        "findings": [],
+        "kind": "secrets",
+        "language": "common",
+        "outcome": "findings",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 2
+      },
+      {
+        "findings": [],
+        "hint": "Dependency audit needs api.osv.dev",
+        "kind": "dependencies",
+        "language": "common",
+        "outcome": "skipped",
+        "reason": "offline",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "lint",
+        "language": "python",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 317
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "lint",
+        "language": "python",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "base",
+        "wall_time_ms": 273
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "coverage",
+        "language": "python",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 10931
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "typecheck",
+        "language": "python",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 15965
+      },
+      {
+        "dependency_state": "verified",
+        "findings": [],
+        "kind": "typecheck",
+        "language": "python",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "base",
+        "wall_time_ms": 15483
+      }
+    ],
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "Graph references use syntax and text; no language server was used",
+      "Offline applies to Rio; tool and test processes were not network-isolated"
+    ]
+  },
+  "findings": [
+    {
+      "finding": {
+        "category": "defect",
+        "evidence": [
+          "Built-in credential pattern high-entropy"
+        ],
+        "evidence_level": "static_proven",
+        "id": "49a4254e92e57f4a7a9a3cf017c64d89abdba6c11b56ebbf413bc3475c805562",
+        "impact": "A credential may be exposed by this change",
+        "location": {
+          "column": 28,
+          "line_end": 723,
+          "line_start": 723,
+          "occurrence_state": "pre-existing",
+          "path": "mitmproxy/certs.py",
+          "symbol_path": ""
+        },
+        "locations": [
+          {
+            "column": 28,
+            "line_end": 723,
+            "line_start": 723,
+            "occurrence_state": "pre-existing",
+            "path": "mitmproxy/certs.py",
+            "symbol_path": ""
+          }
+        ],
+        "message": "Potential high-entropy credential: self[REDACTED]",
+        "rule_id": "secret/high-entropy",
+        "severity": "error",
+        "source": {
+          "tool": "rio-secrets",
+          "version": "0.1.0"
+        },
+        "state": "pre-existing",
+        "suggested_fix": "Remove the credential and rotate it if it was active",
+        "trigger": "self[REDACTED]"
+      },
+      "verdict": "false-positive",
+      "reason": "Independent Python AST/source inspection at base 3368a0a06ae6195aad817a1ece1aaeb6fe0353a1 (certs.py:721) and head be9f49d248a0142ae30f8bd412ad45060d0ee25e (certs.py:723) shows privatekey=self.default_privatekey. Its value is an Attribute expression, not a literal secret. See eval/runs/mitmproxy-evidence/secret-false-positive-evidence.json. Rio labels this pre-existing but its high-entropy credential claim and rotation recommendation are incorrect.",
+      "message_template": "Potential high-entropy credential: self[REDACTED]",
+      "file_set": [
+        "mitmproxy/certs.py"
+      ],
+      "root_cause_key": "63c1e8da3ff91e1598f36c3560eaa9d4dd53633dbee9dcc865401cd12084ceac",
+      "family": "secret/high-entropy"
+    }
+  ],
+  "root_causes": [
+    {
+      "root_cause_key": "63c1e8da3ff91e1598f36c3560eaa9d4dd53633dbee9dcc865401cd12084ceac",
+      "rule_id": "secret/high-entropy",
+      "message_template": "Potential high-entropy credential: self[REDACTED]",
+      "file_set": [
+        "mitmproxy/certs.py"
+      ],
+      "verdict": "false-positive",
+      "family": "secret/high-entropy",
+      "finding_count": 1,
+      "occurrence_count": 1,
+      "finding_ids": [
+        "49a4254e92e57f4a7a9a3cf017c64d89abdba6c11b56ebbf413bc3475c805562"
+      ]
+    }
+  ],
+  "misses": [],
+  "verdict": "not-useful",
+  "reason": "No actionable finding or independently confirmed clean report."
+}

@@ -1,0 +1,11 @@
+#!/usr/bin/env python3
+"""Evaluation setup workaround: anchor inherited mypy targets to their config directory."""
+import os
+from pathlib import Path
+import sys
+args = sys.argv[1:]
+if '--config-file' in args:
+    config = Path(args[args.index('--config-file') + 1]).resolve()
+    os.chdir(config.parent)
+python = str(Path(__file__).resolve().parent / 'python')
+os.execv(python, [python, '-m', 'mypy', *args])

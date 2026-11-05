@@ -1,0 +1,340 @@
+{
+  "blocking_problems": [],
+  "cache": {
+    "free_space": 7138504704,
+    "path": "/tmp/rio-pydantic-ai-ram/oracle/.rio/cache",
+    "writable": true
+  },
+  "configuration": {
+    "cache": {
+      "dir": "/tmp/rio-pydantic-ai-ram/oracle/.rio/cache",
+      "max_age": {
+        "nanos": 0,
+        "secs": 2592000
+      },
+      "max_size": 5368709120,
+      "retain_raw_output": true
+    },
+    "config_dir": "/home/ubuntu/.config/rio",
+    "endpoint_url": null,
+    "notices": [],
+    "output_limit": 268435456,
+    "parallelism": 4,
+    "sources": {
+      "cache.dir": "default",
+      "cache.max_age": "default",
+      "cache.max_size": "default",
+      "cache.retain_raw_output": "default",
+      "endpoint.url": "default",
+      "run.output_limit": "default",
+      "run.parallelism": "default"
+    }
+  },
+  "endpoint": "No endpoint is available in this version",
+  "head": "c9841c796bb6a8fbfd5492bdcc532f2410518e2c",
+  "plan": {
+    "checks": [
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: uv.lock: missing ag-ui-protocol at ag-ui-protocol; reinstall dependencies",
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "typecheck",
+        "language": "python",
+        "root": "examples",
+        "scheduled_as": "dependent",
+        "skip": {
+          "findings": [],
+          "hint": "uv.lock: missing ag-ui-protocol at ag-ui-protocol; reinstall dependencies",
+          "outcome": "skipped",
+          "reason": "dependency_mismatch"
+        },
+        "targets": [],
+        "tool": {
+          "name": "mypy",
+          "path": "/tmp/rio-pydantic-ai-ram/oracle/.venv/bin/mypy",
+          "version": "mypy 2.1.0 (compiled: yes)"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: uv.lock: missing ag-ui-protocol at ag-ui-protocol; reinstall dependencies",
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "coverage",
+        "language": "python",
+        "root": "examples",
+        "scheduled_as": "dependent",
+        "skip": {
+          "findings": [],
+          "hint": "Install coverage in the project environment",
+          "outcome": "skipped",
+          "reason": "tool_missing"
+        },
+        "targets": [],
+        "tool": null
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: linked dependency .venv/lib/python3.13/site-packages/_editable_impl_pydantic_ai_slim.pth points at changed source pydantic_ai_slim: pydantic_ai_slim/pydantic_ai/output.py; commit or stash the linked package's changes",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "python",
+        "root": "pydantic_ai_slim",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "pydantic_ai_slim/pydantic_ai/output.py"
+        ],
+        "tool": {
+          "name": "mypy",
+          "path": "/tmp/rio-pydantic-ai-ram/oracle/.venv/bin/mypy",
+          "version": "mypy 2.1.0 (compiled: yes)"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: linked dependency .venv/lib/python3.13/site-packages/_editable_impl_pydantic_ai_slim.pth points at changed source pydantic_ai_slim: pydantic_ai_slim/pydantic_ai/output.py; commit or stash the linked package's changes",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "lint",
+        "language": "python",
+        "root": "pydantic_ai_slim",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [
+          "pydantic_ai_slim/pydantic_ai/output.py"
+        ],
+        "tool": {
+          "name": "ruff",
+          "path": "/tmp/rio-pydantic-ai-ram/oracle/.venv/bin/ruff",
+          "version": "ruff 0.15.19"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: linked dependency .venv/lib/python3.13/site-packages/_editable_impl_pydantic_ai_slim.pth points at changed source pydantic_ai_slim: pydantic_ai_slim/pydantic_ai/output.py; commit or stash the linked package's changes",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "coverage",
+        "language": "python",
+        "root": "pydantic_ai_slim",
+        "scheduled_as": "changed",
+        "skip": {
+          "findings": [],
+          "hint": "Install coverage in the project environment",
+          "outcome": "skipped",
+          "reason": "tool_missing"
+        },
+        "targets": [
+          "pydantic_ai_slim/pydantic_ai/output.py"
+        ],
+        "tool": null
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: linked dependency .venv/lib/python3.13/site-packages/_editable_impl_pydantic_ai_slim.pth points at changed source pydantic_ai_slim: pydantic_ai_slim/pydantic_ai/output.py; commit or stash the linked package's changes",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "python",
+        "root": "pydantic_evals",
+        "scheduled_as": "dependent",
+        "skip": null,
+        "targets": [],
+        "tool": {
+          "name": "mypy",
+          "path": "/tmp/rio-pydantic-ai-ram/oracle/.venv/bin/mypy",
+          "version": "mypy 2.1.0 (compiled: yes)"
+        }
+      },
+      {
+        "baseline": false,
+        "baseline_hint": "baseline_failed: linked dependency .venv/lib/python3.13/site-packages/_editable_impl_pydantic_ai_slim.pth points at changed source pydantic_ai_slim: pydantic_ai_slim/pydantic_ai/output.py; commit or stash the linked package's changes",
+        "dependency_hash": null,
+        "dependency_state": "verified",
+        "kind": "coverage",
+        "language": "python",
+        "root": "pydantic_evals",
+        "scheduled_as": "dependent",
+        "skip": {
+          "findings": [],
+          "hint": "Install coverage in the project environment",
+          "outcome": "skipped",
+          "reason": "tool_missing"
+        },
+        "targets": [],
+        "tool": null
+      },
+      {
+        "baseline": false,
+        "baseline_hint": null,
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "secrets",
+        "language": "common",
+        "root": ".",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [],
+        "tool": null
+      },
+      {
+        "baseline": false,
+        "baseline_hint": null,
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "dependencies",
+        "language": "common",
+        "root": ".",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [],
+        "tool": null
+      }
+    ],
+    "layout": {
+      "dependencies": {
+        ".": [],
+        "clai": [],
+        "examples": [
+          "pydantic_ai_slim"
+        ],
+        "pydantic_ai_slim": [
+          "pydantic_graph"
+        ],
+        "pydantic_evals": [
+          "pydantic_ai_slim"
+        ],
+        "pydantic_graph": []
+      },
+      "notes": [],
+      "roots": [
+        {
+          "language": "python",
+          "manifest": "pyproject.toml",
+          "name": "pydantic-ai",
+          "path": ".",
+          "workspace": null
+        },
+        {
+          "language": "python",
+          "manifest": "clai/pyproject.toml",
+          "name": "clai",
+          "path": "clai",
+          "workspace": "."
+        },
+        {
+          "language": "python",
+          "manifest": "examples/pyproject.toml",
+          "name": "pydantic-ai-examples",
+          "path": "examples",
+          "workspace": "."
+        },
+        {
+          "language": "python",
+          "manifest": "pydantic_ai_slim/pyproject.toml",
+          "name": "pydantic-ai-slim",
+          "path": "pydantic_ai_slim",
+          "workspace": "."
+        },
+        {
+          "language": "python",
+          "manifest": "pydantic_evals/pyproject.toml",
+          "name": "pydantic-evals",
+          "path": "pydantic_evals",
+          "workspace": "."
+        },
+        {
+          "language": "python",
+          "manifest": "pydantic_graph/pyproject.toml",
+          "name": "pydantic-graph",
+          "path": "pydantic_graph",
+          "workspace": "."
+        }
+      ]
+    },
+    "notes": [],
+    "probes_ran": true,
+    "roots": [
+      {
+        "base": {
+          "hint": "linked dependency .venv/lib/python3.13/site-packages/_editable_impl_pydantic_ai_slim.pth points at changed source pydantic_ai_slim: pydantic_ai_slim/pydantic_ai/output.py; commit or stash the linked package's changes",
+          "state": "mismatch"
+        },
+        "environment": "/tmp/rio-pydantic-ai-ram/oracle/./.venv",
+        "head": {
+          "hint": "uv.lock: missing ag-ui-protocol at ag-ui-protocol; reinstall dependencies",
+          "state": "mismatch"
+        },
+        "installation_root": ".",
+        "lockfile": "uv.lock",
+        "project": {
+          "language": "python",
+          "manifest": "examples/pyproject.toml",
+          "name": "pydantic-ai-examples",
+          "path": "examples",
+          "workspace": "."
+        }
+      },
+      {
+        "base": {
+          "hint": "linked dependency .venv/lib/python3.13/site-packages/_editable_impl_pydantic_ai_slim.pth points at changed source pydantic_ai_slim: pydantic_ai_slim/pydantic_ai/output.py; commit or stash the linked package's changes",
+          "state": "mismatch"
+        },
+        "environment": "/tmp/rio-pydantic-ai-ram/oracle/./.venv",
+        "head": {
+          "hash": "a368e01836a11dcb71c758f8f794c85e2b78eb0c1877c06dd9257d06a7f66959",
+          "state": "verified"
+        },
+        "installation_root": ".",
+        "lockfile": "uv.lock",
+        "project": {
+          "language": "python",
+          "manifest": "pydantic_ai_slim/pyproject.toml",
+          "name": "pydantic-ai-slim",
+          "path": "pydantic_ai_slim",
+          "workspace": "."
+        }
+      },
+      {
+        "base": {
+          "hint": "linked dependency .venv/lib/python3.13/site-packages/_editable_impl_pydantic_ai_slim.pth points at changed source pydantic_ai_slim: pydantic_ai_slim/pydantic_ai/output.py; commit or stash the linked package's changes",
+          "state": "mismatch"
+        },
+        "environment": "/tmp/rio-pydantic-ai-ram/oracle/./.venv",
+        "head": {
+          "hash": "ecc2419b6a284c7ac21d217d8a35ad31d0a6df662a99983aad61650330861e1f",
+          "state": "verified"
+        },
+        "installation_root": ".",
+        "lockfile": "uv.lock",
+        "project": {
+          "language": "python",
+          "manifest": "pydantic_evals/pyproject.toml",
+          "name": "pydantic-evals",
+          "path": "pydantic_evals",
+          "workspace": "."
+        }
+      }
+    ]
+  },
+  "profile": {
+    "chain": [
+      "rio/base"
+    ],
+    "name": "rio/base",
+    "valid": true
+  },
+  "repository": "/tmp/rio-pydantic-ai-ram/oracle",
+  "warnings": [
+    "rio/base:$.steps[3]: rio/triage is deferred locally: no_endpoint",
+    "rio/base:$.steps[4]: rio/agents is deferred locally: no_endpoint",
+    "rio/base:$.steps[5]: rio/verify is deferred locally: no_endpoint",
+    "typecheck examples would skip: skipped (dependency_mismatch) — uv.lock: missing ag-ui-protocol at ag-ui-protocol; reinstall dependencies",
+    "coverage examples would skip: skipped (tool_missing) — Install coverage in the project environment",
+    "coverage pydantic_ai_slim would skip: skipped (tool_missing) — Install coverage in the project environment",
+    "coverage pydantic_evals would skip: skipped (tool_missing) — Install coverage in the project environment"
+  ]
+}

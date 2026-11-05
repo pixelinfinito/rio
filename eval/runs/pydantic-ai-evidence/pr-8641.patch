@@ -1,0 +1,237 @@
+diff --git a/pydantic_ai_slim/pydantic_ai/_output.py b/pydantic_ai_slim/pydantic_ai/_output.py
+index 34317319252..d99fbf00320 100644
+--- a/pydantic_ai_slim/pydantic_ai/_output.py
++++ b/pydantic_ai_slim/pydantic_ai/_output.py
+@@ -30,6 +30,7 @@
+     TextOutputFunc,
+     ToolOutput,
+     _ChoicesActions,  # type: ignore[reportPrivateUsage]
++    _NoneOutput,  # type: ignore[reportPrivateUsage]
+     _OutputSpecItem,  # type: ignore[reportPrivateUsage]
+ )
+ from .tools import DeferredToolRequests, GenerateToolJsonSchema, ObjectJsonSchema, ToolDefinition
+@@ -1584,7 +1585,7 @@ def _flatten_output_spec(output_spec: OutputSpec[T]) -> Sequence[_OutputSpecItem
+ 
+ 
+ def _flatten_output_spec(output_spec: OutputSpec[T]) -> Sequence[_OutputSpecItem[T]]:
+-    outputs: Sequence[OutputSpec[T]]
++    outputs: Sequence[OutputSpec[T] | _NoneOutput[T]]
+     if isinstance(output_spec, Sequence):
+         outputs = output_spec  # pyright: ignore[reportUnknownVariableType]
+     else:
+@@ -1602,7 +1603,7 @@ def _flatten_output_spec(output_spec: OutputSpec[T]) -> Sequence[_OutputSpecItem
+ 
+ 
+ def types_from_output_spec(output_spec: OutputSpec[T]) -> Sequence[T | type[str]]:
+-    outputs: Sequence[OutputSpec[T]]
++    outputs: Sequence[OutputSpec[T] | _NoneOutput[T]]
+     if isinstance(output_spec, Sequence):
+         outputs = output_spec  # pyright: ignore[reportUnknownVariableType]
+     else:
+diff --git a/pydantic_ai_slim/pydantic_ai/output.py b/pydantic_ai_slim/pydantic_ai/output.py
+index acfcd51deb9..178d7f722ec 100644
+--- a/pydantic_ai_slim/pydantic_ai/output.py
++++ b/pydantic_ai_slim/pydantic_ai/output.py
+@@ -3,7 +3,7 @@
+ import inspect
+ from collections.abc import Awaitable, Callable, Mapping, Sequence
+ from dataclasses import dataclass
+-from typing import Any, ClassVar, Generic, Literal, overload
++from typing import Any, ClassVar, Generic, Literal, Protocol, cast, overload
+ 
+ from pydantic import GetCoreSchemaHandler, GetJsonSchemaHandler
+ from pydantic.json_schema import JsonSchemaValue
+@@ -66,6 +66,21 @@
+ """
+ 
+ 
++class _NoneOutput(Protocol[T_co]):
++    """The type of a bare `None` output type, as seen by a type checker.
++
++    `None` in `output_type=[Foo, None]` or `ToolOutput(None)` is a value, not a type, so `type[T]` cannot match it
++    and would not add `None` to the output type if it did. Matching `None` structurally binds `T` to `None` through
++    `__class__`, while `__bool__` returning `Literal[False]` keeps other values out (a class annotating its own
++    `__bool__` that way would also match). A list of only `None` still type-checks, though it is refused at run time.
++    """
++
++    @property
++    def __class__(self) -> type[T_co]: ...  # pyright: ignore[reportIncompatibleMethodOverride]
++
++    def __bool__(self) -> Literal[False]: ...
++
++
+ TextOutputFunc = TypeAliasType(
+     'TextOutputFunc',
+     Callable[[RunContext[Any], str], Awaitable[T_co] | T_co] | Callable[[str], Awaitable[T_co] | T_co],
+@@ -137,7 +152,7 @@ class Vehicle(BaseModel):
+ 
+     def __init__(
+         self,
+-        type_: OutputTypeOrFunction[OutputDataT],
++        type_: OutputTypeOrFunction[OutputDataT] | _NoneOutput[OutputDataT],
+         *,
+         name: str | None = None,
+         description: str | None = None,
+@@ -147,7 +162,8 @@ def __init__(
+     ):
+         if max_retries is not None and max_retries < 0:
+             raise exceptions.UserError(f'max_retries must be >= 0, got {max_retries}')
+-        self.output = type_
++        # A bare `None` is kept as is: the output schema treats it as the `None` output type.
++        self.output = cast(OutputTypeOrFunction[OutputDataT], type_)
+         self.name = name
+         self.description = description
+         self.max_retries = max_retries
+@@ -196,14 +212,16 @@ class NativeOutput(Generic[OutputDataT]):
+ 
+     def __init__(
+         self,
+-        outputs: OutputTypeOrFunction[OutputDataT] | Sequence[OutputTypeOrFunction[OutputDataT]],
++        outputs: OutputTypeOrFunction[OutputDataT]
++        | Sequence[OutputTypeOrFunction[OutputDataT] | _NoneOutput[OutputDataT]],
+         *,
+         name: str | None = None,
+         description: str | None = None,
+         strict: bool | None = None,
+         template: str | Literal[False] | None = None,
+     ):
+-        self.outputs = outputs
++        # A bare `None` item stays in the list: the output schema treats it as the `None` output type.
++        self.outputs = cast(OutputTypeOrFunction[OutputDataT] | Sequence[OutputTypeOrFunction[OutputDataT]], outputs)
+         self.name = name
+         self.description = description
+         self.strict = strict
+@@ -268,13 +286,15 @@ class Device(BaseModel):
+ 
+     def __init__(
+         self,
+-        outputs: OutputTypeOrFunction[OutputDataT] | Sequence[OutputTypeOrFunction[OutputDataT]],
++        outputs: OutputTypeOrFunction[OutputDataT]
++        | Sequence[OutputTypeOrFunction[OutputDataT] | _NoneOutput[OutputDataT]],
+         *,
+         name: str | None = None,
+         description: str | None = None,
+         template: str | Literal[False] | None = None,
+     ):
+-        self.outputs = outputs
++        # A bare `None` item stays in the list: the output schema treats it as the `None` output type.
++        self.outputs = cast(OutputTypeOrFunction[OutputDataT] | Sequence[OutputTypeOrFunction[OutputDataT]], outputs)
+         self.name = name
+         self.description = description
+         self.template = template
+@@ -666,12 +686,12 @@ def __get_pydantic_core_schema__(
+ 
+ OutputSpec = TypeAliasType(
+     'OutputSpec',
+-    _OutputSpecItem[T_co] | Sequence['OutputSpec[T_co]'],
++    _OutputSpecItem[T_co] | Sequence['OutputSpec[T_co] | _NoneOutput[T_co]'],
+     type_params=(T_co,),
+ )
+ """Specification of the agent's output data.
+ 
+-This can be a single type, a function, a sequence of types and/or functions, or an instance of one of the output mode marker classes:
++This can be a single type, a function, a sequence of types and/or functions (which can include `None` to allow no output), or an instance of one of the output mode marker classes:
+ - [`ToolOutput`][pydantic_ai.output.ToolOutput]
+ - [`NativeOutput`][pydantic_ai.output.NativeOutput]
+ - [`PromptedOutput`][pydantic_ai.output.PromptedOutput]
+diff --git a/tests/models/test_typesafe.py b/tests/models/test_typesafe.py
+index c1c915d8741..73d1c3051af 100644
+--- a/tests/models/test_typesafe.py
++++ b/tests/models/test_typesafe.py
+@@ -2443,9 +2443,7 @@ def record(request: httpx2.Request) -> httpx2.Response:
+             ),
+         )
+ 
+-    # `None` in an `output_type` list is not spelled out in the overloads, so the output type is named here;
+-    # it runs on every model.
+-    agent: Agent[None, Ticket | None] = Agent(mock_model(record), output_type=[Ticket, None])  # type: ignore[arg-type]
++    agent = Agent(mock_model(record), output_type=[Ticket, None])
+     result = await agent.run('Nothing here needs handling.')
+ 
+     assert result.output is None
+@@ -2474,7 +2472,7 @@ def record(request: httpx2.Request) -> httpx2.Response:
+ 
+     agent = Agent(
+         mock_model(record),
+-        output_type=[Ticket, ToolOutput(type_=None, name='nothing', description='Nothing needs doing here.')],  # type: ignore[arg-type]
++        output_type=[Ticket, ToolOutput(type_=None, name='nothing', description='Nothing needs doing here.')],
+     )
+     result = await agent.run('Thanks, all sorted.')
+ 
+@@ -2634,7 +2632,7 @@ def record(request: httpx2.Request) -> httpx2.Response:
+ 
+     agent: Agent[None, Ticket | None] = Agent(
+         mock_model(record),
+-        output_type=[Ticket, None],  # type: ignore[arg-type]
++        output_type=[Ticket, None],
+         tools=[refund],
+     )
+     result = await agent.run('Refund me maybe.')
+@@ -2664,7 +2662,7 @@ def unreachable(request: httpx2.Request) -> httpx2.Response:  # pragma: no cover
+     ]
+     agent: Agent[None, str | None] = Agent(
+         mock_model(unreachable),
+-        output_type=[approve, None],  # type: ignore[arg-type]
++        output_type=[approve, None],
+         tools=[refund],
+     )
+     result: AgentRunResult[str | None] = await agent.run(None, message_history=history)
+diff --git a/tests/typed_agent.py b/tests/typed_agent.py
+index afc470934b0..df41f56b4d2 100644
+--- a/tests/typed_agent.py
++++ b/tests/typed_agent.py
+@@ -14,7 +14,7 @@
+ from pydantic_ai import Agent, ModelRetry, RunContext, RunUsage, Tool
+ from pydantic_ai.agent import AgentRunResult
+ from pydantic_ai.capabilities import PrepareTools, Thinking, WebSearch
+-from pydantic_ai.output import Choice, Choices, StructuredDict, TextOutput, ToolOutput
++from pydantic_ai.output import Choice, Choices, NativeOutput, PromptedOutput, StructuredDict, TextOutput, ToolOutput
+ from pydantic_ai.tools import DeferredToolRequests, ToolDefinition
+ from pydantic_ai.ui.vercel_ai import VercelAIAdapter
+ 
+@@ -238,6 +238,9 @@ def run_sync3() -> None:
+ union_agent2: Agent[object, MyUnion] = Agent(output_type=MyUnion)  # type: ignore[call-overload]
+ assert_type(union_agent2, Agent[object, MyUnion])
+ 
++# `None` is only an output type alongside another one: on its own, it raises a `UserError`
++Agent(output_type=None)  # type: ignore[call-overload]
++
+ structured_dict = StructuredDict(
+     {
+         'type': 'object',
+@@ -333,6 +336,9 @@ def my_method(self) -> bool:
+     two_scalars_output_agent = Agent[object, int | str](output_type=[int, str])
+     assert_type(two_scalars_output_agent, Agent[object, int | str])
+ 
++    none_output_agent = Agent[object, Foo | Bar | None](output_type=[Foo, Bar, None])
++    assert_type(none_output_agent, Agent[object, Foo | Bar | None])
++
+     marker: ToolOutput[bool | tuple[str, int]] = ToolOutput(bool | tuple[str, int])  # type: ignore[arg-type]
+     complex_output_agent = Agent[object, Foo | Bar | Decimal | int | bool | tuple[str, int] | str | re.Pattern[str]](
+         output_type=[str, Foo, Bar, foobar_ctx, ToolOutput[int](foobar_plain), marker, TextOutput(str_to_regex)]
+@@ -361,6 +367,25 @@ def my_method(self) -> bool:
+     two_scalars_output_agent = Agent(output_type=[int, str])
+     assert_type(two_scalars_output_agent, Agent[object, int | str])
+ 
++    # `None` in a sequence of output types adds `None` to the output type, however the sequence is built
++    none_output_agent = Agent(output_type=[Foo, Bar, None])
++    assert_type(none_output_agent, Agent[object, Foo | Bar | None])
++    assert_type(none_output_agent.run_sync('x').output, Foo | Bar | None)
++    assert_type(Agent(output_type=[Foo, None]), Agent[object, Foo | None])
++    assert_type(Agent(output_type=[str, Foo, None]), Agent[object, str | Foo | None])
++    assert_type(Agent(output_type=[ToolOutput(Foo), None]), Agent[object, Foo | None])
++    assert_type(ToolOutput(None, name='nothing'), ToolOutput[None])
++    assert_type(Agent(output_type=[Foo, ToolOutput(None, name='nothing')]), Agent[object, Foo | None])
++    assert_type(
++        Agent(output_type=[ToolOutput(Foo), ToolOutput(type_=None, name='nothing', description='Nothing to do.')]),
++        Agent[object, Foo | None],
++    )
++    assert_type(Agent(output_type=NativeOutput([Foo, None])), Agent[object, Foo | None])
++    assert_type(Agent(output_type=PromptedOutput([Foo, None])), Agent[object, Foo | None])
++    assert_type(Agent(output_type=[[Foo, None], Bar]), Agent[object, Foo | None | Bar])
++    assert_type(Agent(output_type=Foo | None), Agent[object, Foo | None])
++    assert_type(typed_agent.run_sync('x', deps=MyDeps(foo=1, bar=2), output_type=[Foo, None]).output, Foo | None)
++
+     marker: ToolOutput[bool | tuple[str, int]] = ToolOutput(bool | tuple[str, int])  # type: ignore[arg-type]
+     complex_output_agent = Agent(
+         output_type=[str, Foo, Bar, foobar_ctx, ToolOutput(foobar_plain), marker, TextOutput(str_to_regex)]

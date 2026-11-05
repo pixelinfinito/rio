@@ -1,0 +1,312 @@
+{
+  "schema": "rio-eval-summary-v1",
+  "methodology": "deterministic-v1",
+  "records": [
+    "eval/runs/mitmproxy-8473/record.json",
+    "eval/runs/mitmproxy-8473-attempt2/record.json",
+    "eval/runs/mitmproxy-8521-seeded/record.json",
+    "eval/runs/pydantic-ai-12540-attempt3/record.json",
+    "eval/runs/pydantic-ai-8641-seeded-attempt1/record.json"
+  ],
+  "attempts": 5,
+  "observed_raw_counts": {
+    "true-positive": 1,
+    "false-positive": 3,
+    "pre-existing-shown": 0,
+    "environment-failure": 0,
+    "out-of-scope": 0
+  },
+  "observed_occurrence_counts": {
+    "true-positive": 1,
+    "false-positive": 3,
+    "pre-existing-shown": 0,
+    "environment-failure": 0,
+    "out-of-scope": 0
+  },
+  "observed_cause_counts": {
+    "true-positive": 1,
+    "false-positive": 3,
+    "pre-existing-shown": 0,
+    "environment-failure": 0,
+    "out-of-scope": 0
+  },
+  "observed_unique_cause_counts": {
+    "true-positive": 1,
+    "false-positive": 2,
+    "pre-existing-shown": 0,
+    "environment-failure": 0,
+    "out-of-scope": 0
+  },
+  "eligible": {
+    "eligible_prs": 2,
+    "raw_counts": {
+      "true-positive": 1,
+      "false-positive": 1,
+      "pre-existing-shown": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0
+    },
+    "occurrence_counts": {
+      "true-positive": 1,
+      "false-positive": 1,
+      "pre-existing-shown": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0
+    },
+    "cause_counts": {
+      "true-positive": 1,
+      "false-positive": 1,
+      "pre-existing-shown": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0
+    },
+    "unique_cause_counts": {
+      "true-positive": 1,
+      "false-positive": 1,
+      "pre-existing-shown": 0,
+      "environment-failure": 0,
+      "out-of-scope": 0
+    },
+    "precision": 0.5,
+    "positive_control_cases": 1,
+    "positive_control_expected": 1,
+    "positive_control_detected": 1,
+    "positive_control_recall": 1.0,
+    "false_positive_per_pr": 0.5,
+    "pr_with_false_positive_fraction": 0.5,
+    "useful_prs": 1,
+    "useful_real_prs": 0,
+    "usefulness_fraction": 0.5
+  },
+  "by_repository": {
+    "mitmproxy/mitmproxy": {
+      "eligible_prs": 2,
+      "raw_counts": {
+        "true-positive": 1,
+        "false-positive": 1,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "occurrence_counts": {
+        "true-positive": 1,
+        "false-positive": 1,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "cause_counts": {
+        "true-positive": 1,
+        "false-positive": 1,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "unique_cause_counts": {
+        "true-positive": 1,
+        "false-positive": 1,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "precision": 0.5,
+      "positive_control_cases": 1,
+      "positive_control_expected": 1,
+      "positive_control_detected": 1,
+      "positive_control_recall": 1.0,
+      "false_positive_per_pr": 0.5,
+      "pr_with_false_positive_fraction": 0.5,
+      "useful_prs": 1,
+      "useful_real_prs": 0,
+      "usefulness_fraction": 0.5
+    },
+    "pydantic/pydantic-ai": {
+      "eligible_prs": 0,
+      "raw_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "occurrence_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "cause_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "unique_cause_counts": {
+        "true-positive": 0,
+        "false-positive": 0,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "precision": null,
+      "positive_control_cases": 0,
+      "positive_control_expected": 0,
+      "positive_control_detected": 0,
+      "positive_control_recall": null,
+      "false_positive_per_pr": null,
+      "pr_with_false_positive_fraction": null,
+      "useful_prs": 0,
+      "useful_real_prs": 0,
+      "usefulness_fraction": null
+    }
+  },
+  "by_language": {
+    "python": {
+      "eligible_prs": 2,
+      "raw_counts": {
+        "true-positive": 1,
+        "false-positive": 1,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "occurrence_counts": {
+        "true-positive": 1,
+        "false-positive": 1,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "cause_counts": {
+        "true-positive": 1,
+        "false-positive": 1,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "unique_cause_counts": {
+        "true-positive": 1,
+        "false-positive": 1,
+        "pre-existing-shown": 0,
+        "environment-failure": 0,
+        "out-of-scope": 0
+      },
+      "precision": 0.5,
+      "positive_control_cases": 1,
+      "positive_control_expected": 1,
+      "positive_control_detected": 1,
+      "positive_control_recall": 1.0,
+      "false_positive_per_pr": 0.5,
+      "pr_with_false_positive_fraction": 0.5,
+      "useful_prs": 1,
+      "useful_real_prs": 0,
+      "usefulness_fraction": 0.5
+    }
+  },
+  "environment_failures": [
+    {
+      "repository": "mitmproxy/mitmproxy",
+      "pr": "https://github.com/mitmproxy/mitmproxy/pull/8473",
+      "case_id": "8473-attempt1",
+      "record_path": "eval/runs/mitmproxy-8473/record.json",
+      "reasons": [
+        "lint .: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck .: head=passed, dependency_state=verified, base=unavailable"
+      ]
+    },
+    {
+      "repository": "pydantic/pydantic-ai",
+      "pr": "https://github.com/pydantic/pydantic-ai/pull/12540",
+      "case_id": "12540",
+      "record_path": "eval/runs/pydantic-ai-12540-attempt3/record.json",
+      "reasons": [
+        "coverage . head: skipped disabled Disabled in the profile",
+        "coverage examples head: skipped disabled Disabled in the profile",
+        "coverage pydantic_ai_slim head: skipped disabled Disabled in the profile",
+        "coverage pydantic_evals head: skipped disabled Disabled in the profile",
+        "coverage pydantic_graph head: skipped disabled Disabled in the profile",
+        "coverage src/pydantic_ai_harness head: skipped disabled Disabled in the profile",
+        "coverage src/pydantic_clai2 head: skipped disabled Disabled in the profile",
+        "dependencies . head: skipped disabled Disabled in the profile",
+        "lint . head: skipped dependency_mismatch uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "lint .: head=skipped, dependency_state=unavailable, base=unavailable",
+        "lint pydantic_ai_slim head: skipped dependency_mismatch uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "lint pydantic_ai_slim: head=skipped, dependency_state=unavailable, base=unavailable",
+        "lint pydantic_evals head: skipped dependency_mismatch uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "lint pydantic_evals: head=skipped, dependency_state=unavailable, base=unavailable",
+        "lint pydantic_graph: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck . head: skipped dependency_mismatch uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "typecheck .: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck examples head: skipped dependency_mismatch uv.lock: missing ag-ui-protocol at ag-ui-protocol; reinstall dependencies",
+        "typecheck examples: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck pydantic_ai_slim head: skipped dependency_mismatch uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "typecheck pydantic_ai_slim: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck pydantic_evals head: skipped dependency_mismatch uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "typecheck pydantic_evals: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck pydantic_graph: head=passed, dependency_state=verified, base=unavailable",
+        "typecheck src/pydantic_ai_harness head: skipped dependency_mismatch uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "typecheck src/pydantic_ai_harness: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck src/pydantic_clai2 head: skipped dependency_mismatch uv.lock: missing fastapi at fastapi; reinstall dependencies",
+        "typecheck src/pydantic_clai2: head=skipped, dependency_state=unavailable, base=unavailable"
+      ]
+    },
+    {
+      "repository": "pydantic/pydantic-ai",
+      "pr": "https://github.com/pydantic/pydantic-ai/pull/8641",
+      "case_id": "8641-seeded-unused-import",
+      "record_path": "eval/runs/pydantic-ai-8641-seeded-attempt1/record.json",
+      "reasons": [
+        "coverage examples head: skipped disabled Disabled in the profile",
+        "coverage pydantic_ai_slim head: skipped disabled Disabled in the profile",
+        "coverage pydantic_evals head: skipped disabled Disabled in the profile",
+        "dependencies . head: skipped disabled Disabled in the profile",
+        "lint pydantic_ai_slim head: skipped dependency_mismatch uv.lock: burner-redis: expected burner-redis@0.1.6, installed burner-redis@0.1.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "lint pydantic_ai_slim: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck examples head: skipped dependency_mismatch uv.lock: missing ag-ui-protocol at ag-ui-protocol; reinstall dependencies",
+        "typecheck examples: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck pydantic_ai_slim head: skipped dependency_mismatch uv.lock: burner-redis: expected burner-redis@0.1.6, installed burner-redis@0.1.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "typecheck pydantic_ai_slim: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck pydantic_evals head: skipped dependency_mismatch uv.lock: burner-redis: expected burner-redis@0.1.6, installed burner-redis@0.1.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "typecheck pydantic_evals: head=skipped, dependency_state=unavailable, base=unavailable"
+      ]
+    }
+  ],
+  "agent_layer_backlog": [],
+  "deterministic_misses": 1,
+  "sample": {
+    "eligible_real_prs": 1,
+    "repositories": 1,
+    "languages": [
+      "python"
+    ],
+    "positive_control_repositories": 1,
+    "positive_controls_by_language": {
+      "typescript": 0,
+      "python": 1
+    },
+    "clean_negative_controls": 1,
+    "adequate": false,
+    "requirements_missing": [
+      "Need at least 10 eligible real PRs",
+      "Need at least 5 eligible repositories",
+      "Need both languages",
+      "Need at least 10 eligible positive controls",
+      "Need controls across at least 3 repositories",
+      "Need at least 5 controls per language"
+    ]
+  },
+  "decision": "insufficient-evidence",
+  "decision_reasons": [
+    "Need at least 10 eligible real PRs",
+    "Need at least 5 eligible repositories",
+    "Need both languages",
+    "Need at least 10 eligible positive controls",
+    "Need controls across at least 3 repositories",
+    "Need at least 5 controls per language",
+    "Precision below 0.80",
+    "False-positive causes per PR must be < 0.15",
+    "Need at least 10 useful real PRs"
+  ]
+}

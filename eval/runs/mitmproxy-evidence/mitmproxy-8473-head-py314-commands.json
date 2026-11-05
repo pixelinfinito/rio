@@ -1,0 +1,153 @@
+[
+  {
+    "argv": [
+      "uv",
+      "sync",
+      "--locked",
+      "--python",
+      "3.14.10",
+      "--all-groups",
+      "--all-extras"
+    ],
+    "cwd": "/tmp/rio-pydantic-ai-ram/mitmproxy-negative-head",
+    "environment": {
+      "UV_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/uv-cache"
+    },
+    "exit_code": 0,
+    "wall_time_s": 0.915,
+    "output": "mitmproxy-8473-head-py314-install.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "mypy"
+    ],
+    "cwd": "/tmp/rio-pydantic-ai-ram/mitmproxy-negative-head",
+    "environment": {
+      "UV_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/uv-cache"
+    },
+    "exit_code": 0,
+    "wall_time_s": 20.276,
+    "output": "mitmproxy-8473-head-py314-mypy.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "ruff",
+      "check"
+    ],
+    "cwd": "/tmp/rio-pydantic-ai-ram/mitmproxy-negative-head",
+    "environment": {
+      "UV_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/uv-cache"
+    },
+    "exit_code": 0,
+    "wall_time_s": 0.166,
+    "output": "mitmproxy-8473-head-py314-ruff.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "coverage",
+      "erase"
+    ],
+    "cwd": "/tmp/rio-pydantic-ai-ram/mitmproxy-negative-head",
+    "environment": {
+      "UV_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/uv-cache"
+    },
+    "exit_code": 0,
+    "wall_time_s": 0.526,
+    "output": "mitmproxy-8473-head-py314-coverage-erase.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "coverage",
+      "run",
+      "--source=mitmproxy",
+      "-m",
+      "pytest",
+      "-q",
+      "test/mitmproxy/test_certs.py"
+    ],
+    "cwd": "/tmp/rio-pydantic-ai-ram/mitmproxy-negative-head",
+    "environment": {
+      "UV_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/uv-cache"
+    },
+    "exit_code": 0,
+    "wall_time_s": 7.739,
+    "output": "mitmproxy-8473-head-py314-pytest-coverage.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "coverage",
+      "json",
+      "--fail-under=0",
+      "-o",
+      "/tmp/rio-pydantic-ai-ram/evidence/mitmproxy-8473-head-py314-coverage.json"
+    ],
+    "cwd": "/tmp/rio-pydantic-ai-ram/mitmproxy-negative-head",
+    "environment": {
+      "UV_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/uv-cache"
+    },
+    "exit_code": 0,
+    "wall_time_s": 3.924,
+    "output": "mitmproxy-8473-head-py314-coverage-json.log"
+  },
+  {
+    "argv": [
+      "uv",
+      "run",
+      "--no-sync",
+      "python",
+      "-c",
+      "import importlib.metadata as m,sys; print(sys.version); print({n:m.version(n) for n in [\"mypy\",\"ruff\",\"coverage\",\"pytest\"]})"
+    ],
+    "cwd": "/tmp/rio-pydantic-ai-ram/mitmproxy-negative-head",
+    "environment": {
+      "UV_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/uv-cache"
+    },
+    "exit_code": 0,
+    "wall_time_s": 0.155,
+    "output": "mitmproxy-8473-head-py314-versions.log"
+  },
+  {
+    "argv": [
+      "git",
+      "status",
+      "--porcelain",
+      "--untracked-files=no"
+    ],
+    "cwd": "/tmp/rio-pydantic-ai-ram/mitmproxy-negative-head",
+    "environment": {
+      "UV_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/uv-cache"
+    },
+    "exit_code": 0,
+    "wall_time_s": 0.01,
+    "output": "mitmproxy-8473-head-py314-tracked-status.log"
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "/tmp/rio-pydantic-ai-ram/mitmproxy-negative-head",
+    "environment": {
+      "UV_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/uv-cache"
+    },
+    "exit_code": 0,
+    "wall_time_s": 0.004,
+    "output": "mitmproxy-8473-head-py314-pin.log"
+  }
+]

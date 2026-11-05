@@ -1,0 +1,87 @@
+{
+  "provenance": "Extracted from pinned negative head pyproject.toml; see corresponding PR record for SHA.",
+  "mypy": {
+    "files": "tests/typed_agent.py",
+    "strict": true
+  },
+  "pyright": {
+    "pythonVersion": "3.11",
+    "typeCheckingMode": "strict",
+    "reportMissingTypeStubs": false,
+    "reportUnnecessaryIsInstance": false,
+    "reportUnnecessaryTypeIgnoreComment": true,
+    "reportMissingModuleSource": false,
+    "include": [
+      "pydantic_ai_slim",
+      "pydantic_evals",
+      "pydantic_graph",
+      "tests",
+      "examples",
+      "clai",
+      "src/pydantic_ai_harness",
+      "src/pydantic_clai2",
+      "scripts/typecheck_changed.py",
+      "scripts/test_typecheck_changed.py",
+      "scripts/check_complexity.py",
+      "scripts/test_check_complexity.py",
+      "scripts/durable_exec_contract.py"
+    ],
+    "venvPath": ".",
+    "venv": ".venv",
+    "executionEnvironments": [
+      {
+        "root": "tests/durable_exec/test_durable_exec_contract_manifest.py",
+        "extraPaths": [
+          "scripts",
+          "examples"
+        ],
+        "reportUnusedFunction": false,
+        "reportPrivateImportUsage": false
+      },
+      {
+        "root": "tests/durable_exec/test_durable_exec_contract_touched.py",
+        "extraPaths": [
+          "scripts",
+          "examples"
+        ],
+        "reportUnusedFunction": false,
+        "reportPrivateImportUsage": false
+      },
+      {
+        "root": "tests",
+        "extraPaths": [
+          "examples"
+        ],
+        "reportUnusedFunction": false,
+        "reportPrivateImportUsage": false
+      },
+      {
+        "root": "scripts/typecheck_changed.py",
+        "pythonVersion": "3.11"
+      },
+      {
+        "root": "scripts/test_typecheck_changed.py",
+        "extraPaths": [
+          "scripts"
+        ],
+        "pythonVersion": "3.11",
+        "reportUnusedFunction": false,
+        "reportPrivateImportUsage": false
+      },
+      {
+        "root": "scripts/test_check_complexity.py",
+        "extraPaths": [
+          "scripts"
+        ],
+        "reportPrivateUsage": false
+      }
+    ],
+    "exclude": [
+      "src/pydantic_ai_harness/pydantic_ai_harness/browser_use",
+      "tests/harness/browser_use",
+      "examples/pydantic_ai_examples/weather_agent_gradio.py",
+      "pydantic_ai_slim/pydantic_ai/embeddings/voyageai.py"
+    ]
+  },
+  "adapter_source": "crates/rio-adapters/src/languages.rs:53-74; explicit mypy targets suppress inferred package targets; internal argv not captured"
+}
