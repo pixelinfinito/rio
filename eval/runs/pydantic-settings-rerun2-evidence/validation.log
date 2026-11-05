@@ -1,0 +1,26 @@
+UTC 2026-11-05T11:39:21.705097+00:00
+
+argv=["/dev/shm/pydantic-settings-rerun2-eval/cpython-3.13.9-linux-x86_64-gnu/bin/python3.13", "eval/evaluate.py", "validate", "eval/runs/pydantic-settings-1097-rerun2/record.json"]
+Valid: eval/runs/pydantic-settings-1097-rerun2/record.json
+exit_code=0
+
+argv=["/dev/shm/pydantic-settings-rerun2-eval/cpython-3.13.9-linux-x86_64-gnu/bin/python3.13", "eval/evaluate.py", "validate", "eval/runs/pydantic-settings-1097-rerun2-attempt2/record.json"]
+Valid: eval/runs/pydantic-settings-1097-rerun2-attempt2/record.json
+exit_code=0
+
+argv=["/dev/shm/pydantic-settings-rerun2-eval/cpython-3.13.9-linux-x86_64-gnu/bin/python3.13", "eval/evaluate.py", "validate", "eval/runs/pydantic-settings-1109-rerun2/record.json"]
+Valid: eval/runs/pydantic-settings-1109-rerun2/record.json
+exit_code=0
+
+argv=["/dev/shm/pydantic-settings-rerun2-eval/cpython-3.13.9-linux-x86_64-gnu/bin/python3.13", "eval/evaluate.py", "validate", "eval/runs/pydantic-settings-708-rerun2/record.json"]
+Valid: eval/runs/pydantic-settings-708-rerun2/record.json
+exit_code=0
+
+argv=["/dev/shm/pydantic-settings-rerun2-eval/cpython-3.13.9-linux-x86_64-gnu/bin/python3.13", "eval/evaluate.py", "validate", "eval/runs/pydantic-settings-rerun2-SUMMARY.json"]
+Valid: eval/runs/pydantic-settings-rerun2-SUMMARY.json
+exit_code=0
+
+Artifact checks: 206 staged files, all under eval/runs/, no .git/.venv components, no file over 5,000,000 bytes; largest 43,587 bytes. All findings/risks adjudicated, correct automated reviewer identity, no TODO, no disposable runner clone remains.
+Raw captured stdout logs preserve trailing blank lines from printing the optional coverage hook; full git diff --check reports those six raw log files. They were not rewritten.
+argv=["git", "diff", "--cached", "--check", "--", "eval/runs", ":(exclude,glob)**/*.log"]
+exit_code=0

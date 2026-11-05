@@ -1,0 +1,27 @@
+{
+  "started_utc": "2026-11-05T10:57:35.816970+00:00",
+  "binary": "/home/ubuntu/rio/target/release/rio",
+  "version": "rio 0.1.0 x86_64-unknown-linux-gnu f6e4f87e4c65",
+  "binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+  "python": "Python 3.13.9",
+  "python_executable": "/home/ubuntu/.local/share/uv/python/cpython-3.13.9-linux-x86_64-gnu/bin/python3.13",
+  "uv": "uv 0.13.7 (x86_64-unknown-linux-gnu)",
+  "platform": "Linux-6.8.0-147-generic-x86_64-with-glibc2.39",
+  "environment_overrides": {
+    "PATH": "/home/ubuntu/.local/share/uv/python/cpython-3.13.9-linux-x86_64-gnu/bin:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/tmp/rio-acceptance-tools:/home/ubuntu/.local/bin:/home/ubuntu/.local/bin:/home/ubuntu/.codex/tmp/arg0-linux/codex-arg02i4dIb:/home/ubuntu/.codex/packages/standalone/releases/0.166.0-x86_64-unknown-linux-musl/codex-path:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+    "UV_PYTHON": "3.13.9",
+    "TMPDIR": "/dev/shm/pydantic-settings-rerun2-eval",
+    "UV_CACHE_DIR": "/dev/shm/pydantic-settings-rerun2-eval/uv-cache"
+  },
+  "selected_inherited_environment": {
+    "PYTHONPATH": null,
+    "PYTHONHOME": null,
+    "MYPYPATH": null,
+    "PYTEST_ADDOPTS": null,
+    "COVERAGE_FILE": null,
+    "COVERAGE_PROCESS_START": null,
+    "COVERAGE_PROCESS_CONFIG": null
+  },
+  "free_space_bytes_before": 5839372288,
+  "scope": "Same preregistered cases, install plans, profiles, and independent oracle evidence. Offline audit has no advisory cache; no audit-safety claim. No semantic endpoint. Sequential runs; strace observes successful child execve without environment values."
+}

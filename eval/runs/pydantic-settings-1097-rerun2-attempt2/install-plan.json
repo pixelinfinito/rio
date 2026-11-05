@@ -1,0 +1,38 @@
+{
+  "base": [
+    [
+      "uv",
+      "sync",
+      "--locked",
+      "--all-groups",
+      "--all-extras",
+      "--no-install-project"
+    ],
+    [
+      "uv",
+      "run",
+      "--no-sync",
+      "python",
+      "-c",
+      "import pathlib, sysconfig; p = pathlib.Path(sysconfig.get_path('purelib')) / 'a1_coverage.pth'; print(str(p)); print(p.read_text() if p.exists() else 'absent'); p.unlink(missing_ok=True)"
+    ]
+  ],
+  "head": [
+    [
+      "uv",
+      "sync",
+      "--locked",
+      "--all-groups",
+      "--all-extras",
+      "--no-install-project"
+    ],
+    [
+      "uv",
+      "run",
+      "--no-sync",
+      "python",
+      "-c",
+      "import pathlib, sysconfig; p = pathlib.Path(sysconfig.get_path('purelib')) / 'a1_coverage.pth'; print(str(p)); print(p.read_text() if p.exists() else 'absent'); p.unlink(missing_ok=True)"
+    ]
+  ]
+}

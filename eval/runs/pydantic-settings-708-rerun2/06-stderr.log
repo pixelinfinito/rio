@@ -1,0 +1,13 @@
+Warning: you are leaving 3 commits behind, not connected to
+any of your branches:
+
+  7d60367 Apply suggestion from @hramezani
+  922c819 fix: aws secrets manager
+  4aede65 Add support for AWS Secrets Manager VersionId parameter
+
+If you want to keep them by creating a new branch, this may be a good time
+to do so with:
+
+ git branch <new-branch-name> 7d60367
+
+HEAD is now at 61e0b46 add deep merge functionality to config file sources (#698)
