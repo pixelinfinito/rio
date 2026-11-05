@@ -1,0 +1,6 @@
+Found 'package.json' at '/recorded/repo/package.json'.
+======== Resolving module './src/index' from '/recorded/repo/src/test.ts'. ========
+File '/recorded/repo/src/index.ts' exists - use it as a name resolution result.
+src/test.ts(1,7): error TS2322: Type 'string' is not assignable to type 'number'.
+======== Module name './src/index' was successfully resolved. ========
+error TS6504: File '/recorded/repo/rollup.config.js' is a JavaScript file. Did you mean to enable the 'allowJs' option?

@@ -76,7 +76,11 @@ fn pyright_zero_based_coordinates_and_mypy_line_fallback_are_normalized() {
 
 #[test]
 fn malformed_output_and_outside_paths_are_never_silently_discarded() {
-    assert!(parse_tsc(b"compiler stack trace", &context()).is_err());
+    assert!(
+        parse_tsc(b"compiler stack trace", &context())
+            .unwrap()
+            .is_empty()
+    );
     assert!(parse_tsc(b"../../outside.ts(1,1): error TS2322: invalid", &context()).is_err());
     assert!(parse_eslint(b"{}", &context()).is_err());
     assert!(parse_pyright(b"{}", &context()).is_err());
@@ -315,3 +319,19 @@ fn canonical_tool_paths_are_mapped_through_a_repository_directory_alias() {
     let findings = parse_ruff(&serde_json::to_vec(&output).unwrap(), &context).unwrap();
     assert_eq!(findings[0].location.path, "source.py");
 }
+
+#[test]
+fn tsc_trace_and_global_errors_preserve_valid_diagnostics() {
+    let parsed = parse_tsc(
+        include_bytes!("fixtures/diagnostics/tsc-trace-global.stdout"),
+        &context(),
+    )
+    .unwrap();
+    assert_eq!(parsed.len(), 2);
+    assert_eq!(parsed[0].rule_id, "typecheck/tsc/TS2322");
+    assert_eq!(parsed[1].rule_id, "typecheck/tsc/TS6504");
+    assert_eq!(parsed[1].location.path, "tsconfig.json");
+    let parsed = parse_tsc(b"error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline.", &context()).unwrap();
+    assert_eq!(parsed[0].rule_id, "typecheck/tsc/TS5112");
+}
+

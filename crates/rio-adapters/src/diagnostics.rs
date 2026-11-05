@@ -137,6 +137,8 @@ pub fn parse_tsc(stdout: &[u8], context: &DiagnosticContext<'_>) -> Result<Vec<F
     static DIAGNOSTIC: LazyLock<Regex> = LazyLock::new(|| {
         Regex::new(r"^(.*)\((\d+),(\d+)\): (error|warning) (TS\d+): (.*)$").unwrap()
     });
+    static GLOBAL: LazyLock<Regex> =
+        LazyLock::new(|| Regex::new(r"^(error|warning) (TS\d+): (.*)$").unwrap());
     let text = std::str::from_utf8(stdout)?;
     let mut parsed: Vec<(String, u32, u32, String, String, Severity)> = Vec::new();
     for line in text.lines().filter(|line| !line.trim().is_empty()) {
@@ -153,13 +155,27 @@ pub fn parse_tsc(stdout: &[u8], context: &DiagnosticContext<'_>) -> Result<Vec<F
                     Severity::Warning
                 },
             ));
+        } else if let Some(captures) = GLOBAL.captures(line) {
+            parsed.push((
+                "tsconfig.json".into(),
+                1,
+                1,
+                captures[2].into(),
+                captures[3].into(),
+                if &captures[1] == "error" {
+                    Severity::Error
+                } else {
+                    Severity::Warning
+                },
+            ));
         } else if line.starts_with(char::is_whitespace) && !parsed.is_empty() {
             let message = &mut parsed.last_mut().unwrap().4;
             message.push('\n');
             message.push_str(line.trim());
-        } else {
-            bail!("unrecognized tsc output: {}", redact(line));
         }
+        // traceResolution, listFiles, watch banners and summaries are not
+        // diagnostics. Exit-code validation still rejects failing runs with
+        // no parsed diagnostic.
     }
     parsed
         .iter()
