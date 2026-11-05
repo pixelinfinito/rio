@@ -333,6 +333,16 @@ pub struct CompatibilityRequest<'a> {
 }
 
 pub fn check_compatibility(request: CompatibilityRequest<'_>) -> Compatibility {
+    compatibility(request, false)
+}
+
+/// Base source links are redirected into the disposable base tree before tools
+/// run. Installation graph mismatches still prevent classification.
+pub fn check_base_compatibility(request: CompatibilityRequest<'_>) -> Compatibility {
+    compatibility(request, true)
+}
+
+fn compatibility(request: CompatibilityRequest<'_>, remap: bool) -> Compatibility {
     let mut inputs = request.installation.fingerprints.clone();
     let mut unverified = Vec::new();
     let hash = |inputs: &BTreeMap<String, Vec<u8>>| dependency_state_hash(inputs);
@@ -388,7 +398,11 @@ pub fn check_compatibility(request: CompatibilityRequest<'_>) -> Compatibility {
                 request.project_root
             }
             || (relative.is_empty() && request.project_root == ".");
-        if expected.is_none() && !own_root && !name.ends_with(".pth") {
+        if expected.is_none()
+            && !own_root
+            && !name.ends_with(".pth")
+            && !name.ends_with(".egg-link")
+        {
             continue;
         }
         if let Some(expected_source) = expected.and_then(|node| node.package.link.as_deref()) {
@@ -412,11 +426,16 @@ pub fn check_compatibility(request: CompatibilityRequest<'_>) -> Compatibility {
             .into_iter()
             .find(|path| path.starts_with(&prefix))
         {
-            return Compatibility::Mismatch {
-                hint: format!(
-                    "linked dependency {name} points at changed source {relative}: {path}; commit or stash the linked package's changes"
-                ),
-            };
+            if !remap {
+                return Compatibility::Mismatch {
+                    hint: format!(
+                        "linked dependency {name} points at changed source {relative}: {path}; make the installed source match the selected head"
+                    ),
+                };
+            }
+            if let Some(hint) = missing_build_output(request.selected, &relative, name) {
+                return Compatibility::Mismatch { hint };
+            }
         }
         for (path, entry) in request
             .selected
@@ -512,4 +531,43 @@ pub fn check_compatibility(request: CompatibilityRequest<'_>) -> Compatibility {
     Compatibility::Verified {
         hash: hash(&inputs),
     }
+}
+
+// Entry points can be conditional exports or arrays, as well as main/types.
+pub(super) fn missing_build_output(tree: &Tree, root: &str, name: &str) -> Option<String> {
+    let manifest = tree.get(&join(root, "package.json"))?;
+    let manifest: Value = serde_json::from_slice(&manifest.content).ok()?;
+    fn strings(value: &Value, result: &mut Vec<String>) {
+        match value {
+            Value::String(value) => result.push(value.clone()),
+            Value::Array(values) => values.iter().for_each(|value| strings(value, result)),
+            Value::Object(values) => values.values().for_each(|value| strings(value, result)),
+            _ => {}
+        }
+    }
+    let mut entries = Vec::new();
+    for key in [
+        "main",
+        "module",
+        "types",
+        "typings",
+        "exports",
+        "typesVersions",
+    ] {
+        strings(&manifest[key], &mut entries);
+    }
+    for entry in entries {
+        let entry = entry.trim_start_matches("./");
+        let directory = entry.split('/').next()?;
+        if !entry.contains('/') || directory == "src" || directory == ".." {
+            continue;
+        }
+        let prefix = format!("{}/", join(root, directory));
+        if !tree.keys().any(|path| path.starts_with(&prefix)) {
+            return Some(format!(
+                "linked package {name} is consumed through build output {directory}/ that is not in the tree; run the build in the base or configure source entry points"
+            ));
+        }
+    }
+    None
 }

@@ -578,3 +578,98 @@ fn yarn_classic_workspace_links_are_resolved_using_workspace_manifests() {
     let result = check(root.path(), &tree, &tree, Some(&lock), &installed, false);
     assert!(result.can_run(), "{result:?}");
 }
+
+#[cfg(unix)]
+#[test]
+fn baseline_remaps_source_but_rejects_untracked_build_entry_points() {
+    use rio_adapters::check_base_compatibility;
+    let root = tempfile::tempdir().unwrap();
+    let lock = serde_json::json!({"lockfileVersion":3,"packages":{
+        "":{"dependencies":{"shared":"*"}},
+        "packages/shared":{"name":"shared","version":"1.0.0"},
+        "node_modules/shared":{"resolved":"packages/shared","link":true}
+    }})
+    .to_string();
+    let mut base = Tree::new();
+    put(&mut base, "package-lock.json", &lock);
+    put(
+        &mut base,
+        "packages/shared/package.json",
+        r#"{"name":"shared","version":"1.0.0","types":"src/index.ts"}"#,
+    );
+    put(
+        &mut base,
+        "packages/shared/src/index.ts",
+        "export const value = 1;",
+    );
+    let mut head = base.clone();
+    put(
+        &mut head,
+        "packages/shared/src/index.ts",
+        "export const value = 'new';",
+    );
+    write(root.path(), "node_modules/.package-lock.json", &lock);
+    package(root.path(), "packages/shared", "shared", "1.0.0");
+    std::os::unix::fs::symlink(
+        "../packages/shared",
+        root.path().join("node_modules/shared"),
+    )
+    .unwrap();
+    let installed = read_installation(
+        root.path(),
+        ".",
+        &governing_lockfile(&head, ".", None, Ecosystem::Npm)
+            .unwrap()
+            .unwrap()
+            .graph,
+    );
+    for field in ["types", "main", "exports"] {
+        for compiled in [false, true] {
+            let mut selected = base.clone();
+            let entry = if compiled {
+                "./dist/index.js"
+            } else {
+                "./src/index.ts"
+            };
+            let mut manifest = serde_json::json!({"name":"shared","version":"1.0.0"});
+            manifest[field] = if field == "exports" {
+                serde_json::json!({".":{"types":entry,"default":entry}})
+            } else {
+                serde_json::json!(entry)
+            };
+            put(
+                &mut selected,
+                "packages/shared/package.json",
+                &manifest.to_string(),
+            );
+            let lock = governing_lockfile(&selected, ".", None, Ecosystem::Npm)
+                .unwrap()
+                .unwrap();
+            let result = check_base_compatibility(CompatibilityRequest {
+                worktree: root.path(),
+                working: &head,
+                selected: &selected,
+                project_root: ".",
+                lockfile: Some(&lock),
+                installation: &installed,
+                environment: &DependencyEnvironment::default(),
+                trust: false,
+            });
+            if compiled {
+                assert!(
+                    matches!(result, Compatibility::Mismatch { .. }),
+                    "{result:?}"
+                );
+                assert!(
+                    result
+                        .hint()
+                        .unwrap()
+                        .contains("consumed through build output dist/ that is not in the tree")
+                );
+                assert!(!result.hint().unwrap().contains("commit or stash"));
+            } else {
+                assert!(result.can_run(), "{result:?}");
+            }
+        }
+    }
+}

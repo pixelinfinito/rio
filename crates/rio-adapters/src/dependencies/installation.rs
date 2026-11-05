@@ -304,16 +304,67 @@ fn python(worktree: &Path, installation_root: &str, installation: &mut Installat
     for site in sites {
         for entry in fs::read_dir(&site)? {
             let path = entry?.path();
-            if path.extension().is_some_and(|extension| extension == "pth") {
+            let filename = path.file_name().unwrap_or_default().to_string_lossy();
+            if (filename.starts_with("__editable__") || filename.starts_with("_editable_impl_"))
+                && filename.ends_with(".py")
+            {
+                let key = path
+                    .strip_prefix(worktree)?
+                    .to_string_lossy()
+                    .replace('\\', "/");
+                installation.fingerprints.insert(
+                    key,
+                    fs::read_to_string(&path)?
+                        .replace(
+                            canonical_worktree.to_string_lossy().as_ref(),
+                            "<repository>",
+                        )
+                        .into_bytes(),
+                );
+            }
+            if path
+                .extension()
+                .is_some_and(|extension| extension == "pth" || extension == "egg-link")
+            {
                 let text = fs::read_to_string(&path)?;
-                for line in text
+                let key = path
+                    .strip_prefix(worktree)?
+                    .to_string_lossy()
+                    .replace('\\', "/");
+                installation.fingerprints.insert(
+                    key,
+                    text.replace(
+                        canonical_worktree.to_string_lossy().as_ref(),
+                        "<repository>",
+                    )
+                    .into_bytes(),
+                );
+                for (line_number, line) in text
                     .lines()
                     .map(str::trim)
                     .filter(|line| !line.is_empty() && !line.starts_with('#'))
+                    .enumerate()
                 {
+                    if path
+                        .extension()
+                        .is_some_and(|extension| extension == "egg-link")
+                        && line_number > 0
+                    {
+                        break;
+                    }
                     if line.starts_with("import ") || line.starts_with("import\t") {
-                        // PEP 660 finders are handled by direct_url.json below.
-                        if !line.contains("__editable__") {
+                        // A finder may not ship direct_url.json. Conservatively
+                        // scope it to the repository until its literal source
+                        // paths can be proven in the private base overlay.
+                        if line.contains("__editable__") || line.contains("_editable_impl_") {
+                            installation.links.insert(
+                                path.strip_prefix(worktree)?
+                                    .to_string_lossy()
+                                    .replace('\\', "/"),
+                                canonical_worktree.clone(),
+                            );
+                        }
+                        if !line.contains("__editable__") && !line.contains("_editable_impl_") {
                             installation.complete = false;
                             installation.notes.push(format!(
                                 "executable .pth cannot be verified: {}",
@@ -325,12 +376,16 @@ fn python(worktree: &Path, installation_root: &str, installation: &mut Installat
                         if target.is_dir() {
                             let target = target.canonicalize()?;
                             if target.starts_with(&canonical_worktree) {
-                                installation.links.insert(
-                                    path.strip_prefix(worktree)?
-                                        .to_string_lossy()
-                                        .replace('\\', "/"),
-                                    target,
-                                );
+                                let key = path
+                                    .strip_prefix(worktree)?
+                                    .to_string_lossy()
+                                    .replace('\\', "/");
+                                let key = if line_number == 0 {
+                                    key
+                                } else {
+                                    format!("{key}#{line_number}.pth")
+                                };
+                                installation.links.insert(key, target);
                             }
                         }
                     }

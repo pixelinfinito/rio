@@ -517,7 +517,7 @@ async fn concurrent_reviews_keep_separate_records_and_build_one_baseline() {
 
 #[cfg(unix)]
 #[tokio::test]
-async fn linked_workspace_source_edit_disables_the_importing_roots_baseline() {
+async fn linked_workspace_source_edit_remaps_the_importing_roots_baseline() {
     let temp = tempfile::tempdir().unwrap();
     let root = temp.path();
     let profile = diagnostic_fixture(root, false);
@@ -562,18 +562,30 @@ async fn linked_workspace_source_edit_disables_the_importing_roots_baseline() {
         report
             .findings
             .iter()
-            .any(|f| f.rule_id == "typecheck/tsc/TS2322" && f.state == State::Unclassified),
+            .any(|f| f.rule_id == "typecheck/tsc/TS2322" && f.state == State::PreExisting),
         "{:#?}",
         report.checks
     );
+    let base = report
+        .checks
+        .iter()
+        .find(|c| c.version == Version::Base)
+        .unwrap();
     assert!(
-        report
+        base.outcome
+            .details()
+            .hint
+            .as_ref()
+            .unwrap()
+            .contains("baseline: 1 linked packages remapped to base")
+    );
+    assert!(
+        !report
             .footer
             .notes
             .iter()
-            .any(|note| note.contains("baseline_failed") && note.contains("packages/shared"))
+            .any(|note| note.contains("baseline_failed"))
     );
-    assert!(!report.checks.iter().any(|c| c.version == Version::Base));
 }
 
 #[cfg(unix)]
@@ -782,5 +794,264 @@ exit 2
                     "baseline disabled"
                 }))
         );
+    }
+}
+
+#[cfg(unix)]
+#[tokio::test]
+async fn committed_workspace_change_classifies_errors_in_dependent_package() {
+    let tsc = fixture("ts-sample").join("node_modules/.bin/tsc");
+    if !require_tool(tsc.exists(), "tsc") {
+        return;
+    }
+    let temp = tempfile::tempdir().unwrap();
+    let root = temp.path();
+    init(root);
+    for directory in [
+        "node_modules/.bin",
+        "packages/a/src",
+        "packages/b/src",
+        "packages/b/node_modules",
+    ] {
+        fs::create_dir_all(root.join(directory)).unwrap();
+    }
+    fs::write(root.join(".gitignore"), "node_modules/\n.rio/cache/\n").unwrap();
+    fs::write(
+        root.join("package.json"),
+        r#"{"name":"workspace","version":"1.0.0","workspaces":["packages/*"]}"#,
+    )
+    .unwrap();
+    fs::write(
+        root.join("packages/a/package.json"),
+        r#"{"name":"a","version":"1.0.0","types":"src/index.ts"}"#,
+    )
+    .unwrap();
+    fs::write(
+        root.join("packages/b/package.json"),
+        r#"{"name":"b","version":"1.0.0","dependencies":{"a":"*"}}"#,
+    )
+    .unwrap();
+    for package in ["a", "b"] {
+        fs::write(root.join(format!("packages/{package}/tsconfig.json")), r#"{"compilerOptions":{"strict":true,"skipLibCheck":true,"module":"commonjs"},"include":["src"]}"#).unwrap();
+    }
+    fs::write(
+        root.join("packages/a/src/index.ts"),
+        "export const value: number = 1;\n",
+    )
+    .unwrap();
+    fs::write(
+        root.join("packages/b/src/caller.ts"),
+        "import {value} from 'a';\nexport const result: number = value;\n",
+    )
+    .unwrap();
+    fs::write(
+        root.join("packages/b/src/existing.ts"),
+        "export const old: number = 'old';\n",
+    )
+    .unwrap();
+    std::os::unix::fs::symlink(&tsc, root.join("node_modules/.bin/tsc")).unwrap();
+    std::os::unix::fs::symlink("../packages/a", root.join("node_modules/a")).unwrap();
+    std::os::unix::fs::symlink("../packages/b", root.join("node_modules/b")).unwrap();
+    std::os::unix::fs::symlink("../../a", root.join("packages/b/node_modules/a")).unwrap();
+    let lock = serde_json::json!({"lockfileVersion":3,"packages":{
+        "":{"name":"workspace","version":"1.0.0"},
+        "packages/a":{"name":"a","version":"1.0.0"},
+        "packages/b":{"name":"b","version":"1.0.0","dependencies":{"a":"*"}},
+        "node_modules/a":{"resolved":"packages/a","link":true},
+        "node_modules/b":{"resolved":"packages/b","link":true}
+    }})
+    .to_string();
+    fs::write(root.join("package-lock.json"), &lock).unwrap();
+    fs::write(root.join("node_modules/.package-lock.json"), &lock).unwrap();
+    let profile = profile(root, "60s", true);
+    git(root, &["add", "."]);
+    git(root, &["commit", "-m", "base workspace"]);
+    fs::write(
+        root.join("packages/a/src/index.ts"),
+        "export const value: string = 'new';\n",
+    )
+    .unwrap();
+    git(root, &["add", "."]);
+    git(root, &["commit", "-m", "change dependency API"]);
+    let mut input = request(root, profile);
+    input.changes = select(
+        &GixRepo::discover(root).unwrap(),
+        Selection::Branch {
+            reference: "HEAD~1".into(),
+        },
+    )
+    .unwrap();
+    let report = review(
+        input,
+        ProcessSupervisor::default(),
+        CancellationToken::new(),
+        None,
+    )
+    .await
+    .unwrap();
+    assert!(
+        report
+            .findings
+            .iter()
+            .any(|f| f.location.path == "packages/b/src/caller.ts" && f.state == State::New),
+        "{:#?}",
+        report
+    );
+    assert!(
+        report
+            .findings
+            .iter()
+            .any(|f| f.location.path == "packages/b/src/existing.ts"
+                && f.state == State::PreExisting),
+        "{:#?}",
+        report
+    );
+    assert!(report.checks.iter().any(|c| c.root == "packages/b"
+        && c.version == Version::Base
+        && c.scheduled_as == ScheduledAs::Dependent));
+    assert!(
+        !report
+            .footer
+            .notes
+            .iter()
+            .any(|note| note.contains("baseline_failed")),
+        "{:?}",
+        report.footer
+    );
+    assert_eq!(
+        fs::read_link(root.join("packages/b/node_modules/a")).unwrap(),
+        Path::new("../../a")
+    );
+}
+
+#[cfg(unix)]
+#[tokio::test]
+async fn committed_python_editables_resolve_base_source_without_changing_head() {
+    use std::os::unix::fs::PermissionsExt;
+    for finder in [false, true] {
+        let temp = tempfile::tempdir().unwrap();
+        let root = temp.path();
+        init(root);
+        let status = std::process::Command::new("python3")
+            .args(["-m", "venv", "--without-pip"])
+            .arg(root.join(".venv"))
+            .status()
+            .unwrap();
+        assert!(status.success());
+        let site = fs::read_dir(root.join(".venv/lib"))
+            .unwrap()
+            .next()
+            .unwrap()
+            .unwrap()
+            .path()
+            .join("site-packages");
+        fs::create_dir_all(root.join("src/shared")).unwrap();
+        fs::write(root.join("src/shared/__init__.py"), "value = 1\n").unwrap();
+        fs::write(
+            root.join("caller.py"),
+            "from shared import value\nresult: int = value\n",
+        )
+        .unwrap();
+        fs::write(root.join("existing.py"), "old: int = 'old'\n").unwrap();
+        fs::write(root.join("pyproject.toml"), "[project]\nname='shared'\nversion='1.0.0'\n[tool.mypy]\nfiles=['caller.py','existing.py']\n").unwrap();
+        fs::write(root.join("requirements.txt"), "shared==1.0.0\n").unwrap();
+        fs::write(
+            root.join(".gitignore"),
+            ".venv/\n.rio/cache/\n__pycache__/\n",
+        )
+        .unwrap();
+        fs::create_dir_all(site.join("shared-1.0.0.dist-info")).unwrap();
+        fs::write(
+            site.join("shared-1.0.0.dist-info/METADATA"),
+            "Name: shared\nVersion: 1.0.0\n",
+        )
+        .unwrap();
+        fs::write(site.join("shared-1.0.0.dist-info/direct_url.json"), serde_json::json!({"url":format!("file://{}",root.display()),"dir_info":{"editable":true}}).to_string()).unwrap();
+        if finder {
+            fs::write(
+                site.join("shared.pth"),
+                "import __editable__shared; __editable__shared.install()\n",
+            )
+            .unwrap();
+            fs::write(site.join("__editable__shared.py"), format!(r#"import sys, importlib.abc, importlib.util
+MAPPING = {{'shared': {:?}}}
+class Finder(importlib.abc.MetaPathFinder):
+    @classmethod
+    def find_spec(cls, fullname, path=None, target=None):
+        if fullname in MAPPING:
+            return importlib.util.spec_from_file_location(fullname, MAPPING[fullname] + '/__init__.py')
+def install():
+    sys.meta_path.append(Finder)
+"#, root.join("src/shared").to_str().unwrap())).unwrap();
+        } else {
+            fs::write(
+                site.join("shared.pth"),
+                format!("{}\n", root.join("src").display()),
+            )
+            .unwrap();
+        }
+        // This checker imports the editable package with the actual venv
+        // interpreter, so head leakage changes the diagnostic set and fails.
+        let checker = root.join(".venv/bin/mypy");
+        fs::write(&checker, format!(r#"#!{}/.venv/bin/python
+import sys, json
+if '--version' in sys.argv:
+    print('mypy 1.14.1'); sys.exit(0)
+import shared
+def error(file, message):
+    print(json.dumps(dict(file=file, line=2, column=0, end_line=2, end_column=10, message=message, code='assignment', severity='error')))
+error('existing.py', 'pre-existing error')
+if isinstance(shared.value, str):
+    error('caller.py', 'dependency changed to string')
+sys.exit(1)
+"#, root.display())).unwrap();
+        fs::set_permissions(&checker, fs::Permissions::from_mode(0o755)).unwrap();
+        let profile = profile(root, "60s", true);
+        git(root, &["add", "."]);
+        git(root, &["commit", "-m", "base editable"]);
+        fs::write(root.join("src/shared/__init__.py"), "value = 'new'\n").unwrap();
+        git(root, &["add", "."]);
+        git(root, &["commit", "-m", "change editable API"]);
+        let original = fs::read(site.join("shared.pth")).unwrap();
+        let mut input = request(root, profile);
+        input.changes = select(
+            &GixRepo::discover(root).unwrap(),
+            Selection::Branch {
+                reference: "HEAD~1".into(),
+            },
+        )
+        .unwrap();
+        let report = review(
+            input,
+            ProcessSupervisor::default(),
+            CancellationToken::new(),
+            None,
+        )
+        .await
+        .unwrap();
+        assert!(
+            report
+                .findings
+                .iter()
+                .any(|f| f.location.path == "caller.py" && f.state == State::New),
+            "{report:#?}"
+        );
+        assert!(
+            report
+                .findings
+                .iter()
+                .any(|f| f.location.path == "existing.py" && f.state == State::PreExisting),
+            "{report:#?}"
+        );
+        assert!(
+            report.checks.iter().any(|c| c.version == Version::Base
+                && c.outcome
+                    .details()
+                    .hint
+                    .as_ref()
+                    .is_some_and(|hint| hint.contains("linked packages remapped to base"))),
+            "{report:#?}"
+        );
+        assert_eq!(fs::read(site.join("shared.pth")).unwrap(), original);
     }
 }

@@ -23,6 +23,8 @@ pub struct PlannedCheck {
     pub dependency_state: Option<DependencyState>,
     pub dependency_hash: Option<String>,
     pub baseline: bool,
+    #[serde(default)]
+    pub baseline_remap: bool,
     pub baseline_hint: Option<String>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -192,8 +194,13 @@ pub async fn plan_review(
             .await;
             plan.probes_ran = true;
         }
-        let compatibility = |selected: &Tree, lockfile: Option<&GoverningLockfile>, trust| {
-            check_compatibility(CompatibilityRequest {
+        let compatibility = |selected: &Tree, lockfile: Option<&GoverningLockfile>, trust, base| {
+            let checker = if base {
+                check_base_compatibility
+            } else {
+                check_compatibility
+            };
+            checker(CompatibilityRequest {
                 worktree,
                 working,
                 selected,
@@ -204,8 +211,24 @@ pub async fn plan_review(
                 trust,
             })
         };
-        let head = compatibility(&changes.head, lock.as_ref(), trust);
-        let base = compatibility(&changes.base, base_lock.as_ref(), false);
+        let head = compatibility(&changes.head, lock.as_ref(), trust, false);
+        let base = compatibility(&changes.base, base_lock.as_ref(), false, true);
+        let canonical_worktree = worktree.canonicalize()?;
+        let baseline_remap = installation.links.values().any(|target| {
+            target
+                .strip_prefix(&canonical_worktree)
+                .is_ok_and(|relative| {
+                    let path = relative.to_string_lossy().replace('\\', "/");
+                    let prefix = if path.is_empty() {
+                        path
+                    } else {
+                        format!("{path}/")
+                    };
+                    rio_git::changed_paths(working, &changes.base)
+                        .iter()
+                        .any(|path| path.starts_with(&prefix))
+                })
+        });
         let environment_path = if language == "typescript" {
             Some(worktree.join(&installation_root).join("node_modules"))
         } else {
@@ -308,6 +331,7 @@ pub async fn plan_review(
                 dependency_state: head.dependency_state(),
                 dependency_hash,
                 baseline: can_baseline,
+                baseline_remap,
                 baseline_hint,
             });
         }
@@ -333,6 +357,7 @@ pub async fn plan_review(
             dependency_state: None,
             dependency_hash: None,
             baseline: false,
+            baseline_remap: false,
             baseline_hint: None,
         });
     }

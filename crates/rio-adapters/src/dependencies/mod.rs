@@ -12,3 +12,6 @@ mod installation;
 pub use installation::*;
 mod compatibility;
 pub use compatibility::*;
+
+mod remap;
+pub use remap::*;
