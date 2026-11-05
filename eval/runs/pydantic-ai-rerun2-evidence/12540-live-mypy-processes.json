@@ -1,0 +1,16 @@
+[
+  {
+    "pid": 973021,
+    "argv": [
+      "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/head/.venv/bin/python",
+      "-m",
+      "mypy",
+      "--output",
+      "json",
+      "--config-file",
+      "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/cache/8ba8f4c268b11d0f/runs/01M6NQN2QA7VM19B7NRB2HZR36/tools/tool.tmp-ijgKqM/pyproject.toml"
+    ],
+    "cwd": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/cache/8ba8f4c268b11d0f/runs/01M6NQN2QA7VM19B7NRB2HZR36/tools/tool.tmp-ijgKqM",
+    "source": "Independent live /proc inspection during attempt3; not harness child-argv capture."
+  }
+]

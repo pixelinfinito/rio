@@ -1,0 +1,163 @@
+[
+  {
+    "attempt": "pydantic-ai-12540-rerun2",
+    "started_utc": "2026-11-05T10:56:15.969071+00:00",
+    "finished_utc": "2026-11-05T11:20:58.349060+00:00",
+    "runner_seconds": 1482.38,
+    "uv_sync_seconds": 49.732,
+    "rio_review_seconds": 1393.212,
+    "failures": [
+      "Expecting value: line 1 column 1 (char 0)"
+    ],
+    "report_bytes": 0,
+    "environment": null
+  },
+  {
+    "attempt": "pydantic-ai-12540-rerun2-attempt2",
+    "started_utc": "2026-11-05T11:27:40.005601+00:00",
+    "finished_utc": "2026-11-05T11:30:42.633519+00:00",
+    "runner_seconds": 182.628,
+    "uv_sync_seconds": 0.213,
+    "rio_review_seconds": 101.658,
+    "failures": [
+      "base dependency installation failed (127)",
+      "head dependency installation failed (127)",
+      "Baseline/setup ineligible; fix before scoring"
+    ],
+    "report_bytes": 21721,
+    "environment": {
+      "dependency_state": "unavailable",
+      "baseline_ran": false,
+      "baseline_classification_ran": false,
+      "eligible": false,
+      "reasons": [
+        "lint . head: skipped tool_missing Install ruff in the project environment",
+        "lint .: head=skipped, dependency_state=unavailable, base=unavailable",
+        "lint pydantic_ai_slim head: skipped tool_missing Install ruff in the project environment",
+        "lint pydantic_ai_slim: head=skipped, dependency_state=unavailable, base=unavailable",
+        "lint pydantic_evals head: skipped tool_missing Install ruff in the project environment",
+        "lint pydantic_evals: head=skipped, dependency_state=unavailable, base=unavailable",
+        "lint pydantic_graph head: skipped tool_missing Install ruff in the project environment",
+        "lint pydantic_graph: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck . head: skipped tool_missing Install pyright or mypy in the project environment",
+        "typecheck .: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck examples head: skipped tool_missing Install pyright or mypy in the project environment",
+        "typecheck examples: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck pydantic_ai_slim head: skipped tool_missing Install pyright or mypy in the project environment",
+        "typecheck pydantic_ai_slim: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck pydantic_evals head: skipped tool_missing Install pyright or mypy in the project environment",
+        "typecheck pydantic_evals: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck pydantic_graph head: skipped tool_missing Install pyright or mypy in the project environment",
+        "typecheck pydantic_graph: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck src/pydantic_ai_harness head: skipped tool_missing Install pyright or mypy in the project environment",
+        "typecheck src/pydantic_ai_harness: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck src/pydantic_clai2 head: skipped tool_missing Install pyright or mypy in the project environment",
+        "typecheck src/pydantic_clai2: head=skipped, dependency_state=unavailable, base=unavailable"
+      ],
+      "notes": [
+        "Intent inference is deferred: no_endpoint",
+        "Graph references use syntax and text; no language server was used",
+        "Impact graph truncated at max_nodes",
+        "Offline applies to Rio; tool and test processes were not network-isolated"
+      ]
+    },
+    "raw_states": {
+      "pre-existing": 1
+    },
+    "diagnostic_check_counts": {
+      "skipped": 11
+    },
+    "raw_finding_count": 1
+  },
+  {
+    "attempt": "pydantic-ai-12540-rerun2-attempt3",
+    "started_utc": "2026-11-05T11:30:18.251322+00:00",
+    "finished_utc": "2026-11-05T11:36:08.126089+00:00",
+    "runner_seconds": 349.875,
+    "uv_sync_seconds": 43.197,
+    "rio_review_seconds": 278.873,
+    "failures": [
+      "Baseline/setup ineligible; fix before scoring"
+    ],
+    "report_bytes": 25165,
+    "environment": {
+      "dependency_state": "mixed",
+      "baseline_ran": true,
+      "baseline_classification_ran": false,
+      "eligible": false,
+      "reasons": [
+        "lint . head: skipped dependency_mismatch uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "lint .: head=skipped, dependency_state=unavailable, base=unavailable",
+        "lint pydantic_ai_slim head: skipped dependency_mismatch uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "lint pydantic_ai_slim: head=skipped, dependency_state=unavailable, base=unavailable",
+        "lint pydantic_evals head: skipped dependency_mismatch uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "lint pydantic_evals: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck . head: skipped dependency_mismatch uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "typecheck .: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck examples head: skipped dependency_mismatch uv.lock: missing ag-ui-protocol at ag-ui-protocol; reinstall dependencies",
+        "typecheck examples: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck pydantic_ai_slim head: skipped dependency_mismatch uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "typecheck pydantic_ai_slim: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck pydantic_evals head: skipped dependency_mismatch uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "typecheck pydantic_evals: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck src/pydantic_ai_harness head: skipped dependency_mismatch uv.lock: fastmcp-slim: expected fastmcp-slim@4.0.5, installed fastmcp-slim@3.4.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "typecheck src/pydantic_ai_harness: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck src/pydantic_clai2 head: skipped dependency_mismatch uv.lock: missing fastapi at fastapi; reinstall dependencies",
+        "typecheck src/pydantic_clai2: head=skipped, dependency_state=unavailable, base=unavailable"
+      ],
+      "notes": [
+        "Intent inference is deferred: no_endpoint",
+        "Graph references use syntax and text; no language server was used",
+        "Impact graph truncated at max_nodes",
+        "Offline applies to Rio; tool and test processes were not network-isolated"
+      ]
+    },
+    "raw_states": {
+      "pre-existing": 1
+    },
+    "diagnostic_check_counts": {
+      "skipped": 9,
+      "passed": 4
+    },
+    "raw_finding_count": 1
+  },
+  {
+    "attempt": "pydantic-ai-8641-rerun2",
+    "started_utc": "2026-11-05T10:56:32.369627+00:00",
+    "finished_utc": "2026-11-05T10:58:20.819446+00:00",
+    "runner_seconds": 108.45,
+    "uv_sync_seconds": 29.682,
+    "rio_review_seconds": 53.034,
+    "failures": [
+      "Baseline/setup ineligible; fix before scoring"
+    ],
+    "report_bytes": 9410,
+    "environment": {
+      "dependency_state": "unavailable",
+      "baseline_ran": false,
+      "baseline_classification_ran": false,
+      "eligible": false,
+      "reasons": [
+        "lint pydantic_ai_slim head: skipped dependency_mismatch uv.lock: burner-redis: expected burner-redis@0.1.6, installed burner-redis@0.1.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "lint pydantic_ai_slim: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck examples head: skipped dependency_mismatch uv.lock: missing ag-ui-protocol at ag-ui-protocol; reinstall dependencies",
+        "typecheck examples: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck pydantic_ai_slim head: skipped dependency_mismatch uv.lock: burner-redis: expected burner-redis@0.1.6, installed burner-redis@0.1.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "typecheck pydantic_ai_slim: head=skipped, dependency_state=unavailable, base=unavailable",
+        "typecheck pydantic_evals head: skipped dependency_mismatch uv.lock: burner-redis: expected burner-redis@0.1.6, installed burner-redis@0.1.7; reinstall dependencies (npm install, pnpm install or the Python environment sync command)",
+        "typecheck pydantic_evals: head=skipped, dependency_state=unavailable, base=unavailable"
+      ],
+      "notes": [
+        "Intent inference is deferred: no_endpoint",
+        "Graph references use syntax and text; no language server was used",
+        "Impact graph truncated at max_nodes",
+        "Offline applies to Rio; tool and test processes were not network-isolated"
+      ]
+    },
+    "raw_states": {},
+    "diagnostic_check_counts": {
+      "skipped": 4
+    },
+    "raw_finding_count": 0
+  }
+]

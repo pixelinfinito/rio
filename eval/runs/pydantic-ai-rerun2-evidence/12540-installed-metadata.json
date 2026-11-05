@@ -1,0 +1,16 @@
+{
+  "attempt": "pydantic-ai-12540-rerun2-attempt3",
+  "mypy_wrapper": "#!/usr/bin/env python3\n\"\"\"Evaluation setup workaround: anchor inherited mypy targets to their config directory.\"\"\"\nimport os\nfrom pathlib import Path\nimport sys\nargs = sys.argv[1:]\nif '--config-file' in args:\n    config = Path(args[args.index('--config-file') + 1]).resolve()\n    os.chdir(config.parent)\npython = str(Path(__file__).resolve().parent / 'python')\nos.execv(python, [python, '-m', 'mypy', *args])\n",
+  "editable_metadata": {
+    "_editable_impl_pydantic_graph.pth": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/head/pydantic_graph",
+    "_editable_impl_pydantic_evals.pth": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/head/pydantic_evals",
+    "_editable_impl_pydantic_ai_slim.pth": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/head/pydantic_ai_slim",
+    "_editable_impl_pydantic_ai.pth": "/tmp/rio-pydantic-ai-ram/tmp/rio-eval-qo9gi142/head"
+  },
+  "installed_versions_from_dist_info": [
+    "ruff-0.17.2.dist-info",
+    "mypy-2.4.0.dist-info",
+    "fastmcp_slim-3.4.7.dist-info"
+  ],
+  "pyvenv_cfg": "home = /tmp/rio-pydantic-ai-ram/rerun2-python/cpython-3.13.9-linux-x86_64-gnu/bin\nimplementation = CPython\nuv = 0.13.7\nversion_info = 3.13.9\ninclude-system-site-packages = false\nprompt = pydantic-ai\n"
+}

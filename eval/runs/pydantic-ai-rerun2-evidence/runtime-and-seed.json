@@ -1,0 +1,52 @@
+{
+  "rio_version": "rio 0.1.0 x86_64-unknown-linux-gnu f6e4f87e4c65",
+  "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+  "python": "/home/ubuntu/.local/share/uv/python/cpython-3.13.9-linux-x86_64-gnu/bin/python3",
+  "uv_version": "uv 0.13.7 (x86_64-unknown-linux-gnu)",
+  "TMPDIR": "/tmp/rio-pydantic-ai-ram/tmp",
+  "UV_CACHE_DIR": "/tmp/rio-pydantic-ai-ram/uv-cache",
+  "PATH_prefix": "/home/ubuntu/.local/share/uv/python/cpython-3.13.9-linux-x86_64-gnu/bin",
+  "GIT_CONFIG_COUNT": "1",
+  "GIT_CONFIG_KEY_0": "url./tmp/rio-pydantic-ai-ram/runner-cache.insteadOf",
+  "GIT_CONFIG_VALUE_0": "https://github.com/pydantic/pydantic-ai.git",
+  "temp_choice": "Existing private executable tmpfs: 5.2 GiB free of 8 GiB before runs. /dev/shm has 6.0 GiB free but nosuid,nodev; private tmpfs preserves prior executable setup. Shared disk I/O pressure avg10 some=17.32%, full=10.15%.",
+  "seed_verification": {
+    "exact_patch_matches": true,
+    "patch_sha256": "f807200ad614afd9498c760192d48694f2b7e42170508c733ec072bce846339b",
+    "base_sha": "8ed5b18b4133d85252de924d1c65a24fb295589c",
+    "head_sha": "c9841c796bb6a8fbfd5492bdcc532f2410518e2c",
+    "commit_hash_verified": true,
+    "seed": "20261105-unused-itertools-v1",
+    "preregistered_patch": "../pydantic-ai-evidence/8641-seed.patch"
+  },
+  "scope": "Same profiles and install plans as preregistered attempts; no trust override, tracked source changes, harness edits, or rebuild.",
+  "attempt2_workaround": {
+    "reason": "Initial 12540 review timed out at runner 1200s with no JSON; severe shared machine disk I/O pressure. No source/profile/install-plan change.",
+    "copy_command": "cp -a /home/ubuntu/.local/share/uv/python/cpython-3.13.9-linux-x86_64-gnu /tmp/rio-pydantic-ai-ram/rerun2-python/",
+    "python_executable_sha256_original_and_copy": "6b0b5932e322f730ef5c31820df7ead292af44904bb72f46e025237b7762cbb2",
+    "PATH_prefix": "/tmp/rio-pydantic-ai-ram/rerun2-python/cpython-3.13.9-linux-x86_64-gnu/bin",
+    "UV_PYTHON_INSTALL_DIR": "/tmp/rio-pydantic-ai-ram/rerun2-python",
+    "unchanged": "All other recorded runtime overrides, runner timeout 1200s, exact SHAs/install plan/profile/binary.",
+    "PATH_setup_failure": "login=false omits /tmp/rio-acceptance-tools; uv absent from PATH. Both installs exit127. Preserved as attempt2; corrected in attempt3."
+  },
+  "io_pressure_observations": [
+    {
+      "utc": "2026-11-05T11:19:41Z",
+      "some_avg10": 98.99,
+      "full_avg10": 96.67
+    },
+    {
+      "utc": "2026-11-05T11:21:39Z",
+      "some_avg10": 88.7,
+      "full_avg10": 80.52
+    }
+  ],
+  "attempt3_workaround": {
+    "reason": "Initial 12540 review timed out at runner 1200s with no JSON; severe shared machine disk I/O pressure. No source/profile/install-plan change.",
+    "copy_command": "cp -a /home/ubuntu/.local/share/uv/python/cpython-3.13.9-linux-x86_64-gnu /tmp/rio-pydantic-ai-ram/rerun2-python/",
+    "python_executable_sha256_original_and_copy": "6b0b5932e322f730ef5c31820df7ead292af44904bb72f46e025237b7762cbb2",
+    "PATH_prefix": "/tmp/rio-pydantic-ai-ram/rerun2-python/cpython-3.13.9-linux-x86_64-gnu/bin:/tmp/rio-acceptance-tools",
+    "UV_PYTHON_INSTALL_DIR": "/tmp/rio-pydantic-ai-ram/rerun2-python",
+    "unchanged": "All other recorded runtime overrides, runner timeout 1200s, exact SHAs/install plan/profile/binary."
+  }
+}
