@@ -520,7 +520,7 @@ async fn concurrent_reviews_keep_separate_records_and_build_one_baseline() {
 async fn linked_workspace_source_edit_remaps_the_importing_roots_baseline() {
     let temp = tempfile::tempdir().unwrap();
     let root = temp.path();
-    let profile = diagnostic_fixture(root, false);
+    let mut profile = diagnostic_fixture(root, false);
     let lock=serde_json::json!({"lockfileVersion":3,"packages":{"":{"dependencies":{"shared":"file:packages/shared"}},"packages/shared":{"name":"shared","version":"1.0.0"},"node_modules/shared":{"resolved":"packages/shared","link":true}}}).to_string();
     fs::write(root.join("package-lock.json"), &lock).unwrap();
     fs::write(root.join("node_modules/.package-lock.json"), &lock).unwrap();
@@ -550,8 +550,20 @@ async fn linked_workspace_source_edit_remaps_the_importing_roots_baseline() {
     )
     .unwrap();
     fs::write(root.join("a.ts"), "const x:number='b';\n").unwrap();
+    fs::write(
+        root.join("node_modules/.bin/tsc"),
+        r#"#!/usr/bin/python3
+import sys,pathlib
+if '--version' in sys.argv: print('Version 5.7.3');sys.exit(0)
+print("a.ts(1,7): error TS2322: existing error")
+if 'a=2' in pathlib.Path('node_modules/shared/src/shared.ts').read_text():
+    print("b.ts(1,7): error TS2322: dependency changed")
+sys.exit(2)
+"#,
+    )
+    .unwrap();
     let report = review(
-        request(root, profile),
+        request(root, profile.clone()),
         ProcessSupervisor::default(),
         CancellationToken::new(),
         None,
@@ -562,7 +574,7 @@ async fn linked_workspace_source_edit_remaps_the_importing_roots_baseline() {
         report
             .findings
             .iter()
-            .any(|f| f.rule_id == "typecheck/tsc/TS2322" && f.state == State::PreExisting),
+            .any(|f| f.location.path == "a.ts" && f.state == State::PreExisting),
         "{:#?}",
         report.checks
     );
@@ -585,6 +597,47 @@ async fn linked_workspace_source_edit_remaps_the_importing_roots_baseline() {
             .notes
             .iter()
             .any(|note| note.contains("baseline_failed"))
+    );
+    assert!(
+        report
+            .findings
+            .iter()
+            .any(|f| f.location.path == "b.ts" && f.state == State::New)
+    );
+    // Trust does not require installation metadata. Physical source links still
+    // need remapping when the verifier has no recorded links to consult.
+    fs::remove_file(root.join("package-lock.json")).unwrap();
+    fs::remove_file(root.join("node_modules/.package-lock.json")).unwrap();
+    profile
+        .profile
+        .steps
+        .iter_mut()
+        .find(|s| s.id == "checks")
+        .unwrap()
+        .options["trust_installed_dependencies"] = serde_json::json!(true);
+    let trusted = review(
+        request(root, profile),
+        ProcessSupervisor::default(),
+        CancellationToken::new(),
+        None,
+    )
+    .await
+    .unwrap();
+    assert!(
+        trusted
+            .findings
+            .iter()
+            .any(|f| f.location.path == "b.ts" && f.state == State::New),
+        "{trusted:#?}"
+    );
+    assert!(
+        trusted.checks.iter().any(|c| c.version == Version::Base
+            && c.outcome
+                .details()
+                .hint
+                .as_ref()
+                .is_some_and(|hint| hint.contains("baseline: 1 linked packages remapped to base"))),
+        "{trusted:#?}"
     );
 }
 

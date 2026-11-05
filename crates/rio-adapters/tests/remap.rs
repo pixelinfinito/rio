@@ -170,3 +170,36 @@ fn egg_link_and_plain_pth_remap_without_touching_original_metadata() {
         original
     );
 }
+
+#[test]
+fn compiled_finder_without_direct_url_is_never_silently_accepted() {
+    let repo = tempfile::tempdir().unwrap();
+    let base = tempfile::tempdir().unwrap();
+    write(repo.path(), "src/a.py", "head");
+    write(base.path(), "src/a.py", "base");
+    write(
+        repo.path(),
+        ".venv/lib/python3.12/site-packages/a.pth",
+        "import __editable__compiled; __editable__compiled.install()\n",
+    );
+    let link = DependencyLink {
+        path: ".venv".into(),
+        target: repo.path().join(".venv"),
+    };
+    std::os::unix::fs::symlink(&link.target, base.path().join(".venv")).unwrap();
+    let error = remap_base_dependencies(
+        repo.path(),
+        base.path(),
+        &[link],
+        &tree("src/a.py", "head"),
+        &tree("src/a.py", "base"),
+        &|| false,
+    )
+    .unwrap_err();
+    assert!(
+        error
+            .to_string()
+            .contains("editable finder cannot be remapped"),
+        "{error}"
+    );
+}

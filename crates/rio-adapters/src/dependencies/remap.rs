@@ -152,6 +152,8 @@ impl Overlay<'_> {
         let text = fs::read_to_string(source)?;
         let mut rewritten = text.clone();
         if name.ends_with(".pth") || name.ends_with(".egg-link") {
+            let editable_modules =
+                regex::Regex::new(r"\b(?:__editable__|_editable_impl_)[A-Za-z0-9_]*\b")?;
             let mut lines = Vec::new();
             for (line_number, line) in text.lines().enumerate() {
                 if name.ends_with(".egg-link") && line_number > 0 {
@@ -159,6 +161,21 @@ impl Overlay<'_> {
                     continue;
                 }
                 let trimmed = line.trim();
+                if trimmed.starts_with("import ") || trimmed.starts_with("import\t") {
+                    // A compiled or missing finder cannot be rewritten. Do not
+                    // let missing direct_url.json turn that into a silent pass.
+                    for module in editable_modules.find_iter(trimmed) {
+                        ensure!(
+                            source
+                                .parent()
+                                .unwrap()
+                                .join(format!("{}.py", module.as_str()))
+                                .is_file(),
+                            "linked dependency points at changed source; editable finder cannot be remapped: {}",
+                            module.as_str()
+                        );
+                    }
+                }
                 if trimmed.is_empty()
                     || trimmed.starts_with('#')
                     || trimmed.starts_with("import ")

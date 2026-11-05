@@ -237,21 +237,22 @@ pub async fn plan_review(
         let head = compatibility(&changes.head, lock.as_ref(), trust, false);
         let base = compatibility(&changes.base, base_lock.as_ref(), false, true);
         let canonical_worktree = worktree.canonicalize()?;
-        let baseline_remap = installation.links.values().any(|target| {
-            target
-                .strip_prefix(&canonical_worktree)
-                .is_ok_and(|relative| {
-                    let path = relative.to_string_lossy().replace('\\', "/");
-                    let prefix = if path.is_empty() {
-                        path
-                    } else {
-                        format!("{path}/")
-                    };
-                    base_source_changes
-                        .iter()
-                        .any(|path| path.starts_with(&prefix))
-                })
-        });
+        let baseline_remap = matches!(head, Compatibility::Trusted { .. })
+            || installation.links.values().any(|target| {
+                target
+                    .strip_prefix(&canonical_worktree)
+                    .is_ok_and(|relative| {
+                        let path = relative.to_string_lossy().replace('\\', "/");
+                        let prefix = if path.is_empty() {
+                            path
+                        } else {
+                            format!("{path}/")
+                        };
+                        base_source_changes
+                            .iter()
+                            .any(|path| path.starts_with(&prefix))
+                    })
+            });
         let environment_path = if language == "typescript" {
             Some(worktree.join(&installation_root).join("node_modules"))
         } else {

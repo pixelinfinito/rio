@@ -260,7 +260,7 @@ impl Execution {
         };
         let tool = check.tool.as_ref().context("no diagnostic tool")?;
         let mut command = diagnostic_command(tool, tree, disposable.path(), &check.root, &targets)?;
-        if version == Version::Base && check.baseline_remap {
+        if remapped > 0 {
             configure_base_command(
                 &mut command,
                 &self.request.worktree,
