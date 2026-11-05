@@ -1,0 +1,81 @@
+ Vitest  "environmentMatchGlobs" is deprecated. Use "workspace" to define different configurations instead.
+ Vitest  "environmentMatchGlobs" is deprecated. Use "workspace" to define different configurations instead.
+
+ RUN  v3.1.3 /tmp/vue-positive-head
+      Coverage enabled with v8
+
+ ✓ |unit| packages/compiler-sfc/__tests__/compileScript.spec.ts (84 tests) 717ms
+ ✓ |unit| packages/compiler-sfc/__tests__/compileScript/resolveType.spec.ts (79 tests | 1 skipped) 396ms
+ ✓ |unit| packages/compiler-sfc/__tests__/compileScript/defineProps.spec.ts (30 tests) 362ms
+ ✓ |unit| packages/compiler-sfc/__tests__/compileScript/definePropsDestructure.spec.ts (28 tests) 312ms
+ ✓ |unit| packages/compiler-sfc/__tests__/parse.spec.ts (28 tests) 79ms
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+2 │         @import "./import.scss";
+  │                 ^^^^^^^^^^^^^^^
+  ╵
+    packages/compiler-sfc/__tests__/fixture/test.scss 2:17  root stylesheet
+
+ ✓ |unit| packages/compiler-sfc/__tests__/compileStyle.spec.ts (26 tests) 3106ms
+   ✓ SFC style preprocessors > scss @import  2748ms
+ ✓ |unit| packages/compiler-sfc/__tests__/cssVars.spec.ts (17 tests) 210ms
+ ✓ |unit| packages/compiler-sfc/__tests__/compileScript/defineModel.spec.ts (10 tests) 220ms
+ ✓ |unit| packages/compiler-sfc/__tests__/rewriteDefault.spec.ts (16 tests) 196ms
+ ✓ |unit| packages/compiler-sfc/__tests__/compileScript/importUsageCheck.spec.ts (16 tests) 183ms
+ ✓ |unit| packages/compiler-sfc/__tests__/compileScript/defineEmits.spec.ts (19 tests) 212ms
+ ✓ |unit| packages/compiler-sfc/__tests__/templateTransformAssetUrl.spec.ts (13 tests) 53ms
+ ✓ |unit| packages/compiler-sfc/__tests__/compileScript/hoistStatic.spec.ts (10 tests) 234ms
+ ❯ |unit| packages/compiler-sfc/__tests__/compileTemplate.spec.ts (21 tests | 1 failed) 24070ms
+   ✓ should work 26ms
+   ✓ should work with style comment 9ms
+   × preprocess pug 23808ms
+     → Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+   ✓ preprocess pug with indents and blank lines 17ms
+   ✓ warn missing preprocessor 2ms
+   ✓ transform asset url options 11ms
+   ✓ source map 13ms
+   ✓ source map: v-if generated comment should not have original position 17ms
+   ✓ should work w/ AST from descriptor 14ms
+   ✓ should work w/ AST from descriptor in SSR mode 13ms
+   ✓ should not reuse AST if using custom compiler 1ms
+   ✓ should force re-parse on already transformed AST 4ms
+   ✓ should force re-parse with correct compiler in SSR mode 3ms
+   ✓ template errors 25ms
+   ✓ preprocessor errors 5ms
+   ✓ should generate the correct imports expression 11ms
+   ✓ should not hoist srcset URLs in SSR mode 8ms
+   ✓ dynamic v-on + static v-on should merged 5ms
+   ✓ prefixing edge case for reused AST 42ms
+   ✓ prefixing edge case for reused AST ssr mode 16ms
+   ✓ non-identifier expression in legacy filter syntax 17ms
+ ✓ |unit| packages/compiler-sfc/__tests__/templateTransformSrcset.spec.ts (5 tests) 215ms
+ ✓ |unit| packages/compiler-sfc/__tests__/compileScript/defineOptions.spec.ts (7 tests) 246ms
+ ✓ |unit| packages/compiler-sfc/__tests__/templateUtils.spec.ts (9 tests) 36ms
+ ✓ |unit| packages/compiler-sfc/__tests__/compileScript/defineSlots.spec.ts (3 tests) 246ms
+ ✓ |unit| packages/compiler-sfc/__tests__/compileScript/defineExpose.spec.ts (2 tests) 221ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |unit| packages/compiler-sfc/__tests__/compileTemplate.spec.ts > preprocess pug
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ packages/compiler-sfc/__tests__/compileTemplate.spec.ts:45:1
+     43| })
+     44| 
+     45| test('preprocess pug', () => {
+       | ^
+     46|   const template = parse(
+     47|     `
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 18 passed (19)
+      Tests  1 failed | 421 passed | 1 skipped (423)
+   Start at  11:22:57
+   Duration  107.30s (transform 27.20s, setup 442ms, collect 100.23s, tests 31.31s, environment 11ms, prepare 23.95s)
+

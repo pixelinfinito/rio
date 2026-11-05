@@ -1,0 +1,13 @@
+ Vitest  "environmentMatchGlobs" is deprecated. Use "workspace" to define different configurations instead.
+ Vitest  "environmentMatchGlobs" is deprecated. Use "workspace" to define different configurations instead.
+ Vitest  "environmentMatchGlobs" is deprecated. Use "workspace" to define different configurations instead.
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+2 │         @import "./import.scss";
+  │                 ^^^^^^^^^^^^^^^
+  ╵
+    packages/compiler-sfc/__tests__/fixture/test.scss 2:17  root stylesheet
+

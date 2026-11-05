@@ -1,0 +1,43 @@
+ Vitest  "environmentMatchGlobs" is deprecated. Use "workspace" to define different configurations instead.
+ Vitest  "environmentMatchGlobs" is deprecated. Use "workspace" to define different configurations instead.
+
+ RUN  v3.1.3 /tmp/vue-positive-head
+      Coverage enabled with v8
+
+ ✓ |unit| packages/compiler-sfc/__tests__/compileScript.spec.ts (84 tests) 864ms
+ ✓ |unit| packages/compiler-sfc/__tests__/compileScript/resolveType.spec.ts (79 tests | 1 skipped) 469ms
+ ✓ |unit| packages/compiler-sfc/__tests__/compileScript/defineProps.spec.ts (30 tests) 398ms
+ ✓ |unit| packages/compiler-sfc/__tests__/compileScript/definePropsDestructure.spec.ts (28 tests) 256ms
+ ✓ |unit| packages/compiler-sfc/__tests__/parse.spec.ts (28 tests) 119ms
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+2 │         @import "./import.scss";
+  │                 ^^^^^^^^^^^^^^^
+  ╵
+    packages/compiler-sfc/__tests__/fixture/test.scss 2:17  root stylesheet
+
+ ✓ |unit| packages/compiler-sfc/__tests__/compileStyle.spec.ts (26 tests) 918ms
+   ✓ SFC style preprocessors > scss @import  676ms
+ ✓ |unit| packages/compiler-sfc/__tests__/compileTemplate.spec.ts (21 tests) 550ms
+   ✓ preprocess pug  303ms
+ ✓ |unit| packages/compiler-sfc/__tests__/cssVars.spec.ts (17 tests) 196ms
+ ✓ |unit| packages/compiler-sfc/__tests__/compileScript/defineModel.spec.ts (10 tests) 210ms
+ ✓ |unit| packages/compiler-sfc/__tests__/rewriteDefault.spec.ts (16 tests) 92ms
+ ✓ |unit| packages/compiler-sfc/__tests__/compileScript/importUsageCheck.spec.ts (16 tests) 219ms
+ ✓ |unit| packages/compiler-sfc/__tests__/templateTransformAssetUrl.spec.ts (13 tests) 47ms
+ ✓ |unit| packages/compiler-sfc/__tests__/compileScript/defineEmits.spec.ts (19 tests) 240ms
+ ✓ |unit| packages/compiler-sfc/__tests__/compileScript/hoistStatic.spec.ts (10 tests) 157ms
+ ✓ |unit| packages/compiler-sfc/__tests__/compileScript/defineOptions.spec.ts (7 tests) 171ms
+ ✓ |unit| packages/compiler-sfc/__tests__/templateTransformSrcset.spec.ts (5 tests) 58ms
+ ✓ |unit| packages/compiler-sfc/__tests__/templateUtils.spec.ts (9 tests) 10ms
+ ✓ |unit| packages/compiler-sfc/__tests__/compileScript/defineExpose.spec.ts (2 tests) 76ms
+ ✓ |unit| packages/compiler-sfc/__tests__/compileScript/defineSlots.spec.ts (3 tests) 107ms
+
+ Test Files  19 passed (19)
+      Tests  422 passed | 1 skipped (423)
+   Start at  11:26:59
+   Duration  30.13s (transform 4.66s, setup 209ms, collect 27.98s, tests 5.16s, environment 12ms, prepare 5.99s)
+

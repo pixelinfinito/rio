@@ -1,0 +1,47 @@
+Warning: rio/base:$.steps[3]: rio/triage is deferred locally: no_endpoint
+Warning: rio/base:$.steps[4]: rio/agents is deferred locally: no_endpoint
+Warning: rio/base:$.steps[5]: rio/verify is deferred locally: no_endpoint
+Running prepare…
+Finished prepare
+Running checks…
+typecheck packages-private/dts-built-test: findings
+coverage packages-private/sfc-playground: skipped (no_tests)
+coverage packages-private/dts-built-test: skipped (no_tests)
+typecheck packages-private/vite-debug: findings
+coverage packages/compiler-ssr: passed
+coverage packages-private/dts-test: skipped (no_tests)
+coverage packages/reactivity: passed
+typecheck packages-private/dts-test: findings
+typecheck packages-private/sfc-playground: findings
+typecheck packages/reactivity: passed
+typecheck packages/runtime-core: passed
+lint packages/shared: passed
+lint packages/runtime-dom: passed
+typecheck packages/shared: passed
+coverage packages/runtime-core: passed
+coverage packages/shared: passed
+typecheck packages/runtime-dom: passed
+coverage packages/runtime-dom: passed
+typecheck packages/vue: passed
+coverage packages/runtime-test: passed
+typecheck packages/runtime-test: passed
+coverage packages/vue: failed (tests_failed)
+coverage packages/vue-compat: passed
+secrets .: passed
+dependencies .: skipped (offline)
+typecheck packages/vue-compat: passed
+typecheck packages/server-renderer: passed
+coverage packages-private/vite-debug: skipped (no_tests)
+coverage packages/compiler-dom: passed
+coverage packages/server-renderer: passed
+coverage packages/compiler-core: passed
+coverage packages/compiler-sfc: passed
+typecheck packages/compiler-core: passed
+typecheck packages/compiler-dom: passed
+typecheck packages/compiler-sfc: passed
+typecheck packages/compiler-ssr: passed
+Finished checks
+Running graph…
+Finished graph
+Running report…
+Finished report

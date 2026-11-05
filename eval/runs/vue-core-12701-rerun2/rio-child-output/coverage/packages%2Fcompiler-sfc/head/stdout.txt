@@ -1,0 +1,30 @@
+
+ RUN  v3.1.3 /dev/shm/vue-core-rerun2/rio-eval-bcixpg06/cache/b57e1cb3323cf4e6/runs/01M6NNMD9R00EZ9YM9B24E724P/tools/tool.tmp-etrljf
+      Coverage enabled with v8
+
+ ✓ |unit| packages/compiler-sfc/__tests__/compileScript.spec.ts (84 tests) 574ms
+ ✓ |unit| packages/compiler-sfc/__tests__/compileScript/resolveType.spec.ts (79 tests | 1 skipped) 305ms
+ ✓ |unit| packages/compiler-sfc/__tests__/compileScript/defineProps.spec.ts (30 tests) 311ms
+ ✓ |unit| packages/compiler-sfc/__tests__/compileScript/definePropsDestructure.spec.ts (28 tests) 316ms
+ ✓ |unit| packages/compiler-sfc/__tests__/parse.spec.ts (28 tests) 88ms
+ ✓ |unit| packages/compiler-sfc/__tests__/compileStyle.spec.ts (26 tests) 677ms
+   ✓ SFC style preprocessors > scss @import  505ms
+ ✓ |unit| packages/compiler-sfc/__tests__/compileTemplate.spec.ts (21 tests) 408ms
+ ✓ |unit| packages/compiler-sfc/__tests__/cssVars.spec.ts (17 tests) 196ms
+ ✓ |unit| packages/compiler-sfc/__tests__/compileScript/defineModel.spec.ts (10 tests) 167ms
+ ✓ |unit| packages/compiler-sfc/__tests__/rewriteDefault.spec.ts (16 tests) 83ms
+ ✓ |unit| packages/compiler-sfc/__tests__/compileScript/importUsageCheck.spec.ts (16 tests) 202ms
+ ✓ |unit| packages/compiler-sfc/__tests__/templateTransformAssetUrl.spec.ts (13 tests) 44ms
+ ✓ |unit| packages/compiler-sfc/__tests__/compileScript/defineEmits.spec.ts (19 tests) 169ms
+ ✓ |unit| packages/compiler-sfc/__tests__/compileScript/hoistStatic.spec.ts (10 tests) 131ms
+ ✓ |unit| packages/compiler-sfc/__tests__/compileScript/defineOptions.spec.ts (7 tests) 90ms
+ ✓ |unit| packages/compiler-sfc/__tests__/templateUtils.spec.ts (9 tests) 10ms
+ ✓ |unit| packages/compiler-sfc/__tests__/templateTransformSrcset.spec.ts (5 tests) 54ms
+ ✓ |unit| packages/compiler-sfc/__tests__/compileScript/defineSlots.spec.ts (3 tests) 67ms
+ ✓ |unit| packages/compiler-sfc/__tests__/compileScript/defineExpose.spec.ts (2 tests) 65ms
+
+ Test Files  19 passed (19)
+      Tests  422 passed | 1 skipped (423)
+   Start at  10:57:47
+   Duration  20.63s (transform 2.99s, setup 147ms, collect 17.03s, tests 3.96s, environment 11ms, prepare 4.64s)
+

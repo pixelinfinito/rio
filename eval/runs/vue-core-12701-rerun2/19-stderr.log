@@ -1,0 +1,30 @@
+Warning: rio/base:$.steps[3]: rio/triage is deferred locally: no_endpoint
+Warning: rio/base:$.steps[4]: rio/agents is deferred locally: no_endpoint
+Warning: rio/base:$.steps[5]: rio/verify is deferred locally: no_endpoint
+Running prepare…
+Finished prepare
+Running checks…
+typecheck packages-private/dts-built-test: findings
+coverage packages-private/dts-built-test: skipped (no_tests)
+coverage packages/server-renderer: passed
+secrets .: passed
+typecheck packages/server-renderer: findings
+dependencies .: skipped (offline)
+typecheck packages/vue: findings
+typecheck packages-private/vite-debug: findings
+coverage packages/vue: failed (tests_failed)
+coverage packages-private/dts-test: skipped (no_tests)
+typecheck packages/vue-compat: findings
+coverage packages/vue-compat: passed
+coverage packages-private/sfc-playground: skipped (no_tests)
+lint packages/compiler-sfc: passed
+coverage packages-private/vite-debug: skipped (no_tests)
+typecheck packages-private/dts-test: findings
+typecheck packages-private/sfc-playground: findings
+coverage packages/compiler-sfc: passed
+typecheck packages/compiler-sfc: findings
+Finished checks
+Running graph…
+Finished graph
+Running report…
+Finished report

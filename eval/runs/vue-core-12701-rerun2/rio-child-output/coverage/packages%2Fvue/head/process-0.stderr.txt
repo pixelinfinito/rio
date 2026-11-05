@@ -1,0 +1,69 @@
+ Vitest  "environmentMatchGlobs" is deprecated. Use "workspace" to define different configurations instead.
+ Vitest  "environmentMatchGlobs" is deprecated. Use "workspace" to define different configurations instead.
+ Vitest  "environmentMatchGlobs" is deprecated. Use "workspace" to define different configurations instead.
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 12 ⎯⎯⎯⎯⎯⎯
+
+ FAIL  |e2e| packages/vue/__tests__/e2e/Transition.spec.ts > e2e: Transition
+ FAIL  |e2e| packages/vue/__tests__/e2e/TransitionGroup.spec.ts > e2e: TransitionGroup
+ FAIL  |e2e| packages/vue/__tests__/e2e/commits.spec.ts > e2e: commits
+ FAIL  |e2e| packages/vue/__tests__/e2e/grid.spec.ts > e2e: grid
+ FAIL  |e2e| packages/vue/__tests__/e2e/hydrationStrategies.spec.ts > async component hydration strategies
+ FAIL  |e2e| packages/vue/__tests__/e2e/markdown.spec.ts > e2e: markdown
+ FAIL  |e2e| packages/vue/__tests__/e2e/ssr-custom-element.spec.ts [ packages/vue/__tests__/e2e/ssr-custom-element.spec.ts ]
+ FAIL  |e2e| packages/vue/__tests__/e2e/svg.spec.ts > e2e: svg
+ FAIL  |e2e| packages/vue/__tests__/e2e/todomvc.spec.ts > e2e: todomvc
+ FAIL  |e2e| packages/vue/__tests__/e2e/tree.spec.ts > e2e: tree
+ FAIL  |e2e| packages/vue/__tests__/e2e/trusted-types.spec.ts [ packages/vue/__tests__/e2e/trusted-types.spec.ts ]
+ FAIL  |e2e| packages/vue/__tests__/e2e/vModel.spec.ts [ packages/vue/__tests__/e2e/vModel.spec.ts ]
+Error: Could not find Chrome (ver. 136.0.7103.92). This can occur if either
+ 1. you did not perform an installation before running the script (e.g. `npx puppeteer browsers install chrome`) or
+ 2. your cache path is incorrectly configured (which is: /home/ubuntu/.cache/puppeteer).
+For (2), check out our guide on configuring puppeteer at https://pptr.dev/guides/configuration.
+ ❯ ChromeLauncher.resolveExecutablePath ../../../../../../head/node_modules/.pnpm/puppeteer-core@24.8.2/node_modules/puppeteer-core/src/node/BrowserLauncher.ts:476:17
+ ❯ ChromeLauncher.computeLaunchArguments ../../../../../../head/node_modules/.pnpm/puppeteer-core@24.8.2/node_modules/puppeteer-core/src/node/ChromeLauncher.ts:128:16
+ ❯ ChromeLauncher.launch ../../../../../../head/node_modules/.pnpm/puppeteer-core@24.8.2/node_modules/puppeteer-core/src/node/BrowserLauncher.ts:102:24
+ ❯ packages/vue/__tests__/e2e/e2eUtils.ts:67:15
+     65| 
+     66|   beforeAll(async () => {
+     67|     browser = await puppeteer.launch(resolvedOptions)
+       |               ^
+     68|   }, 20000)
+     69| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/24]⎯
+
+ FAIL  |e2e| packages/vue/__tests__/e2e/Transition.spec.ts > e2e: Transition
+ FAIL  |e2e| packages/vue/__tests__/e2e/TransitionGroup.spec.ts > e2e: TransitionGroup
+ FAIL  |e2e| packages/vue/__tests__/e2e/commits.spec.ts > e2e: commits
+ FAIL  |e2e| packages/vue/__tests__/e2e/grid.spec.ts > e2e: grid
+ FAIL  |e2e| packages/vue/__tests__/e2e/hydrationStrategies.spec.ts > async component hydration strategies
+ FAIL  |e2e| packages/vue/__tests__/e2e/markdown.spec.ts > e2e: markdown
+ FAIL  |e2e| packages/vue/__tests__/e2e/svg.spec.ts > e2e: svg
+ FAIL  |e2e| packages/vue/__tests__/e2e/todomvc.spec.ts > e2e: todomvc
+ FAIL  |e2e| packages/vue/__tests__/e2e/tree.spec.ts > e2e: tree
+TypeError: Cannot read properties of undefined (reading 'close')
+ ❯ packages/vue/__tests__/e2e/e2eUtils.ts:90:19
+     88| 
+     89|   afterAll(async () => {
+     90|     await browser.close()
+       |                   ^
+     91|   })
+     92| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/24]⎯
+
+ FAIL  |e2e| packages/vue/__tests__/e2e/ssr-custom-element.spec.ts [ packages/vue/__tests__/e2e/ssr-custom-element.spec.ts ]
+ FAIL  |e2e| packages/vue/__tests__/e2e/trusted-types.spec.ts [ packages/vue/__tests__/e2e/trusted-types.spec.ts ]
+ FAIL  |e2e| packages/vue/__tests__/e2e/vModel.spec.ts [ packages/vue/__tests__/e2e/vModel.spec.ts ]
+TypeError: Cannot read properties of undefined (reading 'close')
+ ❯ packages/vue/__tests__/e2e/e2eUtils.ts:90:19
+     88| 
+     89|   afterAll(async () => {
+     90|     await browser.close()
+       |                   ^
+     91|   })
+     92| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/24]⎯
+

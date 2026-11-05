@@ -1,0 +1,783 @@
+{
+  "schema": "rio-eval-runner-v2",
+  "repository": "vuejs/core",
+  "pr": "https://github.com/vuejs/core/pull/15328",
+  "started_utc": "2026-11-05T10:59:34.111847+00:00",
+  "rio_binary": "/home/ubuntu/rio/target/release/rio",
+  "rio_binary_sha256": "3e28a47f9460af1ae2ad9572d065f4eb03314ee56cdc851c8f185d9bb57572c7",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-checkout",
+        "https://github.com/vuejs/core.git",
+        "/dev/shm/vue-core-rerun2/rio-eval-w7i0tw6v/head"
+      ],
+      "cwd": "/dev/shm/vue-core-rerun2/rio-eval-w7i0tw6v",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-vue-core/eval/runs/vue-core-15328-rerun2/01-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-vue-core/eval/runs/vue-core-15328-rerun2/01-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 14140
+    },
+    {
+      "argv": [
+        "git",
+        "fetch",
+        "origin",
+        "a2b40db9a83b36ed9da3a16403cf8f040262d73f",
+        "57c730ab498aba29c525099d0a32529ff6d392e4"
+      ],
+      "cwd": "/dev/shm/vue-core-rerun2/rio-eval-w7i0tw6v/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-vue-core/eval/runs/vue-core-15328-rerun2/02-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-vue-core/eval/runs/vue-core-15328-rerun2/02-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 15254
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "a2b40db9a83b36ed9da3a16403cf8f040262d73f",
+        "57c730ab498aba29c525099d0a32529ff6d392e4"
+      ],
+      "cwd": "/dev/shm/vue-core-rerun2/rio-eval-w7i0tw6v/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-vue-core/eval/runs/vue-core-15328-rerun2/03-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-vue-core/eval/runs/vue-core-15328-rerun2/03-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 710
+    },
+    {
+      "argv": [
+        "git",
+        "checkout",
+        "--detach",
+        "57c730ab498aba29c525099d0a32529ff6d392e4"
+      ],
+      "cwd": "/dev/shm/vue-core-rerun2/rio-eval-w7i0tw6v/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-vue-core/eval/runs/vue-core-15328-rerun2/04-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-vue-core/eval/runs/vue-core-15328-rerun2/04-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 516
+    },
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-hardlinks",
+        "--no-checkout",
+        "/dev/shm/vue-core-rerun2/rio-eval-w7i0tw6v/head",
+        "/dev/shm/vue-core-rerun2/rio-eval-w7i0tw6v/base"
+      ],
+      "cwd": "/dev/shm/vue-core-rerun2/rio-eval-w7i0tw6v",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-vue-core/eval/runs/vue-core-15328-rerun2/05-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-vue-core/eval/runs/vue-core-15328-rerun2/05-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 3494
+    },
+    {
+      "argv": [
+        "git",
+        "checkout",
+        "--detach",
+        "a2b40db9a83b36ed9da3a16403cf8f040262d73f"
+      ],
+      "cwd": "/dev/shm/vue-core-rerun2/rio-eval-w7i0tw6v/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-vue-core/eval/runs/vue-core-15328-rerun2/06-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-vue-core/eval/runs/vue-core-15328-rerun2/06-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 216
+    },
+    {
+      "argv": [
+        "corepack",
+        "pnpm",
+        "install",
+        "--frozen-lockfile",
+        "--force"
+      ],
+      "cwd": "/dev/shm/vue-core-rerun2/rio-eval-w7i0tw6v/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-vue-core/eval/runs/vue-core-15328-rerun2/07-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-vue-core/eval/runs/vue-core-15328-rerun2/07-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 1048035
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "cwd": "/dev/shm/vue-core-rerun2/rio-eval-w7i0tw6v/base",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-vue-core/eval/runs/vue-core-15328-rerun2/08-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-vue-core/eval/runs/vue-core-15328-rerun2/08-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 116
+    },
+    {
+      "argv": [
+        "corepack",
+        "pnpm",
+        "install",
+        "--frozen-lockfile",
+        "--force"
+      ],
+      "cwd": "/dev/shm/vue-core-rerun2/rio-eval-w7i0tw6v/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-vue-core/eval/runs/vue-core-15328-rerun2/09-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-vue-core/eval/runs/vue-core-15328-rerun2/09-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 30763
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "cwd": "/dev/shm/vue-core-rerun2/rio-eval-w7i0tw6v/head",
+      "environment": {},
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-vue-core/eval/runs/vue-core-15328-rerun2/10-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-vue-core/eval/runs/vue-core-15328-rerun2/10-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 126
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "--version"
+      ],
+      "cwd": "/dev/shm/vue-core-rerun2/rio-eval-w7i0tw6v/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/vue-core-rerun2/rio-eval-w7i0tw6v/config",
+        "RIO_CACHE_DIR": "/dev/shm/vue-core-rerun2/rio-eval-w7i0tw6v/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-vue-core/eval/runs/vue-core-15328-rerun2/rio-version.txt",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-vue-core/eval/runs/vue-core-15328-rerun2/11-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 9
+    },
+    {
+      "argv": [
+        "node",
+        "--version"
+      ],
+      "cwd": "/dev/shm/vue-core-rerun2/rio-eval-w7i0tw6v/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/vue-core-rerun2/rio-eval-w7i0tw6v/config",
+        "RIO_CACHE_DIR": "/dev/shm/vue-core-rerun2/rio-eval-w7i0tw6v/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-vue-core/eval/runs/vue-core-15328-rerun2/12-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-vue-core/eval/runs/vue-core-15328-rerun2/12-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 17
+    },
+    {
+      "argv": [
+        "npm",
+        "--version"
+      ],
+      "cwd": "/dev/shm/vue-core-rerun2/rio-eval-w7i0tw6v/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/vue-core-rerun2/rio-eval-w7i0tw6v/config",
+        "RIO_CACHE_DIR": "/dev/shm/vue-core-rerun2/rio-eval-w7i0tw6v/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-vue-core/eval/runs/vue-core-15328-rerun2/13-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-vue-core/eval/runs/vue-core-15328-rerun2/13-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 8601
+    },
+    {
+      "argv": [
+        "corepack",
+        "--version"
+      ],
+      "cwd": "/dev/shm/vue-core-rerun2/rio-eval-w7i0tw6v/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/vue-core-rerun2/rio-eval-w7i0tw6v/config",
+        "RIO_CACHE_DIR": "/dev/shm/vue-core-rerun2/rio-eval-w7i0tw6v/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-vue-core/eval/runs/vue-core-15328-rerun2/14-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-vue-core/eval/runs/vue-core-15328-rerun2/14-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 222
+    },
+    {
+      "argv": [
+        "python3",
+        "--version"
+      ],
+      "cwd": "/dev/shm/vue-core-rerun2/rio-eval-w7i0tw6v/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/vue-core-rerun2/rio-eval-w7i0tw6v/config",
+        "RIO_CACHE_DIR": "/dev/shm/vue-core-rerun2/rio-eval-w7i0tw6v/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-vue-core/eval/runs/vue-core-15328-rerun2/15-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-vue-core/eval/runs/vue-core-15328-rerun2/15-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 20
+    },
+    {
+      "argv": [
+        "uv",
+        "--version"
+      ],
+      "cwd": "/dev/shm/vue-core-rerun2/rio-eval-w7i0tw6v/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/vue-core-rerun2/rio-eval-w7i0tw6v/config",
+        "RIO_CACHE_DIR": "/dev/shm/vue-core-rerun2/rio-eval-w7i0tw6v/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-vue-core/eval/runs/vue-core-15328-rerun2/16-stdout.log",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-vue-core/eval/runs/vue-core-15328-rerun2/16-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 33
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "profile",
+        "show",
+        "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-vue-core/eval/runs/vue-core-15328-rerun2/profile.yaml"
+      ],
+      "cwd": "/dev/shm/vue-core-rerun2/rio-eval-w7i0tw6v/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/vue-core-rerun2/rio-eval-w7i0tw6v/config",
+        "RIO_CACHE_DIR": "/dev/shm/vue-core-rerun2/rio-eval-w7i0tw6v/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-vue-core/eval/runs/vue-core-15328-rerun2/resolved-profile.txt",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-vue-core/eval/runs/vue-core-15328-rerun2/17-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 418
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "doctor",
+        "--format",
+        "json"
+      ],
+      "cwd": "/dev/shm/vue-core-rerun2/rio-eval-w7i0tw6v/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/vue-core-rerun2/rio-eval-w7i0tw6v/config",
+        "RIO_CACHE_DIR": "/dev/shm/vue-core-rerun2/rio-eval-w7i0tw6v/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-vue-core/eval/runs/vue-core-15328-rerun2/doctor.json",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-vue-core/eval/runs/vue-core-15328-rerun2/18-stderr.log",
+      "exit_code": 0,
+      "wall_time_ms": 425
+    },
+    {
+      "argv": [
+        "/home/ubuntu/rio/target/release/rio",
+        "review",
+        "--base",
+        "a2b40db9a83b36ed9da3a16403cf8f040262d73f",
+        "--format",
+        "json",
+        "--offline",
+        "--profile",
+        "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-vue-core/eval/runs/vue-core-15328-rerun2/profile.yaml"
+      ],
+      "cwd": "/dev/shm/vue-core-rerun2/rio-eval-w7i0tw6v/head",
+      "environment": {
+        "RIO_CONFIG_DIR": "/dev/shm/vue-core-rerun2/rio-eval-w7i0tw6v/config",
+        "RIO_CACHE_DIR": "/dev/shm/vue-core-rerun2/rio-eval-w7i0tw6v/cache"
+      },
+      "stdout": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-vue-core/eval/runs/vue-core-15328-rerun2/report.json",
+      "stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-vue-core/eval/runs/vue-core-15328-rerun2/19-stderr.log",
+      "exit_code": 4,
+      "wall_time_ms": 244432
+    }
+  ],
+  "installations": {
+    "base": {
+      "commands": [
+        [
+          "corepack",
+          "pnpm",
+          "install",
+          "--frozen-lockfile",
+          "--force"
+        ]
+      ],
+      "succeeded": true,
+      "lockfiles": {
+        "pnpm-lock.yaml": "f11732d06f097304c817c35d16242ae35368c722117fdd038217aa7112b5babb"
+      }
+    },
+    "head": {
+      "commands": [
+        [
+          "corepack",
+          "pnpm",
+          "install",
+          "--frozen-lockfile",
+          "--force"
+        ]
+      ],
+      "succeeded": true,
+      "lockfiles": {
+        "pnpm-lock.yaml": "f11732d06f097304c817c35d16242ae35368c722117fdd038217aa7112b5babb"
+      }
+    }
+  },
+  "failures": [
+    "Baseline/setup ineligible; fix before scoring"
+  ],
+  "network": "Installers may use network; Rio review uses --offline. Subprocesses are not isolated.",
+  "profile_sha256": "54923428bdf61617ff4f2dc8555ae85ca45e40511dcb9e344ad6deff777ea206",
+  "resolution": {
+    "base_sha": "a2b40db9a83b36ed9da3a16403cf8f040262d73f",
+    "head_sha": "57c730ab498aba29c525099d0a32529ff6d392e4",
+    "source": "pinned argv"
+  },
+  "disposable_directory": "/dev/shm/vue-core-rerun2/rio-eval-w7i0tw6v",
+  "base_sha": "a2b40db9a83b36ed9da3a16403cf8f040262d73f",
+  "head_sha": "57c730ab498aba29c525099d0a32529ff6d392e4",
+  "removed_environment_keys": [],
+  "resolved_profile_sha256": "ae771ff1ff2401f5e3958d3e60f7e90bb9c7189b8a791cd341bd5b71ae5353e1",
+  "review_exit_code": 4,
+  "rio_checks": {
+    "source": "report.json#/checks",
+    "child_argv_available": false,
+    "limitation": "Rio report-v1 checks contain no child executable, argv, cwd, or tool version. The v0.1 CLI has no child-argv trace flag or environment hook; runner commands and Rio stderr are retained separately.",
+    "entries": [
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "findings",
+        "root": "packages-private/dts-built-test",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 3545
+      },
+      {
+        "dependency_state": "verified",
+        "hint": "The project's test runner found no tests",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "no_tests",
+        "root": "packages-private/sfc-playground",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 8699
+      },
+      {
+        "dependency_state": "verified",
+        "hint": "The project's test runner found no tests",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "no_tests",
+        "root": "packages-private/dts-built-test",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 7482
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "findings",
+        "root": "packages-private/vite-debug",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 16970
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/compiler-ssr",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 17224
+      },
+      {
+        "dependency_state": "verified",
+        "hint": "The project's test runner found no tests",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "no_tests",
+        "root": "packages-private/dts-test",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 7044
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/reactivity",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 11533
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "findings",
+        "root": "packages-private/dts-test",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 23807
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "findings",
+        "root": "packages-private/sfc-playground",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 22257
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/reactivity",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 30791
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/runtime-core",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 30682
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "lint",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/shared",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 2357
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "lint",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/runtime-dom",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 1932
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/shared",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 30951
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/runtime-core",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 39099
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/shared",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 12464
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/runtime-dom",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 36207
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/runtime-dom",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 31149
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/vue",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 36238
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/runtime-test",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 7895
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/runtime-test",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 36104
+      },
+      {
+        "dependency_state": "verified",
+        "hint": "Test runner exited with code 1 without producing usable coverage: ⎯⎯⎯⎯⎯⎯ Failed Suites 11 ⎯⎯⎯⎯⎯⎯",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "failed",
+        "reason": "tests_failed",
+        "root": "packages/vue",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 48935
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/vue-compat",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 26375
+      },
+      {
+        "kind": "secrets",
+        "language": "common",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 1
+      },
+      {
+        "hint": "Dependency audit needs api.osv.dev",
+        "kind": "dependencies",
+        "language": "common",
+        "outcome": "skipped",
+        "reason": "offline",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 1
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/vue-compat",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 38072
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/server-renderer",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 37419
+      },
+      {
+        "dependency_state": "verified",
+        "hint": "The project's test runner found no tests",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "skipped",
+        "reason": "no_tests",
+        "root": "packages-private/vite-debug",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 7746
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/compiler-dom",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 15426
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/server-renderer",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 24312
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/compiler-core",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 28320
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "coverage",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/compiler-sfc",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 36934
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/compiler-core",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 50078
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/compiler-dom",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 50023
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/compiler-sfc",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 42628
+      },
+      {
+        "dependency_state": "verified",
+        "kind": "typecheck",
+        "language": "typescript",
+        "outcome": "passed",
+        "root": "packages/compiler-ssr",
+        "scheduled_as": "dependent",
+        "version": "head",
+        "wall_time_ms": 38168
+      }
+    ]
+  },
+  "rio_review_stderr": "/home/ubuntu/.t3/worktrees/rio/eval-rerun2-vue-core/eval/runs/vue-core-15328-rerun2/19-stderr.log",
+  "environment": {
+    "dependency_state": "verified",
+    "baseline_ran": false,
+    "baseline_classification_ran": false,
+    "eligible": false,
+    "reasons": [
+      "coverage packages-private/dts-built-test head: skipped no_tests The project's test runner found no tests",
+      "coverage packages-private/dts-test head: skipped no_tests The project's test runner found no tests",
+      "coverage packages-private/sfc-playground head: skipped no_tests The project's test runner found no tests",
+      "coverage packages-private/vite-debug head: skipped no_tests The project's test runner found no tests",
+      "coverage packages/vue head: failed tests_failed Test runner exited with code 1 without producing usable coverage: ⎯⎯⎯⎯⎯⎯ Failed Suites 11 ⎯⎯⎯⎯⎯⎯",
+      "lint packages/runtime-dom: head=passed, dependency_state=verified, base=unavailable",
+      "lint packages/shared: head=passed, dependency_state=verified, base=unavailable",
+      "typecheck packages-private/dts-built-test: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck packages-private/dts-test: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck packages-private/sfc-playground: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck packages-private/vite-debug: head=findings, dependency_state=verified, base=unavailable",
+      "typecheck packages/compiler-core: head=passed, dependency_state=verified, base=unavailable",
+      "typecheck packages/compiler-dom: head=passed, dependency_state=verified, base=unavailable",
+      "typecheck packages/compiler-sfc: head=passed, dependency_state=verified, base=unavailable",
+      "typecheck packages/compiler-ssr: head=passed, dependency_state=verified, base=unavailable",
+      "typecheck packages/reactivity: head=passed, dependency_state=verified, base=unavailable",
+      "typecheck packages/runtime-core: head=passed, dependency_state=verified, base=unavailable",
+      "typecheck packages/runtime-dom: head=passed, dependency_state=verified, base=unavailable",
+      "typecheck packages/runtime-test: head=passed, dependency_state=verified, base=unavailable",
+      "typecheck packages/server-renderer: head=passed, dependency_state=verified, base=unavailable",
+      "typecheck packages/shared: head=passed, dependency_state=verified, base=unavailable",
+      "typecheck packages/vue-compat: head=passed, dependency_state=verified, base=unavailable",
+      "typecheck packages/vue: head=passed, dependency_state=verified, base=unavailable"
+    ],
+    "notes": [
+      "Intent inference is deferred: no_endpoint",
+      "typecheck packages-private/dts-built-test: baseline_failed: linked package packages-private/dts-built-test::@vue/shared is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck packages-private/vite-debug: baseline_failed: linked package packages/compiler-core::@vue/shared is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck packages-private/dts-test: baseline_failed: linked package packages-private/dts-built-test::@vue/shared is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck packages-private/sfc-playground: baseline_failed: linked package packages/compiler-core::@vue/shared is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck packages/reactivity: baseline_failed: linked package packages/reactivity::@vue/shared is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck packages/runtime-core: baseline_failed: linked package packages/reactivity::@vue/shared is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "lint packages/shared: baseline_failed: linked package packages-private/dts-built-test::@vue/shared is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "lint packages/runtime-dom: baseline_failed: linked package packages/reactivity::@vue/shared is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck packages/shared: baseline_failed: linked package packages-private/dts-built-test::@vue/shared is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck packages/runtime-dom: baseline_failed: linked package packages/reactivity::@vue/shared is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck packages/vue: baseline_failed: linked package packages/compiler-core::@vue/shared is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck packages/runtime-test: baseline_failed: linked package packages/reactivity::@vue/shared is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck packages/vue-compat: baseline_failed: linked package packages/compiler-core::@vue/shared is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck packages/server-renderer: baseline_failed: linked package packages/compiler-core::@vue/shared is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck packages/compiler-core: baseline_failed: linked package packages/compiler-core::@vue/shared is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck packages/compiler-dom: baseline_failed: linked package packages/compiler-core::@vue/shared is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck packages/compiler-sfc: baseline_failed: linked package packages/compiler-core::@vue/shared is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "typecheck packages/compiler-ssr: baseline_failed: linked package packages/compiler-core::@vue/shared is consumed through build output dist/ that is not in the tree; run the build in the base or configure source entry points",
+      "Graph references use syntax and text; no language server was used",
+      "Offline applies to Rio; tool and test processes were not network-isolated"
+    ]
+  },
+  "finished_utc": "2026-11-05T11:26:54.098532+00:00"
+}
