@@ -230,7 +230,17 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           const agentTokens = Math.floor(
             (active.tokens ?? 100000) / (active.agents_max ?? 3),
           );
-          for (const agent of selected.slice(0, active.agents_max ?? 3)) {
+          // A diff-only round on an unchanged head has nothing new to review:
+          // agents are not re-run and earlier findings carry forward.
+          const unchanged =
+            lineage?.diff_only && previousHead && incremental.length === 0;
+          if (unchanged && selected.length)
+            report.footer.notes.push(
+              "No change since the previously reviewed head; agents were not re-run and earlier findings carry forward.",
+            );
+          for (const agent of unchanged
+            ? []
+            : selected.slice(0, active.agents_max ?? 3)) {
             const declaration = (s.agents ?? []).find((a) =>
               Object.hasOwn(a, agent),
             );

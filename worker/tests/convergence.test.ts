@@ -500,6 +500,46 @@ describe("review lineages", () => {
     expect(() => validateReport(r6.report)).not.toThrow();
   }, 120000);
 
+  it("does not re-run agents when the head is unchanged since the previous round", async () => {
+    const ref: LineageRef = {
+      repository: "github.com/acme/unchanged",
+      kind: "branch",
+      ref: "main",
+    };
+    const base = { "src/a.ts": "function a(){ return 0; }\n" };
+    const head = { "src/a.ts": "function a(){ throw new Error(); }\n" };
+    const h1 = hyp("src/a.ts", "a", 1);
+    const r1 = await review({ base, head, lineage: ref, agents: () => [h1] });
+    expect(r1.report.findings.map((f: any) => f.id)).toEqual([idOf(h1)]);
+    const r2 = await review({
+      base,
+      head,
+      lineage: ref,
+      agents: () => {
+        throw new Error("agents must not run on an unchanged head");
+      },
+    });
+    expect(r2.status).toBe("complete");
+    expect(r2.prompts).toHaveLength(0);
+    expect(r2.report.footer.notes).toContain(
+      "No change since the previously reviewed head; agents were not re-run and earlier findings carry forward.",
+    );
+    // The open finding carries forward without new votes and is held back.
+    expect(r2.report.findings.map((f: any) => [f.id, f.status])).toEqual([
+      [idOf(h1), "open"],
+    ]);
+    expect(r2.report.lineage).toMatchObject({
+      round: 2,
+      diff_only: true,
+      held_back: 1,
+    });
+    const votes = await runtime.DB.prepare(
+      "SELECT COUNT(*) AS n FROM votes WHERE review_id=?",
+    )
+      .bind(r2.id)
+      .first<any>();
+    expect(votes.n).toBe(0);
+  });
   it("gives round-2 agents only the incremental diff, re-verifies only moved findings and holds back reproductions", async () => {
     const ref: LineageRef = {
       repository: "github.com/acme/app",
