@@ -223,16 +223,27 @@ is unadjudicated, any PR failed to run, the provider profile differs from the
 previous release's, or the harmful count exceeds the previous release's; failing
 findings are named.
 
-The nightly [noise workflow](../.github/workflows/noise.yml) (schedule and manual
-dispatch with optional `repository` and `limit` inputs) builds Rio, runs the job
-with the pinned `rio/openrouter` profile against the endpoint configured by the
-`RIO_ENDPOINT_URL` and `RIO_API_TOKEN` repository secrets (provider keys stay in the
-endpoint, deployed from secrets), copies the job log into the run, runs
-`python3 -I eval/credscan.py` over the run directory and log (exact and base64
-values of `RIO_API_TOKEN` and the provider key secrets, plus common token shapes),
-and only when that scan is clean uploads `eval/runs/noise/<date>` as artifact
-`noise-<date>` with 90-day retention. Adjudicate the downloaded directory and run
-the release check against the previous release's summary.
+The noise measurement runs nightly on the maintainer's machine, never in public
+CI: no endpoint URL, API token or provider key is stored in the repository or on
+GitHub. `python3 -I eval/nightly.py run` calls `rio eval noise` with the pinned
+`rio/openrouter` profile; Rio reads the endpoint and token already saved in
+`~/.config/rio`. Configure it in `~/.config/rio/noise.json`, which holds no secrets:
+
+```json
+{"repo": "/path/to/reference/clone", "repository": "owner/name",
+ "profile": "rio/openrouter", "limit": 10, "rio": "/path/to/rio"}
+```
+
+Each run is written privately (mode 0700) to `~/.local/share/rio/noise/<date>/`
+with its log under `logs/`. Every run is scanned with `eval/credscan.py` for the
+exact and base64 values of every saved credential (`secrets-*.json` and the client
+`credentials` file) plus common token shapes; a match quarantines the run as
+`<date>.quarantined-<time>` and exits 1 without printing the value. Runs older than
+90 days (`retention_days`) are pruned. Schedule it with
+`python3 -I eval/nightly.py install --enable` (a systemd user timer at 03:00, with
+`loginctl enable-linger` so it fires while logged out) or
+`install --print-cron` for a crontab line. Adjudicate a run directory and run the
+release check against the previous release's summary.
 
 ## Author responses, rounds to pass and the regression gate
 

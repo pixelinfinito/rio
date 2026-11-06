@@ -19,11 +19,19 @@ Each noise finding SHALL be labeled `harmful` (acting on it would introduce a bu
 - **THEN** validation reports that finding as unadjudicated and does not count it as neutral
 
 ### Requirement: Nightly noise run
-A scheduled CI workflow SHALL run `rio eval noise` nightly against the pinned provider profile, using repository secrets for provider credentials, and retain the run's reports and summary as build artifacts for at least 90 days.
+A scheduled job on the maintainer's machine SHALL run `rio eval noise` nightly against the pinned provider profile, using the endpoint configuration already saved for that machine. Endpoint URLs, API tokens and provider keys SHALL NOT be stored in the source repository or its hosting service. Runs SHALL be kept outside the repository, privately, for at least 90 days.
 
-#### Scenario: Scheduled run publishes artifacts
-- **WHEN** the nightly workflow runs
-- **THEN** it uses the pinned profile, uploads the dated noise directory as an artifact, and exposes no credential in logs or artifacts
+#### Scenario: Nightly run stays on the machine
+- **WHEN** the nightly job runs
+- **THEN** it uses the pinned profile and saved endpoint configuration, writes the dated noise directory and its log to the private local store, and the repository gains no file or secret
+
+#### Scenario: Leaked credential is quarantined
+- **WHEN** a run's log or reports contain a saved credential
+- **THEN** the job reports the file and credential kind without printing the value, quarantines the run directory and exits non-zero
+
+#### Scenario: Old runs pruned
+- **WHEN** the nightly job finds run directories older than 90 days in the local store
+- **THEN** it removes them and keeps newer runs
 
 ### Requirement: Noise release gate
 A release SHALL be blocked when its harmful noise count exceeds the previous release's count on the pinned provider set, or when any finding in the candidate's noise run is unadjudicated.
