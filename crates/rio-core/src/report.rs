@@ -179,6 +179,76 @@ pub struct Report {
     pub metrics: Metrics,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub error: Option<ReportError>,
+    /// Present only for reviews that belong to a lineage (PR or `--since-last`).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub lineage: Option<Lineage>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum LineageKind {
+    Pr,
+    Branch,
+}
+
+/// A ratio in `[0, 1]`. Finite by construction, so equality is total.
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
+#[serde(try_from = "f64", into = "f64")]
+pub struct Ratio(f64);
+impl Eq for Ratio {}
+impl Ratio {
+    pub fn new(value: f64) -> Option<Self> {
+        (value.is_finite() && (0.0..=1.0).contains(&value)).then_some(Self(value))
+    }
+    pub fn get(self) -> f64 {
+        self.0
+    }
+}
+impl TryFrom<f64> for Ratio {
+    type Error = String;
+    fn try_from(value: f64) -> Result<Self, Self::Error> {
+        Self::new(value).ok_or_else(|| format!("ratio {value} is outside [0, 1]"))
+    }
+}
+impl From<Ratio> for f64 {
+    fn from(value: Ratio) -> Self {
+        value.0
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ReconsiderItem {
+    pub id: String,
+    pub title: String,
+    pub path: String,
+    pub line_start: u32,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct Reconsider {
+    pub unresolved: u32,
+    pub top: Vec<ReconsiderItem>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub split: Option<Vec<String>>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct Lineage {
+    pub repository: String,
+    pub kind: LineageKind,
+    #[serde(rename = "ref")]
+    pub reference: String,
+    pub generation: u32,
+    pub round: u32,
+    pub cap: u32,
+    pub capped: bool,
+    pub diff_only: bool,
+    pub previous_head: Option<String>,
+    pub held_back: u32,
+    pub rounds_to_pass: Option<u32>,
+    pub author_response_ratio: Option<Ratio>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub reconsider: Option<Reconsider>,
 }
 
 impl Report {
@@ -201,6 +271,7 @@ impl Report {
             footer: Footer::default(),
             metrics: Metrics::default(),
             error: None,
+            lineage: None,
         }
     }
 }

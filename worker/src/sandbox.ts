@@ -7,7 +7,8 @@ export class Sandbox extends DurableObject<Env> {
     const job: Execution = await request.json();
     invariant(
       job.network === false &&
-        job.limits.memory_mb <= 8192 && job.limits.cpu <= 2 &&
+        job.limits.memory_mb <= 8192 &&
+        job.limits.cpu <= 2 &&
         job.limits.wall_ms <= 120000 &&
         job.limits.output_bytes <= 1048576,
       "invalid sandbox limits",

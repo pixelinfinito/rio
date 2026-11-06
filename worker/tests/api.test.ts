@@ -5,9 +5,10 @@ import { D1Ledger, Store } from "../src/storage";
 import { hash, canonical } from "../src/validation";
 import { jobToken, sign } from "../src/auth";
 import { createJob, finishJob } from "../src/jobs";
-import { profile, snapshot, submission } from "./fixtures";
-import migration from "../migrations/0001_core.sql?raw";
+import { allMigrations, profile, snapshot, submission } from "./fixtures";
 import type { Env } from "../src/types";
+import contracts from "../../docs/verifier-contracts.md?raw";
+import { lineageId } from "../src/lineage";
 const testEnv = env as Env;
 const owner = {
   authorization: "Bearer test-owner-token-at-least-32-characters",
@@ -68,19 +69,15 @@ async function createReview() {
   return ((await response.json()) as any).id as string;
 }
 beforeAll(async () => {
-  await applyD1Migrations(testEnv.DB, [
-    {
-      name: "core",
-      queries: migration
-        .split(";")
-        .map((s) => s.trim())
-        .filter(Boolean),
-    },
-  ]);
+  await applyD1Migrations(testEnv.DB, allMigrations);
 });
 beforeEach(async () => {
   await testEnv.DB.batch(
     [
+      "feedback",
+      "findings",
+      "lineage_reviews",
+      "lineages",
       "votes",
       "hypotheses",
       "usage",
@@ -369,5 +366,269 @@ describe("Worker API and storage", () => {
       usage: [],
       executions: [],
     });
+  });
+});
+
+describe("lineages and finding feedback", () => {
+  const documented = JSON.parse(
+    /```json\n([\s\S]*?)```/.exec(
+      contracts.slice(contracts.indexOf("## Review lineages and rounds")),
+    )![1],
+  );
+  async function upload() {
+    const uploaded = await request("/v1/snapshots", "POST", snapshot);
+    return ((await uploaded.json()) as any).id as string;
+  }
+  it("accepts the documented lineage submission and exposes lineage state", async () => {
+    const s: any = { ...submission(), ...documented };
+    s.snapshot_id = await upload();
+    const query = new URLSearchParams({
+      repository: documented.lineage.repository,
+      kind: documented.lineage.kind,
+      ref: documented.lineage.ref,
+    });
+    expect((await request(`/v1/lineages?${query}`)).status).toBe(404);
+    const response = await request("/v1/reviews", "POST", s);
+    expect(response.status).toBe(202);
+    const { id } = (await response.json()) as any;
+    const attached = await testEnv.DB.prepare(
+      "SELECT generation FROM lineage_reviews WHERE review_id=?",
+    )
+      .bind(id)
+      .first<any>();
+    expect(attached.generation).toBe(1);
+    const state = await request(`/v1/lineages?${query}`);
+    expect(state.status).toBe(200);
+    expect(await state.json()).toEqual({
+      repository: documented.lineage.repository,
+      kind: "branch",
+      ref: "feature/x",
+      generation: 1,
+      round: 0,
+      previous_head: null,
+      posted: [],
+      rounds_to_pass: null,
+    });
+    // Lineage state is tenant-scoped.
+    const token = "a-different-tenant-token-32-characters";
+    await testEnv.DB.prepare(
+      "INSERT INTO api_tokens(hash,tenant,scope,expires_at) VALUES(?,?,?,?)",
+    )
+      .bind(hash(token), "other", "reviews:read", Date.now() + 60000)
+      .run();
+    expect(
+      (
+        await request(`/v1/lineages?${query}`, "GET", undefined, {
+          authorization: `Bearer ${token}`,
+        })
+      ).status,
+    ).toBe(404);
+    // A plain submission joins no lineage.
+    const plain = submission();
+    plain.snapshot_id = s.snapshot_id;
+    const other = (await (
+      await request("/v1/reviews", "POST", plain)
+    ).json()) as any;
+    expect(
+      await testEnv.DB.prepare(
+        "SELECT * FROM lineage_reviews WHERE review_id=?",
+      )
+        .bind(other.id)
+        .first(),
+    ).toBeNull();
+  });
+  it.each([
+    [{ repository: "r", kind: "tag", ref: "x" }],
+    [{ repository: "r", kind: "pr", ref: "feature" }],
+    [{ repository: "", kind: "branch", ref: "x" }],
+    [{ repository: "r", kind: "branch", ref: "x", reset: "yes" }],
+    [{ repository: "r", kind: "branch", ref: "x", parent: "abc" }],
+  ])("rejects an invalid lineage reference %j", async (lineage) => {
+    const s: any = submission();
+    s.snapshot_id = await upload();
+    s.lineage = lineage;
+    const response = await request("/v1/reviews", "POST", s);
+    expect(response.status).toBe(400);
+    expect(((await response.json()) as any).error).toMatch(/lineage/);
+  });
+  async function postedFinding(tenant = "owner") {
+    const id = hash(`finding-${crypto.randomUUID()}`),
+      lineage = lineageId(tenant, {
+        repository: "github.com/acme/app",
+        kind: "branch",
+        ref: `feature/${id.slice(0, 8)}`,
+      }),
+      finding = {
+        id,
+        rule_id: "correctness/throw",
+        category: "defect",
+        state: "new",
+        location: { path: "src/a.ts", line_start: 1, line_end: 1 },
+      };
+    await testEnv.DB.batch([
+      testEnv.DB.prepare(
+        "INSERT INTO lineages(id,tenant,repository,kind,ref,generation,round,posted_json,updated_at) VALUES(?,?,?,?,?,1,1,?,?)",
+      ).bind(
+        lineage,
+        tenant,
+        "github.com/acme/app",
+        "branch",
+        `feature/${id.slice(0, 8)}`,
+        JSON.stringify({ [id]: { first_posted_in: "s1", round: 1 } }),
+        Date.now(),
+      ),
+      testEnv.DB.prepare(
+        "INSERT INTO findings(tenant,lineage_id,generation,identity,review_id,snapshot_id,repository,rule_id,category,source_kind,state,status,round,first_posted_in,location_json,finding_json,created_at,updated_at) VALUES(?,?,1,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+      ).bind(
+        tenant,
+        lineage,
+        id,
+        "review",
+        "s1",
+        "github.com/acme/app",
+        finding.rule_id,
+        "defect",
+        "agent",
+        "new",
+        "open",
+        1,
+        "s1",
+        JSON.stringify({ location: finding.location }),
+        JSON.stringify({ finding, check: null }),
+        Date.now(),
+        Date.now(),
+      ),
+    ]);
+    return id;
+  }
+  it.each(["fixed", "wrong", "intentional", "irrelevant", "style"])(
+    "records %s as the author response without touching the profile",
+    async (reason) => {
+      const reviewId = await createReview();
+      const stored = await testEnv.DB.prepare(
+        "SELECT submission_key FROM reviews WHERE id=?",
+      )
+        .bind(reviewId)
+        .first<any>();
+      const before = await new Store(runtime).get<any>(stored.submission_key);
+      const id = await postedFinding();
+      const response = await request(`/v1/findings/${id}/feedback`, "POST", {
+        reason,
+        note: "documented behavior",
+        actor: "dev@example.com",
+      });
+      expect(response.status).toBe(200);
+      const body = (await response.json()) as any;
+      expect(body).toMatchObject({
+        id,
+        status: "dismissed",
+        author_response: {
+          reason,
+          actor: "dev@example.com",
+          note: "documented behavior",
+        },
+      });
+      expect(new Date(body.author_response.at).toISOString()).toBe(
+        body.author_response.at,
+      );
+      const row = await testEnv.DB.prepare(
+        "SELECT status,state,author_response_json FROM findings WHERE identity=?",
+      )
+        .bind(id)
+        .first<any>();
+      expect(row.status).toBe("dismissed");
+      expect(row.state).toBe("new");
+      expect(JSON.parse(row.author_response_json)).toEqual(
+        body.author_response,
+      );
+      expect(
+        (
+          await testEnv.DB.prepare(
+            "SELECT reason,actor,note FROM feedback WHERE finding_id=?",
+          )
+            .bind(id)
+            .all()
+        ).results,
+      ).toEqual([
+        { reason, actor: "dev@example.com", note: "documented behavior" },
+      ]);
+      // Posture, budgets, rules and suppressions are untouched.
+      expect(await new Store(runtime).get<any>(stored.submission_key)).toEqual(
+        before,
+      );
+      expect(before.profile.suppress).toEqual([]);
+    },
+  );
+  it("rejects unknown reasons and hides other tenants' findings", async () => {
+    const id = await postedFinding();
+    const rejected = await request(`/v1/findings/${id}/feedback`, "POST", {
+      reason: "false_positive",
+    });
+    expect(rejected.status).toBe(400);
+    expect(((await rejected.json()) as any).error).toContain(
+      "fixed, wrong, intentional, irrelevant, style",
+    );
+    const row = await testEnv.DB.prepare(
+      "SELECT status,author_response_json FROM findings WHERE identity=?",
+    )
+      .bind(id)
+      .first<any>();
+    expect(row).toEqual({ status: "open", author_response_json: null });
+    expect(
+      (
+        await request(`/v1/findings/${hash("unknown")}/feedback`, "POST", {
+          reason: "wrong",
+        })
+      ).status,
+    ).toBe(404);
+    const foreign = await postedFinding("other");
+    const token = "a-different-tenant-writer-32-characters";
+    await testEnv.DB.prepare(
+      "INSERT INTO api_tokens(hash,tenant,scope,expires_at) VALUES(?,?,?,?)",
+    )
+      .bind(hash(token), "intruder", "reviews:write", Date.now() + 60000)
+      .run();
+    expect(
+      (
+        await request(
+          `/v1/findings/${foreign}/feedback`,
+          "POST",
+          { reason: "wrong" },
+          { authorization: `Bearer ${token}` },
+        )
+      ).status,
+    ).toBe(404);
+    expect(
+      (
+        await testEnv.DB.prepare("SELECT status FROM findings WHERE identity=?")
+          .bind(foreign)
+          .first<any>()
+      ).status,
+    ).toBe("open");
+    // Answering with an explicit lineage targets that lineage only.
+    expect(
+      (
+        await request(`/v1/findings/${id}/feedback`, "POST", {
+          reason: "wrong",
+          lineage: {
+            repository: "github.com/acme/app",
+            kind: "branch",
+            ref: "elsewhere",
+          },
+        })
+      ).status,
+    ).toBe(404);
+    expect(
+      (
+        await request(`/v1/findings/${id}/feedback`, "POST", {
+          reason: "wrong",
+          lineage: {
+            repository: "github.com/acme/app",
+            kind: "branch",
+            ref: `feature/${id.slice(0, 8)}`,
+          },
+        })
+      ).status,
+    ).toBe(200);
   });
 });

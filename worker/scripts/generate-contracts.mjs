@@ -66,6 +66,7 @@ const exports = {};
 for (const [name, file] of Object.entries({
   profile: "profile-v1",
   report: "report-v1",
+  finding: "finding-v1",
   hypothesis: "hypothesis-v1",
   answer: "vote-answer-v1",
 })) {

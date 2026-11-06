@@ -1,4 +1,10 @@
 import type { Hypothesis, Profile, Snapshot, Submission } from "../src/types";
+import migrations from "../src/migrations.json";
+// Every bundled migration, in order, for applyD1Migrations.
+export const allMigrations = migrations.map((m) => ({
+  name: m.name,
+  queries: m.statements,
+}));
 export const snapshot: Snapshot = {
   base: {
     "src/a.ts": { mode: 0o100644, content: "function a(){ return 0; }\n" },

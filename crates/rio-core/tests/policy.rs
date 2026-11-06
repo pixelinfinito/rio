@@ -250,3 +250,45 @@ fn partial_reports_respect_incomplete_policy_and_malformed_audits_fail_closed() 
     r.agent_audit = Some(serde_json::json!({"policy_failed": true, "policy_matches": []}));
     assert_eq!(exit_code(&r, &lenient, ExitContext::default()), 1);
 }
+
+#[test]
+fn lifecycle_status_and_responses_never_change_fail_on_or_exit_codes() {
+    let policy = FailOn::default().compile().unwrap();
+    for state in [State::New, State::PreExisting] {
+        let mut base = report();
+        let mut f = finding();
+        f.state = state;
+        base.findings.push(f);
+        let expected_match = policy.matches(&base.findings[0]);
+        let expected_exit = exit_code(&base, &policy, ExitContext::default());
+        assert_eq!(expected_exit, if state == State::New { 1 } else { 0 });
+        for status in [
+            LifecycleStatus::Open,
+            LifecycleStatus::Fixed,
+            LifecycleStatus::Dismissed,
+        ] {
+            for reason in ResponseReason::ALL {
+                let mut report = base.clone();
+                let f = &mut report.findings[0];
+                f.round = Some(3);
+                f.first_posted_in = Some("snap-1".into());
+                f.status = Some(status);
+                f.resolution = Some(Resolution {
+                    fixed_in: Some("snap-3".into()),
+                    note: None,
+                });
+                f.author_response = Some(AuthorResponse {
+                    reason,
+                    actor: "octocat".into(),
+                    at: "2026-11-05T10:00:00Z".into(),
+                    note: None,
+                });
+                assert_eq!(policy.matches(&report.findings[0]), expected_match);
+                assert_eq!(
+                    exit_code(&report, &policy, ExitContext::default()),
+                    expected_exit
+                );
+            }
+        }
+    }
+}

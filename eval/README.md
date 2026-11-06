@@ -123,22 +123,136 @@ metric views, a canonical selection manifest, blocked monorepos, and a compariso
 with the historical hand summary. Rebuild its records and run aggregate/render
 with the generated narrative using `python3 eval/rerun_v01.py`.
 
-## v0.2 verifier comparison
+## v0.2 verifier comparison (pinned acceptance)
 
-`python3 eval/verifier.py MANIFEST.json --out COMPARISON.json` compares single-voter
-and quorum reports on identical pinned base/head snapshots. A manifest uses schema
-`rio-verifier-eval-v1`, `execution: live-model` (or `recorded` for harness tests),
+`python3 -I eval/verifier.py MANIFEST.json --out COMPARISON.json [--markdown SUMMARY.md]`
+compares single-verifier and quorum reports on identical pinned base/head snapshots.
+The manifest ([schema](schema/verifier-manifest-v1.json)) uses schema
+`rio-verifier-eval-v1`, `execution: live-model` (or `recorded` for harness tests)
 and nonempty `cases`. Each case pins `id`, `generator_model`, `voter_model`,
-`profile_hash`, `high_controls` (known high-severity IDs), `independently_clean`,
-and `single`/`quorum` arms. Each arm names `report`, `audit`, `verdicts` relative
-paths plus their `report_sha256`, `audit_sha256`, `verdicts_sha256` pins.
+`profile_hash`, `high_controls` (known high-severity control IDs, empty for clean
+controls), `independently_clean`, and `single`/`quorum` arms. Each arm names
+`report`, `audit`, `verdicts` paths relative to the manifest plus their
+`report_sha256`, `audit_sha256`, `verdicts_sha256` pins.
 
 Verdicts contain an independent `reviewer` and per-finding entries with `verdict`
 (true-positive/false-positive), artifact-backed `evidence`, and optional
-`control_id`. The report includes the actual finding contracts and the audit is
-from the authenticated endpoint. The comparator records blind-match buckets,
-precision by evidence, verification tokens/cost and high-severity recall. Acceptance
-requires a set containing known high-severity issues and clean controls, at least
-80% precision, preserved baseline high-severity detections, and live model runs.
-It writes a failed comparison and returns exit 1 when a gate is absent or fails.
-No empirical verifier acceptance is claimed from the recorded test fixtures.
+`control_id` naming the high-severity control a true positive detects. The report
+holds the actual finding contracts and the audit comes from the authenticated
+endpoint (`votes`, `usage`). The comparison ([schema](schema/verifier-comparison-v1.json))
+records, per case and per arm, verdict counts, blind-match buckets, precision by
+evidence level, verification tokens and cost, and detected controls, plus arm
+totals and high-severity recall.
+
+Acceptance (`accepted: true`) requires every gate: a reference set with known
+high-severity issues and independently clean controls; quorum precision >= 0.80;
+no high-severity control detected by the single-verifier baseline but missed by
+the quorum; complete data (every case scored, verification cost known); and
+`execution: live-model`. A failing or unusable comparison is still written, with
+the quorum false positives (`quorum_false_positives`), the lost controls
+(`lost_high_controls`, as `case/control`) and unscorable cases (`errors`) named,
+and the command exits 1. Recorded test fixtures never establish acceptance.
+
+The live measurement is a separate, paid step that this harness does not run. It
+needs: a deployed endpoint with the pinned `rio/openrouter` profile hash; a
+reference set of real PRs with registered high-severity controls and
+independently clean controls; for each case and arm (`verify.voters: 1` versus the
+quorum profile) the `report.json`, the endpoint audit (`votes`, `usage` with
+`cost_usd`) and independent verdicts; and a manifest pinning their SHA-256 values
+with `execution: live-model`. Write the outcome with `--markdown
+docs/evaluation/v0.2-verifier.md` and keep a failing comparison as evidence.
+
+## Eval cases and incidents
+
+Cases follow the internal [schemas/eval-case-v1.json](../schemas/eval-case-v1.json):
+`label` (`incident | historical | mutation`), `input` (PR, base and head refs with
+full SHAs, changed files), `expected` findings (locations with `path`, line range,
+enclosing `symbol_path` and `symbol_line`; editable `trigger` and its source),
+`counterfactual_catch` (`ci | human | none`, required for incidents) and
+`provenance` (source, time, tool, and for incidents the fix PR and the file
+overlap). Validate with `python3 -I eval/cases.py validate eval/cases`.
+
+The `rio eval` subcommands run these scripts with `python3 -I`. They need
+`python3` and this harness: run them inside the Rio source tree, or set
+`RIO_EVAL_DIR` to this `eval/` directory; otherwise they exit 2.
+
+`rio eval import-incident <pr> <fix-pr> [--caught-by ci|human|none]` runs
+`python3 -I eval/incident.py <pr> <fix-pr> [--caught-by ...] [--repo PATH]
+[--gh-repo OWNER/REPO] [--repository NAME] [--trigger TEXT] [--force]`. It fetches
+both PRs through `gh pr view --json` and `gh pr diff` (file contents through local
+`git show`, else `gh api`), refuses with an overlap report (exit 1) when the fix
+changes no file the PR changed, and otherwise writes
+`<repo>/eval/cases/incident-<pr>-<fix-pr>.json`. The expected location is the set of
+symbols enclosing the fix hunks in overlapping files: from each hunk's first old
+line, the nearest preceding `def`/`fn`/`function`/`class` line in the fix's base file,
+falling back to a file-level location; lines are in the fix base's coordinates. The
+trigger is the fix description's first paragraph (else its title) and is meant to
+be edited. Without `--caught-by` the command asks on a terminal and fails (exit 2)
+otherwise. Nothing leaves the repository; contributing a case to a shared set is a
+separate step.
+
+## Noise measurement
+
+`rio eval noise ARGS` runs `python3 -I eval/noise.py run ARGS` (`--repo`, `--branch`,
+`--rio`, `--profile`, `--limit`, `--since`, `--pr`, `--exclude N=REASON`,
+`--window-days 90`, `--date`, `--out-root eval/runs/noise`, `--recorded DIR`). It
+selects known-clean PRs from the local clone's default branch: GitHub merge commits
+(`Merge pull request #N`) and squash commits (`... (#N)`), excluding any PR later
+reverted (`This reverts commit` or `Revert "<title>"`), any PR whose changed line
+ranges a later first-parent commit edits or inserts next to within 90 days (ranges
+are carried through intervening commits), and PRs whose window has not elapsed.
+`python3 -I eval/noise.py select` prints the selection without reviewing. Each
+selected PR is reviewed with `rio review --base <base> --format json [--profile P]`
+in a temporary worktree at the PR head; `eval/runs/noise/<date>/` then holds
+`selection.json`, `run.json`, `<case>/report.json`, `<case>/adjudication.json` and
+`summary.json`.
+
+Adjudication ([schema](schema/noise-adjudication-v1.json)) starts with every
+finding's `label`, `adjudicator` and `rationale` null. A human sets `label` to
+`harmful` (acting on it would introduce a bug or remove intended behavior),
+`neutral` or `useful` with the adjudicator and a rationale (the same definition is
+`$defs/noise_adjudication` in the [record schema](schema/record-v2.json)); the
+harness never infers labels. `python3 -I eval/noise.py validate RUN-DIR` lists
+unadjudicated findings, and `summarize RUN-DIR` rewrites `summary.json`
+([schema](schema/noise-summary-v1.json)): the harmful count is a lower bound and
+unlabeled findings are counted as unadjudicated, never neutral.
+
+Release check: `python3 -I eval/noise.py check --candidate RUN-DIR|summary.json
+(--previous RUN-DIR|summary.json | --first-release)` fails (exit 1) when any finding
+is unadjudicated, any PR failed to run, the provider profile differs from the
+previous release's, or the harmful count exceeds the previous release's; failing
+findings are named.
+
+The nightly [noise workflow](../.github/workflows/noise.yml) (schedule and manual
+dispatch with optional `repository` and `limit` inputs) builds Rio, runs the job
+with the pinned `rio/openrouter` profile against the endpoint configured by the
+`RIO_ENDPOINT_URL` and `RIO_API_TOKEN` repository secrets (provider keys stay in the
+endpoint, deployed from secrets), copies the job log into the run, runs
+`python3 -I eval/credscan.py` over the run directory and log (exact and base64
+values of `RIO_API_TOKEN` and the provider key secrets, plus common token shapes),
+and only when that scan is clean uploads `eval/runs/noise/<date>` as artifact
+`noise-<date>` with 90-day retention. Adjudicate the downloaded directory and run
+the release check against the previous release's summary.
+
+## Author responses, rounds to pass and the regression gate
+
+`python3 -I eval/convergence.py summarize REPORT.json... [--repository NAME] --out
+SUMMARY.json` aggregates lineage reports per repository
+([schema](schema/convergence-summary-v1.json)): the author-response ratio
+`fixed / (fixed + wrong + intentional + irrelevant + style)` over responded
+findings (for example 6 fixed, 2 wrong, 1 intentional, 1 style gives 0.6), `wrong`
+per agent and evidence level, `intentional` per agent, `irrelevant`/`style` per rule
+and per category, and `rounds_to_pass` per lineage with its distribution. Each
+finding identity counts once per lineage generation (its latest round). Responses
+are never aggregated per user, and suppressions suggested from them still need
+approval.
+
+Every prompt, tool or model change is scored on incidents, historical PRs and
+mutations together. `python3 -I eval/gate.py scorecard --summary EVAL-SUMMARY.json
+--cases eval/cases --reports RUN-DIR --label NAME --out CARD.json` combines the
+adjudicated harness summary (precision and positive-control recall from
+`evaluate.py aggregate`) with case recall from `RUN-DIR/<case-id>/report.json`
+([schema](schema/scorecard-v1.json)). `python3 -I eval/gate.py gate --baseline
+BASE.json --candidate CARD.json` exits 1 when precision, recall or incident recall
+falls, a measured metric or case report is missing, or a previously caught
+incident is missed (named in the output); otherwise it exits 0.

@@ -1,0 +1,172 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rio.dev/eval/schema/scorecard-v1.json",
+  "title": "Rio regression-gate scorecard v1",
+  "type": "object",
+  "properties": {
+    "schema": {
+      "const": "rio-eval-scorecard-v1"
+    },
+    "label": {
+      "type": "string",
+      "minLength": 1
+    },
+    "rio_versions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "profile_hashes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "precision": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 1
+    },
+    "recall": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 1
+    },
+    "historical_recall": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 1
+    },
+    "mutation_recall": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 1
+    },
+    "incident_recall": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 1
+    },
+    "case_recall": {
+      "type": "object",
+      "properties": {
+        "incident": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "historical": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "mutation": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "required": [
+        "incident",
+        "historical",
+        "mutation"
+      ],
+      "additionalProperties": false
+    },
+    "cases": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "enum": [
+              "incident",
+              "historical",
+              "mutation"
+            ]
+          },
+          "case_path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "report": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "status": {
+            "enum": [
+              "caught",
+              "missed",
+              "missing"
+            ]
+          },
+          "matched": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "required": [
+          "label",
+          "case_path",
+          "report",
+          "status",
+          "matched"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "missing_reports": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "schema",
+    "label",
+    "rio_versions",
+    "profile_hashes",
+    "precision",
+    "recall",
+    "historical_recall",
+    "mutation_recall",
+    "incident_recall",
+    "case_recall",
+    "cases",
+    "missing_reports"
+  ],
+  "additionalProperties": false
+}

@@ -22,6 +22,8 @@ export interface Location {
   line_end: number;
   symbol_path: string;
   occurrence_state: string;
+  // Instance identity inside a class-level finding.
+  id?: string;
 }
 export interface Hypothesis {
   id: string;
@@ -85,13 +87,34 @@ export interface Verification {
   blind_match: BlindMatch[];
   split: boolean;
 }
+export type ResponseReason =
+  "fixed" | "wrong" | "intentional" | "irrelevant" | "style";
+export interface AuthorResponse {
+  reason: ResponseReason;
+  actor: string;
+  at: string;
+  note?: string;
+}
+export type LifecycleStatus = "open" | "fixed" | "dismissed";
 export type Finding = Hypothesis & {
   category: "defect" | "risk" | "security";
   evidence_level: Evidence;
   evidence: string[];
   locations: Location[];
   verification?: Verification;
+  // Lineage-only keys; absent outside lineages.
+  round?: number;
+  first_posted_in?: string;
+  status?: LifecycleStatus;
+  resolution?: { fixed_in?: string; note?: string };
+  author_response?: AuthorResponse;
 };
+export interface LineageRef {
+  repository: string;
+  kind: "pr" | "branch";
+  ref: string;
+  reset?: boolean;
+}
 export interface Step {
   id: string;
   uses: string;
@@ -145,6 +168,7 @@ export interface Submission {
   intent: string;
   fork: boolean;
   mode: "fast" | "deep";
+  lineage?: LineageRef;
 }
 export interface Execution {
   protocol: 1;

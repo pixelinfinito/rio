@@ -1,6 +1,7 @@
 import type { ValidateFunction } from "ajv";
 export const profile: ValidateFunction<any>;
 export const report: ValidateFunction<any>;
+export const finding: ValidateFunction<any>;
 export const hypothesis: ValidateFunction<any>;
 export const answer: ValidateFunction<any>;
 export const module0: ValidateFunction<any>;

@@ -258,6 +258,9 @@
           "family": {
             "type": "string",
             "minLength": 1
+          },
+          "noise": {
+            "$ref": "#/$defs/noise_adjudication"
           }
         },
         "required": [
@@ -444,5 +447,62 @@
     "rio_binary_sha256",
     "profile_sha256"
   ],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "$defs": {
+    "noise_adjudication": {
+      "description": "Noise adjudication of one finding on a known-clean PR. Skeletons start with every field null; only a human adjudicator sets a label, and the harness never infers one. harmful: acting on the finding would introduce a bug or remove intended behavior.",
+      "type": "object",
+      "properties": {
+        "label": {
+          "enum": [
+            "harmful",
+            "neutral",
+            "useful",
+            null
+          ]
+        },
+        "adjudicator": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "rationale": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      },
+      "required": [
+        "label",
+        "adjudicator",
+        "rationale"
+      ],
+      "additionalProperties": false,
+      "if": {
+        "properties": {
+          "label": {
+            "enum": [
+              "harmful",
+              "neutral",
+              "useful"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "adjudicator": {
+            "type": "string"
+          },
+          "rationale": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
 }

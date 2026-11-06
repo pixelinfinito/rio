@@ -54,6 +54,9 @@ pub struct Location {
     pub column: Option<u32>,
     pub symbol_path: String,
     pub occurrence_state: OccurrenceState,
+    /// Instance identity when this location belongs to a class-level finding.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub id: Option<String>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -105,6 +108,90 @@ pub struct Finding {
     pub advisory: Option<Advisory>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub verification: Option<Verification>,
+    /// Review round within a lineage that produced the finding.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub round: Option<u32>,
+    /// Snapshot id of the lineage round that first posted this identity.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub first_posted_in: Option<String>,
+    /// Lifecycle of a posted lineage finding; independent of regression `state`
+    /// and never consulted by `fail_on`.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub status: Option<LifecycleStatus>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub resolution: Option<Resolution>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub author_response: Option<AuthorResponse>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum LifecycleStatus {
+    Open,
+    Fixed,
+    Dismissed,
+}
+
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Resolution {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub fixed_in: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub note: Option<String>,
+}
+
+/// The only accepted answers to a finding (`finding-feedback`).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum ResponseReason {
+    Fixed,
+    Wrong,
+    Intentional,
+    Irrelevant,
+    Style,
+}
+impl ResponseReason {
+    pub const ALL: [Self; 5] = [
+        Self::Fixed,
+        Self::Wrong,
+        Self::Intentional,
+        Self::Irrelevant,
+        Self::Style,
+    ];
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Fixed => "fixed",
+            Self::Wrong => "wrong",
+            Self::Intentional => "intentional",
+            Self::Irrelevant => "irrelevant",
+            Self::Style => "style",
+        }
+    }
+}
+impl std::str::FromStr for ResponseReason {
+    type Err = String;
+    fn from_str(value: &str) -> Result<Self, Self::Err> {
+        Self::ALL
+            .into_iter()
+            .find(|reason| reason.as_str() == value)
+            .ok_or_else(|| {
+                format!(
+                    "unknown reason {value:?}; accepted reasons: {}",
+                    Self::ALL.map(Self::as_str).join(", ")
+                )
+            })
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct AuthorResponse {
+    pub reason: ResponseReason,
+    pub actor: String,
+    pub at: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub note: Option<String>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]

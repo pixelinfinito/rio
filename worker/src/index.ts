@@ -2,13 +2,16 @@ import { Hono } from "hono";
 import type { Env, Execution, Submission } from "./types";
 import { authenticate, equal, jobToken, sign, verifyJobToken } from "./auth";
 import {
+  RESPONSE_REASONS,
   canonical,
   hash,
   invariant,
   validateGraph,
+  validateLineageRef,
   validateSnapshot,
   validateSubmission,
 } from "./validation";
+import { attachStatements, lineageId } from "./lineage";
 import { Store } from "./storage";
 import { finishJob } from "./jobs";
 import { parseWall } from "./budget";
@@ -130,18 +133,22 @@ app.post("/v1/reviews", async (c) => {
       : value.profile.budget.fast;
   const wall = parseWall(active.wall_time);
   invariant(wall <= 3600000, "review wall budget exceeds one hour");
-  await c.env.DB.prepare(
-    "INSERT INTO reviews(id,tenant,submission_key,status,created_at,token_limit,deadline) VALUES(?,?,?,'queued',?,?,?)",
-  )
-    .bind(
+  // The review and its lineage attachment (including a reset) commit together.
+  await c.env.DB.batch([
+    c.env.DB.prepare(
+      "INSERT INTO reviews(id,tenant,submission_key,status,created_at,token_limit,deadline) VALUES(?,?,?,'queued',?,?,?)",
+    ).bind(
       id,
       tenant,
       key,
       Date.now(),
       active.tokens ?? 100000,
       Date.now() + wall,
-    )
-    .run();
+    ),
+    ...(value.lineage
+      ? attachStatements(c.env, tenant, value.lineage, id, value.snapshot_id)
+      : []),
+  ]);
   try {
     await c.env.REVIEWS.create({
       id,
@@ -239,6 +246,105 @@ app.post("/v1/reviews/:id/cancel", async (c) => {
     .bind(row.id)
     .run();
   return c.json({ id: row.id, status: "cancelled" });
+});
+app.get("/v1/lineages", async (c) => {
+  const tenant = await authenticate(c.req.raw, c.env, "reviews:read");
+  const ref = {
+    repository: c.req.query("repository"),
+    kind: c.req.query("kind"),
+    ref: c.req.query("ref"),
+  };
+  validateLineageRef(ref, false);
+  const row = await c.env.DB.prepare(
+    "SELECT * FROM lineages WHERE id=? AND tenant=?",
+  )
+    .bind(lineageId(tenant, ref), tenant)
+    .first<any>();
+  if (!row) return c.json({ error: "lineage not found" }, 404);
+  return c.json({
+    repository: row.repository,
+    kind: row.kind,
+    ref: row.ref,
+    generation: row.generation,
+    round: row.round,
+    previous_head: row.previous_head,
+    posted: Object.keys(JSON.parse(row.posted_json)).sort(),
+    rounds_to_pass: row.rounds_to_pass,
+  });
+});
+// Answers a posted lineage finding. It writes author_response and a feedback
+// record only; posture, budgets, rules and suppressions are never touched.
+app.post("/v1/findings/:id/feedback", async (c) => {
+  const tenant = await authenticate(c.req.raw, c.env, "reviews:write"),
+    value = await body(c.req.raw, 64 * 1024),
+    id = c.req.param("id");
+  invariant(/^[a-f0-9]{64}$/.test(id), "invalid finding id");
+  invariant(
+    value &&
+      typeof value === "object" &&
+      !Array.isArray(value) &&
+      Object.keys(value).every((k) =>
+        ["reason", "note", "actor", "lineage"].includes(k),
+      ),
+    "invalid feedback",
+  );
+  invariant(
+    RESPONSE_REASONS.includes(value.reason),
+    `invalid reason: expected one of ${RESPONSE_REASONS.join(", ")}`,
+  );
+  invariant(
+    value.note === undefined ||
+      (typeof value.note === "string" && value.note.length <= 4000),
+    "invalid note",
+  );
+  invariant(
+    value.actor === undefined ||
+      (typeof value.actor === "string" &&
+        value.actor.length > 0 &&
+        value.actor.length <= 256),
+    "invalid actor",
+  );
+  if (value.lineage !== undefined) validateLineageRef(value.lineage, false);
+  const row = await (
+    value.lineage
+      ? c.env.DB.prepare(
+          "SELECT lineage_id,generation FROM findings WHERE tenant=? AND identity=? AND lineage_id=? AND first_posted_in IS NOT NULL ORDER BY generation DESC LIMIT 1",
+        ).bind(tenant, id, lineageId(tenant, value.lineage))
+      : c.env.DB.prepare(
+          "SELECT lineage_id,generation FROM findings WHERE tenant=? AND identity=? AND first_posted_in IS NOT NULL ORDER BY updated_at DESC,generation DESC LIMIT 1",
+        ).bind(tenant, id)
+  ).first<{ lineage_id: string; generation: number }>();
+  if (!row) return c.json({ error: "finding not found" }, 404);
+  const response = {
+    reason: value.reason,
+    actor: value.actor ?? tenant,
+    at: new Date().toISOString(),
+    ...(value.note ? { note: value.note } : {}),
+  };
+  await c.env.DB.batch([
+    c.env.DB.prepare(
+      "UPDATE findings SET status='dismissed',author_response_json=?,updated_at=? WHERE tenant=? AND lineage_id=? AND generation=? AND identity=?",
+    ).bind(
+      JSON.stringify(response),
+      Date.now(),
+      tenant,
+      row.lineage_id,
+      row.generation,
+      id,
+    ),
+    c.env.DB.prepare(
+      "INSERT INTO feedback(id,tenant,finding_id,reason,actor,note,created_at) VALUES(?,?,?,?,?,?,?)",
+    ).bind(
+      crypto.randomUUID(),
+      tenant,
+      id,
+      response.reason,
+      response.actor,
+      value.note ?? null,
+      Date.now(),
+    ),
+  ]);
+  return c.json({ id, status: "dismissed", author_response: response });
 });
 app.post("/v1/runner/claim", async (c) => {
   const bearer = c.req.header("authorization")?.replace(/^Bearer /, "") ?? "";

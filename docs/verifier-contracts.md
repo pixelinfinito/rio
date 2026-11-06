@@ -84,3 +84,112 @@ cache. Output is redacted before persistence. Repository source snapshots remain
 private immutable source, so they are not rewritten by output redaction.
 Risk status is always neutral advisory data; it is not approval. No SARIF or PR
 publisher ships in this change. See [Cloudflare operations](cloudflare.md).
+
+## Review lineages and rounds
+
+A review joins a lineage when its submission names one. The optional
+`lineage` member of `POST /v1/reviews` is:
+
+```json
+{
+  "lineage": {
+    "repository": "github.com/pixelinfinito/rio",
+    "kind": "branch",
+    "ref": "feature/x",
+    "reset": false
+  }
+}
+```
+
+`repository` (1-1024 characters, no control characters) is a client-chosen key
+scoped to the tenant; `kind` is `pr` (with the PR number as `ref`) or `branch`
+(with the branch name). Unknown members are rejected with HTTP 400. The
+endpoint holds lineage state, keyed by tenant, repository, kind and ref and
+independent of commit ancestry, so a rebased or force-pushed head stays in the
+same lineage. `reset: true` starts a new generation at round 1; resetting a
+generation that has no review yet is a no-op. Reviews submitted without
+`lineage` have no round, no `report.lineage` and no lifecycle keys, and write no
+finding rows.
+
+Rounds. A review's `round` is one plus the number of earlier reviews in its
+generation that listed at least one finding (any category, including risks,
+held-back and capped ones); a review that lists none does not consume a round.
+The round is assigned when the review's workflow starts and stamped on every
+finding (`findings`, `risks`, `security` and each check's `findings`). The
+previous reviewed head is the snapshot of the most recent earlier review of the
+generation that finished its workflow; failed reviews do not advance it.
+Lineage reviews are expected to run one at a time.
+
+`rounds_to_pass` is the round of the first `complete` review of the generation
+with no open defect: no unanswered `defect` among its findings and no earlier
+defect that is still `open` (not fixed and not dismissed). It is null while
+defects remain open and never changes afterwards within the generation.
+
+Report. Lineage reviews add `report.lineage` with `repository`, `kind`, `ref`,
+`generation`, `round`, `cap` (profile `rounds.cap`, default 3), `capped`
+(`round > cap`), `diff_only`, `previous_head`, `held_back`, `rounds_to_pass`
+(after this review) and `author_response_ratio` (`fixed` share of answered
+findings in the tenant's repository, null when there is none). Findings carry
+`round`; posted findings also carry `first_posted_in` (snapshot id of the
+round that first posted the identity) and lifecycle `status`, plus
+`author_response` once answered. `report.agent_audit.already_posted` lists the
+held-back identities (renderers mark them as already posted), and
+`agent_audit.lineage_updates` lists `{id, status, resolution}` for earlier
+open findings that this review did not produce.
+
+- Never re-post: an identity already posted in the generation is held back.
+  It stays in the report's lists (so `fail_on` sees it), keeps its original
+  `first_posted_in` and counts in `held_back`.
+- Round cap: when `capped`, the report still lists every finding, deterministic
+  (`source.tool`) findings are still posted, and agent findings not posted
+  before are summarized by `reconsider`: `unresolved` (open agent findings),
+  `top` (up to three, by severity then evidence level, with `id`, `title`,
+  `path`, `line_start`) and, when the change exceeded `max_lines` (the
+  resolved profile's `max_lines` against the summed `lines_changed`, or the
+  prepare step's footer note), `split`: changed files grouped by their deepest
+  check root, otherwise by top-level directory, as `"<part> (N files, M lines)"`.
+- Diff-only re-review: for `round > rounds.diff_only_after` (default 1) with a
+  previous head, agents receive the previous-head to new-head change as the
+  changed code, the generation's earlier findings with their current states,
+  and the intent of the generation's first review. Checks and the graph still
+  run on base to head. The verifier re-verifies only new hypotheses in files of
+  that incremental change and earlier open agent findings whose location moved
+  or whose code changed; an open finding on unchanged code keeps its earlier
+  verification and is not dispatched to voters. The plan is recorded in
+  `agent_audit.diff_only` (`reverified`, `carried`, `not_reverified`).
+- Class findings: agent findings with equal category, `rule_id` and trigger
+  hash (`blake3` of the whitespace-normalized trigger, the same hash used by the
+  blind comparison) across different symbols merge when their count exceeds the
+  consolidation `class_threshold` (default 3). The class finding's id is
+  `blake3(rule_id | "class" | trigger_hash)`, its `locations` list every
+  instance and its message reads `N occurrences of <message>; fix the pattern,
+  for example at <path>:<line>`. `agent_audit.classes` maps each class id to its
+  instance ids. A suppression or response on the class applies to every instance.
+
+Lifecycle. A posted finding starts `open`. When a later `complete` review of
+the generation re-assessed its location (for deterministic findings, the
+check that produced it, or every check covering its path, ran with outcome
+`passed` or `findings`; for agent findings, a verify step finished without
+incomplete votes), no longer produces its identity, and the code at its
+location changed or was removed, it becomes `fixed` with
+`resolution.fixed_in` set to the new snapshot id. Otherwise it stays `open`
+with `resolution.note` `not re-assessed` or `did not reproduce` (unchanged
+code). `status` never changes regression `state` or `fail_on`.
+
+Storage. Migration `0002_convergence.sql` adds `lineages` (generation, current
+round, previous head, posted identities, `rounds_to_pass`, carried intent),
+`lineage_reviews`, `findings` (one row per tenant, lineage generation and
+identity, written when a lineage review finishes) and `feedback`, whose
+`reason` accepts only `fixed | wrong | intentional | irrelevant | style`
+(draft `false_positive` and `known` rows convert to `wrong` and
+`intentional`).
+
+`GET /v1/lineages?repository=…&kind=…&ref=…` (scope `reviews:read`) returns the
+current generation (`round` is the round of its latest finished review, 0
+before the first) or HTTP 404. `POST /v1/findings/{id}/feedback` (scope
+`reviews:write`) answers a posted finding with
+`{ reason, note?, actor?, lineage? }`; `actor` defaults to the token's tenant.
+It returns `{ id, status: "dismissed", author_response }`, HTTP 400 for any
+other reason and HTTP 404 when the tenant has no posted finding with that id.
+It writes the finding row and a `feedback` record only. See
+[convergence contracts](convergence-contracts.md).

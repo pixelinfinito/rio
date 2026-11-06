@@ -5,4 +5,4 @@ description: Report the review artifacts
 local: true
 inputs: ["findings", "check_outcomes", "impact", "verified_findings"]
 outputs: ["report"]
-schema: {"type": "object", "additionalProperties": false, "properties": {}}
+schema: {"type": "object", "additionalProperties": false, "properties": {"class_threshold": {"type": "integer", "minimum": 1, "default": 3, "description": "Agent findings sharing rule and trigger across more symbols than this merge into one class-level finding"}}}

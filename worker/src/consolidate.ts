@@ -3,10 +3,12 @@ import type {
   FailOn,
   Finding,
   Hypothesis,
+  Location,
   Profile,
   Verification,
 } from "./types";
 import { matches } from "./triage";
+import { hash, normalizeTrigger } from "./validation";
 const evidence: Record<Evidence, number> = {
   refuted: 0,
   plausible: 1,
@@ -21,6 +23,8 @@ export interface Verified {
   category?: Hypothesis["category"];
   reclassification_reason?: string;
   evidence?: string[];
+  // Carried-forward class findings keep every instance location.
+  locations?: Location[];
 }
 export function policyMatches(f: Finding, policy: FailOn): boolean {
   return (
@@ -31,7 +35,75 @@ export function policyMatches(f: Finding, policy: FailOn): boolean {
       (policy.states ?? ["new", "worsened"]).includes(f.state))
   );
 }
-export function consolidate(verified: Verified[], p: Profile) {
+export interface ConsolidateOptions {
+  // Instances above this count merge into one class finding (default 3).
+  classThreshold?: number;
+}
+export function triggerHash(trigger: string): string {
+  return hash(normalizeTrigger(trigger));
+}
+export function classId(rule_id: string, trigger_hash: string): string {
+  return hash(`${rule_id}|class|${trigger_hash}`);
+}
+const order = (a: Finding, b: Finding) =>
+  severity[b.severity] * evidence[b.evidence_level] -
+    severity[a.severity] * evidence[a.evidence_level] ||
+  a.location.path.localeCompare(b.location.path) ||
+  a.location.line_start - b.location.line_start ||
+  a.id.localeCompare(b.id);
+/**
+ * Merge agent findings that share rule_id and trigger hash across different
+ * symbols into one class-level finding when the group exceeds the threshold.
+ * Members keep their own ids in the returned group (and the consolidation audit).
+ */
+export function classify(
+  findings: Finding[],
+  threshold: number,
+): { finding: Finding; members: Finding[] }[] {
+  const groups = new Map<string, Finding[]>();
+  for (const f of findings) {
+    const key = `${f.category}\0${f.rule_id}\0${triggerHash(f.trigger)}`;
+    groups.set(key, [...(groups.get(key) ?? []), f]);
+  }
+  const result: { finding: Finding; members: Finding[] }[] = [];
+  for (const members of groups.values()) {
+    const symbols = new Set(
+      members.map((m) => `${m.location.path}\0${m.location.symbol_path}`),
+    );
+    if (members.length <= threshold || symbols.size < 2) {
+      for (const m of members) result.push({ finding: m, members: [m] });
+      continue;
+    }
+    const strongest = [...members].sort(order)[0];
+    // Instances keep their own identity inside the class finding.
+    const locations = members
+      .flatMap((m) => m.locations.map((l) => ({ ...l, id: m.id })))
+      .sort(
+        (a, b) =>
+          a.path.localeCompare(b.path) ||
+          a.line_start - b.line_start ||
+          a.symbol_path.localeCompare(b.symbol_path),
+      );
+    const first = locations[0];
+    result.push({
+      members,
+      finding: {
+        ...strongest,
+        id: classId(strongest.rule_id, triggerHash(strongest.trigger)),
+        location: (({ id: _, ...location }) => location)(first),
+        locations,
+        message: `${members.length} occurrences of ${strongest.message.replace(/[.\s]+$/, "")}; fix the pattern, for example at ${first.path}:${first.line_start}`,
+        evidence: [...new Set(members.flatMap((m) => m.evidence))].sort(),
+      },
+    });
+  }
+  return result;
+}
+export function consolidate(
+  verified: Verified[],
+  p: Profile,
+  options: ConsolidateOptions = {},
+) {
   const security =
     p.steps.find((s) => s.uses.startsWith("rio/security@"))?.with ?? {};
   const audit = {
@@ -43,6 +115,7 @@ export function consolidate(verified: Verified[], p: Profile) {
     category_drops: {} as Record<string, number>,
     suppressed: 0,
     refuted: 0,
+    classes: {} as Record<string, string[]>,
     policy_failed: false,
     policy_matches: [] as string[],
   };
@@ -57,6 +130,15 @@ export function consolidate(verified: Verified[], p: Profile) {
     states: ["new", "worsened"],
     ...security.fail_on,
   };
+  const suppressed = (f: Finding) =>
+    p.suppress.some((s) =>
+      "finding" in s
+        ? s.finding === f.id
+        : "path" in s
+          ? f.locations.every((l) => matches(s.path, l.path))
+          : matches(s.rule, f.rule_id),
+    );
+  const candidates: Finding[] = [];
   for (const v of verified) {
     const category = v.category ?? v.hypothesis.category;
     if (category === "style" || category === "diagnostic") {
@@ -76,19 +158,24 @@ export function consolidate(verified: Verified[], p: Profile) {
       evidence_level: v.evidence_level,
       verification: v.verification,
       evidence: v.evidence ?? [],
-      locations: [h.location],
+      locations: v.locations ?? [h.location],
     };
-    if (
-      p.suppress.some((s) =>
-        "finding" in s
-          ? s.finding === f.id
-          : "path" in s
-            ? matches(s.path, f.location.path)
-            : matches(s.rule, f.rule_id),
-      )
-    ) {
+    if (suppressed(f)) {
       audit.suppressed++;
       continue;
+    }
+    candidates.push(f);
+  }
+  const classes = classify(candidates, options.classThreshold ?? 3);
+  for (const { finding: f, members } of classes) {
+    const category = f.category;
+    if (members.length > 1) {
+      audit.classes[f.id] = members.map((m) => m.id);
+      // A suppression of the class applies to every instance.
+      if (suppressed(f)) {
+        audit.suppressed += members.length;
+        continue;
+      }
     }
     // Fail policies inspect every unsuppressed verified security entry before presentation floors/caps.
     if (
@@ -118,36 +205,30 @@ export function consolidate(verified: Verified[], p: Profile) {
           : "info";
     if (category === "security") {
       if (
-        v.evidence_level === "plausible"
+        f.evidence_level === "plausible"
           ? posture !== "critical-only"
-          : evidence[v.evidence_level] >= evidence[min] &&
+          : evidence[f.evidence_level] >= evidence[min] &&
             severity[f.severity] >= severity[floor]
       )
         pools.security.push(f);
       continue;
     }
-    if (category === "risk" || v.evidence_level === "plausible") {
+    if (category === "risk" || f.evidence_level === "plausible") {
       if (
-        v.evidence_level === "plausible"
+        f.evidence_level === "plausible"
           ? posture !== "critical-only"
-          : evidence[v.evidence_level] >= evidence[min]
+          : evidence[f.evidence_level] >= evidence[min]
       )
         pools.risks.push({ ...f, category: "risk" });
       continue;
     }
     if (
-      evidence[v.evidence_level] >= evidence[min] &&
+      evidence[f.evidence_level] >= evidence[min] &&
       severity[f.severity] >=
         severity[p.posture_policy?.defect_severity_floor ?? floor]
     )
       pools.defects.push(f);
   }
-  const order = (a: Finding, b: Finding) =>
-    severity[b.severity] * evidence[b.evidence_level] -
-      severity[a.severity] * evidence[a.evidence_level] ||
-    a.location.path.localeCompare(b.location.path) ||
-    a.location.line_start - b.location.line_start ||
-    a.id.localeCompare(b.id);
   const limits = {
     defects: p.max_defects,
     risks: p.posture === "thorough" ? Infinity : p.max_defects,

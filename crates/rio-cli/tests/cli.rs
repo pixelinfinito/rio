@@ -1238,3 +1238,474 @@ fn changing_endpoint_does_not_forward_the_previous_deployment_credential() {
     assert!(document.get("deployment").is_none());
     assert!(!directory.join("credentials").exists());
 }
+
+type Requests = std::sync::Arc<std::sync::Mutex<Vec<(String, String, Value)>>>;
+/// A loopback HTTP endpoint answering every request with `handler(method, path, body)`
+/// until dropped. Requests are logged in order.
+struct MockEndpoint {
+    url: String,
+    requests: Requests,
+    stop: std::sync::Arc<std::sync::atomic::AtomicBool>,
+    thread: Option<std::thread::JoinHandle<()>>,
+}
+impl MockEndpoint {
+    fn start(mut handler: impl FnMut(&str, &str, &Value) -> (u16, Value) + Send + 'static) -> Self {
+        use std::{
+            io::{Read, Write},
+            net::TcpListener,
+            sync::{Arc, Mutex, atomic::AtomicBool, atomic::Ordering},
+            time::Duration,
+        };
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        listener.set_nonblocking(true).unwrap();
+        let url = format!("http://{}", listener.local_addr().unwrap());
+        let requests: Requests = Arc::new(Mutex::new(Vec::new()));
+        let stop = Arc::new(AtomicBool::new(false));
+        let (log, halt) = (requests.clone(), stop.clone());
+        let thread = std::thread::spawn(move || {
+            while !halt.load(Ordering::SeqCst) {
+                let mut stream = match listener.accept() {
+                    Ok((stream, _)) => stream,
+                    Err(error) if error.kind() == std::io::ErrorKind::WouldBlock => {
+                        std::thread::sleep(Duration::from_millis(5));
+                        continue;
+                    }
+                    Err(error) => panic!("{error}"),
+                };
+                stream.set_nonblocking(false).unwrap();
+                stream
+                    .set_read_timeout(Some(Duration::from_secs(10)))
+                    .unwrap();
+                let mut bytes = Vec::new();
+                let mut chunk = [0; 65536];
+                let (end, headers) = loop {
+                    let n = stream.read(&mut chunk).unwrap();
+                    assert!(n > 0);
+                    bytes.extend_from_slice(&chunk[..n]);
+                    if let Some(end) = bytes.windows(4).position(|w| w == b"\r\n\r\n") {
+                        let h = String::from_utf8_lossy(&bytes[..end]).to_string();
+                        let length = h
+                            .lines()
+                            .find_map(|l| {
+                                l.to_lowercase()
+                                    .strip_prefix("content-length: ")
+                                    .map(str::to_owned)
+                            })
+                            .and_then(|l| l.parse::<usize>().ok())
+                            .unwrap_or(0);
+                        if bytes.len() >= end + 4 + length {
+                            break (end, h);
+                        }
+                    }
+                };
+                assert!(
+                    headers
+                        .to_lowercase()
+                        .contains("authorization: bearer long-enough-api-token-32-characters")
+                );
+                let mut first = headers.lines().next().unwrap().split_whitespace();
+                let method = first.next().unwrap().to_owned();
+                let path = first.next().unwrap().to_owned();
+                let body: Value = serde_json::from_slice(&bytes[end + 4..]).unwrap_or(Value::Null);
+                let (status, response) = handler(&method, &path, &body);
+                log.lock().unwrap().push((method, path, body));
+                let body = serde_json::to_vec(&response).unwrap();
+                write!(stream, "HTTP/1.1 {status} X\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n", body.len()).unwrap();
+                stream.write_all(&body).unwrap();
+            }
+        });
+        Self {
+            url,
+            requests,
+            stop,
+            thread: Some(thread),
+        }
+    }
+    fn take(&self) -> Vec<(String, String, Value)> {
+        std::mem::take(&mut *self.requests.lock().unwrap())
+    }
+}
+impl Drop for MockEndpoint {
+    fn drop(&mut self) {
+        self.stop.store(true, std::sync::atomic::Ordering::SeqCst);
+        if let Some(thread) = self.thread.take()
+            && thread.join().is_err()
+            && !std::thread::panicking()
+        {
+            panic!("mock endpoint failed");
+        }
+    }
+}
+
+/// Lineage semantics of the endpoint, reduced to what the CLI observes: every
+/// review posts the same defect, so each run consumes a round and later rounds
+/// hold it back.
+fn lineage_endpoint() -> MockEndpoint {
+    let mut snapshots = 0;
+    let mut reports = std::collections::BTreeMap::<String, Value>::new();
+    // (repository, ref) -> (generation, round, previous_head, posted: id -> first snapshot)
+    let mut lineages = std::collections::BTreeMap::<
+        (String, String),
+        (
+            u64,
+            u64,
+            Option<String>,
+            std::collections::BTreeMap<String, String>,
+        ),
+    >::new();
+    MockEndpoint::start(move |method, path, body| {
+        let id = "d".repeat(64);
+        if path == "/v1/snapshots" {
+            snapshots += 1;
+            return (200, serde_json::json!({"id": format!("snap-{snapshots}")}));
+        }
+        if path.starts_with("/v1/lineages?") {
+            let query: std::collections::BTreeMap<String, String> = path
+                .split_once('?')
+                .unwrap()
+                .1
+                .split('&')
+                .map(|pair| {
+                    let (k, v) = pair.split_once('=').unwrap();
+                    let v = v.replace("%2F", "/").replace("%3A", ":");
+                    (k.to_owned(), v)
+                })
+                .collect();
+            assert_eq!(query["kind"], "branch");
+            return match lineages.get(&(query["repository"].clone(), query["ref"].clone())) {
+                Some((generation, round, previous, posted)) => (
+                    200,
+                    serde_json::json!({"repository":query["repository"],"kind":"branch",
+                        "ref":query["ref"],"generation":generation,"round":round,
+                        "previous_head":previous,"posted":posted.keys().collect::<Vec<_>>(),
+                        "rounds_to_pass":null}),
+                ),
+                None => (404, serde_json::json!({"error":"not_found"})),
+            };
+        }
+        if method == "POST" && path == "/v1/reviews" {
+            let mut report = body["report"].clone();
+            let mut finding: Value =
+                serde_json::from_str(include_str!("../../rio-core/tests/fixtures/finding.json"))
+                    .unwrap();
+            finding["id"] = serde_json::json!(id);
+            if let Some(lineage) = body.get("lineage") {
+                let key = (
+                    lineage["repository"].as_str().unwrap().to_owned(),
+                    lineage["ref"].as_str().unwrap().to_owned(),
+                );
+                let snapshot = body["snapshot_id"].as_str().unwrap().to_owned();
+                let entry = lineages
+                    .entry(key)
+                    .or_insert((0, 0, None, Default::default()));
+                if lineage["reset"] == true || entry.0 == 0 {
+                    *entry = (entry.0 + 1, 0, None, Default::default());
+                }
+                let previous = entry.2.replace(snapshot.clone());
+                entry.1 += 1;
+                let held_back = u64::from(entry.3.contains_key(&id));
+                let first = entry.3.entry(id.clone()).or_insert(snapshot).clone();
+                finding["round"] = serde_json::json!(entry.1);
+                finding["first_posted_in"] = serde_json::json!(first);
+                report["lineage"] = serde_json::json!({"repository":lineage["repository"],
+                    "kind":"branch","ref":lineage["ref"],"generation":entry.0,"round":entry.1,
+                    "cap":3,"capped":false,"diff_only":entry.1 > 1,"previous_head":previous,
+                    "held_back":held_back,"rounds_to_pass":null,"author_response_ratio":null});
+            }
+            report["findings"] = serde_json::json!([finding]);
+            let remote = format!("review-{}", reports.len() + 1);
+            reports.insert(remote.clone(), report);
+            return (200, serde_json::json!({"id": remote}));
+        }
+        let remote = path.split('/').nth(3).unwrap_or_default().to_owned();
+        if path.ends_with("/report") {
+            (200, reports[&remote].clone())
+        } else if path.ends_with("/audit") {
+            (
+                200,
+                serde_json::json!({"hypotheses":[],"votes":[],"usage":[],"executions":[]}),
+            )
+        } else {
+            (200, serde_json::json!({"status":"complete"}))
+        }
+    })
+}
+
+#[test]
+fn since_last_keeps_endpoint_rounds_held_back_counts_and_a_refetchable_local_copy() {
+    let temp = repository();
+    let root = temp.path();
+    git(
+        root,
+        &[
+            "remote",
+            "add",
+            "origin",
+            "https://user:secret@github.com/pixelinfinito/rio.git",
+        ],
+    );
+    git(root, &["checkout", "-b", "feature/x"]);
+    let endpoint = lineage_endpoint();
+    let review = |args: &[&str], content: &str| {
+        fs::write(root.join("a.txt"), content).unwrap();
+        rio(root)
+            .env("RIO_ENDPOINT_URL", &endpoint.url)
+            .env("RIO_API_TOKEN", "long-enough-api-token-32-characters")
+            .args(["review", "--since-last"])
+            .args(args)
+            .assert()
+            // The reproduced defect is `worsened`: fail_on is unaffected by lineage state.
+            .code(1)
+            .get_output()
+            .clone()
+    };
+    let copy = root.join(".rio/cache/lineages").join(format!(
+        "{}.json",
+        blake3_hex("github.com/pixelinfinito/rio|feature/x")
+    ));
+    let lineage_fetches = |requests: &[(String, String, Value)]| {
+        requests
+            .iter()
+            .filter(|(_, path, _)| path.starts_with("/v1/lineages?"))
+            .count()
+    };
+    let submitted = |requests: &[(String, String, Value)]| {
+        requests
+            .iter()
+            .find(|(_, path, _)| path == "/v1/reviews")
+            .unwrap()
+            .2["lineage"]
+            .clone()
+    };
+
+    // Round 1: no copy and no endpoint lineage yet (404).
+    let report = json_report(&review(&["--format", "json"], "two\n"));
+    let requests = endpoint.take();
+    assert_eq!(lineage_fetches(&requests), 1);
+    assert_eq!(
+        submitted(&requests),
+        serde_json::json!({"repository":"github.com/pixelinfinito/rio","kind":"branch",
+            "ref":"feature/x","reset":false})
+    );
+    assert_eq!(report["lineage"]["round"], 1);
+    assert_eq!(report["lineage"]["held_back"], 0);
+    let local: Value = serde_json::from_slice(&fs::read(&copy).unwrap()).unwrap();
+    assert_eq!(local["version"], 1);
+    assert_eq!(local["round"], 1);
+    assert_eq!(local["previous_head"], "snap-1");
+    assert_eq!(local["posted"], serde_json::json!(["d".repeat(64)]));
+
+    // Round 2: the local copy is used; the reproduced defect is held back.
+    let output = review(&["--format", "md"], "three\n");
+    let markdown = String::from_utf8_lossy(&output.stdout);
+    let requests = endpoint.take();
+    assert_eq!(lineage_fetches(&requests), 0);
+    assert!(markdown.contains("Round 2 of cap 3"), "{markdown}");
+    assert!(markdown.contains("Held back as already posted: 1"));
+    assert!(markdown.contains("(already posted)"));
+    assert!(markdown.contains("Diff-only re-review since snap-1"));
+
+    // A deleted copy is refetched from the endpoint and the lineage continues.
+    fs::remove_dir_all(root.join(".rio/cache/lineages")).unwrap();
+    let report = json_report(&review(&["--format", "json"], "four\n"));
+    let requests = endpoint.take();
+    assert_eq!(lineage_fetches(&requests), 1);
+    assert_eq!(submitted(&requests)["reset"], false);
+    assert_eq!(report["lineage"]["round"], 3);
+    assert_eq!(report["lineage"]["generation"], 1);
+    assert_eq!(report["lineage"]["held_back"], 1);
+    let local: Value = serde_json::from_slice(&fs::read(&copy).unwrap()).unwrap();
+    assert_eq!(local["round"], 3);
+
+    // --reset-lineage starts a new generation at round 1 without consulting state.
+    let output = review(&["--reset-lineage"], "five\n");
+    let terminal = String::from_utf8_lossy(&output.stdout);
+    let requests = endpoint.take();
+    assert_eq!(lineage_fetches(&requests), 0);
+    assert_eq!(submitted(&requests)["reset"], true);
+    assert!(terminal.contains("Round 1 of cap 3"), "{terminal}");
+    assert!(terminal.contains("generation 2"));
+    assert!(!terminal.contains("(already posted)"));
+    let local: Value = serde_json::from_slice(&fs::read(&copy).unwrap()).unwrap();
+    assert_eq!(
+        (local["round"].clone(), local["generation"].clone()),
+        (1.into(), 2.into())
+    );
+
+    // A plain endpoint review carries no lineage.
+    fs::write(root.join("a.txt"), "six\n").unwrap();
+    let output = rio(root)
+        .env("RIO_ENDPOINT_URL", &endpoint.url)
+        .env("RIO_API_TOKEN", "long-enough-api-token-32-characters")
+        .args(["review", "--format", "json"])
+        .assert()
+        .code(1)
+        .get_output()
+        .clone();
+    assert!(json_report(&output).get("lineage").is_none());
+    let requests = endpoint.take();
+    assert!(submitted(&requests).is_null());
+    assert_eq!(lineage_fetches(&requests), 0);
+}
+
+fn blake3_hex(text: &str) -> String {
+    blake3::hash(text.as_bytes()).to_hex().to_string()
+}
+
+#[test]
+fn since_last_needs_a_branch_an_online_endpoint_and_reset_needs_since_last() {
+    let temp = repository();
+    let root = temp.path();
+    fs::write(root.join("a.txt"), "two\n").unwrap();
+    // Nothing listens here; these failures must precede any network access.
+    let endpoint = "http://127.0.0.1:9";
+    let output = rio(root)
+        .env("RIO_ENDPOINT_URL", endpoint)
+        .env("RIO_API_TOKEN", "long-enough-api-token-32-characters")
+        .args(["review", "--since-last", "--offline", "--format", "json"])
+        .assert()
+        .code(2)
+        .get_output()
+        .clone();
+    let report = json_report(&output);
+    assert_eq!(report["error"]["code"], "endpoint_required");
+    assert!(
+        report["error"]["message"]
+            .as_str()
+            .unwrap()
+            .contains("--since-last")
+    );
+    rio(root)
+        .env("RIO_ENDPOINT_URL", endpoint)
+        .args(["review", "--reset-lineage"])
+        .assert()
+        .code(2);
+    git(root, &["checkout", "--detach", "HEAD"]);
+    let output = rio(root)
+        .env("RIO_ENDPOINT_URL", endpoint)
+        .env("RIO_API_TOKEN", "long-enough-api-token-32-characters")
+        .args(["review", "--since-last", "--format", "json"])
+        .assert()
+        .code(2)
+        .get_output()
+        .clone();
+    let report = json_report(&output);
+    assert_eq!(report["error"]["code"], "branch_required");
+    assert!(
+        String::from_utf8_lossy(&output.stderr).contains("a branch is required"),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    assert!(!root.join(".rio/cache/lineages").exists());
+}
+
+#[test]
+fn feedback_validates_reasons_locally_and_maps_endpoint_answers_to_exit_codes() {
+    let temp = repository();
+    let root = temp.path();
+    // Invalid reason: exit 2 listing the accepted reasons, without any request.
+    let silent = MockEndpoint::start(|_, _, _| panic!("no request expected"));
+    for reason in ["known", "false_positive"] {
+        let output = rio(root)
+            .env("RIO_ENDPOINT_URL", &silent.url)
+            .env("RIO_API_TOKEN", "long-enough-api-token-32-characters")
+            .args(["feedback", "8c1e", "--dismiss", reason])
+            .assert()
+            .code(2)
+            .get_output()
+            .clone();
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        assert!(
+            stderr.contains("fixed, wrong, intentional, irrelevant, style"),
+            "{stderr}"
+        );
+    }
+    assert!(silent.take().is_empty());
+    drop(silent);
+    // No endpoint configured.
+    let output = rio(root)
+        .args(["feedback", "8c1e", "--dismiss", "wrong"])
+        .assert()
+        .code(2)
+        .get_output()
+        .clone();
+    assert!(String::from_utf8_lossy(&output.stderr).contains("endpoint"));
+
+    let endpoint = MockEndpoint::start(|method, path, body| {
+        assert_eq!(method, "POST");
+        match path {
+            "/v1/findings/8c1e/feedback" => (
+                200,
+                serde_json::json!({"id":"8c1e","status":"dismissed","author_response":{
+                    "reason":body["reason"],"actor":body["actor"],"at":"2026-11-06T10:00:00Z",
+                    "note":body["note"]}}),
+            ),
+            "/v1/findings/0bad/feedback" => (404, serde_json::json!({"error":"not_found"})),
+            _ => (400, serde_json::json!({"error":"invalid"})),
+        }
+    });
+    let feedback = |args: &[&str]| {
+        rio(root)
+            .env("RIO_ENDPOINT_URL", &endpoint.url)
+            .env("RIO_API_TOKEN", "long-enough-api-token-32-characters")
+            .arg("feedback")
+            .args(args)
+            .assert()
+    };
+    let output = feedback(&[
+        "8c1e",
+        "--dismiss",
+        "intentional",
+        "--note",
+        "documented behavior",
+    ])
+    .code(0)
+    .get_output()
+    .clone();
+    assert!(String::from_utf8_lossy(&output.stdout).contains("8c1e dismissed (intentional)"));
+    let requests = endpoint.take();
+    assert_eq!(requests.len(), 1);
+    assert_eq!(
+        requests[0].2,
+        serde_json::json!({"reason":"intentional","note":"documented behavior",
+            "actor":"rio@example.invalid"})
+    );
+    let output = feedback(&["0bad", "--dismiss", "wrong"])
+        .code(3)
+        .get_output()
+        .clone();
+    assert!(String::from_utf8_lossy(&output.stderr).contains("not found"));
+    feedback(&["1bad", "--dismiss", "fixed"]).code(3);
+    feedback(&["../reviews", "--dismiss", "fixed"]).code(2);
+    assert_eq!(endpoint.take().len(), 2);
+}
+#[test]
+fn eval_requires_the_harness_and_forwards_to_it() {
+    let temp = repository();
+    let output = rio(temp.path())
+        .args(["eval", "import-incident", "41", "57"])
+        .env_remove("RIO_EVAL_DIR")
+        .assert()
+        .code(2)
+        .get_output()
+        .clone();
+    assert!(String::from_utf8_lossy(&output.stderr).contains("RIO_EVAL_DIR"));
+    let harness = tempfile::tempdir().unwrap();
+    std::fs::write(harness.path().join("noise.py"), "").unwrap();
+    std::fs::write(
+        harness.path().join("incident.py"),
+        "import sys\nprint(' '.join(sys.argv[1:]))\nsys.exit(7)\n",
+    )
+    .unwrap();
+    let output = rio(temp.path())
+        .args(["eval", "import-incident", "41", "57", "--caught-by", "none"])
+        .env("RIO_EVAL_DIR", harness.path())
+        .assert()
+        .code(7)
+        .get_output()
+        .clone();
+    assert_eq!(
+        String::from_utf8_lossy(&output.stdout).trim(),
+        "41 57 --caught-by none"
+    );
+}

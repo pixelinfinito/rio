@@ -1,6 +1,7 @@
 mod config;
 mod deployment;
 mod endpoint;
+mod lineage;
 use clap::{Args, Parser, Subcommand, ValueEnum};
 use config::MachineConfig;
 use rio_adapters::{ProcessSupervisor, ToolResolver};
@@ -39,6 +40,39 @@ enum Command {
         deployment: deployment::DeployArgs,
     },
     Deploy(deployment::DeployArgs),
+    /// Answer a posted finding through the configured endpoint.
+    Feedback(FeedbackArgs),
+    /// Run the evaluation harness (requires python3 and Rio's `eval/` directory).
+    Eval {
+        #[command(subcommand)]
+        command: EvalCommand,
+    },
+}
+#[derive(Subcommand)]
+enum EvalCommand {
+    /// Review known-clean PRs and write noise adjudication skeletons and a summary.
+    Noise {
+        #[arg(trailing_var_arg = true, allow_hyphen_values = true)]
+        args: Vec<String>,
+    },
+    /// Turn a PR and the PR that fixed it into a labeled incident case.
+    ImportIncident {
+        pr: String,
+        fix_pr: String,
+        #[arg(trailing_var_arg = true, allow_hyphen_values = true)]
+        args: Vec<String>,
+    },
+}
+#[derive(Args)]
+struct FeedbackArgs {
+    /// Finding id (as shown in the report).
+    id: String,
+    /// Dismiss the finding with a reason: fixed, wrong, intentional, irrelevant or style.
+    #[arg(long, value_name = "REASON")]
+    dismiss: String,
+    /// Free-text note recorded with the response.
+    #[arg(long, value_name = "TEXT")]
+    note: Option<String>,
 }
 #[derive(Clone, Copy, Default, ValueEnum, PartialEq, Eq)]
 enum Format {
@@ -99,8 +133,12 @@ struct ReviewArgs {
     fork: bool,
     #[arg(long)]
     publish: bool,
+    /// Review the current branch as a lineage held by the endpoint.
     #[arg(long)]
     since_last: bool,
+    /// Start a new lineage generation at round 1 (requires --since-last).
+    #[arg(long, requires = "since_last")]
+    reset_lineage: bool,
 }
 #[derive(Clone, Copy, ValueEnum)]
 enum Preset {
@@ -163,8 +201,49 @@ async fn main() -> ExitCode {
             }
         }
         Command::Deploy(args) => run_deploy(args).await,
+        Command::Feedback(args) => run_feedback(args).await,
+        Command::Eval { command } => run_eval(command),
     };
     ExitCode::from(code)
+}
+/// The harness is Python in Rio's source tree. `RIO_EVAL_DIR` points at it;
+/// otherwise the current repository's `eval/` is used when it is Rio's harness.
+fn eval_dir() -> Option<PathBuf> {
+    std::env::var_os("RIO_EVAL_DIR")
+        .map(PathBuf::from)
+        .or_else(|| {
+            let cwd = std::env::current_dir().ok()?;
+            let root = GixRepo::discover(&cwd).ok()?.root().to_path_buf();
+            Some(root.join("eval"))
+        })
+        .filter(|dir| dir.join("noise.py").is_file() && dir.join("incident.py").is_file())
+}
+fn run_eval(command: EvalCommand) -> u8 {
+    let Some(dir) = eval_dir() else {
+        eprintln!(
+            "rio eval requires Rio's evaluation harness: run it inside the Rio source tree or set RIO_EVAL_DIR to its eval/ directory"
+        );
+        return 2;
+    };
+    let (script, args) = match command {
+        EvalCommand::Noise { args } => ("noise.py", [vec!["run".into()], args].concat()),
+        EvalCommand::ImportIncident { pr, fix_pr, args } => {
+            ("incident.py", [vec![pr, fix_pr], args].concat())
+        }
+    };
+    // Isolated mode: the harness never imports modules from the working directory.
+    match std::process::Command::new("python3")
+        .arg("-I")
+        .arg(dir.join(script))
+        .args(args)
+        .status()
+    {
+        Ok(status) => status.code().map_or(3, |code| code.clamp(0, 255) as u8),
+        Err(error) => {
+            eprintln!("could not start python3: {error}");
+            3
+        }
+    }
 }
 async fn run_deploy(args: deployment::DeployArgs) -> u8 {
     match deployment::run(args).await {
@@ -208,11 +287,7 @@ fn loader(root: Option<PathBuf>, config: &MachineConfig, cwd: PathBuf) -> Profil
     ProfileLoader::new(root, config.config_dir.clone(), cwd)
 }
 async fn run_review(args: ReviewArgs) -> u8 {
-    for (flag, present) in [
-        ("--pr", args.pr.is_some()),
-        ("--publish", args.publish),
-        ("--since-last", args.since_last),
-    ] {
+    for (flag, present) in [("--pr", args.pr.is_some()), ("--publish", args.publish)] {
         if present {
             return error_report(
                 args.format,
@@ -285,6 +360,56 @@ async fn run_review(args: ReviewArgs) -> u8 {
             Preset::Deep => rio_profile::Posture::Thorough,
         })
     };
+    if args.since_last && (config.endpoint_url.is_none() || args.offline) {
+        return error_report(
+            args.format,
+            2,
+            "endpoint_required",
+            "--since-last requires a configured endpoint and online mode; the endpoint holds the lineage".into(),
+            Vec::new(),
+        );
+    }
+    let lineage = if args.since_last {
+        let branch = match repo.branch() {
+            Ok(Some(branch)) => branch,
+            Ok(None) => {
+                return error_report(
+                    args.format,
+                    2,
+                    "branch_required",
+                    "--since-last reviews a branch lineage: a branch is required, but HEAD is detached".into(),
+                    Vec::new(),
+                );
+            }
+            Err(error) => {
+                return error_report(
+                    args.format,
+                    3,
+                    "repository_error",
+                    format!("{error:#}"),
+                    Vec::new(),
+                );
+            }
+        };
+        match lineage::repository_key(repo.root(), repo.remote_url("origin").as_deref()) {
+            Ok(repository) => Some(lineage::BranchLineage {
+                repository,
+                branch,
+                reset: args.reset_lineage,
+            }),
+            Err(error) => {
+                return error_report(
+                    args.format,
+                    3,
+                    "repository_error",
+                    format!("{error:#}"),
+                    Vec::new(),
+                );
+            }
+        }
+    } else {
+        None
+    };
     if (args.deep || args.preset.is_some()) && (config.endpoint_url.is_none() || args.offline) {
         return error_report(
             args.format,
@@ -353,6 +478,7 @@ async fn run_review(args: ReviewArgs) -> u8 {
                 cache: config.cache.clone(),
                 deep: args.deep || matches!(args.preset, Some(Preset::Deep)),
                 fork: args.fork,
+                lineage: lineage.clone(),
             })
     } else {
         None
@@ -401,8 +527,14 @@ async fn run_review(args: ReviewArgs) -> u8 {
             }
         }
     });
+    let mut posted = None;
     let result = if let Some(request) = remote_request {
-        endpoint::review(request, cancellation.clone()).await
+        endpoint::review(request, cancellation.clone())
+            .await
+            .map(|outcome| {
+                posted = outcome.posted;
+                outcome.report
+            })
     } else {
         review(
             ReviewRequest {
@@ -448,6 +580,7 @@ async fn run_review(args: ReviewArgs) -> u8 {
         color: io::stdout().is_terminal() && !args.no_color,
         show_pre_existing: args.show_pre_existing,
         policy: Some(&policy),
+        posted: posted.as_ref(),
     };
     let output = match args.format {
         Format::Json => render_json(&report),
@@ -674,6 +807,96 @@ async fn run_doctor(args: DoctorArgs) -> u8 {
         );
     }
     if problems.is_empty() { 0 } else { 1 }
+}
+
+/// Exit codes: 0 recorded, 2 invalid reason or no endpoint, 3 rejected or unknown.
+async fn run_feedback(args: FeedbackArgs) -> u8 {
+    let reason: ResponseReason = match args.dismiss.parse() {
+        Ok(reason) => reason,
+        Err(message) => {
+            eprintln!("{}", redact(&message));
+            return 2;
+        }
+    };
+    if args.id.is_empty()
+        || !args
+            .id
+            .chars()
+            .all(|c| c.is_ascii_alphanumeric() || c == '-')
+    {
+        eprintln!("invalid finding id {:?}", redact(&args.id));
+        return 2;
+    }
+    let cwd = match current_dir() {
+        Ok(cwd) => cwd,
+        Err(error) => {
+            eprintln!("{error}");
+            return 3;
+        }
+    };
+    let root = GixRepo::discover(&cwd)
+        .ok()
+        .map(|repo| repo.root().to_owned());
+    let config = match MachineConfig::load(root.as_deref().unwrap_or(&cwd)) {
+        Ok(config) => config,
+        Err(error) => {
+            eprintln!("{}", redact(&format!("{error:#}")));
+            return 2;
+        }
+    };
+    let Some(url) = config.endpoint_url.as_deref() else {
+        eprintln!(
+            "endpoint_required: rio feedback requires a configured endpoint (rio init --endpoint URL)"
+        );
+        return 2;
+    };
+    let client = match endpoint::client(url, &config.config_dir) {
+        Ok(client) => client,
+        Err(error) => {
+            eprintln!("endpoint_required: {}", redact(&format!("{error:#}")));
+            return 2;
+        }
+    };
+    let mut body = json!({"reason": reason.as_str()});
+    if let Some(note) = &args.note {
+        body["note"] = json!(note);
+    }
+    if let Some(actor) = git_user_email(root.as_deref().unwrap_or(&cwd)) {
+        body["actor"] = json!(actor);
+    }
+    match client.feedback(&args.id, &body).await {
+        Ok(response) => {
+            println!(
+                "Finding {} {} ({})",
+                redact(response["id"].as_str().unwrap_or(&args.id)),
+                redact(response["status"].as_str().unwrap_or("dismissed")),
+                reason.as_str()
+            );
+            0
+        }
+        Err(error) => {
+            let message = match rio_client::http_status(&error) {
+                Some(404) => format!("finding {} was not found by the endpoint", args.id),
+                Some(_) => format!("the endpoint rejected the response: {error:#}"),
+                None => format!("could not record the response: {error:#}"),
+            };
+            eprintln!("{}", redact(&message));
+            3
+        }
+    }
+}
+/// `git config user.email`, if git and the setting are available.
+fn git_user_email(directory: &std::path::Path) -> Option<String> {
+    let output = std::process::Command::new("git")
+        .arg("-C")
+        .arg(directory)
+        .args(["config", "user.email"])
+        .stdin(std::process::Stdio::null())
+        .stderr(std::process::Stdio::null())
+        .output()
+        .ok()?;
+    let email = String::from_utf8(output.stdout).ok()?.trim().to_owned();
+    (output.status.success() && !email.is_empty()).then_some(email)
 }
 
 fn run_init(endpoint: String, token_stdin: bool) -> u8 {

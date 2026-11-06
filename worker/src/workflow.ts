@@ -28,14 +28,23 @@ import { triage, type Plan } from "./triage";
 import { verifyHypothesis } from "./verifier";
 import { consolidate, type Verified } from "./consolidate";
 import { createJob } from "./jobs";
+import {
+  applyLineage,
+  incrementalChanges,
+  loadContext,
+  persistStatements,
+  planReverification,
+  type LineageContext,
+  type Tree,
+} from "./lineage";
 export interface WorkflowParams {
   review_id: string;
   snapshot_key: string;
 }
-function changedCode(submission: Submission, snapshot: Snapshot) {
+function changedCode(changed: Submission["changed"], snapshot: Snapshot) {
   const previews: any[] = [];
   let remaining = 16000;
-  for (const file of submission.changed) {
+  for (const file of changed) {
     const preview: any = { path: file.path };
     for (const version of ["base", "head"] as const) {
       const entry =
@@ -92,6 +101,13 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
     const ledger = new D1Ledger(this.env, id),
       gateway = new ProviderGateway(this.env);
     let graphs = submission.graphs;
+    // Lineage state is read once, durably, so replays see the same round and history.
+    let lineage: LineageContext | null = null;
+    const trees = new Map<string, Tree>();
+    let previousHead: Snapshot | undefined;
+    let incremental: Submission["changed"] = [];
+    let agentsVerified = false;
+    let diffOnlyAudit: Record<string, string[]> | undefined;
     const call = async (name: string, action: () => Promise<ModelResponse>) => {
       const key = await step.do(
         `model-${name}`,
@@ -242,7 +258,40 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
               2000,
               Array.isArray(config.tools) ? config.tools : undefined,
             );
-            const prompt = `Review the change independently for ${agent}. Inspect actual base and head code before making a claim; symbol names and graph hashes are not source code. Use read_file for omitted or truncated code. Suggested focus is only a hint; tools can read/search either entire repository snapshot. Classify concrete correctness regressions as defect, uncertain hazards as risk, style and repeated tool diagnostics accurately. Omit guidance unless citing a real owner-guidance document supplied below; source-code lines are not owner guidance. Check guidance/contradiction and guidance/stale risks against existing guidance lines: emit category risk, cite guidance:{path,line} and the changed code behavior. Return {result:hypotheses[]}.\n${dataBlock("intent", filteredLines(submission.intent.split("\n")))}\n${dataBlock("suggested_focus", plan.suggested_focus)}\n${dataBlock("graph", graphs)}\n${dataBlock("changed code excerpts", changedCode(submission, snapshot))}\n${dataBlock("deterministic checks", report.checks)}\n${guidanceBlock(submission.owner_guidance, plan.suggested_focus)}`;
+            const diffOnly = lineage?.diff_only && previousHead;
+            const reviewed = diffOnly
+              ? {
+                  changed: incremental,
+                  snapshot: { base: previousHead!.head, head: snapshot.head },
+                  focus: incremental.map((f) => f.path),
+                }
+              : {
+                  changed: submission.changed,
+                  snapshot,
+                  focus: plan.suggested_focus,
+                };
+            const roundContext = diffOnly
+              ? `\nThis is round ${lineage!.round} of a review lineage. Review ONLY the incremental change between the previously reviewed head and the new head shown below (base is the previously reviewed head); do not re-derive earlier findings, which are listed with their current states for context.\n${dataBlock(
+                  "previous round findings",
+                  lineage!.prior
+                    .filter((p) => p.status !== "fixed")
+                    .map((p) => ({
+                      id: p.id,
+                      rule_id: p.finding.rule_id,
+                      category: p.finding.category,
+                      message: p.finding.message,
+                      location: p.finding.location,
+                      status: p.status,
+                      ...(p.author_response
+                        ? { author_response: p.author_response.reason }
+                        : {}),
+                    })),
+                )}`
+              : "";
+            const intent = diffOnly
+              ? (lineage!.intent ?? submission.intent)
+              : submission.intent;
+            const prompt = `Review the change independently for ${agent}. Inspect actual base and head code before making a claim; symbol names and graph hashes are not source code. Use read_file for omitted or truncated code. Suggested focus is only a hint; tools can read/search either entire repository snapshot. Classify concrete correctness regressions as defect, uncertain hazards as risk, style and repeated tool diagnostics accurately. Omit guidance unless citing a real owner-guidance document supplied below; source-code lines are not owner guidance. Check guidance/contradiction and guidance/stale risks against existing guidance lines: emit category risk, cite guidance:{path,line} and the changed code behavior. Return {result:hypotheses[]}.${roundContext}\n${dataBlock("intent", filteredLines(intent.split("\n")))}\n${dataBlock("suggested_focus", reviewed.focus)}\n${dataBlock("graph", graphs)}\n${dataBlock("changed code excerpts", changedCode(reviewed.changed, reviewed.snapshot))}\n${dataBlock("deterministic checks", report.checks)}\n${guidanceBlock(submission.owner_guidance, reviewed.focus)}`;
             const result = validateHypotheses(
               await converse({
                 gateway,
@@ -268,7 +317,25 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           plan.mode === "deep"
             ? (submission.profile.budget.deep ?? submission.profile.budget.fast)
             : submission.profile.budget.fast;
-        for (const h of hypotheses) {
+        let candidates = hypotheses;
+        if (lineage?.diff_only) {
+          const reverify = planReverification(
+            hypotheses,
+            lineage,
+            trees,
+            snapshot.head,
+            graphs.head,
+            new Set(incremental.map((f) => f.path)),
+          );
+          candidates = reverify.verify;
+          verified.push(...reverify.carried);
+          diffOnlyAudit = {
+            reverified: reverify.verify.map((h) => h.id),
+            carried: reverify.carried.map((v) => v.hypothesis.id),
+            not_reverified: reverify.skipped,
+          };
+        }
+        for (const h of candidates) {
           const key = `reviews/${id}/hypotheses/${h.id}.json`;
           await store.put(key, h);
           await this.env.DB.prepare(
@@ -339,6 +406,29 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
       );
     };
     try {
+      const lineageKey = await step.do("lineage", async () => {
+        const context = await loadContext(this.env, id, submission.profile);
+        return context
+          ? store.put(`reviews/${id}/lineage-context.json`, context)
+          : null;
+      });
+      if (lineageKey) {
+        lineage = await store.get<LineageContext>(lineageKey);
+        const keys = new Map<string, string>();
+        for (const p of lineage.prior)
+          if (p.snapshot_key) keys.set(p.snapshot_id, p.snapshot_key);
+        if (lineage.previous_head && lineage.previous_head_key)
+          keys.set(lineage.previous_head, lineage.previous_head_key);
+        for (const [snapshotId, key] of keys)
+          trees.set(snapshotId, (await store.get<Snapshot>(key)).head);
+        if (lineage.diff_only && lineage.previous_head) {
+          previousHead = {
+            base: {},
+            head: trees.get(lineage.previous_head)!,
+          };
+          incremental = incrementalChanges(previousHead.head, snapshot.head);
+        }
+      }
       plan = triage(submission, snapshot);
       await step.do("budget-initial", () =>
         store.selectBudget(id, submission.profile, plan.mode),
@@ -359,7 +449,11 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           pending.delete(s.id);
         }
       }
-      const findings = consolidate(verified, submission.profile);
+      const findings = consolidate(verified, submission.profile, {
+        classThreshold: submission.profile.steps.find((s) =>
+          s.uses.startsWith("rio/report@"),
+        )?.with?.class_threshold,
+      });
       report.findings.push(...findings.defects);
       report.risks.push(...findings.risks);
       if (findings.security.length) report.security = findings.security;
@@ -416,6 +510,22 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
       report.deferred = [];
       report.review.rio_version = this.env.RIO_VERSION;
       if (await store.cancelled(id)) report.status = "partial";
+      if (diffOnlyAudit) report.agent_audit.diff_only = diffOnlyAudit;
+      agentsVerified =
+        !failed?.count &&
+        submission.profile.steps.some(
+          (s) => s.uses.startsWith("rio/verify@") && done.has(s.id),
+        );
+      const outcome = lineage
+        ? applyLineage(report, lineage, {
+            head: snapshot.head,
+            trees,
+            graph: graphs.head,
+            agents_reassessed: agentsVerified,
+            changed: submission.changed,
+            max_lines: submission.profile.max_lines,
+          })
+        : null;
       const key = await store.put(`reviews/${id}/report.json`, report);
       await step.do("finish", async () => {
         await this.env.DB.prepare(
@@ -423,6 +533,16 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
         )
           .bind(report.status === "partial" ? "partial" : "complete", key, id)
           .run();
+        if (lineage && outcome)
+          await this.env.DB.batch(
+            persistStatements(
+              this.env,
+              lineage,
+              outcome,
+              id,
+              submission.intent,
+            ),
+          );
         await store.event(
           id,
           report.status === "partial" ? "review:partial" : "review:done",
@@ -435,6 +555,20 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
       report.footer.notes.push(
         error instanceof Error ? error.message : "review failed",
       );
+      // A failed review is stamped for display but does not advance lineage state.
+      if (lineage)
+        try {
+          applyLineage(report, lineage, {
+            head: snapshot.head,
+            trees,
+            graph: graphs.head,
+            agents_reassessed: false,
+            changed: submission.changed,
+            max_lines: submission.profile.max_lines,
+          });
+        } catch {
+          // Keep the partial report without lineage keys.
+        }
       const key = await store.put(`reviews/${id}/report.json`, report);
       await step.do("failed", async () => {
         await this.env.DB.prepare(

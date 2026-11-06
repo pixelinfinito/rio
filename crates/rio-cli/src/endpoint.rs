@@ -5,7 +5,9 @@ use rio_git::{ChangeSet, Selection, Snapshot, diff};
 use rio_graph::{GraphBuilder, GraphOptions};
 use rio_profile::ResolvedProfile;
 use serde_json::json;
-use std::{path::Path, time::Duration};
+use std::{collections::BTreeSet, path::Path, time::Duration};
+
+use crate::lineage::{BranchLineage, LocalLineage};
 use tokio_util::sync::CancellationToken;
 
 pub struct EndpointRequest<'a> {
@@ -16,11 +18,51 @@ pub struct EndpointRequest<'a> {
     pub cache: CacheOptions,
     pub deep: bool,
     pub fork: bool,
+    /// `--since-last` branch lineage, with the reset request.
+    pub lineage: Option<BranchLineage>,
+}
+pub struct EndpointOutcome {
+    pub report: Report,
+    /// Identities the lineage had posted before this review (for marking
+    /// held-back findings); `None` outside lineages.
+    pub posted: Option<BTreeSet<String>>,
+}
+/// Saved tokens are bound to the configured URL; never send them elsewhere.
+pub fn client(url: &str, config_dir: &Path) -> Result<rio_client::Client> {
+    let token = match std::env::var("RIO_API_TOKEN").ok() {
+        Some(token) => Some(token),
+        None => crate::deployment::endpoint_token(config_dir, url)?,
+    }
+    .context("set RIO_API_TOKEN or run rio init --token-stdin")?;
+    rio_client::Client::new(url, token.trim().into())
+}
+/// The lineage state before this review: the local copy, else the endpoint's
+/// state (stored as the new local copy). A missing copy is never a reset.
+async fn lineage_before(
+    client: &rio_client::Client,
+    cache: &CacheOptions,
+    lineage: &BranchLineage,
+) -> Result<Option<LocalLineage>> {
+    if lineage.reset {
+        return Ok(None);
+    }
+    if let Some(copy) = LocalLineage::load(cache, lineage) {
+        return Ok(Some(copy));
+    }
+    let Some(state) = client
+        .lineage(&lineage.repository, "branch", &lineage.branch)
+        .await?
+    else {
+        return Ok(None);
+    };
+    let copy = LocalLineage::from_endpoint(lineage, state)?;
+    copy.save(cache)?;
+    Ok(Some(copy))
 }
 pub async fn review(
     request: EndpointRequest<'_>,
     cancellation: CancellationToken,
-) -> Result<Report> {
+) -> Result<EndpointOutcome> {
     let EndpointRequest {
         url,
         config_dir,
@@ -29,18 +71,15 @@ pub async fn review(
         cache,
         deep,
         fork,
+        lineage,
     } = request;
-    let token = std::env::var("RIO_API_TOKEN").ok();
-    let token = match token {
-        Some(token) => Some(token),
-        // Saved tokens are bound to the configured URL; never send them elsewhere.
-        None => crate::deployment::endpoint_token(config_dir, url)?,
-    }
-    .context("set RIO_API_TOKEN or run rio init --token-stdin")?;
-    let client = rio_client::Client::new(url, token.trim().into())?;
+    let client = client(url, config_dir)?;
     let delta = diff(&changes, &profile_excludes(&profile))?;
     if delta.files.is_empty() {
-        return Ok(Report::empty(ReportStatus::NoChanges));
+        return Ok(EndpointOutcome {
+            report: Report::empty(ReportStatus::NoChanges),
+            posted: None,
+        });
     }
     let snapshot = Snapshot::from_changes(&changes);
     let id = blake3::hash(format!("{}|{}", snapshot.key, profile.hash()?).as_bytes()).to_hex()
@@ -86,7 +125,14 @@ pub async fn review(
     report.impact = graph.impact(options.hops);
     let snapshot_id = client.upload_snapshot(&changes.base, &changes.head).await?;
     let changed:Vec<_>=delta.files.iter().filter(|f|f.excluded.is_none()).map(|f|json!({"path":f.path,"old_path":f.old_path,"lines_changed":f.hunks.iter().map(|h|h.base.count.max(h.head.count) as u64).sum::<u64>()})).collect();
-    let submission = json!({"protocol":1,"snapshot_id":snapshot_id,"profile":profile,"report":report,"changed":changed,"graphs":{"base":graph.base,"head":graph.head},"owner_guidance":guidance,"intent":format!("Review the change from {} to {}",changes.base_id,changes.head_id),"fork":fork,"mode":if deep{"deep"}else{"fast"}});
+    let before = match &lineage {
+        Some(lineage) => Some(lineage_before(&client, &cache.options, lineage).await?),
+        None => None,
+    };
+    let mut submission = json!({"protocol":1,"snapshot_id":snapshot_id,"profile":profile,"report":report,"changed":changed,"graphs":{"base":graph.base,"head":graph.head},"owner_guidance":guidance,"intent":format!("Review the change from {} to {}",changes.base_id,changes.head_id),"fork":fork,"mode":if deep{"deep"}else{"fast"}});
+    if let Some(lineage) = &lineage {
+        submission["lineage"] = lineage.submission();
+    }
     let remote_id = client.submit(&submission).await?;
     eprintln!("Endpoint review: {remote_id}");
     cache.write(
@@ -118,5 +164,23 @@ pub async fn review(
     )?;
     report = serde_json::from_slice(&rio_core::render_json(&report).map_err(anyhow::Error::msg)?)?;
     cache.finish(&report)?;
-    Ok(report)
+    let posted = match (&lineage, before) {
+        (Some(lineage), before) => {
+            let before = before.flatten();
+            match LocalLineage::after_review(before.as_ref(), lineage, &report, &snapshot_id)? {
+                Some(copy) => copy.save(&cache.options)?,
+                None => eprintln!(
+                    "Warning: the endpoint returned no lineage state for --since-last; the local lineage copy was not updated"
+                ),
+            }
+            Some(before.map(|copy| copy.posted).unwrap_or_default())
+        }
+        (None, _) => None,
+    };
+    // Endpoint-only users never run the local engine, which otherwise prunes;
+    // keep lineage copies and run records within the cache's age and size rules.
+    if let Err(error) = rio_engine::prune_cache(&cache.options, None) {
+        eprintln!("Warning: cache pruning failed: {error:#}");
+    }
+    Ok(EndpointOutcome { report, posted })
 }

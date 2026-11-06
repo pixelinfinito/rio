@@ -97,7 +97,8 @@ steps:
   - graph
   - verify
   parallel: false
-  with: {}
+  with:
+    class_threshold: 3
 suppress: []
 publish: never
 fail_on:

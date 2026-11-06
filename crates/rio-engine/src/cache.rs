@@ -53,6 +53,29 @@ pub fn atomic_write(path: &Path, bytes: &[u8]) -> Result<()> {
     Ok(())
 }
 
+/// Directory of versioned local lineage copies, pruned by age and size with the
+/// rest of the review cache.
+pub const LINEAGES: &str = "lineages";
+
+/// Writes a cache file that belongs to no run (for example `lineages/<key>.json`)
+/// under the shared prune lock, so pruning cannot remove it mid-write.
+pub fn write_cache_file(options: &CacheOptions, relative: &str, bytes: &[u8]) -> Result<()> {
+    ensure!(
+        !relative.is_empty()
+            && Path::new(relative)
+                .components()
+                .all(|part| matches!(part, Component::Normal(_))),
+        "unsafe cache path"
+    );
+    private_directory(&options.dir)?;
+    let prune = private_file(&options.dir.join("prune.lock"), false)?;
+    FileExt::lock_shared(&prune)?;
+    if !options.dir.join(".gitignore").exists() {
+        atomic_write(&options.dir.join(".gitignore"), b"*\n")?;
+    }
+    atomic_write(&options.dir.join(relative), bytes)
+}
+
 pub struct RunCache {
     pub options: CacheOptions,
     pub review_id: String,
@@ -378,6 +401,23 @@ pub fn prune_cache(
         }
     }
     recover(&options.dir, &live_ids, start);
+    // Local lineage copies are caches of endpoint state: expire them by age and
+    // let them compete for space with every other entry.
+    for entry in list(&options.dir.join(LINEAGES)) {
+        if start.elapsed() > Duration::from_secs(1) {
+            return Ok(());
+        }
+        let filename = entry.file_name().unwrap().to_string_lossy();
+        if filename.ends_with(".lock") || filename.ends_with(".used") || filename.contains(".tmp-")
+        {
+            continue;
+        }
+        if now.duration_since(used(&entry)).unwrap_or_default() > options.max_age {
+            remove(&entry);
+        } else {
+            entries.push(entry);
+        }
+    }
     for namespace in ["snapshots", "heads", "osv", "baselines"] {
         for entry in list(&options.dir.join(namespace)) {
             if start.elapsed() > Duration::from_secs(1) {

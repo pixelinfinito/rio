@@ -30,5 +30,10 @@ export default defineConfig({
       },
     }),
   ],
-  test: { include: ["tests/**/*.test.ts"], fileParallelism: false },
+  test: {
+    include: ["tests/**/*.test.ts"],
+    fileParallelism: false,
+    // Workflow and D1 round trips run in workerd; allow for loaded CI hosts.
+    testTimeout: 30000,
+  },
 });

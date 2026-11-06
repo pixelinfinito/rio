@@ -39,7 +39,14 @@
   "rio/report@0.1.0": {
     "type": "object",
     "additionalProperties": false,
-    "properties": {}
+    "properties": {
+      "class_threshold": {
+        "type": "integer",
+        "minimum": 1,
+        "default": 3,
+        "description": "Agent findings sharing rule and trigger across more symbols than this merge into one class-level finding"
+      }
+    }
   },
   "rio/security@0.2.0": {
     "type": "object",

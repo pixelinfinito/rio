@@ -1,0 +1,40 @@
+---
+source: crates/rio-core/tests/render.rs
+expression: terminal
+---
+Rio 0.1.0 — complete
+Review: 1234567890abcdef  Run: 01J00000000000000000000000
+Mode: working-tree  Base: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb  Head:
+snapshot:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+Profile: rio/base  Chain: rio/base
+
+Deterministic results
+  typecheck . (typescript, head, changed): findings — 100 ms
+
+Reconsider
+Round 4 exceeds the cap of 3: 2 unresolved finding(s). Reconsider the approach or split the change along the parts
+below.
+  Missing guard on <input> [link](x) — src/a.ts:3
+  Proposed split: parser *core*; renderer
+
+Findings
+2 finding(s).
+  typecheck/tsc/TS2322 [worsened; error; static_proven] FAIL (already posted)
+    src/a.ts:8 (a.run) [pre-existing]
+    src/a.ts:12 (a.run) [new]
+    Type 'string' is not assignable to type 'number'.
+    Lineage: round 4; answered intentional by octocat (documented *behavior*); first posted in snap-1
+    Trigger: Assigning a string to a number
+  typecheck/tsc/TS2322 [new; error; static_proven] FAIL
+    src/a.ts:8 (a.run) [pre-existing]
+    src/a.ts:12 (a.run) [new]
+    Missing guard on <input>
+    Lineage: round 4
+    Trigger: Assigning a string to a number
+
+Footer
+Round 4 of cap 3 (capped: reconsider) — branch lineage feature/x_y, generation 1
+Diff-only re-review since snap-3
+Author-response ratio: 0.6
+Held back as already posted: 1
+Total: 105 ms

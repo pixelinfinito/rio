@@ -5,12 +5,14 @@ import { blake3 } from "@noble/hashes/blake3.js";
 import type {
   Graph,
   Hypothesis,
+  LineageRef,
   Snapshot,
   Submission,
   VoteAnswer,
 } from "./types";
 const profileValidator = validators.profile;
 const reportValidator = validators.report;
+const findingValidator = validators.finding;
 const hypothesisValidator = validators.hypothesis,
   answerValidator = validators.answer;
 const ajv = {
@@ -52,6 +54,53 @@ export function validateReport(value: any): void {
     ...value.checks.flatMap((c: any) => c.findings ?? []),
   ])
     if (f.verification) validateVerification(f.verification);
+}
+export function validateFinding(value: any): void {
+  invariant(
+    findingValidator(value),
+    `invalid finding: ${ajv.errorsText(findingValidator.errors)}`,
+  );
+  if (value.verification) validateVerification(value.verification);
+}
+export const RESPONSE_REASONS = [
+  "fixed",
+  "wrong",
+  "intentional",
+  "irrelevant",
+  "style",
+] as const;
+const LINEAGE_KEYS = ["repository", "kind", "ref", "reset"];
+// Lineage keys are client-chosen strings; they are bounded and free of control characters.
+export function validateLineageRef(
+  value: any,
+  allowReset = true,
+): asserts value is LineageRef {
+  invariant(
+    value &&
+      typeof value === "object" &&
+      !Array.isArray(value) &&
+      Object.keys(value).every(
+        (k) => LINEAGE_KEYS.includes(k) && (allowReset || k !== "reset"),
+      ),
+    "invalid lineage",
+  );
+  for (const key of ["repository", "ref"])
+    invariant(
+      typeof value[key] === "string" &&
+        value[key].length > 0 &&
+        value[key].length <= 1024 &&
+        !/[\u0000-\u001f\u007f]/.test(value[key]),
+      `invalid lineage ${key}`,
+    );
+  invariant(["pr", "branch"].includes(value.kind), "invalid lineage kind");
+  invariant(
+    value.kind !== "pr" || /^[1-9][0-9]{0,18}$/.test(value.ref),
+    "invalid lineage ref: a pr lineage uses the PR number",
+  );
+  invariant(
+    value.reset === undefined || typeof value.reset === "boolean",
+    "invalid lineage reset",
+  );
 }
 export function invariant(value: unknown, message: string): asserts value {
   if (!value) throw new Error(message);
@@ -232,6 +281,7 @@ export function validateSubmission(value: any): asserts value is Submission {
       /^[a-f0-9]{64}$/.test(value.snapshot_id),
     "invalid snapshot id",
   );
+  if (value.lineage !== undefined) validateLineageRef(value.lineage);
 }
 export function validateHypotheses(value: any): Hypothesis[] {
   invariant(

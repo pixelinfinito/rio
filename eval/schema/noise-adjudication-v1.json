@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rio.dev/eval/schema/noise-adjudication-v1.json",
+  "title": "Rio noise adjudication v1",
+  "description": "Per-PR adjudication file written as an unlabeled skeleton by eval/noise.py run. Each finding's adjudication uses the record schema's noise label definition.",
+  "type": "object",
+  "properties": {
+    "schema": {
+      "const": "rio-noise-adjudication-v1"
+    },
+    "repository": {
+      "type": "string",
+      "minLength": 1
+    },
+    "case_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "pr": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "title": {
+      "type": "string"
+    },
+    "base": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40,64}$"
+    },
+    "head": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40,64}$"
+    },
+    "report": {
+      "type": "string",
+      "minLength": 1
+    },
+    "report_sha256": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "findings": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "finding": {
+            "type": "object",
+            "properties": {
+              "rule_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "category": {
+                "enum": [
+                  "defect",
+                  "risk",
+                  "security"
+                ]
+              },
+              "severity": {
+                "enum": [
+                  "error",
+                  "warning",
+                  "info"
+                ]
+              },
+              "evidence_level": {
+                "enum": [
+                  "reproduced",
+                  "static_proven",
+                  "plausible",
+                  "refuted"
+                ]
+              },
+              "source": {
+                "type": "string",
+                "minLength": 1
+              },
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "line_start": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "message": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "rule_id",
+              "category",
+              "severity",
+              "evidence_level",
+              "source",
+              "path",
+              "line_start",
+              "message"
+            ],
+            "additionalProperties": false
+          },
+          "adjudication": {
+            "$ref": "record-v2.json#/$defs/noise_adjudication"
+          }
+        },
+        "required": [
+          "finding",
+          "adjudication"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "schema",
+    "repository",
+    "case_id",
+    "pr",
+    "title",
+    "base",
+    "head",
+    "report",
+    "report_sha256",
+    "findings"
+  ],
+  "additionalProperties": false
+}

@@ -8,8 +8,7 @@ import { app } from "../src/index";
 import { Store } from "../src/storage";
 import { finishJob } from "../src/jobs";
 import { hash, validateHypotheses } from "../src/validation";
-import { hypothesis, snapshot, submission } from "./fixtures";
-import migration from "../migrations/0001_core.sql?raw";
+import { allMigrations, hypothesis, snapshot, submission } from "./fixtures";
 import type { Env } from "../src/types";
 const runtime = env as Env;
 const headers = {
@@ -17,15 +16,7 @@ const headers = {
   "content-type": "application/json",
 };
 beforeAll(async () => {
-  await applyD1Migrations(runtime.DB, [
-    {
-      name: "core",
-      queries: migration
-        .split(";")
-        .map((s) => s.trim())
-        .filter(Boolean),
-    },
-  ]);
+  await applyD1Migrations(runtime.DB, allMigrations);
 });
 it.each([false, true])(
   "runs the real durable DAG with recorded providers and independent blind voters (fork=%s)",

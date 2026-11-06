@@ -1,0 +1,152 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rio.dev/eval/schema/verifier-manifest-v1.json",
+  "title": "Rio pinned verifier comparison manifest v1",
+  "type": "object",
+  "properties": {
+    "schema": {
+      "const": "rio-verifier-eval-v1"
+    },
+    "execution": {
+      "enum": [
+        "live-model",
+        "recorded"
+      ]
+    },
+    "description": {
+      "type": "string"
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "generator_model": {
+            "type": "string",
+            "minLength": 1
+          },
+          "voter_model": {
+            "type": "string",
+            "minLength": 1
+          },
+          "profile_hash": {
+            "type": "string",
+            "minLength": 1
+          },
+          "high_controls": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "independently_clean": {
+            "type": "boolean"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "single": {
+            "type": "object",
+            "properties": {
+              "report": {
+                "type": "string",
+                "minLength": 1
+              },
+              "audit": {
+                "type": "string",
+                "minLength": 1
+              },
+              "verdicts": {
+                "type": "string",
+                "minLength": 1
+              },
+              "report_sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "audit_sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "verdicts_sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            },
+            "required": [
+              "report",
+              "audit",
+              "verdicts",
+              "report_sha256",
+              "audit_sha256",
+              "verdicts_sha256"
+            ],
+            "additionalProperties": false
+          },
+          "quorum": {
+            "type": "object",
+            "properties": {
+              "report": {
+                "type": "string",
+                "minLength": 1
+              },
+              "audit": {
+                "type": "string",
+                "minLength": 1
+              },
+              "verdicts": {
+                "type": "string",
+                "minLength": 1
+              },
+              "report_sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "audit_sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "verdicts_sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            },
+            "required": [
+              "report",
+              "audit",
+              "verdicts",
+              "report_sha256",
+              "audit_sha256",
+              "verdicts_sha256"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "id",
+          "generator_model",
+          "voter_model",
+          "profile_hash",
+          "high_controls",
+          "independently_clean",
+          "single",
+          "quorum"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "schema",
+    "execution",
+    "cases"
+  ],
+  "additionalProperties": false
+}

@@ -17,6 +17,7 @@ CLASSES = ('true-positive', 'false-positive', 'pre-existing-shown',
            'environment-failure', 'out-of-scope', 'pre-existing-hidden')
 SUCCESS = {'passed', 'findings'}
 SCHEMA = ROOT / 'eval/schema'
+DATE_TIME = re.compile(r'\d{4}-\d{2}-\d{2}[Tt]\d{2}:\d{2}:\d{2}(\.\d+)?([Zz]|[+-]\d{2}:\d{2})')
 
 
 def read_json(path):
@@ -50,8 +51,8 @@ def validate(value, schema_path, fragment='', label='$'):
 def _validate(value, schema, path, label):
     supported = {'$schema', '$id', '$ref', '$defs', 'title', 'description', 'type',
                  'properties', 'required', 'additionalProperties', 'items', 'enum',
-                 'const', 'pattern', 'minLength', 'minimum', 'maximum', 'minItems', 'uniqueItems',
-                 'oneOf', 'allOf', 'if', 'then', 'else', 'not'}
+                 'const', 'pattern', 'minLength', 'minimum', 'maximum', 'minItems', 'maxItems',
+                 'uniqueItems', 'format', 'oneOf', 'allOf', 'if', 'then', 'else', 'not'}
     if isinstance(schema, bool):
         if not schema:
             raise ValueError(f'{label}: forbidden value')
@@ -84,6 +85,8 @@ def _validate(value, schema, path, label):
     if isinstance(value, list):
         if len(value) < schema.get('minItems', 0):
             raise ValueError(f'{label}: too few items')
+        if len(value) > schema.get('maxItems', float('inf')):
+            raise ValueError(f'{label}: too many items')
         if schema.get('uniqueItems') and len({json.dumps(v, sort_keys=True) for v in value}) != len(value):
             raise ValueError(f'{label}: duplicate items')
         for i, item in enumerate(value):
@@ -93,6 +96,12 @@ def _validate(value, schema, path, label):
             raise ValueError(f'{label}: empty string')
         if 'pattern' in schema and not re.search(schema['pattern'], value):
             raise ValueError(f'{label}: pattern mismatch')
+    if 'format' in schema:
+        # Only the formats Rio's schemas use; unknown formats fail closed.
+        if schema['format'] != 'date-time':
+            raise ValueError(f'{label}: unsupported format {schema["format"]!r}')
+        if isinstance(value, str) and not DATE_TIME.fullmatch(value):
+            raise ValueError(f'{label}: expected RFC 3339 date-time')
     if type(value) in (int, float) and value < schema.get('minimum', float('-inf')):
         raise ValueError(f'{label}: below minimum')
     if type(value) in (int, float) and value > schema.get('maximum', float('inf')):

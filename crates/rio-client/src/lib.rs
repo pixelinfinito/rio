@@ -61,6 +61,30 @@ pub fn decode_tree(tree: BTreeMap<String, WireFile>) -> Result<Tree> {
 const SNAPSHOT_MAX_FILES: usize = 100_000;
 const SNAPSHOT_MAX_CONTENT: usize = 32 * 1024 * 1024;
 const SNAPSHOT_MAX_BODY: usize = 40 * 1024 * 1024;
+/// A non-success HTTP status from the endpoint. Bodies are never echoed: they
+/// may contain raw provider or tool output.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct HttpStatus(pub u16);
+impl std::fmt::Display for HttpStatus {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Rio endpoint returned HTTP {}", self.0)
+    }
+}
+impl std::error::Error for HttpStatus {}
+/// The HTTP status of an endpoint error, if the endpoint answered at all.
+pub fn http_status(error: &anyhow::Error) -> Option<u16> {
+    error.downcast_ref::<HttpStatus>().map(|status| status.0)
+}
+/// Endpoint-issued ids are restricted so they cannot alter the request path.
+fn path_id(id: &str) -> Result<&str> {
+    ensure!(
+        !id.is_empty()
+            && id.len() <= 128
+            && id.chars().all(|c| c.is_ascii_alphanumeric() || c == '-'),
+        "invalid id {id:?}"
+    );
+    Ok(id)
+}
 #[derive(Clone)]
 pub struct Client {
     http: reqwest::Client,
@@ -115,9 +139,19 @@ impl Client {
         body: Option<Vec<u8>>,
         timeout: Option<Duration>,
     ) -> Result<Value> {
+        self.send_url(method, self.base.join(path)?, body, timeout)
+            .await
+    }
+    async fn send_url(
+        &self,
+        method: reqwest::Method,
+        url: reqwest::Url,
+        body: Option<Vec<u8>>,
+        timeout: Option<Duration>,
+    ) -> Result<Value> {
         let mut request = self
             .http
-            .request(method, self.base.join(path)?)
+            .request(method, url)
             .bearer_auth(&self.token)
             .header("rio-protocol", "1");
         if let Some(body) = body {
@@ -131,11 +165,9 @@ impl Client {
         let mut response = request.send().await.context("contacting Rio endpoint")?;
         let status = response.status();
         // Do not echo server bodies: they may contain raw provider or tool output.
-        ensure!(
-            status.is_success(),
-            "Rio endpoint returned HTTP {}",
-            status.as_u16()
-        );
+        if !status.is_success() {
+            return Err(HttpStatus(status.as_u16()).into());
+        }
         let mut bytes = Vec::new();
         while let Some(chunk) = response.chunk().await? {
             ensure!(
@@ -242,6 +274,34 @@ impl Client {
             tokio::select! { _=cancellation.cancelled()=>{}, _=tokio::time::sleep(Duration::from_secs(1))=>{} }
         }
     }
+    /// Current generation of a lineage (`GET /v1/lineages`), or `None` when the
+    /// endpoint has no such lineage (HTTP 404).
+    pub async fn lineage(
+        &self,
+        repository: &str,
+        kind: &str,
+        reference: &str,
+    ) -> Result<Option<Value>> {
+        let mut url = self.base.join("v1/lineages")?;
+        url.query_pairs_mut()
+            .append_pair("repository", repository)
+            .append_pair("kind", kind)
+            .append_pair("ref", reference);
+        match self.send_url(reqwest::Method::GET, url, None, None).await {
+            Ok(value) => Ok(Some(value)),
+            Err(error) if http_status(&error) == Some(404) => Ok(None),
+            Err(error) => Err(error),
+        }
+    }
+    /// Records an author response (`POST /v1/findings/{id}/feedback`).
+    pub async fn feedback(&self, id: &str, body: &Value) -> Result<Value> {
+        self.request(
+            reqwest::Method::POST,
+            &format!("v1/findings/{}/feedback", path_id(id)?),
+            Some(body),
+        )
+        .await
+    }
     pub async fn audit(&self, id: &str) -> Result<Value> {
         self.request(
             reqwest::Method::GET,
@@ -336,5 +396,76 @@ mod tests {
             "snapshot"
         );
         server.join().unwrap();
+    }
+    #[tokio::test]
+    async fn lineage_404_is_absent_and_feedback_errors_keep_their_status() {
+        use std::{
+            io::{Read, Write},
+            net::TcpListener,
+        };
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = listener.local_addr().unwrap();
+        let server = std::thread::spawn(move || {
+            let mut lines = Vec::new();
+            for (status, body) in [
+                ("404 Not Found", "{}"),
+                ("200 OK", r#"{"round":2}"#),
+                ("404 Not Found", "{}"),
+            ] {
+                let (mut socket, _) = listener.accept().unwrap();
+                let mut bytes = Vec::new();
+                let mut chunk = [0; 4096];
+                while !bytes.windows(4).any(|w| w == b"\r\n\r\n") {
+                    let n = socket.read(&mut chunk).unwrap();
+                    bytes.extend_from_slice(&chunk[..n]);
+                }
+                let text = String::from_utf8_lossy(&bytes).to_string();
+                let header_end = text.find("\r\n\r\n").unwrap();
+                let length = text[..header_end]
+                    .to_lowercase()
+                    .lines()
+                    .find_map(|l| l.strip_prefix("content-length: ").map(str::to_owned))
+                    .map(|l| l.parse::<usize>().unwrap())
+                    .unwrap_or(0);
+                while bytes.len() < header_end + 4 + length {
+                    let n = socket.read(&mut chunk).unwrap();
+                    bytes.extend_from_slice(&chunk[..n]);
+                }
+                lines.push(text.lines().next().unwrap().to_owned());
+                write!(socket,"HTTP/1.1 {status}\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{body}",body.len()).unwrap();
+            }
+            lines
+        });
+        let client = Client::new(
+            &format!("http://{address}"),
+            "long-enough-api-token-32-characters".into(),
+        )
+        .unwrap();
+        assert_eq!(
+            client
+                .lineage("github.com/o/r", "branch", "feature/x y")
+                .await
+                .unwrap(),
+            None
+        );
+        assert_eq!(
+            client
+                .lineage("github.com/o/r", "branch", "feature/x y")
+                .await
+                .unwrap(),
+            Some(json!({"round":2}))
+        );
+        let error = client
+            .feedback("8c1e", &json!({"reason":"wrong"}))
+            .await
+            .unwrap_err();
+        assert_eq!(http_status(&error), Some(404));
+        assert!(client.feedback("../reviews", &json!({})).await.is_err());
+        let lines = server.join().unwrap();
+        assert_eq!(
+            lines[0],
+            "GET /v1/lineages?repository=github.com%2Fo%2Fr&kind=branch&ref=feature%2Fx+y HTTP/1.1"
+        );
+        assert_eq!(lines[2], "POST /v1/findings/8c1e/feedback HTTP/1.1");
     }
 }

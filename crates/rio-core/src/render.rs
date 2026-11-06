@@ -1,4 +1,4 @@
-use std::{cmp::Reverse, sync::LazyLock};
+use std::{cmp::Reverse, collections::BTreeSet, sync::LazyLock};
 
 use crate::*;
 use serde::Serialize;
@@ -8,6 +8,9 @@ pub struct RenderOptions<'a> {
     pub color: bool,
     pub show_pre_existing: bool,
     pub policy: Option<&'a CompiledFailOn>,
+    /// Finding identities the review's lineage had already posted before this
+    /// review. Only consulted for reports that carry `lineage`.
+    pub posted: Option<&'a BTreeSet<String>>,
 }
 impl Default for RenderOptions<'_> {
     fn default() -> Self {
@@ -16,6 +19,7 @@ impl Default for RenderOptions<'_> {
             color: false,
             show_pre_existing: false,
             policy: None,
+            posted: None,
         }
     }
 }
@@ -286,6 +290,122 @@ fn footer(report: &Report) -> Vec<String> {
     lines.push(format!("Total: {} ms", report.metrics.wall_time_ms));
     lines
 }
+fn ratio(value: Ratio) -> String {
+    let text = format!("{:.2}", value.get());
+    text.trim_end_matches('0').trim_end_matches('.').into()
+}
+/// Footer lines for lineage reviews; empty without a lineage.
+fn lineage_footer(report: &Report) -> Vec<String> {
+    let Some(lineage) = &report.lineage else {
+        return Vec::new();
+    };
+    let mut lines = vec![format!(
+        "Round {} of cap {}{} — {} lineage {}, generation {}",
+        lineage.round,
+        lineage.cap,
+        if lineage.capped {
+            " (capped: reconsider)"
+        } else {
+            ""
+        },
+        label(&lineage.kind),
+        lineage.reference,
+        lineage.generation
+    )];
+    if lineage.diff_only {
+        lines.push(format!(
+            "Diff-only re-review since {}",
+            lineage
+                .previous_head
+                .as_deref()
+                .unwrap_or("the previous head")
+        ));
+    }
+    if let Some(value) = lineage.author_response_ratio {
+        lines.push(format!("Author-response ratio: {}", ratio(value)));
+    }
+    lines.push(format!(
+        "Held back as already posted: {}",
+        lineage.held_back
+    ));
+    if let Some(rounds) = lineage.rounds_to_pass {
+        lines.push(format!("Rounds to pass: {rounds}"));
+    }
+    lines
+}
+/// The capped-round summary: statement, top findings as (title, location), split.
+type ReconsiderView<'a> = (String, Vec<(&'a str, String)>, Option<&'a [String]>);
+fn reconsider(report: &Report) -> Option<ReconsiderView<'_>> {
+    let lineage = report.lineage.as_ref().filter(|l| l.capped)?;
+    let reconsider = lineage.reconsider.as_ref()?;
+    let split = reconsider
+        .split
+        .as_deref()
+        .filter(|parts| !parts.is_empty());
+    Some((
+        format!(
+            "Round {} exceeds the cap of {}: {} unresolved finding(s). {}",
+            lineage.round,
+            lineage.cap,
+            reconsider.unresolved,
+            if split.is_some() {
+                "Reconsider the approach or split the change along the parts below."
+            } else {
+                "Reconsider the approach or split the change."
+            }
+        ),
+        reconsider
+            .top
+            .iter()
+            .map(|item| {
+                (
+                    item.title.as_str(),
+                    format!("{}:{}", item.path, item.line_start),
+                )
+            })
+            .collect(),
+        split,
+    ))
+}
+fn already_posted(report: &Report, finding: &Finding, options: &RenderOptions<'_>) -> bool {
+    report.lineage.is_some()
+        && options
+            .posted
+            .is_some_and(|posted| posted.contains(&finding.id))
+}
+fn lifecycle(finding: &Finding) -> Option<String> {
+    let mut parts = Vec::new();
+    if let Some(round) = finding.round {
+        parts.push(format!("round {round}"));
+    }
+    if let Some(status) = finding.status {
+        parts.push(format!("status {}", label(&status)));
+    }
+    if let Some(response) = &finding.author_response {
+        parts.push(format!(
+            "answered {} by {}{}",
+            response.reason.as_str(),
+            response.actor,
+            response
+                .note
+                .as_ref()
+                .map(|note| format!(" ({note})"))
+                .unwrap_or_default()
+        ));
+    }
+    if let Some(resolution) = &finding.resolution {
+        if let Some(head) = &resolution.fixed_in {
+            parts.push(format!("fixed in {head}"));
+        }
+        if let Some(note) = &resolution.note {
+            parts.push(note.clone());
+        }
+    }
+    if let Some(snapshot) = &finding.first_posted_in {
+        parts.push(format!("first posted in {snapshot}"));
+    }
+    (!parts.is_empty()).then(|| format!("Lineage: {}", parts.join("; ")))
+}
 fn title(report: &Report) -> String {
     format!(
         "Rio {} — {}",
@@ -497,6 +617,22 @@ pub fn render_markdown(report: &Report, options: &RenderOptions<'_>) -> String {
             ));
         }
     }
+    if let Some((statement, top, split)) = reconsider(report) {
+        out.push_str(&format!("\n## Reconsider\n\n{}\n\n", safe(&statement)));
+        for (title, at) in top {
+            out.push_str(&format!("- {} — {}\n", markdown_text(title), code(&at)));
+        }
+        if let Some(parts) = split {
+            out.push_str(&format!(
+                "- Proposed split: {}\n",
+                parts
+                    .iter()
+                    .map(|part| markdown_text(part))
+                    .collect::<Vec<_>>()
+                    .join("; ")
+            ));
+        }
+    }
     for (name, findings) in groups(report, options) {
         if name != "Findings" && findings.is_empty() {
             continue;
@@ -509,12 +645,17 @@ pub fn render_markdown(report: &Report, options: &RenderOptions<'_>) -> String {
             let failing = options.policy.is_some_and(|policy| policy.matches(finding))
                 || AuditSignals::matches(report, &finding.id);
             out.push_str(&format!(
-                "- **{}** [{}; {}; {}]{} — {}\n",
+                "- **{}** [{}; {}; {}]{}{} — {}\n",
                 safe(&finding.rule_id),
                 label(&finding.state),
                 label(&finding.severity),
                 label(&finding.evidence_level),
                 if failing { " **FAIL**" } else { "" },
+                if already_posted(report, finding, options) {
+                    " (already posted)"
+                } else {
+                    ""
+                },
                 finding_text(
                     finding,
                     &format!(
@@ -550,6 +691,9 @@ pub fn render_markdown(report: &Report, options: &RenderOptions<'_>) -> String {
                     v.agreeing, v.voters, v.blind_match, v.split
                 ));
             }
+            if let Some(text) = lifecycle(finding) {
+                out.push_str(&format!("  - {}\n", markdown_text(&text)));
+            }
             if !finding.trigger.is_empty() {
                 out.push_str(&format!(
                     "  - Trigger: {}\n",
@@ -576,6 +720,9 @@ pub fn render_markdown(report: &Report, options: &RenderOptions<'_>) -> String {
         ));
     }
     out.push_str("\n## Footer\n\n");
+    for line in lineage_footer(report) {
+        out.push_str(&format!("- {}\n", markdown_text(&line)));
+    }
     for line in footer(report) {
         out.push_str(&format!(
             "- {}\n",
@@ -643,6 +790,16 @@ pub fn render_terminal(report: &Report, options: &RenderOptions<'_>) -> String {
             ));
         }
     }
+    if let Some((statement, top, split)) = reconsider(report) {
+        lines.push("\nReconsider".into());
+        lines.push(statement);
+        for (title, at) in top {
+            lines.push(format!("  {title} — {at}"));
+        }
+        if let Some(parts) = split {
+            lines.push(format!("  Proposed split: {}", parts.join("; ")));
+        }
+    }
     for (name, findings) in groups(report, options) {
         if name != "Findings" && findings.is_empty() {
             continue;
@@ -653,7 +810,7 @@ pub fn render_terminal(report: &Report, options: &RenderOptions<'_>) -> String {
         }
         for finding in findings {
             lines.push(format!(
-                "  {} [{}; {}; {}]{}",
+                "  {} [{}; {}; {}]{}{}",
                 finding.rule_id,
                 label(&finding.state),
                 label(&finding.severity),
@@ -662,6 +819,11 @@ pub fn render_terminal(report: &Report, options: &RenderOptions<'_>) -> String {
                     || AuditSignals::matches(report, &finding.id)
                 {
                     " FAIL"
+                } else {
+                    ""
+                },
+                if already_posted(report, finding, options) {
+                    " (already posted)"
                 } else {
                     ""
                 }
@@ -698,6 +860,9 @@ pub fn render_terminal(report: &Report, options: &RenderOptions<'_>) -> String {
                     v.agreeing, v.voters, v.blind_match, v.split
                 ));
             }
+            if let Some(text) = lifecycle(finding) {
+                lines.push(format!("    {text}"));
+            }
             if !finding.trigger.is_empty() {
                 lines.push(format!("    Trigger: {}", finding.trigger));
             }
@@ -713,6 +878,7 @@ pub fn render_terminal(report: &Report, options: &RenderOptions<'_>) -> String {
         ));
     }
     lines.push("\nFooter".into());
+    lines.extend(lineage_footer(report));
     lines.extend(footer(report));
     let text = lines
         .into_iter()

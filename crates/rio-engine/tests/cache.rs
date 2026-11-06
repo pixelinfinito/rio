@@ -206,3 +206,27 @@ fn pruning_a_latest_run_repairs_the_pointer() {
         first.run_id
     );
 }
+
+#[test]
+fn expired_lineage_copies_are_pruned_and_current_ones_kept_until_size_eviction() {
+    let temp = tempfile::tempdir().unwrap();
+    let mut options = CacheOptions::for_repository(temp.path());
+    write_cache_file(&options, "lineages/expired.json", b"{\"version\":1}").unwrap();
+    write_cache_file(&options, "lineages/current.json", b"{\"version\":1}").unwrap();
+    assert!(write_cache_file(&options, "../escape.json", b"x").is_err());
+    let expired = options.dir.join("lineages/expired.json");
+    let current = options.dir.join("lineages/current.json");
+    fs::File::options()
+        .write(true)
+        .open(&expired)
+        .unwrap()
+        .set_modified(std::time::SystemTime::now() - Duration::from_secs(40 * 86400))
+        .unwrap();
+    prune_cache(&options, None).unwrap();
+    assert!(!expired.exists());
+    assert!(current.exists());
+    // Current copies still count towards and yield to the size limit.
+    options.max_size = 1;
+    prune_cache(&options, None).unwrap();
+    assert!(!current.exists());
+}

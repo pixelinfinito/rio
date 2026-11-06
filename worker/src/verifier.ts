@@ -59,15 +59,18 @@ export function blindContext(o: VerifyOptions): string {
           .slice(n!.line_start - 1, n!.line_end)
           .join("\n"),
       })),
+      // A file added (or deleted) by the change has no counterpart to excerpt.
       fallback: nodes.length
         ? undefined
-        : readFile(o.snapshot, location.path, version as "base" | "head")
-            .split("\n")
-            .slice(
-              Math.max(0, location.line_start - 20),
-              location.line_end + 20,
-            )
-            .join("\n"),
+        : !Object.hasOwn(o.snapshot[version as "base" | "head"], location.path)
+          ? null
+          : readFile(o.snapshot, location.path, version as "base" | "head")
+              .split("\n")
+              .slice(
+                Math.max(0, location.line_start - 20),
+                location.line_end + 20,
+              )
+              .join("\n"),
     };
   });
   // Only location is copied; no title, trigger, proposed impact, rationale, or id.

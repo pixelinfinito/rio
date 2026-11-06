@@ -202,3 +202,31 @@ fn shallow_history_error_suggests_fetching_more_history() {
         "{error}"
     );
 }
+
+#[test]
+fn branch_and_remote_url_detect_detached_heads_and_missing_origins() {
+    let dir = init();
+    write(dir.path(), "a.ts", "one\n");
+    let first = commit(dir.path(), "first");
+    git(dir.path(), &["checkout", "-b", "feature/x"]);
+    let repo = GixRepo::discover(dir.path()).unwrap();
+    assert_eq!(repo.branch().unwrap().as_deref(), Some("feature/x"));
+    assert_eq!(repo.remote_url("origin"), None);
+    git(
+        dir.path(),
+        &[
+            "remote",
+            "add",
+            "origin",
+            "git@github.com:pixelinfinito/rio.git",
+        ],
+    );
+    let repo = GixRepo::discover(dir.path()).unwrap();
+    assert_eq!(
+        repo.remote_url("origin").as_deref(),
+        Some("git@github.com:pixelinfinito/rio.git")
+    );
+    git(dir.path(), &["checkout", "--detach", &first]);
+    let repo = GixRepo::discover(dir.path()).unwrap();
+    assert_eq!(repo.branch().unwrap(), None);
+}

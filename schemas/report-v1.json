@@ -383,6 +383,134 @@
     "agent_audit": {
       "type": "object",
       "additionalProperties": true
+    },
+    "lineage": {
+      "description": "Present only for reviews that belong to a review lineage (PR or --since-last branch).",
+      "type": "object",
+      "properties": {
+        "repository": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "enum": [
+            "pr",
+            "branch"
+          ]
+        },
+        "ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "generation": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "round": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cap": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "capped": {
+          "type": "boolean"
+        },
+        "diff_only": {
+          "type": "boolean"
+        },
+        "previous_head": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "held_back": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rounds_to_pass": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "author_response_ratio": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "reconsider": {
+          "type": "object",
+          "properties": {
+            "unresolved": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "top": {
+              "type": "array",
+              "maxItems": 3,
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  },
+                  "line_start": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                },
+                "required": [
+                  "id",
+                  "title",
+                  "path",
+                  "line_start"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "split": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "required": [
+            "unresolved",
+            "top"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "repository",
+        "kind",
+        "ref",
+        "generation",
+        "round",
+        "cap",
+        "capped",
+        "diff_only",
+        "previous_head",
+        "held_back",
+        "rounds_to_pass",
+        "author_response_ratio"
+      ],
+      "additionalProperties": false
     }
   },
   "required": [
@@ -574,6 +702,11 @@
                   "fixed",
                   "unclassified"
                 ]
+              },
+              "id": {
+                "description": "Identity of the instance finding when this location belongs to a class-level finding.",
+                "type": "string",
+                "minLength": 1
               }
             },
             "required": [
@@ -665,6 +798,29 @@
             "actor",
             "at"
           ],
+          "additionalProperties": false
+        },
+        "status": {
+          "description": "Lifecycle of a posted lineage finding, independent of regression state.",
+          "enum": [
+            "open",
+            "fixed",
+            "dismissed"
+          ]
+        },
+        "resolution": {
+          "description": "How the lifecycle status was reached: the head that fixed the finding, or why it stayed open.",
+          "type": "object",
+          "properties": {
+            "fixed_in": {
+              "type": "string",
+              "minLength": 1
+            },
+            "note": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
           "additionalProperties": false
         },
         "verification": {

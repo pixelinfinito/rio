@@ -633,6 +633,7 @@ fn advisory_findings(package: &AuditPackage, mut records: Vec<Value>) -> Vec<Fin
             column: None,
             symbol_path: format!("{}@{}", package.name, package.version),
             occurrence_state: OccurrenceState::New,
+            id: None,
         };
         findings.push(Finding {
             id: finding_id(
@@ -660,6 +661,11 @@ fn advisory_findings(package: &AuditPackage, mut records: Vec<Value>) -> Vec<Fin
                 version: "v1".into(),
             },
             verification: None,
+            round: None,
+            first_posted_in: None,
+            status: None,
+            resolution: None,
+            author_response: None,
             advisory: Some(Advisory {
                 url: format!("https://osv.dev/vulnerability/{id}"),
                 id,
