@@ -1,0 +1,27 @@
+[package]
+name = "rio-runner"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+[lints]
+workspace = true
+[dependencies]
+anyhow.workspace = true
+clap.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+reqwest.workspace = true
+tokio.workspace = true
+tokio-util.workspace = true
+tempfile.workspace = true
+blake3.workspace = true
+gix.workspace = true
+hmac = "0.12"
+sha2 = "0.10"
+rio-core = { path = "../rio-core" }
+rio-git = { path = "../rio-git" }
+rio-client = { path = "../rio-client" }
+rio-profile = { path = "../rio-profile" }
+rio-adapters = { path = "../rio-adapters" }
+rio-engine = { path = "../rio-engine" }
+rio-graph = { path = "../rio-graph" }

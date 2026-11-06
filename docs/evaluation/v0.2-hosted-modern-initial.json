@@ -1,0 +1,491 @@
+{
+  "schema": "rio-hosted-smoke-v1",
+  "date": "2026-11-06",
+  "purpose": "Failed modern-model deployment smoke retained as evidence; not precision acceptance",
+  "review_id": "f19777ad-241a-42b2-9569-3f58b339456a",
+  "models": {
+    "generator": "openrouter/anthropic/claude-sonnet-5.5",
+    "verifier": "openrouter/openai/gpt-6.1-sol"
+  },
+  "report": {
+    "agent_audit": {
+      "board_deferred": true,
+      "category_drops": {},
+      "held_back": {
+        "defects": [],
+        "risks": [],
+        "security": []
+      },
+      "incomplete_votes": 2,
+      "policy_failed": false,
+      "policy_matches": [],
+      "refuted": 0,
+      "require_human": false,
+      "suppressed": 0,
+      "verification_usage": {
+        "cost_usd": 0.036310032000000006,
+        "input_tokens": 20457,
+        "output_tokens": 1743
+      }
+    },
+    "checks": [
+      {
+        "findings": [],
+        "hint": "Install pyright or mypy in the project environment",
+        "kind": "typecheck",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "tool_missing",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "findings": [],
+        "hint": "lint runs only against the project's own rules; add an ESLint, Biome or Ruff configuration",
+        "kind": "lint",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "no_project_config",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "findings": [],
+        "hint": "Install coverage in the project environment",
+        "kind": "coverage",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "tool_missing",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "findings": [],
+        "kind": "secrets",
+        "language": "common",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "findings": [],
+        "hint": "Dependency audit needs api.osv.dev",
+        "kind": "dependencies",
+        "language": "common",
+        "outcome": "skipped",
+        "reason": "offline",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 4
+      }
+    ],
+    "deferred": [],
+    "excluded": [],
+    "findings": [],
+    "footer": {
+      "notes": [
+        "Hypothesis board coordination is deferred; agents and verifier voters run independently.",
+        "2 verifier votes did not complete; inspect the vote audit. Missing votes do not reduce quorum."
+      ],
+      "suppressions": [],
+      "tool_versions": {}
+    },
+    "impact": {
+      "symbols": [
+        {
+          "path": "calc.py",
+          "references_per_hop": [
+            0,
+            0
+          ],
+          "symbol_path": "calc.average",
+          "test_referenced": false,
+          "unresolved": 0
+        }
+      ],
+      "truncated": false,
+      "unresolved": 0
+    },
+    "incomplete": [
+      {
+        "findings": [],
+        "hint": "Install pyright or mypy in the project environment",
+        "kind": "typecheck",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "tool_missing",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "findings": [],
+        "hint": "lint runs only against the project's own rules; add an ESLint, Biome or Ruff configuration",
+        "kind": "lint",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "no_project_config",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "findings": [],
+        "hint": "Install coverage in the project environment",
+        "kind": "coverage",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "tool_missing",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "findings": [],
+        "hint": "Dependency audit needs api.osv.dev",
+        "kind": "dependencies",
+        "language": "common",
+        "outcome": "skipped",
+        "reason": "offline",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 4
+      }
+    ],
+    "metrics": {
+      "checks": [],
+      "tool_versions": {},
+      "wall_time_ms": 0
+    },
+    "review": {
+      "base": "d3b178e3e718fac032c1def1feb27495da43127a",
+      "chain": [
+        "rio-default",
+        "rio/openrouter",
+        "rio/base"
+      ],
+      "head": "snapshot:43ed2007161a5857e85c2548dd0d3c3bda7ed44214d3af7c403da5e6284ecc21",
+      "id": "5d4f9def2467bdcb",
+      "mode": "working-tree",
+      "profile": "rio-default",
+      "rio_version": "0.2.0",
+      "run_id": "01M6R71V0C8GD6G7S787ZGJTTM"
+    },
+    "risk_tier": {
+      "reasons": [],
+      "source": "triage",
+      "tier": "low"
+    },
+    "risks": [
+      {
+        "category": "risk",
+        "evidence": [
+          "code:head:calc.py:fc3d9d89d4cc8981e4a78137bade54bd0a93deddcb5cbd1a7af2d13aad75ed49"
+        ],
+        "evidence_level": "plausible",
+        "id": "192797a7151875184e35c9091dd88dcac17b68a00d4d4b7b38e9125b5a46a32f",
+        "impact": "Callers that relied on the zero-count fallback now get an uncaught ZeroDivisionError. A search of the head snapshot found no other references to `average` in the repository, so no in-repo caller is affected, but external or future callers could break. No tests or documentation in the snapshot say the removal is intentional.",
+        "location": {
+          "line_end": 2,
+          "line_start": 1,
+          "occurrence_state": "new",
+          "path": "calc.py",
+          "symbol_path": "calc.average"
+        },
+        "locations": [
+          {
+            "line_end": 2,
+            "line_start": 1,
+            "occurrence_state": "new",
+            "path": "calc.py",
+            "symbol_path": "calc.average"
+          }
+        ],
+        "message": "The change removes the `count == 0` guard from `average`. At base, `average(total, 0)` returned 0. At head it executes `total / count` and raises ZeroDivisionError.",
+        "rule_id": "correctness/removed-zero-guard",
+        "severity": "warning",
+        "source": {
+          "agent": "correctness"
+        },
+        "state": "new",
+        "suggested_fix": "Restore the guard (`if count == 0: return 0`), or if raising is intended, document it and make it explicit, for example by raising ValueError with a clear message, and update callers.",
+        "trigger": "Any call to `average(total, 0)`, such as averaging an empty collection. Base code read at calc.py:2-3 returned 0 for this input; head code at calc.py:2 divides unconditionally.",
+        "verification": {
+          "agreeing": 1,
+          "blind_match": [
+            "related",
+            "related",
+            "related"
+          ],
+          "split": true,
+          "voters": 3
+        }
+      }
+    ],
+    "schema": "rio-report-v1",
+    "status": "incomplete",
+    "summary": {
+      "fixed": 0,
+      "pre_existing": 0,
+      "suppressed": 0
+    }
+  },
+  "cli_exit_code": 4,
+  "votes": [
+    {
+      "voter": 0,
+      "status": "exhausted",
+      "error": "token budget exhausted",
+      "blind_match": "related"
+    },
+    {
+      "voter": 1,
+      "status": "completed",
+      "blind_match": "related",
+      "validated_level": "static_proven"
+    },
+    {
+      "voter": 2,
+      "status": "malformed",
+      "error": "malformed model output",
+      "blind_match": "related"
+    }
+  ],
+  "usage": [
+    {
+      "actor": "192797a7151875184e35c9091dd88dcac17b68a00d4d4b7b38e9125b5a46a32f-0",
+      "phase": "verify-blind",
+      "status": "completed",
+      "input_tokens": 1203,
+      "output_tokens": 133,
+      "cost_usd": 0.00144144,
+      "model": "openrouter/openai/gpt-6.1-sol"
+    },
+    {
+      "actor": "192797a7151875184e35c9091dd88dcac17b68a00d4d4b7b38e9125b5a46a32f-1",
+      "phase": "verify-disclosed",
+      "status": "completed",
+      "input_tokens": 2215,
+      "output_tokens": 49,
+      "cost_usd": 0.001788732,
+      "model": "openrouter/openai/gpt-6.1-sol"
+    },
+    {
+      "actor": "agents-correctness",
+      "phase": "generation",
+      "status": "completed",
+      "input_tokens": 2908,
+      "output_tokens": 497,
+      "cost_usd": 0.01067814,
+      "model": "openrouter/anthropic/claude-sonnet-5.5"
+    },
+    {
+      "actor": "192797a7151875184e35c9091dd88dcac17b68a00d4d4b7b38e9125b5a46a32f-2",
+      "phase": "verify-disclosed",
+      "status": "completed",
+      "input_tokens": 1757,
+      "output_tokens": 255,
+      "cost_usd": 0.00687159,
+      "model": "openrouter/openai/gpt-6.1-sol"
+    },
+    {
+      "actor": "agents-correctness",
+      "phase": "generation",
+      "status": "completed",
+      "input_tokens": 2541,
+      "output_tokens": 166,
+      "cost_usd": 0.00667458,
+      "model": "openrouter/anthropic/claude-sonnet-5.5"
+    },
+    {
+      "actor": "agents-correctness",
+      "phase": "generation",
+      "status": "completed",
+      "input_tokens": 2663,
+      "output_tokens": 178,
+      "cost_usd": 0.00703494,
+      "model": "openrouter/anthropic/claude-sonnet-5.5"
+    },
+    {
+      "actor": "192797a7151875184e35c9091dd88dcac17b68a00d4d4b7b38e9125b5a46a32f-2",
+      "phase": "verify-disclosed",
+      "status": "completed",
+      "input_tokens": 2211,
+      "output_tokens": 121,
+      "cost_usd": 0.002501136,
+      "model": "openrouter/openai/gpt-6.1-sol"
+    },
+    {
+      "actor": "192797a7151875184e35c9091dd88dcac17b68a00d4d4b7b38e9125b5a46a32f-0",
+      "phase": "verify-disclosed",
+      "status": "completed",
+      "input_tokens": 2326,
+      "output_tokens": 165,
+      "cost_usd": 0.003228489,
+      "model": "openrouter/openai/gpt-6.1-sol"
+    },
+    {
+      "actor": "192797a7151875184e35c9091dd88dcac17b68a00d4d4b7b38e9125b5a46a32f-1",
+      "phase": "verify-disclosed",
+      "status": "completed",
+      "input_tokens": 1761,
+      "output_tokens": 254,
+      "cost_usd": 0.00687159,
+      "model": "openrouter/openai/gpt-6.1-sol"
+    },
+    {
+      "actor": "192797a7151875184e35c9091dd88dcac17b68a00d4d4b7b38e9125b5a46a32f-1",
+      "phase": "verify-disclosed",
+      "status": "completed",
+      "input_tokens": 2280,
+      "output_tokens": 109,
+      "cost_usd": 0.001464903,
+      "model": "openrouter/openai/gpt-6.1-sol"
+    },
+    {
+      "actor": "192797a7151875184e35c9091dd88dcac17b68a00d4d4b7b38e9125b5a46a32f-2",
+      "phase": "verify-disclosed",
+      "status": "completed",
+      "input_tokens": 2544,
+      "output_tokens": 69,
+      "cost_usd": 0.001731807,
+      "model": "openrouter/openai/gpt-6.1-sol"
+    },
+    {
+      "actor": "192797a7151875184e35c9091dd88dcac17b68a00d4d4b7b38e9125b5a46a32f-0",
+      "phase": "verify-disclosed",
+      "status": "completed",
+      "input_tokens": 1754,
+      "output_tokens": 312,
+      "cost_usd": 0.007428465,
+      "model": "openrouter/openai/gpt-6.1-sol"
+    },
+    {
+      "actor": "192797a7151875184e35c9091dd88dcac17b68a00d4d4b7b38e9125b5a46a32f-1",
+      "phase": "verify-blind",
+      "status": "completed",
+      "input_tokens": 1203,
+      "output_tokens": 140,
+      "cost_usd": 0.00151074,
+      "model": "openrouter/openai/gpt-6.1-sol"
+    },
+    {
+      "actor": "192797a7151875184e35c9091dd88dcac17b68a00d4d4b7b38e9125b5a46a32f-2",
+      "phase": "verify-blind",
+      "status": "completed",
+      "input_tokens": 1203,
+      "output_tokens": 136,
+      "cost_usd": 0.00147114,
+      "model": "openrouter/openai/gpt-6.1-sol"
+    }
+  ],
+  "executions": [
+    {
+      "job_id": "2ffb0e3c54ff8ad756ef92a167473e1e",
+      "kind": "graph",
+      "outcome": "exited",
+      "version": "head",
+      "exit_code": 0,
+      "command": [
+        "rio-internal",
+        "rio/graph"
+      ]
+    },
+    {
+      "job_id": "0bce196f81e07a814016647fd95d9a8e",
+      "kind": "checks",
+      "outcome": "exited",
+      "version": "head",
+      "exit_code": 0,
+      "command": [
+        "rio-internal",
+        "rio/checks"
+      ]
+    },
+    {
+      "job_id": "1e3052b14d2df52dcd4e8334c5f4013f",
+      "kind": "run",
+      "outcome": "spawn_failed",
+      "version": "base",
+      "exit_code": 127,
+      "command": [
+        "python",
+        "-c",
+        "from calc import average; assert average(10, 0) == 0"
+      ]
+    },
+    {
+      "job_id": "ae7f69dda520fc60b8792a2323335e2d",
+      "kind": "run",
+      "outcome": "spawn_failed",
+      "version": "base",
+      "exit_code": 127,
+      "command": [
+        "python",
+        "-c",
+        "from calc import average; assert average(10, 0) == 0"
+      ]
+    },
+    {
+      "job_id": "df335fdc55425154e7ce2ea279202025",
+      "kind": "run",
+      "outcome": "spawn_failed",
+      "version": "head",
+      "exit_code": 127,
+      "command": [
+        "python",
+        "-c",
+        "from calc import average; assert average(10, 0) == 0"
+      ]
+    },
+    {
+      "job_id": "b738b5f42aa40d57eb0020f117504dcd",
+      "kind": "run",
+      "outcome": "spawn_failed",
+      "version": "head",
+      "exit_code": 127,
+      "command": [
+        "python",
+        "-c",
+        "from calc import average; assert average(10, 0) == 0"
+      ]
+    },
+    {
+      "job_id": "cf6c7e74dc1f6339653548fc51dc05a5",
+      "kind": "run",
+      "outcome": "exited",
+      "version": "base",
+      "exit_code": 0,
+      "command": [
+        "python3",
+        "-c",
+        "from calc import average; assert average(10, 0) == 0"
+      ]
+    },
+    {
+      "job_id": "a446c957e8e647db2e77dfa30403762b",
+      "kind": "run",
+      "outcome": "exited",
+      "version": "head",
+      "exit_code": 1,
+      "command": [
+        "python3",
+        "-c",
+        "from calc import average; assert average(10, 0) == 0"
+      ]
+    }
+  ]
+}

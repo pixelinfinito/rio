@@ -5,4 +5,4 @@ description: Verify the review artifacts
 local: false
 inputs: ["snapshot", "hypotheses"]
 outputs: ["verified_findings"]
-schema: {"type": "object", "additionalProperties": false, "properties": {}}
+schema: {"type": "object", "additionalProperties": false, "properties": {"run": {"type": "boolean", "default": true}}}

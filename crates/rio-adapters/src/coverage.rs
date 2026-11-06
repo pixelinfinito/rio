@@ -450,6 +450,7 @@ pub fn diff_coverage(
                     version: "merged".into(),
                 },
                 advisory: None,
+                verification: None,
             });
         }
     }

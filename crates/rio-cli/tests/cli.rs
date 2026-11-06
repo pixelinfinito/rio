@@ -72,9 +72,46 @@ fn version_contains_version_target_and_commit() {
     let text = String::from_utf8(output).unwrap();
     let fields: Vec<_> = text.split_whitespace().collect();
     assert_eq!(fields.len(), 4);
-    assert_eq!(fields[1], "0.1.0");
+    assert_eq!(
+        fields[1],
+        option_env!("RIO_BUILD_VERSION").unwrap_or(env!("CARGO_PKG_VERSION"))
+    );
     assert!(fields[2].contains('-'));
     assert!(fields[3].chars().all(|ch| ch.is_ascii_hexdigit()) || fields[3] == "unknown");
+}
+#[test]
+fn deployment_dry_run_needs_no_checkout_toolchain_or_credentials() {
+    let temp = tempfile::tempdir().unwrap();
+    let config = temp.path().join("deployment-config");
+    let output = rio(temp.path())
+        .env("RIO_CONFIG_DIR", &config)
+        .env("PATH", "")
+        .env_remove("CLOUDFLARE_API_TOKEN")
+        .env_remove("CLOUDFLARE_ACCOUNT_ID")
+        .args([
+            "init",
+            "--dry-run",
+            "--account",
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "--runner",
+            "self-hosted",
+        ])
+        .assert()
+        .success()
+        .get_output()
+        .clone();
+    let value: serde_json::Value = serde_json::from_slice(&output.stdout).unwrap();
+    assert_eq!(value["mutations"], false);
+    assert_eq!(value["sandbox"], false);
+    assert_eq!(
+        value["deployment"]["account_id"],
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    );
+    assert!(!config.exists());
+    rio(temp.path())
+        .args(["init", "--endpoint", "https://example.com", "--dry-run"])
+        .assert()
+        .code(2);
 }
 #[test]
 fn errors_and_empty_changes_emit_exactly_one_json_document() {
@@ -132,6 +169,7 @@ fn selectors_and_endpoint_only_flags_fail_before_review() {
     for args in [
         vec!["--pr", "123"],
         vec!["--deep"],
+        vec!["--fork"],
         vec!["--publish"],
         vec!["--since-last"],
     ] {
@@ -146,7 +184,7 @@ fn selectors_and_endpoint_only_flags_fail_before_review() {
         assert_eq!(report["error"]["code"], "endpoint_required");
         let message = report["error"]["message"].as_str().unwrap();
         assert!(message.contains(args[0]));
-        assert!(message.contains("not supported in this version"));
+        assert!(message.contains("configured endpoint") || message.contains("not implemented"));
     }
 }
 #[test]
@@ -303,7 +341,7 @@ fn configuration_precedence_sources_unknown_keys_and_endpoint_notice() {
         doc["configuration"]["sources"]["run.parallelism"],
         "RIO_PARALLELISM"
     );
-    assert!(String::from_utf8_lossy(&output.stdout).contains("not supported in this version"));
+    assert_eq!(doc["endpoint"], "https://example.invalid");
     fs::write(root.join("a.txt"), "changed\n").unwrap();
     let output = rio(root)
         .args(["review", "--offline", "--format", "json"])
@@ -312,7 +350,7 @@ fn configuration_precedence_sources_unknown_keys_and_endpoint_notice() {
         .get_output()
         .clone();
     json_report(&output);
-    assert!(String::from_utf8_lossy(&output.stderr).contains("not supported in this version"));
+    assert!(!String::from_utf8_lossy(&output.stderr).contains("not supported in this version"));
     fs::write(&file, "[cache]\nmaxage = '7d'\n").unwrap();
     let output = rio(root)
         .args(["review", "--format", "json"])
@@ -1018,4 +1056,185 @@ fn malformed_lockfile_reports_unverified_dependencies_without_internal_error() {
             .as_str()
             .is_some_and(|hint| hint.contains("cannot parse pnpm-lock.yaml"))
     }));
+}
+
+#[test]
+fn endpoint_presets_submit_snapshots_and_cache_verification_without_local_commands() {
+    use std::{
+        io::{Read, Write},
+        net::TcpListener,
+        time::{Duration, Instant},
+    };
+    for (args, posture, mode) in [
+        (vec!["--preset", "quick"], "critical-only", "fast"),
+        (vec!["--preset", "standard"], "balanced", "fast"),
+        (vec!["--deep"], "thorough", "deep"),
+    ] {
+        let temp = repository();
+        let root = temp.path();
+        fs::write(root.join("a.txt"), "two\n").unwrap();
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        listener.set_nonblocking(true).unwrap();
+        let address = listener.local_addr().unwrap();
+        let server = std::thread::spawn(move || {
+            let deadline = Instant::now() + Duration::from_secs(20);
+            let mut report = serde_json::json!({});
+            let mut seen = Vec::new();
+            while seen.len() < 5 && Instant::now() < deadline {
+                let (mut stream, _) = match listener.accept() {
+                    Ok(value) => value,
+                    Err(error) if error.kind() == std::io::ErrorKind::WouldBlock => {
+                        std::thread::sleep(Duration::from_millis(5));
+                        continue;
+                    }
+                    Err(error) => panic!("{error}"),
+                };
+                stream
+                    .set_read_timeout(Some(Duration::from_secs(5)))
+                    .unwrap();
+                let mut bytes = Vec::new();
+                let mut chunk = [0; 8192];
+                let (header_end, headers) = loop {
+                    let n = stream.read(&mut chunk).unwrap();
+                    assert!(n > 0);
+                    bytes.extend_from_slice(&chunk[..n]);
+                    if let Some(end) = bytes.windows(4).position(|w| w == b"\r\n\r\n") {
+                        let h = String::from_utf8_lossy(&bytes[..end]).to_string();
+                        let length = h
+                            .lines()
+                            .find_map(|l| {
+                                l.to_lowercase()
+                                    .strip_prefix("content-length: ")
+                                    .map(str::to_owned)
+                            })
+                            .and_then(|l| l.parse::<usize>().ok())
+                            .unwrap_or(0);
+                        if bytes.len() >= end + 4 + length {
+                            break (end, h);
+                        }
+                    }
+                };
+                let path = headers
+                    .lines()
+                    .next()
+                    .unwrap()
+                    .split_whitespace()
+                    .nth(1)
+                    .unwrap()
+                    .to_owned();
+                assert!(
+                    headers
+                        .to_lowercase()
+                        .contains("authorization: bearer long-enough-api-token-32-characters")
+                );
+                let response = if path == "/v1/snapshots" {
+                    let value: Value = serde_json::from_slice(&bytes[header_end + 4..]).unwrap();
+                    assert_eq!(value["base"]["a.txt"]["content"], "one\n");
+                    assert_eq!(value["head"]["a.txt"]["content"], "two\n");
+                    serde_json::json!({"id":"a".repeat(64)})
+                } else if path == "/v1/reviews" {
+                    let value: Value = serde_json::from_slice(&bytes[header_end + 4..]).unwrap();
+                    assert_eq!(value["profile"]["posture"], posture);
+                    assert_eq!(value["mode"], mode);
+                    assert_eq!(
+                        value["profile"]["max_defects"],
+                        if posture == "critical-only" {
+                            3
+                        } else if posture == "balanced" {
+                            5
+                        } else {
+                            15
+                        }
+                    );
+                    report = value["report"].clone();
+                    serde_json::json!({"id":"remote-review"})
+                } else if path.ends_with("/report") {
+                    report.clone()
+                } else if path.ends_with("/audit") {
+                    serde_json::json!({"hypotheses":[],"votes":[],"usage":[],"executions":[]})
+                } else {
+                    serde_json::json!({"status":"complete"})
+                };
+                let body = serde_json::to_vec(&response).unwrap();
+                write!(stream,"HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n",body.len()).unwrap();
+                stream.write_all(&body).unwrap();
+                seen.push(path);
+            }
+            assert_eq!(seen.len(), 5, "requests: {seen:?}");
+        });
+        let output = rio(root)
+            .env("RIO_ENDPOINT_URL", format!("http://{address}"))
+            .env("RIO_API_TOKEN", "long-enough-api-token-32-characters")
+            .args(["review", "--format", "json"])
+            .args(args)
+            .assert()
+            .success()
+            .get_output()
+            .clone();
+        let report = json_report(&output);
+        assert!(report["checks"].as_array().unwrap().is_empty());
+        let run = root
+            .join(".rio/cache")
+            .join(report["review"]["id"].as_str().unwrap())
+            .join("runs")
+            .join(report["review"]["run_id"].as_str().unwrap());
+        assert!(run.join("verification/audit.json").is_file());
+        assert_eq!(fs::read_to_string(root.join("a.txt")).unwrap(), "two\n");
+        server.join().unwrap();
+    }
+}
+
+#[test]
+fn init_preserves_user_config_and_stores_private_credentials() {
+    let temp = tempfile::tempdir().unwrap();
+    let directory = temp.path().join("user-config");
+    fs::create_dir_all(&directory).unwrap();
+    fs::write(directory.join("config.toml"), "[run]\nparallelism = 2\n").unwrap();
+    rio(temp.path())
+        .args([
+            "init",
+            "--endpoint",
+            "http://127.0.0.1:8787",
+            "--token-stdin",
+        ])
+        .write_stdin("long-enough-api-token-32-characters\n")
+        .assert()
+        .success();
+    assert!(
+        fs::read_to_string(directory.join("config.toml"))
+            .unwrap()
+            .contains("parallelism = 2")
+    );
+    assert_eq!(
+        fs::read_to_string(directory.join("credentials")).unwrap(),
+        "long-enough-api-token-32-characters"
+    );
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        assert_eq!(
+            fs::metadata(directory.join("credentials"))
+                .unwrap()
+                .permissions()
+                .mode()
+                & 0o777,
+            0o600
+        );
+    }
+}
+#[test]
+fn changing_endpoint_does_not_forward_the_previous_deployment_credential() {
+    let temp = tempfile::tempdir().unwrap();
+    let directory = temp.path().join("user-config");
+    fs::create_dir_all(&directory).unwrap();
+    fs::write(directory.join("config.toml"), "[endpoint]\nurl='https://old.example.com'\n[deployment]\naccount_id='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'\ncredential_store='file'\n").unwrap();
+    fs::write(directory.join("credentials"), "old-credential").unwrap();
+    rio(temp.path())
+        .args(["init", "--endpoint", "https://new.example.com"])
+        .assert()
+        .success();
+    let document: toml::Value =
+        toml::from_str(&fs::read_to_string(directory.join("config.toml")).unwrap()).unwrap();
+    assert!(document.get("deployment").is_none());
+    assert!(!directory.join("credentials").exists());
 }

@@ -15,6 +15,7 @@ pub enum EvidenceLevel {
 pub enum Category {
     Defect,
     Risk,
+    Security,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
@@ -102,6 +103,8 @@ pub struct Finding {
     pub locations: Vec<Location>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub advisory: Option<Advisory>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub verification: Option<Verification>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
@@ -241,4 +244,44 @@ pub struct CheckEntry {
     pub wall_time_ms: u64,
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub cached: bool,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum BlindMatch {
+    Same,
+    Related,
+    None,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(try_from = "VerificationWire")]
+pub struct Verification {
+    pub voters: u32,
+    pub agreeing: u32,
+    pub blind_match: Vec<BlindMatch>,
+    pub split: bool,
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct VerificationWire {
+    voters: u32,
+    agreeing: u32,
+    blind_match: Vec<BlindMatch>,
+    split: bool,
+}
+impl TryFrom<VerificationWire> for Verification {
+    type Error = String;
+    fn try_from(v: VerificationWire) -> Result<Self, Self::Error> {
+        if v.voters == 0 || v.agreeing > v.voters || v.blind_match.len() != v.voters as usize {
+            return Err("invalid verification counts or per-voter blind matches".into());
+        }
+        Ok(Self {
+            voters: v.voters,
+            agreeing: v.agreeing,
+            blind_match: v.blind_match,
+            split: v.split,
+        })
+    }
 }

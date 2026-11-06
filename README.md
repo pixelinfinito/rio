@@ -1,6 +1,6 @@
 # Rio
 
-Rio reviews local Git changes with TypeScript, Python and Rust type checking, linting, secret scanning, diff coverage, dependency auditing, and a bounded impact graph. It runs on your machine. Rio is licensed under Apache-2.0.
+Rio reviews Git changes with TypeScript, Python and Rust type checking, linting, secret scanning, diff coverage, dependency auditing, and a bounded impact graph. Run deterministic checks locally, or configure the Cloudflare endpoint for isolated checks and agent review with independent verifier voters. Rio is licensed under Apache-2.0.
 
 The original [automated acceptance evaluation](docs/evaluation/v0.1.md) concluded **no-go**. A [methodology-corrected rescoring](docs/evaluation/v0.1-rescored.md) finds **insufficient evidence** because all ten PRs lacked working baseline classification; stable v0.1 release remains blocked. The implementation and release-candidate validation are available; the commands below describe published release installation.
 
@@ -74,7 +74,19 @@ The first Ctrl-C terminates tool process trees and keeps a partial report. A sec
 
 TypeScript tools are `tsc`, ESLint, Vitest or Jest. Python tools are Pyright or mypy, Ruff, pytest and coverage.py. Rust uses installed Cargo/toolchain components for `cargo check`, configured Clippy/rustfmt checks, and optional `cargo llvm-cov` coverage. Rust member changes check each scheduled member and its dependents; workspace-wide changes check the workspace. Project-local executables take precedence over PATH. See [adapter details](docs/adapters.md).
 
-Deterministic checks and the graph run locally. Agent, triage and verifier steps are deferred with `no_endpoint`. `--pr`, `--deep`, `--publish` and `--since-last` require an endpoint and exit 2 in this version. Setting `endpoint.url` only prints a notice.
+Without an endpoint, deterministic checks and the graph run locally; agent, triage and verifier steps are deferred with `no_endpoint`. A configured endpoint captures immutable base/head snapshots and runs checks remotely in a Cloudflare Container or self-hosted Docker runner. It adds risk triage, independent agents and blind verifier quorum, with audit evidence cached alongside the report.
+
+```sh
+cf auth login
+# Supply OPENROUTER_API_KEY through your private environment or --secrets-file.
+rio init
+rio review --profile rio/openrouter --preset standard
+rio deploy # upgrade the paired Worker in your own account
+rio review --preset quick
+rio review --deep
+```
+
+Quick, Standard and Deep require an endpoint; `--offline` keeps local deterministic execution. PR fetching, publication and convergence (`--pr`, `--publish`, `--since-last`) remain unsupported. The security policy interface is available but its agent/catalog execution remains gated on v0.3. See [Cloudflare deployment and runners](docs/cloudflare.md) and [verification evidence](docs/verifier-contracts.md) for setup, isolation, budgets and the pending live model acceptance gate.
 
 When resolved dependency versions change, Rio sends the changed package names, ecosystems and versions to `https://api.osv.dev/v1/querybatch` and `/v1/query`, then fetches advisory details from `/v1/vulns/<id>`. It caches advisory records. `--offline` prevents network requests by Rio. Tools, plugins and project tests are **not network-isolated**; reports say so when an offline review executes a subprocess. Use external network isolation to block their network access as well.
 
@@ -119,10 +131,10 @@ Rio checks the selected source's lockfile against installed dependency metadata.
 | Code | Meaning |
 | --- | --- |
 | 0 | No policy failure; optional missing tools may still make the report incomplete |
-| 1 | At least one finding matches `fail_on` |
+| 1 | A finding matches the general or security failure policy |
 | 2 | Usage, configuration or profile error |
 | 3 | Repository state prevents review, or an internal/persistence error aborts it |
-| 4 | A check failed or was cancelled under `fail_on.incomplete`, or a required check was skipped |
+| 4 | A review is partial, a check failed or was cancelled under `fail_on.incomplete`, or a required check was skipped |
 | 130 | Second interrupt |
 
 The default policy fails on new or worsened defects with `static_proven` or stronger evidence. It ignores pre-existing findings and risks. A missing optional tool is a skip and does not itself fail the command. Set `fail_on.required_checks: [typecheck, lint]` to require those checks, or `fail_on.incomplete: false` to stop incomplete analysis from producing exit 4. A matching finding takes precedence over exit 4.

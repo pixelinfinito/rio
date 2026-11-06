@@ -53,6 +53,24 @@ pub fn render_json(report: &Report) -> Result<Vec<u8>, String> {
         jsonschema::validator_for(&schema).expect("embedded report schema")
     });
     let mut document = serde_json::to_value(report).map_err(|error| error.to_string())?;
+    for finding in report
+        .findings
+        .iter()
+        .chain(&report.risks)
+        .chain(&report.security)
+        .chain(
+            report
+                .checks
+                .iter()
+                .flat_map(|c| &c.outcome.details().findings),
+        )
+    {
+        if let Some(v) = &finding.verification
+            && (v.voters == 0 || v.agreeing > v.voters || v.blind_match.len() != v.voters as usize)
+        {
+            return Err("invalid verification counts".into());
+        }
+    }
     scrub(&mut document);
     let errors: Vec<_> = VALIDATOR
         .iter_errors(&document)
@@ -81,7 +99,41 @@ fn table(text: &str) -> String {
     safe(text).replace('|', "\\|").replace('\n', "<br>")
 }
 fn code(text: &str) -> String {
-    format!("`{}`", safe(text).replace('`', "\\`"))
+    // Inline code cannot span a blank line; a newline would end the span and let
+    // the remaining text render as live Markdown.
+    let text = safe(text).replace('\n', " ");
+    let longest = text.split(|ch| ch != '`').map(str::len).max().unwrap_or(0);
+    let delimiter = "`".repeat(longest + 1);
+    let padding = if text.starts_with('`') || text.ends_with('`') {
+        " "
+    } else {
+        ""
+    };
+    format!("{delimiter}{padding}{text}{padding}{delimiter}")
+}
+fn markdown_text(text: &str) -> String {
+    let mut output = String::new();
+    for ch in safe(text).chars() {
+        match ch {
+            '&' => output.push_str("&amp;"),
+            '<' => output.push_str("&lt;"),
+            '>' => output.push_str("&gt;"),
+            '\n' => output.push_str("<br>"),
+            '\\' | '`' | '*' | '_' | '[' | ']' | '#' | '|' => {
+                output.push('\\');
+                output.push(ch);
+            }
+            _ => output.push(ch),
+        }
+    }
+    output
+}
+fn finding_text(finding: &Finding, text: &str) -> String {
+    if matches!(finding.source, Source::Agent { .. }) {
+        markdown_text(text)
+    } else {
+        safe(text)
+    }
 }
 fn ordered(findings: &[Finding]) -> Vec<&Finding> {
     let mut findings: Vec<_> = findings.iter().collect();
@@ -183,6 +235,45 @@ fn footer(report: &Report) -> Vec<String> {
         lines.push(format!("{}: {}", file.path, file.reason));
     }
     lines.extend(report.footer.notes.iter().cloned());
+    if let Some(audit) = &report.agent_audit {
+        if let Some(pools) = audit["held_back"].as_object() {
+            for (pool, titles) in pools {
+                if let Some(titles) = titles.as_array().filter(|t| !t.is_empty()) {
+                    lines.push(format!(
+                        "Held back {} {}: {}. Run --deep or raise max_defects.",
+                        titles.len(),
+                        pool,
+                        titles
+                            .iter()
+                            .filter_map(|t| t.as_str())
+                            .collect::<Vec<_>>()
+                            .join("; ")
+                    ));
+                }
+            }
+        }
+        if let Some(drops) = audit["category_drops"].as_object() {
+            for (category, count) in drops {
+                lines.push(format!("Dropped by category floor: {category}: {count}"));
+            }
+        }
+        if let Some(usage) = audit.get("verification_usage") {
+            lines.push(format!(
+                "Verifier usage: {} input tokens, {} output tokens; cost USD {}",
+                usage["input_tokens"], usage["output_tokens"], usage["cost_usd"]
+            ));
+        }
+        if AuditSignals::of(report)
+            .ok()
+            .flatten()
+            .is_some_and(|audit| audit.policy_failed)
+        {
+            lines.push(
+                "Security fail policy matched, including findings held back by presentation caps."
+                    .into(),
+            );
+        }
+    }
     for suppression in &report.footer.suppressions {
         lines.push(format!(
             "Suppression {}: {} finding(s)",
@@ -207,6 +298,7 @@ fn classification_summary(report: &Report) -> Option<String> {
         .findings
         .iter()
         .chain(&report.risks)
+        .chain(&report.security)
         .filter(|finding| finding.state == State::Unclassified)
         .count();
     let mismatches: Vec<_> = report
@@ -320,12 +412,22 @@ fn groups<'a>(
                 .collect(),
         ),
     ];
+    if !report.security.is_empty() {
+        groups.push((
+            "Security",
+            ordered(&report.security)
+                .into_iter()
+                .filter(|f| visible(f))
+                .collect(),
+        ));
+    }
     if options.show_pre_existing {
         groups.push((
             "Pre-existing findings",
             ordered(&report.findings)
                 .into_iter()
                 .chain(ordered(&report.risks))
+                .chain(ordered(&report.security))
                 .filter(|f| f.state == State::PreExisting)
                 .collect(),
         ));
@@ -404,7 +506,8 @@ pub fn render_markdown(report: &Report, options: &RenderOptions<'_>) -> String {
             out.push_str(&format!("{}\n\n", safe(&statement(report))));
         }
         for finding in findings {
-            let failing = options.policy.is_some_and(|policy| policy.matches(finding));
+            let failing = options.policy.is_some_and(|policy| policy.matches(finding))
+                || AuditSignals::matches(report, &finding.id);
             out.push_str(&format!(
                 "- **{}** [{}; {}; {}]{} — {}\n",
                 safe(&finding.rule_id),
@@ -412,8 +515,24 @@ pub fn render_markdown(report: &Report, options: &RenderOptions<'_>) -> String {
                 label(&finding.severity),
                 label(&finding.evidence_level),
                 if failing { " **FAIL**" } else { "" },
-                safe(&finding.message)
+                finding_text(
+                    finding,
+                    &format!(
+                        "{}{}",
+                        if finding.category == Category::Security
+                            && finding.evidence_level == EvidenceLevel::Plausible
+                        {
+                            "Risk for human judgment: "
+                        } else {
+                            ""
+                        },
+                        finding.message
+                    )
+                )
             ));
+            if finding.locations.is_empty() {
+                out.push_str(&format!("  - {}\n", code(&location(&finding.location))));
+            }
             for loc in finding.locations.iter().filter(|loc| {
                 options.show_pre_existing
                     || finding.state != State::Unclassified
@@ -425,11 +544,28 @@ pub fn render_markdown(report: &Report, options: &RenderOptions<'_>) -> String {
                     label(&loc.occurrence_state)
                 ));
             }
+            if let Some(v) = &finding.verification {
+                out.push_str(&format!(
+                    "  - Verification: {}/{} voters; blind: {:?}; split: {}\n",
+                    v.agreeing, v.voters, v.blind_match, v.split
+                ));
+            }
             if !finding.trigger.is_empty() {
-                out.push_str(&format!("  - Trigger: {}\n", safe(&finding.trigger)));
+                out.push_str(&format!(
+                    "  - Trigger: {}\n",
+                    finding_text(finding, &finding.trigger)
+                ));
             }
             if let Some(fix) = &finding.suggested_fix {
-                out.push_str(&format!("  - Suggested fix: {}\n", safe(fix)));
+                out.push_str(&format!(
+                    "  - Suggested fix: {}\n",
+                    finding_text(finding, fix)
+                ));
+            }
+            if matches!(finding.source, Source::Agent { .. }) {
+                for artifact in &finding.evidence {
+                    out.push_str(&format!("  - Evidence: {}\n", code(artifact)));
+                }
             }
         }
     }
@@ -441,7 +577,14 @@ pub fn render_markdown(report: &Report, options: &RenderOptions<'_>) -> String {
     }
     out.push_str("\n## Footer\n\n");
     for line in footer(report) {
-        out.push_str(&format!("- {}\n", safe(&line)));
+        out.push_str(&format!(
+            "- {}\n",
+            if report.agent_audit.is_some() {
+                markdown_text(&line)
+            } else {
+                safe(&line)
+            }
+        ));
     }
     out
 }
@@ -515,13 +658,18 @@ pub fn render_terminal(report: &Report, options: &RenderOptions<'_>) -> String {
                 label(&finding.state),
                 label(&finding.severity),
                 label(&finding.evidence_level),
-                if options.policy.is_some_and(|p| p.matches(finding)) {
+                if options.policy.is_some_and(|p| p.matches(finding))
+                    || AuditSignals::matches(report, &finding.id)
+                {
                     " FAIL"
                 } else {
                     ""
                 }
             ));
             // Locations get their own lines so messages never wrap paths.
+            if finding.locations.is_empty() {
+                lines.push(format!("    {}", location(&finding.location)));
+            }
             for loc in finding.locations.iter().filter(|loc| {
                 options.show_pre_existing
                     || finding.state != State::Unclassified
@@ -533,7 +681,23 @@ pub fn render_terminal(report: &Report, options: &RenderOptions<'_>) -> String {
                     label(&loc.occurrence_state)
                 ));
             }
-            lines.push(format!("    {}", finding.message));
+            lines.push(format!(
+                "    {}{}",
+                if finding.category == Category::Security
+                    && finding.evidence_level == EvidenceLevel::Plausible
+                {
+                    "Risk for human judgment: "
+                } else {
+                    ""
+                },
+                finding.message
+            ));
+            if let Some(v) = &finding.verification {
+                lines.push(format!(
+                    "    Verification: {}/{} voters; blind: {:?}; split: {}",
+                    v.agreeing, v.voters, v.blind_match, v.split
+                ));
+            }
             if !finding.trigger.is_empty() {
                 lines.push(format!("    Trigger: {}", finding.trigger));
             }

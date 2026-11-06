@@ -138,6 +138,45 @@ fn failed_and_required_skipped_checks_affect_exit_independently_of_report_status
     assert_eq!(r.status, ReportStatus::Complete);
     assert_eq!(r.incomplete.len(), 1);
 }
+#[test]
+fn incomplete_remote_votes_respect_the_incomplete_exit_policy() {
+    let mut r = report();
+    r.status = ReportStatus::Incomplete;
+    // Skipped optional local checks preserve the existing exit policy.
+    assert_eq!(
+        exit_code(
+            &r,
+            &FailOn::default().compile().unwrap(),
+            ExitContext::default()
+        ),
+        0
+    );
+    r.agent_audit = Some(serde_json::json!({
+        "policy_failed": false, "policy_matches": [], "incomplete_votes": 3
+    }));
+    assert!(r.checks.is_empty());
+    assert_eq!(
+        exit_code(
+            &r,
+            &FailOn::default().compile().unwrap(),
+            ExitContext::default()
+        ),
+        4
+    );
+    assert_eq!(
+        exit_code(
+            &r,
+            &FailOn {
+                incomplete: false,
+                ..Default::default()
+            }
+            .compile()
+            .unwrap(),
+            ExitContext::default()
+        ),
+        0
+    );
+}
 
 #[test]
 fn precedence_and_partial_status_are_preserved() {
@@ -187,4 +226,27 @@ fn precedence_and_partial_status_are_preserved() {
     );
     r.findings.clear();
     assert_eq!(exit_code(&r, &policy, ExitContext::default()), 4);
+}
+
+#[test]
+fn partial_reports_respect_incomplete_policy_and_malformed_audits_fail_closed() {
+    let mut r = report();
+    r.status = ReportStatus::Partial;
+    let lenient = FailOn {
+        incomplete: false,
+        ..Default::default()
+    }
+    .compile()
+    .unwrap();
+    let strict = FailOn::default().compile().unwrap();
+    assert_eq!(exit_code(&r, &strict, ExitContext::default()), 4);
+    assert_eq!(exit_code(&r, &lenient, ExitContext::default()), 0);
+    r.status = ReportStatus::Complete;
+    // A renamed or mistyped policy field must not read as a pass.
+    r.agent_audit = Some(serde_json::json!({"policy_fail": true, "policy_matches": []}));
+    assert_eq!(exit_code(&r, &lenient, ExitContext::default()), 4);
+    r.agent_audit = Some(serde_json::json!({"policy_failed": "yes", "policy_matches": []}));
+    assert_eq!(exit_code(&r, &lenient, ExitContext::default()), 4);
+    r.agent_audit = Some(serde_json::json!({"policy_failed": true, "policy_matches": []}));
+    assert_eq!(exit_code(&r, &lenient, ExitContext::default()), 1);
 }

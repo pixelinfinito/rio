@@ -67,6 +67,76 @@ fn every_renderer_redacts_credentials_and_uses_stable_headings() {
         assert!(second.contains(heading));
     }
 }
+
+#[test]
+fn agent_security_renders_uncertainty_votes_policy_caps_and_escaped_evidence() {
+    let mut report = fixture("complete");
+    let mut finding: Finding = serde_json::from_str(include_str!("fixtures/finding.json")).unwrap();
+    finding.category = Category::Security;
+    finding.source = Source::Agent {
+        agent: "security".into(),
+    };
+    finding.evidence_level = EvidenceLevel::Plausible;
+    finding.message = "<script>alert(1)</script> [click](https://example.com) token = ghp_abcdefghijklmnopqrstuvwxyz1234567890".into();
+    finding.verification = Some(Verification {
+        voters: 3,
+        agreeing: 2,
+        blind_match: vec![BlindMatch::None, BlindMatch::Related, BlindMatch::Same],
+        split: true,
+    });
+    finding.evidence = vec![
+        "code:head:src/a.ts:node".into(),
+        "x\n\n# Approved\n[click](https://evil.example)".into(),
+    ];
+    report.agent_audit = Some(serde_json::json!({
+        "held_back":{"security":["<hidden title>"],"defects":[],"risks":[]},
+        "category_drops":{"style":1,"diagnostic":2},
+        "policy_failed":true,"policy_matches":[finding.id],
+        "verification_usage":{"input_tokens":120,"output_tokens":30,"cost_usd":0.001}
+    }));
+    report.security.push(finding);
+    let markdown = render_markdown(&report, &RenderOptions::default());
+    assert!(markdown.contains("## Security"));
+    assert!(markdown.contains("Risk for human judgment"));
+    assert!(markdown.contains("&lt;script&gt;"));
+    assert!(!markdown.contains("<script>"));
+    assert!(markdown.contains("\\[click\\]"));
+    assert!(markdown.contains("Evidence: `code:head:src/a.ts:node`"));
+    assert!(markdown.contains("Evidence: `x  # Approved [click](https://evil.example)`"));
+    assert!(!markdown.contains("\n# Approved"));
+    for output in [
+        markdown,
+        render_terminal(
+            &report,
+            &RenderOptions {
+                width: 160,
+                ..Default::default()
+            },
+        ),
+        String::from_utf8(render_json(&report).unwrap()).unwrap(),
+    ] {
+        assert!(!output.contains("abcdefghijklmnopqrstuvwxyz"));
+        assert!(output.contains("REDACTED"));
+        assert!(!output.contains("confidence"));
+    }
+    let terminal = render_terminal(
+        &report,
+        &RenderOptions {
+            width: 160,
+            ..Default::default()
+        },
+    );
+    for text in [
+        "2/3 voters",
+        "split: true",
+        "Held back 1 security",
+        "style: 1",
+        "Verifier usage",
+        "FAIL",
+    ] {
+        assert!(terminal.contains(text), "{text}");
+    }
+}
 #[test]
 fn progress_reports_completed_outcomes() {
     assert!(

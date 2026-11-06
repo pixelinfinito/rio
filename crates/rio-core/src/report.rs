@@ -167,6 +167,10 @@ pub struct Report {
     pub impact: ImpactSummary,
     pub findings: Vec<Finding>,
     pub risks: Vec<Finding>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub security: Vec<Finding>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub agent_audit: Option<serde_json::Value>,
     pub incomplete: Vec<CheckEntry>,
     pub deferred: Vec<DeferredStep>,
     pub excluded: Vec<ExcludedFile>,
@@ -188,6 +192,8 @@ impl Report {
             impact: ImpactSummary::default(),
             findings: Vec::new(),
             risks: Vec::new(),
+            security: Vec::new(),
+            agent_audit: None,
             incomplete: Vec::new(),
             deferred: Vec::new(),
             excluded: Vec::new(),

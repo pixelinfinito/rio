@@ -6,7 +6,7 @@ use rio_git::{Diff, Tree};
 use serde::Serialize;
 
 #[derive(Debug, Serialize)]
-pub(crate) struct OwnerGuidance {
+pub struct OwnerGuidance {
     path: String,
     scope_dir: String,
     content_hash: String,
@@ -14,7 +14,7 @@ pub(crate) struct OwnerGuidance {
 }
 
 /// Read the selected immutable head as data, never as engine instructions.
-pub(crate) fn owner_guidance(head: &Tree, diff: &Diff) -> Vec<OwnerGuidance> {
+pub fn owner_guidance(head: &Tree, diff: &Diff) -> Vec<OwnerGuidance> {
     let mut paths = BTreeSet::new();
     for file in &diff.files {
         let mut directory = Path::new(&file.path).parent();

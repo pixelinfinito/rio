@@ -1,0 +1,359 @@
+{
+  "schema": "rio-hosted-smoke-v1",
+  "date": "2026-11-06",
+  "purpose": "Deployment and model-inference smoke; not independently adjudicated precision acceptance",
+  "review_id": "4ee2756f-194f-4d53-a478-9b94fa1de000",
+  "fixture": {
+    "path": "calc.py",
+    "base": "def average(total, count):\n    if count == 0:\n        return 0\n    return total / count\n",
+    "head": "def average(total, count):\n    return total / count\n"
+  },
+  "transport": "OpenRouter through authenticated Cloudflare AI Gateway; cache and log collection disabled",
+  "models": {
+    "generator": "openrouter/openai/gpt-4.1-mini",
+    "verifier": "openrouter/anthropic/claude-haiku-4.5"
+  },
+  "report": {
+    "agent_audit": {
+      "board_deferred": true,
+      "category_drops": {},
+      "held_back": {
+        "defects": [],
+        "risks": [],
+        "security": []
+      },
+      "policy_failed": false,
+      "policy_matches": [],
+      "refuted": 0,
+      "require_human": false,
+      "suppressed": 0,
+      "verification_usage": {
+        "cost_usd": 0.02453517,
+        "input_tokens": 12258,
+        "output_tokens": 2505
+      }
+    },
+    "checks": [
+      {
+        "findings": [],
+        "hint": "Install pyright or mypy in the project environment",
+        "kind": "typecheck",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "tool_missing",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "findings": [],
+        "hint": "lint runs only against the project's own rules; add an ESLint, Biome or Ruff configuration",
+        "kind": "lint",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "no_project_config",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "findings": [],
+        "hint": "Install coverage in the project environment",
+        "kind": "coverage",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "tool_missing",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "findings": [],
+        "kind": "secrets",
+        "language": "common",
+        "outcome": "passed",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "findings": [],
+        "hint": "Dependency audit needs api.osv.dev",
+        "kind": "dependencies",
+        "language": "common",
+        "outcome": "skipped",
+        "reason": "offline",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 3
+      }
+    ],
+    "deferred": [],
+    "excluded": [],
+    "findings": [
+      {
+        "category": "defect",
+        "evidence": [
+          "code:head:calc.py:fc3d9d89d4cc8981e4a78137bade54bd0a93deddcb5cbd1a7af2d13aad75ed49"
+        ],
+        "evidence_level": "static_proven",
+        "id": "9e409cd5d1743edf76bf7e8cc559975da91139a0360407eccc087d1d842d781f",
+        "impact": "Calling average with count=0 will raise a ZeroDivisionError, breaking callers that rely on previous behavior.",
+        "location": {
+          "column": 1,
+          "line_end": 2,
+          "line_start": 1,
+          "occurrence_state": "new",
+          "path": "calc.py",
+          "symbol_path": "calc.average"
+        },
+        "locations": [
+          {
+            "column": 1,
+            "line_end": 2,
+            "line_start": 1,
+            "occurrence_state": "new",
+            "path": "calc.py",
+            "symbol_path": "calc.average"
+          }
+        ],
+        "message": "Division by zero is possible after removal of count==0 check in average function.",
+        "rule_id": "defect/python_zero_division",
+        "severity": "error",
+        "source": {
+          "agent": "correctness"
+        },
+        "state": "new",
+        "suggested_fix": "Restore the check for count==0 and return 0 in that case to prevent division by zero.",
+        "trigger": "The base code returns 0 when count is 0 to avoid division by zero. The head code divides total/count unconditionally.",
+        "verification": {
+          "agreeing": 2,
+          "blind_match": [
+            "related",
+            "related",
+            "related"
+          ],
+          "split": false,
+          "voters": 3
+        }
+      }
+    ],
+    "footer": {
+      "notes": [
+        "Hypothesis board coordination is deferred; agents and verifier voters run independently."
+      ],
+      "suppressions": [],
+      "tool_versions": {}
+    },
+    "impact": {
+      "symbols": [
+        {
+          "path": "calc.py",
+          "references_per_hop": [
+            0,
+            0
+          ],
+          "symbol_path": "calc.average",
+          "test_referenced": false,
+          "unresolved": 0
+        }
+      ],
+      "truncated": false,
+      "unresolved": 0
+    },
+    "incomplete": [
+      {
+        "findings": [],
+        "hint": "Install pyright or mypy in the project environment",
+        "kind": "typecheck",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "tool_missing",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "findings": [],
+        "hint": "lint runs only against the project's own rules; add an ESLint, Biome or Ruff configuration",
+        "kind": "lint",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "no_project_config",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "findings": [],
+        "hint": "Install coverage in the project environment",
+        "kind": "coverage",
+        "language": "python",
+        "outcome": "skipped",
+        "reason": "tool_missing",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 0
+      },
+      {
+        "findings": [],
+        "hint": "Dependency audit needs api.osv.dev",
+        "kind": "dependencies",
+        "language": "common",
+        "outcome": "skipped",
+        "reason": "offline",
+        "root": ".",
+        "scheduled_as": "changed",
+        "version": "head",
+        "wall_time_ms": 3
+      }
+    ],
+    "metrics": {
+      "checks": [],
+      "tool_versions": {},
+      "wall_time_ms": 0
+    },
+    "review": {
+      "base": "d3b178e3e718fac032c1def1feb27495da43127a",
+      "chain": [
+        "rio-default",
+        "rio/openrouter",
+        "rio/base"
+      ],
+      "head": "snapshot:43ed2007161a5857e85c2548dd0d3c3bda7ed44214d3af7c403da5e6284ecc21",
+      "id": "1f414ed8ea57b5c0",
+      "mode": "working-tree",
+      "profile": "rio-default",
+      "rio_version": "0.2.0",
+      "run_id": "01M6R69AQ29V4Y9YRWVPR86MXQ"
+    },
+    "risk_tier": {
+      "reasons": [],
+      "source": "triage",
+      "tier": "low"
+    },
+    "risks": [],
+    "schema": "rio-report-v1",
+    "status": "incomplete",
+    "summary": {
+      "fixed": 0,
+      "pre_existing": 0,
+      "suppressed": 0
+    }
+  },
+  "cli_exit_code": 1,
+  "votes": [
+    {
+      "voter": 0,
+      "status": "completed",
+      "blind_match": "related",
+      "validated_level": "static_proven"
+    },
+    {
+      "voter": 1,
+      "status": "completed",
+      "blind_match": "related",
+      "validated_level": "static_proven"
+    },
+    {
+      "voter": 2,
+      "status": "completed",
+      "blind_match": "related",
+      "validated_level": "plausible",
+      "validation_note": "Claimed evidence level is not supported by valid selected-review artifacts."
+    }
+  ],
+  "usage": [
+    {
+      "actor": "9e409cd5d1743edf76bf7e8cc559975da91139a0360407eccc087d1d842d781f-1",
+      "phase": "verify-blind",
+      "status": "completed",
+      "input_tokens": 1618,
+      "output_tokens": 341,
+      "cost_usd": 0.00328977,
+      "model": "openrouter/anthropic/claude-haiku-4.5"
+    },
+    {
+      "actor": "agents-correctness",
+      "phase": "generation",
+      "status": "completed",
+      "input_tokens": 1889,
+      "output_tokens": 216,
+      "cost_usd": 0.001090188,
+      "model": "openrouter/openai/gpt-4.1-mini"
+    },
+    {
+      "actor": "9e409cd5d1743edf76bf7e8cc559975da91139a0360407eccc087d1d842d781f-0",
+      "phase": "verify-blind",
+      "status": "completed",
+      "input_tokens": 1618,
+      "output_tokens": 339,
+      "cost_usd": 0.00327987,
+      "model": "openrouter/anthropic/claude-haiku-4.5"
+    },
+    {
+      "actor": "9e409cd5d1743edf76bf7e8cc559975da91139a0360407eccc087d1d842d781f-2",
+      "phase": "verify-disclosed",
+      "status": "completed",
+      "input_tokens": 2472,
+      "output_tokens": 434,
+      "cost_usd": 0.00459558,
+      "model": "openrouter/anthropic/claude-haiku-4.5"
+    },
+    {
+      "actor": "9e409cd5d1743edf76bf7e8cc559975da91139a0360407eccc087d1d842d781f-0",
+      "phase": "verify-disclosed",
+      "status": "completed",
+      "input_tokens": 2465,
+      "output_tokens": 496,
+      "cost_usd": 0.00489555,
+      "model": "openrouter/anthropic/claude-haiku-4.5"
+    },
+    {
+      "actor": "9e409cd5d1743edf76bf7e8cc559975da91139a0360407eccc087d1d842d781f-1",
+      "phase": "verify-disclosed",
+      "status": "completed",
+      "input_tokens": 2467,
+      "output_tokens": 549,
+      "cost_usd": 0.00515988,
+      "model": "openrouter/anthropic/claude-haiku-4.5"
+    },
+    {
+      "actor": "9e409cd5d1743edf76bf7e8cc559975da91139a0360407eccc087d1d842d781f-2",
+      "phase": "verify-blind",
+      "status": "completed",
+      "input_tokens": 1618,
+      "output_tokens": 346,
+      "cost_usd": 0.00331452,
+      "model": "openrouter/anthropic/claude-haiku-4.5"
+    }
+  ],
+  "executions": [
+    {
+      "job_id": "b2c838cbf06451790665cf6004244d0b",
+      "kind": "checks",
+      "outcome": "exited",
+      "version": "head",
+      "exit_code": 0,
+      "timed_out": false,
+      "truncated": false
+    },
+    {
+      "job_id": "1cf2151ff3de79d567055194e15b0dd7",
+      "kind": "graph",
+      "outcome": "exited",
+      "version": "head",
+      "exit_code": 0,
+      "timed_out": false,
+      "truncated": false
+    }
+  ]
+}

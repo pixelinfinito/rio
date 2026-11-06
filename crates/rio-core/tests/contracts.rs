@@ -161,3 +161,36 @@ fn report_risk_tier_is_nullable_and_has_a_strict_contract() {
         assert!(!validator.is_valid(&report));
     }
 }
+
+#[test]
+fn verification_and_security_are_optional_but_counts_are_checked() {
+    let original: Value = serde_json::from_str(include_str!("fixtures/finding.json")).unwrap();
+    let mut value = original.clone();
+    value["category"] = json!("security");
+    value["verification"] =
+        json!({"voters":3,"agreeing":2,"blind_match":["same","related","none"],"split":true});
+    let finding: rio_core::Finding = serde_json::from_value(value.clone()).unwrap();
+    assert_eq!(serde_json::to_value(finding).unwrap(), value);
+    assert!(
+        jsonschema::validator_for(&schema("finding"))
+            .unwrap()
+            .is_valid(&value)
+    );
+    for invalid in [
+        json!({"voters":0,"agreeing":0,"blind_match":[],"split":false}),
+        json!({"voters":1,"agreeing":2,"blind_match":["same"],"split":false}),
+        json!({"voters":2,"agreeing":1,"blind_match":["none"],"split":false}),
+        json!({"voters":1,"agreeing":1,"blind_match":["unknown"],"split":false}),
+    ] {
+        value["verification"] = invalid;
+        assert!(serde_json::from_value::<rio_core::Finding>(value.clone()).is_err());
+    }
+    let report: rio_core::Report =
+        serde_json::from_str(include_str!("fixtures/complete.json")).unwrap();
+    assert!(
+        serde_json::to_value(report)
+            .unwrap()
+            .get("security")
+            .is_none()
+    );
+}

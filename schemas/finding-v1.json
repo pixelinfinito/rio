@@ -15,7 +15,8 @@
     "category": {
       "enum": [
         "defect",
-        "risk"
+        "risk",
+        "security"
       ]
     },
     "evidence_level": {
@@ -264,6 +265,40 @@
         "at"
       ],
       "additionalProperties": false
+    },
+    "verification": {
+      "type": "object",
+      "properties": {
+        "voters": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "agreeing": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "blind_match": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "same",
+              "related",
+              "none"
+            ]
+          }
+        },
+        "split": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "voters",
+        "agreeing",
+        "blind_match",
+        "split"
+      ],
+      "additionalProperties": false,
+      "description": "Semantic invariant: agreeing <= voters and blind_match contains one entry per configured voter; enforced by Rio deserialization and runtime validation."
     }
   },
   "required": [

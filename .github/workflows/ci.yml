@@ -106,3 +106,26 @@ jobs:
       - name: Installer on Windows PowerShell 5.1
         shell: powershell
         run: ./tests/installers/windows.ps1 -Shell powershell
+
+  worker:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '26'
+          cache: npm
+          cache-dependency-path: worker/package-lock.json
+      - run: npm ci --prefix worker
+      - run: npm run check --prefix worker
+      - run: npm test --prefix worker
+      - run: python3 -m unittest discover -s worker/runner/tests -v
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: '1.99.1'
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo build --locked -p rio-runner
+      - run: docker build -f worker/Dockerfile -t rio-runner:0.2.0 .
+      - name: Runner protocol and Docker isolation
+        run: RIO_TEST_DOCKER=1 python3 -m unittest discover -s worker/runner/tests -v
+      - run: npm run dry-run --prefix worker

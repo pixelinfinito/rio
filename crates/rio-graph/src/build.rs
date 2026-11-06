@@ -123,13 +123,28 @@ impl GraphBuilder {
         stop: &dyn Fn() -> bool,
     ) -> Result<GraphSlices> {
         ensure!(options.max_nodes > 0, "graph max_nodes must be positive");
-        let base = self.slice(&changes.base, diff, Version::Base, options, stop)?;
-        let head = self.slice(&changes.head, diff, Version::Head, options, stop)?;
+        let base = self.slice(
+            &changes.base,
+            &changes.head,
+            diff,
+            Version::Base,
+            options,
+            stop,
+        )?;
+        let head = self.slice(
+            &changes.head,
+            &changes.base,
+            diff,
+            Version::Head,
+            options,
+            stop,
+        )?;
         Ok(GraphSlices::new(base, head))
     }
     fn slice(
         &self,
         tree: &Tree,
+        other_tree: &Tree,
         diff: &Diff,
         version: Version,
         options: &GraphOptions,
@@ -161,12 +176,50 @@ impl GraphBuilder {
             }
             let table = self.syntax.analyze(path, &entry.content)?;
             let mut seeds = BTreeSet::new();
+            // Parsed lazily, once per file: only pure insertions/deletions need it.
+            let mut other_table = None;
             for hunk in &file.hunks {
                 let range = if version == Version::Base {
                     hunk.base
                 } else {
                     hunk.head
                 };
+                if range.count == 0 {
+                    // A pure deletion/insertion can still change the enclosing symbol.
+                    // Match its identity in the other snapshot, rather than incorrectly
+                    // seeding an unrelated symbol adjacent to the empty hunk.
+                    let other_path = if version == Version::Base {
+                        &file.path
+                    } else {
+                        file.old_path.as_deref().unwrap_or(&file.path)
+                    };
+                    if other_table.is_none() {
+                        // A rename can change the language; an unsupported or missing
+                        // counterpart only supports a file-level seed.
+                        other_table = Some(
+                            other_tree
+                                .get(other_path)
+                                .filter(|_| language_for_path(other_path).is_some())
+                                .map(|other| self.syntax.analyze(other_path, &other.content))
+                                .transpose()?,
+                        );
+                    }
+                    let other_range = if version == Version::Base {
+                        hunk.head
+                    } else {
+                        hunk.base
+                    };
+                    match other_table.as_ref().expect("parsed above") {
+                        Some(other_table) => {
+                            for line in other_range.start..other_range.start + other_range.count {
+                                seeds.insert(shared_enclosing(other_table, &table, line));
+                            }
+                        }
+                        None => {
+                            seeds.insert(None);
+                        }
+                    }
+                }
                 for line in range.start..range.start + range.count {
                     seeds.insert(
                         table
@@ -329,4 +382,24 @@ impl GraphBuilder {
         slice.edges = edges.into_values().collect();
         Ok(slice)
     }
+}
+/// The innermost symbol enclosing `line` in `other` that also exists in `table`.
+/// Newly added nested symbols fall back to their nearest shared ancestor, and
+/// then to the file itself.
+fn shared_enclosing(other: &SyntaxTable, table: &SyntaxTable, line: u32) -> Option<String> {
+    let mut enclosing: Vec<_> = other
+        .symbols
+        .iter()
+        .filter(|symbol| symbol.line_start <= line && line <= symbol.line_end)
+        .collect();
+    enclosing.sort_by_key(|symbol| symbol.byte_end - symbol.byte_start);
+    enclosing
+        .into_iter()
+        .find(|symbol| {
+            table
+                .symbols
+                .iter()
+                .any(|s| s.symbol_path == symbol.symbol_path)
+        })
+        .map(|symbol| symbol.symbol_path.clone())
 }

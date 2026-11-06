@@ -1,0 +1,19 @@
+[package]
+name = "rio-client"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+[lints]
+workspace = true
+[dependencies]
+anyhow.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+reqwest.workspace = true
+tokio.workspace = true
+tokio-util.workspace = true
+base64 = "0.22"
+rio-core = { path = "../rio-core" }
+rio-git = { path = "../rio-git" }
+[dev-dependencies]
+tempfile.workspace = true

@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "name": "security",
+  "run": true,
+  "available": false,
+  "independent": true
+}

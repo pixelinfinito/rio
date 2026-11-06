@@ -1,8 +1,16 @@
 kind: step
 name: rio/triage
 version: 0.1.0
-description: Triage the review artifacts
+description: Derive risk and select agents and budget deterministically
 local: false
-inputs: ["projects", "findings", "graph"]
-outputs: ["plan"]
-schema: {"type": "object", "additionalProperties": false, "properties": {}}
+inputs: [projects, findings, graph]
+outputs: [plan]
+schema:
+  type: object
+  additionalProperties: false
+  properties:
+    sensitive_paths: { type: array, items: { type: string, minLength: 1 }, default: [] }
+    public_contracts: { type: boolean, default: true }
+    dependency_changes: { type: boolean, default: true }
+    missing_coverage: { type: boolean, default: true }
+    fan_out_high: { type: integer, minimum: 1, default: 20 }

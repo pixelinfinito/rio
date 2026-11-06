@@ -1,0 +1,120 @@
+{
+  "kind": "step",
+  "name": "rio/security",
+  "version": "0.2.0",
+  "description": "Independent security policy interface; agent and catalog execution release in v0.3",
+  "local": false,
+  "inputs": [
+    "intent",
+    "checks",
+    "graph",
+    "owner_guidance"
+  ],
+  "outputs": [
+    "hypotheses"
+  ],
+  "schema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "enabled": {
+        "type": "boolean",
+        "default": false
+      },
+      "posture": {
+        "enum": [
+          "critical-only",
+          "balanced",
+          "thorough"
+        ],
+        "default": "thorough"
+      },
+      "max_defects": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "catalog": {
+        "enum": [
+          "owasp-top10-2025",
+          "asvs-5.0"
+        ],
+        "default": "owasp-top10-2025"
+      },
+      "fail_on": {
+        "type": "object",
+        "properties": {
+          "evidence": {
+            "enum": [
+              "reproduced",
+              "static_proven",
+              "plausible",
+              "refuted"
+            ]
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "defect",
+                "risk",
+                "security"
+              ]
+            },
+            "uniqueItems": true
+          },
+          "states": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "new",
+                "worsened",
+                "pre-existing",
+                "fixed",
+                "unclassified"
+              ]
+            },
+            "uniqueItems": true
+          },
+          "rules": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "incomplete": {
+            "type": "boolean"
+          },
+          "required_checks": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "typecheck",
+                "lint",
+                "secrets",
+                "coverage",
+                "dependencies"
+              ]
+            },
+            "uniqueItems": true
+          }
+        },
+        "required": [],
+        "additionalProperties": false,
+        "default": {
+          "evidence": "plausible",
+          "categories": [
+            "security"
+          ],
+          "states": [
+            "new",
+            "worsened"
+          ],
+          "rules": [],
+          "incomplete": true,
+          "required_checks": []
+        }
+      }
+    }
+  }
+}

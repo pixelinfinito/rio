@@ -2,3 +2,5 @@ version: 1
 name: invalid-models
 extends: rio/base
 models: {default: same, verifier: same}
+
+verify: {voters: 1}

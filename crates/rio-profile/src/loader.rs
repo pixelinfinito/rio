@@ -22,6 +22,8 @@ pub struct BudgetLimit {
     pub tokens: Option<u64>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub agents_max: Option<u64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub verify_tokens: Option<u64>,
 }
 impl Default for BudgetLimit {
     fn default() -> Self {
@@ -29,6 +31,7 @@ impl Default for BudgetLimit {
             wall_time: "4m".into(),
             tokens: None,
             agents_max: None,
+            verify_tokens: None,
         }
     }
 }
@@ -154,6 +157,26 @@ pub struct Profile {
     pub rounds: Rounds,
     #[serde(default)]
     pub always_human: Vec<String>,
+    #[serde(default)]
+    pub verify: Verify,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(default)]
+pub struct Verify {
+    pub voters: u32,
+    pub quorum: u32,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub model: Option<String>,
+}
+impl Default for Verify {
+    fn default() -> Self {
+        Self {
+            voters: 3,
+            quorum: 2,
+            model: None,
+        }
+    }
 }
 
 impl Profile {
@@ -351,9 +374,19 @@ impl ProfileLoader {
     }
 
     pub fn load(&self, reference: Option<&str>) -> Result<ResolvedProfile, ProfileErrors> {
+        self.load_with_preset(reference, None)
+    }
+    pub fn load_with_preset(
+        &self,
+        reference: Option<&str>,
+        preset: Option<Posture>,
+    ) -> Result<ResolvedProfile, ProfileErrors> {
         let source = self.discover(reference)?;
         let mut document = self.document(source, &mut Vec::new())?;
         document.value.as_object_mut().unwrap().remove("extends");
+        if let Some(posture) = preset {
+            document.value["posture"] = json!(posture);
+        }
         let posture: Posture = serde_json::from_value(
             document
                 .value
@@ -366,6 +399,15 @@ impl ProfileLoader {
         let values = document.value.as_object_mut().unwrap();
         values.entry("min_evidence").or_insert(json!(evidence));
         values.entry("max_defects").or_insert(json!(max_defects));
+        let verify = values
+            .entry("verify")
+            .or_insert(json!({}))
+            .as_object_mut()
+            .unwrap();
+        let voters = verify.entry("voters").or_insert(json!(3)).as_u64().unwrap();
+        verify
+            .entry("quorum")
+            .or_insert(json!(if voters == 1 { 1 } else { 2 }));
         let mut diagnostics = Vec::new();
         let mut warnings = Vec::new();
         let mut modules = BTreeMap::new();
@@ -417,8 +459,9 @@ impl ProfileLoader {
                                 }
                             }
                         }
+                        let enabled = options["enabled"].as_bool() != Some(false);
                         step["uses"] = Value::String(format!("{}@{}", module.name, module.version));
-                        if !module.local {
+                        if !module.local && enabled {
                             warnings.push(Diagnostic {
                                 source: source_for(&pointer),
                                 path: yaml_path(&pointer),
@@ -449,9 +492,41 @@ impl ProfileLoader {
         if !diagnostics.is_empty() {
             return Err(ProfileErrors { diagnostics });
         }
-        let profile: Profile = serde_json::from_value(document.value).map_err(|error| {
+        let mut profile: Profile = serde_json::from_value(document.value).map_err(|error| {
             ProfileErrors::one(document.sources[0].label(), "$", error.to_string())
         })?;
+        for budget in
+            std::iter::once(&mut profile.budget.fast).chain(profile.budget.deep.iter_mut())
+        {
+            let tokens = *budget.tokens.get_or_insert(100_000);
+            let agents = *budget.agents_max.get_or_insert(3);
+            budget
+                .verify_tokens
+                .get_or_insert((tokens / agents / 5).max(1));
+        }
+        for step in &mut profile.steps {
+            if step.uses.starts_with("rio/security@") {
+                let posture = step.options["posture"].as_str().unwrap_or("thorough");
+                let cap = match posture {
+                    "critical-only" => 3,
+                    "balanced" => 5,
+                    _ => 15,
+                };
+                step.options
+                    .as_object_mut()
+                    .unwrap()
+                    .entry("max_defects")
+                    .or_insert(json!(cap));
+            }
+        }
+        if profile.budget.deep.is_none() {
+            profile.budget.deep = Some(BudgetLimit {
+                wall_time: "10m".into(),
+                tokens: Some(300_000),
+                agents_max: Some(5),
+                verify_tokens: Some(12_000),
+            });
+        }
         let mut add = |pointer: &str, message: String| {
             diagnostics.push(Diagnostic {
                 source: source_for(pointer),
@@ -459,14 +534,31 @@ impl ProfileLoader {
                 message,
             })
         };
-        if profile
-            .models
-            .get("default")
-            .is_some_and(|default| profile.models.get("verifier") == Some(default))
+        let alias =
+            profile
+                .verify
+                .model
+                .as_deref()
+                .unwrap_or(if profile.models.contains_key("verifier") {
+                    "verifier"
+                } else {
+                    "default"
+                });
+        if profile.verify.quorum > profile.verify.voters {
+            add("/verify/quorum", "quorum must not exceed voters".into());
+        }
+        if profile.verify.model.is_some() && !profile.models.contains_key(alias) {
+            add("/verify/model", "unknown model alias".into());
+        }
+        if profile.verify.voters == 1
+            && profile
+                .models
+                .get("default")
+                .is_some_and(|model| profile.models.get(alias) == Some(model))
         {
             add(
                 "/models/verifier",
-                "verifier alias must differ from the default".into(),
+                "verifier alias must differ from the default for one voter".into(),
             );
         }
         if profile.min_evidence < EvidenceLevel::Plausible {
@@ -500,7 +592,33 @@ impl ProfileLoader {
             add("/steps", error);
         }
         for (index, step) in profile.steps.iter().enumerate() {
+            if step.uses.starts_with("rio/triage@")
+                && let Some(patterns) = step.options["sensitive_paths"].as_array()
+            {
+                for (i, pattern) in patterns.iter().enumerate() {
+                    if let Err(error) = globset::Glob::new(pattern.as_str().unwrap()) {
+                        add(
+                            &format!("/steps/{index}/with/sensitive_paths/{i}"),
+                            error.to_string(),
+                        );
+                    }
+                }
+            }
+            if step.uses.starts_with("rio/security@") {
+                let policy: FailOn =
+                    serde_json::from_value(step.options["fail_on"].clone()).unwrap_or_default();
+                if let Err(error) = policy.compile() {
+                    add(&format!("/steps/{index}/with/fail_on"), error.to_string());
+                }
+            }
             for (rule_index, rule) in step.rules.iter().enumerate() {
+                if matches!(parse_action(&rule.then),Ok(crate::Action::Disable(ref agent) | crate::Action::Enable(ref agent)) if matches!(agent.as_str(),"verify"|"verifier"|"rio/verify"))
+                {
+                    add(
+                        &format!("/steps/{index}/rules/{rule_index}/then"),
+                        "triage cannot disable or replace verification".into(),
+                    );
+                }
                 if let Err(error) = parse_expression(&rule.when) {
                     add(
                         &format!("/steps/{index}/rules/{rule_index}/when"),
@@ -514,9 +632,11 @@ impl ProfileLoader {
                     );
                 }
             }
-            if step.uses.starts_with("rio/agents@")
+            if (step.uses.starts_with("rio/agents@") || step.uses.starts_with("rio/security@"))
+                && step.options.get("enabled").and_then(Value::as_bool) != Some(false)
                 && !profile.steps.iter().any(|candidate| {
                     candidate.uses.starts_with("rio/verify@")
+                        && candidate.options.get("enabled").and_then(Value::as_bool) != Some(false)
                         && depends_on(
                             &profile.steps,
                             &candidate.id,

@@ -122,3 +122,23 @@ The [v0.1 rerun worked example](../docs/evaluation/v0.1-rerun.md) includes both
 metric views, a canonical selection manifest, blocked monorepos, and a comparison
 with the historical hand summary. Rebuild its records and run aggregate/render
 with the generated narrative using `python3 eval/rerun_v01.py`.
+
+## v0.2 verifier comparison
+
+`python3 eval/verifier.py MANIFEST.json --out COMPARISON.json` compares single-voter
+and quorum reports on identical pinned base/head snapshots. A manifest uses schema
+`rio-verifier-eval-v1`, `execution: live-model` (or `recorded` for harness tests),
+and nonempty `cases`. Each case pins `id`, `generator_model`, `voter_model`,
+`profile_hash`, `high_controls` (known high-severity IDs), `independently_clean`,
+and `single`/`quorum` arms. Each arm names `report`, `audit`, `verdicts` relative
+paths plus their `report_sha256`, `audit_sha256`, `verdicts_sha256` pins.
+
+Verdicts contain an independent `reviewer` and per-finding entries with `verdict`
+(true-positive/false-positive), artifact-backed `evidence`, and optional
+`control_id`. The report includes the actual finding contracts and the audit is
+from the authenticated endpoint. The comparator records blind-match buckets,
+precision by evidence, verification tokens/cost and high-severity recall. Acceptance
+requires a set containing known high-severity issues and clean controls, at least
+80% precision, preserved baseline high-severity detections, and live model runs.
+It writes a failed comparison and returns exit 1 when a gate is absent or fails.
+No empirical verifier acceptance is claimed from the recorded test fixtures.

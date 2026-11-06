@@ -122,6 +122,7 @@ fn finding(
         },
         locations: vec![location],
         advisory: None,
+        verification: None,
     })
 }
 fn number(value: &Value, default: u32) -> Result<u32> {

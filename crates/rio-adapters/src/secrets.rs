@@ -82,6 +82,7 @@ pub fn scan_secrets(diff: &Diff, head: &Tree) -> Result<Vec<Finding>> {
                 },
                 locations: vec![location],
                 advisory: None,
+                verification: None,
             });
         }
     }

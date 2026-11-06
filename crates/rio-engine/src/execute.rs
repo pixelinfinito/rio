@@ -856,6 +856,9 @@ pub async fn review(
     };
     for step in order {
         let module = resolve_module(&step.uses)?;
+        if module.name == "rio/security" && step.options["enabled"].as_bool() != Some(true) {
+            continue;
+        }
         if !module.local {
             report.deferred.push(DeferredStep {
                 step: step.id,

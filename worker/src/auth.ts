@@ -1,0 +1,81 @@
+import type { Env } from "./types";
+import { hash, invariant } from "./validation";
+const encoder = new TextEncoder();
+export async function sign(secret: string, value: string): Promise<string> {
+  const key = await crypto.subtle.importKey(
+    "raw",
+    encoder.encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"],
+  );
+  const signature = await crypto.subtle.sign(
+    "HMAC",
+    key,
+    encoder.encode(value),
+  );
+  return Array.from(new Uint8Array(signature), (x) =>
+    x.toString(16).padStart(2, "0"),
+  ).join("");
+}
+export function equal(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  let n = 0;
+  for (let i = 0; i < a.length; i++) n |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return n === 0;
+}
+export async function authenticate(
+  request: Request,
+  env: Env,
+  scope: string,
+): Promise<string> {
+  const token =
+    request.headers.get("authorization")?.replace(/^Bearer /, "") ?? "";
+  invariant(token.length >= 24, "unauthorized");
+  if (env.RIO_API_TOKEN && equal(hash(token), hash(env.RIO_API_TOKEN)))
+    return "owner";
+  const row = await env.DB.prepare(
+    "SELECT tenant,scope FROM api_tokens WHERE hash=? AND expires_at>?",
+  )
+    .bind(hash(token), Date.now())
+    .first<{ tenant: string; scope: string }>();
+  invariant(
+    row && (row.scope === "*" || row.scope.split(",").includes(scope)),
+    "unauthorized",
+  );
+  return row.tenant;
+}
+export async function jobToken(
+  env: Env,
+  review: string,
+  job: string,
+  attempt: number,
+  expires: number,
+): Promise<string> {
+  invariant(
+    env.RUNNER_SECRET?.length >= 32,
+    "runner signing secret is not configured",
+  );
+  const claims = `${review}:${job}:${attempt}:${expires}`;
+  return `${expires}.${await sign(env.RUNNER_SECRET, claims)}`;
+}
+export async function verifyJobToken(
+  request: Request,
+  env: Env,
+  review: string,
+  job: string,
+  attempt: number,
+) {
+  const token =
+    request.headers.get("authorization")?.replace(/^Bearer /, "") ?? "";
+  const expires = Number(token.split(".")[0]);
+  invariant(
+    Number.isSafeInteger(expires) && expires > Date.now(),
+    "expired runner capability",
+  );
+  invariant(
+    equal(token, await jobToken(env, review, job, attempt, expires)),
+    "unauthorized runner capability",
+  );
+  return token;
+}

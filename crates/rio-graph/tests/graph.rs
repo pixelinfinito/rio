@@ -140,6 +140,26 @@ fn deleted_symbols_stay_in_base_file_level_seeds_and_node_caps_are_explicit() {
     assert_eq!(slices.head.nodes.len(), 1);
     assert!(slices.impact(2).truncated);
 }
+#[test]
+fn deleting_a_guard_keeps_the_surviving_symbol_in_both_graphs() {
+    let base = [("a.py".into(), entry("def average(total, count):\n    if count == 0:\n        return 0\n    return total / count\n"))].into();
+    let head = [(
+        "a.py".into(),
+        entry("def average(total, count):\n    return total / count\n"),
+    )]
+    .into();
+    let slices = graph(base, head, GraphOptions::default());
+    for slice in [&slices.base, &slices.head] {
+        assert!(
+            slice
+                .nodes
+                .iter()
+                .any(|n| n.symbol_path == "a.average" && n.seed)
+        );
+    }
+    assert_eq!(slices.delta.changed, ["a.py::a.average"]);
+    assert!(slices.delta.added.is_empty() && slices.delta.removed.is_empty());
+}
 
 #[test]
 fn python_relative_imports_typescript_path_mappings_and_unresolved_confidence() {
@@ -322,4 +342,43 @@ fn rust_macro_invocations_are_references_and_grouped_imports_resolve() {
                 .iter()
                 .any(|node| node.id == edge.from && node.name == "unresolved")
     }));
+}
+
+#[test]
+fn renames_across_languages_with_pure_hunks_seed_the_file() {
+    let lines: String = (0..30).map(|n| format!("value_{n} = {n}\n")).collect();
+    let base: Tree = [("a.py".into(), entry(&lines))].into();
+    let head: Tree = [("a.txt".into(), entry(&format!("{lines}extra = 1\n")))].into();
+    let options = GraphOptions::default();
+    let changes = changes(base, head);
+    let delta = diff(&changes, &options.exclude).unwrap();
+    let file = &delta.files[0];
+    assert_eq!(file.old_path.as_deref(), Some("a.py"));
+    assert!(file.hunks.iter().any(|hunk| hunk.base.count == 0));
+    let slices = GraphBuilder::default()
+        .build(&changes, &delta, &options)
+        .unwrap();
+    assert!(slices.base.nodes.iter().any(|n| n.path == "a.py" && n.seed));
+}
+
+#[test]
+fn inserted_nested_symbols_seed_their_nearest_shared_ancestor() {
+    let base: Tree = [(
+        "a.py".into(),
+        entry("class Foo:\n    def first(self):\n        return 1\n\n\ndef caller():\n    return Foo()\n"),
+    )]
+    .into();
+    let head: Tree = [(
+        "a.py".into(),
+        entry("class Foo:\n    def first(self):\n        return 1\n\n    def second(self):\n        return 2\n\n\ndef caller():\n    return Foo()\n"),
+    )]
+    .into();
+    let slices = graph(base, head, GraphOptions::default());
+    assert!(
+        slices
+            .base
+            .nodes
+            .iter()
+            .any(|n| n.symbol_path == "a.Foo" && n.seed)
+    );
 }

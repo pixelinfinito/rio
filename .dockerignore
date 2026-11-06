@@ -1,0 +1,17 @@
+.git
+.agents
+.claude
+target
+**/target
+**/node_modules
+**/.venv
+**/.rio
+**/.wrangler
+**/.cloudflare
+**/.env*
+**/.dev.vars
+**/credentials
+**/*.pem
+**/*.key
+openspec
+eval/runs

@@ -1,4 +1,6 @@
 mod config;
+mod deployment;
+mod endpoint;
 use clap::{Args, Parser, Subcommand, ValueEnum};
 use config::MachineConfig;
 use rio_adapters::{ProcessSupervisor, ToolResolver};
@@ -28,6 +30,15 @@ enum Command {
         command: ProfileCommand,
     },
     Doctor(DoctorArgs),
+    Init {
+        #[arg(long, conflicts_with_all = ["from", "account", "name", "cf_profile", "runner", "runner_image", "workers_subdomain", "credential_store", "secrets_file", "dry_run"])]
+        endpoint: Option<String>,
+        #[arg(long, requires = "endpoint")]
+        token_stdin: bool,
+        #[command(flatten)]
+        deployment: deployment::DeployArgs,
+    },
+    Deploy(deployment::DeployArgs),
 }
 #[derive(Clone, Copy, Default, ValueEnum, PartialEq, Eq)]
 enum Format {
@@ -82,10 +93,20 @@ struct ReviewArgs {
     pr: Option<String>,
     #[arg(long)]
     deep: bool,
+    #[arg(long, value_enum, conflicts_with = "deep")]
+    preset: Option<Preset>,
+    #[arg(long)]
+    fork: bool,
     #[arg(long)]
     publish: bool,
     #[arg(long)]
     since_last: bool,
+}
+#[derive(Clone, Copy, ValueEnum)]
+enum Preset {
+    Quick,
+    Standard,
+    Deep,
 }
 #[derive(Subcommand)]
 enum ProfileCommand {
@@ -130,8 +151,29 @@ async fn main() -> ExitCode {
         Command::Review(args) => run_review(args).await,
         Command::Profile { command } => run_profile(command),
         Command::Doctor(args) => run_doctor(args).await,
+        Command::Init {
+            endpoint,
+            token_stdin,
+            deployment,
+        } => {
+            if let Some(endpoint) = endpoint {
+                run_init(endpoint, token_stdin)
+            } else {
+                run_deploy(deployment).await
+            }
+        }
+        Command::Deploy(args) => run_deploy(args).await,
     };
     ExitCode::from(code)
+}
+async fn run_deploy(args: deployment::DeployArgs) -> u8 {
+    match deployment::run(args).await {
+        Ok(()) => 0,
+        Err(error) => {
+            eprintln!("Deployment failed: {error:#}");
+            3
+        }
+    }
 }
 fn write_stdout(bytes: &[u8]) -> io::Result<()> {
     let stdout = io::stdout();
@@ -168,7 +210,6 @@ fn loader(root: Option<PathBuf>, config: &MachineConfig, cwd: PathBuf) -> Profil
 async fn run_review(args: ReviewArgs) -> u8 {
     for (flag, present) in [
         ("--pr", args.pr.is_some()),
-        ("--deep", args.deep),
         ("--publish", args.publish),
         ("--since-last", args.since_last),
     ] {
@@ -177,9 +218,7 @@ async fn run_review(args: ReviewArgs) -> u8 {
                 args.format,
                 2,
                 "endpoint_required",
-                format!(
-                    "{flag} requires a configured endpoint, which is not supported in this version (v0.1)"
-                ),
+                format!("{flag} is not implemented by the current endpoint protocol"),
                 Vec::new(),
             );
         }
@@ -237,7 +276,37 @@ async fn run_review(args: ReviewArgs) -> u8 {
     for notice in &config.notices {
         eprintln!("{notice}");
     }
-    let profile = match loader(Some(repo.root().into()), &config, cwd).load(args.profile.as_deref())
+    let preset = if args.deep {
+        Some(rio_profile::Posture::Thorough)
+    } else {
+        args.preset.map(|preset| match preset {
+            Preset::Quick => rio_profile::Posture::CriticalOnly,
+            Preset::Standard => rio_profile::Posture::Balanced,
+            Preset::Deep => rio_profile::Posture::Thorough,
+        })
+    };
+    if (args.deep || args.preset.is_some()) && (config.endpoint_url.is_none() || args.offline) {
+        return error_report(
+            args.format,
+            2,
+            "endpoint_required",
+            "--deep/--preset require a configured endpoint and online mode".into(),
+            Vec::new(),
+        );
+    }
+    // Local reviews execute repository commands on the host; refuse rather than
+    // silently run untrusted fork code.
+    if args.fork && (config.endpoint_url.is_none() || args.offline) {
+        return error_report(
+            args.format,
+            2,
+            "endpoint_required",
+            "--fork requires a configured endpoint and online mode; local reviews execute repository commands".into(),
+            Vec::new(),
+        );
+    }
+    let profile = match loader(Some(repo.root().into()), &config, cwd)
+        .load_with_preset(args.profile.as_deref(), preset)
     {
         Ok(profile) => profile,
         Err(error) => {
@@ -251,6 +320,13 @@ async fn run_review(args: ReviewArgs) -> u8 {
         }
     };
     for warning in &profile.warnings {
+        if config.endpoint_url.is_some()
+            && !args.offline
+            && (warning.message.contains("no_endpoint")
+                || warning.message.starts_with("posture, max_defects"))
+        {
+            continue;
+        }
         eprintln!("Warning: {warning}");
     }
     let changes = match select(&repo, args.selection.selection()) {
@@ -264,6 +340,22 @@ async fn run_review(args: ReviewArgs) -> u8 {
                 .to_owned();
             return error_report(args.format, 3, &name, message, Vec::new());
         }
+    };
+    let remote_request = if !args.offline {
+        config
+            .endpoint_url
+            .as_ref()
+            .map(|url| endpoint::EndpointRequest {
+                url,
+                config_dir: &config.config_dir,
+                changes: changes.clone(),
+                profile: profile.clone(),
+                cache: config.cache.clone(),
+                deep: args.deep || matches!(args.preset, Some(Preset::Deep)),
+                fork: args.fork,
+            })
+    } else {
+        None
     };
     let working = match repo.working_tree() {
         Ok(tree) => tree,
@@ -309,22 +401,27 @@ async fn run_review(args: ReviewArgs) -> u8 {
             }
         }
     });
-    let result = review(
-        ReviewRequest {
-            worktree: repo.root().into(),
-            working,
-            changes,
-            profile,
-            cache: config.cache,
-            parallelism: config.parallelism,
-            output_limit: config.output_limit,
-            offline: args.offline,
-        },
-        supervisor,
-        cancellation,
-        Some(sender),
-    )
-    .await;
+    let result = if let Some(request) = remote_request {
+        endpoint::review(request, cancellation.clone()).await
+    } else {
+        review(
+            ReviewRequest {
+                worktree: repo.root().into(),
+                working,
+                changes,
+                profile,
+                cache: config.cache,
+                parallelism: config.parallelism,
+                output_limit: config.output_limit,
+                offline: args.offline,
+            },
+            supervisor,
+            cancellation,
+            Some(sender.clone()),
+        )
+        .await
+    };
+    drop(sender);
     let _ = progress.await;
     let report = match result {
         Ok(report) => report,
@@ -562,7 +659,7 @@ async fn run_doctor(args: DoctorArgs) -> u8 {
             }
         }
     }
-    document["endpoint"] = json!("No endpoint is available in this version");
+    document["endpoint"] = json!(config.as_ref().and_then(|c| c.endpoint_url.as_ref()));
     document["blocking_problems"] = json!(problems);
     document["warnings"] = json!(warnings);
     if args.format == DoctorFormat::Json {
@@ -577,4 +674,77 @@ async fn run_doctor(args: DoctorArgs) -> u8 {
         );
     }
     if problems.is_empty() { 0 } else { 1 }
+}
+
+fn run_init(endpoint: String, token_stdin: bool) -> u8 {
+    let result = (|| -> anyhow::Result<()> {
+        use std::io::Read;
+        let directory = config::config_directory()?;
+        rio_git::private_directory(&directory)?;
+        let file = directory.join("config.toml");
+        let mut document: toml::Value = match std::fs::read_to_string(&file) {
+            Ok(text) => toml::from_str(&text)?,
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => {
+                toml::Value::Table(Default::default())
+            }
+            Err(error) => return Err(error.into()),
+        };
+        let token = if token_stdin {
+            let mut value = String::new();
+            std::io::stdin().take(65536).read_to_string(&mut value)?;
+            Some(value.trim().to_owned())
+        } else {
+            None
+        };
+        let previous_endpoint = document
+            .get("endpoint")
+            .and_then(|e| e.get("url"))
+            .and_then(toml::Value::as_str)
+            .map(str::to_owned);
+        let _ = rio_client::Client::new(
+            &endpoint,
+            token
+                .clone()
+                .unwrap_or_else(|| "validation-token-for-endpoint-only".into()),
+        )?;
+        document
+            .as_table_mut()
+            .ok_or_else(|| anyhow::anyhow!("configuration must be a TOML table"))?
+            .insert(
+                "endpoint".into(),
+                toml::Value::Table(
+                    [(String::from("url"), toml::Value::String(endpoint))]
+                        .into_iter()
+                        .collect(),
+                ),
+            );
+        // Explicit endpoint connection uses the supplied client credential, rather
+        // than a keychain secret associated with a previously managed deployment.
+        document.as_table_mut().unwrap().remove("deployment");
+        if previous_endpoint.as_deref()
+            != document
+                .get("endpoint")
+                .and_then(|e| e.get("url"))
+                .and_then(toml::Value::as_str)
+        {
+            match std::fs::remove_file(directory.join("credentials")) {
+                Ok(()) => {}
+                Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
+                Err(error) => return Err(error.into()),
+            }
+        }
+        rio_engine::atomic_write(&file, toml::to_string_pretty(&document)?.as_bytes())?;
+        if let Some(token) = token {
+            rio_engine::atomic_write(&directory.join("credentials"), token.as_bytes())?;
+        }
+        eprintln!("Rio endpoint configured in {}", file.display());
+        Ok(())
+    })();
+    match result {
+        Ok(()) => 0,
+        Err(error) => {
+            eprintln!("{error:#}");
+            2
+        }
+    }
 }

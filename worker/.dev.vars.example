@@ -1,0 +1,6 @@
+RIO_API_TOKEN=replace-with-an-independent-random-api-secret
+RUNNER_SECRET=replace-with-an-independent-random-runner-secret
+OPENAI_API_KEY=replace-privately
+# ANTHROPIC_API_KEY=
+# OPENROUTER_API_KEY=
+# AI_GATEWAY_TOKEN=
