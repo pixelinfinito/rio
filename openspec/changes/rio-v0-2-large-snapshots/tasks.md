@@ -15,12 +15,12 @@
 
 - [x] 3.1 Replace embedded trees in job payloads with `{snapshot_id, version, needs}` and stream a POSIX tar (`base/…`, `head/…`, regular files, exact modes) from the reader; the `Sandbox` Durable Object writes the JSON header line then the archive to the container stdin. Verify a Worker test that the streamed archive reproduces a snapshot byte for byte and mode for mode, and that no job payload contains file contents.
 - [x] 3.2 Add `GET /v1/runner/:review/:job/:attempt/archive` authorized by the job capability. Verify API tests for a valid capability, a missing one and another job's capability.
-- [ ] 3.3 Update `worker/runner/execute.py` to read the header line and stream-extract the archive with strict member checks (regular files under `base/` or `head/`, safe relative paths), and `rio-runner inside` to take `--base DIR --head DIR`; update the self-hosted runner to download the archive and pipe header plus archive into Docker. Verify executor tests for extraction, rejected link/absolute/`..`/device members, and `RIO_TEST_DOCKER=1` runner tests with the rebuilt image.
+- [x] 3.3 Update `worker/runner/execute.py` to read the header line and stream-extract the archive with strict member checks (regular files under `base/` or `head/`, safe relative paths), and `rio-runner inside` to take `--base DIR --head DIR`; update the self-hosted runner to download the archive and pipe header plus archive into Docker. Verify executor tests for extraction, rejected link/absolute/`..`/device members, and `RIO_TEST_DOCKER=1` runner tests with the rebuilt image.
 
 ## 4. CLI upload
 
-- [ ] 4.1 In `rio-client`, hash contents, deduplicate across trees, check the limits before any upload (naming limit, value and, for files, the path), negotiate missing contents, upload packs (four in parallel, idempotent retries) and large contents in parts, upload manifest chunks and seal; `rio-cli` uses it for endpoint reviews. Verify unit tests for packing, limits, retries and manifest id stability, and the CLI mock-endpoint tests updated to the new protocol.
-- [ ] 4.2 Document the snapshot protocol, limits and deduplication in `docs/cloudflare.md` and `docs/convergence-contracts.md` where it references snapshot ids. Verify the documented endpoints match the API tests.
+- [x] 4.1 In `rio-client`, hash contents, deduplicate across trees, check the limits before any upload (naming limit, value and, for files, the path), negotiate missing contents, upload packs (four in parallel, idempotent retries) and large contents in parts, upload manifest chunks and seal; `rio-cli` uses it for endpoint reviews. Verify unit tests for packing, limits, retries and manifest id stability, and the CLI mock-endpoint tests updated to the new protocol.
+- [x] 4.2 Document the snapshot protocol, limits and deduplication in `docs/cloudflare.md` and `docs/convergence-contracts.md` where it references snapshot ids. Verify the documented endpoints match the API tests.
 
 ## 5. Integration
 

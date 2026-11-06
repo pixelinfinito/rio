@@ -108,7 +108,7 @@ class Nightly(unittest.TestCase):
         calls = []
         with contextlib.redirect_stdout(io.StringIO()):
             nightly.install(config, True, False, lambda args, check: calls.append(args), units)
-        self.assertIn(f'run --config {config}', (units / 'rio-noise.service').read_text())
+        self.assertIn(f'run --config {config.resolve()}', (units / 'rio-noise.service').read_text())
         self.assertIn('OnCalendar=', (units / 'rio-noise.timer').read_text())
         self.assertEqual(calls[-1], ['systemctl', '--user', 'enable', '--now', 'rio-noise.timer'])
         out = io.StringIO()
