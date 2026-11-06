@@ -676,7 +676,13 @@ fn interrupts_preserve_one_partial_document_and_second_interrupt_emits_none() {
             .spawn()
             .unwrap();
         let started = Instant::now();
-        while !root.join("worker.pid").exists() {
+        // The shell creates the file before writing the PID; wait for a complete value.
+        let read_pid = || {
+            fs::read_to_string(root.join("worker.pid"))
+                .ok()
+                .and_then(|text| text.trim().parse::<i32>().ok())
+        };
+        while read_pid().is_none() {
             if started.elapsed() >= Duration::from_secs(30) {
                 let _ = child.kill();
                 let output = child.wait_with_output().unwrap();
@@ -687,11 +693,7 @@ fn interrupts_preserve_one_partial_document_and_second_interrupt_emits_none() {
             }
             std::thread::sleep(Duration::from_millis(20));
         }
-        let worker: i32 = fs::read_to_string(root.join("worker.pid"))
-            .unwrap()
-            .trim()
-            .parse()
-            .unwrap();
+        let worker = read_pid().unwrap();
         // SAFETY: signaling only the child CLI started by this test.
         unsafe {
             libc::kill(child.id() as i32, libc::SIGINT);
