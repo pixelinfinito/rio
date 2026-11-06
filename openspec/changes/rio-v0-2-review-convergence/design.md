@@ -26,7 +26,7 @@ Constraints:
 
 ### D1. Lineage identity
 
-A lineage is keyed by `(repo_id, kind, ref)` where `kind` is `pr` with the PR number, or `branch` with the branch name for `--since-last` in the CLI. Each review in a lineage gets `round = 1 + number of earlier reviews in the lineage that posted at least one finding`; a review that posts nothing does not consume a round. `rounds_to_pass` is the round of the first review whose open defect count is zero, or null while open. Force-pushes keep the lineage: identity is by PR or branch, not by commit ancestry, because the author's experience is per PR. Alternative: lineage by first-parent ancestry. Rejected because a rebase would start a new lineage and defeat the cap.
+A lineage is keyed by `(repo_id, kind, ref)` where `kind` is `pr` with the PR number, or `branch` with the branch name for `--since-last` in the CLI. Each review in a lineage gets `round = 1 + number of earlier reviews in the lineage that posted at least one finding`; a review that posts nothing does not consume a round. `rounds_to_pass` is the round of the first review whose open defect count is zero, or null while open. Force-pushes keep the lineage: identity is by PR or branch, not by commit ancestry, because the author's experience is per PR. The endpoint is the single authority for lineage state. A reset (maintainer `/rio review`, or `--reset-lineage` for a branch) starts a new generation of the same key at round 1; losing a client's local copy never resets anything. Alternative: lineage by first-parent ancestry. Rejected because a rebase would start a new lineage and defeat the cap.
 
 ### D2. Round cap and the "reconsider" message
 
@@ -38,7 +38,7 @@ For `round > rounds.diff_only_after`, prepare computes a second diff: previous r
 
 ### D4. Class-level findings
 
-After root-cause grouping, consolidation groups findings sharing `rule_id` and `trigger_hash` across different symbol paths. When a group has more than `class_threshold` members (consolidation option, default 3), it is replaced by one class-level finding: identity `blake3(rule_id | "class" | trigger_hash)`, `locations` listing every instance, message rewritten as "N occurrences of <pattern>; fix the pattern, for example at <first location>". Suppressing the class suppresses the instances. The class finding's `author_response` applies to all instances. Deterministic checks already do this per function; this extends it across the diff.
+After root-cause grouping, consolidation groups findings sharing `rule_id` and `trigger_hash` across different symbol paths. When a group has more than `class_threshold` members (consolidation option, default 3), it is replaced by one class-level finding: identity `blake3(rule_id | "class" | trigger_hash)` (an explicit exception to the location-based identity, recorded in the `findings` delta), `locations` listing every instance, message rewritten as "N occurrences of <pattern>; fix the pattern, for example at <first location>". Suppressing the class suppresses the instances. The class finding's `author_response` applies to all instances. Deterministic checks already do this per function; this extends it across the diff.
 
 ### D5. Never re-post
 
@@ -46,9 +46,9 @@ The publisher keeps, per lineage, the set of posted finding identities with the 
 
 ### D6. Findings are answered
 
-A posted finding's terminal states are `fixed` and `dismissed(reason)`. Transitions:
+A posted finding carries a lifecycle `status` (`open`, `fixed`, `dismissed`) separate from its regression `state`, which keeps its v0.1 meaning; `status` never changes `state` or `fail_on`. A dismissal's reason is `author_response.reason`. Transitions:
 
-- the next review in the lineage no longer produces the identity and the location's code was changed or removed → `fixed` (auto-resolution; the thread is resolved with "fixed in <sha>");
+- the next review in the lineage is `complete`, re-assessed the location (covering checks succeeded; for agent findings, verification finished without incomplete votes), no longer produces the identity, and the location's code was changed or removed → `fixed` (auto-resolution; the thread is resolved with "fixed in <sha>"). A partial or incomplete review never auto-resolves, because absence there is missing evidence, not a fix;
 - the next review no longer produces the identity but the code is unchanged → remains `open` with a note that the finding did not reproduce, because a vanished finding on unchanged code is a verifier calibration signal, not a fix;
 - `rio feedback <id> --dismiss <reason>`, `POST /v1/findings/{id}/feedback`, or a `/rio dismiss <id> <reason>` comment by a collaborator → `dismissed(reason)`, and `author_response = { reason, actor, at, note }` is written to the finding and to `feedback`.
 
@@ -60,7 +60,7 @@ Aggregations computed by `eval/` and shown per repository: author-response ratio
 
 ### D8. Noise measurement
 
-`rio eval noise` selects known-clean PRs from the reference set: merged PRs where no later commit on the default branch reverts them or touches the same hunks within 90 days. It runs the current pipeline on each and classifies every finding with the harness's existing adjudication as `harmful` (acting on it would introduce a bug or remove intended behavior), `neutral` or `useful`. The harmful count is the headline; the target is zero. The job runs nightly in CI against the pinned provider set and writes `eval/runs/noise/<date>/summary.json`; a harmful count above the last release's blocks the release.
+`rio eval noise` selects known-clean PRs from the reference set: merged PRs where no later commit on the default branch reverts them or touches the same hunks within 90 days. It runs the current pipeline on each and writes an adjudication skeleton, extending the harness's existing verdict files: a human adjudicator labels each finding `harmful` (acting on it would introduce a bug or remove intended behavior), `neutral` or `useful` with a rationale. The harness never infers a label. The harmful count is the headline; the target is zero. A scheduled CI workflow runs the job nightly against the pinned provider profile, with provider keys from repository secrets, and keeps the dated `eval/runs/noise/<date>/` directory as a 90-day artifact. A harmful count above the last release's, or any unadjudicated finding, blocks the release.
 
 ### D9. Incidents become cases
 
@@ -68,7 +68,7 @@ Aggregations computed by `eval/` and shown per repository: author-response ratio
 
 ### D10. Local lineages in the CLI
 
-`rio review --since-last` on a branch uses the `branch` lineage kind stored under `<cache>/lineages/<branch-hash>.json`: previous reviewed head, posted identities (here: rendered identities), round. The terminal report applies the same rules: diff-only context after round 1, held-back findings counted in the footer, and the "reconsider" message at the cap. This makes the rules observable before any PR integration exists, which keeps pre-PR review the center of gravity.
+`rio review --since-last` on a branch uses the `branch` lineage kind. The endpoint holds the lineage; the CLI keeps a versioned copy under `<cache>/lineages/<branch-hash>.json` (previous reviewed head, posted identities, round, generation) for offline display, included in the cache's age and size pruning. A missing copy is refetched; `--reset-lineage` requests a new generation. The terminal report applies the same rules: diff-only context after round 1, held-back findings counted in the footer, and the "reconsider" message at the cap. This makes the rules observable before any PR integration exists, which keeps pre-PR review the center of gravity.
 
 ## Risks / Trade-offs
 
@@ -82,10 +82,14 @@ Aggregations computed by `eval/` and shown per repository: author-response ratio
 
 ## Migration Plan
 
-Additive. D1 migration adds `lineages` and the three `findings` columns, and converts any `feedback.reason` values from the draft set (`false_positive` → `wrong`, `known` → `intentional`); no production data exists before this change. profile-v1, finding-v1 and report-v1 are unchanged; the reserved keys are now emitted. The CLI lineage file format is versioned and may be deleted at any time (it is cache).
+Additive. The migration adds `lineages` (with a generation counter) and a new `findings` table (tenant, review, lineage and generation, identity, regression `state`, lifecycle `status`, `round`, `first_posted_in`, `author_response_json`, location), populated from each lineage review's report when it finishes; the endpoint previously kept findings only inside report artifacts. It adds `feedback` with the fixed reason enum, converting any draft values (`false_positive` → `wrong`, `known` → `intentional`); no production data exists before this change. profile-v1 and report-v1 are unchanged; finding-v1 gains the optional lifecycle `status` and now emits the reserved keys. The CLI lineage file format is versioned and may be deleted at any time (it is cache).
 
-## Open Questions
+## Resolved Questions (2026-11-06)
 
-- Whether `rounds.cap` should count rounds with only `plausible` risks posted, or only rounds with defects.
-- Whether the "reconsider" message should propose a split along the prepare step's logical parts when `max_lines` was exceeded.
-- How long a `branch` lineage lives in the CLI cache after the branch is deleted locally.
+- `rounds.cap` counts every review that posted at least one finding, including rounds with only `plausible` risks, as in D1.
+- When `max_lines` was exceeded, the "reconsider" message proposes a split along the prepare step's logical parts; otherwise it uses the generic reconsider-or-split request.
+- A local `branch` lineage lives until the review cache's normal age and size pruning removes it; a branch recreated with the same name within that window resumes its lineage.
+
+## Carried-over v0.2 acceptance
+
+The archived `rio-v0-2-verifier` change left two acceptance tasks open: the pinned verifier-versus-single-verifier precision/recall comparison and the hosted Linux/macOS/Windows CI matrix. They move here unchanged in substance. The comparison extends the same `eval/` harness this change grows (noise runs, incidents, regression gate), so it is specified in `eval/noise-and-incidents` and gates v0.2 acceptance independently of the convergence features.

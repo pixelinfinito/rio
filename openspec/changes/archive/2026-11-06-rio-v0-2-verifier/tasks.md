@@ -89,3 +89,7 @@ Task 9.2 remains open for pinned live-model comparisons and independent adjudica
 
 - Archive this change only after its implementation, integration checks and measured acceptance are complete; do not synchronize its proposed runtime behavior into main specs during this planning workflow.
 - With the v0.3 security agent and catalog change, activate security execution and its thorough community profile against the already-tested verifier/policy interfaces; retain the disabled v0.2 default until then.
+
+## Archive note (2026-11-06)
+
+Archived at the owner's request with tasks 9.2 and 9.3 still open. Both moved to `rio-v0-2-review-convergence`, which now owns the measured precision/recall acceptance and the hosted CI matrix for v0.2. Delta specs were synced into the main specs at archive time.

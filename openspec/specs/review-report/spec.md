@@ -7,7 +7,7 @@ The report is the product: the ordered, evidence-first presentation of a review 
 ## Requirements
 
 ### Requirement: Section order
-Every format SHALL present sections in this order: header (review id, run id, mode, base and head identifiers, profile name and chain, Rio version, status `complete`, `incomplete` or `partial`); deterministic results grouped by check kind, with each root's outcome; impact summary; findings (new, worsened and unclassified defects); risks; summary counts (pre-existing, fixed, suppressed); footer (skipped checks, deferred steps, excluded files, size notes, tool versions, timings). Sections with nothing to show SHALL be omitted except the header, the findings statement and the footer.
+Every format SHALL present sections in this order: header (review id, run id, mode, base and head identifiers, profile name and chain, Rio version, status `complete`, `incomplete` or `partial`); deterministic results grouped by check kind, with each root's outcome; impact summary; findings (new, worsened and unclassified defects); risks; security findings when present; summary counts (pre-existing, fixed, suppressed); footer (skipped checks, deferred steps, excluded files, size notes, tool versions, timings). Sections with nothing to show SHALL be omitted except the header, the findings statement and the footer.
 
 #### Scenario: No findings
 - **WHEN** a review produces no findings and no risks
@@ -18,14 +18,14 @@ Every format SHALL present sections in this order: header (review id, run id, mo
 - **THEN** the header status is `incomplete`, and the findings statement says that no findings were produced and that coverage did not complete
 
 ### Requirement: Finding ordering
-Within the findings section, findings SHALL be ordered by severity, then evidence level, then path and line. Findings matching the `fail_on` policy SHALL be marked as such.
+Within the findings section, findings SHALL be ordered by severity, then evidence level, then path and line. Agent findings SHALL be selected for presentation by impact and evidence before the section is rendered, with stable tie-breaking. Deterministic ordering SHALL remain unchanged. Findings matching either the profile or applicable security `fail_on` policy SHALL be marked as such.
 
 #### Scenario: Errors before warnings
 - **WHEN** a review has a lint warning in `a.ts` and a type error in `z.ts`
 - **THEN** the type error is listed first
 
 ### Requirement: Finding presentation
-Each rendered finding SHALL show rule id, state, evidence level, location with enclosing symbol, message, trigger when known, and suggested fix when present. Secret values SHALL appear redacted. Pre-existing findings SHALL be available in full through `--show-pre-existing`.
+Each rendered finding SHALL show rule id, state, evidence level, location with enclosing symbol, message, trigger when known, and suggested fix when present. Verified agent findings SHALL additionally show agreeing versus configured voters, the per-voter blind-match summary, and any split flag without a numeric confidence score. Secret values SHALL appear redacted. Pre-existing findings SHALL be available in full through `--show-pre-existing`.
 
 #### Scenario: Pre-existing on request
 - **WHEN** `rio review --show-pre-existing` is run on a change with pre-existing type errors
@@ -46,7 +46,7 @@ The Markdown renderer SHALL produce a document with stable headings for each sec
 - **THEN** both use the same heading text for the same sections
 
 ### Requirement: JSON renderer
-The JSON renderer SHALL emit a single document `{ "schema": "rio-report-v1", "status": "...", "review": {...}, "risk_tier": {...} | null, "checks": [...], "impact": {...}, "findings": [...], "risks": [...], "incomplete": [...], "deferred": [...], "excluded": [...], "metrics": {...}, "error": {...} }` that validates against `schemas/report-v1.json`. `risk_tier` is `{ tier: low | medium | high, reasons: [string], source: always_human | triage }`; in this version it is non-null only when a changed file matches a profile `always_human` glob, and it is never an approval. `status` takes the values defined by the review CLI capability, and `error` is present only when `status` is `error`. Each `checks` entry SHALL carry kind, language, root, version, whether the root was scheduled as `changed` or `dependent`, outcome, reason, hint, `dependency_state` (`verified` or `trusted`) and wall time. `incomplete` lists the checks whose outcome is `failed`, `skipped` or `cancelled`. Findings use the finding-v1 form, and `metrics` includes per-check wall time and tool versions. For `no_changes` and `error`, the arrays SHALL be present and empty when nothing ran.
+The JSON renderer SHALL emit a single document `{ "schema": "rio-report-v1", "status": "...", "review": {...}, "risk_tier": {...} | null, "checks": [...], "impact": {...}, "findings": [...], "risks": [...], "security": [...], "incomplete": [...], "deferred": [...], "excluded": [...], "metrics": {...}, "error": {...} }` that validates against `schemas/report-v1.json`. `risk_tier` is `{ tier: low | medium | high, reasons: [string], source: always_human | triage }`; it is populated by endpoint triage when available, or by a local `always_human` match, and it is never an approval. `status` takes the values defined by the review CLI capability, and `error` is present only when `status` is `error`. Each `checks` entry SHALL carry kind, language, root, version, whether the root was scheduled as `changed` or `dependent`, outcome, reason, hint, `dependency_state` (`verified` or `trusted`) and wall time. `incomplete` lists the checks whose outcome is `failed`, `skipped` or `cancelled`. Findings use the finding-v1 form, and `metrics` includes per-check wall time and tool versions plus separately accounted verification usage and cost when available. The new security collection SHALL be optional for historical documents and omitted when unused. For `no_changes` and `error`, the existing required arrays SHALL be present and empty when nothing ran; security remains optional.
 
 #### Scenario: Risk tier from an always-human path
 - **WHEN** a change edits a file matching the profile's `always_human` globs and the review is rendered as JSON
@@ -57,14 +57,14 @@ The JSON renderer SHALL emit a single document `{ "schema": "rio-report-v1", "st
 - **THEN** `metrics` contains the wall time of each check that ran and the total wall time
 
 ### Requirement: Footer content
-The footer SHALL always list: each `failed`, `skipped` or `cancelled` check with its outcome, reason and hint; a statement when any result used trusted dependencies; coverage files listed as `coverage_excluded` or `coverage_not_instrumented`; each deferred step with the reason `no_endpoint`; excluded files with reasons; a size note when `max_lines` is exceeded; graph truncation when it occurred; the counts of suppressed findings per suppression entry.
+The footer SHALL always list: each `failed`, `skipped` or `cancelled` check with its outcome, reason and hint; a statement when any result used trusted dependencies; coverage files listed as `coverage_excluded` or `coverage_not_instrumented`; each deferred step with the reason `no_endpoint`; excluded files with reasons; a size note when `max_lines` is exceeded; graph truncation when it occurred; the counts of suppressed findings per suppression entry; category-floor drops by category; held-back agent counts and titles by pool with guidance to run `--deep` or raise `max_defects`; fork static-only restrictions; and deferred board coordination when applicable.
 
 #### Scenario: Deferred steps explained
 - **WHEN** a review runs with no endpoint
 - **THEN** the footer lists `triage`, `agents` and `verify` as deferred with reason `no_endpoint`
 
 ### Requirement: Review cache
-Each run SHALL write its record to `<cache>/<review-id>/runs/<run-id>/`. The record contains `report.json`, `profile.resolved.yaml`, `graph/{base,head,delta}.json`, `owner_guidance.json` (every `REVIEW.md`, `CLAUDE.md` and `AGENTS.md` between the repository root and each changed file's directory, as `[{path, scope_dir, content_hash, lines[]}]`, stored as data and not interpreted in this version), and `checks/<kind>/<root>/`, which holds the raw tool output and the parsed findings. When the run finishes, it SHALL atomically replace `<cache>/<review-id>/latest` so that the file names the newest finished run. `<cache>` is the configured cache directory (default `.rio/cache`). Snapshots SHALL be stored under `<cache>/snapshots/`, base materializations and baseline results under `<cache>/baselines/`, head materializations under `<cache>/heads/`, and OSV advisory records under `<cache>/osv/`. The system SHALL create `<cache>/.gitignore` containing `*` so the cache is never committed.
+Each run SHALL write its record to `<cache>/<review-id>/runs/<run-id>/`. The record contains `report.json`, `profile.resolved.yaml`, `graph/{base,head,delta}.json`, `owner_guidance.json` (every `REVIEW.md`, `CLAUDE.md` and `AGENTS.md` between the repository root and each changed file's directory, as `[{path, scope_dir, content_hash, lines[]}]`, stored as data and consumed by agent and verifier prompts when the endpoint runtime is available), per-hypothesis blind answers, vote results, verification artifact references and token/cost records when verification runs, and `checks/<kind>/<root>/`, which holds the raw tool output and the parsed findings. When the run finishes, it SHALL atomically replace `<cache>/<review-id>/latest` so that the file names the newest finished run. `<cache>` is the configured cache directory (default `.rio/cache`). Snapshots SHALL be stored under `<cache>/snapshots/`, base materializations and baseline results under `<cache>/baselines/`, head materializations under `<cache>/heads/`, and OSV advisory records under `<cache>/osv/`. The system SHALL create `<cache>/.gitignore` containing `*` so the cache is never committed.
 
 The cache SHALL be safe under concurrent runs and interruption:
 - every entry is written under a temporary name in the same directory and published by an atomic rename. A reader never sees a partially written entry. When a content-addressed entry already exists, the run discards its own copy and uses the existing one;
@@ -98,8 +98,51 @@ Cached evidence holds copies of source code and tool output, so the cache direct
 
 #### Scenario: Owner guidance recorded
 - **WHEN** the repository has a root `AGENTS.md` and `crates/core/REVIEW.md`, and a change edits `crates/core/src/lib.rs`
-- **THEN** the run's `owner_guidance.json` lists both files in path order with their content hashes, and no finding or exclusion is derived from their content
+- **THEN** the run's `owner_guidance.json` lists both files in path order with their content hashes, and guidance content cannot directly alter policy or exclusions; only verified guidance hypotheses can become findings
 
 #### Scenario: Raw output retained
 - **WHEN** a type check runs
 - **THEN** its standard output and standard error are stored under `checks/typecheck/<root>/` in the run's directory
+
+### Requirement: Triage risk tier
+Endpoint triage SHALL derive `risk_tier: { tier, reasons, source: triage }` deterministically from configured thresholds for sensitive paths, public-contract changes, dependency changes, missing coverage on changed logic and graph fan-out. Reasons SHALL identify the triggering signals. The tier SHALL feed agent and budget rules and be present in the JSON report. Existing local no-triage behavior SHALL remain available.
+
+#### Scenario: Configured fan-out threshold
+- **WHEN** graph fan-out crosses a configured high-risk threshold
+- **THEN** triage emits high risk with the fan-out reason and risk rules observe that tier
+
+#### Scenario: Deterministic triage output
+- **WHEN** selected snapshots, signals and resolved risk thresholds are unchanged
+- **THEN** repeated triage yields the same tier and reasons
+
+### Requirement: Human-review override
+A changed path matching `always_human` SHALL force high risk with source `always_human`, retain reasons identifying matching globs, and require human review even when other triage signals suggest lower risk. Rename matches SHALL consider both old and new paths.
+
+#### Scenario: Override survives low-risk triage
+- **WHEN** a changed installer matches `always_human` and triage would otherwise select low risk
+- **THEN** the final tier is high with source always_human and the plan requires human review
+
+#### Scenario: Renamed sensitive file
+- **WHEN** a changed file's old path matches an always-human glob but its new path does not
+- **THEN** the review still requires human review and records the matching glob
+
+### Requirement: Security presentation and policy transparency
+Verified security findings SHALL render in a separate security section with their evidence level and applicable policy match. Plausible entries SHALL be labeled as risks for human judgment. JSON SHALL preserve category security. Held-back counts SHALL identify the general or security pool and SHALL NOT be conflated with suppressions or category drops.
+
+#### Scenario: Separate security section
+- **WHEN** a report contains a deterministic defect, a general risk and a plausible security finding
+- **THEN** each appears in its respective section and the security entry is visibly uncertain
+
+### Requirement: Risk is not approval
+Rio SHALL NOT turn a risk tier into an approval or a successful PR check conclusion. When publishing is available, the tier SHALL be exposed with a neutral conclusion and machine-readable reasons. SARIF field integration SHALL use the same tier contract when SARIF ships; implementing SARIF is outside this change.
+
+#### Scenario: Low risk does not approve
+- **WHEN** a published review has low triage risk and no open findings
+- **THEN** Rio exposes the tier without creating an approval or a success conclusion
+
+### Requirement: Auditable verification omissions
+Report evidence SHALL retain enough information to distinguish refuted, split, invalid, failed and budget-exhausted verification outcomes. Failed or missing votes SHALL NOT be represented as successful verification. Footer notes SHALL identify verification limitations while preserving the existing report completeness policy.
+
+#### Scenario: Voter timeout visible
+- **WHEN** a voter times out and the remaining votes do not establish quorum
+- **THEN** the audit records the timeout and the report does not claim a proven or refuted quorum

@@ -16,16 +16,17 @@ A review tool is judged by how fast a change converges, not by how much it says.
 - **Noise measurement.** A nightly job (`rio eval noise`) runs the reference set's known-clean PRs (merged, with no later revert or fix touching the same lines) through the current pipeline and counts findings that would lead to a harmful change, judged by the existing evaluation harness; per repository, the author-response ratio (share of `fixed` among responses) is computed and shown in the report footer.
 - **Incidents are the eval.** `rio eval import-incident <pr> <fix-pr>` turns a revert or fix-forward into a labeled case: the original PR is the input, and the fix PR's hunks define the expected finding location and trigger. The full set (incidents, historical PRs, mutations) is rerun on every prompt, tool or model change by the CI regression gate; a change that lowers the score is dropped.
 - **Metric `rounds_to_pass`.** The round at which a lineage first has no open defect, recorded per lineage and aggregated per repository in `eval/` summaries.
+- **Carried-over v0.2 acceptance.** The open acceptance tasks of the archived `rio-v0-2-verifier` change move here: a pinned verifier-versus-single-verifier comparison that must show at least 80% precision without losing high-severity recall, and the hosted Linux/macOS/Windows CI matrix.
 - **Report additions.** The footer shows the round number, the lineage's cap state, the per-repository author-response ratio, and the count of findings held back as already posted.
 
-Nothing is breaking. profile-v1, finding-v1 and report-v1 are extended only through keys the v0.1 change reserved; the `feedback.reason` column gains the new enum, and the earlier draft values (`false_positive`, `known`) are mapped to `wrong` and `intentional` at migration time, before any production data exists.
+Nothing is breaking. profile-v1 is extended only through keys the v0.1 change reserved; finding-v1 and report-v1 gain only optional keys; the `feedback.reason` column gains the new enum, and the earlier draft values (`false_positive`, `known`) are mapped to `wrong` and `intentional` at migration time, before any production data exists.
 
 ## Capabilities
 
 ### New Capabilities
 - `review-convergence`: lineages and rounds, the round cap and its author message, diff-only re-review, class-level findings, never re-posting, and the `rounds_to_pass` metric.
 - `finding-feedback`: `author_response`, the standardized reason set, auto-resolution from a later head, the three entry points (CLI, API, PR comment) and how reasons feed evaluation.
-- `eval/noise-and-incidents`: the nightly noise run on known-clean PRs, the author-response ratio, `rio eval import-incident`, and the regression gate over the full case set.
+- `eval/noise-and-incidents`: the nightly noise run on known-clean PRs, the author-response ratio, `rio eval import-incident`, the regression gate over the full case set, and the carried-over v0.2 verifier acceptance comparison.
 
 ### Modified Capabilities
 - `findings`: `round`, `first_posted_in` and `author_response` are now emitted; state transitions include auto-resolution.
@@ -35,6 +36,6 @@ Nothing is breaking. profile-v1, finding-v1 and report-v1 are extended only thro
 ## Impact
 
 - **Code**: `worker/` (lineage storage, round assignment, publisher edits, feedback endpoint), `rio-core` (class-level consolidation, lineage-aware suppression), `rio-cli` (`rio feedback`, `rio eval import-incident`, `rio eval noise`), `eval/` (incident case format, noise job, `rounds_to_pass` and author-response aggregation).
-- **Data model**: new `lineages` table; `findings` gains `round`, `first_posted_in`, `author_response_json`; `feedback.reason` enum fixed to `fixed | wrong | intentional | irrelevant | style`.
-- **Contracts**: no new schema keys; consumes profile-v1 `rounds`, finding-v1 `round`, `first_posted_in`, `author_response`. `schemas/eval-case-v1.json` is new and internal to `eval/`.
+- **Data model**: new `lineages` table with reset generations; new endpoint `findings` table (findings were previously stored only in report artifacts) carrying `round`, `first_posted_in`, lifecycle `status` and `author_response_json`; `feedback.reason` enum fixed to `fixed | wrong | intentional | irrelevant | style`.
+- **Contracts**: consumes profile-v1 `rounds` and finding-v1 `round`, `first_posted_in`, `author_response`; finding-v1 gains optional lifecycle `status` (`open | fixed | dismissed`, kept separate from regression `state`), `resolution` and a per-location instance `id` for class findings; report-v1 gains an optional `lineage` object carrying round, cap state, held-back count, author-response ratio and the reconsider summary. All additions are optional and additive. The `rio/report` step gains the `class_threshold` option (default 3). Shared wire shapes are in `docs/convergence-contracts.md`. `schemas/eval-case-v1.json` is new and internal to `eval/`.
 - **Dependencies on other changes**: requires the endpoint and agents (v0.2 core change); PR-thread behaviors activate with the GitHub App change (v0.3).
