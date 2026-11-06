@@ -2,6 +2,7 @@ import { DurableObject } from "cloudflare:workers";
 import type { Env, Execution } from "./types";
 import { invariant } from "./validation";
 import { validateResult } from "./jobs";
+import { jobInput } from "./archive";
 export class Sandbox extends DurableObject<Env> {
   async fetch(request: Request): Promise<Response> {
     const job: Execution = await request.json();
@@ -31,10 +32,10 @@ export class Sandbox extends DurableObject<Env> {
           user: "10001",
         },
       );
-      const writer = process.stdin!.getWriter();
-      await writer.write(new TextEncoder().encode(JSON.stringify(job)));
-      await writer.close();
-      const output = await process.output();
+      // Stream the header and tree archive; output is collected concurrently so
+      // neither side can block on a full pipe.
+      const input = (await jobInput(this.env, job)).pipeTo(process.stdin!);
+      const [output] = await Promise.all([process.output(), input]);
       invariant(output.exitCode === 0, "sandbox executor failed");
       const result = JSON.parse(new TextDecoder().decode(output.stdout));
       validateResult(result, job);

@@ -1081,8 +1081,9 @@ fn endpoint_presets_submit_snapshots_and_cache_verification_without_local_comman
         let server = std::thread::spawn(move || {
             let deadline = Instant::now() + Duration::from_secs(20);
             let mut report = serde_json::json!({});
+            let (mut manifest, mut snapshot) = (String::new(), String::new());
             let mut seen = Vec::new();
-            while seen.len() < 5 && Instant::now() < deadline {
+            while seen.len() < 8 && Instant::now() < deadline {
                 let (mut stream, _) = match listener.accept() {
                     Ok(value) => value,
                     Err(error) if error.kind() == std::io::ErrorKind::WouldBlock => {
@@ -1098,9 +1099,12 @@ fn endpoint_presets_submit_snapshots_and_cache_verification_without_local_comman
                     .unwrap();
                 let mut bytes = Vec::new();
                 let mut chunk = [0; 8192];
-                let (header_end, headers) = loop {
-                    let n = stream.read(&mut chunk).unwrap();
-                    assert!(n > 0);
+                let request = loop {
+                    // Probes and unused connections close or time out without a request.
+                    let n = match stream.read(&mut chunk) {
+                        Ok(n) if n > 0 => n,
+                        _ => break None,
+                    };
                     bytes.extend_from_slice(&chunk[..n]);
                     if let Some(end) = bytes.windows(4).position(|w| w == b"\r\n\r\n") {
                         let h = String::from_utf8_lossy(&bytes[..end]).to_string();
@@ -1114,9 +1118,12 @@ fn endpoint_presets_submit_snapshots_and_cache_verification_without_local_comman
                             .and_then(|l| l.parse::<usize>().ok())
                             .unwrap_or(0);
                         if bytes.len() >= end + 4 + length {
-                            break (end, h);
+                            break Some((end, h));
                         }
                     }
+                };
+                let Some((header_end, headers)) = request else {
+                    continue;
                 };
                 let path = headers
                     .lines()
@@ -1126,18 +1133,43 @@ fn endpoint_presets_submit_snapshots_and_cache_verification_without_local_comman
                     .nth(1)
                     .unwrap()
                     .to_owned();
-                assert!(
-                    headers
-                        .to_lowercase()
-                        .contains("authorization: bearer long-enough-api-token-32-characters")
-                );
-                let response = if path == "/v1/snapshots" {
-                    let value: Value = serde_json::from_slice(&bytes[header_end + 4..]).unwrap();
-                    assert_eq!(value["base"]["a.txt"]["content"], "one\n");
-                    assert_eq!(value["head"]["a.txt"]["content"], "two\n");
-                    serde_json::json!({"id":"a".repeat(64)})
+                // Drop unrelated local probes of the port; a CLI request without
+                // the token then fails the review.
+                if !headers
+                    .to_lowercase()
+                    .contains("authorization: bearer long-enough-api-token-32-characters")
+                {
+                    continue;
+                }
+                let body = &bytes[header_end + 4..];
+                let response = if path == "/v1/contents/missing" {
+                    let value: Value = serde_json::from_slice(body).unwrap();
+                    assert_eq!(value["hashes"].as_array().unwrap().len(), 3);
+                    serde_json::json!({"missing": value["hashes"]})
+                } else if path == "/v1/packs" {
+                    // .gitignore, then a.txt in base and head.
+                    assert!(body.ends_with(b"one\ntwo\n"));
+                    serde_json::json!({"pack":"p","contents":3})
+                } else if path.ends_with("/chunks/0") {
+                    manifest = String::from_utf8(body.to_vec()).unwrap();
+                    serde_json::json!({})
+                } else if path.ends_with("/seal") {
+                    let id = blake3_hex(&manifest);
+                    assert_eq!(path, format!("/v1/manifests/{id}/seal"));
+                    let lines: Vec<Value> = manifest
+                        .lines()
+                        .map(|line| serde_json::from_str(line).unwrap())
+                        .collect();
+                    assert_eq!(lines.len(), 4);
+                    assert_eq!(lines[1]["path"], "a.txt");
+                    assert_eq!(lines[1]["hash"], blake3_hex("one\n"));
+                    assert_eq!(lines[3]["version"], "head");
+                    assert_eq!(lines[3]["hash"], blake3_hex("two\n"));
+                    snapshot = id.clone();
+                    serde_json::json!({ "id": id })
                 } else if path == "/v1/reviews" {
-                    let value: Value = serde_json::from_slice(&bytes[header_end + 4..]).unwrap();
+                    let value: Value = serde_json::from_slice(body).unwrap();
+                    assert_eq!(value["snapshot_id"], snapshot.as_str());
                     assert_eq!(value["profile"]["posture"], posture);
                     assert_eq!(value["mode"], mode);
                     assert_eq!(
@@ -1164,7 +1196,7 @@ fn endpoint_presets_submit_snapshots_and_cache_verification_without_local_comman
                 stream.write_all(&body).unwrap();
                 seen.push(path);
             }
-            assert_eq!(seen.len(), 5, "requests: {seen:?}");
+            assert_eq!(seen.len(), 8, "requests: {seen:?}");
         });
         let output = rio(root)
             .env("RIO_ENDPOINT_URL", format!("http://{address}"))
@@ -1175,6 +1207,13 @@ fn endpoint_presets_submit_snapshots_and_cache_verification_without_local_comman
             .success()
             .get_output()
             .clone();
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        assert!(
+            stderr.contains(
+                "snapshot: uploaded 34 B in 3 new contents (34 B in 3 distinct contents, 4 files total)"
+            ),
+            "{stderr}"
+        );
         let report = json_report(&output);
         assert!(report["checks"].as_array().unwrap().is_empty());
         let run = root
@@ -1282,9 +1321,12 @@ impl MockEndpoint {
                     .unwrap();
                 let mut bytes = Vec::new();
                 let mut chunk = [0; 65536];
-                let (end, headers) = loop {
-                    let n = stream.read(&mut chunk).unwrap();
-                    assert!(n > 0);
+                let request = loop {
+                    // Probes and unused connections close or time out without a request.
+                    let n = match stream.read(&mut chunk) {
+                        Ok(n) if n > 0 => n,
+                        _ => break None,
+                    };
                     bytes.extend_from_slice(&chunk[..n]);
                     if let Some(end) = bytes.windows(4).position(|w| w == b"\r\n\r\n") {
                         let h = String::from_utf8_lossy(&bytes[..end]).to_string();
@@ -1298,15 +1340,21 @@ impl MockEndpoint {
                             .and_then(|l| l.parse::<usize>().ok())
                             .unwrap_or(0);
                         if bytes.len() >= end + 4 + length {
-                            break (end, h);
+                            break Some((end, h));
                         }
                     }
                 };
-                assert!(
-                    headers
-                        .to_lowercase()
-                        .contains("authorization: bearer long-enough-api-token-32-characters")
-                );
+                let Some((end, headers)) = request else {
+                    continue;
+                };
+                // Drop unrelated local probes of the port; a CLI request without
+                // the token then fails the review.
+                if !headers
+                    .to_lowercase()
+                    .contains("authorization: bearer long-enough-api-token-32-characters")
+                {
+                    continue;
+                }
                 let mut first = headers.lines().next().unwrap().split_whitespace();
                 let method = first.next().unwrap().to_owned();
                 let path = first.next().unwrap().to_owned();
@@ -1345,7 +1393,8 @@ impl Drop for MockEndpoint {
 /// review posts the same defect, so each run consumes a round and later rounds
 /// hold it back.
 fn lineage_endpoint() -> MockEndpoint {
-    let mut snapshots = 0;
+    // Contents the endpoint holds; negotiated contents count as uploaded.
+    let mut stored = std::collections::HashSet::<String>::new();
     let mut reports = std::collections::BTreeMap::<String, Value>::new();
     // (repository, ref) -> (generation, round, previous_head, posted: id -> first snapshot)
     let mut lineages = std::collections::BTreeMap::<
@@ -1359,9 +1408,21 @@ fn lineage_endpoint() -> MockEndpoint {
     >::new();
     MockEndpoint::start(move |method, path, body| {
         let id = "d".repeat(64);
-        if path == "/v1/snapshots" {
-            snapshots += 1;
-            return (200, serde_json::json!({"id": format!("snap-{snapshots}")}));
+        if path == "/v1/contents/missing" {
+            let missing: Vec<&Value> = body["hashes"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .filter(|hash| stored.insert(hash.as_str().unwrap().to_owned()))
+                .collect();
+            return (200, serde_json::json!({ "missing": missing }));
+        }
+        if path == "/v1/packs" || path.contains("/chunks/") {
+            return (201, serde_json::json!({}));
+        }
+        if let Some(seal) = path.strip_prefix("/v1/manifests/") {
+            let id = seal.strip_suffix("/seal").unwrap();
+            return (201, serde_json::json!({ "id": id }));
         }
         if path.starts_with("/v1/lineages?") {
             let query: std::collections::BTreeMap<String, String> = path
@@ -1483,8 +1544,22 @@ fn since_last_keeps_endpoint_rounds_held_back_counts_and_a_refetchable_local_cop
     };
 
     // Round 1: no copy and no endpoint lineage yet (404).
-    let report = json_report(&review(&["--format", "json"], "two\n"));
+    let output = review(&["--format", "json"], "two\n");
+    let report = json_report(&output);
     let requests = endpoint.take();
+    let first_snapshot = requests
+        .iter()
+        .find(|(_, path, _)| path == "/v1/reviews")
+        .unwrap()
+        .2["snapshot_id"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(
+        stderr.contains("B in 3 new contents (") && stderr.contains("snapshot: uploaded "),
+        "{stderr}"
+    );
     assert_eq!(lineage_fetches(&requests), 1);
     assert_eq!(
         submitted(&requests),
@@ -1496,18 +1571,20 @@ fn since_last_keeps_endpoint_rounds_held_back_counts_and_a_refetchable_local_cop
     let local: Value = serde_json::from_slice(&fs::read(&copy).unwrap()).unwrap();
     assert_eq!(local["version"], 1);
     assert_eq!(local["round"], 1);
-    assert_eq!(local["previous_head"], "snap-1");
+    assert_eq!(local["previous_head"], first_snapshot.as_str());
     assert_eq!(local["posted"], serde_json::json!(["d".repeat(64)]));
 
     // Round 2: the local copy is used; the reproduced defect is held back.
     let output = review(&["--format", "md"], "three\n");
     let markdown = String::from_utf8_lossy(&output.stdout);
+    // Only the new head content is uploaded again.
+    assert!(String::from_utf8_lossy(&output.stderr).contains("B in 1 new contents ("));
     let requests = endpoint.take();
     assert_eq!(lineage_fetches(&requests), 0);
     assert!(markdown.contains("Round 2 of cap 3"), "{markdown}");
     assert!(markdown.contains("Held back as already posted: 1"));
     assert!(markdown.contains("(already posted)"));
-    assert!(markdown.contains("Diff-only re-review since snap-1"));
+    assert!(markdown.contains(&format!("Diff-only re-review since {first_snapshot}")));
 
     // A deleted copy is refetched from the endpoint and the lineage continues.
     fs::remove_dir_all(root.join(".rio/cache/lineages")).unwrap();

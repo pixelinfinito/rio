@@ -9,25 +9,62 @@ import type {
   Version,
 } from "./types";
 import { invariant, safePath } from "./validation";
+import {
+  LARGE,
+  SYMLINK,
+  decodeText,
+  readerOf,
+  splitLines,
+  type Entry,
+  type SnapshotReader,
+} from "./snapshot";
 export const OUTPUT_LIMIT = 24000;
-export function readFile(
-  snapshot: Snapshot,
+/** The readable entry for a path; never follows links, even intermediate ones. */
+async function readable(
+  snapshot: Snapshot | SnapshotReader,
   path: string,
   version: Version,
-): string {
+): Promise<Entry> {
   safePath(path);
   invariant(version === "base" || version === "head", "invalid version");
-  const tree = snapshot[version];
-  // Never follow links, including an intermediate directory link.
+  const tree = readerOf(snapshot)[version];
   const parts = path.split("/");
-  for (let i = 1; i <= parts.length; i++)
-    invariant(
-      tree[parts.slice(0, i).join("/")]?.mode !== 0o120000,
-      "symlink access denied",
-    );
-  invariant(Object.hasOwn(tree, path), "file not in selected snapshot");
-  invariant(!tree[path].encoding, "binary file cannot be read as text");
-  return tree[path].content;
+  let entry: Entry | null = null;
+  for (let i = 1; i <= parts.length; i++) {
+    entry = await tree.stat(parts.slice(0, i).join("/"));
+    invariant(entry?.mode !== SYMLINK, "symlink access denied");
+  }
+  invariant(entry, "file not in selected snapshot");
+  return entry;
+}
+export async function readFile(
+  snapshot: Snapshot | SnapshotReader,
+  path: string,
+  version: Version,
+): Promise<string> {
+  const entry = await readable(snapshot, path, version);
+  const text = decodeText(await readerOf(snapshot)[version].read(entry));
+  invariant(text !== null, "binary file cannot be read as text");
+  return text;
+}
+/** Lines of a large file, streamed; null when it is not text. */
+async function largeLines(
+  tree: SnapshotReader[Version],
+  entry: Entry,
+  keep: (line: string, index: number) => boolean | "stop",
+): Promise<string[] | null> {
+  const lines: string[] = [];
+  let index = 0;
+  try {
+    for await (const line of splitLines(await tree.stream(entry))) {
+      const verdict = keep(line, index++);
+      if (verdict === "stop") break;
+      if (verdict) lines.push(line);
+    }
+  } catch {
+    return null;
+  }
+  return lines;
 }
 export function runAllowed(
   agent: string,
@@ -69,8 +106,9 @@ export function guidanceBlock(guidance: Guidance[], focus: string[]): string {
   );
 }
 export class Tools {
+  readonly snapshot: SnapshotReader;
   constructor(
-    readonly snapshot: Snapshot,
+    snapshot: Snapshot | SnapshotReader,
     readonly graphs: { base: Graph; head: Graph },
     readonly execute:
       | ((command: string[], version: Version) => Promise<ExecutionResult>)
@@ -78,7 +116,9 @@ export class Tools {
     readonly hops = 2,
     readonly maxNodes = 2000,
     readonly permissions?: string[],
-  ) {}
+  ) {
+    this.snapshot = readerOf(snapshot);
+  }
   async dispatch(name: string, args: any): Promise<any> {
     invariant(
       !this.permissions || this.permissions.includes(name),
@@ -87,7 +127,7 @@ export class Tools {
     if (name === "board_read") return [];
     if (name === "board_write") return { deferred: true };
     if (name === "read_file") {
-      const content = readFile(this.snapshot, args.path, args.version);
+      const entry = await readable(this.snapshot, args.path, args.version);
       const start = args.line_start ?? 1,
         end = args.line_end ?? start + 200;
       invariant(
@@ -97,9 +137,21 @@ export class Tools {
           end >= start,
         "invalid line range",
       );
-      return redact(content)
-        .split("\n")
-        .slice(start - 1, end)
+      // A large file is streamed and redacted per line, keeping only the range.
+      const lines =
+        entry.size > LARGE
+          ? (
+              await largeLines(
+                this.snapshot[args.version as Version],
+                entry,
+                (_, i) => (i >= end ? "stop" : i >= start - 1),
+              )
+            )?.map(redact)
+          : redact(
+              await readFile(this.snapshot, args.path, args.version),
+            ).split("\n");
+      invariant(lines, "binary file cannot be read as text");
+      return (entry.size > LARGE ? lines : lines.slice(start - 1, end))
         .map((line, i) => `${start + i}: ${line}`)
         .join("\n")
         .slice(0, OUTPUT_LIMIT);
@@ -122,28 +174,46 @@ export class Tools {
       );
       const match = picomatch(scope, { dot: true }),
         results: any[] = [];
-      let size = 0;
-      for (const path of Object.keys(
-        this.snapshot[args.version as Version],
-      ).sort()) {
-        if (
-          !match(path) ||
-          this.snapshot[args.version as Version][path].mode === 0o120000 ||
-          !!this.snapshot[args.version as Version][path].encoding
-        )
-          continue;
-        const lines = readFile(this.snapshot, path, args.version).split("\n");
-        for (let i = 0; i < lines.length; i++)
-          if (lines[i].includes(args.pattern)) {
+      const tree = this.snapshot[args.version as Version];
+      let size = 0,
+        truncated = false;
+      // Streams the tree in path order and stops at the output limit.
+      for await (const batch of tree.batches(
+        (e) => e.mode !== SYMLINK && match(e.path),
+      )) {
+        for (const [entry, bytes] of batch) {
+          let lines: string[] | null;
+          const found: { line: number; text: string }[] = [];
+          if (bytes) {
+            lines = decodeText(bytes)?.split("\n") ?? null;
+            lines?.forEach((text, i) => {
+              if (text.includes(args.pattern))
+                found.push({ line: i + 1, text });
+            });
+          } else
+            lines = await largeLines(tree, entry, (text, i) => {
+              if (text.includes(args.pattern))
+                found.push({ line: i + 1, text });
+              // Each item exceeds 24 characters, so this already passes the limit.
+              return found.length > 1000 ? "stop" : false;
+            });
+          // Binary files are skipped, as before.
+          if (lines === null) continue;
+          for (const f of found) {
             const item = {
-              path,
-              line: i + 1,
-              text: redact(lines[i]).slice(0, 1000),
+              path: entry.path,
+              line: f.line,
+              text: redact(f.text).slice(0, 1000),
             };
             size += JSON.stringify(item).length;
-            if (size > OUTPUT_LIMIT) return { results, truncated: true };
+            if (size > OUTPUT_LIMIT) {
+              truncated = true;
+              break;
+            }
             results.push(item);
           }
+          if (truncated) return { results, truncated: true };
+        }
       }
       return { results, truncated: false };
     }

@@ -572,10 +572,10 @@ describe("tools and owner guidance", () => {
   });
   it("rejects escapes, symlinks and graph expansion above host bounds", async () => {
     for (const path of ["../etc/passwd", "/etc/passwd", "a/../b", "C:\\secret"])
-      expect(() => readFile(snapshot, path, "head")).toThrow();
+      await expect(readFile(snapshot, path, "head")).rejects.toThrow();
     const s = structuredClone(snapshot);
     s.head.link = { mode: 0o120000, content: "/etc" };
-    expect(() => readFile(s, "link/passwd", "head")).toThrow();
+    await expect(readFile(s, "link/passwd", "head")).rejects.toThrow();
     await expect(
       new Tools(snapshot, graphs, undefined).dispatch("graph_query", {
         version: "head",

@@ -26,6 +26,8 @@ import type {
   LineageRef,
   Submission,
 } from "../src/types";
+import { readJobInput, treeOf, uploadSnapshot } from "./snapshots";
+import { jobInput } from "../src/archive";
 
 const runtime = env as Env;
 const headers = {
@@ -185,10 +187,10 @@ async function review(round: Round) {
     });
   try {
     const snapshot = { base: tree(round.base), head: tree(round.head) };
-    const uploaded = await app.request(
-      "https://rio/v1/snapshots",
-      { method: "POST", headers, body: JSON.stringify(snapshot) },
-      runtime,
+    const uploaded = await uploadSnapshot(
+      (path, method, body) =>
+        app.request(`https://rio${path}`, { method, headers, body }, runtime),
+      snapshot,
     );
     const snapshotId = ((await uploaded.json()) as any).id as string;
     const s = submission();
@@ -629,7 +631,10 @@ describe("review lineages", () => {
     });
     expect(r2.status).toBe("complete");
     // Checks still run against the original base, not the previous head.
-    expect(payload.context.snapshot.base).toEqual(tree(base));
+    expect(payload.snapshot).toBeUndefined();
+    const input = await readJobInput(await jobInput(runtime, payload));
+    expect(treeOf(input.files, "base")).toEqual(tree(base));
+    expect(treeOf(input.files, "head")).toEqual(tree(head2));
     expect(r2.report.checks.map((c: any) => c.version)).toEqual([
       "head",
       "head",

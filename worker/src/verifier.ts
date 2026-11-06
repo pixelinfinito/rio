@@ -5,10 +5,12 @@ import type {
   Guidance,
   Hypothesis,
   ModelRequest,
+  ArtifactRef,
   Profile,
   Snapshot,
   Vote,
 } from "./types";
+import { readerOf, type SnapshotReader } from "./snapshot";
 import type { Ledger } from "./gateway";
 import { converse } from "./gateway";
 import {
@@ -25,7 +27,7 @@ export interface VerifyOptions {
   hypothesis: Hypothesis;
   intent: string;
   guidance: Guidance[];
-  snapshot: Snapshot;
+  snapshot: Snapshot | SnapshotReader;
   context: EvidenceContext;
   gateway: Gateway;
   ledger: Ledger;
@@ -36,43 +38,66 @@ export interface VerifyOptions {
   call?: Parameters<typeof converse>[0]["call"];
   save: (vote: Vote) => Promise<void>;
 }
-export function blindContext(o: VerifyOptions): string {
+/** The evidence context with the head modes of every cited path filled in. */
+async function cited(
+  o: VerifyOptions,
+  refs: ArtifactRef[],
+): Promise<EvidenceContext> {
+  const head = { ...o.context.snapshot.head };
+  const tree = readerOf(o.snapshot).head;
+  for (const ref of refs)
+    if (ref.path && !Object.hasOwn(head, ref.path)) {
+      const entry = await tree.stat(ref.path);
+      if (entry) head[ref.path] = { mode: entry.mode };
+    }
+  return { ...o.context, snapshot: { head } };
+}
+export async function blindContext(o: VerifyOptions): Promise<string> {
   const location = o.hypothesis.location;
-  const versions = ["base", "head"].map((version) => {
-    const graph = version === "head" ? o.context.head : o.tools(0).graphs.base;
-    const symbol = graph.nodes.find(
-      (n) => n.path === location.path && n.symbol_path === location.symbol_path,
-    );
-    const callers = symbol
-      ? graph.edges
-          .filter((e) => e.to === symbol.id)
-          .map((e) => graph.nodes.find((n) => n.id === e.from))
-          .filter(Boolean)
-      : [];
-    const nodes = [...(symbol ? [symbol] : []), ...callers].slice(0, 20);
-    return {
-      version,
-      symbols: nodes.map((n) => ({
-        node: n,
-        content: readFile(o.snapshot, n!.path, version as "base" | "head")
-          .split("\n")
-          .slice(n!.line_start - 1, n!.line_end)
-          .join("\n"),
-      })),
-      // A file added (or deleted) by the change has no counterpart to excerpt.
-      fallback: nodes.length
-        ? undefined
-        : !Object.hasOwn(o.snapshot[version as "base" | "head"], location.path)
-          ? null
-          : readFile(o.snapshot, location.path, version as "base" | "head")
-              .split("\n")
-              .slice(
-                Math.max(0, location.line_start - 20),
-                location.line_end + 20,
-              )
-              .join("\n"),
-    };
-  });
+  const reader = readerOf(o.snapshot);
+  const versions = await Promise.all(
+    ["base", "head"].map(async (version) => {
+      const graph =
+        version === "head" ? o.context.head : o.tools(0).graphs.base;
+      const symbol = graph.nodes.find(
+        (n) =>
+          n.path === location.path && n.symbol_path === location.symbol_path,
+      );
+      const callers = symbol
+        ? graph.edges
+            .filter((e) => e.to === symbol.id)
+            .map((e) => graph.nodes.find((n) => n.id === e.from))
+            .filter(Boolean)
+        : [];
+      const nodes = [...(symbol ? [symbol] : []), ...callers].slice(0, 20);
+      const v = version as "base" | "head";
+      const symbols = [];
+      for (const n of nodes)
+        symbols.push({
+          node: n,
+          content: (await readFile(reader, n!.path, v))
+            .split("\n")
+            .slice(n!.line_start - 1, n!.line_end)
+            .join("\n"),
+        });
+      return {
+        version,
+        symbols,
+        // A file added (or deleted) by the change has no counterpart to excerpt.
+        fallback: nodes.length
+          ? undefined
+          : !(await reader[v].stat(location.path))
+            ? null
+            : (await readFile(reader, location.path, v))
+                .split("\n")
+                .slice(
+                  Math.max(0, location.line_start - 20),
+                  location.line_end + 20,
+                )
+                .join("\n"),
+      };
+    }),
+  );
   // Only location is copied; no title, trigger, proposed impact, rationale, or id.
   return `What, if anything, is wrong in this function? Return {result: hypotheses[]}; [] is valid. ${dataBlock("location", { path: location.path, symbol_path: location.symbol_path })}\n${dataBlock("selected code and direct callers", versions)}\n${dataBlock("intent", filteredLines(o.intent.split("\n")))}\n${guidanceBlock(o.guidance, [location.path])}`;
 }
@@ -102,7 +127,7 @@ export async function verifyHypothesis(
               o.verifyTokens ?? Math.max(1, Math.floor(o.agentTokens / 5)),
           };
           const messages: ModelRequest["messages"] = [
-            { role: "user", content: blindContext(o) },
+            { role: "user", content: await blindContext(o) },
           ];
           const tools = o.tools(voter);
           const options = {
@@ -148,7 +173,7 @@ export async function verifyHypothesis(
           vote.validated_level = evidenceLevel(
             vote.answer,
             o.hypothesis,
-            o.context,
+            await cited(o, vote.answer.evidence),
           );
           if (vote.validated_level !== vote.answer.evidence_level)
             vote.validation_note =
@@ -182,6 +207,12 @@ export async function verifyHypothesis(
   const category = [...counts]
     .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
     .find(([, n]) => n >= quorum)?.[0] as Hypothesis["category"] | undefined;
+  const context = await cited(
+    o,
+    votes.flatMap((v) =>
+      v.status === "completed" && v.answer ? v.answer.evidence : [],
+    ),
+  );
   const evidence = [
     ...new Set(
       votes
@@ -193,7 +224,7 @@ export async function verifyHypothesis(
                 evidenceLevel(
                   { evidence_level: v.answer!.evidence_level, evidence: [ref] },
                   o.hypothesis,
-                  o.context,
+                  context,
                 ) !== "plausible",
             )
             .map((ref) =>

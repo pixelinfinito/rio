@@ -165,8 +165,9 @@ RIO_ENDPOINT_URL=https://rio.YOUR-SUBDOMAIN.workers.dev \
   cargo run --locked -p rio-runner -- serve --image rio-runner:0.2.0
 ```
 
-The host only polls jobs, starts Docker and signs completions. Source and commands
-are passed as JSON over stdin, never interpolated into shell code. Each job uses
+The host only polls jobs, downloads job archives, starts Docker and signs
+completions. Source and commands are streamed over stdin (see the snapshot
+protocol below), never interpolated into shell code. Each job uses
 a fresh non-root container, no network, a read-only root, a private bounded tmpfs,
 all capabilities dropped, no privilege escalation, two CPUs, 2 GiB of memory and
 128 PIDs. Wall and output limits kill process groups; the host removes the whole
@@ -189,6 +190,63 @@ available in a deliberately provisioned runner image to execute their checks
 without network. Missing or mismatched dependencies produce incomplete check
 outcomes; Rio does not silently install packages or call an incomplete run clean.
 
+## Snapshot protocol
+
+A hosted review uploads both complete trees, because remote checks build the
+repository. Each distinct file content is stored once per tenant, so base and head
+share their unchanged files and a later review of the same repository uploads only
+new contents. No endpoint component holds a whole tree in memory: steps and tools
+read files on demand, and runners receive a streamed archive.
+
+Limits, checked by the CLI before uploading anything and enforced by the endpoint:
+300,000 paths per tree, 64 MiB per file, 1 GiB of distinct content across both
+trees, and 8 MiB per request body. The CLI error names the exceeded limit, the
+measured value and, for the file limit, the path.
+
+A content is identified by the lowercase hex BLAKE3 hash of its bytes (a symbolic
+link's content is its target). All routes need `reviews:write`.
+
+1. `POST /v1/contents/missing` with `{"hashes": [...]}` (1 to 10,000 distinct hashes)
+   returns `{"missing": [...]}`, the hashes the tenant has not stored, in request
+   order. Another tenant's identical content is reported missing.
+2. `PUT /v1/packs` (`application/octet-stream`, at most 8 MiB) uploads several
+   contents. The body is a 4-byte big-endian length `N`, then `N` bytes of index JSON
+   `[{"hash": h, "size": n}, ...]` (1 to 2,000 distinct entries), then the contents
+   concatenated in index order. Every hash and size is verified before anything is
+   stored; a mismatch rejects the whole pack. Returns `201 {"pack": id, "contents": k}`.
+   Re-uploading stored contents is harmless.
+3. A content over 7 MiB is uploaded in 8 MiB parts:
+   `POST /v1/contents/<hash>/uploads` with `{"size": n}` returns `{"upload": u}`
+   (or `{"present": true}` when already stored);
+   `PUT /v1/contents/<hash>/uploads/<part>?upload=<u>` sends part 1, 2, … (every part
+   but the last exactly 8 MiB) and returns `{"part": p, "etag": e}`;
+   `POST /v1/contents/<hash>/uploads/complete?upload=<u>` with
+   `{"size": n, "parts": [{"part": p, "etag": e}, ...]}` assembles the content,
+   verifies its hash and size, and returns `201 {"hash": h, "size": n}`.
+4. The manifest lists every path of both trees, one canonical JSON line each:
+   `{"version":"base","path":"src/a.rs","hash":"…","mode":33188,"size":120}` followed
+   by `\n`, with exactly these keys in this order and standard JSON string escaping.
+   Lines are sorted by version (`base` before `head`), then by path compared as UTF-8
+   bytes, with no duplicates. Modes are `33188` (0100644), `33261` (0100755) and
+   `40960` (0120000, symbolic link). The snapshot id is the BLAKE3 hash of the whole
+   manifest. It is uploaded in chunks of whole lines, each at most 8 MiB, with
+   `PUT /v1/manifests/<id>/chunks/<n>` (`n` from 0), then sealed with
+   `POST /v1/manifests/<id>/seal` and `{"chunks": count}`. Sealing recomputes the id,
+   checks the canonical form, paths, modes, limits and that every content is stored
+   for the tenant, and returns `201 {"id": id}` (`200` when already sealed).
+
+`POST /v1/reviews` references the sealed snapshot id as `snapshot_id`.
+
+Runner jobs reference the snapshot (`snapshot_id`, `needs`: the versions the job
+reads) instead of embedding files. The executor's standard input is one JSON header
+line, the job plus `links` (`{"base": {path: base64 target}, "head": {…}}` for the
+needed versions), followed by a POSIX tar archive of the needed trees: regular files
+only, named `base/<path>` or `head/<path>`, with mode 0644 or 0755 and PAX headers
+for long or non-ASCII names. Symbolic links are never materialized. The Cloudflare
+Sandbox streams this input into the container. A self-hosted runner downloads the
+same bytes from `GET /v1/runner/:review/:job/:attempt/archive` with its job
+capability as the bearer token and pipes them into Docker.
+
 ## API, evidence and acceptance
 
 Every API request uses `Authorization: Bearer ...` and `rio-protocol: 1`. The
@@ -196,7 +254,8 @@ bootstrap API secret owns the `owner` tenant. Additional tokens are stored hashe
 in D1 `api_tokens`, scoped to a tenant and `reviews:read`/`reviews:write` or `*`,
 with an expiry in Unix milliseconds. Never share the runner secret with clients.
 
-- `POST /v1/snapshots`, then `POST /v1/reviews` submits a versioned review.
+- The content and manifest endpoints below register a snapshot; `POST /v1/reviews`
+  then submits a versioned review referencing its id.
 - `GET /v1/reviews/:id` returns state; `/report` returns the report when available.
 - `/events` returns replayable SSE records. Reconnect with `Last-Event-ID`.
 - `/audit` returns hypotheses, blind answers, voter outcomes, artifact references

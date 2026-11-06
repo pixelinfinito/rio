@@ -9,6 +9,8 @@ import { allMigrations, profile, snapshot, submission } from "./fixtures";
 import type { Env } from "../src/types";
 import contracts from "../../docs/verifier-contracts.md?raw";
 import { lineageId } from "../src/lineage";
+import { manifestOf, uploadSnapshot } from "./snapshots";
+const snapshotId = manifestOf(snapshot).id;
 const testEnv = env as Env;
 const owner = {
   authorization: "Bearer test-owner-token-at-least-32-characters",
@@ -50,15 +52,21 @@ async function request(
       body:
         value === undefined
           ? undefined
-          : typeof value === "string"
+          : typeof value === "string" || value instanceof Uint8Array
             ? value
             : JSON.stringify(value),
     },
     runtime,
   );
 }
+function upload(value = snapshot, headers: Record<string, string> = owner) {
+  return uploadSnapshot(
+    (path, method, body) => request(path, method, body as any, headers),
+    value,
+  );
+}
 async function createReview() {
-  const uploaded = await request("/v1/snapshots", "POST", snapshot);
+  const uploaded = await upload();
   expect(uploaded.status).toBe(201);
   const { id } = (await uploaded.json()) as any;
   const s = submission();
@@ -96,11 +104,7 @@ describe("Worker API and storage", () => {
   it("negotiates version and rejects unauthorized or cross-tenant access", async () => {
     expect((await request("/health")).status).toBe(200);
     expect(
-      (
-        await request("/v1/snapshots", "POST", snapshot, {
-          "content-type": "application/json",
-        })
-      ).status,
+      (await upload(snapshot, { "content-type": "application/json" })).status,
     ).toBe(401);
     const id = await createReview();
     expect(fakeWorkflow.created).toEqual([id]);
@@ -128,19 +132,14 @@ describe("Worker API and storage", () => {
       ).status,
     ).toBe(401);
     expect(
-      (
-        await request("/v1/snapshots", "POST", snapshot, {
-          ...owner,
-          "rio-protocol": "2",
-        })
-      ).status,
+      (await upload(snapshot, { ...owner, "rio-protocol": "2" })).status,
     ).toBe(400);
   });
   it("rejects invalid paths, graphs, guidance and review contracts", async () => {
     const unsafe = structuredClone(snapshot);
     unsafe.head["../escape"] = { mode: 0o100644, content: "x" };
-    expect((await request("/v1/snapshots", "POST", unsafe)).status).toBe(400);
-    const uploaded = await request("/v1/snapshots", "POST", snapshot);
+    expect((await upload(unsafe)).status).toBe(400);
+    const uploaded = await upload();
     const s = submission();
     s.snapshot_id = ((await uploaded.json()) as any).id;
     s.graphs.head.nodes[0].line_end = 999;
@@ -187,7 +186,7 @@ describe("Worker API and storage", () => {
   it("signs completion capabilities for one review, job and attempt, with idempotent replay", async () => {
     const id = await createReview(),
       job = "job1";
-    await createJob(runtime, id, job, "run", ["false"], "head", snapshot);
+    await createJob(runtime, id, job, "run", ["false"], "head", snapshotId);
     expect(jobs).toHaveLength(1);
     const claim = await request(
       "/v1/runner/claim",
@@ -245,7 +244,7 @@ describe("Worker API and storage", () => {
   });
   it("rejects expired capabilities and preserves cancellation state", async () => {
     const id = await createReview();
-    await createJob(runtime, id, "job1", "run", ["true"], "head", snapshot);
+    await createJob(runtime, id, "job1", "run", ["true"], "head", snapshotId);
     const token = await jobToken(runtime, id, "job1", 1, Date.now() - 1);
     expect(
       (
@@ -265,7 +264,7 @@ describe("Worker API and storage", () => {
   it("publishes one immutable winner for racing completions and retains cancelled job evidence", async () => {
     const id = await createReview(),
       store = new Store(runtime);
-    await createJob(runtime, id, "race", "run", ["false"], "head", snapshot);
+    await createJob(runtime, id, "race", "run", ["false"], "head", snapshotId);
     const result = {
       job_id: "race",
       attempt: 1,
@@ -300,7 +299,7 @@ describe("Worker API and storage", () => {
       "run",
       ["true"],
       "head",
-      snapshot,
+      snapshotId,
     );
     await request(`/v1/reviews/${id}/cancel`, "POST", {});
     const events = fakeWorkflow.events.length;
@@ -375,13 +374,12 @@ describe("lineages and finding feedback", () => {
       contracts.slice(contracts.indexOf("## Review lineages and rounds")),
     )![1],
   );
-  async function upload() {
-    const uploaded = await request("/v1/snapshots", "POST", snapshot);
-    return ((await uploaded.json()) as any).id as string;
+  async function uploaded() {
+    return ((await (await upload()).json()) as any).id as string;
   }
   it("accepts the documented lineage submission and exposes lineage state", async () => {
     const s: any = { ...submission(), ...documented };
-    s.snapshot_id = await upload();
+    s.snapshot_id = await uploaded();
     const query = new URLSearchParams({
       repository: documented.lineage.repository,
       kind: documented.lineage.kind,
@@ -445,7 +443,7 @@ describe("lineages and finding feedback", () => {
     [{ repository: "r", kind: "branch", ref: "x", parent: "abc" }],
   ])("rejects an invalid lineage reference %j", async (lineage) => {
     const s: any = submission();
-    s.snapshot_id = await upload();
+    s.snapshot_id = await uploaded();
     s.lineage = lineage;
     const response = await request("/v1/reviews", "POST", s);
     expect(response.status).toBe(400);

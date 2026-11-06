@@ -123,7 +123,16 @@ pub async fn review(
         ..Default::default()
     };
     report.impact = graph.impact(options.hops);
-    let snapshot_id = client.upload_snapshot(&changes.base, &changes.head).await?;
+    let upload = client.upload_snapshot(&changes.base, &changes.head).await?;
+    eprintln!(
+        "snapshot: uploaded {} in {} new contents ({} in {} distinct contents, {} files total)",
+        rio_client::format_bytes(upload.uploaded_bytes),
+        rio_client::format_count(upload.uploaded_contents as u64),
+        rio_client::format_bytes(upload.bytes),
+        rio_client::format_count(upload.contents as u64),
+        rio_client::format_count(upload.files as u64)
+    );
+    let snapshot_id = upload.id;
     let changed:Vec<_>=delta.files.iter().filter(|f|f.excluded.is_none()).map(|f|json!({"path":f.path,"old_path":f.old_path,"lines_changed":f.hunks.iter().map(|h|h.base.count.max(h.head.count) as u64).sum::<u64>()})).collect();
     let before = match &lineage {
         Some(lineage) => Some(lineage_before(&client, &cache.options, lineage).await?),

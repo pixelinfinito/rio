@@ -44,6 +44,12 @@ round that first posted the identity), lifecycle `status`
 (`open | fixed | dismissed`), optional `resolution` (`fixed_in`, `note`) and,
 once answered, `author_response`. Regression `state` is unchanged by `status`.
 
+A snapshot id is the BLAKE3 hash of the snapshot's canonical manifest (see
+"Snapshot protocol" in `docs/cloudflare.md`), so identical base and head trees
+always have the same id. Finding relocation and diff-only rounds read only the
+files they need from earlier snapshots; unchanged files are recognized by their
+content hash.
+
 Held-back findings (identities already posted in the lineage) remain in the
 report's finding lists so `fail_on` sees them; `report.lineage.held_back`
 counts them and renderers mark them as already posted. The held-back ids are

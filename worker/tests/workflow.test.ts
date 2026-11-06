@@ -9,6 +9,7 @@ import { Store } from "../src/storage";
 import { finishJob } from "../src/jobs";
 import { hash, validateHypotheses } from "../src/validation";
 import { allMigrations, hypothesis, snapshot, submission } from "./fixtures";
+import { storeSnapshot, uploadSnapshot } from "./snapshots";
 import type { Env } from "../src/types";
 const runtime = env as Env;
 const headers = {
@@ -70,10 +71,14 @@ it.each([false, true])(
         ANTHROPIC_API_KEY: "recorded-key",
       };
       // Workflow gets its environment bindings, so test keys are configured in Vitest.
-      const uploaded = await app.request(
-        "https://rio/v1/snapshots",
-        { method: "POST", headers, body: JSON.stringify(snapshot) },
-        bindings,
+      const uploaded = await uploadSnapshot(
+        (path, method, body) =>
+          app.request(
+            `https://rio${path}`,
+            { method, headers, body },
+            bindings,
+          ),
+        snapshot,
       );
       const s = submission();
       s.fork = fork;
@@ -183,10 +188,10 @@ it("marks failed remote votes incomplete and keeps the configured quorum", async
       });
     });
   try {
-    const uploaded = await app.request(
-      "https://rio/v1/snapshots",
-      { method: "POST", headers, body: JSON.stringify(snapshot) },
-      runtime,
+    const uploaded = await uploadSnapshot(
+      (path, method, body) =>
+        app.request(`https://rio${path}`, { method, headers, body }, runtime),
+      snapshot,
     );
     const s = submission();
     s.snapshot_id = ((await uploaded.json()) as any).id;
@@ -243,8 +248,12 @@ it("resumes an isolated runner job using an attempt-specific event", async () =>
     { id: "checks", uses: "rio/checks@0.1.0", needs: [], with: {} },
     { id: "report", uses: "rio/report@0.1.0", needs: ["checks"], with: {} },
   ];
-  const snapshotKey = await store.put(`snapshots/test/${id}.json`, snapshot),
-    key = await store.put(`reviews/${id}/submission.json`, s);
+  const stored = await storeSnapshot(runtime, snapshot),
+    snapshotKey = stored.key,
+    key = await store.put(`reviews/${id}/submission.json`, {
+      ...s,
+      snapshot_id: stored.id,
+    });
   await runtime.DB.prepare(
     "INSERT INTO reviews(id,tenant,submission_key,status,created_at,token_limit,deadline) VALUES(?,?,?,'queued',?,?,?)",
   )
@@ -352,8 +361,12 @@ it("retains reproduced evidence when every blind pass misses, with runner artifa
       { id: "agents", uses: "rio/agents@0.1.0", needs: ["triage"], with: {} },
       { id: "verify", uses: "rio/verify@0.1.0", needs: ["agents"], with: {} },
     ];
-    const snapshotKey = await store.put(`snapshots/test/${id}.json`, snapshot),
-      key = await store.put(`reviews/${id}/submission.json`, s);
+    const stored = await storeSnapshot(runtime, snapshot),
+      snapshotKey = stored.key,
+      key = await store.put(`reviews/${id}/submission.json`, {
+        ...s,
+        snapshot_id: stored.id,
+      });
     await runtime.DB.prepare(
       "INSERT INTO reviews(id,tenant,submission_key,status,created_at,token_limit,deadline) VALUES(?,?,?,'queued',?,?,?)",
     )
@@ -449,11 +462,12 @@ it.each(["explicit", "triage"])(
           with: {},
         },
       ];
-      const snapshotKey = await store.put(
-          `snapshots/test/${id}.json`,
-          snapshot,
-        ),
-        key = await store.put(`reviews/${id}/submission.json`, s);
+      const stored = await storeSnapshot(runtime, snapshot),
+        snapshotKey = stored.key,
+        key = await store.put(`reviews/${id}/submission.json`, {
+          ...s,
+          snapshot_id: stored.id,
+        });
       await runtime.DB.prepare(
         "INSERT INTO reviews(id,tenant,submission_key,status,created_at,token_limit,deadline) VALUES(?,?,?,'queued',?,?,?)",
       )
@@ -506,8 +520,12 @@ it.each(["cancelled", "invalid-triage"])(
             : [],
       },
     ];
-    const snapshotKey = await store.put(`snapshots/test/${id}.json`, snapshot),
-      key = await store.put(`reviews/${id}/submission.json`, s);
+    const stored = await storeSnapshot(runtime, snapshot),
+      snapshotKey = stored.key,
+      key = await store.put(`reviews/${id}/submission.json`, {
+        ...s,
+        snapshot_id: stored.id,
+      });
     await runtime.DB.prepare(
       "INSERT INTO reviews(id,tenant,submission_key,status,created_at,token_limit,deadline,cancelled) VALUES(?,?,?,'queued',?,?,?,?)",
     )

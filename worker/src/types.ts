@@ -178,8 +178,10 @@ export interface Execution {
   version: Version;
   kind: "run" | "checks" | "graph" | "static";
   command: string[];
-  snapshot: Record<string, File>;
-  context?: { profile: Profile; snapshot: Snapshot };
+  // The trees arrive as a streamed archive; jobs never embed file contents.
+  snapshot_id: string;
+  needs: Version[];
+  context?: { profile: Profile };
   limits: {
     wall_ms: number;
     memory_mb: number;

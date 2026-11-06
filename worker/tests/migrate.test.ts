@@ -41,6 +41,7 @@ it("applies forward migrations once and leaves no deployment lock", async () => 
       "lineage_reviews",
       "findings",
       "feedback",
+      "contents",
     ]),
   );
   expect(await tables()).not.toContain("feedback_next");
@@ -64,6 +65,7 @@ it("upgrades a v0.2 database and converts draft feedback reasons", async () => {
     "findings",
     "lineage_reviews",
     "lineages",
+    "contents",
   ])
     await env.DB.prepare(`DROP TABLE IF EXISTS ${table}`).run();
   const core = migrations.find((m) => m.name === "0001_core.sql")!;
@@ -110,6 +112,11 @@ it("upgrades a v0.2 database and converts draft feedback reasons", async () => {
   ]);
   await rejectsReason("known");
   expect(await tables()).toEqual(
-    expect.arrayContaining(["lineages", "lineage_reviews", "findings"]),
+    expect.arrayContaining([
+      "lineages",
+      "lineage_reviews",
+      "findings",
+      "contents",
+    ]),
   );
 });

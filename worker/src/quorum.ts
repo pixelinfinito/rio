@@ -5,7 +5,6 @@ import type {
   Graph,
   Guidance,
   Hypothesis,
-  Snapshot,
   Verification,
   Vote,
   VoteAnswer,
@@ -39,7 +38,9 @@ export function blindMatch(
     : "none";
 }
 export interface EvidenceContext {
-  snapshot: Snapshot;
+  // Modes of the head files cited by the evidence being checked (a full
+  // snapshot also satisfies this); checks stay synchronous.
+  snapshot: { head: Record<string, { mode: number }> };
   head: Graph;
   executions: Record<string, ExecutionResult>;
   guidance: Guidance[];

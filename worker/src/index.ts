@@ -8,9 +8,25 @@ import {
   invariant,
   validateGraph,
   validateLineageRef,
-  validateSnapshot,
   validateSubmission,
 } from "./validation";
+import {
+  LIMITS,
+  SYMLINK,
+  StoredSnapshot,
+  lineCounts,
+  materialize,
+} from "./snapshot";
+import {
+  completeUpload,
+  missing,
+  seal,
+  startUpload,
+  storeChunk,
+  storePack,
+  uploadPart,
+} from "./upload";
+import { jobInput } from "./archive";
 import { attachStatements, lineageId } from "./lineage";
 import { Store } from "./storage";
 import { finishJob } from "./jobs";
@@ -80,19 +96,78 @@ async function reviewAccess(
   invariant(row, "review not found");
   return row;
 }
-app.post("/v1/snapshots", async (c) => {
-  const tenant = await authenticate(c.req.raw, c.env, "reviews:write"),
-    snapshot = await body(c.req.raw);
-  validateSnapshot(snapshot);
-  const id = hash(canonical(snapshot)),
-    key = `snapshots/${tenant}/${id}.json`;
-  await new Store(c.env).put(key, snapshot);
-  await c.env.DB.prepare(
-    "INSERT INTO snapshots(id,tenant,object_key) VALUES(?,?,?) ON CONFLICT DO NOTHING",
-  )
-    .bind(id, tenant, key)
-    .run();
-  return c.json({ id }, 201);
+// Snapshots are uploaded as deduplicated contents plus a chunked manifest
+// (docs/cloudflare.md, "Snapshot protocol").
+app.post("/v1/contents/missing", async (c) => {
+  const tenant = await authenticate(c.req.raw, c.env, "reviews:write");
+  return c.json({
+    missing: await missing(c.env, tenant, await body(c.req.raw, 1024 * 1024)),
+  });
+});
+app.put("/v1/packs", async (c) => {
+  const tenant = await authenticate(c.req.raw, c.env, "reviews:write");
+  return c.json(
+    await storePack(c.env, tenant, await bytes(c.req.raw, LIMITS.request)),
+    201,
+  );
+});
+app.post("/v1/contents/:hash/uploads", async (c) => {
+  const tenant = await authenticate(c.req.raw, c.env, "reviews:write");
+  const result = await startUpload(
+    c.env,
+    tenant,
+    c.req.param("hash"),
+    await body(c.req.raw, 64 * 1024),
+  );
+  return c.json(result, result.present ? 200 : 201);
+});
+app.post("/v1/contents/:hash/uploads/complete", async (c) => {
+  const tenant = await authenticate(c.req.raw, c.env, "reviews:write");
+  return c.json(
+    await completeUpload(
+      c.env,
+      tenant,
+      c.req.param("hash"),
+      c.req.query("upload"),
+      await body(c.req.raw, 64 * 1024),
+    ),
+    201,
+  );
+});
+app.put("/v1/contents/:hash/uploads/:part", async (c) => {
+  const tenant = await authenticate(c.req.raw, c.env, "reviews:write");
+  return c.json(
+    await uploadPart(
+      c.env,
+      tenant,
+      c.req.param("hash"),
+      Number(c.req.param("part")),
+      c.req.query("upload"),
+      await bytes(c.req.raw, LIMITS.request),
+    ),
+  );
+});
+app.put("/v1/manifests/:id/chunks/:n", async (c) => {
+  const tenant = await authenticate(c.req.raw, c.env, "reviews:write");
+  const chunk = Number(c.req.param("n"));
+  await storeChunk(
+    c.env,
+    tenant,
+    c.req.param("id"),
+    chunk,
+    await bytes(c.req.raw, LIMITS.request),
+  );
+  return c.json({ chunk }, 201);
+});
+app.post("/v1/manifests/:id/seal", async (c) => {
+  const tenant = await authenticate(c.req.raw, c.env, "reviews:write");
+  const result = await seal(
+    c.env,
+    tenant,
+    c.req.param("id"),
+    await body(c.req.raw, 64 * 1024),
+  );
+  return c.json({ id: result.id }, result.created ? 201 : 200);
 });
 app.post("/v1/reviews", async (c) => {
   const tenant = await authenticate(c.req.raw, c.env, "reviews:write"),
@@ -105,25 +180,43 @@ app.post("/v1/reviews", async (c) => {
     .first<{ object_key: string }>();
   invariant(snapshotRow, "snapshot not found");
   const store = new Store(c.env),
-    snapshot = await store.get<any>(snapshotRow.object_key);
-  validateGraph(value.graphs.base, snapshot.base);
-  validateGraph(value.graphs.head, snapshot.head);
-  // Guidance is reproduced from immutable head, never accepted from mutable working state.
-  for (const g of value.owner_guidance)
+    snapshot = await StoredSnapshot.open(c.env, snapshotRow.object_key);
+  for (const version of ["base", "head"] as const) {
+    const graph = value.graphs[version];
     invariant(
-      snapshot.head[g.path]?.mode !== 0o120000 &&
+      graph && Array.isArray(graph.nodes) && graph.nodes.length <= 100000,
+      "invalid graph",
+    );
+    validateGraph(
+      graph,
+      await lineCounts(
+        snapshot[version],
+        new Set(graph.nodes.map((n: any) => n?.path)),
+      ),
+    );
+  }
+  // Guidance is reproduced from immutable head, never accepted from mutable working state.
+  const guidance = await materialize(
+    snapshot.head,
+    value.owner_guidance.map((g) => g.path),
+  );
+  for (const g of value.owner_guidance) {
+    const file = guidance[g.path];
+    invariant(
+      file &&
+        file.mode !== SYMLINK &&
+        !file.encoding &&
         ["REVIEW.md", "CLAUDE.md", "AGENTS.md"].includes(
           g.path.split("/").at(-1) ?? "",
         ) &&
         g.scope_dir === g.path.split("/").slice(0, -1).join("/") &&
-        g.content_hash === hash(snapshot.head[g.path]?.content ?? "") &&
+        g.content_hash === hash(file.content) &&
         Array.isArray(g.lines) &&
         g.lines.join("\n") ===
-          snapshot.head[g.path]?.content
-            .replace(/\r\n/g, "\n")
-            .replace(/\n$/, ""),
+          file.content.replace(/\r\n/g, "\n").replace(/\n$/, ""),
       "guidance does not match snapshot",
     );
+  }
   const id = crypto.randomUUID(),
     key = `reviews/${id}/submission.json`;
   await store.put(key, value);
@@ -369,6 +462,26 @@ app.post("/v1/runner/claim", async (c) => {
       row.attempt,
       Date.now() + 180000,
     ),
+  });
+});
+// A self-hosted runner downloads exactly the executor input the Sandbox streams.
+app.get("/v1/runner/:review/:job/:attempt/archive", async (c) => {
+  const review = c.req.param("review"),
+    job = c.req.param("job"),
+    attempt = Number(c.req.param("attempt"));
+  await verifyJobToken(c.req.raw, c.env, review, job, attempt);
+  const row = await c.env.DB.prepare(
+    "SELECT payload_key FROM jobs WHERE id=? AND review_id=? AND attempt=?",
+  )
+    .bind(job, review, attempt)
+    .first<{ payload_key: string }>();
+  invariant(row, "unknown job attempt");
+  const payload = await new Store(c.env).get<Execution>(row.payload_key);
+  return new Response(await jobInput(c.env, payload), {
+    headers: {
+      "content-type": "application/octet-stream",
+      "cache-control": "no-store",
+    },
   });
 });
 app.post("/v1/runner/:review/:job/:attempt/complete", async (c) => {

@@ -1,49 +1,94 @@
 #!/usr/bin/env python3
 """Trusted container entry point. Never run this on the host for untrusted jobs."""
-import base64
 import json
 import os
-from pathlib import Path, PurePosixPath
+from pathlib import Path
 import selectors
+import shutil
 import signal
+import stat
 import subprocess
 import sys
+import tarfile
 import tempfile
 import time
 
 
-def execute(job):
+HEADER_LIMIT = 16 * 1024 * 1024
+VERSIONS = ('base', 'head')
+
+
+def safe_path(name):
+    parts = name.split('/')
+    return bool(name) and not name.startswith('/') and '\\' not in name and '\0' not in name and all(p not in ('', '.', '..') and p.lower() != '.git' for p in parts)
+
+
+def write_member(tree, path, source, mode):
+    # Nothing but directories and regular files is ever created, but check every component
+    # without following links so a duplicate or file/directory overlap cannot escape.
+    directory = tree
+    for part in path.split('/')[:-1]:
+        directory = directory / part
+        if os.path.lexists(directory):
+            assert stat.S_ISDIR(os.lstat(directory).st_mode), 'archive member overlaps a file'
+        else:
+            directory.mkdir()
+    descriptor = os.open(tree / path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
+    with os.fdopen(descriptor, 'wb') as target:
+        shutil.copyfileobj(source, target, 1 << 20)
+        os.fchmod(target.fileno(), mode)
+
+
+def extract(stream, root, needs):
+    """Stream-extract the job archive: only regular `base/<path>` or `head/<path>` members of
+    needed versions with mode 0644 or 0755. Directory entries, links and every other member
+    type abort the job; never use extractall on repository-controlled archives."""
+    with tarfile.open(fileobj=stream, mode='r|', encoding='utf-8', errors='strict') as archive:
+        for member in archive:
+            assert member.isreg(), 'archive member is not a regular file'
+            version, _, path = member.name.partition('/')
+            assert version in needs and safe_path(path), 'unsafe archive member'
+            assert member.mode in (0o644, 0o755), 'unsupported archive member mode'
+            write_member(root / version, path, archive.extractfile(member), member.mode)
+
+
+def execute(stream):
+    header = stream.readline(HEADER_LIMIT + 1)
+    assert header.endswith(b'\n'), 'missing or oversized job header'
+    job = json.loads(header)
     assert job['protocol'] == 1 and job['network'] is False
     limits = job['limits']
     assert 0 < limits['wall_ms'] <= 120000 and 0 < limits['output_bytes'] <= 1048576
+    needs = job['needs']
+    assert isinstance(needs, list) and len(set(needs)) == len(needs) and set(needs) <= set(VERSIONS)
+    if job['kind'] == 'run':
+        assert job['version'] in needs
+    else:
+        # Analysis compares both trees; an absent one would silently look empty.
+        assert set(needs) == set(VERSIONS)
+    assert isinstance(job.get('links', {}), dict) and set(job.get('links', {})) <= set(needs)
     with tempfile.TemporaryDirectory(prefix='rio-') as directory:
         root = Path(directory)
-        # Links are rejected, so no materialization order can escape the snapshot.
-        for name, file in sorted(job['snapshot'].items()):
-            path = PurePosixPath(name)
-            assert name and not path.is_absolute() and all(p not in ('', '.', '..') for p in name.split('/')) and '\\' not in name and '\0' not in name
-            assert file['mode'] in (0o100644, 0o100755, 0o120000)
-            if file['mode'] == 0o120000:
-                continue
-            target = root / name
-            target.parent.mkdir(parents=True, exist_ok=True)
-            content = base64.b64decode(file['content'], validate=True) if file.get('encoding') == 'base64' else file['content'].encode()
-            target.write_bytes(content)
-            target.chmod(0o755 if file['mode'] == 0o100755 else 0o644)
+        for version in VERSIONS:
+            (root / version).mkdir()
+        # Symbolic links stay in the header's `links`; they are never materialized.
+        extract(stream, root, needs)
         command = job['command']
         assert isinstance(command, list) and 0 < len(command) <= 128 and all(isinstance(x, str) and len(x) <= 16000 for x in command)
         if job['kind'] in ('checks', 'graph', 'static'):
-            command = ['/usr/local/bin/rio-runner', 'inside', job['kind'], str(root)]
+            command = ['/usr/local/bin/rio-runner', 'inside', job['kind'], '--base', str(root / 'base'), '--head', str(root / 'head')]
+            cwd = root / 'head'
         else:
             assert job['kind'] == 'run'
+            cwd = root / job['version']
         # Only a fixed environment reaches repository code; provider and API secrets stay outside.
         env = {'PATH': '/usr/local/cargo/bin:/usr/local/bin:/usr/bin:/bin', 'HOME': directory, 'TMPDIR': directory, 'CI': 'true', 'RIO_CONTAINER': '1', 'CARGO_NET_OFFLINE': 'true', 'PIP_NO_INDEX': '1', 'npm_config_offline': 'true'}
         try:
-            process = subprocess.Popen(command, cwd=root, env=env, stdin=subprocess.PIPE if job['kind'] != 'run' else subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.PIPE, start_new_session=True)
+            process = subprocess.Popen(command, cwd=cwd, env=env, stdin=subprocess.PIPE if job['kind'] != 'run' else subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.PIPE, start_new_session=True)
         except OSError:
             return dict(job_id=job['job_id'], attempt=job['attempt'], version=job['version'], exit_code=127, stdout='', stderr='command could not be started', timed_out=False, truncated=False, outcome='spawn_failed')
         if job['kind'] != 'run':
-            process.stdin.write(json.dumps(job).encode())
+            process.stdin.write(header)
             process.stdin.close()
         selector = selectors.DefaultSelector()
         selector.register(process.stdout, selectors.EVENT_READ, 'stdout')
@@ -87,7 +132,7 @@ def execute(job):
 
 if __name__ == '__main__':
     try:
-        print(json.dumps(execute(json.load(sys.stdin)), separators=(',', ':')))
+        print(json.dumps(execute(sys.stdin.buffer), separators=(',', ':')))
     except Exception as error:
         print(type(error).__name__ + ': ' + str(error), file=sys.stderr)
         sys.exit(1)

@@ -2,12 +2,12 @@ import type {
   Env,
   Execution,
   ExecutionResult,
-  Snapshot,
   Version,
   Profile,
 } from "./types";
 import { Store } from "./storage";
 import { canonical, hash, invariant } from "./validation";
+import { needs } from "./archive";
 export async function createJob(
   env: Env,
   review: string,
@@ -15,9 +15,9 @@ export async function createJob(
   kind: Execution["kind"],
   command: string[],
   version: Version,
-  snapshot: Snapshot,
+  snapshotId: string,
   attempt = 1,
-  context?: { profile: Profile; snapshot: Snapshot },
+  context?: { profile: Profile },
 ): Promise<void> {
   const store = new Store(env);
   invariant(!(await store.cancelled(review)), "cancelled");
@@ -29,7 +29,8 @@ export async function createJob(
     kind,
     command,
     version,
-    snapshot: snapshot[version],
+    snapshot_id: snapshotId,
+    needs: needs(kind, version),
     limits: {
       wall_ms: Math.min(120000, await store.remainingMs(review)),
       memory_mb: env.RUNNER_BACKEND === "sandbox" ? 8192 : 2048,

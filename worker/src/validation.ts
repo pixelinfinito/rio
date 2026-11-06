@@ -6,7 +6,6 @@ import type {
   Graph,
   Hypothesis,
   LineageRef,
-  Snapshot,
   Submission,
   VoteAnswer,
 } from "./types";
@@ -132,33 +131,10 @@ export function safePath(path: unknown): asserts path is string {
     "invalid repository path",
   );
 }
-export function validateSnapshot(value: any): asserts value is Snapshot {
-  invariant(
-    value && typeof value === "object" && value.base && value.head,
-    "base and head required",
-  );
-  let bytes = 0,
-    count = 0;
-  for (const tree of [value.base, value.head]) {
-    invariant(typeof tree === "object" && !Array.isArray(tree), "invalid tree");
-    for (const [path, file] of Object.entries<any>(tree)) {
-      safePath(path);
-      invariant(
-        file &&
-          typeof file.content === "string" &&
-          [0o100644, 0o100755, 0o120000].includes(file.mode),
-        "invalid file",
-      );
-      bytes += new TextEncoder().encode(file.content).length;
-      count++;
-    }
-  }
-  invariant(
-    bytes <= 32 * 1024 * 1024 && count <= 100000,
-    "snapshot limit exceeded",
-  );
-}
-export function validateGraph(graph: Graph, tree: Snapshot["head"]) {
+/**
+ * `lines` maps each regular (non-link) file a node may cite to its line count.
+ */
+export function validateGraph(graph: Graph, lines: Map<string, number>) {
   invariant(
     graph &&
       Array.isArray(graph.nodes) &&
@@ -173,12 +149,11 @@ export function validateGraph(graph: Graph, tree: Snapshot["head"]) {
     invariant(
       !ids.has(node.id) &&
         typeof node.symbol_path === "string" &&
-        tree[node.path] &&
-        tree[node.path].mode !== 0o120000 &&
+        lines.has(node.path) &&
         Number.isInteger(node.line_start) &&
         node.line_start > 0 &&
         node.line_end >= node.line_start &&
-        node.line_end <= tree[node.path].content.split("\n").length,
+        node.line_end <= lines.get(node.path)!,
       "invalid graph node",
     );
     ids.add(node.id);

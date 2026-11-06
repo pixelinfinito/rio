@@ -9,6 +9,7 @@ import type {
   Graph,
   Hypothesis,
   ModelResponse,
+  File,
   Snapshot,
   Submission,
   Version,
@@ -37,20 +38,30 @@ import {
   type LineageContext,
   type Tree,
 } from "./lineage";
+import {
+  StoredSnapshot,
+  compareUtf8,
+  materialize,
+  type Entry,
+  type SnapshotReader,
+  type TreeReader,
+} from "./snapshot";
 export interface WorkflowParams {
   review_id: string;
   snapshot_key: string;
 }
-function changedCode(changed: Submission["changed"], snapshot: Snapshot) {
+async function changedCode(
+  changed: Submission["changed"],
+  snapshot: SnapshotReader,
+) {
   const previews: any[] = [];
   let remaining = 16000;
   for (const file of changed) {
     const preview: any = { path: file.path };
     for (const version of ["base", "head"] as const) {
-      const entry =
-        snapshot[version][
-          version === "base" ? (file.old_path ?? file.path) : file.path
-        ];
+      const path =
+        version === "base" ? (file.old_path ?? file.path) : file.path;
+      const entry = (await materialize(snapshot[version], [path]))[path];
       if (!entry) preview[version] = null;
       else if (entry.encoding === "base64") preview[version] = { binary: true };
       else {
@@ -73,6 +84,34 @@ function changedCode(changed: Submission["changed"], snapshot: Snapshot) {
   }
   return previews;
 }
+/** Paths whose content or mode differ between two trees, by manifest hash. */
+async function differing(before: TreeReader, after: TreeReader) {
+  const paths: string[] = [];
+  const a = before.list()[Symbol.asyncIterator](),
+    b = after.list()[Symbol.asyncIterator]();
+  let x = await a.next(),
+    y = await b.next();
+  while (!x.done || !y.done) {
+    const order = x.done
+      ? 1
+      : y.done
+        ? -1
+        : compareUtf8((x.value as Entry).path, (y.value as Entry).path);
+    if (order < 0) {
+      paths.push(x.value.path);
+      x = await a.next();
+    } else if (order > 0) {
+      paths.push(y.value.path);
+      y = await b.next();
+    } else {
+      if (x.value.hash !== y.value.hash || x.value.mode !== y.value.mode)
+        paths.push(x.value.path);
+      x = await a.next();
+      y = await b.next();
+    }
+  }
+  return paths;
+}
 export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
   async run(event: WorkflowEvent<WorkflowParams>, step: WorkflowStep) {
     const id = event.payload.review_id,
@@ -92,7 +131,21 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
       return row;
     });
     const submission = await store.get<Submission>(load.submission_key),
-      snapshot = await store.get<Snapshot>(event.payload.snapshot_key);
+      snapshot = await StoredSnapshot.open(
+        this.env,
+        event.payload.snapshot_key,
+      );
+    // Steps read files on demand; triage needs only the changed files.
+    const changedFiles: Snapshot = {
+      base: await materialize(
+        snapshot.base,
+        submission.changed.flatMap((f) => [f.path, f.old_path ?? f.path]),
+      ),
+      head: await materialize(
+        snapshot.head,
+        submission.changed.map((f) => f.path),
+      ),
+    };
     let plan: Plan;
     const report = structuredClone(submission.report);
     const executions: Record<string, ExecutionResult> = {},
@@ -104,7 +157,9 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
     // Lineage state is read once, durably, so replays see the same round and history.
     let lineage: LineageContext | null = null;
     const trees = new Map<string, Tree>();
-    let previousHead: Snapshot | undefined;
+    // Head files at the prior findings' locations, for relocation.
+    let head: Record<string, File> = {};
+    let previousHead: SnapshotReader | undefined;
     let incremental: Submission["changed"] = [];
     let agentsVerified = false;
     let diffOnlyAudit: Record<string, string[]> | undefined;
@@ -141,9 +196,9 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           kind,
           command,
           version,
-          snapshot,
+          submission.snapshot_id,
           attempt,
-          { profile: submission.profile, snapshot },
+          kind === "run" ? undefined : { profile: submission.profile },
         );
         return job;
       });
@@ -178,7 +233,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
       );
       const module = s.uses.split("@")[0];
       if (module === "rio/triage") {
-        plan = triage({ ...submission, report, graphs }, snapshot);
+        plan = triage({ ...submission, report, graphs }, changedFiles);
         await step.do(`budget-${s.id}`, () =>
           store.selectBudget(id, submission.profile, plan.mode),
         );
@@ -301,7 +356,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             const intent = diffOnly
               ? (lineage!.intent ?? submission.intent)
               : submission.intent;
-            const prompt = `Review the change independently for ${agent}. Inspect actual base and head code before making a claim; symbol names and graph hashes are not source code. Use read_file for omitted or truncated code. Suggested focus is only a hint; tools can read/search either entire repository snapshot. Classify concrete correctness regressions as defect, uncertain hazards as risk, style and repeated tool diagnostics accurately. Omit guidance unless citing a real owner-guidance document supplied below; source-code lines are not owner guidance. Check guidance/contradiction and guidance/stale risks against existing guidance lines: emit category risk, cite guidance:{path,line} and the changed code behavior. Return {result:hypotheses[]}.${roundContext}\n${dataBlock("intent", filteredLines(intent.split("\n")))}\n${dataBlock("suggested_focus", reviewed.focus)}\n${dataBlock("graph", graphs)}\n${dataBlock("changed code excerpts", changedCode(reviewed.changed, reviewed.snapshot))}\n${dataBlock("deterministic checks", report.checks)}\n${guidanceBlock(submission.owner_guidance, reviewed.focus)}`;
+            const prompt = `Review the change independently for ${agent}. Inspect actual base and head code before making a claim; symbol names and graph hashes are not source code. Use read_file for omitted or truncated code. Suggested focus is only a hint; tools can read/search either entire repository snapshot. Classify concrete correctness regressions as defect, uncertain hazards as risk, style and repeated tool diagnostics accurately. Omit guidance unless citing a real owner-guidance document supplied below; source-code lines are not owner guidance. Check guidance/contradiction and guidance/stale risks against existing guidance lines: emit category risk, cite guidance:{path,line} and the changed code behavior. Return {result:hypotheses[]}.${roundContext}\n${dataBlock("intent", filteredLines(intent.split("\n")))}\n${dataBlock("suggested_focus", reviewed.focus)}\n${dataBlock("graph", graphs)}\n${dataBlock("changed code excerpts", await changedCode(reviewed.changed, reviewed.snapshot))}\n${dataBlock("deterministic checks", report.checks)}\n${guidanceBlock(submission.owner_guidance, reviewed.focus)}`;
             const result = validateHypotheses(
               await converse({
                 gateway,
@@ -333,7 +388,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             hypotheses,
             lineage,
             trees,
-            snapshot.head,
+            head,
             graphs.head,
             new Set(incremental.map((f) => f.path)),
           );
@@ -361,7 +416,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             guidance: submission.owner_guidance,
             snapshot,
             context: {
-              snapshot,
+              snapshot: { head: {} },
               head: graphs.head,
               executions,
               guidance: submission.owner_guidance,
@@ -424,22 +479,46 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
       });
       if (lineageKey) {
         lineage = await store.get<LineageContext>(lineageKey);
-        const keys = new Map<string, string>();
+        // Only the files at prior finding locations are read from earlier heads.
+        const wanted = new Map<string, { key: string; paths: Set<string> }>();
         for (const p of lineage.prior)
-          if (p.snapshot_key) keys.set(p.snapshot_id, p.snapshot_key);
-        if (lineage.previous_head && lineage.previous_head_key)
-          keys.set(lineage.previous_head, lineage.previous_head_key);
-        for (const [snapshotId, key] of keys)
-          trees.set(snapshotId, (await store.get<Snapshot>(key)).head);
-        if (lineage.diff_only && lineage.previous_head) {
-          previousHead = {
-            base: {},
-            head: trees.get(lineage.previous_head)!,
-          };
-          incremental = incrementalChanges(previousHead.head, snapshot.head);
+          if (p.snapshot_key) {
+            const w = wanted.get(p.snapshot_id) ?? {
+              key: p.snapshot_key,
+              paths: new Set<string>(),
+            };
+            w.paths.add(p.finding.location.path);
+            wanted.set(p.snapshot_id, w);
+          }
+        for (const [snapshotId, w] of wanted)
+          trees.set(
+            snapshotId,
+            await materialize(
+              (await StoredSnapshot.open(this.env, w.key)).head,
+              w.paths,
+            ),
+          );
+        head = await materialize(
+          snapshot.head,
+          lineage.prior.map((p) => p.finding.location.path),
+        );
+        if (
+          lineage.diff_only &&
+          lineage.previous_head &&
+          lineage.previous_head_key
+        ) {
+          previousHead = await StoredSnapshot.open(
+            this.env,
+            lineage.previous_head_key,
+          );
+          const paths = await differing(previousHead.head, snapshot.head);
+          incremental = incrementalChanges(
+            await materialize(previousHead.head, paths),
+            await materialize(snapshot.head, paths),
+          );
         }
       }
-      plan = triage(submission, snapshot);
+      plan = triage(submission, changedFiles);
       await step.do("budget-initial", () =>
         store.selectBudget(id, submission.profile, plan.mode),
       );
@@ -528,7 +607,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
         );
       const outcome = lineage
         ? applyLineage(report, lineage, {
-            head: snapshot.head,
+            head,
             trees,
             graph: graphs.head,
             agents_reassessed: agentsVerified,
@@ -569,7 +648,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
       if (lineage)
         try {
           applyLineage(report, lineage, {
-            head: snapshot.head,
+            head,
             trees,
             graph: graphs.head,
             agents_reassessed: false,

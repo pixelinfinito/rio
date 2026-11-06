@@ -1,66 +1,15 @@
 //! Versioned authenticated transport for the Cloudflare review endpoint.
 use anyhow::{Context, Result, ensure};
-use base64::{Engine, engine::general_purpose::STANDARD};
 use rio_core::Report;
-use rio_git::{Tree, TreeEntry};
-use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
-use std::{collections::BTreeMap, time::Duration};
+use std::time::Duration;
 use tokio_util::sync::CancellationToken;
+mod snapshot;
+pub use snapshot::{
+    MAX_BODY_BYTES, MAX_CONTENT_BYTES, MAX_FILE_BYTES, MAX_TREE_PATHS, SnapshotUpload,
+    format_bytes, format_count,
+};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct WireFile {
-    pub content: String,
-    pub mode: u32,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub encoding: Option<String>,
-}
-pub fn wire_tree(tree: &Tree) -> BTreeMap<String, WireFile> {
-    tree.iter()
-        .map(|(path, entry)| {
-            let (content, encoding) = match String::from_utf8(entry.content.clone()) {
-                Ok(content) => (content, None),
-                Err(_) => (STANDARD.encode(&entry.content), Some("base64".into())),
-            };
-            (
-                path.clone(),
-                WireFile {
-                    content,
-                    mode: entry.mode,
-                    encoding,
-                },
-            )
-        })
-        .collect()
-}
-pub fn decode_tree(tree: BTreeMap<String, WireFile>) -> Result<Tree> {
-    tree.into_iter()
-        .map(|(path, file)| {
-            rio_git::validate_tree_path(&path)?;
-            ensure!(
-                [0o100644, 0o100755, 0o120000].contains(&file.mode),
-                "unsupported snapshot mode"
-            );
-            let content = match file.encoding.as_deref() {
-                None => file.content.into_bytes(),
-                Some("base64") => STANDARD.decode(file.content)?,
-                _ => anyhow::bail!("unsupported file encoding"),
-            };
-            Ok((
-                path,
-                TreeEntry {
-                    content,
-                    mode: file.mode,
-                    object_id: String::new(),
-                },
-            ))
-        })
-        .collect()
-}
-/// Mirrors the worker's snapshot validation and `/v1/snapshots` body limit.
-const SNAPSHOT_MAX_FILES: usize = 100_000;
-const SNAPSHOT_MAX_CONTENT: usize = 32 * 1024 * 1024;
-const SNAPSHOT_MAX_BODY: usize = 40 * 1024 * 1024;
 /// A non-success HTTP status from the endpoint. Bodies are never echoed: they
 /// may contain raw provider or tool output.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -129,24 +78,18 @@ impl Client {
         path: &str,
         body: Option<&Value>,
     ) -> Result<Value> {
-        let body = body.map(serde_json::to_vec).transpose()?;
-        self.send(method, path, body, None).await
-    }
-    async fn send(
-        &self,
-        method: reqwest::Method,
-        path: &str,
-        body: Option<Vec<u8>>,
-        timeout: Option<Duration>,
-    ) -> Result<Value> {
-        self.send_url(method, self.base.join(path)?, body, timeout)
+        let body = body
+            .map(serde_json::to_vec)
+            .transpose()?
+            .map(|body| ("application/json", body));
+        self.send_url(method, self.base.join(path)?, body, None)
             .await
     }
     async fn send_url(
         &self,
         method: reqwest::Method,
         url: reqwest::Url,
-        body: Option<Vec<u8>>,
+        body: Option<(&str, Vec<u8>)>,
         timeout: Option<Duration>,
     ) -> Result<Value> {
         let mut request = self
@@ -154,10 +97,8 @@ impl Client {
             .request(method, url)
             .bearer_auth(&self.token)
             .header("rio-protocol", "1");
-        if let Some(body) = body {
-            request = request
-                .header("content-type", "application/json")
-                .body(body);
+        if let Some((content_type, body)) = body {
+            request = request.header("content-type", content_type).body(body);
         }
         if let Some(timeout) = timeout {
             request = request.timeout(timeout);
@@ -177,43 +118,6 @@ impl Client {
             bytes.extend_from_slice(&chunk);
         }
         Ok(serde_json::from_slice(&bytes)?)
-    }
-    /// Uploads both complete trees: remote checks build the repository, so review
-    /// exclusions cannot be dropped. Server limits are checked first so oversized
-    /// repositories fail with an actionable message instead of a timeout or HTTP 413.
-    pub async fn upload_snapshot(&self, base: &Tree, head: &Tree) -> Result<String> {
-        let (base, head) = (wire_tree(base), wire_tree(head));
-        let files = base.len() + head.len();
-        let content: usize = base
-            .values()
-            .chain(head.values())
-            .map(|f| f.content.len())
-            .sum();
-        ensure!(
-            files <= SNAPSHOT_MAX_FILES && content <= SNAPSHOT_MAX_CONTENT,
-            "snapshot has {files} files and {} MiB of content; the endpoint accepts at most {SNAPSHOT_MAX_FILES} files and {} MiB across base and head",
-            content.div_ceil(1024 * 1024),
-            SNAPSHOT_MAX_CONTENT / (1024 * 1024)
-        );
-        let body = serde_json::to_vec(&json!({"base":base,"head":head}))?;
-        ensure!(
-            body.len() <= SNAPSHOT_MAX_BODY,
-            "encoded snapshot is {} MiB; the endpoint accepts at most {} MiB",
-            body.len().div_ceil(1024 * 1024),
-            SNAPSHOT_MAX_BODY / (1024 * 1024)
-        );
-        let result = self
-            .send(
-                reqwest::Method::POST,
-                "v1/snapshots",
-                Some(body),
-                Some(Duration::from_secs(300)),
-            )
-            .await?;
-        Ok(result["id"]
-            .as_str()
-            .context("snapshot response omitted id")?
-            .into())
     }
     pub async fn submit(&self, submission: &Value) -> Result<String> {
         let result = self
@@ -316,7 +220,7 @@ impl Client {
 mod tests {
     use super::*;
     #[test]
-    fn endpoint_auth_and_immutable_binary_transport() {
+    fn endpoint_requires_https_except_loopback_and_no_credentials() {
         for endpoint in [
             "http://example.com",
             "https://user:password@example.com",
@@ -332,70 +236,6 @@ mod tests {
             )
             .is_ok()
         );
-        let tree: Tree = [(
-            "binary.bin".into(),
-            TreeEntry {
-                mode: 0o100644,
-                object_id: String::new(),
-                content: vec![0, 255, 1],
-            },
-        )]
-        .into();
-        let wire = wire_tree(&tree);
-        assert_eq!(wire["binary.bin"].encoding.as_deref(), Some("base64"));
-        assert_eq!(decode_tree(wire).unwrap(), tree);
-    }
-    #[tokio::test]
-    async fn sends_protocol_bearer_and_snapshot_then_returns_server_id() {
-        use std::{
-            io::{Read, Write},
-            net::TcpListener,
-        };
-        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
-        let address = listener.local_addr().unwrap();
-        let server = std::thread::spawn(move || {
-            let (mut socket, _) = listener.accept().unwrap();
-            let mut bytes = Vec::new();
-            let mut chunk = [0; 4096];
-            loop {
-                let n = socket.read(&mut chunk).unwrap();
-                bytes.extend_from_slice(&chunk[..n]);
-                if let Some(header_end) = bytes.windows(4).position(|w| w == b"\r\n\r\n") {
-                    let headers = String::from_utf8_lossy(&bytes[..header_end]).to_lowercase();
-                    let length = headers
-                        .lines()
-                        .find_map(|l| l.strip_prefix("content-length: "))
-                        .unwrap()
-                        .parse::<usize>()
-                        .unwrap();
-                    if bytes.len() >= header_end + 4 + length {
-                        assert!(
-                            headers.contains(
-                                "authorization: bearer long-enough-api-token-32-characters"
-                            )
-                        );
-                        assert!(headers.contains("rio-protocol: 1"));
-                        assert!(headers.starts_with("post /v1/snapshots "));
-                        break;
-                    }
-                }
-            }
-            let body = r#"{"id":"snapshot"}"#;
-            write!(socket,"HTTP/1.1 201 Created\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",body.len(),body).unwrap();
-        });
-        let client = Client::new(
-            &format!("http://{address}"),
-            "long-enough-api-token-32-characters".into(),
-        )
-        .unwrap();
-        assert_eq!(
-            client
-                .upload_snapshot(&Tree::new(), &Tree::new())
-                .await
-                .unwrap(),
-            "snapshot"
-        );
-        server.join().unwrap();
     }
     #[tokio::test]
     async fn lineage_404_is_absent_and_feedback_errors_keep_their_status() {

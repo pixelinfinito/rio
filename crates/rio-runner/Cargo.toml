@@ -15,12 +15,12 @@ tokio.workspace = true
 tokio-util.workspace = true
 tempfile.workspace = true
 blake3.workspace = true
+base64 = "0.22"
 gix.workspace = true
 hmac = "0.12"
 sha2 = "0.10"
 rio-core = { path = "../rio-core" }
 rio-git = { path = "../rio-git" }
-rio-client = { path = "../rio-client" }
 rio-profile = { path = "../rio-profile" }
 rio-adapters = { path = "../rio-adapters" }
 rio-engine = { path = "../rio-engine" }

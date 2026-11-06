@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS contents (tenant TEXT NOT NULL, hash TEXT NOT NULL, pack TEXT NOT NULL, offset INTEGER NOT NULL CHECK(offset >= 0), size INTEGER NOT NULL CHECK(size >= 0), created_at INTEGER NOT NULL, PRIMARY KEY(tenant,hash))

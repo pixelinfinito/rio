@@ -3556,7 +3556,7 @@ name = "rio-client"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "base64 0.22.1",
+ "blake3",
  "reqwest",
  "rio-core",
  "rio-git",
@@ -3674,13 +3674,13 @@ name = "rio-runner"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "base64 0.22.1",
  "blake3",
  "clap",
  "gix",
  "hmac",
  "reqwest",
  "rio-adapters",
- "rio-client",
  "rio-core",
  "rio-engine",
  "rio-git",
