@@ -51,9 +51,16 @@
 ## 9. Integration
 
 - [x] 9.1 Run a recorded-gateway end-to-end lineage of three rounds through the deployed-equivalent Worker: round 1 posts findings, round 2 is diff-only with held-back and auto-fixed findings and a feedback dismissal, round 4 under `rounds.cap: 3` produces the reconsider message. Verify expected footers, states and exit codes in all report formats.
-- [ ] 9.2 (Migrated from `rio-v0-2-verifier` task 9.3.) Run `cargo fmt --all --check`, `cargo clippy --workspace --all-targets --locked`, `cargo test --workspace --locked --no-fail-fast`, the Worker package checks and tests, `python3 -m unittest discover -s eval/tests -v`, generated-profile-reference verification, `openspec validate --specs` and `openspec validate rio-v0-2-review-convergence --strict`. Verify the hosted Linux/macOS/Windows CI matrix (`.github/workflows/ci.yml`) and integrated contract tests pass on the pushed branch before marking implementation complete.
+- [x] 9.2 (Migrated from `rio-v0-2-verifier` task 9.3.) Run `cargo fmt --all --check`, `cargo clippy --workspace --all-targets --locked`, `cargo test --workspace --locked --no-fail-fast`, the Worker package checks and tests, `python3 -m unittest discover -s eval/tests -v`, generated-profile-reference verification, `openspec validate --specs` and `openspec validate rio-v0-2-review-convergence --strict`. Verify the hosted Linux/macOS/Windows CI matrix (`.github/workflows/ci.yml`) and integrated contract tests pass on the pushed branch before marking implementation complete.
 
 ## Workflow follow-up
 
 - PR-thread behaviors (editing posted comments, including the capped-round reconsider message, `/rio dismiss` and `/rio review` comment handling, thread resolution) are specified here and land with the GitHub App change (v0.3); that change must not re-specify them.
 - Archive this change after its tasks, including the carried-over v0.2 acceptance gates, are complete.
+
+## Validation record (2026-11-06)
+
+Local: Rust workspace 300 tests passed with fmt and clippy clean; Worker 101 tests, contract/bundle check and Prettier; eval harness 80 tests; generated profile reference unchanged; `openspec validate --specs` and strict change validation passed. Hosted CI (Linux, macOS, Windows, Worker) passed on `0e5c1cd` after fixing a PID-read race and macOS non-blocking mock sockets in the CLI tests; the Windows failure before that was a PowerShell Gallery download error. The redeployed endpoint ran live `--since-last` rounds: round 1 posted the reproduced fixture defect, and an unchanged follow-up round carried it forward as held back without re-running agents (fixed in `c3de0fc`).
+
+Open: 1.1 needs the approved case set (`docs/evaluation/v0.2-verifier-candidates.md`), independent adjudication and live runs of both arms; 8.3 needs the `RIO_ENDPOINT_URL` and `RIO_API_TOKEN` repository secrets and a manual dispatch of `noise.yml`.
+
