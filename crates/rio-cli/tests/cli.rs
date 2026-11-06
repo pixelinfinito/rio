@@ -1091,6 +1091,8 @@ fn endpoint_presets_submit_snapshots_and_cache_verification_without_local_comman
                     }
                     Err(error) => panic!("{error}"),
                 };
+                // Accepted sockets inherit non-blocking mode on macOS and BSD.
+                stream.set_nonblocking(false).unwrap();
                 stream
                     .set_read_timeout(Some(Duration::from_secs(5)))
                     .unwrap();
