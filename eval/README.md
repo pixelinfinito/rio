@@ -242,8 +242,11 @@ exact and base64 values of every saved credential (`secrets-*.json` and the clie
 90 days (`retention_days`) are pruned. Schedule it with
 `python3 -I eval/nightly.py install --enable` (a systemd user timer at 03:00, with
 `loginctl enable-linger` so it fires while logged out) or
-`install --print-cron` for a crontab line. Adjudicate a run directory and run the
-release check against the previous release's summary.
+`install --print-cron` for a crontab line. The unit and the cron line record the
+absolute path of the `eval/nightly.py` that ran `install`, so install from a stable
+checkout (for example the main clone), not from a temporary worktree. Check the
+schedule with `systemctl --user list-timers rio-noise.timer`. Adjudicate a run
+directory and run the release check against the previous release's summary.
 
 ## Author responses, rounds to pass and the regression gate
 

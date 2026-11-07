@@ -3,11 +3,15 @@
 ## MODIFIED Requirements
 
 ### Requirement: Endpoint-only flags fail explicitly
-Flags that need a Rio endpoint (`--pr`, `--deep`, `--publish`, `--since-last`) SHALL be accepted by the parser and, when no endpoint is configured, SHALL cause the command to exit with code 2 and a message that names the flag and states that it requires a configured endpoint. With an endpoint configured, `--pr` SHALL additionally exit with code 2 when the endpoint has no GitHub App installation covering the repository's `origin`, naming `rio init` and its GitHub App step. The command SHALL NOT run any part of the review in either case.
+Flags that need a Rio endpoint (`--pr`, `--deep`, `--publish`, `--since-last`, `--fork`) SHALL be accepted by the parser and, when no endpoint is configured or `--offline` is set, SHALL cause the command to exit with code 2 and a message that names the flag and states that it requires a configured endpoint. With an endpoint configured, `--pr` SHALL additionally exit with code 2 when the endpoint has no GitHub App installation covering the repository's `origin`, naming `rio init` and its GitHub App step. The command SHALL NOT run any part of the review in either case.
 
 #### Scenario: PR flag without endpoint
 - **WHEN** `rio review --pr 123` is run with no endpoint configured
 - **THEN** the command exits with code 2 and prints a message naming `--pr` and stating that a configured endpoint is required
+
+#### Scenario: Since-last without endpoint
+- **WHEN** `rio review --since-last --offline` is run
+- **THEN** the command exits with code 2, names `--since-last` and runs no part of the review
 
 #### Scenario: PR flag without installation
 - **WHEN** `rio review --pr 123` is run against an endpoint that has no installation covering the repository's `origin`
