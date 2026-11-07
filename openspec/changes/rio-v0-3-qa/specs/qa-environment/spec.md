@@ -62,7 +62,7 @@ Persona credentials SHALL be given only as environment variable names; a literal
 - **THEN** the proposed contract starts the Compose project and uses `http://127.0.0.1:3000`
 
 ### Requirement: Readiness and failure to start
-A run SHALL restore or build the seed snapshot, start the app with `app.start`, run `app.seed` (a per-run hook for state the snapshot cannot hold, such as cache warmups) once the readiness probe succeeds, and wait at most `ready.timeout` (default 120 s). If the probe never succeeds, the QA step SHALL end `failed` with reason `app_not_ready`, keep the captured stdout and stderr as evidence, and SHALL NOT report any journey as passed.
+A run SHALL restore or build the seed snapshot, start the service doubles, start the app with `app.start`, run `app.seed` (a per-run hook for state the snapshot cannot hold, such as cache warmups) once the readiness probe succeeds, and wait at most `ready.timeout` (default 120 s). If the probe never succeeds, the QA step SHALL end `failed` with reason `app_not_ready`, keep the captured stdout and stderr as evidence, and SHALL NOT report any journey as passed.
 
 #### Scenario: App never listens
 - **WHEN** `app.start` exits before the probe succeeds

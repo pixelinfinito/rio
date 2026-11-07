@@ -88,7 +88,17 @@ Alternative rejected: snapshotting the whole container filesystem or a Docker vo
 
 Alternative rejected: re-running the seed every run with caching left to the project. That is the status quo the user flagged as too costly for large data sets.
 
+### D16. Service doubles run in the container and own the only reachable hosts
+Doubles are processes the controller starts before the app, bound to loopback ports, with the manifest's `env` templated to their URLs and injected into `app.start`. `http-mock` is a small recording server in the controller package (matchers on method, path, headers and body shape; canned responses; named behaviors switch the active response set); `smtp-capture`, `sms-capture` and `webhook-sink` are thin servers that store messages as step evidence and serve them to the harness tools; `oauth-provider` is a minimal authorization-code server issuing tokens for seeded users; `s3` is an S3-compatible in-process store backed by the `files` seed path. `custom` runs a declared command. Hostname-based dependencies are reached by mapping the host to loopback in the container's hosts file, so SDKs with hard-coded hosts work when the app accepts a base-URL override or the host mapping. Egress stays blocked, which turns an undoubled dependency into a visible `blocked_egress` entry rather than a hang.
+
+Time control uses Playwright's clock API for the browser and a `QA_FAKE_TIME` variable the app may honor; Rio does not patch the app's runtime. Generated upload files are produced by the seed build and stored in the seed snapshot under the `files` kind, so they share the fingerprint and the cache.
+
+Alternative rejected: record-and-replay against real services. The app has no egress by design, and recordings against live providers would need real credentials in the container.
+
 ## Risks / Trade-offs
+
+- [Canned responses drift from the real provider] → recordings are reviewed files in the repository, authored from SDK types; a journey that depends on a provider's exact behavior is flagged in the skill as needing a human-maintained recording.
+- [Apps with hard-coded provider hosts and TLS pinning cannot be doubled] → the init summary lists them as undoubled; the journey is skipped with `precondition_failed` rather than failing the run.
 
 - [Seed snapshots hold synthetic but realistic data and can be large] → private cache or tenant store only, size cap, prune keeping the newest three, the skill forbids production data and validation warns on personal-data patterns.
 - [Fingerprint misses a dependency and a stale seed is restored] → migrations globs are explicit in the contract, `rio qa seed status` shows both fingerprints, and `seed build --force` is one command.

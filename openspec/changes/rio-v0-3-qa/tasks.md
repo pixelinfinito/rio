@@ -29,6 +29,17 @@
 - [ ] 2a.6 Implement seed authoring in `rio qa init` (schema and migrations discovery, persona accounts from environment variables, synthetic-data instruction in the skill, personal-data warning in validate) and `rio qa seed build|prune|export`; verify CLI tests for "Init builds the seed first", "Realistic data stays synthetic" and prune keeping the newest three
 - [ ] 2a.7 Document seed data in `docs/qa.md` with a Postgres and a SQLite example; verify both examples validate and the documented commands run against the fixture app
 
+## 2b. Run fixtures
+
+- [ ] 2b.1 Add `schemas/qa-fixtures-v1.json` and manifest validation (file size limit, service kinds, behavior names, context values) and include the manifest and committed files in the seed fingerprint; verify schema tests for "Manifest validates" and "Oversized committed file rejected"
+- [ ] 2b.2 Implement generated upload files in the seed build (`image`, `pdf`, `csv`, `json`, `text`, `binary`) stored under the `files` seed kind, and the `upload_fixture` name resolution; verify a test for "Large generated file" restores without regeneration
+- [ ] 2b.3 Implement the `http-mock` server with matchers, recordings and behaviors, the `set_service_behavior` tool and per-journey reset; verify tests for "Payment double" and "Decline then approve"
+- [ ] 2b.4 Implement `smtp-capture`, `sms-capture`, `webhook-sink` and the `read_mail`, `read_sms`, `read_webhooks` tools with link extraction and step evidence; verify a test for "Registration verification link" against the fixture app
+- [ ] 2b.5 Implement `oauth-provider`, `s3` and `custom` doubles, env templating into `app.start`, the hosts-file mapping and the `blocked_egress` network-log entry and footer list; verify tests for "Undoubled dependency" and an OAuth login round trip
+- [ ] 2b.6 Implement controlled context (clock, timezone, locale, geolocation, network) at defaults and journey level and the in-step `set_network` and `set_geolocation` tools; verify tests for "Offline step" and "Fixed time"
+- [ ] 2b.7 Implement dependency detection and double proposal in `rio qa init` (env variables, SDK imports, first-start outbound hosts) and `rio qa fixtures status`; verify the "Stripe detected" scenario with a fixture that imports the Stripe SDK
+- [ ] 2b.8 Document fixtures in `docs/qa.md` with a payments double, a mail capture and an offline step example; verify the examples validate and run against the fixture app
+
 ## 3. rio-qa crate: browser recorder, probes and evidence
 
 - [ ] 3.1 Add the Node controller package under `crates/rio-qa/controller/` that launches Chromium through Playwright with tracing, console and network capture and a CDP endpoint, starts `@playwright/mcp` against it with the restricted capability set, and runs Rio's MCP server (`login`, `set_viewport`, `set_color_scheme`, `upload_fixture`, `step_done`, `observe`); verify with a Playwright test against the fixture app that each tool works and no shell tool is listed
@@ -83,7 +94,7 @@
 
 ## 8. Fixture app and evaluation
 
-- [ ] 8.1 Add `tests/fixtures/qa-sample`, a small Vite app with a SQLite-backed API, a committed `.rio/qa/seed/` (schema, seeded shopper and admin accounts, products, one saved address), a login, a registration flow, a checkout flow and switchable seeded defects (disabled save button, missing confirmation, gradient hero, accent-border cards, a raw primitive, low contrast in dark mode, a console error, a fixed banner covering the pay button only on phones, 28 px icon buttons, a 14 px email input, a hover-only menu); verify `npm run build` passes and a toggle file selects which defects are present
+- [ ] 8.1 Add `tests/fixtures/qa-sample`, a small Vite app with a SQLite-backed API, a committed `.rio/qa/seed/` (schema, seeded shopper and admin accounts, products, one saved address), a committed `.rio/qa/fixtures/` (a payments `http-mock` with approve and decline, mail capture for registration, one generated CSV upload), a login, a registration flow with email verification, a checkout flow and switchable seeded defects (disabled save button, missing confirmation, gradient hero, accent-border cards, a raw primitive, low contrast in dark mode, a console error, a fixed banner covering the pay button only on phones, 28 px icon buttons, a 14 px email input, a hover-only menu); verify `npm run build` passes and a toggle file selects which defects are present
 - [ ] 8.2 Add `eval/qa/` with labeled cases per seeded defect, a clean-run noise case and the metrics (precision, recall, cost and wall time per journey); verify `python3 eval/qa/run.py --local` reports the seeded defects found and the clean run's noise count
 - [ ] 8.3 Run the fixture app end to end locally with codex and with pi, record the results in `docs/evaluation/v0.3-qa-local.md`; verify the document lists every seeded defect with its finding id or a stated miss
 

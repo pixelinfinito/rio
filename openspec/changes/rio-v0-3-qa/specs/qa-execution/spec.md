@@ -50,7 +50,7 @@ Rio SHALL launch Chromium itself with tracing, screenshot, console and network c
 - **THEN** both runs produce a screenshot and a DOM snapshot per step and a trace per journey, named by the same scheme
 
 ### Requirement: Harness tool set
-The harness SHALL receive tools to navigate, inspect the accessibility tree, click, type, select, upload a fixture file, wait, log in as a persona, switch viewport and color scheme, mark a step outcome and record an observation. The harness SHALL NOT receive shell, file system or network tools.
+The harness SHALL receive tools to navigate, inspect the accessibility tree, click, type, select, upload a fixture file, wait, log in as a persona, switch viewport and color scheme, read captured mail, SMS and webhooks, set a service behavior, set network and geolocation, mark a step outcome and record an observation. The harness SHALL NOT receive shell, file system or network tools.
 
 #### Scenario: Fixture upload
 - **WHEN** a step says to upload a profile picture
