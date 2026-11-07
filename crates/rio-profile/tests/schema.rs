@@ -101,3 +101,67 @@ fn built_in_manifests_and_base_profile_validate() {
         );
     }
 }
+
+#[test]
+fn shipped_catalogs_validate_with_unique_official_ids_and_attribution() {
+    let validator = jsonschema::validator_for(&schema("module")).unwrap();
+    let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../modules/catalogs");
+    let mut names: Vec<_> = fs::read_dir(&root)
+        .unwrap()
+        .map(|entry| entry.unwrap().file_name().to_string_lossy().into_owned())
+        .collect();
+    names.sort();
+    assert_eq!(names, ["asvs-5.0.yaml", "owasp-top10-2025.yaml"]);
+    for (file, id_pattern, count) in [
+        ("owasp-top10-2025.yaml", r"^A(0[1-9]|10):2025$", 10),
+        ("asvs-5.0.yaml", r"^V(1[0-7]|[1-9])\.[1-9]$", 69),
+    ] {
+        let catalog: Value =
+            serde_yaml::from_str(&fs::read_to_string(root.join(file)).unwrap()).unwrap();
+        let errors: Vec<_> = validator
+            .iter_errors(&catalog)
+            .map(|e| e.to_string())
+            .collect();
+        assert!(errors.is_empty(), "{file}: {errors:?}");
+        assert_eq!(catalog["kind"], "catalog");
+        assert_eq!(
+            catalog["name"],
+            format!("rio/{}", file.trim_end_matches(".yaml"))
+        );
+        let notice = catalog["attribution"]["notice"].as_str().unwrap();
+        assert!(notice.contains("OWASP Foundation") && notice.contains("ShareAlike 4.0"));
+        assert_eq!(catalog["attribution"]["license"], "CC BY-SA 4.0");
+        let pattern = regex::Regex::new(id_pattern).unwrap();
+        let items = catalog["items"].as_array().unwrap();
+        assert_eq!(items.len(), count, "{file}");
+        let mut ids = std::collections::BTreeSet::new();
+        for item in items {
+            let id = item["id"].as_str().unwrap();
+            assert!(pattern.is_match(id), "{file}: {id}");
+            assert!(ids.insert(id), "{file}: duplicate {id}");
+            for key in ["title", "summary", "url"] {
+                assert!(!item[key].as_str().unwrap().trim().is_empty(), "{id} {key}");
+            }
+        }
+    }
+    // Every predicate and trace name is closed by the schema.
+    let mut catalog: Value = serde_yaml::from_str(
+        &fs::read_to_string(root.join("owasp-top10-2025.yaml")).unwrap(),
+    )
+    .unwrap();
+    catalog["items"][0]["applies_when"] = json!({"any": [{"runtime": ["node"]}]});
+    assert!(!validator.is_valid(&catalog));
+    catalog["items"][0]["applies_when"] = json!({"any": [{"node_kind": ["route"]}]});
+    assert!(!validator.is_valid(&catalog));
+    catalog["items"][0]["applies_when"] = json!({"any": [{"always": true}]});
+    catalog["items"][0]["trace"]["sinks"] = json!(["eval"]);
+    assert!(!validator.is_valid(&catalog));
+    // A catalog cannot carry step or adapter fields, and steps keep strict names.
+    catalog["items"][0]["trace"]["sinks"] = json!(["sql_query"]);
+    assert!(validator.is_valid(&catalog));
+    catalog["schema"] = json!({"type": "object"});
+    assert!(!validator.is_valid(&catalog));
+    let step = json!({"kind": "step", "name": "rio/agents.v2", "version": "0.1.0",
+        "description": "x", "schema": {}, "inputs": [], "outputs": [], "local": false});
+    assert!(!validator.is_valid(&step));
+}

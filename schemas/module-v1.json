@@ -238,7 +238,7 @@
             "pattern": "^https://"
           },
           "applies_when": {
-            "description": "The item applies when every `all` predicate and at least one `any` predicate match (an absent list matches).",
+            "description": "The item applies when every `all` predicate and at least one `any` predicate match (an absent list matches). `sink` matches when a trace sink of that kind occurs in the changed code.",
             "type": "object",
             "properties": {
               "all": {
@@ -316,6 +316,43 @@
                       },
                       "required": [
                         "sensitive_path"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "sink": {
+                          "type": "array",
+                          "items": {
+                            "enum": [
+                              "sql_query",
+                              "shell_command",
+                              "filesystem_path",
+                              "html_output",
+                              "redirect",
+                              "deserialization",
+                              "crypto_operation",
+                              "authorization_check",
+                              "authentication_check",
+                              "log_output",
+                              "outbound_request",
+                              "template_render",
+                              "unsafe_memory",
+                              "error_response",
+                              "session_state",
+                              "secret_value",
+                              "token_handling",
+                              "dependency_manifest",
+                              "file_upload"
+                            ]
+                          },
+                          "minItems": 1,
+                          "uniqueItems": true
+                        }
+                      },
+                      "required": [
+                        "sink"
                       ],
                       "additionalProperties": false
                     },
@@ -410,6 +447,43 @@
                       },
                       "required": [
                         "sensitive_path"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "sink": {
+                          "type": "array",
+                          "items": {
+                            "enum": [
+                              "sql_query",
+                              "shell_command",
+                              "filesystem_path",
+                              "html_output",
+                              "redirect",
+                              "deserialization",
+                              "crypto_operation",
+                              "authorization_check",
+                              "authentication_check",
+                              "log_output",
+                              "outbound_request",
+                              "template_render",
+                              "unsafe_memory",
+                              "error_response",
+                              "session_state",
+                              "secret_value",
+                              "token_handling",
+                              "dependency_manifest",
+                              "file_upload"
+                            ]
+                          },
+                          "minItems": 1,
+                          "uniqueItems": true
+                        }
+                      },
+                      "required": [
+                        "sink"
                       ],
                       "additionalProperties": false
                     },
