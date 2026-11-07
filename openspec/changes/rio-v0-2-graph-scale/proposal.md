@@ -16,12 +16,13 @@ Ignore rules are also rebuilt from every `.gitignore` for each candidate path. I
 - **Ignore rules compiled once per tree** instead of once per candidate path.
 - **Every graph build has a deadline.** Endpoint mode and the runner's `graph` and `static` jobs now stop at a deadline like local reviews already do. The slice is marked truncated, and the report says the graph was cut at its deadline.
 - **Same output.** For a given repository, change and options, the graph is identical to today's whenever the deadline is not reached. The existing graph tests stay unchanged.
+- **Analysis artifacts get their own bound.** Found in the live ruff run: the container built the graph, but its JSON (several MiB) exceeded the runner's 1 MiB output limit, which also capped the trusted runner's artifact. Command output keeps its 1 MiB bound. The `checks`, `graph` and `static` artifact is returned separately, bounded at 12 MiB, and no longer copied into stdout.
 - **Measured on ruff.** A local measurement command reports graph build time and work counts for any repository and base/head pair. The ruff case must build its graph without reaching the deadline, on the development machine and in the runner container. Stopping at the node cap is still allowed.
 
 ## Capabilities
 
 ### New Capabilities
-None.
+- `runner-results`: what a runner job returns to the endpoint, with separate bounds for untrusted command output and Rio's own analysis artifact.
 
 ### Modified Capabilities
 - `impact-graph`: "Bounded expansion" gains a deadline that applies to every graph build and records why a slice was truncated. A new requirement covers deterministic output, repository-scale cost, and the ruff acceptance case.

@@ -67,6 +67,18 @@ A `graph-bench` example in `rio-graph` takes a git repository, base and head. It
 
 The equivalence tests compare the new builder against the current implementation on the existing graph fixtures and a generated many-file repository. The current implementation is kept test-only, as `legacy_slice`, until this change is archived.
 
+### D8. Analysis artifacts outside command output
+`execute.py` reads `rio-runner inside` stdout as the artifact, with its own 12 MiB cap (`limits.artifact_bytes`, set by `createJob` for analysis jobs). stderr keeps the 1 MiB `output_bytes` cap, and the result's `stdout` is empty for analysis jobs.
+
+The bounds are enforced at each hop:
+- **Executor:** passing the cap kills the process group and marks the result truncated, as the output cap does.
+- **Worker:** `validateResult` bounds the serialized artifact by `artifact_bytes`.
+- **Sandbox:** the Durable Object accepts `artifact_bytes` up to 12 MiB.
+
+The self-hosted path already allows 16 MiB completion bodies, enough for a 12 MiB artifact plus the result envelope.
+
+Alternative rejected: raising `output_bytes` for analysis jobs. The artifact would be copied twice (as escaped stdout and as parsed JSON), which nears the 16 MiB completion limit, and the cap on untrusted command output would be weakened for no benefit.
+
 ## Risks / Trade-offs
 
 - **The ruff case may still truncate on 2 vCPU if parsing dominates.** Mitigation: the bench measures parse time separately. If it does not fit, the fallback is to raise the runner job's wall limit for `graph` jobs, which is within Sandbox limits. Changing semantics is not a fallback.

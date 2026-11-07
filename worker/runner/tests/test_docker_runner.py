@@ -45,7 +45,7 @@ class DockerRunner(unittest.TestCase):
                 ]
             job = {'protocol': 1, 'network': False, 'kind': kind, 'job_id': uuid.uuid4().hex, 'attempt': 1, 'version': 'head',
                    'command': ['this-command-must-never-run'], 'snapshot_id': 'a' * 64, 'needs': ['base', 'head'], 'context': {'profile': analysis_profile},
-                   'limits': {'wall_ms': 10000, 'output_bytes': 1048576}}
+                   'limits': {'wall_ms': 10000, 'output_bytes': 1048576, 'artifact_bytes': 12 * 1024 * 1024}}
             name = f'rio-test-{job["job_id"]}'
             try:
                 result = subprocess.run(['docker', 'run', '-i', '--name', name, '--network', 'none', '--read-only', '--cap-drop', 'ALL',
@@ -56,6 +56,8 @@ class DockerRunner(unittest.TestCase):
                 execution = json.loads(result.stdout)
                 self.assertEqual(execution['exit_code'], 0, execution['stderr'])
                 self.assertTrue(execution['artifact']['graphs']['head']['nodes'])
+                # The artifact is returned once, not echoed as command output.
+                self.assertEqual(execution['stdout'], '')
                 checks = execution['artifact']['report']['checks']
                 if kind == 'graph':
                     self.assertEqual(checks, [])

@@ -187,6 +187,8 @@ export interface Execution {
     memory_mb: number;
     cpu: number;
     output_bytes: number;
+    // Analysis jobs only: bound on the trusted runner's artifact, kept out of stdout.
+    artifact_bytes?: number;
   };
   network: false;
 }

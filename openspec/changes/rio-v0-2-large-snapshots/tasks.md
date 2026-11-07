@@ -25,11 +25,16 @@
 ## 5. Integration
 
 - [x] 5.1 Run the full local suites (`cargo fmt --all --check`, `cargo clippy --workspace --all-targets --locked -- -D warnings`, `cargo test --workspace --locked`, Worker `npm run check` and `npx vitest run`, `python3 -m unittest discover -s eval/tests`, `RIO_TEST_DOCKER=1` runner tests), redeploy with `rio deploy` and the rebuilt runner image, and push so hosted CI runs. Verify all pass, including the Linux/macOS/Windows matrix.
-- [ ] 5.2 Live check on the deployed endpoint with the largest approved evaluation case (HS-RS-04, astral-sh/ruff, 144.5 MiB base+head) and one Python case: the review completes with checks executed in the container, and a second review of the same repository uploads only new contents. Verify by the review reports, the upload byte counts printed by the CLI, and that the eight previously oversized cases now pass the CLI limit check.
+- [x] 5.2 Live check on the deployed endpoint with the largest approved evaluation case (HS-RS-04, astral-sh/ruff, 144.5 MiB base+head) and one Python case: the review completes with checks executed in the container, and a second review of the same repository uploads only new contents. Verify by the review reports, the upload byte counts printed by the CLI, and that the eight previously oversized cases now pass the CLI limit check.
+  Completed through `rio-v0-2-graph-scale` task 4.3 (2026-11-07):
+  - **ruff HS-RS-04:** the first upload was 72.1 MiB in 9,318 new contents (20,056 files). Later reviews uploaded 0 B.
+  - **Container checks:** `graph` and `checks` ran in the container and returned their artifacts (review `4b83a147-…`).
+  - **fastapi HS-PY-04:** 27.3 MiB uploaded, then 709.1 KiB for the next commit.
+  - **Limit check:** all eight formerly oversized cases pass; the largest is ruff at 72.1 MiB distinct.
+  - **Status:** both reviews were `partial` because the agents used up the profile's token budget, not because of the snapshot path.
 
 ## Workflow follow-up
 
-- Task 5.2 is blocked by local graph building on the ruff case (it never reached the upload in 30 min and 2 h runs); `rio-v0-2-graph-scale` fixes this and completes 5.2 in its task 4.3.
 
 - Resume task 1.1 of `rio-v0-2-review-convergence` with the approved case set unchanged once this change is applied.
 - Archive this change after its tasks are complete.

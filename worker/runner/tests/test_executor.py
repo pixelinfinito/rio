@@ -4,6 +4,7 @@ import io
 import json
 from pathlib import Path
 import tarfile
+import tempfile
 import unittest
 
 spec = importlib.util.spec_from_file_location('executor', Path(__file__).resolve().parents[1] / 'execute.py')
@@ -137,6 +138,44 @@ print(json.dumps(out))'''
         result = self.execute(job)
         self.assertTrue(result['truncated'])
         self.assertLessEqual(len(result['stdout']) + len(result['stderr']), 4096)
+
+    def analysis(self, artifact_size, artifact_bytes):
+        """Runs a graph job whose fake runner prints a JSON artifact of about `artifact_size` bytes."""
+        with tempfile.TemporaryDirectory() as directory:
+            runner = Path(directory) / 'rio-runner'
+            runner.write_text('#!/usr/bin/python3\nimport json, sys\nsys.stdin.read()\n'
+                              f'print(json.dumps({{"graphs": "x" * {artifact_size}}}))\n'
+                              'print("analysis log", file=sys.stderr)\n')
+            runner.chmod(0o755)
+            job = self.job(['ignored'], kind='graph', needs=('base', 'head'))
+            job['limits'].update(output_bytes=1048576, artifact_bytes=artifact_bytes)
+            original, executor.RUNNER = executor.RUNNER, str(runner)
+            try:
+                return self.execute(job, [('base/a.txt', b'a', 0o644), ('head/a.txt', b'b', 0o644)])
+            finally:
+                executor.RUNNER = original
+
+    def test_analysis_artifacts_have_their_own_bound_and_are_not_echoed(self):
+        result = self.analysis(3 * 1024 * 1024, 12 * 1024 * 1024)
+        self.assertEqual(result['exit_code'], 0)
+        self.assertFalse(result['truncated'])
+        self.assertEqual(result['stdout'], '')
+        self.assertEqual(result['stderr'], 'analysis log\n')
+        self.assertEqual(len(result['artifact']['graphs']), 3 * 1024 * 1024)
+        oversized = self.analysis(2 * 1024 * 1024, 1024 * 1024)
+        self.assertTrue(oversized['truncated'])
+        self.assertNotIn('artifact', oversized)
+        self.assertEqual(oversized['stdout'], '')
+
+    def test_artifact_limit_is_declared_only_for_analysis_jobs(self):
+        job = self.job(['/bin/true'])
+        job['limits']['artifact_bytes'] = 1024
+        with self.assertRaises(AssertionError):
+            self.execute(job)
+        job = self.job(['ignored'], kind='graph', needs=('base', 'head'))
+        job['limits']['artifact_bytes'] = 13 * 1024 * 1024
+        with self.assertRaises(AssertionError):
+            self.execute(job, [])
 
     def test_network_enabled_protocol_is_rejected_before_spawning(self):
         job = self.job(['/bin/true'])

@@ -15,6 +15,10 @@ import time
 
 
 HEADER_LIMIT = 16 * 1024 * 1024
+# Rio's own analysis artifact (stdout of `rio-runner inside`) has its own bound; command
+# output keeps `output_bytes`.
+ARTIFACT_LIMIT = 12 * 1024 * 1024
+RUNNER = '/usr/local/bin/rio-runner'
 VERSIONS = ('base', 'head')
 
 
@@ -59,6 +63,9 @@ def execute(stream):
     assert job['protocol'] == 1 and job['network'] is False
     limits = job['limits']
     assert 0 < limits['wall_ms'] <= 120000 and 0 < limits['output_bytes'] <= 1048576
+    analysis = job['kind'] != 'run'
+    artifact_bytes = limits.get('artifact_bytes', 0)
+    assert (0 < artifact_bytes <= ARTIFACT_LIMIT) if analysis else not artifact_bytes, 'invalid artifact limit'
     needs = job['needs']
     assert isinstance(needs, list) and len(set(needs)) == len(needs) and set(needs) <= set(VERSIONS)
     if job['kind'] == 'run':
@@ -76,7 +83,7 @@ def execute(stream):
         command = job['command']
         assert isinstance(command, list) and 0 < len(command) <= 128 and all(isinstance(x, str) and len(x) <= 16000 for x in command)
         if job['kind'] in ('checks', 'graph', 'static'):
-            command = ['/usr/local/bin/rio-runner', 'inside', job['kind'], '--base', str(root / 'base'), '--head', str(root / 'head')]
+            command = [RUNNER, 'inside', job['kind'], '--base', str(root / 'base'), '--head', str(root / 'head')]
             cwd = root / 'head'
         else:
             assert job['kind'] == 'run'
@@ -108,7 +115,10 @@ def execute(stream):
                 if not chunk:
                     selector.unregister(key.fileobj)
                     continue
-                room = limits['output_bytes'] - sum(len(b) for b in output.values())
+                if analysis and key.data == 'stdout':
+                    room = artifact_bytes - len(output['stdout'])
+                else:
+                    room = limits['output_bytes'] - len(output['stderr']) - (0 if analysis else len(output['stdout']))
                 output[key.data].extend(chunk[:max(0, room)])
                 if len(chunk) > room:
                     truncated = True
@@ -124,9 +134,14 @@ def execute(stream):
         selector.close()
         process.stdout.close()
         process.stderr.close()
-        result = dict(outcome='exited', job_id=job['job_id'], attempt=job['attempt'], version=job['version'], exit_code=process.returncode, timed_out=timed_out, truncated=truncated, **{k: v.decode('utf-8', errors='replace') for k, v in output.items()})
-        if job['kind'] != 'run' and process.returncode == 0:
-            result['artifact'] = json.loads(result['stdout'])
+        streams = {k: v.decode('utf-8', errors='replace') for k, v in output.items()}
+        if analysis:
+            # The artifact is returned once, parsed, never echoed as command output.
+            artifact = streams['stdout']
+            streams['stdout'] = ''
+        result = dict(outcome='exited', job_id=job['job_id'], attempt=job['attempt'], version=job['version'], exit_code=process.returncode, timed_out=timed_out, truncated=truncated, **streams)
+        if analysis and process.returncode == 0 and not truncated:
+            result['artifact'] = json.loads(artifact)
         return result
 
 

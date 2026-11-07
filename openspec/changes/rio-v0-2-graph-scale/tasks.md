@@ -22,6 +22,11 @@ Baseline (2026-11-07, this machine, today's builder, one thread):
 
 - [x] 3.1 Use `build_until` with a 120 s graph budget in `rio-cli` endpoint mode, and with `limits.wall_ms` minus a margin (15 s, or a quarter of a shorter limit) in `rio-runner inside`. Share the truncation-reason notes with `rio-engine`. Verify with a test where an always-expired deadline gives a truncated slice and the deadline note in the endpoint report, and with runner unit tests for the deadline computed from the header.
 
+- [x] 3.2 Return analysis artifacts separately from command output with a 12 MiB cap (design D8): `limits.artifact_bytes` in `createJob`, `execute.py` capture, Worker `validateResult` and the Sandbox limit check. Verify with:
+  - executor tests: an artifact above 1 MiB is returned with empty stdout; an artifact over its cap is truncated without an artifact; `run` output is still cut at 1 MiB;
+  - Worker tests: an oversized artifact is rejected;
+  - the `RIO_TEST_DOCKER=1` runner tests with the rebuilt image.
+
 ## 4. Integration
 
 - [ ] 4.1 Run the full local suites: `cargo fmt --all --check`, `cargo clippy --workspace --all-targets --locked -- -D warnings`, `cargo test --workspace --locked`, the `RIO_TEST_DOCKER=1` runner tests with a rebuilt image, and the Worker and eval suites. Verify that all pass, then push so hosted CI passes on Linux, macOS and Windows.
@@ -31,7 +36,12 @@ Baseline (2026-11-07, this machine, today's builder, one thread):
   - Each run: 3,682 files and 25.3 MiB parsed, 2,000/2,000 nodes and 3,306/3,306 edges, deadline not reached (stopped at the node cap).
   - The 1- and 8-thread slices were identical.
   - rio `HEAD~3`: 12.6 s, against 170.3 s for the legacy builder, with identical slices.
-- [ ] 4.3 Redeploy with `rio deploy` and the rebuilt runner image, then run the live endpoint review of HS-RS-04. Verify that the CLI leaves graph building and uploads, and that the runner `graph`/`checks` job finishes within its wall limit. The resulting report and upload statistics also complete task 5.2 of `rio-v0-2-large-snapshots`.
+- [x] 4.3 Redeploy with `rio deploy` and the rebuilt runner image, then run the live endpoint review of HS-RS-04. Verify that the CLI leaves graph building and uploads, and that the runner `graph`/`checks` job finishes within its wall limit. The resulting report and upload statistics also complete task 5.2 of `rio-v0-2-large-snapshots`.
+  Live run on 2026-11-07, review `4b83a147-bb1c-440c-8ac6-db4df5c48ade`:
+  - **CLI:** built the graph (stopped at the node cap) and uploaded; the whole review took 198 s.
+  - **Container jobs:** `graph` and `checks` exited 0 within the wall limit, untruncated, with 3.17 MiB and 3.03 MiB artifacts. The secrets check passed; the toolchain checks were skipped offline.
+  - **Status `partial`:** "token budget exhausted" in the agent phase (a profile budget, outside this change).
+  - **Fixes found on the way:** the archive's ASCII name field (commit 5528ab5) and the separate artifact bound (task 3.2).
 
 ## Workflow follow-up
 

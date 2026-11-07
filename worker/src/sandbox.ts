@@ -1,7 +1,7 @@
 import { DurableObject } from "cloudflare:workers";
 import type { Env, Execution } from "./types";
 import { invariant } from "./validation";
-import { validateResult } from "./jobs";
+import { ARTIFACT_LIMIT, validateResult } from "./jobs";
 import { jobInput } from "./archive";
 export class Sandbox extends DurableObject<Env> {
   async fetch(request: Request): Promise<Response> {
@@ -11,7 +11,8 @@ export class Sandbox extends DurableObject<Env> {
         job.limits.memory_mb <= 8192 &&
         job.limits.cpu <= 2 &&
         job.limits.wall_ms <= 120000 &&
-        job.limits.output_bytes <= 1048576,
+        job.limits.output_bytes <= 1048576 &&
+        (job.limits.artifact_bytes ?? 0) <= ARTIFACT_LIMIT,
       "invalid sandbox limits",
     );
     const container = this.ctx.container;

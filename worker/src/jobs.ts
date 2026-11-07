@@ -36,6 +36,7 @@ export async function createJob(
       memory_mb: env.RUNNER_BACKEND === "sandbox" ? 8192 : 2048,
       cpu: 2,
       output_bytes: 1024 * 1024,
+      ...(kind === "run" ? {} : { artifact_bytes: ARTIFACT_LIMIT }),
     },
     network: false,
     context,
@@ -49,6 +50,8 @@ export async function createJob(
     .run();
   await env.JOBS.send({ review_id: review, job_id: job, attempt });
 }
+// The trusted runner's analysis artifact is bounded apart from command output.
+export const ARTIFACT_LIMIT = 12 * 1024 * 1024;
 export function validateResult(
   value: any,
   payload: Execution,
@@ -70,6 +73,13 @@ export function validateResult(
       payload.limits.output_bytes + 4096,
     "runner output limit exceeded",
   );
+  if (value.artifact !== undefined)
+    invariant(
+      payload.kind !== "run" &&
+        new TextEncoder().encode(JSON.stringify(value.artifact)).length <=
+          (payload.limits.artifact_bytes ?? 0) + 4096,
+      "runner artifact limit exceeded",
+    );
 }
 export async function finishJob(
   env: Env,

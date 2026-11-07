@@ -4,7 +4,7 @@ import { app } from "../src/index";
 import type { Env, File, Snapshot } from "../src/types";
 import { hash } from "../src/validation";
 import { jobToken } from "../src/auth";
-import { createJob } from "../src/jobs";
+import { createJob, validateResult } from "../src/jobs";
 import { Store } from "../src/storage";
 import { jobInput } from "../src/archive";
 import { Tools } from "../src/tools";
@@ -631,6 +631,48 @@ describe("runner archives", () => {
     );
     expect(Object.keys(run.files).every((n) => n.startsWith("base/"))).toBe(
       true,
+    );
+  });
+  it("bounds analysis artifacts apart from command output", async () => {
+    const { id, snapshot: snapshotId } = await review();
+    await createJob(
+      runtime,
+      id,
+      "graph",
+      "graph",
+      ["rio-internal"],
+      "head",
+      snapshotId,
+      1,
+      {
+        profile: {} as any,
+      },
+    );
+    await createJob(runtime, id, "run", "run", ["true"], "head", snapshotId);
+    const graph = await payload(id, "graph"),
+      run = await payload(id, "run");
+    expect(graph.limits.artifact_bytes).toBe(12 * MiB);
+    expect(run.limits.artifact_bytes).toBeUndefined();
+    const result = (job: any, artifact: unknown) => ({
+      job_id: job.job_id,
+      attempt: 1,
+      version: "head",
+      exit_code: 0,
+      stdout: "",
+      stderr: "",
+      timed_out: false,
+      truncated: false,
+      artifact,
+    });
+    // A 4 MiB graph is far beyond the 1 MiB output bound, but within its own.
+    expect(() =>
+      validateResult(result(graph, { graphs: "x".repeat(4 * MiB) }), graph),
+    ).not.toThrow();
+    expect(() =>
+      validateResult(result(graph, { graphs: "x".repeat(13 * MiB) }), graph),
+    ).toThrow("runner artifact limit exceeded");
+    expect(() => validateResult(result(run, { forged: true }), run)).toThrow(
+      "runner artifact limit exceeded",
     );
   });
   it("serves the archive only with that job's capability", async () => {
