@@ -11,6 +11,10 @@ use crate::lineage::{BranchLineage, LocalLineage};
 use tokio_util::sync::CancellationToken;
 /// Wall-time budget for building the impact graph before an endpoint review.
 const GRAPH_BUDGET: std::time::Duration = std::time::Duration::from_secs(120);
+/// JSON bytes per graph version in the submission. Edges dominate large slices
+/// (tens of thousands at two hops in big repositories), and the endpoint caps the
+/// submission body; the runner rebuilds the complete graph from the snapshot.
+const SUBMITTED_GRAPH_BYTES: usize = 2 * 1024 * 1024;
 
 pub struct EndpointRequest<'a> {
     pub url: &'a str,
@@ -140,6 +144,13 @@ pub async fn review(
     ) {
         report.footer.notes.push(note);
     }
+    let mut submitted = graph.clone();
+    if submitted.bound(SUBMITTED_GRAPH_BYTES) {
+        report.footer.notes.push(format!(
+            "Submitted impact graph bounded to {} per version; the runner rebuilds the complete graph",
+            rio_client::format_bytes(SUBMITTED_GRAPH_BYTES as u64)
+        ));
+    }
     let upload = client.upload_snapshot(&changes.base, &changes.head).await?;
     eprintln!(
         "snapshot: uploaded {} in {} new contents ({} in {} distinct contents, {} files total)",
@@ -155,7 +166,7 @@ pub async fn review(
         Some(lineage) => Some(lineage_before(&client, &cache.options, lineage).await?),
         None => None,
     };
-    let mut submission = json!({"protocol":1,"snapshot_id":snapshot_id,"profile":profile,"report":report,"changed":changed,"graphs":{"base":graph.base,"head":graph.head},"owner_guidance":guidance,"intent":format!("Review the change from {} to {}",changes.base_id,changes.head_id),"fork":fork,"mode":if deep{"deep"}else{"fast"}});
+    let mut submission = json!({"protocol":1,"snapshot_id":snapshot_id,"profile":profile,"report":report,"changed":changed,"graphs":{"base":submitted.base,"head":submitted.head},"owner_guidance":guidance,"intent":format!("Review the change from {} to {}",changes.base_id,changes.head_id),"fork":fork,"mode":if deep{"deep"}else{"fast"}});
     if let Some(lineage) = &lineage {
         submission["lineage"] = lineage.submission();
     }

@@ -1,6 +1,6 @@
 import { env, applyD1Migrations } from "cloudflare:test";
 import { beforeAll, beforeEach, describe, it, expect } from "vitest";
-import { app } from "../src/index";
+import worker, { app } from "../src/index";
 import { D1Ledger, Store } from "../src/storage";
 import { hash, canonical } from "../src/validation";
 import { jobToken, sign } from "../src/auth";
@@ -261,6 +261,49 @@ describe("Worker API and storage", () => {
     );
     expect(await new Store(runtime).cancelled(id)).toBe(true);
   });
+  it("records a runner backend failure on the last queue delivery instead of waiting for the step timeout", async () => {
+    const id = crypto.randomUUID();
+    await runtime.DB.prepare(
+      "INSERT INTO reviews(id,tenant,submission_key,status,created_at,token_limit,deadline) VALUES(?,?,?,'queued',?,?,?)",
+    )
+      .bind(id, "owner", `reviews/${id}/submission.json`, Date.now(), 100000, Date.now() + 60000)
+      .run();
+    await createJob(runtime, id, "job-fail", "checks", ["rio-internal", "rio/checks"], "head", snapshotId, 1, { profile });
+    const sandboxEnv = {
+      ...runtime,
+      RUNNER_BACKEND: "sandbox",
+      SANDBOX: {
+        idFromName: (name: string) => name,
+        get: () => ({
+          fetch: async () => {
+            throw new Error("Cloudflare Container is unavailable");
+          },
+        }),
+      },
+    } as unknown as Env;
+    const outcomes: string[] = [];
+    const message = (attempts: number) => ({
+      body: { review_id: id, job_id: "job-fail", attempt: 1 },
+      attempts,
+      ack: () => outcomes.push(`ack:${attempts}`),
+      retry: () => outcomes.push(`retry:${attempts}`),
+    });
+    await worker.queue({ messages: [message(1), message(2)] } as any, sandboxEnv);
+    expect(outcomes).toEqual(["retry:1", "retry:2"]);
+    expect(
+      (await runtime.DB.prepare("SELECT status FROM jobs WHERE id=?").bind("job-fail").first<any>()).status,
+    ).toBe("leased");
+    await worker.queue({ messages: [message(3)] } as any, sandboxEnv);
+    expect(outcomes.at(-1)).toBe("ack:3");
+    const row = await runtime.DB.prepare("SELECT status,result_key FROM jobs WHERE id=?").bind("job-fail").first<any>();
+    expect(row.status).toBe("completed");
+    const result = await new Store(runtime).get<any>(row.result_key);
+    expect(result.outcome).toBe("runner_failed");
+    expect(result.exit_code).toBe(1);
+    expect(result.stderr).toBe("runner backend: Cloudflare Container is unavailable");
+    expect(fakeWorkflow.events.at(-1)).toMatchObject({ id, type: "job-job-fail-1" });
+  });
+
   it("publishes one immutable winner for racing completions and retains cancelled job evidence", async () => {
     const id = await createReview(),
       store = new Store(runtime);

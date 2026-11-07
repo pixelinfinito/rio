@@ -25,12 +25,14 @@ Nothing is breaking. profile-v1 gains the optional `council` block; module-v1 ga
 - `council`: triggers, the evidence pack, member isolation, experiments, round 2 rules, the deterministic aggregator, degradation, and the report section.
 - `council-members`: the `member` module kind, context packs, roles, weights, the author-family rule, and the self-hosted open-weights path.
 - `council-governance`: vendor allowlist, audit record, `rio init` opt-in, retention of council artifacts.
+- `council-evaluation`: disagreement, accuracy and cost metrics; A/B against verifier-only; offline weight estimation; the keep-or-remove release rule.
 
 ### Modified Capabilities
-- `review-profiles`: `council` block and trigger predicates `verify.split`, `mode == deep`, `nightly`.
+- `review-profiles`: `council` block and trigger predicates `evidence == level`, `severity >= level`, `verify.split`, `risk_tier == tier`, `mode == fast|deep`, `nightly`.
 - `findings`: `council` block (decision, tier, members, experiments, note).
-- `review-report`: council section and metrics.
-- `eval`: disagreement, accuracy and cost metrics; A/B against verifier-only; weight estimation.
+- `review-report`: council section per councilled finding, the partial marker and cost in the footer.
+
+**Dependencies.** Builds on `rio-v0-2-review-convergence` (feedback reasons feed weights) and `rio-v0-3-core` (the `security` community profile that enables the step, PR metadata for the author-family rule, the nightly eval job as the `nightly` trigger). The step must be implementable before PR mode exists: without PR metadata the author-family rule is reported as not applicable.
 
 ## Impact
 

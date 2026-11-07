@@ -530,3 +530,52 @@ fn parsing_threads_do_not_change_the_slices() {
     assert_eq!(one, eight);
     assert_eq!(parsed_one, parsed_eight);
 }
+
+#[test]
+fn bounding_keeps_the_nodes_nearest_the_change_within_the_byte_budget() {
+    let (base, head) = example();
+    let full = graph(base, head, GraphOptions::default());
+    let mut unchanged = full.clone();
+    assert!(!unchanged.bound(usize::MAX));
+    assert_eq!(unchanged, full);
+    let mut bounded = full.clone();
+    let budget = serde_json::to_vec(&full.head).unwrap().len() / 2;
+    assert!(bounded.bound(budget));
+    assert!(bounded.head.truncated);
+    assert!(serde_json::to_vec(&bounded.head).unwrap().len() <= budget);
+    assert!(bounded.head.nodes.len() < full.head.nodes.len());
+    // Seeds survive, farther hops go first, and no edge dangles.
+    assert!(
+        bounded
+            .head
+            .nodes
+            .iter()
+            .all(|node| node.seed || node.hop <= 1)
+    );
+    assert!(bounded.head.nodes.iter().any(|node| node.seed));
+    let kept: std::collections::BTreeSet<_> =
+        bounded.head.nodes.iter().map(|n| n.id.as_str()).collect();
+    assert!(
+        bounded
+            .head
+            .edges
+            .iter()
+            .all(|e| kept.contains(e.from.as_str()) && kept.contains(e.to.as_str()))
+    );
+    // The original order is preserved.
+    let order: Vec<_> = full
+        .head
+        .nodes
+        .iter()
+        .filter(|n| kept.contains(n.id.as_str()))
+        .map(|n| &n.id)
+        .collect();
+    assert_eq!(
+        bounded.head.nodes.iter().map(|n| &n.id).collect::<Vec<_>>(),
+        order
+    );
+    // A budget below a single node leaves an empty, truncated slice.
+    let mut empty = full.clone();
+    assert!(empty.bound(1));
+    assert!(empty.head.nodes.is_empty() && empty.head.truncated);
+}

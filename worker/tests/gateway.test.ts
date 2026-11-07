@@ -69,6 +69,85 @@ it("executes identical duplicated provider tool JSON once and rejects differing 
   expect(result).toEqual([]);
   expect(dispatch).toHaveBeenCalledTimes(1);
 });
+it("asks once more for the protocol after native tool syntax and gives up after the repair limit", async () => {
+  const xml =
+    '<invoke name="read_file">\n<parameter name="args">{"path":"a.ts","version":"head"}</parameter>\n</invoke>';
+  const ledger: Ledger = {
+    remaining: async () => 100000,
+    reserve: async () => "id",
+    settle: async () => {},
+  };
+  const dispatch = vi.fn(async () => ({ content: "source" }));
+  const seen: string[][] = [];
+  const base = {
+    ledger,
+    actor: "agent",
+    phase: "generation",
+    model: "openrouter/anthropic/test",
+    dispatch,
+  };
+  const result = await converse({
+    ...base,
+    gateway: {
+      complete: async (request) => {
+        seen.push(request.messages.map((m) => `${m.role}:${m.content.slice(0, 24)}`));
+        return {
+          content: seen.length === 1 ? xml : '{"result":[]}',
+          input_tokens: 80,
+          output_tokens: 50,
+          cost_usd: null,
+        };
+      },
+    },
+    allowance: { remaining: 16000 },
+    messages: [{ role: "user", content: "review" }],
+  });
+  expect(result).toEqual([]);
+  expect(dispatch).not.toHaveBeenCalled();
+  // The raw reply and the host's correction precede the retry.
+  expect(seen[1]).toEqual([
+    "user:review",
+    `assistant:${xml.slice(0, 24)}`,
+    "user:Your previous reply was ",
+  ]);
+  // A model that relapses after each correction is repaired again, up to the cap.
+  const tool = '{"tools":[{"name":"read_file","args":{"path":"a.ts","version":"head"}}]}';
+  let relapses = 0;
+  const relapsing = await converse({
+    ...base,
+    gateway: {
+      complete: async () => {
+        relapses++;
+        return {
+          content: relapses % 2 ? xml : relapses >= 8 ? '{"result":[]}' : tool,
+          input_tokens: 80,
+          output_tokens: 50,
+          cost_usd: null,
+        };
+      },
+    },
+    allowance: { remaining: 160000 },
+    messages: [{ role: "user", content: "review" }],
+  });
+  expect(relapsing).toEqual([]);
+  expect(relapses).toBe(8);
+  expect(dispatch).toHaveBeenCalledTimes(3);
+  let calls = 0;
+  await expect(
+    converse({
+      ...base,
+      gateway: {
+        complete: async () => {
+          calls++;
+          return { content: xml, input_tokens: 80, output_tokens: 50, cost_usd: null };
+        },
+      },
+      allowance: { remaining: 16000 },
+      messages: [{ role: "user", content: "review" }],
+    }),
+  ).rejects.toThrow("malformed model output");
+  expect(calls).toBe(3);
+});
 it("calls the runtime fetch function with its global receiver", async () => {
   const transport = vi
     .spyOn(globalThis, "fetch")

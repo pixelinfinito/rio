@@ -309,6 +309,11 @@ fn cargo_lock_v3_v4_and_manifest_flags_preserve_resolution_and_auditability() {
         "core/Cargo.toml".into(),
         entry(&(manifest + "\n[features]\nclock = [\"dep:chrono\"]\n")),
     );
+    // An invalid manifest kept as a test fixture never fails the analysis.
+    tree.insert(
+        "tests/fixtures/invalid/Cargo.toml".into(),
+        entry("[package]\nname = 'broken'\nkey = invalid-value\n"),
+    );
     let lock = governing_lockfile(&tree, "core", Some("."), Ecosystem::CratesIo)
         .unwrap()
         .unwrap();

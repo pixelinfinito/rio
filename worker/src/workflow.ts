@@ -20,10 +20,12 @@ import { ProviderGateway, converse } from "./gateway";
 import {
   Tools,
   dataBlock,
+  promptGraph,
   filteredLines,
   guidanceBlock,
   runAllowed,
 } from "./tools";
+import { redact } from "./redaction";
 import { hash, invariant, validateHypotheses } from "./validation";
 import { triage, type Plan } from "./triage";
 import { verifyHypothesis } from "./verifier";
@@ -249,8 +251,21 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             ["rio-internal", module],
             "head",
           );
-          if (result.timed_out || result.exit_code !== 0 || !result.artifact)
-            throw new Error(`${s.id}: runner analysis failed`);
+          if (result.timed_out || result.exit_code !== 0 || !result.artifact) {
+            // The runner is trusted; its first stderr line names the failure.
+            const reason = result.timed_out
+              ? "timed out"
+              : (result.stderr
+                  .split("\n")
+                  .map((line) => line.trim())
+                  .find((line) => line) ??
+                (result.artifact
+                  ? `exit code ${result.exit_code}`
+                  : "no artifact"));
+            throw new Error(
+              `${s.id}: runner analysis failed: ${redact(reason).slice(0, 200)}`,
+            );
+          }
           if (module === "rio/checks") {
             const r = result.artifact.report;
             invariant(r?.schema === "rio-report-v1", "invalid runner report");
@@ -356,7 +371,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             const intent = diffOnly
               ? (lineage!.intent ?? submission.intent)
               : submission.intent;
-            const prompt = `Review the change independently for ${agent}. Inspect actual base and head code before making a claim; symbol names and graph hashes are not source code. Use read_file for omitted or truncated code. Suggested focus is only a hint; tools can read/search either entire repository snapshot. Classify concrete correctness regressions as defect, uncertain hazards as risk, style and repeated tool diagnostics accurately. Omit guidance unless citing a real owner-guidance document supplied below; source-code lines are not owner guidance. Check guidance/contradiction and guidance/stale risks against existing guidance lines: emit category risk, cite guidance:{path,line} and the changed code behavior. Return {result:hypotheses[]}.${roundContext}\n${dataBlock("intent", filteredLines(intent.split("\n")))}\n${dataBlock("suggested_focus", reviewed.focus)}\n${dataBlock("graph", graphs)}\n${dataBlock("changed code excerpts", await changedCode(reviewed.changed, reviewed.snapshot))}\n${dataBlock("deterministic checks", report.checks)}\n${guidanceBlock(submission.owner_guidance, reviewed.focus)}`;
+            const prompt = `Review the change independently for ${agent}. Inspect actual base and head code before making a claim; symbol names and graph hashes are not source code. Use read_file for omitted or truncated code. Suggested focus is only a hint; tools can read/search either entire repository snapshot. The graph excerpt holds the changed symbols and their nearest neighbours; query graph_query for anything beyond it. Classify concrete correctness regressions as defect, uncertain hazards as risk, style and repeated tool diagnostics accurately. Omit guidance unless citing a real owner-guidance document supplied below; source-code lines are not owner guidance. Check guidance/contradiction and guidance/stale risks against existing guidance lines: emit category risk, cite guidance:{path,line} and the changed code behavior. Return {result:hypotheses[]}.${roundContext}\n${dataBlock("intent", filteredLines(intent.split("\n")))}\n${dataBlock("suggested_focus", reviewed.focus)}\n${dataBlock("graph excerpt", { base: promptGraph(graphs.base), head: promptGraph(graphs.head) })}\n${dataBlock("changed code excerpts", await changedCode(reviewed.changed, reviewed.snapshot))}\n${dataBlock("deterministic checks", report.checks)}\n${guidanceBlock(submission.owner_guidance, reviewed.focus)}`;
             const result = validateHypotheses(
               await converse({
                 gateway,

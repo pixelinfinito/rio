@@ -46,10 +46,20 @@ export interface GraphNode {
   symbol_path: string;
   line_start: number;
   line_end: number;
+  // Slice metadata from the Rust graph builder; absent in older submissions.
+  kind?: string;
+  seed?: boolean;
+  hop?: number;
+}
+export interface GraphEdge {
+  from: string;
+  to: string;
+  kind?: string;
 }
 export interface Graph {
   nodes: GraphNode[];
-  edges: { from: string; to: string }[];
+  edges: GraphEdge[];
+  truncated?: boolean;
 }
 export interface Guidance {
   path: string;

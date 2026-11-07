@@ -125,7 +125,14 @@ pub fn annotate_cargo_manifests(
         (path.as_str() == "Cargo.toml" || path.ends_with("/Cargo.toml"))
             && path.starts_with(&prefix)
     }) {
-        let value: toml::Value = toml::from_str(std::str::from_utf8(&entry.content)?)?;
+        // Repositories carry invalid manifests as test fixtures; they are not path
+        // dependencies and must not fail the whole dependency analysis.
+        let Some(value) = std::str::from_utf8(&entry.content)
+            .ok()
+            .and_then(|text| toml::from_str::<toml::Value>(text).ok())
+        else {
+            continue;
+        };
         let Some(name) = value
             .get("package")
             .and_then(|package| package.get("name"))

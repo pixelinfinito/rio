@@ -24,6 +24,9 @@ pub const MAX_PACKED_CONTENT: usize = 7 * MIB as usize;
 const MAX_PACK_ENTRIES: usize = 2_000;
 const MAX_MISSING_BATCH: usize = 10_000;
 const MODES: [u32; 3] = [0o100644, 0o100755, 0o120000];
+/// Submodule entries carry a commit id, not content; the diff reports them as
+/// `submodule_not_reviewed` and the snapshot omits them.
+const GITLINK: u32 = 0o160000;
 const PARALLEL_REQUESTS: usize = 4;
 const RETRIES: u32 = 3;
 const UPLOAD_TIMEOUT: Duration = Duration::from_secs(300);
@@ -96,7 +99,7 @@ fn prepare<'a>(base: &'a Tree, head: &'a Tree, limits: &Limits) -> Result<Prepar
         );
     }
     for (version, tree) in trees {
-        for (path, entry) in tree {
+        for (path, entry) in tree.iter().filter(|(_, e)| e.mode != GITLINK) {
             let size = entry.content.len() as u64;
             ensure!(
                 size <= limits.file,
@@ -119,7 +122,7 @@ fn prepare<'a>(base: &'a Tree, head: &'a Tree, limits: &Limits) -> Result<Prepar
     let (mut chunks, mut chunk_start) = (Vec::new(), 0);
     for (version, tree) in trees {
         // `Tree` is a `BTreeMap<String, _>`: paths iterate in UTF-8 byte order.
-        for (path, entry) in tree {
+        for (path, entry) in tree.iter().filter(|(_, e)| e.mode != GITLINK) {
             let index = *seen
                 .entry(blake3::hash(&entry.content))
                 .or_insert_with_key(|hash| {
@@ -166,7 +169,10 @@ fn prepare<'a>(base: &'a Tree, head: &'a Tree, limits: &Limits) -> Result<Prepar
         manifest,
         chunks,
         contents,
-        files: base.len() + head.len(),
+        files: trees
+            .iter()
+            .map(|(_, tree)| tree.values().filter(|e| e.mode != GITLINK).count())
+            .sum(),
     })
 }
 
@@ -663,9 +669,16 @@ mod tests {
             error.contains("limit of 1 KiB of distinct content across base and head: it has 1.2 KiB (1,200 bytes)"),
             "{error}"
         );
-        let mut gitlink = tree([("sub", b"x")]);
+        // Submodule entries are omitted rather than rejected or uploaded.
+        let mut gitlink = tree([("sub", b"x"), ("file", b"y")]);
         gitlink.get_mut("sub").unwrap().mode = 0o160000;
-        assert!(prepare(&gitlink, &Tree::new(), &LIMITS).is_err());
+        let empty = Tree::new();
+        let prepared = prepare(&gitlink, &empty, &LIMITS).unwrap();
+        let manifest = String::from_utf8(prepared.manifest.clone()).unwrap();
+        assert!(manifest.contains("\"path\":\"file\""), "{manifest}");
+        assert!(!manifest.contains("sub"), "{manifest}");
+        assert_eq!(prepared.files, 1);
+        assert!(prepare(&tree([("other", b"z")]), &Tree::new(), &LIMITS).is_ok());
     }
 
     #[test]

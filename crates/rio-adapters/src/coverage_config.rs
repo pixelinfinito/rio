@@ -1,5 +1,5 @@
 use crate::{CoverageSettings, ancestor_config, parse_source, vitest_supports_all};
-use anyhow::{Context, Result};
+use anyhow::Result;
 use rio_git::Tree;
 use serde_json::Value;
 use tree_sitter::Node;
@@ -313,9 +313,11 @@ pub fn python_coverage_settings(tree: &Tree, root: &str) -> Result<CoverageSetti
     ) {
         let text = std::str::from_utf8(&tree[&config].content)?;
         if config.ends_with(".toml") {
-            let document: toml::Value =
-                toml::from_str(text).with_context(|| format!("invalid {config}"))?;
-            values = serde_json::to_value(document)?["tool"]["coverage"]["run"].clone();
+            // An unparsable pyproject.toml (for example a test fixture) leaves the
+            // coverage configuration unknown rather than failing the analysis.
+            if let Ok(document) = toml::from_str::<toml::Value>(text) {
+                values = serde_json::to_value(document)?["tool"]["coverage"]["run"].clone();
+            }
         } else {
             let mut in_run = false;
             let mut key = String::new();

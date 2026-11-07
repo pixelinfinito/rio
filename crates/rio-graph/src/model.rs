@@ -76,6 +76,56 @@ pub struct GraphSlice {
     pub edges: Vec<GraphEdge>,
     pub truncated: bool,
 }
+impl GraphSlice {
+    fn json_len(&self) -> usize {
+        serde_json::to_vec(self).map_or(usize::MAX, |bytes| bytes.len())
+    }
+    /// Keeps the slice within `max_bytes` of JSON: the nodes nearest the change
+    /// (seeds, then ascending hop) and the edges among them, in the original
+    /// order. Returns whether anything was dropped; a bounded slice is truncated.
+    pub fn bound(&mut self, max_bytes: usize) -> bool {
+        if self.json_len() <= max_bytes {
+            return false;
+        }
+        let mut ranked: Vec<&GraphNode> = self.nodes.iter().collect();
+        ranked.sort_by(|a, b| {
+            b.seed
+                .cmp(&a.seed)
+                .then(a.hop.cmp(&b.hop))
+                .then(a.id.cmp(&b.id))
+        });
+        let candidate = |count: usize| -> GraphSlice {
+            let ids: BTreeSet<&str> = ranked[..count].iter().map(|n| n.id.as_str()).collect();
+            GraphSlice {
+                nodes: self
+                    .nodes
+                    .iter()
+                    .filter(|n| ids.contains(n.id.as_str()))
+                    .cloned()
+                    .collect(),
+                edges: self
+                    .edges
+                    .iter()
+                    .filter(|e| ids.contains(e.from.as_str()) && ids.contains(e.to.as_str()))
+                    .cloned()
+                    .collect(),
+                truncated: true,
+            }
+        };
+        // The size grows with the prefix, so the largest fitting prefix is found by bisection.
+        let (mut low, mut high) = (0, ranked.len());
+        while low < high {
+            let middle = low + (high - low).div_ceil(2);
+            if candidate(middle).json_len() <= max_bytes {
+                low = middle;
+            } else {
+                high = middle - 1;
+            }
+        }
+        *self = candidate(low);
+        true
+    }
+}
 
 #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct GraphDelta {
@@ -178,6 +228,12 @@ impl GraphSlices {
                 "Impact graph truncated at max_nodes".into()
             }
         })
+    }
+    /// Bounds both versions to `max_bytes` of JSON each; see `GraphSlice::bound`.
+    pub fn bound(&mut self, max_bytes: usize) -> bool {
+        let base = self.base.bound(max_bytes);
+        let head = self.head.bound(max_bytes);
+        base || head
     }
     pub fn impact(&self, hops: usize) -> ImpactSummary {
         let mut symbols = Vec::new();

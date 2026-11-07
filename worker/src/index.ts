@@ -29,7 +29,7 @@ import {
 import { jobInput } from "./archive";
 import { attachStatements, lineageId } from "./lineage";
 import { Store } from "./storage";
-import { finishJob } from "./jobs";
+import { failJob, finishJob } from "./jobs";
 import { parseWall } from "./budget";
 export { ReviewWorkflow } from "./workflow";
 export { MigrationWorkflow } from "./migrate";
@@ -303,7 +303,29 @@ app.get("/v1/reviews/:id/audit", async (c) => {
         )
           .bind(id)
           .all<{ result_key: string }>()
-      ).results.map((r) => store.get(r.result_key)),
+      ).results.map(async (r) => {
+        // Runner graphs reach megabytes per version and are not verification
+        // evidence; the audit keeps their size, not their content.
+        const result = await store.get<any>(r.result_key);
+        const graphs = result?.artifact?.graphs;
+        if (graphs && typeof graphs === "object") {
+          result.artifact = {
+            ...result.artifact,
+            graphs: Object.fromEntries(
+              Object.entries(graphs).map(([version, graph]: [string, any]) => [
+                version,
+                {
+                  nodes: graph?.nodes?.length ?? 0,
+                  edges: graph?.edges?.length ?? 0,
+                  truncated: graph?.truncated === true,
+                  omitted: true,
+                },
+              ]),
+            ),
+          };
+        }
+        return result;
+      }),
     ),
   });
 });
@@ -505,6 +527,8 @@ app.post("/v1/runner/:review/:job/:attempt/complete", async (c) => {
   return c.json({ accepted: true });
 });
 export { app };
+/** Deliveries per queue message: one plus `max_retries` in wrangler.jsonc. */
+const JOB_DELIVERIES = 3;
 export default {
   fetch: app.fetch,
   async queue(
@@ -543,8 +567,26 @@ export default {
         invariant(response.ok, "sandbox execution failed");
         await finishJob(env, review_id, job_id, attempt, await response.json());
         message.ack();
-      } catch {
-        message.retry({ delaySeconds: 10 });
+      } catch (error) {
+        // The last delivery (max_retries in wrangler.jsonc) records the failure so
+        // the review fails with its reason instead of waiting for the step timeout.
+        if (message.attempts < JOB_DELIVERIES) {
+          message.retry({ delaySeconds: 10 });
+          continue;
+        }
+        try {
+          const { review_id, job_id, attempt } = message.body;
+          await failJob(
+            env,
+            review_id,
+            job_id,
+            attempt,
+            error instanceof Error ? error.message : String(error),
+          );
+        } catch {
+          /* The job may already be completed or cancelled; the workflow times out as before. */
+        }
+        message.ack();
       }
     }
   },

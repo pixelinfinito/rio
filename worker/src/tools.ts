@@ -4,6 +4,8 @@ import { scrub, redact } from "./redaction";
 import type {
   ExecutionResult,
   Graph,
+  GraphEdge,
+  GraphNode,
   Guidance,
   Snapshot,
   Version,
@@ -95,6 +97,69 @@ export function filteredLines(
 }
 export function dataBlock(label: string, data: unknown): string {
   return `<repository_data label=${JSON.stringify(label)}>\n${JSON.stringify(scrub(data)).replace(/</g, "\\u003c").replace(/>/g, "\\u003e").replace(/&/g, "\\u0026")}\n</repository_data>`;
+}
+/** Bytes of graph excerpt per version in an agent prompt; the complete graph stays behind graph_query. */
+export const PROMPT_GRAPH_BYTES = 16 * 1024;
+export interface GraphExcerpt {
+  nodes: GraphNode[];
+  edges: GraphEdge[];
+  truncated: boolean;
+  total_nodes: number;
+  total_edges: number;
+}
+/**
+ * The part of a graph that fits in an agent prompt: the nodes nearest the
+ * change (seeds, then ascending hop) and the edges among them. Repository
+ * graphs reach megabytes at two hops, far past any agent's token allowance.
+ */
+export function promptGraph(
+  graph: Graph,
+  maxBytes = PROMPT_GRAPH_BYTES,
+): GraphExcerpt {
+  const ranked = [...graph.nodes].sort(
+    (a, b) =>
+      Number(b.seed ?? false) - Number(a.seed ?? false) ||
+      (a.hop ?? 0) - (b.hop ?? 0) ||
+      (a.id < b.id ? -1 : a.id > b.id ? 1 : 0),
+  );
+  const excerpt = (count: number): GraphExcerpt => {
+    const ids = new Set(ranked.slice(0, count).map((n) => n.id));
+    return {
+      nodes: graph.nodes
+        .filter((n) => ids.has(n.id))
+        .map((n) => ({
+          id: n.id,
+          ...(n.kind === undefined ? {} : { kind: n.kind }),
+          path: n.path,
+          symbol_path: n.symbol_path,
+          line_start: n.line_start,
+          line_end: n.line_end,
+          ...(n.seed ? { seed: true } : {}),
+          ...(n.hop === undefined ? {} : { hop: n.hop }),
+        })),
+      edges: graph.edges
+        .filter((e) => ids.has(e.from) && ids.has(e.to))
+        .map((e) => ({
+          from: e.from,
+          to: e.to,
+          ...(e.kind === undefined ? {} : { kind: e.kind }),
+        })),
+      truncated: graph.truncated === true || count < graph.nodes.length,
+      total_nodes: graph.nodes.length,
+      total_edges: graph.edges.length,
+    };
+  };
+  const size = (count: number) =>
+    new TextEncoder().encode(JSON.stringify(excerpt(count))).length;
+  // Size grows with the prefix, so the largest fitting prefix is found by bisection.
+  let low = 0,
+    high = ranked.length;
+  while (low < high) {
+    const middle = low + Math.ceil((high - low) / 2);
+    if (size(middle) <= maxBytes) low = middle;
+    else high = middle - 1;
+  }
+  return excerpt(low);
 }
 export function guidanceBlock(guidance: Guidance[], focus: string[]): string {
   return dataBlock(

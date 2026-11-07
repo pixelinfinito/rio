@@ -123,7 +123,13 @@ without running repository commands on the developer's machine. Deterministic
 checks run in the selected remote runner using the existing Rust engine.
 The impact graph is built locally with a 120 s budget (`RIO_GRAPH_BUDGET_SECS`
 overrides it); on a very large change the review continues with a truncated graph
-and says so in the report. `--offline`, or no endpoint, retains the local deterministic review.
+and says so in the report. The submitted graph is bounded to 2 MiB of JSON per
+version, keeping the nodes nearest the change (seeds, then ascending hop) and the
+edges among them, because large repositories reach tens of thousands of edges at
+two hops; the runner rebuilds the complete graph from the snapshot. Agents receive
+a 16 KiB excerpt of each graph in their prompt and query the rest through
+`graph_query`. Submodule entries are omitted from snapshots; the diff lists them as
+`submodule_not_reviewed`. `--offline`, or no endpoint, retains the local deterministic review.
 `--fork` forces a static-only review; model execution is denied after manifest
 overrides. PR fetching, publication and convergence flags (`--pr`, `--publish`,
 `--since-last`) are outside the implemented transport and return an explicit error.
