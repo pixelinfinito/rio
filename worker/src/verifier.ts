@@ -55,6 +55,10 @@ async function cited(
 /** Contract hypotheses are settled through graph paths in both versions. */
 export const CONTRACT_VERIFICATION =
   " This is a contract hypothesis: static_proven requires one code citation whose head graph node_ids form a connected path, possibly across files, from a cited consumer location to the changed contract's file. If head updated a cited consumer so it no longer relies on the old contract, answer refuted and cite that consumer's head graph node as a code reference with demonstrates protection; a protection on that path also refutes it.";
+/** Code bytes per version in a voter's blind context; read_file covers the rest. */
+export const CONTEXT_BYTES = 24 * 1024;
+/** Lines of one symbol excerpted before the voter must read the file itself. */
+export const SYMBOL_LINES = 300;
 export async function blindContext(o: VerifyOptions): Promise<string> {
   const location = o.hypothesis.location;
   const reader = readerOf(o.snapshot);
@@ -75,17 +79,32 @@ export async function blindContext(o: VerifyOptions): Promise<string> {
       const nodes = [...(symbol ? [symbol] : []), ...callers].slice(0, 20);
       const v = version as "base" | "head";
       const symbols = [];
-      for (const n of nodes)
+      // Voter conversations are bounded by bytes; a declaration file or a symbol
+      // spanning hundreds of lines must not fill the allowance on the first turn.
+      let remaining = CONTEXT_BYTES;
+      let omitted = 0;
+      for (const n of nodes) {
+        if (remaining <= 0) {
+          omitted++;
+          continue;
+        }
+        const lines = (await readFile(reader, n!.path, v))
+          .split("\n")
+          .slice(n!.line_start - 1, n!.line_end);
+        let content = lines.slice(0, SYMBOL_LINES).join("\n");
+        const truncated = lines.length > SYMBOL_LINES || content.length > remaining;
+        content = content.slice(0, Math.max(0, remaining));
+        remaining -= content.length;
         symbols.push({
           node: n,
-          content: (await readFile(reader, n!.path, v))
-            .split("\n")
-            .slice(n!.line_start - 1, n!.line_end)
-            .join("\n"),
+          content,
+          ...(truncated ? { truncated: true } : {}),
         });
+      }
       return {
         version,
         symbols,
+        ...(omitted ? { callers_omitted: omitted } : {}),
         // A file added (or deleted) by the change has no counterpart to excerpt.
         fallback: nodes.length
           ? undefined
@@ -102,7 +121,7 @@ export async function blindContext(o: VerifyOptions): Promise<string> {
     }),
   );
   // Only location is copied; no title, trigger, proposed impact, rationale, or id.
-  return `What, if anything, is wrong in this function? Return {result: hypotheses[]}; [] is valid. ${dataBlock("location", { path: location.path, symbol_path: location.symbol_path })}\n${dataBlock("selected code and direct callers", versions)}\n${dataBlock("intent", filteredLines(o.intent.split("\n")))}\n${guidanceBlock(o.guidance, [location.path])}`;
+  return `What, if anything, is wrong in this function? Return {result: hypotheses[]}; [] is valid. Excerpts marked truncated and omitted callers are available through read_file and graph_query. ${dataBlock("location", { path: location.path, symbol_path: location.symbol_path })}\n${dataBlock("selected code and direct callers", versions)}\n${dataBlock("intent", filteredLines(o.intent.split("\n")))}\n${guidanceBlock(o.guidance, [location.path])}`;
 }
 export async function verifyHypothesis(
   o: VerifyOptions,

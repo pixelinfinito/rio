@@ -3,6 +3,8 @@ import { scrub } from "./redaction";
 import { invariant } from "./validation";
 import hypothesisSchema from "../../schemas/hypothesis-v1.json";
 import voteSchema from "../../schemas/vote-answer-v1.json";
+/** Pause before the single retry of a transient provider failure. */
+const RETRY_DELAY_MS = 2000;
 export class ProviderGateway implements Gateway {
   constructor(
     readonly env: Env,
@@ -76,35 +78,57 @@ export class ProviderGateway implements Gateway {
             ? { provider: { require_parameters: true } }
             : {}),
         };
-    const response = await this.transport(url, {
-      method: "POST",
-      headers,
-      body: JSON.stringify(body),
-      signal: request.signal ?? AbortSignal.timeout(90000),
-    });
-    // Never persist provider response bodies on failure: they can contain credentials or raw prompts.
-    invariant(response.ok, `provider failed (${response.status})`);
-    const result: any = await response.json();
-    const content = anthropic
-      ? result.content
-          ?.filter((b: any) => b.type === "text")
-          .map((b: any) => b.text)
-          .join("\n")
-      : result.choices?.[0]?.message?.content;
-    const input = anthropic
-      ? result.usage?.input_tokens
-      : result.usage?.prompt_tokens;
-    const output = anthropic
-      ? result.usage?.output_tokens
-      : result.usage?.completion_tokens;
-    invariant(
-      typeof content === "string" &&
-        Number.isSafeInteger(input) &&
-        input >= 0 &&
-        Number.isSafeInteger(output) &&
-        output >= 0,
-      "provider omitted content or usage",
-    );
+    // One transient failure (overload, rate limit, or a reply without content or
+    // usage, which routers return under load) is retried once; the first attempt
+    // is never charged because it reported no usage.
+    const attempt = async () => {
+      const response = await this.transport(url, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(body),
+        signal: request.signal ?? AbortSignal.timeout(90000),
+      });
+      // Never persist provider response bodies on failure: they can contain credentials or raw prompts.
+      invariant(response.ok, `provider failed (${response.status})`);
+      const result: any = await response.json();
+      const content = anthropic
+        ? result.content
+            ?.filter((b: any) => b.type === "text")
+            .map((b: any) => b.text)
+            .join("\n")
+        : result.choices?.[0]?.message?.content;
+      const input = anthropic
+        ? result.usage?.input_tokens
+        : result.usage?.prompt_tokens;
+      const output = anthropic
+        ? result.usage?.output_tokens
+        : result.usage?.completion_tokens;
+      invariant(
+        typeof content === "string" &&
+          Number.isSafeInteger(input) &&
+          input >= 0 &&
+          Number.isSafeInteger(output) &&
+          output >= 0,
+        "provider omitted content or usage",
+      );
+      return { result, content, input, output };
+    };
+    let outcome: Awaited<ReturnType<typeof attempt>>;
+    try {
+      outcome = await attempt();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "";
+      if (
+        !/omitted content or usage|provider failed \((429|5\d\d)\)/.test(
+          message,
+        ) ||
+        request.signal?.aborted
+      )
+        throw error;
+      await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
+      outcome = await attempt();
+    }
+    const { result, content, input, output } = outcome;
     const prices = JSON.parse(this.env.MODEL_PRICES ?? "{}")[request.model];
     return {
       content,
@@ -327,6 +351,42 @@ export async function converse(options: {
       role: "user",
       content: JSON.stringify(scrub({ tool_results: results })).slice(0, 64000),
     });
+    elideOldToolResults(o.messages);
   }
   throw new Error("model turn limit exhausted");
+}
+/** Conversation bytes above which earlier tool results are elided. */
+export const HISTORY_BYTES = 160 * 1024;
+/** Tool-result messages kept whole at the end of the conversation. */
+export const RECENT_TOOL_RESULTS = 2;
+const ELIDED =
+  '{"tool_results_elided":true,"note":"earlier tool results were removed to keep the conversation within its context; call the tools again if you need them"}';
+/**
+ * Every turn resends the whole conversation, so tool results dominate the cost
+ * of a long agent review. Once the history exceeds the budget, tool-result
+ * messages older than the most recent ones are replaced by a short note; the
+ * model's own tool requests stay, and every raw reply remains in the audit.
+ */
+export function elideOldToolResults(
+  messages: ModelRequest["messages"],
+  maxBytes = HISTORY_BYTES,
+): number {
+  const size = () =>
+    new TextEncoder().encode(JSON.stringify(messages)).length;
+  if (size() <= maxBytes) return 0;
+  const toolResults = messages
+    .map((m, i) => ({ m, i }))
+    .filter(
+      ({ m }) =>
+        m.role === "user" &&
+        m.content !== ELIDED &&
+        m.content.startsWith('{"tool_results":'),
+    );
+  let elided = 0;
+  for (const { m } of toolResults.slice(0, -RECENT_TOOL_RESULTS)) {
+    if (size() <= maxBytes) break;
+    m.content = ELIDED;
+    elided++;
+  }
+  return elided;
 }

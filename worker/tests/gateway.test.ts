@@ -2,6 +2,7 @@ import { it, expect, vi } from "vitest";
 import {
   ProviderGateway,
   converse,
+  elideOldToolResults,
   parseModelOutput,
   type Ledger,
 } from "../src/gateway";
@@ -194,6 +195,70 @@ it("repairs an empty tool list and answers calls past the batch limit instead of
   expect(results[8].error).toMatch(/limited to 8 calls per turn/);
   expect(results[9].error).toMatch(/resend it/);
 });
+it("elides tool results older than the most recent ones once the history exceeds its budget", () => {
+  const big = JSON.stringify({ tool_results: [{ name: "read_file", result: "x".repeat(50000) }] });
+  const messages = [
+    { role: "user" as const, content: "review" },
+    { role: "assistant" as const, content: '{"tools":[{"name":"read_file","args":{}}]}' },
+    { role: "user" as const, content: big },
+    { role: "assistant" as const, content: '{"tools":[{"name":"read_file","args":{}}]}' },
+    { role: "user" as const, content: big },
+    { role: "assistant" as const, content: '{"tools":[{"name":"read_file","args":{}}]}' },
+    { role: "user" as const, content: big },
+    { role: "assistant" as const, content: '{"tools":[{"name":"read_file","args":{}}]}' },
+    { role: "user" as const, content: big },
+  ];
+  const untouched = structuredClone(messages);
+  expect(elideOldToolResults(untouched, 1 << 20)).toBe(0);
+  expect(untouched).toEqual(messages);
+  // Four results of 50 KB exceed 150 KB: the oldest goes, then the next, and the
+  // recent two stay whole even though the history is still over budget.
+  expect(elideOldToolResults(messages, 150 * 1024)).toBe(1);
+  expect(messages[2].content).toContain('"tool_results_elided":true');
+  expect(messages[4].content).toBe(big);
+  expect(elideOldToolResults(messages, 1)).toBe(1);
+  expect(messages[4].content).toContain('"tool_results_elided":true');
+  expect(messages[6].content).toBe(big);
+  expect(messages[8].content).toBe(big);
+  expect(elideOldToolResults(messages, 1)).toBe(0);
+  // The prompt and the model's own tool requests are never touched.
+  expect(messages[0].content).toBe("review");
+  expect(messages[1].content).toContain('"tools"');
+});
+it("retries one transient provider failure and never a client error", async () => {
+  const attempts: number[] = [];
+  const flaky = async () => {
+    attempts.push(attempts.length);
+    return attempts.length === 1
+      ? Response.json({ choices: [{ message: {} }] })
+      : Response.json({
+          choices: [{ message: { content: '{"result":[]}' } }],
+          usage: { prompt_tokens: 10, completion_tokens: 20 },
+        });
+  };
+  const env = { OPENAI_API_KEY: "key" } as Env;
+  const response = await new ProviderGateway(env, flaky as typeof fetch).complete(request);
+  expect(response.input_tokens).toBe(10);
+  expect(attempts).toHaveLength(2);
+  let calls = 0;
+  const rejecting = async () => {
+    calls++;
+    return new Response("bad request", { status: 400 });
+  };
+  await expect(
+    new ProviderGateway(env, rejecting as typeof fetch).complete(request),
+  ).rejects.toThrow("provider failed (400)");
+  expect(calls).toBe(1);
+  let overloaded = 0;
+  const alwaysOverloaded = async () => {
+    overloaded++;
+    return new Response("overloaded", { status: 529 });
+  };
+  await expect(
+    new ProviderGateway(env, alwaysOverloaded as typeof fetch).complete(request),
+  ).rejects.toThrow("provider failed (529)");
+  expect(overloaded).toBe(2);
+}, 15000);
 it("calls the runtime fetch function with its global receiver", async () => {
   const transport = vi
     .spyOn(globalThis, "fetch")
