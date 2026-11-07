@@ -1,6 +1,6 @@
 use std::collections::{BTreeMap, BTreeSet, VecDeque};
 
-use anyhow::{Context, Result};
+use anyhow::Result;
 use globset::GlobBuilder;
 use rio_core::{CheckKind, ScheduledAs};
 use rio_git::{Diff, Exclusions, Tree};
@@ -90,27 +90,43 @@ fn relative(root: &str, path: &str) -> Option<String> {
     })
 }
 
-fn json(tree: &Tree, path: &str) -> Result<Option<Value>> {
-    tree.get(path)
-        .map(|entry| {
-            if path.ends_with("tsconfig.json") {
-                json5::from_str(std::str::from_utf8(&entry.content)?)
-                    .with_context(|| format!("invalid {path}"))
-            } else {
-                serde_json::from_slice(&entry.content).with_context(|| format!("invalid {path}"))
-            }
-        })
-        .transpose()
+/// Manifests that do not parse (test fixtures of invalid `Cargo.toml` or
+/// `tsconfig.json` files are common) are skipped with a note rather than
+/// failing the analysis of the whole repository.
+fn skipped(path: &str, notes: &mut Vec<String>) -> Option<Value> {
+    let note = format!("Skipped unparsable manifest {path}");
+    if !notes.contains(&note) {
+        notes.push(note);
+    }
+    None
 }
 
-fn toml_json(tree: &Tree, path: &str) -> Result<Option<Value>> {
-    tree.get(path)
-        .map(|entry| {
-            let document: toml::Value = toml::from_str(std::str::from_utf8(&entry.content)?)
-                .with_context(|| format!("invalid {path}"))?;
-            Ok(serde_json::to_value(document)?)
-        })
-        .transpose()
+fn json(tree: &Tree, path: &str, notes: &mut Vec<String>) -> Option<Value> {
+    let entry = tree.get(path)?;
+    let parsed = std::str::from_utf8(&entry.content).ok().and_then(|text| {
+        if path.ends_with("tsconfig.json") {
+            json5::from_str(text).ok()
+        } else {
+            serde_json::from_str(text).ok()
+        }
+    });
+    parsed.or_else(|| skipped(path, notes))
+}
+
+fn toml_json(tree: &Tree, path: &str, notes: &mut Vec<String>) -> Option<Value> {
+    let entry = tree.get(path)?;
+    std::str::from_utf8(&entry.content)
+        .ok()
+        .and_then(|text| toml::from_str::<toml::Value>(text).ok())
+        .and_then(|document| serde_json::to_value(document).ok())
+        .or_else(|| skipped(path, notes))
+}
+
+fn yaml_json(tree: &Tree, path: &str, notes: &mut Vec<String>) -> Option<Value> {
+    let entry = tree.get(path)?;
+    serde_yaml::from_slice(&entry.content)
+        .ok()
+        .or_else(|| skipped(path, notes))
 }
 
 fn strings(value: &Value) -> Vec<String> {
@@ -144,6 +160,7 @@ fn matches_patterns(path: &str, patterns: &[String]) -> Result<bool> {
 /// not accidentally read manifests from the current worktree.
 pub fn detect_repository(tree: &Tree, diff: &Diff) -> Result<RepositoryLayout> {
     let exclusions = Exclusions::new(tree, &[])?;
+    let mut notes = Vec::new();
     let mut roots = BTreeMap::<(String, String), ProjectRoot>::new();
     for (path, entry) in tree {
         if exclusions
@@ -170,27 +187,32 @@ pub fn detect_repository(tree: &Tree, diff: &Diff) -> Result<RepositoryLayout> {
             name: None,
         });
         if name == "package.json" {
-            let value = json(tree, path)?.unwrap();
-            project.name = value["name"].as_str().map(str::to_owned);
+            if let Some(value) = json(tree, path, &mut notes) {
+                project.name = value["name"].as_str().map(str::to_owned);
+            }
             project.manifest = Some(path.clone());
         } else if name == "Cargo.toml" {
-            let value = toml_json(tree, path)?.unwrap();
-            project.name = value["package"]["name"].as_str().map(str::to_owned);
+            if let Some(value) = toml_json(tree, path, &mut notes) {
+                project.name = value["package"]["name"].as_str().map(str::to_owned);
+            }
             project.manifest = Some(path.clone());
         } else if name == "pyproject.toml" {
-            let value = toml_json(tree, path)?.unwrap();
-            project.name = value["project"]["name"]
-                .as_str()
-                .or_else(|| value["tool"]["poetry"]["name"].as_str())
-                .map(str::to_owned);
+            if let Some(value) = toml_json(tree, path, &mut notes) {
+                project.name = value["project"]["name"]
+                    .as_str()
+                    .or_else(|| value["tool"]["poetry"]["name"].as_str())
+                    .map(str::to_owned);
+            }
             project.manifest = Some(path.clone());
         }
     }
     let mut workspaces = Vec::<(String, String, Vec<String>, Vec<String>)>::new();
-    for (path, entry) in tree {
+    for path in tree.keys() {
         let directory = parent(path);
         if path.ends_with("package.json") {
-            let value = json(tree, path)?.unwrap();
+            let Some(value) = json(tree, path, &mut notes) else {
+                continue;
+            };
             let patterns = if value["workspaces"].is_array() {
                 strings(&value["workspaces"])
             } else {
@@ -200,8 +222,9 @@ pub fn detect_repository(tree: &Tree, diff: &Diff) -> Result<RepositoryLayout> {
                 workspaces.push((directory.into(), "typescript".into(), patterns, Vec::new()));
             }
         } else if path.ends_with("pnpm-workspace.yaml") {
-            let value: Value = serde_yaml::from_slice(&entry.content)
-                .with_context(|| format!("invalid {path}"))?;
+            let Some(value) = yaml_json(tree, path, &mut notes) else {
+                continue;
+            };
             workspaces.push((
                 directory.into(),
                 "typescript".into(),
@@ -209,7 +232,9 @@ pub fn detect_repository(tree: &Tree, diff: &Diff) -> Result<RepositoryLayout> {
                 Vec::new(),
             ));
         } else if path.ends_with("Cargo.toml") {
-            let value = toml_json(tree, path)?.unwrap();
+            let Some(value) = toml_json(tree, path, &mut notes) else {
+                continue;
+            };
             if value["workspace"].is_object() {
                 workspaces.push((
                     directory.into(),
@@ -219,7 +244,9 @@ pub fn detect_repository(tree: &Tree, diff: &Diff) -> Result<RepositoryLayout> {
                 ));
             }
         } else if path.ends_with("pyproject.toml") {
-            let value = toml_json(tree, path)?.unwrap();
+            let Some(value) = toml_json(tree, path, &mut notes) else {
+                continue;
+            };
             let workspace = &value["tool"]["uv"]["workspace"];
             if workspace.is_object() {
                 workspaces.push((
@@ -251,7 +278,10 @@ pub fn detect_repository(tree: &Tree, diff: &Diff) -> Result<RepositoryLayout> {
             }
         }
     }
-    let mut layout = RepositoryLayout::default();
+    let mut layout = RepositoryLayout {
+        notes,
+        ..RepositoryLayout::default()
+    };
     for file in &diff.files {
         if file.excluded.is_some() || file.binary {
             continue;
@@ -281,7 +311,11 @@ pub fn detect_repository(tree: &Tree, diff: &Diff) -> Result<RepositoryLayout> {
     for project in &projects {
         let mut dependency_paths = BTreeSet::new();
         if project.language == "typescript" {
-            if let Some(value) = json(tree, &join(&project.path, "package.json"))? {
+            if let Some(value) = json(
+                tree,
+                &join(&project.path, "package.json"),
+                &mut layout.notes,
+            ) {
                 for key in [
                     "dependencies",
                     "devDependencies",
@@ -310,7 +344,11 @@ pub fn detect_repository(tree: &Tree, diff: &Diff) -> Result<RepositoryLayout> {
                     }
                 }
             }
-            if let Some(value) = json(tree, &join(&project.path, "tsconfig.json"))? {
+            if let Some(value) = json(
+                tree,
+                &join(&project.path, "tsconfig.json"),
+                &mut layout.notes,
+            ) {
                 for reference in value["references"].as_array().into_iter().flatten() {
                     if let Some(path) = reference["path"]
                         .as_str()
@@ -325,10 +363,13 @@ pub fn detect_repository(tree: &Tree, diff: &Diff) -> Result<RepositoryLayout> {
                 }
             }
         } else if project.language == "rust" {
-            if let Some(value) = toml_json(tree, &join(&project.path, "Cargo.toml"))? {
+            if let Some(value) =
+                toml_json(tree, &join(&project.path, "Cargo.toml"), &mut layout.notes)
+            {
                 let workspace = project.workspace.as_deref().unwrap_or(&project.path);
                 let workspace_value =
-                    toml_json(tree, &join(workspace, "Cargo.toml"))?.unwrap_or(Value::Null);
+                    toml_json(tree, &join(workspace, "Cargo.toml"), &mut layout.notes)
+                        .unwrap_or(Value::Null);
                 let mut declarations = vec![&value];
                 declarations.extend(
                     value["target"]
@@ -359,7 +400,11 @@ pub fn detect_repository(tree: &Tree, diff: &Diff) -> Result<RepositoryLayout> {
                     }
                 }
             }
-        } else if let Some(value) = toml_json(tree, &join(&project.path, "pyproject.toml"))? {
+        } else if let Some(value) = toml_json(
+            tree,
+            &join(&project.path, "pyproject.toml"),
+            &mut layout.notes,
+        ) {
             for (_, source) in value["tool"]["uv"]["sources"]
                 .as_object()
                 .into_iter()
@@ -422,10 +467,11 @@ pub fn detect_repository(tree: &Tree, diff: &Diff) -> Result<RepositoryLayout> {
                         name.starts_with("requirements") && name.ends_with(".txt")
                     })
             }) {
-                for line in std::str::from_utf8(&entry.content)
-                    .with_context(|| format!("invalid {path}"))?
-                    .lines()
-                {
+                let Ok(text) = std::str::from_utf8(&entry.content) else {
+                    skipped(path, &mut layout.notes);
+                    continue;
+                };
+                for line in text.lines() {
                     let line = line.trim();
                     if let Some(path) = line
                         .strip_prefix("-e ")

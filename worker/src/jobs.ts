@@ -81,6 +81,38 @@ export function validateResult(
       "runner artifact limit exceeded",
     );
 }
+/**
+ * Records a job the runner backend could not execute at all (for example the
+ * sandbox container failed to start), so the review fails with the reason
+ * instead of waiting for the workflow step timeout.
+ */
+export async function failJob(
+  env: Env,
+  review: string,
+  job: string,
+  attempt: number,
+  reason: string,
+) {
+  const store = new Store(env),
+    row = await env.DB.prepare(
+      "SELECT payload_key FROM jobs WHERE id=? AND review_id=? AND attempt=?",
+    )
+      .bind(job, review, attempt)
+      .first<{ payload_key: string }>();
+  invariant(row, "unknown job attempt");
+  const payload = await store.get<Execution>(row.payload_key);
+  await finishJob(env, review, job, attempt, {
+    outcome: "runner_failed",
+    job_id: job,
+    attempt,
+    version: payload.version,
+    exit_code: 1,
+    stdout: "",
+    stderr: `runner backend: ${reason}`.slice(0, 1000),
+    timed_out: false,
+    truncated: false,
+  });
+}
 export async function finishJob(
   env: Env,
   review: string,

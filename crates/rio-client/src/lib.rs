@@ -105,9 +105,26 @@ impl Client {
         }
         let mut response = request.send().await.context("contacting Rio endpoint")?;
         let status = response.status();
-        // Do not echo server bodies: they may contain raw provider or tool output.
         if !status.is_success() {
-            return Err(HttpStatus(status.as_u16()).into());
+            // Server bodies may contain raw provider or tool output and are never
+            // echoed. The endpoint's own short `error` field is the exception.
+            let detail = response
+                .bytes()
+                .await
+                .ok()
+                .filter(|body| body.len() <= 16 * 1024)
+                .and_then(|body| serde_json::from_slice::<Value>(&body).ok())
+                .and_then(|value| value["error"].as_str().map(str::to_owned))
+                .filter(|error| {
+                    !error.is_empty()
+                        && error.len() <= 200
+                        && error.chars().all(|c| c == ' ' || c.is_ascii_graphic())
+                });
+            let error = anyhow::Error::from(HttpStatus(status.as_u16()));
+            return Err(match detail {
+                Some(detail) => error.context(format!("endpoint error: {detail}")),
+                None => error,
+            });
         }
         let mut bytes = Vec::new();
         while let Some(chunk) = response.chunk().await? {
@@ -251,6 +268,8 @@ mod tests {
                 ("404 Not Found", "{}"),
                 ("200 OK", r#"{"round":2}"#),
                 ("404 Not Found", "{}"),
+                ("400 Bad Request", r#"{"error":"request too large"}"#),
+                ("400 Bad Request", "{\"error\":\"x\\nsecret\"}"),
             ] {
                 let (mut socket, _) = listener.accept().unwrap();
                 let mut bytes = Vec::new();
@@ -300,6 +319,22 @@ mod tests {
             .await
             .unwrap_err();
         assert_eq!(http_status(&error), Some(404));
+        // The endpoint's short error text is surfaced; anything else is not echoed.
+        let error = client
+            .feedback("8c1e", &json!({"reason":"wrong"}))
+            .await
+            .unwrap_err();
+        assert_eq!(http_status(&error), Some(400));
+        assert_eq!(
+            format!("{error:#}"),
+            "endpoint error: request too large: Rio endpoint returned HTTP 400"
+        );
+        let error = client
+            .feedback("8c1e", &json!({"reason":"wrong"}))
+            .await
+            .unwrap_err();
+        assert_eq!(http_status(&error), Some(400));
+        assert_eq!(format!("{error:#}"), "Rio endpoint returned HTTP 400");
         assert!(client.feedback("../reviews", &json!({})).await.is_err());
         let lines = server.join().unwrap();
         assert_eq!(

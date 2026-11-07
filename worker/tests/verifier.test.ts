@@ -13,8 +13,7 @@ import {
   filteredLines,
   guidanceBlock,
   readFile,
-  runAllowed,
-} from "../src/tools";
+  runAllowed, promptGraph } from "../src/tools";
 import { consolidate } from "../src/consolidate";
 import { evaluate, triage } from "../src/triage";
 import { graphs, hypothesis, profile, snapshot, submission } from "./fixtures";
@@ -556,6 +555,53 @@ describe("quorum", () => {
       }
     },
   );
+});
+describe("prompt graph excerpt", () => {
+  it("keeps seeds and nearest hops within the byte budget and flags truncation", () => {
+    const node = (id: string, hop: number, seed = false) => ({
+      id,
+      kind: "function",
+      path: `src/${id}.ts`,
+      symbol_path: id,
+      line_start: 1,
+      line_end: 3,
+      seed,
+      hop,
+    });
+    const nodes = [
+      node("far1", 2),
+      node("near1", 1),
+      node("seed1", 0, true),
+      node("far2", 2),
+      node("near2", 1),
+      node("seed2", 0, true),
+    ];
+    const edges = [
+      { from: "seed1", to: "near1", kind: "calls" },
+      { from: "near1", to: "far1", kind: "calls" },
+      { from: "seed2", to: "near2", kind: "calls" },
+      { from: "near2", to: "far2", kind: "calls" },
+    ];
+    const whole = promptGraph({ nodes, edges }, 1 << 20);
+    expect(whole.truncated).toBe(false);
+    expect(whole.nodes.map((n) => n.id)).toEqual(nodes.map((n) => n.id));
+    expect(whole.edges).toHaveLength(4);
+    expect(whole.total_nodes).toBe(6);
+    const budget = new TextEncoder().encode(JSON.stringify(whole)).length / 2;
+    const half = promptGraph({ nodes, edges }, budget);
+    expect(half.truncated).toBe(true);
+    expect(new TextEncoder().encode(JSON.stringify(half)).length).toBeLessThanOrEqual(budget);
+    const kept = new Set(half.nodes.map((n) => n.id));
+    expect(kept.has("seed1") && kept.has("seed2")).toBe(true);
+    expect(half.nodes.every((n) => n.seed || (n.hop ?? 0) <= 1)).toBe(true);
+    expect(half.edges.every((e) => kept.has(e.from) && kept.has(e.to))).toBe(true);
+    // Original order survives and a truncated source graph stays flagged.
+    expect(half.nodes.map((n) => n.id)).toEqual(nodes.filter((n) => kept.has(n.id)).map((n) => n.id));
+    expect(promptGraph({ nodes, edges, truncated: true }, 1 << 20).truncated).toBe(true);
+    expect(promptGraph({ nodes, edges }, 1).nodes).toEqual([]);
+    // Legacy graphs without slice metadata are excerpted in id order.
+    expect(promptGraph(graphs.head, 1 << 20).nodes[0]?.id).toBe("h");
+  });
 });
 describe("tools and owner guidance", () => {
   it("reads and searches both complete snapshots beyond focus", async () => {

@@ -101,3 +101,76 @@ fn uv_poetry_and_editable_path_edges_propagate_changes() {
             .is_none()
     );
 }
+
+#[test]
+fn unparsable_manifests_are_skipped_with_a_note_instead_of_failing_detection() {
+    let head: Tree = [
+        (
+            "Cargo.toml".into(),
+            entry("[workspace]\nmembers=['crates/*']\n"),
+        ),
+        (
+            "crates/app/Cargo.toml".into(),
+            entry("[package]\nname='app'\n"),
+        ),
+        ("crates/app/src/lib.rs".into(), entry("pub fn f() {}\n")),
+        (
+            "tests/fixtures/invalid/Cargo.toml".into(),
+            entry("[package]\nkey = invalid-value\n"),
+        ),
+        ("tests/fixtures/invalid/tsconfig.json".into(), entry("}\n")),
+        ("tests/fixtures/invalid/package.json".into(), entry("{\n")),
+        (
+            "tests/fixtures/invalid/pyproject.toml".into(),
+            entry("[project\n"),
+        ),
+        (
+            "tests/fixtures/invalid/pnpm-workspace.yaml".into(),
+            entry("packages: [\n"),
+        ),
+    ]
+    .into_iter()
+    .collect();
+    let mut base = head.clone();
+    base.get_mut("crates/app/src/lib.rs").unwrap().content = b"pub fn f() { }\n".to_vec();
+    let changes = changes(base, head);
+    let diff = diff(&changes, &[]).unwrap();
+    let layout = detect_repository(&changes.head, &diff).unwrap();
+    assert_eq!(
+        layout
+            .root_for("crates/app/src/lib.rs", "rust")
+            .unwrap()
+            .path,
+        "crates/app"
+    );
+    assert_eq!(
+        layout
+            .root_for("crates/app/src/lib.rs", "rust")
+            .unwrap()
+            .workspace
+            .as_deref(),
+        Some(".")
+    );
+    for path in [
+        "tests/fixtures/invalid/Cargo.toml",
+        "tests/fixtures/invalid/tsconfig.json",
+        "tests/fixtures/invalid/package.json",
+        "tests/fixtures/invalid/pyproject.toml",
+        "tests/fixtures/invalid/pnpm-workspace.yaml",
+    ] {
+        assert!(
+            layout
+                .notes
+                .contains(&format!("Skipped unparsable manifest {path}")),
+            "{:?}",
+            layout.notes
+        );
+    }
+    // The invalid fixtures still register as roots by file name, without a name.
+    let fixture = layout
+        .roots
+        .iter()
+        .find(|root| root.path == "tests/fixtures/invalid" && root.language == "rust")
+        .unwrap();
+    assert_eq!(fixture.name, None);
+}
