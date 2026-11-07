@@ -52,8 +52,13 @@ struct JobContext {
     profile: rio_profile::ResolvedProfile,
 }
 #[derive(Deserialize)]
+struct Limits {
+    wall_ms: u64,
+}
+#[derive(Deserialize)]
 struct Header {
     context: JobContext,
+    limits: Limits,
     #[serde(default)]
     links: BTreeMap<String, BTreeMap<String, String>>,
 }
@@ -117,7 +122,14 @@ fn load_tree(directory: &Path, links: &BTreeMap<String, String>) -> Result<Tree>
     }
     Ok(tree)
 }
+/// The impact graph must leave the rest of the job time to finish within its wall
+/// limit, which also covers reading the archive and writing the result: 15 s, or a
+/// quarter of a shorter limit.
+fn graph_deadline(start: std::time::Instant, wall_ms: u64) -> std::time::Instant {
+    start + Duration::from_millis(wall_ms - (wall_ms / 4).min(15000))
+}
 async fn inside(kind: String, base_dir: PathBuf, root: PathBuf) -> Result<()> {
+    let start = std::time::Instant::now();
     ensure!(
         std::env::var_os("RIO_CONTAINER").is_some(),
         "inside is available only in the runner container"
@@ -155,13 +167,22 @@ async fn inside(kind: String, base_dir: PathBuf, root: PathBuf) -> Result<()> {
             head,
         };
         let delta = rio_git::diff(&changes, &rio_engine::profile_excludes(&context.profile))?;
-        let graphs = rio_graph::GraphBuilder::default().build(
+        let deadline = graph_deadline(start, header.limits.wall_ms);
+        let graphs = rio_graph::GraphBuilder::default().build_until(
             &changes,
             &delta,
             &rio_graph::GraphOptions::default(),
+            &|| std::time::Instant::now() >= deadline,
         )?;
         let mut report = rio_core::Report::empty(rio_core::ReportStatus::Complete);
         report.impact = graphs.impact(2);
+        if let Some(note) = graphs.truncation_note(
+            false,
+            std::time::Instant::now() >= deadline,
+            "the job deadline",
+        ) {
+            report.footer.notes.push(note);
+        }
         if kind == "graph" {
             println!("{}", json!({"report":report,"graphs":graphs}));
             return Ok(());
@@ -603,6 +624,23 @@ async fn run_docker(
 mod tests {
     use super::*;
     use std::os::unix::fs::PermissionsExt;
+    #[test]
+    fn graph_deadline_leaves_a_margin_of_the_job_wall_limit() {
+        let start = std::time::Instant::now();
+        assert_eq!(
+            graph_deadline(start, 120000),
+            start + Duration::from_secs(105)
+        );
+        // A short wall limit keeps a quarter of it for the rest of the job.
+        assert_eq!(
+            graph_deadline(start, 10000),
+            start + Duration::from_millis(7500)
+        );
+        // The header carries the job's limits next to its other fields.
+        let limits: Limits =
+            serde_json::from_value(json!({"wall_ms": 60000, "memory_mb": 2048})).unwrap();
+        assert_eq!(limits.wall_ms, 60000);
+    }
     #[test]
     fn load_tree_reads_files_modes_and_links() {
         let directory = tempfile::tempdir().unwrap();

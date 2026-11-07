@@ -121,7 +121,9 @@ forwarded to another origin.
 Endpoint mode captures selected base/head snapshots, the graph and owner guidance
 without running repository commands on the developer's machine. Deterministic
 checks run in the selected remote runner using the existing Rust engine.
-`--offline`, or no endpoint, retains the local deterministic review.
+The impact graph is built locally with a 120 s budget (`RIO_GRAPH_BUDGET_SECS`
+overrides it); on a very large change the review continues with a truncated graph
+and says so in the report. `--offline`, or no endpoint, retains the local deterministic review.
 `--fork` forces a static-only review; model execution is denied after manifest
 overrides. PR fetching, publication and convergence flags (`--pr`, `--publish`,
 `--since-last`) are outside the implemented transport and return an explicit error.

@@ -9,6 +9,8 @@ use std::{collections::BTreeSet, path::Path, time::Duration};
 
 use crate::lineage::{BranchLineage, LocalLineage};
 use tokio_util::sync::CancellationToken;
+/// Wall-time budget for building the impact graph before an endpoint review.
+const GRAPH_BUDGET: std::time::Duration = std::time::Duration::from_secs(120);
 
 pub struct EndpointRequest<'a> {
     pub url: &'a str,
@@ -105,7 +107,15 @@ pub async fn review(
         exclude: profile_excludes(&profile),
     };
     // Snapshot parsing only. Repository commands run exclusively in the remote runner.
-    let graph = GraphBuilder::default().build(&changes, &delta, &options)?;
+    // The graph has a budget so a large repository yields a truncated graph, not a hang.
+    let budget = std::env::var("RIO_GRAPH_BUDGET_SECS")
+        .ok()
+        .and_then(|value| value.parse().ok())
+        .map_or(GRAPH_BUDGET, std::time::Duration::from_secs);
+    let deadline = std::time::Instant::now() + budget;
+    let graph = GraphBuilder::default().build_until(&changes, &delta, &options, &|| {
+        std::time::Instant::now() >= deadline
+    })?;
     graph.write(&cache.path)?;
     let mut report = Report::empty(ReportStatus::Complete);
     report.review = ReviewHeader {
@@ -123,6 +133,13 @@ pub async fn review(
         ..Default::default()
     };
     report.impact = graph.impact(options.hops);
+    if let Some(note) = graph.truncation_note(
+        false,
+        std::time::Instant::now() >= deadline,
+        "the graph deadline",
+    ) {
+        report.footer.notes.push(note);
+    }
     let upload = client.upload_snapshot(&changes.base, &changes.head).await?;
     eprintln!(
         "snapshot: uploaded {} in {} new contents ({} in {} distinct contents, {} files total)",

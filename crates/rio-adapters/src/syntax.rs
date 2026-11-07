@@ -85,6 +85,24 @@ pub fn syntax_language(path: &str) -> Result<Language> {
     })
 }
 
+/// A compiled query, shared per language and query text: compiling is far more
+/// expensive than running a query on one file.
+pub(crate) fn cached_query(
+    language: &Language,
+    text: &'static str,
+) -> Result<std::sync::Arc<Query>> {
+    type Queries = Mutex<std::collections::HashMap<(usize, usize), std::sync::Arc<Query>>>;
+    static QUERIES: std::sync::OnceLock<Queries> = std::sync::OnceLock::new();
+    let key = (language.clone().into_raw() as usize, text.as_ptr() as usize);
+    let queries = QUERIES.get_or_init(Mutex::default);
+    if let Some(query) = queries.lock().unwrap().get(&key) {
+        return Ok(query.clone());
+    }
+    let query = std::sync::Arc::new(Query::new(language, text)?);
+    queries.lock().unwrap().insert(key, query.clone());
+    Ok(query)
+}
+
 pub fn parse_source(path: &str, source: &[u8]) -> Result<tree_sitter::Tree> {
     let mut parser = Parser::new();
     parser.set_language(&syntax_language(path)?)?;
@@ -379,7 +397,7 @@ pub fn analyze_source(path: &str, source: &[u8]) -> Result<SyntaxTable> {
     } else {
         include_str!("../../../modules/adapters/typescript/queries/symbols.scm")
     };
-    let query = Query::new(&language, symbols_query)?;
+    let query = cached_query(&language, symbols_query)?;
     let mut result = SyntaxTable {
         parse_errors: tree.root_node().has_error(),
         ..Default::default()
@@ -461,7 +479,7 @@ pub fn analyze_source(path: &str, source: &[u8]) -> Result<SyntaxTable> {
         && !path.ends_with(".d.cts")
         && !path.ends_with(".pyi")
     {
-        let query = Query::new(
+        let query = cached_query(
             &language,
             if python {
                 include_str!("../../../modules/adapters/python/queries/executable.scm")
@@ -487,6 +505,8 @@ pub fn analyze_source(path: &str, source: &[u8]) -> Result<SyntaxTable> {
 #[derive(Default)]
 pub struct SyntaxCache {
     tables: Mutex<BTreeMap<String, SyntaxTable>>,
+    // Files and bytes actually parsed (cache misses), for graph measurements.
+    parsed: Mutex<(usize, u64)>,
 }
 impl SyntaxCache {
     pub fn analyze(&self, path: &str, source: &[u8]) -> Result<SyntaxTable> {
@@ -495,7 +515,14 @@ impl SyntaxCache {
             return Ok(table.clone());
         }
         let table = analyze_source(path, source)?;
+        let mut parsed = self.parsed.lock().unwrap();
+        parsed.0 += 1;
+        parsed.1 += source.len() as u64;
         self.tables.lock().unwrap().insert(key, table.clone());
         Ok(table)
+    }
+    /// Files and bytes parsed so far.
+    pub fn parsed(&self) -> (usize, u64) {
+        *self.parsed.lock().unwrap()
     }
 }

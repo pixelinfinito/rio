@@ -1,6 +1,86 @@
 use crate::{Confidence, GraphNode};
 use rio_adapters::{Identifier, SyntaxTable};
 use rio_git::Tree;
+use std::cell::{OnceCell, RefCell};
+use std::collections::{BTreeMap, HashMap};
+use std::rc::Rc;
+
+/// Import resolution for one tree, caching what does not depend on the importing
+/// file: parsed manifests, crate names, and each crate's module map. Results are
+/// identical to resolving every import from scratch.
+pub struct Resolver<'a> {
+    tree: &'a Tree,
+    manifests: RefCell<HashMap<String, Option<Rc<toml::Value>>>>,
+    // (normalized crate name, manifest path) in tree order.
+    crates: OnceCell<Vec<(String, String)>>,
+    modules: RefCell<HashMap<String, Option<Rc<ModuleMap>>>>,
+}
+/// Module path (`a::b`) to the file declaring it.
+type ModuleMap = BTreeMap<String, String>;
+impl<'a> Resolver<'a> {
+    pub fn new(tree: &'a Tree) -> Self {
+        Self {
+            tree,
+            manifests: RefCell::default(),
+            crates: OnceCell::new(),
+            modules: RefCell::default(),
+        }
+    }
+    pub fn resolve_import(&self, path: &str, module: &str) -> Option<String> {
+        if rio_adapters::language_for_path(path) == Some("rust") {
+            return resolve_rust(self, path, module);
+        }
+        resolve_other(self.tree, path, module)
+    }
+    fn manifest(&self, path: &str) -> Option<Rc<toml::Value>> {
+        if let Some(value) = self.manifests.borrow().get(path) {
+            return value.clone();
+        }
+        let value = self
+            .tree
+            .get(path)
+            .and_then(|entry| std::str::from_utf8(&entry.content).ok())
+            .and_then(|text| toml::from_str::<toml::Value>(text).ok())
+            .map(Rc::new);
+        self.manifests
+            .borrow_mut()
+            .insert(path.into(), value.clone());
+        value
+    }
+    fn crate_manifest(&self, package_name: &str) -> Option<String> {
+        let crates = self.crates.get_or_init(|| {
+            self.tree
+                .keys()
+                .filter(|path| path.as_str() == "Cargo.toml" || path.ends_with("/Cargo.toml"))
+                .filter_map(|path| {
+                    let value = self.manifest(path)?;
+                    let name = value
+                        .get("lib")
+                        .and_then(|value| value.get("name"))
+                        .or_else(|| value.get("package").and_then(|value| value.get("name")))?
+                        .as_str()?
+                        .replace('-', "_");
+                    Some((name, path.clone()))
+                })
+                .collect()
+        });
+        let wanted = package_name.replace('-', "_");
+        crates
+            .iter()
+            .find(|(name, _)| *name == wanted)
+            .map(|(_, path)| path.clone())
+    }
+    fn modules(&self, entry: &str) -> Option<Rc<ModuleMap>> {
+        if let Some(modules) = self.modules.borrow().get(entry) {
+            return modules.clone();
+        }
+        let modules = module_map(self.tree, entry).map(Rc::new);
+        self.modules
+            .borrow_mut()
+            .insert(entry.into(), modules.clone());
+        modules
+    }
+}
 
 fn parent(path: &str) -> &str {
     path.rsplit_once('/').map_or("", |(parent, _)| parent)
@@ -45,10 +125,11 @@ fn locate(tree: &Tree, path: &str, python: bool) -> Option<String> {
         .find(|candidate| tree.contains_key(candidate))
 }
 
+#[cfg(feature = "legacy")]
 pub fn resolve_import(tree: &Tree, path: &str, module: &str) -> Option<String> {
-    if rio_adapters::language_for_path(path) == Some("rust") {
-        return resolve_rust(tree, path, module);
-    }
+    Resolver::new(tree).resolve_import(path, module)
+}
+fn resolve_other(tree: &Tree, path: &str, module: &str) -> Option<String> {
     let python = rio_adapters::language_for_path(path) == Some("python");
     if !python {
         if module.starts_with('.') {
@@ -176,11 +257,10 @@ pub fn reference(
     }
 }
 
-fn resolve_rust(tree: &Tree, path: &str, module: &str) -> Option<String> {
-    use std::collections::{BTreeMap, BTreeSet, VecDeque};
+fn resolve_rust(resolver: &Resolver<'_>, path: &str, module: &str) -> Option<String> {
+    let tree = resolver.tree;
     let manifest = rio_adapters::ancestor_config(tree, parent(path), &["Cargo.toml"])?;
-    let manifest_value: toml::Value =
-        toml::from_str(std::str::from_utf8(&tree[&manifest].content).ok()?).ok()?;
+    let manifest_value = resolver.manifest(&manifest)?;
     let manifest_root = parent(&manifest);
     let mut pieces: Vec<_> = module
         .trim_end_matches("::*")
@@ -204,26 +284,12 @@ fn resolve_rust(tree: &Tree, path: &str, module: &str) -> Option<String> {
         if let Some(candidate) = dependency_path.filter(|path| tree.contains_key(path)) {
             selected_manifest = candidate;
             pieces.remove(0);
-        } else if let Some(candidate) = tree
-            .iter()
-            .filter(|(path, _)| path.as_str() == "Cargo.toml" || path.ends_with("/Cargo.toml"))
-            .find_map(|(path, entry)| {
-                let value: toml::Value =
-                    toml::from_str(std::str::from_utf8(&entry.content).ok()?).ok()?;
-                let name = value
-                    .get("lib")
-                    .and_then(|value| value.get("name"))
-                    .or_else(|| value.get("package").and_then(|value| value.get("name")))?
-                    .as_str()?;
-                (name.replace('-', "_") == package_name.replace('-', "_")).then(|| path.clone())
-            })
-        {
+        } else if let Some(candidate) = resolver.crate_manifest(package_name) {
             selected_manifest = candidate;
             pieces.remove(0);
         }
     }
-    let value: toml::Value =
-        toml::from_str(std::str::from_utf8(&tree[&selected_manifest].content).ok()?).ok()?;
+    let value = resolver.manifest(&selected_manifest)?;
     let root = parent(&selected_manifest);
     let entry = value
         .get("lib")
@@ -236,6 +302,52 @@ fn resolve_rust(tree: &Tree, path: &str, module: &str) -> Option<String> {
     } else {
         normalize(&format!("{root}/src/main.rs"))?
     };
+    let modules = resolver.modules(&entry)?;
+    let mut prefix = Vec::<String>::new();
+    if matches!(first, "self" | "super") && selected_manifest == manifest {
+        prefix = modules
+            .iter()
+            .filter(|(_, file)| file.as_str() == path)
+            .min_by_key(|(name, _)| name.len())
+            .map(|(name, _)| {
+                name.split("::")
+                    .filter(|name| !name.is_empty())
+                    .map(str::to_owned)
+                    .collect()
+            })
+            .unwrap_or_default();
+    }
+    while let Some(piece) = pieces.first().copied() {
+        match piece {
+            "crate" => {
+                prefix.clear();
+                pieces.remove(0);
+            }
+            "self" => {
+                pieces.remove(0);
+            }
+            "super" => {
+                prefix.pop();
+                pieces.remove(0);
+            }
+            _ => break,
+        }
+    }
+    prefix.extend(pieces.into_iter().map(str::to_owned));
+    // A use path may end in a module or in an item of a declared module.
+    // Dropping further segments would resolve unknown modules to the crate root.
+    if let Some(file) = modules.get(&prefix.join("::")) {
+        return Some(file.clone());
+    }
+    prefix.pop()?;
+    modules.get(&prefix.join("::")).cloned()
+}
+
+/// Module path to file for a crate, walking `mod` declarations from its entry
+/// file. `None` when a declared module file is missing or fails to parse.
+fn module_map(tree: &Tree, entry: &str) -> Option<ModuleMap> {
+    use std::collections::{BTreeSet, VecDeque};
+    let entry = entry.to_owned();
     let mut modules = BTreeMap::new();
     let mut queue = VecDeque::from([(String::new(), entry.clone(), parent(&entry).to_owned())]);
     let mut seen = BTreeSet::new();
@@ -299,42 +411,5 @@ fn resolve_rust(tree: &Tree, path: &str, module: &str) -> Option<String> {
             &mut queue,
         );
     }
-    let mut prefix = Vec::<String>::new();
-    if matches!(first, "self" | "super") && selected_manifest == manifest {
-        prefix = modules
-            .iter()
-            .filter(|(_, file)| file.as_str() == path)
-            .min_by_key(|(name, _)| name.len())
-            .map(|(name, _)| {
-                name.split("::")
-                    .filter(|name| !name.is_empty())
-                    .map(str::to_owned)
-                    .collect()
-            })
-            .unwrap_or_default();
-    }
-    while let Some(piece) = pieces.first().copied() {
-        match piece {
-            "crate" => {
-                prefix.clear();
-                pieces.remove(0);
-            }
-            "self" => {
-                pieces.remove(0);
-            }
-            "super" => {
-                prefix.pop();
-                pieces.remove(0);
-            }
-            _ => break,
-        }
-    }
-    prefix.extend(pieces.into_iter().map(str::to_owned));
-    // A use path may end in a module or in an item of a declared module.
-    // Dropping further segments would resolve unknown modules to the crate root.
-    if let Some(file) = modules.get(&prefix.join("::")) {
-        return Some(file.clone());
-    }
-    prefix.pop()?;
-    modules.get(&prefix.join("::")).cloned()
+    Some(modules)
 }

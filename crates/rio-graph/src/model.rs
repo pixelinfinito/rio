@@ -161,6 +161,24 @@ impl GraphSlices {
         rio_git::sync_directory(&directory)?;
         Ok(())
     }
+    /// The report note for a truncated graph, naming why it stopped: an
+    /// interruption, its deadline (described by `deadline`), or the node cap.
+    pub fn truncation_note(
+        &self,
+        interrupted: bool,
+        deadline_reached: bool,
+        deadline: &str,
+    ) -> Option<String> {
+        (self.base.truncated || self.head.truncated).then(|| {
+            if interrupted {
+                "Impact graph truncated after interruption".into()
+            } else if deadline_reached {
+                format!("Impact graph truncated at {deadline}")
+            } else {
+                "Impact graph truncated at max_nodes".into()
+            }
+        })
+    }
     pub fn impact(&self, hops: usize) -> ImpactSummary {
         let mut symbols = Vec::new();
         let mut seen = BTreeSet::new();

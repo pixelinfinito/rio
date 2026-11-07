@@ -1086,17 +1086,12 @@ pub async fn review(
                 report.footer.notes.push(
                     "Graph references use syntax and text; no language server was used".into(),
                 );
-                if report.impact.truncated {
-                    report.footer.notes.push(
-                        if cancellation.is_cancelled() {
-                            "Impact graph truncated after interruption"
-                        } else if Instant::now() >= execution.deadline {
-                            "Impact graph truncated at the review deadline"
-                        } else {
-                            "Impact graph truncated at max_nodes"
-                        }
-                        .into(),
-                    );
+                if let Some(note) = graph.truncation_note(
+                    cancellation.is_cancelled(),
+                    Instant::now() >= execution.deadline,
+                    "the review deadline",
+                ) {
+                    report.footer.notes.push(note);
                 }
                 emit(
                     &events,

@@ -1067,10 +1067,12 @@ fn endpoint_presets_submit_snapshots_and_cache_verification_without_local_comman
         net::TcpListener,
         time::{Duration, Instant},
     };
-    for (args, posture, mode) in [
-        (vec!["--preset", "quick"], "critical-only", "fast"),
-        (vec!["--preset", "standard"], "balanced", "fast"),
-        (vec!["--deep"], "thorough", "deep"),
+    // The last case also exhausts the graph budget: the review continues with a
+    // truncated graph and says why.
+    for (args, posture, mode, budget) in [
+        (vec!["--preset", "quick"], "critical-only", "fast", None),
+        (vec!["--preset", "standard"], "balanced", "fast", None),
+        (vec!["--deep"], "thorough", "deep", Some("0")),
     ] {
         let temp = repository();
         let root = temp.path();
@@ -1198,7 +1200,11 @@ fn endpoint_presets_submit_snapshots_and_cache_verification_without_local_comman
             }
             assert_eq!(seen.len(), 8, "requests: {seen:?}");
         });
-        let output = rio(root)
+        let mut command = rio(root);
+        if let Some(budget) = budget {
+            command.env("RIO_GRAPH_BUDGET_SECS", budget);
+        }
+        let output = command
             .env("RIO_ENDPOINT_URL", format!("http://{address}"))
             .env("RIO_API_TOKEN", "long-enough-api-token-32-characters")
             .args(["review", "--format", "json"])
@@ -1216,6 +1222,13 @@ fn endpoint_presets_submit_snapshots_and_cache_verification_without_local_comman
         );
         let report = json_report(&output);
         assert!(report["checks"].as_array().unwrap().is_empty());
+        let truncated = report["footer"]["notes"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|note| note == "Impact graph truncated at the graph deadline");
+        assert_eq!(truncated, budget.is_some(), "{}", report["footer"]);
+        assert_eq!(report["impact"]["truncated"], budget.is_some());
         let run = root
             .join(".rio/cache")
             .join(report["review"]["id"].as_str().unwrap())

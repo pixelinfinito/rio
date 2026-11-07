@@ -3643,6 +3643,7 @@ dependencies = [
  "rio-adapters",
  "rio-core",
  "rio-git",
+ "rio-graph",
  "serde",
  "serde_json",
  "tempfile",

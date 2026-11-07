@@ -29,5 +29,7 @@
 
 ## Workflow follow-up
 
+- Task 5.2 is blocked by local graph building on the ruff case (it never reached the upload in 30 min and 2 h runs); `rio-v0-2-graph-scale` fixes this and completes 5.2 in its task 4.3.
+
 - Resume task 1.1 of `rio-v0-2-review-convergence` with the approved case set unchanged once this change is applied.
 - Archive this change after its tasks are complete.
