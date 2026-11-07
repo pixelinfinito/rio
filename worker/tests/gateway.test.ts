@@ -110,6 +110,28 @@ it("asks once more for the protocol after native tool syntax and gives up after 
     `assistant:${xml.slice(0, 24)}`,
     "user:Your previous reply was ",
   ]);
+  // A model that relapses after each correction is repaired again, up to the cap.
+  const tool = '{"tools":[{"name":"read_file","args":{"path":"a.ts","version":"head"}}]}';
+  let relapses = 0;
+  const relapsing = await converse({
+    ...base,
+    gateway: {
+      complete: async () => {
+        relapses++;
+        return {
+          content: relapses % 2 ? xml : relapses >= 8 ? '{"result":[]}' : tool,
+          input_tokens: 80,
+          output_tokens: 50,
+          cost_usd: null,
+        };
+      },
+    },
+    allowance: { remaining: 160000 },
+    messages: [{ role: "user", content: "review" }],
+  });
+  expect(relapsing).toEqual([]);
+  expect(relapses).toBe(8);
+  expect(dispatch).toHaveBeenCalledTimes(3);
   let calls = 0;
   await expect(
     converse({
