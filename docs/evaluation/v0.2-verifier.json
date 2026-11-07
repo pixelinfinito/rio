@@ -1,0 +1,203 @@
+{
+  "schema": "rio-verifier-comparison-v1",
+  "execution": "live-model",
+  "manifest_sha256": "198204cf3e4757c6265f3d779383c450f11b1189304e4154e0a84d94e821fba3",
+  "cases": [],
+  "errors": [
+    {
+      "id": "HS-PY-02",
+      "error": "only completed reviews can establish acceptance"
+    },
+    {
+      "id": "HS-PY-03",
+      "error": "only completed reviews can establish acceptance"
+    },
+    {
+      "id": "HS-PY-04",
+      "error": "only completed reviews can establish acceptance"
+    },
+    {
+      "id": "HS-TS-01",
+      "error": "only completed reviews can establish acceptance"
+    },
+    {
+      "id": "HS-TS-02",
+      "error": "only completed reviews can establish acceptance"
+    },
+    {
+      "id": "HS-TS-03",
+      "error": "only completed reviews can establish acceptance"
+    },
+    {
+      "id": "HS-RS-01",
+      "error": "only completed reviews can establish acceptance"
+    },
+    {
+      "id": "HS-RS-02",
+      "error": "only completed reviews can establish acceptance"
+    },
+    {
+      "id": "HS-RS-03",
+      "error": "only completed reviews can establish acceptance"
+    },
+    {
+      "id": "HS-RS-04",
+      "error": "only completed reviews can establish acceptance"
+    },
+    {
+      "id": "CL-PY-01",
+      "error": "only completed reviews can establish acceptance"
+    },
+    {
+      "id": "CL-PY-02",
+      "error": "only completed reviews can establish acceptance"
+    },
+    {
+      "id": "CL-PY-04",
+      "error": "only completed reviews can establish acceptance"
+    },
+    {
+      "id": "CL-TS-03",
+      "error": "only completed reviews can establish acceptance"
+    },
+    {
+      "id": "CL-TS-04",
+      "error": "only completed reviews can establish acceptance"
+    },
+    {
+      "id": "CL-RS-02",
+      "error": "only completed reviews can establish acceptance"
+    },
+    {
+      "id": "CL-RS-03",
+      "error": "only completed reviews can establish acceptance"
+    },
+    {
+      "id": "CL-RS-04",
+      "error": "only completed reviews can establish acceptance"
+    }
+  ],
+  "arms": {
+    "single": {
+      "counts": {
+        "true-positive": 0,
+        "false-positive": 0
+      },
+      "precision": null,
+      "by_evidence": {
+        "plausible": {
+          "true-positive": 0,
+          "false-positive": 0,
+          "precision": null
+        },
+        "static_proven": {
+          "true-positive": 0,
+          "false-positive": 0,
+          "precision": null
+        },
+        "reproduced": {
+          "true-positive": 0,
+          "false-positive": 0,
+          "precision": null
+        }
+      },
+      "blind_match": {
+        "same": {
+          "true-positive": 0,
+          "false-positive": 0
+        },
+        "related": {
+          "true-positive": 0,
+          "false-positive": 0
+        },
+        "none": {
+          "true-positive": 0,
+          "false-positive": 0
+        }
+      },
+      "verification_tokens": 0,
+      "verification_cost_usd": 0.0,
+      "high_controls_expected": 0,
+      "high_controls_detected": 0,
+      "high_severity_recall": null
+    },
+    "quorum": {
+      "counts": {
+        "true-positive": 0,
+        "false-positive": 0
+      },
+      "precision": null,
+      "by_evidence": {
+        "plausible": {
+          "true-positive": 0,
+          "false-positive": 0,
+          "precision": null
+        },
+        "static_proven": {
+          "true-positive": 0,
+          "false-positive": 0,
+          "precision": null
+        },
+        "reproduced": {
+          "true-positive": 0,
+          "false-positive": 0,
+          "precision": null
+        }
+      },
+      "blind_match": {
+        "same": {
+          "true-positive": 0,
+          "false-positive": 0
+        },
+        "related": {
+          "true-positive": 0,
+          "false-positive": 0
+        },
+        "none": {
+          "true-positive": 0,
+          "false-positive": 0
+        }
+      },
+      "verification_tokens": 0,
+      "verification_cost_usd": 0.0,
+      "high_controls_expected": 0,
+      "high_controls_detected": 0,
+      "high_severity_recall": null
+    }
+  },
+  "precision": null,
+  "gate": 0.8,
+  "high_severity_recall_preserved": false,
+  "lost_high_controls": [],
+  "quorum_false_positives": [],
+  "gates": {
+    "reference_set": false,
+    "precision": null,
+    "high_severity_recall": null,
+    "complete_data": false,
+    "live_model": true
+  },
+  "accepted": false,
+  "reasons": [
+    "case HS-PY-02 could not be scored: only completed reviews can establish acceptance",
+    "case HS-PY-03 could not be scored: only completed reviews can establish acceptance",
+    "case HS-PY-04 could not be scored: only completed reviews can establish acceptance",
+    "case HS-TS-01 could not be scored: only completed reviews can establish acceptance",
+    "case HS-TS-02 could not be scored: only completed reviews can establish acceptance",
+    "case HS-TS-03 could not be scored: only completed reviews can establish acceptance",
+    "case HS-RS-01 could not be scored: only completed reviews can establish acceptance",
+    "case HS-RS-02 could not be scored: only completed reviews can establish acceptance",
+    "case HS-RS-03 could not be scored: only completed reviews can establish acceptance",
+    "case HS-RS-04 could not be scored: only completed reviews can establish acceptance",
+    "case CL-PY-01 could not be scored: only completed reviews can establish acceptance",
+    "case CL-PY-02 could not be scored: only completed reviews can establish acceptance",
+    "case CL-PY-04 could not be scored: only completed reviews can establish acceptance",
+    "case CL-TS-03 could not be scored: only completed reviews can establish acceptance",
+    "case CL-TS-04 could not be scored: only completed reviews can establish acceptance",
+    "case CL-RS-02 could not be scored: only completed reviews can establish acceptance",
+    "case CL-RS-03 could not be scored: only completed reviews can establish acceptance",
+    "case CL-RS-04 could not be scored: only completed reviews can establish acceptance",
+    "reference set requires high-severity issues and independently clean controls",
+    "quorum precision has no denominator (no adjudicated agent findings)"
+  ]
+}
