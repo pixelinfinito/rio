@@ -1,4 +1,4 @@
-# Rio
+<p align="center"><img src="docs/assets/readme-header.webp" alt="Rio: open-source AI code review, right in your terminal. Pipeline: prepare, checks and graph run on your machine; triage, agents and verify run in your Cloudflare account (optional); report." width="1280"></p>
 
 Rio reviews Git changes with TypeScript, Python and Rust type checking, linting, secret scanning, diff coverage, dependency auditing, and a bounded impact graph. Run deterministic checks locally, or configure the Cloudflare endpoint for isolated checks and agent review with independent verifier voters. Rio is licensed under Apache-2.0.
 
