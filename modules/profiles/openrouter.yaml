@@ -8,12 +8,13 @@ models:
 # by its UTF-8 bytes (about three times the token count for code). An agent review
 # of a real repository runs 6 to 12 turns of 30k to 50k tokens (about 500k in
 # total), and each voter's blind and disclosed passes run several tool turns
-# (about 40k actual tokens per voter). `tokens` caps the whole review, agents and
-# voters together, so it is sized for both; the ledger charges actual tokens, and
-# pilots on real repositories cost between USD 0.5 and 1.2 per review.
+# (about 40k actual tokens per voter). `tokens` caps the whole review, every agent
+# (the security step runs its own) and all voters together, so it is sized for two
+# agents; the ledger charges actual tokens, and pilots on real repositories cost
+# between USD 0.4 and 2.1 per review.
 budget:
-  fast: { tokens: 1200000, agents_max: 1, wall_time: 8m, verify_tokens: 320000 }
-  deep: { tokens: 2000000, agents_max: 2, wall_time: 15m, verify_tokens: 400000 }
+  fast: { tokens: 2400000, agents_max: 1, wall_time: 8m, verify_tokens: 320000 }
+  deep: { tokens: 4000000, agents_max: 2, wall_time: 15m, verify_tokens: 400000 }
 verify: { voters: 3, quorum: 2 }
 steps:
   - id: prepare

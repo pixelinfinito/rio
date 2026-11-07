@@ -370,9 +370,12 @@ def validate_record(record):
                 raise ValueError('positive-control deterministic miss needs an expectation ID')
         if 'expectation_id' in m:
             e = next((e for e in control['expected'] if e['id'] == m['expectation_id']), None)
-            if not e or e['finding_ids'] or m['scope_class'] != 'deterministic':
+            # Contract and security controls are the agents' to find, so their misses
+            # are agent-layer; every other control miss is deterministic.
+            allowed = ('deterministic', 'agent-layer') if e and e['mechanism'] in AGENT_MECHANISMS else ('deterministic',)
+            if not e or e['finding_ids'] or m['scope_class'] not in allowed:
                 raise ValueError('miss references absent, detected, or out-of-scope expectation')
-            if m['mechanism'] != e['mechanism']:
+            if m.get('mechanism') != e['mechanism']:
                 raise ValueError('control miss mechanism differs from expected bug')
 
 

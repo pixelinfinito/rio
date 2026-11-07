@@ -164,6 +164,23 @@ class AggregationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'deterministic miss'):
             e.validate_record(r)
 
+    def test_undetected_agent_control_creates_an_agent_layer_miss(self):
+        r = report()
+        v = e.skeleton(r, 'owner/repo1', 'https://github.com/owner/repo1/pull/1', ['typescript'])
+        v.update(reviewer='independent oracle', independently_clean=False)
+        v['positive_control'] = {'kind': 'real-pr', 'expected': [
+            {'id': 'bug-1', 'mechanism': 'contract-break', 'evidence': 'client test fails at head',
+             'finding_ids': []}]}
+        built = e.build_record(r, v, 'raw.json')
+        self.assertEqual([(m['scope_class'], m['mechanism']) for m in built['misses']],
+                         [('agent-layer', 'contract-break')])
+        e.validate_record(built)
+        # A deterministic control cannot be recorded as an agent-layer miss.
+        deterministic = record(1, control=True)
+        deterministic['misses'][0]['scope_class'] = 'agent-layer'
+        with self.assertRaisesRegex(ValueError, 'out-of-scope'):
+            e.validate_record(deterministic)
+
     def test_successful_baseline_accepts_trusted_and_cached(self):
         r = report()
         r['checks'][0]['dependency_state'] = 'trusted'

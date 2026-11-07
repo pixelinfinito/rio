@@ -12,8 +12,8 @@ models:
   default: openrouter/anthropic/claude-sonnet-5.5
   verifier: openrouter/openai/gpt-6.1-sol
 budget:
-  fast: { tokens: 1200000, agents_max: 1, wall_time: 12m, verify_tokens: 320000 }
-  deep: { tokens: 2000000, agents_max: 2, wall_time: 15m, verify_tokens: 400000 }
+  fast: { tokens: 2400000, agents_max: 1, wall_time: 12m, verify_tokens: 320000 }
+  deep: { tokens: 4000000, agents_max: 2, wall_time: 15m, verify_tokens: 400000 }
 verify: { voters: 3, quorum: 2 }
 steps:
   - id: prepare
