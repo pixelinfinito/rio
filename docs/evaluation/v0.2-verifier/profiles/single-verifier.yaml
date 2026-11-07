@@ -1,0 +1,8 @@
+# Single-verifier baseline arm for the pinned v0.2 verifier comparison.
+# Identical to the built-in rio/openrouter profile except for one voter.
+version: 1
+name: v0.2-verifier-single
+extends: rio/openrouter
+verify:
+  voters: 1
+  quorum: 1

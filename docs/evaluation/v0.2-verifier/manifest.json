@@ -1,0 +1,477 @@
+{
+  "schema": "rio-verifier-eval-v1",
+  "execution": "live-model",
+  "description": "v0.2 pinned verifier comparison, 2026-11-07, approved 24-case set",
+  "cases": [
+    {
+      "id": "HS-PY-02",
+      "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
+      "voter_model": "openrouter/openai/gpt-6.1-sol",
+      "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
+      "high_controls": [
+        "hs-py-02"
+      ],
+      "independently_clean": false,
+      "notes": "single-arm profile hash d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
+      "single": {
+        "report": "HS-PY-02/single/report.json",
+        "audit": "HS-PY-02/single/audit.json",
+        "verdicts": "HS-PY-02/single/verdicts.json",
+        "report_sha256": "4ee2604820a3417dcf43abf77e1cfb79191852b2f92be2cd39dc29b6bf20f9f7",
+        "audit_sha256": "e99dbe8c37cbc9632fa7b0e473512eb1ad97f7b7f93b8320fd637ea6d20d6389",
+        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+      },
+      "quorum": {
+        "report": "HS-PY-02/quorum/report.json",
+        "audit": "HS-PY-02/quorum/audit.json",
+        "verdicts": "HS-PY-02/quorum/verdicts.json",
+        "report_sha256": "ee598d888ff8ac3858e7c878ee013c82441fe26b7430875d55f282c94da4d01e",
+        "audit_sha256": "8fe9ef6bbfbecd973012d802e08b5c08c8089ed52a66afbc91601352fa276395",
+        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+      }
+    },
+    {
+      "id": "HS-PY-03",
+      "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
+      "voter_model": "openrouter/openai/gpt-6.1-sol",
+      "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
+      "high_controls": [
+        "hs-py-03"
+      ],
+      "independently_clean": false,
+      "notes": "single-arm profile hash d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
+      "single": {
+        "report": "HS-PY-03/single/report.json",
+        "audit": "HS-PY-03/single/audit.json",
+        "verdicts": "HS-PY-03/single/verdicts.json",
+        "report_sha256": "81c0e53ba540bedca7f74201a98af970f570de61eb8137850a3c8e1b1958c53e",
+        "audit_sha256": "40a704b81558f93f5b1191bec788398778b92b45962833f7fe47490b0de590fe",
+        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+      },
+      "quorum": {
+        "report": "HS-PY-03/quorum/report.json",
+        "audit": "HS-PY-03/quorum/audit.json",
+        "verdicts": "HS-PY-03/quorum/verdicts.json",
+        "report_sha256": "4d9cb0cb63ae71add542b883d03f84239d9eedd0492641e46ff65f531959b57c",
+        "audit_sha256": "f74643fa0d25c4b9328b1cf924ace537d9f1692dbd6408a0af5471a13af43b3f",
+        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+      }
+    },
+    {
+      "id": "HS-PY-04",
+      "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
+      "voter_model": "openrouter/openai/gpt-6.1-sol",
+      "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
+      "high_controls": [
+        "hs-py-04"
+      ],
+      "independently_clean": false,
+      "notes": "single-arm profile hash d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
+      "single": {
+        "report": "HS-PY-04/single/report.json",
+        "audit": "HS-PY-04/single/audit.json",
+        "verdicts": "HS-PY-04/single/verdicts.json",
+        "report_sha256": "8fba38fc75041fbe806983155e8d64aea05ac401a61260d445e32351861dcfd6",
+        "audit_sha256": "7c496919fefbefe9b85e39002ebe93bcc9a3ed79eacb763ee1740419d47585f5",
+        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+      },
+      "quorum": {
+        "report": "HS-PY-04/quorum/report.json",
+        "audit": "HS-PY-04/quorum/audit.json",
+        "verdicts": "HS-PY-04/quorum/verdicts.json",
+        "report_sha256": "458e37363bab9d2009b0711d03ca9edd69f8f162de2401e0b3e46b5a0f100af4",
+        "audit_sha256": "c334e35dcdbe7390c99f30ab7d211db8d562a556981aaaccf047dc0ce3519b09",
+        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+      }
+    },
+    {
+      "id": "HS-TS-01",
+      "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
+      "voter_model": "openrouter/openai/gpt-6.1-sol",
+      "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
+      "high_controls": [
+        "hs-ts-01"
+      ],
+      "independently_clean": false,
+      "notes": "single-arm profile hash d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
+      "single": {
+        "report": "HS-TS-01/single/report.json",
+        "audit": "HS-TS-01/single/audit.json",
+        "verdicts": "HS-TS-01/single/verdicts.json",
+        "report_sha256": "52d38f6741825d7707cf5feb7dba21c3d614cc82de827cd03690295379d3eaa7",
+        "audit_sha256": "3732778e8a46569bca34ee2f37aa9ea907f18f11cfd0d17ba7c9b0d66339816f",
+        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+      },
+      "quorum": {
+        "report": "HS-TS-01/quorum/report.json",
+        "audit": "HS-TS-01/quorum/audit.json",
+        "verdicts": "HS-TS-01/quorum/verdicts.json",
+        "report_sha256": "1e48d54788ab8eade44e69d534aee02c2508f777adf177037043989ad1d011b5",
+        "audit_sha256": "7d33a724427cd6678fcde64daf013c5e5182ca20d084cba69914ee2677e5a69b",
+        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+      }
+    },
+    {
+      "id": "HS-TS-02",
+      "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
+      "voter_model": "openrouter/openai/gpt-6.1-sol",
+      "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
+      "high_controls": [
+        "hs-ts-02"
+      ],
+      "independently_clean": false,
+      "notes": "single-arm profile hash d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
+      "single": {
+        "report": "HS-TS-02/single/report.json",
+        "audit": "HS-TS-02/single/audit.json",
+        "verdicts": "HS-TS-02/single/verdicts.json",
+        "report_sha256": "2fc98047ef2d5fd29b56eba16db1c1ad810910cbd3748f0adbee81815b9edc3c",
+        "audit_sha256": "78cacf8772274fbb8534d20d50bc553cb3a0595e5b8876c9b7f4cf88d8fc6b30",
+        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+      },
+      "quorum": {
+        "report": "HS-TS-02/quorum/report.json",
+        "audit": "HS-TS-02/quorum/audit.json",
+        "verdicts": "HS-TS-02/quorum/verdicts.json",
+        "report_sha256": "79cc8191523ff3f4f93130d884469ea60550ec3614a1f6662888cedde03b94a3",
+        "audit_sha256": "c0c57fbbcba7c3e69415865237254fac416e2de7c3fc5a0c4c5218cae36822be",
+        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+      }
+    },
+    {
+      "id": "HS-TS-03",
+      "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
+      "voter_model": "openrouter/openai/gpt-6.1-sol",
+      "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
+      "high_controls": [
+        "hs-ts-03"
+      ],
+      "independently_clean": false,
+      "notes": "single-arm profile hash d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
+      "single": {
+        "report": "HS-TS-03/single/report.json",
+        "audit": "HS-TS-03/single/audit.json",
+        "verdicts": "HS-TS-03/single/verdicts.json",
+        "report_sha256": "51cfa6371480e7b94b7ec21db4b7d8461f4248ee068b6f573e423c9ef6efb385",
+        "audit_sha256": "a1237a0425931e2050019dc7d8d9e818a8581d8625e85b86c42d1cbbfb998a6a",
+        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+      },
+      "quorum": {
+        "report": "HS-TS-03/quorum/report.json",
+        "audit": "HS-TS-03/quorum/audit.json",
+        "verdicts": "HS-TS-03/quorum/verdicts.json",
+        "report_sha256": "ca00e54884bf4f404e845fcc662b8a689fd066db323bd2543ea0f09ac9f25c3b",
+        "audit_sha256": "3116c867ec696ffdc0884302f0d85f43086f1206ff4d1165588f859f109143a6",
+        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+      }
+    },
+    {
+      "id": "HS-RS-01",
+      "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
+      "voter_model": "openrouter/openai/gpt-6.1-sol",
+      "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
+      "high_controls": [
+        "hs-rs-01"
+      ],
+      "independently_clean": false,
+      "notes": "single-arm profile hash d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
+      "single": {
+        "report": "HS-RS-01/single/report.json",
+        "audit": "HS-RS-01/single/audit.json",
+        "verdicts": "HS-RS-01/single/verdicts.json",
+        "report_sha256": "5a287265dab8d35f2de8d7e768ff7b783d269b46b217198df478ee815ed10c8e",
+        "audit_sha256": "390fea8e845a3953e77a1883e28713c92c71e0f1d520bb5b70e8144a1c633fe7",
+        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+      },
+      "quorum": {
+        "report": "HS-RS-01/quorum/report.json",
+        "audit": "HS-RS-01/quorum/audit.json",
+        "verdicts": "HS-RS-01/quorum/verdicts.json",
+        "report_sha256": "7852a073d41a76bcb69623a878706a09e2fc26eadd42ca0490e84d9dbdf6cf2c",
+        "audit_sha256": "6b447c8001d1a494cbcb3584426d1f1668d8989fdc2c7de70fddf2ffd6d61f4e",
+        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+      }
+    },
+    {
+      "id": "HS-RS-02",
+      "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
+      "voter_model": "openrouter/openai/gpt-6.1-sol",
+      "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
+      "high_controls": [
+        "hs-rs-02"
+      ],
+      "independently_clean": false,
+      "notes": "single-arm profile hash d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
+      "single": {
+        "report": "HS-RS-02/single/report.json",
+        "audit": "HS-RS-02/single/audit.json",
+        "verdicts": "HS-RS-02/single/verdicts.json",
+        "report_sha256": "0acc936b5ca7d230d744b7d285d3226bc883a716efe9b7b99ecdd931ed64a448",
+        "audit_sha256": "62dc1d49435a7511743bef093f5f02a5a87be71597b0e5b8225919e1ae4e2535",
+        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+      },
+      "quorum": {
+        "report": "HS-RS-02/quorum/report.json",
+        "audit": "HS-RS-02/quorum/audit.json",
+        "verdicts": "HS-RS-02/quorum/verdicts.json",
+        "report_sha256": "d8f47738fcf51a5b97f8c41dceae2ad6b508eea72f9e49a80e8baeaadcd6a3e0",
+        "audit_sha256": "37f5a2f770bd071b16c2cfe3f20ff9a04143505c651e26afdc98b66cd2492c3f",
+        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+      }
+    },
+    {
+      "id": "HS-RS-03",
+      "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
+      "voter_model": "openrouter/openai/gpt-6.1-sol",
+      "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
+      "high_controls": [
+        "hs-rs-03"
+      ],
+      "independently_clean": false,
+      "notes": "single-arm profile hash d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
+      "single": {
+        "report": "HS-RS-03/single/report.json",
+        "audit": "HS-RS-03/single/audit.json",
+        "verdicts": "HS-RS-03/single/verdicts.json",
+        "report_sha256": "536f25cfa632e0979c75ea798fd7cfdd865db95755dbbbab0bea61673e4e69a9",
+        "audit_sha256": "6a28b1cceb05d6a5f991a5c16f613b5069cdd8709b911e6c16178a7cdddf4376",
+        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+      },
+      "quorum": {
+        "report": "HS-RS-03/quorum/report.json",
+        "audit": "HS-RS-03/quorum/audit.json",
+        "verdicts": "HS-RS-03/quorum/verdicts.json",
+        "report_sha256": "37c4b577e83bfcdbe0debc19948f58b5d6794893c441b8615d63ae4185d374d5",
+        "audit_sha256": "f01697561bddce81f21a916ca87714637d9a25b602e4fd026064e36b30ab912e",
+        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+      }
+    },
+    {
+      "id": "HS-RS-04",
+      "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
+      "voter_model": "openrouter/openai/gpt-6.1-sol",
+      "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
+      "high_controls": [
+        "hs-rs-04"
+      ],
+      "independently_clean": false,
+      "notes": "single-arm profile hash d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
+      "single": {
+        "report": "HS-RS-04/single/report.json",
+        "audit": "HS-RS-04/single/audit.json",
+        "verdicts": "HS-RS-04/single/verdicts.json",
+        "report_sha256": "16d92385f56318e03fd1b4f176312d2539e6ef575302c111849967d15bc75788",
+        "audit_sha256": "afc5aa4f291bcc4e0cd16ae77e86a40d8cda00963963f66650d0565f9f190fbe",
+        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+      },
+      "quorum": {
+        "report": "HS-RS-04/quorum/report.json",
+        "audit": "HS-RS-04/quorum/audit.json",
+        "verdicts": "HS-RS-04/quorum/verdicts.json",
+        "report_sha256": "d689e845a5dfd8f0abb66759aa2d8a9863085c29a0f959fbf1d4cf24c6bdc651",
+        "audit_sha256": "3116c867ec696ffdc0884302f0d85f43086f1206ff4d1165588f859f109143a6",
+        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+      }
+    },
+    {
+      "id": "CL-PY-01",
+      "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
+      "voter_model": "openrouter/openai/gpt-6.1-sol",
+      "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
+      "high_controls": [],
+      "independently_clean": false,
+      "notes": "single-arm profile hash d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
+      "single": {
+        "report": "CL-PY-01/single/report.json",
+        "audit": "CL-PY-01/single/audit.json",
+        "verdicts": "CL-PY-01/single/verdicts.json",
+        "report_sha256": "51fe3c549c8541db962334e5cf919142d264db7ad72ab299207360b0f8b3d171",
+        "audit_sha256": "5d5c54ecbe783c5f3f2ebbbe7c3c1e1cfcb31edf1323f7694adc7ad8a0c3fcc6",
+        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+      },
+      "quorum": {
+        "report": "CL-PY-01/quorum/report.json",
+        "audit": "CL-PY-01/quorum/audit.json",
+        "verdicts": "CL-PY-01/quorum/verdicts.json",
+        "report_sha256": "7d34f6f9c0b19e9e39593e61a2e337caa262e2bcfc46784841241ba2f0a9d1b0",
+        "audit_sha256": "c13c3ab12703253db85cf7ab31529d69bdb84ec5594b928b63a7a7c59bb287b9",
+        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+      }
+    },
+    {
+      "id": "CL-PY-02",
+      "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
+      "voter_model": "openrouter/openai/gpt-6.1-sol",
+      "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
+      "high_controls": [],
+      "independently_clean": false,
+      "notes": "single-arm profile hash d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
+      "single": {
+        "report": "CL-PY-02/single/report.json",
+        "audit": "CL-PY-02/single/audit.json",
+        "verdicts": "CL-PY-02/single/verdicts.json",
+        "report_sha256": "fa143e33ad3199e15794a4368cd50c6a92d99d5a3e15f79094aad61331b252c0",
+        "audit_sha256": "ecd927dfce89be4fde0d80fd89864ede86e81493c8e778c54d7653974bf775b9",
+        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+      },
+      "quorum": {
+        "report": "CL-PY-02/quorum/report.json",
+        "audit": "CL-PY-02/quorum/audit.json",
+        "verdicts": "CL-PY-02/quorum/verdicts.json",
+        "report_sha256": "5326a5434680a771f88e0b8607cc8bb2cd77aa0c6382cdab96567502c87c4348",
+        "audit_sha256": "754dc427000bd4de0a26e77b3c799b98e46c99c4b1d6996272debc5a56dee792",
+        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+      }
+    },
+    {
+      "id": "CL-PY-04",
+      "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
+      "voter_model": "openrouter/openai/gpt-6.1-sol",
+      "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
+      "high_controls": [],
+      "independently_clean": false,
+      "notes": "single-arm profile hash d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
+      "single": {
+        "report": "CL-PY-04/single/report.json",
+        "audit": "CL-PY-04/single/audit.json",
+        "verdicts": "CL-PY-04/single/verdicts.json",
+        "report_sha256": "bd8f4ff9fcec54e33c7dad3410d833cf65afb452468d07d9751e43152df9dff0",
+        "audit_sha256": "e053a5f766835a82638ce59639a11c498f51ba3598c9375c927c204bdedc6f75",
+        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+      },
+      "quorum": {
+        "report": "CL-PY-04/quorum/report.json",
+        "audit": "CL-PY-04/quorum/audit.json",
+        "verdicts": "CL-PY-04/quorum/verdicts.json",
+        "report_sha256": "282002e6b1270d285ae9108f8862a66a72a0b03ab9b45ebf49313e5daa97ca4b",
+        "audit_sha256": "948c698e9329fa8dd6f8d4d85c166aca3968e96ee6437adb9a31c06ec2ccfe87",
+        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+      }
+    },
+    {
+      "id": "CL-TS-03",
+      "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
+      "voter_model": "openrouter/openai/gpt-6.1-sol",
+      "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
+      "high_controls": [],
+      "independently_clean": false,
+      "notes": "single-arm profile hash d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
+      "single": {
+        "report": "CL-TS-03/single/report.json",
+        "audit": "CL-TS-03/single/audit.json",
+        "verdicts": "CL-TS-03/single/verdicts.json",
+        "report_sha256": "2b87751eadeebe8c9ac40d076533add10b7053575ad5410242b6c8b51c2ac541",
+        "audit_sha256": "d79c517022c644ab4a267dcfd54353da0ec98b2fdce5977cd2a8bf5e1c36079d",
+        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+      },
+      "quorum": {
+        "report": "CL-TS-03/quorum/report.json",
+        "audit": "CL-TS-03/quorum/audit.json",
+        "verdicts": "CL-TS-03/quorum/verdicts.json",
+        "report_sha256": "123adcc2a3e4a7dce720a1d0fd7bee64a0b50107c66f1f6717918df8b023d40c",
+        "audit_sha256": "183f88ca78037f750da9bfce98ffbcfcb0a796b462c85b78e0f1bbc4bba336d0",
+        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+      }
+    },
+    {
+      "id": "CL-TS-04",
+      "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
+      "voter_model": "openrouter/openai/gpt-6.1-sol",
+      "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
+      "high_controls": [],
+      "independently_clean": false,
+      "notes": "single-arm profile hash d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
+      "single": {
+        "report": "CL-TS-04/single/report.json",
+        "audit": "CL-TS-04/single/audit.json",
+        "verdicts": "CL-TS-04/single/verdicts.json",
+        "report_sha256": "0786fe837dbbab82c6a52c6e780ef350de7bf9ad07e71f905feda25b10c9fbcc",
+        "audit_sha256": "9f5015a9d35eb8843035423129b08fe8d0b5c3030abeb14d21f561e57df41913",
+        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+      },
+      "quorum": {
+        "report": "CL-TS-04/quorum/report.json",
+        "audit": "CL-TS-04/quorum/audit.json",
+        "verdicts": "CL-TS-04/quorum/verdicts.json",
+        "report_sha256": "940b18aa378d22c6d230917575c43b2602705832496f0030481ca6f788be41f5",
+        "audit_sha256": "704a726b05816536d22db3d3d8331f8cbd1d4c8f9c4df8d57d86669ae2963328",
+        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+      }
+    },
+    {
+      "id": "CL-RS-02",
+      "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
+      "voter_model": "openrouter/openai/gpt-6.1-sol",
+      "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
+      "high_controls": [],
+      "independently_clean": false,
+      "notes": "single-arm profile hash d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
+      "single": {
+        "report": "CL-RS-02/single/report.json",
+        "audit": "CL-RS-02/single/audit.json",
+        "verdicts": "CL-RS-02/single/verdicts.json",
+        "report_sha256": "6f914ddb10de2a6984eec5be90f63427e8f43f959e48a391fc908fa76e5d9a79",
+        "audit_sha256": "512e861fc40807eaeb1dad4d6863695c124cb55f204277b7a5f0ada9bf55cb47",
+        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+      },
+      "quorum": {
+        "report": "CL-RS-02/quorum/report.json",
+        "audit": "CL-RS-02/quorum/audit.json",
+        "verdicts": "CL-RS-02/quorum/verdicts.json",
+        "report_sha256": "e2c5ca0c14d7e66373c3170e4607468cf4fc13b6d4c1e3555ad55e6f82991eba",
+        "audit_sha256": "ac4d3f702f25c326f104e061d5ad5747df1ba6a91500f6f4d96514830235c526",
+        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+      }
+    },
+    {
+      "id": "CL-RS-03",
+      "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
+      "voter_model": "openrouter/openai/gpt-6.1-sol",
+      "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
+      "high_controls": [],
+      "independently_clean": false,
+      "notes": "single-arm profile hash d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
+      "single": {
+        "report": "CL-RS-03/single/report.json",
+        "audit": "CL-RS-03/single/audit.json",
+        "verdicts": "CL-RS-03/single/verdicts.json",
+        "report_sha256": "4c33a3907a3192f9f5cd0daf0cebc5bf679bf4b1871b510bc8e470d53af441de",
+        "audit_sha256": "c1ae955821690849ea80d39a0329914d4ab44ab64c6e3bbd9218084ca7b9bf8d",
+        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+      },
+      "quorum": {
+        "report": "CL-RS-03/quorum/report.json",
+        "audit": "CL-RS-03/quorum/audit.json",
+        "verdicts": "CL-RS-03/quorum/verdicts.json",
+        "report_sha256": "713ef9b748aad0f19dc9e31aa979b4765e1dbbb06d6a298e87f6af24639a24c7",
+        "audit_sha256": "3116c867ec696ffdc0884302f0d85f43086f1206ff4d1165588f859f109143a6",
+        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+      }
+    },
+    {
+      "id": "CL-RS-04",
+      "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
+      "voter_model": "openrouter/openai/gpt-6.1-sol",
+      "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
+      "high_controls": [],
+      "independently_clean": false,
+      "notes": "single-arm profile hash d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
+      "single": {
+        "report": "CL-RS-04/single/report.json",
+        "audit": "CL-RS-04/single/audit.json",
+        "verdicts": "CL-RS-04/single/verdicts.json",
+        "report_sha256": "d01537225ecc9b970e7ad9d179db1b5db41521b3051d32dc89c58b14543e86f1",
+        "audit_sha256": "37c4d94e2d2e15e182b75af8f732be92770f8a4868ffb602d064b1dd3ea6b5cb",
+        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+      },
+      "quorum": {
+        "report": "CL-RS-04/quorum/report.json",
+        "audit": "CL-RS-04/quorum/audit.json",
+        "verdicts": "CL-RS-04/quorum/verdicts.json",
+        "report_sha256": "62838acafba4cb3d307e277cdb2cf6dbc5dd3240bfde0634ce7897c52ce963af",
+        "audit_sha256": "3116c867ec696ffdc0884302f0d85f43086f1206ff4d1165588f859f109143a6",
+        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+      }
+    }
+  ]
+}
