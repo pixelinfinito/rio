@@ -303,7 +303,29 @@ app.get("/v1/reviews/:id/audit", async (c) => {
         )
           .bind(id)
           .all<{ result_key: string }>()
-      ).results.map((r) => store.get(r.result_key)),
+      ).results.map(async (r) => {
+        // Runner graphs reach megabytes per version and are not verification
+        // evidence; the audit keeps their size, not their content.
+        const result = await store.get<any>(r.result_key);
+        const graphs = result?.artifact?.graphs;
+        if (graphs && typeof graphs === "object") {
+          result.artifact = {
+            ...result.artifact,
+            graphs: Object.fromEntries(
+              Object.entries(graphs).map(([version, graph]: [string, any]) => [
+                version,
+                {
+                  nodes: graph?.nodes?.length ?? 0,
+                  edges: graph?.edges?.length ?? 0,
+                  truncated: graph?.truncated === true,
+                  omitted: true,
+                },
+              ]),
+            ),
+          };
+        }
+        return result;
+      }),
     ),
   });
 });

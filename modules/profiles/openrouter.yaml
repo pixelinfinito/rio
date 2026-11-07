@@ -4,9 +4,12 @@ extends: rio/base
 models:
   default: openrouter/anthropic/claude-sonnet-5.5
   verifier: openrouter/openai/gpt-6.1-sol
+# The gateway bounds each call by the UTF-8 bytes of the whole conversation, so a
+# generation turn over a real repository (prompt, then up to 64 KiB of tool results
+# per round) needs a few hundred thousand units; the ledger charges actual tokens.
 budget:
-  fast: { tokens: 80000, agents_max: 1, wall_time: 8m, verify_tokens: 16000 }
-  deep: { tokens: 200000, agents_max: 2, wall_time: 15m, verify_tokens: 24000 }
+  fast: { tokens: 320000, agents_max: 1, wall_time: 8m, verify_tokens: 48000 }
+  deep: { tokens: 640000, agents_max: 2, wall_time: 15m, verify_tokens: 64000 }
 verify: { voters: 3, quorum: 2 }
 steps:
   - id: prepare

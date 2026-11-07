@@ -285,6 +285,18 @@ it("resumes an isolated runner job using an attempt-specific event", async () =>
         .first<any>()
     ).status,
   ).toBe("complete");
+  // Runner graphs are summarized in the audit, never copied.
+  const audit = (await (
+    await app.request(`https://rio/v1/reviews/${id}/audit`, { headers }, runtime)
+  ).json()) as any;
+  expect(audit.executions).toHaveLength(1);
+  expect(audit.executions[0].artifact.graphs.head).toEqual({
+    nodes: 1,
+    edges: 0,
+    truncated: false,
+    omitted: true,
+  });
+  expect(audit.executions[0].artifact.report.schema).toBe("rio-report-v1");
 }, 60000);
 
 it("retains reproduced evidence when every blind pass misses, with runner artifacts and risk-selected budget", async () => {
