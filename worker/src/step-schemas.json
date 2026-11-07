@@ -2,7 +2,13 @@
   "rio/agents@0.1.0": {
     "type": "object",
     "additionalProperties": false,
-    "properties": {}
+    "properties": {
+      "cache": {
+        "type": "boolean",
+        "default": true,
+        "description": "Replay agent hypotheses for unchanged hunks from the agent result cache; the verifier always runs"
+      }
+    }
   },
   "rio/checks@0.1.0": {
     "type": "object",
@@ -45,6 +51,12 @@
         "minimum": 1,
         "default": 3,
         "description": "Agent findings sharing rule and trigger across more symbols than this merge into one class-level finding"
+      },
+      "proposal_threshold": {
+        "type": "integer",
+        "minimum": 1,
+        "default": 3,
+        "description": "Dismissals with reason irrelevant or style on one rule or directory that yield a suppression proposal"
       }
     }
   },

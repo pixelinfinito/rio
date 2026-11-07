@@ -318,6 +318,42 @@ fn profiles_show_list_raw_validate_and_third_party_rejection() {
     assert!(String::from_utf8_lossy(&output.stderr).contains("third-party"));
 }
 #[test]
+fn profile_validate_checks_agent_cache_and_proposal_threshold_options() {
+    let temp = repository();
+    let root = temp.path();
+    let dir = root.join(".rio/profiles");
+    fs::create_dir_all(&dir).unwrap();
+    // A child's `steps` replaces the inherited list, so the pipeline is complete.
+    let profile = |threshold: u32| {
+        format!(
+            "version: 1\nname: options\nextends: rio/base\nsteps:\n  - {{id: prepare, uses: rio/prepare}}\n  - {{id: checks, uses: rio/checks, needs: [prepare]}}\n  - {{id: graph, uses: rio/graph, needs: [prepare]}}\n  - {{id: triage, uses: rio/triage, needs: [checks, graph]}}\n  - {{id: agents, uses: rio/agents, needs: [triage], with: {{cache: false}}}}\n  - {{id: verify, uses: rio/verify, needs: [agents]}}\n  - {{id: report, uses: rio/report, needs: [verify], with: {{proposal_threshold: {threshold}}}}}\n"
+        )
+    };
+    fs::write(dir.join("options.yaml"), profile(2)).unwrap();
+    rio(root)
+        .args(["profile", "validate", "options"])
+        .assert()
+        .success();
+    let output = rio(root)
+        .args(["profile", "show", "options"])
+        .assert()
+        .success()
+        .get_output()
+        .clone();
+    let text = String::from_utf8_lossy(&output.stdout);
+    assert!(text.contains("cache: false") && text.contains("proposal_threshold: 2"));
+    fs::write(dir.join("options.yaml"), profile(0)).unwrap();
+    let output = rio(root)
+        .args(["profile", "validate", "options"])
+        .assert()
+        .code(2)
+        .get_output()
+        .clone();
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(stderr.contains("proposal_threshold"), "{stderr}");
+    assert!(stderr.contains("minimum of 1"), "{stderr}");
+}
+#[test]
 fn configuration_precedence_sources_unknown_keys_and_endpoint_notice() {
     let temp = repository();
     let root = temp.path();
