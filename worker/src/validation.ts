@@ -6,6 +6,7 @@ import type {
   Graph,
   Hypothesis,
   LineageRef,
+  Location,
   Submission,
   VoteAnswer,
 } from "./types";
@@ -292,6 +293,31 @@ export function validateHypotheses(value: any): Hypothesis[] {
       "invalid location",
     );
     invariant(!("confidence" in h), "confidence is not evidence");
+    const location = {
+      ...h.location,
+      occurrence_state: h.location.occurrence_state ?? "new",
+    };
+    // Cited locations keep the primary first and never repeat a location.
+    let locations: Location[] | undefined;
+    if (h.locations) {
+      locations = [location];
+      for (const l of h.locations) {
+        safePath(l.path);
+        invariant(l.line_end >= l.line_start, "invalid location");
+        if (
+          !locations.some(
+            (x) =>
+              x.path === l.path &&
+              x.line_start === l.line_start &&
+              x.line_end === l.line_end,
+          )
+        )
+          locations.push({
+            ...l,
+            occurrence_state: l.occurrence_state ?? "new",
+          });
+      }
+    }
     return {
       ...h,
       id: hash(
@@ -299,12 +325,104 @@ export function validateHypotheses(value: any): Hypothesis[] {
       ),
       state: h.state ?? "new",
       source: { agent: h.source?.agent ?? "correctness" },
-      location: {
-        ...h.location,
-        occurrence_state: h.location.occurrence_state ?? "new",
-      },
+      location,
+      ...(locations ? { locations } : {}),
     };
   });
+}
+export const CONTRACT_KINDS = [
+  "signature",
+  "route",
+  "schema",
+  "migration",
+  "format",
+  "cli",
+  "env",
+  "config",
+] as const;
+export const CONTRACT_BREAKS = [
+  "removed",
+  "changed",
+  "added_required",
+  "semantics",
+] as const;
+const CONTRACT_RULE = new RegExp(
+  `^contracts/(?:${CONTRACT_KINDS.join("|")})/(?:${CONTRACT_BREAKS.join("|")})$`,
+);
+export const NO_CONSUMER =
+  "No consumer was found in the repository; only consumers outside the repository could be affected.";
+export interface Rejection {
+  agent: string;
+  id: string;
+  rule_id: string;
+  reason: string;
+}
+/**
+ * Agent-specific rules applied to each validated hypothesis. A violation
+ * discards that hypothesis with an audit entry; the others are kept.
+ */
+export function screenHypotheses(
+  agent: string,
+  hypotheses: Hypothesis[],
+  options: { catalogItems?: Set<string> } = {},
+): { accepted: Hypothesis[]; rejected: Rejection[] } {
+  const accepted: Hypothesis[] = [],
+    rejected: Rejection[] = [];
+  const reject = (h: Hypothesis, reason: string) =>
+    rejected.push({ agent, id: h.id, rule_id: h.rule_id, reason });
+  for (const h of hypotheses) {
+    if (agent === "contracts") {
+      if (!CONTRACT_RULE.test(h.rule_id)) {
+        reject(h, "rule id outside contracts/<kind>/<break>");
+        continue;
+      }
+      if (h.category === "style" || h.category === "security") {
+        reject(h, `category ${h.category} is not a contract hypothesis`);
+        continue;
+      }
+      // Producer plus at least one consumer, or a risk that says none exists.
+      const cited = h.locations?.length ?? 1;
+      if (cited < 2 && h.category === "defect") {
+        reject(h, "a contract defect needs the producer and a consumer");
+        continue;
+      }
+      if (cited < 2 && h.category === "risk") {
+        const text = `${h.message} ${h.impact ?? ""}`.toLowerCase();
+        if (!/no consumer/.test(text))
+          h.impact = h.impact ? `${h.impact} ${NO_CONSUMER}` : NO_CONSUMER;
+      }
+    }
+    if (agent === "security") {
+      if (h.category !== "security" && h.category !== "diagnostic") {
+        reject(
+          h,
+          `security hypotheses have category security, not ${h.category}`,
+        );
+        continue;
+      }
+      if (h.category === "security" && !h.catalog_item) {
+        reject(h, "security hypothesis without catalog_item");
+        continue;
+      }
+      if (
+        h.category === "security" &&
+        options.catalogItems &&
+        !options.catalogItems.has(h.catalog_item!)
+      ) {
+        reject(
+          h,
+          `catalog item ${h.catalog_item} is not applicable to this change`,
+        );
+        continue;
+      }
+      if (h.category === "security" && !h.trace_change) {
+        reject(h, "security hypothesis without trace_change");
+        continue;
+      }
+    }
+    accepted.push(h);
+  }
+  return { accepted, rejected };
 }
 export function normalizeTrigger(trigger: string): string {
   return trigger.trim().replace(/\s+/g, " ");

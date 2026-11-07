@@ -442,77 +442,7 @@ it("retains reproduced evidence when every blind pass misses, with runner artifa
   }
 }, 60000);
 
-it.each(["explicit", "triage"])(
-  "reports security enabled by %s as unavailable without making a security model call",
-  async (selection) => {
-    const transport = vi.spyOn(globalThis, "fetch");
-    try {
-      const store = new Store(runtime),
-        id = crypto.randomUUID(),
-        s = submission();
-      s.profile.steps = [
-        {
-          id: "triage",
-          uses: "rio/triage@0.1.0",
-          needs: [],
-          with: { sensitive_paths: ["src/**"] },
-        },
-        {
-          id: "security",
-          uses: "rio/security@0.2.0",
-          needs: ["triage"],
-          with: { enabled: selection === "explicit" },
-          rules:
-            selection === "triage"
-              ? [{ when: "risk >= high", then: "enable(security)" }]
-              : [],
-        },
-        {
-          id: "verify",
-          uses: "rio/verify@0.1.0",
-          needs: ["security"],
-          with: {},
-        },
-      ];
-      const stored = await storeSnapshot(runtime, snapshot),
-        snapshotKey = stored.key,
-        key = await store.put(`reviews/${id}/submission.json`, {
-          ...s,
-          snapshot_id: stored.id,
-        });
-      await runtime.DB.prepare(
-        "INSERT INTO reviews(id,tenant,submission_key,status,created_at,token_limit,deadline) VALUES(?,?,?,'queued',?,?,?)",
-      )
-        .bind(id, "owner", key, Date.now(), 100000, Date.now() + 240000)
-        .run();
-      await using instance = await introspectWorkflowInstance(
-        runtime.REVIEWS,
-        id,
-      );
-      await runtime.REVIEWS.create({
-        id,
-        params: { review_id: id, snapshot_key: snapshotKey },
-      });
-      await instance.waitForStatus("complete");
-      const row = await runtime.DB.prepare(
-        "SELECT report_key FROM reviews WHERE id=?",
-      )
-        .bind(id)
-        .first<any>();
-      const report = await store.get<any>(row.report_key);
-      expect(report.footer.notes.join(" ")).toContain(
-        "security review was not performed",
-      );
-      expect(report.status).toBe("partial");
-      expect(transport).not.toHaveBeenCalled();
-      expect(report.security).toBeUndefined();
-    } finally {
-      transport.mockRestore();
-    }
-  },
-  60000,
-);
-
+// Security agent and catalog behavior (v0.3) is covered in agents.test.ts.
 it.each(["cancelled", "invalid-triage"])(
   "produces a partial report for %s before model execution",
   async (reason) => {

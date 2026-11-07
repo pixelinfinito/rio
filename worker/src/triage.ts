@@ -1,6 +1,7 @@
 import picomatch from "picomatch";
 import type { ChangedFile, Profile, Snapshot, Submission } from "./types";
 import { invariant } from "./validation";
+import { agents as manifests } from "./manifests";
 export interface Risk {
   tier: "low" | "medium" | "high";
   reasons: string[];
@@ -11,6 +12,8 @@ export interface Plan {
   require_human: boolean;
   mode: "fast" | "deep";
   agents: string[];
+  /** Why each selected agent runs: `default`, a triage signal, or `rule: <when>`. */
+  agent_reasons: Record<string, string>;
   suggested_focus: string[];
   signals: {
     adds_dependency: boolean;
@@ -84,6 +87,7 @@ export function triage(submission: Submission, snapshot: Snapshot): Plan {
   for (const glob of opts.sensitive_paths ?? [])
     if (changed.some((path) => matches(glob, path)))
       raise(`sensitive_path: ${glob}`, 2);
+  let publicContract = false;
   if (
     opts.public_contracts !== false &&
     (changed.some(
@@ -103,8 +107,10 @@ export function triage(submission: Submission, snapshot: Snapshot): Plan {
             publicDeclarations(snapshot.head[file.path]?.content ?? ""),
           ),
       ))
-  )
+  ) {
     raise("public_contract_change", 2);
+    publicContract = true;
+  }
   const depFiles = changed.filter((path) =>
     /(?:^|\/)(?:package(?:-lock)?\.json|pnpm-lock\.yaml|yarn\.lock|Cargo\.(?:lock|toml)|pyproject\.toml|requirements[^/]*\.txt|uv\.lock)$/.test(
       path,
@@ -162,6 +168,7 @@ export function triage(submission: Submission, snapshot: Snapshot): Plan {
     require_human: !!overrides.length,
     mode: submission.mode,
     agents: ["correctness"],
+    agent_reasons: { correctness: "default" },
     suggested_focus: submission.changed.map((f) => f.path),
     signals: {
       adds_dependency: addsDependency,
@@ -178,9 +185,21 @@ export function triage(submission: Submission, snapshot: Snapshot): Plan {
       ],
     },
   };
+  // Agents whose manifest declares `contracts` review public-contract changes.
+  if (publicContract)
+    for (const [name, manifest] of Object.entries(manifests))
+      if (
+        manifest.contracts &&
+        manifest.available &&
+        !plan.agents.includes(name)
+      ) {
+        plan.agents.push(name);
+        plan.agent_reasons[name] = "public_contract_change";
+      }
   for (const step of p.steps)
     for (const rule of step.rules ?? [])
-      if (evaluate(rule.when, plan, changed)) applyAction(rule.then, plan);
+      if (evaluate(rule.when, plan, changed))
+        applyAction(rule.then, plan, `rule: ${rule.when}`);
   invariant(
     !plan.agents.includes("verify") && !plan.agents.includes("verifier"),
     "verifier cannot be selected or disabled by triage",
@@ -283,7 +302,7 @@ export function evaluate(
   invariant(at === tokens.length, "trailing rule input");
   return value;
 }
-function applyAction(input: string, plan: Plan) {
+function applyAction(input: string, plan: Plan, reason: string) {
   const match =
     /^(enable|disable|budget|require_human)\(\s*([\w/.-]*|"[^"]*"|'[^']*')\s*\)$/.exec(
       input.trim(),
@@ -309,8 +328,12 @@ function applyAction(input: string, plan: Plan) {
     ),
     "unknown agent",
   );
-  if (match[1] === "enable" && !plan.agents.includes(arg))
+  if (match[1] === "enable" && !plan.agents.includes(arg)) {
     plan.agents.push(arg);
-  if (match[1] === "disable")
+    plan.agent_reasons[arg] = reason;
+  } else if (match[1] === "enable") plan.agent_reasons[arg] = reason;
+  if (match[1] === "disable") {
     plan.agents = plan.agents.filter((a) => a !== arg);
+    delete plan.agent_reasons[arg];
+  }
 }

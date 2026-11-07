@@ -28373,6 +28373,47 @@ const schema39 = {
       additionalProperties: false,
     },
     evidence: { type: "array", items: { type: "string" }, maxItems: 100 },
+    locations: {
+      description:
+        "Every cited location, primary first: a contract's producer and consumers, or a security trace path.",
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          path: { type: "string", minLength: 1 },
+          line_start: { type: "integer", minimum: 1 },
+          line_end: { type: "integer", minimum: 1 },
+          column: { type: "integer", minimum: 1 },
+          symbol_path: { type: "string" },
+          occurrence_state: {
+            enum: ["new", "pre-existing", "fixed", "unclassified"],
+          },
+        },
+        required: ["path", "line_start", "line_end", "symbol_path"],
+        additionalProperties: false,
+      },
+      minItems: 1,
+      maxItems: 20,
+    },
+    limitations: {
+      description:
+        "What the agent could not establish, such as consumers the graph could not resolve.",
+      type: "array",
+      items: { type: "string", minLength: 1, maxLength: 1000 },
+      maxItems: 20,
+    },
+    catalog_item: {
+      description:
+        "Security hypotheses: the id of the applicable catalog item.",
+      type: "string",
+      minLength: 1,
+      maxLength: 40,
+    },
+    trace_change: {
+      description:
+        "Security hypotheses: whether the change introduced, removed or weakened a step of the item's trace.",
+      enum: ["introduced", "removed", "weakened"],
+    },
   },
   required: [
     "rule_id",
@@ -29320,8 +29361,527 @@ function validate26(
         errors++;
       }
     }
+    if (data.locations !== undefined) {
+      let data23 = data.locations;
+      if (Array.isArray(data23)) {
+        if (data23.length > 20) {
+          const err53 = {
+            instancePath: instancePath + "/locations",
+            schemaPath: "#/properties/locations/maxItems",
+            keyword: "maxItems",
+            params: { limit: 20 },
+            message: "must NOT have more than 20 items",
+          };
+          if (vErrors === null) {
+            vErrors = [err53];
+          } else {
+            vErrors.push(err53);
+          }
+          errors++;
+        }
+        if (data23.length < 1) {
+          const err54 = {
+            instancePath: instancePath + "/locations",
+            schemaPath: "#/properties/locations/minItems",
+            keyword: "minItems",
+            params: { limit: 1 },
+            message: "must NOT have fewer than 1 items",
+          };
+          if (vErrors === null) {
+            vErrors = [err54];
+          } else {
+            vErrors.push(err54);
+          }
+          errors++;
+        }
+        const len1 = data23.length;
+        for (let i1 = 0; i1 < len1; i1++) {
+          let data24 = data23[i1];
+          if (data24 && typeof data24 == "object" && !Array.isArray(data24)) {
+            if (data24.path === undefined) {
+              const err55 = {
+                instancePath: instancePath + "/locations/" + i1,
+                schemaPath: "#/properties/locations/items/required",
+                keyword: "required",
+                params: { missingProperty: "path" },
+                message: "must have required property '" + "path" + "'",
+              };
+              if (vErrors === null) {
+                vErrors = [err55];
+              } else {
+                vErrors.push(err55);
+              }
+              errors++;
+            }
+            if (data24.line_start === undefined) {
+              const err56 = {
+                instancePath: instancePath + "/locations/" + i1,
+                schemaPath: "#/properties/locations/items/required",
+                keyword: "required",
+                params: { missingProperty: "line_start" },
+                message: "must have required property '" + "line_start" + "'",
+              };
+              if (vErrors === null) {
+                vErrors = [err56];
+              } else {
+                vErrors.push(err56);
+              }
+              errors++;
+            }
+            if (data24.line_end === undefined) {
+              const err57 = {
+                instancePath: instancePath + "/locations/" + i1,
+                schemaPath: "#/properties/locations/items/required",
+                keyword: "required",
+                params: { missingProperty: "line_end" },
+                message: "must have required property '" + "line_end" + "'",
+              };
+              if (vErrors === null) {
+                vErrors = [err57];
+              } else {
+                vErrors.push(err57);
+              }
+              errors++;
+            }
+            if (data24.symbol_path === undefined) {
+              const err58 = {
+                instancePath: instancePath + "/locations/" + i1,
+                schemaPath: "#/properties/locations/items/required",
+                keyword: "required",
+                params: { missingProperty: "symbol_path" },
+                message: "must have required property '" + "symbol_path" + "'",
+              };
+              if (vErrors === null) {
+                vErrors = [err58];
+              } else {
+                vErrors.push(err58);
+              }
+              errors++;
+            }
+            for (const key4 in data24) {
+              if (!(
+                key4 === "path" ||
+                key4 === "line_start" ||
+                key4 === "line_end" ||
+                key4 === "column" ||
+                key4 === "symbol_path" ||
+                key4 === "occurrence_state"
+              )) {
+                const err59 = {
+                  instancePath: instancePath + "/locations/" + i1,
+                  schemaPath:
+                    "#/properties/locations/items/additionalProperties",
+                  keyword: "additionalProperties",
+                  params: { additionalProperty: key4 },
+                  message: "must NOT have additional properties",
+                };
+                if (vErrors === null) {
+                  vErrors = [err59];
+                } else {
+                  vErrors.push(err59);
+                }
+                errors++;
+              }
+            }
+            if (data24.path !== undefined) {
+              let data25 = data24.path;
+              if (typeof data25 === "string") {
+                if (func2(data25) < 1) {
+                  const err60 = {
+                    instancePath: instancePath + "/locations/" + i1 + "/path",
+                    schemaPath:
+                      "#/properties/locations/items/properties/path/minLength",
+                    keyword: "minLength",
+                    params: { limit: 1 },
+                    message: "must NOT have fewer than 1 characters",
+                  };
+                  if (vErrors === null) {
+                    vErrors = [err60];
+                  } else {
+                    vErrors.push(err60);
+                  }
+                  errors++;
+                }
+              } else {
+                const err61 = {
+                  instancePath: instancePath + "/locations/" + i1 + "/path",
+                  schemaPath:
+                    "#/properties/locations/items/properties/path/type",
+                  keyword: "type",
+                  params: { type: "string" },
+                  message: "must be string",
+                };
+                if (vErrors === null) {
+                  vErrors = [err61];
+                } else {
+                  vErrors.push(err61);
+                }
+                errors++;
+              }
+            }
+            if (data24.line_start !== undefined) {
+              let data26 = data24.line_start;
+              if (!(
+                typeof data26 == "number" &&
+                !(data26 % 1) &&
+                !isNaN(data26)
+              )) {
+                const err62 = {
+                  instancePath:
+                    instancePath + "/locations/" + i1 + "/line_start",
+                  schemaPath:
+                    "#/properties/locations/items/properties/line_start/type",
+                  keyword: "type",
+                  params: { type: "integer" },
+                  message: "must be integer",
+                };
+                if (vErrors === null) {
+                  vErrors = [err62];
+                } else {
+                  vErrors.push(err62);
+                }
+                errors++;
+              }
+              if (typeof data26 == "number") {
+                if (data26 < 1 || isNaN(data26)) {
+                  const err63 = {
+                    instancePath:
+                      instancePath + "/locations/" + i1 + "/line_start",
+                    schemaPath:
+                      "#/properties/locations/items/properties/line_start/minimum",
+                    keyword: "minimum",
+                    params: { comparison: ">=", limit: 1 },
+                    message: "must be >= 1",
+                  };
+                  if (vErrors === null) {
+                    vErrors = [err63];
+                  } else {
+                    vErrors.push(err63);
+                  }
+                  errors++;
+                }
+              }
+            }
+            if (data24.line_end !== undefined) {
+              let data27 = data24.line_end;
+              if (!(
+                typeof data27 == "number" &&
+                !(data27 % 1) &&
+                !isNaN(data27)
+              )) {
+                const err64 = {
+                  instancePath: instancePath + "/locations/" + i1 + "/line_end",
+                  schemaPath:
+                    "#/properties/locations/items/properties/line_end/type",
+                  keyword: "type",
+                  params: { type: "integer" },
+                  message: "must be integer",
+                };
+                if (vErrors === null) {
+                  vErrors = [err64];
+                } else {
+                  vErrors.push(err64);
+                }
+                errors++;
+              }
+              if (typeof data27 == "number") {
+                if (data27 < 1 || isNaN(data27)) {
+                  const err65 = {
+                    instancePath:
+                      instancePath + "/locations/" + i1 + "/line_end",
+                    schemaPath:
+                      "#/properties/locations/items/properties/line_end/minimum",
+                    keyword: "minimum",
+                    params: { comparison: ">=", limit: 1 },
+                    message: "must be >= 1",
+                  };
+                  if (vErrors === null) {
+                    vErrors = [err65];
+                  } else {
+                    vErrors.push(err65);
+                  }
+                  errors++;
+                }
+              }
+            }
+            if (data24.column !== undefined) {
+              let data28 = data24.column;
+              if (!(
+                typeof data28 == "number" &&
+                !(data28 % 1) &&
+                !isNaN(data28)
+              )) {
+                const err66 = {
+                  instancePath: instancePath + "/locations/" + i1 + "/column",
+                  schemaPath:
+                    "#/properties/locations/items/properties/column/type",
+                  keyword: "type",
+                  params: { type: "integer" },
+                  message: "must be integer",
+                };
+                if (vErrors === null) {
+                  vErrors = [err66];
+                } else {
+                  vErrors.push(err66);
+                }
+                errors++;
+              }
+              if (typeof data28 == "number") {
+                if (data28 < 1 || isNaN(data28)) {
+                  const err67 = {
+                    instancePath: instancePath + "/locations/" + i1 + "/column",
+                    schemaPath:
+                      "#/properties/locations/items/properties/column/minimum",
+                    keyword: "minimum",
+                    params: { comparison: ">=", limit: 1 },
+                    message: "must be >= 1",
+                  };
+                  if (vErrors === null) {
+                    vErrors = [err67];
+                  } else {
+                    vErrors.push(err67);
+                  }
+                  errors++;
+                }
+              }
+            }
+            if (data24.symbol_path !== undefined) {
+              if (typeof data24.symbol_path !== "string") {
+                const err68 = {
+                  instancePath:
+                    instancePath + "/locations/" + i1 + "/symbol_path",
+                  schemaPath:
+                    "#/properties/locations/items/properties/symbol_path/type",
+                  keyword: "type",
+                  params: { type: "string" },
+                  message: "must be string",
+                };
+                if (vErrors === null) {
+                  vErrors = [err68];
+                } else {
+                  vErrors.push(err68);
+                }
+                errors++;
+              }
+            }
+            if (data24.occurrence_state !== undefined) {
+              let data30 = data24.occurrence_state;
+              if (!(
+                data30 === "new" ||
+                data30 === "pre-existing" ||
+                data30 === "fixed" ||
+                data30 === "unclassified"
+              )) {
+                const err69 = {
+                  instancePath:
+                    instancePath + "/locations/" + i1 + "/occurrence_state",
+                  schemaPath:
+                    "#/properties/locations/items/properties/occurrence_state/enum",
+                  keyword: "enum",
+                  params: {
+                    allowedValues:
+                      schema39.properties.locations.items.properties
+                        .occurrence_state.enum,
+                  },
+                  message: "must be equal to one of the allowed values",
+                };
+                if (vErrors === null) {
+                  vErrors = [err69];
+                } else {
+                  vErrors.push(err69);
+                }
+                errors++;
+              }
+            }
+          } else {
+            const err70 = {
+              instancePath: instancePath + "/locations/" + i1,
+              schemaPath: "#/properties/locations/items/type",
+              keyword: "type",
+              params: { type: "object" },
+              message: "must be object",
+            };
+            if (vErrors === null) {
+              vErrors = [err70];
+            } else {
+              vErrors.push(err70);
+            }
+            errors++;
+          }
+        }
+      } else {
+        const err71 = {
+          instancePath: instancePath + "/locations",
+          schemaPath: "#/properties/locations/type",
+          keyword: "type",
+          params: { type: "array" },
+          message: "must be array",
+        };
+        if (vErrors === null) {
+          vErrors = [err71];
+        } else {
+          vErrors.push(err71);
+        }
+        errors++;
+      }
+    }
+    if (data.limitations !== undefined) {
+      let data31 = data.limitations;
+      if (Array.isArray(data31)) {
+        if (data31.length > 20) {
+          const err72 = {
+            instancePath: instancePath + "/limitations",
+            schemaPath: "#/properties/limitations/maxItems",
+            keyword: "maxItems",
+            params: { limit: 20 },
+            message: "must NOT have more than 20 items",
+          };
+          if (vErrors === null) {
+            vErrors = [err72];
+          } else {
+            vErrors.push(err72);
+          }
+          errors++;
+        }
+        const len2 = data31.length;
+        for (let i2 = 0; i2 < len2; i2++) {
+          let data32 = data31[i2];
+          if (typeof data32 === "string") {
+            if (func2(data32) > 1000) {
+              const err73 = {
+                instancePath: instancePath + "/limitations/" + i2,
+                schemaPath: "#/properties/limitations/items/maxLength",
+                keyword: "maxLength",
+                params: { limit: 1000 },
+                message: "must NOT have more than 1000 characters",
+              };
+              if (vErrors === null) {
+                vErrors = [err73];
+              } else {
+                vErrors.push(err73);
+              }
+              errors++;
+            }
+            if (func2(data32) < 1) {
+              const err74 = {
+                instancePath: instancePath + "/limitations/" + i2,
+                schemaPath: "#/properties/limitations/items/minLength",
+                keyword: "minLength",
+                params: { limit: 1 },
+                message: "must NOT have fewer than 1 characters",
+              };
+              if (vErrors === null) {
+                vErrors = [err74];
+              } else {
+                vErrors.push(err74);
+              }
+              errors++;
+            }
+          } else {
+            const err75 = {
+              instancePath: instancePath + "/limitations/" + i2,
+              schemaPath: "#/properties/limitations/items/type",
+              keyword: "type",
+              params: { type: "string" },
+              message: "must be string",
+            };
+            if (vErrors === null) {
+              vErrors = [err75];
+            } else {
+              vErrors.push(err75);
+            }
+            errors++;
+          }
+        }
+      } else {
+        const err76 = {
+          instancePath: instancePath + "/limitations",
+          schemaPath: "#/properties/limitations/type",
+          keyword: "type",
+          params: { type: "array" },
+          message: "must be array",
+        };
+        if (vErrors === null) {
+          vErrors = [err76];
+        } else {
+          vErrors.push(err76);
+        }
+        errors++;
+      }
+    }
+    if (data.catalog_item !== undefined) {
+      let data33 = data.catalog_item;
+      if (typeof data33 === "string") {
+        if (func2(data33) > 40) {
+          const err77 = {
+            instancePath: instancePath + "/catalog_item",
+            schemaPath: "#/properties/catalog_item/maxLength",
+            keyword: "maxLength",
+            params: { limit: 40 },
+            message: "must NOT have more than 40 characters",
+          };
+          if (vErrors === null) {
+            vErrors = [err77];
+          } else {
+            vErrors.push(err77);
+          }
+          errors++;
+        }
+        if (func2(data33) < 1) {
+          const err78 = {
+            instancePath: instancePath + "/catalog_item",
+            schemaPath: "#/properties/catalog_item/minLength",
+            keyword: "minLength",
+            params: { limit: 1 },
+            message: "must NOT have fewer than 1 characters",
+          };
+          if (vErrors === null) {
+            vErrors = [err78];
+          } else {
+            vErrors.push(err78);
+          }
+          errors++;
+        }
+      } else {
+        const err79 = {
+          instancePath: instancePath + "/catalog_item",
+          schemaPath: "#/properties/catalog_item/type",
+          keyword: "type",
+          params: { type: "string" },
+          message: "must be string",
+        };
+        if (vErrors === null) {
+          vErrors = [err79];
+        } else {
+          vErrors.push(err79);
+        }
+        errors++;
+      }
+    }
+    if (data.trace_change !== undefined) {
+      let data34 = data.trace_change;
+      if (!(
+        data34 === "introduced" ||
+        data34 === "removed" ||
+        data34 === "weakened"
+      )) {
+        const err80 = {
+          instancePath: instancePath + "/trace_change",
+          schemaPath: "#/properties/trace_change/enum",
+          keyword: "enum",
+          params: { allowedValues: schema39.properties.trace_change.enum },
+          message: "must be equal to one of the allowed values",
+        };
+        if (vErrors === null) {
+          vErrors = [err80];
+        } else {
+          vErrors.push(err80);
+        }
+        errors++;
+      }
+    }
   } else {
-    const err53 = {
+    const err81 = {
       instancePath,
       schemaPath: "#/type",
       keyword: "type",
@@ -29329,9 +29889,9 @@ function validate26(
       message: "must be object",
     };
     if (vErrors === null) {
-      vErrors = [err53];
+      vErrors = [err81];
     } else {
-      vErrors.push(err53);
+      vErrors.push(err81);
     }
     errors++;
   }

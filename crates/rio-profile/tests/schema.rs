@@ -145,10 +145,9 @@ fn shipped_catalogs_validate_with_unique_official_ids_and_attribution() {
         }
     }
     // Every predicate and trace name is closed by the schema.
-    let mut catalog: Value = serde_yaml::from_str(
-        &fs::read_to_string(root.join("owasp-top10-2025.yaml")).unwrap(),
-    )
-    .unwrap();
+    let mut catalog: Value =
+        serde_yaml::from_str(&fs::read_to_string(root.join("owasp-top10-2025.yaml")).unwrap())
+            .unwrap();
     catalog["items"][0]["applies_when"] = json!({"any": [{"runtime": ["node"]}]});
     assert!(!validator.is_valid(&catalog));
     catalog["items"][0]["applies_when"] = json!({"any": [{"node_kind": ["route"]}]});
@@ -164,4 +163,35 @@ fn shipped_catalogs_validate_with_unique_official_ids_and_attribution() {
     let step = json!({"kind": "step", "name": "rio/agents.v2", "version": "0.1.0",
         "description": "x", "schema": {}, "inputs": [], "outputs": [], "local": false});
     assert!(!validator.is_valid(&step));
+}
+
+#[test]
+fn agent_manifests_validate_and_declare_v03_roles() {
+    let validator = jsonschema::validator_for(&schema("agent")).unwrap();
+    let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../modules/agents");
+    for entry in fs::read_dir(&root).unwrap() {
+        let directory = entry.unwrap().path();
+        let manifest: Value =
+            serde_json::from_str(&fs::read_to_string(directory.join("manifest.json")).unwrap())
+                .unwrap();
+        let errors: Vec<_> = validator
+            .iter_errors(&manifest)
+            .map(|e| e.to_string())
+            .collect();
+        assert!(errors.is_empty(), "{}: {errors:?}", directory.display());
+        let name = manifest["name"].as_str().unwrap();
+        // Only the contracts agent answers triage's public_contracts signal.
+        assert_eq!(manifest["contracts"] == json!(true), name == "contracts");
+        // Agents with their own instructions ship them as prompt.md.
+        assert_eq!(
+            directory.join("prompt.md").is_file(),
+            ["contracts", "security"].contains(&name),
+            "{name}"
+        );
+    }
+    let security: Value =
+        serde_json::from_str(&fs::read_to_string(root.join("security/manifest.json")).unwrap())
+            .unwrap();
+    assert_eq!(security["available"], true);
+    assert_eq!(security["run"], true);
 }

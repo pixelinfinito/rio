@@ -2,6 +2,6 @@
   "version": 1,
   "name": "security",
   "run": true,
-  "available": false,
+  "available": true,
   "independent": true
 }

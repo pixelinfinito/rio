@@ -20,6 +20,34 @@ if (process.argv.includes("--check")) {
   if (readFileSync(path, "utf8") !== output)
     throw new Error("Regenerate worker step schemas with npm run generate");
 } else writeFileSync(path, output);
+// Catalog modules and agent prompts are data the Workflow reads; embed them like the step schemas.
+const catalogs = {};
+for (const name of readdirSync(`${root}/modules/catalogs`).sort()) {
+  const catalog = parse(
+    readFileSync(`${root}/modules/catalogs/${name}`, "utf8"),
+  );
+  catalogs[catalog.name.replace(/^rio\//, "")] = catalog;
+}
+const prompts = {};
+for (const name of readdirSync(`${root}/modules/agents`).sort()) {
+  const path = `${root}/modules/agents/${name}/prompt.md`;
+  try {
+    prompts[name] = readFileSync(path, "utf8");
+  } catch (error) {
+    if (error.code !== "ENOENT") throw error;
+  }
+}
+for (const [file, value] of [
+  ["catalogs.json", catalogs],
+  ["agent-prompts.json", prompts],
+]) {
+  const path = `${root}/worker/src/${file}`,
+    output = await format(JSON.stringify(value), { parser: "json" });
+  if (process.argv.includes("--check")) {
+    if (readFileSync(path, "utf8") !== output)
+      throw new Error(`Regenerate ${file} with npm run generate`);
+  } else writeFileSync(path, output);
+}
 const secrets = JSON.parse(
   execFileSync(
     "python3",
