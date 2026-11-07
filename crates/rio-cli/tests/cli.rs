@@ -318,6 +318,101 @@ fn profiles_show_list_raw_validate_and_third_party_rejection() {
     assert!(String::from_utf8_lossy(&output.stderr).contains("third-party"));
 }
 #[test]
+fn profile_validate_checks_agent_cache_and_proposal_threshold_options() {
+    let temp = repository();
+    let root = temp.path();
+    let dir = root.join(".rio/profiles");
+    fs::create_dir_all(&dir).unwrap();
+    // A child's `steps` replaces the inherited list, so the pipeline is complete.
+    let profile = |threshold: u32| {
+        format!(
+            "version: 1\nname: options\nextends: rio/base\nsteps:\n  - {{id: prepare, uses: rio/prepare}}\n  - {{id: checks, uses: rio/checks, needs: [prepare]}}\n  - {{id: graph, uses: rio/graph, needs: [prepare]}}\n  - {{id: triage, uses: rio/triage, needs: [checks, graph]}}\n  - {{id: agents, uses: rio/agents, needs: [triage], with: {{cache: false}}}}\n  - {{id: verify, uses: rio/verify, needs: [agents]}}\n  - {{id: report, uses: rio/report, needs: [verify], with: {{proposal_threshold: {threshold}}}}}\n"
+        )
+    };
+    fs::write(dir.join("options.yaml"), profile(2)).unwrap();
+    rio(root)
+        .args(["profile", "validate", "options"])
+        .assert()
+        .success();
+    let output = rio(root)
+        .args(["profile", "show", "options"])
+        .assert()
+        .success()
+        .get_output()
+        .clone();
+    let text = String::from_utf8_lossy(&output.stdout);
+    assert!(text.contains("cache: false") && text.contains("proposal_threshold: 2"));
+    fs::write(dir.join("options.yaml"), profile(0)).unwrap();
+    let output = rio(root)
+        .args(["profile", "validate", "options"])
+        .assert()
+        .code(2)
+        .get_output()
+        .clone();
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(stderr.contains("proposal_threshold"), "{stderr}");
+    assert!(stderr.contains("minimum of 1"), "{stderr}");
+}
+#[test]
+fn security_community_profile_validates_offline_and_enables_thorough_asvs() {
+    let temp = repository();
+    let root = temp.path();
+    rio(root)
+        .args(["profile", "validate", "rio/security"])
+        .assert()
+        .success();
+    let output = rio(root)
+        .args(["profile", "show", "rio/security"])
+        .assert()
+        .success()
+        .get_output()
+        .clone();
+    let resolved: serde_yaml::Value = serde_yaml::from_slice(&output.stdout).unwrap();
+    let security = resolved["steps"]
+        .as_sequence()
+        .unwrap()
+        .iter()
+        .find(|s| s["id"] == "security")
+        .unwrap();
+    assert_eq!(security["uses"], "rio/security@0.2.0");
+    assert_eq!(security["with"]["enabled"], true);
+    assert_eq!(security["with"]["posture"], "thorough");
+    assert_eq!(security["with"]["catalog"], "asvs-5.0");
+    let text = String::from_utf8_lossy(&output.stdout);
+    assert!(
+        text.contains("rio/base") && text.contains("rio/security"),
+        "{text}"
+    );
+    // Every other base setting is unchanged.
+    let base = rio(root)
+        .args(["profile", "show", "rio/base"])
+        .assert()
+        .success()
+        .get_output()
+        .clone();
+    let base: serde_yaml::Value = serde_yaml::from_slice(&base.stdout).unwrap();
+    for key in [
+        "budget",
+        "fail_on",
+        "posture",
+        "publish",
+        "max_defects",
+        "verify",
+    ] {
+        assert_eq!(resolved[key], base[key], "{key}");
+    }
+    let steps = |v: &serde_yaml::Value| -> Vec<serde_yaml::Value> {
+        v["steps"]
+            .as_sequence()
+            .unwrap()
+            .iter()
+            .filter(|s| s["id"] != "security")
+            .cloned()
+            .collect()
+    };
+    assert_eq!(steps(&resolved), steps(&base));
+}
+#[test]
 fn configuration_precedence_sources_unknown_keys_and_endpoint_notice() {
     let temp = repository();
     let root = temp.path();

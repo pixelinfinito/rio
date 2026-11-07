@@ -1,0 +1,1134 @@
+{
+  "asvs-5.0": {
+    "kind": "catalog",
+    "name": "rio/asvs-5.0",
+    "version": "1.0.0",
+    "description": "OWASP ASVS 5.0.0 as a security review checklist, one item per section that a code change can affect; the documentation sections (V*.1 where the section is \"Documentation\") are omitted because a diff cannot assess them",
+    "attribution": {
+      "source": "OWASP Application Security Verification Standard 5.0.0, The OWASP Foundation",
+      "url": "https://github.com/OWASP/ASVS/tree/v5.0.0/5.0/en",
+      "license": "CC BY-SA 4.0",
+      "notice": "Section identifiers and titles are from the OWASP Application Security Verification Standard 5.0.0 (May 2025) by the OWASP Foundation, licensed under the Creative Commons Attribution-ShareAlike 4.0 International license. Summaries, applicability predicates and trace hints are written for Rio; this file is distributed under the same license."
+    },
+    "items": [
+      {
+        "id": "V1.1",
+        "title": "Encoding and Sanitization Architecture",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x10-V1-Encoding-and-Sanitization.md",
+        "summary": "Input is decoded once into its canonical form before checks run, and output encoding happens at the interpreter boundary that consumes it, not earlier.",
+        "applies_when": {
+          "any": [
+            { "node_kind": ["endpoint", "event"] },
+            { "sink": ["html_output", "sql_query", "template_render"] }
+          ]
+        },
+        "trace": {
+          "sources": ["http_request", "message"],
+          "sinks": ["html_output", "sql_query", "template_render"]
+        }
+      },
+      {
+        "id": "V1.2",
+        "title": "Injection Prevention",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x10-V1-Encoding-and-Sanitization.md",
+        "summary": "Queries, commands, templates and markup are built with parameterization or context-aware encoding, so untrusted values can never change their structure.",
+        "applies_when": { "any": [{ "always": true }] },
+        "trace": {
+          "sources": [
+            "http_request",
+            "cli_args",
+            "message",
+            "file_content",
+            "external_response"
+          ],
+          "sinks": [
+            "sql_query",
+            "shell_command",
+            "html_output",
+            "template_render",
+            "filesystem_path"
+          ]
+        }
+      },
+      {
+        "id": "V1.3",
+        "title": "Sanitization",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x10-V1-Encoding-and-Sanitization.md",
+        "summary": "Where untrusted markup, URLs or file names must be accepted, a maintained sanitizer or strict allowlist removes the dangerous parts before use.",
+        "applies_when": {
+          "any": [
+            { "node_kind": ["endpoint"] },
+            { "framework": ["browser"] },
+            { "sink": ["html_output", "redirect"] }
+          ]
+        },
+        "trace": {
+          "sources": ["http_request", "external_response"],
+          "sinks": ["html_output", "redirect", "filesystem_path"]
+        }
+      },
+      {
+        "id": "V1.4",
+        "title": "Memory, String, and Unmanaged Code",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x10-V1-Encoding-and-Sanitization.md",
+        "summary": "Unsafe or foreign code keeps memory safe: bounds are checked, lengths come from trusted values, and raw pointers or unchecked conversions cannot be driven by input.",
+        "applies_when": { "any": [{ "sink": ["unsafe_memory"] }] },
+        "trace": {
+          "sources": ["http_request", "cli_args", "file_content", "message"],
+          "sinks": ["unsafe_memory"]
+        }
+      },
+      {
+        "id": "V1.5",
+        "title": "Safe Deserialization",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x10-V1-Encoding-and-Sanitization.md",
+        "summary": "Untrusted data is parsed into plain data with a safe parser and validated, never into arbitrary objects, types or executable values.",
+        "applies_when": {
+          "any": [
+            { "node_kind": ["endpoint", "event"] },
+            { "sink": ["deserialization"] }
+          ]
+        },
+        "trace": {
+          "sources": [
+            "http_request",
+            "message",
+            "file_content",
+            "external_response"
+          ],
+          "sinks": ["deserialization"]
+        }
+      },
+      {
+        "id": "V2.2",
+        "title": "Input Validation",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x11-V2-Validation-and-Business-Logic.md",
+        "summary": "Every input is checked against an expected type, range, length and format at a trusted layer, and a failed check stops processing.",
+        "applies_when": {
+          "any": [
+            { "node_kind": ["endpoint", "event", "config"] },
+            { "sensitive_path": true }
+          ]
+        },
+        "trace": {
+          "sources": ["http_request", "cli_args", "message", "environment"],
+          "sinks": ["sql_query", "filesystem_path", "authorization_check"]
+        }
+      },
+      {
+        "id": "V2.3",
+        "title": "Business Logic Security",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x11-V2-Validation-and-Business-Logic.md",
+        "summary": "Business flows run their steps in order, once, and within limits; concurrent or repeated requests cannot skip a step, double-spend or exceed a quota.",
+        "applies_when": {
+          "any": [
+            { "node_kind": ["endpoint", "table", "event"] },
+            { "sensitive_path": true }
+          ]
+        },
+        "trace": {
+          "sources": ["http_request", "message", "session"],
+          "sinks": ["sql_query", "authorization_check"]
+        }
+      },
+      {
+        "id": "V2.4",
+        "title": "Anti-automation",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x11-V2-Validation-and-Business-Logic.md",
+        "summary": "Costly or abusable operations are rate limited or otherwise protected against automated use.",
+        "applies_when": { "any": [{ "node_kind": ["endpoint"] }] },
+        "trace": {
+          "sources": ["http_request"],
+          "sinks": ["authentication_check", "outbound_request", "sql_query"]
+        }
+      },
+      {
+        "id": "V3.2",
+        "title": "Unintended Content Interpretation",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x12-V3-Web-Frontend-Security.md",
+        "summary": "Responses declare their content type and are rendered as that type only, so user-supplied content cannot be interpreted as script or markup by the browser.",
+        "applies_when": {
+          "any": [{ "framework": ["browser"] }, { "sink": ["html_output"] }]
+        },
+        "trace": {
+          "sources": ["http_request", "database_read"],
+          "sinks": ["html_output"]
+        }
+      },
+      {
+        "id": "V3.3",
+        "title": "Cookie Setup",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x12-V3-Web-Frontend-Security.md",
+        "summary": "Cookies carrying session or security state use Secure, HttpOnly, an appropriate SameSite value and a host-bound prefix where possible.",
+        "applies_when": {
+          "any": [{ "sink": ["session_state"] }],
+          "all": [{ "node_kind": ["endpoint"] }]
+        },
+        "trace": { "sources": ["session"], "sinks": ["session_state"] }
+      },
+      {
+        "id": "V3.4",
+        "title": "Browser Security Mechanism Headers",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x12-V3-Web-Frontend-Security.md",
+        "summary": "Responses set the browser protections the application relies on (Content-Security-Policy, Strict-Transport-Security, framing and referrer controls) and changes do not weaken them.",
+        "applies_when": {
+          "any": [{ "framework": ["browser"] }, { "node_kind": ["endpoint"] }],
+          "all": [{ "framework": ["browser"] }]
+        },
+        "trace": { "sources": [], "sinks": ["html_output"] }
+      },
+      {
+        "id": "V3.5",
+        "title": "Browser Origin Separation",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x12-V3-Web-Frontend-Security.md",
+        "summary": "State-changing requests are protected against cross-site request forgery and the CORS policy admits only the intended origins.",
+        "applies_when": {
+          "all": [{ "node_kind": ["endpoint"] }],
+          "any": [{ "framework": ["browser"] }, { "sink": ["session_state"] }]
+        },
+        "trace": {
+          "sources": ["http_request", "session"],
+          "sinks": ["session_state", "authorization_check"]
+        }
+      },
+      {
+        "id": "V3.6",
+        "title": "External Resource Integrity",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x12-V3-Web-Frontend-Security.md",
+        "summary": "Scripts and styles loaded from other origins are pinned with integrity checks or served from the application's own origin.",
+        "applies_when": { "all": [{ "framework": ["browser"] }] },
+        "trace": { "sources": ["external_response"], "sinks": ["html_output"] }
+      },
+      {
+        "id": "V3.7",
+        "title": "Other Browser Security Considerations",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x12-V3-Web-Frontend-Security.md",
+        "summary": "Client-side code does not open redirects, leak data through postMessage or storage, or rely on browser features that the supported browsers do not provide.",
+        "applies_when": { "all": [{ "framework": ["browser"] }] },
+        "trace": {
+          "sources": ["http_request", "message"],
+          "sinks": ["redirect", "html_output"]
+        }
+      },
+      {
+        "id": "V4.1",
+        "title": "Generic Web Service Security",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x13-V4-API-and-Web-Service.md",
+        "summary": "Web service responses carry correct content types, and methods, versions and transport choices exposed by an API do not bypass the protections of its primary path.",
+        "applies_when": { "any": [{ "node_kind": ["endpoint"] }] },
+        "trace": {
+          "sources": ["http_request"],
+          "sinks": ["html_output", "error_response", "authorization_check"]
+        }
+      },
+      {
+        "id": "V4.2",
+        "title": "HTTP Message Structure Validation",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x13-V4-API-and-Web-Service.md",
+        "summary": "Request framing, headers and body lengths are validated so ambiguous messages cannot smuggle requests or split responses.",
+        "applies_when": { "any": [{ "node_kind": ["endpoint"] }] },
+        "trace": {
+          "sources": ["http_request"],
+          "sinks": ["outbound_request", "html_output"]
+        }
+      },
+      {
+        "id": "V4.3",
+        "title": "GraphQL",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x13-V4-API-and-Web-Service.md",
+        "summary": "GraphQL endpoints bound query cost and depth, authorize at the field or resolver level, and do not expose introspection where it is not intended.",
+        "applies_when": { "any": [{ "framework": ["graphql"] }] },
+        "trace": {
+          "sources": ["http_request"],
+          "sinks": ["authorization_check", "sql_query"]
+        }
+      },
+      {
+        "id": "V4.4",
+        "title": "WebSocket",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x13-V4-API-and-Web-Service.md",
+        "summary": "WebSocket connections are authenticated and origin-checked at the handshake, and every message is validated and authorized like a request.",
+        "applies_when": { "any": [{ "framework": ["websocket"] }] },
+        "trace": {
+          "sources": ["message", "session"],
+          "sinks": ["authorization_check", "session_state"]
+        }
+      },
+      {
+        "id": "V5.2",
+        "title": "File Upload and Content",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x14-V5-File-Handling.md",
+        "summary": "Uploaded files are limited in size and count and checked by content, not by name, before they are stored or processed.",
+        "applies_when": { "any": [{ "sink": ["file_upload"] }] },
+        "trace": {
+          "sources": ["http_request"],
+          "sinks": ["file_upload", "filesystem_path"]
+        }
+      },
+      {
+        "id": "V5.3",
+        "title": "File Storage",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x14-V5-File-Handling.md",
+        "summary": "Stored files land under a server-chosen name and location; paths derived from input cannot traverse directories or overwrite other files, and stored files are never executed.",
+        "applies_when": {
+          "any": [{ "sink": ["filesystem_path", "file_upload"] }]
+        },
+        "trace": {
+          "sources": ["http_request", "cli_args", "message"],
+          "sinks": ["filesystem_path"]
+        }
+      },
+      {
+        "id": "V5.4",
+        "title": "File Download",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x14-V5-File-Handling.md",
+        "summary": "Downloads resolve the requested file inside an allowed location, check the caller's access to it, and set content type and disposition explicitly.",
+        "applies_when": {
+          "all": [
+            { "node_kind": ["endpoint"] },
+            { "sink": ["filesystem_path"] }
+          ]
+        },
+        "trace": {
+          "sources": ["http_request"],
+          "sinks": ["filesystem_path", "authorization_check"]
+        }
+      },
+      {
+        "id": "V6.2",
+        "title": "Password Security",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x15-V6-Authentication.md",
+        "summary": "Passwords are accepted with sensible length rules, checked against breached lists where required, and stored only with a slow, salted password hash.",
+        "applies_when": {
+          "any": [
+            { "sensitive_path": true },
+            { "sink": ["authentication_check"] }
+          ]
+        },
+        "trace": {
+          "sources": ["http_request"],
+          "sinks": ["authentication_check", "crypto_operation", "log_output"]
+        }
+      },
+      {
+        "id": "V6.3",
+        "title": "General Authentication Security",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x15-V6-Authentication.md",
+        "summary": "Every path into the application authenticates with the same strength, failures do not reveal which factor was wrong, and attempts are limited.",
+        "applies_when": {
+          "any": [
+            { "sensitive_path": true },
+            { "sink": ["authentication_check"] }
+          ]
+        },
+        "trace": {
+          "sources": ["http_request", "session"],
+          "sinks": ["authentication_check", "session_state", "error_response"]
+        }
+      },
+      {
+        "id": "V6.4",
+        "title": "Authentication Factor Lifecycle and Recovery",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x15-V6-Authentication.md",
+        "summary": "Enrolling, resetting and recovering credentials requires proof at least as strong as signing in, and recovery tokens are single-use and expire.",
+        "applies_when": { "any": [{ "sensitive_path": true }] },
+        "trace": {
+          "sources": ["http_request"],
+          "sinks": [
+            "authentication_check",
+            "token_handling",
+            "outbound_request"
+          ]
+        }
+      },
+      {
+        "id": "V6.5",
+        "title": "General Multi-factor authentication requirements",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x15-V6-Authentication.md",
+        "summary": "One-time codes and second factors are single-use, short-lived, rate limited and verified on the server.",
+        "applies_when": { "any": [{ "sensitive_path": true }] },
+        "trace": {
+          "sources": ["http_request", "session"],
+          "sinks": ["authentication_check", "token_handling"]
+        }
+      },
+      {
+        "id": "V6.6",
+        "title": "Out-of-Band authentication mechanisms",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x15-V6-Authentication.md",
+        "summary": "Codes sent by email, SMS or push are bound to the request that asked for them, expire quickly and cannot be replayed.",
+        "applies_when": { "any": [{ "sensitive_path": true }] },
+        "trace": {
+          "sources": ["http_request"],
+          "sinks": ["authentication_check", "outbound_request"]
+        }
+      },
+      {
+        "id": "V6.7",
+        "title": "Cryptographic authentication mechanism",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x15-V6-Authentication.md",
+        "summary": "Certificate and key based authentication validates the full chain and binds the verified key to the identity it authenticates.",
+        "applies_when": {
+          "any": [{ "sensitive_path": true }],
+          "all": [{ "sink": ["crypto_operation"] }]
+        },
+        "trace": {
+          "sources": ["http_request"],
+          "sinks": ["crypto_operation", "authentication_check"]
+        }
+      },
+      {
+        "id": "V6.8",
+        "title": "Authentication with an Identity Provider",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x15-V6-Authentication.md",
+        "summary": "Assertions from an external identity provider are verified for signature, issuer, audience and freshness, and users are matched on a stable provider identifier.",
+        "applies_when": {
+          "any": [{ "framework": ["oauth"] }, { "sink": ["token_handling"] }],
+          "all": [{ "sensitive_path": true }]
+        },
+        "trace": {
+          "sources": ["external_response", "http_request"],
+          "sinks": ["token_handling", "authentication_check"]
+        }
+      },
+      {
+        "id": "V7.2",
+        "title": "Fundamental Session Management Security",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x16-V7-Session-Management.md",
+        "summary": "Session tokens are random, verified on the server for every request, and regenerated when the authentication state changes.",
+        "applies_when": {
+          "any": [{ "sink": ["session_state"] }, { "sensitive_path": true }]
+        },
+        "trace": {
+          "sources": ["session", "http_request"],
+          "sinks": ["session_state", "crypto_operation"]
+        }
+      },
+      {
+        "id": "V7.3",
+        "title": "Session Timeout",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x16-V7-Session-Management.md",
+        "summary": "Sessions end after inactivity and after an absolute lifetime appropriate to the risk of the application.",
+        "applies_when": {
+          "any": [{ "sink": ["session_state", "token_handling"] }]
+        },
+        "trace": {
+          "sources": ["session"],
+          "sinks": ["session_state", "token_handling"]
+        }
+      },
+      {
+        "id": "V7.4",
+        "title": "Session Termination",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x16-V7-Session-Management.md",
+        "summary": "Logging out, changing credentials or disabling an account invalidates the affected sessions and tokens on the server.",
+        "applies_when": {
+          "any": [
+            { "sink": ["session_state", "token_handling"] },
+            { "sensitive_path": true }
+          ]
+        },
+        "trace": {
+          "sources": ["session"],
+          "sinks": ["session_state", "token_handling"]
+        }
+      },
+      {
+        "id": "V7.5",
+        "title": "Defenses Against Session Abuse",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x16-V7-Session-Management.md",
+        "summary": "Sensitive changes require re-authentication, and users can see and end their other active sessions.",
+        "applies_when": { "any": [{ "sensitive_path": true }] },
+        "trace": {
+          "sources": ["session", "http_request"],
+          "sinks": ["session_state", "authentication_check"]
+        }
+      },
+      {
+        "id": "V7.6",
+        "title": "Federated Re-authentication",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x16-V7-Session-Management.md",
+        "summary": "Session lifetimes and re-authentication between a relying party and its identity provider are coordinated so that ending one ends the other as intended.",
+        "applies_when": {
+          "any": [{ "framework": ["oauth"] }],
+          "all": [{ "sensitive_path": true }]
+        },
+        "trace": {
+          "sources": ["external_response", "session"],
+          "sinks": ["session_state", "token_handling"]
+        }
+      },
+      {
+        "id": "V8.2",
+        "title": "General Authorization Design",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x17-V8-Authorization.md",
+        "summary": "Function, data and field level access is decided on the server from the caller's identity and the object's owner, never from values the client supplies.",
+        "applies_when": {
+          "any": [
+            { "node_kind": ["endpoint", "table"] },
+            { "sensitive_path": true },
+            { "sink": ["authorization_check"] }
+          ]
+        },
+        "trace": {
+          "sources": ["http_request", "session"],
+          "sinks": ["authorization_check", "sql_query", "filesystem_path"]
+        }
+      },
+      {
+        "id": "V8.3",
+        "title": "Operation Level Authorization",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x17-V8-Authorization.md",
+        "summary": "Each operation checks authorization at the trusted layer where it executes, immediately before the protected action, and changes in permissions take effect promptly.",
+        "applies_when": {
+          "any": [
+            { "node_kind": ["endpoint"] },
+            { "sensitive_path": true },
+            { "sink": ["authorization_check"] }
+          ]
+        },
+        "trace": {
+          "sources": ["http_request", "session", "message"],
+          "sinks": ["authorization_check", "sql_query"]
+        }
+      },
+      {
+        "id": "V8.4",
+        "title": "Other Authorization Considerations",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x17-V8-Authorization.md",
+        "summary": "Multi-tenant and administrative paths isolate tenants and require the stronger controls their reach demands.",
+        "applies_when": {
+          "any": [{ "sensitive_path": true }, { "node_kind": ["table"] }]
+        },
+        "trace": {
+          "sources": ["http_request", "session"],
+          "sinks": ["authorization_check", "sql_query"]
+        }
+      },
+      {
+        "id": "V9.1",
+        "title": "Token source and integrity",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x18-V9-Self-contained-Tokens.md",
+        "summary": "Self-contained tokens are accepted only after their signature or MAC is verified with an allowed algorithm and a trusted key.",
+        "applies_when": { "any": [{ "sink": ["token_handling"] }] },
+        "trace": {
+          "sources": ["http_request", "external_response"],
+          "sinks": ["token_handling", "crypto_operation"]
+        }
+      },
+      {
+        "id": "V9.2",
+        "title": "Token content",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x18-V9-Self-contained-Tokens.md",
+        "summary": "Token claims are checked for expiry, audience and type before the token is used for the decision it is meant for.",
+        "applies_when": { "any": [{ "sink": ["token_handling"] }] },
+        "trace": {
+          "sources": ["http_request"],
+          "sinks": ["token_handling", "authorization_check"]
+        }
+      },
+      {
+        "id": "V10.1",
+        "title": "Generic OAuth and OIDC Security",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x19-V10-OAuth-and-OIDC.md",
+        "summary": "OAuth flows use PKCE and state or nonce values bound to the session, and tokens are sent only to the parties that need them.",
+        "applies_when": { "any": [{ "framework": ["oauth"] }] },
+        "trace": {
+          "sources": ["http_request", "external_response"],
+          "sinks": ["token_handling", "redirect"]
+        }
+      },
+      {
+        "id": "V10.2",
+        "title": "OAuth Client",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x19-V10-OAuth-and-OIDC.md",
+        "summary": "Clients validate redirect responses against the request they started and keep client secrets and tokens out of the browser.",
+        "applies_when": { "any": [{ "framework": ["oauth"] }] },
+        "trace": {
+          "sources": ["external_response", "http_request"],
+          "sinks": ["token_handling", "redirect", "secret_value"]
+        }
+      },
+      {
+        "id": "V10.3",
+        "title": "OAuth Resource Server",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x19-V10-OAuth-and-OIDC.md",
+        "summary": "Resource servers accept only access tokens issued for them and enforce the scopes and subject the token carries.",
+        "applies_when": {
+          "any": [{ "framework": ["oauth"] }],
+          "all": [{ "node_kind": ["endpoint"] }]
+        },
+        "trace": {
+          "sources": ["http_request"],
+          "sinks": ["token_handling", "authorization_check"]
+        }
+      },
+      {
+        "id": "V10.4",
+        "title": "OAuth Authorization Server",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x19-V10-OAuth-and-OIDC.md",
+        "summary": "Authorization servers match redirect URIs exactly, issue short-lived single-use codes, and bind refresh tokens to their client.",
+        "applies_when": {
+          "any": [{ "framework": ["oauth"] }],
+          "all": [{ "sensitive_path": true }]
+        },
+        "trace": {
+          "sources": ["http_request"],
+          "sinks": ["token_handling", "redirect", "crypto_operation"]
+        }
+      },
+      {
+        "id": "V10.5",
+        "title": "OIDC Client",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x19-V10-OAuth-and-OIDC.md",
+        "summary": "Relying parties validate ID tokens (signature, issuer, audience, nonce, expiry) and identify users by issuer and subject together.",
+        "applies_when": { "any": [{ "framework": ["oauth"] }] },
+        "trace": {
+          "sources": ["external_response"],
+          "sinks": ["token_handling", "authentication_check"]
+        }
+      },
+      {
+        "id": "V10.6",
+        "title": "OpenID Provider",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x19-V10-OAuth-and-OIDC.md",
+        "summary": "OpenID providers protect their signing keys, publish accurate metadata and issue ID tokens only for authenticated users and registered clients.",
+        "applies_when": {
+          "any": [{ "framework": ["oauth"] }],
+          "all": [{ "sensitive_path": true }]
+        },
+        "trace": {
+          "sources": ["http_request"],
+          "sinks": ["token_handling", "crypto_operation"]
+        }
+      },
+      {
+        "id": "V10.7",
+        "title": "Consent Management",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x19-V10-OAuth-and-OIDC.md",
+        "summary": "Users see and approve the scopes a client requests, and consent can be reviewed and revoked.",
+        "applies_when": {
+          "any": [{ "framework": ["oauth"] }],
+          "all": [{ "node_kind": ["endpoint"] }]
+        },
+        "trace": {
+          "sources": ["http_request", "session"],
+          "sinks": ["token_handling", "authorization_check"]
+        }
+      },
+      {
+        "id": "V11.2",
+        "title": "Secure Cryptography Implementation",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x20-V11-Cryptography.md",
+        "summary": "Cryptography comes from vetted libraries used as documented, fails closed, and compares secrets in constant time.",
+        "applies_when": { "any": [{ "sink": ["crypto_operation"] }] },
+        "trace": {
+          "sources": ["http_request", "environment"],
+          "sinks": ["crypto_operation", "secret_value"]
+        }
+      },
+      {
+        "id": "V11.3",
+        "title": "Encryption Algorithms",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x20-V11-Cryptography.md",
+        "summary": "Encryption uses approved authenticated modes with unique nonces; insecure modes, static IVs and unauthenticated ciphertext are not used.",
+        "applies_when": { "any": [{ "sink": ["crypto_operation"] }] },
+        "trace": {
+          "sources": ["environment", "database_read"],
+          "sinks": ["crypto_operation", "secret_value"]
+        }
+      },
+      {
+        "id": "V11.4",
+        "title": "Hashing and Hash-based Functions",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x20-V11-Cryptography.md",
+        "summary": "Security uses of hashing pick collision-resistant functions, and passwords and keys are derived with slow, salted functions.",
+        "applies_when": {
+          "any": [{ "sink": ["crypto_operation", "authentication_check"] }]
+        },
+        "trace": { "sources": ["http_request"], "sinks": ["crypto_operation"] }
+      },
+      {
+        "id": "V11.5",
+        "title": "Random Values",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x20-V11-Cryptography.md",
+        "summary": "Tokens, keys, nonces and identifiers that must be unguessable come from a cryptographically secure generator with enough entropy.",
+        "applies_when": {
+          "any": [
+            { "sink": ["crypto_operation", "token_handling", "session_state"] }
+          ]
+        },
+        "trace": {
+          "sources": [],
+          "sinks": ["crypto_operation", "token_handling", "session_state"]
+        }
+      },
+      {
+        "id": "V11.6",
+        "title": "Public Key Cryptography",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x20-V11-Cryptography.md",
+        "summary": "Signatures and key exchange use approved algorithms and key sizes, and verification checks every signature it relies on.",
+        "applies_when": {
+          "any": [{ "sink": ["crypto_operation", "token_handling"] }]
+        },
+        "trace": {
+          "sources": ["external_response", "http_request"],
+          "sinks": ["crypto_operation", "token_handling"]
+        }
+      },
+      {
+        "id": "V11.7",
+        "title": "In-Use Data Cryptography",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x20-V11-Cryptography.md",
+        "summary": "Sensitive values held in memory are minimized and cleared after use where the platform allows it.",
+        "applies_when": {
+          "all": [
+            { "sink": ["crypto_operation", "secret_value"] },
+            { "sensitive_path": true }
+          ]
+        },
+        "trace": {
+          "sources": ["environment"],
+          "sinks": ["secret_value", "crypto_operation"]
+        }
+      },
+      {
+        "id": "V12.1",
+        "title": "General TLS Security Guidance",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x21-V12-Secure-Communication.md",
+        "summary": "TLS uses current protocol versions and cipher suites, and certificate validation is never disabled.",
+        "applies_when": {
+          "any": [{ "sink": ["outbound_request"] }, { "node_kind": ["config"] }]
+        },
+        "trace": { "sources": ["environment"], "sinks": ["outbound_request"] }
+      },
+      {
+        "id": "V12.2",
+        "title": "HTTPS Communication with External Facing Services",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x21-V12-Secure-Communication.md",
+        "summary": "Every externally reachable service is served over HTTPS only, with no plain-text fallback.",
+        "applies_when": { "any": [{ "node_kind": ["endpoint", "config"] }] },
+        "trace": {
+          "sources": ["environment"],
+          "sinks": ["outbound_request", "redirect"]
+        }
+      },
+      {
+        "id": "V12.3",
+        "title": "General Service to Service Communication Security",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x21-V12-Secure-Communication.md",
+        "summary": "Calls between services are encrypted and authenticated, including internal and database connections.",
+        "applies_when": {
+          "any": [{ "sink": ["outbound_request"] }, { "node_kind": ["config"] }]
+        },
+        "trace": {
+          "sources": ["environment"],
+          "sinks": ["outbound_request", "secret_value"]
+        }
+      },
+      {
+        "id": "V13.2",
+        "title": "Backend Communication Configuration",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x22-V13-Configuration.md",
+        "summary": "Connections to databases and other backends authenticate with least-privilege identities, and outbound targets the server calls are restricted to an allowlist.",
+        "applies_when": {
+          "any": [{ "node_kind": ["config"] }, { "sink": ["outbound_request"] }]
+        },
+        "trace": {
+          "sources": ["environment", "http_request"],
+          "sinks": ["outbound_request", "secret_value"]
+        }
+      },
+      {
+        "id": "V13.3",
+        "title": "Secret Management",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x22-V13-Configuration.md",
+        "summary": "Secrets come from a secret store or the environment, never from source code or committed configuration, and are scoped and rotatable.",
+        "applies_when": {
+          "any": [{ "node_kind": ["config"] }, { "sink": ["secret_value"] }]
+        },
+        "trace": {
+          "sources": ["environment", "file_content"],
+          "sinks": ["secret_value", "log_output"]
+        }
+      },
+      {
+        "id": "V13.4",
+        "title": "Unintended Information Leakage",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x22-V13-Configuration.md",
+        "summary": "Responses, headers and error pages do not disclose versions, stack traces, internal paths or debug data, and debug features are off in production.",
+        "applies_when": {
+          "any": [
+            { "node_kind": ["endpoint", "config"] },
+            { "sink": ["error_response"] }
+          ]
+        },
+        "trace": {
+          "sources": ["http_request"],
+          "sinks": ["error_response", "log_output", "html_output"]
+        }
+      },
+      {
+        "id": "V14.2",
+        "title": "General Data Protection",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x23-V14-Data-Protection.md",
+        "summary": "Sensitive data is not placed in URLs, logs or caches where it can leak, and is retained only as long as needed.",
+        "applies_when": {
+          "any": [
+            { "node_kind": ["table", "endpoint"] },
+            { "sink": ["log_output"] }
+          ]
+        },
+        "trace": {
+          "sources": ["http_request", "database_read"],
+          "sinks": ["log_output", "outbound_request", "redirect"]
+        }
+      },
+      {
+        "id": "V14.3",
+        "title": "Client-side Data Protection",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x23-V14-Data-Protection.md",
+        "summary": "Sensitive data is not stored in browser storage or left in client-side caches after logout.",
+        "applies_when": { "all": [{ "framework": ["browser"] }] },
+        "trace": {
+          "sources": ["session", "http_request"],
+          "sinks": ["session_state", "html_output"]
+        }
+      },
+      {
+        "id": "V15.2",
+        "title": "Security Architecture and Dependencies",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x24-V15-Secure-Coding-and-Architecture.md",
+        "summary": "Components are current, come from trusted sources, and risky or resource-hungry functionality is isolated from the rest of the application.",
+        "applies_when": {
+          "any": [
+            { "sink": ["dependency_manifest"] },
+            { "node_kind": ["config"] }
+          ]
+        },
+        "trace": {
+          "sources": ["external_response"],
+          "sinks": ["dependency_manifest"]
+        }
+      },
+      {
+        "id": "V15.3",
+        "title": "Defensive Coding",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x24-V15-Secure-Coding-and-Architecture.md",
+        "summary": "Code returns only the fields a caller needs, binds request data to explicit fields (no mass assignment), and guards against type confusion and prototype pollution.",
+        "applies_when": { "any": [{ "always": true }] },
+        "trace": {
+          "sources": ["http_request", "message", "external_response"],
+          "sinks": ["sql_query", "deserialization", "html_output"]
+        }
+      },
+      {
+        "id": "V15.4",
+        "title": "Safe Concurrency",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x24-V15-Secure-Coding-and-Architecture.md",
+        "summary": "Shared state is protected against races, check-then-act sequences are atomic, and locks cannot deadlock under load.",
+        "applies_when": {
+          "any": [{ "node_kind": ["endpoint", "event", "table"] }]
+        },
+        "trace": {
+          "sources": ["http_request", "message"],
+          "sinks": ["sql_query", "filesystem_path", "authorization_check"]
+        }
+      },
+      {
+        "id": "V16.2",
+        "title": "General Logging",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x25-V16-Security-Logging-and-Error-Handling.md",
+        "summary": "Log entries carry the metadata needed to investigate (who, what, when, where) in a consistent, parseable format.",
+        "applies_when": { "any": [{ "sink": ["log_output"] }] },
+        "trace": {
+          "sources": ["http_request", "session"],
+          "sinks": ["log_output"]
+        }
+      },
+      {
+        "id": "V16.3",
+        "title": "Security Events",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x25-V16-Security-Logging-and-Error-Handling.md",
+        "summary": "Authentication, authorization failures, attempts to bypass controls and unexpected errors are logged.",
+        "applies_when": {
+          "any": [
+            { "sensitive_path": true },
+            { "sink": ["authentication_check", "authorization_check"] }
+          ]
+        },
+        "trace": {
+          "sources": ["http_request", "session"],
+          "sinks": ["log_output", "authentication_check", "authorization_check"]
+        }
+      },
+      {
+        "id": "V16.4",
+        "title": "Log Protection",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x25-V16-Security-Logging-and-Error-Handling.md",
+        "summary": "Logged input is encoded so it cannot forge entries, secrets and sensitive data are excluded, and logs are protected from tampering.",
+        "applies_when": { "any": [{ "sink": ["log_output"] }] },
+        "trace": {
+          "sources": ["http_request", "message"],
+          "sinks": ["log_output", "secret_value"]
+        }
+      },
+      {
+        "id": "V16.5",
+        "title": "Error Handling",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x25-V16-Security-Logging-and-Error-Handling.md",
+        "summary": "Errors are caught and turned into generic responses, a failure in a control fails closed, and the application keeps working when an external resource is unavailable.",
+        "applies_when": { "any": [{ "always": true }] },
+        "trace": {
+          "sources": ["http_request", "external_response", "message"],
+          "sinks": ["error_response", "authorization_check"]
+        }
+      },
+      {
+        "id": "V17.1",
+        "title": "TURN Server",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x26-V17-WebRTC.md",
+        "summary": "TURN servers relay only for authenticated users and cannot be used to reach internal or reserved addresses.",
+        "applies_when": { "any": [{ "framework": ["webrtc"] }] },
+        "trace": {
+          "sources": ["message"],
+          "sinks": ["outbound_request", "authentication_check"]
+        }
+      },
+      {
+        "id": "V17.2",
+        "title": "Media",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x26-V17-WebRTC.md",
+        "summary": "Media servers validate and rate-limit incoming media and signaling-derived parameters, and encrypt media in transit.",
+        "applies_when": { "any": [{ "framework": ["webrtc"] }] },
+        "trace": {
+          "sources": ["message"],
+          "sinks": ["unsafe_memory", "crypto_operation"]
+        }
+      },
+      {
+        "id": "V17.3",
+        "title": "Signaling",
+        "url": "https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x26-V17-WebRTC.md",
+        "summary": "Signaling servers authenticate peers, validate messages and keep working under malformed or flooding input.",
+        "applies_when": { "any": [{ "framework": ["webrtc"] }] },
+        "trace": {
+          "sources": ["message"],
+          "sinks": ["authentication_check", "error_response"]
+        }
+      }
+    ]
+  },
+  "owasp-top10-2025": {
+    "kind": "catalog",
+    "name": "rio/owasp-top10-2025",
+    "version": "1.0.0",
+    "description": "OWASP Top 10:2025 as a security review checklist, one item per category",
+    "attribution": {
+      "source": "OWASP Top 10:2025, The OWASP Foundation",
+      "url": "https://owasp.org/Top10/2025/",
+      "license": "CC BY-SA 4.0",
+      "notice": "Item identifiers, titles and links are from the OWASP Top 10:2025 by the OWASP Foundation, licensed under the Creative Commons Attribution-ShareAlike 4.0 International license. Summaries, applicability predicates and trace hints are written for Rio; this file is distributed under the same license."
+    },
+    "items": [
+      {
+        "id": "A01:2025",
+        "title": "Broken Access Control",
+        "url": "https://owasp.org/Top10/2025/A01_2025-Broken_Access_Control/",
+        "summary": "A caller reaches data or an operation it is not entitled to: a missing or weakened authorization check, an object id taken from the request without an ownership check, a path or redirect target the caller controls, or a cross-origin policy that is too broad.",
+        "applies_when": {
+          "any": [
+            { "node_kind": ["endpoint", "table"] },
+            { "sensitive_path": true },
+            { "sink": ["authorization_check"] }
+          ]
+        },
+        "trace": {
+          "sources": ["http_request", "session"],
+          "sinks": [
+            "authorization_check",
+            "sql_query",
+            "filesystem_path",
+            "redirect"
+          ]
+        }
+      },
+      {
+        "id": "A02:2025",
+        "title": "Security Misconfiguration",
+        "url": "https://owasp.org/Top10/2025/A02_2025-Security_Misconfiguration/",
+        "summary": "A configuration default or setting that weakens the deployed system: debug modes, verbose errors, permissive CORS or headers, default credentials, or a security feature switched off by a changed configuration key or environment variable.",
+        "applies_when": {
+          "any": [{ "node_kind": ["config"] }, { "node_kind": ["endpoint"] }]
+        },
+        "trace": {
+          "sources": ["environment", "file_content"],
+          "sinks": ["error_response", "secret_value", "session_state"]
+        }
+      },
+      {
+        "id": "A03:2025",
+        "title": "Software Supply Chain Failures",
+        "url": "https://owasp.org/Top10/2025/A03_2025-Software_Supply_Chain_Failures/",
+        "summary": "A dependency, build step or artifact source that the project trusts without checking: an unpinned or newly added package, a changed registry or install script, or a build that fetches and runs code from outside the repository.",
+        "applies_when": {
+          "any": [
+            { "node_kind": ["config"] },
+            { "sink": ["dependency_manifest"] }
+          ]
+        },
+        "trace": {
+          "sources": ["external_response"],
+          "sinks": ["dependency_manifest", "shell_command"]
+        }
+      },
+      {
+        "id": "A04:2025",
+        "title": "Cryptographic Failures",
+        "url": "https://owasp.org/Top10/2025/A04_2025-Cryptographic_Failures/",
+        "summary": "Sensitive data protected with a weak or misused primitive: a broken hash for passwords, a static key or IV, predictable random values used as secrets, disabled certificate checks, or data sent or stored in clear text.",
+        "applies_when": {
+          "any": [
+            { "sink": ["crypto_operation", "token_handling"] },
+            { "sensitive_path": true }
+          ]
+        },
+        "trace": {
+          "sources": ["http_request", "environment", "database_read"],
+          "sinks": [
+            "crypto_operation",
+            "token_handling",
+            "secret_value",
+            "outbound_request"
+          ]
+        }
+      },
+      {
+        "id": "A05:2025",
+        "title": "Injection",
+        "url": "https://owasp.org/Top10/2025/A05_2025-Injection/",
+        "summary": "Untrusted input reaches an interpreter as code rather than data: SQL or NoSQL queries built by string concatenation, shell commands, template expressions, HTML without output encoding, or paths and expressions evaluated at runtime.",
+        "applies_when": { "any": [{ "always": true }] },
+        "trace": {
+          "sources": [
+            "http_request",
+            "cli_args",
+            "message",
+            "file_content",
+            "external_response"
+          ],
+          "sinks": [
+            "sql_query",
+            "shell_command",
+            "html_output",
+            "template_render",
+            "filesystem_path",
+            "deserialization"
+          ]
+        }
+      },
+      {
+        "id": "A06:2025",
+        "title": "Insecure Design",
+        "url": "https://owasp.org/Top10/2025/A06_2025-Insecure_Design/",
+        "summary": "A flaw in the intended behavior rather than its implementation: a business flow that can be abused (replay, skipped step, unlimited attempts), trust placed in a client-side check, or a missing limit on a costly operation.",
+        "applies_when": {
+          "any": [
+            { "node_kind": ["endpoint", "event"] },
+            { "sensitive_path": true }
+          ]
+        },
+        "trace": {
+          "sources": ["http_request", "message", "session"],
+          "sinks": ["authorization_check", "sql_query", "outbound_request"]
+        }
+      },
+      {
+        "id": "A07:2025",
+        "title": "Authentication Failures",
+        "url": "https://owasp.org/Top10/2025/A07_2025-Authentication_Failures/",
+        "summary": "An identity is accepted without sufficient proof: credentials compared or stored unsafely, sessions or tokens that are not invalidated or are predictable, missing brute-force limits, or an authentication step that a changed code path skips.",
+        "applies_when": {
+          "any": [
+            { "sensitive_path": true },
+            {
+              "sink": [
+                "authentication_check",
+                "token_handling",
+                "session_state"
+              ]
+            }
+          ]
+        },
+        "trace": {
+          "sources": ["http_request", "session"],
+          "sinks": [
+            "authentication_check",
+            "session_state",
+            "token_handling",
+            "crypto_operation"
+          ]
+        }
+      },
+      {
+        "id": "A08:2025",
+        "title": "Software or Data Integrity Failures",
+        "url": "https://owasp.org/Top10/2025/A08_2025-Software_or_Data_Integrity_Failures/",
+        "summary": "Code or data is trusted without verifying where it came from: deserializing untrusted input into objects, accepting unsigned updates or webhooks, or caching and replaying data whose integrity is not checked.",
+        "applies_when": {
+          "any": [
+            { "node_kind": ["endpoint", "event", "config"] },
+            { "sink": ["deserialization"] }
+          ]
+        },
+        "trace": {
+          "sources": [
+            "http_request",
+            "message",
+            "external_response",
+            "file_content"
+          ],
+          "sinks": ["deserialization", "crypto_operation", "shell_command"]
+        }
+      },
+      {
+        "id": "A09:2025",
+        "title": "Security Logging and Alerting Failures",
+        "url": "https://owasp.org/Top10/2025/A09_2025-Security_Logging_and_Alerting_Failures/",
+        "summary": "Security-relevant events are not recorded, or are recorded unsafely: authentication and authorization decisions without a log entry, secrets or personal data written to logs, or log lines that untrusted input can forge.",
+        "applies_when": {
+          "any": [
+            { "sensitive_path": true },
+            { "node_kind": ["endpoint"] },
+            { "sink": ["log_output"] }
+          ]
+        },
+        "trace": {
+          "sources": ["http_request", "session"],
+          "sinks": [
+            "log_output",
+            "authentication_check",
+            "authorization_check",
+            "secret_value"
+          ]
+        }
+      },
+      {
+        "id": "A10:2025",
+        "title": "Mishandling of Exceptional Conditions",
+        "url": "https://owasp.org/Top10/2025/A10_2025-Mishandling_of_Exceptional_Conditions/",
+        "summary": "An error path leaves the system in an unsafe state or reveals too much: a failure that skips a check (fail open), a partially applied operation that is not rolled back, an unhandled exception or panic reachable from input, or internal details in an error response.",
+        "applies_when": { "any": [{ "always": true }] },
+        "trace": {
+          "sources": [
+            "http_request",
+            "message",
+            "external_response",
+            "file_content"
+          ],
+          "sinks": ["error_response", "authorization_check", "log_output"]
+        }
+      }
+    ]
+  }
+}

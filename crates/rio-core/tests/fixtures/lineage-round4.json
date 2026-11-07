@@ -267,6 +267,9 @@
     "tool_versions": {}
   },
   "agent_audit": {
+    "agents": {
+      "correctness": "default"
+    },
     "held_back": {
       "defects": [],
       "risks": [],

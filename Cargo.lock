@@ -3544,6 +3544,7 @@ dependencies = [
  "rpassword",
  "serde",
  "serde_json",
+ "serde_yaml",
  "sysinfo",
  "tempfile",
  "tokio",

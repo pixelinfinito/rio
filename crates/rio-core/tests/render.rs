@@ -75,6 +75,7 @@ fn agent_security_renders_uncertainty_votes_policy_caps_and_escaped_evidence() {
     finding.category = Category::Security;
     finding.source = Source::Agent {
         agent: "security".into(),
+        cached: None,
     };
     finding.evidence_level = EvidenceLevel::Plausible;
     finding.message = "<script>alert(1)</script> [click](https://example.com) token = ghp_abcdefghijklmnopqrstuvwxyz1234567890".into();
@@ -262,6 +263,7 @@ fn capped_lineage() -> Report {
     agent.state = State::New;
     agent.source = Source::Agent {
         agent: "defects".into(),
+        cached: None,
     };
     agent.message = "Missing guard on <input>".into();
     agent.round = Some(4);
@@ -412,4 +414,89 @@ fn reviews_without_a_lineage_render_nothing_extra() {
         "lineage_none_80",
         render_terminal(&report, &RenderOptions::default())
     );
+}
+
+fn security_run() -> Report {
+    // The SARIF fixture's review has security findings and catalog coverage.
+    let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../../tests/fixtures/sarif/risks-and-plausible/report.json");
+    serde_json::from_slice(&std::fs::read(path).unwrap()).unwrap()
+}
+
+#[test]
+fn security_catalog_coverage_renders_in_section_and_footer_of_every_format() {
+    let assessed = security_run();
+    let mut unassessed = fixture("complete");
+    unassessed.security_coverage = Some(SecurityCoverage {
+        catalog: SecurityCatalog::Asvs5_0,
+        assessed: vec![AssessedItem {
+            item: "V1.2".into(),
+            title: "Injection Prevention".into(),
+            findings: vec![],
+        }],
+        unassessed: vec![
+            UnassessedItem {
+                item: "V8.3".into(),
+                title: "Operation Level Authorization".into(),
+                reason: UnassessedReason::Budget,
+            },
+            UnassessedItem {
+                item: "V2.2".into(),
+                title: "Input Validation".into(),
+                reason: UnassessedReason::NoEvidence,
+            },
+        ],
+        not_applicable: vec![CatalogItemRef {
+            item: "V3.6".into(),
+            title: "External Resource Integrity".into(),
+        }],
+    });
+    let none = fixture("complete");
+    for (name, report) in [
+        ("security_assessed", &assessed),
+        ("security_unassessed", &unassessed),
+    ] {
+        let terminal = render_terminal(report, &RenderOptions::default());
+        let markdown = render_markdown(report, &RenderOptions::default());
+        for output in [&terminal, &markdown] {
+            assert!(output.contains("Security"), "{name}");
+            assert!(output.contains("Not a passed security review"), "{name}");
+            assert!(
+                !output.contains("security review was not performed"),
+                "{name}"
+            );
+        }
+        insta::assert_snapshot!(format!("{name}_120"), {
+            let options = RenderOptions {
+                width: 120,
+                ..Default::default()
+            };
+            render_terminal(report, &options)
+        });
+        insta::assert_snapshot!(format!("{name}_markdown"), markdown);
+        let json: serde_json::Value =
+            serde_json::from_slice(&render_json(report).unwrap()).unwrap();
+        assert_eq!(
+            json["security_coverage"],
+            serde_json::to_value(report.security_coverage.as_ref().unwrap()).unwrap()
+        );
+    }
+    // Zero security findings with unassessed items is not presented as clean.
+    let wide = RenderOptions {
+        width: 200,
+        ..Default::default()
+    };
+    let terminal = render_terminal(&unassessed, &wide);
+    assert!(terminal.contains("No security finding was produced."));
+    assert!(terminal.contains("V8.3 (budget), V2.2 (no_evidence)"));
+    // A review without the security step renders neither the section nor the footer line.
+    for output in [
+        render_terminal(&none, &RenderOptions::default()),
+        render_markdown(&none, &RenderOptions::default()),
+    ] {
+        assert!(!output.contains("\nSecurity\n") && !output.contains("## Security"));
+        assert!(!output.contains("Security catalog"));
+    }
+    let json: serde_json::Value = serde_json::from_slice(&render_json(&none).unwrap()).unwrap();
+    assert!(json.get("security_coverage").is_none());
 }

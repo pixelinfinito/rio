@@ -24,6 +24,10 @@
     },
     "independent": {
       "const": true
+    },
+    "contracts": {
+      "description": "Selected by triage's public_contracts signal and given the contract inventory.",
+      "type": "boolean"
     }
   },
   "required": [

@@ -1,0 +1,182 @@
+{
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "rio",
+          "version": "0.3.0",
+          "informationUri": "https://github.com/pixelinfinito/rio",
+          "rules": [
+            {
+              "id": "correctness/race",
+              "shortDescription": {
+                "text": "Concurrent set calls lose an entry."
+              },
+              "properties": {
+                "category": "defect"
+              }
+            },
+            {
+              "id": "correctness/timeout-unit",
+              "shortDescription": {
+                "text": "The timeout is passed in seconds to an API that expects milliseconds."
+              },
+              "properties": {
+                "category": "defect"
+              }
+            }
+          ]
+        }
+      },
+      "originalUriBaseIds": {
+        "SRCROOT": {
+          "description": {
+            "text": "Repository root"
+          }
+        }
+      },
+      "results": [
+        {
+          "ruleId": "correctness/race",
+          "ruleIndex": 0,
+          "level": "error",
+          "message": {
+            "text": "Concurrent set calls lose an entry.\nTrigger: Two set calls for the same key within one tick"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/cache.ts",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 50,
+                  "endLine": 58
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "rioFindingId/v1": "4444444444444444444444444444444444444444444444444444444444444444"
+          },
+          "baselineState": "new",
+          "properties": {
+            "evidence_level": "reproduced",
+            "category": "defect",
+            "state": "new",
+            "severity": "error",
+            "status": "open",
+            "verification": {
+              "voters": 3,
+              "agreeing": 3,
+              "blind_match": [
+                "same",
+                "same",
+                "related"
+              ],
+              "split": false
+            },
+            "round": 2,
+            "history": {
+              "first_seen": "rev-a",
+              "last_seen": "rev-b",
+              "seen_count": 2,
+              "previous_status": "dismissed",
+              "previous_response": {
+                "reason": "wrong",
+                "actor": "octocat",
+                "at": "2026-11-01T09:00:00Z",
+                "note": "guarded by the lock"
+              },
+              "dismissed_in": "github.com/acme/api#37"
+            }
+          }
+        },
+        {
+          "ruleId": "correctness/timeout-unit",
+          "ruleIndex": 1,
+          "level": "warning",
+          "message": {
+            "text": "The timeout is passed in seconds to an API that expects milliseconds.\nTrigger: Any request with the default timeout"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/http.ts",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 12,
+                  "endLine": 12
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "rioFindingId/v1": "5555555555555555555555555555555555555555555555555555555555555555"
+          },
+          "baselineState": "new",
+          "properties": {
+            "evidence_level": "static_proven",
+            "category": "defect",
+            "state": "new",
+            "severity": "warning",
+            "status": "dismissed",
+            "verification": {
+              "voters": 3,
+              "agreeing": 3,
+              "blind_match": [
+                "same",
+                "same",
+                "related"
+              ],
+              "split": false
+            },
+            "round": 1,
+            "author_response": {
+              "reason": "intentional",
+              "actor": "maintainer",
+              "at": "2026-11-06T12:00:00Z"
+            }
+          }
+        }
+      ],
+      "invocations": [
+        {
+          "executionSuccessful": true,
+          "startTimeUtc": "2026-11-07T12:00:00Z",
+          "endTimeUtc": "2026-11-07T12:02:05Z"
+        }
+      ],
+      "properties": {
+        "rio.status": "complete",
+        "rio.risk_tier": {
+          "tier": "high",
+          "reasons": [
+            "always_human: migrations/**"
+          ],
+          "source": "always_human"
+        },
+        "rio.review_id": "1234567890abcdef",
+        "rio.lineage": {
+          "repository": "github.com/acme/api",
+          "kind": "pr",
+          "ref": "42",
+          "generation": 1,
+          "round": 2,
+          "cap": 3,
+          "capped": false,
+          "diff_only": true,
+          "previous_head": "snap-1",
+          "held_back": 1,
+          "rounds_to_pass": null,
+          "author_response_ratio": 0.5
+        }
+      }
+    }
+  ]
+}

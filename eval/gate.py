@@ -6,6 +6,7 @@
                  --cases eval/cases [--cases ...] --reports RUN-DIR --label NAME --out CARD.json
   gate       compare a candidate scorecard with the current baseline:
              python3 -I eval/gate.py gate --baseline BASE.json --candidate CAND.json [--out RESULT.json]
+                 [--false-positive-rate SOURCE [SOURCE ...]]
 
 Precision and recall come from the adjudicated harness summary (`eval/evaluate.py
 aggregate` over historical PRs and seeded mutations: eligible.precision and
@@ -18,15 +19,30 @@ whose report is missing is recorded as missing, never as caught.
 The gate fails when the candidate lowers precision, recall or incident recall, when
 a metric the baseline measured is missing, when a baseline case is absent, or when
 any incident the baseline caught is missed (each missed incident is named).
+
+--false-positive-rate adds the v0.3 exit criterion "false positives per agent < 15 %".
+Per producing agent, rate = wrong / responses, where responses are author responses
+(fixed, wrong, intentional, irrelevant, style) to posted agent findings in report-v1
+files (each identity counted once per lineage generation, latest round, as in
+eval/convergence.py) plus adjudicated findings of noise runs. Noise runs label
+findings on known-clean PRs harmful, neutral or useful: harmful counts as wrong, and
+every adjudicated label counts as a response; unadjudicated findings are not
+responses. A SOURCE is a report-v1 file (.json or .json.gz), a rio-noise-adjudication-v1
+file, or a noise run directory (its */adjudication.json files). The gate fails when
+an agent with at least 30 responses exceeds 15 %; agents under that floor are
+reported, never gated. Tool findings are not agents and are not counted.
 Exit codes: 0 pass, 1 fail, 2 usage or input error.
 """
 import argparse
+from collections import Counter, defaultdict
 from pathlib import Path
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import cases as c  # noqa: E402
+import convergence as cv  # noqa: E402
 import evaluate as e  # noqa: E402
+import noise as nz  # noqa: E402
 
 SCORECARD_SCHEMA = e.SCHEMA / 'scorecard-v1.json'
 METRICS = ('precision', 'recall', 'incident_recall')
@@ -79,7 +95,67 @@ def scorecard(summary, case_paths, reports_dir, label):
     return card
 
 
-def gate(baseline, candidate):
+FP_THRESHOLD = 0.15
+FP_MIN_RESPONSES = 30
+
+
+def fp_sources(paths):
+    """Split SOURCE paths into report-v1 documents and noise adjudication documents."""
+    reports, adjudications = [], []
+    for raw in paths:
+        path = Path(raw)
+        files = sorted(path.glob('*/adjudication.json')) if path.is_dir() else [path]
+        if path.is_dir() and not files:
+            raise ValueError(f'{path}: no */adjudication.json in this noise run directory')
+        for file in files:
+            doc = e.read_json(file)
+            if doc.get('schema') == 'rio-report-v1':
+                e.validate(doc, e.ROOT / 'schemas/report-v1.json', label=str(file))
+                reports.append((doc, file))
+            elif doc.get('schema') == 'rio-noise-adjudication-v1':
+                nz.validate_adjudication(doc)
+                adjudications.append(doc)
+            else:
+                raise ValueError(f'{file}: expected a rio-report-v1 or rio-noise-adjudication-v1 document')
+    return reports, adjudications
+
+
+def false_positive_rate(paths, threshold=FP_THRESHOLD, min_responses=FP_MIN_RESPONSES):
+    reports, adjudications = fp_sources(paths)
+    reasons = defaultdict(Counter)
+    noise = defaultdict(Counter)
+    findings, _, _ = cv.collect(reports, default_repository='reference-set')
+    for f in findings.values():
+        agent = f.get('source', {}).get('agent')
+        response = f.get('author_response')
+        if agent and response:
+            reasons[agent][response['reason']] += 1
+    for doc in adjudications:
+        for entry in doc['findings'].values():
+            source, label = entry['finding']['source'], entry['adjudication']['label']
+            if label is not None and not source.startswith('tool:'):
+                noise[source][label] += 1
+    agents, failed, under = {}, [], []
+    for agent in sorted(set(reasons) | set(noise)):
+        wrong = reasons[agent]['wrong'] + noise[agent]['harmful']
+        responses = sum(reasons[agent].values()) + sum(noise[agent].values())
+        rate = wrong / responses if responses else None
+        gated = responses >= min_responses
+        passed = not gated or rate <= threshold + EPSILON
+        agents[agent] = {'responses': responses, 'wrong': wrong, 'rate': rate, 'gated': gated, 'passed': passed,
+                         'author_responses': {r: reasons[agent][r] for r in cv.REASONS},
+                         'noise': {label: noise[agent][label] for label in ('harmful', 'neutral', 'useful')}}
+        if not passed:
+            failed.append(f'{agent}: {wrong}/{responses} = {rate:.1%} false positives exceeds {threshold:.0%}')
+        elif not gated:
+            under.append(f'{agent}: {responses} responses, under the {min_responses}-response floor '
+                         f'({wrong} wrong); reported, not gated')
+    return {'threshold': threshold, 'min_responses': min_responses, 'agents': agents,
+            'passed': not failed, 'failed': failed, 'under_floor': under,
+            'sources': {'reports': len(reports), 'noise_adjudications': len(adjudications)}}
+
+
+def gate(baseline, candidate, fp_paths=None):
     for card in (baseline, candidate):
         e.validate(card, SCORECARD_SCHEMA)
     reasons, notes = [], []
@@ -105,10 +181,20 @@ def gate(baseline, candidate):
         reasons.append('previously caught incident(s) missed: ' + ', '.join(missed_incidents))
     if regressed:
         notes.append('previously caught non-incident case(s) missed: ' + ', '.join(regressed))
-    return {'schema': 'rio-eval-gate-v1', 'passed': not reasons, 'reasons': reasons, 'notes': notes,
+    fp = None
+    if fp_paths:
+        fp = false_positive_rate(fp_paths)
+        reasons.extend(fp['failed'])
+        notes.extend(fp['under_floor'])
+        if not fp['agents']:
+            reasons.append('false-positive rate: no agent responses in the given sources')
+    result = {'schema': 'rio-eval-gate-v1', 'passed': not reasons, 'reasons': reasons, 'notes': notes,
             'baseline': baseline['label'], 'candidate': candidate['label'],
             'missed_incidents': missed_incidents, 'regressed_cases': regressed,
             'metrics': {m: {'baseline': baseline[m], 'candidate': candidate[m]} for m in METRICS}}
+    if fp is not None:
+        result['false_positive_rate'] = fp
+    return result
 
 
 def main(argv=None):
@@ -124,6 +210,8 @@ def main(argv=None):
     p.add_argument('--baseline', required=True)
     p.add_argument('--candidate', required=True)
     p.add_argument('--out')
+    p.add_argument('--false-positive-rate', nargs='+', metavar='SOURCE', dest='false_positive_rate',
+                   help='report-v1 files and noise run directories; gate per-agent false positives at 15 %%')
     args = parser.parse_args(argv)
     try:
         if args.command == 'scorecard':
@@ -132,13 +220,17 @@ def main(argv=None):
             print(f'Scorecard {args.out}: precision {card["precision"]}, recall {card["recall"]}, '
                   f'incident recall {card["incident_recall"]}')
             return 0
-        result = gate(e.read_json(args.baseline), e.read_json(args.candidate))
+        result = gate(e.read_json(args.baseline), e.read_json(args.candidate), args.false_positive_rate)
     except (ValueError, KeyError, OSError) as error:
         print(f'gate error: {error}', file=sys.stderr)
         return 2
     if args.out:
         e.write_json(args.out, result)
     print(('PASS' if result['passed'] else 'FAIL') + ''.join(f'\n- {r}' for r in result['reasons']))
+    for agent, row in result.get('false_positive_rate', {}).get('agents', {}).items():
+        rate = 'n/a' if row['rate'] is None else f'{row["rate"]:.1%}'
+        print(f'  false positives {agent}: {row["wrong"]}/{row["responses"]} = {rate}'
+              + ('' if row['gated'] else ' (under the response floor; not gated)'))
     return 0 if result['passed'] else 1
 
 

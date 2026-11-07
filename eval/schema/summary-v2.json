@@ -351,6 +351,31 @@
         ],
         "additionalProperties": false
       }
+    },
+    "by_agent": {
+      "description": "Finding-level verdict counts and precision per producing agent over eligible records; present only when an eligible record has agent findings.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "counts": {
+            "$ref": "#/$defs/counts"
+          },
+          "precision": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "required": [
+          "counts",
+          "precision"
+        ],
+        "additionalProperties": false
+      }
     }
   },
   "required": [

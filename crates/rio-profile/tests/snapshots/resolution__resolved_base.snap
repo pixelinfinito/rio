@@ -61,7 +61,8 @@ steps:
   needs:
   - triage
   parallel: false
-  with: {}
+  with:
+    cache: true
 - id: security
   uses: rio/security@0.2.0
   needs:
@@ -99,6 +100,7 @@ steps:
   parallel: false
   with:
     class_threshold: 3
+    proposal_threshold: 3
 suppress: []
 publish: never
 fail_on:

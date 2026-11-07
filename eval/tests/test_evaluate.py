@@ -355,3 +355,56 @@ class AggregationTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class PerAgentPrecision(unittest.TestCase):
+    """v0.3 tasks 8.3 and 9.6: contracts and security precision are reported separately."""
+
+    def agent_record(self, index, agents):
+        fs = []
+        for i, (agent, verdict) in enumerate(agents):
+            f = finding(index * 10 + i + 1, message=f'{agent} {verdict}', line=i + 1)
+            f['source'] = {'agent': agent}
+            if agent == 'security':
+                f.update(category='security', rule_id='security/sql-injection', evidence_level='plausible')
+            elif agent == 'contracts':
+                f.update(category='defect', rule_id='contracts/route/removed')
+            fs.append((f, verdict))
+        r = report([f for f, _ in fs if f['category'] != 'security'])
+        r['security'] = [f for f, _ in fs if f['category'] == 'security']
+        v = e.skeleton(r, f'owner/repo{index}', f'https://github.com/owner/repo{index}/pull/{index}', ['typescript'])
+        self.assertEqual(set(v['findings']), {f['id'] for f, _ in fs})
+        v.update(reviewer='independent oracle')
+        v['findings'] = {f['id']: {'verdict': verdict, 'reason': 'independent evidence'} for f, verdict in fs}
+        return e.build_record(r, v, 'raw.json')
+
+    def test_security_entries_are_scored_and_each_agent_has_its_own_precision(self):
+        records = [
+            self.agent_record(1, [('contracts', 'true-positive'), ('security', 'true-positive'),
+                                  ('correctness', 'false-positive')]),
+            self.agent_record(2, [('contracts', 'false-positive'), ('security', 'false-positive'),
+                                  ('security', 'true-positive')]),
+            self.agent_record(3, [('contracts', 'true-positive')]),
+        ]
+        self.assertEqual(sum(f['finding']['category'] == 'security' for r in records for f in r['findings']), 3)
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        paths = []
+        for i, r in enumerate(records):
+            path = Path(directory.name) / f'r{i}.json'
+            e.write_json(path, r)
+            paths.append(path)
+        summary = e.aggregate(records, paths)
+        by_agent = summary['by_agent']
+        self.assertEqual(set(by_agent), {'contracts', 'correctness', 'security'})
+        self.assertAlmostEqual(by_agent['contracts']['precision'], 2 / 3)
+        self.assertAlmostEqual(by_agent['security']['precision'], 2 / 3)
+        self.assertEqual(by_agent['security']['counts']['false-positive'], 1)
+        self.assertEqual(by_agent['correctness']['precision'], 0)
+        # Tool-only cohorts carry no per-agent view.
+        self.assertNotIn('by_agent', e.aggregate([record(1, ['true-positive'])], ['1']))
+        output = Path(directory.name) / 'summary.md'
+        e.render(records, paths, summary, 'v0.3', output)
+        text = output.read_text()
+        self.assertIn('| security | 2 | 1 | 0.667 |', text)
+        self.assertIn('| contracts | 2 | 1 | 0.667 |', text)

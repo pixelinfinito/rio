@@ -1,0 +1,134 @@
+kind: catalog
+name: rio/owasp-top10-2025
+version: 1.0.0
+description: OWASP Top 10:2025 as a security review checklist, one item per category
+attribution:
+  source: OWASP Top 10:2025, The OWASP Foundation
+  url: https://owasp.org/Top10/2025/
+  license: CC BY-SA 4.0
+  notice: >-
+    Item identifiers, titles and links are from the OWASP Top 10:2025 by the OWASP
+    Foundation, licensed under the Creative Commons Attribution-ShareAlike 4.0
+    International license. Summaries, applicability predicates and trace hints are
+    written for Rio; this file is distributed under the same license.
+items:
+  - id: "A01:2025"
+    title: Broken Access Control
+    url: https://owasp.org/Top10/2025/A01_2025-Broken_Access_Control/
+    summary: >-
+      A caller reaches data or an operation it is not entitled to: a missing or weakened
+      authorization check, an object id taken from the request without an ownership check,
+      a path or redirect target the caller controls, or a cross-origin policy that is too broad.
+    applies_when:
+      any: [{node_kind: [endpoint, table]}, {sensitive_path: true}, {sink: [authorization_check]}]
+    trace:
+      sources: [http_request, session]
+      sinks: [authorization_check, sql_query, filesystem_path, redirect]
+  - id: "A02:2025"
+    title: Security Misconfiguration
+    url: https://owasp.org/Top10/2025/A02_2025-Security_Misconfiguration/
+    summary: >-
+      A configuration default or setting that weakens the deployed system: debug modes, verbose
+      errors, permissive CORS or headers, default credentials, or a security feature switched off
+      by a changed configuration key or environment variable.
+    applies_when:
+      any: [{node_kind: [config]}, {node_kind: [endpoint]}]
+    trace:
+      sources: [environment, file_content]
+      sinks: [error_response, secret_value, session_state]
+  - id: "A03:2025"
+    title: Software Supply Chain Failures
+    url: https://owasp.org/Top10/2025/A03_2025-Software_Supply_Chain_Failures/
+    summary: >-
+      A dependency, build step or artifact source that the project trusts without checking: an
+      unpinned or newly added package, a changed registry or install script, or a build that fetches
+      and runs code from outside the repository.
+    applies_when:
+      any: [{node_kind: [config]}, {sink: [dependency_manifest]}]
+    trace:
+      sources: [external_response]
+      sinks: [dependency_manifest, shell_command]
+  - id: "A04:2025"
+    title: Cryptographic Failures
+    url: https://owasp.org/Top10/2025/A04_2025-Cryptographic_Failures/
+    summary: >-
+      Sensitive data protected with a weak or misused primitive: a broken hash for passwords, a
+      static key or IV, predictable random values used as secrets, disabled certificate checks, or
+      data sent or stored in clear text.
+    applies_when:
+      any: [{sink: [crypto_operation, token_handling]}, {sensitive_path: true}]
+    trace:
+      sources: [http_request, environment, database_read]
+      sinks: [crypto_operation, token_handling, secret_value, outbound_request]
+  - id: "A05:2025"
+    title: Injection
+    url: https://owasp.org/Top10/2025/A05_2025-Injection/
+    summary: >-
+      Untrusted input reaches an interpreter as code rather than data: SQL or NoSQL queries built
+      by string concatenation, shell commands, template expressions, HTML without output encoding,
+      or paths and expressions evaluated at runtime.
+    applies_when:
+      any: [{always: true}]
+    trace:
+      sources: [http_request, cli_args, message, file_content, external_response]
+      sinks: [sql_query, shell_command, html_output, template_render, filesystem_path, deserialization]
+  - id: "A06:2025"
+    title: Insecure Design
+    url: https://owasp.org/Top10/2025/A06_2025-Insecure_Design/
+    summary: >-
+      A flaw in the intended behavior rather than its implementation: a business flow that can be
+      abused (replay, skipped step, unlimited attempts), trust placed in a client-side check, or a
+      missing limit on a costly operation.
+    applies_when:
+      any: [{node_kind: [endpoint, event]}, {sensitive_path: true}]
+    trace:
+      sources: [http_request, message, session]
+      sinks: [authorization_check, sql_query, outbound_request]
+  - id: "A07:2025"
+    title: Authentication Failures
+    url: https://owasp.org/Top10/2025/A07_2025-Authentication_Failures/
+    summary: >-
+      An identity is accepted without sufficient proof: credentials compared or stored unsafely,
+      sessions or tokens that are not invalidated or are predictable, missing brute-force limits,
+      or an authentication step that a changed code path skips.
+    applies_when:
+      any: [{sensitive_path: true}, {sink: [authentication_check, token_handling, session_state]}]
+    trace:
+      sources: [http_request, session]
+      sinks: [authentication_check, session_state, token_handling, crypto_operation]
+  - id: "A08:2025"
+    title: Software or Data Integrity Failures
+    url: https://owasp.org/Top10/2025/A08_2025-Software_or_Data_Integrity_Failures/
+    summary: >-
+      Code or data is trusted without verifying where it came from: deserializing untrusted input
+      into objects, accepting unsigned updates or webhooks, or caching and replaying data whose
+      integrity is not checked.
+    applies_when:
+      any: [{node_kind: [endpoint, event, config]}, {sink: [deserialization]}]
+    trace:
+      sources: [http_request, message, external_response, file_content]
+      sinks: [deserialization, crypto_operation, shell_command]
+  - id: "A09:2025"
+    title: Security Logging and Alerting Failures
+    url: https://owasp.org/Top10/2025/A09_2025-Security_Logging_and_Alerting_Failures/
+    summary: >-
+      Security-relevant events are not recorded, or are recorded unsafely: authentication and
+      authorization decisions without a log entry, secrets or personal data written to logs, or log
+      lines that untrusted input can forge.
+    applies_when:
+      any: [{sensitive_path: true}, {node_kind: [endpoint]}, {sink: [log_output]}]
+    trace:
+      sources: [http_request, session]
+      sinks: [log_output, authentication_check, authorization_check, secret_value]
+  - id: "A10:2025"
+    title: Mishandling of Exceptional Conditions
+    url: https://owasp.org/Top10/2025/A10_2025-Mishandling_of_Exceptional_Conditions/
+    summary: >-
+      An error path leaves the system in an unsafe state or reveals too much: a failure that skips a
+      check (fail open), a partially applied operation that is not rolled back, an unhandled
+      exception or panic reachable from input, or internal details in an error response.
+    applies_when:
+      any: [{always: true}]
+    trace:
+      sources: [http_request, message, external_response, file_content]
+      sinks: [error_response, authorization_check, log_output]

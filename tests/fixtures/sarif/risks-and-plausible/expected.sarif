@@ -1,0 +1,270 @@
+{
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "rio",
+          "version": "0.3.0",
+          "informationUri": "https://github.com/pixelinfinito/rio",
+          "rules": [
+            {
+              "id": "correctness/off-by-one",
+              "shortDescription": {
+                "text": "The last page is skipped."
+              },
+              "properties": {
+                "category": "defect"
+              }
+            },
+            {
+              "id": "contracts/route/removed",
+              "shortDescription": {
+                "text": "The DELETE /v1/sessions route was removed; no consumer was found in the repository."
+              },
+              "properties": {
+                "category": "risk"
+              }
+            },
+            {
+              "id": "security/sql-injection",
+              "shortDescription": {
+                "text": "The user name reaches a raw SQL string."
+              },
+              "properties": {
+                "category": "security"
+              }
+            },
+            {
+              "id": "security/missing-authorization",
+              "shortDescription": {
+                "text": "deleteUser no longer checks the admin role."
+              },
+              "properties": {
+                "category": "security"
+              }
+            }
+          ]
+        }
+      },
+      "originalUriBaseIds": {
+        "SRCROOT": {
+          "description": {
+            "text": "Repository root"
+          }
+        }
+      },
+      "results": [
+        {
+          "ruleId": "correctness/off-by-one",
+          "ruleIndex": 0,
+          "level": "error",
+          "message": {
+            "text": "The last page is skipped.\nTrigger: Exactly page_size * n items"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/page.ts",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 41,
+                  "endLine": 41
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "rioFindingId/v1": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+          },
+          "properties": {
+            "evidence_level": "static_proven",
+            "category": "defect",
+            "state": "unclassified",
+            "severity": "error",
+            "verification": {
+              "voters": 3,
+              "agreeing": 3,
+              "blind_match": [
+                "same",
+                "same",
+                "related"
+              ],
+              "split": false
+            }
+          }
+        },
+        {
+          "ruleId": "contracts/route/removed",
+          "ruleIndex": 1,
+          "level": "note",
+          "message": {
+            "text": "Risk for human judgment: The DELETE /v1/sessions route was removed; no consumer was found in the repository.\nTrigger: A client that still calls DELETE /v1/sessions"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/routes.ts",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 18,
+                  "endLine": 18
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "rioFindingId/v1": "1111111111111111111111111111111111111111111111111111111111111111"
+          },
+          "baselineState": "new",
+          "properties": {
+            "evidence_level": "plausible",
+            "category": "risk",
+            "state": "new",
+            "severity": "warning",
+            "verification": {
+              "voters": 3,
+              "agreeing": 1,
+              "blind_match": [
+                "none",
+                "related",
+                "none"
+              ],
+              "split": true
+            }
+          }
+        },
+        {
+          "ruleId": "security/sql-injection",
+          "ruleIndex": 2,
+          "level": "note",
+          "message": {
+            "text": "Risk for human judgment: The user name reaches a raw SQL string.\nTrigger: A name containing a quote"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/api/users.ts",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 10,
+                  "endLine": 10
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/db/users.ts",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 22,
+                  "endLine": 22
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "rioFindingId/v1": "2222222222222222222222222222222222222222222222222222222222222222"
+          },
+          "baselineState": "new",
+          "properties": {
+            "evidence_level": "plausible",
+            "category": "security",
+            "state": "new",
+            "severity": "error",
+            "verification": {
+              "voters": 3,
+              "agreeing": 2,
+              "blind_match": [
+                "same",
+                "related",
+                "none"
+              ],
+              "split": false
+            }
+          }
+        },
+        {
+          "ruleId": "security/missing-authorization",
+          "ruleIndex": 3,
+          "level": "error",
+          "message": {
+            "text": "deleteUser no longer checks the admin role.\nTrigger: Any authenticated user calling DELETE /admin/users/:id"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/api/admin.ts",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 5,
+                  "endLine": 12
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "rioFindingId/v1": "3333333333333333333333333333333333333333333333333333333333333333"
+          },
+          "baselineState": "new",
+          "properties": {
+            "evidence_level": "static_proven",
+            "category": "security",
+            "state": "new",
+            "severity": "error",
+            "verification": {
+              "voters": 3,
+              "agreeing": 3,
+              "blind_match": [
+                "same",
+                "same",
+                "related"
+              ],
+              "split": false
+            }
+          }
+        }
+      ],
+      "invocations": [
+        {
+          "executionSuccessful": true,
+          "startTimeUtc": "2026-11-07T11:00:00Z",
+          "endTimeUtc": "2026-11-07T11:06:40Z",
+          "toolExecutionNotifications": [
+            {
+              "level": "warning",
+              "descriptor": {
+                "id": "lint"
+              },
+              "message": {
+                "text": "lint . head: skipped (tool_missing) — install eslint in the project"
+              }
+            }
+          ]
+        }
+      ],
+      "properties": {
+        "rio.status": "incomplete",
+        "rio.risk_tier": {
+          "tier": "high",
+          "reasons": [
+            "sensitive_path: src/auth/**"
+          ],
+          "source": "triage"
+        },
+        "rio.review_id": "1234567890abcdef"
+      }
+    }
+  ]
+}

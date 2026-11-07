@@ -214,6 +214,71 @@ fn location(location: &Location) -> String {
     }
     text
 }
+fn item_list(items: &[(&str, &str)]) -> String {
+    items
+        .iter()
+        .map(|(item, title)| format!("{item} {title}"))
+        .collect::<Vec<_>>()
+        .join("; ")
+}
+/// The security section's statement: what the catalog run assessed. A run with
+/// unassessed items is never presented as a passed security review.
+fn security_statement(report: &Report) -> Vec<String> {
+    let Some(coverage) = &report.security_coverage else {
+        return Vec::new();
+    };
+    let mut lines = Vec::new();
+    if report.security.iter().all(|f| !visible(f)) {
+        lines.push("No security finding was produced.".to_string());
+    }
+    lines.push(format!(
+        "Catalog {}: {} assessed, {} unassessed, {} not applicable.",
+        label(&coverage.catalog),
+        coverage.assessed.len(),
+        coverage.unassessed.len(),
+        coverage.not_applicable.len()
+    ));
+    if !coverage.unassessed.is_empty() {
+        lines.push(format!(
+            "Not a passed security review: {} applicable item(s) were not assessed.",
+            coverage.unassessed.len()
+        ));
+    }
+    if !coverage.assessed.is_empty() {
+        lines.push(format!(
+            "Assessed: {}",
+            coverage
+                .assessed
+                .iter()
+                .map(|a| match a.findings.len() {
+                    0 => format!("{} {}", a.item, a.title),
+                    n => format!("{} {} ({n} finding(s))", a.item, a.title),
+                })
+                .collect::<Vec<_>>()
+                .join("; ")
+        ));
+    }
+    if !coverage.unassessed.is_empty() {
+        lines.push(format!(
+            "Unassessed: {}",
+            coverage
+                .unassessed
+                .iter()
+                .map(|u| format!("{} {} ({})", u.item, u.title, label(&u.reason)))
+                .collect::<Vec<_>>()
+                .join("; ")
+        ));
+    }
+    if !coverage.not_applicable.is_empty() {
+        let items: Vec<_> = coverage
+            .not_applicable
+            .iter()
+            .map(|n| (n.item.as_str(), n.title.as_str()))
+            .collect();
+        lines.push(format!("Not applicable: {}", item_list(&items)));
+    }
+    lines
+}
 fn footer(report: &Report) -> Vec<String> {
     let mut lines = Vec::new();
     for check in &report.incomplete {
@@ -277,6 +342,34 @@ fn footer(report: &Report) -> Vec<String> {
                     .into(),
             );
         }
+    }
+    if let Some(coverage) = &report.security_coverage {
+        let assessed: Vec<_> = coverage.assessed.iter().map(|a| a.item.as_str()).collect();
+        let mut line = format!(
+            "Security catalog {}: {} item(s) assessed{}",
+            label(&coverage.catalog),
+            assessed.len(),
+            if assessed.is_empty() {
+                String::new()
+            } else {
+                format!(" ({})", assessed.join(", "))
+            }
+        );
+        if coverage.unassessed.is_empty() {
+            line.push_str("; every applicable item was assessed.");
+        } else {
+            line.push_str(&format!(
+                "; {} not assessed: {}.",
+                coverage.unassessed.len(),
+                coverage
+                    .unassessed
+                    .iter()
+                    .map(|u| format!("{} ({})", u.item, label(&u.reason)))
+                    .collect::<Vec<_>>()
+                    .join(", ")
+            ));
+        }
+        lines.push(line);
     }
     for suppression in &report.footer.suppressions {
         lines.push(format!(
@@ -532,7 +625,7 @@ fn groups<'a>(
                 .collect(),
         ),
     ];
-    if !report.security.is_empty() {
+    if !report.security.is_empty() || report.security_coverage.is_some() {
         groups.push((
             "Security",
             ordered(&report.security)
@@ -634,12 +727,23 @@ pub fn render_markdown(report: &Report, options: &RenderOptions<'_>) -> String {
         }
     }
     for (name, findings) in groups(report, options) {
-        if name != "Findings" && findings.is_empty() {
+        let coverage = if name == "Security" {
+            security_statement(report)
+        } else {
+            Vec::new()
+        };
+        if name != "Findings" && findings.is_empty() && coverage.is_empty() {
             continue;
         }
         out.push_str(&format!("\n## {name}\n\n"));
         if name == "Findings" {
             out.push_str(&format!("{}\n\n", safe(&statement(report))));
+        }
+        for line in &coverage {
+            out.push_str(&format!("{}  \n", markdown_text(line)));
+        }
+        if !coverage.is_empty() {
+            out.push('\n');
         }
         for finding in findings {
             let failing = options.policy.is_some_and(|policy| policy.matches(finding))
@@ -801,13 +905,19 @@ pub fn render_terminal(report: &Report, options: &RenderOptions<'_>) -> String {
         }
     }
     for (name, findings) in groups(report, options) {
-        if name != "Findings" && findings.is_empty() {
+        let coverage = if name == "Security" {
+            security_statement(report)
+        } else {
+            Vec::new()
+        };
+        if name != "Findings" && findings.is_empty() && coverage.is_empty() {
             continue;
         }
         lines.push(format!("\n{name}"));
         if name == "Findings" {
             lines.push(statement(report));
         }
+        lines.extend(coverage);
         for finding in findings {
             lines.push(format!(
                 "  {} [{}; {}; {}]{}{}",

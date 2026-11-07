@@ -1,0 +1,259 @@
+{
+  "schema": "rio-report-v1",
+  "status": "complete",
+  "review": {
+    "id": "1234567890abcdef",
+    "run_id": "01J00000000000000000000000",
+    "mode": "working-tree",
+    "base": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "head": "snapshot:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "profile": "rio/base",
+    "chain": [
+      "rio/base"
+    ],
+    "rio_version": "0.3.0"
+  },
+  "checks": [],
+  "impact": {
+    "symbols": [],
+    "unresolved": 0,
+    "truncated": false
+  },
+  "findings": [
+    {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "rule_id": "typecheck/tsc/TS2322",
+      "category": "defect",
+      "evidence_level": "static_proven",
+      "severity": "error",
+      "state": "worsened",
+      "location": {
+        "path": "src/a.ts",
+        "line_start": 12,
+        "line_end": 12,
+        "column": 5,
+        "symbol_path": "a.run",
+        "occurrence_state": "new"
+      },
+      "message": "Type 'string' is not assignable to type 'number'.",
+      "trigger": "Assigning a string to a number",
+      "evidence": [],
+      "source": {
+        "tool": "tsc",
+        "version": "5.7.2"
+      },
+      "locations": [
+        {
+          "path": "src/a.ts",
+          "line_start": 8,
+          "line_end": 8,
+          "column": 5,
+          "symbol_path": "a.run",
+          "occurrence_state": "pre-existing"
+        },
+        {
+          "path": "src/a.ts",
+          "line_start": 12,
+          "line_end": 12,
+          "column": 5,
+          "symbol_path": "a.run",
+          "occurrence_state": "new"
+        }
+      ]
+    },
+    {
+      "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "rule_id": "correctness/null-dereference",
+      "category": "defect",
+      "evidence_level": "reproduced",
+      "severity": "warning",
+      "state": "new",
+      "location": {
+        "path": "src/parse.ts",
+        "line_start": 30,
+        "line_end": 34,
+        "symbol_path": "parse",
+        "occurrence_state": "new"
+      },
+      "message": "parse() dereferences a missing header.",
+      "trigger": "A request without the Content-Type header",
+      "evidence": [],
+      "source": {
+        "agent": "correctness"
+      },
+      "locations": [
+        {
+          "path": "src/parse.ts",
+          "line_start": 30,
+          "line_end": 34,
+          "symbol_path": "parse",
+          "occurrence_state": "new"
+        }
+      ],
+      "verification": {
+        "voters": 3,
+        "agreeing": 3,
+        "blind_match": [
+          "same",
+          "same",
+          "related"
+        ],
+        "split": false
+      }
+    },
+    {
+      "id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "rule_id": "correctness/unchecked-index",
+      "category": "defect",
+      "evidence_level": "static_proven",
+      "severity": "warning",
+      "state": "new",
+      "location": {
+        "path": "src/list.ts",
+        "line_start": 4,
+        "line_end": 4,
+        "symbol_path": "first",
+        "occurrence_state": "new"
+      },
+      "message": "3 occurrences of Index read without a bounds check; fix the pattern, for example at src/list.ts:4",
+      "trigger": "Reading index 0 of an empty array",
+      "evidence": [],
+      "source": {
+        "agent": "correctness"
+      },
+      "locations": [
+        {
+          "path": "src/list.ts",
+          "line_start": 4,
+          "line_end": 4,
+          "symbol_path": "first",
+          "occurrence_state": "new",
+          "id": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        {
+          "path": "src/list.ts",
+          "line_start": 9,
+          "line_end": 9,
+          "symbol_path": "last",
+          "occurrence_state": "new",
+          "id": "2222222222222222222222222222222222222222222222222222222222222222"
+        },
+        {
+          "path": "src/queue.ts",
+          "line_start": 17,
+          "line_end": 17,
+          "symbol_path": "Queue.peek",
+          "occurrence_state": "new",
+          "id": "3333333333333333333333333333333333333333333333333333333333333333"
+        }
+      ],
+      "verification": {
+        "voters": 3,
+        "agreeing": 3,
+        "blind_match": [
+          "same",
+          "same",
+          "related"
+        ],
+        "split": false
+      }
+    },
+    {
+      "id": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "rule_id": "lint/eslint/no-unused-vars",
+      "category": "defect",
+      "evidence_level": "static_proven",
+      "severity": "info",
+      "state": "fixed",
+      "location": {
+        "path": "src/b.ts",
+        "line_start": 3,
+        "line_end": 3,
+        "symbol_path": "",
+        "occurrence_state": "fixed"
+      },
+      "message": "'tmp' is assigned a value but never used.",
+      "trigger": "",
+      "evidence": [],
+      "source": {
+        "tool": "eslint",
+        "version": "9.1.0"
+      },
+      "locations": [
+        {
+          "path": "src/b.ts",
+          "line_start": 3,
+          "line_end": 3,
+          "symbol_path": "",
+          "occurrence_state": "fixed"
+        }
+      ]
+    },
+    {
+      "id": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "rule_id": "lint/eslint/eqeqeq",
+      "category": "defect",
+      "evidence_level": "static_proven",
+      "severity": "warning",
+      "state": "pre-existing",
+      "location": {
+        "path": "src/b.ts",
+        "line_start": 20,
+        "line_end": 20,
+        "symbol_path": "compare",
+        "occurrence_state": "pre-existing"
+      },
+      "message": "Expected '===' and instead saw '=='.",
+      "trigger": "",
+      "evidence": [],
+      "source": {
+        "tool": "eslint",
+        "version": "9.1.0"
+      },
+      "locations": [
+        {
+          "path": "src/b.ts",
+          "line_start": 20,
+          "line_end": 20,
+          "symbol_path": "compare",
+          "occurrence_state": "pre-existing"
+        }
+      ]
+    }
+  ],
+  "risks": [],
+  "incomplete": [],
+  "deferred": [],
+  "excluded": [],
+  "summary": {
+    "pre_existing": 1,
+    "fixed": 1,
+    "suppressed": 0
+  },
+  "footer": {
+    "notes": [],
+    "suppressions": [],
+    "tool_versions": {}
+  },
+  "metrics": {
+    "wall_time_ms": 105,
+    "checks": [
+      {
+        "kind": "typecheck",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 100
+      }
+    ],
+    "tool_versions": {
+      "tsc": "5.7.2"
+    }
+  },
+  "risk_tier": {
+    "tier": "medium",
+    "reasons": [
+      "public_contract_change"
+    ],
+    "source": "triage"
+  }
+}
