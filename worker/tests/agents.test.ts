@@ -290,6 +290,9 @@ describe("contracts agent", () => {
     });
     expect(calls).not.toContain("contracts");
     expect(report.agent_audit.agents).toEqual({ correctness: "default" });
+    expect(report.agent_audit.agents_skipped.contracts).toContain(
+      "public_contracts signal did not fire",
+    );
   }, 60000);
 
   it("skips a public-contract signal whose inventory is empty unless the profile names the agent", async () => {

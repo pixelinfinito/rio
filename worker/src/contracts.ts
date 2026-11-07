@@ -308,8 +308,7 @@ const LOCKFILE =
 const MIGRATION =
   /(?:^|\/)(?:migrations?|migrate|alembic|schema)(?:\/|$)|\.sql$/;
 
-/** Top-level and one-level-nested keys of a configuration file. */
-export function configKeys(
+function allConfigKeys(
   path: string,
   content: string,
 ): Map<string, Declaration> {
@@ -358,6 +357,18 @@ export function configKeys(
   });
   return keys;
 }
+/** Top-level and one-level-nested keys of a configuration file, outside dependency sections. */
+export function configKeys(
+  path: string,
+  content: string,
+): Map<string, Declaration> {
+  // Dependency lists are supply-chain data, not configuration contracts.
+  return new Map(
+    [...allConfigKeys(path, content)].filter(
+      ([key]) => !key.split(".").some((part) => /dependencies$/i.test(part)),
+    ),
+  );
+}
 
 interface Occurrence extends Declaration {
   kind: Exclude<ContractKind, "export">;
@@ -390,6 +401,26 @@ function occurrences(path: string, content: string): Map<string, Occurrence> {
     }
   }
   return found;
+}
+
+/**
+ * The public surface of one file version, for triage's `public_contracts`
+ * signal: exported declarations, routes, tables, events, CLI flags and, for
+ * configuration files, their keys. Env reads are left out: reading a variable
+ * does not make a change a contract change. Rust reachability is not checked
+ * here (it needs other files); the inventory applies it.
+ */
+export function contractSurface(path: string, content: string): string[] {
+  const surface = [...exportsOf(path, content)].map(
+    // An assigned value is not the contract; the declaration up to it is.
+    ([name, d]) => `export\0${name}\0${d.text.replace(/\s*=(?![=>]).*$/, "")}`,
+  );
+  for (const [key, o] of occurrences(path, content))
+    if (o.rule !== "env") surface.push(`${key}\0${o.text}`);
+  if (CONFIG_FILE.test(path) && !LOCKFILE.test(path))
+    for (const key of configKeys(path, content).keys())
+      surface.push(`config\0${key}`);
+  return surface.sort();
 }
 
 /** Graph consumers of a symbol within `hops`, and the unresolved references. */

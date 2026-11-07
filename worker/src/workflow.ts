@@ -37,6 +37,7 @@ import {
   type Rejection,
 } from "./validation";
 import agentPrompts from "./agent-prompts.json";
+import { agents } from "./manifests";
 import {
   changedContents,
   frameworks,
@@ -457,6 +458,12 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
                 };
               })
             : null;
+        // The plan says why a contracts-capable agent did not run.
+        if (!security && !unchanged)
+          for (const [name, manifest] of Object.entries(agents))
+            if (manifest.contracts && !selected.includes(name))
+              skippedAgents[name] =
+                "not selected: triage's public_contracts signal did not fire (no exported declaration, route, table, event, CLI flag or configuration key changed)";
         for (const agent of unchanged
           ? []
           : selected.slice(0, active.agents_max ?? 3)) {

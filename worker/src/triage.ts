@@ -2,6 +2,7 @@ import picomatch from "picomatch";
 import type { ChangedFile, Profile, Snapshot, Submission } from "./types";
 import { invariant } from "./validation";
 import { agents as manifests } from "./manifests";
+import { contractSurface } from "./contracts";
 export interface Risk {
   tier: "low" | "medium" | "high";
   reasons: string[];
@@ -63,17 +64,6 @@ function dependencies(content: string, path: string): Set<string> {
   }
   return names;
 }
-function publicDeclarations(content: string): string[] {
-  return content
-    .split("\n")
-    .filter((line) =>
-      /^\s*(?:export\s+(?:default\s+)?(?:async\s+)?(?:function|class|interface|type|const|enum)|pub(?:\([^)]*\))?\s+(?:async\s+)?(?:fn|struct|enum|trait|type|const))\b/.test(
-        line,
-      ),
-    )
-    .map((line) => line.split(/[={;]/, 1)[0].trim())
-    .sort();
-}
 export function triage(submission: Submission, snapshot: Snapshot): Plan {
   const p = submission.profile,
     opts = p.steps.find((s) => s.uses.startsWith("rio/triage@"))?.with ?? {};
@@ -99,12 +89,13 @@ export function triage(submission: Submission, snapshot: Snapshot): Plan {
       submission.changed.some(
         (file) =>
           JSON.stringify(
-            publicDeclarations(
+            contractSurface(
+              file.old_path ?? file.path,
               snapshot.base[file.old_path ?? file.path]?.content ?? "",
             ),
           ) !==
           JSON.stringify(
-            publicDeclarations(snapshot.head[file.path]?.content ?? ""),
+            contractSurface(file.path, snapshot.head[file.path]?.content ?? ""),
           ),
       ))
   ) {

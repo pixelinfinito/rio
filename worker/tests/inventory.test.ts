@@ -317,3 +317,68 @@ describe("contract inventory: Rust", () => {
     expect(kinds.has("endpoint")).toBe(false);
   });
 });
+
+describe("triage public_contracts signal", () => {
+  const plan = async (base: string, head: string, path: string) => {
+    const { triage } = await import("../src/triage");
+    const { submission } = await import("./fixtures");
+    const s = submission();
+    s.changed = [{ path, lines_changed: 2 }];
+    s.profile.steps = [
+      { id: "triage", uses: "rio/triage@0.1.0", needs: [], with: {} },
+    ];
+    return triage(s, {
+      base: { [path]: { mode: 0o100644, content: base } },
+      head: { [path]: { mode: 0o100644, content: head } },
+    });
+  };
+  it.each([
+    [
+      "a removed Python CLI flag",
+      "slime/arguments.py",
+      `def add(parser):\n    parser.add_argument("--router-ip")\n    parser.add_argument("--router-port")\n`,
+      `def add(parser):\n    parser.add_argument("--router-port")\n`,
+    ],
+    [
+      "a changed Python export",
+      "pkg/api.py",
+      "def fetch(url):\n    pass\n",
+      "def fetch(url, *, timeout):\n    pass\n",
+    ],
+    [
+      "a removed route",
+      "src/server.ts",
+      `app.get("/a", a);\napp.delete("/b", b);\n`,
+      `app.get("/a", a);\n`,
+    ],
+  ])("selects the contracts agent for %s", async (_, path, base, head) => {
+    const p = await plan(base, head, path);
+    expect(p.agents).toContain("contracts");
+    expect(p.agent_reasons.contracts).toBe("public_contract_change");
+  });
+
+  it.each([
+    [
+      "a function body",
+      "pkg/api.py",
+      "def fetch(url):\n    return 1\n",
+      "def fetch(url):\n    return 2\n",
+    ],
+    [
+      "an exported value",
+      "src/version.ts",
+      "export const VERSION = 1;\n",
+      "export const VERSION = 2;\n",
+    ],
+    [
+      "an env read",
+      "src/env.ts",
+      "const a = 1;\n",
+      "const a = process.env.API_URL;\n",
+    ],
+  ])("does not fire for %s", async (_, path, base, head) => {
+    const p = await plan(base, head, path);
+    expect(p.agents).not.toContain("contracts");
+    expect(p.risk.reasons).not.toContain("public_contract_change");
+  });
+});
