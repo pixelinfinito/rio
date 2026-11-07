@@ -1,0 +1,59 @@
+{
+  "schema": "rio-eval-case-v1",
+  "id": "SE-POS-03",
+  "label": "historical",
+  "repository": "jpadilla/pyjwt",
+  "input": {
+    "pr": 970,
+    "url": "https://github.com/jpadilla/pyjwt/pull/970",
+    "base": {
+      "ref": null,
+      "sha": "868cf4ab2ca5a0a39da40e5a14dd740b203662b2"
+    },
+    "head": {
+      "ref": null,
+      "sha": "1570e708672aa9036bc772476beae8bfa48f4131"
+    },
+    "files": [
+      "CHANGELOG.rst",
+      "jwt/api_jws.py",
+      "jwt/api_jwt.py"
+    ]
+  },
+  "expected": [
+    {
+      "locations": [
+        {
+          "path": "jwt/api_jwt.py",
+          "line_start": 366,
+          "line_end": 371,
+          "symbol_path": "PyJWT._validate_iss",
+          "symbol_line": null
+        },
+        {
+          "path": "jwt/api_jwt.py",
+          "line_start": 366,
+          "line_end": 366,
+          "symbol_path": "PyJWT._validate_iss",
+          "symbol_line": null
+        }
+      ],
+      "trigger": "A typing clean-up changed the issuer check to `isinstance(issuer, Sequence)`. Because `str` is a Sequence, a string `issuer` is now checked with `payload['iss'] not in issuer`, a substring test, so a token whose `iss` is any substring of the expected issuer (e.g. 'urn:' for 'urn:expected') passes validation.",
+      "trigger_source": "manual",
+      "rule_id": null,
+      "category": "security",
+      "severity": "high",
+      "agent": "security"
+    }
+  ],
+  "provenance": {
+    "source": "manual",
+    "created_at": "2026-11-07T00:00:00Z",
+    "tool": "docs/evaluation/v0.3-agents-candidates.md selection",
+    "notes": [
+      "Introducing PR https://github.com/jpadilla/pyjwt/pull/970; fix https://github.com/jpadilla/pyjwt/commit/33022c25525c1020869c71ce2a4109e44ae4ced1.",
+      "Expected locations come from the pre-run selection and were not changed after seeing Rio output.",
+      "Catalog items: A07:2025, ASVS V9.2."
+    ]
+  }
+}
