@@ -31,6 +31,7 @@ import { redact } from "./redaction";
 import {
   hash,
   invariant,
+  clampAgentOutput,
   screenHypotheses,
   validateHypotheses,
   type Rejection,
@@ -600,9 +601,13 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             unassessedByAgent = output.unassessed;
             output = output.hypotheses;
           }
-          const screened = screenHypotheses(agent, validateHypotheses(output), {
-            catalogItems: new Set(applicable.map((i) => i.id)),
-          });
+          const screened = screenHypotheses(
+            agent,
+            validateHypotheses(clampAgentOutput(output)),
+            {
+              catalogItems: new Set(applicable.map((i) => i.id)),
+            },
+          );
           rejected.push(...screened.rejected);
           for (const h of screened.accepted) {
             h.source = { agent };
@@ -668,6 +673,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             context: {
               snapshot: { head: {} },
               head: graphs.head,
+              base: graphs.base,
               executions,
               guidance: submission.owner_guidance,
             },

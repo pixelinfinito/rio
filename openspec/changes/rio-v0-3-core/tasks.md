@@ -62,6 +62,7 @@
 - [x] 8.1 Build the deterministic contract inventory in the agents step (changed `endpoint`, `table`, `event`, `config` nodes and exported symbols with per-language visibility rules, consumers at `hops` in both versions, unresolved edges listed). Verify unit tests on TypeScript, Python and Rust fixtures for each contract kind and for an unresolved consumer
 - [x] 8.2 Write `modules/agents/contracts/prompt.md`, declare `contracts: true` in the manifest, wire triage's `public_contracts` signal to select it, and validate hypothesis rule ids against `contracts/<kind>/<break>` with the two-location rule (no consumer → risk). Verify Worker tests with a recorded gateway for a removed route with a consumer (defect), an added required parameter without a consumer (risk) and a rejected single-location defect
 - [ ] 8.3 Add contracts cases to the eval reference set and the per-agent precision report. Verify `python3 -m unittest discover -s eval/tests -v` covers the new cases
+- [x] 8.4 Settle contract hypotheses through graph paths in the verifier: `static_proven` requires a cited head graph path (across files) from a cited consumer to the changed contract, and a cited consumer updated in head or a protection on that path (in the contract or a cited consumer) refutes it; tell voters the rule. Verify quorum unit tests for proof, each insufficient citation, consumer update and protection, and Workflow tests for the "Consumer updated in head" scenario and an off-path protection
 
 ## 9. Security agent and catalogs
 

@@ -91,6 +91,8 @@ async function review(run: Run) {
       head: { nodes: [], edges: [] },
     };
     s.profile.steps = run.steps;
+    // Voters read the hypothesis, both versions and the graph; give them room.
+    s.profile.budget.fast.verify_tokens = 40000;
     run.mutate?.(s);
     const stored = await storeSnapshot(runtime, snapshot);
     const key = await store.put(`reviews/${id}/submission.json`, {
@@ -166,8 +168,16 @@ describe("contracts agent", () => {
         line_start: 1,
         line_end: 3,
       },
+      // The router module the client's session call resolves to.
+      {
+        id: "r",
+        path: "src/routes.ts",
+        symbol_path: "routes",
+        line_start: 1,
+        line_end: 1,
+      },
     ],
-    edges: [],
+    edges: [{ from: "c", to: "r", kind: "references" }],
   };
   const removedRoute = {
     rule_id: "contracts/route/removed",
@@ -216,7 +226,7 @@ describe("contracts agent", () => {
                   kind: "code",
                   version: "head",
                   path: "src/client.ts",
-                  node_ids: ["c"],
+                  node_ids: ["c", "r"],
                   demonstrates: "regression",
                 },
               ],
@@ -308,6 +318,121 @@ describe("contracts agent", () => {
       agents: {},
     });
     expect(named.calls).toContain("contracts");
+  }, 60000);
+});
+
+describe("contract verification", () => {
+  // contracts-agent spec, "Consumer updated in head": the verifier cites the
+  // updated caller and the hypothesis is refuted.
+  const base = {
+    "src/api.ts": `export function createUser(name: string) {\n  return name;\n}\n`,
+    "src/signup.ts": `import { createUser } from "./api";\nexport function signup(name: string) {\n  return createUser(name);\n}\n`,
+  };
+  const head = {
+    "src/api.ts": `export function createUser(name: string, email: string) {\n  return name + email;\n}\n`,
+    "src/signup.ts": `import { createUser } from "./api";\nexport function signup(name: string, email: string) {\n  return createUser(name, email);\n}\n`,
+  };
+  const graph = (signupHash: string) => ({
+    nodes: [
+      {
+        id: "p",
+        path: "src/api.ts",
+        symbol_path: "api.createUser",
+        line_start: 1,
+        line_end: 3,
+        content_hash: "p" + signupHash,
+      },
+      {
+        id: "s",
+        path: "src/signup.ts",
+        symbol_path: "signup.signup",
+        line_start: 2,
+        line_end: 4,
+        content_hash: signupHash,
+      },
+    ],
+    edges: [{ from: "s", to: "p", kind: "calls" }],
+  });
+  const claim = {
+    rule_id: "contracts/signature/added_required",
+    category: "defect",
+    severity: "error",
+    location: at("src/api.ts", 1, "api.createUser"),
+    locations: [
+      at("src/api.ts", 1, "api.createUser"),
+      at("src/signup.ts", 3, "signup.signup"),
+    ],
+    message:
+      "createUser now requires email but signup still calls it with the name only.",
+    trigger: "signup(name)",
+  };
+
+  it("refutes a claimed break when head also updated the consumer", async () => {
+    const { report, calls } = await review({
+      base,
+      head,
+      changed: ["src/api.ts", "src/signup.ts"],
+      graphs: { base: graph("old"), head: graph("new") },
+      steps: agentSteps(),
+      agents: { contracts: [claim] },
+      vote: () => ({
+        evidence_level: "refuted",
+        evidence: [
+          {
+            kind: "code",
+            version: "head",
+            path: "src/signup.ts",
+            node_ids: ["s"],
+            demonstrates: "protection",
+          },
+        ],
+      }),
+    });
+    expect(calls.filter((c) => c === "verify")).toHaveLength(3);
+    expect(
+      report.findings.concat(report.risks).map((f: any) => f.rule_id),
+    ).not.toContain("contracts/signature/added_required");
+    expect(report.agent_audit.refuted).toBe(1);
+  }, 60000);
+
+  it("keeps the claim plausible when the cited protection is off the consumer's path", async () => {
+    const offPath = (hash: string) => {
+      const g = graph(hash);
+      g.nodes.push({
+        id: "o",
+        path: "src/other.ts",
+        symbol_path: "other.check",
+        line_start: 1,
+        line_end: 1,
+        content_hash: "o",
+      });
+      return g;
+    };
+    const { report } = await review({
+      base: { ...base, "src/other.ts": "export const check = 1;\n" },
+      head: { ...head, "src/other.ts": "export const check = 1;\n" },
+      changed: ["src/api.ts", "src/signup.ts"],
+      graphs: { base: offPath("same"), head: offPath("same") },
+      steps: agentSteps(),
+      agents: { contracts: [claim] },
+      vote: () => ({
+        evidence_level: "refuted",
+        evidence: [
+          {
+            kind: "code",
+            version: "head",
+            path: "src/other.ts",
+            node_ids: ["o"],
+            demonstrates: "protection",
+          },
+        ],
+      }),
+    });
+    expect(report.agent_audit.refuted).toBe(0);
+    const kept = report.risks.find(
+      (f: any) => f.rule_id === "contracts/signature/added_required",
+    );
+    expect(kept.evidence_level).toBe("plausible");
   }, 60000);
 });
 

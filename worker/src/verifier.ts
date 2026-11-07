@@ -52,6 +52,9 @@ async function cited(
     }
   return { ...o.context, snapshot: { head } };
 }
+/** Contract hypotheses are settled through graph paths in both versions. */
+export const CONTRACT_VERIFICATION =
+  " This is a contract hypothesis: static_proven requires one code citation whose head graph node_ids form a connected path, possibly across files, from a cited consumer location to the changed contract's file. If head updated a cited consumer so it no longer relies on the old contract, answer refuted and cite that consumer's head graph node as a code reference with demonstrates protection; a protection on that path also refutes it.";
 export async function blindContext(o: VerifyOptions): Promise<string> {
   const location = o.hypothesis.location;
   const reader = readerOf(o.snapshot);
@@ -148,7 +151,7 @@ export async function verifyHypothesis(
           await o.save(vote);
           messages.push({
             role: "user",
-            content: `Verify this hypothesis. Assess regression on base/head, reachability, protections and contracts. Return {result:{evidence_level,evidence:[{kind:execution|code,version:base|head,job_id?,path?,node_ids?,demonstrates:regression|protection}],category?,reclassification_reason?}}. Reproduced requires a failed head runner execution of the reproduction; refutation requires a passing head reproduction or a cited protection. Static proof must cite the actual head graph path. Keep the original category by omitting category. Only downward changes are permitted: defect/security to risk/diagnostic/style, risk to diagnostic/style, diagnostic to style, with reclassification_reason required. Never upgrade risk to defect, even if proven; category and evidence level are independent. Cite only job IDs returned by an actual host run tool. If you have not executed a reproduction, use static_proven with actual head graph node IDs or plausible; describing a command does not execute it.\n${dataBlock("hypothesis", o.hypothesis)}`,
+            content: `Verify this hypothesis. Assess regression on base/head, reachability, protections and contracts. Return {result:{evidence_level,evidence:[{kind:execution|code,version:base|head,job_id?,path?,node_ids?,demonstrates:regression|protection}],category?,reclassification_reason?}}. Reproduced requires a failed head runner execution of the reproduction; refutation requires a passing head reproduction or a cited protection. Static proof must cite the actual head graph path. Keep the original category by omitting category. Only downward changes are permitted: defect/security to risk/diagnostic/style, risk to diagnostic/style, diagnostic to style, with reclassification_reason required. Never upgrade risk to defect, even if proven; category and evidence level are independent. Cite only job IDs returned by an actual host run tool. If you have not executed a reproduction, use static_proven with actual head graph node IDs or plausible; describing a command does not execute it.${o.hypothesis.rule_id.startsWith("contracts/") ? CONTRACT_VERIFICATION : ""}\n${dataBlock("hypothesis", o.hypothesis)}`,
           });
           vote.answer = validateAnswer(
             await converse({ ...options, phase: "verify-disclosed" }),
