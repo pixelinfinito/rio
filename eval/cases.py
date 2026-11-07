@@ -67,7 +67,7 @@ def location_matches(finding, expected_location):
         if not symbol:
             return True
         reported = loc.get('symbol_path') or ''
-        if reported and reported.replace('::', '.').split('.')[-1] == symbol.split('.')[-1]:
+        if reported and reported.replace('::', '.').split('.')[-1] == symbol.replace('::', '.').split('.')[-1]:
             return True
         if loc['line_start'] <= expected_location['line_end'] and loc['line_end'] >= expected_location['line_start']:
             return True
@@ -75,9 +75,11 @@ def location_matches(finding, expected_location):
 
 
 def caught(case, report):
-    """Per expected finding, the IDs of reported findings that match any of its locations."""
+    """Per expected finding, the IDs of reported findings that match any of its locations.
+    An expectation that names an `agent` is caught only by that agent's findings."""
     findings = report_findings(report)
-    return [sorted({f['id'] for f in findings for loc in x['locations'] if location_matches(f, loc)})
+    return [sorted({f['id'] for f in findings for loc in x['locations'] if location_matches(f, loc)
+                    and (not x.get('agent') or f.get('source', {}).get('agent') == x['agent'])})
             for x in case['expected']]
 
 

@@ -13,6 +13,7 @@ import sys
 from urllib.parse import unquote
 
 ROOT = Path(__file__).resolve().parents[1]
+AGENT_MECHANISMS = ('contract-break', 'security-vulnerability')
 CLASSES = ('true-positive', 'false-positive', 'pre-existing-shown',
            'environment-failure', 'out-of-scope', 'pre-existing-hidden')
 SUCCESS = {'passed', 'findings'}
@@ -294,7 +295,9 @@ def build_record(report, verdicts, report_path):
         if not expected['finding_ids'] and not any(
                 m.get('expectation_id') == expected['id'] for m in record['misses']):
             record['misses'].append({'id': f'control/{expected["id"]}',
-                'scope_class': 'deterministic', 'description': f'Positive control {expected["id"]} was not detected.',
+                # Contract and security controls are the agents' to find.
+                'scope_class': 'agent-layer' if expected['mechanism'] in AGENT_MECHANISMS else 'deterministic',
+                'description': f'Positive control {expected["id"]} was not detected.',
                 'evidence': expected['evidence'], 'mechanism': expected['mechanism'],
                 'expectation_id': expected['id']})
     record['verdict'], record['reason'] = usefulness(record)

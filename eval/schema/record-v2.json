@@ -133,7 +133,9 @@
                   "lint-rule",
                   "uncovered-lines",
                   "leaked-secret",
-                  "vulnerable-dependency"
+                  "vulnerable-dependency",
+                  "contract-break",
+                  "security-vulnerability"
                 ]
               },
               "evidence": {
@@ -372,7 +374,9 @@
               "lint-rule",
               "uncovered-lines",
               "leaked-secret",
-              "vulnerable-dependency"
+              "vulnerable-dependency",
+              "contract-break",
+              "security-vulnerability"
             ]
           },
           "expectation_id": {

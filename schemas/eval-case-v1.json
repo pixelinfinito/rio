@@ -302,6 +302,16 @@
             "normal",
             null
           ]
+        },
+        "agent": {
+          "description": "The Rio agent expected to detect this finding (contracts, security, ...). When set, only findings produced by that agent count as catching it.",
+          "enum": [
+            "correctness",
+            "contracts",
+            "tests",
+            "performance",
+            "security"
+          ]
         }
       },
       "required": [
