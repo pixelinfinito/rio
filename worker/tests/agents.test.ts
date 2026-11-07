@@ -38,6 +38,8 @@ interface Run {
   steps: Submission["profile"]["steps"];
   /** Generation result per agent; anything else returns an empty array. */
   agents: Record<string, unknown>;
+  /** Raw provider content per agent, replacing the wrapped result. */
+  raw?: Record<string, string>;
   /** Disclosed verification answer for a hypothesis. */
   vote?: (h: any) => unknown;
   mutate?: (s: Submission) => void;
@@ -56,10 +58,12 @@ async function review(run: Run) {
         first,
       )?.[1];
       let result: unknown = [];
+      let raw: string | undefined;
       if (agent) {
         prompts[agent] = first;
         calls.push(agent);
         result = run.agents[agent] ?? [];
+        raw = run.raw?.[agent];
       } else if (last.startsWith("Verify this hypothesis.")) {
         calls.push("verify");
         result = run.vote?.(block(last, "hypothesis")) ?? {
@@ -67,7 +71,7 @@ async function review(run: Run) {
           evidence: [],
         };
       } else calls.push("blind");
-      const content = JSON.stringify({ result });
+      const content = raw ?? JSON.stringify({ result });
       return Response.json(
         String(input).includes("anthropic")
           ? {
@@ -583,6 +587,69 @@ describe("security agent", () => {
     },
     60000,
   );
+
+  it("ends only the failing agent: a security conversation that never speaks the protocol leaves the other agent's work in a partial report", async () => {
+    const { report, calls } = await review({
+      base,
+      head,
+      changed: ["src/api/users.ts"],
+      steps: [
+        { id: "triage", uses: "rio/triage@0.1.0", needs: [], with: {} },
+        {
+          id: "agents",
+          uses: "rio/agents@0.1.0",
+          needs: ["triage"],
+          with: {},
+          agents: [{ correctness: { model: "default" } }],
+        },
+        {
+          id: "security",
+          uses: "rio/security@0.2.0",
+          needs: ["triage"],
+          with: { enabled: true, catalog: "asvs-5.0" },
+        },
+        {
+          id: "verify",
+          uses: "rio/verify@0.1.0",
+          needs: ["agents", "security"],
+          with: {},
+        },
+      ],
+      agents: {
+        correctness: [
+          {
+            rule_id: "correctness/unchecked-input",
+            category: "risk",
+            severity: "warning",
+            location: at("src/api/users.ts", 1, "users.handler"),
+            message: "The handler reads the parameter without a check.",
+            trigger: "a request without the parameter",
+          },
+        ],
+      },
+      // Every security reply is an empty tool list, which no repair fixes.
+      raw: { security: '{"tools":[]}' },
+    });
+    expect(calls.filter((c) => c === "security").length).toBe(3);
+    expect(report.status).toBe("partial");
+    expect(
+      report.footer.notes.some((n: string) =>
+        /^security agent failed: malformed tool output/.test(n),
+      ),
+    ).toBe(true);
+    // The correctness agent's hypothesis was still verified and reported.
+    expect(
+      [...report.findings, ...report.risks].some(
+        (f: any) => f.rule_id === "correctness/unchecked-input",
+      ),
+    ).toBe(true);
+    const coverage = report.security_coverage;
+    expect(coverage.assessed).toEqual([]);
+    expect(
+      coverage.unassessed.length > 0 &&
+        coverage.unassessed.every((u: any) => u.reason === "tools_unavailable"),
+    ).toBe(true);
+  }, 60000);
 
   it("lists assessed and unassessed items when no hypothesis is produced", async () => {
     const { report } = await review({

@@ -148,6 +148,52 @@ it("asks once more for the protocol after native tool syntax and gives up after 
   ).rejects.toThrow("malformed model output");
   expect(calls).toBe(3);
 });
+it("repairs an empty tool list and answers calls past the batch limit instead of ending the agent", async () => {
+  const ledger: Ledger = {
+    remaining: async () => 100000,
+    reserve: async () => "id",
+    settle: async () => {},
+  };
+  const dispatch = vi.fn(async () => ({ content: "source" }));
+  const base = {
+    ledger,
+    actor: "agent",
+    phase: "generation",
+    model: "openrouter/anthropic/test",
+    dispatch,
+  };
+  const tools = Array.from({ length: 10 }, (_, i) => ({
+    name: "read_file",
+    args: { path: `f${i}.ts`, version: "head" },
+  }));
+  const sent: any[] = [];
+  const replies = ['{"tools":[]}', JSON.stringify({ tools }), '{"result":[]}'];
+  const result = await converse({
+    ...base,
+    gateway: {
+      complete: async (request) => {
+        sent.push(request.messages.at(-1));
+        return {
+          content: replies[sent.length - 1]!,
+          input_tokens: 80,
+          output_tokens: 50,
+          cost_usd: null,
+        };
+      },
+    },
+    allowance: { remaining: 160000 },
+    messages: [{ role: "user", content: "review" }],
+  });
+  expect(result).toEqual([]);
+  // The empty list was repaired, not dispatched; the batch ran its first eight.
+  expect(dispatch).toHaveBeenCalledTimes(8);
+  expect(sent[1].content).toMatch(/^Your previous reply was not the protocol/);
+  const results = JSON.parse(sent[2].content).tool_results;
+  expect(results).toHaveLength(10);
+  expect(results.slice(0, 8).every((r: any) => r.result)).toBe(true);
+  expect(results[8].error).toMatch(/limited to 8 calls per turn/);
+  expect(results[9].error).toMatch(/resend it/);
+});
 it("calls the runtime fetch function with its global receiver", async () => {
   const transport = vi
     .spyOn(globalThis, "fetch")

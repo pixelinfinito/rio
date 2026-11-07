@@ -578,21 +578,30 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
               cancelled: () => store.cancelled(id),
             });
           } catch (error) {
-            // An exhausted security budget leaves its items unassessed, never passed.
             const message = error instanceof Error ? error.message : "";
-            if (
-              agent !== "security" ||
-              !/budget exhausted|turn limit exhausted/.test(message)
-            )
-              throw error;
-            output = {
-              hypotheses: [],
-              assessed: [],
-              unassessed: applicable.map((i) => ({
-                item: i.id,
-                reason: "budget",
-              })),
-            };
+            if (/cancel/.test(message)) throw error;
+            const budget = /budget exhausted|turn limit exhausted/.test(message);
+            if (agent === "security") {
+              // An exhausted budget or a failed conversation leaves the items
+              // unassessed, never passed.
+              output = {
+                hypotheses: [],
+                assessed: [],
+                unassessed: applicable.map((i) => ({
+                  item: i.id,
+                  reason: budget ? "budget" : "tools_unavailable",
+                })),
+              };
+            }
+            if (agent !== "security" || !budget) {
+              // One agent's failure ends only that agent; the others' work and
+              // the deterministic results stay in a partial report.
+              report.status = "partial";
+              report.footer.notes.push(
+                `${agent} agent failed: ${redact(message).slice(0, 200)}; its findings are missing from this review.`,
+              );
+              if (agent !== "security") continue;
+            }
           }
           let assessedByAgent: unknown = [],
             unassessedByAgent: unknown = [];

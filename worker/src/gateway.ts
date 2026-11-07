@@ -191,6 +191,8 @@ export function parseModelOutput(content: string): any {
  * limit is on consecutive failures, with a cap on the whole conversation.
  */
 const MAX_CONSECUTIVE_REPAIRS = 2;
+/** Tool calls run per model turn; later calls in a batch are answered with the limit. */
+const MAX_TOOLS_PER_TURN = 8;
 const MAX_REPAIRS = 6;
 const REPAIR =
   'Your previous reply was not the protocol and was discarded. Reply with exactly one JSON object and nothing else: {"tools":[{"name":"...","args":{...}}]} to run tools, or {"result":...}. No XML tool tags, no Markdown fences, no prose.';
@@ -265,13 +267,10 @@ export async function converse(options: {
     const total = response.input_tokens + response.output_tokens;
     o.allowance.remaining -= total;
     invariant(o.allowance.remaining >= 0, "provider exceeded token allowance");
-    let parsed: any;
-    try {
-      parsed = parseModelOutput(response.content);
-    } catch (error) {
-      // Models answer in their native tool syntax despite the protocol. The host
-      // asks once more for the JSON document; the raw output stays in the audit
-      // and is never interpreted as tool calls or evidence.
+    // Models answer in their native tool syntax, or with no tools and no result,
+    // despite the protocol. The host asks once more for the JSON document; the raw
+    // output stays in the audit and is never interpreted as tool calls or evidence.
+    const repair = (error: unknown) => {
       if (consecutiveRepairs >= MAX_CONSECUTIVE_REPAIRS || repairs >= MAX_REPAIRS)
         throw error;
       repairs++;
@@ -281,6 +280,19 @@ export async function converse(options: {
         content: response.content.slice(0, 4000),
       });
       o.messages.push({ role: "user", content: REPAIR });
+    };
+    let parsed: any;
+    try {
+      parsed = parseModelOutput(response.content);
+    } catch (error) {
+      repair(error);
+      continue;
+    }
+    if (
+      !Object.hasOwn(parsed, "result") &&
+      !(Array.isArray(parsed.tools) && parsed.tools.length > 0)
+    ) {
+      repair(new Error("malformed tool output"));
       continue;
     }
     consecutiveRepairs = 0;
@@ -288,14 +300,17 @@ export async function converse(options: {
     // in audit and its full usage remains charged.
     o.messages.push({ role: "assistant", content: JSON.stringify(parsed) });
     if (Object.hasOwn(parsed, "result")) return parsed.result;
-    invariant(
-      Array.isArray(parsed.tools) &&
-        parsed.tools.length > 0 &&
-        parsed.tools.length <= 8,
-      "malformed tool output",
-    );
     const results = [];
-    for (const tool of parsed.tools) {
+    for (const [index, tool] of parsed.tools.entries()) {
+      // A batch over the limit runs its first calls; the rest are answered with
+      // the limit so the model can resend them, instead of ending the agent.
+      if (index >= MAX_TOOLS_PER_TURN) {
+        results.push({
+          name: tool.name,
+          error: `tool batch limited to ${MAX_TOOLS_PER_TURN} calls per turn; this call was not run, resend it`,
+        });
+        continue;
+      }
       try {
         results.push({
           name: tool.name,
