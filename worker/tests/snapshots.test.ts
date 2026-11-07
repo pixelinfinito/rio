@@ -609,6 +609,21 @@ describe("runner archives", () => {
         expect(member.mode).toBe(file.mode === 0o100755 ? 0o755 : 0o644);
       }
     }
+    // Fixed-width tar name fields stay printable ASCII; strict readers (Python's
+    // tarfile) decode them even when a PAX header carries the real name.
+    const raw = new Uint8Array(
+      await new Response(await jobInput(runtime, job)).arrayBuffer(),
+    );
+    let offset = raw.indexOf(10) + 1;
+    while (offset + 512 <= raw.length && raw[offset] !== 0) {
+      const field = raw.subarray(offset, offset + 100);
+      expect(field.every((b) => b === 0 || (b >= 0x20 && b < 0x7f))).toBe(true);
+      const size = parseInt(
+        new TextDecoder().decode(raw.subarray(offset + 124, offset + 135)),
+        8,
+      );
+      offset += 512 + Math.ceil(size / 512) * 512;
+    }
     // A run job receives only its own tree.
     await createJob(runtime, id, "run", "run", ["true"], "base", snapshotId);
     const run = await readJobInput(

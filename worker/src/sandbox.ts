@@ -34,9 +34,16 @@ export class Sandbox extends DurableObject<Env> {
       );
       // Stream the header and tree archive; output is collected concurrently so
       // neither side can block on a full pipe.
-      const input = (await jobInput(this.env, job)).pipeTo(process.stdin!);
-      const [output] = await Promise.all([process.output(), input]);
-      invariant(output.exitCode === 0, "sandbox executor failed");
+      const input = (await jobInput(this.env, job))
+        .pipeTo(process.stdin!)
+        .catch((error: unknown) => error);
+      const [output, piped] = await Promise.all([process.output(), input]);
+      // An executor that exits early closes its input; its own error explains why.
+      if (output.exitCode !== 0)
+        throw new Error(
+          `sandbox executor failed: ${new TextDecoder().decode(output.stderr).slice(0, 500)}`,
+        );
+      if (piped instanceof Error) throw piped;
       const result = JSON.parse(new TextDecoder().decode(output.stdout));
       validateResult(result, job);
       return Response.json(result);

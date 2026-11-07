@@ -38,14 +38,19 @@ function paxPath(name: Uint8Array): Uint8Array {
 export function memberHeader(path: string, size: number, mode: number) {
   const name = encoder.encode(path);
   const parts: Uint8Array[] = [];
-  if (name.length > 100 || /[^\x20-\x7e]/.test(path)) {
-    const pax = paxPath(name);
-    parts.push(
-      header(encoder.encode("././@PaxHeader"), pax.length, 0o644, "x"),
-    );
-    parts.push(pax, padding(pax.length));
+  if (name.length <= 100 && !/[^\x20-\x7e]/.test(path)) {
+    parts.push(header(name, size, mode, "0"));
+    return parts;
   }
-  parts.push(header(name, size, mode, "0"));
+  // The PAX record carries the real name. The fixed field gets a printable ASCII
+  // stand-in: readers decode it strictly even though the PAX name replaces it.
+  const pax = paxPath(name);
+  parts.push(header(encoder.encode("././@PaxHeader"), pax.length, 0o644, "x"));
+  parts.push(pax, padding(pax.length));
+  const fallback = encoder.encode(
+    path.replace(/[^\x20-\x7e]/g, "_").slice(0, 100),
+  );
+  parts.push(header(fallback, size, mode, "0"));
   return parts;
 }
 /** Versions a job reads: run jobs their own tree; analysis jobs both. */
