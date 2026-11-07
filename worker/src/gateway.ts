@@ -312,9 +312,22 @@ export async function converse(options: {
       repair(error);
       continue;
     }
+    // A reply must be an object with a result, or a non-empty list of named tools.
+    const document =
+      parsed !== null && typeof parsed === "object" && !Array.isArray(parsed);
     if (
-      !Object.hasOwn(parsed, "result") &&
-      !(Array.isArray(parsed.tools) && parsed.tools.length > 0)
+      !document ||
+      (!Object.hasOwn(parsed, "result") &&
+        !(
+          Array.isArray(parsed.tools) &&
+          parsed.tools.length > 0 &&
+          parsed.tools.every(
+            (tool: unknown) =>
+              tool !== null &&
+              typeof tool === "object" &&
+              typeof (tool as any).name === "string",
+          )
+        ))
     ) {
       repair(new Error("malformed tool output"));
       continue;

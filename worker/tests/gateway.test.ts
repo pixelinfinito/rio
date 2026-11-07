@@ -168,7 +168,9 @@ it("repairs an empty tool list and answers calls past the batch limit instead of
     args: { path: `f${i}.ts`, version: "head" },
   }));
   const sent: any[] = [];
-  const replies = ['{"tools":[]}', JSON.stringify({ tools }), '{"result":[]}'];
+  // null, a bare array, a tool without a name and an empty list are all repaired.
+  const single = JSON.stringify({ tools: tools.slice(0, 1) });
+  const replies = ["null", "[]", single, '{"tools":[null]}', '{"tools":[]}', JSON.stringify({ tools }), '{"result":[]}'];
   const result = await converse({
     ...base,
     gateway: {
@@ -186,10 +188,13 @@ it("repairs an empty tool list and answers calls past the batch limit instead of
     messages: [{ role: "user", content: "review" }],
   });
   expect(result).toEqual([]);
-  // The empty list was repaired, not dispatched; the batch ran its first eight.
-  expect(dispatch).toHaveBeenCalledTimes(8);
-  expect(sent[1].content).toMatch(/^Your previous reply was not the protocol/);
-  const results = JSON.parse(sent[2].content).tool_results;
+  // The malformed replies were repaired, not dispatched: one valid call between
+  // them resets the consecutive-repair count, then the batch ran its first eight.
+  expect(dispatch).toHaveBeenCalledTimes(9);
+  for (const i of [1, 2, 4, 5])
+    expect(sent[i].content).toMatch(/^Your previous reply was not the protocol/);
+  expect(JSON.parse(sent[3].content).tool_results).toHaveLength(1);
+  const results = JSON.parse(sent[6].content).tool_results;
   expect(results).toHaveLength(10);
   expect(results.slice(0, 8).every((r: any) => r.result)).toBe(true);
   expect(results[8].error).toMatch(/limited to 8 calls per turn/);
