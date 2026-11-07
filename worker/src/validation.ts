@@ -330,6 +330,25 @@ export function validateHypotheses(value: any): Hypothesis[] {
     };
   });
 }
+/**
+ * Bounds the list-valued agent keys to the hypothesis schema's limits, so one
+ * hypothesis citing many consumers is trimmed instead of failing the agent's
+ * whole output. Anything else is left for schema validation.
+ */
+export function clampAgentOutput(value: unknown): unknown {
+  if (!Array.isArray(value)) return value;
+  return value.map((h) => {
+    if (!h || typeof h !== "object" || Array.isArray(h)) return h;
+    const out: any = { ...h };
+    if (Array.isArray(out.locations))
+      out.locations = out.locations.slice(0, 20);
+    if (Array.isArray(out.limitations))
+      out.limitations = out.limitations
+        .slice(0, 20)
+        .map((l: unknown) => (typeof l === "string" ? l.slice(0, 1000) : l));
+    return out;
+  });
+}
 export const CONTRACT_KINDS = [
   "signature",
   "route",

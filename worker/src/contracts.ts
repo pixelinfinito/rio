@@ -593,18 +593,23 @@ export async function inventory(
                 .replace(/[:{<].*$/, "")
             : e.name.replace(/^--/, ""),
       }));
+      // An export is consumed where an import or a same-language reference
+      // names it; its pattern does not depend on the file, so it is built once.
+      const patterns = needles.map(({ entry, needle }) => ({
+        entry,
+        needle,
+        word:
+          entry.kind === "export"
+            ? new RegExp(
+                `(?<![\\w$])${needle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![\\w$])`,
+              )
+            : null,
+      }));
       for await (const [path, content] of input.scan(version)) {
         const lines = content.split("\n");
-        for (const { entry, needle } of needles) {
+        for (const { entry, needle, word } of patterns) {
           if (path === entry.path || needle.length < 3) continue;
           if (entry.consumers[version].length >= MAX_CONSUMERS) continue;
-          // An export is consumed where an import or a same-language reference names it.
-          const word =
-            entry.kind === "export"
-              ? new RegExp(
-                  `(?<![\\w$])${needle.replace(/[$]/g, "\\$")}(?![\\w$])`,
-                )
-              : null;
           const sameLanguage = languageOf(path) === languageOf(entry.path);
           const index = lines.findIndex((l) =>
             word

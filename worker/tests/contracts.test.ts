@@ -93,3 +93,43 @@ describe("v0.3 contract keys", () => {
     }
   });
 });
+
+describe("agent output bounds", () => {
+  it("trims a hypothesis citing many consumers instead of rejecting the whole output", async () => {
+    const { clampAgentOutput, validateHypotheses } =
+      await import("../src/validation");
+    const at = (line: number) => ({
+      path: `src/consumer${line}.ts`,
+      line_start: line,
+      line_end: line,
+      symbol_path: `consumer${line}.use`,
+    });
+    const many = {
+      rule_id: "contracts/signature/removed",
+      category: "defect",
+      severity: "error",
+      location: at(1),
+      locations: Array.from({ length: 30 }, (_, i) => at(i + 1)),
+      limitations: Array.from({ length: 30 }, () => "x".repeat(1500)),
+      message: "removed export still imported by 29 consumers",
+      trigger: "import { gone }",
+    };
+    const ok = {
+      ...many,
+      rule_id: "contracts/signature/changed",
+      locations: [at(1), at(2)],
+      limitations: [],
+    };
+    expect(() => validateHypotheses([many, ok])).toThrow(
+      /malformed hypothesis/,
+    );
+    const [trimmed, kept] = validateHypotheses(
+      clampAgentOutput([many, ok]) as any[],
+    );
+    expect(trimmed.locations).toHaveLength(20);
+    expect(trimmed.limitations).toHaveLength(20);
+    expect(trimmed.limitations!.every((l) => l.length === 1000)).toBe(true);
+    expect(kept.locations).toHaveLength(2);
+    expect(clampAgentOutput({ hypotheses: [] })).toEqual({ hypotheses: [] });
+  });
+});
