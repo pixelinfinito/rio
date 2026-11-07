@@ -1,0 +1,85 @@
+# Tasks
+
+## 0. Contracts, schemas and storage
+
+- [ ] 0.1 Extend `schemas/finding-v1.json` and `rio-core::Finding` with the optional `history` block and `source.cached`; extend `schemas/report-v1.json` with optional `publication`, `cache` and `suppression_proposals` objects and the security catalog coverage fields; regenerate the Worker validators. Verify `crates/rio-core/tests/contracts.rs` and `npm run check` accept documents with and without the new keys and reject a `history` block with an unknown reason
+- [ ] 0.2 Extend `schemas/module-v1.json` with kind `catalog` (items with `id`, `title`, `summary`, `applies_when`, `trace`) and `schemas/profile-v1.json` with the `rio/agents` `cache` option and the `rio/report` `proposal_threshold` option; update `modules/steps/agents/module.yaml` and `modules/steps/report/module.yaml`. Verify `rio profile validate` accepts `cache: false` and `proposal_threshold: 2` and rejects `proposal_threshold: 0`
+- [ ] 0.3 Add Worker migration `0004_pr_mode.sql`: `installations`, `deliveries`, `publications`, `finding_history`, `suppressions` (origin, status, evidence) and `agent_cache` index; register it in `worker/src/migrations.json`. Verify the migration tests apply it on a fresh and an upgraded database and `rio deploy` runs it in the deployment mock tests
+- [ ] 0.4 Write `docs/sarif-mapping.md` and `docs/github-app.md` (permissions, manifest flow, secrets, webhook URL, rotation) from the design; add `tests/fixtures/sarif/` with at least four cases (complete review, risks and plausible entries, lineage with dismissals and history, error status). Verify a documentation test checks every property name in the mapping document appears in the fixtures
+- [ ] 0.5 Compose the `Built-in step options` and `Footer content` deltas with the in-flight convergence and QA changes: whichever change archives last carries every addition. Verify a documentation test diffs the three deltas against the main spec and fails if any addition is lost
+
+## 1. GitHub App and webhooks
+
+- [ ] 1.1 Add the GitHub App manifest step to `rio init` (`--github-app`, skippable, reproducible from `config.toml`): open the manifest flow with the minimal permission set, receive the app credentials, store `GITHUB_APP_ID`, `GITHUB_APP_PRIVATE_KEY` and `GITHUB_WEBHOOK_SECRET` as Worker secrets, never write them to disk unencrypted. Verify deployment mock tests for a completed flow, a declined flow and `--from config.toml` replay, and that the manifest's permission list equals the one in `docs/github-app.md`
+- [ ] 1.2 Implement installation token minting in the Worker (App JWT → installation token scoped to one repository and the permissions the job needs, ten-minute lifetime, never stored). Verify unit tests with a recorded GitHub double for the permission subsets, expiry and the no-persistence assertion
+- [ ] 1.3 Implement `POST /v1/hooks/github`: raw-body HMAC verification, 24-hour delivery-id replay window, installation lookup, event filtering (`pull_request` opened/synchronize/reopened/ready_for_review, `issue_comment` starting with `/rio`, `installation`, `installation_repositories`), queueing of a `review-request` message, 204 for ignored events, 401 for bad signatures, 404 without app secrets, and `/v1/hooks/gitlab` returning 501. Verify API tests for each path, including a replayed delivery and a draft PR
+- [ ] 1.4 Implement the `review-request` queue consumer: fork detection, PR metadata capture (author login and type, SHAs, agent attribution when present), lineage reference `pr`, and scheduling of the `prepare` job. Verify Worker tests that a fork PR produces a `fork: true` submission and that two deliveries for the same head create one review
+- [ ] 1.5 Extend `rio doctor` with the endpoint pairing, app-secret presence, installation coverage of `origin` and default publish policy lines, and add `rio doctor --rotate`. Verify CLI tests for the installation-missing warning (exit 0) and the rotation success and abort paths against a GitHub double
+
+## 2. Hosted preparation
+
+- [ ] 2.1 Add `rio prepare --base <sha> --head <sha> --submit` to `rio-cli` (internal, hidden): build the snapshot from a clone, run checks and the graph, collect owner guidance and intent input, upload through the content-addressed protocol and `POST /v1/reviews` with the job token. Verify a CLI test produces a submission identical to `rio review` on the same commits
+- [ ] 2.2 Add the `prepare` job kind to `rio-runner` on the Docker backend: networked clone phase with the installation token, then a network-less analysis phase with the clone bind-mounted; token present only in the clone phase's environment. Verify `worker/runner/tests` with `RIO_TEST_DOCKER=1` that the analysis container has no route and no token, and that the job fails cleanly on a bad token
+- [ ] 2.3 Add Sandbox preparation for non-fork PRs and the eligibility rule (fork PRs require the self-hosted runner, reported with reason `fork_requires_self_hosted` when none is registered). Verify Worker tests for both backends and the ineligible case
+- [ ] 2.4 Ship the TypeScript, Python and Rust toolchains in the runner image and apply the existing dependency-compatibility skip rules to hosted checks (`dependency_missing` with its hint). Verify an image test runs typecheck on a fixture with vendored dependencies and skips it with the reason on a fixture without
+- [ ] 2.5 Implement `rio review --pr <n>`: resolve the installation through the endpoint, request hosted preparation, wait on the event stream, render as a `pr` lineage; exit 2 without an endpoint, exit 2 naming `rio init` without an installation, exit 2 when combined with a selection flag. Verify CLI tests for each exit and a recorded end-to-end review
+
+## 3. Publisher
+
+- [ ] 3.1 Implement the publish step with the host interface and GitHub implementation: inline review comments on anchorable lines with `<!-- rio:finding:<identity> -->`, unanchorable findings in the summary, one `<!-- rio:summary:<lineage> -->` comment per lineage, `PATCH` edits, marker reconciliation before posting, per-finding `publications` rows. Verify Worker tests with a GitHub double for first post, second round edit, lost record reconciliation and an anchor rejection falling back to the summary
+- [ ] 3.2 Implement the `rio/review` check run (always `neutral`, status, risk tier, counts, report link) and thread resolution via the GraphQL mutation on `fixed` and `dismissed`. Verify tests that no check run ever has `success` or `failure` and that a dismissed finding's thread is resolved with the reason text
+- [ ] 3.3 Implement publish policy semantics: `never` posts nothing; `auto` posts everything; `ask` posts from the CLI only with confirmation or `--publish`, and check-run-only from webhooks with the explanatory summary. Verify workflow tests for the six policy × trigger combinations
+- [ ] 3.4 Implement `/rio review` and `/rio dismiss <id> <reason>` handling with actor classification from the permission API, identity prefix resolution (≥ 8 characters, unambiguous), reactions and comment edits as the only responses, and bot comments ignored. Verify tests for maintainer, collaborator and other actors, an ambiguous prefix, and that a dismissal writes the same `author_response` as the feedback endpoint
+- [ ] 3.5 Implement fork publication: nothing until a maintainer `/rio review`, then publication under the profile policy with `run` tools still disabled. Verify a workflow test for the escalation path and the footer's static-only line
+- [ ] 3.6 Record partial failures per finding and retry them on the next round; add the `publication` object to report-v1 and the footer lines in terminal, Markdown and JSON. Verify `crates/rio-core/tests/render.rs` snapshots for a published, a failed and an `ask`-on-webhook review
+
+## 4. Finding history
+
+- [ ] 4.1 Update `finding_history` from every finished review (lineage or not) with first/last seen, count, status, response, location and `code_hash` of the normalized enclosing symbol. Verify Worker tests for a first sighting, a repeat, and a non-lineage review
+- [ ] 4.2 Apply remembered dismissals in consolidation after profile suppressions: `intentional`, `irrelevant`, `style` on unchanged `code_hash` are removed and counted as remembered; changed code re-reports with `history`; `wrong` is never remembered; a reappearing `fixed` identity is flagged as a regression of a fixed finding. Verify consolidation tests for each rule
+- [ ] 4.3 Add `GET /v1/findings` with repository, status, rule and since filters and tenant isolation, and `rio findings [--status] [--rule] [--since] [--format json]`. Verify API tests for filters and a cross-tenant 404, and CLI tests for terminal and JSON output
+- [ ] 4.4 Add `--show-remembered` to `rio review` and the remembered footer lines with reason and origin to all renderers. Verify render snapshots with and without the flag
+
+## 5. SARIF
+
+- [ ] 5.1 Implement the SARIF 2.1.0 renderer in `rio-core` per `docs/sarif-mapping.md` (rules, levels, locations with `SRCROOT`, `partialFingerprints.rioFindingId/v1`, `baselineState`, properties, run properties, invocation, exclusions, error status). Verify the fixtures in `tests/fixtures/sarif/` match byte-for-byte after canonical ordering and validate against the official SARIF schema
+- [ ] 5.2 Implement the same mapping in the Worker for `GET /v1/reviews/{id}/report?format=sarif`. Verify a test renders every fixture through both renderers and asserts equality
+- [ ] 5.3 Add `--format sarif` to `rio review` with the clean-stdout rules and the error-document behavior for exits 2 and 3. Verify CLI tests for a complete review, a configuration error and a non-repository directory
+
+## 6. Suppression proposals
+
+- [ ] 6.1 Compute proposals at review end from the last 90 days of feedback (`irrelevant` and `style` only; `{rule}` per rule id; `{path: <dir>/**}` per directory with mixed rules; threshold from `proposal_threshold`), store them with evidence and statuses, and honor the 180-day pause after a decline. Verify Worker tests at threshold minus one and at threshold, with `wrong` not counting, and after a decline
+- [ ] 6.2 Add `GET /v1/suppressions` and the footer listing of open proposals; verify API tests and render snapshots
+- [ ] 6.3 Implement `rio suppressions list|apply <id> [--yes]|decline <id> [--note]`: apply prints the entry and evidence, confirms, appends to `.rio/profiles/default.yaml` (creating it extending `rio/base`), validates, restores the previous content on failure, and marks the proposal applied. Verify CLI tests for creation, append, validation failure rollback, decline and the no-confirmation refusal; document the commands in `README.md`
+
+## 7. Agent result cache
+
+- [ ] 7.1 Compute `hunk_hash` and `context_hash` in the agents step, look up `cache/<tenant>/<hunk_hash>/<context_hash>.json`, replay hits with `source.cached: true` and no model call, slice agent output per hunk and populate entries only after a complete run; skip lookup and population on fork PRs and when `cache: false`. Verify workflow tests for a hit, a miss, a prompt edit, a model change, a fork review and a budget-cut run
+- [ ] 7.2 Add the `agent_cache` index, retention equal to evidence retention, and the `cache` report object with the footer line; add a test that fails when `prompt.md` changes without a manifest version bump. Verify retention tests and render snapshots
+
+## 8. Contracts agent
+
+- [ ] 8.1 Build the deterministic contract inventory in the agents step (changed `endpoint`, `table`, `event`, `config` nodes and exported symbols with per-language visibility rules, consumers at `hops` in both versions, unresolved edges listed). Verify unit tests on TypeScript, Python and Rust fixtures for each contract kind and for an unresolved consumer
+- [ ] 8.2 Write `modules/agents/contracts/prompt.md`, declare `contracts: true` in the manifest, wire triage's `public_contracts` signal to select it, and validate hypothesis rule ids against `contracts/<kind>/<break>` with the two-location rule (no consumer → risk). Verify Worker tests with a recorded gateway for a removed route with a consumer (defect), an added required parameter without a consumer (risk) and a rejected single-location defect
+- [ ] 8.3 Add contracts cases to the eval reference set and the per-agent precision report. Verify `python3 -m unittest discover -s eval/tests -v` covers the new cases
+
+## 9. Security agent and catalogs
+
+- [ ] 9.1 Add `modules/catalogs/owasp-top10-2025.yaml` and `asvs-5.0.yaml` as `catalog` modules with ids, titles, Rio-written summaries, `applies_when` predicates, trace hints and attribution. Verify a loader test checks unique ids, every predicate name is known and both files validate against module-v1
+- [ ] 9.2 Implement applicability filtering against the change (languages, frameworks from prepare, touched node kinds, sensitive paths) and the taint trace inputs for the security step. Verify unit tests that a Rust CLI change filters out browser-only items and an endpoint change keeps injection items
+- [ ] 9.3 Write `modules/agents/security/prompt.md`, set the manifest `available: true`, remove the v0.2 unavailable branch from the workflow, require `catalog_item` on security hypotheses and collect `unassessed` with reasons. Verify Worker tests that an enabled step makes security model calls, a zero-hypothesis run still lists assessed and unassessed items, and a hypothesis without `catalog_item` is rejected
+- [ ] 9.4 Render catalog coverage in the security section and footer across renderers. Verify render snapshots with assessed, unassessed and no-security runs
+- [ ] 9.5 Add `modules/profiles/security.yaml` (extends base, security enabled, thorough, `asvs-5.0`) and update `docs/profiles.md`, `docs/cloudflare.md` and `README.md` to drop the v0.3 gate wording. Verify `rio profile show rio/security` shows the step enabled and the generated profile reference is regenerated
+- [ ] 9.6 Add security cases to the eval reference set (injection, missing authorization, clean controls). Verify the eval tests cover them and the security agent's precision is reported separately
+
+## 10. Release gate and integration
+
+- [ ] 10.1 Add `--false-positive-rate` to `eval/gate.py`: per agent `wrong / responses` over posted agent findings, failing above 15 % for agents with at least 30 responses, reporting others; add the v0.3 line to `docs/release-checklist.md`. Verify gate tests for a failing agent, a passing agent and one under the sample floor
+- [ ] 10.2 Run a recorded end-to-end PR lineage through the deployed-equivalent Worker: webhook open → prepare → review → publish under `auto`; synchronize → diff-only round with edits and a resolved thread; `/rio dismiss` from a collaborator; a fork PR held until `/rio review`; SARIF fetched from the endpoint equals the CLI's. Verify expected comments, check runs, footers and exit codes
+- [ ] 10.3 Run `cargo fmt --all --check`, `cargo clippy --workspace --all-targets --locked`, `cargo test --workspace --locked --no-fail-fast`, the Worker checks and tests, `RIO_TEST_DOCKER=1 python3 -m unittest discover -s worker/runner/tests -v`, `python3 -m unittest discover -s eval/tests -v`, `openspec validate --specs` and `openspec validate rio-v0-3-core --strict`. Verify the hosted Linux/macOS/Windows CI matrix passes on the pushed branch before marking implementation complete
+- [ ] 10.4 Live acceptance on a test account: install the app on a test repository, open a PR, observe the review and publication, run `rio review --pr` and `rio suppressions apply` against it, and record the evidence under `docs/evaluation/v0.3-pr-mode.md`. Verify the record lists run URLs, versions and observed results
+
+## Workflow follow-up
+
+- `rio-v0-3-council` (specs and tasks still to be written) and `rio-v0-3-qa` are sibling v0.3 changes; the council's `verify.split` and `nightly` predicates and its vendor governance are not part of this change.
+- Archive this change after its tasks, including the hosted CI matrix and the live acceptance record, are complete.
