@@ -24,7 +24,7 @@
 
 ## 5. Integration
 
-- [ ] 5.1 Run the full local suites (`cargo fmt --all --check`, `cargo clippy --workspace --all-targets --locked -- -D warnings`, `cargo test --workspace --locked`, Worker `npm run check` and `npx vitest run`, `python3 -m unittest discover -s eval/tests`, `RIO_TEST_DOCKER=1` runner tests), redeploy with `rio deploy` and the rebuilt runner image, and push so hosted CI runs. Verify all pass, including the Linux/macOS/Windows matrix.
+- [x] 5.1 Run the full local suites (`cargo fmt --all --check`, `cargo clippy --workspace --all-targets --locked -- -D warnings`, `cargo test --workspace --locked`, Worker `npm run check` and `npx vitest run`, `python3 -m unittest discover -s eval/tests`, `RIO_TEST_DOCKER=1` runner tests), redeploy with `rio deploy` and the rebuilt runner image, and push so hosted CI runs. Verify all pass, including the Linux/macOS/Windows matrix.
 - [ ] 5.2 Live check on the deployed endpoint with the largest approved evaluation case (HS-RS-04, astral-sh/ruff, 144.5 MiB base+head) and one Python case: the review completes with checks executed in the container, and a second review of the same repository uploads only new contents. Verify by the review reports, the upload byte counts printed by the CLI, and that the eight previously oversized cases now pass the CLI limit check.
 
 ## Workflow follow-up
