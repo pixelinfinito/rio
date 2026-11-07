@@ -57,11 +57,15 @@ The JSON renderer SHALL emit a single document `{ "schema": "rio-report-v1", "st
 - **THEN** `metrics` contains the wall time of each check that ran and the total wall time
 
 ### Requirement: Footer content
-The footer SHALL always list: each `failed`, `skipped` or `cancelled` check with its outcome, reason and hint; a statement when any result used trusted dependencies; coverage files listed as `coverage_excluded` or `coverage_not_instrumented`; each deferred step with the reason `no_endpoint`; excluded files with reasons; a size note when `max_lines` is exceeded; graph truncation when it occurred; the counts of suppressed findings per suppression entry; category-floor drops by category; held-back agent counts and titles by pool with guidance to run `--deep` or raise `max_defects`; fork static-only restrictions; and deferred board coordination when applicable.
+The footer SHALL always list: each `failed`, `skipped` or `cancelled` check with its outcome, reason and hint; a statement when any result used trusted dependencies; coverage files listed as `coverage_excluded` or `coverage_not_instrumented`; each deferred step with the reason `no_endpoint`; excluded files with reasons; a size note when `max_lines` is exceeded; graph truncation when it occurred; the counts of suppressed findings per suppression entry; category-floor drops by category; held-back agent counts and titles by pool with guidance to run `--deep` or raise `max_defects`; fork static-only restrictions; deferred board coordination when applicable; and, for lineage reviews, the round number, the lineage's cap state, the repository's author-response ratio when any response exists, and the count of findings held back as already posted.
 
 #### Scenario: Deferred steps explained
 - **WHEN** a review runs with no endpoint
 - **THEN** the footer lists `triage`, `agents` and `verify` as deferred with reason `no_endpoint`
+
+#### Scenario: Lineage footer
+- **WHEN** the third round of a lineage holds back two already-posted findings in a repository with author-response ratio 0.6
+- **THEN** the footer shows round 3 of cap 3, the ratio 0.6 and two held-back findings
 
 ### Requirement: Review cache
 Each run SHALL write its record to `<cache>/<review-id>/runs/<run-id>/`. The record contains `report.json`, `profile.resolved.yaml`, `graph/{base,head,delta}.json`, `owner_guidance.json` (every `REVIEW.md`, `CLAUDE.md` and `AGENTS.md` between the repository root and each changed file's directory, as `[{path, scope_dir, content_hash, lines[]}]`, stored as data and consumed by agent and verifier prompts when the endpoint runtime is available), per-hypothesis blind answers, vote results, verification artifact references and token/cost records when verification runs, and `checks/<kind>/<root>/`, which holds the raw tool output and the parsed findings. When the run finishes, it SHALL atomically replace `<cache>/<review-id>/latest` so that the file names the newest finished run. `<cache>` is the configured cache directory (default `.rio/cache`). Snapshots SHALL be stored under `<cache>/snapshots/`, base materializations and baseline results under `<cache>/baselines/`, head materializations under `<cache>/heads/`, and OSV advisory records under `<cache>/osv/`. The system SHALL create `<cache>/.gitignore` containing `*` so the cache is never committed.
