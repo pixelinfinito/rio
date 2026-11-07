@@ -7,7 +7,7 @@ A versioned, built-in ruleset names the interface defects and generated-looking 
 ## ADDED Requirements
 
 ### Requirement: Built-in ruleset
-`modules/qa/rules/ui-v1.yaml` SHALL be a module of kind `ruleset` listing rules with `id` (`ui/<name>`), `kind` (`probe` or `judged`), `category` (`functional`, `ux`, `style`, `accessibility`), default `severity`, a description and, for probes, the computed-style or DOM predicate and its threshold.
+`modules/qa/rules/ui-v1.yaml` SHALL be a module of kind `ruleset` listing rules with `id` (`ui/<name>` or `mobile/<name>`), `kind` (`probe` or `judged`), `category` (`functional`, `ux`, `style`, `accessibility`), default `severity`, a description and, for probes, the computed-style or DOM predicate and its threshold.
 
 #### Scenario: Ruleset validates as a module
 - **WHEN** the built-in ruleset is loaded

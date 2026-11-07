@@ -76,7 +76,7 @@ Each selected journey SHALL run once per viewport in its resolved matrix and per
 - **THEN** the harness switches to the matching landscape preset, the step boundary captures evidence in that orientation, and the journey continues
 
 ### Requirement: Journey outcomes
-Each selected journey SHALL end `passed`, `failed`, `skipped` (reason `missing_credentials`, `precondition_failed` or `held_back`), `not_run` (app not ready) or `cancelled` (budget or interruption). `failed` SHALL name the first step whose expectation or success criterion did not hold and SHALL carry the evidence references for that step. A journey SHALL be marked for each viewport and color scheme it ran in.
+Each selected journey SHALL end `passed`, `failed`, `skipped` (reason `missing_credentials`, `precondition_failed` or `held_back`), `not_run` (app not ready) or `cancelled` (reason `budget`, `harness_error` or `interrupted`). `failed` SHALL name the first step whose expectation or success criterion did not hold and SHALL carry the evidence references for that step. A journey SHALL be marked for each viewport and color scheme it ran in.
 
 #### Scenario: Failed step named
 - **WHEN** step 4 of `checkout` expects an order confirmation and the page shows a blank panel

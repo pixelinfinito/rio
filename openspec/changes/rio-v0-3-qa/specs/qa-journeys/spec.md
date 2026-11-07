@@ -50,6 +50,13 @@ Each step SHALL have `do` (a natural-language action) and MAY have `at` (route p
 - **WHEN** a step declares `do: Type hunter2 into the password field`
 - **THEN** validation warns that the step appears to contain a credential and recommends the persona login tool
 
+### Requirement: Candidate files
+A file ending in `.proposed.yaml` SHALL be a candidate: validated like a journey with `name` equal to the stem before `.proposed`, allowed to carry `sync_reason`, and never loaded for a run or counted by selection until renamed. `rio qa list` SHALL show candidates separately.
+
+#### Scenario: Candidate is not run
+- **WHEN** `.rio/qa/journeys/` contains `checkout.yaml` and `checkout.proposed.yaml`
+- **THEN** `rio qa` runs only `checkout`, and `rio qa list` shows the candidate with its `sync_reason`
+
 ### Requirement: Coverage declarations select journeys
 `covers.paths` globs and `covers.routes` patterns SHALL be the data from which changed-mode selection is computed. Validation SHALL reject journeys whose `covers.paths` is empty when `covers.routes` is also empty, and SHALL warn when a glob matches no file in the head snapshot.
 

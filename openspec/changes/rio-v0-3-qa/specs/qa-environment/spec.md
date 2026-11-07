@@ -7,10 +7,10 @@ The environment contract tells Rio how to start the application, when it is read
 ## ADDED Requirements
 
 ### Requirement: Environment contract
-`.rio/qa.yaml` SHALL declare `version: 1`, `app`, `personas[]` and the optional blocks `browser`, `harness`, `rules`, `evidence` and `seed` (`manifest` path, default `.rio/qa/seed/seed.yaml`; `migrations[]` globs; `max_size`; `fallback_rebuild`). The schema SHALL be published as `schemas/qa-config-v1.json`; unknown keys SHALL be rejected.
+`.rio/qa.yaml` SHALL declare `version: 1`, `app`, `personas[]` and the optional blocks `browser`, `harness`, `rules`, `evidence` (`video`, `retention_days`) and `seed` (`manifest` path, default `.rio/qa/seed/seed.yaml`; `migrations[]` globs; `max_size`; `fallback_rebuild`). The schema SHALL be published as `schemas/qa-config-v1.json`; unknown keys SHALL be rejected.
 
 #### Scenario: Full contract validates
-- **WHEN** the file declares `app` (`start`, `url`, `ready` with `path`, `status`, `timeout`, plus `env`, `seed`, `teardown`, `workdir`), two personas with `name`, `description`, `username_env` and `password_env`, `browser.viewports`, `browser.color_schemes`, `harness.default`, `harness.model`, `rules.disable`, `rules.add`, `evidence.video` and `evidence.trace`
+- **WHEN** the file declares `app` (`start`, `url`, `ready` with `path`, `status`, `timeout`, plus `env`, `seed`, `teardown`, `workdir`), two personas with `name`, `description`, `username_env` and `password_env`, `browser.viewports`, `browser.color_schemes`, `harness.default`, `harness.model`, `rules.disable`, `rules.add`, `evidence.video` and `evidence.retention_days`
 - **THEN** `rio qa validate` accepts it and `rio qa show` prints the resolved contract
 
 #### Scenario: Unknown key rejected
@@ -19,7 +19,7 @@ The environment contract tells Rio how to start the application, when it is read
 
 #### Scenario: Defaults applied
 - **WHEN** `.rio/qa.yaml` declares only `app` and one persona
-- **THEN** the resolved contract has viewports `mobile`, `tablet` and `desktop`, color schemes `light` and `dark`, harness `codex`, trace on and video off
+- **THEN** the resolved contract has viewports `mobile`, `tablet` and `desktop`, color schemes `light` and `dark`, harness `codex`, video off and evidence retention of 30 days
 
 ### Requirement: Viewport matrix
 `browser.viewports[]` SHALL name entries from the built-in presets or declare custom ones with `name`, `width`, `height`, `device_scale_factor`, `mobile` (touch events and a mobile user agent) and optional `orientation`. The default matrix SHALL be `mobile`, `tablet` and `desktop`.

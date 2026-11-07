@@ -14,7 +14,7 @@ QA results SHALL be published only when the profile's `publish` is `auto`, or `a
 - **THEN** the command reports that publication is outside the implemented transport and the local report is still written
 
 ### Requirement: Inline comments anchor on attributed lines
-A QA finding whose `qa.attribution` is `source` SHALL be published as an inline review comment on the attributed file and line when that line is within the PR diff, and as a comment on the file's first diff hunk otherwise. A finding whose attribution is `journey` SHALL be published in the summary comment, never inline. Probe findings sharing a rule and route SHALL be one comment listing viewports.
+A QA finding whose `qa.attribution` is `source` SHALL be published as an inline review comment on the attributed file and line when that line is within the PR diff, as a comment on the file's first diff hunk when the file has one, and in the summary comment when the file is not in the diff at all. A finding whose attribution is `journey` SHALL be published in the summary comment, never inline. Probe findings sharing a rule and route SHALL be one comment listing viewports.
 
 #### Scenario: Attributed to a changed line
 - **WHEN** a `ui/raw-primitive` finding is attributed to `src/components/Form.tsx:48` and that line is in the diff
@@ -44,7 +44,7 @@ Comments SHALL embed the failing step's screenshot as an image served by a signe
 
 #### Scenario: Expired evidence on an old comment
 - **WHEN** a reader opens the comment after the expiry
-- **THEN** the image no longer loads and the expiry line explains why; Rio does not re-sign on read
+- **THEN** the origin no longer serves the image, a copy GitHub's image proxy already cached may remain visible, the expiry line explains this, and Rio does not re-sign on read
 
 ### Requirement: Check run per QA step
 Publication SHALL create or update one check run named `rio/qa` with a neutral conclusion, a summary of journeys passed, failed, skipped and not run, and annotations for inline-anchored findings. A failed QA fail policy SHALL be reported as `failure` only when the profile's fail policy applies to publication; the QA risk tier SHALL never be an approval.

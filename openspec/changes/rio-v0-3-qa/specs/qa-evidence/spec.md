@@ -14,7 +14,7 @@ Each journey run SHALL produce, per step: a screenshot (`png`), a DOM and access
 - **THEN** the manifest lists ten screenshots, ten DOM snapshots, ten console logs, ten network logs, two traces and one transcript, each with a content hash
 
 ### Requirement: Storage location
-Local runs SHALL store evidence under `<cache>/<review-id>/runs/<run-id>/qa/<journey>/<viewport>-<scheme>/`, inheriting the cache's permissions, pruning and size limits. Hosted runs SHALL stream evidence to R2 under `qa/<tenant>/<review-id>/<run-id>/` as it is produced, so an interrupted run keeps the evidence captured before interruption. Evidence SHALL never be written inside the repository working tree.
+Local runs SHALL store evidence under `<cache>/<review-id>/runs/<run-id>/qa/<journey>/<viewport>-<scheme>/`, inheriting the cache's permissions, pruning and size limits. Hosted runs SHALL stream evidence to R2 under `qa/<tenant>/<review-id>/<run-id>/` as it is produced, so an interrupted run keeps the evidence captured before interruption. Evidence SHALL be written only under the git-ignored cache directory or the hosted store, never to a tracked path.
 
 #### Scenario: Interrupted hosted run
 - **WHEN** a hosted run is cancelled after two journeys
@@ -39,7 +39,7 @@ Each journey outcome and QA finding SHALL reference its evidence by artifact id.
 - **THEN** its screenshot and trace are links to signed URLs that expire, each scoped to one object
 
 ### Requirement: Retention
-Hosted evidence SHALL be deleted by a bucket lifecycle rule after `qa.evidence_retention` days (default 30), and the run record SHALL state the expiry date. Local evidence SHALL follow the review cache pruning rules. `rio qa evidence prune --review ID` SHALL delete hosted evidence for one review on demand.
+Hosted evidence SHALL be deleted by a bucket lifecycle rule after `evidence.retention_days` from `.rio/qa.yaml` (default 30), and the run record SHALL state the expiry date. Local evidence SHALL follow the review cache pruning rules. `rio qa evidence prune --review ID` SHALL delete hosted evidence for one review on demand.
 
 #### Scenario: Expired evidence
 - **WHEN** a report older than the retention period is rendered from the cache

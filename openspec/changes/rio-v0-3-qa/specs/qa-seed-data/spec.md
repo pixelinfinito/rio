@@ -40,14 +40,14 @@ A seed snapshot SHALL be keyed by a fingerprint of the manifest, every reference
 - **THEN** the fingerprint differs, the seed is rebuilt and captured, and the footer shows `seed: built` with the reason `migrations changed`
 
 ### Requirement: Snapshot storage
-Seed snapshots SHALL be stored content-addressed by fingerprint: locally under `<cache>/qa-seeds/<fingerprint>/`, hosted in the same tenant-scoped store as review snapshots, so unchanged archives are not re-uploaded. A snapshot SHALL be split into one archive per datastore and path so a change to one datastore uploads only that archive. Snapshot size SHALL be capped by `qa.seed_max_size` (default 2 GiB) and the footer SHALL show the size.
+Seed snapshots SHALL be stored content-addressed by fingerprint: locally under `<cache>/qa-seeds/<fingerprint>/`, hosted in the same tenant-scoped store as review snapshots, so unchanged archives are not re-uploaded. A snapshot SHALL be split into one archive per datastore and path so a change to one datastore uploads only that archive. Snapshot size SHALL be capped by `seed.max_size` in `.rio/qa.yaml` (default 2 GiB) and the footer SHALL show the size.
 
 #### Scenario: One datastore changes
 - **WHEN** only the `files` path content changes between fingerprints
 - **THEN** only the files archive is uploaded and the database archives are reused by content hash
 
 #### Scenario: Size cap
-- **WHEN** a captured snapshot exceeds `qa.seed_max_size`
+- **WHEN** a captured snapshot exceeds `seed.max_size`
 - **THEN** the build ends `failed` with reason `seed_too_large`, names the largest archive, and the run continues without seed by rebuilding each time only if `seed.fallback_rebuild` is true
 
 ### Requirement: Isolation between journeys
