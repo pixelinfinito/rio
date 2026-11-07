@@ -349,6 +349,40 @@ describe("quorum", () => {
       ),
     ).toBe("plausible");
   });
+  it("bounds the fallback excerpt when no graph node matches the location", async () => {
+    const longFile = Array.from({ length: 5000 }, (_, i) => `line ${i + 1}: ${"y".repeat(60)}`).join("\n");
+    const added = {
+      base: {},
+      head: { "src/new.ts": { mode: 0o100644, content: longFile } },
+    };
+    const empty = { nodes: [], edges: [] };
+    const prompt = await blindContext({
+      profile,
+      hypothesis: {
+        ...hypothesis,
+        // A huge line range must not send the whole file.
+        location: { ...hypothesis.location, path: "src/new.ts", symbol_path: "missing", line_start: 1, line_end: 5000 },
+      },
+      intent: "Fix behavior",
+      guidance: [],
+      snapshot: added,
+      context: { snapshot: added, head: empty, executions: {}, guidance: [] },
+      gateway: { complete: async () => ({ content: "", input_tokens: 0, output_tokens: 0, cost_usd: null }) },
+      ledger: new MemoryLedger(),
+      tools: () => new Tools(added, { base: empty, head: empty }, undefined),
+      agentTokens: 50000,
+      save: async () => {},
+    } as any);
+    const start = prompt.indexOf('<repository_data label="selected code and direct callers">\n');
+    const from = prompt.indexOf("\n", start) + 1;
+    const [base, head] = JSON.parse(prompt.slice(from, prompt.indexOf("\n</repository_data>", from)));
+    expect(base.fallback).toBeNull();
+    expect(base.fallback_truncated).toBeUndefined();
+    expect(head.fallback.length).toBeLessThanOrEqual(CONTEXT_BYTES);
+    expect(head.fallback.split("\n").length).toBeLessThanOrEqual(SYMBOL_LINES);
+    expect(head.fallback_truncated).toBe(true);
+    expect(new TextEncoder().encode(prompt).length).toBeLessThan(CONTEXT_BYTES + 4096);
+  });
   it("bounds the blind context by bytes and lines and points voters at the tools for the rest", async () => {
     const longFile = Array.from({ length: 2000 }, (_, i) => `line ${i + 1}: ${"x".repeat(40)}`).join("\n");
     const wide = {

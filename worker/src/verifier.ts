@@ -92,7 +92,8 @@ export async function blindContext(o: VerifyOptions): Promise<string> {
           .split("\n")
           .slice(n!.line_start - 1, n!.line_end);
         let content = lines.slice(0, SYMBOL_LINES).join("\n");
-        const truncated = lines.length > SYMBOL_LINES || content.length > remaining;
+        const truncated =
+          lines.length > SYMBOL_LINES || content.length > remaining;
         content = content.slice(0, Math.max(0, remaining));
         remaining -= content.length;
         symbols.push({
@@ -101,22 +102,26 @@ export async function blindContext(o: VerifyOptions): Promise<string> {
           ...(truncated ? { truncated: true } : {}),
         });
       }
+      // A file added (or deleted) by the change has no counterpart to excerpt;
+      // the location's surroundings are bounded like a symbol excerpt.
+      let fallback: string | null | undefined;
+      let fallbackTruncated = false;
+      if (!nodes.length && (await reader[v].stat(location.path))) {
+        const start = Math.max(0, location.line_start - 20);
+        const window = (await readFile(reader, location.path, v))
+          .split("\n")
+          .slice(start, location.line_end + 20);
+        const text = window.slice(0, SYMBOL_LINES).join("\n");
+        fallback = text.slice(0, CONTEXT_BYTES);
+        fallbackTruncated =
+          window.length > SYMBOL_LINES || text.length > CONTEXT_BYTES;
+      } else if (!nodes.length) fallback = null;
       return {
         version,
         symbols,
         ...(omitted ? { callers_omitted: omitted } : {}),
-        // A file added (or deleted) by the change has no counterpart to excerpt.
-        fallback: nodes.length
-          ? undefined
-          : !(await reader[v].stat(location.path))
-            ? null
-            : (await readFile(reader, location.path, v))
-                .split("\n")
-                .slice(
-                  Math.max(0, location.line_start - 20),
-                  location.line_end + 20,
-                )
-                .join("\n"),
+        fallback,
+        ...(fallbackTruncated ? { fallback_truncated: true } : {}),
       };
     }),
   );
