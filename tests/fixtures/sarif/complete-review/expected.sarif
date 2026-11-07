@@ -1,0 +1,267 @@
+{
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "rio",
+          "version": "0.3.0",
+          "informationUri": "https://github.com/pixelinfinito/rio",
+          "rules": [
+            {
+              "id": "typecheck/tsc/TS2322",
+              "shortDescription": {
+                "text": "Type 'string' is not assignable to type 'number'."
+              },
+              "properties": {
+                "category": "defect"
+              }
+            },
+            {
+              "id": "correctness/null-dereference",
+              "shortDescription": {
+                "text": "parse() dereferences a missing header."
+              },
+              "properties": {
+                "category": "defect"
+              }
+            },
+            {
+              "id": "correctness/unchecked-index",
+              "shortDescription": {
+                "text": "3 occurrences of Index read without a bounds check; fix the pattern, for example at src/list.ts:4"
+              },
+              "properties": {
+                "category": "defect"
+              }
+            },
+            {
+              "id": "lint/eslint/no-unused-vars",
+              "shortDescription": {
+                "text": "'tmp' is assigned a value but never used."
+              },
+              "properties": {
+                "category": "defect"
+              }
+            }
+          ]
+        }
+      },
+      "originalUriBaseIds": {
+        "SRCROOT": {
+          "description": {
+            "text": "Repository root"
+          }
+        }
+      },
+      "results": [
+        {
+          "ruleId": "typecheck/tsc/TS2322",
+          "ruleIndex": 0,
+          "level": "error",
+          "message": {
+            "text": "Type 'string' is not assignable to type 'number'.\nTrigger: Assigning a string to a number"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/a.ts",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 8,
+                  "endLine": 8,
+                  "startColumn": 5
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/a.ts",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 12,
+                  "endLine": 12,
+                  "startColumn": 5
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "rioFindingId/v1": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "baselineState": "new",
+          "properties": {
+            "evidence_level": "static_proven",
+            "category": "defect",
+            "state": "worsened",
+            "severity": "error"
+          }
+        },
+        {
+          "ruleId": "correctness/null-dereference",
+          "ruleIndex": 1,
+          "level": "warning",
+          "message": {
+            "text": "parse() dereferences a missing header.\nTrigger: A request without the Content-Type header"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/parse.ts",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 30,
+                  "endLine": 34
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "rioFindingId/v1": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          },
+          "baselineState": "new",
+          "properties": {
+            "evidence_level": "reproduced",
+            "category": "defect",
+            "state": "new",
+            "severity": "warning",
+            "verification": {
+              "voters": 3,
+              "agreeing": 3,
+              "blind_match": [
+                "same",
+                "same",
+                "related"
+              ],
+              "split": false
+            }
+          }
+        },
+        {
+          "ruleId": "correctness/unchecked-index",
+          "ruleIndex": 2,
+          "level": "warning",
+          "message": {
+            "text": "3 occurrences of Index read without a bounds check; fix the pattern, for example at src/list.ts:4\nTrigger: Reading index 0 of an empty array"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/list.ts",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 4,
+                  "endLine": 4
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/list.ts",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 9,
+                  "endLine": 9
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/queue.ts",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 17,
+                  "endLine": 17
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "rioFindingId/v1": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+          },
+          "baselineState": "new",
+          "properties": {
+            "evidence_level": "static_proven",
+            "category": "defect",
+            "state": "new",
+            "severity": "warning",
+            "verification": {
+              "voters": 3,
+              "agreeing": 3,
+              "blind_match": [
+                "same",
+                "same",
+                "related"
+              ],
+              "split": false
+            }
+          }
+        },
+        {
+          "ruleId": "lint/eslint/no-unused-vars",
+          "ruleIndex": 3,
+          "level": "note",
+          "message": {
+            "text": "'tmp' is assigned a value but never used."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/b.ts",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 3,
+                  "endLine": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "rioFindingId/v1": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+          },
+          "baselineState": "absent",
+          "properties": {
+            "evidence_level": "static_proven",
+            "category": "defect",
+            "state": "fixed",
+            "severity": "info"
+          }
+        }
+      ],
+      "invocations": [
+        {
+          "executionSuccessful": true,
+          "exitCode": 1,
+          "startTimeUtc": "2026-11-07T10:00:00Z",
+          "endTimeUtc": "2026-11-07T10:03:12Z"
+        }
+      ],
+      "properties": {
+        "rio.status": "complete",
+        "rio.risk_tier": {
+          "tier": "medium",
+          "reasons": [
+            "public_contract_change"
+          ],
+          "source": "triage"
+        },
+        "rio.review_id": "1234567890abcdef"
+      }
+    }
+  ]
+}
