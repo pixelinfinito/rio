@@ -27,6 +27,36 @@ async function rejectsReason(reason: string) {
   ).rejects.toThrow(/CHECK constraint/);
 }
 
+// 0004_pr_mode: suppressions carry origin, status and evidence; history counts start at one.
+async function prModeConstraints() {
+  const proposal = (id: string, status: string, origin = "proposed") =>
+    env.DB.prepare(
+      "INSERT INTO suppressions(id,tenant,repository,origin,status,entry_json,evidence_json,evidence_count,created_at) VALUES(?,?,?,?,?,?,?,?,?)",
+    )
+      .bind(id, "owner", "o/r", origin, status, `{"rule":"${id}"}`, "[]", 3, 1)
+      .run();
+  for (const status of ["proposed", "applied", "declined"])
+    await proposal(`s-${status}`, status);
+  await expect(proposal("s-bad", "suppressed")).rejects.toThrow(/CHECK/);
+  await expect(proposal("s-manual", "proposed", "manual")).rejects.toThrow(
+    /CHECK/,
+  );
+  await expect(
+    env.DB.prepare(
+      "INSERT INTO finding_history(tenant,repository,identity,rule_id,first_seen_review,last_seen_review,seen_count,status,location_json,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?)",
+    )
+      .bind("owner", "o/r", "f", "r", "a", "a", 0, "open", "{}", 1)
+      .run(),
+  ).rejects.toThrow(/CHECK/);
+  await expect(
+    env.DB.prepare(
+      "INSERT INTO publications(tenant,lineage_id,identity,review_id,kind,state,updated_at) VALUES(?,?,?,?,?,?,?)",
+    )
+      .bind("owner", "l", "f", "r", "finding", "duplicated", 1)
+      .run(),
+  ).rejects.toThrow(/CHECK/);
+}
+
 it("applies forward migrations once and leaves no deployment lock", async () => {
   for (let i = 0; i < 2; i++) await migrate(`migration-${i}`);
   const ledger = await env.DB.prepare("SELECT name FROM rio_migrations").all();
@@ -42,9 +72,16 @@ it("applies forward migrations once and leaves no deployment lock", async () => 
       "findings",
       "feedback",
       "contents",
+      "installations",
+      "deliveries",
+      "publications",
+      "finding_history",
+      "suppressions",
+      "agent_cache",
     ]),
   );
   expect(await tables()).not.toContain("feedback_next");
+  await prModeConstraints();
   // The fresh feedback table accepts only the standardized reasons.
   for (const reason of ["false_positive", "known", "other"])
     await rejectsReason(reason);
@@ -66,6 +103,12 @@ it("upgrades a v0.2 database and converts draft feedback reasons", async () => {
     "lineage_reviews",
     "lineages",
     "contents",
+    "installations",
+    "deliveries",
+    "publications",
+    "finding_history",
+    "suppressions",
+    "agent_cache",
   ])
     await env.DB.prepare(`DROP TABLE IF EXISTS ${table}`).run();
   const core = migrations.find((m) => m.name === "0001_core.sql")!;
@@ -117,6 +160,13 @@ it("upgrades a v0.2 database and converts draft feedback reasons", async () => {
       "lineage_reviews",
       "findings",
       "contents",
+      "installations",
+      "deliveries",
+      "publications",
+      "finding_history",
+      "suppressions",
+      "agent_cache",
     ]),
   );
+  await prModeConstraints();
 });

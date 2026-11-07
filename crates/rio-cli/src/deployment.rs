@@ -1352,6 +1352,29 @@ mod tests {
                 upload.2.contains("provider-secret") && upload.2.contains("gateway-secret-value")
             );
             assert_eq!(upload.2.contains("new_sqlite_classes"), !existing);
+            // The uploaded Worker embeds every D1 migration, and the deployment
+            // starts the migration Workflow that applies them after the upload.
+            for name in [
+                "0001_core.sql",
+                "0002_convergence.sql",
+                "0003_snapshot_contents.sql",
+                "0004_pr_mode.sql",
+            ] {
+                assert!(upload.2.contains(name), "{name}");
+            }
+            assert!(
+                upload
+                    .2
+                    .contains("CREATE TABLE IF NOT EXISTS finding_history")
+            );
+            let position =
+                |f: &dyn Fn(&(String, String, String)) -> bool| records.iter().position(f).unwrap();
+            assert!(
+                position(&|(m, p, _)| m == "PUT" && p.ends_with("/workers/scripts/rio"))
+                    < position(
+                        &|(m, p, _)| m == "POST" && p.ends_with("/workflows/rio-migrate/instances")
+                    )
+            );
             let saved = std::fs::read_to_string(directory.path().join("config.toml")).unwrap();
             assert!(saved.contains("rio.account-test.workers.dev"));
             assert!(!saved.contains("secret"));
