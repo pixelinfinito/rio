@@ -89,6 +89,7 @@ pub fn scan_secrets(diff: &Diff, head: &Tree) -> Result<Vec<Finding>> {
                 status: None,
                 resolution: None,
                 author_response: None,
+                history: None,
             });
         }
     }

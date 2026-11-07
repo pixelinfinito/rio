@@ -75,6 +75,7 @@ fn agent_security_renders_uncertainty_votes_policy_caps_and_escaped_evidence() {
     finding.category = Category::Security;
     finding.source = Source::Agent {
         agent: "security".into(),
+        cached: None,
     };
     finding.evidence_level = EvidenceLevel::Plausible;
     finding.message = "<script>alert(1)</script> [click](https://example.com) token = ghp_abcdefghijklmnopqrstuvwxyz1234567890".into();
@@ -262,6 +263,7 @@ fn capped_lineage() -> Report {
     agent.state = State::New;
     agent.source = Source::Agent {
         agent: "defects".into(),
+        cached: None,
     };
     agent.message = "Missing guard on <input>".into();
     agent.round = Some(4);

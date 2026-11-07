@@ -36,9 +36,14 @@ export interface Hypothesis {
   impact?: string;
   suggested_fix?: string;
   state: "new" | "worsened" | "pre-existing" | "fixed" | "unclassified";
-  source: { agent: string };
+  source: { agent: string; cached?: boolean };
   guidance?: { path: string; line: number };
   evidence?: string[];
+  // Agent-specific keys, folded into the finding by consolidation.
+  locations?: Location[];
+  catalog_item?: string;
+  trace_change?: "introduced" | "removed" | "weakened";
+  limitations?: string[];
 }
 export interface GraphNode {
   id: string;
@@ -118,7 +123,24 @@ export type Finding = Hypothesis & {
   status?: LifecycleStatus;
   resolution?: { fixed_in?: string; note?: string };
   author_response?: AuthorResponse;
+  // Present only when the repository registry has an earlier record.
+  history?: FindingHistory;
 };
+export interface FindingHistory {
+  first_seen: string;
+  last_seen: string;
+  seen_count: number;
+  previous_status: LifecycleStatus;
+  previous_response?: AuthorResponse;
+  dismissed_in?: string;
+}
+export type UnassessedReason = "budget" | "no_evidence" | "tools_unavailable";
+export interface SecurityCoverage {
+  catalog: "owasp-top10-2025" | "asvs-5.0";
+  assessed: { item: string; title: string; findings: string[] }[];
+  unassessed: { item: string; title: string; reason: UnassessedReason }[];
+  not_applicable: { item: string; title: string }[];
+}
 export interface LineageRef {
   repository: string;
   kind: "pr" | "branch";

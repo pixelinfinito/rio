@@ -182,6 +182,116 @@ pub struct Report {
     /// Present only for reviews that belong to a lineage (PR or `--since-last`).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub lineage: Option<Lineage>,
+    /// Present when a publication step ran.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub publication: Option<Publication>,
+    /// Agent result cache use; present when the agents step ran.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub cache: Option<CacheStats>,
+    /// Open suppression proposals for the repository.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub suppression_proposals: Option<Vec<SuppressionProposal>>,
+    /// Catalog coverage; present when the security step ran.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub security_coverage: Option<SecurityCoverage>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum PublishPolicy {
+    Never,
+    Ask,
+    Auto,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Publication {
+    pub policy: PublishPolicy,
+    pub posted: u32,
+    pub edited: u32,
+    pub resolved: u32,
+    pub failed: u32,
+    pub unanchored: u32,
+    pub check_run_url: Option<String>,
+    pub summary_comment_url: Option<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct CacheStats {
+    pub lookups: u64,
+    pub hits: u64,
+    pub hit_rate: Option<Ratio>,
+    pub tokens_saved_estimate: u64,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct SuppressionProposal {
+    pub id: String,
+    pub entry: ProposalEntry,
+    pub evidence_count: u32,
+    pub since: String,
+}
+
+/// A proposed profile `suppress` entry: a rule or a directory glob.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum ProposalEntry {
+    Rule { rule: String },
+    Path { path: String },
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum SecurityCatalog {
+    #[serde(rename = "owasp-top10-2025")]
+    OwaspTop10_2025,
+    #[serde(rename = "asvs-5.0")]
+    Asvs5_0,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum UnassessedReason {
+    Budget,
+    NoEvidence,
+    ToolsUnavailable,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct AssessedItem {
+    pub item: String,
+    pub title: String,
+    /// Identities of the reported findings that cite the item.
+    pub findings: Vec<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct UnassessedItem {
+    pub item: String,
+    pub title: String,
+    pub reason: UnassessedReason,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct CatalogItemRef {
+    pub item: String,
+    pub title: String,
+}
+
+/// Which catalog items the security step assessed. A run with unassessed
+/// items is never a passed security review.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct SecurityCoverage {
+    pub catalog: SecurityCatalog,
+    pub assessed: Vec<AssessedItem>,
+    pub unassessed: Vec<UnassessedItem>,
+    pub not_applicable: Vec<CatalogItemRef>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -272,6 +382,10 @@ impl Report {
             metrics: Metrics::default(),
             error: None,
             lineage: None,
+            publication: None,
+            cache: None,
+            suppression_proposals: None,
+            security_coverage: None,
         }
     }
 }

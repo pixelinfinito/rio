@@ -457,6 +457,7 @@ pub fn diff_coverage(
                 status: None,
                 resolution: None,
                 author_response: None,
+                history: None,
             });
         }
     }

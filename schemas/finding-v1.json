@@ -132,6 +132,10 @@
             "agent": {
               "type": "string",
               "minLength": 1
+            },
+            "cached": {
+              "type": "boolean",
+              "description": "True when the hypotheses were replayed from the agent result cache."
             }
           },
           "required": [
@@ -327,6 +331,76 @@
       ],
       "additionalProperties": false,
       "description": "Semantic invariant: agreeing <= voters and blind_match contains one entry per configured voter; enforced by Rio deserialization and runtime validation."
+    },
+    "history": {
+      "description": "Earlier record of this identity in the repository's finding registry; present only when one exists. Never consulted by state, status or fail policies.",
+      "type": "object",
+      "properties": {
+        "first_seen": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Review id that first produced the identity in the repository."
+        },
+        "last_seen": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Review id that last produced the identity before this review."
+        },
+        "seen_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "previous_status": {
+          "enum": [
+            "open",
+            "fixed",
+            "dismissed"
+          ]
+        },
+        "previous_response": {
+          "type": "object",
+          "properties": {
+            "reason": {
+              "enum": [
+                "fixed",
+                "wrong",
+                "intentional",
+                "irrelevant",
+                "style"
+              ]
+            },
+            "actor": {
+              "type": "string",
+              "minLength": 1
+            },
+            "at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "note": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "reason",
+            "actor",
+            "at"
+          ],
+          "additionalProperties": false
+        },
+        "dismissed_in": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Review id or pull request reference where the identity was dismissed."
+        }
+      },
+      "required": [
+        "first_seen",
+        "last_seen",
+        "seen_count",
+        "previous_status"
+      ],
+      "additionalProperties": false
     }
   },
   "required": [
