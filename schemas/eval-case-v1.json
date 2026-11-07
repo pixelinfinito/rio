@@ -1,0 +1,315 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rio.dev/schemas/eval-case-v1.json",
+  "title": "Rio evaluation case v1",
+  "description": "Internal to eval/. A labeled case: the change under review (input), the findings a correct review is expected to report, and where the label came from. Incident cases are written by `rio eval import-incident` into the reviewed repository's own eval/cases/ directory.",
+  "type": "object",
+  "properties": {
+    "schema": {
+      "const": "rio-eval-case-v1"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+    },
+    "label": {
+      "description": "Case family. The regression gate reports incident recall separately.",
+      "enum": [
+        "incident",
+        "historical",
+        "mutation"
+      ]
+    },
+    "repository": {
+      "type": "string",
+      "minLength": 1
+    },
+    "input": {
+      "description": "The change to review: base and head commits (full SHAs) with the refs they came from.",
+      "type": "object",
+      "properties": {
+        "pr": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "base": {
+          "$ref": "#/$defs/commit"
+        },
+        "head": {
+          "$ref": "#/$defs/commit"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/path"
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "pr",
+        "base",
+        "head",
+        "files"
+      ],
+      "additionalProperties": false
+    },
+    "expected": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/expected_finding"
+      }
+    },
+    "counterfactual_catch": {
+      "description": "Whether CI or a human would have caught the issue without Rio. Required for incidents.",
+      "enum": [
+        "ci",
+        "human",
+        "none"
+      ]
+    },
+    "provenance": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "enum": [
+            "import-incident",
+            "manual",
+            "mutation-tool"
+          ]
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "tool": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fix": {
+          "description": "The revert or fix-forward PR an incident was derived from.",
+          "type": "object",
+          "properties": {
+            "pr": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "url": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "base": {
+              "$ref": "#/$defs/commit"
+            },
+            "head": {
+              "$ref": "#/$defs/commit"
+            },
+            "files": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/path"
+              },
+              "uniqueItems": true
+            }
+          },
+          "required": [
+            "pr",
+            "base",
+            "head",
+            "files"
+          ],
+          "additionalProperties": false
+        },
+        "overlap": {
+          "description": "Files changed by both the original and the fix PR.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/path"
+          },
+          "uniqueItems": true
+        },
+        "location_heuristic": {
+          "type": "string",
+          "minLength": 1
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "source",
+        "created_at",
+        "tool"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "schema",
+    "id",
+    "label",
+    "repository",
+    "input",
+    "expected",
+    "provenance"
+  ],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "label": {
+            "const": "incident"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "counterfactual_catch"
+        ],
+        "properties": {
+          "provenance": {
+            "required": [
+              "fix",
+              "overlap"
+            ],
+            "properties": {
+              "overlap": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "path": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?![A-Za-z]:)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"
+    },
+    "commit": {
+      "type": "object",
+      "properties": {
+        "ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sha": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{40,64}$"
+        }
+      },
+      "required": [
+        "ref",
+        "sha"
+      ],
+      "additionalProperties": false
+    },
+    "location": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/path"
+        },
+        "line_start": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "line_end": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "symbol_path": {
+          "description": "Enclosing symbol name, or an empty string for a file-level expectation.",
+          "type": "string"
+        },
+        "symbol_line": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        }
+      },
+      "required": [
+        "path",
+        "line_start",
+        "line_end",
+        "symbol_path",
+        "symbol_line"
+      ],
+      "additionalProperties": false
+    },
+    "expected_finding": {
+      "type": "object",
+      "properties": {
+        "locations": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/location"
+          }
+        },
+        "trigger": {
+          "description": "Editable description of what triggers the defect.",
+          "type": "string",
+          "minLength": 1
+        },
+        "trigger_source": {
+          "enum": [
+            "fix-pr-description",
+            "fix-pr-title",
+            "manual"
+          ]
+        },
+        "rule_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "category": {
+          "enum": [
+            "defect",
+            "risk",
+            "security",
+            null
+          ]
+        },
+        "severity": {
+          "enum": [
+            "high",
+            "normal",
+            null
+          ]
+        }
+      },
+      "required": [
+        "locations",
+        "trigger",
+        "trigger_source"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

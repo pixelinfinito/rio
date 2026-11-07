@@ -410,6 +410,7 @@ pub fn diff_coverage(
                     column: None,
                     symbol_path: symbol.clone(),
                     occurrence_state: OccurrenceState::New,
+                    id: None,
                 })
                 .collect();
             let range_text = ranges
@@ -450,6 +451,12 @@ pub fn diff_coverage(
                     version: "merged".into(),
                 },
                 advisory: None,
+                verification: None,
+                round: None,
+                first_posted_in: None,
+                status: None,
+                resolution: None,
+                author_response: None,
             });
         }
     }

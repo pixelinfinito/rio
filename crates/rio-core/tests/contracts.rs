@@ -161,3 +161,139 @@ fn report_risk_tier_is_nullable_and_has_a_strict_contract() {
         assert!(!validator.is_valid(&report));
     }
 }
+
+#[test]
+fn verification_and_security_are_optional_but_counts_are_checked() {
+    let original: Value = serde_json::from_str(include_str!("fixtures/finding.json")).unwrap();
+    let mut value = original.clone();
+    value["category"] = json!("security");
+    value["verification"] =
+        json!({"voters":3,"agreeing":2,"blind_match":["same","related","none"],"split":true});
+    let finding: rio_core::Finding = serde_json::from_value(value.clone()).unwrap();
+    assert_eq!(serde_json::to_value(finding).unwrap(), value);
+    assert!(
+        jsonschema::validator_for(&schema("finding"))
+            .unwrap()
+            .is_valid(&value)
+    );
+    for invalid in [
+        json!({"voters":0,"agreeing":0,"blind_match":[],"split":false}),
+        json!({"voters":1,"agreeing":2,"blind_match":["same"],"split":false}),
+        json!({"voters":2,"agreeing":1,"blind_match":["none"],"split":false}),
+        json!({"voters":1,"agreeing":1,"blind_match":["unknown"],"split":false}),
+    ] {
+        value["verification"] = invalid;
+        assert!(serde_json::from_value::<rio_core::Finding>(value.clone()).is_err());
+    }
+    let report: rio_core::Report =
+        serde_json::from_str(include_str!("fixtures/complete.json")).unwrap();
+    assert!(
+        serde_json::to_value(report)
+            .unwrap()
+            .get("security")
+            .is_none()
+    );
+}
+
+fn lineage_finding() -> Value {
+    let mut finding: Value = serde_json::from_str(include_str!("fixtures/finding.json")).unwrap();
+    finding["state"] = json!("new");
+    finding["round"] = json!(2);
+    finding["first_posted_in"] = json!("3f2a");
+    finding["status"] = json!("dismissed");
+    finding["resolution"] = json!({"note": "did not reproduce"});
+    finding["author_response"] = json!({"reason": "wrong", "actor": "octocat",
+        "at": "2026-11-05T10:00:00Z", "note": "guarded upstream"});
+    finding
+}
+
+fn lineage() -> Value {
+    json!({"repository":"github.com/pixelinfinito/rio","kind":"branch","ref":"feature/x",
+        "generation":1,"round":4,"cap":3,"capped":true,"diff_only":true,
+        "previous_head":"snap-3","held_back":2,"rounds_to_pass":null,
+        "author_response_ratio":0.6,
+        "reconsider":{"unresolved":2,"top":[{"id":"a1","title":"Missing guard",
+            "path":"src/a.ts","line_start":3}],"split":["parser","renderer"]}})
+}
+
+#[test]
+fn lineage_finding_fields_round_trip_typed_and_validate_with_or_without_them() {
+    let finding_validator = jsonschema::validator_for(&schema("finding")).unwrap();
+    let report_validator = jsonschema::validator_for(&schema("report")).unwrap();
+    let plain: Value = serde_json::from_str(include_str!("fixtures/finding.json")).unwrap();
+    let typed: rio_core::Finding = serde_json::from_value(plain.clone()).unwrap();
+    assert!(typed.round.is_none() && typed.status.is_none() && typed.author_response.is_none());
+    // Absent lineage fields are not serialized.
+    assert_eq!(serde_json::to_value(&typed).unwrap(), plain);
+
+    let value = lineage_finding();
+    assert!(finding_validator.is_valid(&value));
+    let typed: rio_core::Finding = serde_json::from_value(value.clone()).unwrap();
+    assert_eq!(typed.state, rio_core::State::New);
+    assert_eq!(typed.status, Some(rio_core::LifecycleStatus::Dismissed));
+    assert_eq!(
+        typed.author_response.as_ref().unwrap().reason,
+        rio_core::ResponseReason::Wrong
+    );
+    assert_eq!(serde_json::to_value(&typed).unwrap(), value);
+    for status in ["open", "fixed", "dismissed"] {
+        let mut value = value.clone();
+        value["status"] = json!(status);
+        assert!(finding_validator.is_valid(&value));
+        assert!(serde_json::from_value::<rio_core::Finding>(value).is_ok());
+    }
+    let mut report: Value = serde_json::from_str(include_str!("fixtures/complete.json")).unwrap();
+    report["findings"] = json!([value.clone()]);
+    report["lineage"] = lineage();
+    assert!(report_validator.is_valid(&report));
+    let typed: rio_core::Report = serde_json::from_value(report.clone()).unwrap();
+    assert_eq!(serde_json::to_value(&typed).unwrap(), report);
+    assert!(rio_core::render_json(&typed).is_ok());
+}
+
+#[test]
+fn lifecycle_values_cannot_leak_into_state_and_unknown_reasons_are_rejected() {
+    let finding_validator = jsonschema::validator_for(&schema("finding")).unwrap();
+    let report_validator = jsonschema::validator_for(&schema("report")).unwrap();
+    let mut invalid = Vec::new();
+    let mut value = lineage_finding();
+    value["state"] = json!("dismissed");
+    invalid.push(value);
+    for reason in ["known", "false_positive"] {
+        let mut value = lineage_finding();
+        value["author_response"]["reason"] = json!(reason);
+        invalid.push(value);
+    }
+    let mut value = lineage_finding();
+    value["status"] = json!("resolved");
+    invalid.push(value);
+    let mut value = lineage_finding();
+    value["resolution"] = json!({"fixed_in": "abc", "by": "bot"});
+    invalid.push(value);
+    for value in invalid {
+        assert!(!finding_validator.is_valid(&value), "{value}");
+        assert!(
+            serde_json::from_value::<rio_core::Finding>(value.clone()).is_err(),
+            "{value}"
+        );
+        let mut report: Value =
+            serde_json::from_str(include_str!("fixtures/complete.json")).unwrap();
+        report["findings"] = json!([value]);
+        assert!(!report_validator.is_valid(&report));
+    }
+    for (key, bad) in [
+        ("author_response_ratio", json!(1.5)),
+        ("kind", json!("tag")),
+        ("round", json!(0)),
+    ] {
+        let mut report: Value =
+            serde_json::from_str(include_str!("fixtures/complete.json")).unwrap();
+        report["lineage"] = lineage();
+        report["lineage"][key] = bad;
+        assert!(!report_validator.is_valid(&report), "{key}");
+    }
+    let mut report: Value = serde_json::from_str(include_str!("fixtures/complete.json")).unwrap();
+    report["lineage"] = lineage();
+    report["lineage"]["author_response_ratio"] = json!(1.5);
+    assert!(serde_json::from_value::<rio_core::Report>(report).is_err());
+}

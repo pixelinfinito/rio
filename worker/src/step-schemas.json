@@ -1,0 +1,141 @@
+{
+  "rio/agents@0.1.0": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {}
+  },
+  "rio/checks@0.1.0": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "typecheck": { "type": "boolean", "default": true },
+      "lint": { "type": "boolean", "default": true },
+      "secrets": { "type": "boolean", "default": true },
+      "coverage": { "type": "boolean", "default": true },
+      "dependencies": { "type": "boolean", "default": true },
+      "baseline": { "type": "boolean", "default": true },
+      "trust_installed_dependencies": { "type": "boolean", "default": false }
+    }
+  },
+  "rio/graph@0.1.0": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "hops": { "type": "integer", "minimum": 0, "default": 2 },
+      "max_nodes": { "type": "integer", "minimum": 1, "default": 2000 }
+    }
+  },
+  "rio/prepare@0.1.0": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "exclude": {
+        "type": "array",
+        "items": { "type": "string" },
+        "default": []
+      }
+    }
+  },
+  "rio/report@0.1.0": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "class_threshold": {
+        "type": "integer",
+        "minimum": 1,
+        "default": 3,
+        "description": "Agent findings sharing rule and trigger across more symbols than this merge into one class-level finding"
+      }
+    }
+  },
+  "rio/security@0.2.0": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "enabled": { "type": "boolean", "default": false },
+      "posture": {
+        "enum": ["critical-only", "balanced", "thorough"],
+        "default": "thorough"
+      },
+      "max_defects": { "type": "integer", "minimum": 1 },
+      "catalog": {
+        "enum": ["owasp-top10-2025", "asvs-5.0"],
+        "default": "owasp-top10-2025"
+      },
+      "fail_on": {
+        "type": "object",
+        "properties": {
+          "evidence": {
+            "enum": ["reproduced", "static_proven", "plausible", "refuted"]
+          },
+          "categories": {
+            "type": "array",
+            "items": { "enum": ["defect", "risk", "security"] },
+            "uniqueItems": true
+          },
+          "states": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "new",
+                "worsened",
+                "pre-existing",
+                "fixed",
+                "unclassified"
+              ]
+            },
+            "uniqueItems": true
+          },
+          "rules": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "incomplete": { "type": "boolean" },
+          "required_checks": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "typecheck",
+                "lint",
+                "secrets",
+                "coverage",
+                "dependencies"
+              ]
+            },
+            "uniqueItems": true
+          }
+        },
+        "required": [],
+        "additionalProperties": false,
+        "default": {
+          "evidence": "plausible",
+          "categories": ["security"],
+          "states": ["new", "worsened"],
+          "rules": [],
+          "incomplete": true,
+          "required_checks": []
+        }
+      }
+    }
+  },
+  "rio/triage@0.1.0": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "sensitive_paths": {
+        "type": "array",
+        "items": { "type": "string", "minLength": 1 },
+        "default": []
+      },
+      "public_contracts": { "type": "boolean", "default": true },
+      "dependency_changes": { "type": "boolean", "default": true },
+      "missing_coverage": { "type": "boolean", "default": true },
+      "fan_out_high": { "type": "integer", "minimum": 1, "default": 20 }
+    }
+  },
+  "rio/verify@0.1.0": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": { "run": { "type": "boolean", "default": true } }
+  }
+}

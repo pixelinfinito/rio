@@ -16,6 +16,33 @@ concurrency:
 jobs:
   checks:
     uses: ./.github/workflows/ci.yml
+  runner-image:
+    needs: checks
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/metadata-action@v5
+        id: image
+        with:
+          images: ghcr.io/${{ github.repository_owner }}/rio-runner
+          tags: type=semver,pattern={{version}}
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: worker/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.image.outputs.tags }}
+          labels: ${{ steps.image.outputs.labels }}
   build:
     needs: checks
     permissions:
@@ -41,6 +68,14 @@ jobs:
         with:
           toolchain: '1.99.1'
           targets: ${{ matrix.target }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Verify the paired embedded Worker
+        shell: bash
+        run: |
+          npm ci --prefix worker
+          npm run check --prefix worker
       - uses: Swatinem/rust-cache@v2
         with:
           key: release-${{ matrix.target }}
@@ -129,7 +164,7 @@ jobs:
             dist/*.intoto.jsonl
           if-no-files-found: error
   publish:
-    needs: build
+    needs: [build, runner-image]
     runs-on: ubuntu-24.04
     permissions:
       contents: write

@@ -1,6 +1,6 @@
-# Rio
+<p align="center"><img src="docs/assets/readme-header.webp" alt="Rio: open-source AI code review, right in your terminal. Pipeline: prepare, checks and graph run on your machine; triage, agents and verify run in your Cloudflare account (optional); report." width="1280"></p>
 
-Rio reviews local Git changes with TypeScript, Python and Rust type checking, linting, secret scanning, diff coverage, dependency auditing, and a bounded impact graph. It runs on your machine. Rio is licensed under Apache-2.0.
+Rio reviews Git changes with TypeScript, Python and Rust type checking, linting, secret scanning, diff coverage, dependency auditing, and a bounded impact graph. Run deterministic checks locally, or configure the Cloudflare endpoint for isolated checks and agent review with independent verifier voters. Rio is licensed under Apache-2.0.
 
 The original [automated acceptance evaluation](docs/evaluation/v0.1.md) concluded **no-go**. A [methodology-corrected rescoring](docs/evaluation/v0.1-rescored.md) finds **insufficient evidence** because all ten PRs lacked working baseline classification; stable v0.1 release remains blocked. The implementation and release-candidate validation are available; the commands below describe published release installation.
 
@@ -74,7 +74,31 @@ The first Ctrl-C terminates tool process trees and keeps a partial report. A sec
 
 TypeScript tools are `tsc`, ESLint, Vitest or Jest. Python tools are Pyright or mypy, Ruff, pytest and coverage.py. Rust uses installed Cargo/toolchain components for `cargo check`, configured Clippy/rustfmt checks, and optional `cargo llvm-cov` coverage. Rust member changes check each scheduled member and its dependents; workspace-wide changes check the workspace. Project-local executables take precedence over PATH. See [adapter details](docs/adapters.md).
 
-Deterministic checks and the graph run locally. Agent, triage and verifier steps are deferred with `no_endpoint`. `--pr`, `--deep`, `--publish` and `--since-last` require an endpoint and exit 2 in this version. Setting `endpoint.url` only prints a notice.
+Without an endpoint, deterministic checks and the graph run locally; agent, triage and verifier steps are deferred with `no_endpoint`. A configured endpoint captures immutable base/head snapshots and runs checks remotely in a Cloudflare Container or self-hosted Docker runner. It adds risk triage, independent agents and blind verifier quorum, with audit evidence cached alongside the report.
+
+```sh
+cf auth login
+# Supply OPENROUTER_API_KEY through your private environment or --secrets-file.
+rio init
+rio review --profile rio/openrouter --preset standard
+rio deploy # upgrade the paired Worker in your own account
+rio review --preset quick
+rio review --deep
+```
+
+Quick, Standard and Deep require an endpoint; `--offline` keeps local deterministic execution. PR fetching and publication (`--pr`, `--publish`) remain unsupported. The security policy interface is available but its agent/catalog execution remains gated on v0.3. See [Cloudflare deployment and runners](docs/cloudflare.md) and [verification evidence](docs/verifier-contracts.md) for setup, isolation, budgets and the pending live model acceptance gate.
+
+### Review lineages and feedback
+
+```sh
+rio review --since-last                  # next round of this branch's lineage
+rio review --since-last --reset-lineage  # new generation, back to round 1
+rio feedback 8c1e --dismiss intentional --note "documented behavior"
+```
+
+`--since-last` reviews the current branch as a lineage held by the endpoint; it needs a configured endpoint and online mode (otherwise exit 2) and a checked-out branch (a detached HEAD exits 2). The lineage is keyed by the normalized `origin` URL (scheme, credentials, port and `.git` removed), or the repository directory name without an `origin`, plus the branch name, so rebases and force-pushes keep it. The endpoint assigns the round, re-reviews only the diff since the previous head after the first round, holds back findings it already posted and, once the round exceeds `rounds.cap`, summarizes unresolved findings in a "reconsider" message. Reports always list every finding, so `fail_on` and exit codes are unchanged; the footer shows the round and cap state, the author-response ratio when answers exist and the held-back count, and already-posted findings are marked. Rio keeps a versioned copy of the endpoint's lineage state at `<cache>/lineages/<hash>.json`. It is a cache: a missing copy is refetched from the endpoint, never treated as a reset, and it is pruned with the rest of the review cache. Only `--reset-lineage` (which requires `--since-last`) starts a new generation.
+
+`rio feedback <id> --dismiss <reason> [--note TEXT]` answers a posted finding through the endpoint. Accepted reasons are `fixed`, `wrong`, `intentional`, `irrelevant` and `style`; any other reason exits 2 before contacting the endpoint. The actor is your `git config user.email` when set. It exits 0 when the response is recorded, 2 for an invalid reason, a missing endpoint or a missing API token, and 3 when the endpoint rejects the response or does not know the finding. A dismissal never changes posture, budgets, rules or suppressions.
 
 When resolved dependency versions change, Rio sends the changed package names, ecosystems and versions to `https://api.osv.dev/v1/querybatch` and `/v1/query`, then fetches advisory details from `/v1/vulns/<id>`. It caches advisory records. `--offline` prevents network requests by Rio. Tools, plugins and project tests are **not network-isolated**; reports say so when an offline review executes a subprocess. Use external network isolation to block their network access as well.
 
@@ -119,10 +143,10 @@ Rio checks the selected source's lockfile against installed dependency metadata.
 | Code | Meaning |
 | --- | --- |
 | 0 | No policy failure; optional missing tools may still make the report incomplete |
-| 1 | At least one finding matches `fail_on` |
+| 1 | A finding matches the general or security failure policy |
 | 2 | Usage, configuration or profile error |
 | 3 | Repository state prevents review, or an internal/persistence error aborts it |
-| 4 | A check failed or was cancelled under `fail_on.incomplete`, or a required check was skipped |
+| 4 | A review is partial, a check failed or was cancelled under `fail_on.incomplete`, or a required check was skipped |
 | 130 | Second interrupt |
 
 The default policy fails on new or worsened defects with `static_proven` or stronger evidence. It ignores pre-existing findings and risks. A missing optional tool is a skip and does not itself fail the command. Set `fail_on.required_checks: [typecheck, lint]` to require those checks, or `fail_on.incomplete: false` to stop incomplete analysis from producing exit 4. A matching finding takes precedence over exit 4.
@@ -159,7 +183,7 @@ output_limit = "128MiB"
 
 The cache contains source snapshots, pure extracted source trees, resolved profiles, parsed findings, graph slices and redacted tool output. Treat it as sensitive as the repository. Cached trees never receive installation links. Each tool runs in its own disposable source copy with links to the current worktree's ignored dependency installation. Separate worktrees can share cached source while using their own installations. Tools rewriting source cannot modify the cached source tree. Rio never hard-links writable tool source to cached source.
 
-Run records live at `<cache>/<review-id>/runs/<run-id>/`; `latest` names the most recently finished run. Review IDs identify the snapshot and resolved profile; each execution gets a distinct run ID. Shared entries publish atomically under locks; live references protect them during pruning. Age, reachability and LRU size rules control retention. Unix cache directories use mode 0700 and files 0600; Windows inherits the containing directory's ACL. Raw streams are redacted, capped at 16MiB each with head and tail retained, and can be disabled with `cache.retain_raw_output`. Source snapshots themselves retain source content, including any secrets present there.
+Run records live at `<cache>/<review-id>/runs/<run-id>/`; `latest` names the most recently finished run. Review IDs identify the snapshot and resolved profile; each execution gets a distinct run ID. Shared entries publish atomically under locks; live references protect them during pruning. Age, reachability and LRU size rules control retention; local lineage copies under `<cache>/lineages/` expire by age and are evicted by size like other entries. Unix cache directories use mode 0700 and files 0600; Windows inherits the containing directory's ACL. Raw streams are redacted, capped at 16MiB each with head and tail retained, and can be disabled with `cache.retain_raw_output`. Source snapshots themselves retain source content, including any secrets present there.
 
 Working trees, indexes, branch merge bases, untracked non-ignored files, unborn HEAD, linked worktrees and sparse checkout are supported. Conflicted indexes are refused for working-tree and staged reviews. Bare repositories are refused. Shallow branch reviews need enough history for a merge base; fetch deeper history or unshallow. Partial clones need the selected objects available locally; Rio does not fetch missing promised blobs. Hydrate the required history before reviewing. Submodules are recorded as gitlinks, not recursively reviewed. LFS pointers stay pointers. Unsafe paths, symlink traversal and case collisions on insensitive filesystems are rejected. macOS cannot reliably track descendants that escape a process group with `setsid`; Windows review features remain best effort, with tools supervised in Job Objects.
 

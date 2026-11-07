@@ -62,7 +62,12 @@ pub fn apply_suppressions(
         .collect::<Result<_, _>>()?;
     let mut counts = vec![0; compiled.len()];
     let mut suppressed = BTreeSet::new();
-    for finding in report.findings.iter().chain(&report.risks) {
+    for finding in report
+        .findings
+        .iter()
+        .chain(&report.risks)
+        .chain(&report.security)
+    {
         if let Some(index) = compiled.iter().position(|s| s.matches(finding))
             && suppressed.insert(finding.id.clone())
         {
@@ -71,6 +76,7 @@ pub fn apply_suppressions(
     }
     report.findings.retain(|f| !suppressed.contains(&f.id));
     report.risks.retain(|f| !suppressed.contains(&f.id));
+    report.security.retain(|f| !suppressed.contains(&f.id));
     for check in report.checks.iter_mut().chain(&mut report.incomplete) {
         check
             .outcome
@@ -141,11 +147,18 @@ impl CompiledFailOn {
 
     pub fn is_incomplete(&self, report: &Report) -> bool {
         self.policy.incomplete
-            && report.checks.iter().any(|check| match check.outcome {
-                CheckOutcome::Failed { .. } | CheckOutcome::Cancelled { .. } => true,
-                CheckOutcome::Skipped { .. } => self.policy.required_checks.contains(&check.kind),
-                _ => false,
-            })
+            && (report.status == ReportStatus::Partial
+                || AuditSignals::of(report)
+                    .ok()
+                    .flatten()
+                    .is_some_and(|audit| audit.incomplete_votes > 0)
+                || report.checks.iter().any(|check| match check.outcome {
+                    CheckOutcome::Failed { .. } | CheckOutcome::Cancelled { .. } => true,
+                    CheckOutcome::Skipped { .. } => {
+                        self.policy.required_checks.contains(&check.kind)
+                    }
+                    _ => false,
+                }))
     }
 }
 
@@ -195,7 +208,8 @@ pub struct ExitContext {
 }
 
 /// Precedence: usage/configuration or repository/internal errors, then a second
-/// interrupt, policy-matching findings, incomplete required analysis, success.
+/// interrupt, policy-matching findings, incomplete required analysis (including
+/// partial reports and missing votes, per `fail_on.incomplete`), success.
 pub fn exit_code(report: &Report, policy: &CompiledFailOn, context: ExitContext) -> u8 {
     if let Some(error) = context.error {
         return match error {
@@ -213,12 +227,47 @@ pub fn exit_code(report: &Report, policy: &CompiledFailOn, context: ExitContext)
         .findings
         .iter()
         .chain(&report.risks)
+        .chain(&report.security)
         .any(|f| policy.matches(f))
     {
         return 1;
     }
-    if policy.is_incomplete(report) {
+    let audit = AuditSignals::of(report);
+    if audit
+        .as_ref()
+        .is_ok_and(|audit| audit.as_ref().is_some_and(|a| a.policy_failed))
+    {
+        return 1;
+    }
+    // An unreadable verifier outcome could hide a policy failure; never report success.
+    if audit.is_err() || policy.is_incomplete(report) {
         return 4;
     }
     0
+}
+
+/// Verifier outcomes the endpoint records in `agent_audit`. `policy_failed` and
+/// `policy_matches` are always emitted, so their absence is a protocol error rather
+/// than a silent pass.
+#[derive(Debug, Default, Deserialize)]
+pub struct AuditSignals {
+    pub policy_failed: bool,
+    pub policy_matches: Vec<String>,
+    #[serde(default)]
+    pub incomplete_votes: u64,
+}
+impl AuditSignals {
+    pub fn of(report: &Report) -> Result<Option<Self>, serde_json::Error> {
+        report
+            .agent_audit
+            .as_ref()
+            .map(Self::deserialize)
+            .transpose()
+    }
+    pub fn matches(report: &Report, id: &str) -> bool {
+        Self::of(report)
+            .ok()
+            .flatten()
+            .is_some_and(|audit| audit.policy_matches.iter().any(|m| m == id))
+    }
 }

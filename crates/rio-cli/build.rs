@@ -1,5 +1,6 @@
 use std::process::Command;
 fn main() {
+    println!("cargo:rerun-if-changed=../../worker/bundle/worker.mjs");
     println!(
         "cargo:rustc-env=RIO_VERSION={}",
         std::env::var("RIO_BUILD_VERSION")

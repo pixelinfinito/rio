@@ -1,10 +1,9 @@
 use crate::{EdgeKind, EdgeSource, GraphEdge, GraphNode, GraphSlice, GraphSlices, NodeKind};
-use aho_corasick::AhoCorasick;
 use anyhow::{Result, ensure};
 use rio_adapters::{Symbol, SymbolKind, SyntaxCache, SyntaxTable, is_test_path, language_for_path};
 use rio_core::Version;
 use rio_git::{ChangeSet, Diff, Exclusions, Tree};
-use std::collections::{BTreeMap, BTreeSet, VecDeque};
+use std::collections::{BTreeMap, BTreeSet, HashMap, VecDeque};
 
 #[derive(Debug, Clone)]
 pub struct GraphOptions {
@@ -22,7 +21,7 @@ impl Default for GraphOptions {
     }
 }
 
-fn graph_node(
+pub(crate) fn graph_node(
     path: &str,
     symbol: Option<&Symbol>,
     source: &[u8],
@@ -70,41 +69,72 @@ fn graph_node(
     }
 }
 
-fn ignored(tree: &Tree, path: &str) -> Result<bool> {
-    let mut files: Vec<_> = tree
-        .iter()
-        .filter(|(name, _)| name.rsplit('/').next() == Some(".gitignore"))
-        .collect();
-    files.sort_by_key(|(name, _)| name.len());
-    let mut ignored = false;
-    for (name, entry) in files {
-        let directory = name.rsplit_once('/').map_or("", |(directory, _)| directory);
-        let relative = if directory.is_empty() {
-            path
-        } else if let Some(path) = path.strip_prefix(&format!("{directory}/")) {
-            path
-        } else {
-            continue;
-        };
-        let mut builder = ignore::gitignore::GitignoreBuilder::new("");
-        for line in std::str::from_utf8(&entry.content)?.lines() {
-            builder.add_line(None, line)?;
-        }
-        match builder
-            .build()?
-            .matched_path_or_any_parents(relative, false)
-        {
-            ignore::Match::Ignore(_) => ignored = true,
-            ignore::Match::Whitelist(_) => ignored = false,
-            ignore::Match::None => {}
-        }
+/// The tree's `.gitignore` rules, each compiled at most once, applied as
+/// `ignored` applies them: shallowest first, the last match winning.
+struct IgnoreRules<'a> {
+    // (directory, rules text, rules compiled on first use)
+    files: Vec<(&'a str, &'a [u8], CompiledRules)>,
+}
+type CompiledRules = std::cell::OnceCell<Result<ignore::gitignore::Gitignore, String>>;
+impl<'a> IgnoreRules<'a> {
+    fn new(tree: &'a Tree) -> Self {
+        let mut files: Vec<_> = tree
+            .iter()
+            .filter(|(name, _)| name.rsplit('/').next() == Some(".gitignore"))
+            .map(|(name, entry)| {
+                (
+                    name.rsplit_once('/').map_or("", |(directory, _)| directory),
+                    entry.content.as_slice(),
+                    std::cell::OnceCell::new(),
+                )
+            })
+            .collect();
+        // The directory is the name minus "/.gitignore", so this is the same order.
+        files.sort_by_key(|(directory, _, _)| directory.len());
+        Self { files }
     }
-    Ok(ignored)
+    fn ignored(&self, path: &str) -> Result<bool> {
+        let mut ignored = false;
+        for (directory, content, compiled) in &self.files {
+            let relative = if directory.is_empty() {
+                path
+            } else if let Some(path) = path
+                .strip_prefix(*directory)
+                .and_then(|rest| rest.strip_prefix('/'))
+            {
+                path
+            } else {
+                continue;
+            };
+            let matcher = compiled
+                .get_or_init(|| {
+                    let build = || -> Result<ignore::gitignore::Gitignore> {
+                        let mut builder = ignore::gitignore::GitignoreBuilder::new("");
+                        for line in std::str::from_utf8(content)?.lines() {
+                            builder.add_line(None, line)?;
+                        }
+                        Ok(builder.build()?)
+                    };
+                    build().map_err(|error| format!("{error:#}"))
+                })
+                .as_ref()
+                .map_err(|error| anyhow::anyhow!("{error}"))?;
+            match matcher.matched_path_or_any_parents(relative, false) {
+                ignore::Match::Ignore(_) => ignored = true,
+                ignore::Match::Whitelist(_) => ignored = false,
+                ignore::Match::None => {}
+            }
+        }
+        Ok(ignored)
+    }
 }
 
 #[derive(Default)]
 pub struct GraphBuilder {
     pub syntax: SyntaxCache,
+    /// Parsing threads; `None` uses the available parallelism. The slices are
+    /// identical for every value.
+    pub threads: Option<usize>,
 }
 impl GraphBuilder {
     pub fn build(
@@ -123,13 +153,28 @@ impl GraphBuilder {
         stop: &dyn Fn() -> bool,
     ) -> Result<GraphSlices> {
         ensure!(options.max_nodes > 0, "graph max_nodes must be positive");
-        let base = self.slice(&changes.base, diff, Version::Base, options, stop)?;
-        let head = self.slice(&changes.head, diff, Version::Head, options, stop)?;
+        let base = self.slice(
+            &changes.base,
+            &changes.head,
+            diff,
+            Version::Base,
+            options,
+            stop,
+        )?;
+        let head = self.slice(
+            &changes.head,
+            &changes.base,
+            diff,
+            Version::Head,
+            options,
+            stop,
+        )?;
         Ok(GraphSlices::new(base, head))
     }
     fn slice(
         &self,
         tree: &Tree,
+        other_tree: &Tree,
         diff: &Diff,
         version: Version,
         options: &GraphOptions,
@@ -161,12 +206,50 @@ impl GraphBuilder {
             }
             let table = self.syntax.analyze(path, &entry.content)?;
             let mut seeds = BTreeSet::new();
+            // Parsed lazily, once per file: only pure insertions/deletions need it.
+            let mut other_table = None;
             for hunk in &file.hunks {
                 let range = if version == Version::Base {
                     hunk.base
                 } else {
                     hunk.head
                 };
+                if range.count == 0 {
+                    // A pure deletion/insertion can still change the enclosing symbol.
+                    // Match its identity in the other snapshot, rather than incorrectly
+                    // seeding an unrelated symbol adjacent to the empty hunk.
+                    let other_path = if version == Version::Base {
+                        &file.path
+                    } else {
+                        file.old_path.as_deref().unwrap_or(&file.path)
+                    };
+                    if other_table.is_none() {
+                        // A rename can change the language; an unsupported or missing
+                        // counterpart only supports a file-level seed.
+                        other_table = Some(
+                            other_tree
+                                .get(other_path)
+                                .filter(|_| language_for_path(other_path).is_some())
+                                .map(|other| self.syntax.analyze(other_path, &other.content))
+                                .transpose()?,
+                        );
+                    }
+                    let other_range = if version == Version::Base {
+                        hunk.head
+                    } else {
+                        hunk.base
+                    };
+                    match other_table.as_ref().expect("parsed above") {
+                        Some(other_table) => {
+                            for line in other_range.start..other_range.start + other_range.count {
+                                seeds.insert(shared_enclosing(other_table, &table, line));
+                            }
+                        }
+                        None => {
+                            seeds.insert(None);
+                        }
+                    }
+                }
                 for line in range.start..range.start + range.count {
                     seeds.insert(
                         table
@@ -198,6 +281,7 @@ impl GraphBuilder {
             }
             tables.insert(path.into(), table);
         }
+        let rules = IgnoreRules::new(tree);
         let candidates: Vec<_> = tree
             .iter()
             .filter(|(path, entry)| {
@@ -205,7 +289,7 @@ impl GraphBuilder {
                     && entry.mode != 0o120000
                     && exclusions.reason(path, entry, true).is_none()
             })
-            .filter_map(|(path, entry)| match ignored(tree, path) {
+            .filter_map(|(path, entry)| match rules.ignored(path) {
                 Ok(false) => Some(Ok((path, entry))),
                 Ok(true) => None,
                 Err(error) => Some(Err(error)),
@@ -213,6 +297,14 @@ impl GraphBuilder {
             .collect::<Result<_>>()?;
         let mut edges = BTreeMap::new();
         let mut imports = BTreeMap::<String, BTreeMap<String, Option<String>>>::new();
+        let resolver = crate::resolve::Resolver::new(tree);
+        let mut occurrences = HashMap::<String, HashMap<String, Vec<usize>>>::new();
+        let mut index = crate::index::TokenIndex::new(
+            candidates
+                .iter()
+                .map(|(_, entry)| entry.content.as_slice())
+                .collect(),
+        );
         'expand: while let Some(id) = queue.pop_front() {
             if stop() {
                 slice.truncated = true;
@@ -232,14 +324,19 @@ impl GraphBuilder {
                 .split('.')
                 .next()
                 .unwrap_or(&target.name);
-            let search = AhoCorasick::new([target.name.as_str(), module])?;
-            for (path, entry) in &candidates {
+            // Only files containing the name or module stem, in candidate order.
+            let matching = index.any(&[target.name.as_str(), module])?;
+            self.prefetch(
+                matching
+                    .iter()
+                    .map(|&file| candidates[file as usize])
+                    .filter(|(path, _)| !tables.contains_key(*path)),
+            );
+            for file in matching {
+                let (path, entry) = &candidates[file as usize];
                 if stop() {
                     slice.truncated = true;
                     break;
-                }
-                if !search.is_match(&entry.content) {
-                    continue;
                 }
                 if !tables.contains_key(*path) {
                     tables.insert((*path).clone(), self.syntax.analyze(path, &entry.content)?);
@@ -252,7 +349,7 @@ impl GraphBuilder {
                         .map(|import| {
                             (
                                 import.module.clone(),
-                                crate::resolve::resolve_import(tree, path, &import.module),
+                                resolver.resolve_import(path, &import.module),
                             )
                         })
                         .collect()
@@ -269,13 +366,28 @@ impl GraphBuilder {
                         }
                     }
                 }
-                for identifier in &table.identifiers {
+                // Only occurrences of the wanted names, still in source order.
+                let by_name = occurrences.entry((*path).clone()).or_insert_with(|| {
+                    let mut by_name = HashMap::<String, Vec<usize>>::new();
+                    for (index, identifier) in table.identifiers.iter().enumerate() {
+                        by_name
+                            .entry(identifier.name.clone())
+                            .or_default()
+                            .push(index);
+                    }
+                    by_name
+                });
+                let mut hits: Vec<usize> = names
+                    .iter()
+                    .filter_map(|name| by_name.get(*name))
+                    .flatten()
+                    .copied()
+                    .collect();
+                hits.sort_unstable();
+                for identifier in hits.into_iter().map(|index| &table.identifiers[index]) {
                     if stop() {
                         slice.truncated = true;
                         break;
-                    }
-                    if !names.contains(identifier.name.as_str()) {
-                        continue;
                     }
                     let Some(confidence) = crate::resolve::reference(
                         path,
@@ -329,4 +441,57 @@ impl GraphBuilder {
         slice.edges = edges.into_values().collect();
         Ok(slice)
     }
+}
+impl GraphBuilder {
+    /// Parses files into the syntax cache in parallel. Results depend only on path
+    /// and content, so the slice is the same for any thread count; failures are left
+    /// for the sequential pass to report at the same point as before.
+    fn prefetch<'t>(&self, files: impl Iterator<Item = (&'t String, &'t rio_git::TreeEntry)>) {
+        let files: Vec<_> = files.collect();
+        let threads = self
+            .threads
+            .unwrap_or_else(|| std::thread::available_parallelism().map_or(1, usize::from))
+            .max(1);
+        if threads == 1 || files.len() < 2 {
+            return;
+        }
+        let next = std::sync::atomic::AtomicUsize::new(0);
+        std::thread::scope(|scope| {
+            for _ in 0..threads.min(files.len()) {
+                scope.spawn(|| {
+                    loop {
+                        let i = next.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                        let Some((path, entry)) = files.get(i) else {
+                            break;
+                        };
+                        let _ = self.syntax.analyze(path, &entry.content);
+                    }
+                });
+            }
+        });
+    }
+}
+/// The innermost symbol enclosing `line` in `other` that also exists in `table`.
+/// Newly added nested symbols fall back to their nearest shared ancestor, and
+/// then to the file itself.
+pub(crate) fn shared_enclosing(
+    other: &SyntaxTable,
+    table: &SyntaxTable,
+    line: u32,
+) -> Option<String> {
+    let mut enclosing: Vec<_> = other
+        .symbols
+        .iter()
+        .filter(|symbol| symbol.line_start <= line && line <= symbol.line_end)
+        .collect();
+    enclosing.sort_by_key(|symbol| symbol.byte_end - symbol.byte_start);
+    enclosing
+        .into_iter()
+        .find(|symbol| {
+            table
+                .symbols
+                .iter()
+                .any(|s| s.symbol_path == symbol.symbol_path)
+        })
+        .map(|symbol| symbol.symbol_path.clone())
 }

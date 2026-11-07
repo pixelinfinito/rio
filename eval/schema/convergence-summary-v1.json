@@ -1,0 +1,338 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rio.dev/eval/schema/convergence-summary-v1.json",
+  "title": "Rio convergence evaluation summary v1",
+  "description": "Author-response reasons and rounds_to_pass aggregated per repository by eval/convergence.py.",
+  "type": "object",
+  "properties": {
+    "schema": {
+      "const": "rio-eval-convergence-v1"
+    },
+    "reports": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "skipped_reports": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "by_repository": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "findings": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "responded": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "responses": {
+            "type": "object",
+            "properties": {
+              "fixed": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "wrong": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "intentional": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "irrelevant": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "style": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "fixed",
+              "wrong",
+              "intentional",
+              "irrelevant",
+              "style"
+            ],
+            "additionalProperties": false
+          },
+          "author_response_ratio": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 1
+          },
+          "wrong_by_agent_evidence": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "reproduced": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "static_proven": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "plausible": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "refuted": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "intentional_by_agent": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "irrelevant_style_by_rule": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "irrelevant": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "style": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "irrelevant",
+                "style"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "irrelevant_style_by_category": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "irrelevant": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "style": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "irrelevant",
+                "style"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "rounds_to_pass": {
+            "type": "object",
+            "properties": {
+              "lineages": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "converged": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "open": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "mean": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0
+              },
+              "median": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0
+              },
+              "max": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 1
+              },
+              "distribution": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "by_lineage": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "enum": [
+                        "pr",
+                        "branch"
+                      ]
+                    },
+                    "ref": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "generation": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "last_round": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "rounds_to_pass": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "minimum": 1
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "ref",
+                    "generation",
+                    "last_round",
+                    "rounds_to_pass"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "lineages",
+              "converged",
+              "open",
+              "mean",
+              "median",
+              "max",
+              "distribution",
+              "by_lineage"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "findings",
+          "responded",
+          "responses",
+          "author_response_ratio",
+          "wrong_by_agent_evidence",
+          "intentional_by_agent",
+          "irrelevant_style_by_rule",
+          "irrelevant_style_by_category",
+          "rounds_to_pass"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "overall": {
+      "type": "object",
+      "properties": {
+        "responded": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "responses": {
+          "type": "object",
+          "properties": {
+            "fixed": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "wrong": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "intentional": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "irrelevant": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "style": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "fixed",
+            "wrong",
+            "intentional",
+            "irrelevant",
+            "style"
+          ],
+          "additionalProperties": false
+        },
+        "author_response_ratio": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "required": [
+        "responded",
+        "responses",
+        "author_response_ratio"
+      ],
+      "additionalProperties": false
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "schema",
+    "reports",
+    "skipped_reports",
+    "by_repository",
+    "overall",
+    "notes"
+  ],
+  "additionalProperties": false
+}

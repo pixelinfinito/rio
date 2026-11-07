@@ -89,17 +89,17 @@ fn resolved_base_has_pinned_modules_stable_hash_and_writes_exact_document() {
     let loader = loader(root.path());
     let resolved = loader.load(Some("rio/base")).unwrap();
     assert_eq!(resolved.warnings.len(), 4);
-    assert_eq!(resolved.modules.len(), 7);
+    assert_eq!(resolved.modules.len(), 8);
     assert!(
         resolved
             .profile
             .steps
             .iter()
-            .all(|s| s.uses.ends_with("@0.1.0"))
+            .all(|s| s.uses.ends_with("@0.1.0") || s.uses == "rio/security@0.2.0")
     );
     assert_eq!(
         execution_order(&resolved.profile.steps).unwrap(),
-        [0, 1, 2, 3, 4, 5, 6]
+        [0, 1, 2, 3, 4, 5, 6, 7]
     );
     insta::assert_snapshot!("resolved_base", resolved.to_yaml().unwrap());
     let path = root.path().join("profile.resolved.yaml");
@@ -127,7 +127,7 @@ fn semantic_and_schema_diagnostics_point_to_the_declaring_file_and_yaml_path() {
     write(
         root.path(),
         "parent.yaml",
-        "version: 1\nname: parent\nextends: rio/base\nmodels: {default: same, verifier: same}\nmin_evidence: refuted\n",
+        "version: 1\nname: parent\nextends: rio/base\nmodels: {default: same, verifier: same}\nverify: {voters: 1}\nmin_evidence: refuted\n",
     );
     write(
         root.path(),
@@ -306,4 +306,136 @@ proptest! {
         deep_merge(&mut parent, json!({}));
         prop_assert_eq!(parent, original);
     }
+}
+
+#[test]
+fn verifier_defaults_budgets_aliases_and_guardrails() {
+    let root = tempfile::tempdir().unwrap();
+    write(
+        root.path(),
+        "p.yaml",
+        "version: 1\nname: test\nmodels: {default: openai/a, verifier: openai/b}\nbudget:\n  fast: {tokens: 10003, agents_max: 2, wall_time: 1m}\n",
+    );
+    let p = loader(root.path()).load(Some("p.yaml")).unwrap();
+    assert_eq!((p.profile.verify.voters, p.profile.verify.quorum), (3, 2));
+    assert_eq!(p.profile.budget.fast.verify_tokens, Some(1000));
+    assert!(!p.to_yaml().unwrap().contains("model: null"));
+    let hash = p.hash().unwrap();
+    for (settings, valid) in [
+        ("verify: {voters: 1}", true),
+        (
+            "verify: {voters: 3}\nmodels: {default: openai/a, verifier: openai/a}",
+            true,
+        ),
+        (
+            "verify: {voters: 1, model: other}\nmodels: {default: openai/a, other: openai/a}",
+            false,
+        ),
+        ("verify: {voters: 2, quorum: 3}", false),
+        ("verify: {model: absent}", false),
+        ("verify: {voters: 0}", false),
+        ("budget: {fast: {verify_tokens: 0}}", false),
+    ] {
+        write(
+            root.path(),
+            "child.yaml",
+            &format!("version: 1\nname: child\nextends: p.yaml\n{settings}\n"),
+        );
+        let result = loader(root.path()).load(Some("child.yaml"));
+        assert_eq!(result.is_ok(), valid, "{settings}: {result:?}");
+        if let Ok(p) = result {
+            if p.profile.verify.voters == 1 {
+                assert_eq!(p.profile.verify.quorum, 1);
+            }
+            assert_ne!(p.hash().unwrap(), hash);
+        }
+    }
+    write(
+        root.path(),
+        "child.yaml",
+        "version: 1\nname: child\nextends: rio/base\nsteps: [{id: security, uses: rio/security, with: {enabled: true}}]\n",
+    );
+    assert!(
+        loader(root.path())
+            .load(Some("child.yaml"))
+            .unwrap_err()
+            .to_string()
+            .contains("verifier step is mandatory")
+    );
+}
+
+#[test]
+fn presets_resolve_posture_and_preserve_explicit_caps() {
+    use rio_core::EvidenceLevel;
+    use rio_profile::Posture;
+    let root = tempfile::tempdir().unwrap();
+    for (posture, evidence, cap) in [
+        (Posture::CriticalOnly, EvidenceLevel::Reproduced, 3),
+        (Posture::Balanced, EvidenceLevel::StaticProven, 5),
+        (Posture::Thorough, EvidenceLevel::Plausible, 15),
+    ] {
+        let p = loader(root.path())
+            .load_with_preset(Some("rio/base"), Some(posture))
+            .unwrap();
+        assert_eq!(p.profile.posture, posture);
+        assert_eq!(p.profile.min_evidence, evidence);
+        assert_eq!(p.profile.max_defects, cap);
+        assert!(p.profile.budget.deep.is_some());
+    }
+    write(
+        root.path(),
+        "p.yaml",
+        "version: 1\nname: explicit\nextends: rio/base\nmin_evidence: static_proven\nmax_defects: 8\n",
+    );
+    let p = loader(root.path())
+        .load_with_preset(Some("p.yaml"), Some(Posture::Thorough))
+        .unwrap();
+    assert_eq!(p.profile.max_defects, 8);
+    assert_eq!(p.profile.min_evidence, EvidenceLevel::StaticProven);
+}
+
+#[test]
+fn security_and_triage_options_have_strict_schemas_and_verifier_dependencies() {
+    let root = tempfile::tempdir().unwrap();
+    for options in [
+        "{enabled: false, catalog: owasp-top10-2025, posture: thorough, max_defects: 2, fail_on: {evidence: plausible, categories: [security]}}",
+        "{enabled: false, catalog: asvs-5.0}",
+    ] {
+        write(
+            root.path(),
+            "p.yaml",
+            &format!(
+                "version: 1\nname: test\nextends: rio/base\nsteps: [{{id: security, uses: rio/security, with: {options}}}]\n"
+            ),
+        );
+        assert!(
+            loader(root.path()).load(Some("p.yaml")).is_ok(),
+            "{options}"
+        );
+    }
+    for options in [
+        "{catalog: unknown}",
+        "{max_defects: -1}",
+        "{posture: extreme}",
+        "{fail_on: {evidence: certain}}",
+        "{fail_on: {rules: ['[']}}",
+    ] {
+        write(
+            root.path(),
+            "p.yaml",
+            &format!(
+                "version: 1\nname: test\nextends: rio/base\nsteps: [{{id: security, uses: rio/security, with: {options}}}]\n"
+            ),
+        );
+        assert!(
+            loader(root.path()).load(Some("p.yaml")).is_err(),
+            "{options}"
+        );
+    }
+    write(
+        root.path(),
+        "p.yaml",
+        "version: 1\nname: test\nextends: rio/base\nsteps: [{id: triage, uses: rio/triage, with: {fan_out_high: 0}}]\n",
+    );
+    assert!(loader(root.path()).load(Some("p.yaml")).is_err());
 }

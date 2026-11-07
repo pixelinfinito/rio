@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Rio hypothesis v1",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "rule_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 150,
+      "pattern": "^[a-zA-Z0-9_/-]+$"
+    },
+    "category": {
+      "enum": [
+        "defect",
+        "risk",
+        "security",
+        "style",
+        "diagnostic"
+      ]
+    },
+    "severity": {
+      "enum": [
+        "error",
+        "warning",
+        "info"
+      ]
+    },
+    "location": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "line_start": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "line_end": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "column": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "symbol_path": {
+          "type": "string"
+        },
+        "occurrence_state": {
+          "enum": [
+            "new",
+            "pre-existing",
+            "fixed",
+            "unclassified"
+          ]
+        }
+      },
+      "required": [
+        "path",
+        "line_start",
+        "line_end",
+        "symbol_path"
+      ],
+      "additionalProperties": false
+    },
+    "message": {
+      "type": "string",
+      "maxLength": 16000
+    },
+    "trigger": {
+      "type": "string",
+      "maxLength": 16000
+    },
+    "impact": {
+      "type": "string",
+      "maxLength": 16000
+    },
+    "suggested_fix": {
+      "type": "string",
+      "maxLength": 16000
+    },
+    "state": {
+      "enum": [
+        "new",
+        "worsened",
+        "pre-existing",
+        "fixed",
+        "unclassified"
+      ]
+    },
+    "source": {
+      "type": "object",
+      "properties": {
+        "agent": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "agent"
+      ],
+      "additionalProperties": false
+    },
+    "guidance": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "path",
+        "line"
+      ],
+      "additionalProperties": false
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 100
+    }
+  },
+  "required": [
+    "rule_id",
+    "category",
+    "severity",
+    "location",
+    "message",
+    "trigger"
+  ],
+  "additionalProperties": false
+}

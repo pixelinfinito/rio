@@ -72,13 +72,15 @@ fn listing_keeps_shadowed_profiles_and_marks_only_the_actual_default() {
         root.path().into(),
     );
     let initial = loader.list().unwrap();
-    assert_eq!(initial.len(), 1);
+    assert_eq!(initial.len(), 2);
     assert_eq!(initial[0].name, "rio/base");
     assert!(initial[0].is_default);
+    assert_eq!(initial[1].name, "rio/openrouter");
+    assert!(!initial[1].is_default);
     write(root.path(), ".rio/profiles/default.yaml", "default");
     write(config.path(), "profiles/default.yaml", "default");
     let listed = loader.list().unwrap();
-    assert_eq!(listed.len(), 3);
+    assert_eq!(listed.len(), 4);
     assert_eq!(listed.iter().filter(|p| p.is_default).count(), 1);
     assert!(
         listed

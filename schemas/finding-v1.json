@@ -15,7 +15,8 @@
     "category": {
       "enum": [
         "defect",
-        "risk"
+        "risk",
+        "security"
       ]
     },
     "evidence_level": {
@@ -172,6 +173,11 @@
               "fixed",
               "unclassified"
             ]
+          },
+          "id": {
+            "description": "Identity of the instance finding when this location belongs to a class-level finding.",
+            "type": "string",
+            "minLength": 1
           }
         },
         "required": [
@@ -264,6 +270,63 @@
         "at"
       ],
       "additionalProperties": false
+    },
+    "status": {
+      "description": "Lifecycle of a posted lineage finding, independent of regression state.",
+      "enum": [
+        "open",
+        "fixed",
+        "dismissed"
+      ]
+    },
+    "resolution": {
+      "description": "How the lifecycle status was reached: the head that fixed the finding, or why it stayed open.",
+      "type": "object",
+      "properties": {
+        "fixed_in": {
+          "type": "string",
+          "minLength": 1
+        },
+        "note": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "verification": {
+      "type": "object",
+      "properties": {
+        "voters": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "agreeing": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "blind_match": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "same",
+              "related",
+              "none"
+            ]
+          }
+        },
+        "split": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "voters",
+        "agreeing",
+        "blind_match",
+        "split"
+      ],
+      "additionalProperties": false,
+      "description": "Semantic invariant: agreeing <= voters and blind_match contains one entry per configured voter; enforced by Rio deserialization and runtime validation."
     }
   },
   "required": [

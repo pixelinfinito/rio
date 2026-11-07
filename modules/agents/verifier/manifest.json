@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "name": "verifier",
+  "run": true,
+  "available": true,
+  "independent": true
+}

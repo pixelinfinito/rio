@@ -106,13 +106,23 @@ impl MachineConfig {
             Ok(())
         }
         match fs::read_to_string(&file) {
-            Ok(contents) => flatten(
-                "",
-                toml::from_str(&contents).with_context(|| file.display().to_string())?,
-                &mut values,
-                &file.display().to_string(),
-                &known,
-            )?,
+            Ok(contents) => {
+                let mut document: toml::Value =
+                    toml::from_str(&contents).with_context(|| file.display().to_string())?;
+                if let Some(table) = document.as_table_mut()
+                    && let Some(deployment) = table.remove("deployment")
+                {
+                    let deployment: crate::deployment::Deployment = deployment.try_into()?;
+                    deployment.validate()?;
+                }
+                flatten(
+                    "",
+                    document,
+                    &mut values,
+                    &file.display().to_string(),
+                    &known,
+                )?;
+            }
             Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
             Err(error) => return Err(error).with_context(|| format!("reading {}", file.display())),
         }
@@ -181,11 +191,6 @@ impl MachineConfig {
                 }
                 _ => unreachable!(),
             }
-        }
-        if config.endpoint_url.is_some() {
-            config.notices.push(
-                "endpoint.url is configured but endpoints are not supported in this version".into(),
-            );
         }
         Ok(config)
     }

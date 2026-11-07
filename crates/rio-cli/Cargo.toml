@@ -24,6 +24,13 @@ tokio-util.workspace = true
 fs4.workspace = true
 tempfile.workspace = true
 sysinfo.workspace = true
+blake3.workspace = true
+reqwest = { workspace = true, features = ["multipart"] }
+getrandom = "0.3"
+rpassword = "7.4"
+keyring = { version = "3.6.3", features = ["apple-native", "windows-native", "sync-secret-service", "crypto-rust", "vendored"] }
+rio-graph = { path = "../rio-graph" }
+rio-client = { path = "../rio-client" }
 rio-core = { path = "../rio-core" }
 rio-git = { path = "../rio-git" }
 rio-profile = { path = "../rio-profile" }

@@ -9,6 +9,8 @@ members = [
     "crates/rio-adapters",
     "crates/rio-graph",
     "crates/rio-engine",
+    "crates/rio-client",
+    "crates/rio-runner",
 ]
 
 [workspace.package]

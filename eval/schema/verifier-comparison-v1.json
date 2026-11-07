@@ -1,0 +1,1228 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rio.dev/eval/schema/verifier-comparison-v1.json",
+  "title": "Rio verifier comparison v1",
+  "description": "Output of eval/verifier.py. accepted is true only when every gate is true; failures are retained with named cases.",
+  "type": "object",
+  "properties": {
+    "schema": {
+      "const": "rio-verifier-comparison-v1"
+    },
+    "execution": {
+      "enum": [
+        "live-model",
+        "recorded",
+        null
+      ]
+    },
+    "manifest_sha256": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "generator_model": {
+            "type": "string",
+            "minLength": 1
+          },
+          "voter_model": {
+            "type": "string",
+            "minLength": 1
+          },
+          "profile_hash": {
+            "type": "string",
+            "minLength": 1
+          },
+          "independently_clean": {
+            "type": "boolean"
+          },
+          "high_controls": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "single": {
+            "type": "object",
+            "properties": {
+              "counts": {
+                "type": "object",
+                "properties": {
+                  "true-positive": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "false-positive": {
+                    "type": "integer",
+                    "minimum": 0
+                  }
+                },
+                "required": [
+                  "true-positive",
+                  "false-positive"
+                ],
+                "additionalProperties": false
+              },
+              "precision": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 1
+              },
+              "by_evidence": {
+                "type": "object",
+                "properties": {
+                  "plausible": {
+                    "type": "object",
+                    "properties": {
+                      "true-positive": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "false-positive": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "precision": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "minimum": 0,
+                        "maximum": 1
+                      }
+                    },
+                    "required": [
+                      "true-positive",
+                      "false-positive",
+                      "precision"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "static_proven": {
+                    "type": "object",
+                    "properties": {
+                      "true-positive": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "false-positive": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "precision": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "minimum": 0,
+                        "maximum": 1
+                      }
+                    },
+                    "required": [
+                      "true-positive",
+                      "false-positive",
+                      "precision"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "reproduced": {
+                    "type": "object",
+                    "properties": {
+                      "true-positive": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "false-positive": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "precision": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "minimum": 0,
+                        "maximum": 1
+                      }
+                    },
+                    "required": [
+                      "true-positive",
+                      "false-positive",
+                      "precision"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "plausible",
+                  "static_proven",
+                  "reproduced"
+                ],
+                "additionalProperties": false
+              },
+              "blind_match": {
+                "type": "object",
+                "properties": {
+                  "same": {
+                    "type": "object",
+                    "properties": {
+                      "true-positive": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "false-positive": {
+                        "type": "integer",
+                        "minimum": 0
+                      }
+                    },
+                    "required": [
+                      "true-positive",
+                      "false-positive"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "related": {
+                    "type": "object",
+                    "properties": {
+                      "true-positive": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "false-positive": {
+                        "type": "integer",
+                        "minimum": 0
+                      }
+                    },
+                    "required": [
+                      "true-positive",
+                      "false-positive"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "none": {
+                    "type": "object",
+                    "properties": {
+                      "true-positive": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "false-positive": {
+                        "type": "integer",
+                        "minimum": 0
+                      }
+                    },
+                    "required": [
+                      "true-positive",
+                      "false-positive"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "same",
+                  "related",
+                  "none"
+                ],
+                "additionalProperties": false
+              },
+              "detected_high_controls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "false_positives": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "finding_id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "rule_id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "evidence_level": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "evidence": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "finding_id",
+                    "rule_id",
+                    "evidence_level",
+                    "evidence"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "verification_tokens": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "verification_cost_usd": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0
+              },
+              "base": {
+                "type": "string",
+                "minLength": 1
+              },
+              "head": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "counts",
+              "precision",
+              "by_evidence",
+              "blind_match",
+              "detected_high_controls",
+              "false_positives",
+              "verification_tokens",
+              "verification_cost_usd",
+              "base",
+              "head"
+            ],
+            "additionalProperties": false
+          },
+          "quorum": {
+            "type": "object",
+            "properties": {
+              "counts": {
+                "type": "object",
+                "properties": {
+                  "true-positive": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "false-positive": {
+                    "type": "integer",
+                    "minimum": 0
+                  }
+                },
+                "required": [
+                  "true-positive",
+                  "false-positive"
+                ],
+                "additionalProperties": false
+              },
+              "precision": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 1
+              },
+              "by_evidence": {
+                "type": "object",
+                "properties": {
+                  "plausible": {
+                    "type": "object",
+                    "properties": {
+                      "true-positive": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "false-positive": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "precision": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "minimum": 0,
+                        "maximum": 1
+                      }
+                    },
+                    "required": [
+                      "true-positive",
+                      "false-positive",
+                      "precision"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "static_proven": {
+                    "type": "object",
+                    "properties": {
+                      "true-positive": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "false-positive": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "precision": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "minimum": 0,
+                        "maximum": 1
+                      }
+                    },
+                    "required": [
+                      "true-positive",
+                      "false-positive",
+                      "precision"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "reproduced": {
+                    "type": "object",
+                    "properties": {
+                      "true-positive": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "false-positive": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "precision": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "minimum": 0,
+                        "maximum": 1
+                      }
+                    },
+                    "required": [
+                      "true-positive",
+                      "false-positive",
+                      "precision"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "plausible",
+                  "static_proven",
+                  "reproduced"
+                ],
+                "additionalProperties": false
+              },
+              "blind_match": {
+                "type": "object",
+                "properties": {
+                  "same": {
+                    "type": "object",
+                    "properties": {
+                      "true-positive": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "false-positive": {
+                        "type": "integer",
+                        "minimum": 0
+                      }
+                    },
+                    "required": [
+                      "true-positive",
+                      "false-positive"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "related": {
+                    "type": "object",
+                    "properties": {
+                      "true-positive": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "false-positive": {
+                        "type": "integer",
+                        "minimum": 0
+                      }
+                    },
+                    "required": [
+                      "true-positive",
+                      "false-positive"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "none": {
+                    "type": "object",
+                    "properties": {
+                      "true-positive": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "false-positive": {
+                        "type": "integer",
+                        "minimum": 0
+                      }
+                    },
+                    "required": [
+                      "true-positive",
+                      "false-positive"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "same",
+                  "related",
+                  "none"
+                ],
+                "additionalProperties": false
+              },
+              "detected_high_controls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "false_positives": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "finding_id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "rule_id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "evidence_level": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "evidence": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "finding_id",
+                    "rule_id",
+                    "evidence_level",
+                    "evidence"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "verification_tokens": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "verification_cost_usd": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0
+              },
+              "base": {
+                "type": "string",
+                "minLength": 1
+              },
+              "head": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "counts",
+              "precision",
+              "by_evidence",
+              "blind_match",
+              "detected_high_controls",
+              "false_positives",
+              "verification_tokens",
+              "verification_cost_usd",
+              "base",
+              "head"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "id",
+          "generator_model",
+          "voter_model",
+          "profile_hash",
+          "independently_clean",
+          "high_controls",
+          "single",
+          "quorum"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "error": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "id",
+          "error"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "arms": {
+      "type": "object",
+      "properties": {
+        "single": {
+          "type": "object",
+          "properties": {
+            "counts": {
+              "type": "object",
+              "properties": {
+                "true-positive": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "false-positive": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "true-positive",
+                "false-positive"
+              ],
+              "additionalProperties": false
+            },
+            "precision": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0,
+              "maximum": 1
+            },
+            "by_evidence": {
+              "type": "object",
+              "properties": {
+                "plausible": {
+                  "type": "object",
+                  "properties": {
+                    "true-positive": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "false-positive": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "precision": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "minimum": 0,
+                      "maximum": 1
+                    }
+                  },
+                  "required": [
+                    "true-positive",
+                    "false-positive",
+                    "precision"
+                  ],
+                  "additionalProperties": false
+                },
+                "static_proven": {
+                  "type": "object",
+                  "properties": {
+                    "true-positive": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "false-positive": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "precision": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "minimum": 0,
+                      "maximum": 1
+                    }
+                  },
+                  "required": [
+                    "true-positive",
+                    "false-positive",
+                    "precision"
+                  ],
+                  "additionalProperties": false
+                },
+                "reproduced": {
+                  "type": "object",
+                  "properties": {
+                    "true-positive": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "false-positive": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "precision": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "minimum": 0,
+                      "maximum": 1
+                    }
+                  },
+                  "required": [
+                    "true-positive",
+                    "false-positive",
+                    "precision"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "plausible",
+                "static_proven",
+                "reproduced"
+              ],
+              "additionalProperties": false
+            },
+            "blind_match": {
+              "type": "object",
+              "properties": {
+                "same": {
+                  "type": "object",
+                  "properties": {
+                    "true-positive": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "false-positive": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "true-positive",
+                    "false-positive"
+                  ],
+                  "additionalProperties": false
+                },
+                "related": {
+                  "type": "object",
+                  "properties": {
+                    "true-positive": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "false-positive": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "true-positive",
+                    "false-positive"
+                  ],
+                  "additionalProperties": false
+                },
+                "none": {
+                  "type": "object",
+                  "properties": {
+                    "true-positive": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "false-positive": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "true-positive",
+                    "false-positive"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "same",
+                "related",
+                "none"
+              ],
+              "additionalProperties": false
+            },
+            "verification_tokens": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "verification_cost_usd": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "high_controls_expected": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "high_controls_detected": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "high_severity_recall": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0,
+              "maximum": 1
+            }
+          },
+          "required": [
+            "counts",
+            "precision",
+            "by_evidence",
+            "blind_match",
+            "verification_tokens",
+            "verification_cost_usd",
+            "high_controls_expected",
+            "high_controls_detected",
+            "high_severity_recall"
+          ],
+          "additionalProperties": false
+        },
+        "quorum": {
+          "type": "object",
+          "properties": {
+            "counts": {
+              "type": "object",
+              "properties": {
+                "true-positive": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "false-positive": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "true-positive",
+                "false-positive"
+              ],
+              "additionalProperties": false
+            },
+            "precision": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0,
+              "maximum": 1
+            },
+            "by_evidence": {
+              "type": "object",
+              "properties": {
+                "plausible": {
+                  "type": "object",
+                  "properties": {
+                    "true-positive": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "false-positive": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "precision": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "minimum": 0,
+                      "maximum": 1
+                    }
+                  },
+                  "required": [
+                    "true-positive",
+                    "false-positive",
+                    "precision"
+                  ],
+                  "additionalProperties": false
+                },
+                "static_proven": {
+                  "type": "object",
+                  "properties": {
+                    "true-positive": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "false-positive": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "precision": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "minimum": 0,
+                      "maximum": 1
+                    }
+                  },
+                  "required": [
+                    "true-positive",
+                    "false-positive",
+                    "precision"
+                  ],
+                  "additionalProperties": false
+                },
+                "reproduced": {
+                  "type": "object",
+                  "properties": {
+                    "true-positive": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "false-positive": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "precision": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "minimum": 0,
+                      "maximum": 1
+                    }
+                  },
+                  "required": [
+                    "true-positive",
+                    "false-positive",
+                    "precision"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "plausible",
+                "static_proven",
+                "reproduced"
+              ],
+              "additionalProperties": false
+            },
+            "blind_match": {
+              "type": "object",
+              "properties": {
+                "same": {
+                  "type": "object",
+                  "properties": {
+                    "true-positive": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "false-positive": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "true-positive",
+                    "false-positive"
+                  ],
+                  "additionalProperties": false
+                },
+                "related": {
+                  "type": "object",
+                  "properties": {
+                    "true-positive": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "false-positive": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "true-positive",
+                    "false-positive"
+                  ],
+                  "additionalProperties": false
+                },
+                "none": {
+                  "type": "object",
+                  "properties": {
+                    "true-positive": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "false-positive": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "true-positive",
+                    "false-positive"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "same",
+                "related",
+                "none"
+              ],
+              "additionalProperties": false
+            },
+            "verification_tokens": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "verification_cost_usd": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "high_controls_expected": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "high_controls_detected": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "high_severity_recall": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0,
+              "maximum": 1
+            }
+          },
+          "required": [
+            "counts",
+            "precision",
+            "by_evidence",
+            "blind_match",
+            "verification_tokens",
+            "verification_cost_usd",
+            "high_controls_expected",
+            "high_controls_detected",
+            "high_severity_recall"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "single",
+        "quorum"
+      ],
+      "additionalProperties": false
+    },
+    "precision": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 1
+    },
+    "gate": {
+      "type": "number"
+    },
+    "high_severity_recall_preserved": {
+      "type": "boolean"
+    },
+    "lost_high_controls": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "quorum_false_positives": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "case": {
+            "type": "string",
+            "minLength": 1
+          },
+          "finding_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "rule_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "evidence_level": {
+            "type": "string",
+            "minLength": 1
+          },
+          "evidence": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "case",
+          "finding_id",
+          "rule_id",
+          "evidence_level",
+          "evidence"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "gates": {
+      "type": "object",
+      "properties": {
+        "reference_set": {
+          "type": "boolean"
+        },
+        "precision": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "high_severity_recall": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "complete_data": {
+          "type": "boolean"
+        },
+        "live_model": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "reference_set",
+        "precision",
+        "high_severity_recall",
+        "complete_data",
+        "live_model"
+      ],
+      "additionalProperties": false
+    },
+    "accepted": {
+      "type": "boolean"
+    },
+    "reasons": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "schema",
+    "execution",
+    "manifest_sha256",
+    "cases",
+    "errors",
+    "arms",
+    "precision",
+    "gate",
+    "high_severity_recall_preserved",
+    "lost_high_controls",
+    "quorum_false_positives",
+    "gates",
+    "accepted",
+    "reasons"
+  ],
+  "additionalProperties": false,
+  "if": {
+    "properties": {
+      "accepted": {
+        "const": true
+      }
+    }
+  },
+  "then": {
+    "properties": {
+      "reasons": {
+        "maxItems": 0
+      },
+      "errors": {
+        "maxItems": 0
+      },
+      "execution": {
+        "const": "live-model"
+      },
+      "gates": {
+        "properties": {
+          "reference_set": {
+            "const": true
+          },
+          "precision": {
+            "const": true
+          },
+          "high_severity_recall": {
+            "const": true
+          },
+          "complete_data": {
+            "const": true
+          },
+          "live_model": {
+            "const": true
+          }
+        }
+      }
+    }
+  }
+}

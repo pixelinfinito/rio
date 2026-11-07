@@ -135,6 +135,28 @@ impl GixRepo {
     pub fn index_tree(&self) -> Result<Tree> {
         index_tree(self)
     }
+
+    /// The checked-out local branch, or `None` on a detached HEAD.
+    pub fn branch(&self) -> Result<Option<String>> {
+        use gix::bstr::ByteSlice;
+        Ok(self.repository.head_name()?.and_then(|name| {
+            name.as_bstr()
+                .to_str()
+                .ok()
+                .and_then(|name| name.strip_prefix("refs/heads/"))
+                .filter(|name| !name.is_empty())
+                .map(str::to_owned)
+        }))
+    }
+
+    /// The configured URL of a remote, if any.
+    pub fn remote_url(&self, remote: &str) -> Option<String> {
+        self.repository
+            .config_snapshot()
+            .string(format!("remote.{remote}.url").as_str())
+            .map(|value| value.to_string())
+            .filter(|value| !value.trim().is_empty())
+    }
 }
 
 pub fn index_tree(repo: &impl Repo) -> Result<Tree> {

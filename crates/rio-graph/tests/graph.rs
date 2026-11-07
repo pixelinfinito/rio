@@ -7,8 +7,15 @@ use rio_graph::*;
 fn graph(base: Tree, head: Tree, options: GraphOptions) -> GraphSlices {
     let changes = changes(base, head);
     let diff = diff(&changes, &options.exclude).unwrap();
+    build_graph(&changes, &diff, &options)
+}
+fn build_graph(
+    changes: &rio_git::ChangeSet,
+    diff: &rio_git::Diff,
+    options: &GraphOptions,
+) -> GraphSlices {
     GraphBuilder::default()
-        .build(&changes, &diff, &options)
+        .build(changes, diff, options)
         .unwrap()
 }
 fn example() -> (Tree, Tree) {
@@ -139,6 +146,26 @@ fn deleted_symbols_stay_in_base_file_level_seeds_and_node_caps_are_explicit() {
     assert!(slices.head.truncated);
     assert_eq!(slices.head.nodes.len(), 1);
     assert!(slices.impact(2).truncated);
+}
+#[test]
+fn deleting_a_guard_keeps_the_surviving_symbol_in_both_graphs() {
+    let base = [("a.py".into(), entry("def average(total, count):\n    if count == 0:\n        return 0\n    return total / count\n"))].into();
+    let head = [(
+        "a.py".into(),
+        entry("def average(total, count):\n    return total / count\n"),
+    )]
+    .into();
+    let slices = graph(base, head, GraphOptions::default());
+    for slice in [&slices.base, &slices.head] {
+        assert!(
+            slice
+                .nodes
+                .iter()
+                .any(|n| n.symbol_path == "a.average" && n.seed)
+        );
+    }
+    assert_eq!(slices.delta.changed, ["a.py::a.average"]);
+    assert!(slices.delta.added.is_empty() && slices.delta.removed.is_empty());
 }
 
 #[test]
@@ -322,4 +349,184 @@ fn rust_macro_invocations_are_references_and_grouped_imports_resolve() {
                 .iter()
                 .any(|node| node.id == edge.from && node.name == "unresolved")
     }));
+}
+
+#[test]
+fn renames_across_languages_with_pure_hunks_seed_the_file() {
+    let lines: String = (0..30).map(|n| format!("value_{n} = {n}\n")).collect();
+    let base: Tree = [("a.py".into(), entry(&lines))].into();
+    let head: Tree = [("a.txt".into(), entry(&format!("{lines}extra = 1\n")))].into();
+    let options = GraphOptions::default();
+    let changes = changes(base, head);
+    let delta = diff(&changes, &options.exclude).unwrap();
+    let file = &delta.files[0];
+    assert_eq!(file.old_path.as_deref(), Some("a.py"));
+    assert!(file.hunks.iter().any(|hunk| hunk.base.count == 0));
+    let slices = build_graph(&changes, &delta, &options);
+    assert!(slices.base.nodes.iter().any(|n| n.path == "a.py" && n.seed));
+}
+
+#[test]
+fn inserted_nested_symbols_seed_their_nearest_shared_ancestor() {
+    let base: Tree = [(
+        "a.py".into(),
+        entry("class Foo:\n    def first(self):\n        return 1\n\n\ndef caller():\n    return Foo()\n"),
+    )]
+    .into();
+    let head: Tree = [(
+        "a.py".into(),
+        entry("class Foo:\n    def first(self):\n        return 1\n\n    def second(self):\n        return 2\n\n\ndef caller():\n    return Foo()\n"),
+    )]
+    .into();
+    let slices = graph(base, head, GraphOptions::default());
+    assert!(
+        slices
+            .base
+            .nodes
+            .iter()
+            .any(|n| n.symbol_path == "a.Foo" && n.seed)
+    );
+}
+
+#[test]
+fn nested_gitignore_re_include_rules_apply_in_depth_order() {
+    let base: Tree = [
+        (".gitignore".into(), entry("gen/\n*.log\n")),
+        ("gen/.gitignore".into(), entry("!keep.ts\n")),
+        ("src/core.ts".into(), entry("export function core() {\n  return 1;\n}\n")),
+        ("gen/keep.ts".into(), entry("import {core} from '../src/core';\nexport function kept() { return core(); }\n")),
+        ("gen/other.ts".into(), entry("import {core} from '../src/core';\nexport function dropped() { return core(); }\n")),
+        ("deep/a/.gitignore".into(), entry("skip.ts\n")),
+        ("deep/a/skip.ts".into(), entry("import {core} from '../../src/core';\nexport function skipped() { return core(); }\n")),
+        ("deep/a/use.ts".into(), entry("import {core} from '../../src/core';\nexport function used() { return core(); }\n")),
+    ]
+    .into();
+    let mut head = base.clone();
+    head.insert(
+        "src/core.ts".into(),
+        entry("export function core() {\n  return 2;\n}\n"),
+    );
+    let slices = graph(base, head, GraphOptions::default());
+    let paths: Vec<_> = slices.head.nodes.iter().map(|n| n.path.as_str()).collect();
+    assert!(paths.contains(&"gen/keep.ts"));
+    assert!(paths.contains(&"deep/a/use.ts"));
+    assert!(!paths.contains(&"gen/other.ts"));
+    assert!(!paths.contains(&"deep/a/skip.ts"));
+}
+
+/// A repository of `files` TypeScript and Python files around a changed `args`
+/// module: aliased and plain imports, chained callers, test files, look-alike
+/// names (`myargs`, `parse_args`) and mentions in comments and strings.
+pub fn generated(files: usize) -> (Tree, Tree) {
+    let mut base = Tree::new();
+    base.insert(
+        "src/args.ts".into(),
+        entry("export function args(x: number) {\n  return x + 1;\n}\nexport function other() { return 0; }\n"),
+    );
+    base.insert(
+        "pkg/args.py".into(),
+        entry("def parse_args(value):\n    return value\n"),
+    );
+    base.insert(".gitignore".into(), entry("vendor/\n"));
+    for i in 0..files {
+        let (path, content) = match i % 8 {
+            0 => (
+                format!("src/m{i}.ts"),
+                format!(
+                    "import {{args as a{i}}} from './args';\nexport function f{i}() {{ return a{i}({i}); }}\n"
+                ),
+            ),
+            1 => (
+                format!("src/m{i}.ts"),
+                format!(
+                    "import {{f{}}} from './m{}';\nexport function g{i}() {{ return f{}(); }}\n",
+                    i - 1,
+                    i - 1,
+                    i - 1
+                ),
+            ),
+            2 => (
+                format!("tests/m{i}.test.ts"),
+                format!(
+                    "import {{args}} from '../src/args';\nexport function test_{i}() {{ return args({i}); }}\n"
+                ),
+            ),
+            3 => (
+                format!("src/m{i}.ts"),
+                format!(
+                    "// args({i}) in a comment\nconst myargs{i} = 'args({i})';\nexport function h{i}() {{ return myargs{i}; }}\n"
+                ),
+            ),
+            4 => (
+                format!("pkg/m{i}.py"),
+                format!(
+                    "from pkg.args import parse_args\n\ndef p{i}():\n    return parse_args({i})\n"
+                ),
+            ),
+            5 => (
+                format!("pkg/m{i}.py"),
+                format!(
+                    "from .args import parse_args as pa{i}\n\ndef q{i}():\n    return pa{i}({i})\n"
+                ),
+            ),
+            6 => (
+                format!("vendor/m{i}.ts"),
+                format!(
+                    "import {{args}} from '../src/args';\nexport function v{i}() {{ return args(1); }}\n"
+                ),
+            ),
+            _ => (
+                format!("src/sub{}/m{i}.ts", i % 13),
+                format!(
+                    "import * as all{i} from '../args';\nexport function s{i}() {{ return all{i}.args(2); }}\n"
+                ),
+            ),
+        };
+        base.insert(path, entry(&content));
+    }
+    let mut head = base.clone();
+    head.insert(
+        "src/args.ts".into(),
+        entry("export function args(x: number) {\n  return x + 2;\n}\nexport function other() { return 0; }\n"),
+    );
+    head.insert(
+        "pkg/args.py".into(),
+        entry("def parse_args(value):\n    return value * 2\n"),
+    );
+    (base, head)
+}
+
+#[test]
+fn generated_repository_builds_a_large_two_hop_graph() {
+    let (base, head) = generated(2000);
+    let slices = graph(base, head, GraphOptions::default());
+    assert!(
+        slices.head.nodes.len() > 1000,
+        "{}",
+        slices.head.nodes.len()
+    );
+    assert!(slices.head.edges.iter().any(|e| e.kind == EdgeKind::Tests));
+}
+
+#[test]
+fn parsing_threads_do_not_change_the_slices() {
+    let (base, head) = generated(2000);
+    let changes = changes(base, head);
+    let options = GraphOptions::default();
+    let delta = diff(&changes, &options.exclude).unwrap();
+    let build = |threads| {
+        let builder = GraphBuilder {
+            threads: Some(threads),
+            ..GraphBuilder::default()
+        };
+        let graph = builder.build(&changes, &delta, &options).unwrap();
+        (
+            serde_json::to_string(&graph).unwrap(),
+            builder.syntax.parsed(),
+        )
+    };
+    let (one, parsed_one) = build(1);
+    let (eight, parsed_eight) = build(8);
+    assert_eq!(one, eight);
+    assert_eq!(parsed_one, parsed_eight);
 }

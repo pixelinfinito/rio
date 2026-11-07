@@ -12,6 +12,7 @@ node_modules/
 dist/
 coverage/
 .wrangler/
+.cloudflare/
 *.tsbuildinfo
 npm-debug.log*
 pnpm-debug.log*
@@ -48,3 +49,4 @@ htmlcov/
 
 # Claude Code local settings
 .claude/settings.local.json
+.claude/worktrees/

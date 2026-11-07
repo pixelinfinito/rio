@@ -2,7 +2,7 @@ use crate::{Identifier, Import, Symbol, SymbolKind, SyntaxTable, parse_source};
 use anyhow::Result;
 use std::collections::BTreeMap;
 use streaming_iterator::StreamingIterator;
-use tree_sitter::{Node, Query, QueryCursor};
+use tree_sitter::{Node, QueryCursor};
 
 fn text<'a>(node: Node<'_>, source: &'a [u8]) -> &'a str {
     std::str::from_utf8(&source[node.byte_range()]).unwrap_or_default()
@@ -185,11 +185,11 @@ pub(crate) fn analyze_rust(path: &str, source: &[u8]) -> Result<SyntaxTable> {
     let tree = parse_source(path, source)?;
     let language = tree_sitter_rust::LANGUAGE.into();
     // Validate and use all three shipped query contracts.
-    Query::new(
+    crate::syntax::cached_query(
         &language,
         include_str!("../../../modules/adapters/rust/queries/references.scm"),
     )?;
-    let query = Query::new(
+    let query = crate::syntax::cached_query(
         &language,
         include_str!("../../../modules/adapters/rust/queries/symbols.scm"),
     )?;
@@ -249,7 +249,7 @@ pub(crate) fn analyze_rust(path: &str, source: &[u8]) -> Result<SyntaxTable> {
         .symbols
         .sort_by_key(|symbol| (symbol.byte_start, symbol.byte_end));
     walk(tree.root_node(), source, &mut result);
-    let query = Query::new(
+    let query = crate::syntax::cached_query(
         &language,
         include_str!("../../../modules/adapters/rust/queries/executable.scm"),
     )?;

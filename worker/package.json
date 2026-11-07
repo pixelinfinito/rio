@@ -1,0 +1,38 @@
+{
+  "name": "rio-worker",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node scripts/generate-contracts.mjs --check && tsc --noEmit && node scripts/bundle.mjs --check",
+    "bundle": "node scripts/bundle.mjs",
+    "test": "vitest run",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "dry-run": "wrangler deploy --dry-run",
+    "migrate": "wrangler d1 migrations apply rio --remote",
+    "generate": "node scripts/generate-contracts.mjs"
+  },
+  "dependencies": {
+    "@noble/hashes": "^2.0.1",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "hono": "4.13.16",
+    "picomatch": "^4.0.3"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-plugin": "^1.6.0",
+    "@cloudflare/workers-types": "latest",
+    "@types/picomatch": "^4.0.3",
+    "esbuild": "0.28.2",
+    "prettier": "^3.9.10",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.0",
+    "wrangler": "4.158.0",
+    "yaml": "^2.9.1"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true,
+    "workerd@1.20261104.1": true
+  }
+}

@@ -7,6 +7,14 @@ name: rio/base
 budget:
   fast:
     wall_time: 4m
+    tokens: 100000
+    agents_max: 3
+    verify_tokens: 6666
+  deep:
+    wall_time: 10m
+    tokens: 300000
+    agents_max: 5
+    verify_tokens: 12000
 models: {}
 steps:
 - id: prepare
@@ -42,19 +50,46 @@ steps:
   - checks
   - graph
   parallel: false
-  with: {}
+  with:
+    dependency_changes: true
+    fan_out_high: 20
+    missing_coverage: true
+    public_contracts: true
+    sensitive_paths: []
 - id: agents
   uses: rio/agents@0.1.0
   needs:
   - triage
   parallel: false
   with: {}
+- id: security
+  uses: rio/security@0.2.0
+  needs:
+  - triage
+  parallel: false
+  with:
+    catalog: owasp-top10-2025
+    enabled: false
+    fail_on:
+      categories:
+      - security
+      evidence: plausible
+      incomplete: true
+      required_checks: []
+      rules: []
+      states:
+      - new
+      - worsened
+    max_defects: 15
+    posture: thorough
 - id: verify
   uses: rio/verify@0.1.0
   needs:
   - agents
+  - security
   parallel: false
-  with: {}
+  with:
+    run: true
 - id: report
   uses: rio/report@0.1.0
   needs:
@@ -62,7 +97,8 @@ steps:
   - graph
   - verify
   parallel: false
-  with: {}
+  with:
+    class_threshold: 3
 suppress: []
 publish: never
 fail_on:
@@ -75,7 +111,7 @@ fail_on:
   rules: []
   incomplete: true
   required_checks: []
-min_evidence: plausible
+min_evidence: static_proven
 max_lines: 1500
 posture: balanced
 max_defects: 5
@@ -83,6 +119,9 @@ rounds:
   cap: 3
   diff_only_after: 1
 always_human: []
+verify:
+  voters: 3
+  quorum: 2
 chain:
 - rio/base
 modules:
@@ -91,6 +130,7 @@ modules:
   rio/graph: 0.1.0
   rio/prepare: 0.1.0
   rio/report: 0.1.0
+  rio/security: 0.2.0
   rio/triage: 0.1.0
   rio/verify: 0.1.0
 engine_version: 0.1.0

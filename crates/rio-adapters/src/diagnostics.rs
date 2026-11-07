@@ -96,6 +96,7 @@ fn finding(
         column: diagnostic.column,
         symbol_path: symbol_path.clone(),
         occurrence_state: OccurrenceState::Unclassified,
+        id: None,
     };
     Ok(Finding {
         id: finding_id(
@@ -122,6 +123,12 @@ fn finding(
         },
         locations: vec![location],
         advisory: None,
+        verification: None,
+        round: None,
+        first_posted_in: None,
+        status: None,
+        resolution: None,
+        author_response: None,
     })
 }
 fn number(value: &Value, default: u32) -> Result<u32> {

@@ -32,9 +32,13 @@ steps:
     uses: rio/agents@0.1.0
     needs: [triage]
     agents: []
+  - id: security
+    uses: rio/security@0.2.0
+    needs: [triage]
+    with: { enabled: false }
   - id: verify
     uses: rio/verify@0.1.0
-    needs: [agents]
+    needs: [agents, security]
   - id: report
     uses: rio/report@0.1.0
     needs: [checks, graph, verify]
@@ -47,7 +51,6 @@ fail_on:
   rules: []
   incomplete: true
   required_checks: []
-min_evidence: plausible
 max_lines: 1500
 posture: balanced
 rounds: { cap: 3, diff_only_after: 1 }

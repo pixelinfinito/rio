@@ -59,6 +59,7 @@ pub fn scan_secrets(diff: &Diff, head: &Tree) -> Result<Vec<Finding>> {
                 ),
                 symbol_path: String::new(),
                 occurrence_state,
+                id: None,
             };
             let rule_id = format!("secret/{}", found.pattern);
             let trigger = redact_value(&content[found.start..found.end]);
@@ -82,6 +83,12 @@ pub fn scan_secrets(diff: &Diff, head: &Tree) -> Result<Vec<Finding>> {
                 },
                 locations: vec![location],
                 advisory: None,
+                verification: None,
+                round: None,
+                first_posted_in: None,
+                status: None,
+                resolution: None,
+                author_response: None,
             });
         }
     }

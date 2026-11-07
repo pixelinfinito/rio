@@ -373,6 +373,144 @@
           "additionalProperties": false
         }
       ]
+    },
+    "security": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/finding"
+      }
+    },
+    "agent_audit": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "lineage": {
+      "description": "Present only for reviews that belong to a review lineage (PR or --since-last branch).",
+      "type": "object",
+      "properties": {
+        "repository": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "enum": [
+            "pr",
+            "branch"
+          ]
+        },
+        "ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "generation": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "round": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cap": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "capped": {
+          "type": "boolean"
+        },
+        "diff_only": {
+          "type": "boolean"
+        },
+        "previous_head": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "held_back": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rounds_to_pass": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "author_response_ratio": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "reconsider": {
+          "type": "object",
+          "properties": {
+            "unresolved": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "top": {
+              "type": "array",
+              "maxItems": 3,
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  },
+                  "line_start": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                },
+                "required": [
+                  "id",
+                  "title",
+                  "path",
+                  "line_start"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "split": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "required": [
+            "unresolved",
+            "top"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "repository",
+        "kind",
+        "ref",
+        "generation",
+        "round",
+        "cap",
+        "capped",
+        "diff_only",
+        "previous_head",
+        "held_back",
+        "rounds_to_pass",
+        "author_response_ratio"
+      ],
+      "additionalProperties": false
     }
   },
   "required": [
@@ -393,9 +531,6 @@
   "additionalProperties": false,
   "$defs": {
     "finding": {
-      "$schema": "https://json-schema.org/draft/2020-12/schema",
-      "$id": "https://rio.dev/schemas/finding-v1.json",
-      "title": "Rio finding v1",
       "type": "object",
       "properties": {
         "id": {
@@ -409,7 +544,8 @@
         "category": {
           "enum": [
             "defect",
-            "risk"
+            "risk",
+            "security"
           ]
         },
         "evidence_level": {
@@ -566,6 +702,11 @@
                   "fixed",
                   "unclassified"
                 ]
+              },
+              "id": {
+                "description": "Identity of the instance finding when this location belongs to a class-level finding.",
+                "type": "string",
+                "minLength": 1
               }
             },
             "required": [
@@ -658,6 +799,63 @@
             "at"
           ],
           "additionalProperties": false
+        },
+        "status": {
+          "description": "Lifecycle of a posted lineage finding, independent of regression state.",
+          "enum": [
+            "open",
+            "fixed",
+            "dismissed"
+          ]
+        },
+        "resolution": {
+          "description": "How the lifecycle status was reached: the head that fixed the finding, or why it stayed open.",
+          "type": "object",
+          "properties": {
+            "fixed_in": {
+              "type": "string",
+              "minLength": 1
+            },
+            "note": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        "verification": {
+          "type": "object",
+          "properties": {
+            "voters": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "agreeing": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "blind_match": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "same",
+                  "related",
+                  "none"
+                ]
+              }
+            },
+            "split": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "voters",
+            "agreeing",
+            "blind_match",
+            "split"
+          ],
+          "additionalProperties": false,
+          "description": "Semantic invariant: agreeing <= voters and blind_match contains one entry per configured voter; enforced by Rio deserialization and runtime validation."
         }
       },
       "required": [

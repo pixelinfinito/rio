@@ -1,0 +1,75 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "rio",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-11-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "vars": {
+    "RIO_VERSION": "0.2.0",
+    "RUNNER_BACKEND": "sandbox",
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "rio",
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations",
+    },
+  ],
+  "r2_buckets": [
+    {
+      "binding": "ARTIFACTS",
+      "bucket_name": "rio-artifacts",
+    },
+  ],
+  "workflows": [
+    {
+      "binding": "MIGRATIONS",
+      "name": "rio-migrate",
+      "class_name": "MigrationWorkflow",
+    },
+    {
+      "binding": "REVIEWS",
+      "name": "rio-review",
+      "class_name": "ReviewWorkflow",
+    },
+  ],
+  "queues": {
+    "producers": [
+      {
+        "binding": "JOBS",
+        "queue": "rio-jobs",
+      },
+    ],
+    "consumers": [
+      {
+        "queue": "rio-jobs",
+        "max_batch_size": 1,
+        "max_retries": 2,
+      },
+    ],
+  },
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "SANDBOX",
+        "class_name": "Sandbox",
+      },
+    ],
+  },
+  "containers": [
+    {
+      "class_name": "Sandbox",
+      "image": "./Dockerfile",
+      "instance_type": "standard-3",
+      "max_instances": 5,
+      "image_build_context": "..",
+    },
+  ],
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["Sandbox"],
+    },
+  ],
+}
