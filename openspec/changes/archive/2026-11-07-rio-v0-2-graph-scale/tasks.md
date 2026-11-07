@@ -45,5 +45,5 @@ Baseline (2026-11-07, this machine, today's builder, one thread):
 
 ## Workflow follow-up
 
-- Mark task 5.2 of `rio-v0-2-large-snapshots` once 4.3 passes, then archive that change. Resume task 1.1 of `rio-v0-2-review-convergence`.
-- Archive this change once its tasks are complete; remove `legacy_slice` at archive time.
+- Task 5.2 of `rio-v0-2-large-snapshots` was marked complete from 4.3, and that change was archived on 2026-11-07. Task 1.1 of `rio-v0-2-review-convergence` resumes next.
+- Archived 2026-11-07. At archive time the legacy builder was removed: the `legacy` feature, the equivalence checks and the benchmark's `--legacy` options. The thread-determinism test and `graph-bench --compare-threads` remain.

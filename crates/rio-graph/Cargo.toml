@@ -24,14 +24,5 @@ rio-core = { path = "../rio-core" }
 rio-git = { path = "../rio-git" }
 rio-adapters = { path = "../rio-adapters" }
 
-[features]
-# Exposes the pre-index builder for equivalence tests and graph-bench.
-legacy = []
-
 [dev-dependencies]
-rio-graph = { path = ".", features = ["legacy"] }
 insta.workspace = true
-
-[[example]]
-name = "graph-bench"
-required-features = ["legacy"]

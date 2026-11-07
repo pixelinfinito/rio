@@ -125,10 +125,6 @@ fn locate(tree: &Tree, path: &str, python: bool) -> Option<String> {
         .find(|candidate| tree.contains_key(candidate))
 }
 
-#[cfg(feature = "legacy")]
-pub fn resolve_import(tree: &Tree, path: &str, module: &str) -> Option<String> {
-    Resolver::new(tree).resolve_import(path, module)
-}
 fn resolve_other(tree: &Tree, path: &str, module: &str) -> Option<String> {
     let python = rio_adapters::language_for_path(path) == Some("python");
     if !python {

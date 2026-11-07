@@ -4,29 +4,19 @@ use common::*;
 use rio_git::{Tree, diff};
 use rio_graph::*;
 
-/// Builds the graph and checks it against the pre-index builder.
 fn graph(base: Tree, head: Tree, options: GraphOptions) -> GraphSlices {
     let changes = changes(base, head);
     let diff = diff(&changes, &options.exclude).unwrap();
-    build_checked(&changes, &diff, &options)
+    build_graph(&changes, &diff, &options)
 }
-fn build_checked(
+fn build_graph(
     changes: &rio_git::ChangeSet,
     diff: &rio_git::Diff,
     options: &GraphOptions,
 ) -> GraphSlices {
-    let graph = GraphBuilder::default()
+    GraphBuilder::default()
         .build(changes, diff, options)
-        .unwrap();
-    let legacy = rio_graph::legacy::LegacyBuilder::default()
-        .build(changes, diff, options)
-        .unwrap();
-    assert_eq!(
-        serde_json::to_string(&graph).unwrap(),
-        serde_json::to_string(&legacy).unwrap(),
-        "indexed and legacy graphs differ"
-    );
-    graph
+        .unwrap()
 }
 fn example() -> (Tree, Tree) {
     let base:Tree=[
@@ -372,7 +362,7 @@ fn renames_across_languages_with_pure_hunks_seed_the_file() {
     let file = &delta.files[0];
     assert_eq!(file.old_path.as_deref(), Some("a.py"));
     assert!(file.hunks.iter().any(|hunk| hunk.base.count == 0));
-    let slices = build_checked(&changes, &delta, &options);
+    let slices = build_graph(&changes, &delta, &options);
     assert!(slices.base.nodes.iter().any(|n| n.path == "a.py" && n.seed));
 }
 
@@ -399,7 +389,7 @@ fn inserted_nested_symbols_seed_their_nearest_shared_ancestor() {
 }
 
 #[test]
-fn nested_gitignore_re_include_matches_the_legacy_builder() {
+fn nested_gitignore_re_include_rules_apply_in_depth_order() {
     let base: Tree = [
         (".gitignore".into(), entry("gen/\n*.log\n")),
         ("gen/.gitignore".into(), entry("!keep.ts\n")),
@@ -507,7 +497,7 @@ pub fn generated(files: usize) -> (Tree, Tree) {
 }
 
 #[test]
-fn generated_repository_matches_the_legacy_builder() {
+fn generated_repository_builds_a_large_two_hop_graph() {
     let (base, head) = generated(2000);
     let slices = graph(base, head, GraphOptions::default());
     assert!(
