@@ -1,109 +1,90 @@
 # Tasks
 
-## 1. Contracts and schemas
+## 0. Contracts and schemas
 
-- [ ] 1.1 Add `schemas/journey-v1.json` and `schemas/qa-config-v1.json` with the keys from the qa-journeys and qa-environment specs; verify with schema tests that the valid examples in the spec scenarios pass and the unknown-key, literal-credential and missing-coverage cases fail
-- [ ] 1.2 Extend `schemas/module-v1.json` with kind `ruleset` (rule `id`, `kind`, `category`, `severity`, `description`, probe `predicate` and `threshold`) and verify the existing adapter and step manifests still validate
-- [ ] 1.3 Extend `schemas/finding-v1.json` with category `ux` and the optional `qa` block, and `schemas/report-v1.json` with the optional `qa` object; verify with the schema snapshot tests that existing report fixtures still validate and a QA fixture validates
-- [ ] 1.4 Add `modules/steps/qa/module.yaml` (`rio/qa@0.1.0`, `local: true`, inputs snapshot, graph, journeys, qa_config; outputs journey_outcomes, hypotheses, evidence) with the option schema from the review-profiles delta, and verify `rio profile validate` rejects `harness: claude` naming the allowed values
-- [ ] 1.5 Add `modules/qa/rules/ui-v1.yaml` with every probe and judged rule named in the ui-quality-rules spec, thresholds and minority ratios; verify it loads as a `ruleset` module with unique ids
-- [ ] 1.6 Add `modules/qa/skill/SKILL.md` (journey schema, coverage rules, evidence expectations, rule ids, `write_journey` usage) with a version marker; verify a documentation test checks every rule id it mentions exists in the ruleset
-- [ ] 1.7 Add `modules/profiles/qa.yaml` extending `rio/base`, and add the disabled `rio/qa` step to `modules/profiles/base.yaml`; verify `rio profile show rio/qa` resolves the budgets and `rio profile show rio/base` shows QA disabled; regenerate `docs/profiles.md`
+- [ ] 0.1 Add `schemas/journey-v1.json`, `qa-config-v1.json`, `qa-seed-v1.json`, `qa-fixtures-v1.json` and `qa-replay-v1.json`; verify schema tests that every valid example in the spec scenarios passes and the unknown-key, literal-credential, missing-coverage, `after` cycle and oversized-file cases fail
+- [ ] 0.2 Extend `schemas/module-v1.json` with kind `ruleset` (rule `id`, `kind`, `category`, `severity`, `eligible`, `measure`, `threshold`, `exclude`, `scope`); verify existing manifests still validate
+- [ ] 0.3 Extend `schemas/finding-v1.json` with category `ux`, the `qa` block bound to `ux`, and the `cell` and `evidence` keys on occurrences; extend `schemas/report-v1.json` with the `qa` object and cell schema; verify snapshot tests on existing fixtures and a new QA fixture, including rejection of `ux` without `qa` and `defect` with `qa`
+- [ ] 0.4 Extend `schemas/profile-v1.json` with `budget.<mode>.qa` and `rio-profile` with its defaults, the deadline composition and the guardrail for `rio/qa`; verify tests for "Deadline extended by QA", "Unknown QA budget key rejected" and "QA requires verification"
+- [ ] 0.5 Compose the finding-model and footer replacements with the convergence change: whichever change archives second carries both; verify a documentation test diffs both deltas against the main spec and fails if either loses the other's additions
+- [ ] 0.6 Add `modules/steps/qa/module.yaml` (`rio/qa@0.1.0`, needs `graph`, inputs and outputs per the qa-execution spec, option schema per the review-profiles delta); verify `rio profile validate` rejects `harness: claude` and `viewports: [desktop, wide]`
+- [ ] 0.7 Add `modules/qa/rules/ui-v1.yaml` with every probe and judged rule, predicates, thresholds and scopes; verify it loads as a `ruleset` with unique ids and every predicate named in the spec is present
+- [ ] 0.8 Add `modules/qa/skill/SKILL.md` with a version marker; verify a test checks every rule id it mentions exists in the ruleset
+- [ ] 0.9 Add `modules/profiles/qa.yaml` and the disabled `rio/qa` step with its wiring to `modules/profiles/base.yaml`; verify `rio profile show rio/qa` shows `verify` needing `qa` and `rio/base` shows QA disabled; regenerate `docs/profiles.md`
 
-## 2. rio-qa crate: journeys, contract and selection
+## 1. Fixture app, controller skeleton and images
 
-- [ ] 2.1 Create `crates/rio-qa` with the journey and contract models, YAML loading, schema validation and semantic checks (persona exists, stale globs warn, credential-looking step text warns); verify with unit tests for each scenario in qa-journeys "Journey documents", "Journey steps" and "Coverage declarations"
-- [ ] 2.2 Implement framework route derivation (Next.js app and pages, SvelteKit, Remix and React Router file routes, Nuxt, Astro) with an `app.routes_from` override; verify with fixture trees that each convention maps a changed file to the expected route
-- [ ] 2.3 Implement changed-mode selection from the diff, the graph delta and the derived routes, plus the `max_journeys` cap and plan reasons; verify unit tests cover "Graph expansion selects a journey", "Nothing matches", "Cap keeps smoke" and explicit `--journey` selection
-- [ ] 2.4 Implement `rio qa sync --check` on top of selection without a container; verify a CLI test exits non-zero naming the stale journey
-- [ ] 2.5 Implement the environment contract detection order (Compose, Dockerfile, `package.json` scripts, framework defaults); verify unit tests for the Vite and Compose scenarios and the "nothing detected" fallback marker
-- [ ] 2.6 Document journeys, the contract and the skill in `docs/qa.md`; verify every YAML example in the document validates against the schemas in a documentation test
+- [ ] 1.1 Add `tests/fixtures/qa-sample`: a Vite app with a SQLite-backed API, `Dockerfile.qa` provisioning it, a committed `.rio/qa.yaml`, `.rio/qa/seed/` (schema, shopper and admin accounts with apply commands, products, one saved address), `.rio/qa/fixtures/` (payments `http-mock` with `approve` and `decline` and a claim on a fake provider host, mail capture, one generated CSV upload), journeys for login, registration with email verification (`resets: true`), add-to-cart and checkout (`after`), and a `defects.json` toggle for seeded defects (disabled save button, missing confirmation, gradient hero, accent-border cards, raw primitive, low contrast in dark mode, console error, fixed banner over the pay button on phones, 28 px icon buttons, 14 px email input, hover-only menu); verify the image builds and the clean build serves every flow
+- [ ] 1.2 Add `worker/Dockerfile.qa` (QA base image: Chromium via Playwright, `@playwright/mcp`, codex CLI, pi, datastore client tools, the entrypoint that writes host claims and the run CA before dropping privileges); verify it builds in CI and `rio-runner qa --self-test` serves a bundled static page and runs one step
+- [ ] 1.3 Add the Node controller package under `crates/rio-qa/controller/` with Chromium launch (tracing, console, network, CDP), the restricted `@playwright/mcp` bridge and Rio's MCP server stubs; verify a Playwright test against the fixture app that each tool is listed and no shell tool exists
+- [ ] 1.4 Create `crates/rio-qa` with the journey, contract, seed and fixture models, loading and semantic validation (persona exists, stale globs, credential-looking steps, `after` cycles, mobile mandatory, `desktop_only` reason); verify unit tests for every validation scenario in qa-journeys and qa-environment
 
-## 2a. Seed data
+## 2. Pod runtime and isolation
 
-- [ ] 2a.1 Add `schemas/qa-seed-v1.json` and the `seed` block of `qa-config-v1`, with validation of the manifest, the personas-to-users mapping, the 5 MiB unreferenced-file rule and the `.cache` rule; verify schema tests for "Manifest validates" and "Materialized data in the repository is rejected"
-- [ ] 2a.2 Implement the fingerprint (manifest, referenced files, migration globs, datastore kinds, image version) and `rio qa seed status`; verify unit tests for "Migration change rebuilds" and "Status after a schema change"
-- [ ] 2a.3 Implement datastore adapters `sqlite`, `postgres`, `mysql`, `redis`, `files` and `custom` with capture and restore in the controller, and add the client tools to `worker/Dockerfile.qa`; verify an integration test round-trips each kind in the fixture container and "Missing client tool" fails with the named tool
-- [ ] 2a.4 Implement snapshot storage per datastore archive in `<cache>/qa-seeds/<fingerprint>/` and in the hosted content-addressed store, the size cap and `fallback_rebuild`; verify tests for "One datastore changes", "Size cap" and that a hosted re-upload of an unchanged archive is skipped
-- [ ] 2a.5 Implement restore-or-build at run start, `resets: true` per journey and run-order sharing; verify tests for "Second run restores", "Registration journey resets" and "Shared state in order"
-- [ ] 2a.6 Implement seed authoring in `rio qa init` (schema and migrations discovery, persona accounts from environment variables, synthetic-data instruction in the skill, personal-data warning in validate) and `rio qa seed build|prune|export`; verify CLI tests for "Init builds the seed first", "Realistic data stays synthetic" and prune keeping the newest three
-- [ ] 2a.7 Document seed data in `docs/qa.md` with a Postgres and a SQLite example; verify both examples validate and the documented commands run against the fixture app
+- [ ] 2.1 Implement the pod on the Docker backend in `rio-runner`: three containers, internal network for `app` and `browser`, controller network with host-enforced egress to the gateway and upload hosts, snapshot materialization into `app`, teardown on timeout and interruption; verify integration tests for "Repository code cannot reach the model route", "App egress blocked behaviorally", "Controller egress limited", "Harness container holds no source" and "Interrupted run"
+- [ ] 2.2 Implement the model proxy in the controller with run-scoped token, per-cell token budget and usage records, plus the local keychain-backed variant; verify tests that the budget cuts off a cell and no provider key appears in any container environment
+- [ ] 2.3 Implement `harness.auth` resolution (`auto`, `subscription` Docker-only read-only mount into `controller`, `gateway`) and `rio doctor` lines; verify tests for "Local subscription reuse" and that `subscription` is refused hosted and in the Sandbox
+- [ ] 2.4 Implement the `qa` job class: protocol fields, heartbeat leases every 60 s replacing the bounded wait, evidence and seed sinks, the Sandbox `sandbox: allow` path with its labels and `no_runtime` deferral otherwise; verify Worker tests for lease renewal, "Sandbox without opt-in" and "Sandbox with opt-in"
+- [ ] 2.5 Implement start order inside `app` (datastores with `ready`, seed restore, credential apply, doubles, app, readiness, `app.seed` hook) with named failures; verify tests for "App never listens", "Datastore never ready" and "Compose rejected"
+- [ ] 2.6 Implement the local no-endpoint path in `rio-engine` (image verification, pod, `no_runtime`); verify "QA runs locally with Docker" and "Docker unavailable locally"
+- [ ] 2.7 Document the pod, egress policy, backend eligibility and self-hosted setup in `docs/cloudflare.md`; verify the documented commands run against the fixture app
 
-## 2b. Run fixtures
+## 3. Seed data and fixtures
 
-- [ ] 2b.1 Add `schemas/qa-fixtures-v1.json` and manifest validation (file size limit, service kinds, behavior names, context values) and include the manifest and committed files in the seed fingerprint; verify schema tests for "Manifest validates" and "Oversized committed file rejected"
-- [ ] 2b.2 Implement generated upload files in the seed build (`image`, `pdf`, `csv`, `json`, `text`, `binary`) stored under the `files` seed kind, and the `upload_fixture` name resolution; verify a test for "Large generated file" restores without regeneration
-- [ ] 2b.3 Implement the `http-mock` server with matchers, recordings and behaviors, the `set_service_behavior` tool and per-journey reset; verify tests for "Payment double" and "Decline then approve"
-- [ ] 2b.4 Implement `smtp-capture`, `sms-capture`, `webhook-sink` and the `read_mail`, `read_sms`, `read_webhooks` tools with link extraction and step evidence; verify a test for "Registration verification link" against the fixture app
-- [ ] 2b.5 Implement `oauth-provider`, `s3` and `custom` doubles, env templating into `app.start`, the hosts-file mapping and the `blocked_egress` network-log entry and footer list; verify tests for "Undoubled dependency" and an OAuth login round trip
-- [ ] 2b.6 Implement controlled context (clock, timezone, locale, geolocation, network) at defaults and journey level and the in-step `set_network` and `set_geolocation` tools; verify tests for "Offline step" and "Fixed time"
-- [ ] 2b.7 Implement dependency detection and double proposal in `rio qa init` (env variables, SDK imports, first-start outbound hosts) and `rio qa fixtures status`; verify the "Stripe detected" scenario with a fixture that imports the Stripe SDK
-- [ ] 2b.8 Document fixtures in `docs/qa.md` with a payments double, a mail capture and an offline step example; verify the examples validate and run against the fixture app
+- [ ] 3.1 Implement the fingerprint, `rio qa seed status`, datastore adapters (`sqlite`, `postgres`, `mysql`, `redis`, `files`, `custom`) with start, ready, capture and restore; verify round-trip tests per kind in the fixture image and "Missing server binary"
+- [ ] 3.2 Implement credential re-apply after restore and `seed.cache_version`; verify "Password rotated"
+- [ ] 3.3 Implement the seed object protocol: per-archive parts with hashes, atomic manifest, quotas, safe extraction, leased pruning, local and hosted stores; verify "One datastore changes", "Size cap", "Interrupted upload", "Hash mismatch" and that an unchanged archive is not re-uploaded
+- [ ] 3.4 Implement restore before every chain and `resets` as chain heads; verify "Registration in every cell" and "Shared state in order"
+- [ ] 3.5 Implement generated upload files, `http-mock` with recordings and behaviors, `smtp-capture`, `sms-capture`, `webhook-sink`, `oauth-provider`, `s3`, `custom`, host claims with the run CA, `blocked_egress` and `tls_pinned` logging; verify "Payment double by URL", "Hard-coded provider host", "Pinned certificate", "Undoubled dependency", "Registration verification link" and "Decline then approve"
+- [ ] 3.6 Implement controlled context (clock, timezone, locale, geolocation, network) as replay events; verify "Offline step" and "Fixed time"
+- [ ] 3.7 Document seeds and fixtures in `docs/qa.md` with Postgres, SQLite, payments-double and mail-capture examples; verify the examples validate and run against the fixture app
 
-## 3. rio-qa crate: browser recorder, probes and evidence
+## 4. Browser recorder, matrix, probes and evidence
 
-- [ ] 3.1 Add the Node controller package under `crates/rio-qa/controller/` that launches Chromium through Playwright with tracing, console and network capture and a CDP endpoint, starts `@playwright/mcp` against it with the restricted capability set, and runs Rio's MCP server (`login`, `set_viewport`, `set_color_scheme`, `upload_fixture`, `step_done`, `observe`); verify with a Playwright test against the fixture app that each tool works and no shell tool is listed
-- [ ] 3.2 Implement step-boundary capture (screenshot, DOM and accessibility snapshot, console and network log flush) and the action recorder for replay; verify a test replays a recorded three-step journey headlessly to the same final URL and DOM hash
-- [ ] 3.2a Implement the viewport matrix: built-in presets, custom entries, validation that at least one mobile viewport remains at contract, profile and journey level (`desktop_only` with reason), fresh device-emulated context per viewport and scheme, mobile-first ordering and in-step orientation switch; verify tests for "Mobile emulation is real emulation", "Desktop-only matrix rejected", "Silent mobile removal rejected", "Mobile runs first" and "Orientation change in a step"
-- [ ] 3.2b Implement the `mobile/` probe family gated on mobile or touch contexts; verify fixture pages trigger "Pay button under a fixed footer" and "Small tap targets" in `mobile` and nothing in `desktop`
-- [ ] 3.3 Implement the probe script for every probe in the ruleset with the minority-pattern thresholds; verify fixture pages trigger each probe exactly as the ui-quality-rules scenarios state, including the "Consistent gradients" non-firing case
-- [ ] 3.4 Implement the evidence manifest, naming scheme, redaction of text artifacts, header and body limits for the network log, and masking of password and `data-rio-mask` elements; verify tests cover "Manifest lists everything" and "Token in a response body"
-- [ ] 3.5 Implement persona login from environment variables inside the controller so values never reach the harness; verify the transcript fixture shows `login(persona)` with no value and the login-form screenshot is masked
-- [ ] 3.6 Implement finding construction: probe hits at `static_proven`, hypotheses from `observe` with evidence refs required, identity from journey, step, rule and route, merge across viewports, attribution order; verify unit tests for "Stable across viewports", "Unsupported observation dropped", "Ambiguous text match" and "Stack trace wins over text"
+- [ ] 4.1 Implement step-boundary capture, the replay event log (`qa-replay-v1`) covering Playwright actions and Rio tools, and `rio-runner qa replay --until` with outcomes `recurred`, `not_recurred`, `prerequisites_failed`; verify a replay of the fixture checkout chain reproduces the seeded defect and a broken prerequisite yields `prerequisites_failed`
+- [ ] 4.2 Implement the viewport matrix: presets, custom entries, device-emulated contexts per cell, mobile-first ordering, chain × cell execution, orientation switch; verify "Mobile emulation is real emulation", "Mobile runs first", "Orientation change in a step" and "Mobile-only failure"
+- [ ] 4.3 Implement the probe script with every written predicate, candidate collection, step and run scopes, the minority test with ratio and `min_sample`, mobile gating, and severity by adoption; verify fixture pages trigger each probe exactly as the ui-quality-rules scenarios state, including "Consistent gradients", "Too few elements", "Run-scoped probe finalized once" and "Not adopted"
+- [ ] 4.4 Implement text sanitization, member-level trace sanitization with fail-closed drop, DOM-level masking, the evidence manifest and the `evidence_bytes` quota; verify "Token in a response body", "Trace member redacted", "Unparseable member", "Masked video", "Evidence quota" and a seeded-secret scan of a full bundle
+- [ ] 4.5 Implement finding construction: QA identity, cell occurrences, state derivation including `worsened`, attribution order, hypotheses with structured fields and evidence-required drop; verify "QA identity ignores measurements and cells", "Two cells, one finding", "Worsened across cells", "Ambiguous text match", "Stack trace wins over text" and "Unsupported observation dropped"
 
-## 4. Harness drivers
+## 5. Harness drivers and authoring
 
-- [ ] 4.1 Implement the `Harness` trait and the codex driver (per-run `config.toml` with MCP servers, `model_providers.rio` for the gateway path, read-only sandbox, non-interactive exec, transcript normalization to jsonl); verify with a stub MCP server test that the generated config contains no secret value and the transcript normalizes
-- [ ] 4.2 Implement the pi driver on the same trait; verify the same stub test passes and the journey evidence layout is identical to codex ("Same evidence for both harnesses")
-- [ ] 4.3 Implement `harness_auth` resolution: subscription (local only, read-only mount) and gateway (run-scoped token); verify `rio doctor` prints the resolved path and the run record never contains a credential value
-- [ ] 4.4 Implement author mode (`rio qa init` and `rio qa sync`) with the `write_journey` tool writing to staging, validation, `*.proposed.yaml` handling and `--force`; verify CLI tests for "First generation", "Existing journey preserved" and "Proposed update" with a scripted harness stub
-- [ ] 4.5 Implement skill installation and refresh (`.rio/qa/skills/rio-qa`, `.claude/skills/rio-qa` symlink or copy, fenced `AGENTS.md` section, `SKILL.proposed.md`); verify tests for "Skill registered for two harnesses", "User text outside the fence survives" and "Edited skill preserved"
+- [ ] 5.1 Implement the `Harness` trait, the codex driver and the pi driver with per-run configuration, MCP wiring and transcript normalization; verify a stub-MCP test for each that the config holds no secret and "Same evidence for both harnesses"
+- [ ] 5.2 Implement the Rio MCP tools (`login`, viewport and scheme, `upload_fixture`, `read_mail`, `read_sms`, `read_webhooks`, `set_service_behavior`, `set_network`, `set_geolocation`, `step_done`, `observe`) and per-cell retry on harness crash; verify "Credentials outside the prompt", "Fixture upload", "Shell tool denied" and "Harness crash"
+- [ ] 5.3 Implement author mode for `rio qa init` (contract detection, seed and fixture authoring with dependency detection, seed build, journey generation with `write_journey`, `resets` inference, candidates, `--force`) and `rio qa sync`; verify "Init builds the seed first", "Stripe detected", "First generation", "Existing journey preserved", "Proposed update" and "Check mode in CI" with a scripted harness stub
+- [ ] 5.4 Implement skill installation and refresh; verify "Skill registered for two harnesses", "Edited skill preserved" and "User text outside the fence survives"
 
-## 5. Runner image and job class
+## 6. Worker, verifier and selection
 
-- [ ] 5.1 Add `worker/Dockerfile.qa` extending the runner image with Playwright Chromium, `@playwright/mcp`, the codex CLI and pi at pinned versions, and a `rio-runner qa` entry point; verify the image builds in CI and `rio-runner qa --self-test` runs a one-step journey against a bundled static page
-- [ ] 5.2 Extend the job protocol with `class: qa`, `network: egress_model`, QA wall limits and the `evidence_sink`; update `worker/src/step-schemas.json`, validators and `rio-runner`; verify protocol tests reject a `qa` job with `network: false` or with wall above the class ceiling
-- [ ] 5.3 Implement the Docker backend for `qa` jobs: fresh container, materialized snapshot, no app egress, harness egress through a sidecar whose only route is the gateway, teardown on timeout and interruption; verify integration tests cover "Working tree not mounted", "Interrupted run" and that a curl from the app process fails
-- [ ] 5.4 Implement the Sandbox backend for `qa` jobs with `enableInternet: true`, the provider-pinned harness and the `egress: provider_pinned (sandbox)` job record; verify the Worker test asserts the record and the report footer text
-- [ ] 5.5 Implement the local Docker path in `rio-engine` for no-endpoint runs, including the loopback model proxy with budget enforcement, image tag verification and `no_runtime` deferral; verify tests for "QA runs locally with Docker" and "Docker unavailable"
-- [ ] 5.6 Implement replay (`rio-runner qa replay --until <step>`) from recorded actions in a fresh container; verify a test replays the fixture journey and produces the artifacts named in the verifier-quorum delta
-- [ ] 5.7 Document the QA image, job class, egress policy and self-hosted setup in `docs/cloudflare.md`; verify the documented commands run as written against the fixture app
-
-## 6. Worker: workflow step, evidence and verifier
-
-- [ ] 6.1 Add the QA workflow step: mint the run-scoped gateway token, issue presigned multipart upload targets, dispatch the `qa` job, consume outcomes and hypotheses, revoke the token; add D1 migration `qa_runs`; verify Worker tests for token scope, budget and revocation at run end
-- [ ] 6.2 Implement signed read URLs scoped to one object with the configured expiry, the `qa.evidence_retention` lifecycle rule in `rio init`, and `rio qa evidence prune --review ID`; verify tests for "Markdown with hosted evidence", "Expired evidence" and prune
-- [ ] 6.3 Extend `rio/verify` with the QA evidence pack (screenshots, DOM, log excerpts, attributed base and head file, journey file, tool calls only), browser-trace support for `reproduced`, probe results as `static_proven`, replay-backed refutation and the one-replay-per-hypothesis rule; verify quorum tests for "Browser trace supports reproduced", "Screenshot alone cannot refute", "Replay recurs", "Second replay refused" and "Transcript prose excluded"
-- [ ] 6.4 Implement the QA `fail_on` policy and cap as a separate pool like security; verify tests for "QA policy independent of general cap" and that `unclassified` QA findings do not match the default policy
+- [ ] 6.1 Add the QA workflow step: run-scoped token mint and revoke, presigned evidence and seed targets, dispatch, consume outcomes, `qa_runs` migration; verify Worker tests for token scope, budget, revocation and partial results after cancellation
+- [ ] 6.2 Implement signed one-object read URLs, the lifecycle rule from `evidence.retention_days` in `rio init`, and `rio qa evidence prune`; verify "Markdown with hosted evidence", "Expired evidence" and prune
+- [ ] 6.3 Extend `rio/verify` with the QA blind turn and blind match, the second-turn evidence pack, browser artifacts as `reproduced`, probe results as `static_proven`, replay on request with one-per-hypothesis and `replay_wall`, non-recurrence as inconclusive, refutation from original evidence; verify "Blind rediscovery on a journey-attributed finding", "Browser trace supports reproduced", "Non-recurrence is not a refutation", "Refutation from the original evidence", "Replay recurs", "Prerequisites fail", "Second replay refused" and "Transcript prose excluded"
+- [ ] 6.4 Implement changed-mode selection (diff, graph delta, `routes_from` conventions and map, `after` pull-in), the cap by chains, cell count and estimate, and the exploratory pass; verify "Graph expansion selects a journey", "Dependency pulled in", "Nothing matches", "Cap keeps smoke" and "New page without a journey"
+- [ ] 6.5 Implement the QA fail policy pool with severity floor and adoption; verify "QA policy independent of general cap", "Adopted" and that `unclassified` or `info` QA findings do not match the default policy
 
 ## 7. CLI and report
 
-- [ ] 7.1 Add `rio qa` with subcommands `init`, `sync`, `list`, `validate`, `show`, `rules`, `evidence prune` and the bare run form with `--full`, `--journey`, `--baseline`, `--harness` and the review selection flags; verify `assert_cmd` tests for each and that `rio qa` runs prepare, graph, qa, verify and report
-- [ ] 7.2 Extend `rio doctor` with Docker reachability, the paired QA image tag, harness binaries and the auth path; verify a doctor test shows each line
-- [ ] 7.3 Add the `qa` block to `rio-core` findings, the QA section to the terminal, Markdown and JSON renderers (journeys, step reached, evidence links, probe versus verified versus unverified observations), the footer lines and the run record files; verify snapshot tests for "QA section with a failed journey", "Per-viewport grid", "Unverified observations labeled", "QA footer", "Hosted record carries keys only" and "JSON validates with QA"
-- [ ] 7.4 Implement `baseline: true` (second container on base, outcome diff per rule, journey and step) and the no-baseline state rule; verify tests for "Regression classified" and "Attribution without baseline"
-- [ ] 7.5 Update `README.md` with the QA quick start and `docs/PRD.md` with requirement R32; verify the README commands run as written
+- [ ] 7.1 Add `rio qa` with subcommands `init`, `sync`, `list`, `validate`, `show`, `rules`, `seed`, `fixtures`, `evidence prune` and the run form with its flags and the standalone subgraph; verify `assert_cmd` tests for each and "Standalone run on a working tree"
+- [ ] 7.2 Add the QA section with the per-cell grid, unverified observations, footer lines, run record files and the JSON `qa` object to `rio-core` renderers; verify snapshot tests for "QA section with a failed journey", "Unverified observations labeled", "QA footer", "Local record is complete", "Hosted record carries keys only" and "JSON validates with QA"
+- [ ] 7.3 Implement `baseline: true` as a second pod on base with cell-by-cell matching; verify "Regression classified", "Worsened across cells" and "Attribution without baseline"
+- [ ] 7.4 Update `README.md` with the QA quick start and `docs/PRD.md` with requirement R32; verify the README commands run as written
 
 ## 7a. PR publishing (gated on the GitHub App change)
 
-- [ ] 7a.1 Implement the QA publishable mapping in `rio-core` (inline at attributed line in the diff, first hunk otherwise, summary for journey attribution, one comment per rule and route with viewports); verify unit tests for "Attributed to a changed line", "Attributed outside the diff" and "Journey-only attribution"
-- [ ] 7a.2 Implement the `rio/qa` summary comment body (journeys, outcomes, step reached, evidence links and expiry, held-back and skipped, stale journeys from `sync --check`) and its edit-in-place keying by lineage; verify snapshot tests for the body and a publisher-stub test for "Second round edits the summary"
-- [ ] 7a.3 Implement the `rio/qa` check run (neutral by default, failure on QA policy match, annotations for inline-anchored findings); verify publisher-stub tests for "Journeys failed, policy not matched" and "Policy matched"
-- [ ] 7a.4 Wire QA identities into lineage, never-re-post, auto-resolution on a passing journey and `/rio dismiss`; verify tests for "Journey fixed on the next round" and "Dismissed as intentional"
-- [ ] 7a.5 Make `rio qa --publish` return the existing transport error until the GitHub App change lands, and document publishing in `docs/qa.md`; verify the CLI test for "No PR transport"
+- [ ] 7a.1 Implement the publishable mapping (inline at line, first hunk, summary for unchanged files and journey attribution, one comment per finding with cells); verify "Attributed to a changed line", "Attributed outside the diff hunks", "Attributed to an unchanged file" and "Journey-only attribution"
+- [ ] 7a.2 Implement the summary comment body and edit-in-place keying; verify a snapshot and "Second round edits the summary"
+- [ ] 7a.3 Implement the `rio/qa` check run; verify "Journeys failed, policy not matched" and "Policy matched"
+- [ ] 7a.4 Wire QA identities into lineage, never-re-post, the QA re-assessment condition for auto-resolution and `/rio dismiss`; verify "Journey fixed on the next round", "Cell not re-run", "Passed but unchanged code" and "Dismissed as intentional"
+- [ ] 7a.5 Return the transport error for `rio qa --publish` until the GitHub App change lands and document publishing in `docs/qa.md`; verify "No PR transport"
 
-## 8. Fixture app and evaluation
+## 8. Evaluation and integration
 
-- [ ] 8.1 Add `tests/fixtures/qa-sample`, a small Vite app with a SQLite-backed API, a committed `.rio/qa/seed/` (schema, seeded shopper and admin accounts, products, one saved address), a committed `.rio/qa/fixtures/` (a payments `http-mock` with approve and decline, mail capture for registration, one generated CSV upload), a login, a registration flow with email verification, a checkout flow and switchable seeded defects (disabled save button, missing confirmation, gradient hero, accent-border cards, a raw primitive, low contrast in dark mode, a console error, a fixed banner covering the pay button only on phones, 28 px icon buttons, a 14 px email input, a hover-only menu); verify `npm run build` passes and a toggle file selects which defects are present
-- [ ] 8.2 Add `eval/qa/` with labeled cases per seeded defect, a clean-run noise case and the metrics (precision, recall, cost and wall time per journey); verify `python3 eval/qa/run.py --local` reports the seeded defects found and the clean run's noise count
-- [ ] 8.3 Run the fixture app end to end locally with codex and with pi, record the results in `docs/evaluation/v0.3-qa-local.md`; verify the document lists every seeded defect with its finding id or a stated miss
-
-## 9. Integration
-
-- [ ] 9.1 Run `cargo test --workspace`, the Worker test suite and the controller tests; verify all pass
-- [ ] 9.2 Run `rio review --profile rio/qa` on the fixture repository with a change that breaks the checkout confirmation, with and without an endpoint; verify the hosted report has a verified `reproduced` finding and the local report lists the same observation as unverified
+- [ ] 8.1 Add `eval/qa/` with labeled cases per seeded defect, a clean-run noise case and metrics (precision, recall, cost and wall time per cell); verify `python3 eval/qa/run.py --local` reports the seeded defects found and the clean run's noise count
+- [ ] 8.2 Run the fixture app end to end locally with codex and with pi and record results in `docs/evaluation/v0.3-qa-local.md`; verify the document lists every seeded defect with its finding id or a stated miss
+- [ ] 8.3 Run `cargo test --workspace`, the Worker test suite and the controller tests; verify all pass
+- [ ] 8.4 Run `rio review --profile rio/qa` on the fixture repository with a change that breaks the checkout confirmation, with and without an endpoint; verify the hosted report has a verified `reproduced` finding with two cell occurrences and the local report lists the same observation as unverified
 
 ## Workflow follow-up
 
-- Archive the change after the project's review requirements are satisfied.
+- Archive the change after the project's review requirements are satisfied, composing with the convergence change per task 0.5.
 - Verify the archived result.

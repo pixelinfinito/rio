@@ -2,15 +2,15 @@
 
 ## Purpose
 
-The environment contract tells Rio how to start the application, when it is ready, which personas can use it and in which runtime the app, the browser and the agent harness run, locally or hosted.
+The environment contract tells Rio how the application is packaged and started, when it is ready, which personas can use it, and in which isolated runtime the app, the browser and the agent harness run, locally or hosted.
 
 ## ADDED Requirements
 
 ### Requirement: Environment contract
-`.rio/qa.yaml` SHALL declare `version: 1`, `app`, `personas[]` and the optional blocks `browser`, `harness`, `rules`, `evidence` (`video`, `retention_days`) and `seed` (`manifest` path, default `.rio/qa/seed/seed.yaml`; `migrations[]` globs; `max_size`; `fallback_rebuild`). The schema SHALL be published as `schemas/qa-config-v1.json`; unknown keys SHALL be rejected.
+`.rio/qa.yaml` SHALL declare `version: 1`, `app`, `personas[]` and the optional blocks `browser`, `harness`, `rules`, `evidence` (`video`, `retention_days`) and `seed` (`manifest`, `migrations[]`, `max_size`, `fallback_rebuild`, `cache_version`). The schema SHALL be published as `schemas/qa-config-v1.json`; unknown keys SHALL be rejected.
 
 #### Scenario: Full contract validates
-- **WHEN** the file declares `app` (`start`, `url`, `ready` with `path`, `status`, `timeout`, plus `env`, `seed`, `teardown`, `workdir`), two personas with `name`, `description`, `username_env` and `password_env`, `browser.viewports`, `browser.color_schemes`, `harness.default`, `harness.model`, `rules.disable`, `rules.add`, `evidence.video` and `evidence.retention_days`
+- **WHEN** the file declares `app` (`packaging`, `start`, `url`, `ready` with `path`, `status`, `timeout`, plus `env`, `seed`, `workdir`, `routes_from`), two personas with `name`, `description`, `username_env` and `password_env`, `browser.viewports`, `browser.color_schemes`, `harness.default`, `harness.model`, `harness.auth`, `rules.disable`, `rules.add`, `rules.adopt`, `evidence.video`, `evidence.retention_days` and the `seed` block
 - **THEN** `rio qa validate` accepts it and `rio qa show` prints the resolved contract
 
 #### Scenario: Unknown key rejected
@@ -19,29 +19,22 @@ The environment contract tells Rio how to start the application, when it is read
 
 #### Scenario: Defaults applied
 - **WHEN** `.rio/qa.yaml` declares only `app` and one persona
-- **THEN** the resolved contract has viewports `mobile`, `tablet` and `desktop`, color schemes `light` and `dark`, harness `codex`, video off and evidence retention of 30 days
+- **THEN** the resolved contract has viewports `mobile` and `desktop`, color schemes `light` and `dark`, harness `codex` with auth `auto`, video off and evidence retention of 30 days
 
-### Requirement: Viewport matrix
-`browser.viewports[]` SHALL name entries from the built-in presets or declare custom ones with `name`, `width`, `height`, `device_scale_factor`, `mobile` (touch events and a mobile user agent) and optional `orientation`. The default matrix SHALL be `mobile`, `tablet` and `desktop`.
+### Requirement: Application packaging
+`app.packaging` SHALL be `image` (a repository Dockerfile that provisions dependencies, datastore servers and tools), `static` (a directory served by Rio) or `vendored` (a Node or Python app whose dependencies are present in the snapshot). Rio SHALL NOT install dependencies. A Compose file SHALL be rejected with reason `unsupported_topology` and a hint to write a Dockerfile.
 
-#### Scenario: Built-in presets
-- **WHEN** `rio qa show --viewports` is run
-- **THEN** it lists `mobile-small` (360×740, scale 3, mobile), `mobile` (390×844, scale 3, mobile), `mobile-landscape` (844×390, scale 3, mobile), `tablet` (820×1180, scale 2, touch), `desktop` (1280×800, scale 1) and `wide` (1920×1080, scale 1)
+#### Scenario: Image packaging
+- **WHEN** `app.packaging: image` names `Dockerfile.qa`
+- **THEN** the run builds or pulls that image, verifies it contains the Rio controller hooks, and starts the app inside it
 
-#### Scenario: Custom viewport
-- **WHEN** the contract declares `{ name: kiosk, width: 1080, height: 1920, device_scale_factor: 1, mobile: false }`
-- **THEN** validation passes and journeys run in that viewport in addition to the named presets
+#### Scenario: Vendored dependencies missing
+- **WHEN** `app.packaging: vendored` and `node_modules` is absent from the snapshot
+- **THEN** the step ends `failed` with reason `dependencies_unavailable` naming the packaging alternatives
 
-#### Scenario: Mobile emulation is real emulation
-- **WHEN** a journey runs in the `mobile` preset
-- **THEN** the page sees a 390×844 layout viewport, a device pixel ratio of 3, touch events, a mobile user agent, and `pointer: coarse` media queries match
-
-### Requirement: Mobile is mandatory
-The resolved matrix SHALL contain at least one viewport with `mobile: true`. A contract or profile that removes every mobile viewport SHALL be rejected by validation, so no QA run reports a journey as passing without having run it on a phone-sized screen.
-
-#### Scenario: Desktop-only matrix rejected
-- **WHEN** `browser.viewports: [desktop, wide]` is declared
-- **THEN** validation fails stating that at least one mobile viewport is required and naming the presets that qualify
+#### Scenario: Compose rejected
+- **WHEN** `rio qa init` finds only a `compose.yaml`
+- **THEN** it reports `unsupported_topology`, writes a Dockerfile skeleton as `Dockerfile.qa.proposed`, and does not generate journeys
 
 ### Requirement: Credentials are named, never stored
 Persona credentials SHALL be given only as environment variable names; a literal username or password value in the contract SHALL be rejected by validation.
@@ -51,25 +44,33 @@ Persona credentials SHALL be given only as environment variable names; a literal
 - **THEN** validation fails stating that credentials are named by environment variable only
 
 ### Requirement: Detection on init
-`rio qa init` SHALL propose `app` defaults by inspecting, in order, a Compose file, a Dockerfile, `package.json` scripts (`dev`, `start`, `preview`) and framework conventions for the base URL and readiness path. The proposal SHALL be shown and written to `.rio/qa.yaml` before any journey generation. When detection finds nothing, the command SHALL ask the harness to propose a contract and SHALL still require the developer to confirm.
+`rio qa init` SHALL propose `app` defaults by inspecting, in order, a Dockerfile, `package.json` scripts (`dev`, `start`, `preview`), a Python entry point and framework conventions for the base URL and readiness path. The proposal SHALL be shown and written to `.rio/qa.yaml` before seed, fixture or journey generation. When detection finds nothing, the command SHALL ask the harness to propose a contract and SHALL still require the developer to confirm.
 
 #### Scenario: Vite project
-- **WHEN** `rio qa init` runs in a project whose `package.json` has a `dev` script running `vite`
-- **THEN** the proposed contract starts `npm run dev -- --host 0.0.0.0 --port 4173`, uses `http://127.0.0.1:4173` and probes `/` for status 200
+- **WHEN** `rio qa init` runs in a project whose `package.json` has a `dev` script running `vite` and a committed lockfile with `node_modules` present
+- **THEN** the proposed contract uses `packaging: vendored`, starts `npm run dev -- --host 0.0.0.0 --port 4173`, uses `http://127.0.0.1:4173` and probes `/` for status 200
 
-#### Scenario: Compose project
-- **WHEN** a `compose.yaml` exposes a `web` service on port 3000
-- **THEN** the proposed contract starts the Compose project and uses `http://127.0.0.1:3000`
+#### Scenario: Dockerfile project
+- **WHEN** the repository has a `Dockerfile` exposing port 3000
+- **THEN** the proposed contract uses `packaging: image` with that Dockerfile and `http://127.0.0.1:3000`
 
-### Requirement: Readiness and failure to start
-A run SHALL restore or build the seed snapshot, start the service doubles, start the app with `app.start`, run `app.seed` (a per-run hook for state the snapshot cannot hold, such as cache warmups) once the readiness probe succeeds, and wait at most `ready.timeout` (default 120 s). If the probe never succeeds, the QA step SHALL end `failed` with reason `app_not_ready`, keep the captured stdout and stderr as evidence, and SHALL NOT report any journey as passed.
+### Requirement: Start order and readiness
+A run SHALL start the app container's stages in a fixed order, waiting for each stage's readiness, and SHALL end the step `failed` with a reason naming the stage (`datastore_not_ready`, `seed_failed`, `app_not_ready`) when a stage fails, keeping that stage's output as evidence. The app readiness wait SHALL be at most `ready.timeout` (default 120 s).
+
+#### Scenario: Stage order
+- **WHEN** a run starts
+- **THEN** the stages run as: datastores with their `ready` probes, seed restore or build, persona credential apply, service doubles, `app.start`, the readiness probe, then the `app.seed` hook
 
 #### Scenario: App never listens
 - **WHEN** `app.start` exits before the probe succeeds
 - **THEN** the step outcome is `failed` with reason `app_not_ready`, the process output is stored as evidence, and the report shows every selected journey as `not_run`
 
+#### Scenario: Datastore never ready
+- **WHEN** the `postgres` datastore's `ready` probe fails for its timeout
+- **THEN** the step outcome is `failed` with reason `datastore_not_ready` naming the datastore and nothing later starts
+
 ### Requirement: Personas and credentials
-Each persona SHALL be usable by the agent through a login tool that reads the named environment variables at run time, so the credential value never enters the prompt, the journey, the transcript or a screenshot. Password fields SHALL be masked in screenshots and video. When a journey's persona needs credentials and the variables are unset, the journey SHALL be `skipped` with reason `missing_credentials`.
+Each persona SHALL be usable by the agent through a login tool that reads the named environment variables at run time inside the controller, so the credential value never enters the prompt, the journey, the transcript or a screenshot. Password fields SHALL be masked in screenshots and video. When a journey's persona needs credentials and the variables are unset, the journey SHALL be `skipped` with reason `missing_credentials`.
 
 #### Scenario: Credentials outside the prompt
 - **WHEN** the agent logs in as persona `shopper`
@@ -79,35 +80,61 @@ Each persona SHALL be usable by the agent through a login tool that reads the na
 - **WHEN** persona `admin` names `QA_ADMIN_PASSWORD` and the variable is unset
 - **THEN** every journey using `admin` is `skipped` with reason `missing_credentials` and the run continues
 
-### Requirement: Runtime isolation
-The app, the browser and the harness SHALL run inside one fresh container per run from the paired QA runner image: local Docker when no endpoint is configured, otherwise the configured hosted runner. The app SHALL have no network egress; the harness SHALL reach only the model endpoint it is configured with.
+### Requirement: Runtime pod
+A QA run SHALL execute as three containers on a private per-run network: `app` (repository code, datastores, doubles), `browser` (Chromium) and `controller` (Rio controller, MCP bridge, harness, model proxy, evidence sink). Repository code SHALL run only in `app`. Model credentials and the model route SHALL exist only in `controller`, which SHALL hold no repository checkout.
 
-#### Scenario: Local run without an endpoint
-- **WHEN** `rio qa` runs with no endpoint and Docker available
-- **THEN** the run uses the local QA runner image and the app receives no outbound network
+#### Scenario: Repository code cannot reach the model route
+- **WHEN** a test process inside `app` attempts to connect to the controller's proxy port or the gateway host
+- **THEN** the connection is refused and the attempt appears in the run record as `blocked_egress`
 
-#### Scenario: Docker unavailable
-- **WHEN** `rio qa` runs with no endpoint and no reachable Docker daemon
-- **THEN** the command exits with an actionable message, and `rio review` marks the QA step as deferred with reason `no_runtime` rather than failing
+#### Scenario: Harness container holds no source
+- **WHEN** the harness lists its working directory
+- **THEN** it contains the skill, the journeys, the contract and the fixtures manifest, and no file from the repository snapshot
+
+### Requirement: Egress policy
+`app` and `browser` SHALL have no egress. `controller` SHALL have egress only to the model gateway host (or the local loopback proxy) and the evidence and seed upload endpoint. The policy SHALL be enforced by the runner host's network configuration, not by harness configuration, and the job record SHALL state the policy that applied.
+
+#### Scenario: App egress blocked behaviorally
+- **WHEN** the app process runs `curl https://example.com` during a journey
+- **THEN** the request fails, the network log records `blocked_egress: example.com`, and the footer lists the host
+
+#### Scenario: Controller egress limited
+- **WHEN** the harness attempts to reach a host other than the gateway
+- **THEN** the connection is refused and the transcript records the rejection
+
+### Requirement: Backend eligibility
+Hosted QA SHALL run on the self-hosted Docker runner by default. The Cloudflare Sandbox backend SHALL run QA only when the step sets `sandbox: allow`; then subscription credentials SHALL be refused, only a run-scoped gateway token SHALL be present, the report SHALL state `app isolation: none (sandbox)`, and the run SHALL be marked `partial` for isolation. Without `sandbox: allow`, a Sandbox-only deployment SHALL defer QA with reason `no_runtime`.
+
+#### Scenario: Sandbox without opt-in
+- **WHEN** the endpoint's runner backend is `sandbox` and the profile does not set `sandbox: allow`
+- **THEN** the QA step is deferred with reason `no_runtime` and the footer explains that QA needs the Docker runner or `sandbox: allow`
+
+#### Scenario: Sandbox with opt-in
+- **WHEN** `sandbox: allow` is set
+- **THEN** QA runs, the job record carries `egress: provider_pinned (sandbox)` and `app_isolation: none`, and the report header status is `partial`
 
 ### Requirement: Snapshot materialization and teardown
-Repository contents SHALL be materialized inside the container from the snapshot, never bind-mounted from the developer's working tree. The container SHALL be destroyed when the run ends, including after a timeout or an interruption.
+Repository contents SHALL be materialized inside `app` from the snapshot, never bind-mounted from the developer's working tree. Every container of the pod SHALL be destroyed when the run ends, including after a timeout or an interruption.
 
 #### Scenario: Working tree not mounted
 - **WHEN** a local run starts
-- **THEN** the container has no bind mount of the repository and the app runs from the materialized head snapshot
+- **THEN** `app` has no bind mount of the repository and the app runs from the materialized head snapshot
 
 #### Scenario: Interrupted run
 - **WHEN** the developer presses Ctrl-C during a journey
-- **THEN** the container is removed, evidence captured so far stays in the cache, and the report is partial
+- **THEN** all three containers are removed, evidence captured so far stays in the cache, and the report is partial
 
 ### Requirement: Harness credentials
-The codex harness SHALL authenticate either with the developer's own subscription credentials mounted read-only in a local run, or with the Rio AI Gateway through an OpenAI-compatible provider configuration and a run-scoped token; the pi harness SHALL use the gateway. Hosted runs SHALL use the gateway path only. The configured path SHALL be shown by `rio doctor` and recorded in the run record without secret values.
+`harness.auth` SHALL be `auto`, `subscription` or `gateway`. `subscription` (codex only) SHALL be allowed only on the Docker backend, mounting the developer's codex auth file read-only into `controller`. `gateway` SHALL configure the harness against the controller's model proxy, which holds the run-scoped token and enforces the token budget. Hosted runs SHALL use `gateway`. The resolved path SHALL be shown by `rio doctor` and recorded in the run record without secret values.
 
 #### Scenario: Hosted codex uses the gateway
 - **WHEN** a hosted QA run uses harness `codex`
-- **THEN** the harness is configured with the gateway base URL and a token scoped to the run's budget, and no subscription credential is present in the container
+- **THEN** the harness is configured with the proxy base URL, the proxy holds a token scoped to the run's budget, and no subscription credential is present in any container
 
 #### Scenario: Local subscription reuse
-- **WHEN** a local run uses harness `codex` and the developer's codex credentials are present
-- **THEN** they are mounted read-only, the run record notes `harness_auth: subscription`, and no value is copied into the cache
+- **WHEN** a local Docker run resolves `harness.auth` to `subscription`
+- **THEN** the auth file is mounted read-only into `controller` only, the run record notes `harness_auth: subscription` and `tokens: unmetered`, and no value is copied into the cache
+
+#### Scenario: Docker unavailable locally
+- **WHEN** `rio qa` runs with no endpoint and no reachable Docker daemon
+- **THEN** the command exits with an actionable message, and `rio review` marks the QA step as deferred with reason `no_runtime` rather than failing

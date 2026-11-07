@@ -4,122 +4,129 @@
 
 See proposal.md for motivation. What shapes the approach today:
 
-- The runner contract (`worker/runner/execute.py`, `worker/src/sandbox.ts`, `rio-runner serve`) is built for short, offline, non-interactive jobs: network off, 120 s wall, one Python entry point streaming a tree archive and returning a JSON result. A QA run is the opposite: minutes long, needs model egress, runs a server and a browser, and produces megabytes of binary evidence.
-- The runner image (`worker/Dockerfile`) ships Rust, Python and Node; no browser, no harness.
-- Steps are modules with a `with` schema (`modules/steps/*`), validated by `rio-profile`; `rio-engine` runs the local subset and defers the rest with `no_endpoint`. The security step shows the pattern for a step with its own posture, cap and `fail_on`.
-- Findings carry `evidence[]` as string references into the run record; the verifier only counts artifact-backed evidence; `rio/verify` is hosted-only.
-- Skills already live in `.claude/skills/` in this repository and `AGENTS.md` is read by Codex.
+- The runner contract (`worker/runner/execute.py`, `worker/src/sandbox.ts`, `rio-runner serve`) is built for short, offline, non-interactive jobs: network off, 120 s wall, one entry point streaming a tree archive and returning a JSON result, leases renewed by a single bounded wait. A QA run is the opposite: minutes long, needs model egress for one process only, runs a server, datastores and a browser, and produces megabytes of binary evidence.
+- The runner image (`worker/Dockerfile`) ships Rust, Python and Node; no browser, no harness, no datastore servers. Project dependencies must already be in a deliberately provisioned image; Rio never installs them.
+- The snapshot protocol stores distinct content per tenant with 64 MiB per file, 1 GiB per review and 8 MiB parts.
+- Steps are modules with a `with` schema; `rio-engine` runs the local subset and defers the rest with `no_endpoint`. Guardrails require `rio/verify` to depend on every enabled `rio/agents` or `rio/security` step.
+- The in-flight convergence change replaces the finding-model and footer requirements and defines auto-resolution; this change composes with it rather than overriding it.
+- Findings carry `evidence[]` references into the run record; the verifier counts only artifact-backed evidence and runs a blind first turn.
 
 ## Goals / Non-Goals
 
 **Goals:**
-- One execution path for local Docker and hosted runners: the same QA image, the same in-container controller, the same evidence layout.
-- Harness-independent evidence: Rio owns the browser; the harness only drives it through tools.
-- Deterministic probes that prove styling defects without a model, and agent judgment that is always gated by the verifier.
-- Journeys that a human can read and a coding agent can write, with enough declared coverage to select them for a diff.
+- Enforced, not declared, boundaries: repository code never shares a network namespace or a filesystem with model credentials or the model route.
+- One controller and one evidence layout for the Docker backend locally and hosted, with the Sandbox backend admitted only where its boundary is good enough and labeled where it is not.
+- Reproducible state for every matrix cell and for replay.
+- Deterministic probes with written predicates; agent judgment always gated by the verifier.
+- Journeys a human can read and a coding agent can write, with declared coverage for diff selection.
 
 **Non-Goals:**
 - Pixel-diff visual regression baselines.
-- Native mobile apps, Electron, or multi-browser matrices (Chromium only).
-- Cloudflare Browser Rendering as a backend (see Open Questions).
+- Native mobile, Electron, non-Chromium browsers.
+- Cloudflare Browser Rendering as a backend (Open Questions).
 - Load, performance or security testing of the running app.
-- Running QA on fork PRs.
+- Docker Compose topologies in this version (rejected with a named failure; init proposes a Dockerfile instead).
+- QA on fork PRs.
 
 ## Decisions
 
-### D1. A `rio-qa` crate and an in-container controller
-A new crate `rio-qa` holds the journey model and schema, the environment contract, selection, the browser recorder, the probe engine, harness drivers and the evidence manifest. It is linked into `rio-cli` (for `rio qa init|sync|list|validate` and local orchestration) and into `rio-runner`, which gains a `qa` subcommand that is the in-container controller: materialize the snapshot, start the app, wait for readiness, launch Chromium, start the MCP bridge, run the harness per journey, run probes at step boundaries, write evidence, emit outcomes and hypotheses.
+### D1. A `rio-qa` crate and a three-container pod per run
+`rio-qa` holds the journey, contract, seed and fixture models, selection, the probe engine, harness drivers, the replay event model and the evidence manifest. A QA job is a pod of three containers on one private network created per run by the Docker backend (`rio-runner` locally and self-hosted):
 
-Alternative rejected: driving Playwright from the Worker through Browser Rendering. The app would then have to be reachable from Cloudflare's network, which breaks "the app has no network" and the local path.
+| Container | Runs | Filesystem | Network |
+| --- | --- | --- | --- |
+| `app` | the app, datastores, service doubles, the probe injector target | materialized head snapshot, seed restore | pod network only; no egress; no route to the controller's gateway interface |
+| `browser` | Chromium with CDP | none of the repository | pod network only: reaches `app`, exposes CDP to `controller` |
+| `controller` | the Rio controller, the Playwright MCP bridge, the harness (codex or pi), the model proxy, the evidence sink | skill, journeys, contract, fixtures manifest; **no repository checkout**; harness credentials | pod network plus one egress route limited to the gateway host (or the loopback proxy locally) and the evidence upload endpoint |
 
-### D2. Rio owns the browser; the harness gets tools over MCP
-The controller launches Chromium through Playwright (Node, inside the image) with `tracing`, `recordVideo` (optional) and a CDP endpoint, then starts `@playwright/mcp` with `--cdp-endpoint` and a restricted capability set. Codex and pi both attach to MCP servers from their configuration, so one bridge serves both. Rio adds its own small MCP server beside it with `login(persona)`, `set_viewport(name)`, `set_color_scheme(scheme)`, `upload_fixture(name)`, `step_done(index, outcome, note)` and `observe(rule_id, kind, evidence_refs, observed, expected, fix)`. Step boundaries come from `step_done`; the controller takes the screenshot, DOM and accessibility snapshot, flushes console and network logs, and runs the probes there, independent of what the harness does.
+Repository code runs only in `app`. Model credentials and the model route exist only in `controller`, where no repository code runs; the harness's own shell sandbox, if any, sees only the harness home. The controller container is the only one that can upload, so evidence and seed uploads never require giving `app` a network.
 
-Alternative rejected: Rio's own agent loop with Playwright tools. It would take the most work, duplicate what the harnesses already do well, and the user asked for codex/pi.
+Alternative rejected: one container with per-process rules. Non-root containers cannot install packet filters, so a single container cannot separate app traffic from harness traffic.
 
-### D3. Harness drivers: codex default, pi optional
-A `Harness` trait has `prepare(workdir, auth, mcp_servers, model) -> Config`, `run(journey_prompt) -> Transcript` and `cancel()`. The codex driver writes a per-run `config.toml` (MCP servers, `model_provider`, sandbox read-only, approval never) and runs `codex exec` with the journey prompt and the skill; the pi driver does the same with pi's settings. Transcripts are normalized to `jsonl` events (tool call, tool result, text) so the evidence pack and the verifier see one format.
+### D2. Backend eligibility: Docker enforces, Sandbox is labeled and opt-in
+The Docker backend implements the pod with Docker networks: an internal network for `app` and `browser`, and a second network for `controller` with egress filtered to the gateway host by the runner host (the host already holds the runner secret and is trusted). The Sandbox backend runs one container and cannot build the pod, so hosted QA defaults to the self-hosted Docker runner. A profile may set `rio/qa` `with.sandbox: allow` to run QA in the Sandbox; then subscription credentials are refused, the harness uses only a run-scoped gateway token, the job record and report state `egress: provider_pinned (sandbox), app isolation: none`, and the fail policy treats the run as `partial` for isolation. Without `sandbox: allow`, a Sandbox-only deployment defers QA with reason `no_runtime`.
 
-Authentication: `harness_auth` resolves to `subscription` (local only, `~/.codex/auth.json` mounted read-only into the container at the harness home) or `gateway` (codex `model_providers.rio` with `base_url` at the Rio AI Gateway OpenAI-compatible route and a run-scoped bearer in `env_key`; pi configured with the same base URL as an OpenAI-compatible provider). The run-scoped token is minted by the Worker with a token budget and expiry and is revoked at run end; the local path mints it through the endpoint when configured, otherwise uses the provider key from the user's keychain through a loopback proxy with the same budget enforcement, so no raw provider key enters the container.
+### D3. Rio owns the browser; the harness gets tools over MCP
+The controller launches Chromium in `browser` with tracing, screenshot, console and network capture and attaches `@playwright/mcp` over CDP with a restricted capability set. Rio's own MCP server adds `login(persona)`, `set_viewport`, `set_color_scheme`, `upload_fixture(name)`, `read_mail`, `read_sms`, `read_webhooks`, `set_service_behavior`, `set_network`, `set_geolocation`, `step_done` and `observe`. Step boundaries come from `step_done`; the controller captures evidence and runs probes there regardless of harness. Every tool call is appended to the replay event log (D10).
 
-### D4. A second runner image and a `qa` job class
-`worker/Dockerfile.qa` extends the runner image with Chromium (Playwright's bundled build), `@playwright/mcp`, the codex CLI and pi, pinned by version. The job protocol gains `class: qa` with `network: egress_model` (only the model endpoint), `limits.wall_ms` up to 1 800 000 (deep: 5 400 000), `limits.output_bytes` for the result only, and an `evidence_sink` (local directory or presigned R2 multipart targets). The Docker backend enforces egress with a sidecar network namespace whose only route is the gateway host; the Sandbox backend sets `enableInternet: true` and the controller pins the harness to the gateway URL, which the job record and the report state as `egress: provider_pinned (sandbox)`. Jobs of class `qa` run the controller instead of `execute.py` and keep the existing non-root user, read-only root and tmpfs.
+### D4. Harness drivers and authentication
+A `Harness` trait with codex (default) and pi drivers, both configured per run with the MCP servers, a read-only sandbox and non-interactive execution; transcripts normalize to jsonl. `harness_auth` resolves to `subscription` (local Docker only; the developer's codex auth file is mounted read-only into `controller`, never into `app`) or `gateway` (an OpenAI-compatible provider pointed at the model proxy). The proxy runs in `controller`, holds the run-scoped token minted by the Worker (or, locally without an endpoint, the provider key from the keychain), enforces the per-cell token budget and records usage. Subscription mode cannot meter tokens; it is wall-bounded only and the footer says so.
 
-Alternative rejected: reusing the 120 s job with one job per step. The app would have to restart per step and the browser state would be lost.
+### D5. Application packaging and provisioning
+The contract's `app.packaging` is one of:
+- `image`: a Dockerfile in the repository that starts `FROM` the Rio QA base image (or any image into which the runner injects the controller's probe assets through a mounted volume). Project dependencies, datastore servers and tools are provisioned there, matching Rio's existing rule that Rio never installs dependencies. This is what `rio qa init` proposes when it finds a Dockerfile or any server-side runtime.
+- `static`: a committed or built directory served by the controller's static server, for SPAs without a server.
+- `vendored`: a Node or Python app whose dependencies are present in the snapshot.
+Compose files produce the named failure `unsupported_topology` with a hint, and init offers a Dockerfile skeleton. Datastores declare `start` and `ready` probes (built-in defaults for the supported kinds when their server binaries are present; `missing_tool` otherwise). Start order inside `app` is: datastores, seed restore, credential apply, service doubles, app, readiness probe, `app.seed` hook.
 
-### D5. Journey format
-`journey-v1`: natural-language `do`/`expect` steps with optional `at` and `hint`, persona, preconditions and success criteria, plus `covers.paths` and `covers.routes`. Steps are intentionally not a selector script: the agent interprets them, which is what makes the test resilient to markup changes and lets it notice what a script would not. Determinism comes from the recorded actions, which the replay uses. `hint` gives the agent a selector or accessible name when the natural-language target is ambiguous.
+### D6. Viewport matrix, chains and state per cell
+A matrix cell is one viewport and color scheme. Journeys may declare `after: [journey]` to share state; the plan groups journeys into chains (a journey with no `after` is a chain of one). The unit of execution is chain × cell: for each cell, the seed snapshot is restored, the chain runs in order in a fresh browser context, and a journey with `resets: true` is always a chain head. The default matrix is `mobile` and `desktop`; `tablet` is a preset to opt into. Mobile cells run first.
 
-### D6. Selection
-Changed files come from the snapshot diff; the graph delta adds dependent files. `covers.paths` are matched with the same glob engine as `always_human`. Routes are derived from changed files by framework conventions (Next.js `app/` and `pages/`, SvelteKit `src/routes`, Remix and React Router file routes, Nuxt `pages/`, Astro `src/pages`) and compared with `covers.routes`; `app.routes_from` in the contract can override the convention. The plan records each journey with `smoke`, `path: <glob> <- <file>`, `graph: <changed> -> <dependent>` or `route: <pattern> <- <file>`. The exploratory pass takes derived routes not visited by a selected journey.
+Alternative rejected: reset once per journey across cells. The review showed it breaks any journey that creates records.
 
-### D7. Probes as a versioned module
-`modules/qa/rules/ui-v1.yaml` is a `ruleset` module (module-v1 gains the kind). Each probe is a named predicate implemented in the probe script injected at step boundaries (computed styles, bounding boxes, contrast from colors, layout shift from `PerformanceObserver`, console errors from the recorder, broken images from `naturalWidth`). The YAML carries thresholds and the "minority pattern" ratio, not code, so a project can see what fires and why; new predicates need a Rio release. Judged rules are rendered into the harness prompt as named criteria with the required evidence per criterion.
+### D7. Selection
+Changed files from the diff; graph delta adds dependents; `covers.paths` matched with the `always_human` glob engine; routes derived by framework conventions with an `app.routes_from` override (`convention: next-app | next-pages | sveltekit | remix | nuxt | astro | none`, or `map: [{ glob, route }]`). Plan reasons: `smoke`, `path`, `graph`, `route`, `explicit`.
 
-### D8. Evidence pipeline
-The controller writes artifacts to a run directory and appends to `manifest.json` as each is complete. The sink streams finished files: locally into the cache run record; hosted, through presigned multipart uploads issued with the job, so the Worker never proxies bytes and an interrupted job keeps what was uploaded. Text artifacts pass the redaction catalog in the controller before the sink. Signed read URLs are minted by the Worker when a report is rendered, scoped to one key, default 7 days.
+### D8. Probes and the minority computation
+`modules/qa/rules/ui-v1.yaml` is a `ruleset` module; each probe has a written predicate (eligible elements, measurements, tolerances, exclusions) in the spec and in the YAML. Probe candidates are collected at every step boundary; run-wide decisions (the minority test) are finalized at run end, so a probe finding is emitted once per run after all cells complete. Style probes default to severity `info`; a project lists rules in `rules.adopt[]` to raise them to `warning` and make them eligible for `fail_on`. Mobile probes run only in mobile or touch cells.
 
-### D9. Findings, identity and state
-Probe hits become `static_proven` findings in the controller. Observations become hypotheses with `qa` metadata and go to `rio/verify`, which gains the QA evidence pack and the replay request (D10). Identity uses journey, step, rule and route (not element paths) so ids survive DOM reshuffles. State: with `baseline: true` the same selected journeys run on base in a second container and outcomes are diffed per rule/journey/step; otherwise `new` when attributed to a changed file, `unclassified` otherwise. Attribution reads development source annotations first (React `__source`, Vue `__file`, Svelte `data-svelte-h`, Vite's `data-v-inspector` when present), then console stack traces, then a unique text or class match in changed files.
+### D9. Evidence sanitization, fail closed
+The controller never stores a raw Playwright trace. It unpacks the trace, applies the secrets catalog and the header and query-parameter redaction to every member (network entries, action arguments, URLs, DOM snapshot files), drops response bodies, and repacks it; any member it cannot parse causes the whole trace to be dropped with a `evidence_unsanitized` footer entry. Screenshots and video are masked at the DOM level before capture: an injected stylesheet applies `-webkit-text-security: disc` and a blur to password inputs and `data-rio-mask` elements for the life of the context, so continuous video is masked at the source. Captured mail, SMS and webhooks pass the same redaction. Artifacts are hashed after sanitization; a test seeds secrets through every channel and scans the whole bundle.
 
-### D10. Replay for the verifier
-The recorder stores every harness action as a Playwright-replayable event (selector, action, value, viewport, scheme). A voter's replay request runs `rio-runner qa replay --until <step>` in a fresh container without the harness, at most once per hypothesis, and stores the artifacts beside the hypothesis. This keeps "reproduced" tied to an execution Rio performed, not to the agent's claim.
+### D10. Replay event model
+Every action is recorded as a `qa-replay-v1` event: Playwright actions (selector, action, value, viewport, scheme) and Rio tool calls (`login` by persona name, `set_service_behavior`, `set_network`, `set_geolocation`, clock changes, `upload_fixture` by name). A voter's replay runs `rio-runner qa replay --until <journey>:<step>` in a fresh pod: seed restore, the chain's prerequisite journeys from their events, then the target up to the step, without the harness. Outcomes: `recurred` (supports `reproduced`), `not_recurred` (inconclusive, recorded) and `prerequisites_failed` (inconclusive). Replay is never a refutation on its own.
 
-### D11. Local orchestration
-With no endpoint, `rio-engine` runs `rio/qa` by invoking the local Docker path in `rio-qa`: pull or verify the paired image tag, create a container with `--network none` for the app plus a loopback model proxy published only to the container, stream the snapshot in with the same archive format, and collect the evidence sink into the cache. `rio/verify` stays deferred, so observations render as unverified. `rio doctor` reports Docker, the image tag, the harness binaries and the auth path.
+### D11. Budgets
+profile-v1 gains `budget.<mode>.qa` with `wall` (run, default 30 min fast and 90 min deep), `cell_wall` (per chain per cell, default 8 and 15 min), `tokens` (per cell, default 150 000), `evidence_bytes` (default 512 MiB) and `replay_wall` (default 5 min). When QA is enabled, the review deadline is `wall_time + qa.wall + verify reserve`; the Worker leases `qa` jobs with a 60 s heartbeat instead of one bounded wait. Baseline runs share `qa.wall`. Replay draws on `replay_wall` and the voter's `verify_tokens`.
 
-### D12. Journey generation and sync
-`rio qa init` runs the controller in `author` mode: the harness gets the skill, the contract and a `write_journey(yaml)` tool that validates before writing to a staging directory; Rio then copies valid files into `.rio/qa/journeys/` (or `*.proposed.yaml`). `rio qa sync` runs the same mode seeded with the stale journeys and the diff. `--check` is pure selection logic with no container.
+### D12. Seed snapshots: a separate object protocol
+Seed archives are stored under a tenant-scoped `seeds/` namespace, uploaded from `controller` in 8 MiB parts reusing the packs protocol, with per-archive and total quotas from `seed.max_size`, hash verification per part, and a manifest published atomically only after every part is verified. Extraction enforces a bounded expansion ratio, regular files only, no symlinks. Pruning never deletes a snapshot leased by a running job. Persona credentials are never in the snapshot: `users[].apply` commands re-apply them from environment variables after every restore, and `seed.cache_version` is a non-secret fingerprint input for other runtime-dependent state.
 
-### D13. PR publishing reuses the publisher, adds anchoring and a check run
-The GitHub App change owns the publisher (posting, editing, threads, `/rio` commands). QA contributes a `Publishable` mapping in `rio-core`: a QA finding with `qa.attribution: source` maps to an inline comment at the attributed line when it is in the diff, else the file's first hunk; `journey` attribution maps to the summary comment. The summary comment is one edited comment keyed by lineage and `rio/qa`, like the round-cap message. Evidence images use the same signed URLs the report uses; GitHub caches images through its proxy, so expiry is stated in the comment and never re-signed on read. The `rio/qa` check run is produced by the same code path as the review check with `neutral` by default and `failure` only on a QA policy match. Convergence identity for QA findings is the journey, step, rule and route tuple from D9, so a journey passing on a later head auto-resolves its findings as `fixed`.
+### D13. Service doubles and host claims
+Doubles run in `app` on loopback ports; the manifest's `env` templates their URLs into `app.start`. Host claims (`claims: [api.stripe.com]`) are written to the container's hosts file by the image entrypoint before dropping to the unprivileged user, and doubles serve HTTPS with a run-generated CA installed into the container trust store and exported through `NODE_EXTRA_CA_CERTS`, `SSL_CERT_FILE` and `REQUESTS_CA_BUNDLE`. Apps with certificate pinning or hard-coded ports that cannot be claimed are listed as undoubled; journeys depending on them skip with `precondition_failed`.
 
-Alternative rejected: a separate QA bot or comment format. It would duplicate the never-re-post and dismissal rules and give authors two places to respond.
+### D14. Findings, identity and state
+Canonical QA identity: `blake3(rule_id | "qa" | journey | step | route_pattern | trigger_hash)`, where `trigger_hash` for probes is the predicate id plus an element-role signature (tag, role, accessible name), never measured values, and for observations is the hash of the structured `expected` and `observed` fields, never free text. Occurrences are matrix cells carried in `locations[]` with a `cell` and their own `evidence[]`; presentation grouping across journeys is report-level and does not touch identity. With `baseline: true`, cells are matched one to one between head and base: `new`, `pre-existing`, `fixed`, `worsened` when at least one cell is new and one pre-existing, and `unclassified` for any cell the base run did not complete. Without baseline: `new` when attributed to a changed file, `unclassified` otherwise.
 
-### D14. Viewport matrix as browser contexts, mobile first
-Each viewport and color scheme pair is a fresh Playwright browser context created from a preset device descriptor (viewport, `deviceScaleFactor`, `isMobile`, `hasTouch`, user agent, `colorScheme`), so the matrix is a loop around the journey, not a journey variation. Mobile contexts run first so budget exhaustion keeps the phone result. `mobile/` probes are part of the same injected probe script, gated on the context's `isMobile` or `hasTouch`. Orientation changes inside a step swap to the matching landscape descriptor in the same context. The per-viewport evidence directory from D8 already separates artifacts, and the finding identity from D9 excludes the viewport so one finding lists every viewport it fired in.
+### D15. Step wiring and verification
+`rio/qa` needs `graph`, outputs `qa_findings`, `hypotheses`, `journey_outcomes` and `evidence`; `rio/verify` needs `agents`, `security` and `qa`; `rio/report` consumes `qa_findings` and `journey_outcomes`. The guardrail extends to `rio/qa`: an enabled QA step without a verifier depending on it is rejected. `rio qa` standalone runs the subgraph `prepare, graph, qa, verify, report` and records the other steps as `skipped: standalone`. The verifier's blind first turn for a QA hypothesis gives voters the step evidence pack without the hypothesis text and asks what they observe; blind match is computed on rule, journey, step and route instead of symbol.
 
-Alternative rejected: one context resized between viewports. Resizing keeps session state and layout caches that a real device switch would not, and hides first-render problems.
+### D16. PR publishing
+The GitHub App change owns the publisher. QA adds a mapping: source-attributed findings become inline comments when the file is in the diff (at the line if in a hunk, else the first hunk), otherwise the summary; one summary comment per lineage edited in place; the `rio/qa` check run is neutral unless the QA policy matches. Auto-resolution is the convergence rule with a QA re-assessment condition: the same cell of the same journey completed on the later head, the identity is absent, and the attributed code (or the journey file and its covered paths) changed.
 
-### D15. Seed snapshots reuse the content-addressed snapshot store
-Seed definitions are small and committed; materialized state is big and cached. The controller computes the fingerprint (manifest, referenced files, migration globs, datastore kinds, image version) before starting the app. On a hit it restores each datastore archive through the kind's restore path (`sqlite` copy, `pg_restore`, `mysql`, `redis-server --dbfilename`, `tar` for `files`, the custom command otherwise) before `app.start`; on a miss it starts the app's datastores, runs the steps, captures one archive per datastore and path, and registers them under the fingerprint. Storage reuses the content-addressed hosted snapshot store from the v0.2 snapshot change for the hosted path and `<cache>/qa-seeds/` locally, so an unchanged archive is never re-uploaded and pruning follows the cache rules. `resets: true` restores from the already-downloaded archives, which is a local copy, not a network round trip. The datastore client tools ship in the QA image, so the same restore works in Docker and in the Sandbox.
+### D17. Journey generation and sync
+`rio qa init` runs the controller in author mode: contract detection first, then seed and fixture authoring, seed build, then journeys against the seeded app through a `write_journey` tool that validates into staging. `rio qa sync` reuses author mode seeded with stale journeys; `--check` is selection only.
 
-Alternative rejected: snapshotting the whole container filesystem or a Docker volume. It is not portable to the Sandbox backend, ties the snapshot to the image layer and cannot be split per datastore.
+## Configuration reference
 
-Alternative rejected: re-running the seed every run with caching left to the project. That is the status quo the user flagged as too costly for large data sets.
-
-### D16. Service doubles run in the container and own the only reachable hosts
-Doubles are processes the controller starts before the app, bound to loopback ports, with the manifest's `env` templated to their URLs and injected into `app.start`. `http-mock` is a small recording server in the controller package (matchers on method, path, headers and body shape; canned responses; named behaviors switch the active response set); `smtp-capture`, `sms-capture` and `webhook-sink` are thin servers that store messages as step evidence and serve them to the harness tools; `oauth-provider` is a minimal authorization-code server issuing tokens for seeded users; `s3` is an S3-compatible in-process store backed by the `files` seed path. `custom` runs a declared command. Hostname-based dependencies are reached by mapping the host to loopback in the container's hosts file, so SDKs with hard-coded hosts work when the app accepts a base-URL override or the host mapping. Egress stays blocked, which turns an undoubled dependency into a visible `blocked_egress` entry rather than a hang.
-
-Time control uses Playwright's clock API for the browser and a `QA_FAKE_TIME` variable the app may honor; Rio does not patch the app's runtime. Generated upload files are produced by the seed build and stored in the seed snapshot under the `files` kind, so they share the fingerprint and the cache.
-
-Alternative rejected: record-and-replay against real services. The app has no egress by design, and recordings against live providers would need real credentials in the container.
+| Key | Location | Default |
+| --- | --- | --- |
+| `app.packaging`, `app.start`, `app.url`, `app.ready`, `app.routes_from`, `app.seed` | `.rio/qa.yaml` | detected |
+| `personas[]` | `.rio/qa.yaml` | required |
+| `browser.viewports`, `browser.color_schemes` | `.rio/qa.yaml` | `[mobile, desktop]`, `[light, dark]` |
+| `harness.default`, `harness.model`, `harness.auth` | `.rio/qa.yaml` | `codex`, provider default, `auto` |
+| `rules.disable`, `rules.add`, `rules.adopt` | `.rio/qa.yaml`, overridable by the step | `[]` |
+| `evidence.video`, `evidence.retention_days` | `.rio/qa.yaml` | `false`, `30` |
+| `seed.manifest`, `seed.migrations`, `seed.max_size`, `seed.fallback_rebuild`, `seed.cache_version` | `.rio/qa.yaml` | `.rio/qa/seed/seed.yaml`, detected, `2 GiB`, `false`, `1` |
+| `with.enabled`, `mode`, `harness`, `baseline`, `max_journeys`, `max_defects`, `viewports`, `rules`, `fail_on`, `sandbox` | `rio/qa` step | `false`, `changed`, `codex`, `false`, `12`, `15`, all, `{}`, QA policy, `deny` |
+| `budget.<mode>.qa.wall`, `cell_wall`, `tokens`, `evidence_bytes`, `replay_wall` | profile | `30m/90m`, `8m/15m`, `150000`, `512 MiB`, `5m` |
 
 ## Risks / Trade-offs
 
-- [Canned responses drift from the real provider] → recordings are reviewed files in the repository, authored from SDK types; a journey that depends on a provider's exact behavior is flagged in the skill as needing a human-maintained recording.
-- [Apps with hard-coded provider hosts and TLS pinning cannot be doubled] → the init summary lists them as undoubled; the journey is skipped with `precondition_failed` rather than failing the run.
-
-- [Seed snapshots hold synthetic but realistic data and can be large] → private cache or tenant store only, size cap, prune keeping the newest three, the skill forbids production data and validation warns on personal-data patterns.
-- [Fingerprint misses a dependency and a stale seed is restored] → migrations globs are explicit in the contract, `rio qa seed status` shows both fingerprints, and `seed build --force` is one command.
-
-- [The matrix multiplies cost by viewports × schemes] → defaults are three viewports and two schemes; `max_journeys` counts journeys; profiles can narrow to one mobile and one desktop viewport; the footer shows cost per viewport.
-
-- [GitHub's image proxy may cache screenshots beyond the signed URL expiry] → the summary states expiry; screenshots are redacted and masked before upload; publishing stays opt-in through `publish`.
-
-- [Harness nondeterminism makes journey outcomes flaky] → every outcome is tied to recorded evidence; the verifier replays deterministically; `smoke` journeys are expected to be short and stable; flaky journeys are reported with their last three outcomes in the footer once convergence data exists.
-- [Model egress from a container running repository code] → the app has no network; only the harness process gets the proxy; the token is run-scoped and budgeted; the Docker backend enforces egress at the network level; the Sandbox backend's weaker guarantee is stated in the report.
-- [Evidence contains application data] → private cache or private R2 only, redaction before storage, masked fields, 30-day lifecycle, signed one-object URLs.
-- [Style probes flag intentional design] → minority-pattern thresholds, per-project disable list, `unclassified` state does not match the default fail policy.
-- [Cost of a full run] → caps on journeys and wall time, `changed` mode by default, baseline off by default, cost in the footer.
-- [Image size and release pairing] → the QA image is separate so the review image stays small; both are version-paired with the CLI and verified by tag.
-- [Subscription auth inside a container] → local only, mounted read-only, never copied; hosted runs use the gateway only.
+- [Pod model needs a Docker host] → hosted QA defaults to the self-hosted runner; Sandbox is opt-in and labeled; local runs need Docker, which `rio doctor` checks.
+- [Harness nondeterminism] → every outcome is tied to recorded evidence; replay from events; non-recurrence is inconclusive, never a refutation.
+- [Evidence contains application data] → DOM-level masking, member-level trace sanitization, fail-closed drops, private storage, lifecycle expiry, one-object signed URLs.
+- [Style probes flag intentional design] → minority test over the run, `info` severity unless adopted, project disable list.
+- [Cost of matrix × chains] → default two viewports, `max_journeys` counts journeys, evidence byte quota, plan-time cell count and estimate in the footer.
+- [Seed snapshots are large] → separate quota and namespace, chunked upload, prune keeping three, credentials re-applied after restore.
+- [Canned provider responses drift] → recordings are reviewed repository files; the skill flags provider-exact journeys as human-maintained.
+- [GitHub's image proxy caches screenshots] → expiry stated in the comment; screenshots are masked before upload.
 
 ## Migration Plan
 
-Additive. Profiles without the QA step are unaffected; `rio/base` carries it disabled. Deploying the QA image is a `rio deploy` step that is skipped when no profile enables QA. D1 migration `qa_runs` is forward-only like the others. Rollback is removing the step from profiles; evidence expires by lifecycle.
+Additive. `rio/base` carries QA disabled; profiles without the step are unaffected. `rio deploy` builds and registers the QA base image only when a profile enables QA. D1 migration `qa_runs` is forward-only. The finding-model and footer replacements compose with the convergence change: whichever archives second must carry both sets of additions, which task 0.5 verifies.
 
 ## Open Questions
 
-- Whether Cloudflare Browser Rendering can replace the in-container Chromium for hosted runs once the app is reachable only inside the container; evaluated after the first hosted release, no spec impact.
-- Whether a GitHub Actions runner (PRD R21) can host QA jobs with the same image; depends on that change.
+- Whether Cloudflare Browser Rendering can serve as the `browser` container for Sandbox runs once a pod-equivalent exists there; no spec impact now.
+- Whether a GitHub Actions runner (PRD R21) can host the pod; depends on that change.
