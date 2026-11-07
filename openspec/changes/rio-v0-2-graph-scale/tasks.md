@@ -29,7 +29,7 @@ Baseline (2026-11-07, this machine, today's builder, one thread):
 
 ## 4. Integration
 
-- [ ] 4.1 Run the full local suites: `cargo fmt --all --check`, `cargo clippy --workspace --all-targets --locked -- -D warnings`, `cargo test --workspace --locked`, the `RIO_TEST_DOCKER=1` runner tests with a rebuilt image, and the Worker and eval suites. Verify that all pass, then push so hosted CI passes on Linux, macOS and Windows.
+- [x] 4.1 Run the full local suites: `cargo fmt --all --check`, `cargo clippy --workspace --all-targets --locked -- -D warnings`, `cargo test --workspace --locked`, the `RIO_TEST_DOCKER=1` runner tests with a rebuilt image, and the Worker and eval suites. Verify that all pass, then push so hosted CI passes on Linux, macOS and Windows.
 - [x] 4.2 Re-run `graph-bench` on the ruff case. Verify that it completes without reaching its deadline (the node cap may truncate it), well within 120 s, with identical slices for 1 and N threads. Record the timings next to the baseline from 1.1.
   Measured on 2026-11-07, this machine, ruff HS-RS-04:
   - 1 thread: 38.9 s; 2 threads (the container's CPU count): 25.3 s; 8 threads: 16.1 s.
