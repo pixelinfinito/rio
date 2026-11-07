@@ -19,6 +19,16 @@
 - [ ] 2.5 Implement the environment contract detection order (Compose, Dockerfile, `package.json` scripts, framework defaults); verify unit tests for the Vite and Compose scenarios and the "nothing detected" fallback marker
 - [ ] 2.6 Document journeys, the contract and the skill in `docs/qa.md`; verify every YAML example in the document validates against the schemas in a documentation test
 
+## 2a. Seed data
+
+- [ ] 2a.1 Add `schemas/qa-seed-v1.json` and the `seed` block of `qa-config-v1`, with validation of the manifest, the personas-to-users mapping, the 5 MiB unreferenced-file rule and the `.cache` rule; verify schema tests for "Manifest validates" and "Materialized data in the repository is rejected"
+- [ ] 2a.2 Implement the fingerprint (manifest, referenced files, migration globs, datastore kinds, image version) and `rio qa seed status`; verify unit tests for "Migration change rebuilds" and "Status after a schema change"
+- [ ] 2a.3 Implement datastore adapters `sqlite`, `postgres`, `mysql`, `redis`, `files` and `custom` with capture and restore in the controller, and add the client tools to `worker/Dockerfile.qa`; verify an integration test round-trips each kind in the fixture container and "Missing client tool" fails with the named tool
+- [ ] 2a.4 Implement snapshot storage per datastore archive in `<cache>/qa-seeds/<fingerprint>/` and in the hosted content-addressed store, the size cap and `fallback_rebuild`; verify tests for "One datastore changes", "Size cap" and that a hosted re-upload of an unchanged archive is skipped
+- [ ] 2a.5 Implement restore-or-build at run start, `resets: true` per journey and run-order sharing; verify tests for "Second run restores", "Registration journey resets" and "Shared state in order"
+- [ ] 2a.6 Implement seed authoring in `rio qa init` (schema and migrations discovery, persona accounts from environment variables, synthetic-data instruction in the skill, personal-data warning in validate) and `rio qa seed build|prune|export`; verify CLI tests for "Init builds the seed first", "Realistic data stays synthetic" and prune keeping the newest three
+- [ ] 2a.7 Document seed data in `docs/qa.md` with a Postgres and a SQLite example; verify both examples validate and the documented commands run against the fixture app
+
 ## 3. rio-qa crate: browser recorder, probes and evidence
 
 - [ ] 3.1 Add the Node controller package under `crates/rio-qa/controller/` that launches Chromium through Playwright with tracing, console and network capture and a CDP endpoint, starts `@playwright/mcp` against it with the restricted capability set, and runs Rio's MCP server (`login`, `set_viewport`, `set_color_scheme`, `upload_fixture`, `step_done`, `observe`); verify with a Playwright test against the fixture app that each tool works and no shell tool is listed
@@ -73,7 +83,7 @@
 
 ## 8. Fixture app and evaluation
 
-- [ ] 8.1 Add `tests/fixtures/qa-sample`, a small Vite app with a login, a registration flow, a checkout flow and switchable seeded defects (disabled save button, missing confirmation, gradient hero, accent-border cards, a raw primitive, low contrast in dark mode, a console error, a fixed banner covering the pay button only on phones, 28 px icon buttons, a 14 px email input, a hover-only menu); verify `npm run build` passes and a toggle file selects which defects are present
+- [ ] 8.1 Add `tests/fixtures/qa-sample`, a small Vite app with a SQLite-backed API, a committed `.rio/qa/seed/` (schema, seeded shopper and admin accounts, products, one saved address), a login, a registration flow, a checkout flow and switchable seeded defects (disabled save button, missing confirmation, gradient hero, accent-border cards, a raw primitive, low contrast in dark mode, a console error, a fixed banner covering the pay button only on phones, 28 px icon buttons, a 14 px email input, a hover-only menu); verify `npm run build` passes and a toggle file selects which defects are present
 - [ ] 8.2 Add `eval/qa/` with labeled cases per seeded defect, a clean-run noise case and the metrics (precision, recall, cost and wall time per journey); verify `python3 eval/qa/run.py --local` reports the seeded defects found and the clean run's noise count
 - [ ] 8.3 Run the fixture app end to end locally with codex and with pi, record the results in `docs/evaluation/v0.3-qa-local.md`; verify the document lists every seeded defect with its finding id or a stated miss
 

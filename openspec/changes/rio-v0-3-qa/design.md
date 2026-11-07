@@ -81,7 +81,17 @@ Each viewport and color scheme pair is a fresh Playwright browser context create
 
 Alternative rejected: one context resized between viewports. Resizing keeps session state and layout caches that a real device switch would not, and hides first-render problems.
 
+### D15. Seed snapshots reuse the content-addressed snapshot store
+Seed definitions are small and committed; materialized state is big and cached. The controller computes the fingerprint (manifest, referenced files, migration globs, datastore kinds, image version) before starting the app. On a hit it restores each datastore archive through the kind's restore path (`sqlite` copy, `pg_restore`, `mysql`, `redis-server --dbfilename`, `tar` for `files`, the custom command otherwise) before `app.start`; on a miss it starts the app's datastores, runs the steps, captures one archive per datastore and path, and registers them under the fingerprint. Storage reuses the content-addressed hosted snapshot store from the v0.2 snapshot change for the hosted path and `<cache>/qa-seeds/` locally, so an unchanged archive is never re-uploaded and pruning follows the cache rules. `resets: true` restores from the already-downloaded archives, which is a local copy, not a network round trip. The datastore client tools ship in the QA image, so the same restore works in Docker and in the Sandbox.
+
+Alternative rejected: snapshotting the whole container filesystem or a Docker volume. It is not portable to the Sandbox backend, ties the snapshot to the image layer and cannot be split per datastore.
+
+Alternative rejected: re-running the seed every run with caching left to the project. That is the status quo the user flagged as too costly for large data sets.
+
 ## Risks / Trade-offs
+
+- [Seed snapshots hold synthetic but realistic data and can be large] → private cache or tenant store only, size cap, prune keeping the newest three, the skill forbids production data and validation warns on personal-data patterns.
+- [Fingerprint misses a dependency and a stale seed is restored] → migrations globs are explicit in the contract, `rio qa seed status` shows both fingerprints, and `seed build --force` is one command.
 
 - [The matrix multiplies cost by viewports × schemes] → defaults are three viewports and two schemes; `max_journeys` counts journeys; profiles can narrow to one mobile and one desktop viewport; the footer shows cost per viewport.
 

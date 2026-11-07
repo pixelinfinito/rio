@@ -7,7 +7,7 @@ The environment contract tells Rio how to start the application, when it is read
 ## ADDED Requirements
 
 ### Requirement: Environment contract
-`.rio/qa.yaml` SHALL declare `version: 1`, `app`, `personas[]` and the optional blocks `browser`, `harness`, `rules` and `evidence`. The schema SHALL be published as `schemas/qa-config-v1.json`; unknown keys SHALL be rejected.
+`.rio/qa.yaml` SHALL declare `version: 1`, `app`, `personas[]` and the optional blocks `browser`, `harness`, `rules`, `evidence` and `seed` (`manifest` path, default `.rio/qa/seed/seed.yaml`; `migrations[]` globs; `max_size`; `fallback_rebuild`). The schema SHALL be published as `schemas/qa-config-v1.json`; unknown keys SHALL be rejected.
 
 #### Scenario: Full contract validates
 - **WHEN** the file declares `app` (`start`, `url`, `ready` with `path`, `status`, `timeout`, plus `env`, `seed`, `teardown`, `workdir`), two personas with `name`, `description`, `username_env` and `password_env`, `browser.viewports`, `browser.color_schemes`, `harness.default`, `harness.model`, `rules.disable`, `rules.add`, `evidence.video` and `evidence.trace`
@@ -62,7 +62,7 @@ Persona credentials SHALL be given only as environment variable names; a literal
 - **THEN** the proposed contract starts the Compose project and uses `http://127.0.0.1:3000`
 
 ### Requirement: Readiness and failure to start
-A run SHALL start the app with `app.start`, run `app.seed` once the readiness probe succeeds, and wait at most `ready.timeout` (default 120 s). If the probe never succeeds, the QA step SHALL end `failed` with reason `app_not_ready`, keep the captured stdout and stderr as evidence, and SHALL NOT report any journey as passed.
+A run SHALL restore or build the seed snapshot, start the app with `app.start`, run `app.seed` (a per-run hook for state the snapshot cannot hold, such as cache warmups) once the readiness probe succeeds, and wait at most `ready.timeout` (default 120 s). If the probe never succeeds, the QA step SHALL end `failed` with reason `app_not_ready`, keep the captured stdout and stderr as evidence, and SHALL NOT report any journey as passed.
 
 #### Scenario: App never listens
 - **WHEN** `app.start` exits before the probe succeeds

@@ -21,6 +21,13 @@ A journey SHALL be one YAML file at `.rio/qa/journeys/<name>.yaml` declaring `ve
 - **WHEN** a journey declares `persona: admin` and `.rio/qa.yaml` declares no persona named `admin`
 - **THEN** validation fails naming the journey, the persona and the config file
 
+### Requirement: Journey data preconditions
+`preconditions[]` SHALL be natural-language statements about seeded state that the agent checks before step 1, and a journey MAY declare `resets: true` to start from a freshly restored seed snapshot. A precondition that does not hold SHALL end the journey `skipped` with reason `precondition_failed` and the evidence of the check.
+
+#### Scenario: Precondition fails
+- **WHEN** a journey's precondition says the shopper has one saved address and the seeded account has none
+- **THEN** the journey is `skipped` with reason `precondition_failed` and the check's screenshot is attached
+
 ### Requirement: Journey viewport override
 A journey MAY declare `viewports[]` to narrow the matrix it runs in, naming viewports from the resolved contract. The override SHALL NOT remove every mobile viewport unless the journey also declares `desktop_only: true` with a `reason`, which the report SHALL show beside the journey.
 
