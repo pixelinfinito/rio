@@ -86,7 +86,7 @@ rio review --preset quick
 rio review --deep
 ```
 
-Quick, Standard and Deep require an endpoint; `--offline` keeps local deterministic execution. PR fetching and publication (`--pr`, `--publish`) remain unsupported. The security policy interface is available but its agent/catalog execution remains gated on v0.3. See [Cloudflare deployment and runners](docs/cloudflare.md) and [verification evidence](docs/verifier-contracts.md) for setup, isolation, budgets and the pending live model acceptance gate.
+Quick, Standard and Deep require an endpoint; `--offline` keeps local deterministic execution. PR fetching and publication (`--pr`, `--publish`) remain unsupported. An enabled security step (or `--profile rio/security`) reviews the change against the OWASP Top 10:2025 or ASVS 5.0 catalog and reports which catalog items it assessed. See [Cloudflare deployment and runners](docs/cloudflare.md) and [verification evidence](docs/verifier-contracts.md) for setup, isolation, budgets and the pending live model acceptance gate.
 
 ### Review lineages and feedback
 

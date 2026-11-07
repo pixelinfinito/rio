@@ -40,6 +40,7 @@ rio-adapters = { path = "../rio-adapters" }
 [dev-dependencies]
 assert_cmd.workspace = true
 jsonschema.workspace = true
+serde_yaml.workspace = true
 
 [target.'cfg(unix)'.dev-dependencies]
 libc.workspace = true

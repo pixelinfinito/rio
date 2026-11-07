@@ -354,6 +354,65 @@ fn profile_validate_checks_agent_cache_and_proposal_threshold_options() {
     assert!(stderr.contains("minimum of 1"), "{stderr}");
 }
 #[test]
+fn security_community_profile_validates_offline_and_enables_thorough_asvs() {
+    let temp = repository();
+    let root = temp.path();
+    rio(root)
+        .args(["profile", "validate", "rio/security"])
+        .assert()
+        .success();
+    let output = rio(root)
+        .args(["profile", "show", "rio/security"])
+        .assert()
+        .success()
+        .get_output()
+        .clone();
+    let resolved: serde_yaml::Value = serde_yaml::from_slice(&output.stdout).unwrap();
+    let security = resolved["steps"]
+        .as_sequence()
+        .unwrap()
+        .iter()
+        .find(|s| s["id"] == "security")
+        .unwrap();
+    assert_eq!(security["uses"], "rio/security@0.2.0");
+    assert_eq!(security["with"]["enabled"], true);
+    assert_eq!(security["with"]["posture"], "thorough");
+    assert_eq!(security["with"]["catalog"], "asvs-5.0");
+    let text = String::from_utf8_lossy(&output.stdout);
+    assert!(
+        text.contains("rio/base") && text.contains("rio/security"),
+        "{text}"
+    );
+    // Every other base setting is unchanged.
+    let base = rio(root)
+        .args(["profile", "show", "rio/base"])
+        .assert()
+        .success()
+        .get_output()
+        .clone();
+    let base: serde_yaml::Value = serde_yaml::from_slice(&base.stdout).unwrap();
+    for key in [
+        "budget",
+        "fail_on",
+        "posture",
+        "publish",
+        "max_defects",
+        "verify",
+    ] {
+        assert_eq!(resolved[key], base[key], "{key}");
+    }
+    let steps = |v: &serde_yaml::Value| -> Vec<serde_yaml::Value> {
+        v["steps"]
+            .as_sequence()
+            .unwrap()
+            .iter()
+            .filter(|s| s["id"] != "security")
+            .cloned()
+            .collect()
+    };
+    assert_eq!(steps(&resolved), steps(&base));
+}
+#[test]
 fn configuration_precedence_sources_unknown_keys_and_endpoint_notice() {
     let temp = repository();
     let root = temp.path();
