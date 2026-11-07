@@ -21,6 +21,17 @@ A journey SHALL be one YAML file at `.rio/qa/journeys/<name>.yaml` declaring `ve
 - **WHEN** a journey declares `persona: admin` and `.rio/qa.yaml` declares no persona named `admin`
 - **THEN** validation fails naming the journey, the persona and the config file
 
+### Requirement: Journey viewport override
+A journey MAY declare `viewports[]` to narrow the matrix it runs in, naming viewports from the resolved contract. The override SHALL NOT remove every mobile viewport unless the journey also declares `desktop_only: true` with a `reason`, which the report SHALL show beside the journey.
+
+#### Scenario: Admin console is desktop only
+- **WHEN** journey `admin-audit` declares `desktop_only: true`, `reason: "The admin console is not offered on phones"` and `viewports: [desktop, wide]`
+- **THEN** validation passes, the journey runs only in those viewports, and the report shows the reason beside its outcomes
+
+#### Scenario: Silent mobile removal rejected
+- **WHEN** a journey declares `viewports: [desktop]` without `desktop_only`
+- **THEN** validation fails naming the journey and stating that a mobile viewport is required unless `desktop_only` is declared with a reason
+
 ### Requirement: Journey steps
 Each step SHALL have `do` (a natural-language action) and MAY have `at` (route pattern), `hint` (selector or accessible name) and `expect` (natural-language expectation). Steps SHALL NOT contain executable code or credential values.
 

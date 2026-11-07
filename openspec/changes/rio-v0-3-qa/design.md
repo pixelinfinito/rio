@@ -76,7 +76,14 @@ The GitHub App change owns the publisher (posting, editing, threads, `/rio` comm
 
 Alternative rejected: a separate QA bot or comment format. It would duplicate the never-re-post and dismissal rules and give authors two places to respond.
 
+### D14. Viewport matrix as browser contexts, mobile first
+Each viewport and color scheme pair is a fresh Playwright browser context created from a preset device descriptor (viewport, `deviceScaleFactor`, `isMobile`, `hasTouch`, user agent, `colorScheme`), so the matrix is a loop around the journey, not a journey variation. Mobile contexts run first so budget exhaustion keeps the phone result. `mobile/` probes are part of the same injected probe script, gated on the context's `isMobile` or `hasTouch`. Orientation changes inside a step swap to the matching landscape descriptor in the same context. The per-viewport evidence directory from D8 already separates artifacts, and the finding identity from D9 excludes the viewport so one finding lists every viewport it fired in.
+
+Alternative rejected: one context resized between viewports. Resizing keeps session state and layout caches that a real device switch would not, and hides first-render problems.
+
 ## Risks / Trade-offs
+
+- [The matrix multiplies cost by viewports × schemes] → defaults are three viewports and two schemes; `max_journeys` counts journeys; profiles can narrow to one mobile and one desktop viewport; the footer shows cost per viewport.
 
 - [GitHub's image proxy may cache screenshots beyond the signed URL expiry] → the summary states expiry; screenshots are redacted and masked before upload; publishing stays opt-in through `publish`.
 

@@ -17,6 +17,10 @@ Every format SHALL present sections in this order: header (review id, run id, mo
 - **WHEN** QA ran three journeys, one failed at step 4 on mobile and two probe findings fired
 - **THEN** the QA section lists the three journeys with outcomes and evidence links, names step 4 for the failed one, and lists the two findings as `static_proven`
 
+#### Scenario: Per-viewport grid
+- **WHEN** the QA section renders a journey that ran in `mobile`, `tablet` and `desktop` in two color schemes
+- **THEN** the journey shows one cell per viewport and scheme with its outcome and step reached, mobile first, and a failed cell links the evidence captured in that viewport
+
 #### Scenario: Unverified observations labeled
 - **WHEN** QA ran locally without an endpoint and the agent reported two observations
 - **THEN** the QA section shows them under an `unverified observations` heading, never as findings, with their evidence links

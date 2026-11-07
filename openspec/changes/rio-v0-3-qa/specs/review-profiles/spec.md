@@ -19,6 +19,10 @@ The `with` schemas of the built-in steps SHALL define the review settings that t
 - **WHEN** a profile sets `rio/qa` with `with: { harness: claude }`
 - **THEN** validation fails naming the step, the option and the allowed values `codex` and `pi`
 
+#### Scenario: Profile narrows the matrix but keeps mobile
+- **WHEN** a profile sets the qa step's `viewports: [mobile-small, mobile, desktop]`
+- **THEN** the resolved profile runs those three viewports; `viewports: [desktop, wide]` is rejected because no mobile viewport remains
+
 #### Scenario: QA policy independent of general cap
 - **WHEN** a profile has `max_defects: 3` and the QA step sets `max_defects: 10`
 - **THEN** QA findings resolve their cap to ten and the general cap remains three

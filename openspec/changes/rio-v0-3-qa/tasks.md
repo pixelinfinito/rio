@@ -23,6 +23,8 @@
 
 - [ ] 3.1 Add the Node controller package under `crates/rio-qa/controller/` that launches Chromium through Playwright with tracing, console and network capture and a CDP endpoint, starts `@playwright/mcp` against it with the restricted capability set, and runs Rio's MCP server (`login`, `set_viewport`, `set_color_scheme`, `upload_fixture`, `step_done`, `observe`); verify with a Playwright test against the fixture app that each tool works and no shell tool is listed
 - [ ] 3.2 Implement step-boundary capture (screenshot, DOM and accessibility snapshot, console and network log flush) and the action recorder for replay; verify a test replays a recorded three-step journey headlessly to the same final URL and DOM hash
+- [ ] 3.2a Implement the viewport matrix: built-in presets, custom entries, validation that at least one mobile viewport remains at contract, profile and journey level (`desktop_only` with reason), fresh device-emulated context per viewport and scheme, mobile-first ordering and in-step orientation switch; verify tests for "Mobile emulation is real emulation", "Desktop-only matrix rejected", "Silent mobile removal rejected", "Mobile runs first" and "Orientation change in a step"
+- [ ] 3.2b Implement the `mobile/` probe family gated on mobile or touch contexts; verify fixture pages trigger "Pay button under a fixed footer" and "Small tap targets" in `mobile` and nothing in `desktop`
 - [ ] 3.3 Implement the probe script for every probe in the ruleset with the minority-pattern thresholds; verify fixture pages trigger each probe exactly as the ui-quality-rules scenarios state, including the "Consistent gradients" non-firing case
 - [ ] 3.4 Implement the evidence manifest, naming scheme, redaction of text artifacts, header and body limits for the network log, and masking of password and `data-rio-mask` elements; verify tests cover "Manifest lists everything" and "Token in a response body"
 - [ ] 3.5 Implement persona login from environment variables inside the controller so values never reach the harness; verify the transcript fixture shows `login(persona)` with no value and the login-form screenshot is masked
@@ -57,7 +59,7 @@
 
 - [ ] 7.1 Add `rio qa` with subcommands `init`, `sync`, `list`, `validate`, `show`, `rules`, `evidence prune` and the bare run form with `--full`, `--journey`, `--baseline`, `--harness` and the review selection flags; verify `assert_cmd` tests for each and that `rio qa` runs prepare, graph, qa, verify and report
 - [ ] 7.2 Extend `rio doctor` with Docker reachability, the paired QA image tag, harness binaries and the auth path; verify a doctor test shows each line
-- [ ] 7.3 Add the `qa` block to `rio-core` findings, the QA section to the terminal, Markdown and JSON renderers (journeys, step reached, evidence links, probe versus verified versus unverified observations), the footer lines and the run record files; verify snapshot tests for "QA section with a failed journey", "Unverified observations labeled", "QA footer", "Hosted record carries keys only" and "JSON validates with QA"
+- [ ] 7.3 Add the `qa` block to `rio-core` findings, the QA section to the terminal, Markdown and JSON renderers (journeys, step reached, evidence links, probe versus verified versus unverified observations), the footer lines and the run record files; verify snapshot tests for "QA section with a failed journey", "Per-viewport grid", "Unverified observations labeled", "QA footer", "Hosted record carries keys only" and "JSON validates with QA"
 - [ ] 7.4 Implement `baseline: true` (second container on base, outcome diff per rule, journey and step) and the no-baseline state rule; verify tests for "Regression classified" and "Attribution without baseline"
 - [ ] 7.5 Update `README.md` with the QA quick start and `docs/PRD.md` with requirement R32; verify the README commands run as written
 
@@ -71,7 +73,7 @@
 
 ## 8. Fixture app and evaluation
 
-- [ ] 8.1 Add `tests/fixtures/qa-sample`, a small Vite app with a login, a registration flow, a checkout flow and switchable seeded defects (disabled save button, missing confirmation, gradient hero, accent-border cards, a raw primitive, low contrast in dark mode, a console error); verify `npm run build` passes and a toggle file selects which defects are present
+- [ ] 8.1 Add `tests/fixtures/qa-sample`, a small Vite app with a login, a registration flow, a checkout flow and switchable seeded defects (disabled save button, missing confirmation, gradient hero, accent-border cards, a raw primitive, low contrast in dark mode, a console error, a fixed banner covering the pay button only on phones, 28 px icon buttons, a 14 px email input, a hover-only menu); verify `npm run build` passes and a toggle file selects which defects are present
 - [ ] 8.2 Add `eval/qa/` with labeled cases per seeded defect, a clean-run noise case and the metrics (precision, recall, cost and wall time per journey); verify `python3 eval/qa/run.py --local` reports the seeded defects found and the clean run's noise count
 - [ ] 8.3 Run the fixture app end to end locally with codex and with pi, record the results in `docs/evaluation/v0.3-qa-local.md`; verify the document lists every seeded defect with its finding id or a stated miss
 

@@ -60,6 +60,21 @@ The harness SHALL receive tools to navigate, inspect the accessibility tree, cli
 - **WHEN** the harness attempts to run a shell command
 - **THEN** no shell tool exists in its tool set and the attempt is recorded in the transcript as rejected
 
+### Requirement: Every journey runs across the viewport matrix
+Each selected journey SHALL run once per viewport in its resolved matrix and per color scheme, in a fresh browser context each time, mobile viewports first. A run SHALL NOT report a journey as `passed` until it passed in every viewport of its matrix; a pass on desktop with a failure on mobile SHALL be `failed` with the mobile step named. The exploratory pass SHALL also visit each derived route in every viewport of the default matrix.
+
+#### Scenario: Mobile-only failure
+- **WHEN** `checkout` passes in `desktop` and `tablet` but the pay button is below a fixed footer in `mobile`
+- **THEN** the journey is `failed` at that step in viewport `mobile`, the desktop and tablet passes are recorded, and the report shows the per-viewport grid
+
+#### Scenario: Mobile runs first
+- **WHEN** the run budget ends after the first viewport of the last journey
+- **THEN** the recorded outcome for that journey is its `mobile` result and the other viewports are `cancelled` with reason `budget`
+
+#### Scenario: Orientation change in a step
+- **WHEN** a step says to rotate the phone
+- **THEN** the harness switches to the matching landscape preset, the step boundary captures evidence in that orientation, and the journey continues
+
 ### Requirement: Journey outcomes
 Each selected journey SHALL end `passed`, `failed`, `skipped` (reason `missing_credentials`, `precondition_failed` or `held_back`), `not_run` (app not ready) or `cancelled` (budget or interruption). `failed` SHALL name the first step whose expectation or success criterion did not hold and SHALL carry the evidence references for that step. A journey SHALL be marked for each viewport and color scheme it ran in.
 
@@ -83,7 +98,11 @@ The agent SHALL report observations as hypotheses carrying `rule_id`, kind (`fun
 - **THEN** the hypothesis reaches the verifier with those artifacts
 
 ### Requirement: Budgets and degradation
-The step SHALL enforce `budget.<mode>.qa_wall` per run (default 30 min), `qa_journey_wall` per journey (default 8 min) and `qa_tokens` per journey. When the run budget ends, remaining journeys SHALL be `cancelled` with reason `budget`, outcomes already recorded SHALL be kept, and the step SHALL end `partial`. A harness crash SHALL retry the current journey once and then mark it `cancelled` with reason `harness_error`.
+The step SHALL enforce `budget.<mode>.qa_wall` per run (default 30 min), `qa_journey_wall` per journey per viewport and color scheme (default 8 min) and `qa_tokens` per journey per viewport and color scheme. When the run budget ends, remaining journeys SHALL be `cancelled` with reason `budget`, outcomes already recorded SHALL be kept, and the step SHALL end `partial`. A harness crash SHALL retry the current journey once and then mark it `cancelled` with reason `harness_error`.
+
+#### Scenario: Cap counts journeys, not viewport runs
+- **WHEN** `max_journeys` is 4 and the matrix has three viewports and two schemes
+- **THEN** four journeys run, each in all six viewport and scheme combinations
 
 #### Scenario: Run budget ends mid-run
 - **WHEN** three of five journeys finished when the run budget ends

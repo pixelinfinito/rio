@@ -19,7 +19,29 @@ The environment contract tells Rio how to start the application, when it is read
 
 #### Scenario: Defaults applied
 - **WHEN** `.rio/qa.yaml` declares only `app` and one persona
-- **THEN** the resolved contract has viewports `desktop` (1280×800) and `mobile` (390×844), color schemes `light` and `dark`, harness `codex`, trace on and video off
+- **THEN** the resolved contract has viewports `mobile`, `tablet` and `desktop`, color schemes `light` and `dark`, harness `codex`, trace on and video off
+
+### Requirement: Viewport matrix
+`browser.viewports[]` SHALL name entries from the built-in presets or declare custom ones with `name`, `width`, `height`, `device_scale_factor`, `mobile` (touch events and a mobile user agent) and optional `orientation`. The default matrix SHALL be `mobile`, `tablet` and `desktop`.
+
+#### Scenario: Built-in presets
+- **WHEN** `rio qa show --viewports` is run
+- **THEN** it lists `mobile-small` (360×740, scale 3, mobile), `mobile` (390×844, scale 3, mobile), `mobile-landscape` (844×390, scale 3, mobile), `tablet` (820×1180, scale 2, touch), `desktop` (1280×800, scale 1) and `wide` (1920×1080, scale 1)
+
+#### Scenario: Custom viewport
+- **WHEN** the contract declares `{ name: kiosk, width: 1080, height: 1920, device_scale_factor: 1, mobile: false }`
+- **THEN** validation passes and journeys run in that viewport in addition to the named presets
+
+#### Scenario: Mobile emulation is real emulation
+- **WHEN** a journey runs in the `mobile` preset
+- **THEN** the page sees a 390×844 layout viewport, a device pixel ratio of 3, touch events, a mobile user agent, and `pointer: coarse` media queries match
+
+### Requirement: Mobile is mandatory
+The resolved matrix SHALL contain at least one viewport with `mobile: true`. A contract or profile that removes every mobile viewport SHALL be rejected by validation, so no QA run reports a journey as passing without having run it on a phone-sized screen.
+
+#### Scenario: Desktop-only matrix rejected
+- **WHEN** `browser.viewports: [desktop, wide]` is declared
+- **THEN** validation fails stating that at least one mobile viewport is required and naming the presets that qualify
 
 ### Requirement: Credentials are named, never stored
 Persona credentials SHALL be given only as environment variable names; a literal username or password value in the contract SHALL be rejected by validation.

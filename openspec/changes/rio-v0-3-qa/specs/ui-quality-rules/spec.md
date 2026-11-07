@@ -15,7 +15,26 @@ A versioned, built-in ruleset names the interface defects and generated-looking 
 
 #### Scenario: Shipped rule set
 - **WHEN** the built-in ruleset is listed with `rio qa rules`
-- **THEN** it contains at least the probes `ui/gradient-background`, `ui/accent-border-card`, `ui/raw-primitive`, `ui/spacing-scale`, `ui/type-scale`, `ui/low-contrast`, `ui/horizontal-overflow`, `ui/layout-shift`, `ui/console-error`, `ui/broken-image`, `ui/missing-focus-style` and the judged rules `ui/no-feedback`, `ui/dead-end`, `ui/inconsistent-copy`, `ui/unreachable-action`, `ui/placeholder-content`, `ui/decorative-emoji`
+- **THEN** it contains at least the probes `ui/gradient-background`, `ui/accent-border-card`, `ui/raw-primitive`, `ui/spacing-scale`, `ui/type-scale`, `ui/low-contrast`, `ui/horizontal-overflow`, `ui/layout-shift`, `ui/console-error`, `ui/broken-image`, `ui/missing-focus-style`, the mobile probes `mobile/tap-target`, `mobile/viewport-meta`, `mobile/input-zoom`, `mobile/fixed-overlap`, `mobile/offscreen-content`, `mobile/text-truncation`, `mobile/hover-only`, and the judged rules `ui/no-feedback`, `ui/dead-end`, `ui/inconsistent-copy`, `ui/unreachable-action`, `ui/placeholder-content`, `ui/decorative-emoji`, `mobile/navigation-reachable`
+
+### Requirement: Mobile probes
+Probes with the `mobile/` prefix SHALL run only in viewports with `mobile: true` or touch enabled, and SHALL carry their thresholds in the ruleset like every other probe.
+
+#### Scenario: Mobile probe definitions
+- **WHEN** the ruleset is listed for a mobile viewport
+- **THEN** it defines `mobile/tap-target` (interactive targets under 44×44 CSS px or closer than 8 px to another), `mobile/viewport-meta` (missing or non-responsive `viewport` meta), `mobile/input-zoom` (text inputs with computed font size under 16 px), `mobile/fixed-overlap` (fixed or sticky elements covering an interactive target or over 30 % of the viewport), `mobile/offscreen-content` (content beyond the layout viewport), `mobile/text-truncation` (text clipped by `overflow: hidden` without an ellipsis) and `mobile/hover-only` (content revealed only by `:hover` with no touch equivalent)
+
+#### Scenario: Pay button under a fixed footer
+- **WHEN** in `mobile` a fixed cookie banner covers the pay button's bounding box
+- **THEN** a `mobile/fixed-overlap` finding names both elements with the step screenshot
+
+#### Scenario: Small tap targets
+- **WHEN** a toolbar renders five icon buttons of 28×28 px with 4 px gaps in `mobile`
+- **THEN** one `mobile/tap-target` finding lists the five element paths and measured sizes
+
+#### Scenario: Desktop does not run mobile probes
+- **WHEN** the same toolbar renders in `desktop`
+- **THEN** no `mobile/*` finding is emitted for that viewport
 
 ### Requirement: Probes run at every step boundary
 After each step, Rio SHALL evaluate every enabled probe against the current DOM and computed styles in the current viewport and color scheme, and SHALL emit one finding per rule and element group with evidence level `static_proven`, the step screenshot, the DOM snapshot and the matched element paths. Probes SHALL NOT depend on the harness or the model.
