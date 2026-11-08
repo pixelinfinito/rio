@@ -1,476 +1,603 @@
 {
   "schema": "rio-verifier-eval-v1",
   "execution": "live-model",
-  "description": "v0.2 pinned verifier comparison, 2026-11-07, approved 24-case set",
+  "description": "v0.2 pinned verifier comparison, 2026-11-08, approved 24-case set; OpenRouter route until its credit limit, then the account's AI Gateway custom providers to the same models; HS-RS-03 (astral-sh/uv) dropped by the owner: both arms were cancelled by the wall budget on the fast (8 min) and deep (15 min) tiers, 24.6 MiB snapshot, graph truncated at max_nodes; owner acceptance of 2026-11-08",
   "cases": [
+    {
+      "id": "HS-PY-01",
+      "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
+      "voter_model": "openrouter/openai/gpt-6.1-sol",
+      "profile_hash": "bdcb94aad2775ee9c3fa0af467dcba04906a2faec88b1559bf14fc8dc2875ba6",
+      "high_controls": [
+        "hs-py-01"
+      ],
+      "independently_clean": false,
+      "notes": "single-arm profile hash 49c673184d81c8ef41723a934e72c676109bbbccf92dc1a26b330cca6b28c0f7; route openrouter; mode branch; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
+      "single": {
+        "report": "HS-PY-01/single/report.json",
+        "audit": "HS-PY-01/single/audit.json",
+        "verdicts": "HS-PY-01/single/verdicts.json",
+        "report_sha256": "33c2aaa04f2a4bcc9a06a185c6459672c8593ee33492e566b38b583ca7a2f07a",
+        "audit_sha256": "a0bbd0ff08391c9344960055d1f78791052fed91e0893f45ab6cd4bb3bdc291d",
+        "verdicts_sha256": "e0c7bc33c8edcf691d594440eb247440f1df8ce6b850bca70b2bd7667330ff8a"
+      },
+      "quorum": {
+        "report": "HS-PY-01/quorum/report.json",
+        "audit": "HS-PY-01/quorum/audit.json",
+        "verdicts": "HS-PY-01/quorum/verdicts.json",
+        "report_sha256": "9156e20e297c5a4e1218b85676dddbdb5315bf3f054e6651e873be8b57ff2ae0",
+        "audit_sha256": "de1b412db0c265fb98d4e7a0ef86dc09d0d3ab17b9bc2808736eb0edb0d4ec09",
+        "verdicts_sha256": "07c61dc0c390ba93c5ff9b943799221f9b4d67b6f0fc2d62eecd666702019eb1"
+      }
+    },
     {
       "id": "HS-PY-02",
       "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
       "voter_model": "openrouter/openai/gpt-6.1-sol",
-      "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
+      "profile_hash": "bdcb94aad2775ee9c3fa0af467dcba04906a2faec88b1559bf14fc8dc2875ba6",
       "high_controls": [
         "hs-py-02"
       ],
       "independently_clean": false,
-      "notes": "single-arm profile hash d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
+      "notes": "single-arm profile hash 49c673184d81c8ef41723a934e72c676109bbbccf92dc1a26b330cca6b28c0f7; route openrouter; mode branch; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
       "single": {
         "report": "HS-PY-02/single/report.json",
         "audit": "HS-PY-02/single/audit.json",
         "verdicts": "HS-PY-02/single/verdicts.json",
-        "report_sha256": "4ee2604820a3417dcf43abf77e1cfb79191852b2f92be2cd39dc29b6bf20f9f7",
-        "audit_sha256": "e99dbe8c37cbc9632fa7b0e473512eb1ad97f7b7f93b8320fd637ea6d20d6389",
-        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+        "report_sha256": "ed384266c6f60f646b6a9b2c8fc5c3f0471c48bae61b27eafccc8f45ee7f5176",
+        "audit_sha256": "df379de346336c6bce7ffa077150a5b2efe8c0172fe28011d83a905515635fec",
+        "verdicts_sha256": "c924cbb653c67cb6a92c2f7a6827614ca93e81785046476d65a32970fc6bd2d5"
       },
       "quorum": {
         "report": "HS-PY-02/quorum/report.json",
         "audit": "HS-PY-02/quorum/audit.json",
         "verdicts": "HS-PY-02/quorum/verdicts.json",
-        "report_sha256": "ee598d888ff8ac3858e7c878ee013c82441fe26b7430875d55f282c94da4d01e",
-        "audit_sha256": "8fe9ef6bbfbecd973012d802e08b5c08c8089ed52a66afbc91601352fa276395",
-        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+        "report_sha256": "abbc3d06a82963e4234b7a6873de532418690c4b9ce62b13ad5746e6907e8a01",
+        "audit_sha256": "35f1f197801e4eba4ae4e0dae369aa3f723102064717ade223950ac9a214ca38",
+        "verdicts_sha256": "6b00e14cb32db6525a871bceb0b4c54cd225cc2c93470a45686aab2212a35f6a"
       }
     },
     {
       "id": "HS-PY-03",
       "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
       "voter_model": "openrouter/openai/gpt-6.1-sol",
-      "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
+      "profile_hash": "bdcb94aad2775ee9c3fa0af467dcba04906a2faec88b1559bf14fc8dc2875ba6",
       "high_controls": [
         "hs-py-03"
       ],
       "independently_clean": false,
-      "notes": "single-arm profile hash d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
+      "notes": "single-arm profile hash 49c673184d81c8ef41723a934e72c676109bbbccf92dc1a26b330cca6b28c0f7; route openrouter; mode branch; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
       "single": {
         "report": "HS-PY-03/single/report.json",
         "audit": "HS-PY-03/single/audit.json",
         "verdicts": "HS-PY-03/single/verdicts.json",
-        "report_sha256": "81c0e53ba540bedca7f74201a98af970f570de61eb8137850a3c8e1b1958c53e",
-        "audit_sha256": "40a704b81558f93f5b1191bec788398778b92b45962833f7fe47490b0de590fe",
-        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+        "report_sha256": "99084f7264865bf119c4aa89a15e5e0293170b21ed05c7d7b432a2c9e8aef035",
+        "audit_sha256": "5afc366d1d65f877f3f74eb3dbf41a37877fb53522bf9b505f23ec03797061aa",
+        "verdicts_sha256": "78687ce5d70e2ccffc7df3e4ea5aa99b6d06218a6391b5f24a7cc11d04aea32e"
       },
       "quorum": {
         "report": "HS-PY-03/quorum/report.json",
         "audit": "HS-PY-03/quorum/audit.json",
         "verdicts": "HS-PY-03/quorum/verdicts.json",
-        "report_sha256": "4d9cb0cb63ae71add542b883d03f84239d9eedd0492641e46ff65f531959b57c",
-        "audit_sha256": "f74643fa0d25c4b9328b1cf924ace537d9f1692dbd6408a0af5471a13af43b3f",
-        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+        "report_sha256": "83eb6ef565e501b19ebd14c3bb1626aaa31a7c304e91eb3cfc16a2988efe0864",
+        "audit_sha256": "43652789f1a7ecbf57fa15c3aa0ddc2ae8e5e80c6f6af41428f37b62716ae1ee",
+        "verdicts_sha256": "78687ce5d70e2ccffc7df3e4ea5aa99b6d06218a6391b5f24a7cc11d04aea32e"
       }
     },
     {
       "id": "HS-PY-04",
       "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
       "voter_model": "openrouter/openai/gpt-6.1-sol",
-      "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
+      "profile_hash": "bdcb94aad2775ee9c3fa0af467dcba04906a2faec88b1559bf14fc8dc2875ba6",
       "high_controls": [
         "hs-py-04"
       ],
       "independently_clean": false,
-      "notes": "single-arm profile hash d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
+      "notes": "single-arm profile hash 49c673184d81c8ef41723a934e72c676109bbbccf92dc1a26b330cca6b28c0f7; route openrouter; mode branch; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
       "single": {
         "report": "HS-PY-04/single/report.json",
         "audit": "HS-PY-04/single/audit.json",
         "verdicts": "HS-PY-04/single/verdicts.json",
-        "report_sha256": "8fba38fc75041fbe806983155e8d64aea05ac401a61260d445e32351861dcfd6",
-        "audit_sha256": "7c496919fefbefe9b85e39002ebe93bcc9a3ed79eacb763ee1740419d47585f5",
-        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+        "report_sha256": "78ad9d31d6555cc4d86f3f79330d04e894c60aa2c04407d5cdcd4fb2129c05ca",
+        "audit_sha256": "13aceac1e5b85dd5609021cfb9ce614fc2333c9662b61f1f16c766766d08bcf8",
+        "verdicts_sha256": "09b7f3ff10ce4fa13c89030ad971c63267f0442366cd12440246e2780c7e2287"
       },
       "quorum": {
         "report": "HS-PY-04/quorum/report.json",
         "audit": "HS-PY-04/quorum/audit.json",
         "verdicts": "HS-PY-04/quorum/verdicts.json",
-        "report_sha256": "458e37363bab9d2009b0711d03ca9edd69f8f162de2401e0b3e46b5a0f100af4",
-        "audit_sha256": "c334e35dcdbe7390c99f30ab7d211db8d562a556981aaaccf047dc0ce3519b09",
-        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+        "report_sha256": "fa7b76ab95aa09995e5db2b169e38e3eb1c1f0565cedc2f9ba02d4eac3a0b7ed",
+        "audit_sha256": "108a61f5b8aa1647db62137cd0e583ff528d60828412a7a8ac12db5b99ef1216",
+        "verdicts_sha256": "822b18fafa40244c039d0cec0c871307d970d509b6cfff550eb1922f7d6da03a"
       }
     },
     {
       "id": "HS-TS-01",
       "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
       "voter_model": "openrouter/openai/gpt-6.1-sol",
-      "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
+      "profile_hash": "bdcb94aad2775ee9c3fa0af467dcba04906a2faec88b1559bf14fc8dc2875ba6",
       "high_controls": [
         "hs-ts-01"
       ],
       "independently_clean": false,
-      "notes": "single-arm profile hash d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
+      "notes": "single-arm profile hash 49c673184d81c8ef41723a934e72c676109bbbccf92dc1a26b330cca6b28c0f7; route openrouter; mode branch; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
       "single": {
         "report": "HS-TS-01/single/report.json",
         "audit": "HS-TS-01/single/audit.json",
         "verdicts": "HS-TS-01/single/verdicts.json",
-        "report_sha256": "52d38f6741825d7707cf5feb7dba21c3d614cc82de827cd03690295379d3eaa7",
-        "audit_sha256": "3732778e8a46569bca34ee2f37aa9ea907f18f11cfd0d17ba7c9b0d66339816f",
-        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+        "report_sha256": "5dcdd2184a505f7dda16539489e7df663d834e781ef0982f7fc0d4baafb878c2",
+        "audit_sha256": "fd2ea309d888cb6a9743cfe3316137948123d67eb144457f23a73d9c846c81a6",
+        "verdicts_sha256": "34f946595afc5a8a779a500be8f7ca1c713cbcdf3ef3ddac39bc21be4c822eda"
       },
       "quorum": {
         "report": "HS-TS-01/quorum/report.json",
         "audit": "HS-TS-01/quorum/audit.json",
         "verdicts": "HS-TS-01/quorum/verdicts.json",
-        "report_sha256": "1e48d54788ab8eade44e69d534aee02c2508f777adf177037043989ad1d011b5",
-        "audit_sha256": "7d33a724427cd6678fcde64daf013c5e5182ca20d084cba69914ee2677e5a69b",
-        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+        "report_sha256": "5b08a46647def248777db5dcbd875183da458fbcbade0aa39d401a813543e1f5",
+        "audit_sha256": "c4ad28f71d56a869c7079f65a1c3563dd49d2bb3776ad14bdd8a9757da3b93c6",
+        "verdicts_sha256": "d9c28fb4e608e8a64a39b902ee2cfb91d508091c12409381e3e9dc016a0defdb"
       }
     },
     {
       "id": "HS-TS-02",
-      "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
-      "voter_model": "openrouter/openai/gpt-6.1-sol",
-      "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
+      "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+      "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+      "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
       "high_controls": [
         "hs-ts-02"
       ],
       "independently_clean": false,
-      "notes": "single-arm profile hash d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
+      "notes": "single-arm profile hash 49c673184d81c8ef41723a934e72c676109bbbccf92dc1a26b330cca6b28c0f7; route ai-gateway-custom; mode branch; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
       "single": {
         "report": "HS-TS-02/single/report.json",
         "audit": "HS-TS-02/single/audit.json",
         "verdicts": "HS-TS-02/single/verdicts.json",
-        "report_sha256": "2fc98047ef2d5fd29b56eba16db1c1ad810910cbd3748f0adbee81815b9edc3c",
-        "audit_sha256": "78cacf8772274fbb8534d20d50bc553cb3a0595e5b8876c9b7f4cf88d8fc6b30",
-        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+        "report_sha256": "ce7af0d3e5752182562ace698ec5e51b1e02661b553c7caa1e35958048e0897f",
+        "audit_sha256": "2520ea8a8e583b281bf300de29df1330a727c66d364312812c0bbb0e379d9475",
+        "verdicts_sha256": "d3d00f90d5e8979a01d84d30bccffdeb7eece9fe4846811e6a179337397cbacf"
       },
       "quorum": {
         "report": "HS-TS-02/quorum/report.json",
         "audit": "HS-TS-02/quorum/audit.json",
         "verdicts": "HS-TS-02/quorum/verdicts.json",
-        "report_sha256": "79cc8191523ff3f4f93130d884469ea60550ec3614a1f6662888cedde03b94a3",
-        "audit_sha256": "c0c57fbbcba7c3e69415865237254fac416e2de7c3fc5a0c4c5218cae36822be",
-        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+        "report_sha256": "5bdbf0908fc47d543f08b4d3f2e966f19233b000e8d2eb77263bdcdc4c958203",
+        "audit_sha256": "111810658bf35786fce085f4e1bdf83931417f4fe771f8675cc2c5d2321d4758",
+        "verdicts_sha256": "8f0e0859b9bee2456bc5bddbbb3fdba6adf3a904f1d3a38bd584e03d53872b1d"
       }
     },
     {
       "id": "HS-TS-03",
       "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
       "voter_model": "openrouter/openai/gpt-6.1-sol",
-      "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
+      "profile_hash": "bdcb94aad2775ee9c3fa0af467dcba04906a2faec88b1559bf14fc8dc2875ba6",
       "high_controls": [
         "hs-ts-03"
       ],
       "independently_clean": false,
-      "notes": "single-arm profile hash d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
+      "notes": "single-arm profile hash 49c673184d81c8ef41723a934e72c676109bbbccf92dc1a26b330cca6b28c0f7; route openrouter; mode branch; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
       "single": {
         "report": "HS-TS-03/single/report.json",
         "audit": "HS-TS-03/single/audit.json",
         "verdicts": "HS-TS-03/single/verdicts.json",
-        "report_sha256": "51cfa6371480e7b94b7ec21db4b7d8461f4248ee068b6f573e423c9ef6efb385",
-        "audit_sha256": "a1237a0425931e2050019dc7d8d9e818a8581d8625e85b86c42d1cbbfb998a6a",
-        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+        "report_sha256": "7eb7c71abb37ee74d63e3e51fab28acd5edb22619f6f7676e6cfba7758f80761",
+        "audit_sha256": "c83dfac32a79c68828620f5fce3b2ba2a984ce660bddcd65027b78b5cd952f9a",
+        "verdicts_sha256": "ad60a5787ed53d1ba332b72f266bc1000315b5bf5be21be3f47934b9e4a5dee7"
       },
       "quorum": {
         "report": "HS-TS-03/quorum/report.json",
         "audit": "HS-TS-03/quorum/audit.json",
         "verdicts": "HS-TS-03/quorum/verdicts.json",
-        "report_sha256": "ca00e54884bf4f404e845fcc662b8a689fd066db323bd2543ea0f09ac9f25c3b",
-        "audit_sha256": "3116c867ec696ffdc0884302f0d85f43086f1206ff4d1165588f859f109143a6",
-        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+        "report_sha256": "73424a22cb0e73e574966f9dac11c4c84a8794d94b2291dbdc559b60d9a36c24",
+        "audit_sha256": "e6091f85d4e03a55dfe9a0bdb8dddcc942ddc4b37cb27a32ec3801322c7c6ec2",
+        "verdicts_sha256": "a496cc6d5a19bf01013c7bd4fcfe286a508c677e5112e17513ed15521ba10f64"
+      }
+    },
+    {
+      "id": "HS-TS-04",
+      "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
+      "voter_model": "openrouter/openai/gpt-6.1-sol",
+      "profile_hash": "bdcb94aad2775ee9c3fa0af467dcba04906a2faec88b1559bf14fc8dc2875ba6",
+      "high_controls": [
+        "hs-ts-04"
+      ],
+      "independently_clean": false,
+      "notes": "single-arm profile hash 5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca; route openrouter; mode branch; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
+      "single": {
+        "report": "HS-TS-04/single/report.json",
+        "audit": "HS-TS-04/single/audit.json",
+        "verdicts": "HS-TS-04/single/verdicts.json",
+        "report_sha256": "1111e7d9cd963e4fbd80960370938ace66025c48ef461bff10889b76236fab05",
+        "audit_sha256": "bc2cb9c0338b846babe3b3fd3277bde4ff8949f674e29a2ac95876a616dcb768",
+        "verdicts_sha256": "78687ce5d70e2ccffc7df3e4ea5aa99b6d06218a6391b5f24a7cc11d04aea32e"
+      },
+      "quorum": {
+        "report": "HS-TS-04/quorum/report.json",
+        "audit": "HS-TS-04/quorum/audit.json",
+        "verdicts": "HS-TS-04/quorum/verdicts.json",
+        "report_sha256": "30c83bbef4989a932425c7d5f23552763607d5bd327d3e0b685a91056a70233a",
+        "audit_sha256": "eeae44f582c25945df1b6bf71fbeb5c88cd9b4a222fcf720e976aa21eb54eb8c",
+        "verdicts_sha256": "78687ce5d70e2ccffc7df3e4ea5aa99b6d06218a6391b5f24a7cc11d04aea32e"
       }
     },
     {
       "id": "HS-RS-01",
-      "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
-      "voter_model": "openrouter/openai/gpt-6.1-sol",
-      "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
+      "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+      "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+      "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
       "high_controls": [
         "hs-rs-01"
       ],
       "independently_clean": false,
-      "notes": "single-arm profile hash d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
+      "notes": "single-arm profile hash 49c673184d81c8ef41723a934e72c676109bbbccf92dc1a26b330cca6b28c0f7; route ai-gateway-custom; mode branch; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
       "single": {
         "report": "HS-RS-01/single/report.json",
         "audit": "HS-RS-01/single/audit.json",
         "verdicts": "HS-RS-01/single/verdicts.json",
-        "report_sha256": "5a287265dab8d35f2de8d7e768ff7b783d269b46b217198df478ee815ed10c8e",
-        "audit_sha256": "390fea8e845a3953e77a1883e28713c92c71e0f1d520bb5b70e8144a1c633fe7",
-        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+        "report_sha256": "80ccf40f6429d6c873b17152a523164f1730fd55ca4f337ec9e0f2323fbb284a",
+        "audit_sha256": "e9e708dc6070c2f51c550781a0b25e5638b007cc7f8de5c791168d49745fe63f",
+        "verdicts_sha256": "beddc520e3496506111b2be89deb6134f1bd77e2f2f13d2bd4c6b8e59a80ea08"
       },
       "quorum": {
         "report": "HS-RS-01/quorum/report.json",
         "audit": "HS-RS-01/quorum/audit.json",
         "verdicts": "HS-RS-01/quorum/verdicts.json",
-        "report_sha256": "7852a073d41a76bcb69623a878706a09e2fc26eadd42ca0490e84d9dbdf6cf2c",
-        "audit_sha256": "6b447c8001d1a494cbcb3584426d1f1668d8989fdc2c7de70fddf2ffd6d61f4e",
-        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+        "report_sha256": "be10991d364a58846827c8476ff59abcfc03a9cd53ed189f05cf745a36f81cbb",
+        "audit_sha256": "a02851fe297cab57efecbf04c3fa1503acf736524748165b21ecc4756d8ac27e",
+        "verdicts_sha256": "6da93a8bfd0fdd98bf105e28029d59211639ad4d674c2204a488e35e8f71eb3d"
       }
     },
     {
       "id": "HS-RS-02",
-      "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
-      "voter_model": "openrouter/openai/gpt-6.1-sol",
-      "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
+      "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+      "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+      "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
       "high_controls": [
         "hs-rs-02"
       ],
       "independently_clean": false,
-      "notes": "single-arm profile hash d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
+      "notes": "single-arm profile hash 49c673184d81c8ef41723a934e72c676109bbbccf92dc1a26b330cca6b28c0f7; route ai-gateway-custom; mode branch; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
       "single": {
         "report": "HS-RS-02/single/report.json",
         "audit": "HS-RS-02/single/audit.json",
         "verdicts": "HS-RS-02/single/verdicts.json",
-        "report_sha256": "0acc936b5ca7d230d744b7d285d3226bc883a716efe9b7b99ecdd931ed64a448",
-        "audit_sha256": "62dc1d49435a7511743bef093f5f02a5a87be71597b0e5b8225919e1ae4e2535",
-        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+        "report_sha256": "28cc49be7268edc54dabaf045aa3e55338edd01d86fe78fe0f3cfabc7502ba18",
+        "audit_sha256": "47f5cf2ffe8a3040e3b491af8643d5fb8f5a9c639ce18df34059b24e987a4979",
+        "verdicts_sha256": "55ae2e5b2da538ea22c0c58d691e58ab665969363bd9bf9b88a2e9c99126b588"
       },
       "quorum": {
         "report": "HS-RS-02/quorum/report.json",
         "audit": "HS-RS-02/quorum/audit.json",
         "verdicts": "HS-RS-02/quorum/verdicts.json",
-        "report_sha256": "d8f47738fcf51a5b97f8c41dceae2ad6b508eea72f9e49a80e8baeaadcd6a3e0",
-        "audit_sha256": "37f5a2f770bd071b16c2cfe3f20ff9a04143505c651e26afdc98b66cd2492c3f",
-        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
-      }
-    },
-    {
-      "id": "HS-RS-03",
-      "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
-      "voter_model": "openrouter/openai/gpt-6.1-sol",
-      "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
-      "high_controls": [
-        "hs-rs-03"
-      ],
-      "independently_clean": false,
-      "notes": "single-arm profile hash d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
-      "single": {
-        "report": "HS-RS-03/single/report.json",
-        "audit": "HS-RS-03/single/audit.json",
-        "verdicts": "HS-RS-03/single/verdicts.json",
-        "report_sha256": "536f25cfa632e0979c75ea798fd7cfdd865db95755dbbbab0bea61673e4e69a9",
-        "audit_sha256": "6a28b1cceb05d6a5f991a5c16f613b5069cdd8709b911e6c16178a7cdddf4376",
-        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
-      },
-      "quorum": {
-        "report": "HS-RS-03/quorum/report.json",
-        "audit": "HS-RS-03/quorum/audit.json",
-        "verdicts": "HS-RS-03/quorum/verdicts.json",
-        "report_sha256": "37c4b577e83bfcdbe0debc19948f58b5d6794893c441b8615d63ae4185d374d5",
-        "audit_sha256": "f01697561bddce81f21a916ca87714637d9a25b602e4fd026064e36b30ab912e",
-        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+        "report_sha256": "8d977cfd877a994a168b7dea574d0d41b28634f931303f1d21131e27596032d6",
+        "audit_sha256": "3e52df7a12894ebe055248f30ac40568bcab7e0b44505000dc0da6942a6c7e53",
+        "verdicts_sha256": "ebaf799b9e0c43bd0cabdd20d7f50804e333061e679503bb2fbee03618469b35"
       }
     },
     {
       "id": "HS-RS-04",
-      "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
-      "voter_model": "openrouter/openai/gpt-6.1-sol",
-      "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
+      "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+      "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+      "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
       "high_controls": [
         "hs-rs-04"
       ],
       "independently_clean": false,
-      "notes": "single-arm profile hash d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
+      "notes": "single-arm profile hash 5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca; route ai-gateway-custom; mode branch; quorum generation served by the agent result cache; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
       "single": {
         "report": "HS-RS-04/single/report.json",
         "audit": "HS-RS-04/single/audit.json",
         "verdicts": "HS-RS-04/single/verdicts.json",
-        "report_sha256": "16d92385f56318e03fd1b4f176312d2539e6ef575302c111849967d15bc75788",
-        "audit_sha256": "afc5aa4f291bcc4e0cd16ae77e86a40d8cda00963963f66650d0565f9f190fbe",
-        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+        "report_sha256": "45186cd2ece5807828cd581eb5a3d56882fd1b017e8573def7971803c38aeef6",
+        "audit_sha256": "c713ec9013913121264d302ba69c980a3fe54e6e25df3699cdb13fb17368d650",
+        "verdicts_sha256": "e83896e72f70a22c04459a2d1d1dcb84f8dfdd9b6203dd111a843fb79660dc85"
       },
       "quorum": {
         "report": "HS-RS-04/quorum/report.json",
         "audit": "HS-RS-04/quorum/audit.json",
         "verdicts": "HS-RS-04/quorum/verdicts.json",
-        "report_sha256": "d689e845a5dfd8f0abb66759aa2d8a9863085c29a0f959fbf1d4cf24c6bdc651",
-        "audit_sha256": "3116c867ec696ffdc0884302f0d85f43086f1206ff4d1165588f859f109143a6",
-        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+        "report_sha256": "53373a24b340e06fc38bd740ab24afb0f4b917cfd82d3b0972bc3229674bac1a",
+        "audit_sha256": "f6f9e1a0682dda66ca618319c730b902672b5ba10a2fd9c16824fcbf4df396dd",
+        "verdicts_sha256": "e83896e72f70a22c04459a2d1d1dcb84f8dfdd9b6203dd111a843fb79660dc85"
       }
     },
     {
       "id": "CL-PY-01",
-      "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
-      "voter_model": "openrouter/openai/gpt-6.1-sol",
-      "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
+      "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+      "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+      "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
       "high_controls": [],
-      "independently_clean": false,
-      "notes": "single-arm profile hash d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
+      "independently_clean": true,
+      "notes": "single-arm profile hash 5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca; route ai-gateway-custom; mode branch; quorum generation served by the agent result cache; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
       "single": {
         "report": "CL-PY-01/single/report.json",
         "audit": "CL-PY-01/single/audit.json",
         "verdicts": "CL-PY-01/single/verdicts.json",
-        "report_sha256": "51fe3c549c8541db962334e5cf919142d264db7ad72ab299207360b0f8b3d171",
-        "audit_sha256": "5d5c54ecbe783c5f3f2ebbbe7c3c1e1cfcb31edf1323f7694adc7ad8a0c3fcc6",
-        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+        "report_sha256": "857f06b72fc7c81a0255210b8fdbd9ea35a24c36435012ea14bfa0b956310bdb",
+        "audit_sha256": "c4eecaf2713d1aff36d734e02a516081b42cacf251e705bc4152376f5165e15c",
+        "verdicts_sha256": "78687ce5d70e2ccffc7df3e4ea5aa99b6d06218a6391b5f24a7cc11d04aea32e"
       },
       "quorum": {
         "report": "CL-PY-01/quorum/report.json",
         "audit": "CL-PY-01/quorum/audit.json",
         "verdicts": "CL-PY-01/quorum/verdicts.json",
-        "report_sha256": "7d34f6f9c0b19e9e39593e61a2e337caa262e2bcfc46784841241ba2f0a9d1b0",
-        "audit_sha256": "c13c3ab12703253db85cf7ab31529d69bdb84ec5594b928b63a7a7c59bb287b9",
-        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+        "report_sha256": "300f10543c9899c4c5892029b665b7315712256e3e11227039f619b0a56e5cbe",
+        "audit_sha256": "33e79e6b09a73dda54a0c0e82953fca4f7429bc7b05aabf18effba385f1f5d73",
+        "verdicts_sha256": "78687ce5d70e2ccffc7df3e4ea5aa99b6d06218a6391b5f24a7cc11d04aea32e"
       }
     },
     {
       "id": "CL-PY-02",
-      "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
-      "voter_model": "openrouter/openai/gpt-6.1-sol",
-      "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
+      "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+      "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+      "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
       "high_controls": [],
-      "independently_clean": false,
-      "notes": "single-arm profile hash d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
+      "independently_clean": true,
+      "notes": "single-arm profile hash 5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca; route ai-gateway-custom; mode branch; quorum generation served by the agent result cache; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
       "single": {
         "report": "CL-PY-02/single/report.json",
         "audit": "CL-PY-02/single/audit.json",
         "verdicts": "CL-PY-02/single/verdicts.json",
-        "report_sha256": "fa143e33ad3199e15794a4368cd50c6a92d99d5a3e15f79094aad61331b252c0",
-        "audit_sha256": "ecd927dfce89be4fde0d80fd89864ede86e81493c8e778c54d7653974bf775b9",
-        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+        "report_sha256": "413ee2f51e12ecf00c3e3bcbcc9a932c78dc7c14fdddc6a1e8335118409efc94",
+        "audit_sha256": "1ecde5d1156c2e32d8549e24f4caa5d598043a31f92a67fb1d6187dd92ea58d3",
+        "verdicts_sha256": "78687ce5d70e2ccffc7df3e4ea5aa99b6d06218a6391b5f24a7cc11d04aea32e"
       },
       "quorum": {
         "report": "CL-PY-02/quorum/report.json",
         "audit": "CL-PY-02/quorum/audit.json",
         "verdicts": "CL-PY-02/quorum/verdicts.json",
-        "report_sha256": "5326a5434680a771f88e0b8607cc8bb2cd77aa0c6382cdab96567502c87c4348",
-        "audit_sha256": "754dc427000bd4de0a26e77b3c799b98e46c99c4b1d6996272debc5a56dee792",
-        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+        "report_sha256": "bcc8ca127f2ac4de3b80e8a1358c0ef0445e3155aa3e7b8b6ac0102f17f85b9d",
+        "audit_sha256": "b623c27bebeb6832543a1a95a26371f05bcaf4da1d603d0783b6fb203a72d731",
+        "verdicts_sha256": "78687ce5d70e2ccffc7df3e4ea5aa99b6d06218a6391b5f24a7cc11d04aea32e"
+      }
+    },
+    {
+      "id": "CL-PY-03",
+      "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+      "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+      "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
+      "high_controls": [],
+      "independently_clean": true,
+      "notes": "single-arm profile hash 5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca; route ai-gateway-custom; mode branch; quorum generation served by the agent result cache; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
+      "single": {
+        "report": "CL-PY-03/single/report.json",
+        "audit": "CL-PY-03/single/audit.json",
+        "verdicts": "CL-PY-03/single/verdicts.json",
+        "report_sha256": "ddd3ba567b56d83fbaeda0c8b61c046b3ee244a70a24557129cf541bf3d68b36",
+        "audit_sha256": "05f2e0e51dc17b737dba29b4a9fef5d02446b060741cde4f73dc52cb8a20b6a1",
+        "verdicts_sha256": "c967d6f01534800fd700e2b3d0a1238a8d00e774ab7d6eedf039ab36eb324fd0"
+      },
+      "quorum": {
+        "report": "CL-PY-03/quorum/report.json",
+        "audit": "CL-PY-03/quorum/audit.json",
+        "verdicts": "CL-PY-03/quorum/verdicts.json",
+        "report_sha256": "399e9507d85acef8e840e40559826cc59ed5ab56d311672fa7bb76130ead2d91",
+        "audit_sha256": "e5169dc4461d83718436aa3f7430375d5dd59943af6c82d3768dcab7c9868515",
+        "verdicts_sha256": "c967d6f01534800fd700e2b3d0a1238a8d00e774ab7d6eedf039ab36eb324fd0"
       }
     },
     {
       "id": "CL-PY-04",
-      "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
-      "voter_model": "openrouter/openai/gpt-6.1-sol",
-      "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
+      "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+      "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+      "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
       "high_controls": [],
-      "independently_clean": false,
-      "notes": "single-arm profile hash d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
+      "independently_clean": true,
+      "notes": "single-arm profile hash 5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca; route ai-gateway-custom; mode branch; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
       "single": {
         "report": "CL-PY-04/single/report.json",
         "audit": "CL-PY-04/single/audit.json",
         "verdicts": "CL-PY-04/single/verdicts.json",
-        "report_sha256": "bd8f4ff9fcec54e33c7dad3410d833cf65afb452468d07d9751e43152df9dff0",
-        "audit_sha256": "e053a5f766835a82638ce59639a11c498f51ba3598c9375c927c204bdedc6f75",
-        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+        "report_sha256": "50c4ceb0408e4d466638143c9d5f4a5f4dc1d9711a518aa8d03fc4a0a6de7a20",
+        "audit_sha256": "f3bd1aed54b86e10641f7ee45897a28c38177743e7b07d9eb184e7e41880e5ac",
+        "verdicts_sha256": "78edb2e3f2689aa5e323f2a866b5c3e2e9f70a4c23206e6ff227391ec912accc"
       },
       "quorum": {
         "report": "CL-PY-04/quorum/report.json",
         "audit": "CL-PY-04/quorum/audit.json",
         "verdicts": "CL-PY-04/quorum/verdicts.json",
-        "report_sha256": "282002e6b1270d285ae9108f8862a66a72a0b03ab9b45ebf49313e5daa97ca4b",
-        "audit_sha256": "948c698e9329fa8dd6f8d4d85c166aca3968e96ee6437adb9a31c06ec2ccfe87",
-        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+        "report_sha256": "f282fb9c104d40da5dc7bf59160aee01eb04b4c46301e6d31d464c5e1f92e2e8",
+        "audit_sha256": "dde900010394dfc3d601848e46f550e8a7159eddee6ac2e96656358a0caeb4be",
+        "verdicts_sha256": "6bc4a4b32c660afc7bc9b85b06b1809caf913a1815a232d577c7f4c6dcacdf46"
+      }
+    },
+    {
+      "id": "CL-TS-01",
+      "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+      "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+      "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
+      "high_controls": [],
+      "independently_clean": true,
+      "notes": "single-arm profile hash 5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca; route ai-gateway-custom; mode branch; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
+      "single": {
+        "report": "CL-TS-01/single/report.json",
+        "audit": "CL-TS-01/single/audit.json",
+        "verdicts": "CL-TS-01/single/verdicts.json",
+        "report_sha256": "3d97872bda2860efb6b3974b39544722ff2d75f4787ebe968dfe5bcfb85e1f13",
+        "audit_sha256": "88d82f9a6a85159475a092d9a17cc476ec1b9519d358880abd1a5e805941ca4d",
+        "verdicts_sha256": "f21bf2e0f73117d9afa579fe4b2f41e3febe444015004577a0966cbec7248577"
+      },
+      "quorum": {
+        "report": "CL-TS-01/quorum/report.json",
+        "audit": "CL-TS-01/quorum/audit.json",
+        "verdicts": "CL-TS-01/quorum/verdicts.json",
+        "report_sha256": "2090ba319e5ec3d096f20d5c6e27682e9bae82faad29e9f7aa8a0336ebadf76c",
+        "audit_sha256": "a29632c66b88764ca0327e0013a32e7d4a8bd0860e14e3ac3832faea5d7d2f9a",
+        "verdicts_sha256": "0d3ae6615f3d33dd4c8ed7cbdd0289a1d0f948437b44f9f9b51fba30416c932f"
+      }
+    },
+    {
+      "id": "CL-TS-02",
+      "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+      "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+      "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
+      "high_controls": [],
+      "independently_clean": true,
+      "notes": "single-arm profile hash 5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca; route ai-gateway-custom; mode branch; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
+      "single": {
+        "report": "CL-TS-02/single/report.json",
+        "audit": "CL-TS-02/single/audit.json",
+        "verdicts": "CL-TS-02/single/verdicts.json",
+        "report_sha256": "9dcce76b0001ba30237500cd245f01f61ef1898109a348f882ffd9ed92ef6956",
+        "audit_sha256": "c67f9bfbe66f9a54375ff4abca6bb05535b035f751c21a278e5b453b87aa80b9",
+        "verdicts_sha256": "614696b8ef349f2cfc1b6de6ff879cea5447d233a98b394b5037074f97e306f4"
+      },
+      "quorum": {
+        "report": "CL-TS-02/quorum/report.json",
+        "audit": "CL-TS-02/quorum/audit.json",
+        "verdicts": "CL-TS-02/quorum/verdicts.json",
+        "report_sha256": "f3eb4f0f177fb88994c464d5ad1aca2a1fff2b29082ffacb8e58781040982796",
+        "audit_sha256": "ec77a1771bdb33bc40ef9678ba2ca8ffea186d1ef7e27faa260d0e841f41da88",
+        "verdicts_sha256": "87f308169f799b3a96e0df752c5283b3eae1091931a8014ac51e6b765e8041e3"
       }
     },
     {
       "id": "CL-TS-03",
-      "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
-      "voter_model": "openrouter/openai/gpt-6.1-sol",
-      "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
+      "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+      "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+      "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
       "high_controls": [],
-      "independently_clean": false,
-      "notes": "single-arm profile hash d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
+      "independently_clean": true,
+      "notes": "single-arm profile hash 5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca; route ai-gateway-custom; mode branch; single generation served by the agent result cache; quorum generation served by the agent result cache; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
       "single": {
         "report": "CL-TS-03/single/report.json",
         "audit": "CL-TS-03/single/audit.json",
         "verdicts": "CL-TS-03/single/verdicts.json",
-        "report_sha256": "2b87751eadeebe8c9ac40d076533add10b7053575ad5410242b6c8b51c2ac541",
-        "audit_sha256": "d79c517022c644ab4a267dcfd54353da0ec98b2fdce5977cd2a8bf5e1c36079d",
-        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+        "report_sha256": "726ef98c0f87bc153b1c02a3ae18348f8420f330c4ab7df6222ea82b4eeca141",
+        "audit_sha256": "07c282865609e80706d23f6275f18f8ea499078e2acdfb1027c9fc53d46d10e2",
+        "verdicts_sha256": "78687ce5d70e2ccffc7df3e4ea5aa99b6d06218a6391b5f24a7cc11d04aea32e"
       },
       "quorum": {
         "report": "CL-TS-03/quorum/report.json",
         "audit": "CL-TS-03/quorum/audit.json",
         "verdicts": "CL-TS-03/quorum/verdicts.json",
-        "report_sha256": "123adcc2a3e4a7dce720a1d0fd7bee64a0b50107c66f1f6717918df8b023d40c",
-        "audit_sha256": "183f88ca78037f750da9bfce98ffbcfcb0a796b462c85b78e0f1bbc4bba336d0",
-        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+        "report_sha256": "66dc451ddd6082d1b9958e350a377ccd090f33a2ec2ec7e33e8fb312437fe0ea",
+        "audit_sha256": "294451acd52984abcd0a045fcdcba15d544969ac3af329acc14deddeb37dfe14",
+        "verdicts_sha256": "78687ce5d70e2ccffc7df3e4ea5aa99b6d06218a6391b5f24a7cc11d04aea32e"
       }
     },
     {
       "id": "CL-TS-04",
-      "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
-      "voter_model": "openrouter/openai/gpt-6.1-sol",
-      "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
+      "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+      "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+      "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
       "high_controls": [],
-      "independently_clean": false,
-      "notes": "single-arm profile hash d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
+      "independently_clean": true,
+      "notes": "single-arm profile hash 5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca; route ai-gateway-custom; mode branch; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
       "single": {
         "report": "CL-TS-04/single/report.json",
         "audit": "CL-TS-04/single/audit.json",
         "verdicts": "CL-TS-04/single/verdicts.json",
-        "report_sha256": "0786fe837dbbab82c6a52c6e780ef350de7bf9ad07e71f905feda25b10c9fbcc",
-        "audit_sha256": "9f5015a9d35eb8843035423129b08fe8d0b5c3030abeb14d21f561e57df41913",
-        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+        "report_sha256": "5604d1f4b55e8a6c6f63b533e88feacd8e7767dd6861614ccaa0af3db473a928",
+        "audit_sha256": "b78e93a42cf4fdcd28df70a41ae87fba75205e47c383bf84e229f7f14c5ba53c",
+        "verdicts_sha256": "82ff3e0b26754abed6ea05a47f0e2c120f36dc3287aed613e145a5caf65cfc5c"
       },
       "quorum": {
         "report": "CL-TS-04/quorum/report.json",
         "audit": "CL-TS-04/quorum/audit.json",
         "verdicts": "CL-TS-04/quorum/verdicts.json",
-        "report_sha256": "940b18aa378d22c6d230917575c43b2602705832496f0030481ca6f788be41f5",
-        "audit_sha256": "704a726b05816536d22db3d3d8331f8cbd1d4c8f9c4df8d57d86669ae2963328",
-        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+        "report_sha256": "bbb47d8aa4a59075d202c04f2432d6220b3facb1abe3388c9af776b6b850283e",
+        "audit_sha256": "c5482847a2b7416830c9ed859ba2f6dd42634b08feedec9866d3e55883adbb78",
+        "verdicts_sha256": "166ca711d7714f95919403bd02c82042888f8d998158e584ea29f546048725af"
+      }
+    },
+    {
+      "id": "CL-RS-01",
+      "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+      "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+      "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
+      "high_controls": [],
+      "independently_clean": true,
+      "notes": "single-arm profile hash 5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca; route ai-gateway-custom; mode branch; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
+      "single": {
+        "report": "CL-RS-01/single/report.json",
+        "audit": "CL-RS-01/single/audit.json",
+        "verdicts": "CL-RS-01/single/verdicts.json",
+        "report_sha256": "12e66ae3347563a8658778bfeef4546887bef2c9b8b00629c1166f1df7656242",
+        "audit_sha256": "cf017b38ced4b938f3b738cd259bca8284da9dff277d466271a597fd631478fe",
+        "verdicts_sha256": "7fead9583338d2514a1a97365fef13d0fbbf53863f823c91575d08b95c9477c0"
+      },
+      "quorum": {
+        "report": "CL-RS-01/quorum/report.json",
+        "audit": "CL-RS-01/quorum/audit.json",
+        "verdicts": "CL-RS-01/quorum/verdicts.json",
+        "report_sha256": "c22a735a77c45e2d9038581343caf8366b86406f2f3fb55b36e7e0b7e2860f68",
+        "audit_sha256": "c10cf43ef1f3a802870b82f7c3b9f51c8cc36bfbab4d21ba2e5b941fb31e3914",
+        "verdicts_sha256": "78687ce5d70e2ccffc7df3e4ea5aa99b6d06218a6391b5f24a7cc11d04aea32e"
       }
     },
     {
       "id": "CL-RS-02",
-      "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
-      "voter_model": "openrouter/openai/gpt-6.1-sol",
-      "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
+      "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+      "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+      "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
       "high_controls": [],
-      "independently_clean": false,
-      "notes": "single-arm profile hash d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
+      "independently_clean": true,
+      "notes": "single-arm profile hash 5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca; route ai-gateway-custom; mode branch; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
       "single": {
         "report": "CL-RS-02/single/report.json",
         "audit": "CL-RS-02/single/audit.json",
         "verdicts": "CL-RS-02/single/verdicts.json",
-        "report_sha256": "6f914ddb10de2a6984eec5be90f63427e8f43f959e48a391fc908fa76e5d9a79",
-        "audit_sha256": "512e861fc40807eaeb1dad4d6863695c124cb55f204277b7a5f0ada9bf55cb47",
-        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+        "report_sha256": "f5b5d5f166e29812a0b8c17f539c97eda93d246767c1906a519e1c824f5a33a0",
+        "audit_sha256": "8dd58a21be356d685258f0625f9c9c3b21f72a025c1fea627e56962e15b416db",
+        "verdicts_sha256": "d0ef18c4d20621e8fbd2196671cf12e645ed2961b627333dc20f2e91efbec505"
       },
       "quorum": {
         "report": "CL-RS-02/quorum/report.json",
         "audit": "CL-RS-02/quorum/audit.json",
         "verdicts": "CL-RS-02/quorum/verdicts.json",
-        "report_sha256": "e2c5ca0c14d7e66373c3170e4607468cf4fc13b6d4c1e3555ad55e6f82991eba",
-        "audit_sha256": "ac4d3f702f25c326f104e061d5ad5747df1ba6a91500f6f4d96514830235c526",
-        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+        "report_sha256": "7b3baff38a08ec66c1dbc8df496f0f999d64a4dfd19f9f6bead73221232e16af",
+        "audit_sha256": "3510e1d6046d2fe1eed384e9287790d5db1e5694e0d14db480ee65f6ba8851d9",
+        "verdicts_sha256": "3e6f86a4265d880d85be485be0e3676f1f83f4ac6afbfffb5a365b2ea2422694"
       }
     },
     {
       "id": "CL-RS-03",
-      "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
-      "voter_model": "openrouter/openai/gpt-6.1-sol",
-      "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
+      "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+      "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+      "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
       "high_controls": [],
-      "independently_clean": false,
-      "notes": "single-arm profile hash d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
+      "independently_clean": true,
+      "notes": "single-arm profile hash 5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca; route ai-gateway-custom; mode branch; quorum generation served by the agent result cache; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
       "single": {
         "report": "CL-RS-03/single/report.json",
         "audit": "CL-RS-03/single/audit.json",
         "verdicts": "CL-RS-03/single/verdicts.json",
-        "report_sha256": "4c33a3907a3192f9f5cd0daf0cebc5bf679bf4b1871b510bc8e470d53af441de",
-        "audit_sha256": "c1ae955821690849ea80d39a0329914d4ab44ab64c6e3bbd9218084ca7b9bf8d",
-        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+        "report_sha256": "1a12835ede3f6c967a4530f998afd02cefc4393f1586cb19695da61746fbc5e9",
+        "audit_sha256": "14c1ab31eb90bbf5b09143e6c09a1f463acf994a37afd9a1803af48446c3d63e",
+        "verdicts_sha256": "78687ce5d70e2ccffc7df3e4ea5aa99b6d06218a6391b5f24a7cc11d04aea32e"
       },
       "quorum": {
         "report": "CL-RS-03/quorum/report.json",
         "audit": "CL-RS-03/quorum/audit.json",
         "verdicts": "CL-RS-03/quorum/verdicts.json",
-        "report_sha256": "713ef9b748aad0f19dc9e31aa979b4765e1dbbb06d6a298e87f6af24639a24c7",
-        "audit_sha256": "3116c867ec696ffdc0884302f0d85f43086f1206ff4d1165588f859f109143a6",
-        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+        "report_sha256": "c9bb43c95a15c7b74b42f437da464d4ba4b439651c14078f66659d5e8362b2d2",
+        "audit_sha256": "a7ac1f1d89456c57d20585604fa5d2e8ee6e0ae44a6cea07c49c84b58cdee7de",
+        "verdicts_sha256": "78687ce5d70e2ccffc7df3e4ea5aa99b6d06218a6391b5f24a7cc11d04aea32e"
       }
     },
     {
       "id": "CL-RS-04",
-      "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
-      "voter_model": "openrouter/openai/gpt-6.1-sol",
-      "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
+      "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+      "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+      "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
       "high_controls": [],
-      "independently_clean": false,
-      "notes": "single-arm profile hash d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
+      "independently_clean": true,
+      "notes": "single-arm profile hash 5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca; route ai-gateway-custom; mode branch; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
       "single": {
         "report": "CL-RS-04/single/report.json",
         "audit": "CL-RS-04/single/audit.json",
         "verdicts": "CL-RS-04/single/verdicts.json",
-        "report_sha256": "d01537225ecc9b970e7ad9d179db1b5db41521b3051d32dc89c58b14543e86f1",
-        "audit_sha256": "37c4d94e2d2e15e182b75af8f732be92770f8a4868ffb602d064b1dd3ea6b5cb",
-        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+        "report_sha256": "2850ad1509bfc3aa07cb4afff02d69da63f1e509b40e51d645dcff406344769d",
+        "audit_sha256": "0d8bcc052cc61fbb0d81edaa939b590901fe985b0695145928837102c844cffe",
+        "verdicts_sha256": "879b2d5589c35659443400507d00551376163e00b38b86337945825f74a91f52"
       },
       "quorum": {
         "report": "CL-RS-04/quorum/report.json",
         "audit": "CL-RS-04/quorum/audit.json",
         "verdicts": "CL-RS-04/quorum/verdicts.json",
-        "report_sha256": "62838acafba4cb3d307e277cdb2cf6dbc5dd3240bfde0634ce7897c52ce963af",
-        "audit_sha256": "3116c867ec696ffdc0884302f0d85f43086f1206ff4d1165588f859f109143a6",
-        "verdicts_sha256": "2938a9f5864b3f700d995b741c55f5d3a19e8fae1fc52b7e54ce62546bf2233f"
+        "report_sha256": "acf89bbe6c954c8c6faef1ebab4227c5384382bc90970fc629fe4c64df80fc72",
+        "audit_sha256": "1b3905d938440844f5d9723b94be5c3a7f3d740da77d6e8f3e34041fb35344f5",
+        "verdicts_sha256": "badcaed0a3971067826739aedaf971ff360ca65f526fa5710bdc9bd0d773297b"
       }
     }
   ]
