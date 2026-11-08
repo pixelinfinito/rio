@@ -290,6 +290,10 @@ describe("contracts agent", () => {
       head,
       changed: ["src/api.ts"],
       steps: agentSteps([{ correctness: { model: "default" } }]),
+      // Identical changes across these tests must not share the agent result cache.
+      mutate: (s) => {
+        s.profile.steps[1].with = { cache: false };
+      },
       agents: {
         correctness: {
           hypotheses: [
@@ -318,6 +322,10 @@ describe("contracts agent", () => {
       head,
       changed: ["src/api.ts"],
       steps: agentSteps([{ correctness: { model: "default" } }]),
+      // Identical changes across these tests must not share the agent result cache.
+      mutate: (s) => {
+        s.profile.steps[1].with = { cache: false };
+      },
       agents: { correctness: { not: "an array" } },
     });
     expect(calls).toContain("correctness");
@@ -336,6 +344,10 @@ describe("contracts agent", () => {
       head,
       changed: ["src/api.ts"],
       steps: agentSteps([{ correctness: { model: "default" } }]),
+      // Identical changes across these tests must not share the agent result cache.
+      mutate: (s) => {
+        s.profile.steps[1].with = { cache: false };
+      },
       agents: {
         correctness: [
           {
