@@ -13,6 +13,7 @@ import sys
 from urllib.parse import unquote
 
 ROOT = Path(__file__).resolve().parents[1]
+AGENT_MECHANISMS = ('contract-break', 'security-vulnerability')
 CLASSES = ('true-positive', 'false-positive', 'pre-existing-shown',
            'environment-failure', 'out-of-scope', 'pre-existing-hidden')
 SUCCESS = {'passed', 'findings'}
@@ -251,13 +252,31 @@ def provenance(report_path):
             'profile_sha256': metadata.get('resolved_profile_sha256')}
 
 
+def top_level(report):
+    """Every adjudicated entry: findings, risks and the security section."""
+    return report['findings'] + report['risks'] + report.get('security', [])
+
+
+def agent_metrics(records):
+    """Finding-level verdicts and precision per producing agent, so each agent is measured separately."""
+    counts = defaultdict(Counter)
+    for r in records:
+        for f in r['findings']:
+            agent = f['finding']['source'].get('agent')
+            if agent:
+                counts[agent][f['verdict']] += 1
+    return {agent: {'counts': {k: c[k] for k in CLASSES},
+                    'precision': ratio(c['true-positive'], c['true-positive'] + c['false-positive'])}
+            for agent, c in sorted(counts.items())}
+
+
 def build_record(report, verdicts, report_path):
     validate(report, ROOT / 'schemas/report-v1.json')
     allowed = {'repository', 'pr', 'case_id', 'languages', 'reviewer', 'verdict_source',
                'commands', 'notes', 'independently_clean', 'positive_control', 'findings', 'misses'}
     if set(verdicts) - allowed:
         raise ValueError(f'unknown verdict fields: {set(verdicts) - allowed}')
-    findings, causes = dedupe(report['findings'] + report['risks'], verdicts['findings'])
+    findings, causes = dedupe(top_level(report), verdicts['findings'])
     env = environment(report)
     review = report['review']
     record = {'schema': 'rio-eval-record-v2', 'methodology': 'deterministic-v2',
@@ -276,7 +295,9 @@ def build_record(report, verdicts, report_path):
         if not expected['finding_ids'] and not any(
                 m.get('expectation_id') == expected['id'] for m in record['misses']):
             record['misses'].append({'id': f'control/{expected["id"]}',
-                'scope_class': 'deterministic', 'description': f'Positive control {expected["id"]} was not detected.',
+                # Contract and security controls are the agents' to find.
+                'scope_class': 'agent-layer' if expected['mechanism'] in AGENT_MECHANISMS else 'deterministic',
+                'description': f'Positive control {expected["id"]} was not detected.',
                 'evidence': expected['evidence'], 'mechanism': expected['mechanism'],
                 'expectation_id': expected['id']})
     record['verdict'], record['reason'] = usefulness(record)
@@ -349,9 +370,12 @@ def validate_record(record):
                 raise ValueError('positive-control deterministic miss needs an expectation ID')
         if 'expectation_id' in m:
             e = next((e for e in control['expected'] if e['id'] == m['expectation_id']), None)
-            if not e or e['finding_ids'] or m['scope_class'] != 'deterministic':
+            # Contract and security controls are the agents' to find, so their misses
+            # are agent-layer; every other control miss is deterministic.
+            allowed = ('deterministic', 'agent-layer') if e and e['mechanism'] in AGENT_MECHANISMS else ('deterministic',)
+            if not e or e['finding_ids'] or m['scope_class'] not in allowed:
                 raise ValueError('miss references absent, detected, or out-of-scope expectation')
-            if m['mechanism'] != e['mechanism']:
+            if m.get('mechanism') != e['mechanism']:
                 raise ValueError('control miss mechanism differs from expected bug')
 
 
@@ -555,6 +579,10 @@ def aggregate(records, paths, select=None, allow_mixed_versions=False):
                   for r in records for miss in r['misses']), 'sample': sample,
               'decision': 'insufficient-evidence' if requirements else ('no-go' if failures else 'go'),
               'decision_reasons': requirements + failures}
+    # Only summaries with agent findings carry the per-agent view; tool-only cohorts are unchanged.
+    by_agent = agent_metrics(eligible)
+    if by_agent:
+        result['by_agent'] = by_agent
     validate_summary(result)
     return result
 
@@ -620,6 +648,12 @@ def render(records, paths, summary, version, output, narrative=None):
         lines.append(f'| {c} | {summary["observed_raw_counts"][c]} | '
                      f'{summary["observed_occurrence_counts"][c]} | {summary["observed_cause_counts"][c]} | '
                      f'{summary["observed_unique_cause_counts"][c]} |')
+    if summary.get('by_agent'):
+        lines += ['', '| Producer (eligible) | True positives | False positives | Precision |',
+                  '| --- | ---: | ---: | ---: |']
+        for agent, row in summary['by_agent'].items():
+            lines.append(f'| {cell(agent)} | {row["counts"]["true-positive"]} | '
+                         f'{row["counts"]["false-positive"]} | {fmt(row["precision"])} |')
     lines += ['', 'Decision reasons:', ''] + [f'- {r}' for r in summary['decision_reasons']]
     lines += ['', '## Environment failures', '']
     if not summary['environment_failures']:
@@ -668,7 +702,7 @@ def skeleton(report, repository, pr, languages, case_id=None):
             'commands': [], 'notes': [], 'independently_clean': False,
             'positive_control': {'kind': 'none', 'expected': []}, 'misses': [],
             'findings': {f['id']: {'verdict': 'TODO', 'reason': 'TODO: independent evidence'}
-                         for f in report['findings'] + report['risks']}}
+                         for f in top_level(report)}}
 
 
 def main():

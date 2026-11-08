@@ -151,14 +151,31 @@ export function consolidate(
       continue;
     }
     const h = v.hypothesis;
-    const { guidance, ...publicHypothesis } = h;
+    const {
+      guidance,
+      catalog_item,
+      trace_change,
+      limitations,
+      locations,
+      ...publicHypothesis
+    } = h;
+    // finding-v1 has no slot for agent-only keys; their statements join the impact.
+    const impact = [
+      h.impact,
+      catalog_item &&
+        `Catalog item ${catalog_item}: the change ${trace_change ?? "affects"} a step of its trace.`,
+      limitations?.length && `Limitations: ${limitations.join("; ")}.`,
+    ]
+      .filter(Boolean)
+      .join(" ");
     const f: Finding = {
       ...publicHypothesis,
+      ...(impact ? { impact } : {}),
       category,
       evidence_level: v.evidence_level,
       verification: v.verification,
       evidence: v.evidence ?? [],
-      locations: v.locations ?? [h.location],
+      locations: v.locations ?? locations ?? [h.location],
     };
     if (suppressed(f)) {
       audit.suppressed++;

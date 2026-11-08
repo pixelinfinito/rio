@@ -1,0 +1,74 @@
+{
+  "schema": "rio-eval-case-v1",
+  "id": "SE-POS-04",
+  "label": "historical",
+  "repository": "louislam/uptime-kuma",
+  "input": {
+    "pr": 3739,
+    "url": "https://github.com/louislam/uptime-kuma/pull/3739",
+    "base": {
+      "ref": null,
+      "sha": "bef6a7911fa326d5f0b8b2459ca89d249eb83c59"
+    },
+    "head": {
+      "ref": null,
+      "sha": "98b93c887a49448feac6ee7673eaeefa929e128c"
+    },
+    "files": [
+      "extra/push-examples/bash-curl/index.sh",
+      "extra/push-examples/docker/index.sh",
+      "extra/push-examples/javascript-fetch/index.js",
+      "extra/push-examples/php/index.php",
+      "extra/push-examples/powershell/index.ps1",
+      "extra/push-examples/python/index.py",
+      "extra/push-examples/typescript-fetch/index.ts",
+      "extra/uptime-kuma-push/.gitignore",
+      "extra/uptime-kuma-push/Dockerfile",
+      "extra/uptime-kuma-push/build.js",
+      "extra/uptime-kuma-push/package.json",
+      "extra/uptime-kuma-push/uptime-kuma-push.go",
+      "server/server.js",
+      "server/socket-handlers/general-socket-handler.js",
+      "src/assets/app.scss",
+      "src/lang/en.json",
+      "src/pages/Details.vue",
+      "src/pages/StatusPage.vue"
+    ]
+  },
+  "expected": [
+    {
+      "locations": [
+        {
+          "path": "server/socket-handlers/general-socket-handler.js",
+          "line_start": 71,
+          "line_end": 78,
+          "symbol_path": "generalSocketHandler",
+          "symbol_line": null
+        },
+        {
+          "path": "server/socket-handlers/general-socket-handler.js",
+          "line_start": 68,
+          "line_end": 70,
+          "symbol_path": "generalSocketHandler",
+          "symbol_line": null
+        }
+      ],
+      "trigger": "The new `getPushExample` socket handler runs without the login check that sibling handlers use, and joins the client-supplied `language` into a filesystem path. An unauthenticated client can send `../../` to list arbitrary directories and read any file named `index.*` outside extra/push-examples.",
+      "trigger_source": "manual",
+      "rule_id": null,
+      "category": "security",
+      "severity": "high",
+      "agent": "security"
+    }
+  ],
+  "provenance": {
+    "source": "manual",
+    "created_at": "2026-11-07T00:00:00Z",
+    "tool": "docs/evaluation/v0.3-agents-candidates.md selection",
+    "notes": [
+      "Introducing PR https://github.com/louislam/uptime-kuma/pull/3739; fix https://github.com/louislam/uptime-kuma/pull/5875.",
+      "Expected locations come from the pre-run selection and were not changed after seeing Rio output.",
+      "Catalog items: A01:2025, ASVS V5.3."
+    ]
+  }
+}

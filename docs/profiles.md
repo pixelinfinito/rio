@@ -72,8 +72,9 @@ Steps need unique `id` values. `needs` names existing steps and must form a DAG.
 | `rio/prepare` | `exclude: [glob, ...]` | Detection, exclusions and size notes |
 | `rio/checks` | `typecheck`, `lint`, `secrets`, `coverage`, `dependencies`, `baseline` (all default true); `trust_installed_dependencies` (default false) | Bounded deterministic checks and baseline comparison |
 | `rio/graph` | `hops: 2`, `max_nodes: 2000` | Base/head/delta graph and impact summary |
-| `rio/report` | none | Suppressions, policy, summary and persistence |
-| `rio/triage`, `rio/agents`, `rio/verify` | reserved module-defined options | Deferred locally with `no_endpoint` |
+| `rio/report` | `class_threshold` (default 3); `proposal_threshold` (integer of at least 1, default 3; dismissals that yield a suppression proposal) | Suppressions, policy, summary and persistence |
+| `rio/agents` | `cache` (default true; agent result cache) | Deferred locally with `no_endpoint` |
+| `rio/triage`, `rio/verify` | reserved module-defined options | Deferred locally with `no_endpoint` |
 
 Disabled checks have outcome `skipped`, reason `disabled`. Trust allows an unverifiable installation, never a known mismatch, and disables baseline classification. Trusted diagnostics remain unclassified. `baseline: false` also leaves diagnostic state unclassified.
 
@@ -161,17 +162,32 @@ defects and plausible risks have independent caps; thorough risks are uncapped.
 Suppressions run before caps. Held-back titles stay in the audit/footer with cap
 recovery guidance. Deterministic findings never consume those slots.
 
-## Staged security policy
+## Security policy
 
 `rio/security@0.2.0` is disabled in `rio/base` and joins `rio/verify` independently
 of correctness. Its options are `enabled`, `posture` (default thorough),
-`max_defects` (posture default 3/5/15), `catalog` (`owasp-top10-2025` or `asvs-5.0`)
-and `fail_on` (category security, plausible, new/worsened by default). Security
-presentation has its own pool/cap. Either general or security fail policy can fail
-an unsuppressed security finding before presentation caps. Plausible security
-entries are risks for human judgment. The actual agent/catalog and the enabled
-thorough security community profile are v0.3; enabling security in v0.2 reports
-unavailability and makes no security model call.
+`max_defects` (posture default 3/5/15), `catalog` (`owasp-top10-2025`, the default,
+or `asvs-5.0`; no other value or path is accepted) and `fail_on` (category security,
+plausible, new/worsened by default). Security presentation has its own pool/cap.
+Either general or security fail policy can fail an unsuppressed security finding
+before presentation caps. Plausible security entries are risks for human judgment.
+
+An enabled step runs the security agent with the resolved catalog. The catalogs
+ship as `catalog` modules under `modules/catalogs/` (OWASP Top 10:2025 by category,
+ASVS 5.0 by section, with the CC BY-SA 4.0 attribution OWASP requires). The step
+gives the agent only the items whose `applies_when` predicates match the change
+(languages, detected frameworks, touched endpoints, tables, events and
+configuration, the triage `sensitive_paths`, and sinks found in the changed code),
+plus a taint map of the items' sources and sinks in both versions. Every
+security hypothesis carries the catalog item it relates to and goes through the
+shared verifier. The report's security section and footer list the assessed,
+unassessed (with reason `budget`, `no_evidence` or `tools_unavailable`) and
+not-applicable items; a run with unassessed items is never presented as a passed
+security review. On fork pull requests the agent is static-only.
+
+The built-in `rio/security` community profile extends `rio/base` and only enables
+the step with `posture: thorough` and `catalog: asvs-5.0`; every other base setting
+is unchanged. Select it with `--profile rio/security` or `extends: rio/security`.
 
 `rio/triage` options are `sensitive_paths` (globs), `public_contracts`,
 `dependency_changes`, `missing_coverage` (booleans), and `fan_out_high` (positive

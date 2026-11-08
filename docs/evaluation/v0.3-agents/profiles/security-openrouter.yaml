@@ -1,0 +1,57 @@
+# Run profile for the v0.3 contracts and security agent reference cases.
+# rio/security enables the security step (thorough, asvs-5.0) but, like rio/base,
+# carries no models and a 100k-token budget; the models and review budgets here
+# are rio/openrouter's. The correctness agent is disabled by a triage rule so the
+# spend goes to the two agents under evaluation; the contracts agent is selected
+# by triage's public_contracts signal as in any review. A child's steps replace
+# the inherited list, so rio/security's steps are repeated with that one rule.
+version: 1
+name: v0.3-agents-security
+extends: rio/security
+models:
+  default: openrouter/anthropic/claude-sonnet-5.5
+  verifier: openrouter/openai/gpt-6.1-sol
+budget:
+  fast: { tokens: 2400000, agents_max: 1, wall_time: 12m, verify_tokens: 320000 }
+  deep: { tokens: 4000000, agents_max: 2, wall_time: 15m, verify_tokens: 400000 }
+verify: { voters: 3, quorum: 2 }
+steps:
+  - id: prepare
+    uses: rio/prepare@0.1.0
+    with: { exclude: [] }
+  - id: checks
+    uses: rio/checks@0.1.0
+    needs: [prepare]
+    parallel: true
+    with:
+      typecheck: true
+      lint: true
+      secrets: true
+      coverage: true
+      dependencies: true
+      baseline: true
+      trust_installed_dependencies: false
+  - id: graph
+    uses: rio/graph@0.1.0
+    needs: [prepare]
+    parallel: true
+    with: { hops: 2, max_nodes: 2000 }
+  - id: triage
+    uses: rio/triage@0.1.0
+    needs: [checks, graph]
+    rules:
+      - { when: "touches('**')", then: "disable(correctness)" }
+  - id: agents
+    uses: rio/agents@0.1.0
+    needs: [triage]
+    agents: []
+  - id: security
+    uses: rio/security@0.2.0
+    needs: [triage]
+    with: { enabled: true, posture: thorough, catalog: asvs-5.0 }
+  - id: verify
+    uses: rio/verify@0.1.0
+    needs: [agents, security]
+  - id: report
+    uses: rio/report@0.1.0
+    needs: [checks, graph, verify]

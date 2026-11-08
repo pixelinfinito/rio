@@ -1,0 +1,46 @@
+version: 1
+name: rio/security
+extends: rio/base
+# The security community profile: rio/base with the security step enabled,
+# thorough posture and the ASVS 5.0 catalog. A child's `steps` replaces the
+# inherited list, so every base step is repeated unchanged. The council step
+# (rio-v0-3-council) is added here when that change lands.
+steps:
+  - id: prepare
+    uses: rio/prepare@0.1.0
+    with: { exclude: [] }
+  - id: checks
+    uses: rio/checks@0.1.0
+    needs: [prepare]
+    parallel: true
+    with:
+      typecheck: true
+      lint: true
+      secrets: true
+      coverage: true
+      dependencies: true
+      baseline: true
+      trust_installed_dependencies: false
+  - id: graph
+    uses: rio/graph@0.1.0
+    needs: [prepare]
+    parallel: true
+    with: { hops: 2, max_nodes: 2000 }
+  - id: triage
+    uses: rio/triage@0.1.0
+    needs: [checks, graph]
+    rules: []
+  - id: agents
+    uses: rio/agents@0.1.0
+    needs: [triage]
+    agents: []
+  - id: security
+    uses: rio/security@0.2.0
+    needs: [triage]
+    with: { enabled: true, posture: thorough, catalog: asvs-5.0 }
+  - id: verify
+    uses: rio/verify@0.1.0
+    needs: [agents, security]
+  - id: report
+    uses: rio/report@0.1.0
+    needs: [checks, graph, verify]

@@ -1,0 +1,70 @@
+{
+  "schema": "rio-eval-case-v1",
+  "id": "CT-POS-03",
+  "label": "historical",
+  "repository": "focus-trap/focus-trap-react",
+  "input": {
+    "pr": 1350,
+    "url": "https://github.com/focus-trap/focus-trap-react/pull/1350",
+    "base": {
+      "ref": null,
+      "sha": "bdac34afae03e48bbf41c62d492bb9e607857b04"
+    },
+    "head": {
+      "ref": null,
+      "sha": "4a37daeade3c4d43da9e045441ff974d8acf1072"
+    },
+    "files": [
+      ".changeset/hot-planes-roll.md",
+      ".eslintrc.js",
+      ".gitignore",
+      "README.md",
+      "index.d.ts",
+      "package-lock.json",
+      "package.json",
+      "src/focus-trap-react.js"
+    ]
+  },
+  "expected": [
+    {
+      "locations": [
+        {
+          "path": "index.d.ts",
+          "line_start": 4,
+          "line_end": 4,
+          "symbol_path": "FocusTrap",
+          "symbol_line": null
+        },
+        {
+          "path": "index.d.ts",
+          "line_start": 14,
+          "line_end": 14,
+          "symbol_path": "FocusTrap",
+          "symbol_line": null
+        },
+        {
+          "path": "src/focus-trap-react.js",
+          "line_start": 428,
+          "line_end": 428,
+          "symbol_path": "FocusTrap",
+          "symbol_line": null
+        }
+      ],
+      "trigger": "#1350 replaces `export = FocusTrap` in index.d.ts with a named `export declare class FocusTrap`, removing the default export from the published typings while the runtime (src/focus-trap-react.js) still only does `module.exports = FocusTrap` and the README still documents default require/import.",
+      "trigger_source": "manual",
+      "rule_id": "contracts/signature/removed",
+      "category": "defect",
+      "severity": "normal",
+      "agent": "contracts"
+    }
+  ],
+  "provenance": {
+    "source": "manual",
+    "created_at": "2026-11-07T00:00:00Z",
+    "tool": "docs/evaluation/v0.3-agents-candidates.md selection",
+    "notes": [
+      "Introducing PR https://github.com/focus-trap/focus-trap-react/pull/1350; fix https://github.com/focus-trap/focus-trap-react/pull/1406.",
+      "Expected locations come from the pre-run selection and were not changed after seeing Rio output."
+    ]
+  }
+}

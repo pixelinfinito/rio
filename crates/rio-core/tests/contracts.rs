@@ -297,3 +297,150 @@ fn lifecycle_values_cannot_leak_into_state_and_unknown_reasons_are_rejected() {
     report["lineage"]["author_response_ratio"] = json!(1.5);
     assert!(serde_json::from_value::<rio_core::Report>(report).is_err());
 }
+
+fn history() -> Value {
+    json!({"first_seen": "rev-1", "last_seen": "rev-2", "seen_count": 2,
+        "previous_status": "dismissed", "dismissed_in": "github.com/o/r#41",
+        "previous_response": {"reason": "wrong", "actor": "octocat", "at": "2026-11-05T10:00:00Z"}})
+}
+
+fn v03_objects() -> [(&'static str, Value); 4] {
+    [
+        (
+            "publication",
+            json!({"policy": "auto", "posted": 4, "edited": 1, "resolved": 0, "failed": 0,
+                "unanchored": 1, "check_run_url": "https://github.com/o/r/runs/1",
+                "summary_comment_url": null}),
+        ),
+        (
+            "cache",
+            json!({"lookups": 4, "hits": 2, "hit_rate": 0.5, "tokens_saved_estimate": 1200}),
+        ),
+        (
+            "suppression_proposals",
+            json!([{"id": "p1", "entry": {"rule": "lint/eslint/no-console"}, "evidence_count": 3,
+                "since": "2026-10-01T00:00:00Z"},
+                {"id": "p2", "entry": {"path": "src/generated/**"}, "evidence_count": 4,
+                "since": "2026-10-02T00:00:00Z"}]),
+        ),
+        (
+            "security_coverage",
+            json!({"catalog": "asvs-5.0",
+                "assessed": [{"item": "V1.2", "title": "Injection Prevention", "findings": []}],
+                "unassessed": [{"item": "V8.3", "title": "Operation Level Authorization",
+                    "reason": "budget"}],
+                "not_applicable": [{"item": "V17.1", "title": "TURN Server"}]}),
+        ),
+    ]
+}
+
+#[test]
+fn v03_finding_and_report_keys_are_optional_typed_and_validated() {
+    let finding_validator = jsonschema::validator_for(&schema("finding")).unwrap();
+    let report_validator = jsonschema::validator_for(&schema("report")).unwrap();
+    let mut finding = lineage_finding();
+    finding["source"] = json!({"agent": "security", "cached": true});
+    finding["history"] = history();
+    assert!(finding_validator.is_valid(&finding));
+    let typed: rio_core::Finding = serde_json::from_value(finding.clone()).unwrap();
+    assert_eq!(
+        typed.history.as_ref().unwrap().previous_status,
+        rio_core::LifecycleStatus::Dismissed
+    );
+    assert_eq!(serde_json::to_value(&typed).unwrap(), finding);
+    // Without the new keys the documents are unchanged and still valid.
+    let plain: Value = serde_json::from_str(include_str!("fixtures/finding.json")).unwrap();
+    let typed: rio_core::Finding = serde_json::from_value(plain.clone()).unwrap();
+    assert!(typed.history.is_none());
+    assert_eq!(serde_json::to_value(&typed).unwrap(), plain);
+
+    let plain: Value = serde_json::from_str(include_str!("fixtures/complete.json")).unwrap();
+    assert!(report_validator.is_valid(&plain));
+    let mut report = plain.clone();
+    report["findings"] = json!([finding]);
+    for (key, value) in v03_objects() {
+        report[key] = value;
+    }
+    let errors: Vec<_> = report_validator
+        .iter_errors(&report)
+        .map(|e| e.to_string())
+        .collect();
+    assert!(errors.is_empty(), "{errors:?}");
+    let typed: rio_core::Report = serde_json::from_value(report.clone()).unwrap();
+    assert_eq!(serde_json::to_value(&typed).unwrap(), report);
+    assert!(rio_core::render_json(&typed).is_ok());
+    let typed: rio_core::Report = serde_json::from_value(plain.clone()).unwrap();
+    assert!(typed.publication.is_none() && typed.security_coverage.is_none());
+    assert_eq!(serde_json::to_value(&typed).unwrap(), plain);
+}
+
+#[test]
+fn v03_history_reasons_and_report_objects_are_strict() {
+    let finding_validator = jsonschema::validator_for(&schema("finding")).unwrap();
+    let report_validator = jsonschema::validator_for(&schema("report")).unwrap();
+    let mut invalid = Vec::new();
+    for reason in ["known", "false_positive", "duplicate"] {
+        let mut finding = lineage_finding();
+        finding["history"] = history();
+        finding["history"]["previous_response"]["reason"] = json!(reason);
+        invalid.push(finding);
+    }
+    let mut finding = lineage_finding();
+    finding["history"] = history();
+    finding["history"]["seen_count"] = json!(0);
+    invalid.push(finding);
+    let mut finding = lineage_finding();
+    finding["history"] = history();
+    finding["history"]["previous_status"] = json!("resolved");
+    invalid.push(finding);
+    let mut finding = lineage_finding();
+    finding["source"] = json!({"tool": "tsc", "version": "5", "cached": true});
+    invalid.push(finding);
+    for value in invalid {
+        assert!(!finding_validator.is_valid(&value), "{value}");
+        let mut report: Value =
+            serde_json::from_str(include_str!("fixtures/complete.json")).unwrap();
+        report["findings"] = json!([value]);
+        assert!(!report_validator.is_valid(&report));
+    }
+    let mut finding = lineage_finding();
+    finding["history"] = history();
+    finding["history"]["previous_response"]["reason"] = json!("known");
+    assert!(serde_json::from_value::<rio_core::Finding>(finding).is_err());
+    // The typed model rejects every enum and shape error; counts are bounded by the schema.
+    for (key, pointer, bad, typed) in [
+        ("publication", "/policy", json!("always"), true),
+        ("cache", "/hit_rate", json!(1.5), true),
+        (
+            "suppression_proposals",
+            "/0/entry",
+            json!({"finding": "abc"}),
+            true,
+        ),
+        (
+            "suppression_proposals",
+            "/0/evidence_count",
+            json!(0),
+            false,
+        ),
+        ("security_coverage", "/catalog", json!("internal"), true),
+        (
+            "security_coverage",
+            "/unassessed/0/reason",
+            json!("skipped"),
+            true,
+        ),
+    ] {
+        let mut report: Value =
+            serde_json::from_str(include_str!("fixtures/complete.json")).unwrap();
+        let (_, mut value) = v03_objects().into_iter().find(|(k, _)| *k == key).unwrap();
+        *value.pointer_mut(pointer).unwrap() = bad;
+        report[key] = value;
+        assert!(!report_validator.is_valid(&report), "{key}{pointer}");
+        assert_eq!(
+            serde_json::from_value::<rio_core::Report>(report).is_err(),
+            typed,
+            "{key}{pointer}"
+        );
+    }
+}

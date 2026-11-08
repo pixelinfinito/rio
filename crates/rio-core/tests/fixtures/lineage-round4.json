@@ -267,6 +267,12 @@
     "tool_versions": {}
   },
   "agent_audit": {
+    "agents": {
+      "correctness": "default"
+    },
+    "agents_skipped": {
+      "contracts": "not selected: triage's public_contracts signal did not fire (no exported declaration, route, table, event, CLI flag or configuration key changed)"
+    },
     "held_back": {
       "defects": [],
       "risks": [],

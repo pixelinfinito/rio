@@ -1,0 +1,68 @@
+{
+  "schema": "rio-eval-case-v1",
+  "id": "SE-POS-02",
+  "label": "historical",
+  "repository": "tauri-apps/tauri",
+  "input": {
+    "pr": 6969,
+    "url": "https://github.com/tauri-apps/tauri/pull/6969",
+    "base": {
+      "ref": null,
+      "sha": "cd3846c8ce61ab2879b3911e831525e6242aaab2"
+    },
+    "head": {
+      "ref": null,
+      "sha": "acc36fe1176cc8aa9063bde932abeb94796c5c72"
+    },
+    "files": [
+      ".changes/config-require-literal_leading_dot.md",
+      "core/tauri-config-schema/schema.json",
+      "core/tauri-utils/src/config.rs",
+      "core/tauri/src/scope/fs.rs",
+      "tooling/cli/schema.json"
+    ]
+  },
+  "expected": [
+    {
+      "locations": [
+        {
+          "path": "core/tauri/src/scope/fs.rs",
+          "line_start": 110,
+          "line_end": 120,
+          "symbol_path": "Scope::for_fs_api",
+          "symbol_line": null
+        },
+        {
+          "path": "core/tauri/src/scope/fs.rs",
+          "line_start": 219,
+          "line_end": 227,
+          "symbol_path": "Scope::is_allowed",
+          "symbol_line": null
+        },
+        {
+          "path": "core/tauri/src/scope/fs.rs",
+          "line_start": 239,
+          "line_end": 254,
+          "symbol_path": "Scope::is_allowed",
+          "symbol_line": null
+        }
+      ],
+      "trigger": "Moving the glob match options into a configurable field inverted the Unix default, so `require_literal_leading_dot` became false and wildcard fs scopes such as `$HOME/*` now authorise access to dotfiles such as `~/.ssh`, which the scope previously denied.",
+      "trigger_source": "manual",
+      "rule_id": null,
+      "category": "security",
+      "severity": "high",
+      "agent": "security"
+    }
+  ],
+  "provenance": {
+    "source": "manual",
+    "created_at": "2026-11-07T00:00:00Z",
+    "tool": "docs/evaluation/v0.3-agents-candidates.md selection",
+    "notes": [
+      "Introducing PR https://github.com/tauri-apps/tauri/pull/6969; fix https://github.com/tauri-apps/tauri/pull/7227.",
+      "Expected locations come from the pre-run selection and were not changed after seeing Rio output.",
+      "Catalog items: A01:2025, ASVS V8.2."
+    ]
+  }
+}

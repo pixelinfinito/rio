@@ -285,10 +285,11 @@ runner backends, interrupt/reconnect, inspect the vote audit and cost ledger, th
 run the pinned verifier evaluation in `eval/verifier.py`. A recorded provider test
 proves orchestration only; the PRD's 80% precision gate requires independently
 adjudicated real model outputs. Do not mark that gate passed from synthetic tests.
-Security policy/configuration ships disabled in v0.2. The actual independent
-security agent and OWASP/ASVS catalogs remain gated on v0.3; enabling the step now
-reports that it was unavailable rather than claiming a successful security review.
-An enabled but unavailable security step yields a partial report.
+The security step ships disabled in `rio/base`. Enabling it (or selecting the
+`rio/security` profile) runs the independent security agent with the OWASP Top
+10:2025 or ASVS 5.0 catalog through the shared verifier; the report lists the
+catalog items it assessed and the ones it could not assess, with reasons, rather
+than claiming a clean security review.
 
 To repeat the local runner protocol and container-isolation checks:
 

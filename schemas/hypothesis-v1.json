@@ -127,6 +127,75 @@
         "type": "string"
       },
       "maxItems": 100
+    },
+    "locations": {
+      "description": "Every cited location, primary first: a contract's producer and consumers, or a security trace path.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "line_start": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "line_end": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "column": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "symbol_path": {
+            "type": "string"
+          },
+          "occurrence_state": {
+            "enum": [
+              "new",
+              "pre-existing",
+              "fixed",
+              "unclassified"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "line_start",
+          "line_end",
+          "symbol_path"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1,
+      "maxItems": 20
+    },
+    "limitations": {
+      "description": "What the agent could not establish, such as consumers the graph could not resolve.",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1000
+      },
+      "maxItems": 20
+    },
+    "catalog_item": {
+      "description": "Security hypotheses: the id of the applicable catalog item.",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 40
+    },
+    "trace_change": {
+      "description": "Security hypotheses: whether the change introduced, removed or weakened a step of the item's trace.",
+      "enum": [
+        "introduced",
+        "removed",
+        "weakened"
+      ]
     }
   },
   "required": [

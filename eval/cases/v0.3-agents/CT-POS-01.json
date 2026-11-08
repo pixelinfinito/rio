@@ -1,0 +1,93 @@
+{
+  "schema": "rio-eval-case-v1",
+  "id": "CT-POS-01",
+  "label": "historical",
+  "repository": "vellum-ai/vellum-assistant",
+  "input": {
+    "pr": 12127,
+    "url": "https://github.com/vellum-ai/vellum-assistant/pull/12127",
+    "base": {
+      "ref": null,
+      "sha": "c4a5c887000e278651cb870803f89b5473462cfb"
+    },
+    "head": {
+      "ref": null,
+      "sha": "0e3f135666e426865a4f4b1fe4d365636def9a8d"
+    },
+    "files": [
+      "assistant/src/__tests__/channel-approval-routes.test.ts",
+      "assistant/src/__tests__/channel-guardian.test.ts",
+      "assistant/src/__tests__/guardian-routing-state.test.ts",
+      "assistant/src/__tests__/ingress-routes-http.test.ts",
+      "assistant/src/__tests__/non-member-access-request.test.ts",
+      "assistant/src/__tests__/relay-server.test.ts",
+      "assistant/src/__tests__/send-endpoint-busy.test.ts",
+      "assistant/src/__tests__/trusted-contact-lifecycle-notifications.test.ts",
+      "assistant/src/__tests__/trusted-contact-multichannel.test.ts",
+      "assistant/src/__tests__/trusted-contact-verification.test.ts",
+      "assistant/src/calls/relay-server.ts",
+      "assistant/src/contacts/contact-store.ts",
+      "assistant/src/memory/channel-guardian-store.ts",
+      "assistant/src/memory/guardian-bindings.ts",
+      "assistant/src/memory/ingress-member-store.ts",
+      "assistant/src/runtime/access-request-helper.ts",
+      "assistant/src/runtime/routes/migration-routes.ts"
+    ]
+  },
+  "expected": [
+    {
+      "locations": [
+        {
+          "path": "assistant/src/memory/channel-guardian-store.ts",
+          "line_start": 35,
+          "line_end": 42,
+          "symbol_path": "",
+          "symbol_line": null
+        },
+        {
+          "path": "assistant/src/runtime/channel-guardian-service.ts",
+          "line_start": 24,
+          "line_end": 43,
+          "symbol_path": "",
+          "symbol_line": null
+        },
+        {
+          "path": "assistant/src/runtime/channel-guardian-service.ts",
+          "line_start": 414,
+          "line_end": 414,
+          "symbol_path": "getGuardianBinding",
+          "symbol_line": null
+        },
+        {
+          "path": "assistant/src/runtime/channel-guardian-service.ts",
+          "line_start": 432,
+          "line_end": 432,
+          "symbol_path": "isGuardian",
+          "symbol_line": null
+        },
+        {
+          "path": "assistant/src/runtime/channel-guardian-service.ts",
+          "line_start": 443,
+          "line_end": 443,
+          "symbol_path": "revokeBinding",
+          "symbol_line": null
+        }
+      ],
+      "trigger": "#12127 removes the createBinding/getActiveBinding/revokeBinding/listActiveBindingsByAssistant re-exports from the channel-guardian-store.ts hub while assistant/src/runtime/channel-guardian-service.ts still imports getActiveBinding and revokeBinding from it, so typecheck fails and the imports resolve to undefined.",
+      "trigger_source": "manual",
+      "rule_id": "contracts/signature/removed",
+      "category": "defect",
+      "severity": "normal",
+      "agent": "contracts"
+    }
+  ],
+  "provenance": {
+    "source": "manual",
+    "created_at": "2026-11-07T00:00:00Z",
+    "tool": "docs/evaluation/v0.3-agents-candidates.md selection",
+    "notes": [
+      "Introducing PR https://github.com/vellum-ai/vellum-assistant/pull/12127; fix https://github.com/vellum-ai/vellum-assistant/pull/12130.",
+      "Expected locations come from the pre-run selection and were not changed after seeing Rio output."
+    ]
+  }
+}

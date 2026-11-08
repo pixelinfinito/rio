@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "rio",
+          "version": "0.3.0",
+          "informationUri": "https://github.com/pixelinfinito/rio",
+          "rules": []
+        }
+      },
+      "originalUriBaseIds": {
+        "SRCROOT": {
+          "description": {
+            "text": "Repository root"
+          }
+        }
+      },
+      "results": [],
+      "invocations": [
+        {
+          "executionSuccessful": false,
+          "exitCode": 3,
+          "startTimeUtc": "2026-11-07T13:00:00Z",
+          "endTimeUtc": "2026-11-07T13:00:00Z",
+          "properties": {
+            "error": {
+              "code": "not_a_repository",
+              "message": "the current directory is not inside a git work tree"
+            }
+          }
+        }
+      ],
+      "properties": {
+        "rio.status": "error",
+        "rio.risk_tier": null,
+        "rio.review_id": null
+      }
+    }
+  ]
+}

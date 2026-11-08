@@ -1,0 +1,72 @@
+{
+  "schema": "rio-eval-case-v1",
+  "id": "CT-POS-04",
+  "label": "historical",
+  "repository": "polarsource/polar",
+  "input": {
+    "pr": 14590,
+    "url": "https://github.com/polarsource/polar/pull/14590",
+    "base": {
+      "ref": null,
+      "sha": "833523cbe8047be9eaea4a5d3e7760484f24bc53"
+    },
+    "head": {
+      "ref": null,
+      "sha": "6e8bdcd6b8e2ee0d6135f7da96035a29198c9718"
+    },
+    "files": [
+      "clients/apps/web/src/components/Benefit/BenefitDetailCells.tsx",
+      "clients/apps/web/src/components/Benefit/BenefitForm.tsx",
+      "clients/apps/web/src/components/Benefit/CreateBenefitModalContent.tsx",
+      "clients/apps/web/src/hooks/queries/discord.ts",
+      "clients/packages/client/src/v1.ts",
+      "server/emails/src/types/openapi.ts",
+      "server/polar/benefit/strategies/discord/schemas.py",
+      "server/polar/integrations/discord/endpoints.py",
+      "server/polar/kit/jwt.py",
+      "server/tests/benefit/strategies/test_discord.py"
+    ]
+  },
+  "expected": [
+    {
+      "locations": [
+        {
+          "path": "server/polar/benefit/strategies/discord/schemas.py",
+          "line_start": 30,
+          "line_end": 37,
+          "symbol_path": "BenefitDiscordProperties.guild_token",
+          "symbol_line": null
+        },
+        {
+          "path": "docs/openapi/2026-10.openapi.json",
+          "line_start": 31261,
+          "line_end": 31293,
+          "symbol_path": "BenefitDiscordProperties",
+          "symbol_line": null
+        },
+        {
+          "path": "docs/openapi/2026-04.openapi.json",
+          "line_start": 31261,
+          "line_end": 31293,
+          "symbol_path": "BenefitDiscordProperties",
+          "symbol_line": null
+        }
+      ],
+      "trigger": "#14590 removes the guild_token computed field from the BenefitDiscordProperties response schema while the checked-in versioned OpenAPI specs (docs/openapi/2026-04 and 2026-10) still list guild_token as required, so SDKs generated from them reject benefit responses.",
+      "trigger_source": "manual",
+      "rule_id": "contracts/schema/removed",
+      "category": "defect",
+      "severity": "normal",
+      "agent": "contracts"
+    }
+  ],
+  "provenance": {
+    "source": "manual",
+    "created_at": "2026-11-07T00:00:00Z",
+    "tool": "docs/evaluation/v0.3-agents-candidates.md selection",
+    "notes": [
+      "Introducing PR https://github.com/polarsource/polar/pull/14590; fix https://github.com/polarsource/polar/pull/14671.",
+      "Expected locations come from the pre-run selection and were not changed after seeing Rio output."
+    ]
+  }
+}

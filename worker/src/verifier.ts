@@ -52,6 +52,13 @@ async function cited(
     }
   return { ...o.context, snapshot: { head } };
 }
+/** Contract hypotheses are settled through graph paths in both versions. */
+export const CONTRACT_VERIFICATION =
+  " This is a contract hypothesis: static_proven requires one code citation whose head graph node_ids form a connected path, possibly across files, from a cited consumer location to the changed contract's file. If head updated a cited consumer so it no longer relies on the old contract, answer refuted and cite that consumer's head graph node as a code reference with demonstrates protection; a protection on that path also refutes it.";
+/** Code bytes per version in a voter's blind context; read_file covers the rest. */
+export const CONTEXT_BYTES = 24 * 1024;
+/** Lines of one symbol excerpted before the voter must read the file itself. */
+export const SYMBOL_LINES = 300;
 export async function blindContext(o: VerifyOptions): Promise<string> {
   const location = o.hypothesis.location;
   const reader = readerOf(o.snapshot);
@@ -72,34 +79,54 @@ export async function blindContext(o: VerifyOptions): Promise<string> {
       const nodes = [...(symbol ? [symbol] : []), ...callers].slice(0, 20);
       const v = version as "base" | "head";
       const symbols = [];
-      for (const n of nodes)
+      // Voter conversations are bounded by bytes; a declaration file or a symbol
+      // spanning hundreds of lines must not fill the allowance on the first turn.
+      let remaining = CONTEXT_BYTES;
+      let omitted = 0;
+      for (const n of nodes) {
+        if (remaining <= 0) {
+          omitted++;
+          continue;
+        }
+        const lines = (await readFile(reader, n!.path, v))
+          .split("\n")
+          .slice(n!.line_start - 1, n!.line_end);
+        let content = lines.slice(0, SYMBOL_LINES).join("\n");
+        const truncated =
+          lines.length > SYMBOL_LINES || content.length > remaining;
+        content = content.slice(0, Math.max(0, remaining));
+        remaining -= content.length;
         symbols.push({
           node: n,
-          content: (await readFile(reader, n!.path, v))
-            .split("\n")
-            .slice(n!.line_start - 1, n!.line_end)
-            .join("\n"),
+          content,
+          ...(truncated ? { truncated: true } : {}),
         });
+      }
+      // A file added (or deleted) by the change has no counterpart to excerpt;
+      // the location's surroundings are bounded like a symbol excerpt.
+      let fallback: string | null | undefined;
+      let fallbackTruncated = false;
+      if (!nodes.length && (await reader[v].stat(location.path))) {
+        const start = Math.max(0, location.line_start - 20);
+        const window = (await readFile(reader, location.path, v))
+          .split("\n")
+          .slice(start, location.line_end + 20);
+        const text = window.slice(0, SYMBOL_LINES).join("\n");
+        fallback = text.slice(0, CONTEXT_BYTES);
+        fallbackTruncated =
+          window.length > SYMBOL_LINES || text.length > CONTEXT_BYTES;
+      } else if (!nodes.length) fallback = null;
       return {
         version,
         symbols,
-        // A file added (or deleted) by the change has no counterpart to excerpt.
-        fallback: nodes.length
-          ? undefined
-          : !(await reader[v].stat(location.path))
-            ? null
-            : (await readFile(reader, location.path, v))
-                .split("\n")
-                .slice(
-                  Math.max(0, location.line_start - 20),
-                  location.line_end + 20,
-                )
-                .join("\n"),
+        ...(omitted ? { callers_omitted: omitted } : {}),
+        fallback,
+        ...(fallbackTruncated ? { fallback_truncated: true } : {}),
       };
     }),
   );
   // Only location is copied; no title, trigger, proposed impact, rationale, or id.
-  return `What, if anything, is wrong in this function? Return {result: hypotheses[]}; [] is valid. ${dataBlock("location", { path: location.path, symbol_path: location.symbol_path })}\n${dataBlock("selected code and direct callers", versions)}\n${dataBlock("intent", filteredLines(o.intent.split("\n")))}\n${guidanceBlock(o.guidance, [location.path])}`;
+  return `What, if anything, is wrong in this function? Return {result: hypotheses[]}; [] is valid. Excerpts marked truncated and omitted callers are available through read_file and graph_query. ${dataBlock("location", { path: location.path, symbol_path: location.symbol_path })}\n${dataBlock("selected code and direct callers", versions)}\n${dataBlock("intent", filteredLines(o.intent.split("\n")))}\n${guidanceBlock(o.guidance, [location.path])}`;
 }
 export async function verifyHypothesis(
   o: VerifyOptions,
@@ -148,7 +175,7 @@ export async function verifyHypothesis(
           await o.save(vote);
           messages.push({
             role: "user",
-            content: `Verify this hypothesis. Assess regression on base/head, reachability, protections and contracts. Return {result:{evidence_level,evidence:[{kind:execution|code,version:base|head,job_id?,path?,node_ids?,demonstrates:regression|protection}],category?,reclassification_reason?}}. Reproduced requires a failed head runner execution of the reproduction; refutation requires a passing head reproduction or a cited protection. Static proof must cite the actual head graph path. Keep the original category by omitting category. Only downward changes are permitted: defect/security to risk/diagnostic/style, risk to diagnostic/style, diagnostic to style, with reclassification_reason required. Never upgrade risk to defect, even if proven; category and evidence level are independent. Cite only job IDs returned by an actual host run tool. If you have not executed a reproduction, use static_proven with actual head graph node IDs or plausible; describing a command does not execute it.\n${dataBlock("hypothesis", o.hypothesis)}`,
+            content: `Verify this hypothesis. Assess regression on base/head, reachability, protections and contracts. Return {result:{evidence_level,evidence:[{kind:execution|code,version:base|head,job_id?,path?,node_ids?,demonstrates:regression|protection}],category?,reclassification_reason?}}. Reproduced requires a failed head runner execution of the reproduction; refutation requires a passing head reproduction or a cited protection. Static proof must cite the actual head graph path. Keep the original category by omitting category. Only downward changes are permitted: defect/security to risk/diagnostic/style, risk to diagnostic/style, diagnostic to style, with reclassification_reason required. Never upgrade risk to defect, even if proven; category and evidence level are independent. Cite only job IDs returned by an actual host run tool. If you have not executed a reproduction, use static_proven with actual head graph node IDs or plausible; describing a command does not execute it.${o.hypothesis.rule_id.startsWith("contracts/") ? CONTRACT_VERIFICATION : ""}\n${dataBlock("hypothesis", o.hypothesis)}`,
           });
           vote.answer = validateAnswer(
             await converse({ ...options, phase: "verify-disclosed" }),

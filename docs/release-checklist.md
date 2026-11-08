@@ -85,3 +85,10 @@ Downloaded doctor artifacts from all four runner jobs parse as JSON with no bloc
 - OpenSpec validation and the generated profile reference checks passed. OpenSpec retains requirement-length warnings.
 - Acceptance now records 12 real PRs from five repositories across TypeScript, Python and Rust, including Rio #1. Independent automated verdicts are two useful and ten not-useful. The record-only gate passes; the stable-release gate rejects the preserved **no-go** conclusion. See [the acceptance record](evaluation/v0.1.md) and [Rust evidence](evaluation/rust/README.md).
 - CodeRabbit authentication status succeeded, but the review request failed before analysis with a session/Git-provider authentication error. No CodeRabbit validation is claimed. No commits, pushes or releases were made in this continuation.
+
+# v0.3 release gates
+
+The PRD's v0.3 exit criteria (`docs/PRD.md`, release table; `docs/v0.3-sequence.md`, exit criteria mapping). As above, a box is checked only with recorded evidence: the command, its inputs (pinned report and noise run paths) and its output.
+
+- [ ] False positives per agent are below 15 %: `python3 -I eval/gate.py gate --baseline BASE.json --candidate CAND.json --false-positive-rate REPORT.json [...] NOISE-RUN-DIR [...]` passes over the posted agent findings of the reference set and the adjudicated noise runs. Each agent's rate is `wrong / responses`; a noise finding adjudicated `harmful` counts as `wrong`. Agents with fewer than 30 responses are listed in the gate notes and are not gated; record them here with their counts.
+- [ ] The council beats the verifier-only baseline on the `plausible` bucket, or the council step is removed (`rio-v0-3-council` keep-or-remove rule, `eval/council.py` A/B).

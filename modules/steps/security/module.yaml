@@ -2,7 +2,7 @@
   "kind": "step",
   "name": "rio/security",
   "version": "0.2.0",
-  "description": "Independent security policy interface; agent and catalog execution release in v0.3",
+  "description": "Security agent with its own policy, reviewing against the OWASP Top 10:2025 or ASVS 5.0 catalog",
   "local": false,
   "inputs": [
     "intent",

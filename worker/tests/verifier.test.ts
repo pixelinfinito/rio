@@ -6,7 +6,7 @@ import historicalIncomplete from "../../crates/rio-core/tests/fixtures/incomplet
 import historicalPartial from "../../crates/rio-core/tests/fixtures/partial.json";
 import historicalNoChanges from "../../crates/rio-core/tests/fixtures/no_changes.json";
 import historicalError from "../../crates/rio-core/tests/fixtures/error.json";
-import { verifyHypothesis } from "../src/verifier";
+import { CONTEXT_BYTES, SYMBOL_LINES, blindContext, verifyHypothesis } from "../src/verifier";
 import {
   Tools,
   dataBlock,
@@ -348,6 +348,90 @@ describe("quorum", () => {
         context,
       ),
     ).toBe("plausible");
+  });
+  it("bounds the fallback excerpt when no graph node matches the location", async () => {
+    const longFile = Array.from({ length: 5000 }, (_, i) => `line ${i + 1}: ${"y".repeat(60)}`).join("\n");
+    const added = {
+      base: {},
+      head: { "src/new.ts": { mode: 0o100644, content: longFile } },
+    };
+    const empty = { nodes: [], edges: [] };
+    const prompt = await blindContext({
+      profile,
+      hypothesis: {
+        ...hypothesis,
+        // A huge line range must not send the whole file.
+        location: { ...hypothesis.location, path: "src/new.ts", symbol_path: "missing", line_start: 1, line_end: 5000 },
+      },
+      intent: "Fix behavior",
+      guidance: [],
+      snapshot: added,
+      context: { snapshot: added, head: empty, executions: {}, guidance: [] },
+      gateway: { complete: async () => ({ content: "", input_tokens: 0, output_tokens: 0, cost_usd: null }) },
+      ledger: new MemoryLedger(),
+      tools: () => new Tools(added, { base: empty, head: empty }, undefined),
+      agentTokens: 50000,
+      save: async () => {},
+    } as any);
+    const start = prompt.indexOf('<repository_data label="selected code and direct callers">\n');
+    const from = prompt.indexOf("\n", start) + 1;
+    const [base, head] = JSON.parse(prompt.slice(from, prompt.indexOf("\n</repository_data>", from)));
+    expect(base.fallback).toBeNull();
+    expect(base.fallback_truncated).toBeUndefined();
+    expect(head.fallback.length).toBeLessThanOrEqual(CONTEXT_BYTES);
+    expect(head.fallback.split("\n").length).toBeLessThanOrEqual(SYMBOL_LINES);
+    expect(head.fallback_truncated).toBe(true);
+    expect(new TextEncoder().encode(prompt).length).toBeLessThan(CONTEXT_BYTES + 4096);
+  });
+  it("bounds the blind context by bytes and lines and points voters at the tools for the rest", async () => {
+    const longFile = Array.from({ length: 2000 }, (_, i) => `line ${i + 1}: ${"x".repeat(40)}`).join("\n");
+    const wide = {
+      base: { "src/big.ts": { mode: 0o100644, content: longFile } },
+      head: { "src/big.ts": { mode: 0o100644, content: longFile } },
+    };
+    const callers = Array.from({ length: 12 }, (_, i) => ({
+      id: `c${i}`,
+      path: "src/big.ts",
+      symbol_path: `caller${i}`,
+      line_start: 1,
+      line_end: 400,
+    }));
+    const graph = {
+      nodes: [
+        { id: "s", path: "src/big.ts", symbol_path: "big", line_start: 1, line_end: 2000 },
+        ...callers,
+      ],
+      edges: callers.map((c) => ({ from: c.id, to: "s" })),
+    };
+    const prompt = await blindContext({
+      profile,
+      hypothesis: {
+        ...hypothesis,
+        location: { ...hypothesis.location, path: "src/big.ts", symbol_path: "big" },
+      },
+      intent: "Fix behavior",
+      guidance: [],
+      snapshot: wide,
+      context: { snapshot: wide, head: graph, executions: {}, guidance: [] },
+      gateway: { complete: async () => ({ content: "", input_tokens: 0, output_tokens: 0, cost_usd: null }) },
+      ledger: new MemoryLedger(),
+      tools: () => new Tools(wide, { base: graph, head: graph }, undefined),
+      agentTokens: 50000,
+      save: async () => {},
+    } as any);
+    expect(new TextEncoder().encode(prompt).length).toBeLessThan(2 * CONTEXT_BYTES + 4096);
+    const start = prompt.indexOf('<repository_data label="selected code and direct callers">\n');
+    const from = prompt.indexOf("\n", start) + 1;
+    const versions = JSON.parse(prompt.slice(from, prompt.indexOf("\n</repository_data>", from)));
+    for (const version of versions) {
+      const bytes = version.symbols.reduce((n: number, s: any) => n + s.content.length, 0);
+      expect(bytes).toBeLessThanOrEqual(CONTEXT_BYTES);
+      expect(version.symbols[0].truncated).toBe(true);
+      expect(version.symbols[0].content.split("\n").length).toBeLessThanOrEqual(SYMBOL_LINES);
+      expect(version.callers_omitted).toBeGreaterThan(0);
+      expect(version.symbols.length + version.callers_omitted).toBe(13);
+    }
+    expect(prompt).toContain("available through read_file and graph_query");
   });
   it("keeps independent two-turn conversations and all-none artifact proof", async () => {
     const captured: any[] = [];

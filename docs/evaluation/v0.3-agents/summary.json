@@ -1,0 +1,325 @@
+{
+  "schema": "rio-agent-reference-summary-v1",
+  "cases": [
+    {
+      "id": "CT-POS-01",
+      "kind": "positive",
+      "agent": "contracts",
+      "status": "incomplete",
+      "agent_findings": 0,
+      "adjudicated": false,
+      "cost_usd": 1.52182,
+      "agents_run": [
+        "contracts"
+      ],
+      "security_coverage": true,
+      "failed": false,
+      "control_detected": false
+    },
+    {
+      "id": "CT-POS-02",
+      "kind": "positive",
+      "agent": "contracts",
+      "status": "incomplete",
+      "agent_findings": 1,
+      "adjudicated": false,
+      "cost_usd": 0.69119,
+      "agents_run": [
+        "contracts"
+      ],
+      "security_coverage": true,
+      "failed": false,
+      "control_detected": true
+    },
+    {
+      "id": "CT-POS-03",
+      "kind": "positive",
+      "agent": "contracts",
+      "status": "incomplete",
+      "agent_findings": 1,
+      "adjudicated": false,
+      "cost_usd": 1.045814,
+      "agents_run": [
+        "contracts"
+      ],
+      "security_coverage": true,
+      "failed": false,
+      "control_detected": true
+    },
+    {
+      "id": "CT-POS-04",
+      "kind": "positive",
+      "agent": "contracts",
+      "status": "incomplete",
+      "agent_findings": 1,
+      "adjudicated": false,
+      "cost_usd": 4.236394,
+      "agents_run": [
+        "contracts"
+      ],
+      "security_coverage": true,
+      "failed": false,
+      "control_detected": true
+    },
+    {
+      "id": "CT-POS-05",
+      "kind": "positive",
+      "agent": "contracts",
+      "status": "incomplete",
+      "agent_findings": 2,
+      "adjudicated": false,
+      "cost_usd": 2.048277,
+      "agents_run": [
+        "contracts"
+      ],
+      "security_coverage": true,
+      "failed": false,
+      "control_detected": true
+    },
+    {
+      "id": "CT-CL-01",
+      "kind": "clean",
+      "agent": "contracts",
+      "status": "incomplete",
+      "agent_findings": 0,
+      "adjudicated": false,
+      "cost_usd": 0.603932,
+      "agents_run": [],
+      "security_coverage": true,
+      "failed": false
+    },
+    {
+      "id": "CT-CL-02",
+      "kind": "clean",
+      "agent": "contracts",
+      "status": "incomplete",
+      "agent_findings": 0,
+      "adjudicated": false,
+      "cost_usd": 0.024932,
+      "agents_run": [],
+      "security_coverage": true,
+      "failed": false
+    },
+    {
+      "id": "SE-POS-01",
+      "kind": "positive",
+      "agent": "security",
+      "status": "incomplete",
+      "agent_findings": 1,
+      "adjudicated": false,
+      "cost_usd": 0.53345,
+      "agents_run": [],
+      "security_coverage": true,
+      "failed": false,
+      "control_detected": true
+    },
+    {
+      "id": "SE-POS-02",
+      "kind": "positive",
+      "agent": "security",
+      "status": "incomplete",
+      "agent_findings": 1,
+      "adjudicated": false,
+      "cost_usd": 0.620578,
+      "agents_run": [],
+      "security_coverage": true,
+      "failed": false,
+      "control_detected": true
+    },
+    {
+      "id": "SE-POS-03",
+      "kind": "positive",
+      "agent": "security",
+      "status": "incomplete",
+      "agent_findings": 1,
+      "adjudicated": false,
+      "cost_usd": 0.68807,
+      "agents_run": [],
+      "security_coverage": true,
+      "failed": false,
+      "control_detected": true
+    },
+    {
+      "id": "SE-POS-04",
+      "kind": "positive",
+      "agent": "security",
+      "status": "incomplete",
+      "agent_findings": 2,
+      "adjudicated": false,
+      "cost_usd": 1.048402,
+      "agents_run": [
+        "contracts"
+      ],
+      "security_coverage": true,
+      "failed": false,
+      "control_detected": true
+    },
+    {
+      "id": "SE-CL-01",
+      "kind": "clean",
+      "agent": "security",
+      "status": "incomplete",
+      "agent_findings": 0,
+      "adjudicated": false,
+      "cost_usd": 0.39978,
+      "agents_run": [
+        "contracts"
+      ],
+      "security_coverage": true,
+      "failed": false
+    },
+    {
+      "id": "SE-CL-02",
+      "kind": "clean",
+      "agent": "security",
+      "status": "incomplete",
+      "agent_findings": 0,
+      "adjudicated": false,
+      "cost_usd": 0.38907,
+      "agents_run": [
+        "contracts"
+      ],
+      "security_coverage": true,
+      "failed": false
+    }
+  ],
+  "agents": {
+    "contracts": {
+      "findings": 6,
+      "by_evidence_level": {
+        "plausible": 4,
+        "reproduced": 2
+      },
+      "pending_adjudication": 6,
+      "counts": null,
+      "precision": null,
+      "controls": 5,
+      "controls_detected": 4,
+      "controls_failed": 0
+    },
+    "security": {
+      "findings": 4,
+      "by_evidence_level": {
+        "reproduced": 2,
+        "static_proven": 2
+      },
+      "pending_adjudication": 4,
+      "counts": null,
+      "precision": null,
+      "controls": 4,
+      "controls_detected": 4,
+      "controls_failed": 0
+    }
+  },
+  "failed_cases": [],
+  "controls": [
+    {
+      "id": "CT-POS-01",
+      "agent": "contracts",
+      "detected": false,
+      "finding_ids": [
+        []
+      ]
+    },
+    {
+      "id": "CT-POS-02",
+      "agent": "contracts",
+      "detected": true,
+      "finding_ids": [
+        [
+          "882cb32251d983834bb7aff31b3c8488dfcf0dd5a47d654b95d88354f875a611"
+        ]
+      ]
+    },
+    {
+      "id": "CT-POS-03",
+      "agent": "contracts",
+      "detected": true,
+      "finding_ids": [
+        [
+          "6238a8b375873d7e459ecaa431f5b33f8b70b6999118c68c751f37b040ab4da4"
+        ]
+      ]
+    },
+    {
+      "id": "CT-POS-04",
+      "agent": "contracts",
+      "detected": true,
+      "finding_ids": [
+        [
+          "7683befd6dc92c4851d4c15c9731b3773ff28bf0e0ae7e3f64a4de65a96ea99e"
+        ]
+      ]
+    },
+    {
+      "id": "CT-POS-05",
+      "agent": "contracts",
+      "detected": true,
+      "finding_ids": [
+        [
+          "5df5b86c83455ea8af6daf7709e81c96daedd46fcf7e58ccce7e171226158548",
+          "f74f6ea844e5d8b0894fd56c9c76e161fe321b7c68769de0e4df8ada790c2a33"
+        ]
+      ]
+    },
+    {
+      "id": "SE-POS-01",
+      "agent": "security",
+      "detected": true,
+      "finding_ids": [
+        [
+          "10f6f3aeca926f6f491a4f8e065ebeda8b5283e822c72f60f229450938562276"
+        ]
+      ]
+    },
+    {
+      "id": "SE-POS-02",
+      "agent": "security",
+      "detected": true,
+      "finding_ids": [
+        [
+          "286453924c68a7e8638d75a47651528a014b208120fdbb9c17f78cc99b7b3781"
+        ]
+      ]
+    },
+    {
+      "id": "SE-POS-03",
+      "agent": "security",
+      "detected": true,
+      "finding_ids": [
+        [
+          "f9b90d5fc2102042c8453c48a24e7ac1ef30bfc6df1902a27cba0334d0a120ea"
+        ]
+      ]
+    },
+    {
+      "id": "SE-POS-04",
+      "agent": "security",
+      "detected": true,
+      "finding_ids": [
+        [
+          "dc93337c25bcc12db0c8817e7275cf69359d3c8c470dfb439fe965140c791053"
+        ]
+      ]
+    }
+  ],
+  "cost_usd": 13.8517,
+  "adjudicated_cases": 0,
+  "awaiting_adjudication": [
+    "CT-CL-01",
+    "CT-CL-02",
+    "CT-POS-01",
+    "CT-POS-02",
+    "CT-POS-03",
+    "CT-POS-04",
+    "CT-POS-05",
+    "SE-CL-01",
+    "SE-CL-02",
+    "SE-POS-01",
+    "SE-POS-02",
+    "SE-POS-03",
+    "SE-POS-04"
+  ],
+  "precision_final": false,
+  "note": "Precision is computed only over independently adjudicated cases; 13 case(s) await adjudication, so precision is not yet measured."
+}

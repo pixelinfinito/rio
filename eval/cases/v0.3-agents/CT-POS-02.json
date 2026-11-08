@@ -1,0 +1,56 @@
+{
+  "schema": "rio-eval-case-v1",
+  "id": "CT-POS-02",
+  "label": "historical",
+  "repository": "THUDM/slime",
+  "input": {
+    "pr": 1336,
+    "url": "https://github.com/THUDM/slime/pull/1336",
+    "base": {
+      "ref": null,
+      "sha": "512a1100a0faff379f994caf992b5894f15d47fd"
+    },
+    "head": {
+      "ref": null,
+      "sha": "51a245858cb32f249bedb2f50c9a73c33d2e0b60"
+    },
+    "files": [
+      "slime/backends/sglang_utils/arguments.py"
+    ]
+  },
+  "expected": [
+    {
+      "locations": [
+        {
+          "path": "slime/backends/sglang_utils/arguments.py",
+          "line_start": 24,
+          "line_end": 29,
+          "symbol_path": "add_sglang_router_arguments",
+          "symbol_line": null
+        },
+        {
+          "path": "slime/ray/rollout.py",
+          "line_start": 589,
+          "line_end": 590,
+          "symbol_path": "_start_router",
+          "symbol_line": null
+        }
+      ],
+      "trigger": "#1336 removes the --sglang-router-request-timeout-secs argparse option while slime/ray/rollout.py _start_router still reads args.sglang_router_request_timeout_secs, which no longer exists on the parsed namespace.",
+      "trigger_source": "manual",
+      "rule_id": "contracts/cli/removed",
+      "category": "defect",
+      "severity": "normal",
+      "agent": "contracts"
+    }
+  ],
+  "provenance": {
+    "source": "manual",
+    "created_at": "2026-11-07T00:00:00Z",
+    "tool": "docs/evaluation/v0.3-agents-candidates.md selection",
+    "notes": [
+      "Introducing PR https://github.com/THUDM/slime/pull/1336; fix https://github.com/THUDM/slime/pull/1337.",
+      "Expected locations come from the pre-run selection and were not changed after seeing Rio output."
+    ]
+  }
+}

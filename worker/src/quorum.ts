@@ -3,8 +3,10 @@ import type {
   Evidence,
   ExecutionResult,
   Graph,
+  GraphNode,
   Guidance,
   Hypothesis,
+  Location,
   Verification,
   Vote,
   VoteAnswer,
@@ -42,6 +44,8 @@ export interface EvidenceContext {
   // snapshot also satisfies this); checks stay synchronous.
   snapshot: { head: Record<string, { mode: number }> };
   head: Graph;
+  /** Base graph, for contract hypotheses whose refutation cites a consumer updated in head. */
+  base?: Graph;
   executions: Record<string, ExecutionResult>;
   guidance: Guidance[];
 }
@@ -54,17 +58,20 @@ function validCode(ref: ArtifactRef, context: EvidenceContext): boolean {
     context.snapshot.head[ref.path].mode === 0o120000
   )
     return false;
-  const ids = new Set(ref.node_ids);
   const nodes = ref.node_ids.map((id) =>
     context.head.nodes.find((n) => n.id === id && n.path === ref.path),
   );
   if (nodes.some((n) => !n)) return false;
-  // A multi-node citation must describe a connected path, not an arbitrary bag of nodes.
-  const seen = new Set<string>([ref.node_ids[0]]);
+  return connected(ref.node_ids, context.head);
+}
+/** A multi-node citation must describe a connected path, not an arbitrary bag of nodes. */
+function connected(nodeIds: string[], graph: Graph): boolean {
+  const ids = new Set(nodeIds);
+  const seen = new Set<string>([nodeIds[0]]);
   let changed = true;
   while (changed) {
     changed = false;
-    for (const e of context.head.edges)
+    for (const e of graph.edges)
       if (
         ids.has(e.from) &&
         ids.has(e.to) &&
@@ -97,6 +104,90 @@ function validRun(
       : ref.version === "head" && job.exit_code !== 0)
   );
 }
+const overlaps = (n: GraphNode, l: Location) =>
+  n.path === l.path && n.line_start <= l.line_end && n.line_end >= l.line_start;
+/** Consumers a contract hypothesis cites: every location after the producer. */
+function consumers(h: Hypothesis): Location[] {
+  return (h.locations ?? []).slice(1);
+}
+/**
+ * Contract static proof: a connected head graph path, across files, that
+ * contains a cited consumer and reaches the changed contract's file.
+ */
+function validContractPath(
+  ref: ArtifactRef,
+  h: Hypothesis,
+  context: EvidenceContext,
+): boolean {
+  if (
+    ref.kind !== "code" ||
+    ref.version !== "head" ||
+    !ref.path ||
+    !ref.node_ids?.length ||
+    !context.snapshot.head[ref.path] ||
+    context.snapshot.head[ref.path].mode === 0o120000
+  )
+    return false;
+  const nodes = ref.node_ids.map((id) =>
+    context.head.nodes.find((n) => n.id === id),
+  );
+  if (nodes.some((n) => !n) || !nodes.some((n) => n!.path === ref.path))
+    return false;
+  if (!connected(ref.node_ids, context.head)) return false;
+  return (
+    nodes.some((n) => consumers(h).some((l) => overlaps(n!, l))) &&
+    nodes.some((n) => n!.path === h.location.path)
+  );
+}
+/** A contract protection must sit on the path: in the contract's file or a cited consumer. */
+function onContractPath(
+  ref: ArtifactRef,
+  h: Hypothesis,
+  context: EvidenceContext,
+): boolean {
+  if (!validCode(ref, context)) return false;
+  return ref.node_ids!.some((id) => {
+    const node = context.head.nodes.find((n) => n.id === id)!;
+    return (
+      node.path === h.location.path ||
+      consumers(h).some((l) => overlaps(node, l))
+    );
+  });
+}
+/**
+ * Contract refutation by a consumer update: a cited head node at a consumer
+ * whose content differs from the same symbol in base (or is new in head).
+ */
+function updatedConsumer(
+  ref: ArtifactRef,
+  h: Hypothesis,
+  context: EvidenceContext,
+): boolean {
+  if (
+    ref.kind !== "code" ||
+    ref.version !== "head" ||
+    !ref.path ||
+    !ref.node_ids?.length ||
+    !context.snapshot.head[ref.path] ||
+    !context.base
+  )
+    return false;
+  return ref.node_ids.some((id) => {
+    const node = context.head.nodes.find(
+      (n) => n.id === id && n.path === ref.path,
+    ) as (GraphNode & { content_hash?: string }) | undefined;
+    if (!node || !consumers(h).some((l) => overlaps(node, l))) return false;
+    const before = context.base!.nodes.find(
+      (n) => n.path === node.path && n.symbol_path === node.symbol_path,
+    ) as (GraphNode & { content_hash?: string }) | undefined;
+    return (
+      !before ||
+      (!!node.content_hash &&
+        !!before.content_hash &&
+        node.content_hash !== before.content_hash)
+    );
+  });
+}
 export function evidenceLevel(
   answer: VoteAnswer,
   h: Hypothesis,
@@ -117,11 +208,14 @@ export function evidenceLevel(
   const protection = answer.evidence.filter(
     (r) => r.demonstrates === "protection",
   );
+  const contract = h.rule_id.startsWith("contracts/");
   if (answer.evidence_level === "refuted")
     return protection.some((r) =>
       r.kind === "execution"
         ? validRun(r, context, true)
-        : validCode(r, context),
+        : contract
+          ? updatedConsumer(r, h, context) || onContractPath(r, h, context)
+          : validCode(r, context),
     )
       ? "refuted"
       : "plausible";
@@ -130,9 +224,15 @@ export function evidenceLevel(
     proof.some((r) => r.kind === "execution" && validRun(r, context, false))
   )
     return "reproduced";
+  // A contract break is proven statically only by a head graph path from a
+  // cited consumer to the changed contract.
   if (
     rank[answer.evidence_level] >= 2 &&
-    proof.some((r) => r.kind === "code" && validCode(r, context))
+    proof.some((r) =>
+      contract
+        ? validContractPath(r, h, context)
+        : r.kind === "code" && validCode(r, context),
+    )
   )
     return "static_proven";
   return "plausible";

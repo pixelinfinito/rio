@@ -6,6 +6,8 @@ import {
 import type {
   Env,
   ExecutionResult,
+  SecurityCoverage,
+  UnassessedReason,
   Graph,
   Hypothesis,
   ModelResponse,
@@ -26,7 +28,25 @@ import {
   runAllowed,
 } from "./tools";
 import { redact } from "./redaction";
-import { hash, invariant, validateHypotheses } from "./validation";
+import {
+  hash,
+  invariant,
+  clampAgentOutput,
+  screenHypotheses,
+  validateHypotheses,
+  type Rejection,
+} from "./validation";
+import agentPrompts from "./agent-prompts.json";
+import { agents } from "./manifests";
+import {
+  changedContents,
+  frameworks,
+  inventory,
+  manifestPaths,
+  touchedKinds,
+  type ContractEntry,
+} from "./contracts";
+import { applicability, catalog, changeContext, traceInputs } from "./catalogs";
 import { triage, type Plan } from "./triage";
 import { verifyHypothesis } from "./verifier";
 import { consolidate, type Verified } from "./consolidate";
@@ -41,10 +61,13 @@ import {
   type Tree,
 } from "./lineage";
 import {
+  SYMLINK,
   StoredSnapshot,
   compareUtf8,
+  decodeText,
   materialize,
   type Entry,
+  textOf,
   type SnapshotReader,
   type TreeReader,
 } from "./snapshot";
@@ -114,6 +137,68 @@ async function differing(before: TreeReader, after: TreeReader) {
   }
   return paths;
 }
+/** Every text file of a tree once, in path order, for textual consumers. */
+async function* textFiles(tree: TreeReader): AsyncGenerator<[string, string]> {
+  for await (const batch of tree.batches(
+    (e) =>
+      e.mode !== SYMLINK && /\.(?:[cm]?[jt]sx?|py|rs|sql|sh)$/.test(e.path),
+  ))
+    for (const [entry, bytes] of batch) {
+      const text = bytes ? decodeText(bytes) : null;
+      if (text !== null) yield [entry.path, text];
+    }
+}
+const REASONS: UnassessedReason[] = [
+  "budget",
+  "no_evidence",
+  "tools_unavailable",
+];
+/**
+ * Applicable catalog items end assessed or unassessed. An item the agent did
+ * not report on is unassessed with `no_evidence`; an item a hypothesis cites
+ * is assessed.
+ */
+export function securityCoverage(
+  coverage: SecurityCoverage,
+  applicable: { id: string; title: string }[],
+  hypotheses: Hypothesis[],
+  assessed: unknown,
+  unassessed: unknown,
+): SecurityCoverage {
+  const ids = new Set(applicable.map((i) => i.id));
+  const reasons = new Map<string, UnassessedReason>();
+  for (const u of Array.isArray(unassessed) ? unassessed : [])
+    if (
+      u &&
+      typeof u === "object" &&
+      ids.has(u.item) &&
+      REASONS.includes(u.reason) &&
+      !reasons.has(u.item)
+    )
+      reasons.set(u.item, u.reason);
+  const done = new Set(
+    (Array.isArray(assessed) ? assessed : []).filter(
+      (x): x is string =>
+        typeof x === "string" && ids.has(x) && !reasons.has(x),
+    ),
+  );
+  for (const h of hypotheses)
+    if (h.catalog_item && ids.has(h.catalog_item)) {
+      done.add(h.catalog_item);
+      reasons.delete(h.catalog_item);
+    }
+  for (const id of ids)
+    if (!done.has(id) && !reasons.has(id)) reasons.set(id, "no_evidence");
+  return {
+    ...coverage,
+    assessed: applicable
+      .filter((i) => done.has(i.id))
+      .map((i) => ({ item: i.id, title: i.title, findings: [] })),
+    unassessed: applicable
+      .filter((i) => reasons.has(i.id))
+      .map((i) => ({ item: i.id, title: i.title, reason: reasons.get(i.id)! })),
+  };
+}
 export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
   async run(event: WorkflowEvent<WorkflowParams>, step: WorkflowStep) {
     const id = event.payload.review_id,
@@ -164,6 +249,17 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
     let previousHead: SnapshotReader | undefined;
     let incremental: Submission["changed"] = [];
     let agentsVerified = false;
+    // Agent audit: why agents ran or were skipped, and screened-out hypotheses.
+    const skippedAgents: Record<string, string> = {};
+    const rejected: Rejection[] = [];
+    const catalogOf = new Map<string, string>();
+    let coverage: SecurityCoverage | undefined;
+    const triageOptions =
+      submission.profile.steps.find((x) => x.uses.startsWith("rio/triage@"))
+        ?.with ?? {};
+    const graphHops =
+      submission.profile.steps.find((x) => x.uses.startsWith("rio/graph@"))
+        ?.with?.hops ?? 2;
     let diffOnlyAudit: Record<string, string[]> | undefined;
     const call = async (name: string, action: () => Promise<ModelResponse>) => {
       const key = await step.do(
@@ -286,110 +382,270 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             ? ["security"]
             : []
           : plan.agents.filter((a) => a !== "security");
-        if (security && selected.length) {
-          report.status = "partial";
+        const active =
+          plan.mode === "deep"
+            ? (submission.profile.budget.deep ?? submission.profile.budget.fast)
+            : submission.profile.budget.fast;
+        const agentTokens = Math.floor(
+          (active.tokens ?? 100000) / (active.agents_max ?? 3),
+        );
+        // A diff-only round on an unchanged head has nothing new to review:
+        // agents are not re-run and earlier findings carry forward.
+        const unchanged =
+          lineage?.diff_only && previousHead && incremental.length === 0;
+        if (unchanged && selected.length)
           report.footer.notes.push(
-            "Security agent/catalog is unavailable until v0.3; security review was not performed.",
+            "No change since the previously reviewed head; agents were not re-run and earlier findings carry forward.",
           );
-        } else {
-          const active =
-            plan.mode === "deep"
-              ? (submission.profile.budget.deep ??
-                submission.profile.budget.fast)
-              : submission.profile.budget.fast;
-          const agentTokens = Math.floor(
-            (active.tokens ?? 100000) / (active.agents_max ?? 3),
-          );
-          // A diff-only round on an unchanged head has nothing new to review:
-          // agents are not re-run and earlier findings carry forward.
-          const unchanged =
-            lineage?.diff_only && previousHead && incremental.length === 0;
-          if (unchanged && selected.length)
-            report.footer.notes.push(
-              "No change since the previously reviewed head; agents were not re-run and earlier findings carry forward.",
-            );
-          for (const agent of unchanged
-            ? []
-            : selected.slice(0, active.agents_max ?? 3)) {
-            const declaration = (s.agents ?? []).find((a) =>
-              Object.hasOwn(a, agent),
-            );
-            const config = declaration?.[agent] ?? {};
-            const model =
-              submission.profile.models[config.model ?? agent] ??
-              submission.profile.models.default;
-            invariant(model, "no default model configured");
-            let serial = 0;
-            const tools = new Tools(
-              snapshot,
-              graphs,
-              runAllowed(
-                agent,
-                submission.fork,
-                config.run ??
-                  (Array.isArray(config.tools)
-                    ? config.tools.includes("run")
-                    : undefined),
-              )
-                ? (cmd, v) =>
-                    execute(`${s.id}-${agent}-${serial++}`, "run", cmd, v)
-                : undefined,
-              2,
-              2000,
-              Array.isArray(config.tools) ? config.tools : undefined,
-            );
-            const diffOnly = lineage?.diff_only && previousHead;
-            const reviewed = diffOnly
-              ? {
-                  changed: incremental,
-                  snapshot: { base: previousHead!.head, head: snapshot.head },
-                  focus: incremental.map((f) => f.path),
-                }
-              : {
-                  changed: submission.changed,
-                  snapshot,
-                  focus: plan.suggested_focus,
-                };
-            const roundContext = diffOnly
-              ? `\nThis is round ${lineage!.round} of a review lineage. Review ONLY the incremental change between the previously reviewed head and the new head shown below (base is the previously reviewed head); do not re-derive earlier findings, which are listed with their current states for context.\n${dataBlock(
-                  "previous round findings",
-                  lineage!.prior
-                    .filter((p) => p.status !== "fixed")
-                    .map((p) => ({
-                      id: p.id,
-                      rule_id: p.finding.rule_id,
-                      category: p.finding.category,
-                      message: p.finding.message,
-                      location: p.finding.location,
-                      status: p.status,
-                      ...(p.author_response
-                        ? { author_response: p.author_response.reason }
-                        : {}),
-                    })),
-                )}`
-              : "";
-            const intent = diffOnly
-              ? (lineage!.intent ?? submission.intent)
-              : submission.intent;
-            const prompt = `Review the change independently for ${agent}. Inspect actual base and head code before making a claim; symbol names and graph hashes are not source code. Use read_file for omitted or truncated code. Suggested focus is only a hint; tools can read/search either entire repository snapshot. The graph excerpt holds the changed symbols and their nearest neighbours; query graph_query for anything beyond it. Classify concrete correctness regressions as defect, uncertain hazards as risk, style and repeated tool diagnostics accurately. Omit guidance unless citing a real owner-guidance document supplied below; source-code lines are not owner guidance. Check guidance/contradiction and guidance/stale risks against existing guidance lines: emit category risk, cite guidance:{path,line} and the changed code behavior. Return {result:hypotheses[]}.${roundContext}\n${dataBlock("intent", filteredLines(intent.split("\n")))}\n${dataBlock("suggested_focus", reviewed.focus)}\n${dataBlock("graph excerpt", { base: promptGraph(graphs.base), head: promptGraph(graphs.head) })}\n${dataBlock("changed code excerpts", await changedCode(reviewed.changed, reviewed.snapshot))}\n${dataBlock("deterministic checks", report.checks)}\n${guidanceBlock(submission.owner_guidance, reviewed.focus)}`;
-            const result = validateHypotheses(
-              await converse({
-                gateway,
-                ledger,
-                actor: `${s.id}-${agent}`,
-                phase: "generation",
-                model,
-                allowance: { remaining: agentTokens },
-                messages: [{ role: "user", content: prompt }],
-                dispatch: tools.dispatch.bind(tools),
-                call,
-                cancelled: () => store.cancelled(id),
-              }),
-            );
-            for (const h of result) {
-              h.source = { agent };
-              if (!hypotheses.some((x) => x.id === h.id)) hypotheses.push(h);
+        const diffOnly = lineage?.diff_only && previousHead;
+        const reviewed = diffOnly
+          ? {
+              changed: incremental,
+              snapshot: { base: previousHead!.head, head: snapshot.head },
+              focus: incremental.map((f) => f.path),
             }
+          : {
+              changed: submission.changed,
+              snapshot,
+              focus: plan.suggested_focus,
+            };
+        // The contract inventory and the change context are deterministic; they
+        // are computed once per step and replayed from the step result.
+        const analysis =
+          selected.length && !unchanged
+            ? await step.do(`analysis-${s.id}`, async () => {
+                const contents = await changedContents(
+                  reviewed.changed,
+                  reviewed.snapshot,
+                );
+                const entries = await inventory({
+                  changed: reviewed.changed,
+                  contents,
+                  graphs,
+                  hops: graphHops,
+                  read: (version, path) =>
+                    textOf(reviewed.snapshot[version], path),
+                  scan: (version) => textFiles(reviewed.snapshot[version]),
+                });
+                const manifests: [string, string][] = [];
+                for (const path of manifestPaths(reviewed.changed))
+                  for (const version of ["head", "base"] as const) {
+                    const text = await textOf(reviewed.snapshot[version], path);
+                    if (text !== null) {
+                      manifests.push([path, text]);
+                      break;
+                    }
+                  }
+                const context = changeContext({
+                  changed: reviewed.changed,
+                  contents,
+                  frameworks: frameworks(manifests, reviewed.changed),
+                  node_kinds: touchedKinds(entries, reviewed.changed, contents),
+                  sensitive_paths: triageOptions.sensitive_paths ?? [],
+                });
+                const catalogName = security
+                  ? (s.with.catalog ?? "owasp-top10-2025")
+                  : null;
+                const items = catalogName
+                  ? applicability(catalogName, context).applicable
+                  : [];
+                return {
+                  inventory: entries,
+                  context,
+                  trace: catalogName
+                    ? traceInputs(items, reviewed.changed, contents, graphs)
+                    : null,
+                };
+              })
+            : null;
+        // The plan says why a contracts-capable agent did not run.
+        if (!security && !unchanged)
+          for (const [name, manifest] of Object.entries(agents))
+            if (manifest.contracts && !selected.includes(name))
+              skippedAgents[name] =
+                "not selected: triage's public_contracts signal did not fire (no exported declaration, route, table, event, CLI flag or configuration key changed)";
+        for (const agent of unchanged
+          ? []
+          : selected.slice(0, active.agents_max ?? 3)) {
+          const declaration = (s.agents ?? []).find((a) =>
+            Object.hasOwn(a, agent),
+          );
+          if (
+            agent === "contracts" &&
+            !analysis!.inventory.length &&
+            !declaration &&
+            !plan.agent_reasons[agent]?.startsWith("rule:")
+          ) {
+            skippedAgents[agent] =
+              "contract inventory is empty: no exported symbol, route, table, event or configuration key changed";
+            report.footer.notes.push(
+              "Contracts agent did not run: the change touches no exported symbol, route, table, event or configuration key.",
+            );
+            continue;
+          }
+          const config = declaration?.[agent] ?? {};
+          const model =
+            submission.profile.models[config.model ?? agent] ??
+            submission.profile.models.default;
+          invariant(model, "no default model configured");
+          let serial = 0;
+          const tools = new Tools(
+            snapshot,
+            graphs,
+            runAllowed(
+              agent,
+              submission.fork,
+              config.run ??
+                (Array.isArray(config.tools)
+                  ? config.tools.includes("run")
+                  : undefined),
+            )
+              ? (cmd, v) =>
+                  execute(`${s.id}-${agent}-${serial++}`, "run", cmd, v)
+              : undefined,
+            2,
+            2000,
+            Array.isArray(config.tools) ? config.tools : undefined,
+          );
+          const roundContext = diffOnly
+            ? `\nThis is round ${lineage!.round} of a review lineage. Review ONLY the incremental change between the previously reviewed head and the new head shown below (base is the previously reviewed head); do not re-derive earlier findings, which are listed with their current states for context.\n${dataBlock(
+                "previous round findings",
+                lineage!.prior
+                  .filter((p) => p.status !== "fixed")
+                  .map((p) => ({
+                    id: p.id,
+                    rule_id: p.finding.rule_id,
+                    category: p.finding.category,
+                    message: p.finding.message,
+                    location: p.finding.location,
+                    status: p.status,
+                    ...(p.author_response
+                      ? { author_response: p.author_response.reason }
+                      : {}),
+                  })),
+              )}`
+            : "";
+          const intent = diffOnly
+            ? (lineage!.intent ?? submission.intent)
+            : submission.intent;
+          // Agent instructions are Rio's own; repository data stays in data blocks.
+          let instructions =
+            (agentPrompts as Record<string, string>)[agent] ?? "";
+          let agentData = "";
+          let catalogName: string | null = null;
+          let applicable: { id: string; title: string }[] = [];
+          if (agent === "contracts")
+            agentData = `\n${dataBlock("contract inventory", analysis!.inventory)}`;
+          if (agent === "security") {
+            catalogName = s.with.catalog ?? "owasp-top10-2025";
+            const split = applicability(catalogName!, analysis!.context);
+            applicable = split.applicable;
+            coverage = {
+              catalog: catalogName as any,
+              assessed: [],
+              unassessed: [],
+              not_applicable: split.not_applicable.map((i) => ({
+                item: i.id,
+                title: i.title,
+              })),
+            };
+            if (!applicable.length) continue;
+            agentData = `\n${dataBlock("catalog", {
+              name: catalogName,
+              attribution: catalog(catalogName!).attribution.notice,
+              change: analysis!.context,
+              items: split.applicable.map(({ id, title, summary, trace }) => ({
+                id,
+                title,
+                summary,
+                trace,
+              })),
+            })}\n${dataBlock("taint map", analysis!.trace)}`;
+          }
+          const prompt = `Review the change independently for ${agent}. Inspect actual base and head code before making a claim; symbol names and graph hashes are not source code. Use read_file for omitted or truncated code. Suggested focus is only a hint; tools can read/search either entire repository snapshot. The graph excerpt holds the changed symbols and their nearest neighbours; query graph_query for anything beyond it. Classify concrete correctness regressions as defect, uncertain hazards as risk, style and repeated tool diagnostics accurately. Omit guidance unless citing a real owner-guidance document supplied below; source-code lines are not owner guidance. Check guidance/contradiction and guidance/stale risks against existing guidance lines: emit category risk, cite guidance:{path,line} and the changed code behavior. ${instructions ? "" : "Return {result:hypotheses[]}."}${instructions ? `\n${instructions}` : ""}${roundContext}\n${dataBlock("intent", filteredLines(intent.split("\n")))}\n${dataBlock("suggested_focus", reviewed.focus)}\n${dataBlock("graph excerpt", { base: promptGraph(graphs.base), head: promptGraph(graphs.head) })}\n${dataBlock("changed code excerpts", await changedCode(reviewed.changed, reviewed.snapshot))}\n${dataBlock("deterministic checks", report.checks)}${agentData}\n${guidanceBlock(submission.owner_guidance, reviewed.focus)}`;
+          let output: any;
+          try {
+            output = await converse({
+              gateway,
+              ledger,
+              actor: `${s.id}-${agent}`,
+              phase: "generation",
+              model,
+              allowance: { remaining: agentTokens },
+              messages: [{ role: "user", content: prompt }],
+              dispatch: tools.dispatch.bind(tools),
+              call,
+              cancelled: () => store.cancelled(id),
+            });
+          } catch (error) {
+            const message = error instanceof Error ? error.message : "";
+            if (/cancel/.test(message)) throw error;
+            const budget = /budget exhausted|turn limit exhausted/.test(message);
+            if (agent === "security") {
+              // An exhausted budget or a failed conversation leaves the items
+              // unassessed, never passed.
+              output = {
+                hypotheses: [],
+                assessed: [],
+                unassessed: applicable.map((i) => ({
+                  item: i.id,
+                  reason: budget ? "budget" : "tools_unavailable",
+                })),
+              };
+            }
+            if (agent !== "security" || !budget) {
+              // One agent's failure ends only that agent; the others' work and
+              // the deterministic results stay in a partial report.
+              report.status = "partial";
+              report.footer.notes.push(
+                `${agent} agent failed: ${redact(message).slice(0, 200)}; its findings are missing from this review.`,
+              );
+              if (agent !== "security") continue;
+            }
+          }
+          let assessedByAgent: unknown = [],
+            unassessedByAgent: unknown = [];
+          if (agent === "security") {
+            invariant(
+              output &&
+                typeof output === "object" &&
+                !Array.isArray(output) &&
+                Array.isArray(output.hypotheses),
+              "security result must be an object with hypotheses, assessed and unassessed",
+            );
+            assessedByAgent = output.assessed;
+            unassessedByAgent = output.unassessed;
+            output = output.hypotheses;
+          }
+          const screened = screenHypotheses(
+            agent,
+            validateHypotheses(clampAgentOutput(output)),
+            {
+              catalogItems: new Set(applicable.map((i) => i.id)),
+            },
+          );
+          rejected.push(...screened.rejected);
+          for (const h of screened.accepted) {
+            h.source = { agent };
+            if (!hypotheses.some((x) => x.id === h.id)) hypotheses.push(h);
+            if (h.catalog_item) catalogOf.set(h.id, h.catalog_item);
+          }
+          if (agent === "security")
+            coverage = securityCoverage(
+              coverage!,
+              applicable,
+              screened.accepted,
+              assessedByAgent,
+              unassessedByAgent,
+            );
+          if (agent === "contracts") {
+            const unresolved = analysis!.inventory.filter(
+              (e: ContractEntry) => e.unresolved.length,
+            ).length;
+            if (unresolved)
+              report.footer.notes.push(
+                `${unresolved} contract(s) have consumers the graph could not resolve; the contracts agent lists them as limitations.`,
+              );
           }
         }
       } else if (module === "rio/verify") {
@@ -433,6 +689,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             context: {
               snapshot: { head: {} },
               head: graphs.head,
+              base: graphs.base,
               executions,
               guidance: submission.owner_guidance,
             },
@@ -565,7 +822,25 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
         ...findings.audit,
         require_human: plan.require_human,
         board_deferred: true,
+        agents: plan.agent_reasons,
+        ...(Object.keys(skippedAgents).length
+          ? { agents_skipped: skippedAgents }
+          : {}),
+        ...(rejected.length ? { rejected } : {}),
       };
+      if (coverage) {
+        // Assessed items name the reported findings that cite them.
+        for (const f of report.security ?? []) {
+          const members = findings.audit.classes[f.id] ?? [f.id];
+          for (const member of members) {
+            const item = catalogOf.get(member);
+            const entry = coverage.assessed.find((a) => a.item === item);
+            if (entry && !entry.findings.includes(f.id))
+              entry.findings.push(f.id);
+          }
+        }
+        report.security_coverage = coverage;
+      }
       report.risk_tier = plan.risk;
       report.footer.notes = report.footer.notes.filter(
         (n: string) =>

@@ -1,0 +1,60 @@
+---
+source: crates/rio-core/tests/render.rs
+expression: markdown
+---
+# Rio 0.3.0 — incomplete
+
+Review: 1234567890abcdef  Run: 01J00000000000000000000000  
+Mode: working-tree  Base: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb  Head: snapshot:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc  
+Profile: rio/base  Chain: rio/base  
+Risk tier: high (sensitive_path: src/auth/**)  
+1 unclassified: baseline unavailable; check baseline hint in footer.  
+
+
+## Deterministic results
+
+### lint
+
+| Root | Language | Version | Scheduled as | Outcome | Time (ms) |
+| --- | --- | --- | --- | --- | ---: |
+| . | typescript | head | changed | skipped (tool_missing) | 3 |
+
+## Findings
+
+1 finding(s); 1 risk(s). Review incomplete: lint .: skipped (tool_missing) did not complete.
+
+- **correctness/off-by-one** [unclassified; error; static_proven] — The last page is skipped.
+  - `src/page.ts:41 (paginate)` [unclassified]
+  - Verification: 3/3 voters; blind: [Same, Same, Related]; split: false
+  - Trigger: Exactly page\_size \* n items
+
+## Risks
+
+- **contracts/route/removed** [new; warning; plausible] — The DELETE /v1/sessions route was removed; no consumer was found in the repository.
+  - `src/routes.ts:18 (router)` [new]
+  - Verification: 1/3 voters; blind: [None, Related, None]; split: true
+  - Trigger: A client that still calls DELETE /v1/sessions
+
+## Security
+
+Catalog owasp-top10-2025: 2 assessed, 1 unassessed, 1 not applicable.  
+Not a passed security review: 1 applicable item(s) were not assessed.  
+Assessed: A01:2025 Broken Access Control (1 finding(s)); A05:2025 Injection (1 finding(s))  
+Unassessed: A07:2025 Authentication Failures (budget)  
+Not applicable: A03:2025 Software Supply Chain Failures  
+
+- **security/missing-authorization** [new; error; static_proven] — deleteUser no longer checks the admin role.
+  - `src/api/admin.ts:5 (deleteUser)` [new]
+  - Verification: 3/3 voters; blind: [Same, Same, Related]; split: false
+  - Trigger: Any authenticated user calling DELETE /admin/users/:id
+- **security/sql-injection** [new; error; plausible] — Risk for human judgment: The user name reaches a raw SQL string.
+  - `src/api/users.ts:10 (getUser)` [new]
+  - `src/db/users.ts:22 (findUser)` [new]
+  - Verification: 2/3 voters; blind: [Same, Related, None]; split: false
+  - Trigger: A name containing a quote
+
+## Footer
+
+- lint . head: skipped (tool_missing) — install eslint in the project
+- Security catalog owasp-top10-2025: 2 item(s) assessed (A01:2025, A05:2025); 1 not assessed: A07:2025 (budget).
+- Total: 105 ms

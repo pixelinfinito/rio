@@ -1,0 +1,177 @@
+{
+  "schema": "rio-report-v1",
+  "status": "complete",
+  "review": {
+    "id": "1234567890abcdef",
+    "run_id": "01J00000000000000000000000",
+    "mode": "working-tree",
+    "base": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "head": "snapshot:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "profile": "rio/base",
+    "chain": [
+      "rio/base"
+    ],
+    "rio_version": "0.3.0"
+  },
+  "checks": [],
+  "impact": {
+    "symbols": [],
+    "unresolved": 0,
+    "truncated": false
+  },
+  "findings": [
+    {
+      "id": "4444444444444444444444444444444444444444444444444444444444444444",
+      "rule_id": "correctness/race",
+      "category": "defect",
+      "evidence_level": "reproduced",
+      "severity": "error",
+      "state": "new",
+      "location": {
+        "path": "src/cache.ts",
+        "line_start": 50,
+        "line_end": 58,
+        "symbol_path": "Cache.set",
+        "occurrence_state": "new"
+      },
+      "message": "Concurrent set calls lose an entry.",
+      "trigger": "Two set calls for the same key within one tick",
+      "evidence": [],
+      "source": {
+        "agent": "correctness"
+      },
+      "locations": [
+        {
+          "path": "src/cache.ts",
+          "line_start": 50,
+          "line_end": 58,
+          "symbol_path": "Cache.set",
+          "occurrence_state": "new"
+        }
+      ],
+      "verification": {
+        "voters": 3,
+        "agreeing": 3,
+        "blind_match": [
+          "same",
+          "same",
+          "related"
+        ],
+        "split": false
+      },
+      "round": 2,
+      "first_posted_in": "snap-1",
+      "status": "open",
+      "history": {
+        "first_seen": "rev-a",
+        "last_seen": "rev-b",
+        "seen_count": 2,
+        "previous_status": "dismissed",
+        "previous_response": {
+          "reason": "wrong",
+          "actor": "octocat",
+          "at": "2026-11-01T09:00:00Z",
+          "note": "guarded by the lock"
+        },
+        "dismissed_in": "github.com/acme/api#37"
+      }
+    },
+    {
+      "id": "5555555555555555555555555555555555555555555555555555555555555555",
+      "rule_id": "correctness/timeout-unit",
+      "category": "defect",
+      "evidence_level": "static_proven",
+      "severity": "warning",
+      "state": "new",
+      "location": {
+        "path": "src/http.ts",
+        "line_start": 12,
+        "line_end": 12,
+        "symbol_path": "request",
+        "occurrence_state": "new"
+      },
+      "message": "The timeout is passed in seconds to an API that expects milliseconds.",
+      "trigger": "Any request with the default timeout",
+      "evidence": [],
+      "source": {
+        "agent": "correctness"
+      },
+      "locations": [
+        {
+          "path": "src/http.ts",
+          "line_start": 12,
+          "line_end": 12,
+          "symbol_path": "request",
+          "occurrence_state": "new"
+        }
+      ],
+      "verification": {
+        "voters": 3,
+        "agreeing": 3,
+        "blind_match": [
+          "same",
+          "same",
+          "related"
+        ],
+        "split": false
+      },
+      "round": 1,
+      "first_posted_in": "snap-1",
+      "status": "dismissed",
+      "author_response": {
+        "reason": "intentional",
+        "actor": "maintainer",
+        "at": "2026-11-06T12:00:00Z"
+      }
+    }
+  ],
+  "risks": [],
+  "incomplete": [],
+  "deferred": [],
+  "excluded": [],
+  "summary": {
+    "pre_existing": 0,
+    "fixed": 0,
+    "suppressed": 0
+  },
+  "footer": {
+    "notes": [],
+    "suppressions": [],
+    "tool_versions": {}
+  },
+  "metrics": {
+    "wall_time_ms": 105,
+    "checks": [
+      {
+        "kind": "typecheck",
+        "root": ".",
+        "version": "head",
+        "wall_time_ms": 100
+      }
+    ],
+    "tool_versions": {
+      "tsc": "5.7.2"
+    }
+  },
+  "risk_tier": {
+    "tier": "high",
+    "reasons": [
+      "always_human: migrations/**"
+    ],
+    "source": "always_human"
+  },
+  "lineage": {
+    "repository": "github.com/acme/api",
+    "kind": "pr",
+    "ref": "42",
+    "generation": 1,
+    "round": 2,
+    "cap": 3,
+    "capped": false,
+    "diff_only": true,
+    "previous_head": "snap-1",
+    "held_back": 1,
+    "rounds_to_pass": null,
+    "author_response_ratio": 0.5
+  }
+}

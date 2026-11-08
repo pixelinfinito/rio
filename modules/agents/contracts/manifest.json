@@ -3,5 +3,6 @@
   "name": "contracts",
   "run": false,
   "available": true,
-  "independent": true
+  "independent": true,
+  "contracts": true
 }

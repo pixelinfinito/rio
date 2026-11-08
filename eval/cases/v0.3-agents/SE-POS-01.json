@@ -1,0 +1,60 @@
+{
+  "schema": "rio-eval-case-v1",
+  "id": "SE-POS-01",
+  "label": "historical",
+  "repository": "louislam/uptime-kuma",
+  "input": {
+    "pr": 3178,
+    "url": "https://github.com/louislam/uptime-kuma/pull/3178",
+    "base": {
+      "ref": null,
+      "sha": "ddbf367011e5654a6d7dfac1f353d420140a7b7d"
+    },
+    "head": {
+      "ref": null,
+      "sha": "1d9a28e9abf7628409db7428f1c30acd43aef0cd"
+    },
+    "files": [
+      "server/monitor-types/tailscale-ping.js",
+      "server/uptime-kuma-server.js",
+      "src/lang/en.json",
+      "src/pages/EditMonitor.vue"
+    ]
+  },
+  "expected": [
+    {
+      "locations": [
+        {
+          "path": "server/monitor-types/tailscale-ping.js",
+          "line_start": 40,
+          "line_end": 46,
+          "symbol_path": "TailscalePing.runTailscalePing",
+          "symbol_line": null
+        },
+        {
+          "path": "server/monitor-types/tailscale-ping.js",
+          "line_start": 23,
+          "line_end": 23,
+          "symbol_path": "TailscalePing.check",
+          "symbol_line": null
+        }
+      ],
+      "trigger": "The new Tailscale Ping monitor interpolates the user-supplied monitor hostname into a shell command run with child_process.exec, so an authenticated user can execute arbitrary OS commands; the only validation is an HTML `pattern` attribute in the front end.",
+      "trigger_source": "manual",
+      "rule_id": null,
+      "category": "security",
+      "severity": "high",
+      "agent": "security"
+    }
+  ],
+  "provenance": {
+    "source": "manual",
+    "created_at": "2026-11-07T00:00:00Z",
+    "tool": "docs/evaluation/v0.3-agents-candidates.md selection",
+    "notes": [
+      "Introducing PR https://github.com/louislam/uptime-kuma/pull/3178; fix https://github.com/louislam/uptime-kuma/pull/4095.",
+      "Expected locations come from the pre-run selection and were not changed after seeing Rio output.",
+      "Catalog items: A05:2025, ASVS V1.2."
+    ]
+  }
+}

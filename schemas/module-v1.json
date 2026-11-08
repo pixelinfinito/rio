@@ -7,12 +7,13 @@
     "kind": {
       "enum": [
         "adapter",
-        "step"
+        "step",
+        "catalog"
       ]
     },
     "name": {
       "type": "string",
-      "pattern": "^rio/[a-z][a-z0-9-]*$"
+      "pattern": "^rio/[a-z][a-z0-9.-]*$"
     },
     "version": {
       "type": "string",
@@ -183,14 +184,401 @@
     },
     "local": {
       "type": "boolean"
+    },
+    "attribution": {
+      "description": "Source and license notice that the catalog's source requires.",
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string",
+          "minLength": 1
+        },
+        "url": {
+          "type": "string",
+          "pattern": "^https://"
+        },
+        "license": {
+          "type": "string",
+          "minLength": 1
+        },
+        "notice": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "source",
+        "url",
+        "license",
+        "notice"
+      ],
+      "additionalProperties": false
+    },
+    "items": {
+      "description": "Catalog items: official id, Rio-written summary, applicability predicates and taint trace hints.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "summary": {
+            "type": "string",
+            "minLength": 1
+          },
+          "url": {
+            "type": "string",
+            "pattern": "^https://"
+          },
+          "applies_when": {
+            "description": "The item applies when every `all` predicate and at least one `any` predicate match (an absent list matches). `sink` matches when a trace sink of that kind occurs in the changed code.",
+            "type": "object",
+            "properties": {
+              "all": {
+                "type": "array",
+                "items": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "language": {
+                          "type": "array",
+                          "items": {
+                            "enum": [
+                              "typescript",
+                              "python",
+                              "rust"
+                            ]
+                          },
+                          "minItems": 1,
+                          "uniqueItems": true
+                        }
+                      },
+                      "required": [
+                        "language"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "framework": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "pattern": "^[a-z][a-z0-9-]*$"
+                          },
+                          "minItems": 1,
+                          "uniqueItems": true
+                        }
+                      },
+                      "required": [
+                        "framework"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "node_kind": {
+                          "type": "array",
+                          "items": {
+                            "enum": [
+                              "endpoint",
+                              "table",
+                              "event",
+                              "config",
+                              "export"
+                            ]
+                          },
+                          "minItems": 1,
+                          "uniqueItems": true
+                        }
+                      },
+                      "required": [
+                        "node_kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "sensitive_path": {
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "sensitive_path"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "sink": {
+                          "type": "array",
+                          "items": {
+                            "enum": [
+                              "sql_query",
+                              "shell_command",
+                              "filesystem_path",
+                              "html_output",
+                              "redirect",
+                              "deserialization",
+                              "crypto_operation",
+                              "authorization_check",
+                              "authentication_check",
+                              "log_output",
+                              "outbound_request",
+                              "template_render",
+                              "unsafe_memory",
+                              "error_response",
+                              "session_state",
+                              "secret_value",
+                              "token_handling",
+                              "dependency_manifest",
+                              "file_upload"
+                            ]
+                          },
+                          "minItems": 1,
+                          "uniqueItems": true
+                        }
+                      },
+                      "required": [
+                        "sink"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "always": {
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "always"
+                      ],
+                      "additionalProperties": false
+                    }
+                  ]
+                },
+                "minItems": 1
+              },
+              "any": {
+                "type": "array",
+                "items": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "language": {
+                          "type": "array",
+                          "items": {
+                            "enum": [
+                              "typescript",
+                              "python",
+                              "rust"
+                            ]
+                          },
+                          "minItems": 1,
+                          "uniqueItems": true
+                        }
+                      },
+                      "required": [
+                        "language"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "framework": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "pattern": "^[a-z][a-z0-9-]*$"
+                          },
+                          "minItems": 1,
+                          "uniqueItems": true
+                        }
+                      },
+                      "required": [
+                        "framework"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "node_kind": {
+                          "type": "array",
+                          "items": {
+                            "enum": [
+                              "endpoint",
+                              "table",
+                              "event",
+                              "config",
+                              "export"
+                            ]
+                          },
+                          "minItems": 1,
+                          "uniqueItems": true
+                        }
+                      },
+                      "required": [
+                        "node_kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "sensitive_path": {
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "sensitive_path"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "sink": {
+                          "type": "array",
+                          "items": {
+                            "enum": [
+                              "sql_query",
+                              "shell_command",
+                              "filesystem_path",
+                              "html_output",
+                              "redirect",
+                              "deserialization",
+                              "crypto_operation",
+                              "authorization_check",
+                              "authentication_check",
+                              "log_output",
+                              "outbound_request",
+                              "template_render",
+                              "unsafe_memory",
+                              "error_response",
+                              "session_state",
+                              "secret_value",
+                              "token_handling",
+                              "dependency_manifest",
+                              "file_upload"
+                            ]
+                          },
+                          "minItems": 1,
+                          "uniqueItems": true
+                        }
+                      },
+                      "required": [
+                        "sink"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "always": {
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "always"
+                      ],
+                      "additionalProperties": false
+                    }
+                  ]
+                },
+                "minItems": 1
+              }
+            },
+            "minProperties": 1,
+            "additionalProperties": false
+          },
+          "trace": {
+            "type": "object",
+            "properties": {
+              "sources": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "http_request",
+                    "cli_args",
+                    "environment",
+                    "file_content",
+                    "message",
+                    "database_read",
+                    "session",
+                    "external_response"
+                  ]
+                },
+                "uniqueItems": true
+              },
+              "sinks": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "sql_query",
+                    "shell_command",
+                    "filesystem_path",
+                    "html_output",
+                    "redirect",
+                    "deserialization",
+                    "crypto_operation",
+                    "authorization_check",
+                    "authentication_check",
+                    "log_output",
+                    "outbound_request",
+                    "template_render",
+                    "unsafe_memory",
+                    "error_response",
+                    "session_state",
+                    "secret_value",
+                    "token_handling",
+                    "dependency_manifest",
+                    "file_upload"
+                  ]
+                },
+                "minItems": 1,
+                "uniqueItems": true
+              }
+            },
+            "required": [
+              "sources",
+              "sinks"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "summary",
+          "url",
+          "applies_when",
+          "trace"
+        ],
+        "additionalProperties": false
+      }
     }
   },
   "required": [
     "kind",
     "name",
     "version",
-    "description",
-    "schema"
+    "description"
   ],
   "additionalProperties": false,
   "allOf": [
@@ -204,6 +592,7 @@
       },
       "then": {
         "required": [
+          "schema",
           "languages",
           "files",
           "capabilities",
@@ -225,8 +614,23 @@
               "required": [
                 "outputs"
               ]
+            },
+            {
+              "required": [
+                "attribution"
+              ]
+            },
+            {
+              "required": [
+                "items"
+              ]
             }
           ]
+        },
+        "properties": {
+          "name": {
+            "pattern": "^rio/[a-z][a-z0-9-]*$"
+          }
         }
       }
     },
@@ -240,6 +644,7 @@
       },
       "then": {
         "required": [
+          "schema",
           "inputs",
           "outputs",
           "local"
@@ -264,6 +669,80 @@
             {
               "required": [
                 "tools"
+              ]
+            },
+            {
+              "required": [
+                "attribution"
+              ]
+            },
+            {
+              "required": [
+                "items"
+              ]
+            }
+          ]
+        },
+        "properties": {
+          "name": {
+            "pattern": "^rio/[a-z][a-z0-9-]*$"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "catalog"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "attribution",
+          "items"
+        ],
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "schema"
+              ]
+            },
+            {
+              "required": [
+                "languages"
+              ]
+            },
+            {
+              "required": [
+                "files"
+              ]
+            },
+            {
+              "required": [
+                "capabilities"
+              ]
+            },
+            {
+              "required": [
+                "tools"
+              ]
+            },
+            {
+              "required": [
+                "inputs"
+              ]
+            },
+            {
+              "required": [
+                "outputs"
+              ]
+            },
+            {
+              "required": [
+                "local"
               ]
             }
           ]

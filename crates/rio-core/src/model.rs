@@ -82,8 +82,16 @@ pub struct Advisory {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum Source {
-    Tool { tool: String, version: String },
-    Agent { agent: String },
+    Tool {
+        tool: String,
+        version: String,
+    },
+    Agent {
+        agent: String,
+        /// True when the hypotheses were replayed from the agent result cache.
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        cached: Option<bool>,
+    },
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -122,6 +130,23 @@ pub struct Finding {
     pub resolution: Option<Resolution>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub author_response: Option<AuthorResponse>,
+    /// Earlier record of this identity in the repository registry; never
+    /// consulted by `state`, `status` or fail policies.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub history: Option<FindingHistory>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct FindingHistory {
+    pub first_seen: String,
+    pub last_seen: String,
+    pub seen_count: u32,
+    pub previous_status: LifecycleStatus,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub previous_response: Option<AuthorResponse>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub dismissed_in: Option<String>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]

@@ -5,4 +5,4 @@ description: Agents the review artifacts
 local: false
 inputs: ["snapshot", "findings", "graph", "plan"]
 outputs: ["hypotheses"]
-schema: {"type": "object", "additionalProperties": false, "properties": {}}
+schema: {"type": "object", "additionalProperties": false, "properties": {"cache": {"type": "boolean", "default": true, "description": "Replay agent hypotheses for unchanged hunks from the agent result cache; the verifier always runs"}}}

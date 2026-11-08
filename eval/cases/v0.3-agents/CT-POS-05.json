@@ -1,0 +1,76 @@
+{
+  "schema": "rio-eval-case-v1",
+  "id": "CT-POS-05",
+  "label": "historical",
+  "repository": "foundry-rs/foundry",
+  "input": {
+    "pr": 14224,
+    "url": "https://github.com/foundry-rs/foundry/pull/14224",
+    "base": {
+      "ref": null,
+      "sha": "c54d5a17bac4e7ad2e5f7035686a8c6000c6e923"
+    },
+    "head": {
+      "ref": null,
+      "sha": "22d708056dc88a6753f08b72a84029668f461024"
+    },
+    "files": [
+      "crates/cast/src/cmd/run.rs",
+      "crates/cast/tests/cli/main.rs",
+      "crates/cli/src/opts/evm.rs",
+      "crates/cli/src/opts/mod.rs",
+      "crates/cli/src/opts/rpc.rs",
+      "crates/cli/src/opts/rpc_common.rs",
+      "crates/forge/tests/cli/script.rs"
+    ]
+  },
+  "expected": [
+    {
+      "locations": [
+        {
+          "path": "crates/cli/src/opts/rpc.rs",
+          "line_start": 23,
+          "line_end": 24,
+          "symbol_path": "RpcOpts.url",
+          "symbol_line": null
+        },
+        {
+          "path": "crates/cli/src/opts/evm.rs",
+          "line_start": 45,
+          "line_end": 47,
+          "symbol_path": "EvmArgs.fork_url",
+          "symbol_line": null
+        },
+        {
+          "path": "crates/cli/src/opts/rpc_common.rs",
+          "line_start": 23,
+          "line_end": 25,
+          "symbol_path": "RpcCommonOpts.url",
+          "symbol_line": null
+        },
+        {
+          "path": "crates/cast/tests/cli/main.rs",
+          "line_start": 3979,
+          "line_end": 3980,
+          "symbol_path": "estimate_base_da",
+          "symbol_line": null
+        }
+      ],
+      "trigger": "#14224 moves the RPC URL option into RpcCommonOpts declared as #[arg(long = \"rpc-url\", ...)] without a short form, dropping cast's `-r` (and forge's `-f` for --fork-url) while claiming 'no breaking CLI changes'; scripts using `cast ... -r <url>` stop parsing.",
+      "trigger_source": "manual",
+      "rule_id": "contracts/cli/removed",
+      "category": "risk",
+      "severity": "normal",
+      "agent": "contracts"
+    }
+  ],
+  "provenance": {
+    "source": "manual",
+    "created_at": "2026-11-07T00:00:00Z",
+    "tool": "docs/evaluation/v0.3-agents-candidates.md selection",
+    "notes": [
+      "Introducing PR https://github.com/foundry-rs/foundry/pull/14224; fix https://github.com/foundry-rs/foundry/pull/14246.",
+      "Expected locations come from the pre-run selection and were not changed after seeing Rio output."
+    ]
+  }
+}
