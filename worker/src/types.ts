@@ -211,8 +211,10 @@ export interface Execution {
   job_id: string;
   attempt: number;
   version: Version;
-  kind: "run" | "checks" | "graph" | "static";
+  kind: "run" | "checks" | "graph" | "static" | "prepare";
   command: string[];
+  // Prepare jobs of the self-hosted runner: what to clone (no snapshot yet).
+  prepare?: PrepareSpec;
   // The trees arrive as a streamed archive; jobs never embed file contents.
   snapshot_id: string;
   needs: Version[];
@@ -225,7 +227,8 @@ export interface Execution {
     // Analysis jobs only: bound on the trusted runner's artifact, kept out of stdout.
     artifact_bytes?: number;
   };
-  network: false;
+  // "clone": a self-hosted prepare job whose clone phase alone has network.
+  network: false | "clone";
 }
 export interface ExecutionResult {
   outcome?: "exited" | "spawn_failed" | "runner_failed";
@@ -269,7 +272,7 @@ export interface Env {
   DB: D1Database;
   ARTIFACTS: R2Bucket;
   REVIEWS: Workflow;
-  JOBS: Queue<{ review_id: string; job_id: string; attempt: number }>;
+  JOBS: Queue<QueueMessage>;
   SANDBOX: DurableObjectNamespace;
   RIO_API_TOKEN: string;
   RUNNER_SECRET: string;
@@ -285,4 +288,68 @@ export interface Env {
   // JSON: custom AI Gateway providers by slug, { "SLUG": { "protocol": "openai" | "anthropic" } }.
   AI_GATEWAY_PROVIDERS?: string;
   MODEL_PRICES?: string;
+  // GitHub App (PR mode); without them the webhook route returns 404.
+  GITHUB_APP_ID?: string;
+  GITHUB_APP_PRIVATE_KEY?: string;
+  GITHUB_WEBHOOK_SECRET?: string;
+  // Accepted beside GITHUB_WEBHOOK_SECRET while `rio doctor --rotate` runs.
+  GITHUB_WEBHOOK_SECRET_NEXT?: string;
+  // API root override for GitHub Enterprise and recorded tests.
+  GITHUB_API_URL?: string;
+}
+export interface JobMessage {
+  type?: "job";
+  review_id: string;
+  job_id: string;
+  attempt: number;
+}
+export type Trigger = "webhook" | "cli" | "command";
+/** A pull request to review, queued by the webhook, the CLI or `/rio review`. */
+export interface ReviewRequestMessage {
+  type: "review-request";
+  tenant: string;
+  installation_id: number;
+  repository: string;
+  number: number;
+  trigger: Trigger;
+  // Present when the review row already exists (CLI requests).
+  review_id?: string;
+  // `/rio review` from a maintainer: reset the lineage, escalate a fork.
+  comment_id?: number;
+}
+/** A `/rio` comment; the body is data, parsed only for the two commands. */
+export interface CommandMessage {
+  type: "command";
+  tenant: string;
+  installation_id: number;
+  repository: string;
+  number: number;
+  comment_id: number;
+  body: string;
+  actor: string;
+}
+export interface PublishMessage {
+  type: "publish";
+  review_id: string;
+}
+export type QueueMessage =
+  JobMessage | ReviewRequestMessage | CommandMessage | PublishMessage;
+export interface PullRequestMeta {
+  repository: string;
+  number: number;
+  base_sha: string;
+  head_sha: string;
+  author: { login: string; type: "user" | "bot" };
+  fork: boolean;
+  agent?: { name: string; source: "bot_author" | "commit_trailer" };
+  trigger: Trigger;
+}
+/** The hosted preparation of a PR head; the token is added at dispatch only. */
+export interface PrepareSpec {
+  repository: string;
+  clone_url: string;
+  number: number;
+  base_sha: string;
+  head_sha: string;
+  installation_id: number;
 }

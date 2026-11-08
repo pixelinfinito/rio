@@ -59,7 +59,7 @@ export async function missing(
   const found = await located(env, tenant, hashes);
   return hashes.filter((h: string) => !found.has(h));
 }
-function record(
+export function record(
   env: Env,
   tenant: string,
   pack: string,
@@ -142,7 +142,7 @@ function uploadToken(value: string | undefined): {
   );
   return { key: parsed.k, upload: parsed.u };
 }
-function largeKey(tenant: string, hash: string, key: string) {
+export function largeKey(tenant: string, hash: string, key: string) {
   return `${prefix(tenant)}large/${hash}/${key}`;
 }
 export async function startUpload(

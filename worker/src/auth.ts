@@ -27,8 +27,9 @@ export function equal(a: string, b: string): boolean {
 export async function authenticate(
   request: Request,
   env: Env,
-  scope: string,
+  scope: string | string[],
 ): Promise<string> {
+  const scopes = Array.isArray(scope) ? scope : [scope];
   const token =
     request.headers.get("authorization")?.replace(/^Bearer /, "") ?? "";
   invariant(token.length >= 24, "unauthorized");
@@ -40,7 +41,9 @@ export async function authenticate(
     .bind(hash(token), Date.now())
     .first<{ tenant: string; scope: string }>();
   invariant(
-    row && (row.scope === "*" || row.scope.split(",").includes(scope)),
+    row &&
+      (row.scope === "*" ||
+        row.scope.split(",").some((s) => scopes.includes(s))),
     "unauthorized",
   );
   return row.tenant;

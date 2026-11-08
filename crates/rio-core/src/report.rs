@@ -39,6 +39,61 @@ pub struct ReviewHeader {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub chain: Option<Vec<String>>,
     pub rio_version: String,
+    /// PR-mode metadata recorded by the endpoint.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub pull_request: Option<PullRequestMeta>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct PullRequestMeta {
+    pub repository: String,
+    pub number: u64,
+    pub base_sha: String,
+    pub head_sha: String,
+    pub author: PullRequestAuthor,
+    pub fork: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub agent: Option<AgentAttribution>,
+    pub trigger: PublishTrigger,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct PullRequestAuthor {
+    pub login: String,
+    #[serde(rename = "type")]
+    pub kind: AuthorKind,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum AuthorKind {
+    User,
+    Bot,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct AgentAttribution {
+    pub name: String,
+    pub source: AgentSource,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum AgentSource {
+    BotAuthor,
+    CommitTrailer,
+}
+
+/// What started a PR-mode review; publication under `ask` depends on it.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum PublishTrigger {
+    Webhook,
+    Cli,
+    Command,
 }
 
 impl Default for ReviewHeader {
@@ -51,6 +106,7 @@ impl Default for ReviewHeader {
             head: None,
             profile: None,
             chain: None,
+            pull_request: None,
             rio_version: option_env!("RIO_BUILD_VERSION")
                 .unwrap_or(env!("CARGO_PKG_VERSION"))
                 .into(),
@@ -219,6 +275,37 @@ pub struct Publication {
     pub unanchored: u32,
     pub check_run_url: Option<String>,
     pub summary_comment_url: Option<String>,
+    /// Why nothing, or only the check run, was published.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub reason: Option<UnpublishedReason>,
+    /// Items the host rejected; retried on the next round.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub failures: Vec<PublicationFailure>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum UnpublishedReason {
+    PolicyNever,
+    AskWithoutConsent,
+    ForkNotEscalated,
+    NoInstallation,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct PublicationFailure {
+    pub id: String,
+    pub kind: PublicationKind,
+    pub error: String,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum PublicationKind {
+    Finding,
+    Summary,
+    CheckRun,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

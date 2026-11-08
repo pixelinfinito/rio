@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import type { Env, Execution, Submission } from "./types";
+import type { Env, Execution, JobMessage, QueueMessage } from "./types";
 import { authenticate, equal, jobToken, sign, verifyJobToken } from "./auth";
 import {
   RESPONSE_REASONS,
@@ -29,12 +29,34 @@ import {
 import { jobInput } from "./archive";
 import { attachStatements, lineageId } from "./lineage";
 import { Store } from "./storage";
-import { failJob, finishJob } from "./jobs";
+import { PREPARE_WALL_MS, failJob, finishJob } from "./jobs";
 import { parseWall } from "./budget";
 import { checkProfileModels } from "./gateway";
 import { renderSarif, utc } from "./sarif";
 import { publicRecord } from "./history";
 import { publicProposal } from "./proposals";
+import { createReview } from "./reviews";
+import { recordFeedback } from "./feedback";
+import { APP_TENANT, handleGitHubWebhook, installationFor } from "./webhooks";
+import {
+  handleReviewRequest,
+  failPrepare,
+  prepareCredential,
+  preparedBy,
+  pullOf,
+  repositoryName,
+  requestReview,
+  submitPrepared,
+} from "./pulls";
+import { handleCommand } from "./commands";
+import { publishFinished } from "./publish";
+import { redact } from "./redaction";
+import {
+  InstallationToken,
+  PREPARE_PERMISSIONS,
+  appRequest,
+  appSecrets,
+} from "./github";
 export { ReviewWorkflow } from "./workflow";
 export { MigrationWorkflow } from "./migrate";
 export { Sandbox } from "./sandbox";
@@ -100,23 +122,25 @@ async function reviewAccess(
   invariant(row, "review not found");
   return row;
 }
+// A PR prepare job uploads with its single-use prepare credential.
+const UPLOAD = ["reviews:write", "prepare"];
 // Snapshots are uploaded as deduplicated contents plus a chunked manifest
 // (docs/cloudflare.md, "Snapshot protocol").
 app.post("/v1/contents/missing", async (c) => {
-  const tenant = await authenticate(c.req.raw, c.env, "reviews:write");
+  const tenant = await authenticate(c.req.raw, c.env, UPLOAD);
   return c.json({
     missing: await missing(c.env, tenant, await body(c.req.raw, 1024 * 1024)),
   });
 });
 app.put("/v1/packs", async (c) => {
-  const tenant = await authenticate(c.req.raw, c.env, "reviews:write");
+  const tenant = await authenticate(c.req.raw, c.env, UPLOAD);
   return c.json(
     await storePack(c.env, tenant, await bytes(c.req.raw, LIMITS.request)),
     201,
   );
 });
 app.post("/v1/contents/:hash/uploads", async (c) => {
-  const tenant = await authenticate(c.req.raw, c.env, "reviews:write");
+  const tenant = await authenticate(c.req.raw, c.env, UPLOAD);
   const result = await startUpload(
     c.env,
     tenant,
@@ -126,7 +150,7 @@ app.post("/v1/contents/:hash/uploads", async (c) => {
   return c.json(result, result.present ? 200 : 201);
 });
 app.post("/v1/contents/:hash/uploads/complete", async (c) => {
-  const tenant = await authenticate(c.req.raw, c.env, "reviews:write");
+  const tenant = await authenticate(c.req.raw, c.env, UPLOAD);
   return c.json(
     await completeUpload(
       c.env,
@@ -139,7 +163,7 @@ app.post("/v1/contents/:hash/uploads/complete", async (c) => {
   );
 });
 app.put("/v1/contents/:hash/uploads/:part", async (c) => {
-  const tenant = await authenticate(c.req.raw, c.env, "reviews:write");
+  const tenant = await authenticate(c.req.raw, c.env, UPLOAD);
   return c.json(
     await uploadPart(
       c.env,
@@ -152,7 +176,7 @@ app.put("/v1/contents/:hash/uploads/:part", async (c) => {
   );
 });
 app.put("/v1/manifests/:id/chunks/:n", async (c) => {
-  const tenant = await authenticate(c.req.raw, c.env, "reviews:write");
+  const tenant = await authenticate(c.req.raw, c.env, UPLOAD);
   const chunk = Number(c.req.param("n"));
   await storeChunk(
     c.env,
@@ -164,7 +188,7 @@ app.put("/v1/manifests/:id/chunks/:n", async (c) => {
   return c.json({ chunk }, 201);
 });
 app.post("/v1/manifests/:id/seal", async (c) => {
-  const tenant = await authenticate(c.req.raw, c.env, "reviews:write");
+  const tenant = await authenticate(c.req.raw, c.env, UPLOAD);
   const result = await seal(
     c.env,
     tenant,
@@ -174,93 +198,148 @@ app.post("/v1/manifests/:id/seal", async (c) => {
   return c.json({ id: result.id }, result.created ? 201 : 200);
 });
 app.post("/v1/reviews", async (c) => {
+  const bearer = c.req.header("authorization")?.replace(/^Bearer /, "") ?? "";
+  // A hosted prepare job hands over its PR review; the credential is single-use.
+  const prepared = await preparedBy(c.env, bearer);
+  if (prepared) {
+    const value = await body(c.req.raw, 8 * 1024 * 1024);
+    const id = await submitPrepared(c.env, prepared, value);
+    return c.json({ id, status: "queued" }, 202);
+  }
   const tenant = await authenticate(c.req.raw, c.env, "reviews:write"),
     value = await body(c.req.raw, 8 * 1024 * 1024);
-  validateSubmission(value);
-  checkProfileModels(c.env, value.profile);
-  const snapshotRow = await c.env.DB.prepare(
-    "SELECT object_key FROM snapshots WHERE id=? AND tenant=?",
-  )
-    .bind(value.snapshot_id, tenant)
-    .first<{ object_key: string }>();
-  invariant(snapshotRow, "snapshot not found");
-  const store = new Store(c.env),
-    snapshot = await StoredSnapshot.open(c.env, snapshotRow.object_key);
-  for (const version of ["base", "head"] as const) {
-    const graph = value.graphs[version];
-    invariant(
-      graph && Array.isArray(graph.nodes) && graph.nodes.length <= 100000,
-      "invalid graph",
-    );
-    validateGraph(
-      graph,
-      await lineCounts(
-        snapshot[version],
-        new Set(graph.nodes.map((n: any) => n?.path)),
-      ),
-    );
+  // PR metadata is recorded by the endpoint, never accepted from a client.
+  if (value && typeof value === "object") {
+    delete value.pull_request;
+    if (value.report?.review) delete value.report.review.pull_request;
   }
-  // Guidance is reproduced from immutable head, never accepted from mutable working state.
-  const guidance = await materialize(
-    snapshot.head,
-    value.owner_guidance.map((g) => g.path),
-  );
-  for (const g of value.owner_guidance) {
-    const file = guidance[g.path];
-    invariant(
-      file &&
-        file.mode !== SYMLINK &&
-        !file.encoding &&
-        ["REVIEW.md", "CLAUDE.md", "AGENTS.md"].includes(
-          g.path.split("/").at(-1) ?? "",
-        ) &&
-        g.scope_dir === g.path.split("/").slice(0, -1).join("/") &&
-        g.content_hash === hash(file.content) &&
-        Array.isArray(g.lines) &&
-        g.lines.join("\n") ===
-          file.content.replace(/\r\n/g, "\n").replace(/\n$/, ""),
-      "guidance does not match snapshot",
-    );
-  }
-  const id = crypto.randomUUID(),
-    key = `reviews/${id}/submission.json`;
-  await store.put(key, value);
-  const active =
-    value.mode === "deep"
-      ? (value.profile.budget.deep ?? value.profile.budget.fast)
-      : value.profile.budget.fast;
-  const wall = parseWall(active.wall_time);
-  invariant(wall <= 3600000, "review wall budget exceeds one hour");
-  // The review and its lineage attachment (including a reset) commit together.
-  await c.env.DB.batch([
-    c.env.DB.prepare(
-      "INSERT INTO reviews(id,tenant,submission_key,status,created_at,token_limit,deadline) VALUES(?,?,?,'queued',?,?,?)",
-    ).bind(
-      id,
-      tenant,
-      key,
-      Date.now(),
-      active.tokens ?? 100000,
-      Date.now() + wall,
-    ),
-    ...(value.lineage
-      ? attachStatements(c.env, tenant, value.lineage, id, value.snapshot_id)
-      : []),
-  ]);
-  try {
-    await c.env.REVIEWS.create({
-      id,
-      params: { review_id: id, snapshot_key: snapshotRow.object_key },
-    });
-  } catch {
-    await c.env.DB.prepare(
-      "UPDATE reviews SET status='error',error='workflow creation failed' WHERE id=?",
-    )
-      .bind(id)
-      .run();
-    throw new Error("workflow creation failed");
-  }
+  const id = await createReview(c.env, tenant, value);
   return c.json({ id, status: "queued" }, 202);
+});
+// GitHub App webhooks (docs/github-app.md); the body is verified before parsing.
+app.post("/v1/hooks/github", async (c) =>
+  handleGitHubWebhook(
+    c.env,
+    c.req.raw.headers,
+    await bytes(c.req.raw, 26 * 1024 * 1024),
+  ),
+);
+app.all("/v1/hooks/gitlab", (c) =>
+  c.json(
+    { error: "GitLab integration is not available in this version of Rio" },
+    501,
+  ),
+);
+/** Owner-only routes that act with the GitHub App's own credentials. */
+async function owner(request: Request, env: Env) {
+  const tenant = await authenticate(request, env, "reviews:write");
+  invariant(tenant === "owner", "unauthorized");
+  return tenant;
+}
+// PR-mode readiness for `rio doctor` and `rio review --pr`.
+app.get("/v1/github/installation", async (c) => {
+  const tenant = await authenticate(c.req.raw, c.env, "reviews:read");
+  const configured = appSecrets(c.env) !== null;
+  const name = repositoryName(c.req.query("repository") ?? "");
+  invariant(name, "invalid repository: expected github.com/<owner>/<repo>");
+  const row = configured ? await installationFor(c.env, tenant, name) : null;
+  return c.json({
+    configured,
+    repository: name,
+    installed: row !== null,
+    ...(row ? { installation_id: row.id, account: row.account } : {}),
+  });
+});
+// `rio doctor --rotate`: the app's webhook secret, set with the App JWT. The
+// endpoint holds the private key; `restore` puts back its current secret.
+app.post("/v1/github/hook-config", async (c) => {
+  await owner(c.req.raw, c.env);
+  invariant(appSecrets(c.env), "no GitHub App is configured on this endpoint");
+  const value = await body(c.req.raw, 4096);
+  const secret =
+    value?.restore === true ? c.env.GITHUB_WEBHOOK_SECRET : value?.secret;
+  invariant(
+    typeof secret === "string" && /^[A-Za-z0-9_-]{32,128}$/.test(secret),
+    "invalid webhook secret",
+  );
+  try {
+    await appRequest(c.env, "PATCH", "/app/hook/config", { secret });
+  } catch (error) {
+    return c.json(
+      {
+        error:
+          `GitHub rejected the app webhook update (${error instanceof Error ? error.message : "error"})`.slice(
+            0,
+            200,
+          ),
+      },
+      502,
+    );
+  }
+  return c.json({ updated: true });
+});
+// `rio review --pr <n>`: the endpoint prepares and reviews the PR head.
+app.post("/v1/pulls", async (c) => {
+  const tenant = await authenticate(c.req.raw, c.env, "reviews:write"),
+    value = await body(c.req.raw, 4096);
+  invariant(
+    value &&
+      typeof value === "object" &&
+      Object.keys(value).every((k) =>
+        ["repository", "number", "publish"].includes(k),
+      ) &&
+      Number.isSafeInteger(value.number) &&
+      value.number >= 1 &&
+      (value.publish === undefined || typeof value.publish === "boolean"),
+    "invalid pull request request",
+  );
+  const name = repositoryName(String(value.repository ?? ""));
+  invariant(name, "invalid repository: expected github.com/<owner>/<repo>");
+  if (!appSecrets(c.env))
+    return c.json(
+      {
+        error:
+          "no GitHub App is configured on this endpoint; run rio init --github-app",
+      },
+      404,
+    );
+  const row = await installationFor(c.env, tenant, name);
+  if (!row)
+    return c.json(
+      {
+        error: `no GitHub App installation covers ${name}; install the app (rio init --github-app)`,
+      },
+      404,
+    );
+  const id = await requestReview(
+    c.env,
+    tenant,
+    row.id,
+    name,
+    value.number,
+    value.publish === true,
+  );
+  return c.json({ id, status: "preparing" }, 202);
+});
+// Consent to publish a finished `ask` review from the CLI.
+app.post("/v1/reviews/:id/publish", async (c) => {
+  const row = await reviewAccess(
+    c.req.raw,
+    c.env,
+    c.req.param("id"),
+    "reviews:write",
+  );
+  const pull = await pullOf(c.env, row.id);
+  if (!pull) return c.json({ error: "not a pull request review" }, 404);
+  invariant(
+    row.status === "complete" || row.status === "partial",
+    "review is not finished",
+  );
+  await c.env.DB.prepare("UPDATE pull_requests SET consent=1 WHERE review_id=?")
+    .bind(row.id)
+    .run();
+  await c.env.JOBS.send({ type: "publish", review_id: row.id });
+  return c.json({ id: row.id, status: "publishing" }, 202);
 });
 app.get("/v1/reviews/:id", async (c) => {
   const row = await reviewAccess(c.req.raw, c.env, c.req.param("id"));
@@ -564,86 +643,8 @@ app.post("/v1/findings/:id/feedback", async (c) => {
     "invalid actor",
   );
   if (value.lineage !== undefined) validateLineageRef(value.lineage, false);
-  const row = await (
-    value.lineage
-      ? c.env.DB.prepare(
-          "SELECT f.lineage_id,f.generation,f.review_id,f.repository,l.kind,l.ref FROM findings f JOIN lineages l ON l.id=f.lineage_id WHERE f.tenant=? AND f.identity=? AND f.lineage_id=? AND f.first_posted_in IS NOT NULL ORDER BY f.generation DESC LIMIT 1",
-        ).bind(tenant, id, lineageId(tenant, value.lineage))
-      : c.env.DB.prepare(
-          "SELECT f.lineage_id,f.generation,f.review_id,f.repository,l.kind,l.ref FROM findings f JOIN lineages l ON l.id=f.lineage_id WHERE f.tenant=? AND f.identity=? AND f.first_posted_in IS NOT NULL ORDER BY f.updated_at DESC,f.generation DESC LIMIT 1",
-        ).bind(tenant, id)
-  ).first<{
-    lineage_id: string;
-    generation: number;
-    review_id: string;
-    repository: string;
-    kind: string;
-    ref: string;
-  }>();
-  // Outside lineages the registry's last sighting is the finding answered.
-  const registry = row
-    ? null
-    : value.lineage
-      ? null
-      : await c.env.DB.prepare(
-          "SELECT repository,last_seen_review FROM finding_history WHERE tenant=? AND identity=? ORDER BY updated_at DESC LIMIT 1",
-        )
-          .bind(tenant, id)
-          .first<{ repository: string; last_seen_review: string }>();
-  if (!row && !registry) return c.json({ error: "finding not found" }, 404);
-  const response = {
-    reason: value.reason,
-    actor: value.actor ?? tenant,
-    at: new Date().toISOString(),
-    ...(value.note ? { note: value.note } : {}),
-  };
-  const repository = row?.repository ?? registry!.repository;
-  const dismissedIn = row
-    ? row.kind === "pr"
-      ? `${row.repository}#${row.ref}`
-      : row.review_id
-    : registry!.last_seen_review;
-  await c.env.DB.batch([
-    ...(row
-      ? [
-          c.env.DB.prepare(
-            "UPDATE findings SET status='dismissed',author_response_json=?,updated_at=? WHERE tenant=? AND lineage_id=? AND generation=? AND identity=?",
-          ).bind(
-            JSON.stringify(response),
-            Date.now(),
-            tenant,
-            row.lineage_id,
-            row.generation,
-            id,
-          ),
-        ]
-      : []),
-    // The answer is given on the code last seen: its hash becomes the
-    // dismissal's, and status_at tells running reviews not to overwrite it.
-    c.env.DB.prepare(
-      "UPDATE finding_history SET status='dismissed',author_response_json=?,dismissed_in=?,code_hash=COALESCE(seen_code_hash,code_hash),status_at=?,updated_at=? WHERE tenant=? AND repository=? AND identity=?",
-    ).bind(
-      JSON.stringify(response),
-      dismissedIn,
-      Date.now(),
-      Date.now(),
-      tenant,
-      repository,
-      id,
-    ),
-    c.env.DB.prepare(
-      "INSERT INTO feedback(id,tenant,repository,finding_id,reason,actor,note,created_at) VALUES(?,?,?,?,?,?,?,?)",
-    ).bind(
-      crypto.randomUUID(),
-      tenant,
-      repository,
-      id,
-      response.reason,
-      response.actor,
-      value.note ?? null,
-      Date.now(),
-    ),
-  ]);
+  const response = await recordFeedback(c.env, tenant, id, value);
+  if (!response) return c.json({ error: "finding not found" }, 404);
   return c.json({ id, status: "dismissed", author_response: response });
 });
 app.post("/v1/runner/claim", async (c) => {
@@ -660,15 +661,63 @@ app.post("/v1/runner/claim", async (c) => {
     .first<any>();
   if (!row) return c.json({ job: null });
   const payload = await new Store(c.env).get<Execution>(row.payload_key);
+  if (payload.kind !== "prepare" || !payload.prepare)
+    return c.json({
+      job: payload,
+      token: await jobToken(
+        c.env,
+        row.review_id,
+        row.id,
+        row.attempt,
+        Date.now() + 180000,
+      ),
+    });
+  // A prepare job gets its secrets at claim time only: an installation token
+  // (contents: read on one repository) for the clone phase, which the runner
+  // revokes after cloning, and the single-use prepare credential. Neither is stored.
+  const lease = Date.now() + PREPARE_WALL_MS + 60000;
+  await c.env.DB.prepare(
+    "UPDATE jobs SET lease_until=? WHERE id=? AND attempt=?",
+  )
+    .bind(lease, row.id, row.attempt)
+    .run();
+  const pull = await pullOf(c.env, row.review_id);
+  let github: InstallationToken;
+  try {
+    invariant(
+      pull && pull.state === "preparing",
+      "pull request review is not preparing",
+    );
+    github = await InstallationToken.mint(
+      c.env,
+      payload.prepare.installation_id,
+      payload.prepare.repository,
+      { contents: "read" },
+    );
+  } catch (error) {
+    await c.env.DB.prepare(
+      "UPDATE jobs SET status='failed' WHERE id=? AND attempt=?",
+    )
+      .bind(row.id, row.attempt)
+      .run();
+    if (pull?.state === "preparing")
+      await failPrepare(
+        c.env,
+        row.review_id,
+        `preparation failed: ${error instanceof Error ? error.message : "no installation token"}`.slice(
+          0,
+          300,
+        ),
+      );
+    return c.json({ job: null });
+  }
   return c.json({
     job: payload,
-    token: await jobToken(
-      c.env,
-      row.review_id,
-      row.id,
-      row.attempt,
-      Date.now() + 180000,
-    ),
+    token: await jobToken(c.env, row.review_id, row.id, row.attempt, lease),
+    prepare: {
+      github_token: github.secret(),
+      credential: await prepareCredential(c.env, row.review_id, pull!.tenant),
+    },
   });
 });
 // A self-hosted runner downloads exactly the executor input the Sandbox streams.
@@ -716,17 +765,43 @@ export { app };
 const JOB_DELIVERIES = 3;
 export default {
   fetch: app.fetch,
-  async queue(
-    batch: MessageBatch<{ review_id: string; job_id: string; attempt: number }>,
-    env: Env,
-  ) {
+  async queue(batch: MessageBatch<QueueMessage>, env: Env) {
     for (const message of batch.messages) {
+      const body = message.body;
+      if (body.type && body.type !== "job") {
+        // PR mode: GitHub is called here, never from the webhook handler. A
+        // failure is retried by the queue, never by GitHub's redelivery.
+        try {
+          if (body.type === "review-request")
+            await handleReviewRequest(env, body);
+          else if (body.type === "command") await handleCommand(env, body);
+          else if (body.type === "publish")
+            await publishFinished(env, body.review_id);
+          message.ack();
+        } catch (error) {
+          console.log(
+            `rio: ${body.type} failed: ${redact(error instanceof Error ? error.message : String(error)).slice(0, 300)}`,
+          );
+          if (message.attempts < JOB_DELIVERIES) {
+            message.retry({ delaySeconds: 10 });
+            continue;
+          }
+          if (body.type === "review-request" && body.review_id)
+            await failPrepare(
+              env,
+              body.review_id,
+              "pull request review request failed",
+            ).catch(() => {});
+          message.ack();
+        }
+        continue;
+      }
       if (env.RUNNER_BACKEND !== "sandbox") {
         message.ack();
         continue;
       }
       try {
-        const { review_id, job_id, attempt } = message.body,
+        const { review_id, job_id, attempt } = message.body as JobMessage,
           store = new Store(env);
         if (await store.cancelled(review_id)) {
           message.ack();
@@ -760,7 +835,7 @@ export default {
           continue;
         }
         try {
-          const { review_id, job_id, attempt } = message.body;
+          const { review_id, job_id, attempt } = message.body as JobMessage;
           await failJob(
             env,
             review_id,

@@ -395,6 +395,7 @@ fn footer(report: &Report) -> Vec<String> {
             cache.tokens_saved_estimate
         ));
     }
+    lines.extend(publication_footer(report));
     for suppression in &report.footer.suppressions {
         lines.push(format!(
             "Suppression {}: {} finding(s)",
@@ -405,6 +406,54 @@ fn footer(report: &Report) -> Vec<String> {
         lines.push(format!("{tool}: {version}"));
     }
     lines.push(format!("Total: {} ms", report.metrics.wall_time_ms));
+    lines
+}
+/// The publication outcome (pr-publishing): what reached the pull request.
+fn publication_footer(report: &Report) -> Vec<String> {
+    let Some(p) = &report.publication else {
+        return Vec::new();
+    };
+    let mut lines = Vec::new();
+    match p.reason {
+        Some(UnpublishedReason::PolicyNever) => lines.push(format!(
+            "Publication ({}): nothing published; the profile's publish policy is never",
+            label(&p.policy)
+        )),
+        Some(UnpublishedReason::AskWithoutConsent) => lines.push(format!(
+            "Publication ({}): {}; comments require `publish: auto` or `rio review --pr <n> --publish`",
+            label(&p.policy),
+            if p.check_run_url.is_some() {
+                "check run only"
+            } else {
+                "nothing published without consent"
+            }
+        )),
+        Some(UnpublishedReason::ForkNotEscalated) => lines.push(format!(
+            "Publication ({}): nothing published; a fork pull request needs a maintainer `/rio review`",
+            label(&p.policy)
+        )),
+        Some(UnpublishedReason::NoInstallation) => lines.push(format!(
+            "Publication ({}): nothing published; no GitHub App installation covers the repository",
+            label(&p.policy)
+        )),
+        None => lines.push(format!(
+            "Publication ({}): {} posted, {} edited, {} resolved, {} unanchored (in the summary), {} failed",
+            label(&p.policy),
+            p.posted,
+            p.edited,
+            p.resolved,
+            p.unanchored,
+            p.failed
+        )),
+    }
+    for failure in &p.failures {
+        lines.push(format!(
+            "Publication failed for {} {}: {}; retried on the next round",
+            label(&failure.kind),
+            failure.id,
+            failure.error
+        ));
+    }
     lines
 }
 fn proposal_entry(entry: &ProposalEntry) -> String {
@@ -684,6 +733,21 @@ fn header(report: &Report) -> Vec<String> {
             label(&mode),
             h.base.as_deref().unwrap_or("—"),
             h.head.as_deref().unwrap_or("—")
+        ));
+    }
+    if let Some(pr) = &h.pull_request {
+        lines.push(format!(
+            "Pull request: {}#{}  Head: {}  Author: {} ({}){}{}",
+            pr.repository,
+            pr.number,
+            pr.head_sha,
+            pr.author.login,
+            label(&pr.author.kind),
+            if pr.fork { "  Fork" } else { "" },
+            pr.agent
+                .as_ref()
+                .map(|a| format!("  Agent: {} ({})", a.name, label(&a.source)))
+                .unwrap_or_default()
         ));
     }
     if let Some(profile) = &h.profile {
