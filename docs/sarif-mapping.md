@@ -85,7 +85,7 @@ One result per finding entry, in this order: `findings`, then `risks`, then `sec
 | `level` | notification | `warning` |
 | `descriptor` | notification | `{ "id": <check kind> }` |
 | `id` | `descriptor` | the check kind (`typecheck`, `lint`, `secrets`, `coverage`, `dependencies`) |
-| `message` | notification | `{ "text": "<kind> <root> <version>: <outcome> (<reason>)" }`, followed by ` — <hint>` when the check has a hint |
+| `message` | notification | `{ "text": "<kind> <root> <version>: <outcome> (<reason>)" }`, followed by ` — <hint>` when the check has a non-empty hint |
 | `properties` | invocation | `{ "error": { "code", "message" } }` when the report `status` is `error`; omitted otherwise |
 | `error` | invocation `properties` | the report's `error.code` and `error.message` |
 | `code` | `error` | `error.code` |
@@ -108,7 +108,7 @@ When the report `status` is `error`, the log still has one run. The run has `"re
 | Case | Shows |
 | --- | --- |
 | `complete-review` | tool and agent defects, a class finding with several locations, a verified finding, a `fixed` entry (`absent`) and an omitted `pre-existing` entry |
-| `risks-and-plausible` | `risks` entries and plausible security entries as `note`, a static-proven security entry as `error`, an `unclassified` entry without `baselineState`, a skipped check as a warning notification |
+| `risks-and-plausible` | `risks` entries and plausible security entries as `note`, a static-proven security entry as `error`, an `unclassified` entry without `baselineState`, skipped checks as warning notifications (one with an empty hint, which adds no ` — `) |
 | `lineage-history` | a round 2 lineage review: lifecycle status, author response, history, `round` on results and `rio.lineage` and the risk tier on the run |
 | `error-status` | a review that could not start: no results, `executionSuccessful` false, exit code 3 and the error in the invocation properties |
 

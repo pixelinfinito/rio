@@ -296,6 +296,7 @@ fn footer(report: &Report) -> Vec<String> {
                 .details()
                 .hint
                 .as_ref()
+                .filter(|hint| !hint.is_empty())
                 .map(|hint| format!(" — {hint}"))
                 .unwrap_or_default()
         ));

@@ -168,7 +168,7 @@ pub fn render_sarif(report: &Report, inputs: &SarifInputs) -> Result<Vec<u8>, St
                         check.root,
                         crate::label(&check.version),
                         outcome_label(&check.outcome),
-                        check.outcome.details().hint.as_ref().map(|hint| format!(" — {hint}")).unwrap_or_default()
+                        check.outcome.details().hint.as_ref().filter(|hint| !hint.is_empty()).map(|hint| format!(" — {hint}")).unwrap_or_default()
                     )},
                 })
             })

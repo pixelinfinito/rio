@@ -250,6 +250,15 @@
               "message": {
                 "text": "lint . head: skipped (tool_missing) — install eslint in the project"
               }
+            },
+            {
+              "level": "warning",
+              "descriptor": {
+                "id": "coverage"
+              },
+              "message": {
+                "text": "coverage . head: skipped (no_tests)"
+              }
             }
           ]
         }
