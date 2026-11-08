@@ -54,7 +54,7 @@ import { consolidate, type Verified } from "./consolidate";
 import { createJob } from "./jobs";
 import {
   applyHistory,
-  codeHash,
+  findingHash,
   loadRecords,
   origin,
   registryStatements,
@@ -63,7 +63,7 @@ import {
 import { updateProposals } from "./proposals";
 import {
   changeHunks,
-  contextHash,
+  context as cacheContext,
   expire,
   hunkHash,
   lookup,
@@ -227,10 +227,15 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
       store = new Store(this.env);
     const load = await step.do("load", async () => {
       const row = await this.env.DB.prepare(
-        "SELECT submission_key,deadline,tenant FROM reviews WHERE id=?",
+        "SELECT submission_key,deadline,tenant,created_at FROM reviews WHERE id=?",
       )
         .bind(id)
-        .first<{ submission_key: string; deadline: number; tenant: string }>();
+        .first<{
+          submission_key: string;
+          deadline: number;
+          tenant: string;
+          created_at: number;
+        }>();
       invariant(row, "review not found");
       await this.env.DB.prepare(
         "UPDATE reviews SET status='running' WHERE id=? AND cancelled=0",
@@ -317,7 +322,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
         const job = hash(
           attempt === 1 ? `${id}-${name}` : `${id}-${name}-${attempt}`,
         ).slice(0, 32);
-                await step.do(`dispatch-${job}`, async () => {
+        await step.do(`dispatch-${job}`, async () => {
           await createJob(
             this.env,
             id,
@@ -534,7 +539,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             !submission.fork &&
             s.with.cache !== false;
           let keyed: Keyed[] = [],
-            misses: Keyed[] = [];
+            misses: number[] = [];
           let scope = reviewed;
           if (caching) {
             const read = (version: Version, path: string) =>
@@ -547,7 +552,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
                   keys.push({
                     hunk,
                     hunk_hash: hunkHash(hunk),
-                    context_hash: await contextHash(hunk, {
+                    ...(await cacheContext(hunk, {
                       agent,
                       manifest_version: agents[agent]?.version ?? 0,
                       prompt:
@@ -559,7 +564,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
                       guidance: submission.owner_guidance,
                       read,
                       base_graph: !diffOnly,
-                    }),
+                    })),
                   });
                 const hits = await lookup(this.env, load.tenant, keys);
                 return store.put(`reviews/${id}/cache/${s.id}-${agent}.json`, {
@@ -587,11 +592,11 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
                 if (h.catalog_item) catalogOf.set(h.id, h.catalog_item);
               }
             }
-            misses = keyed.filter((_, i) => !(i in found.hits));
+            misses = keyed.flatMap((_, i) => (i in found.hits ? [] : [i]));
             // Every hunk was a hit: no model call for this agent.
             if (keyed.length && !misses.length) continue;
             if (misses.length < keyed.length) {
-              const paths = new Set(misses.map((k) => k.hunk.path));
+              const paths = new Set(misses.map((i) => keyed[i].hunk.path));
               scope = {
                 ...reviewed,
                 changed: reviewed.changed.filter((f) => paths.has(f.path)),
@@ -756,6 +761,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
                 this.env,
                 load.tenant,
                 agent,
+                keyed,
                 misses,
                 screened.accepted,
                 used?.tokens ?? 0,
@@ -1045,7 +1051,10 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           ];
           const files = await materialize(
             snapshot.head,
-            produced.map((f) => f.location.path),
+            produced.flatMap((f) => [
+              f.location.path,
+              ...f.locations.map((l: any) => l.path),
+            ]),
           );
           const text = (path: string) =>
             files[path] && !files[path].encoding ? files[path].content : null;
@@ -1057,10 +1066,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
               produced.map((f) => f.id),
             ),
             hashes: Object.fromEntries(
-              produced.map((f) => [
-                f.id,
-                codeHash(f.location, graphs.head, text(f.location.path)),
-              ]),
+              produced.map((f) => [f.id, findingHash(f, graphs.head, text)]),
             ),
           });
         });
@@ -1105,6 +1111,38 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           })
         : null;
       const key = await store.put(`reviews/${id}/report.json`, report);
+      // The registry is written in its own durable step, so a later failure
+      // never replays it; its statements are idempotent per review anyway.
+      await step.do("registry", async () => {
+        if (repository) {
+          const groups = registryStatements(
+            this.env,
+            load.tenant,
+            repository,
+            id,
+            load.created_at,
+            origin(lineage, id),
+            [
+              ...report.findings,
+              ...report.risks,
+              ...(report.security ?? []),
+              ...(report.remembered ?? []),
+            ].map((finding: any) => ({
+              finding,
+              code_hash: hashes[finding.id] ?? null,
+            })),
+            records,
+            (outcome?.updates ?? [])
+              .filter((u) => u.status === "fixed")
+              .map((u) => u.id),
+          );
+          // An identity's statements always share one batch.
+          for (let i = 0; i < groups.length; i += 25)
+            await this.env.DB.batch(groups.slice(i, i + 25).flat());
+        }
+        await expire(this.env, load.tenant);
+        return true;
+      });
       await step.do("finish", async () => {
         await this.env.DB.prepare(
           "UPDATE reviews SET status=?,report_key=? WHERE id=?",
@@ -1121,31 +1159,6 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
               submission.intent,
             ),
           );
-        if (repository) {
-          const statements = registryStatements(
-            this.env,
-            load.tenant,
-            repository,
-            id,
-            origin(lineage, id),
-            [
-              ...report.findings,
-              ...report.risks,
-              ...(report.security ?? []),
-              ...(report.remembered ?? []),
-            ].map((finding: any) => ({
-              finding,
-              code_hash: hashes[finding.id] ?? null,
-            })),
-            records,
-            (outcome?.updates ?? [])
-              .filter((u) => u.status === "fixed")
-              .map((u) => ({ id: u.id, code_hash: null })),
-          );
-          for (let i = 0; i < statements.length; i += 50)
-            await this.env.DB.batch(statements.slice(i, i + 50));
-        }
-        await expire(this.env, load.tenant);
         await store.event(
           id,
           report.status === "partial" ? "review:partial" : "review:done",

@@ -10,6 +10,7 @@ import agentPrompts from "../src/agent-prompts.json";
 import { agents } from "../src/manifests";
 import {
   EVIDENCE_RETENTION_MS,
+  context,
   contextHash,
   diffHunks,
   expire,
@@ -47,21 +48,87 @@ describe("hunks and keys", () => {
     expect(hunkHash({ ...moved, path: "y.ts" })).not.toBe(hunkHash(hunks[0]));
   });
 
-  it("slices a completed run per hunk, every hunk getting an entry", () => {
-    const keys = [
+  it("stores only missed hunks, never a hit hunk's hypotheses, and nothing it could not replay", () => {
+    const keys: Keyed[] = [
       ...diffHunks("a.ts", "a.ts", "1\n2\n3\n4\n5\n6\n", "1\nX\n3\n4\n5\nY\n"),
       ...diffHunks("b.ts", "b.ts", "1\n", "2\n"),
-    ].map((hunk) => ({ hunk, hunk_hash: "", context_hash: "" }));
-    const at = (path: string, line: number) =>
+    ].map((hunk) => ({
+      hunk,
+      hunk_hash: "",
+      context_hash: "",
+      covered: [{ path: hunk.path }],
+    }));
+    const at = (path: string, line: number, ...cited: [string, number][]) =>
       ({
         id: `${path}:${line}`,
         location: { path, line_start: line, line_end: line },
+        locations: cited.map(([p, l]) => ({
+          path: p,
+          line_start: l,
+          line_end: l,
+        })),
       }) as any;
-    const sliced = slice(keys, [at("a.ts", 2), at("a.ts", 5), at("c.ts", 1)]);
-    expect(sliced.map((list) => list.map((h) => h.id))).toEqual([
-      ["a.ts:2", "c.ts:1"],
-      ["a.ts:5"],
-      [],
+    const ids = (m: Map<number, any[]>) =>
+      [...m].map(([i, list]) => [i, list.map((h) => h.id)]);
+    // Every hunk missed: one entry each, the empty one included.
+    expect(ids(slice(keys, [0, 1, 2], [at("a.ts", 2), at("a.ts", 5)]))).toEqual(
+      [
+        [0, ["a.ts:2"]],
+        [1, ["a.ts:5"]],
+        [2, []],
+      ],
+    );
+    // Hunk 0 hit: its file was reviewed again, but the hypothesis in it is not
+    // stored under the missed hunk 1 of the same file.
+    expect(ids(slice(keys, [1, 2], [at("a.ts", 2), at("a.ts", 6)]))).toEqual([
+      [1, ["a.ts:6"]],
+      [2, []],
+    ]);
+    // A hypothesis in no changed file: the run cannot be replayed per hunk.
+    expect(slice(keys, [0, 1, 2], [at("a.ts", 2), at("c.ts", 1)]).size).toBe(0);
+    // A cited location outside the regions the context fixes drops that hunk.
+    expect(ids(slice(keys, [0, 1, 2], [at("a.ts", 2, ["c.ts", 4])]))).toEqual([
+      [1, []],
+      [2, []],
+    ]);
+  });
+
+  it("keys symbol positions, so a moved symbol misses", async () => {
+    const at = (start: number): Graph => ({
+      nodes: [
+        {
+          id: "a",
+          path: "a.ts",
+          symbol_path: "a",
+          line_start: start,
+          line_end: start + 2,
+        },
+      ],
+      edges: [],
+    });
+    const before = "function a() {\n  return 0;\n}\n",
+      after = "function a() {\n  return 1;\n}\n";
+    const inputs = (graph: Graph, text: string): ContextInputs => ({
+      agent: "correctness",
+      manifest_version: 1,
+      prompt: "",
+      model: "m",
+      options: {},
+      engine: "e",
+      graphs: { base: graph, head: graph },
+      guidance: [],
+      read: async () => text,
+      base_graph: true,
+    });
+    const [hunk] = diffHunks("a.ts", "a.ts", before, after);
+    const [moved] = diffHunks("a.ts", "a.ts", "\n" + before, "\n" + after);
+    expect(hunkHash(moved)).toBe(hunkHash(hunk));
+    const here = await context(hunk, inputs(at(1), after));
+    const there = await context(moved, inputs(at(2), "\n" + after));
+    expect(there.context_hash).not.toBe(here.context_hash);
+    expect(here.covered).toEqual([
+      { path: "a.ts", line_start: 1, line_end: 3 },
+      { path: "a.ts", line_start: 1, line_end: 3 },
     ]);
   });
 
@@ -502,6 +569,60 @@ describe("agent result cache", () => {
     );
     expect(run.report.cache).toMatchObject({ lookups: 2, hits: 0 });
     expect(await entries()).toBe(before);
+  }, 240000);
+});
+
+describe("agent result cache within one file", () => {
+  it("does not store a hit hunk's fresh hypotheses under the missed hunk of the same file", async () => {
+    const file = "src/mixed/m.ts";
+    const text = (f: string, g: string) =>
+      `function f() {\n  return ${f}; // mixed\n}\nfunction g() {\n  return ${g};\n}\n`;
+    const graph: Graph = {
+      nodes: [
+        { id: "f", path: file, symbol_path: "f", line_start: 1, line_end: 3 },
+        { id: "g", path: file, symbol_path: "g", line_start: 4, line_end: 6 },
+      ],
+      edges: [],
+    };
+    const base = { [file]: text("0", "0") };
+    await review({
+      files: { base, head: { [file]: text("1", "1") } },
+      graph,
+      agent: () => [
+        hyp(file, 2, "f", "correctness/f1"),
+        hyp(file, 5, "g", "correctness/g1"),
+      ],
+    });
+    const second = await review({
+      files: { base, head: { [file]: text("1", "2") } },
+      graph,
+      agent: () => [
+        hyp(file, 2, "f", "correctness/fresh"),
+        hyp(file, 5, "g", "correctness/g2"),
+      ],
+    });
+    expect(second.report.cache).toMatchObject({ lookups: 2, hits: 1 });
+    const rules = (report: any) =>
+      reported(report)
+        .map((f: any) => `${f.rule_id}${f.source.cached ? " (cached)" : ""}`)
+        .sort();
+    expect(rules(second.report)).toEqual([
+      "correctness/f1 (cached)",
+      "correctness/fresh",
+      "correctness/g2",
+    ]);
+    const third = await review({
+      files: { base, head: { [file]: text("1", "2") } },
+      graph,
+      agent: () => {
+        throw new Error("no model call expected");
+      },
+    });
+    expect(third.calls).not.toContain("agent");
+    expect(rules(third.report)).toEqual([
+      "correctness/f1 (cached)",
+      "correctness/g2 (cached)",
+    ]);
   }, 240000);
 });
 

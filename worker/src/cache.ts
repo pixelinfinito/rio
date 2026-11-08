@@ -124,7 +124,25 @@ export async function contextHash(
   h: Hunk,
   inputs: ContextInputs,
 ): Promise<string> {
+  return (await context(h, inputs)).context_hash;
+}
+/**
+ * A region whose content and position the context hash fixes: a symbol, or a
+ * whole file where no symbol encloses the hunk. A replayed hypothesis is valid
+ * only if every location it cites lies in such a region.
+ */
+export interface Region {
+  path: string;
+  // Absent for a whole file.
+  line_start?: number;
+  line_end?: number;
+}
+export async function context(
+  h: Hunk,
+  inputs: ContextInputs,
+): Promise<{ context_hash: string; covered: Region[] }> {
   const parts: string[] = [];
+  const covered: Region[] = [];
   for (const version of ["base", "head"] as const) {
     const path = version === "base" ? h.old_path : h.path;
     const graph = inputs.graphs[version];
@@ -135,6 +153,7 @@ export async function contextHash(
     if (!enclosing.length) {
       const text = await inputs.read(version, path);
       parts.push(`${version}:${path}:file:${text === null ? "-" : hash(text)}`);
+      covered.push({ path });
       continue;
     }
     const ids = new Set(enclosing.map((n) => n.id));
@@ -150,7 +169,16 @@ export async function contextHash(
         .get(n.path)!
         .slice(n.line_start - 1, n.line_end)
         .join("\n");
-      parts.push(`${version}:${n.path}:${n.symbol_path}:${hash(body)}`);
+      // Positions are part of the key: a moved symbol must not replay
+      // hypotheses at its old lines.
+      parts.push(
+        `${version}:${n.path}:${n.symbol_path}:${n.line_start}-${n.line_end}:${hash(body)}`,
+      );
+      covered.push({
+        path: n.path,
+        line_start: n.line_start,
+        line_end: n.line_end,
+      });
     }
   }
   const guidance = inputs.guidance
@@ -161,24 +189,35 @@ export async function contextHash(
         h.path.startsWith(`${g.scope_dir}/`),
     )
     .map((g) => `${g.path}:${g.content_hash}`);
-  return hash(
-    canonical({
-      agent: inputs.agent,
-      manifest_version: inputs.manifest_version,
-      prompt: hash(inputs.prompt),
-      model: inputs.model,
-      options: inputs.options ?? {},
-      engine: inputs.engine,
-      symbols: parts.sort(),
-      guidance: guidance.sort(),
-    }),
-  );
+  return {
+    context_hash: hash(
+      canonical({
+        agent: inputs.agent,
+        manifest_version: inputs.manifest_version,
+        prompt: hash(inputs.prompt),
+        model: inputs.model,
+        options: inputs.options ?? {},
+        engine: inputs.engine,
+        symbols: parts.sort(),
+        guidance: guidance.sort(),
+      }),
+    ),
+    covered,
+  };
 }
+const inside = (l: Hypothesis["location"], regions: Region[]) =>
+  regions.some(
+    (r) =>
+      r.path === l.path &&
+      (r.line_start === undefined ||
+        (l.line_start >= r.line_start && l.line_end <= r.line_end!)),
+  );
 
 export interface Keyed {
   hunk: Hunk;
   hunk_hash: string;
   context_hash: string;
+  covered?: Region[];
 }
 export interface CacheEntry {
   agent: string;
@@ -254,34 +293,59 @@ export async function expire(
 }
 
 /**
- * Slices a completed run's hypotheses by primary location: into the hunk that
- * contains it, else the nearest hunk of the same file, else the first hunk.
- * Every hunk gets an entry, possibly empty.
+ * Assigns each hypothesis, by primary location, to the hunk containing it or
+ * else the nearest hunk of the same file; `-1` when no hunk is in its file.
  */
-export function slice(keys: Keyed[], hypotheses: Hypothesis[]): Hypothesis[][] {
-  const out = keys.map(() => [] as Hypothesis[]);
-  if (!keys.length) return out;
-  for (const h of hypotheses) {
-    const { path, line_start, line_end } = h.location;
-    let best = -1,
-      distance = Infinity;
-    for (const [i, k] of keys.entries()) {
-      if (k.hunk.path !== path) continue;
-      const start = k.hunk.head.start,
-        end = start + Math.max(k.hunk.head.count, 1) - 1;
-      const d =
-        line_end < start
-          ? start - line_end
-          : line_start > end
-            ? line_start - end
-            : 0;
-      if (d < distance) {
-        best = i;
-        distance = d;
-      }
+export function attribute(keys: Keyed[], h: Hypothesis): number {
+  const { path, line_start, line_end } = h.location;
+  let best = -1,
+    distance = Infinity;
+  for (const [i, k] of keys.entries()) {
+    if (k.hunk.path !== path) continue;
+    const start = k.hunk.head.start,
+      end = start + Math.max(k.hunk.head.count, 1) - 1;
+    const d =
+      line_end < start
+        ? start - line_end
+        : line_start > end
+          ? line_start - end
+          : 0;
+    if (d < distance) {
+      best = i;
+      distance = d;
     }
-    out[best < 0 ? 0 : best].push(h);
   }
+  return best;
+}
+/**
+ * The entries a completed run may write: for each missed hunk (index into
+ * `keys`, which holds every hunk of the change, hits included) the hypotheses
+ * attributed to it. Hypotheses attributed to a hit hunk are not stored. A hunk
+ * whose hypotheses cite a location outside the regions its context fixes gets
+ * no entry, and a hypothesis in no changed file means the run cannot be
+ * replayed per hunk at all, so nothing is written.
+ */
+export function slice(
+  keys: Keyed[],
+  missed: number[],
+  hypotheses: Hypothesis[],
+): Map<number, Hypothesis[]> {
+  const out = new Map(missed.map((i) => [i, [] as Hypothesis[]]));
+  const unsafe = new Set<number>();
+  for (const h of hypotheses) {
+    const i = attribute(keys, h);
+    if (i < 0) return new Map();
+    const list = out.get(i);
+    if (!list) continue;
+    list.push(h);
+    const regions = keys[i].covered;
+    if (
+      regions &&
+      ![h.location, ...(h.locations ?? [])].every((l) => inside(l, regions))
+    )
+      unsafe.add(i);
+  }
+  for (const i of unsafe) out.delete(i);
   return out;
 }
 
@@ -290,18 +354,20 @@ export async function store(
   tenant: string,
   agent: string,
   keys: Keyed[],
+  missed: number[],
   hypotheses: Hypothesis[],
   tokens: number,
   now = Date.now(),
 ) {
-  const sliced = slice(keys, hypotheses);
-  const share = keys.length ? Math.floor(tokens / keys.length) : 0;
-  for (const [i, k] of keys.entries()) {
+  const sliced = slice(keys, missed, hypotheses);
+  const share = missed.length ? Math.floor(tokens / missed.length) : 0;
+  for (const [i, list] of sliced) {
+    const k = keys[i];
     const key = objectKey(tenant, k);
     const entry: CacheEntry = {
       agent,
       hunk: { path: k.hunk.path, head: k.hunk.head },
-      hypotheses: sliced[i].map((h) => ({ ...h, source: { agent } })),
+      hypotheses: list.map((h) => ({ ...h, source: { agent } })),
       tokens: share,
       created_at: now,
     };
@@ -314,6 +380,7 @@ export async function store(
       .bind(tenant, k.hunk_hash, k.context_hash, key, now)
       .run();
   }
+  return sliced.size;
 }
 
 /** Every changed hunk of the reviewed change, in path order. */
