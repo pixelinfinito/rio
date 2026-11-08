@@ -11,6 +11,13 @@ import { invariant } from "./validation";
 import { agents } from "./manifests";
 import hypothesisSchema from "../../schemas/hypothesis-v1.json";
 import voteSchema from "../../schemas/vote-answer-v1.json";
+/**
+ * Output tokens offered per model turn. Reasoning models spend output tokens on
+ * their reasoning before the visible reply, and a long hypotheses list runs past
+ * 4k: the v0.2 comparison saw turns that returned 4096 tokens and no text, or a
+ * JSON document cut mid-way. The reservation still bounds the actual spend.
+ */
+const MAX_OUTPUT_TOKENS = 16384;
 /** Pause before the single retry of a transient provider failure. */
 const RETRY_DELAY_MS = 2000;
 const BUILT_IN = ["anthropic", "openai", "openrouter"];
@@ -434,7 +441,7 @@ export async function converse(options: {
         await o.ledger.remaining(),
       );
       invariant(available > inputBound + 16, "token budget exhausted");
-      const output = Math.min(4096, available - inputBound);
+      const output = Math.min(MAX_OUTPUT_TOKENS, available - inputBound);
       const reservation = await o.ledger.reserve(
         o.actor,
         o.phase,
