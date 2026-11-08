@@ -25,6 +25,18 @@
       "hint": "install eslint in the project",
       "findings": [],
       "wall_time_ms": 3
+    },
+    {
+      "kind": "coverage",
+      "language": "typescript",
+      "root": ".",
+      "version": "head",
+      "scheduled_as": "changed",
+      "outcome": "skipped",
+      "reason": "no_tests",
+      "hint": "",
+      "findings": [],
+      "wall_time_ms": 2
     }
   ],
   "impact": {
@@ -128,6 +140,18 @@
       "hint": "install eslint in the project",
       "findings": [],
       "wall_time_ms": 3
+    },
+    {
+      "kind": "coverage",
+      "language": "typescript",
+      "root": ".",
+      "version": "head",
+      "scheduled_as": "changed",
+      "outcome": "skipped",
+      "reason": "no_tests",
+      "hint": "",
+      "findings": [],
+      "wall_time_ms": 2
     }
   ],
   "deferred": [],

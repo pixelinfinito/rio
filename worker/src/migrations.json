@@ -58,5 +58,17 @@
       "CREATE TABLE IF NOT EXISTS agent_cache (tenant TEXT NOT NULL, hunk_hash TEXT NOT NULL, context_hash TEXT NOT NULL, object_key TEXT NOT NULL, created_at INTEGER NOT NULL, last_hit INTEGER, PRIMARY KEY(tenant,hunk_hash,context_hash))",
       "CREATE INDEX IF NOT EXISTS agent_cache_retention ON agent_cache(tenant,created_at)"
     ]
+  },
+  {
+    "name": "0005_registry_integrity.sql",
+    "statements": [
+      "ALTER TABLE finding_history ADD COLUMN seen_code_hash TEXT",
+      "ALTER TABLE finding_history ADD COLUMN first_seen_at INTEGER",
+      "ALTER TABLE finding_history ADD COLUMN last_seen_at INTEGER",
+      "ALTER TABLE finding_history ADD COLUMN status_at INTEGER",
+      "CREATE TABLE IF NOT EXISTS finding_sightings (tenant TEXT NOT NULL, repository TEXT NOT NULL, identity TEXT NOT NULL, review_id TEXT NOT NULL, seen_at INTEGER NOT NULL, PRIMARY KEY(tenant,repository,identity,review_id))",
+      "ALTER TABLE feedback ADD COLUMN repository TEXT",
+      "CREATE INDEX IF NOT EXISTS feedback_repository ON feedback(tenant,repository,created_at)"
+    ]
   }
 ]

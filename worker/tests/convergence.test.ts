@@ -122,8 +122,10 @@ interface Round {
   // Called once the workflow is running, for runner-backed steps.
   during?: (id: string, instance: any) => Promise<void>;
 }
+// The scripted agents answer differently for identical hunks across rounds;
+// the agent result cache (tested in cache.test.ts) would replay them.
 const agentSteps = [
-  { id: "agents", uses: "rio/agents@0.1.0", needs: [], with: {} },
+  { id: "agents", uses: "rio/agents@0.1.0", needs: [], with: { cache: false } },
   { id: "verify", uses: "rio/verify@0.1.0", needs: ["agents"], with: {} },
 ];
 async function review(round: Round) {
@@ -1289,7 +1291,34 @@ describe("end-to-end lineage", () => {
       })),
     });
     validLineageReport(report);
+    // Finding history and the cache object are v0.3 additions with their own
+    // tests; the pinned document is the v0.2 convergence contract. A
+    // dismissal from this lineage is never remembered by the registry: the
+    // dismissed type error stays in the report, with its history.
+    const all = [...report.findings, ...report.risks];
+    expect(all.find((f: any) => f.id === typeError.id).history).toMatchObject({
+      previous_status: "dismissed",
+      previous_response: { reason: "intentional" },
+    });
+    expect(all.find((f: any) => f.id === idOf(ha)).history).toMatchObject({
+      previous_status: "open",
+      seen_count: 3,
+    });
+    expect(report.remembered).toBeUndefined();
+    expect(report.cache).toEqual({
+      lookups: 0,
+      hits: 0,
+      hit_rate: null,
+      tokens_saved_estimate: 0,
+    });
     const pinned = normalize(report);
+    delete pinned.cache;
+    for (const list of [
+      pinned.findings,
+      pinned.risks,
+      ...pinned.checks.map((c: any) => c.findings),
+    ])
+      for (const f of list ?? []) delete f.history;
     expect(pinned).toEqual(lineageRound4);
     expect(() => validateReport(lineageRound4)).not.toThrow();
   }, 240000);

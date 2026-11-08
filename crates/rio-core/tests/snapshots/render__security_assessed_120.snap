@@ -12,9 +12,11 @@ Risk tier: high (sensitive_path: src/auth/**)
 
 Deterministic results
   lint . (typescript, head, changed): skipped (tool_missing) — 3 ms
+  coverage . (typescript, head, changed): skipped (no_tests) — 2 ms
 
 Findings
-1 finding(s); 1 risk(s). Review incomplete: lint .: skipped (tool_missing) did not complete.
+1 finding(s); 1 risk(s). Review incomplete: lint .: skipped (tool_missing), coverage .: skipped (no_tests) did not
+complete.
   correctness/off-by-one [unclassified; error; static_proven]
     src/page.ts:41 (paginate) [unclassified]
     The last page is skipped.
@@ -48,5 +50,6 @@ Not applicable: A03:2025 Software Supply Chain Failures
 
 Footer
 lint . head: skipped (tool_missing) — install eslint in the project
+coverage . head: skipped (no_tests)
 Security catalog owasp-top10-2025: 2 item(s) assessed (A01:2025, A05:2025); 1 not assessed: A07:2025 (budget).
 Total: 105 ms

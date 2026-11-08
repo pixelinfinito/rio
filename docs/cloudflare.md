@@ -278,7 +278,8 @@ vote, execution and report output is redacted using the deterministic secrets
 catalog. R2 publication is atomic; D1 pointers are written only after object PUT.
 The local cache stores the downloaded vote audit under `verification/audit.json`,
 with the existing private/atomic run-cache rules. Risk tier is advisory and creates
-no approval or successful PR check. No publisher or SARIF output ships here.
+no approval or successful PR check. No publisher ships here; `GET /v1/reviews/:id/report?format=sarif`
+returns the report as SARIF 2.1.0 (see [finding history, proposals, SARIF and the agent cache](finding-history.md)).
 
 For live acceptance, deploy to a test account, run a review with both supported
 runner backends, interrupt/reconnect, inspect the vote audit and cost ledger, then

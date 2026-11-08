@@ -659,6 +659,13 @@
         "additionalProperties": false
       }
     },
+    "remembered": {
+      "description": "Findings removed from the main sections as remembered dismissals: the repository registry records them dismissed intentional, irrelevant or style on an unchanged enclosing symbol. Each carries its history block; never consulted by fail policies.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/finding"
+      }
+    },
     "security_coverage": {
       "description": "Catalog coverage of the security step; present when the security step ran.",
       "type": "object",
@@ -1166,6 +1173,11 @@
               "type": "string",
               "minLength": 1,
               "description": "Review id or pull request reference where the identity was dismissed."
+            },
+            "fixed_in": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Review id that recorded the identity fixed; present when previous_status is fixed, so a recurrence reads as a regression of that fix."
             }
           },
           "required": [

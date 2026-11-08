@@ -1,0 +1,20 @@
+{
+  "contracts": {
+    "1": "f1b8c1d787de6ebf8cfcbb62872694c2886d91de1373cfa410b48efae493b1f3"
+  },
+  "correctness": {
+    "1": "af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262"
+  },
+  "performance": {
+    "1": "af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262"
+  },
+  "security": {
+    "1": "9baf753cf4bb4d1d233134ac1873baed6f82b78b0c397bf21062520b076c00d5"
+  },
+  "tests": {
+    "1": "af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262"
+  },
+  "verifier": {
+    "1": "af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262"
+  }
+}

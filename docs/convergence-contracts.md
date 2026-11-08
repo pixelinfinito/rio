@@ -97,11 +97,13 @@ It returns HTTP 404 when no lineage exists for the tenant.
 - `reason` is one of `fixed | wrong | intentional | irrelevant | style`;
   anything else is HTTP 400.
 - `lineage` is optional; without it the most recent posted finding with that id
-  for the tenant is answered. No match is HTTP 404.
+  for the tenant is answered, and without a posted lineage finding the identity's
+  latest record in the repository finding registry
+  ([finding history](finding-history.md)). No match is HTTP 404.
 - The response is `{ "id", "status": "dismissed", "author_response" }`, where
   `author_response` is `{ reason, actor, at, note? }`. A dismissal never changes
   posture, budgets, rules or suppressions.
 - `actor` is optional and defaults to the token's tenant; `note` is at most 4000
-  characters. Only posted findings (with `first_posted_in`) can be answered; a
-  finding of another tenant is HTTP 404. A later review that reproduces a
+  characters. Only posted lineage findings (with `first_posted_in`) or registry
+  records can be answered; a finding of another tenant is HTTP 404. A later review that reproduces a
   dismissed identity keeps it `dismissed` with its `author_response`.

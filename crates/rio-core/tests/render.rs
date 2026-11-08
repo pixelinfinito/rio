@@ -500,3 +500,142 @@ fn security_catalog_coverage_renders_in_section_and_footer_of_every_format() {
     let json: serde_json::Value = serde_json::from_slice(&render_json(&none).unwrap()).unwrap();
     assert!(json.get("security_coverage").is_none());
 }
+
+/// A review with a recurring `wrong` finding, a regression of a fixed finding,
+/// two remembered dismissals, one open proposal and agent cache use.
+fn history_run() -> Report {
+    let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../../tests/fixtures/sarif/lineage-history/report.json");
+    let mut report: Report = serde_json::from_slice(&std::fs::read(path).unwrap()).unwrap();
+    report.lineage = None;
+    let mut regression = report.findings[0].clone();
+    regression.id = "6".repeat(64);
+    regression.rule_id = "correctness/stale-read".into();
+    regression.status = None;
+    regression.round = None;
+    regression.first_posted_in = None;
+    regression.history = Some(FindingHistory {
+        first_seen: "rev-1".into(),
+        last_seen: "rev-1".into(),
+        seen_count: 1,
+        previous_status: LifecycleStatus::Fixed,
+        previous_response: None,
+        dismissed_in: None,
+        fixed_in: Some("rev-2".into()),
+    });
+    let mut remembered = report.findings.remove(1);
+    remembered.status = None;
+    remembered.author_response = None;
+    remembered.round = None;
+    remembered.first_posted_in = None;
+    remembered.history = Some(FindingHistory {
+        first_seen: "rev-1".into(),
+        last_seen: "rev-2".into(),
+        seen_count: 2,
+        previous_status: LifecycleStatus::Dismissed,
+        previous_response: Some(AuthorResponse {
+            reason: ResponseReason::Intentional,
+            actor: "maintainer".into(),
+            at: "2026-11-01T09:00:00Z".into(),
+            note: None,
+        }),
+        dismissed_in: Some("github.com/acme/api#41".into()),
+        fixed_in: None,
+    });
+    let mut second = remembered.clone();
+    second.id = "7".repeat(64);
+    second.location.line_start = 30;
+    second.location.line_end = 30;
+    second.locations = vec![second.location.clone()];
+    report.findings.push(regression);
+    report.remembered = vec![remembered, second];
+    report.suppression_proposals = Some(vec![SuppressionProposal {
+        id: "sp-3f2a9c1b7d4e".into(),
+        entry: ProposalEntry::Rule {
+            rule: "lint/eslint/max-len".into(),
+        },
+        evidence_count: 3,
+        since: "2026-11-05T10:00:00Z".into(),
+    }]);
+    report.cache = Some(CacheStats {
+        lookups: 8,
+        hits: 4,
+        hit_rate: Ratio::new(0.5),
+        tokens_saved_estimate: 5200,
+    });
+    report
+}
+
+#[test]
+fn history_remembered_proposals_and_cache_render_in_every_format() {
+    let report = history_run();
+    let policy = FailOn::default().compile().unwrap();
+    let wide = |show_remembered| RenderOptions {
+        width: 200,
+        show_remembered,
+        policy: Some(&policy),
+        ..Default::default()
+    };
+    for (name, show) in [
+        ("history_default", false),
+        ("history_show_remembered", true),
+    ] {
+        let terminal = render_terminal(&report, &wide(show));
+        let markdown = render_markdown(&report, &wide(show));
+        // Markdown escapes `#` and `_`; compare its text unescaped.
+        for output in [&terminal, &markdown.replace('\\', "")] {
+            assert!(output.contains(
+                "Remembered: 2 finding(s) dismissed earlier on unchanged code and not re-reported (2 intentional in github.com/acme/api#41)"
+            ));
+            assert!(output.contains("Suppression proposal sp-3f2a9c1b7d4e: rule lint/eslint/max-len (3 dismissal(s) since 2026-11-05T10:00:00Z)"));
+            assert!(output.contains(
+                "Agent cache: 4 of 8 lookup(s) served from cache (hit rate 0.5); about 5200 tokens saved"
+            ));
+            assert!(output.contains(
+                "answered wrong by octocat (guarded by the lock) in github.com/acme/api#37"
+            ));
+            assert!(output.contains("regression of a finding fixed in rev-2"));
+            // The remembered findings are listed only on request.
+            assert_eq!(output.contains("Remembered findings"), show, "{name}");
+            assert_eq!(
+                output.contains(&"7".repeat(8)) || output.contains(":30"),
+                show,
+                "{name}"
+            );
+        }
+        insta::assert_snapshot!(format!("{name}_200"), terminal);
+        insta::assert_snapshot!(format!("{name}_markdown"), markdown);
+    }
+    // The flag changes neither the exit code nor any FAIL marker on remembered findings.
+    let shown = render_terminal(&report, &wide(true));
+    let section =
+        &shown[shown.find("\nRemembered findings").unwrap()..shown.find("\nFooter").unwrap()];
+    assert!(!section.contains("FAIL"), "{section}");
+    let mut without = report.clone();
+    without.remembered.clear();
+    assert_eq!(
+        exit_code(&report, &policy, ExitContext::default()),
+        exit_code(&without, &policy, ExitContext::default())
+    );
+    // JSON carries the remembered list and its history blocks; it validates.
+    let json: serde_json::Value = serde_json::from_slice(&render_json(&report).unwrap()).unwrap();
+    assert_eq!(json["remembered"].as_array().unwrap().len(), 2);
+    assert_eq!(
+        json["remembered"][0]["history"]["previous_response"]["reason"],
+        "intentional"
+    );
+    assert_eq!(json["findings"][1]["history"]["fixed_in"], "rev-2");
+    assert_eq!(json["cache"]["hits"], 4);
+    // Without the objects there are no lines.
+    let plain = fixture("complete");
+    for output in [
+        render_terminal(&plain, &RenderOptions::default()),
+        render_markdown(&plain, &RenderOptions::default()),
+    ] {
+        assert!(
+            !output.contains("Remembered")
+                && !output.contains("Agent cache")
+                && !output.contains("Suppression proposal")
+        );
+    }
+}

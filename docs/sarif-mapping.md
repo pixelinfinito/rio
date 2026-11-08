@@ -1,6 +1,6 @@
 # SARIF mapping
 
-Rio renders a review as a [SARIF 2.1.0](https://docs.oasis-open.org/sarif/sarif/v2.1.0/sarif-v2.1.0.html) log so that code-scanning services and editors show the same findings, with the same identities, as the terminal. Two renderers will implement this document: `rio-core` for `rio review --format sarif`, and the Worker for `GET /v1/reviews/{id}/report?format=sarif`. They will be tested against the fixtures in [`tests/fixtures/sarif/`](../tests/fixtures/sarif/), and for the same report and renderer inputs their output must be byte-identical after canonical key ordering. **Status:** neither renderer, the `--format sarif` flag nor the endpoint format exists yet; task group 5 of `openspec/changes/rio-v0-3-core` implements them. Until then the fixtures and the documentation test are the only consumers of this mapping. The capability is specified in `openspec/changes/rio-v0-3-core/specs/sarif-output/spec.md` and decision D9 of that change's design.
+Rio renders a review as a [SARIF 2.1.0](https://docs.oasis-open.org/sarif/sarif/v2.1.0/sarif-v2.1.0.html) log so that code-scanning services and editors show the same findings, with the same identities, as the terminal. Two renderers implement this document: `rio-core` for `rio review --format sarif`, and the Worker for `GET /v1/reviews/{id}/report?format=sarif`. Both are tested against the fixtures in [`tests/fixtures/sarif/`](../tests/fixtures/sarif/) (`crates/rio-core/tests/sarif.rs` and `worker/tests/sarif.test.ts`): for the same report and renderer inputs each reproduces `expected.sarif`, so their outputs are byte-identical after canonical key ordering. The Rust test also validates every rendered log against the official OASIS SARIF 2.1.0 schema, vendored in [`tests/fixtures/sarif-schema/`](../tests/fixtures/sarif-schema/). A change to this mapping changes both renderers and the fixtures together. The capability is specified in `openspec/changes/rio-v0-3-core/specs/sarif-output/spec.md` and decision D9 of that change's design.
 
 ## Inputs
 
@@ -85,7 +85,7 @@ One result per finding entry, in this order: `findings`, then `risks`, then `sec
 | `level` | notification | `warning` |
 | `descriptor` | notification | `{ "id": <check kind> }` |
 | `id` | `descriptor` | the check kind (`typecheck`, `lint`, `secrets`, `coverage`, `dependencies`) |
-| `message` | notification | `{ "text": "<kind> <root> <version>: <outcome> (<reason>)" }`, followed by ` — <hint>` when the check has a hint |
+| `message` | notification | `{ "text": "<kind> <root> <version>: <outcome> (<reason>)" }`, followed by ` — <hint>` when the check has a non-empty hint |
 | `properties` | invocation | `{ "error": { "code", "message" } }` when the report `status` is `error`; omitted otherwise |
 | `error` | invocation `properties` | the report's `error.code` and `error.message` |
 | `code` | `error` | `error.code` |
@@ -108,7 +108,7 @@ When the report `status` is `error`, the log still has one run. The run has `"re
 | Case | Shows |
 | --- | --- |
 | `complete-review` | tool and agent defects, a class finding with several locations, a verified finding, a `fixed` entry (`absent`) and an omitted `pre-existing` entry |
-| `risks-and-plausible` | `risks` entries and plausible security entries as `note`, a static-proven security entry as `error`, an `unclassified` entry without `baselineState`, a skipped check as a warning notification |
+| `risks-and-plausible` | `risks` entries and plausible security entries as `note`, a static-proven security entry as `error`, an `unclassified` entry without `baselineState`, skipped checks as warning notifications (one with an empty hint, which adds no ` — `) |
 | `lineage-history` | a round 2 lineage review: lifecycle status, author response, history, `round` on results and `rio.lineage` and the risk tier on the run |
 | `error-status` | a review that could not start: no results, `executionSuccessful` false, exit code 3 and the error in the invocation properties |
 
