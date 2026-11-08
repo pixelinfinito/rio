@@ -151,7 +151,8 @@ an alias; otherwise `verifier` wins over `default`. A single voter must resolve 
 a different provider/model from the generating default. Multiple voters may use
 the same model. Unknown explicit aliases fail validation.
 
-Optional Worker variables: `OPENAI_BASE_URL` for an OpenAI-compatible HTTPS API;
+Optional Worker variables: `OPENAI_BASE_URL` for an OpenAI-compatible HTTPS API
+(used without a gateway);
 `AI_GATEWAY_URL=https://gateway.ai.cloudflare.com/v1/ACCOUNT/GATEWAY` and secret
 `AI_GATEWAY_TOKEN` for manual gateway configuration (Rio sets these automatically); `MODEL_PRICES` as JSON mapping a full
 provider/model to `{ "input": USD_PER_MILLION, "output": USD_PER_MILLION }`.
@@ -163,6 +164,90 @@ these aliases in a child profile to select other OpenRouter models. The requeste
 Sonnet 5.5 and GPT-6.1 Sol identifiers were verified against OpenRouter's model
 catalog on 2026-11-06; GPT-6.1 Sol also supports structured text outputs in
 [its official model documentation](https://developers.openai.com/api/docs/models/gpt-6.1-sol).
+
+## Custom endpoints through AI Gateway
+
+Besides OpenRouter, OpenAI and Anthropic keys, `rio init` and `rio deploy` can
+register your own OpenAI-compatible or Anthropic Messages endpoints as AI Gateway
+[custom providers](https://developers.cloudflare.com/ai-gateway/configuration/custom-providers/).
+Interactively, choose provider 4 and answer the slug, protocol, base URL, hidden
+key and the generation and verification models. Non-interactively:
+
+```sh
+# The key comes from the environment or --secrets-file, never from arguments.
+export AI_GATEWAY_PROVIDER_KEY_NODE_OPENAI=...      # slug upper-cased, - becomes _
+export AI_GATEWAY_PROVIDER_KEY_NODE_ANTHROPIC=...
+rio init \
+  --custom-provider node-openai:openai:https://api.llm.example/v1 \
+  --custom-provider node-anthropic:anthropic:https://api.llm.example/v1 \
+  --default-model custom-node-anthropic/claude-sonnet-5-5 \
+  --verifier-model custom-node-openai/gpt-6.1-sol
+```
+
+The base URL is the API root that `chat/completions` (OpenAI protocol) or
+`messages` (Anthropic protocol) is appended to, usually ending in `/v1`; Rio
+rejects a base URL that already ends in an endpoint path, so no `/v1` is ever
+duplicated. The definitions are saved in `config.toml` and replayed by every
+`rio deploy` and by `rio deploy --from config.toml`:
+
+```toml
+[[deployment.custom_providers]]
+slug = "node-openai"
+protocol = "openai"               # or "anthropic"
+base_url = "https://api.llm.example/v1"
+# auth_header = "authorization"   # default for openai; "x-api-key" for anthropic
+
+[deployment.model_prices."custom-node-openai/gpt-6.1-sol"]
+input = 1.25                      # optional, USD per million tokens
+output = 10.0
+
+[[deployment.dynamic_routes]]
+name = "support"
+elements_file = "routes/support.json"   # relative to the configuration directory
+```
+
+What a deployment does with them, idempotently:
+
+- Each provider is created as an account-level custom provider with
+  `enable: true`. Its key is sent once as the provider's `headers`, a
+  JSON-encoded string (`{"Authorization":"Bearer …"}` or `{"x-api-key":"…"}`),
+  and kept in the deployment credential store with a fingerprint of what was
+  applied; a later deployment rewrites the headers only when the key or base URL
+  changed. A provider that already exists with the same slug is adopted: its base
+  URL is corrected, and its headers are left alone unless Rio holds its key. A
+  provider that does not exist needs `AI_GATEWAY_PROVIDER_KEY_<SLUG>`.
+- Upstream keys never reach the Worker, `config.toml`, profiles or command output.
+  The Worker receives `AI_GATEWAY_PROVIDERS` (each slug's protocol only), the
+  gateway URL and its `AI_GATEWAY_TOKEN`, and `MODEL_PRICES` when prices are
+  configured.
+- Dynamic routes are created from their element files; a route whose deployed
+  elements differ from the file gets a new version, which is deployed.
+- The Worker is uploaded whole with all of its bindings, the `SANDBOX` Durable
+  Object declaration (`class_name` only) and the Container declaration, as for any
+  deployment; Worker settings are never patched separately.
+
+Profile model identifiers:
+
+| Model | Request |
+| --- | --- |
+| `openrouter/…`, `openai/…`, `anthropic/…` | the provider through its gateway endpoint, with the Worker's provider key |
+| `custom-SLUG/MODEL` | `GATEWAY/custom-SLUG/chat/completions` or `GATEWAY/custom-SLUG/messages`, in the provider's protocol; the gateway adds the upstream key |
+| `compat/PROVIDER/MODEL` | `GATEWAY/compat/chat/completions` with model `PROVIDER/MODEL` (OpenAI request shape), e.g. `compat/custom-SLUG/MODEL` |
+| `dynamic/ROUTE` | `GATEWAY/compat/chat/completions` with model `dynamic/ROUTE` |
+
+Gateway requests authenticate with `cf-aig-authorization: Bearer AI_GATEWAY_TOKEN`
+and bypass the cache. Use the model names your endpoint serves; they may differ
+from OpenRouter's (for example `claude-sonnet-5-5` rather than
+`claude-sonnet-5.5`). A submission whose default, verifier or agent model cannot
+be routed is rejected before the review starts, naming the alias.
+
+Profiles written for a manual setup, where `OPENAI_BASE_URL` pointed at the
+gateway's `/compat` endpoint and `AI_GATEWAY_URL` was blank, keep working: with
+the gateway configured, `openai/custom-SLUG/MODEL` and `openai/dynamic/ROUTE` are
+sent to the unified endpoint. Without `AI_GATEWAY_URL`, `OPENAI_BASE_URL` is used
+as before. Custom endpoints usually report no price, so their cost stays unknown
+(`null`) unless `model_prices` names the model; a usage `cost` field is trusted for
+OpenRouter's own endpoint only.
 
 ## Self-hosted runner
 
