@@ -284,6 +284,24 @@ describe("contracts agent", () => {
     ).not.toContain("contracts/api/broken");
   }, 60000);
 
+  it("ends only the agent whose result is not a hypothesis array", async () => {
+    const { report, calls } = await review({
+      base,
+      head,
+      changed: ["src/api.ts"],
+      steps: agentSteps([{ correctness: { model: "default" } }]),
+      agents: { correctness: { not: "an array" } },
+    });
+    expect(calls).toContain("correctness");
+    expect(report.status).toBe("partial");
+    expect(
+      report.footer.notes.some((n: string) =>
+        /^correctness agent failed: expected hypothesis array/.test(n),
+      ),
+    ).toBe(true);
+    expect(report.findings.concat(report.risks)).toEqual([]);
+  }, 60000);
+
   it("rejects a malformed hypothesis on its own and keeps the agent's well-formed ones", async () => {
     const { report } = await review({
       base,
