@@ -38,7 +38,7 @@ enum Command {
     Serve {
         #[arg(long, env = "RIO_ENDPOINT_URL")]
         endpoint: String,
-        #[arg(long, default_value = "rio-runner:0.2.0")]
+        #[arg(long, default_value = "rio-runner:0.3.0")]
         image: String,
         #[arg(long)]
         once: bool,

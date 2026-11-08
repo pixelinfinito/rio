@@ -265,10 +265,10 @@ OpenRouter's own endpoint only.
 ## Self-hosted runner
 
 ```sh
-docker build -f worker/Dockerfile -t rio-runner:0.2.0 .
+docker build -f worker/Dockerfile -t rio-runner:0.3.0 .
 # RIO_RUNNER_SECRET is the endpoint's RUNNER_SECRET, supplied via secret environment.
 RIO_ENDPOINT_URL=https://rio.YOUR-SUBDOMAIN.workers.dev \
-  cargo run --locked -p rio-runner -- serve --image rio-runner:0.2.0
+  cargo run --locked -p rio-runner -- serve --image rio-runner:0.3.0
 ```
 
 The host only polls jobs, downloads job archives, starts Docker and signs
@@ -394,7 +394,7 @@ To repeat the local runner protocol and container-isolation checks:
 
 ```sh
 cargo build --locked -p rio-runner
-docker build -f worker/Dockerfile -t rio-runner:0.2.0 .
+docker build -f worker/Dockerfile -t rio-runner:0.3.0 .
 RIO_TEST_DOCKER=1 python3 -m unittest discover -s worker/runner/tests -v
 ```
 

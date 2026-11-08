@@ -12,6 +12,9 @@ import threading
 import unittest
 import uuid
 
+# The image under test; CI builds it with this tag (.github/workflows/ci.yml).
+IMAGE = os.getenv('RIO_RUNNER_IMAGE', 'rio-runner:0.3.0')
+
 
 def executor_input(job, trees, links=None):
     """Header line (the job plus links) followed by the tar archive of the needed trees."""
@@ -29,7 +32,7 @@ def executor_input(job, trees, links=None):
 @unittest.skipUnless(os.getenv('RIO_TEST_DOCKER') == '1', 'set RIO_TEST_DOCKER=1 with a built runner image and binary')
 class DockerRunner(unittest.TestCase):
     def test_graph_and_fork_static_analysis_use_the_trusted_rust_engine(self):
-        image = os.getenv('RIO_RUNNER_IMAGE', 'rio-runner:0.2.0')
+        image = IMAGE
         trees = {'base': {'app.py': (b'def result():\n    return 0\n', 0o644)},
                  'head': {'app.py': (b'def result():\n    return 1\n', 0o644)}}
         profile = {'version': 1, 'name': 'runner-test', 'chain': [], 'modules': {}, 'engine_version': '0.2.0',
@@ -71,7 +74,7 @@ class DockerRunner(unittest.TestCase):
         """Runs one `serve --once` against a mock endpoint; returns completions and protocol errors."""
         root = Path(__file__).resolve().parents[3]
         binary = os.getenv('RIO_RUNNER_BIN', str(root / 'target/debug/rio-runner'))
-        image = os.getenv('RIO_RUNNER_IMAGE', 'rio-runner:0.2.0')
+        image = IMAGE
         secret = 'local-test-runner-secret-32-characters'
         capability = 'local-test-scoped-job-capability-32-characters'
         job_id, review_id = job['job_id'], job['review_id']
@@ -312,7 +315,7 @@ class DockerPrepare(unittest.TestCase):
         self.head = subprocess.check_output(['git', '-C', str(source), 'rev-parse', 'HEAD'], text=True).strip()
         subprocess.run(['git', 'clone', '-q', '--bare', str(source), str(root / 'acme/repo.git')], check=True)
         git(root / 'acme/repo.git', 'config', 'uploadpack.allowAnySHA1InWant', 'true')
-        self.git = GitServer(root, self.token, os.getenv('RIO_RUNNER_IMAGE', 'rio-runner:0.3.0'))
+        self.git = GitServer(root, self.token, IMAGE)
 
     def tearDown(self):
         self.git.close()
@@ -321,7 +324,7 @@ class DockerPrepare(unittest.TestCase):
     def run_prepare(self, github_token):
         root = Path(__file__).resolve().parents[3]
         binary = os.getenv('RIO_RUNNER_BIN', str(root / 'target/debug/rio-runner'))
-        image = os.getenv('RIO_RUNNER_IMAGE', 'rio-runner:0.3.0')
+        image = IMAGE
         secret = 'local-test-runner-secret-32-characters'
         capability = 'local-test-scoped-job-capability-32-characters'
         credential = 'rio_prepare_' + 'ab' * 32
@@ -429,7 +432,7 @@ class RunnerImage(unittest.TestCase):
     are skipped with the dependency rule's reason and hint when they are not."""
 
     def checks(self, files):
-        image = os.getenv('RIO_RUNNER_IMAGE', 'rio-runner:0.3.0')
+        image = IMAGE
         trees = {'base': {k: (v.replace(b'2', b'1'), 0o644) for k, v in files.items()}, 'head': {k: (v, 0o644) for k, v in files.items()}}
         profile = {'version': 1, 'name': 'image-test', 'chain': [], 'modules': {}, 'engine_version': '0.2.0',
                    'posture_policy': {'defect_severity_floor': 'warning', 'render_plausible_risks': True, 'plausible_risk_limit': 5},
@@ -474,7 +477,7 @@ class RunnerImage(unittest.TestCase):
         self.assertEqual([c['outcome'] for c in checks if c['kind'] == 'secrets'], ['passed'])
 
     def test_sandbox_prepare_builds_the_submission_from_the_snapshot_without_network(self):
-        image = os.getenv('RIO_RUNNER_IMAGE', 'rio-runner:0.3.0')
+        image = IMAGE
         base, head = 'a' * 40, 'b' * 40
         trees = {'base': {'app.py': (b'def total():\n    return 1\n', 0o644),
                           '.rio/profiles/default.yaml': (b'version: 1\nname: team\nextends: rio/base\npublish: ask\n', 0o644)},
