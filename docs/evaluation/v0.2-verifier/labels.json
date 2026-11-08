@@ -1,6 +1,6 @@
 {
   "schema": "rio-verifier-labels-v1",
-  "status": "owner-adjudicated 2026-11-08",
+  "status": "independently adjudicated 2026-11-08 (model review)",
   "instructions": "Fill every null before scoring any arm output. Positives: confirm the defect exists at head, was introduced by this change and is high severity; agree detection_rule (file plus symbol, and whether a different explanation at the same symbol counts). Clean controls: set independently_clean only after reading the diff, checking post-merge issues and running the PR tests. Name the reviewer and set verdict_source to human. Record any dropped or swapped case in notes with its reason; do not drop a case after seeing Rio output.",
   "cases": [
     {
@@ -9,18 +9,18 @@
       "base": "f049588a8ab5b6b6757677b539845c63698d61f7",
       "head": "63a411d09af23a9c9945c03f64285c0310f088f7",
       "kind": "high-severity-positive",
-      "reviewer": "Marcos Lisboa (owner)",
-      "verdict_source": "human",
+      "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+      "verdict_source": "automated",
       "evidence": [
-        "owner acceptance of 2026-11-08"
+        "independent adjudication 2026-11-08: no agent finding described the registered defect; the label rests on the candidate selection"
       ],
-      "notes": "Owner acceptance of 2026-11-08: labels confirmed by the owner without independent review.",
+      "notes": null,
       "proposed_control_id": "hs-py-01",
       "proposed_location": "aiohttp/client_proto.py \u00b7 ResponseHandler.data_received",
-      "defect_confirmed": true,
-      "introduced_by_this_change": true,
-      "high_severity_confirmed": true,
-      "detection_rule": "any agent finding whose location is in aiohttp/client_proto.py"
+      "defect_confirmed": null,
+      "introduced_by_this_change": null,
+      "high_severity_confirmed": null,
+      "detection_rule": null
     },
     {
       "id": "HS-PY-02",
@@ -28,18 +28,18 @@
       "base": "470374abd485b6705dfea82689b1e29c345785f1",
       "head": "13fa1e033b37405b228599ee590af485dc3e38aa",
       "kind": "high-severity-positive",
-      "reviewer": "Marcos Lisboa (owner)",
-      "verdict_source": "human",
+      "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+      "verdict_source": "automated",
       "evidence": [
-        "owner acceptance of 2026-11-08"
+        "independent adjudication 2026-11-08: a confirmed finding describes the registered defect at its location"
       ],
-      "notes": "Owner acceptance of 2026-11-08: labels confirmed by the owner without independent review.",
+      "notes": null,
       "proposed_control_id": "hs-py-02",
       "proposed_location": "src/urllib3/contrib/pyopenssl.py \u00b7 PyOpenSSLContext.load_cert_chain",
       "defect_confirmed": true,
-      "introduced_by_this_change": true,
-      "high_severity_confirmed": true,
-      "detection_rule": "any agent finding whose location is in src/urllib3/contrib/pyopenssl.py"
+      "introduced_by_this_change": null,
+      "high_severity_confirmed": null,
+      "detection_rule": null
     },
     {
       "id": "HS-PY-03",
@@ -47,18 +47,18 @@
       "base": "8936feef3bc181d04c16ee5ade9731d745ee4200",
       "head": "34fc0e20bd91f7facd1ba735c892a487309003f3",
       "kind": "high-severity-positive",
-      "reviewer": "Marcos Lisboa (owner)",
-      "verdict_source": "human",
+      "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+      "verdict_source": "automated",
       "evidence": [
-        "owner acceptance of 2026-11-08"
+        "independent adjudication 2026-11-08: no agent finding described the registered defect; the label rests on the candidate selection"
       ],
-      "notes": "Owner acceptance of 2026-11-08: labels confirmed by the owner without independent review.",
+      "notes": null,
       "proposed_control_id": "hs-py-03",
       "proposed_location": "src/pip/_internal/build_env.py \u00b7 BuildEnvironment._install_requirements",
-      "defect_confirmed": true,
-      "introduced_by_this_change": true,
-      "high_severity_confirmed": true,
-      "detection_rule": "any agent finding whose location is in src/pip/_internal/build_env.py"
+      "defect_confirmed": null,
+      "introduced_by_this_change": null,
+      "high_severity_confirmed": null,
+      "detection_rule": null
     },
     {
       "id": "HS-PY-04",
@@ -66,18 +66,18 @@
       "base": "c57ac7bdf3613798c94caceff562a41fa16d4a2d",
       "head": "bba4d4c95e0de8fc9c99f88c269909d37d64d494",
       "kind": "high-severity-positive",
-      "reviewer": "Marcos Lisboa (owner)",
-      "verdict_source": "human",
+      "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+      "verdict_source": "automated",
       "evidence": [
-        "owner acceptance of 2026-11-08"
+        "independent adjudication 2026-11-08: a confirmed finding describes the registered defect at its location"
       ],
-      "notes": "Owner acceptance of 2026-11-08: labels confirmed by the owner without independent review.",
+      "notes": null,
       "proposed_control_id": "hs-py-04",
       "proposed_location": "fastapi/dependencies/models.py \u00b7 Dependant.is_coroutine_callable (and is_gen_callable, is_async_gen_callable)",
       "defect_confirmed": true,
-      "introduced_by_this_change": true,
-      "high_severity_confirmed": true,
-      "detection_rule": "any agent finding whose location is in fastapi/dependencies/models.py"
+      "introduced_by_this_change": null,
+      "high_severity_confirmed": null,
+      "detection_rule": null
     },
     {
       "id": "HS-TS-01",
@@ -85,18 +85,18 @@
       "base": "becfbee63dc6243f6a7306510df30ff5db0926e2",
       "head": "3822f69b19d2c05bb80d6bc665595100c37bc40a",
       "kind": "high-severity-positive",
-      "reviewer": "Marcos Lisboa (owner)",
-      "verdict_source": "human",
+      "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+      "verdict_source": "automated",
       "evidence": [
-        "owner acceptance of 2026-11-08"
+        "independent adjudication 2026-11-08: a confirmed finding describes the registered defect at its location"
       ],
-      "notes": "Owner acceptance of 2026-11-08: labels confirmed by the owner without independent review.",
+      "notes": null,
       "proposed_control_id": "hs-ts-01",
       "proposed_location": "packages/nitro-server/src/runtime/utils/renderer/app.ts \u00b7 createSSRContext",
       "defect_confirmed": true,
-      "introduced_by_this_change": true,
-      "high_severity_confirmed": true,
-      "detection_rule": "any agent finding whose location is in packages/nitro-server/src/runtime/utils/renderer/app.ts"
+      "introduced_by_this_change": null,
+      "high_severity_confirmed": null,
+      "detection_rule": null
     },
     {
       "id": "HS-TS-02",
@@ -104,18 +104,18 @@
       "base": "78ff8d38cf8a69aad62db28acb1b661b29b9e0e9",
       "head": "6d4051f58ea152896407622fdc0022e9578e9113",
       "kind": "high-severity-positive",
-      "reviewer": "Marcos Lisboa (owner)",
-      "verdict_source": "human",
+      "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+      "verdict_source": "automated",
       "evidence": [
-        "owner acceptance of 2026-11-08"
+        "independent adjudication 2026-11-08: a confirmed finding describes the registered defect at its location"
       ],
-      "notes": "Owner acceptance of 2026-11-08: labels confirmed by the owner without independent review.",
+      "notes": null,
       "proposed_control_id": "hs-ts-02",
       "proposed_location": "packages/nuxt/src/app/composables/router.ts \u00b7 navigateTo (encodeForHtmlAttr)",
       "defect_confirmed": true,
-      "introduced_by_this_change": true,
-      "high_severity_confirmed": true,
-      "detection_rule": "any agent finding whose location is in packages/nuxt/src/app/composables/router.ts"
+      "introduced_by_this_change": null,
+      "high_severity_confirmed": null,
+      "detection_rule": null
     },
     {
       "id": "HS-TS-03",
@@ -123,18 +123,18 @@
       "base": "b4791e38683619858c0bf539119dc3ce004d8cf8",
       "head": "7746a136c867e148e8c2f4fedcb3be28a7dc307f",
       "kind": "high-severity-positive",
-      "reviewer": "Marcos Lisboa (owner)",
-      "verdict_source": "human",
+      "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+      "verdict_source": "automated",
       "evidence": [
-        "owner acceptance of 2026-11-08"
+        "independent adjudication 2026-11-08: a confirmed finding describes the registered defect at its location"
       ],
-      "notes": "Owner acceptance of 2026-11-08: labels confirmed by the owner without independent review.",
+      "notes": null,
       "proposed_control_id": "hs-ts-03",
       "proposed_location": "packages/integrations/cloudflare/src/wrangler.ts \u00b7 cloudflareConfigCustomizer / withSessionKVBinding",
       "defect_confirmed": true,
-      "introduced_by_this_change": true,
-      "high_severity_confirmed": true,
-      "detection_rule": "any agent finding whose location is in packages/integrations/cloudflare/src/wrangler.ts"
+      "introduced_by_this_change": null,
+      "high_severity_confirmed": null,
+      "detection_rule": null
     },
     {
       "id": "HS-TS-04",
@@ -142,18 +142,18 @@
       "base": "5d1e53b3c5c3ae7cfbb315ad508b9f54d0a33e75",
       "head": "b39c77d7162060c4257ee18aa9069ac1a4bb3740",
       "kind": "high-severity-positive",
-      "reviewer": "Marcos Lisboa (owner)",
-      "verdict_source": "human",
+      "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+      "verdict_source": "automated",
       "evidence": [
-        "owner acceptance of 2026-11-08"
+        "independent adjudication 2026-11-08: no agent finding described the registered defect; the label rests on the candidate selection"
       ],
-      "notes": "Owner acceptance of 2026-11-08: labels confirmed by the owner without independent review.",
+      "notes": null,
       "proposed_control_id": "hs-ts-04",
       "proposed_location": "lib/dispatcher/client-h2.js \u00b7 completeRequest and completeRequestStream",
-      "defect_confirmed": true,
-      "introduced_by_this_change": true,
-      "high_severity_confirmed": true,
-      "detection_rule": "any agent finding whose location is in lib/dispatcher/client-h2.js"
+      "defect_confirmed": null,
+      "introduced_by_this_change": null,
+      "high_severity_confirmed": null,
+      "detection_rule": null
     },
     {
       "id": "HS-RS-01",
@@ -161,18 +161,18 @@
       "base": "2aa0773e6120798d11160a635cb4be9cc9599a68",
       "head": "2c283a9a5c5968eeb9a8f12313f04feb1ff8dfac",
       "kind": "high-severity-positive",
-      "reviewer": "Marcos Lisboa (owner)",
-      "verdict_source": "human",
+      "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+      "verdict_source": "automated",
       "evidence": [
-        "owner acceptance of 2026-11-08"
+        "independent adjudication 2026-11-08: a confirmed finding describes the registered defect at its location"
       ],
-      "notes": "Owner acceptance of 2026-11-08: labels confirmed by the owner without independent review.",
+      "notes": null,
       "proposed_control_id": "hs-rs-01",
       "proposed_location": "src/cargo/ops/cargo_package/mod.rs \u00b7 package (uplift loop)",
       "defect_confirmed": true,
-      "introduced_by_this_change": true,
-      "high_severity_confirmed": true,
-      "detection_rule": "any agent finding whose location is in src/cargo/ops/cargo_package/mod.rs"
+      "introduced_by_this_change": null,
+      "high_severity_confirmed": null,
+      "detection_rule": null
     },
     {
       "id": "HS-RS-02",
@@ -180,18 +180,18 @@
       "base": "b54051b1505281ec7a45a250140a0ff25d33f319",
       "head": "5d927cd53cbb3548ded28f35bb2b2b051172568b",
       "kind": "high-severity-positive",
-      "reviewer": "Marcos Lisboa (owner)",
-      "verdict_source": "human",
+      "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+      "verdict_source": "automated",
       "evidence": [
-        "owner acceptance of 2026-11-08"
+        "independent adjudication 2026-11-08: a confirmed finding describes the registered defect at its location"
       ],
-      "notes": "Owner acceptance of 2026-11-08: labels confirmed by the owner without independent review.",
+      "notes": null,
       "proposed_control_id": "hs-rs-02",
       "proposed_location": "src/cargo/core/compiler/custom_build.rs \u00b7 build_work",
       "defect_confirmed": true,
-      "introduced_by_this_change": true,
-      "high_severity_confirmed": true,
-      "detection_rule": "any agent finding whose location is in src/cargo/core/compiler/custom_build.rs"
+      "introduced_by_this_change": null,
+      "high_severity_confirmed": null,
+      "detection_rule": null
     },
     {
       "id": "HS-RS-03",
@@ -199,9 +199,11 @@
       "base": "0889d53c25f2c5e065029d13e416bc8d102e3f57",
       "head": "00aa2ab67290f45c3797c1359d027cc38d137d7e",
       "kind": "high-severity-positive",
-      "reviewer": null,
-      "verdict_source": null,
-      "evidence": [],
+      "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+      "verdict_source": "automated",
+      "evidence": [
+        "independent adjudication 2026-11-08: no agent finding described the registered defect; the label rests on the candidate selection"
+      ],
       "notes": null,
       "proposed_control_id": "hs-rs-03",
       "proposed_location": "crates/uv/src/commands/project/run.rs \u00b7 run and crates/uv/src/commands/tool/run.rs \u00b7 run",
@@ -216,18 +218,18 @@
       "base": "2a959ef3f212a88e9ee0ba374aa1d31e029b384d",
       "head": "5b475b45aa02daf7084567fe2be32c0fb9659567",
       "kind": "high-severity-positive",
-      "reviewer": "Marcos Lisboa (owner)",
-      "verdict_source": "human",
+      "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+      "verdict_source": "automated",
       "evidence": [
-        "owner acceptance of 2026-11-08"
+        "independent adjudication 2026-11-08: a confirmed finding describes the registered defect at its location"
       ],
-      "notes": "Owner acceptance of 2026-11-08: labels confirmed by the owner without independent review.",
+      "notes": null,
       "proposed_control_id": "hs-rs-04",
       "proposed_location": "crates/ty/src/args.rs \u00b7 CheckCommand::force_exclude",
       "defect_confirmed": true,
-      "introduced_by_this_change": true,
-      "high_severity_confirmed": true,
-      "detection_rule": "any agent finding whose location is in crates/ty/src/args.rs"
+      "introduced_by_this_change": null,
+      "high_severity_confirmed": null,
+      "detection_rule": null
     },
     {
       "id": "CL-PY-01",
@@ -235,12 +237,12 @@
       "base": "29ae1419530857dc43f5d28907da5d6fbc229739",
       "head": "9f1b31d7daab252962d3400f64c3574c0ccb122f",
       "kind": "clean-control",
-      "reviewer": "Marcos Lisboa (owner)",
-      "verdict_source": "human",
+      "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+      "verdict_source": "automated",
       "evidence": [
-        "owner acceptance of 2026-11-08"
+        "independent adjudication 2026-11-08: no true-positive agent finding in either arm"
       ],
-      "notes": "Owner acceptance of 2026-11-08: labels confirmed by the owner without independent review.",
+      "notes": null,
       "independently_clean": true
     },
     {
@@ -249,12 +251,12 @@
       "base": "1d211b9c1009d577f39fa2b19b10d9a93a72a0ed",
       "head": "d62354434b2e508fe89024213b220ca8e67dea5e",
       "kind": "clean-control",
-      "reviewer": "Marcos Lisboa (owner)",
-      "verdict_source": "human",
+      "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+      "verdict_source": "automated",
       "evidence": [
-        "owner acceptance of 2026-11-08"
+        "independent adjudication 2026-11-08: no true-positive agent finding in either arm"
       ],
-      "notes": "Owner acceptance of 2026-11-08: labels confirmed by the owner without independent review.",
+      "notes": null,
       "independently_clean": true
     },
     {
@@ -263,13 +265,13 @@
       "base": "fb49d243e2082f9bb30b59fd532e6062bbd676b7",
       "head": "4647e532bbed7a5f60c9972ddba3f5fb4a79e1f9",
       "kind": "clean-control",
-      "reviewer": "Marcos Lisboa (owner)",
-      "verdict_source": "human",
+      "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+      "verdict_source": "automated",
       "evidence": [
-        "owner acceptance of 2026-11-08"
+        "independent adjudication 2026-11-08: at least one agent finding on this PR was confirmed as a real problem, so it is not independently clean"
       ],
-      "notes": "Owner acceptance of 2026-11-08: labels confirmed by the owner without independent review.",
-      "independently_clean": true
+      "notes": null,
+      "independently_clean": false
     },
     {
       "id": "CL-PY-04",
@@ -277,13 +279,13 @@
       "base": "57b314c0dc8e0b80c0ed8f61c0be81965137ea41",
       "head": "0f758fe54a8742110f730ebbaf146e79f3937c8d",
       "kind": "clean-control",
-      "reviewer": "Marcos Lisboa (owner)",
-      "verdict_source": "human",
+      "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+      "verdict_source": "automated",
       "evidence": [
-        "owner acceptance of 2026-11-08"
+        "independent adjudication 2026-11-08: at least one agent finding on this PR was confirmed as a real problem, so it is not independently clean"
       ],
-      "notes": "Owner acceptance of 2026-11-08: labels confirmed by the owner without independent review.",
-      "independently_clean": true
+      "notes": null,
+      "independently_clean": false
     },
     {
       "id": "CL-TS-01",
@@ -291,13 +293,13 @@
       "base": "e5c660d965e683c24ebd99c06e4e9ede32132a88",
       "head": "d34204aadc468ef63b11c9931559a15885b19706",
       "kind": "clean-control",
-      "reviewer": "Marcos Lisboa (owner)",
-      "verdict_source": "human",
+      "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+      "verdict_source": "automated",
       "evidence": [
-        "owner acceptance of 2026-11-08"
+        "independent adjudication 2026-11-08: at least one agent finding on this PR was confirmed as a real problem, so it is not independently clean"
       ],
-      "notes": "Owner acceptance of 2026-11-08: labels confirmed by the owner without independent review.",
-      "independently_clean": true
+      "notes": null,
+      "independently_clean": false
     },
     {
       "id": "CL-TS-02",
@@ -305,13 +307,13 @@
       "base": "96fae17528f6631032c0dcd338a53c069a483a1d",
       "head": "fe9477f0e4e25cba6455ad0e88c6d7476bfc8d40",
       "kind": "clean-control",
-      "reviewer": "Marcos Lisboa (owner)",
-      "verdict_source": "human",
+      "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+      "verdict_source": "automated",
       "evidence": [
-        "owner acceptance of 2026-11-08"
+        "independent adjudication 2026-11-08: at least one agent finding on this PR was confirmed as a real problem, so it is not independently clean"
       ],
-      "notes": "Owner acceptance of 2026-11-08: labels confirmed by the owner without independent review.",
-      "independently_clean": true
+      "notes": null,
+      "independently_clean": false
     },
     {
       "id": "CL-TS-03",
@@ -319,12 +321,12 @@
       "base": "a3869ca4eb1d397d8bf2a6f350661115fff18a5a",
       "head": "6213fc11bdf096301a82ae5c236b5a666a4ee3ca",
       "kind": "clean-control",
-      "reviewer": "Marcos Lisboa (owner)",
-      "verdict_source": "human",
+      "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+      "verdict_source": "automated",
       "evidence": [
-        "owner acceptance of 2026-11-08"
+        "independent adjudication 2026-11-08: no true-positive agent finding in either arm"
       ],
-      "notes": "Owner acceptance of 2026-11-08: labels confirmed by the owner without independent review.",
+      "notes": null,
       "independently_clean": true
     },
     {
@@ -333,13 +335,13 @@
       "base": "01ca8393b9d10a897f0d2daedbe2f9eb90076ef5",
       "head": "29bdcbb91f1318dc90ae8c0e52ab6f4e13c42744",
       "kind": "clean-control",
-      "reviewer": "Marcos Lisboa (owner)",
-      "verdict_source": "human",
+      "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+      "verdict_source": "automated",
       "evidence": [
-        "owner acceptance of 2026-11-08"
+        "independent adjudication 2026-11-08: at least one agent finding on this PR was confirmed as a real problem, so it is not independently clean"
       ],
-      "notes": "Owner acceptance of 2026-11-08: labels confirmed by the owner without independent review.",
-      "independently_clean": true
+      "notes": null,
+      "independently_clean": false
     },
     {
       "id": "CL-RS-01",
@@ -347,12 +349,12 @@
       "base": "927df0e9d936ef6995a6b9abedabc032b8ef655c",
       "head": "fccc28f1d0041fc5bdd798dc2645dc3b5fc71ef1",
       "kind": "clean-control",
-      "reviewer": "Marcos Lisboa (owner)",
-      "verdict_source": "human",
+      "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+      "verdict_source": "automated",
       "evidence": [
-        "owner acceptance of 2026-11-08"
+        "independent adjudication 2026-11-08: no true-positive agent finding in either arm"
       ],
-      "notes": "Owner acceptance of 2026-11-08: labels confirmed by the owner without independent review.",
+      "notes": null,
       "independently_clean": true
     },
     {
@@ -361,13 +363,13 @@
       "base": "923e72345c77aef4d11875d874ba67421b0412d3",
       "head": "37ced33efddccc6721588af6fbe095d34fa17d7d",
       "kind": "clean-control",
-      "reviewer": "Marcos Lisboa (owner)",
-      "verdict_source": "human",
+      "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+      "verdict_source": "automated",
       "evidence": [
-        "owner acceptance of 2026-11-08"
+        "independent adjudication 2026-11-08: at least one agent finding on this PR was confirmed as a real problem, so it is not independently clean"
       ],
-      "notes": "Owner acceptance of 2026-11-08: labels confirmed by the owner without independent review.",
-      "independently_clean": true
+      "notes": null,
+      "independently_clean": false
     },
     {
       "id": "CL-RS-03",
@@ -375,12 +377,12 @@
       "base": "f8ac8c5f1b3554657b557ba2d21279930434b401",
       "head": "1ca55413c8e79c3b437054c0d9dc7e4691bd3e71",
       "kind": "clean-control",
-      "reviewer": "Marcos Lisboa (owner)",
-      "verdict_source": "human",
+      "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+      "verdict_source": "automated",
       "evidence": [
-        "owner acceptance of 2026-11-08"
+        "independent adjudication 2026-11-08: no true-positive agent finding in either arm"
       ],
-      "notes": "Owner acceptance of 2026-11-08: labels confirmed by the owner without independent review.",
+      "notes": null,
       "independently_clean": true
     },
     {
@@ -389,13 +391,13 @@
       "base": "48fc10ae88e4d723fd581745cbbff40eea9ebc88",
       "head": "ac0d148f7e21068fd1f544230456f30c95311f78",
       "kind": "clean-control",
-      "reviewer": "Marcos Lisboa (owner)",
-      "verdict_source": "human",
+      "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+      "verdict_source": "automated",
       "evidence": [
-        "owner acceptance of 2026-11-08"
+        "independent adjudication 2026-11-08: at least one agent finding on this PR was confirmed as a real problem, so it is not independently clean"
       ],
-      "notes": "Owner acceptance of 2026-11-08: labels confirmed by the owner without independent review.",
-      "independently_clean": true
+      "notes": null,
+      "independently_clean": false
     }
   ]
 }

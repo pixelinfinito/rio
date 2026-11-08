@@ -1,0 +1,552 @@
+{
+  "schema": "rio-agent-verdicts-export-v1",
+  "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+  "cases": {
+    "CT-POS-01": {
+      "repository": "vellum-ai/vellum-assistant",
+      "pr": "https://github.com/vellum-ai/vellum-assistant/pull/12127",
+      "case_id": "CT-POS-01",
+      "languages": [
+        "typescript"
+      ],
+      "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+      "verdict_source": "automated",
+      "commands": [],
+      "notes": [
+        "Independent adjudication of 2026-11-08: each agent finding was checked against the code at the pinned base and head by a Claude Fable 5.1 subagent reading the clone (read-only); deterministic check findings stay out-of-scope for the agent measurement. This replaces the owner's blanket acceptance of the same day."
+      ],
+      "independently_clean": false,
+      "positive_control": {
+        "kind": "real-pr",
+        "expected": [
+          {
+            "id": "ct-pos-01-1",
+            "mechanism": "contract-break",
+            "evidence": "independent adjudication 2026-11-08: the registered defect was not detected by the agent in this run; the label rests on the candidate selection",
+            "finding_ids": []
+          }
+        ]
+      },
+      "misses": [],
+      "findings": {}
+    },
+    "CT-POS-02": {
+      "repository": "THUDM/slime",
+      "pr": "https://github.com/THUDM/slime/pull/1336",
+      "case_id": "CT-POS-02",
+      "languages": [
+        "python"
+      ],
+      "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+      "verdict_source": "automated",
+      "commands": [],
+      "notes": [
+        "Independent adjudication of 2026-11-08: each agent finding was checked against the code at the pinned base and head by a Claude Fable 5.1 subagent reading the clone (read-only); deterministic check findings stay out-of-scope for the agent measurement. This replaces the owner's blanket acceptance of the same day."
+      ],
+      "independently_clean": false,
+      "positive_control": {
+        "kind": "real-pr",
+        "expected": [
+          {
+            "id": "ct-pos-02-1",
+            "mechanism": "contract-break",
+            "evidence": "independent adjudication 2026-11-08: confirmed; agent finding(s) 882cb32251d9 describe the registered defect at its location",
+            "finding_ids": [
+              "882cb32251d983834bb7aff31b3c8488dfcf0dd5a47d654b95d88354f875a611"
+            ]
+          }
+        ]
+      },
+      "misses": [],
+      "findings": {
+        "882cb32251d983834bb7aff31b3c8488dfcf0dd5a47d654b95d88354f875a611": {
+          "verdict": "true-positive",
+          "reason": "[high confidence] The diff (base 512a110 -> head 51a2458) touches only slime/backends/sglang_utils/arguments.py and deletes the parser.add_argument('--sglang-router-request-timeout-secs', type=int, default=14400) block from add_sglang_router_arguments. At head slime/ray/rollout.py:589-590 still does `if hasattr(router_args, 'request_timeout_secs'): router_args.request_timeout_secs = args.sglang_router_request_timeout_secs`, and a repo-wide grep finds no other definition of that attribute, so the read raises AttributeError once the hasattr guard passes. The flag removal plus the un-updated consumer is exactly the registered defect; the finding's producer location (lines 16-22 at head) is the post-deletion neighbourhood of the control's base lines 24-29."
+        }
+      }
+    },
+    "CT-POS-03": {
+      "repository": "focus-trap/focus-trap-react",
+      "pr": "https://github.com/focus-trap/focus-trap-react/pull/1350",
+      "case_id": "CT-POS-03",
+      "languages": [
+        "typescript"
+      ],
+      "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+      "verdict_source": "automated",
+      "commands": [],
+      "notes": [
+        "Independent adjudication of 2026-11-08: each agent finding was checked against the code at the pinned base and head by a Claude Fable 5.1 subagent reading the clone (read-only); deterministic check findings stay out-of-scope for the agent measurement. This replaces the owner's blanket acceptance of the same day."
+      ],
+      "independently_clean": false,
+      "positive_control": {
+        "kind": "real-pr",
+        "expected": [
+          {
+            "id": "ct-pos-03-1",
+            "mechanism": "contract-break",
+            "evidence": "independent adjudication 2026-11-08: confirmed; agent finding(s) 6238a8b37587 describe the registered defect at its location",
+            "finding_ids": [
+              "6238a8b375873d7e459ecaa431f5b33f8b70b6999118c68c751f37b040ab4da4"
+            ]
+          }
+        ]
+      },
+      "misses": [],
+      "findings": {
+        "6238a8b375873d7e459ecaa431f5b33f8b70b6999118c68c751f37b040ab4da4": {
+          "verdict": "true-positive",
+          "reason": "[high confidence] git diff bdac34a..4a37dae -- index.d.ts removes `export = FocusTrap;` and changes line 14 to `export declare class FocusTrap ...`, so the typings now describe an ES module with a named export and no default. src/focus-trap-react.js at head still ends with `module.exports = FocusTrap;` (the diff to that file only strips propTypes/defaultProps), package.json keeps `\"main\": \"dist/focus-trap-react.js\"` and `\"types\": \"index.d.ts\"`, and README.md:90 still documents `const FocusTrap = require('focus-trap-react')`. The declared shape therefore no longer matches the runtime CommonJS export: `import { FocusTrap }` type-checks but yields undefined, and the previously valid default/import-equals forms stop compiling. This is the registered defect; the finding files it as risk/signature-changed rather than defect/signature-removed, which is a labelling difference, not a substantive one."
+        }
+      }
+    },
+    "CT-POS-04": {
+      "repository": "polarsource/polar",
+      "pr": "https://github.com/polarsource/polar/pull/14590",
+      "case_id": "CT-POS-04",
+      "languages": [
+        "python"
+      ],
+      "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+      "verdict_source": "automated",
+      "commands": [],
+      "notes": [
+        "Independent adjudication of 2026-11-08: each agent finding was checked against the code at the pinned base and head by a Claude Fable 5.1 subagent reading the clone (read-only); deterministic check findings stay out-of-scope for the agent measurement. This replaces the owner's blanket acceptance of the same day."
+      ],
+      "independently_clean": false,
+      "positive_control": {
+        "kind": "real-pr",
+        "expected": [
+          {
+            "id": "ct-pos-04-1",
+            "mechanism": "contract-break",
+            "evidence": "independent adjudication 2026-11-08: confirmed; agent finding(s) 7683befd6dc9 describe the registered defect at its location",
+            "finding_ids": [
+              "7683befd6dc92c4851d4c15c9731b3773ff28bf0e0ae7e3f64a4de65a96ea99e"
+            ]
+          }
+        ]
+      },
+      "misses": [],
+      "findings": {
+        "7683befd6dc92c4851d4c15c9731b3773ff28bf0e0ae7e3f64a4de65a96ea99e": {
+          "verdict": "true-positive",
+          "reason": "[high confidence] The diff to server/polar/benefit/strategies/discord/schemas.py removes the `guild_token` computed_field from BenefitDiscordProperties (response) and replaces `guild_token: str = Field(serialization_alias='guild_id')` plus its JWT validator with a required `guild_id: str` in BenefitDiscordCreateProperties (request). The PR does not touch docs/openapi or sdk/: at head docs/openapi/2026-04.openapi.json:31237-31289 (and 2026-10 at the same lines) still list `guild_token` as required in both BenefitDiscordCreateProperties and BenefitDiscordProperties, and sdk/python/polar/v2026_04/inputs.py:165, outputs.py:929 and sdk/typescript/src/2026-04/models.ts:3292/3322 still carry `guild_token`; AGENTS.md:177-182 says these are regenerated from the server after public endpoint changes. The schema break and the stale committed specs/SDKs are real, and the finding covers the registered defect (guild_token removed from the response schema while the versioned OpenAPI specs still require it). One detail is inaccurate: the DiscordGuildConnection check in service.py:198 is pre-existing, not added by this PR."
+        }
+      }
+    },
+    "CT-POS-05": {
+      "repository": "foundry-rs/foundry",
+      "pr": "https://github.com/foundry-rs/foundry/pull/14224",
+      "case_id": "CT-POS-05",
+      "languages": [
+        "rust"
+      ],
+      "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+      "verdict_source": "automated",
+      "commands": [],
+      "notes": [
+        "Independent adjudication of 2026-11-08: each agent finding was checked against the code at the pinned base and head by a Claude Fable 5.1 subagent reading the clone (read-only); deterministic check findings stay out-of-scope for the agent measurement. This replaces the owner's blanket acceptance of the same day."
+      ],
+      "independently_clean": false,
+      "positive_control": {
+        "kind": "real-pr",
+        "expected": [
+          {
+            "id": "ct-pos-05-1",
+            "mechanism": "contract-break",
+            "evidence": "independent adjudication 2026-11-08: confirmed; agent finding(s) 5df5b86c8345, f74f6ea844e5 describe the registered defect at its location",
+            "finding_ids": [
+              "5df5b86c83455ea8af6daf7709e81c96daedd46fcf7e58ccce7e171226158548",
+              "f74f6ea844e5d8b0894fd56c9c76e161fe321b7c68769de0e4df8ada790c2a33"
+            ]
+          }
+        ]
+      },
+      "misses": [],
+      "findings": {
+        "4cde5d2e7423c4e1472225a4b57cf486417aade210a9429b9d8074a875fc2382": {
+          "verdict": "out-of-scope",
+          "reason": "deterministic check finding; outside the agent precision measurement, not adjudicated"
+        },
+        "864ffa71f6b42e7dbc82a4349083fc8c194019d46eae97062fd9a0afba7b647e": {
+          "verdict": "out-of-scope",
+          "reason": "deterministic check finding; outside the agent precision measurement, not adjudicated"
+        },
+        "d49bce8959bb10b4211f11877fbfb39143ed5bd931db59db4cdc508ee8ad201b": {
+          "verdict": "out-of-scope",
+          "reason": "deterministic check finding; outside the agent precision measurement, not adjudicated"
+        },
+        "5df5b86c83455ea8af6daf7709e81c96daedd46fcf7e58ccce7e171226158548": {
+          "verdict": "true-positive",
+          "reason": "[high confidence] At base crates/cli/src/opts/evm.rs:45-47 declares `#[arg(long, short, visible_alias = \"rpc-url\", value_name = \"URL\")] pub fork_url: Option<String>`, and clap derives `-f` from the bare `short` on a field named fork_url. At head EvmArgs replaces that field with `#[command(flatten)] pub rpc: RpcCommonOpts` (evm.rs:42-45), and crates/cli/src/opts/rpc_common.rs:23-25 declares `#[arg(long = \"rpc-url\", visible_alias = \"fork-url\", env = \"ETH_RPC_URL\")] pub url` with no short, so `-f` is no longer accepted on forge test/script. The only `short = 'f'` left in head is cast's `--file` at crates/cast/src/opts.rs:599, unrelated. The removal is real, undocumented in the commit (titled a refactor), and is one of the two shorts the control registers."
+        },
+        "f74f6ea844e5d8b0894fd56c9c76e161fe321b7c68769de0e4df8ada790c2a33": {
+          "verdict": "true-positive",
+          "reason": "[high confidence] At base crates/cli/src/opts/rpc.rs:23 declares `#[arg(short = 'r', long = \"rpc-url\", env = \"ETH_RPC_URL\")] pub url`. At head RpcOpts (rpc.rs:21-24) flattens RpcCommonOpts, whose url field at rpc_common.rs:23-25 has `long = \"rpc-url\"` and an alias but no short, so every cast command built on RpcOpts rejects `-r <url>`. The only remaining `short = 'r'` in head is the independent `--rpc-url` on crates/verify/src/bytecode.rs:79, so cast's short is gone while repo tests (e.g. crates/cast/tests/cli/main.rs:3980) only use `--rpc-url`. This is the primary flag named in the control's trigger."
+        }
+      }
+    },
+    "CT-CL-01": {
+      "repository": "firebase/firebase-functions",
+      "pr": "https://github.com/firebase/firebase-functions/pull/1854",
+      "case_id": "CT-CL-01",
+      "languages": [
+        "typescript"
+      ],
+      "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+      "verdict_source": "automated",
+      "commands": [],
+      "notes": [
+        "Independent adjudication of 2026-11-08: each agent finding was checked against the code at the pinned base and head by a Claude Fable 5.1 subagent reading the clone (read-only); deterministic check findings stay out-of-scope for the agent measurement. This replaces the owner's blanket acceptance of the same day."
+      ],
+      "independently_clean": true,
+      "positive_control": {
+        "kind": "none",
+        "expected": []
+      },
+      "misses": [],
+      "findings": {}
+    },
+    "CT-CL-02": {
+      "repository": "snakemake/snakemake",
+      "pr": "https://github.com/snakemake/snakemake/pull/4108",
+      "case_id": "CT-CL-02",
+      "languages": [
+        "python"
+      ],
+      "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+      "verdict_source": "automated",
+      "commands": [],
+      "notes": [
+        "Independent adjudication of 2026-11-08: each agent finding was checked against the code at the pinned base and head by a Claude Fable 5.1 subagent reading the clone (read-only); deterministic check findings stay out-of-scope for the agent measurement. This replaces the owner's blanket acceptance of the same day."
+      ],
+      "independently_clean": true,
+      "positive_control": {
+        "kind": "none",
+        "expected": []
+      },
+      "misses": [],
+      "findings": {}
+    },
+    "SE-POS-01": {
+      "repository": "louislam/uptime-kuma",
+      "pr": "https://github.com/louislam/uptime-kuma/pull/3178",
+      "case_id": "SE-POS-01",
+      "languages": [
+        "typescript"
+      ],
+      "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+      "verdict_source": "automated",
+      "commands": [],
+      "notes": [
+        "Independent adjudication of 2026-11-08: each agent finding was checked against the code at the pinned base and head by a Claude Fable 5.1 subagent reading the clone (read-only); deterministic check findings stay out-of-scope for the agent measurement. This replaces the owner's blanket acceptance of the same day."
+      ],
+      "independently_clean": false,
+      "positive_control": {
+        "kind": "real-pr",
+        "expected": [
+          {
+            "id": "se-pos-01-1",
+            "mechanism": "security-vulnerability",
+            "evidence": "independent adjudication 2026-11-08: confirmed; agent finding(s) 10f6f3aeca92 describe the registered defect at its location",
+            "finding_ids": [
+              "10f6f3aeca926f6f491a4f8e065ebeda8b5283e822c72f60f229450938562276"
+            ]
+          }
+        ]
+      },
+      "misses": [],
+      "findings": {
+        "109448b9d654b551906fd4c295b1f97a56ef4367b3575843f5eff66fba7ff0e2": {
+          "verdict": "out-of-scope",
+          "reason": "deterministic check finding; outside the agent precision measurement, not adjudicated"
+        },
+        "182ee7401f972084e25573683b5037113b02ebd2106c0513aa040f30f56edb00": {
+          "verdict": "out-of-scope",
+          "reason": "deterministic check finding; outside the agent precision measurement, not adjudicated"
+        },
+        "1db59f3233a2b05c5b32f162c90d46e52a3bdd2017be3cbf8777eff1c9137543": {
+          "verdict": "out-of-scope",
+          "reason": "deterministic check finding; outside the agent precision measurement, not adjudicated"
+        },
+        "2b950d259e72b7ebb91af6cd13a2ef4b4d2c10e52fc5ad8fed1541bb37971296": {
+          "verdict": "out-of-scope",
+          "reason": "deterministic check finding; outside the agent precision measurement, not adjudicated"
+        },
+        "450c7c35da113b11d0e7b8d025fce2769a599313032294d6bb9bd25a4c6d6ddb": {
+          "verdict": "out-of-scope",
+          "reason": "deterministic check finding; outside the agent precision measurement, not adjudicated"
+        },
+        "6e18e1b3c6a9a3bd5946c148b1d832d43302399611bfb7dd8e381c9ffeed330c": {
+          "verdict": "out-of-scope",
+          "reason": "deterministic check finding; outside the agent precision measurement, not adjudicated"
+        },
+        "6eab8d07859293d8b9e41d736c74d5487198fbcc7e7a93b34e3700ed03b0dca0": {
+          "verdict": "out-of-scope",
+          "reason": "deterministic check finding; outside the agent precision measurement, not adjudicated"
+        },
+        "7e1dd734c72ad916bcd0761754bf00cca5a8f334f65ff531f597e5a666fcbe3f": {
+          "verdict": "out-of-scope",
+          "reason": "deterministic check finding; outside the agent precision measurement, not adjudicated"
+        },
+        "8c3410d16a87a99f64136e3812b2ac332fac0342a776387088a427e1d0452ec9": {
+          "verdict": "out-of-scope",
+          "reason": "deterministic check finding; outside the agent precision measurement, not adjudicated"
+        },
+        "9568db45643503a668bef0efa6f7e83517fd181893f9f44f940a5b2ff7da95a7": {
+          "verdict": "out-of-scope",
+          "reason": "deterministic check finding; outside the agent precision measurement, not adjudicated"
+        },
+        "9c6ef1c410a82caa29775dbf3b7a9a0ebb1a9f183ad23e52b446262f9bd90f4e": {
+          "verdict": "out-of-scope",
+          "reason": "deterministic check finding; outside the agent precision measurement, not adjudicated"
+        },
+        "a0f85c570469156f1a2116c5d73a4c971588d59dcdff28b47446447f5e8b9d12": {
+          "verdict": "out-of-scope",
+          "reason": "deterministic check finding; outside the agent precision measurement, not adjudicated"
+        },
+        "a6e7b22073c1deb0c17f9bac38b5eef646e7411d5f56f8ef62a05fa2370d3ced": {
+          "verdict": "out-of-scope",
+          "reason": "deterministic check finding; outside the agent precision measurement, not adjudicated"
+        },
+        "c6afe7a75db8effe4a4f98415cd99e931eb80c835baa0614aa0482b23ece9b7e": {
+          "verdict": "out-of-scope",
+          "reason": "deterministic check finding; outside the agent precision measurement, not adjudicated"
+        },
+        "ca28326383061b81ae7457cf5890748054c0bd55631b33f363ca0d76116d831e": {
+          "verdict": "out-of-scope",
+          "reason": "deterministic check finding; outside the agent precision measurement, not adjudicated"
+        },
+        "cc3cd7822383f76363058db31e7bbdbfccc55396ca672b96605ae41aeed2a0dd": {
+          "verdict": "out-of-scope",
+          "reason": "deterministic check finding; outside the agent precision measurement, not adjudicated"
+        },
+        "e71710b6c1c10147c00836d98ecdc11161d11c4671b3d7ad357977e688c1ab87": {
+          "verdict": "out-of-scope",
+          "reason": "deterministic check finding; outside the agent precision measurement, not adjudicated"
+        },
+        "10f6f3aeca926f6f491a4f8e065ebeda8b5283e822c72f60f229450938562276": {
+          "verdict": "true-positive",
+          "reason": "[high confidence] server/monitor-types/tailscale-ping.js is new in the PR; runTailscalePing builds `let cmd = \\`tailscale ping ${hostname}\\`` (line 40) and runs it with child_process.exec(cmd, {timeout}, ...) (line 46), which invokes /bin/sh, and check() passes monitor.hostname straight in (line 23). The hostname is client-supplied: server/server.js `add` does bean.import(monitor) (line 649) and `editMonitor` does bean.hostname = monitor.hostname (line 721) after only checkLogin, and Monitor.validate() (server/model/monitor.js:1456-1463) checks only the interval bounds. The type is registered in UptimeKumaServer.monitorTypeList at server/uptime-kuma-server.js:102 so it runs on every beat. Shell metacharacters in the hostname therefore execute as the server user for any authenticated user, exactly the registered defect."
+        }
+      }
+    },
+    "SE-POS-02": {
+      "repository": "tauri-apps/tauri",
+      "pr": "https://github.com/tauri-apps/tauri/pull/6969",
+      "case_id": "SE-POS-02",
+      "languages": [
+        "rust"
+      ],
+      "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+      "verdict_source": "automated",
+      "commands": [],
+      "notes": [
+        "Independent adjudication of 2026-11-08: each agent finding was checked against the code at the pinned base and head by a Claude Fable 5.1 subagent reading the clone (read-only); deterministic check findings stay out-of-scope for the agent measurement. This replaces the owner's blanket acceptance of the same day."
+      ],
+      "independently_clean": false,
+      "positive_control": {
+        "kind": "real-pr",
+        "expected": [
+          {
+            "id": "se-pos-02-1",
+            "mechanism": "security-vulnerability",
+            "evidence": "independent adjudication 2026-11-08: confirmed; agent finding(s) 286453924c68 describe the registered defect at its location",
+            "finding_ids": [
+              "286453924c68a7e8638d75a47651528a014b208120fdbb9c17f78cc99b7b3781"
+            ]
+          }
+        ]
+      },
+      "misses": [],
+      "findings": {
+        "286453924c68a7e8638d75a47651528a014b208120fdbb9c17f78cc99b7b3781": {
+          "verdict": "true-positive",
+          "reason": "[high confidence] At base core/tauri/src/scope/fs.rs:219-227 built MatchOptions inside is_allowed with `#[cfg(unix)] require_literal_leading_dot: true`, so wildcard patterns never matched dot-components on Unix. At head Scope::for_fs_api (fs.rs:110-120) computes `require_literal_leading_dot` from the config and, when the scope is the plain AllowedPaths form or does not set the option, falls to `#[cfg(unix)] _ => false, #[cfg(windows)] _ => true`; is_allowed (fs.rs:243-254) now uses self.match_options for both deny and allow matching. core/tauri-utils/src/config.rs:1296-1303 documents the same inverted default, and app.rs:1631/1638 construct both the fs and asset-protocol scopes through for_fs_api. A Unix app with `$HOME/**` and no explicit option therefore now allows `~/.ssh/id_rsa`, which base denied; the comment 'dotfiles are not supposed to be exposed by default on unix' contradicts the code. This is the registered defect."
+        }
+      }
+    },
+    "SE-POS-03": {
+      "repository": "jpadilla/pyjwt",
+      "pr": "https://github.com/jpadilla/pyjwt/pull/970",
+      "case_id": "SE-POS-03",
+      "languages": [
+        "python"
+      ],
+      "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+      "verdict_source": "automated",
+      "commands": [],
+      "notes": [
+        "Independent adjudication of 2026-11-08: each agent finding was checked against the code at the pinned base and head by a Claude Fable 5.1 subagent reading the clone (read-only); deterministic check findings stay out-of-scope for the agent measurement. This replaces the owner's blanket acceptance of the same day."
+      ],
+      "independently_clean": false,
+      "positive_control": {
+        "kind": "real-pr",
+        "expected": [
+          {
+            "id": "se-pos-03-1",
+            "mechanism": "security-vulnerability",
+            "evidence": "independent adjudication 2026-11-08: confirmed; agent finding(s) f9b90d5fc210 describe the registered defect at its location",
+            "finding_ids": [
+              "f9b90d5fc2102042c8453c48a24e7ac1ef30bfc6df1902a27cba0334d0a120ea"
+            ]
+          }
+        ]
+      },
+      "misses": [],
+      "findings": {
+        "44142700879c6cca4417e49c73f05ccdceda77f631e21e10ce149f031887c9eb": {
+          "verdict": "out-of-scope",
+          "reason": "deterministic check finding; outside the agent precision measurement, not adjudicated"
+        },
+        "f9b90d5fc2102042c8453c48a24e7ac1ef30bfc6df1902a27cba0334d0a120ea": {
+          "verdict": "true-positive",
+          "reason": "[high confidence] The diff to jwt/api_jwt.py adds `from collections.abc import Iterable, Sequence` (line 6), changes the decode/decode_complete annotation to `issuer: str | Sequence[str] | None` (lines 114, 199), and at _validate_iss changes `isinstance(issuer, list)` to `isinstance(issuer, Sequence)` (line 366). Since str is registered as a collections.abc.Sequence, a string issuer now takes the branch `if payload['iss'] not in issuer` (line 367), which for two strings is a substring test, whereas at base a string issuer fell to the exact `payload['iss'] != issuer` comparison. A validly signed token with iss 'idp.example.com' or '' therefore passes validation against issuer 'https://idp.example.com'. This is the registered defect at the registered lines."
+        }
+      }
+    },
+    "SE-POS-04": {
+      "repository": "louislam/uptime-kuma",
+      "pr": "https://github.com/louislam/uptime-kuma/pull/3739",
+      "case_id": "SE-POS-04",
+      "languages": [
+        "typescript"
+      ],
+      "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+      "verdict_source": "automated",
+      "commands": [],
+      "notes": [
+        "Independent adjudication of 2026-11-08: each agent finding was checked against the code at the pinned base and head by a Claude Fable 5.1 subagent reading the clone (read-only); deterministic check findings stay out-of-scope for the agent measurement. This replaces the owner's blanket acceptance of the same day."
+      ],
+      "independently_clean": false,
+      "positive_control": {
+        "kind": "real-pr",
+        "expected": [
+          {
+            "id": "se-pos-04-1",
+            "mechanism": "security-vulnerability",
+            "evidence": "independent adjudication 2026-11-08: confirmed; agent finding(s) dc93337c25bc describe the registered defect at its location",
+            "finding_ids": [
+              "dc93337c25bcc12db0c8817e7275cf69359d3c8c470dfb439fe965140c791053"
+            ]
+          }
+        ]
+      },
+      "misses": [],
+      "findings": {
+        "182ee7401f972084e25573683b5037113b02ebd2106c0513aa040f30f56edb00": {
+          "verdict": "out-of-scope",
+          "reason": "deterministic check finding; outside the agent precision measurement, not adjudicated"
+        },
+        "1db59f3233a2b05c5b32f162c90d46e52a3bdd2017be3cbf8777eff1c9137543": {
+          "verdict": "out-of-scope",
+          "reason": "deterministic check finding; outside the agent precision measurement, not adjudicated"
+        },
+        "2b950d259e72b7ebb91af6cd13a2ef4b4d2c10e52fc5ad8fed1541bb37971296": {
+          "verdict": "out-of-scope",
+          "reason": "deterministic check finding; outside the agent precision measurement, not adjudicated"
+        },
+        "450c7c35da113b11d0e7b8d025fce2769a599313032294d6bb9bd25a4c6d6ddb": {
+          "verdict": "out-of-scope",
+          "reason": "deterministic check finding; outside the agent precision measurement, not adjudicated"
+        },
+        "6eab8d07859293d8b9e41d736c74d5487198fbcc7e7a93b34e3700ed03b0dca0": {
+          "verdict": "out-of-scope",
+          "reason": "deterministic check finding; outside the agent precision measurement, not adjudicated"
+        },
+        "7e1dd734c72ad916bcd0761754bf00cca5a8f334f65ff531f597e5a666fcbe3f": {
+          "verdict": "out-of-scope",
+          "reason": "deterministic check finding; outside the agent precision measurement, not adjudicated"
+        },
+        "8c3410d16a87a99f64136e3812b2ac332fac0342a776387088a427e1d0452ec9": {
+          "verdict": "out-of-scope",
+          "reason": "deterministic check finding; outside the agent precision measurement, not adjudicated"
+        },
+        "9568db45643503a668bef0efa6f7e83517fd181893f9f44f940a5b2ff7da95a7": {
+          "verdict": "out-of-scope",
+          "reason": "deterministic check finding; outside the agent precision measurement, not adjudicated"
+        },
+        "9c6ef1c410a82caa29775dbf3b7a9a0ebb1a9f183ad23e52b446262f9bd90f4e": {
+          "verdict": "out-of-scope",
+          "reason": "deterministic check finding; outside the agent precision measurement, not adjudicated"
+        },
+        "a0f85c570469156f1a2116c5d73a4c971588d59dcdff28b47446447f5e8b9d12": {
+          "verdict": "out-of-scope",
+          "reason": "deterministic check finding; outside the agent precision measurement, not adjudicated"
+        },
+        "a6e7b22073c1deb0c17f9bac38b5eef646e7411d5f56f8ef62a05fa2370d3ced": {
+          "verdict": "out-of-scope",
+          "reason": "deterministic check finding; outside the agent precision measurement, not adjudicated"
+        },
+        "cc3cd7822383f76363058db31e7bbdbfccc55396ca672b96605ae41aeed2a0dd": {
+          "verdict": "out-of-scope",
+          "reason": "deterministic check finding; outside the agent precision measurement, not adjudicated"
+        },
+        "e71710b6c1c10147c00836d98ecdc11161d11c4671b3d7ad357977e688c1ab87": {
+          "verdict": "out-of-scope",
+          "reason": "deterministic check finding; outside the agent precision measurement, not adjudicated"
+        },
+        "150952438975f50e1df7ac7860ccaaee5602c5d37b80eaaeaef52b048e73d6d1": {
+          "verdict": "true-positive",
+          "reason": "[medium confidence] Both sides are new in the PR: server/socket-handlers/general-socket-handler.js:68-91 answers getPushExample with `{ok:true, code}` or, on any error or when no `index.*` file is found, `{ok:false, msg:'Not found'}`; src/pages/Details.vue:637-645 is the only consumer and does `res.code.replace(...)` with no check of res.ok, so the not-found shape throws TypeError in the socket callback and the code panel stays empty. The failure path is reachable: `.dockerignore` line 38 (`/extra/push-examples`, pre-existing) excludes the directory from the build context and docker/dockerfile:22 does `COPY . .`, so the Docker image lacks the examples the handler reads at the cwd-relative `./extra/push-examples`. The producer/consumer error-shape mismatch is a genuine defect introduced by this change (the commit's push-examples edits only touch index files, not the ignore rule). It is a contracts finding unrelated to the registered security defect (unauthenticated path traversal), so it does not match the control. The Docker image was not inspected, hence medium rather than high confidence on reachability in that specific environment; the client-side mismatch itself is certain."
+        },
+        "dc93337c25bcc12db0c8817e7275cf69359d3c8c470dfb439fe965140c791053": {
+          "verdict": "true-positive",
+          "reason": "[high confidence] server/socket-handlers/general-socket-handler.js:68-91 (new) does `path.join('./extra/push-examples', language)` (line 71) with the raw client string, readdirSync on the result (line 72), and returns the full contents of the first file starting with `index.` (lines 74-81); there is no allowlist, no containment check and no checkLogin call, unlike initServerTimezone at line 36. generalSocketHandler(socket, server) is registered at server/server.js:1699 directly inside io.on('connection') (line 302) with no auth wrapper; authentication in this codebase is per-handler via checkLogin, so the event is reachable before login. A `language` of `../../node_modules/<pkg>` therefore lists an arbitrary directory and discloses its index.* file to an unauthenticated client, which is the registered defect. The finding's severity of 'warning' understates the control's 'high', but the mechanism is right."
+        }
+      }
+    },
+    "SE-CL-01": {
+      "repository": "Keats/jsonwebtoken",
+      "pr": "https://github.com/Keats/jsonwebtoken/pull/521",
+      "case_id": "SE-CL-01",
+      "languages": [
+        "rust"
+      ],
+      "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+      "verdict_source": "automated",
+      "commands": [],
+      "notes": [
+        "Independent adjudication of 2026-11-08: each agent finding was checked against the code at the pinned base and head by a Claude Fable 5.1 subagent reading the clone (read-only); deterministic check findings stay out-of-scope for the agent measurement. This replaces the owner's blanket acceptance of the same day."
+      ],
+      "independently_clean": true,
+      "positive_control": {
+        "kind": "none",
+        "expected": []
+      },
+      "misses": [],
+      "findings": {
+        "15f1e3cfdec91c4a5e09c2af098f1a07fe0432b624218722c9ea77fb78dac69e": {
+          "verdict": "out-of-scope",
+          "reason": "deterministic check finding; outside the agent precision measurement, not adjudicated"
+        },
+        "1cafe960575c7a0634158af6a56e94f20b24fb8eb25d6aeb75ec6fcc69bea2b6": {
+          "verdict": "out-of-scope",
+          "reason": "deterministic check finding; outside the agent precision measurement, not adjudicated"
+        }
+      }
+    },
+    "SE-CL-02": {
+      "repository": "Kludex/uvicorn",
+      "pr": "https://github.com/Kludex/uvicorn/pull/2824",
+      "case_id": "SE-CL-02",
+      "languages": [
+        "python"
+      ],
+      "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+      "verdict_source": "automated",
+      "commands": [],
+      "notes": [
+        "Independent adjudication of 2026-11-08: each agent finding was checked against the code at the pinned base and head by a Claude Fable 5.1 subagent reading the clone (read-only); deterministic check findings stay out-of-scope for the agent measurement. This replaces the owner's blanket acceptance of the same day."
+      ],
+      "independently_clean": true,
+      "positive_control": {
+        "kind": "none",
+        "expected": []
+      },
+      "misses": [],
+      "findings": {}
+    }
+  }
+}

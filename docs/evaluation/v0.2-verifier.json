@@ -1,7 +1,7 @@
 {
   "schema": "rio-verifier-comparison-v1",
   "execution": "live-model",
-  "manifest_sha256": "e33f6b9c6ba0947e5f366f3752ff03bcd4d35a9768a52ab86f4367d905753910",
+  "manifest_sha256": "2d6ed279b0257b6abe48abdac8f288e69c786a984dc2c97b1686fa5ff0f86840",
   "cases": [
     {
       "id": "HS-PY-01",
@@ -14,10 +14,10 @@
       ],
       "single": {
         "counts": {
-          "true-positive": 2,
-          "false-positive": 0
+          "true-positive": 0,
+          "false-positive": 2
         },
-        "precision": 1.0,
+        "precision": 0.0,
         "by_evidence": {
           "plausible": {
             "true-positive": 0,
@@ -25,14 +25,14 @@
             "precision": null
           },
           "static_proven": {
-            "true-positive": 1,
-            "false-positive": 0,
-            "precision": 1.0
+            "true-positive": 0,
+            "false-positive": 1,
+            "precision": 0.0
           },
           "reproduced": {
-            "true-positive": 1,
-            "false-positive": 0,
-            "precision": 1.0
+            "true-positive": 0,
+            "false-positive": 1,
+            "precision": 0.0
           }
         },
         "blind_match": {
@@ -41,16 +41,29 @@
             "false-positive": 0
           },
           "related": {
-            "true-positive": 1,
-            "false-positive": 0
+            "true-positive": 0,
+            "false-positive": 1
           },
           "none": {
-            "true-positive": 1,
-            "false-positive": 0
+            "true-positive": 0,
+            "false-positive": 1
           }
         },
         "detected_high_controls": [],
-        "false_positives": [],
+        "false_positives": [
+          {
+            "finding_id": "0211655eff0910cfbdc91820fcc6796c03017659b10fbe69d0a0452f094b6da3",
+            "rule_id": "error-handling/narrowed-baseexception-skips-cleanup",
+            "evidence_level": "reproduced",
+            "evidence": "[medium confidence] Same claim as the sibling worker finding: worker.py:125 `except Exception` lets a CancelledError bypass `runner.cleanup()` (line 128) and `run()`'s `except Exception` (line 55). The task stored in `self._task` is never cancelled anywhere in aiohttp, signal handling goes through `loop.add_signal_handler` callbacks (worker.py:152-176) rather than raising into the coroutine, and SystemExit from `handle_abort` escapes `run_until_complete` the same way at base and head. The finding admits no cancel path was found; without one the risk is theoretical, and the intentional narrowing was not reverted by the upstream fix. Not the control defect."
+          },
+          {
+            "finding_id": "8ba1e9ea1760921be6883087718a32e2ca21b0602a4b620e2d904adcb48a68ea",
+            "rule_id": "error-handling/narrowed-baseexception-payload-feed",
+            "evidence_level": "static_proven",
+            "evidence": "[medium confidence] aiohttp/http_parser.py:449 narrows the handler around `self._payload_parser.feed_data(...)` to `except Exception`, and aiohttp/_http_parser.pyx:767 does still use `except BaseException`, so the factual description is accurate. However `HttpPayloadParser.feed_data` is purely synchronous parsing/decompression code (streams.StreamReader.feed_data only calls set_result on a waiter), so the only non-Exception BaseExceptions it can raise are KeyboardInterrupt/SystemExit during process teardown; a CancelledError cannot be injected there, and the suggested 'decompressor' trigger is not realistic. The upstream pool-poisoning fix (#12798) deliberately handled BaseException at the client_proto.data_received layer and left http_parser.py unchanged. The control defect is the client_proto.py narrowing (transport not closed), a different location and consequence, so this does not match the control."
+          }
+        ],
         "verification_tokens": 247559,
         "verification_cost_usd": 0.345358332,
         "base": "f049588a8ab5b6b6757677b539845c63698d61f7",
@@ -58,10 +71,10 @@
       },
       "quorum": {
         "counts": {
-          "true-positive": 1,
-          "false-positive": 0
+          "true-positive": 0,
+          "false-positive": 1
         },
-        "precision": 1.0,
+        "precision": 0.0,
         "by_evidence": {
           "plausible": {
             "true-positive": 0,
@@ -69,9 +82,9 @@
             "precision": null
           },
           "static_proven": {
-            "true-positive": 1,
-            "false-positive": 0,
-            "precision": 1.0
+            "true-positive": 0,
+            "false-positive": 1,
+            "precision": 0.0
           },
           "reproduced": {
             "true-positive": 0,
@@ -85,8 +98,8 @@
             "false-positive": 0
           },
           "related": {
-            "true-positive": 1,
-            "false-positive": 0
+            "true-positive": 0,
+            "false-positive": 1
           },
           "none": {
             "true-positive": 0,
@@ -94,7 +107,14 @@
           }
         },
         "detected_high_controls": [],
-        "false_positives": [],
+        "false_positives": [
+          {
+            "finding_id": "5e2eb7d60f2c63f6505db964444213aabeef12ef799b5f478477488ad5d5b100",
+            "rule_id": "correctness/exception-narrowing-skips-cleanup",
+            "evidence_level": "static_proven",
+            "evidence": "[medium confidence] aiohttp/worker.py:125 now reads `except Exception: pass`, so a CancelledError inside the monitoring loop would skip `await runner.cleanup()` at line 128, but nothing can deliver one: no code in the repository cancels `self._task` (grep for 'cancel' in worker.py is empty), all signals are installed via `loop.add_signal_handler` (worker.py:152-176) so they run as loop callbacks and never raise inside the coroutine, and `handle_abort`'s `sys.exit(1)` raises in a callback, which aborts `run_until_complete` identically at base and head without resuming `_run`. The narrowing is the PR's stated intent ('Replace unintentional except BaseException'), the upstream regression fix (#12798) left worker.py untouched, and the finding itself concedes reachability is unconfirmed; the hazard is conceivable but not plausibly reachable. Does not describe the control defect (client_proto.py)."
+          }
+        ],
         "verification_tokens": 153065,
         "verification_cost_usd": 0.162389997,
         "base": "f049588a8ab5b6b6757677b539845c63698d61f7",
@@ -414,15 +434,15 @@
       ],
       "single": {
         "counts": {
-          "true-positive": 2,
-          "false-positive": 0
+          "true-positive": 1,
+          "false-positive": 1
         },
-        "precision": 1.0,
+        "precision": 0.5,
         "by_evidence": {
           "plausible": {
-            "true-positive": 2,
-            "false-positive": 0,
-            "precision": 1.0
+            "true-positive": 1,
+            "false-positive": 1,
+            "precision": 0.5
           },
           "static_proven": {
             "true-positive": 0,
@@ -445,14 +465,21 @@
             "false-positive": 0
           },
           "none": {
-            "true-positive": 1,
-            "false-positive": 0
+            "true-positive": 0,
+            "false-positive": 1
           }
         },
         "detected_high_controls": [
           "hs-ts-01"
         ],
-        "false_positives": [],
+        "false_positives": [
+          {
+            "finding_id": "c3a4a04af118cde342ed7cf67ed17e300e9fd367bd5905c847341e70bad7de71",
+            "rule_id": "correctness/prerender-header-non-latin1",
+            "evidence_level": "plausible",
+            "evidence": "[medium confidence] The data flow is as described (renderer.ts:175 appends ssrContext.url, now decoded, to the x-nitro-prerender header), but the hazard is not reachable: that branch only runs under import.meta.prerender, where nitro 2.12.9 serves requests through its localFetch built on unenv's mock ServerResponse, whose setHeader (unenv dist/runtime/node/internal/http/response.mjs:69-72) stores the value with no character validation, and nitro's prerenderer treats extracted routes as decoded strings and re-encodes them before fetching. Node's http ERR_INVALID_CHAR validation is never involved on this path. The finding itself labels it an unverified hazard; it does not describe the control defect (query decoding)."
+          }
+        ],
         "verification_tokens": 170883,
         "verification_cost_usd": 0.232493679,
         "base": "becfbee63dc6243f6a7306510df30ff5db0926e2",
@@ -864,10 +891,10 @@
       },
       "quorum": {
         "counts": {
-          "true-positive": 2,
-          "false-positive": 0
+          "true-positive": 1,
+          "false-positive": 1
         },
-        "precision": 1.0,
+        "precision": 0.5,
         "by_evidence": {
           "plausible": {
             "true-positive": 0,
@@ -875,9 +902,9 @@
             "precision": null
           },
           "static_proven": {
-            "true-positive": 2,
-            "false-positive": 0,
-            "precision": 1.0
+            "true-positive": 1,
+            "false-positive": 1,
+            "precision": 0.5
           },
           "reproduced": {
             "true-positive": 0,
@@ -891,18 +918,25 @@
             "false-positive": 0
           },
           "related": {
-            "true-positive": 2,
-            "false-positive": 0
+            "true-positive": 1,
+            "false-positive": 1
           },
           "none": {
-            "true-positive": 1,
-            "false-positive": 0
+            "true-positive": 0,
+            "false-positive": 1
           }
         },
         "detected_high_controls": [
           "hs-rs-01"
         ],
-        "false_positives": [],
+        "false_positives": [
+          {
+            "finding_id": "c4caace08fb45ef0c8ffe95f3031f66d98418e4fdaa0c172a0a7c71fd1242597",
+            "rule_id": "behavior/default-layout-duplicate-artifact",
+            "evidence_level": "static_proven",
+            "evidence": "[high confidence] The facts are correct: create_package (mod.rs:163-167) writes to build_dir/package/tmp-crate/<name>.crate and package() (mod.rs:216-227) always copies to target_dir/package. But this is the stated purpose of the PR (commit message: 'Move .crate out of final artifact location ... making it clear that these files are internal', and it explicitly discusses the extra copy as a possible future rename optimisation), and the updated tests in tests/testsuite/build_dir.rs and build_dir_legacy.rs assert the tmp-crate path. The finding labels intended, tested behaviour as drift; the leftover scratch file after failure also existed at base as package/.<name>.crate."
+          }
+        ],
         "verification_tokens": 835659,
         "verification_cost_usd": 0.7959588200000001,
         "base": "2aa0773e6120798d11160a635cb4be9cc9599a68",
@@ -1310,7 +1344,7 @@
       "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
       "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
       "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
-      "independently_clean": true,
+      "independently_clean": false,
       "high_controls": [],
       "single": {
         "counts": {
@@ -1406,7 +1440,7 @@
       "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
       "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
       "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
-      "independently_clean": true,
+      "independently_clean": false,
       "high_controls": [],
       "single": {
         "counts": {
@@ -1502,7 +1536,7 @@
       "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
       "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
       "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
-      "independently_clean": true,
+      "independently_clean": false,
       "high_controls": [],
       "single": {
         "counts": {
@@ -1598,7 +1632,7 @@
       "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
       "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
       "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
-      "independently_clean": true,
+      "independently_clean": false,
       "high_controls": [],
       "single": {
         "counts": {
@@ -1790,7 +1824,7 @@
       "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
       "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
       "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
-      "independently_clean": true,
+      "independently_clean": false,
       "high_controls": [],
       "single": {
         "counts": {
@@ -1890,15 +1924,15 @@
       "high_controls": [],
       "single": {
         "counts": {
-          "true-positive": 1,
-          "false-positive": 0
+          "true-positive": 0,
+          "false-positive": 1
         },
-        "precision": 1.0,
+        "precision": 0.0,
         "by_evidence": {
           "plausible": {
-            "true-positive": 1,
-            "false-positive": 0,
-            "precision": 1.0
+            "true-positive": 0,
+            "false-positive": 1,
+            "precision": 0.0
           },
           "static_proven": {
             "true-positive": 0,
@@ -1921,12 +1955,19 @@
             "false-positive": 0
           },
           "none": {
-            "true-positive": 1,
-            "false-positive": 0
+            "true-positive": 0,
+            "false-positive": 1
           }
         },
         "detected_high_controls": [],
-        "false_positives": [],
+        "false_positives": [
+          {
+            "finding_id": "f2c9347641aee6609ad6b94434b97d86977cfde504d09e91cd4eb880ce57706b",
+            "rule_id": "concurrency/eager-handoff-spurious-wake-on-zero-timeout-poll",
+            "evidence_level": "plausible",
+            "evidence": "[medium confidence] The mechanism is accurately traced: park.rs:234-239 returns HadDriver::Yes from the zero-duration branch, park_internal stores it at worker.rs:891, and run_task at worker.rs:645-653 then calls notify_parked_local once. But this is the author's deliberate choice (the diff changes `return;` to `return HadDriver::Yes;` in that branch), and it matches the documented semantics in config.rs ('an idle worker is woken whenever a worker thread transitions from polling the I/O driver to polling its own tasks'): the zero-timeout poll in park_yield does poll the driver (driver.park_timeout(handle, ZERO)) and may have woken tasks into this worker's local queue. The woken worker finds the released driver lock and parks on the driver, which is exactly the hand-off the option exists for; notify_parked_local only fires when an idle, non-searching worker exists, and the builder docs already state the option costs extra wakeups. The finding describes intended, documented behaviour as a defect."
+          }
+        ],
         "verification_tokens": 59729,
         "verification_cost_usd": 0.0579401,
         "base": "927df0e9d936ef6995a6b9abedabc032b8ef655c",
@@ -1982,7 +2023,7 @@
       "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
       "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
       "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
-      "independently_clean": true,
+      "independently_clean": false,
       "high_controls": [],
       "single": {
         "counts": {
@@ -2174,7 +2215,7 @@
       "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
       "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
       "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
-      "independently_clean": true,
+      "independently_clean": false,
       "high_controls": [],
       "single": {
         "counts": {
@@ -2270,25 +2311,25 @@
   "arms": {
     "single": {
       "counts": {
-        "true-positive": 24,
-        "false-positive": 0
+        "true-positive": 20,
+        "false-positive": 4
       },
-      "precision": 1.0,
+      "precision": 0.8333333333333334,
       "by_evidence": {
         "plausible": {
-          "true-positive": 6,
-          "false-positive": 0,
-          "precision": 1.0
+          "true-positive": 4,
+          "false-positive": 2,
+          "precision": 0.6666666666666666
         },
         "static_proven": {
-          "true-positive": 13,
-          "false-positive": 0,
-          "precision": 1.0
+          "true-positive": 12,
+          "false-positive": 1,
+          "precision": 0.9230769230769231
         },
         "reproduced": {
-          "true-positive": 5,
-          "false-positive": 0,
-          "precision": 1.0
+          "true-positive": 4,
+          "false-positive": 1,
+          "precision": 0.8
         }
       },
       "blind_match": {
@@ -2297,12 +2338,12 @@
           "false-positive": 0
         },
         "related": {
-          "true-positive": 17,
-          "false-positive": 0
+          "true-positive": 16,
+          "false-positive": 1
         },
         "none": {
-          "true-positive": 7,
-          "false-positive": 0
+          "true-positive": 4,
+          "false-positive": 3
         }
       },
       "verification_tokens": 2056911,
@@ -2313,10 +2354,10 @@
     },
     "quorum": {
       "counts": {
-        "true-positive": 23,
-        "false-positive": 0
+        "true-positive": 21,
+        "false-positive": 2
       },
-      "precision": 1.0,
+      "precision": 0.9130434782608695,
       "by_evidence": {
         "plausible": {
           "true-positive": 5,
@@ -2324,9 +2365,9 @@
           "precision": 1.0
         },
         "static_proven": {
-          "true-positive": 12,
-          "false-positive": 0,
-          "precision": 1.0
+          "true-positive": 10,
+          "false-positive": 2,
+          "precision": 0.8333333333333334
         },
         "reproduced": {
           "true-positive": 6,
@@ -2340,12 +2381,12 @@
           "false-positive": 0
         },
         "related": {
-          "true-positive": 22,
-          "false-positive": 0
+          "true-positive": 20,
+          "false-positive": 2
         },
         "none": {
-          "true-positive": 5,
-          "false-positive": 0
+          "true-positive": 4,
+          "false-positive": 1
         }
       },
       "verification_tokens": 5935634,
@@ -2355,11 +2396,26 @@
       "high_severity_recall": 0.7272727272727273
     }
   },
-  "precision": 1.0,
+  "precision": 0.9130434782608695,
   "gate": 0.8,
   "high_severity_recall_preserved": true,
   "lost_high_controls": [],
-  "quorum_false_positives": [],
+  "quorum_false_positives": [
+    {
+      "case": "HS-PY-01",
+      "finding_id": "5e2eb7d60f2c63f6505db964444213aabeef12ef799b5f478477488ad5d5b100",
+      "rule_id": "correctness/exception-narrowing-skips-cleanup",
+      "evidence_level": "static_proven",
+      "evidence": "[medium confidence] aiohttp/worker.py:125 now reads `except Exception: pass`, so a CancelledError inside the monitoring loop would skip `await runner.cleanup()` at line 128, but nothing can deliver one: no code in the repository cancels `self._task` (grep for 'cancel' in worker.py is empty), all signals are installed via `loop.add_signal_handler` (worker.py:152-176) so they run as loop callbacks and never raise inside the coroutine, and `handle_abort`'s `sys.exit(1)` raises in a callback, which aborts `run_until_complete` identically at base and head without resuming `_run`. The narrowing is the PR's stated intent ('Replace unintentional except BaseException'), the upstream regression fix (#12798) left worker.py untouched, and the finding itself concedes reachability is unconfirmed; the hazard is conceivable but not plausibly reachable. Does not describe the control defect (client_proto.py)."
+    },
+    {
+      "case": "HS-RS-01",
+      "finding_id": "c4caace08fb45ef0c8ffe95f3031f66d98418e4fdaa0c172a0a7c71fd1242597",
+      "rule_id": "behavior/default-layout-duplicate-artifact",
+      "evidence_level": "static_proven",
+      "evidence": "[high confidence] The facts are correct: create_package (mod.rs:163-167) writes to build_dir/package/tmp-crate/<name>.crate and package() (mod.rs:216-227) always copies to target_dir/package. But this is the stated purpose of the PR (commit message: 'Move .crate out of final artifact location ... making it clear that these files are internal', and it explicitly discusses the extra copy as a possible future rename optimisation), and the updated tests in tests/testsuite/build_dir.rs and build_dir_legacy.rs assert the tmp-crate path. The finding labels intended, tested behaviour as drift; the leftover scratch file after failure also existed at base as package/.<name>.crate."
+    }
+  ],
   "gates": {
     "reference_set": true,
     "precision": true,

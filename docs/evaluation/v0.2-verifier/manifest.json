@@ -1,7 +1,7 @@
 {
   "schema": "rio-verifier-eval-v1",
   "execution": "live-model",
-  "description": "v0.2 pinned verifier comparison, 2026-11-08, approved 24-case set; OpenRouter route until its credit limit, then the account's AI Gateway custom providers to the same models; HS-RS-03 (astral-sh/uv) dropped by the owner: both arms were cancelled by the wall budget on the fast (8 min) and deep (15 min) tiers, 24.6 MiB snapshot, graph truncated at max_nodes; owner acceptance of 2026-11-08",
+  "description": "v0.2 pinned verifier comparison, 2026-11-08, approved 24-case set; OpenRouter route until its credit limit, then the account's AI Gateway custom providers to the same models; HS-RS-03 (astral-sh/uv) dropped: both arms cancelled by the wall budget on the fast and deep tiers; findings adjudicated independently by Claude Fable 5.1 on 2026-11-08",
   "cases": [
     {
       "id": "HS-PY-01",
@@ -12,14 +12,14 @@
         "hs-py-01"
       ],
       "independently_clean": false,
-      "notes": "single-arm profile hash 49c673184d81c8ef41723a934e72c676109bbbccf92dc1a26b330cca6b28c0f7; route openrouter; mode branch; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
+      "notes": "single-arm profile hash 49c673184d81c8ef41723a934e72c676109bbbccf92dc1a26b330cca6b28c0f7; route openrouter; mode branch; independent model adjudication 2026-11-08",
       "single": {
         "report": "HS-PY-01/single/report.json",
         "audit": "HS-PY-01/single/audit.json",
         "verdicts": "HS-PY-01/single/verdicts.json",
         "report_sha256": "33c2aaa04f2a4bcc9a06a185c6459672c8593ee33492e566b38b583ca7a2f07a",
         "audit_sha256": "a0bbd0ff08391c9344960055d1f78791052fed91e0893f45ab6cd4bb3bdc291d",
-        "verdicts_sha256": "e0c7bc33c8edcf691d594440eb247440f1df8ce6b850bca70b2bd7667330ff8a"
+        "verdicts_sha256": "5597d8f78d6a30677b255cecb21c2e12a0dd4159fd1f7a0181b7a5410a14e011"
       },
       "quorum": {
         "report": "HS-PY-01/quorum/report.json",
@@ -27,7 +27,7 @@
         "verdicts": "HS-PY-01/quorum/verdicts.json",
         "report_sha256": "9156e20e297c5a4e1218b85676dddbdb5315bf3f054e6651e873be8b57ff2ae0",
         "audit_sha256": "de1b412db0c265fb98d4e7a0ef86dc09d0d3ab17b9bc2808736eb0edb0d4ec09",
-        "verdicts_sha256": "07c61dc0c390ba93c5ff9b943799221f9b4d67b6f0fc2d62eecd666702019eb1"
+        "verdicts_sha256": "e304723268f17652d5789d7217093f687d75243841ea7e7e5693ff9807da653d"
       }
     },
     {
@@ -39,14 +39,14 @@
         "hs-py-02"
       ],
       "independently_clean": false,
-      "notes": "single-arm profile hash 49c673184d81c8ef41723a934e72c676109bbbccf92dc1a26b330cca6b28c0f7; route openrouter; mode branch; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
+      "notes": "single-arm profile hash 49c673184d81c8ef41723a934e72c676109bbbccf92dc1a26b330cca6b28c0f7; route openrouter; mode branch; independent model adjudication 2026-11-08",
       "single": {
         "report": "HS-PY-02/single/report.json",
         "audit": "HS-PY-02/single/audit.json",
         "verdicts": "HS-PY-02/single/verdicts.json",
         "report_sha256": "ed384266c6f60f646b6a9b2c8fc5c3f0471c48bae61b27eafccc8f45ee7f5176",
         "audit_sha256": "df379de346336c6bce7ffa077150a5b2efe8c0172fe28011d83a905515635fec",
-        "verdicts_sha256": "c924cbb653c67cb6a92c2f7a6827614ca93e81785046476d65a32970fc6bd2d5"
+        "verdicts_sha256": "0804c3a40a5c8ca00c2a8a749e95ebb89d1b6e313b1f1ea21f6a82627997d6d6"
       },
       "quorum": {
         "report": "HS-PY-02/quorum/report.json",
@@ -54,7 +54,7 @@
         "verdicts": "HS-PY-02/quorum/verdicts.json",
         "report_sha256": "abbc3d06a82963e4234b7a6873de532418690c4b9ce62b13ad5746e6907e8a01",
         "audit_sha256": "35f1f197801e4eba4ae4e0dae369aa3f723102064717ade223950ac9a214ca38",
-        "verdicts_sha256": "6b00e14cb32db6525a871bceb0b4c54cd225cc2c93470a45686aab2212a35f6a"
+        "verdicts_sha256": "c9e7d62838cf006f6b8bbb966bcdb764a546d40d645681cdb43efcb5ed7f983e"
       }
     },
     {
@@ -66,14 +66,14 @@
         "hs-py-03"
       ],
       "independently_clean": false,
-      "notes": "single-arm profile hash 49c673184d81c8ef41723a934e72c676109bbbccf92dc1a26b330cca6b28c0f7; route openrouter; mode branch; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
+      "notes": "single-arm profile hash 49c673184d81c8ef41723a934e72c676109bbbccf92dc1a26b330cca6b28c0f7; route openrouter; mode branch; independent model adjudication 2026-11-08",
       "single": {
         "report": "HS-PY-03/single/report.json",
         "audit": "HS-PY-03/single/audit.json",
         "verdicts": "HS-PY-03/single/verdicts.json",
         "report_sha256": "99084f7264865bf119c4aa89a15e5e0293170b21ed05c7d7b432a2c9e8aef035",
         "audit_sha256": "5afc366d1d65f877f3f74eb3dbf41a37877fb53522bf9b505f23ec03797061aa",
-        "verdicts_sha256": "78687ce5d70e2ccffc7df3e4ea5aa99b6d06218a6391b5f24a7cc11d04aea32e"
+        "verdicts_sha256": "507f52f8828ab1450e3d02d489c5ef27fc8813be9890ec5db50508bf1d9285ec"
       },
       "quorum": {
         "report": "HS-PY-03/quorum/report.json",
@@ -81,7 +81,7 @@
         "verdicts": "HS-PY-03/quorum/verdicts.json",
         "report_sha256": "83eb6ef565e501b19ebd14c3bb1626aaa31a7c304e91eb3cfc16a2988efe0864",
         "audit_sha256": "43652789f1a7ecbf57fa15c3aa0ddc2ae8e5e80c6f6af41428f37b62716ae1ee",
-        "verdicts_sha256": "78687ce5d70e2ccffc7df3e4ea5aa99b6d06218a6391b5f24a7cc11d04aea32e"
+        "verdicts_sha256": "507f52f8828ab1450e3d02d489c5ef27fc8813be9890ec5db50508bf1d9285ec"
       }
     },
     {
@@ -93,14 +93,14 @@
         "hs-py-04"
       ],
       "independently_clean": false,
-      "notes": "single-arm profile hash 49c673184d81c8ef41723a934e72c676109bbbccf92dc1a26b330cca6b28c0f7; route openrouter; mode branch; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
+      "notes": "single-arm profile hash 49c673184d81c8ef41723a934e72c676109bbbccf92dc1a26b330cca6b28c0f7; route openrouter; mode branch; independent model adjudication 2026-11-08",
       "single": {
         "report": "HS-PY-04/single/report.json",
         "audit": "HS-PY-04/single/audit.json",
         "verdicts": "HS-PY-04/single/verdicts.json",
         "report_sha256": "78ad9d31d6555cc4d86f3f79330d04e894c60aa2c04407d5cdcd4fb2129c05ca",
         "audit_sha256": "13aceac1e5b85dd5609021cfb9ce614fc2333c9662b61f1f16c766766d08bcf8",
-        "verdicts_sha256": "09b7f3ff10ce4fa13c89030ad971c63267f0442366cd12440246e2780c7e2287"
+        "verdicts_sha256": "eb6adea145ecf1afc766c67379a0e2954b9b0931e708d00cab215a050e9b8cb3"
       },
       "quorum": {
         "report": "HS-PY-04/quorum/report.json",
@@ -108,7 +108,7 @@
         "verdicts": "HS-PY-04/quorum/verdicts.json",
         "report_sha256": "fa7b76ab95aa09995e5db2b169e38e3eb1c1f0565cedc2f9ba02d4eac3a0b7ed",
         "audit_sha256": "108a61f5b8aa1647db62137cd0e583ff528d60828412a7a8ac12db5b99ef1216",
-        "verdicts_sha256": "822b18fafa40244c039d0cec0c871307d970d509b6cfff550eb1922f7d6da03a"
+        "verdicts_sha256": "fa128e0e74a67fe91a2e89a6e2bfd71faae2127035968e97243f45cb6a562e87"
       }
     },
     {
@@ -120,14 +120,14 @@
         "hs-ts-01"
       ],
       "independently_clean": false,
-      "notes": "single-arm profile hash 49c673184d81c8ef41723a934e72c676109bbbccf92dc1a26b330cca6b28c0f7; route openrouter; mode branch; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
+      "notes": "single-arm profile hash 49c673184d81c8ef41723a934e72c676109bbbccf92dc1a26b330cca6b28c0f7; route openrouter; mode branch; independent model adjudication 2026-11-08",
       "single": {
         "report": "HS-TS-01/single/report.json",
         "audit": "HS-TS-01/single/audit.json",
         "verdicts": "HS-TS-01/single/verdicts.json",
         "report_sha256": "5dcdd2184a505f7dda16539489e7df663d834e781ef0982f7fc0d4baafb878c2",
         "audit_sha256": "fd2ea309d888cb6a9743cfe3316137948123d67eb144457f23a73d9c846c81a6",
-        "verdicts_sha256": "34f946595afc5a8a779a500be8f7ca1c713cbcdf3ef3ddac39bc21be4c822eda"
+        "verdicts_sha256": "764781e9057079dbd2d823713892ece292becc4b00ecd252f746f03afe730f3c"
       },
       "quorum": {
         "report": "HS-TS-01/quorum/report.json",
@@ -135,7 +135,7 @@
         "verdicts": "HS-TS-01/quorum/verdicts.json",
         "report_sha256": "5b08a46647def248777db5dcbd875183da458fbcbade0aa39d401a813543e1f5",
         "audit_sha256": "c4ad28f71d56a869c7079f65a1c3563dd49d2bb3776ad14bdd8a9757da3b93c6",
-        "verdicts_sha256": "d9c28fb4e608e8a64a39b902ee2cfb91d508091c12409381e3e9dc016a0defdb"
+        "verdicts_sha256": "1cdb7c1c67c3c2d423200f5f34b87ca140121a16b181d0a168140ccfabaebd44"
       }
     },
     {
@@ -147,14 +147,14 @@
         "hs-ts-02"
       ],
       "independently_clean": false,
-      "notes": "single-arm profile hash 49c673184d81c8ef41723a934e72c676109bbbccf92dc1a26b330cca6b28c0f7; route ai-gateway-custom; mode branch; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
+      "notes": "single-arm profile hash 49c673184d81c8ef41723a934e72c676109bbbccf92dc1a26b330cca6b28c0f7; route ai-gateway-custom; mode branch; independent model adjudication 2026-11-08",
       "single": {
         "report": "HS-TS-02/single/report.json",
         "audit": "HS-TS-02/single/audit.json",
         "verdicts": "HS-TS-02/single/verdicts.json",
         "report_sha256": "ce7af0d3e5752182562ace698ec5e51b1e02661b553c7caa1e35958048e0897f",
         "audit_sha256": "2520ea8a8e583b281bf300de29df1330a727c66d364312812c0bbb0e379d9475",
-        "verdicts_sha256": "d3d00f90d5e8979a01d84d30bccffdeb7eece9fe4846811e6a179337397cbacf"
+        "verdicts_sha256": "b4e4e41bf65042dacb9a98d1bb15ef26a87656d370589694954a049a7b50a6ca"
       },
       "quorum": {
         "report": "HS-TS-02/quorum/report.json",
@@ -162,7 +162,7 @@
         "verdicts": "HS-TS-02/quorum/verdicts.json",
         "report_sha256": "5bdbf0908fc47d543f08b4d3f2e966f19233b000e8d2eb77263bdcdc4c958203",
         "audit_sha256": "111810658bf35786fce085f4e1bdf83931417f4fe771f8675cc2c5d2321d4758",
-        "verdicts_sha256": "8f0e0859b9bee2456bc5bddbbb3fdba6adf3a904f1d3a38bd584e03d53872b1d"
+        "verdicts_sha256": "ac73e696480931b072f28c19b325634b9754b574ae1c181d6204890de140d324"
       }
     },
     {
@@ -174,14 +174,14 @@
         "hs-ts-03"
       ],
       "independently_clean": false,
-      "notes": "single-arm profile hash 49c673184d81c8ef41723a934e72c676109bbbccf92dc1a26b330cca6b28c0f7; route openrouter; mode branch; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
+      "notes": "single-arm profile hash 49c673184d81c8ef41723a934e72c676109bbbccf92dc1a26b330cca6b28c0f7; route openrouter; mode branch; independent model adjudication 2026-11-08",
       "single": {
         "report": "HS-TS-03/single/report.json",
         "audit": "HS-TS-03/single/audit.json",
         "verdicts": "HS-TS-03/single/verdicts.json",
         "report_sha256": "7eb7c71abb37ee74d63e3e51fab28acd5edb22619f6f7676e6cfba7758f80761",
         "audit_sha256": "c83dfac32a79c68828620f5fce3b2ba2a984ce660bddcd65027b78b5cd952f9a",
-        "verdicts_sha256": "ad60a5787ed53d1ba332b72f266bc1000315b5bf5be21be3f47934b9e4a5dee7"
+        "verdicts_sha256": "0db049c444743aeb05c702adf6e78cf8aa9c2ceb32bb7b3d68c7dee0fbb24892"
       },
       "quorum": {
         "report": "HS-TS-03/quorum/report.json",
@@ -189,7 +189,7 @@
         "verdicts": "HS-TS-03/quorum/verdicts.json",
         "report_sha256": "73424a22cb0e73e574966f9dac11c4c84a8794d94b2291dbdc559b60d9a36c24",
         "audit_sha256": "e6091f85d4e03a55dfe9a0bdb8dddcc942ddc4b37cb27a32ec3801322c7c6ec2",
-        "verdicts_sha256": "a496cc6d5a19bf01013c7bd4fcfe286a508c677e5112e17513ed15521ba10f64"
+        "verdicts_sha256": "aeff1d581d57ded1ae5470bfa6de73da08837e9ed7f101c3c46b5179fc5504bc"
       }
     },
     {
@@ -201,14 +201,14 @@
         "hs-ts-04"
       ],
       "independently_clean": false,
-      "notes": "single-arm profile hash 5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca; route openrouter; mode branch; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
+      "notes": "single-arm profile hash 5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca; route openrouter; mode branch; independent model adjudication 2026-11-08",
       "single": {
         "report": "HS-TS-04/single/report.json",
         "audit": "HS-TS-04/single/audit.json",
         "verdicts": "HS-TS-04/single/verdicts.json",
         "report_sha256": "1111e7d9cd963e4fbd80960370938ace66025c48ef461bff10889b76236fab05",
         "audit_sha256": "bc2cb9c0338b846babe3b3fd3277bde4ff8949f674e29a2ac95876a616dcb768",
-        "verdicts_sha256": "78687ce5d70e2ccffc7df3e4ea5aa99b6d06218a6391b5f24a7cc11d04aea32e"
+        "verdicts_sha256": "507f52f8828ab1450e3d02d489c5ef27fc8813be9890ec5db50508bf1d9285ec"
       },
       "quorum": {
         "report": "HS-TS-04/quorum/report.json",
@@ -216,7 +216,7 @@
         "verdicts": "HS-TS-04/quorum/verdicts.json",
         "report_sha256": "30c83bbef4989a932425c7d5f23552763607d5bd327d3e0b685a91056a70233a",
         "audit_sha256": "eeae44f582c25945df1b6bf71fbeb5c88cd9b4a222fcf720e976aa21eb54eb8c",
-        "verdicts_sha256": "78687ce5d70e2ccffc7df3e4ea5aa99b6d06218a6391b5f24a7cc11d04aea32e"
+        "verdicts_sha256": "507f52f8828ab1450e3d02d489c5ef27fc8813be9890ec5db50508bf1d9285ec"
       }
     },
     {
@@ -228,14 +228,14 @@
         "hs-rs-01"
       ],
       "independently_clean": false,
-      "notes": "single-arm profile hash 49c673184d81c8ef41723a934e72c676109bbbccf92dc1a26b330cca6b28c0f7; route ai-gateway-custom; mode branch; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
+      "notes": "single-arm profile hash 49c673184d81c8ef41723a934e72c676109bbbccf92dc1a26b330cca6b28c0f7; route ai-gateway-custom; mode branch; independent model adjudication 2026-11-08",
       "single": {
         "report": "HS-RS-01/single/report.json",
         "audit": "HS-RS-01/single/audit.json",
         "verdicts": "HS-RS-01/single/verdicts.json",
         "report_sha256": "80ccf40f6429d6c873b17152a523164f1730fd55ca4f337ec9e0f2323fbb284a",
         "audit_sha256": "e9e708dc6070c2f51c550781a0b25e5638b007cc7f8de5c791168d49745fe63f",
-        "verdicts_sha256": "beddc520e3496506111b2be89deb6134f1bd77e2f2f13d2bd4c6b8e59a80ea08"
+        "verdicts_sha256": "9ed0cd3da757376a2bdcb08087afe7fe81cdf8d633c328ca8806e4d2ef2fd43f"
       },
       "quorum": {
         "report": "HS-RS-01/quorum/report.json",
@@ -243,7 +243,7 @@
         "verdicts": "HS-RS-01/quorum/verdicts.json",
         "report_sha256": "be10991d364a58846827c8476ff59abcfc03a9cd53ed189f05cf745a36f81cbb",
         "audit_sha256": "a02851fe297cab57efecbf04c3fa1503acf736524748165b21ecc4756d8ac27e",
-        "verdicts_sha256": "6da93a8bfd0fdd98bf105e28029d59211639ad4d674c2204a488e35e8f71eb3d"
+        "verdicts_sha256": "b1fda476a8684724ce5ae2db581184cbce4c1389ad7ef2fac1fae52300e0f400"
       }
     },
     {
@@ -255,14 +255,14 @@
         "hs-rs-02"
       ],
       "independently_clean": false,
-      "notes": "single-arm profile hash 49c673184d81c8ef41723a934e72c676109bbbccf92dc1a26b330cca6b28c0f7; route ai-gateway-custom; mode branch; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
+      "notes": "single-arm profile hash 49c673184d81c8ef41723a934e72c676109bbbccf92dc1a26b330cca6b28c0f7; route ai-gateway-custom; mode branch; independent model adjudication 2026-11-08",
       "single": {
         "report": "HS-RS-02/single/report.json",
         "audit": "HS-RS-02/single/audit.json",
         "verdicts": "HS-RS-02/single/verdicts.json",
         "report_sha256": "28cc49be7268edc54dabaf045aa3e55338edd01d86fe78fe0f3cfabc7502ba18",
         "audit_sha256": "47f5cf2ffe8a3040e3b491af8643d5fb8f5a9c639ce18df34059b24e987a4979",
-        "verdicts_sha256": "55ae2e5b2da538ea22c0c58d691e58ab665969363bd9bf9b88a2e9c99126b588"
+        "verdicts_sha256": "aece6c9b08ea1526310a42749398b282f45ab1f04bb17923df4e14d2a026e106"
       },
       "quorum": {
         "report": "HS-RS-02/quorum/report.json",
@@ -270,7 +270,7 @@
         "verdicts": "HS-RS-02/quorum/verdicts.json",
         "report_sha256": "8d977cfd877a994a168b7dea574d0d41b28634f931303f1d21131e27596032d6",
         "audit_sha256": "3e52df7a12894ebe055248f30ac40568bcab7e0b44505000dc0da6942a6c7e53",
-        "verdicts_sha256": "ebaf799b9e0c43bd0cabdd20d7f50804e333061e679503bb2fbee03618469b35"
+        "verdicts_sha256": "e74ec20369cf0c3bbcce81a9a58fc32c30a0f192f6b8aff5c3f9035e2471b563"
       }
     },
     {
@@ -282,14 +282,14 @@
         "hs-rs-04"
       ],
       "independently_clean": false,
-      "notes": "single-arm profile hash 5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca; route ai-gateway-custom; mode branch; quorum generation served by the agent result cache; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
+      "notes": "single-arm profile hash 5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca; route ai-gateway-custom; mode branch; quorum generation served by the agent result cache; independent model adjudication 2026-11-08",
       "single": {
         "report": "HS-RS-04/single/report.json",
         "audit": "HS-RS-04/single/audit.json",
         "verdicts": "HS-RS-04/single/verdicts.json",
         "report_sha256": "45186cd2ece5807828cd581eb5a3d56882fd1b017e8573def7971803c38aeef6",
         "audit_sha256": "c713ec9013913121264d302ba69c980a3fe54e6e25df3699cdb13fb17368d650",
-        "verdicts_sha256": "e83896e72f70a22c04459a2d1d1dcb84f8dfdd9b6203dd111a843fb79660dc85"
+        "verdicts_sha256": "f9df8a135a1825de0e9961ac830fb9c20db90d07f177b119496a117a9a2e4363"
       },
       "quorum": {
         "report": "HS-RS-04/quorum/report.json",
@@ -297,7 +297,7 @@
         "verdicts": "HS-RS-04/quorum/verdicts.json",
         "report_sha256": "53373a24b340e06fc38bd740ab24afb0f4b917cfd82d3b0972bc3229674bac1a",
         "audit_sha256": "f6f9e1a0682dda66ca618319c730b902672b5ba10a2fd9c16824fcbf4df396dd",
-        "verdicts_sha256": "e83896e72f70a22c04459a2d1d1dcb84f8dfdd9b6203dd111a843fb79660dc85"
+        "verdicts_sha256": "f9df8a135a1825de0e9961ac830fb9c20db90d07f177b119496a117a9a2e4363"
       }
     },
     {
@@ -307,14 +307,14 @@
       "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
       "high_controls": [],
       "independently_clean": true,
-      "notes": "single-arm profile hash 5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca; route ai-gateway-custom; mode branch; quorum generation served by the agent result cache; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
+      "notes": "single-arm profile hash 5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca; route ai-gateway-custom; mode branch; quorum generation served by the agent result cache; independent model adjudication 2026-11-08",
       "single": {
         "report": "CL-PY-01/single/report.json",
         "audit": "CL-PY-01/single/audit.json",
         "verdicts": "CL-PY-01/single/verdicts.json",
         "report_sha256": "857f06b72fc7c81a0255210b8fdbd9ea35a24c36435012ea14bfa0b956310bdb",
         "audit_sha256": "c4eecaf2713d1aff36d734e02a516081b42cacf251e705bc4152376f5165e15c",
-        "verdicts_sha256": "78687ce5d70e2ccffc7df3e4ea5aa99b6d06218a6391b5f24a7cc11d04aea32e"
+        "verdicts_sha256": "507f52f8828ab1450e3d02d489c5ef27fc8813be9890ec5db50508bf1d9285ec"
       },
       "quorum": {
         "report": "CL-PY-01/quorum/report.json",
@@ -322,7 +322,7 @@
         "verdicts": "CL-PY-01/quorum/verdicts.json",
         "report_sha256": "300f10543c9899c4c5892029b665b7315712256e3e11227039f619b0a56e5cbe",
         "audit_sha256": "33e79e6b09a73dda54a0c0e82953fca4f7429bc7b05aabf18effba385f1f5d73",
-        "verdicts_sha256": "78687ce5d70e2ccffc7df3e4ea5aa99b6d06218a6391b5f24a7cc11d04aea32e"
+        "verdicts_sha256": "507f52f8828ab1450e3d02d489c5ef27fc8813be9890ec5db50508bf1d9285ec"
       }
     },
     {
@@ -332,14 +332,14 @@
       "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
       "high_controls": [],
       "independently_clean": true,
-      "notes": "single-arm profile hash 5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca; route ai-gateway-custom; mode branch; quorum generation served by the agent result cache; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
+      "notes": "single-arm profile hash 5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca; route ai-gateway-custom; mode branch; quorum generation served by the agent result cache; independent model adjudication 2026-11-08",
       "single": {
         "report": "CL-PY-02/single/report.json",
         "audit": "CL-PY-02/single/audit.json",
         "verdicts": "CL-PY-02/single/verdicts.json",
         "report_sha256": "413ee2f51e12ecf00c3e3bcbcc9a932c78dc7c14fdddc6a1e8335118409efc94",
         "audit_sha256": "1ecde5d1156c2e32d8549e24f4caa5d598043a31f92a67fb1d6187dd92ea58d3",
-        "verdicts_sha256": "78687ce5d70e2ccffc7df3e4ea5aa99b6d06218a6391b5f24a7cc11d04aea32e"
+        "verdicts_sha256": "507f52f8828ab1450e3d02d489c5ef27fc8813be9890ec5db50508bf1d9285ec"
       },
       "quorum": {
         "report": "CL-PY-02/quorum/report.json",
@@ -347,7 +347,7 @@
         "verdicts": "CL-PY-02/quorum/verdicts.json",
         "report_sha256": "bcc8ca127f2ac4de3b80e8a1358c0ef0445e3155aa3e7b8b6ac0102f17f85b9d",
         "audit_sha256": "b623c27bebeb6832543a1a95a26371f05bcaf4da1d603d0783b6fb203a72d731",
-        "verdicts_sha256": "78687ce5d70e2ccffc7df3e4ea5aa99b6d06218a6391b5f24a7cc11d04aea32e"
+        "verdicts_sha256": "507f52f8828ab1450e3d02d489c5ef27fc8813be9890ec5db50508bf1d9285ec"
       }
     },
     {
@@ -356,15 +356,15 @@
       "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
       "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
       "high_controls": [],
-      "independently_clean": true,
-      "notes": "single-arm profile hash 5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca; route ai-gateway-custom; mode branch; quorum generation served by the agent result cache; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
+      "independently_clean": false,
+      "notes": "single-arm profile hash 5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca; route ai-gateway-custom; mode branch; quorum generation served by the agent result cache; independent model adjudication 2026-11-08",
       "single": {
         "report": "CL-PY-03/single/report.json",
         "audit": "CL-PY-03/single/audit.json",
         "verdicts": "CL-PY-03/single/verdicts.json",
         "report_sha256": "ddd3ba567b56d83fbaeda0c8b61c046b3ee244a70a24557129cf541bf3d68b36",
         "audit_sha256": "05f2e0e51dc17b737dba29b4a9fef5d02446b060741cde4f73dc52cb8a20b6a1",
-        "verdicts_sha256": "c967d6f01534800fd700e2b3d0a1238a8d00e774ab7d6eedf039ab36eb324fd0"
+        "verdicts_sha256": "e7ec91786c01862a848e2a5fe5be72e60398ed85d2d0f94e22005bdeed152bc7"
       },
       "quorum": {
         "report": "CL-PY-03/quorum/report.json",
@@ -372,7 +372,7 @@
         "verdicts": "CL-PY-03/quorum/verdicts.json",
         "report_sha256": "399e9507d85acef8e840e40559826cc59ed5ab56d311672fa7bb76130ead2d91",
         "audit_sha256": "e5169dc4461d83718436aa3f7430375d5dd59943af6c82d3768dcab7c9868515",
-        "verdicts_sha256": "c967d6f01534800fd700e2b3d0a1238a8d00e774ab7d6eedf039ab36eb324fd0"
+        "verdicts_sha256": "e7ec91786c01862a848e2a5fe5be72e60398ed85d2d0f94e22005bdeed152bc7"
       }
     },
     {
@@ -381,15 +381,15 @@
       "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
       "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
       "high_controls": [],
-      "independently_clean": true,
-      "notes": "single-arm profile hash 5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca; route ai-gateway-custom; mode branch; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
+      "independently_clean": false,
+      "notes": "single-arm profile hash 5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca; route ai-gateway-custom; mode branch; independent model adjudication 2026-11-08",
       "single": {
         "report": "CL-PY-04/single/report.json",
         "audit": "CL-PY-04/single/audit.json",
         "verdicts": "CL-PY-04/single/verdicts.json",
         "report_sha256": "50c4ceb0408e4d466638143c9d5f4a5f4dc1d9711a518aa8d03fc4a0a6de7a20",
         "audit_sha256": "f3bd1aed54b86e10641f7ee45897a28c38177743e7b07d9eb184e7e41880e5ac",
-        "verdicts_sha256": "78edb2e3f2689aa5e323f2a866b5c3e2e9f70a4c23206e6ff227391ec912accc"
+        "verdicts_sha256": "cfecdf977cdaa07a3519c1b8b072a6a054abe3adb91d24c7b2278d73f05fd39a"
       },
       "quorum": {
         "report": "CL-PY-04/quorum/report.json",
@@ -397,7 +397,7 @@
         "verdicts": "CL-PY-04/quorum/verdicts.json",
         "report_sha256": "f282fb9c104d40da5dc7bf59160aee01eb04b4c46301e6d31d464c5e1f92e2e8",
         "audit_sha256": "dde900010394dfc3d601848e46f550e8a7159eddee6ac2e96656358a0caeb4be",
-        "verdicts_sha256": "6bc4a4b32c660afc7bc9b85b06b1809caf913a1815a232d577c7f4c6dcacdf46"
+        "verdicts_sha256": "4fbcb90ffa22263f18c1c566e3a46ded2f414aa993c638fb36e485e5fdfa806f"
       }
     },
     {
@@ -406,15 +406,15 @@
       "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
       "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
       "high_controls": [],
-      "independently_clean": true,
-      "notes": "single-arm profile hash 5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca; route ai-gateway-custom; mode branch; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
+      "independently_clean": false,
+      "notes": "single-arm profile hash 5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca; route ai-gateway-custom; mode branch; independent model adjudication 2026-11-08",
       "single": {
         "report": "CL-TS-01/single/report.json",
         "audit": "CL-TS-01/single/audit.json",
         "verdicts": "CL-TS-01/single/verdicts.json",
         "report_sha256": "3d97872bda2860efb6b3974b39544722ff2d75f4787ebe968dfe5bcfb85e1f13",
         "audit_sha256": "88d82f9a6a85159475a092d9a17cc476ec1b9519d358880abd1a5e805941ca4d",
-        "verdicts_sha256": "f21bf2e0f73117d9afa579fe4b2f41e3febe444015004577a0966cbec7248577"
+        "verdicts_sha256": "58c68f07eaa9f30892b767317009f452e7dc61c4a5624bf1966b669f51645d63"
       },
       "quorum": {
         "report": "CL-TS-01/quorum/report.json",
@@ -422,7 +422,7 @@
         "verdicts": "CL-TS-01/quorum/verdicts.json",
         "report_sha256": "2090ba319e5ec3d096f20d5c6e27682e9bae82faad29e9f7aa8a0336ebadf76c",
         "audit_sha256": "a29632c66b88764ca0327e0013a32e7d4a8bd0860e14e3ac3832faea5d7d2f9a",
-        "verdicts_sha256": "0d3ae6615f3d33dd4c8ed7cbdd0289a1d0f948437b44f9f9b51fba30416c932f"
+        "verdicts_sha256": "e1b3bf7d3256462c13a65c512d47e298f37fb6bba9790e83a2edbd0321aa151c"
       }
     },
     {
@@ -431,15 +431,15 @@
       "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
       "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
       "high_controls": [],
-      "independently_clean": true,
-      "notes": "single-arm profile hash 5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca; route ai-gateway-custom; mode branch; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
+      "independently_clean": false,
+      "notes": "single-arm profile hash 5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca; route ai-gateway-custom; mode branch; independent model adjudication 2026-11-08",
       "single": {
         "report": "CL-TS-02/single/report.json",
         "audit": "CL-TS-02/single/audit.json",
         "verdicts": "CL-TS-02/single/verdicts.json",
         "report_sha256": "9dcce76b0001ba30237500cd245f01f61ef1898109a348f882ffd9ed92ef6956",
         "audit_sha256": "c67f9bfbe66f9a54375ff4abca6bb05535b035f751c21a278e5b453b87aa80b9",
-        "verdicts_sha256": "614696b8ef349f2cfc1b6de6ff879cea5447d233a98b394b5037074f97e306f4"
+        "verdicts_sha256": "5d66e97a3e54bf37ec89d03995e00d98360f3b06d1b6c7da5dc445d963d1b139"
       },
       "quorum": {
         "report": "CL-TS-02/quorum/report.json",
@@ -447,7 +447,7 @@
         "verdicts": "CL-TS-02/quorum/verdicts.json",
         "report_sha256": "f3eb4f0f177fb88994c464d5ad1aca2a1fff2b29082ffacb8e58781040982796",
         "audit_sha256": "ec77a1771bdb33bc40ef9678ba2ca8ffea186d1ef7e27faa260d0e841f41da88",
-        "verdicts_sha256": "87f308169f799b3a96e0df752c5283b3eae1091931a8014ac51e6b765e8041e3"
+        "verdicts_sha256": "aeeef9ad5020d8bb24cfb2648873986c5fc67b6a7fd35a3137b5f3647feb8a90"
       }
     },
     {
@@ -457,14 +457,14 @@
       "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
       "high_controls": [],
       "independently_clean": true,
-      "notes": "single-arm profile hash 5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca; route ai-gateway-custom; mode branch; single generation served by the agent result cache; quorum generation served by the agent result cache; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
+      "notes": "single-arm profile hash 5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca; route ai-gateway-custom; mode branch; single generation served by the agent result cache; quorum generation served by the agent result cache; independent model adjudication 2026-11-08",
       "single": {
         "report": "CL-TS-03/single/report.json",
         "audit": "CL-TS-03/single/audit.json",
         "verdicts": "CL-TS-03/single/verdicts.json",
         "report_sha256": "726ef98c0f87bc153b1c02a3ae18348f8420f330c4ab7df6222ea82b4eeca141",
         "audit_sha256": "07c282865609e80706d23f6275f18f8ea499078e2acdfb1027c9fc53d46d10e2",
-        "verdicts_sha256": "78687ce5d70e2ccffc7df3e4ea5aa99b6d06218a6391b5f24a7cc11d04aea32e"
+        "verdicts_sha256": "507f52f8828ab1450e3d02d489c5ef27fc8813be9890ec5db50508bf1d9285ec"
       },
       "quorum": {
         "report": "CL-TS-03/quorum/report.json",
@@ -472,7 +472,7 @@
         "verdicts": "CL-TS-03/quorum/verdicts.json",
         "report_sha256": "66dc451ddd6082d1b9958e350a377ccd090f33a2ec2ec7e33e8fb312437fe0ea",
         "audit_sha256": "294451acd52984abcd0a045fcdcba15d544969ac3af329acc14deddeb37dfe14",
-        "verdicts_sha256": "78687ce5d70e2ccffc7df3e4ea5aa99b6d06218a6391b5f24a7cc11d04aea32e"
+        "verdicts_sha256": "507f52f8828ab1450e3d02d489c5ef27fc8813be9890ec5db50508bf1d9285ec"
       }
     },
     {
@@ -481,15 +481,15 @@
       "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
       "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
       "high_controls": [],
-      "independently_clean": true,
-      "notes": "single-arm profile hash 5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca; route ai-gateway-custom; mode branch; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
+      "independently_clean": false,
+      "notes": "single-arm profile hash 5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca; route ai-gateway-custom; mode branch; independent model adjudication 2026-11-08",
       "single": {
         "report": "CL-TS-04/single/report.json",
         "audit": "CL-TS-04/single/audit.json",
         "verdicts": "CL-TS-04/single/verdicts.json",
         "report_sha256": "5604d1f4b55e8a6c6f63b533e88feacd8e7767dd6861614ccaa0af3db473a928",
         "audit_sha256": "b78e93a42cf4fdcd28df70a41ae87fba75205e47c383bf84e229f7f14c5ba53c",
-        "verdicts_sha256": "82ff3e0b26754abed6ea05a47f0e2c120f36dc3287aed613e145a5caf65cfc5c"
+        "verdicts_sha256": "25ea32bf1b142a709646e4a71280b84d7f22e89e07af21f3be6d303afead0cda"
       },
       "quorum": {
         "report": "CL-TS-04/quorum/report.json",
@@ -497,7 +497,7 @@
         "verdicts": "CL-TS-04/quorum/verdicts.json",
         "report_sha256": "bbb47d8aa4a59075d202c04f2432d6220b3facb1abe3388c9af776b6b850283e",
         "audit_sha256": "c5482847a2b7416830c9ed859ba2f6dd42634b08feedec9866d3e55883adbb78",
-        "verdicts_sha256": "166ca711d7714f95919403bd02c82042888f8d998158e584ea29f546048725af"
+        "verdicts_sha256": "408ec52f695ada0bc1a5b3fb901918c3a604f630e8b1421fd3e3964b377b0a08"
       }
     },
     {
@@ -507,14 +507,14 @@
       "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
       "high_controls": [],
       "independently_clean": true,
-      "notes": "single-arm profile hash 5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca; route ai-gateway-custom; mode branch; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
+      "notes": "single-arm profile hash 5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca; route ai-gateway-custom; mode branch; independent model adjudication 2026-11-08",
       "single": {
         "report": "CL-RS-01/single/report.json",
         "audit": "CL-RS-01/single/audit.json",
         "verdicts": "CL-RS-01/single/verdicts.json",
         "report_sha256": "12e66ae3347563a8658778bfeef4546887bef2c9b8b00629c1166f1df7656242",
         "audit_sha256": "cf017b38ced4b938f3b738cd259bca8284da9dff277d466271a597fd631478fe",
-        "verdicts_sha256": "7fead9583338d2514a1a97365fef13d0fbbf53863f823c91575d08b95c9477c0"
+        "verdicts_sha256": "e1e35897d8a1d5982005a92f8c8c5b69189dcaaa78309862992d7c51d7b7bea4"
       },
       "quorum": {
         "report": "CL-RS-01/quorum/report.json",
@@ -522,7 +522,7 @@
         "verdicts": "CL-RS-01/quorum/verdicts.json",
         "report_sha256": "c22a735a77c45e2d9038581343caf8366b86406f2f3fb55b36e7e0b7e2860f68",
         "audit_sha256": "c10cf43ef1f3a802870b82f7c3b9f51c8cc36bfbab4d21ba2e5b941fb31e3914",
-        "verdicts_sha256": "78687ce5d70e2ccffc7df3e4ea5aa99b6d06218a6391b5f24a7cc11d04aea32e"
+        "verdicts_sha256": "507f52f8828ab1450e3d02d489c5ef27fc8813be9890ec5db50508bf1d9285ec"
       }
     },
     {
@@ -531,15 +531,15 @@
       "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
       "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
       "high_controls": [],
-      "independently_clean": true,
-      "notes": "single-arm profile hash 5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca; route ai-gateway-custom; mode branch; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
+      "independently_clean": false,
+      "notes": "single-arm profile hash 5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca; route ai-gateway-custom; mode branch; independent model adjudication 2026-11-08",
       "single": {
         "report": "CL-RS-02/single/report.json",
         "audit": "CL-RS-02/single/audit.json",
         "verdicts": "CL-RS-02/single/verdicts.json",
         "report_sha256": "f5b5d5f166e29812a0b8c17f539c97eda93d246767c1906a519e1c824f5a33a0",
         "audit_sha256": "8dd58a21be356d685258f0625f9c9c3b21f72a025c1fea627e56962e15b416db",
-        "verdicts_sha256": "d0ef18c4d20621e8fbd2196671cf12e645ed2961b627333dc20f2e91efbec505"
+        "verdicts_sha256": "39747d4dd2235722b1d93cb2f5b9f3dde8a42fecf11ff2dd0f944736b0aae43b"
       },
       "quorum": {
         "report": "CL-RS-02/quorum/report.json",
@@ -547,7 +547,7 @@
         "verdicts": "CL-RS-02/quorum/verdicts.json",
         "report_sha256": "7b3baff38a08ec66c1dbc8df496f0f999d64a4dfd19f9f6bead73221232e16af",
         "audit_sha256": "3510e1d6046d2fe1eed384e9287790d5db1e5694e0d14db480ee65f6ba8851d9",
-        "verdicts_sha256": "3e6f86a4265d880d85be485be0e3676f1f83f4ac6afbfffb5a365b2ea2422694"
+        "verdicts_sha256": "612a2e46ffc416e14278acac09bae827c785a8e7cf599a29d8db613454adfb10"
       }
     },
     {
@@ -557,14 +557,14 @@
       "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
       "high_controls": [],
       "independently_clean": true,
-      "notes": "single-arm profile hash 5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca; route ai-gateway-custom; mode branch; quorum generation served by the agent result cache; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
+      "notes": "single-arm profile hash 5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca; route ai-gateway-custom; mode branch; quorum generation served by the agent result cache; independent model adjudication 2026-11-08",
       "single": {
         "report": "CL-RS-03/single/report.json",
         "audit": "CL-RS-03/single/audit.json",
         "verdicts": "CL-RS-03/single/verdicts.json",
         "report_sha256": "1a12835ede3f6c967a4530f998afd02cefc4393f1586cb19695da61746fbc5e9",
         "audit_sha256": "14c1ab31eb90bbf5b09143e6c09a1f463acf994a37afd9a1803af48446c3d63e",
-        "verdicts_sha256": "78687ce5d70e2ccffc7df3e4ea5aa99b6d06218a6391b5f24a7cc11d04aea32e"
+        "verdicts_sha256": "507f52f8828ab1450e3d02d489c5ef27fc8813be9890ec5db50508bf1d9285ec"
       },
       "quorum": {
         "report": "CL-RS-03/quorum/report.json",
@@ -572,7 +572,7 @@
         "verdicts": "CL-RS-03/quorum/verdicts.json",
         "report_sha256": "c9bb43c95a15c7b74b42f437da464d4ba4b439651c14078f66659d5e8362b2d2",
         "audit_sha256": "a7ac1f1d89456c57d20585604fa5d2e8ee6e0ae44a6cea07c49c84b58cdee7de",
-        "verdicts_sha256": "78687ce5d70e2ccffc7df3e4ea5aa99b6d06218a6391b5f24a7cc11d04aea32e"
+        "verdicts_sha256": "507f52f8828ab1450e3d02d489c5ef27fc8813be9890ec5db50508bf1d9285ec"
       }
     },
     {
@@ -581,15 +581,15 @@
       "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
       "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
       "high_controls": [],
-      "independently_clean": true,
-      "notes": "single-arm profile hash 5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca; route ai-gateway-custom; mode branch; owner acceptance of 2026-11-08: verdicts and labels recorded on the owner's authority without independent review",
+      "independently_clean": false,
+      "notes": "single-arm profile hash 5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca; route ai-gateway-custom; mode branch; independent model adjudication 2026-11-08",
       "single": {
         "report": "CL-RS-04/single/report.json",
         "audit": "CL-RS-04/single/audit.json",
         "verdicts": "CL-RS-04/single/verdicts.json",
         "report_sha256": "2850ad1509bfc3aa07cb4afff02d69da63f1e509b40e51d645dcff406344769d",
         "audit_sha256": "0d8bcc052cc61fbb0d81edaa939b590901fe985b0695145928837102c844cffe",
-        "verdicts_sha256": "879b2d5589c35659443400507d00551376163e00b38b86337945825f74a91f52"
+        "verdicts_sha256": "9ad553b82a65498de01e3442e946c6e968969c1a4d109a406158f66d19002ebf"
       },
       "quorum": {
         "report": "CL-RS-04/quorum/report.json",
@@ -597,7 +597,7 @@
         "verdicts": "CL-RS-04/quorum/verdicts.json",
         "report_sha256": "acf89bbe6c954c8c6faef1ebab4227c5384382bc90970fc629fe4c64df80fc72",
         "audit_sha256": "1b3905d938440844f5d9723b94be5c3a7f3d740da77d6e8f3e34041fb35344f5",
-        "verdicts_sha256": "badcaed0a3971067826739aedaf971ff360ca65f526fa5710bdc9bd0d773297b"
+        "verdicts_sha256": "3784cc0c0cc086773476e4c6bf16b3938a1ea4d44126c657ad9dd0635bb1e288"
       }
     }
   ]

@@ -1,0 +1,688 @@
+{
+  "schema": "rio-verifier-verdicts-export-v1",
+  "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+  "cases": {
+    "HS-PY-01": {
+      "single": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {
+          "0211655eff0910cfbdc91820fcc6796c03017659b10fbe69d0a0452f094b6da3": {
+            "verdict": "false-positive",
+            "evidence": "[medium confidence] Same claim as the sibling worker finding: worker.py:125 `except Exception` lets a CancelledError bypass `runner.cleanup()` (line 128) and `run()`'s `except Exception` (line 55). The task stored in `self._task` is never cancelled anywhere in aiohttp, signal handling goes through `loop.add_signal_handler` callbacks (worker.py:152-176) rather than raising into the coroutine, and SystemExit from `handle_abort` escapes `run_until_complete` the same way at base and head. The finding admits no cancel path was found; without one the risk is theoretical, and the intentional narrowing was not reverted by the upstream fix. Not the control defect.",
+            "control_id": null
+          },
+          "8ba1e9ea1760921be6883087718a32e2ca21b0602a4b620e2d904adcb48a68ea": {
+            "verdict": "false-positive",
+            "evidence": "[medium confidence] aiohttp/http_parser.py:449 narrows the handler around `self._payload_parser.feed_data(...)` to `except Exception`, and aiohttp/_http_parser.pyx:767 does still use `except BaseException`, so the factual description is accurate. However `HttpPayloadParser.feed_data` is purely synchronous parsing/decompression code (streams.StreamReader.feed_data only calls set_result on a waiter), so the only non-Exception BaseExceptions it can raise are KeyboardInterrupt/SystemExit during process teardown; a CancelledError cannot be injected there, and the suggested 'decompressor' trigger is not realistic. The upstream pool-poisoning fix (#12798) deliberately handled BaseException at the client_proto.data_received layer and left http_parser.py unchanged. The control defect is the client_proto.py narrowing (transport not closed), a different location and consequence, so this does not match the control.",
+            "control_id": null
+          }
+        },
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      },
+      "quorum": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {
+          "5e2eb7d60f2c63f6505db964444213aabeef12ef799b5f478477488ad5d5b100": {
+            "verdict": "false-positive",
+            "evidence": "[medium confidence] aiohttp/worker.py:125 now reads `except Exception: pass`, so a CancelledError inside the monitoring loop would skip `await runner.cleanup()` at line 128, but nothing can deliver one: no code in the repository cancels `self._task` (grep for 'cancel' in worker.py is empty), all signals are installed via `loop.add_signal_handler` (worker.py:152-176) so they run as loop callbacks and never raise inside the coroutine, and `handle_abort`'s `sys.exit(1)` raises in a callback, which aborts `run_until_complete` identically at base and head without resuming `_run`. The narrowing is the PR's stated intent ('Replace unintentional except BaseException'), the upstream regression fix (#12798) left worker.py untouched, and the finding itself concedes reachability is unconfirmed; the hazard is conceivable but not plausibly reachable. Does not describe the control defect (client_proto.py).",
+            "control_id": null
+          }
+        },
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      }
+    },
+    "HS-PY-02": {
+      "single": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {
+          "99b1abc699f542f633d7291a7bcc35ad3ca69942247b520c8790aa918503f4d4": {
+            "verdict": "true-positive",
+            "evidence": "[high confidence] Describes the control defect: pyopenssl.py:512-516 passes the supplied password to `load_pem_private_key` on pyOpenSSL >= 26, cryptography raises TypeError for an unencrypted key (reproduced locally), and line 522 turns it into ssl.SSLError, whereas the base/legacy branch (`set_passwd_cb` + `use_privatekey_file`, lines 518-519 and base diff) and stdlib ssl ignore the password for unencrypted keys. mTLS configurations that always set a password therefore fail on every connection on the new branch; upstream fix #5255 adds a TypeError fallback to `password=None` and a parametrised test for unencrypted keys with passwords.",
+            "control_id": "hs-py-02"
+          },
+          "bca7bf48b0b9b6af6e4a2b5cd5d20d9e9c31b9a0ad4a7b370af2cfca50d68607": {
+            "verdict": "true-positive",
+            "evidence": "[medium confidence] On the pyOpenSSL >= 26 branch pyopenssl.py:513 performs `open(keyfile or certfile, 'rb')` directly, so a missing or unreadable key file raises OSError which is not in the `except (OpenSSL.SSL.Error, TypeError, ValueError)` tuple at line 522 and escapes as FileNotFoundError/PermissionError instead of ssl.SSLError (base path: `use_privatekey_file` -> OpenSSL.SSL.Error -> ssl.SSLError). urllib3's connectionpool maps SSLError and OSError differently (lines 825-839: SSLError vs ProtocolError with retries), so error handling differs by pyOpenSSL version. Reachable with a simple misconfiguration; impact is minor (and matches stdlib ssl behaviour), consistent with the info severity. Not the control defect.",
+            "control_id": null
+          }
+        },
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      },
+      "quorum": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {
+          "21dcae884e99f85873136edbc967cfd1cff388e1a012fa7260160d4250cdf109": {
+            "verdict": "true-positive",
+            "evidence": "[high confidence] At head src/urllib3/contrib/pyopenssl.py:512-516, when pyOpenSSL >= 26 and a password is given, the key bytes are passed to cryptography's `load_pem_private_key(key_file.read(), password)`; verified locally (cryptography 41.0.7) that this raises `TypeError: Password was given but private key is not encrypted.` for an unencrypted PEM key, and line 522 converts TypeError into `ssl.SSLError('Unable to load certificate chain')`. Base (and the < 26 branch at line 518-519) used `set_passwd_cb` + `use_privatekey_file`, where OpenSSL never invokes the callback for an unencrypted key, so loading succeeded. This is exactly the control defect, fixed upstream in #5255 by retrying with `password=None` on TypeError.",
+            "control_id": "hs-py-02"
+          },
+          "b62235f7149293c46b6633cad97cc072760bd43637934774d5c001098bbdaaa5": {
+            "verdict": "true-positive",
+            "evidence": "[medium confidence] pyopenssl.py:513 opens `keyfile or certfile` with `open(..., 'rb')` on the pyOpenSSL >= 26 branch, so a missing/unreadable key file raises FileNotFoundError/PermissionError, and the except at line 522 catches only `(OpenSSL.SSL.Error, TypeError, ValueError)`, so the OSError escapes unwrapped; base's `use_privatekey_file` raised OpenSSL.SSL.Error, which was wrapped as ssl.SSLError. In urllib3's connectionpool.urlopen (lines 816-839) BaseSSLError maps to urllib3 SSLError while OSError maps to ProtocolError('Connection aborted.') and is retried, so the user-visible exception type changes depending on pyOpenSSL major version. cryptography's UnsupportedAlgorithm is likewise uncaught. Minor and misconfiguration-only, matching its info severity, but the inconsistency is real and introduced by this change; it is not the control defect.",
+            "control_id": null
+          }
+        },
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      }
+    },
+    "HS-PY-03": {
+      "single": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {},
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      },
+      "quorum": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {},
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      }
+    },
+    "HS-PY-04": {
+      "single": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {
+          "0a82840078fe520198ff996b8f34245c64ab2b425923f8d06a9a02993868cbc9": {
+            "verdict": "true-positive",
+            "evidence": "[high confidence] Same control defect: fastapi/dependencies/models.py:151-156 at head looks up `__call__` on the class itself and `iscoroutinefunction` is True for a class whose body defines `async def __call__` (confirmed: `inspect.iscoroutinefunction(getattr(A, '__call__'))` is True), whereas base returned False through its `inspect.isclass` guard. Consumers at utils.py:646-647 (`await call(...)` on a constructor return value) and routing.py:305 (`is_coroutine = dependant.is_coroutine_callable`) therefore misclassify class dependencies and class endpoints, producing a TypeError at the await. The finding's base-vs-head comparison matches the diff and the candidates-doc description of HS-PY-04.",
+            "control_id": "hs-py-04"
+          }
+        },
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      },
+      "quorum": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {
+          "fc6ced0dc071383f81d5d101e33b32dc153158650df43163e478e2726e01d72c": {
+            "verdict": "true-positive",
+            "evidence": "[high confidence] Base `is_coroutine_callable` returned False via an explicit `inspect.isclass(self._unwrapped_call)` guard; head (fastapi/dependencies/models.py:139-166) drops it and checks `iscoroutinefunction(getattr(_impartial(self.call), '__call__'))` (line 151-156). For a class A with `async def __call__`, `A.__call__` resolves to the plain function in the class body, so `iscoroutinefunction` is True (verified locally); the comment at line 165 claiming the class case is covered by the default return is wrong. solve_dependencies (fastapi/dependencies/utils.py:646-647) then does `await call(**values)` on the synchronous constructor result, raising TypeError on every request. This is the control defect (fixed upstream in #14458).",
+            "control_id": "hs-py-04"
+          }
+        },
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      }
+    },
+    "HS-TS-01": {
+      "single": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {
+          "c3a4a04af118cde342ed7cf67ed17e300e9fd367bd5905c847341e70bad7de71": {
+            "verdict": "false-positive",
+            "evidence": "[medium confidence] The data flow is as described (renderer.ts:175 appends ssrContext.url, now decoded, to the x-nitro-prerender header), but the hazard is not reachable: that branch only runs under import.meta.prerender, where nitro 2.12.9 serves requests through its localFetch built on unenv's mock ServerResponse, whose setHeader (unenv dist/runtime/node/internal/http/response.mjs:69-72) stores the value with no character validation, and nitro's prerenderer treats extracted routes as decoded strings and re-encodes them before fetching. Node's http ERR_INVALID_CHAR validation is never involved on this path. The finding itself labels it an unverified hazard; it does not describe the control defect (query decoding).",
+            "control_id": null
+          },
+          "2e17c6a7df2616f0ab60e3e6cc32ea1dec19e8b6d874c4ef504f54ebe0d8792e": {
+            "verdict": "true-positive",
+            "evidence": "[medium confidence] Same root cause as the control: app.ts:16 `decodePath(event.path)` decodes reserved characters other than %2F, so `/a%3Fb` becomes `/a?b` and `/a%2520b` becomes `/a%20b` before router.ts:105-107 hands the string to vue-router as initialURL, where `?`/`#` are reparsed as delimiters and `%20` can be decoded again by param decoding; the client still sees the encoded form, so server and client resolve different routes/params. The finding frames the defect via encoded reserved characters in the path rather than the query, but it identifies the same mechanism and location as the known defect (decoding reserved characters in ssrContext.url changes how the URL is parsed, including the query boundary), so I count it as matching the control.",
+            "control_id": "hs-ts-01"
+          }
+        },
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      },
+      "quorum": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {
+          "ab606869bda2c98be8a7b9b2ff52c41be0b1065d6d6191f4d77d89acc5a0617d": {
+            "verdict": "true-positive",
+            "evidence": "[high confidence] packages/nitro-server/src/runtime/utils/renderer/app.ts:16 sets `url: decodePath(event.path)`; h3's event.path is the full request target including the query string, and ufo 1.6.1's decodePath is decodeURIComponent with only %2F protected, so `%26`, `%3D`, `%23`, `%2B` and `%25` in the query are turned into raw delimiters/characters. packages/nuxt/src/pages/runtime/plugins/router.ts:105-107 feeds this value to the router as initialURL on the server, so SSR route.query diverges from the client parse. This is exactly the known defect (query decoded during SSR, `%2B` becoming a space; fixed by nuxt#34252).",
+            "control_id": "hs-ts-01"
+          }
+        },
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      }
+    },
+    "HS-TS-02": {
+      "single": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {
+          "fbde97efebf75c03cffea5c2891e95e36169955439c4bba6872a8bef01654c7e": {
+            "verdict": "true-positive",
+            "evidence": "[high confidence] Duplicate of the sibling finding: encodeForHtmlAttr at router.ts:130-140 percent-encodes `&` as `%26`, which is a literal data character in a URL rather than an HTML escape, so the meta-refresh body built at router.ts:220 carries a different URL from the Location header (router.ts:216, encodeURL). The base code (`location.replace(/\"/g, '%22')`) preserved `&`. The new fixture navigate-to-external-encode.vue only tests injection characters, not a legitimate multi-parameter query. Matches the known defect.",
+            "control_id": "hs-ts-02"
+          }
+        },
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      },
+      "quorum": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {
+          "b5935ce8bdd38d94e784be1c7b9a4f43026b9695bbbdcc9827b143f779dad137": {
+            "verdict": "true-positive",
+            "evidence": "[high confidence] packages/nuxt/src/app/composables/router.ts:130-140 maps `&` to `%26` (and ' < > to percent escapes), and router.ts:215 now routes every redirect location through encodeForHtmlAttr for the meta-refresh body at router.ts:220, while the Location header at router.ts:216 still uses encodeURL. At base only `\"` was replaced (URL_QUOTE_RE), so `?a=1&b=2` survived; at head the body URL is `?a=1%26b=2`, which a browser following the meta refresh parses as a single parameter. This is precisely the control defect (nuxt#35475, fixed by #35486).",
+            "control_id": "hs-ts-02"
+          }
+        },
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      }
+    },
+    "HS-TS-03": {
+      "single": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {
+          "c3b3c6f3101f897458e395ce1ff6be8e3c7f50ed6d279d9326276db51bbe4d6b": {
+            "verdict": "true-positive",
+            "evidence": "[high confidence] Same finding as its sibling: wrangler.ts:22-29 and :55-58 now return the user's kv_namespaces plus SESSION where base returned only SESSION, and the plugin concatenates the customizer output with the user config, producing duplicate bindings (astro#16590). The updated unit tests (test/wrangler.test.ts:61-70) only assert on the customizer's return value and cannot see the merge. Hedged wording but the correct defect, location and consequence.",
+            "control_id": "hs-ts-03"
+          }
+        },
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      },
+      "quorum": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {
+          "283cf852d8a02d8aa238a28f2289cf780b6e15fb205a24d937a42b34445c8d84": {
+            "verdict": "true-positive",
+            "evidence": "[high confidence] packages/integrations/cloudflare/src/wrangler.ts:22-29 withSessionKVBinding copies the user's existing kv_namespaces and appends the SESSION entry, and lines 55-58 return that array from the customizer for both the top level and previews; at base only [{binding: SESSION}] was returned. @cloudflare/vite-plugin merges the customizer result with the user's wrangler config (as the fix PR astro#16652 and issue #16590 establish), so every user KV binding appears twice and wrangler rejects the duplicates. The finding is hedged on the plugin's merge semantics, which it could not inspect, but it names the exact mechanism, location and failure of the known defect.",
+            "control_id": "hs-ts-03"
+          }
+        },
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      }
+    },
+    "HS-TS-04": {
+      "single": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {},
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      },
+      "quorum": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {},
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      }
+    },
+    "HS-RS-01": {
+      "single": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {
+          "d600fce66b153cd155d13828831fbccc7f461ec604420b901b38700dd556bf18": {
+            "verdict": "true-positive",
+            "evidence": "[high confidence] Same defect as 5746c2: the uplift loop at mod.rs:218-227 opens the destination via open_rw_exclusive_create (flock.rs:230-244, read/write/create without truncate) and copies without set_len(0), while create_package at mod.rs:163-192 only truncates the scratch file in tmp-crate. Base avoided this in the default layout by returning the renamed scratch file. A second, smaller `cargo package` run leaves stale trailing bytes in target/package/<name>.crate, which is the control defect.",
+            "control_id": "hs-rs-01"
+          }
+        },
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      },
+      "quorum": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {
+          "5746c21fe1acb3039234eef8506841b9725161fb111ea6b5387f3bcf246c165d": {
+            "verdict": "true-positive",
+            "evidence": "[high confidence] At head, package() (src/cargo/ops/cargo_package/mod.rs:216-227) unconditionally opens target_dir/package/<name>.crate with open_rw_exclusive_create and io::copy's the scratch tarball into it with no set_len. Filesystem::open_rw_exclusive_create (src/cargo/util/flock.rs:230-244) uses OpenOptions read+write+create with no truncate. At base the target_dir == build_dir branch returned the file that create_package had written after set_len(0) and atomically renamed, so a smaller re-package now leaves the old file's tail behind in the default layout. This is exactly the control defect (cargo #16683).",
+            "control_id": "hs-rs-01"
+          },
+          "c4caace08fb45ef0c8ffe95f3031f66d98418e4fdaa0c172a0a7c71fd1242597": {
+            "verdict": "false-positive",
+            "evidence": "[high confidence] The facts are correct: create_package (mod.rs:163-167) writes to build_dir/package/tmp-crate/<name>.crate and package() (mod.rs:216-227) always copies to target_dir/package. But this is the stated purpose of the PR (commit message: 'Move .crate out of final artifact location ... making it clear that these files are internal', and it explicitly discusses the extra copy as a possible future rename optimisation), and the updated tests in tests/testsuite/build_dir.rs and build_dir_legacy.rs assert the tmp-crate path. The finding labels intended, tested behaviour as drift; the leftover scratch file after failure also existed at base as package/.<name>.crate.",
+            "control_id": null
+          }
+        },
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      }
+    },
+    "HS-RS-02": {
+      "single": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {
+          "f88e651fe078b89aef49a8491b31660ba60daf3a74a092e95e0c3127fc3e3e7c": {
+            "verdict": "true-positive",
+            "evidence": "[high confidence] Duplicate of 6da7c0 and correct: custom_build.rs:467-477 matches the dependency's version_req against unit.pkg.version() (the depending package) and panics on no match; the lookup runs for every RunCustomBuild dep regardless of -Zany-build-script-metadata, because connect_run_custom_build_deps (unit_dependencies.rs:973-979) still includes links-bearing deps on stable. The new tests use path deps with a `*` requirement, which always match, so they cannot catch it. Matches the control defect.",
+            "control_id": "hs-rs-02"
+          }
+        },
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      },
+      "quorum": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {
+          "6da7c088abd160b459625ebeba4eb2056bb98fb32f380459110380bd9f85f8e9": {
+            "verdict": "true-positive",
+            "evidence": "[high confidence] custom_build.rs:467-477 at head searches unit.pkg.dependencies() with `d.version_req().matches(unit.pkg.version())`, i.e. the dependent's own version rather than dep.unit.pkg.version(), and panics when nothing matches. The lib_deps computation is not gated on any_build_script_metadata (the flag is only consulted at custom_build.rs:570 when emitting CARGO_DEP_*), and the unit_dependencies.rs filter still yields links-bearing RunCustomBuild deps on stable, so a package 0.1.0 depending on `bar = \"1.0\"` with links panics. Base (custom_build.rs:465 at base) just used links().unwrap(). This is the control defect.",
+            "control_id": "hs-rs-02"
+          },
+          "ca6b0fcd03c03a8b6d65eab6241dafda06aa2591d871d775443b9afd2adeaa24": {
+            "verdict": "true-positive",
+            "evidence": "[medium confidence] The same lookup at custom_build.rs:467-477 also requires `d.source_id() == dep.unit.pkg.package_id().source_id()`. unit.pkg.dependencies() are the manifest's declared Dependency values (registry source for a crates.io dep), while a [patch]/[replace]-ed package resolves to a PackageId whose source is the patch source; cargo's own code never re-matches manifest deps against resolved ids this way but uses the resolve graph edges, and registry.rs:860-895 shows the special handling needed because matches_id fails for patched deps. So even with the version comparison corrected, a patched links dependency would hit the panic!, and taking the first match among several declarations of the same package can pick the wrong name_in_toml. This is a distinct hazard from the control's wrong-version bug (same panic site), so matches_control is false.",
+            "control_id": null
+          }
+        },
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      }
+    },
+    "HS-RS-04": {
+      "single": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {
+          "49ffc0224822be927355f18f17b547ce5aa241ecb5019dfe346ec9d9b8412872": {
+            "verdict": "true-positive",
+            "evidence": "[high confidence] crates/ty/src/args.rs:192-194 implements CheckCommand::force_exclude as resolve_bool_arg(self.force_exclude, self.no_progress) although the paired flag is no_force_exclude (args.rs:161-166, with overrides_with between the two). resolve_bool_arg (args.rs:454-461) hits unreachable! for (true, true), and clap does not prevent --force-exclude together with the unrelated global --no-progress, so `ty check --force-exclude --no-progress` panics and --no-force-exclude is never consulted. lib.rs:121 feeds this value into project.set_force_exclude. This is exactly the control defect.",
+            "control_id": "hs-rs-04"
+          }
+        },
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      },
+      "quorum": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {
+          "49ffc0224822be927355f18f17b547ce5aa241ecb5019dfe346ec9d9b8412872": {
+            "verdict": "true-positive",
+            "evidence": "[high confidence] crates/ty/src/args.rs:192-194 implements CheckCommand::force_exclude as resolve_bool_arg(self.force_exclude, self.no_progress) although the paired flag is no_force_exclude (args.rs:161-166, with overrides_with between the two). resolve_bool_arg (args.rs:454-461) hits unreachable! for (true, true), and clap does not prevent --force-exclude together with the unrelated global --no-progress, so `ty check --force-exclude --no-progress` panics and --no-force-exclude is never consulted. lib.rs:121 feeds this value into project.set_force_exclude. This is exactly the control defect.",
+            "control_id": "hs-rs-04"
+          }
+        },
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      }
+    },
+    "CL-PY-01": {
+      "single": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {},
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      },
+      "quorum": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {},
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      }
+    },
+    "CL-PY-02": {
+      "single": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {},
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      },
+      "quorum": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {},
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      }
+    },
+    "CL-PY-03": {
+      "single": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {
+          "bf37c066172272481987f84e9528194173fd36478599f1a106a2386503632be4": {
+            "verdict": "true-positive",
+            "evidence": "[high confidence] At head starlette/middleware/sessions.py:64 emits Set-Cookie only when `session.modified and session`, and `modified` is set solely by the overridden top-level mutators of the dict subclass Session (sessions.py:91-125); base re-serialised any non-empty session on every response. A stand-in with the same overrides confirms `s['a']['x'] = 1` leaves `modified` False, so in-place nested mutations are silently never written back. Nothing in the PR documents this; upstream later had to add docs for exactly this limitation (Kludex/starlette#3474), confirming it was a real, unflagged behaviour regression at head. Severity is arguable (maintainers resolved it by documentation, not code), but the described data loss is real.",
+            "control_id": null
+          },
+          "b4ba19e489096d39d895a1474f1d645ff6d4215dd988eeb19502625682afbee0": {
+            "verdict": "true-positive",
+            "evidence": "[high confidence] Session (sessions.py:91-125) overrides __setitem__, __delitem__, clear, pop, setdefault and update but not popitem or __ior__; dict's C implementations of those bypass the Python `update`/`__delitem__` overrides, so `session |= {...}` and `session.popitem()` change the data with `modified` still False (verified with a stand-in subclass: `ior False`, `popitem False`). The middleware then sends no Set-Cookie (sessions.py:64-76), whereas base always re-wrote a non-empty session. Upstream fixed precisely this in Kludex/starlette#3436 by adding popitem and __ior__ overrides.",
+            "control_id": null
+          },
+          "22107422e4c775c3825c8706a124daa4f63a6f0f5a79e312539260b4879f4422": {
+            "verdict": "true-positive",
+            "evidence": "[medium confidence] Base re-signed the cookie on every response with a non-empty session, so the itsdangerous timestamp used by `self.signer.unsign(data, max_age=self.max_age)` (sessions.py:50) was refreshed on each request, giving a sliding expiry; at head (sessions.py:64) the cookie is re-issued only when `session.modified`, so a read-only user's session hard-expires max_age after the last write. The change is real and undocumented in the PR (docs/middleware.md:139 only says 'Session expiry time'); the issue thread (#2019) explicitly called out this consequence and the PR body says it deliberately left out the `refresh_window` from #2527, so this is a knowingly accepted trade-off rather than an oversight, which is why the finding is a warning-level risk rather than a defect. The hazard is genuine and reachable, so the finding stands, though an owner may well dismiss it as intended.",
+            "control_id": null
+          }
+        },
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      },
+      "quorum": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {
+          "bf37c066172272481987f84e9528194173fd36478599f1a106a2386503632be4": {
+            "verdict": "true-positive",
+            "evidence": "[high confidence] At head starlette/middleware/sessions.py:64 emits Set-Cookie only when `session.modified and session`, and `modified` is set solely by the overridden top-level mutators of the dict subclass Session (sessions.py:91-125); base re-serialised any non-empty session on every response. A stand-in with the same overrides confirms `s['a']['x'] = 1` leaves `modified` False, so in-place nested mutations are silently never written back. Nothing in the PR documents this; upstream later had to add docs for exactly this limitation (Kludex/starlette#3474), confirming it was a real, unflagged behaviour regression at head. Severity is arguable (maintainers resolved it by documentation, not code), but the described data loss is real.",
+            "control_id": null
+          },
+          "b4ba19e489096d39d895a1474f1d645ff6d4215dd988eeb19502625682afbee0": {
+            "verdict": "true-positive",
+            "evidence": "[high confidence] Session (sessions.py:91-125) overrides __setitem__, __delitem__, clear, pop, setdefault and update but not popitem or __ior__; dict's C implementations of those bypass the Python `update`/`__delitem__` overrides, so `session |= {...}` and `session.popitem()` change the data with `modified` still False (verified with a stand-in subclass: `ior False`, `popitem False`). The middleware then sends no Set-Cookie (sessions.py:64-76), whereas base always re-wrote a non-empty session. Upstream fixed precisely this in Kludex/starlette#3436 by adding popitem and __ior__ overrides.",
+            "control_id": null
+          },
+          "22107422e4c775c3825c8706a124daa4f63a6f0f5a79e312539260b4879f4422": {
+            "verdict": "true-positive",
+            "evidence": "[medium confidence] Base re-signed the cookie on every response with a non-empty session, so the itsdangerous timestamp used by `self.signer.unsign(data, max_age=self.max_age)` (sessions.py:50) was refreshed on each request, giving a sliding expiry; at head (sessions.py:64) the cookie is re-issued only when `session.modified`, so a read-only user's session hard-expires max_age after the last write. The change is real and undocumented in the PR (docs/middleware.md:139 only says 'Session expiry time'); the issue thread (#2019) explicitly called out this consequence and the PR body says it deliberately left out the `refresh_window` from #2527, so this is a knowingly accepted trade-off rather than an oversight, which is why the finding is a warning-level risk rather than a defect. The hazard is genuine and reachable, so the finding stands, though an owner may well dismiss it as intended.",
+            "control_id": null
+          }
+        },
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      }
+    },
+    "CL-PY-04": {
+      "single": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {
+          "41df7b9ae5a0c6fe5b522a0a8ce66904c2941ce4be58bf857aaf8dd5248cb293": {
+            "verdict": "true-positive",
+            "evidence": "[high confidence] Duplicate of the stale-rename finding: tests/strategies.py:109 passes `c_attr.converter`, which at head (src/attr/_make.py:2843) is the bound decorator method rather than the stored `_converter`; `Attribute.from_counting_attr` (_make.py:2584) was updated to `ca._converter` but the test strategy was not. Reproduced by importing the clone's package: the bound method ends up as the generated attribute's converter and acts as an identity with side effects, exactly as described.",
+            "control_id": null
+          }
+        },
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      },
+      "quorum": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {
+          "cd44affff189c6a3f649a6671a1317231f31627a7512c3d0ba2222d5d886d478": {
+            "verdict": "true-positive",
+            "evidence": "[high confidence] The head commit renames the _CountingAttr slot `converter` to `_converter` (src/attr/_make.py:2706, 2797) and adds a `converter(self, meth)` decorator method (2843-2861), but tests/strategies.py:109 still passes `converter=c_attr.converter` to attr.ib. Running the clone's package confirms `attr.ib().converter` is now `<bound method _CountingAttr.converter ...>` and that it is stored as the field's converter; calling the generated class works only because the decorator returns its argument unchanged (`C(x=5).x == 5`) while mutating the throwaway _CountingAttr's `_converter`. The Hypothesis strategies therefore exercise an accidental path with a bogus converter instead of `None`; upstream has not fixed this line, but the stale reference is real and introduced by this change.",
+            "control_id": null
+          },
+          "7e22a6a6dc84c5064b6a7866c89232531ccdd26bdf967f546a0bcdd5a6163480": {
+            "verdict": "true-positive",
+            "evidence": "[medium confidence] `_CountingAttr.converter` (src/attr/_make.py:2851-2855) wraps the user method in `Converter(lambda value, _self, field: ..., takes_self=True, takes_field=True)`, and `Converter.__getstate__` (_make.py:3187-3195) stores that callable. Running the clone's package: `pickle.dumps(attr.fields(D).y)` for a field defined via `@y.converter` fails with `AttributeError: Can't pickle local object '_CountingAttr.converter.<locals>.<lambda>'`, whereas attrs explicitly supports pickling Attribute and Converter (tests/test_converters.py::test_pickle, tests/test_make.py pickle round-trip tests). The hazard is genuine though narrow (field definitions, not instances, must be pickled), consistent with its info severity.",
+            "control_id": null
+          }
+        },
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      }
+    },
+    "CL-TS-01": {
+      "single": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {
+          "b16877d2e8a4baf337fa4718d133d63c5efc23118cb392337b152a16f489bfb2": {
+            "verdict": "true-positive",
+            "evidence": "[medium confidence] At head, src/response.ts:86-91 reads errHeaders and passes them only to errorResponse(); when onError returns a custom Response the nested prepareResponse call (nested=true) reaches the fast path at src/response.ts:116-118 (`if (!preparedHeaders || nested || !val.ok) return val`) and returns the Response untouched, so errHeaders are never merged. The new docs (docs/1.guide/1.basics/5.response.md:54, 6.error.md:73) promise errHeaders 'will be merged into error responses automatically', which does not hold on this path, and handleCors-installed CORS headers are lost for custom onError Responses. The finding correctly states this is a limitation of the new mechanism rather than a regression; it is a real, reachable gap but low-stakes (info).",
+            "control_id": null
+          },
+          "0ff6f35e76010bd3b340de59c9922cd0276b3dbf14247b4ab07218563168b28f": {
+            "verdict": "true-positive",
+            "evidence": "[medium confidence] errorResponse at src/response.ts:244-250 computes mergeHeaders(jsonHeaders, error.headers) and then mergeHeaders(headers, errHeaders); mergeHeaders (src/response.ts:132-141) uses target.set() for every header except set-cookie, so an errHeaders value replaces an explicit HTTPError header with the same name (e.g. access-control-allow-origin or vary set by appendCorsHeaders at src/utils/cors.ts:116-119). The docs added in the same change describe `new HTTPError({ headers })` as the recommended mechanism and errHeaders as a last resort, so the inverted precedence is a genuine, if narrow, inconsistency. Whether this precedence was intended is not stated anywhere in the change, hence medium confidence.",
+            "control_id": null
+          }
+        },
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      },
+      "quorum": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {
+          "b16877d2e8a4baf337fa4718d133d63c5efc23118cb392337b152a16f489bfb2": {
+            "verdict": "true-positive",
+            "evidence": "[medium confidence] At head, src/response.ts:86-91 reads errHeaders and passes them only to errorResponse(); when onError returns a custom Response the nested prepareResponse call (nested=true) reaches the fast path at src/response.ts:116-118 (`if (!preparedHeaders || nested || !val.ok) return val`) and returns the Response untouched, so errHeaders are never merged. The new docs (docs/1.guide/1.basics/5.response.md:54, 6.error.md:73) promise errHeaders 'will be merged into error responses automatically', which does not hold on this path, and handleCors-installed CORS headers are lost for custom onError Responses. The finding correctly states this is a limitation of the new mechanism rather than a regression; it is a real, reachable gap but low-stakes (info).",
+            "control_id": null
+          }
+        },
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      }
+    },
+    "CL-TS-02": {
+      "single": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {
+          "d781d7a1acf3bd72939973cd069e10030999d35814816b8630a86517e3bcab99": {
+            "verdict": "true-positive",
+            "evidence": "[high confidence] Same defect as the sibling finding: at src/utils/route.ts:92-100 an empty method yields `_method === undefined`, rou3 receives \"\" and removes only the methodless route, while `~routes.findIndex(r => r.route === route && (_method == null || ...))` removes the first entry of any method. In the exact scenario of the new test (test/router.test.ts:253-266, GET+POST then removeRoute(app,'','/path')), rou3 removes nothing but ~routes loses the GET entry; the test only exercises fetch (rou3) so it cannot see the divergence. H3.mount (src/h3.ts:137-142) copies input['~routes'], so a mounted copy would lack the GET route.",
+            "control_id": null
+          }
+        },
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      },
+      "quorum": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {
+          "5d0f407cfa09b1c46d85d60e3792b492202936991e494996c74442352d2bbc7d": {
+            "verdict": "true-positive",
+            "evidence": "[high confidence] src/utils/route.ts:92-100: `_method` is undefined for method \"\", rou3 removeRoute is called with `_method || \"\"` (removing only the methodless entry, as the new test at test/router.test.ts:253-266 confirms GET/POST survive), but the ~routes findIndex uses `_method == null || r.method === _method`, which matches the first entry for that path of any method. H3.on (src/h3.ts:152-168) stores all-methods routes with method \"\", so the correct comparison is against \"\". With app.get('/x') + app.all('/x') and removeRoute(app,'','/x'), rou3 drops the ALL handler while ~routes drops the GET entry; ~routes is consumed by H3.mount at src/h3.ts:137-142 and by src/tracing.ts:78,95, so the stores diverge observably.",
+            "control_id": null
+          }
+        },
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      }
+    },
+    "CL-TS-03": {
+      "single": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {},
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      },
+      "quorum": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {},
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      }
+    },
+    "CL-TS-04": {
+      "single": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {
+          "527295fdf830096f3847644b5d5304b3d848410d9b6a8fd19de8474d81df17ed": {
+            "verdict": "true-positive",
+            "evidence": "[high confidence] Reproduced: parsing `application/json; name=\"x\\\"; charset=utf-8\"` with the head regex and unescape (lib/content-type.js:166-174) stores name=`x\"; charset=utf-8`; toString() (lib/content-type.js:194-208) yields `application/json; name=\"x\"; charset=utf-8\"`, and re-parsing that yields name='x' plus a separate charset='utf-8' parameter that the original header never carried. handle-request.js:87 passes request[kRequestContentType].toString() to contentTypeParser.run, and getParser (lib/content-type-parser.js:119-126) does `new ContentType(string)` on string input, so the re-parse happens on the request path; reply.js:220 uses the same string for the response header. This is a real parameter-smuggling / malformed-header defect introduced by the unescape step.",
+            "control_id": null
+          },
+          "a84e5875633c3a9a1469a82789ce136c5951c2ae75f35894974174890b7c65af": {
+            "verdict": "true-positive",
+            "evidence": "[medium confidence] Overlaps the first truncation finding: lib/content-type.js:24's bare-token alternative has no terminator, and execution confirms `boundary=ab/cd` -> 'ab' and `boundary=abc==` -> 'abc' at head versus the full strings at base. The additional claim also reproduces: `name=\"\\u03c0\"` yields no parameter at head (the quoted-string branch only admits octets up to \\u00ff) whereas base stored '\u03c0'; in practice Node decodes incoming header bytes as latin1 so that case mostly matters for values set programmatically (e.g. reply.header). Silent alteration rather than rejection is a genuine behaviour change not covered by the new tests, though it may be an accepted strictness change.",
+            "control_id": null
+          }
+        },
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      },
+      "quorum": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {
+          "5c567083583d657ccc396ba103466078fbb126ed19d1c711a65059594936d0b2": {
+            "verdict": "true-positive",
+            "evidence": "[medium confidence] lib/content-type.js:24 keyValuePairsReg ends after the value alternative with no terminator lookahead; executing the head and base regexes (copied verbatim) confirms `boundary=ab/cd` -> head 'ab' vs base 'ab/cd', `x=foo bar` -> 'foo' vs 'foo bar', `profile=http://x` -> 'http' vs 'http://x', `boundary=abc==` -> 'abc' vs 'abc=='. Because the next match requires a `;` boundary, the trailing garbage is skipped silently and parsing continues, so the value is truncated rather than rejected. The one inaccuracy is that base returned 'invalid quoted string' for `x=\"abc\"def`, not 'abc\"def'; the mechanism and the behaviour change are otherwise correct and untested (test/content-type.test.js diff only covers well-formed values). It may be an intended tightening, so medium confidence that it is a defect rather than a design choice.",
+            "control_id": null
+          },
+          "75e7682638aadc6df7203c26c3f203e640ec8bc6ab1009a1c582cc6eeb15e0a7": {
+            "verdict": "true-positive",
+            "evidence": "[high confidence] The constructor at lib/content-type.js:166-174 now strips DQUOTEs and replaces quoted-pairs via quotedPairReg, so a value like `he said \\\"hi\\\"` is stored as `he said \"hi\"`; toString() at lib/content-type.js:194-208 still emits `${key}=\"${value}\"` with no escaping. Reproduced with the head regex: toString produces `application/json; name=\"he said \"hi\"\"`, which re-parses to name='he said ' \u2014 the round-trip is broken, whereas at base the backslashes were kept and the output stayed parseable. toString() output is used for parser lookup (lib/content-type-parser.js:83,96,107,125,169), request dispatch (lib/handle-request.js:87) and the response header (lib/reply.js:220-223), so it is reachable.",
+            "control_id": null
+          }
+        },
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      }
+    },
+    "CL-RS-01": {
+      "single": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {
+          "f2c9347641aee6609ad6b94434b97d86977cfde504d09e91cd4eb880ce57706b": {
+            "verdict": "false-positive",
+            "evidence": "[medium confidence] The mechanism is accurately traced: park.rs:234-239 returns HadDriver::Yes from the zero-duration branch, park_internal stores it at worker.rs:891, and run_task at worker.rs:645-653 then calls notify_parked_local once. But this is the author's deliberate choice (the diff changes `return;` to `return HadDriver::Yes;` in that branch), and it matches the documented semantics in config.rs ('an idle worker is woken whenever a worker thread transitions from polling the I/O driver to polling its own tasks'): the zero-timeout poll in park_yield does poll the driver (driver.park_timeout(handle, ZERO)) and may have woken tasks into this worker's local queue. The woken worker finds the released driver lock and parks on the driver, which is exactly the hand-off the option exists for; notify_parked_local only fires when an idle, non-searching worker exists, and the builder docs already state the option costs extra wakeups. The finding describes intended, documented behaviour as a defect.",
+            "control_id": null
+          }
+        },
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      },
+      "quorum": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {},
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      }
+    },
+    "CL-RS-02": {
+      "single": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {
+          "845982eded5218de60ea30c832bcc63a97ab8da9e3059b78d68b789229b974a2": {
+            "verdict": "true-positive",
+            "evidence": "[low confidence] Same defect as the sibling finding: timer.rs:78-101 compares the timer's handle with context::with_current, while the registration queue actually used comes from context::with_scheduler at timer.rs:105-108 and worker.rs:1036-1047. Handle::enter (handle.rs:86-94, context/current.rs:49-63) only sets the current handle, not the scheduler context, so a task on an rt1 worker inside `rt2.enter()` creating a sleep gets rt2's handle (sleep.rs:375), passes the check, and is registered in rt1's local wheel with a tick computed against rt2's time source. The added tests (tests/time_alt.rs reset_should_stay_on_same_runtime*) only exercise cases where the entered handle and worker context agree. The hazard is real but exotic, and it existed identically at base; the finding's claim that the new check uses the wrong source is nonetheless accurate for the new code.",
+            "control_id": null
+          }
+        },
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      },
+      "quorum": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {
+          "201fcb3750d58914da202d96eac09a568c99d03ec794845785093b6bf4df079d": {
+            "verdict": "true-positive",
+            "evidence": "[low confidence] timer.rs:78-101 derives is_same_rt from context::with_current (the entered handle, set by Handle::enter via try_set_current in context/current.rs:33-63) but then at timer.rs:105-108 uses context::with_scheduler, which returns the worker's scheduler Context set independently by set_scheduler (context.rs:180-196). Handle::enter (handle.rs:86-94) only touches the current handle, so on an rt1 worker holding an rt2.enter() guard, sleep() builds the timer with rt2's handle (sleep.rs:375, via Handle::current), is_same_rt is true, and the entry is pushed into rt1's registration queue (worker.rs:1036-1047) with a tick from rt2's time source; in a current-thread block_on under a multi-thread guard expect_multi_thread (scheduler/mod.rs:295-300) panics. The new comment at timer.rs:103-104 asserts same-runtime access that the check does not guarantee, so the flaw is in the new guard itself. Caveat: this nested-enter path behaved the same at base (no check at all), so the change narrows the bug rather than introducing it; the finding is correct that the fix is incomplete, not that it regresses.",
+            "control_id": null
+          }
+        },
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      }
+    },
+    "CL-RS-03": {
+      "single": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {},
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      },
+      "quorum": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {},
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      }
+    },
+    "CL-RS-04": {
+      "single": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {
+          "6211936720f1f287a4f9c5e3be94272b1f080eec13067f4d7a9b77500996897a": {
+            "verdict": "true-positive",
+            "evidence": "[high confidence] Duplicate of the sibling finding and equally correct. In complete.rs:174-184 the Pos arm passes num_arg.saturating_sub(1), but parse_positional (complete.rs:661-663, 675-677) produces Pos((idx, k)) where k is the number of values already consumed for that positional, so completing the (k+1)-th value yields arg_index k-1 instead of k. The Opt arm's count (ParseState::Opt((opt, 1)) at complete.rs:88-90 for `--opt [TAB]`) includes the value being completed, so count-1 is correct there, confirming the inconsistency. The escaped single-value case (Pos((idx,1)) with pos_index already advanced) is correct only by accident, and the suggested fix of keying on prev_pos_index == pos_index is sound.",
+            "control_id": null
+          }
+        },
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      },
+      "quorum": {
+        "reviewer": "Claude Fable 5.1 (independent model review, 2026-11-08)",
+        "findings": {
+          "972d61b20d1eebe7f70c43e250a1b48f2446704fb42ac530014961ecabe0d36c": {
+            "verdict": "true-positive",
+            "evidence": "[high confidence] complete.rs:174-184 passes num_arg.saturating_sub(1) as arg_index in the Pos arm. Tracing the loop (complete.rs:42-100): for `cmd v1 [TAB]` with a positional num_args(3), the first iteration calls parse_positional(cmd, 1, false, ValueDone), which at complete.rs:661-663 returns Pos((1, 1)) with pos_index unchanged; the completed argument then reaches complete_arg with Pos((1,1)) and arg_index = 0, although the second value (index 1) is being completed. In the Opt arm (complete.rs:194-200) count starts at 1 for the first value so count-1 is right; the Pos counter counts already-consumed values, so the two conventions differ and the Pos index lags by one, violating the complete_at contract added in custom.rs:92-111. The only new test (engine.rs suggest_custom_arg_completer_at_index) uses an option.",
+            "control_id": null
+          }
+        },
+        "verdict_source": "automated",
+        "notes": [
+          "Independent adjudication of 2026-11-08: each finding was checked against the code at the pinned base and head by Claude Fable 5.1 subagents reading the clones (read-only); evidence cites file:line. This replaces the owner's blanket acceptance of the same day."
+        ]
+      }
+    }
+  }
+}
