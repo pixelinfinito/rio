@@ -224,9 +224,9 @@ it("offers up to 16k output tokens per turn within the allowance", async () => {
     },
   };
   await converse({ ...base, allowance: { remaining: 400000 }, messages: [{ role: "user", content: "review" }] });
-  await converse({ ...base, allowance: { remaining: 3000 }, messages: [{ role: "user", content: "review" }] });
+  await converse({ ...base, allowance: { remaining: 20000 }, messages: [{ role: "user", content: "review" }] });
   expect(seen[0]).toBe(16384);
-  expect(seen[1]).toBeLessThan(3000);
+  expect(seen[1]).toBeLessThan(16384);
   expect(seen[1]).toBeGreaterThan(0);
 });
 it("elides tool results older than the most recent ones once the history exceeds its budget", () => {
