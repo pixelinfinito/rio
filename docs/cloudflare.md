@@ -212,8 +212,8 @@ What a deployment does with them, idempotently:
   `enable: true`. Its key is sent once as the provider's `headers`, a
   JSON-encoded string (`{"Authorization":"Bearer …"}` or `{"x-api-key":"…"}`),
   and kept in the deployment credential store with a fingerprint of what was
-  applied; a later deployment rewrites the headers only when the key or base URL
-  changed. A provider that already exists with the same slug is adopted: its base
+  applied; a later deployment rewrites the headers only when the base URL or the
+  rendered headers (the key or its `auth_header`) changed. A provider that already exists with the same slug is adopted: its base
   URL is corrected, and its headers are left alone unless Rio holds its key. A
   provider that does not exist needs `AI_GATEWAY_PROVIDER_KEY_<SLUG>`.
 - Upstream keys never reach the Worker, `config.toml`, profiles or command output.

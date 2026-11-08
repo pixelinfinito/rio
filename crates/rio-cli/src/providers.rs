@@ -565,6 +565,24 @@ mod tests {
         );
     }
     #[test]
+    fn the_applied_fingerprint_follows_the_base_url_and_the_rendered_headers() {
+        let p = CustomProvider::parse("node-openai:openai:https://api.llm.example/v1").unwrap();
+        let fingerprint = p.fingerprint("key-1");
+        assert_eq!(fingerprint, p.fingerprint("key-1"));
+        assert_ne!(fingerprint, p.fingerprint("key-2"));
+        // Another authentication header renders other headers for the same key.
+        let header = CustomProvider {
+            auth_header: Some(AuthHeader::XApiKey),
+            ..p.clone()
+        };
+        assert_ne!(fingerprint, header.fingerprint("key-1"));
+        let moved = CustomProvider {
+            base_url: "https://other.llm.example/v1".into(),
+            ..p
+        };
+        assert_ne!(fingerprint, moved.fingerprint("key-1"));
+    }
+    #[test]
     fn provider_specs_normalize_and_reject_endpoint_urls_and_bad_slugs() {
         let p = CustomProvider::parse("node-openai:openai:https://api.llm.example/v1/").unwrap();
         assert_eq!(p.base_url, "https://api.llm.example/v1");
