@@ -710,6 +710,35 @@ describe("security agent", () => {
     ).toBe(true);
   }, 60000);
 
+  it("treats a security result without its assessment lists as a failed agent, never as nothing found", async () => {
+    const { report } = await review({
+      base,
+      head,
+      changed: ["src/api/users.ts"],
+      steps: [
+        { id: "triage", uses: "rio/triage@0.1.0", needs: [], with: {} },
+        {
+          id: "security",
+          uses: "rio/security@0.2.0",
+          needs: ["triage"],
+          with: { enabled: true, catalog: "asvs-5.0" },
+        },
+        { id: "verify", uses: "rio/verify@0.1.0", needs: ["security"], with: {} },
+      ],
+      agents: { security: { hypotheses: [] } },
+    });
+    expect(report.status).toBe("partial");
+    expect(
+      report.footer.notes.some((n: string) =>
+        /^security agent failed: security result must be an object with hypotheses, assessed and unassessed/.test(n),
+      ),
+    ).toBe(true);
+    const coverage = report.security_coverage;
+    expect(coverage.assessed).toEqual([]);
+    expect(coverage.unassessed.length).toBeGreaterThan(0);
+    expect(coverage.unassessed.every((u: any) => u.reason === "tools_unavailable")).toBe(true);
+  }, 60000);
+
   it("lists assessed and unassessed items when no hypothesis is produced", async () => {
     const { report } = await review({
       base,

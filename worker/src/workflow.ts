@@ -729,7 +729,9 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
               ? output &&
                 typeof output === "object" &&
                 !Array.isArray(output) &&
-                Array.isArray(output.hypotheses)
+                Array.isArray(output.hypotheses) &&
+                Array.isArray(output.assessed) &&
+                Array.isArray(output.unassessed)
               : Array.isArray(output);
           if (!shaped) {
             report.status = "partial";
