@@ -27,7 +27,8 @@
       "items": {
         "enum": [
           "typescript",
-          "python"
+          "python",
+          "rust"
         ]
       },
       "minItems": 1,

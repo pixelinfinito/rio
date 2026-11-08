@@ -28,10 +28,13 @@ class Fixture:
         self.root = root
         self.count = 0
 
-    def arm(self, findings, verdicts, votes=None, cost=.001, head='head-sha'):
+    def arm(self, findings, verdicts, votes=None, cost=.001, head='head-sha', status='complete', incomplete=(),
+            incomplete_votes=0):
         self.count += 1
-        report = {'status': 'complete', 'review': {'base': 'base-sha', 'head': head},
-                  'findings': findings, 'risks': []}
+        report = {'status': status, 'review': {'base': 'base-sha', 'head': head},
+                  'findings': findings, 'risks': [], 'incomplete': list(incomplete)}
+        if incomplete_votes:
+            report['agent_audit'] = {'incomplete_votes': incomplete_votes}
         audit = {'votes': votes if votes is not None else [vote(f['id'], f['evidence_level']) for f in findings
                                                              if f['evidence_level'] != 'plausible'],
                  'usage': [{'phase': 'verify-blind', 'status': 'completed', 'input_tokens': 100,
@@ -70,6 +73,26 @@ class Comparison(unittest.TestCase):
              'high_controls': ['high-issue'], 'independently_clean': False, 'single': known, 'quorum': known},
             {'id': 'clean', 'generator_model': 'p/g', 'voter_model': 'p/v', 'profile_hash': 'pinned',
              'high_controls': [], 'independently_clean': True, 'single': clean, 'quorum': clean}]}
+
+    def test_tool_missing_skips_are_scorable_but_failures_and_lost_votes_are_not(self):
+        skipped = [{'kind': 'typecheck', 'outcome': 'skipped', 'reason': 'tool_missing'},
+                   {'kind': 'dependencies', 'outcome': 'skipped', 'reason': 'offline'}]
+        self.assertTrue(verifier.scorable({'status': 'complete', 'incomplete': []}))
+        self.assertTrue(verifier.scorable({'status': 'incomplete', 'incomplete': skipped}))
+        self.assertFalse(verifier.scorable({'status': 'incomplete', 'incomplete': []}))
+        self.assertFalse(verifier.scorable({'status': 'incomplete', 'incomplete': skipped + [
+            {'kind': 'lint', 'outcome': 'failed', 'reason': None}]}))
+        self.assertFalse(verifier.scorable({'status': 'incomplete', 'incomplete': skipped,
+                                            'agent_audit': {'incomplete_votes': 1}}))
+        self.assertFalse(verifier.scorable({'status': 'partial', 'incomplete': skipped}))
+        hosted = self.fx.arm([agent_finding('a')], {'a': tp('high-issue')}, status='incomplete', incomplete=skipped)
+        self.manifest['cases'][0]['single'] = self.manifest['cases'][0]['quorum'] = hosted
+        comparison = verifier.compare(self.manifest, self.root)
+        self.assertEqual(comparison['errors'], [])
+        lost = self.fx.arm([agent_finding('a')], {'a': tp('high-issue')}, status='incomplete', incomplete=skipped,
+                           incomplete_votes=2)
+        self.manifest['cases'][0]['quorum'] = lost
+        self.assertTrue(any('completed reviews' in err['error'] for err in verifier.compare(self.manifest, self.root)['errors']))
 
     def test_recorded_precision_never_claims_live_acceptance(self):
         result = verifier.compare(self.manifest, self.root)
