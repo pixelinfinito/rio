@@ -18,6 +18,10 @@ use tokio_util::sync::CancellationToken;
 /// Maximum completion body accepted by the worker. Executor output is capped at 1 MiB
 /// per stream, but JSON escaping (up to 6x) and the parsed artifact copy can expand it.
 const COMPLETION_LIMIT: usize = 16 * 1024 * 1024;
+/// JSON bytes per graph version in the analysis artifact. The Worker accepts a
+/// 12 MiB artifact and kills a job whose artifact grows past it; two-hop slices of
+/// large repositories reach that through their edges, so the nearest nodes are kept.
+const ARTIFACT_GRAPH_BYTES: usize = 4 * 1024 * 1024;
 /// Maximum job header line, matching the container executor.
 const HEADER_LIMIT: usize = 16 * 1024 * 1024;
 /// Time allowed for a job archive (up to about 1 GiB) to reach the container before
@@ -184,7 +188,7 @@ async fn inside(kind: String, base_dir: PathBuf, root: PathBuf) -> Result<()> {
             report.footer.notes.push(note);
         }
         if kind == "graph" {
-            println!("{}", json!({"report":report,"graphs":graphs}));
+            println!("{}", artifact(&mut report, serde_json::to_value(&graphs)?)?);
             return Ok(());
         }
         report.findings = rio_adapters::scan_secrets(&delta, &changes.head)?;
@@ -237,7 +241,7 @@ async fn inside(kind: String, base_dir: PathBuf, root: PathBuf) -> Result<()> {
             "Fork PR: static-only parsing and secrets scan; repository commands were not executed."
                 .into(),
         );
-        println!("{}", json!({"report":report,"graphs":graphs}));
+        println!("{}", artifact(&mut report, serde_json::to_value(&graphs)?)?);
         return Ok(());
     }
     // Snapshots have no .git directory. The deterministic engine's ignored-installation
@@ -278,8 +282,26 @@ async fn inside(kind: String, base_dir: PathBuf, root: PathBuf) -> Result<()> {
             run.join("graph").join(format!("{version}.json")),
         )?)?;
     }
-    println!("{}", json!({"report":report,"graphs":graphs}));
+    let mut report = report;
+    println!("{}", artifact(&mut report, graphs)?);
     Ok(())
+}
+/// The analysis artifact: the report and both graphs, each graph bounded to
+/// `ARTIFACT_GRAPH_BYTES` with a report note when anything was dropped.
+fn artifact(report: &mut rio_core::Report, mut graphs: Value) -> Result<Value> {
+    let mut bounded = false;
+    for version in ["base", "head"] {
+        let mut slice: rio_graph::GraphSlice = serde_json::from_value(graphs[version].take())?;
+        bounded |= slice.bound(ARTIFACT_GRAPH_BYTES);
+        graphs[version] = serde_json::to_value(&slice)?;
+    }
+    if bounded {
+        report.footer.notes.push(format!(
+            "Runner impact graph bounded to {} MiB per version",
+            ARTIFACT_GRAPH_BYTES / (1024 * 1024)
+        ));
+    }
+    Ok(json!({"report": report, "graphs": graphs}))
 }
 async fn serve(endpoint: String, image: String, once: bool) -> Result<()> {
     let secret = std::env::var("RIO_RUNNER_SECRET")
@@ -624,6 +646,44 @@ async fn run_docker(
 mod tests {
     use super::*;
     use std::os::unix::fs::PermissionsExt;
+    #[test]
+    fn artifact_graphs_are_bounded_to_the_artifact_budget_with_a_report_note() {
+        let node = |id: &str, hop: usize, seed: bool| {
+            json!({"id": id, "kind": "function", "path": "src/a.rs", "symbol_path": id, "name": id,
+                   "line_start": 1, "line_end": 2, "version": "head", "seed": seed, "hop": hop,
+                   "content_hash": "0".repeat(64)})
+        };
+        let edge = |from: &str, to: &str| {
+            json!({"from": from, "to": to, "kind": "calls", "source": "tree-sitter",
+                   "confidence": "resolved", "version": "head"})
+        };
+        let mut nodes = vec![node("seed", 0, true)];
+        let mut edges = Vec::new();
+        for i in 0..40_000 {
+            let id = format!("n{i:05}");
+            nodes.push(node(&id, 2, false));
+            edges.push(edge(&id, "seed"));
+        }
+        let big = json!({"nodes": nodes, "edges": edges, "truncated": false});
+        let small = json!({"nodes": [node("seed", 0, true)], "edges": [], "truncated": false});
+        let mut report = rio_core::Report::empty(rio_core::ReportStatus::Complete);
+        let out = artifact(&mut report, json!({"base": small, "head": big})).unwrap();
+        let head = serde_json::to_vec(&out["graphs"]["head"]).unwrap().len();
+        assert!(head <= ARTIFACT_GRAPH_BYTES, "{head}");
+        assert_eq!(out["graphs"]["head"]["truncated"], true);
+        assert_eq!(out["graphs"]["head"]["nodes"][0]["id"], "seed");
+        assert_eq!(out["graphs"]["base"]["truncated"], false);
+        assert!(
+            report
+                .footer
+                .notes
+                .iter()
+                .any(|n| n == "Runner impact graph bounded to 4 MiB per version")
+        );
+        let mut untouched = rio_core::Report::empty(rio_core::ReportStatus::Complete);
+        artifact(&mut untouched, json!({"base": small, "head": small})).unwrap();
+        assert!(untouched.footer.notes.is_empty());
+    }
     #[test]
     fn graph_deadline_leaves_a_margin_of_the_job_wall_limit() {
         let start = std::time::Instant::now();

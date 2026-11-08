@@ -388,6 +388,36 @@ export interface Rejection {
  * Agent-specific rules applied to each validated hypothesis. A violation
  * discards that hypothesis with an audit entry; the others are kept.
  */
+/**
+ * Validates an agent's hypotheses one by one: a malformed entry is rejected with
+ * its schema error and audited, and the well-formed ones proceed, so one bad
+ * hypothesis never costs the review the agent's other work. The output must still
+ * be an array; anything else fails the agent.
+ */
+export function validateHypothesesLenient(
+  agent: string,
+  value: unknown,
+): { accepted: Hypothesis[]; rejected: Rejection[] } {
+  invariant(
+    Array.isArray(value) && value.length <= 100,
+    "expected hypothesis array",
+  );
+  const accepted: Hypothesis[] = [],
+    rejected: Rejection[] = [];
+  for (const h of value) {
+    try {
+      accepted.push(...validateHypotheses([h]));
+    } catch (error) {
+      rejected.push({
+        agent,
+        id: typeof h?.id === "string" ? h.id.slice(0, 64) : "unknown",
+        rule_id: typeof h?.rule_id === "string" ? h.rule_id.slice(0, 150) : "unknown",
+        reason: (error instanceof Error ? error.message : "malformed hypothesis").slice(0, 300),
+      });
+    }
+  }
+  return { accepted, rejected };
+}
 export function screenHypotheses(
   agent: string,
   hypotheses: Hypothesis[],
