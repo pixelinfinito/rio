@@ -1269,6 +1269,14 @@ fn endpoint_presets_submit_snapshots_and_cache_verification_without_local_comman
                     assert_eq!(value["snapshot_id"], snapshot.as_str());
                     assert_eq!(value["profile"]["posture"], posture);
                     assert_eq!(value["mode"], mode);
+                    // Without an origin the registry key is the directory name.
+                    assert!(
+                        value["repository"]
+                            .as_str()
+                            .is_some_and(|r| !r.is_empty() && !r.contains('/')),
+                        "{}",
+                        value["repository"]
+                    );
                     assert_eq!(
                         value["profile"]["max_defects"],
                         if posture == "critical-only" {
@@ -1897,4 +1905,378 @@ fn eval_requires_the_harness_and_forwards_to_it() {
         String::from_utf8_lossy(&output.stdout).trim(),
         "41 57 --caught-by none"
     );
+}
+
+fn sarif_log(output: &std::process::Output) -> Value {
+    let value: Value = serde_json::from_slice(&output.stdout).unwrap_or_else(|error| {
+        panic!(
+            "{error}: {}\nstderr: {}",
+            String::from_utf8_lossy(&output.stdout),
+            String::from_utf8_lossy(&output.stderr)
+        )
+    });
+    let schema: Value = serde_json::from_str(include_str!(
+        "../../../tests/fixtures/sarif-schema/sarif-schema-2.1.0.json"
+    ))
+    .unwrap();
+    let validator = jsonschema::validator_for(&schema).unwrap();
+    let errors: Vec<_> = validator
+        .iter_errors(&value)
+        .map(|e| e.to_string())
+        .collect();
+    assert!(errors.is_empty(), "{errors:?}");
+    assert_eq!(value["version"], "2.1.0");
+    assert_eq!(value["runs"].as_array().unwrap().len(), 1);
+    value
+}
+#[test]
+fn sarif_output_is_one_clean_log_including_errors() {
+    // Outside a git repository: one log, no results, exit code 3.
+    let temp = tempfile::tempdir().unwrap();
+    let output = rio(temp.path())
+        .args(["review", "--format", "sarif"])
+        .assert()
+        .code(3)
+        .get_output()
+        .clone();
+    let log = sarif_log(&output);
+    let run = &log["runs"][0];
+    assert!(run["results"].as_array().unwrap().is_empty());
+    assert_eq!(run["invocations"][0]["executionSuccessful"], false);
+    assert_eq!(run["invocations"][0]["exitCode"], 3);
+    assert_eq!(
+        run["invocations"][0]["properties"]["error"]["code"],
+        "not_a_repository"
+    );
+    assert_eq!(run["properties"]["rio.status"], "error");
+    // A configuration error: exit 2 and the error in the invocation.
+    let temp = repository();
+    let root = temp.path();
+    fs::write(
+        root.join("broken.yaml"),
+        "version: 1\nname: broken\nunknown: true\n",
+    )
+    .unwrap();
+    let output = rio(root)
+        .args(["review", "--format", "sarif", "--profile", "broken.yaml"])
+        .assert()
+        .code(2)
+        .get_output()
+        .clone();
+    let log = sarif_log(&output);
+    let invocation = &log["runs"][0]["invocations"][0];
+    assert_eq!(invocation["executionSuccessful"], false);
+    assert_eq!(invocation["exitCode"], 2);
+    assert_eq!(invocation["properties"]["error"]["code"], "invalid_profile");
+    // A complete review with a failing finding: the result and exit code 1;
+    // progress went to standard error.
+    let token = "ghp_abcdefghijklmnopqrstuvwxyz1234567890";
+    fs::write(root.join("a.txt"), format!("token = '{token}'\n")).unwrap();
+    let output = rio(root)
+        .args(["review", "--format", "sarif", "--offline"])
+        .assert()
+        .code(1)
+        .get_output()
+        .clone();
+    let log = sarif_log(&output);
+    let run = &log["runs"][0];
+    assert!(String::from_utf8_lossy(&output.stderr).contains("Running"));
+    assert!(!String::from_utf8_lossy(&output.stdout).contains(token));
+    assert_eq!(run["invocations"][0]["executionSuccessful"], true);
+    assert_eq!(run["invocations"][0]["exitCode"], 1);
+    let result = run["results"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|r| r["ruleId"] == "secret/github-token")
+        .unwrap();
+    assert_eq!(
+        result["locations"][0]["physicalLocation"]["artifactLocation"]["uri"],
+        "a.txt"
+    );
+    assert_eq!(
+        result["locations"][0]["physicalLocation"]["artifactLocation"]["uriBaseId"],
+        "SRCROOT"
+    );
+    assert_eq!(
+        result["partialFingerprints"]["rioFindingId/v1"]
+            .as_str()
+            .unwrap()
+            .len(),
+        64
+    );
+    // The same review as JSON names the same identities.
+    let json = json_report(
+        &rio(root)
+            .args(["review", "--format", "json", "--offline"])
+            .assert()
+            .code(1)
+            .get_output()
+            .clone(),
+    );
+    let ids: Vec<_> = json["findings"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|f| f["id"].clone())
+        .collect();
+    for result in run["results"].as_array().unwrap() {
+        assert!(ids.contains(&result["partialFingerprints"]["rioFindingId/v1"]));
+    }
+    // A clean working tree is one successful log without results.
+    git(root, &["checkout", "--", "a.txt"]);
+    fs::remove_file(root.join("broken.yaml")).unwrap();
+    let log = sarif_log(
+        &rio(root)
+            .args(["review", "--format", "sarif"])
+            .assert()
+            .success()
+            .get_output()
+            .clone(),
+    );
+    assert_eq!(log["runs"][0]["properties"]["rio.status"], "no_changes");
+    assert_eq!(log["runs"][0]["invocations"][0]["exitCode"], 0);
+}
+
+const TOKEN: &str = "long-enough-api-token-32-characters";
+fn registry_endpoint() -> MockEndpoint {
+    let mut status = "proposed";
+    MockEndpoint::start(move |method, path, body| {
+        let (route, query) = path.split_once('?').unwrap_or((path, ""));
+        match (method, route) {
+            ("GET", "/v1/findings") => {
+                if !query.contains("repository=") {
+                    return (400, serde_json::json!({"error":"repository required"}));
+                }
+                let records = [
+                    ("open", "aaaa"),
+                    ("open", "bbbb"),
+                    ("open", "cccc"),
+                    ("dismissed", "dddd"),
+                    ("dismissed", "eeee"),
+                ];
+                let findings: Vec<Value> = records
+                    .iter()
+                    .filter(|(s, _)| !query.contains("status=") || query.contains(&format!("status={s}")))
+                    .map(|(s, id)| serde_json::json!({
+                        "identity": id.repeat(16), "repository": "r", "rule_id": "lint/eslint/no-unused-vars",
+                        "status": s, "first_seen": "rev-1", "last_seen": "rev-2", "seen_count": 2,
+                        "location": {"path":"src/a.ts","line_start":3,"line_end":3,"symbol_path":"a","occurrence_state":"new"},
+                        "author_response": if *s == "dismissed" { serde_json::json!({"reason":"style","actor":"a","at":"2026-11-01T00:00:00Z"}) } else { Value::Null },
+                    }))
+                    .collect();
+                (200, serde_json::json!({ "findings": findings }))
+            }
+            ("GET", "/v1/suppressions") => (
+                200,
+                serde_json::json!({"suppressions": [
+                    {"id":"sp-1","repository":"r","entry":{"rule":"lint/eslint/no-console"},"status":status,
+                     "evidence_count":3,"evidence":[
+                        {"finding":"a".repeat(64),"reason":"style","actor":"ana","at":"2026-11-01T00:00:00Z"},
+                        {"finding":"b".repeat(64),"reason":"irrelevant","actor":"bo","at":"2026-11-02T00:00:00Z"},
+                        {"finding":"c".repeat(64),"reason":"style","actor":"cy","at":"2026-11-03T00:00:00Z"}],
+                     "created_at":"2026-11-03T00:00:00Z"},
+                    {"id":"sp-2","repository":"r","entry":{"path":"docs/generated/**"},"status":"declined",
+                     "evidence_count":3,"evidence":[],"created_at":"2026-11-03T00:00:00Z"}]}),
+            ),
+            ("POST", "/v1/suppressions/sp-1") => {
+                status = if body["status"] == "applied" {
+                    "applied"
+                } else {
+                    "declined"
+                };
+                (200, serde_json::json!({"id":"sp-1","status":status}))
+            }
+            _ => (404, serde_json::json!({"error":"not found"})),
+        }
+    })
+}
+#[test]
+fn findings_lists_the_registry_and_needs_an_endpoint() {
+    let temp = repository();
+    let root = temp.path();
+    let output = rio(root)
+        .args(["findings"])
+        .assert()
+        .code(2)
+        .get_output()
+        .clone();
+    assert!(String::from_utf8_lossy(&output.stderr).contains("requires a configured endpoint"));
+    let endpoint = registry_endpoint();
+    let run = |args: &[&str]| {
+        rio(root)
+            .env("RIO_ENDPOINT_URL", &endpoint.url)
+            .env("RIO_API_TOKEN", TOKEN)
+            .arg("findings")
+            .args(args)
+            .assert()
+            .success()
+            .get_output()
+            .clone()
+    };
+    let output = run(&["--status", "open"]);
+    let text = String::from_utf8_lossy(&output.stdout);
+    assert!(text.contains(": 3 record(s)"), "{text}");
+    assert_eq!(text.matches("lint/eslint/no-unused-vars").count(), 3);
+    assert!(
+        text.contains(
+            "aaaaaaaaaaaa  lint/eslint/no-unused-vars  src/a.ts:3  open  last seen rev-2"
+        )
+    );
+    let requests = endpoint.take();
+    let directory = root.file_name().unwrap().to_string_lossy().to_string();
+    assert_eq!(
+        requests[0].1,
+        format!("/v1/findings?repository={directory}&status=open")
+    );
+    let output = run(&[
+        "--format",
+        "json",
+        "--rule",
+        "lint/eslint/no-unused-vars",
+        "--since",
+        "2026-11-01T00:00:00Z",
+    ]);
+    let document: Value = serde_json::from_slice(&output.stdout).unwrap();
+    assert_eq!(document["findings"].as_array().unwrap().len(), 5);
+    assert_eq!(document["repository"], directory.as_str());
+    assert!(
+        endpoint.take()[0]
+            .1
+            .contains("rule=lint%2Feslint%2Fno-unused-vars&since=2026-11-01T00%3A00%3A00Z")
+    );
+    rio(root)
+        .env("RIO_ENDPOINT_URL", &endpoint.url)
+        .env("RIO_API_TOKEN", TOKEN)
+        .args(["findings", "--status", "closed"])
+        .assert()
+        .code(2);
+}
+#[test]
+fn suppressions_list_apply_and_decline() {
+    let temp = repository();
+    let root = temp.path();
+    let endpoint = registry_endpoint();
+    let rio_s = |args: &[&str], stdin: &str| {
+        rio(root)
+            .env("RIO_ENDPOINT_URL", &endpoint.url)
+            .env("RIO_API_TOKEN", TOKEN)
+            .arg("suppressions")
+            .args(args)
+            .write_stdin(stdin.to_owned())
+            .assert()
+    };
+    let output = rio_s(&["list"], "").success().get_output().clone();
+    let text = String::from_utf8_lossy(&output.stdout);
+    assert!(
+        text.contains("sp-1  rule: \"lint/eslint/no-console\"  proposed  3 piece(s) of evidence"),
+        "{text}"
+    );
+    assert!(
+        text.contains("sp-2  path: \"docs/generated/**\"  declined  3"),
+        "{text}"
+    );
+    let document: Value = serde_json::from_slice(
+        &rio_s(&["list", "--format", "json"], "")
+            .success()
+            .get_output()
+            .stdout,
+    )
+    .unwrap();
+    assert_eq!(document["suppressions"].as_array().unwrap().len(), 2);
+    endpoint.take();
+    // No confirmation: nothing written and nothing marked.
+    let profile = root.join(".rio/profiles/default.yaml");
+    let output = rio_s(&["apply", "sp-1"], "n\n")
+        .code(1)
+        .get_output()
+        .clone();
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(
+        stdout.contains("- rule: \"lint/eslint/no-console\"") && stdout.contains("style by ana"),
+        "{stdout}"
+    );
+    assert!(String::from_utf8_lossy(&output.stderr).contains("Not applied"));
+    assert!(!profile.exists());
+    assert!(endpoint.take().iter().all(|(m, _, _)| m == "GET"));
+    // A validation failure restores the previous bytes and keeps the proposal.
+    fs::create_dir_all(profile.parent().unwrap()).unwrap();
+    let broken = "version: 1\nname: default\nextends: rio/base\nposture: sloppy\n";
+    fs::write(&profile, broken).unwrap();
+    let output = rio_s(&["apply", "sp-1", "--yes"], "")
+        .code(2)
+        .get_output()
+        .clone();
+    assert!(String::from_utf8_lossy(&output.stderr).contains("does not validate"));
+    assert_eq!(fs::read_to_string(&profile).unwrap(), broken);
+    assert!(endpoint.take().iter().all(|(m, _, _)| m == "GET"));
+    // Missing profile: created extending rio/base with the single entry.
+    fs::remove_file(&profile).unwrap();
+    rio_s(&["apply", "sp-1"], "y\n").success();
+    let created = fs::read_to_string(&profile).unwrap();
+    assert!(
+        created.contains("extends: rio/base\nsuppress:\n  - rule: \"lint/eslint/no-console\"\n"),
+        "{created}"
+    );
+    let posts: Vec<_> = endpoint
+        .take()
+        .into_iter()
+        .filter(|(m, _, _)| m == "POST")
+        .collect();
+    assert_eq!(posts.len(), 1);
+    assert_eq!(posts[0].1, "/v1/suppressions/sp-1");
+    assert_eq!(posts[0].2, serde_json::json!({"status":"applied"}));
+    rio(root).args(["profile", "validate"]).assert().success();
+    // Already applied: refused.
+    rio_s(&["apply", "sp-1", "--yes"], "").code(2);
+    rio_s(&["decline", "sp-2"], "").code(2);
+    rio_s(&["decline", "sp-9"], "").code(3);
+}
+#[test]
+fn suppressions_append_to_an_existing_profile_and_decline_with_a_note() {
+    let temp = repository();
+    let root = temp.path();
+    let endpoint = registry_endpoint();
+    let profile = root.join(".rio/profiles/default.yaml");
+    fs::create_dir_all(profile.parent().unwrap()).unwrap();
+    let existing = "# team defaults\nversion: 1\nname: team\nextends: rio/base\nsuppress:\n  - path: \"vendor/**\"\nposture: balanced\n";
+    fs::write(&profile, existing).unwrap();
+    rio(root)
+        .env("RIO_ENDPOINT_URL", &endpoint.url)
+        .env("RIO_API_TOKEN", TOKEN)
+        .args(["suppressions", "apply", "sp-1", "--yes"])
+        .assert()
+        .success();
+    assert_eq!(
+        fs::read_to_string(&profile).unwrap(),
+        existing.replace(
+            "  - path: \"vendor/**\"\n",
+            "  - path: \"vendor/**\"\n  - rule: \"lint/eslint/no-console\"\n"
+        )
+    );
+    let shown = rio(root)
+        .args(["profile", "show", ".rio/profiles/default.yaml"])
+        .assert()
+        .success()
+        .get_output()
+        .clone();
+    assert!(String::from_utf8_lossy(&shown.stdout).contains("lint/eslint/no-console"));
+    let temp = repository();
+    let endpoint = registry_endpoint();
+    rio(temp.path())
+        .env("RIO_ENDPOINT_URL", &endpoint.url)
+        .env("RIO_API_TOKEN", TOKEN)
+        .args(["suppressions", "decline", "sp-1", "--note", "we want these"])
+        .assert()
+        .success();
+    let posts: Vec<_> = endpoint
+        .take()
+        .into_iter()
+        .filter(|(m, _, _)| m == "POST")
+        .collect();
+    assert_eq!(
+        posts[0].2,
+        serde_json::json!({"status":"declined","note":"we want these"})
+    );
+    assert!(!temp.path().join(".rio/profiles/default.yaml").exists());
 }

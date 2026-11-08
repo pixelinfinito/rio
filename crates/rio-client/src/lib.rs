@@ -223,6 +223,30 @@ impl Client {
         )
         .await
     }
+    async fn get_query(&self, path: &str, query: &[(&str, &str)]) -> Result<Value> {
+        let mut url = self.base.join(path)?;
+        if !query.is_empty() {
+            url.query_pairs_mut().extend_pairs(query);
+        }
+        self.send_url(reqwest::Method::GET, url, None, None).await
+    }
+    /// The repository finding registry (`GET /v1/findings`).
+    pub async fn findings(&self, query: &[(&str, &str)]) -> Result<Value> {
+        self.get_query("v1/findings", query).await
+    }
+    /// Suppression proposals (`GET /v1/suppressions`).
+    pub async fn suppressions(&self, query: &[(&str, &str)]) -> Result<Value> {
+        self.get_query("v1/suppressions", query).await
+    }
+    /// Marks a proposal `applied` or `declined` (`POST /v1/suppressions/{id}`).
+    pub async fn decide_suppression(&self, id: &str, body: &Value) -> Result<Value> {
+        self.request(
+            reqwest::Method::POST,
+            &format!("v1/suppressions/{}", path_id(id)?),
+            Some(body),
+        )
+        .await
+    }
     pub async fn audit(&self, id: &str) -> Result<Value> {
         self.request(
             reqwest::Method::GET,
