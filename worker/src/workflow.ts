@@ -52,6 +52,25 @@ import { verifyHypothesis } from "./verifier";
 import { consolidate, type Verified } from "./consolidate";
 import { createJob } from "./jobs";
 import {
+  applyHistory,
+  codeHash,
+  loadRecords,
+  origin,
+  registryStatements,
+  type RegistryRecord,
+} from "./history";
+import { updateProposals } from "./proposals";
+import {
+  changeHunks,
+  contextHash,
+  expire,
+  hunkHash,
+  lookup,
+  store as storeCache,
+  type CacheEntry,
+  type Keyed,
+} from "./cache";
+import {
   applyLineage,
   incrementalChanges,
   loadContext,
@@ -205,10 +224,10 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
       store = new Store(this.env);
     const load = await step.do("load", async () => {
       const row = await this.env.DB.prepare(
-        "SELECT submission_key,deadline FROM reviews WHERE id=?",
+        "SELECT submission_key,deadline,tenant FROM reviews WHERE id=?",
       )
         .bind(id)
-        .first<{ submission_key: string; deadline: number }>();
+        .first<{ submission_key: string; deadline: number; tenant: string }>();
       invariant(row, "review not found");
       await this.env.DB.prepare(
         "UPDATE reviews SET status='running' WHERE id=? AND cancelled=0",
@@ -254,6 +273,10 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
     const rejected: Rejection[] = [];
     const catalogOf = new Map<string, string>();
     let coverage: SecurityCoverage | undefined;
+    // Agent result cache use; reported when the agents step ran.
+    let cacheStats:
+      | { lookups: number; hits: number; tokens_saved_estimate: number }
+      | undefined;
     const triageOptions =
       submission.profile.steps.find((x) => x.uses.startsWith("rio/triage@"))
         ?.with ?? {};
@@ -488,6 +511,78 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             submission.profile.models[config.model ?? agent] ??
             submission.profile.models.default;
           invariant(model, "no default model configured");
+          // The agent result cache: per hunk, never for fork reviews, the
+          // security step (its output is catalog coverage) or `cache: false`.
+          const caching =
+            module === "rio/agents" &&
+            !submission.fork &&
+            s.with.cache !== false;
+          let keyed: Keyed[] = [],
+            misses: Keyed[] = [];
+          let scope = reviewed;
+          if (caching) {
+            const read = (version: Version, path: string) =>
+              textOf(reviewed.snapshot[version], path);
+            const lookupKey = await step.do(
+              `cache-lookup-${s.id}-${agent}`,
+              async () => {
+                const keys: Keyed[] = [];
+                for (const hunk of await changeHunks(reviewed.changed, read))
+                  keys.push({
+                    hunk,
+                    hunk_hash: hunkHash(hunk),
+                    context_hash: await contextHash(hunk, {
+                      agent,
+                      manifest_version: agents[agent]?.version ?? 0,
+                      prompt:
+                        (agentPrompts as Record<string, string>)[agent] ?? "",
+                      model,
+                      options: config,
+                      engine: this.env.RIO_VERSION,
+                      graphs,
+                      guidance: submission.owner_guidance,
+                      read,
+                      base_graph: !diffOnly,
+                    }),
+                  });
+                const hits = await lookup(this.env, load.tenant, keys);
+                return store.put(`reviews/${id}/cache/${s.id}-${agent}.json`, {
+                  keys: keys.map((k) => ({
+                    ...k,
+                    hunk: { ...k.hunk, text: "" },
+                  })),
+                  hits,
+                });
+              },
+            );
+            const found = await store.get<{
+              keys: Keyed[];
+              hits: Record<number, CacheEntry>;
+            }>(lookupKey);
+            keyed = found.keys;
+            cacheStats ??= { lookups: 0, hits: 0, tokens_saved_estimate: 0 };
+            cacheStats.lookups += keyed.length;
+            for (const entry of Object.values(found.hits)) {
+              cacheStats.hits++;
+              cacheStats.tokens_saved_estimate += entry.tokens;
+              for (const h of entry.hypotheses) {
+                if (hypotheses.some((x) => x.id === h.id)) continue;
+                hypotheses.push({ ...h, source: { agent, cached: true } });
+                if (h.catalog_item) catalogOf.set(h.id, h.catalog_item);
+              }
+            }
+            misses = keyed.filter((_, i) => !(i in found.hits));
+            // Every hunk was a hit: no model call for this agent.
+            if (keyed.length && !misses.length) continue;
+            if (misses.length < keyed.length) {
+              const paths = new Set(misses.map((k) => k.hunk.path));
+              scope = {
+                ...reviewed,
+                changed: reviewed.changed.filter((f) => paths.has(f.path)),
+                focus: [...paths],
+              };
+            }
+          }
           let serial = 0;
           const tools = new Tools(
             snapshot,
@@ -562,7 +657,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
               })),
             })}\n${dataBlock("taint map", analysis!.trace)}`;
           }
-          const prompt = `Review the change independently for ${agent}. Inspect actual base and head code before making a claim; symbol names and graph hashes are not source code. Use read_file for omitted or truncated code. Suggested focus is only a hint; tools can read/search either entire repository snapshot. The graph excerpt holds the changed symbols and their nearest neighbours; query graph_query for anything beyond it. Classify concrete correctness regressions as defect, uncertain hazards as risk, style and repeated tool diagnostics accurately. Omit guidance unless citing a real owner-guidance document supplied below; source-code lines are not owner guidance. Check guidance/contradiction and guidance/stale risks against existing guidance lines: emit category risk, cite guidance:{path,line} and the changed code behavior. ${instructions ? "" : "Return {result:hypotheses[]}."}${instructions ? `\n${instructions}` : ""}${roundContext}\n${dataBlock("intent", filteredLines(intent.split("\n")))}\n${dataBlock("suggested_focus", reviewed.focus)}\n${dataBlock("graph excerpt", { base: promptGraph(graphs.base), head: promptGraph(graphs.head) })}\n${dataBlock("changed code excerpts", await changedCode(reviewed.changed, reviewed.snapshot))}\n${dataBlock("deterministic checks", report.checks)}${agentData}\n${guidanceBlock(submission.owner_guidance, reviewed.focus)}`;
+          const prompt = `Review the change independently for ${agent}. Inspect actual base and head code before making a claim; symbol names and graph hashes are not source code. Use read_file for omitted or truncated code. Suggested focus is only a hint; tools can read/search either entire repository snapshot. The graph excerpt holds the changed symbols and their nearest neighbours; query graph_query for anything beyond it. Classify concrete correctness regressions as defect, uncertain hazards as risk, style and repeated tool diagnostics accurately. Omit guidance unless citing a real owner-guidance document supplied below; source-code lines are not owner guidance. Check guidance/contradiction and guidance/stale risks against existing guidance lines: emit category risk, cite guidance:{path,line} and the changed code behavior. ${instructions ? "" : "Return {result:hypotheses[]}."}${instructions ? `\n${instructions}` : ""}${roundContext}\n${dataBlock("intent", filteredLines(intent.split("\n")))}\n${dataBlock("suggested_focus", scope.focus)}\n${dataBlock("graph excerpt", { base: promptGraph(graphs.base), head: promptGraph(graphs.head) })}\n${dataBlock("changed code excerpts", await changedCode(scope.changed, reviewed.snapshot))}\n${dataBlock("deterministic checks", report.checks)}${agentData}\n${guidanceBlock(submission.owner_guidance, reviewed.focus)}`;
           let output: any;
           try {
             output = await converse({
@@ -580,7 +675,9 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           } catch (error) {
             const message = error instanceof Error ? error.message : "";
             if (/cancel/.test(message)) throw error;
-            const budget = /budget exhausted|turn limit exhausted/.test(message);
+            const budget = /budget exhausted|turn limit exhausted/.test(
+              message,
+            );
             if (agent === "security") {
               // An exhausted budget or a failed conversation leaves the items
               // unassessed, never passed.
@@ -630,6 +727,24 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             if (!hypotheses.some((x) => x.id === h.id)) hypotheses.push(h);
             if (h.catalog_item) catalogOf.set(h.id, h.catalog_item);
           }
+          // Only a run that completed within budget populates the cache.
+          if (caching && misses.length)
+            await step.do(`cache-store-${s.id}-${agent}`, async () => {
+              const used = await this.env.DB.prepare(
+                "SELECT COALESCE(SUM(COALESCE(input_tokens,0)+COALESCE(output_tokens,0)),0) AS tokens FROM usage WHERE review_id=? AND actor=?",
+              )
+                .bind(id, `${s.id}-${agent}`)
+                .first<{ tokens: number }>();
+              await storeCache(
+                this.env,
+                load.tenant,
+                agent,
+                misses,
+                screened.accepted,
+                used?.tokens ?? 0,
+              );
+              return misses.length;
+            });
           if (agent === "security")
             coverage = securityCoverage(
               coverage!,
@@ -648,6 +763,8 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
               );
           }
         }
+        if (module === "rio/agents")
+          cacheStats ??= { lookups: 0, hits: 0, tokens_saved_estimate: 0 };
       } else if (module === "rio/verify") {
         const active =
           plan.mode === "deep"
@@ -890,6 +1007,71 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
       report.review.rio_version = this.env.RIO_VERSION;
       if (await store.cancelled(id)) report.status = "partial";
       if (diffOnlyAudit) report.agent_audit.diff_only = diffOnlyAudit;
+      if (cacheStats)
+        report.cache = {
+          ...cacheStats,
+          hit_rate: cacheStats.lookups
+            ? cacheStats.hits / cacheStats.lookups
+            : null,
+        };
+      // The repository registry: remembered dismissals after the profile's
+      // suppressions, history on recurrences, and suppression proposals.
+      const repository = lineage?.repository ?? submission.repository ?? null;
+      let records: RegistryRecord[] = [];
+      let hashes: Record<string, string | null> = {};
+      if (repository) {
+        const historyKey = await step.do("history", async () => {
+          const produced: any[] = [
+            ...report.findings,
+            ...report.risks,
+            ...(report.security ?? []),
+          ];
+          const files = await materialize(
+            snapshot.head,
+            produced.map((f) => f.location.path),
+          );
+          const text = (path: string) =>
+            files[path] && !files[path].encoding ? files[path].content : null;
+          return store.put(`reviews/${id}/history.json`, {
+            records: await loadRecords(
+              this.env,
+              load.tenant,
+              repository,
+              produced.map((f) => f.id),
+            ),
+            hashes: Object.fromEntries(
+              produced.map((f) => [
+                f.id,
+                codeHash(f.location, graphs.head, text(f.location.path)),
+              ]),
+            ),
+          });
+        });
+        ({ records, hashes } = await store.get<{
+          records: RegistryRecord[];
+          hashes: Record<string, string | null>;
+        }>(historyKey));
+        applyHistory(
+          report,
+          records,
+          new Map(Object.entries(hashes)),
+          new Set(
+            (lineage?.prior ?? [])
+              .filter((p) => p.author_response)
+              .map((p) => p.id),
+          ),
+        );
+        const threshold =
+          submission.profile.steps.find((s) => s.uses.startsWith("rio/report@"))
+            ?.with?.proposal_threshold ?? 3;
+        const proposals = await step.do("proposals", () =>
+          updateProposals(this.env, load.tenant, repository, threshold),
+        );
+        if (proposals.length) report.suppression_proposals = proposals;
+      } else
+        report.footer.notes.push(
+          "Finding history was not consulted: the submission names no repository.",
+        );
       agentsVerified =
         !failed?.count &&
         submission.profile.steps.some(
@@ -922,6 +1104,31 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
               submission.intent,
             ),
           );
+        if (repository) {
+          const statements = registryStatements(
+            this.env,
+            load.tenant,
+            repository,
+            id,
+            origin(lineage, id),
+            [
+              ...report.findings,
+              ...report.risks,
+              ...(report.security ?? []),
+              ...(report.remembered ?? []),
+            ].map((finding: any) => ({
+              finding,
+              code_hash: hashes[finding.id] ?? null,
+            })),
+            records,
+            (outcome?.updates ?? [])
+              .filter((u) => u.status === "fixed")
+              .map((u) => ({ id: u.id, code_hash: null })),
+          );
+          for (let i = 0; i < statements.length; i += 50)
+            await this.env.DB.batch(statements.slice(i, i + 50));
+        }
+        await expire(this.env, load.tenant);
         await store.event(
           id,
           report.status === "partial" ? "review:partial" : "review:done",
