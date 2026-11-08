@@ -112,12 +112,22 @@ The `with` schemas of the built-in steps SHALL define the review settings that t
 - `rio/prepare`: `exclude` (list of globs relative to the repository root, default `[]`);
 - `rio/checks`: `typecheck`, `lint`, `secrets`, `coverage`, `dependencies`, `baseline` (booleans, default `true`), and `trust_installed_dependencies` (boolean, default `false`);
 - `rio/graph`: `hops` (default 2) and `max_nodes` (default 2000);
-- `rio/security`: `enabled` (default false in v0.2 base), `posture`, `fail_on`, `max_defects`, and `catalog` with the security-step contract;
+- `rio/agents`: `cache` (boolean, default `true`) controlling the agent result cache;
+- `rio/security`: `enabled` (default false in base), `posture`, `fail_on`, `max_defects`, and `catalog` with the security-step contract;
+- `rio/report`: `class_threshold` (integer, default 3, consumed by review convergence) and `proposal_threshold` (integer of at least 1, default 3, the dismissal count that yields a suppression proposal);
 - `rio/triage`: explicit risk thresholds for sensitive-path globs, public-contract changes, dependency changes, missing coverage and graph fan-out.
 
 #### Scenario: Exclusion glob from the profile
 - **WHEN** the `rio/prepare` step sets `with: { exclude: ["docs/generated/**"] }` and a change modifies `docs/generated/api.ts`
 - **THEN** the file is excluded from checks and the graph, and the footer lists it with reason `profile_exclude`
+
+#### Scenario: Agent cache disabled
+- **WHEN** the `rio/agents` step sets `with: { cache: false }`
+- **THEN** the profile validates, no agent cache lookup is made during the review, and the report records zero cache lookups
+
+#### Scenario: Invalid proposal threshold
+- **WHEN** the `rio/report` step sets `with: { proposal_threshold: 0 }`
+- **THEN** validation fails at that option's location naming the minimum of 1
 
 ### Requirement: Local execution subset
 When no endpoint is configured, the engine SHALL execute steps whose module is locally executable (`rio/prepare` without its intent agent, `rio/checks`, `rio/graph`, `rio/report`) in `needs` order, and SHALL mark every other step (`rio/triage`, `rio/agents`, `rio/verify` and enabled `rio/security`) as deferred in the report without failing the run.
@@ -214,3 +224,10 @@ An enabled security step SHALL resolve its own posture, evidence floor and defec
 #### Scenario: Security ignores general cap
 - **WHEN** a profile has `max_defects: 3` and security specifies `max_defects: 8`
 - **THEN** security resolves its cap to eight and the general cap remains three
+
+### Requirement: Security community profile
+Rio SHALL ship a built-in profile named `rio/security` that extends `rio/base` and enables the security step with `posture: thorough` and `catalog: asvs-5.0`. It SHALL validate without an endpoint, and its resolution SHALL show the security step enabled.
+
+#### Scenario: Community profile validates offline
+- **WHEN** `rio profile validate rio/security` runs with no endpoint configured
+- **THEN** validation passes and `rio profile show rio/security` shows the security step enabled with thorough posture and catalog `asvs-5.0`

@@ -7,13 +7,23 @@ The `with` schemas of the built-in steps SHALL define the review settings that t
 - `rio/prepare`: `exclude` (list of globs relative to the repository root, default `[]`);
 - `rio/checks`: `typecheck`, `lint`, `secrets`, `coverage`, `dependencies`, `baseline` (booleans, default `true`), and `trust_installed_dependencies` (boolean, default `false`);
 - `rio/graph`: `hops` (default 2) and `max_nodes` (default 2000);
-- `rio/security`: `enabled` (default false in v0.2 base), `posture`, `fail_on`, `max_defects`, and `catalog` with the security-step contract;
+- `rio/agents`: `cache` (boolean, default `true`) controlling the agent result cache;
+- `rio/security`: `enabled` (default false in base), `posture`, `fail_on`, `max_defects`, and `catalog` with the security-step contract;
+- `rio/report`: `class_threshold` (integer, default 3, consumed by review convergence) and `proposal_threshold` (integer of at least 1, default 3, the dismissal count that yields a suppression proposal);
 - `rio/qa`: `enabled` (default false in base), `mode` (`changed` default, `full`), `harness` (`codex` default, `pi`), `baseline` (default false), `max_journeys` (default 12), `max_defects` (default 15), `viewports` (names from the contract, default all), `rules` (`disable[]`, `add[]`, `adopt[]`, merged over the contract), `sandbox` (`deny` default, `allow`) and `fail_on` with the same shape as the security policy, defaulting to category `ux` at evidence `plausible` for `new` and `worsened` findings of severity `warning` or above;
 - `rio/triage`: explicit risk thresholds for sensitive-path globs, public-contract changes, dependency changes, missing coverage and graph fan-out.
 
 #### Scenario: Exclusion glob from the profile
 - **WHEN** the `rio/prepare` step sets `with: { exclude: ["docs/generated/**"] }` and a change modifies `docs/generated/api.ts`
 - **THEN** the file is excluded from checks and the graph, and the footer lists it with reason `profile_exclude`
+
+#### Scenario: Agent cache disabled
+- **WHEN** the `rio/agents` step sets `with: { cache: false }`
+- **THEN** the profile validates, no agent cache lookup is made during the review, and the report records zero cache lookups
+
+#### Scenario: Invalid proposal threshold
+- **WHEN** the `rio/report` step sets `with: { proposal_threshold: 0 }`
+- **THEN** validation fails at that option's location naming the minimum of 1
 
 #### Scenario: QA option fails its schema
 - **WHEN** a profile sets `rio/qa` with `with: { harness: claude }`
