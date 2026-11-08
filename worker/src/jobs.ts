@@ -89,11 +89,13 @@ export async function createPrepareJob(
   };
   const key = `reviews/${review}/jobs/${job}/1/payload.json`;
   await new Store(env).put(key, execution);
-  await env.DB.prepare(
+  const inserted = await env.DB.prepare(
     "INSERT INTO jobs(id,review_id,attempt,status,payload_key,created_at) VALUES(?,?,1,'pending',?,?) ON CONFLICT(id) DO NOTHING",
   )
     .bind(job, review, key, Date.now())
     .run();
+  // Only the attempt that created the job dispatches it.
+  if (!inserted.meta.changes) return job;
   try {
     await env.JOBS.send({ review_id: review, job_id: job, attempt: 1 });
   } catch (error) {

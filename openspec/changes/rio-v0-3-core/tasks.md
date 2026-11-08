@@ -202,7 +202,7 @@ PR #12 at `50daf05` was reviewed by CodeRabbit (five comments) and by a Codex re
 - Prepare credential (Codex): consumption is one conditional update that checks expiry, scope and a live review, so exactly one concurrent hand-off wins and an expired credential is refused; a prepared submission is stored under its own key, published by the review row's compare-and-set (tests: three concurrent submissions give one 202; an expired credential gives 401).
 - `rio review --pr` (both reviews): the wait now covers the endpoint's one-hour review limit plus preparation, not the local profile's budget; the exit code follows the `fail_on` the endpoint reviewed under (recorded in `agent_audit.fail_on` of PR reports), and the local profile is no longer loaded (CLI test with an invalid local profile). The `pr-lineage` SARIF fixture report gained that key; its SARIF is unchanged.
 - `rio doctor --rotate` (CodeRabbit): a failed final ping is reported as its own step and says the new secret is already in effect (test).
-- Not fixed: none. The Codex suggestion of a durable outbox for webhook deliveries was answered with the simpler delete-on-failure, which makes GitHub's redelivery the retry.
+- Not fixed: none. The Codex suggestion of a durable outbox for webhook deliveries was answered with the simpler delete-on-failure. GitHub does not redeliver a failed delivery by itself, so the retry is a manual redelivery (or the next push, `rio review --pr` or `/rio review`); see the third review record below and `docs/github-app.md`, "Failed deliveries".
 
 CI (task 10.3): on PR #12 head `28ba870` the hosted matrix passed on both workflow runs: `unix (ubuntu-24.04)`, `unix (macos-26)`, `windows` and `worker` (which runs the Worker checks and tests and the `RIO_TEST_DOCKER=1` runner tests against `rio-runner:0.3.0` built in CI). One `unix (macos-26)` job failed in the Unix installer test `test_destination_filesystem_differs_from_temporary_directory` when `hdiutil detach` returned "resource busy" (exit 16) on a temporary disk image; that test is untouched by this change and the other run of the same commit passed. The failed job was rerun without code changes and passed. The earlier head `50daf05` had failed `worker` because CI built `rio-runner:0.2.0` (fixed above). Local checks after the review fixes: `cargo fmt --all --check` and clippy clean, `cargo test --workspace --locked --no-fail-fast` 360 of 360, Worker 260 tests (run alone) with generate, bundle and check, runner Docker tests 16 of 16.
 
@@ -221,6 +221,13 @@ A second Codex review (`gpt-6-astra`) of PR #12 at `b6db15d` reported eleven fin
 - Lifecycle updates: a fixed finding with a later recorded dismissal is shown dismissed, not fixed (test).
 - Resolution ownership: a thread is recorded as Rio's only when Rio resolved it, so a person's resolution of a fixed finding is not undone when it recurs; `/rio dismiss` records its own resolution (test).
 - Failed closing edits: a failed edit or resolution of a fixed or dismissed finding is recorded with its comment and retried in later rounds from the lineage's findings (test).
+
+## Validation record (2026-11-08, stage 4 third review)
+
+CodeRabbit's review of `b6db15d` raised two more points; both were confirmed and fixed with tests.
+
+- Failed deliveries: GitHub does not redeliver a failed webhook delivery by itself, so forgetting the delivery id only helps a manual redelivery. The route now answers 503 (not 400) when it cannot record or queue an event, logs the delivery id, and `docs/github-app.md` ("Failed deliveries") gives the redelivery steps (Recent Deliveries, or `POST /app/hook/deliveries/{id}/attempts`) and the other ways a missed PR event is recovered (the next push, `rio review --pr`, `/rio review`). No automatic redelivery was added; that needs a scheduled job the deployment does not have.
+- Overlapping preparation: two deliveries or a retry running beside the first attempt could both reach job creation and send two job messages. A request is now prepared under an atomic claim on its `pull_requests` row (`claim`, `claimed_until`, ten minutes, added to the unreleased migration 0006) that a dead attempt's successor takes over after it expires, and only the attempt that inserted the job row sends its message (test: three overlapping attempts schedule one job; a live claim blocks, an expired one is taken over).
 
 ## Owner acceptance (2026-11-08)
 

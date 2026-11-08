@@ -310,7 +310,15 @@ export async function handleGitHubWebhook(
       .run()
       // The original failure is the one reported.
       .catch(() => {});
-    throw error;
+    // GitHub records the failure and does not retry by itself; the owner
+    // redelivers it (docs/github-app.md, "Failed deliveries").
+    console.log(
+      `rio: webhook delivery ${delivery} (${event}) failed: ${(error instanceof Error ? error.message : String(error)).slice(0, 200)}`,
+    );
+    return Response.json(
+      { error: "the delivery could not be processed; redeliver it" },
+      { status: 503 },
+    );
   }
   return Response.json({ accepted: true }, { status: 202 });
 }

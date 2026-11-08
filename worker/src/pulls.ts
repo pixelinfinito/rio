@@ -24,6 +24,8 @@ import { Store } from "./storage";
 /** Time a PR review may spend in preparation before its runner claim expires. */
 export const PREPARE_MS = 15 * 60 * 1000;
 export const FORK_REQUIRES_SELF_HOSTED = "fork_requires_self_hosted_runner";
+/** How long one attempt may hold a request while it prepares (tarballs included). */
+export const CLAIM_MS = 10 * 60 * 1000;
 
 /** The lineage repository key of a GitHub repository, as the CLI derives it from `origin`. */
 export function repositoryKey(repository: RepositoryName): string {
@@ -308,61 +310,83 @@ export async function handleReviewRequest(
         review = owner.review_id;
       }
     }
-    await env.DB.prepare(
-      "UPDATE pull_requests SET base_sha=?,head_sha=?,fork=?,author_login=?,author_type=?,agent_json=?,state='preparing' WHERE review_id=? AND state IN ('requested','preparing') AND NOT EXISTS (SELECT 1 FROM jobs WHERE jobs.review_id=pull_requests.review_id)",
+    // One claimant prepares a request at a time, so overlapping deliveries
+    // and retries never schedule twice; a claim whose holder died expires.
+    const claim = crypto.randomUUID();
+    const claimed = await env.DB.prepare(
+      "UPDATE pull_requests SET claim=?,claimed_until=? WHERE review_id=? AND state IN ('requested','preparing') AND (claimed_until IS NULL OR claimed_until<?) AND NOT EXISTS (SELECT 1 FROM jobs WHERE jobs.review_id=pull_requests.review_id) RETURNING review_id",
     )
-      .bind(
-        mergeBase,
-        head,
-        fork ? 1 : 0,
-        login,
-        bot ? "bot" : "user",
-        agent ? JSON.stringify(agent) : null,
-        review,
+      .bind(claim, Date.now() + CLAIM_MS, review, Date.now())
+      .first();
+    if (!claimed) return;
+    try {
+      await env.DB.prepare(
+        "UPDATE pull_requests SET base_sha=?,head_sha=?,fork=?,author_login=?,author_type=?,agent_json=?,state='preparing' WHERE review_id=? AND state IN ('requested','preparing') AND NOT EXISTS (SELECT 1 FROM jobs WHERE jobs.review_id=pull_requests.review_id)",
       )
-      .run();
-    // A retry reviews the head it just read; until its job exists the record
-    // follows. Older webhook reviews of this PR that never got a job are stale.
-    if (message.trigger === "webhook") {
-      const stale = await env.DB.prepare(
-        "SELECT p.review_id FROM pull_requests p WHERE p.tenant=? AND p.repository=? AND p.number=? AND p.trigger='webhook' AND p.review_id!=? AND p.state IN ('requested','preparing') AND NOT EXISTS (SELECT 1 FROM jobs j WHERE j.review_id=p.review_id)",
-      )
-        .bind(message.tenant, message.repository, message.number, review)
-        .all<{ review_id: string }>();
-      for (const old of stale.results)
-        await fail(env, old.review_id, "failed", "superseded by a newer head");
-    }
-    await new Store(env).event(review, "review:preparing", {
-      repository: message.repository,
-      number: message.number,
-      head_sha: head,
-      fork,
-    });
-    // Fork PRs need the self-hosted runner: the Sandbox prepares non-fork PRs only.
-    if (fork && env.RUNNER_BACKEND === "sandbox") {
-      await fail(env, review, "not_prepared", FORK_REQUIRES_SELF_HOSTED);
-      return;
-    }
-    const spec = {
-      repository: message.repository,
-      clone_url: String(
-        pr.base?.repo?.clone_url ??
-          `https://github.com/${message.repository}.git`,
-      ),
-      number: message.number,
-      base_sha: mergeBase,
-      head_sha: head,
-      installation_id: message.installation_id,
-    };
-    if (env.RUNNER_BACKEND === "sandbox") {
-      // The Sandbox has no network: the Worker fetches both trees with this
-      // token and the container prepares from the stored snapshot.
-      const snapshot = await ingestTarballs(env, message.tenant, token, spec);
-      await createPrepareJob(env, review, {
-        snapshot_id: snapshot,
-        prepare: spec,
+        .bind(
+          mergeBase,
+          head,
+          fork ? 1 : 0,
+          login,
+          bot ? "bot" : "user",
+          agent ? JSON.stringify(agent) : null,
+          review,
+        )
+        .run();
+      // A retry reviews the head it just read; until its job exists the record
+      // follows. Older webhook reviews of this PR that never got a job are stale.
+      if (message.trigger === "webhook") {
+        const stale = await env.DB.prepare(
+          "SELECT p.review_id FROM pull_requests p WHERE p.tenant=? AND p.repository=? AND p.number=? AND p.trigger='webhook' AND p.review_id!=? AND p.state IN ('requested','preparing') AND NOT EXISTS (SELECT 1 FROM jobs j WHERE j.review_id=p.review_id)",
+        )
+          .bind(message.tenant, message.repository, message.number, review)
+          .all<{ review_id: string }>();
+        for (const old of stale.results)
+          await fail(
+            env,
+            old.review_id,
+            "failed",
+            "superseded by a newer head",
+          );
+      }
+      await new Store(env).event(review, "review:preparing", {
+        repository: message.repository,
+        number: message.number,
+        head_sha: head,
+        fork,
       });
-    } else await createPrepareJob(env, review, { prepare: spec });
+      // Fork PRs need the self-hosted runner: the Sandbox prepares non-fork PRs only.
+      if (fork && env.RUNNER_BACKEND === "sandbox") {
+        await fail(env, review, "not_prepared", FORK_REQUIRES_SELF_HOSTED);
+        return;
+      }
+      const spec = {
+        repository: message.repository,
+        clone_url: String(
+          pr.base?.repo?.clone_url ??
+            `https://github.com/${message.repository}.git`,
+        ),
+        number: message.number,
+        base_sha: mergeBase,
+        head_sha: head,
+        installation_id: message.installation_id,
+      };
+      if (env.RUNNER_BACKEND === "sandbox") {
+        // The Sandbox has no network: the Worker fetches both trees with this
+        // token and the container prepares from the stored snapshot.
+        const snapshot = await ingestTarballs(env, message.tenant, token, spec);
+        await createPrepareJob(env, review, {
+          snapshot_id: snapshot,
+          prepare: spec,
+        });
+      } else await createPrepareJob(env, review, { prepare: spec });
+    } finally {
+      await env.DB.prepare(
+        "UPDATE pull_requests SET claim=NULL,claimed_until=NULL WHERE review_id=? AND claim=?",
+      )
+        .bind(review, claim)
+        .run();
+    }
   } finally {
     await token.revoke();
   }

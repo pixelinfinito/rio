@@ -679,6 +679,48 @@ describe("self-hosted preparation", () => {
     expect((await payloadOf(id)).prepare!.head_sha).toBe(sha("cli-second"));
   });
 
+  it("lets one attempt at a time prepare a request and takes over an abandoned claim", async () => {
+    github.pull("acme/fork", 18);
+    const { env: e, sent } = capture();
+    const message = { ...request("acme/fork", 18), installation_id: 73 };
+    // Overlapping deliveries of one head schedule exactly one job.
+    await Promise.all([1, 2, 3].map(() => handleReviewRequest(e, message)));
+    const rows = await pullRows("acme/fork", 18);
+    expect(rows).toHaveLength(1);
+    expect(sent).toHaveLength(1);
+    expect(rows[0]).toMatchObject({ claim: null, claimed_until: null });
+    // A claim left by an attempt that died mid-way blocks others until it expires.
+    github.pull("acme/fork", 19);
+    const stuck = { ...request("acme/fork", 19), installation_id: 73 };
+    const down = {
+      ...e,
+      JOBS: {
+        send: async () => {
+          throw new Error("down");
+        },
+      } as any,
+    } as Env;
+    await expect(handleReviewRequest(down, stuck)).rejects.toThrow(/down/);
+    const [row] = await pullRows("acme/fork", 19);
+    await runtime.DB.prepare(
+      "UPDATE pull_requests SET claim='dead',claimed_until=? WHERE review_id=?",
+    )
+      .bind(Date.now() + 60_000, row.review_id)
+      .run();
+    await handleReviewRequest(e, stuck);
+    expect(sent).toHaveLength(1);
+    await runtime.DB.prepare(
+      "UPDATE pull_requests SET claimed_until=? WHERE review_id=?",
+    )
+      .bind(Date.now() - 1, row.review_id)
+      .run();
+    await handleReviewRequest(e, stuck);
+    expect(sent.map((m) => m.review_id)).toEqual([
+      rows[0].review_id,
+      row.review_id,
+    ]);
+  });
+
   it("fails the review cleanly when the runner cannot clone", async () => {
     github.pull("acme/fork", 13);
     const { env: e } = capture();

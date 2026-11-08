@@ -507,7 +507,7 @@ describe("POST /v1/hooks/github", () => {
       env: flaky,
       id: "flaky-1",
     });
-    expect(failed.status).toBe(400);
+    expect(failed.status).toBe(503);
     down = false;
     const redelivered = await deliver("pull_request", prPayload(45, "opened"), {
       env: flaky,

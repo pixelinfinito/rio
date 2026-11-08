@@ -80,6 +80,10 @@ The webhook URL is `https://<worker>/v1/hooks/github`, where `<worker>` is the e
 
 Without the app secrets the route returns 404. A bad signature returns 401, an unknown installation 403, an accepted delivery 202 (a repeat `{"duplicate": true}`), and an ignored event or action 204: drafts until `ready_for_review`, PRs of repositories the installation does not cover, comments that do not start with `/rio`, and comments by bots. The signature is checked over the raw bytes before the body is parsed. The handler never calls GitHub or a model; it records installation changes, enqueues a `review-request` or `command` message and returns within GitHub's ten-second delivery timeout; work that fails on the queue is retried there, never by GitHub's redelivery. `/v1/hooks/gitlab` is reserved and returns 501.
 
+### Failed deliveries
+
+GitHub does not retry a failed webhook delivery by itself. When the endpoint cannot record or queue an event (a transient D1 or queue failure), it answers 503 and forgets the delivery id, so a redelivery is processed normally. To redeliver, open the app's settings on GitHub, **Advanced → Recent Deliveries**, select the failed delivery and choose **Redeliver**; or, with an App JWT, list them with `GET /app/hook/deliveries` and redeliver one with `POST /app/hook/deliveries/{delivery_id}/attempts`. A missed `pull_request` event is also recovered by the next push to the PR, by `rio review --pr <n>`, or by a maintainer's `/rio review`. Work that fails after the event was queued is retried by the queue, never by GitHub.
+
 ## Rotation
 
 - **Webhook secret.** `rio doctor --rotate` needs a deployment made with `rio init` (it sets Worker secrets through Cloudflare). It generates a new secret and:
