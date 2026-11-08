@@ -87,7 +87,7 @@ rio review --preset quick
 rio review --deep
 ```
 
-Quick, Standard and Deep require an endpoint; `--offline` keeps local deterministic execution. PR fetching and publication (`--pr`, `--publish`) remain unsupported. An enabled security step (or `--profile rio/security`) reviews the change against the OWASP Top 10:2025 or ASVS 5.0 catalog and reports which catalog items it assessed. See [Cloudflare deployment and runners](docs/cloudflare.md) and [verification evidence](docs/verifier-contracts.md) for setup, isolation, budgets and the pending live model acceptance gate.
+Instead of OpenRouter, `rio init` can register your own OpenAI-compatible or Anthropic endpoints as AI Gateway custom providers (provider 4, or `--custom-provider SLUG:PROTOCOL:BASE_URL` with the key in `AI_GATEWAY_PROVIDER_KEY_<SLUG>`), and profiles can call them as `custom-SLUG/MODEL`, through the unified `compat/…` endpoint, or through gateway dynamic routes as `dynamic/ROUTE`; see [custom endpoints](docs/cloudflare.md#custom-endpoints-through-ai-gateway). Quick, Standard and Deep require an endpoint; `--offline` keeps local deterministic execution. PR fetching and publication (`--pr`, `--publish`) remain unsupported. An enabled security step (or `--profile rio/security`) reviews the change against the OWASP Top 10:2025 or ASVS 5.0 catalog and reports which catalog items it assessed. See [Cloudflare deployment and runners](docs/cloudflare.md) and [verification evidence](docs/verifier-contracts.md) for setup, isolation, budgets and the pending live model acceptance gate.
 
 ### Review lineages and feedback
 

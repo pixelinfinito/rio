@@ -282,5 +282,7 @@ export interface Env {
   OPENAI_BASE_URL?: string;
   AI_GATEWAY_URL?: string;
   AI_GATEWAY_TOKEN?: string;
+  // JSON: custom AI Gateway providers by slug, { "SLUG": { "protocol": "openai" | "anthropic" } }.
+  AI_GATEWAY_PROVIDERS?: string;
   MODEL_PRICES?: string;
 }

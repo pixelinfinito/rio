@@ -2,6 +2,7 @@ mod config;
 mod deployment;
 mod endpoint;
 mod lineage;
+mod providers;
 mod registry;
 use clap::{Args, Parser, Subcommand, ValueEnum};
 use config::MachineConfig;
@@ -33,7 +34,7 @@ enum Command {
     },
     Doctor(DoctorArgs),
     Init {
-        #[arg(long, conflicts_with_all = ["from", "account", "name", "cf_profile", "runner", "runner_image", "workers_subdomain", "credential_store", "secrets_file", "dry_run"])]
+        #[arg(long, conflicts_with_all = ["from", "account", "name", "cf_profile", "runner", "runner_image", "workers_subdomain", "credential_store", "secrets_file", "custom_providers", "default_model", "verifier_model", "dry_run"])]
         endpoint: Option<String>,
         #[arg(long, requires = "endpoint")]
         token_stdin: bool,

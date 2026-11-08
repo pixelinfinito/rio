@@ -101,6 +101,63 @@ beforeEach(async () => {
   jobs.length = 0;
 });
 describe("Worker API and storage", () => {
+  it("rejects a submission whose reachable model aliases cannot be routed, naming the alias", async () => {
+    const uploaded = await upload();
+    const { id } = (await uploaded.json()) as any;
+    const steps = (declaration: Record<string, any>[] = []) => [
+      { id: "agents", uses: "rio/agents@0.1.0", needs: [], with: {}, agents: declaration },
+      { id: "verify", uses: "rio/verify@0.1.0", needs: ["agents"], with: {} },
+    ];
+    const post = async (
+      models: Record<string, string>,
+      env = runtime,
+      declaration: Record<string, any>[] = [],
+    ) => {
+      const s = submission();
+      s.snapshot_id = id;
+      s.profile.models = models;
+      s.profile.steps = steps(declaration);
+      return app.request(
+        "https://rio.test/v1/reviews",
+        { method: "POST", headers: owner, body: JSON.stringify(s) },
+        env,
+      );
+    };
+    const rejected = await post({ default: "custom-node-openai/gpt", verifier: "anthropic/test" });
+    expect(rejected.status).toBe(400);
+    expect(((await rejected.json()) as any).error).toBe(
+      "model alias default (custom-node-openai/gpt): model custom-node-openai/… requires AI Gateway (AI_GATEWAY_URL is not configured)",
+    );
+    // An agent-named alias that a step declaration overrides is never called,
+    // as in the Workflow; it does not block the submission.
+    const overridden = await post(
+      { default: "openai/test", verifier: "anthropic/test", correctness: "custom-unused/x" },
+      runtime,
+      [{ correctness: { model: "default" } }],
+    );
+    expect(overridden.status).toBe(202);
+    // Without the declaration, triage could select correctness with that alias.
+    const reachable = await post({
+      default: "openai/test",
+      verifier: "anthropic/test",
+      correctness: "custom-unused/x",
+    });
+    expect(reachable.status).toBe(400);
+    expect(((await reachable.json()) as any).error).toMatch(/^model alias correctness /);
+    // With the gateway and the provider configured, custom models are accepted.
+    const configured = {
+      ...runtime,
+      AI_GATEWAY_URL: "https://gateway.ai.cloudflare.com/v1/acct/rio",
+      AI_GATEWAY_TOKEN: "gateway-token-value",
+      AI_GATEWAY_PROVIDERS: JSON.stringify({ "node-openai": { protocol: "openai" } }),
+    } as Env;
+    const accepted = await post(
+      { default: "custom-node-openai/gpt", verifier: "compat/custom-node-openai/other" },
+      configured,
+    );
+    expect(accepted.status).toBe(202);
+    expect(JSON.stringify(await accepted.json())).not.toContain("gateway-token-value");
+  });
   it("negotiates version and rejects unauthorized or cross-tenant access", async () => {
     expect((await request("/health")).status).toBe(200);
     expect(

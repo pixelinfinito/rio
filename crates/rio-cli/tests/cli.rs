@@ -114,6 +114,94 @@ fn deployment_dry_run_needs_no_checkout_toolchain_or_credentials() {
         .code(2);
 }
 #[test]
+fn deployment_dry_run_plans_custom_gateway_providers_from_flags_and_config() {
+    let temp = tempfile::tempdir().unwrap();
+    let config = temp.path().join("deployment-config");
+    let dry_run = |args: &[&str]| {
+        rio(temp.path())
+            .env("RIO_CONFIG_DIR", &config)
+            .env(
+                "AI_GATEWAY_PROVIDER_KEY_NODE_OPENAI",
+                "upstream-key-never-printed",
+            )
+            .env_remove("CLOUDFLARE_API_TOKEN")
+            .env_remove("CLOUDFLARE_ACCOUNT_ID")
+            .args([
+                "init",
+                "--dry-run",
+                "--account",
+                "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            ])
+            .args(args)
+            .assert()
+    };
+    let output = dry_run(&[
+        "--custom-provider",
+        "node-openai:openai:https://api.llm.example/v1/",
+        "--custom-provider",
+        "node-anthropic:anthropic:https://api.llm.example/v1",
+        "--default-model",
+        "custom-node-anthropic/claude-sonnet-5-5",
+    ])
+    .success()
+    .get_output()
+    .clone();
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(!stdout.contains("upstream-key"));
+    let value: serde_json::Value = serde_json::from_slice(&output.stdout).unwrap();
+    assert_eq!(
+        value["deployment"]["custom_providers"],
+        serde_json::json!([
+            {"slug":"node-openai","protocol":"openai","base_url":"https://api.llm.example/v1"},
+            {"slug":"node-anthropic","protocol":"anthropic","base_url":"https://api.llm.example/v1"}
+        ])
+    );
+    assert_eq!(value["mutations"], false);
+    assert!(!config.exists());
+    // Replay from a saved configuration with the same plan.
+    let saved = temp.path().join("saved.toml");
+    fs::write(
+        &saved,
+        "[deployment]\nname = 'rio'\n[[deployment.custom_providers]]\nslug = 'node-openai'\nprotocol = 'openai'\nbase_url = 'https://api.llm.example/v1'\n[deployment.model_prices.'custom-node-openai/gpt-6.1-sol']\ninput = 1.25\noutput = 10.0\n",
+    )
+    .unwrap();
+    let output = dry_run(&["--from", saved.to_str().unwrap()])
+        .success()
+        .get_output()
+        .clone();
+    let value: serde_json::Value = serde_json::from_slice(&output.stdout).unwrap();
+    assert_eq!(
+        value["deployment"]["custom_providers"][0]["slug"],
+        "node-openai"
+    );
+    assert_eq!(
+        value["deployment"]["model_prices"]["custom-node-openai/gpt-6.1-sol"]["output"],
+        10.0
+    );
+    // Invalid definitions are rejected before any account access.
+    for spec in [
+        "node:openai:https://api.llm.example/v1/chat/completions",
+        "custom-node:openai:https://api.llm.example/v1",
+        "node:openai:http://api.llm.example/v1",
+    ] {
+        let output = dry_run(&["--custom-provider", spec])
+            .failure()
+            .get_output()
+            .clone();
+        assert!(!String::from_utf8_lossy(&output.stderr).contains("upstream-key"));
+    }
+    rio(temp.path())
+        .args([
+            "init",
+            "--endpoint",
+            "https://example.com",
+            "--custom-provider",
+            "a:openai:https://a.example/v1",
+        ])
+        .assert()
+        .code(2);
+}
+#[test]
 fn errors_and_empty_changes_emit_exactly_one_json_document() {
     let temp = tempfile::tempdir().unwrap();
     let output = rio(temp.path())

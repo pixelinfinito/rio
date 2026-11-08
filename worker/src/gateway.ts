@@ -1,10 +1,230 @@
-import type { Env, Gateway, ModelRequest, ModelResponse, Usage } from "./types";
+import type {
+  Env,
+  Gateway,
+  ModelRequest,
+  ModelResponse,
+  Profile,
+  Usage,
+} from "./types";
 import { scrub } from "./redaction";
 import { invariant } from "./validation";
+import { agents } from "./manifests";
 import hypothesisSchema from "../../schemas/hypothesis-v1.json";
 import voteSchema from "../../schemas/vote-answer-v1.json";
 /** Pause before the single retry of a transient provider failure. */
 const RETRY_DELAY_MS = 2000;
+const BUILT_IN = ["anthropic", "openai", "openrouter"];
+const LOOPBACK = ["localhost", "127.0.0.1", "[::1]"];
+/** Joins URL parts with exactly one slash between them. */
+export function joinUrl(base: string, ...parts: string[]): string {
+  return [
+    base.replace(/\/+$/, ""),
+    ...parts.map((p) => p.replace(/^\/+|\/+$/g, "")),
+  ]
+    .filter(Boolean)
+    .join("/");
+}
+export interface GatewayProvider {
+  protocol: "openai" | "anthropic";
+}
+/** `AI_GATEWAY_PROVIDERS`: custom providers by slug, written by `rio deploy`. */
+export function gatewayProviders(env: Env): Record<string, GatewayProvider> {
+  if (!env.AI_GATEWAY_PROVIDERS) return {};
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(env.AI_GATEWAY_PROVIDERS);
+  } catch {
+    throw new Error("AI_GATEWAY_PROVIDERS is not valid JSON");
+  }
+  invariant(
+    parsed && typeof parsed === "object" && !Array.isArray(parsed),
+    "AI_GATEWAY_PROVIDERS must map provider slugs to settings",
+  );
+  for (const value of Object.values(parsed))
+    invariant(
+      ["openai", "anthropic"].includes((value as any)?.protocol),
+      "AI_GATEWAY_PROVIDERS protocol must be openai or anthropic",
+    );
+  return parsed as Record<string, GatewayProvider>;
+}
+/**
+ * Where and how a profile model identifier is sent:
+ * - `openai/M`, `anthropic/M`, `openrouter/M`: the provider's API, or its AI
+ *   Gateway provider endpoint when `AI_GATEWAY_URL` is set, with the Worker's key;
+ * - `custom-SLUG/M`: the gateway's endpoint for a custom provider created by
+ *   `rio deploy`, in the provider's protocol; the gateway adds its credential;
+ * - `compat/P/M`: the gateway's OpenAI-compatible unified endpoint with model
+ *   `P/M` (for example `compat/custom-SLUG/M` or `compat/dynamic/ROUTE`);
+ * - `dynamic/ROUTE`: a gateway dynamic route, through the unified endpoint.
+ * `openai/custom-SLUG/M` and `openai/dynamic/ROUTE` with a gateway are the
+ * unified endpoint too, so profiles written for an `OPENAI_BASE_URL` pointed at
+ * `/compat` keep working when the gateway is configured.
+ */
+export interface Route {
+  url: URL;
+  protocol: "openai" | "anthropic";
+  // The model sent in the request body.
+  model: string;
+  headers: Record<string, string>;
+  // The provider whose usage fields report cost (OpenRouter only).
+  provider: string;
+}
+export function route(env: Env, identifier: string): Route {
+  const split = identifier.indexOf("/");
+  invariant(
+    split > 0 && split < identifier.length - 1,
+    "model must be provider/model",
+  );
+  const head = identifier.slice(0, split),
+    rest = identifier.slice(split + 1);
+  const gatewayUrl = env.AI_GATEWAY_URL?.trim() || undefined;
+  const headers: Record<string, string> = {
+    "content-type": "application/json",
+  };
+  const viaGateway = () => {
+    invariant(
+      gatewayUrl,
+      `model ${head}/… requires AI Gateway (AI_GATEWAY_URL is not configured)`,
+    );
+    invariant(env.AI_GATEWAY_TOKEN, "AI Gateway token is not configured");
+    headers["cf-aig-authorization"] = `Bearer ${env.AI_GATEWAY_TOKEN}`;
+    // Independent voters must make independent provider calls, including on retries.
+    headers["cf-aig-skip-cache"] = "true";
+    headers["cf-aig-collect-log"] = "false";
+    return gatewayUrl!;
+  };
+  const unified = (model: string): Route => {
+    invariant(
+      model.includes("/") && !model.endsWith("/"),
+      "unified gateway models are provider/model or dynamic/route",
+    );
+    return {
+      url: new URL(joinUrl(viaGateway(), "compat", "chat/completions")),
+      protocol: "openai",
+      model,
+      headers,
+      provider: "compat",
+    };
+  };
+  let result: Route;
+  if (head === "compat") result = unified(rest);
+  else if (head === "dynamic") result = unified(identifier);
+  else if (head.startsWith("custom-")) {
+    const slug = head.slice("custom-".length);
+    const base = viaGateway();
+    const provider = gatewayProviders(env)[slug];
+    invariant(
+      provider,
+      `custom provider ${slug} is not configured; add it with rio init or rio deploy`,
+    );
+    result = {
+      url: new URL(
+        joinUrl(
+          base,
+          head,
+          provider.protocol === "anthropic" ? "messages" : "chat/completions",
+        ),
+      ),
+      protocol: provider.protocol,
+      model: rest,
+      headers,
+      provider: head,
+    };
+  } else if (
+    head === "openai" &&
+    gatewayUrl &&
+    (rest.startsWith("custom-") || rest.startsWith("dynamic/")) &&
+    rest.includes("/")
+  )
+    result = unified(rest);
+  else {
+    invariant(BUILT_IN.includes(head), "unsupported model provider");
+    const anthropic = head === "anthropic";
+    const key = anthropic
+      ? env.ANTHROPIC_API_KEY
+      : head === "openrouter"
+        ? env.OPENROUTER_API_KEY
+        : env.OPENAI_API_KEY;
+    invariant(key, "model provider key is not configured");
+    const base = gatewayUrl
+      ? joinUrl(viaGateway(), head, anthropic ? "v1" : "")
+      : anthropic
+        ? "https://api.anthropic.com/v1"
+        : head === "openrouter"
+          ? "https://openrouter.ai/api/v1"
+          : env.OPENAI_BASE_URL?.trim() || "https://api.openai.com/v1";
+    if (anthropic) {
+      headers["x-api-key"] = key;
+      headers["anthropic-version"] = "2023-06-01";
+    } else headers.authorization = `Bearer ${key}`;
+    result = {
+      url: new URL(joinUrl(base, anthropic ? "messages" : "chat/completions")),
+      protocol: anthropic ? "anthropic" : "openai",
+      model: rest,
+      headers,
+      provider: head,
+    };
+  }
+  if (result.protocol === "anthropic")
+    result.headers["anthropic-version"] ??= "2023-06-01";
+  invariant(
+    result.url.protocol === "https:" || LOOPBACK.includes(result.url.hostname),
+    "provider requires TLS",
+  );
+  return result;
+}
+/**
+ * The model aliases a profile can actually call, resolved exactly as the
+ * Workflow and the verifier do: an agent uses its step declaration's `model`,
+ * else the alias named after it, else `default`; the verifier uses
+ * `verify.model`, else `verifier`, else `default`.
+ */
+export function reachableAliases(profile: Profile): Set<string> {
+  const resolve = (alias: string) =>
+    profile.models[alias] !== undefined ? alias : "default";
+  const aliases = new Set<string>();
+  for (const step of profile.steps) {
+    const module = step.uses.split("@")[0];
+    if (module === "rio/verify")
+      aliases.add(
+        profile.verify?.model ??
+          (profile.models.verifier ? "verifier" : "default"),
+      );
+    if (module !== "rio/agents" && module !== "rio/security") continue;
+    // The security step runs only the security agent; the agents step any
+    // agent triage selects.
+    const candidates =
+      module === "rio/security"
+        ? ["security"]
+        : Object.keys(agents).filter(
+            (a) => a !== "security" && a !== "verifier",
+          );
+    for (const agent of candidates) {
+      const declaration = (step.agents ?? []).find((a) =>
+        Object.hasOwn(a, agent),
+      );
+      aliases.add(resolve((declaration?.[agent] as any)?.model ?? agent));
+    }
+  }
+  return aliases;
+}
+/**
+ * Routes every reachable model alias, so a review with an unroutable model is
+ * rejected at submission instead of failing after checks ran.
+ */
+export function checkProfileModels(env: Env, profile: Profile) {
+  for (const alias of reachableAliases(profile)) {
+    const model = profile.models[alias];
+    if (!model) continue;
+    try {
+      route(env, model);
+    } catch (error) {
+      throw new Error(
+        `model alias ${alias} (${model}): ${error instanceof Error ? error.message : "unroutable"}`,
+      );
+    }
+  }
+}
 export class ProviderGateway implements Gateway {
   constructor(
     readonly env: Env,
@@ -12,53 +232,11 @@ export class ProviderGateway implements Gateway {
       globalThis.fetch(input, init),
   ) {}
   async complete(request: ModelRequest): Promise<ModelResponse> {
-    const split = request.model.indexOf("/");
-    invariant(split > 0, "model must be provider/model");
-    const provider = request.model.slice(0, split),
-      model = request.model.slice(split + 1);
-    invariant(
-      ["anthropic", "openai", "openrouter"].includes(provider),
-      "unsupported model provider",
+    const { url, headers, model, protocol, provider } = route(
+      this.env,
+      request.model,
     );
-    const anthropic = provider === "anthropic";
-    const key = anthropic
-      ? this.env.ANTHROPIC_API_KEY
-      : provider === "openrouter"
-        ? this.env.OPENROUTER_API_KEY
-        : this.env.OPENAI_API_KEY;
-    invariant(key, "model provider key is not configured");
-    let base = anthropic
-      ? "https://api.anthropic.com/v1"
-      : provider === "openrouter"
-        ? "https://openrouter.ai/api/v1"
-        : (this.env.OPENAI_BASE_URL ?? "https://api.openai.com/v1");
-    if (this.env.AI_GATEWAY_URL)
-      base = `${this.env.AI_GATEWAY_URL.replace(/\/$/, "")}/${provider === "openrouter" ? "openrouter" : provider}${anthropic ? "/v1" : ""}`;
-    const url = new URL(
-      `${base.replace(/\/$/, "")}/${anthropic ? "messages" : "chat/completions"}`,
-    );
-    invariant(
-      url.protocol === "https:" ||
-        ["localhost", "127.0.0.1", "[::1]"].includes(url.hostname),
-      "provider requires TLS",
-    );
-    const headers: Record<string, string> = {
-      "content-type": "application/json",
-    };
-    if (this.env.AI_GATEWAY_URL) {
-      invariant(
-        this.env.AI_GATEWAY_TOKEN,
-        "AI Gateway token is not configured",
-      );
-      headers["cf-aig-authorization"] = `Bearer ${this.env.AI_GATEWAY_TOKEN}`;
-      // Independent voters must make independent provider calls, including on retries.
-      headers["cf-aig-skip-cache"] = "true";
-      headers["cf-aig-collect-log"] = "false";
-    }
-    if (anthropic) {
-      headers["x-api-key"] = key;
-      headers["anthropic-version"] = "2023-06-01";
-    } else headers.authorization = `Bearer ${key}`;
+    const anthropic = protocol === "anthropic";
     const body = anthropic
       ? {
           model,
@@ -295,7 +473,10 @@ export async function converse(options: {
     // despite the protocol. The host asks once more for the JSON document; the raw
     // output stays in the audit and is never interpreted as tool calls or evidence.
     const repair = (error: unknown) => {
-      if (consecutiveRepairs >= MAX_CONSECUTIVE_REPAIRS || repairs >= MAX_REPAIRS)
+      if (
+        consecutiveRepairs >= MAX_CONSECUTIVE_REPAIRS ||
+        repairs >= MAX_REPAIRS
+      )
         throw error;
       repairs++;
       consecutiveRepairs++;
@@ -384,8 +565,7 @@ export function elideOldToolResults(
   messages: ModelRequest["messages"],
   maxBytes = HISTORY_BYTES,
 ): number {
-  const size = () =>
-    new TextEncoder().encode(JSON.stringify(messages)).length;
+  const size = () => new TextEncoder().encode(JSON.stringify(messages)).length;
   if (size() <= maxBytes) return 0;
   const toolResults = messages
     .map((m, i) => ({ m, i }))
