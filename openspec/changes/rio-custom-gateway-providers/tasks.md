@@ -21,9 +21,16 @@
 
 - [x] 4.1 Document setup, replay, reconciliation, model identifiers, cost and manual-setup compatibility in `docs/cloudflare.md` and `README.md`
 
+## 5. Review fixes (Codex review of PR #10 at `0635ebf`)
+
+- [x] 5.1 Resolve relative dynamic-route element files of a `--from` configuration against that file and save them as absolute paths; check every element file before any Cloudflare request. Verify a test with distinct source and destination directories and a missing-file test with no request
+- [x] 5.2 Check at submission only the model aliases a review can call, with the Workflow's and the verifier's precedence. Verify a resolution unit test and an API test where a step declaration overrides an unroutable agent-named alias
+- [x] 5.3 Read every page of dynamic routes (also under `data`), and fail on an unknown list shape instead of treating it as empty. Verify a test with the configured route on the second of two pages and an unknown shape
+- [x] 5.4 Clear `MODEL_PRICES` once after the last Rio-managed price is removed, keeping a hand-set value otherwise. Verify a priced, emptied and unmanaged deployment sequence
+
 ## Validation record (2026-11-08)
 
-Local checks: `cargo fmt --all --check` and `cargo clippy --workspace --all-targets --locked` passed; `cargo test --workspace --locked --no-fail-fast` passed 336 tests. Worker `npm run generate`, `npm run bundle` and `npm run check` passed and 182 tests (run alone) passed. The eval harness passed 98 tests, `python3 -I scripts/generate-profile-reference.py` left `docs/profiles.md` unchanged, and `openspec validate --specs` and `openspec validate rio-custom-gateway-providers --strict` passed.
+Local checks: `cargo fmt --all --check` and `cargo clippy --workspace --all-targets --locked` passed; `cargo test --workspace --locked --no-fail-fast` passed 339 tests. Worker `npm run generate`, `npm run bundle` and `npm run check` passed and 183 tests (run alone) passed (after the review fixes). The eval harness passed 98 tests, `python3 -I scripts/generate-profile-reference.py` left `docs/profiles.md` unchanged, and `openspec validate --specs` and `openspec validate rio-custom-gateway-providers --strict` passed.
 
 Not done here, by instruction: no deployment, no Cloudflare mutation and no live model call; the live Gateway and Worker, the running 24-case evaluation and the personal profiles were left untouched (only read-only listings of the gateway's provider keys and dynamic routes were made). The routes match the endpoints verified on the live gateway by hand (`/custom-SLUG/chat/completions`, `/custom-SLUG/messages`, `/compat/chat/completions`).
 

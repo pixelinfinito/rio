@@ -3,6 +3,7 @@ import {
   ProviderGateway,
   converse,
   joinUrl,
+  reachableAliases,
   route,
   elideOldToolResults,
   parseModelOutput,
@@ -693,4 +694,22 @@ describe("model routes", () => {
     ).complete({ ...request, model: "custom-node-openai/gpt-6.1-sol" });
     expect(priced.cost_usd).toBe(0.00005);
   });
+});
+
+it("resolves reachable model aliases with the Workflow's and verifier's precedence", () => {
+  const profile = (models: Record<string, string>, steps: any[], verify: any = {}) =>
+    ({ models, steps, verify: { voters: 3, quorum: 2, ...verify } }) as any;
+  const agentsStep = (agents: any[] = [], uses = "rio/agents@0.1.0") => ({ id: "a", uses, needs: [], with: {}, agents });
+  const verify = { id: "v", uses: "rio/verify@0.1.0", needs: [], with: {} };
+  const set = (p: any) => [...reachableAliases(p)].sort();
+  // No model step: nothing is called.
+  expect(set(profile({ default: "x/y" }, []))).toEqual([]);
+  expect(set(profile({ default: "x/y", verifier: "x/z" }, [agentsStep(), verify]))).toEqual(["default", "verifier"]);
+  // Agent-named aliases are reachable unless every agents step overrides them.
+  const models = { default: "x/y", correctness: "x/c", security: "x/s", fast: "x/f" };
+  expect(set(profile(models, [agentsStep()]))).toEqual(["correctness", "default"]);
+  expect(set(profile(models, [agentsStep([{ correctness: { model: "fast" } }])]))).toEqual(["default", "fast"]);
+  expect(set(profile(models, [agentsStep([{ correctness: { model: "missing" } }])]))).toEqual(["default"]);
+  expect(set(profile(models, [agentsStep([], "rio/security@0.2.0")]))).toEqual(["security"]);
+  expect(set(profile(models, [verify], { model: "fast" }))).toEqual(["fast"]);
 });

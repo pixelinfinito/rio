@@ -203,7 +203,7 @@ output = 10.0
 
 [[deployment.dynamic_routes]]
 name = "support"
-elements_file = "routes/support.json"   # relative to the configuration directory
+elements_file = "routes/support.json"   # relative to this file's directory
 ```
 
 What a deployment does with them, idempotently:
@@ -221,7 +221,14 @@ What a deployment does with them, idempotently:
   gateway URL and its `AI_GATEWAY_TOKEN`, and `MODEL_PRICES` when prices are
   configured.
 - Dynamic routes are created from their element files; a route whose deployed
-  elements differ from the file gets a new version, which is deployed.
+  elements differ from the file gets a new version, which is deployed. Every page
+  of the gateway's routes is read, and an unreadable element file or an unknown
+  route list stops the deployment before anything is changed. With `--from`,
+  relative element files resolve against the imported file and are saved as
+  absolute paths.
+- `MODEL_PRICES` is uploaded while prices are configured; after the last price is
+  removed it is cleared once. A `MODEL_PRICES` set by hand and never managed by Rio
+  is left as it is.
 - The Worker is uploaded whole with all of its bindings, the `SANDBOX` Durable
   Object declaration (`class_name` only) and the Container declaration, as for any
   deployment; Worker settings are never patched separately.
@@ -239,7 +246,10 @@ Gateway requests authenticate with `cf-aig-authorization: Bearer AI_GATEWAY_TOKE
 and bypass the cache. Use the model names your endpoint serves; they may differ
 from OpenRouter's (for example `claude-sonnet-5-5` rather than
 `claude-sonnet-5.5`). A submission whose default, verifier or agent model cannot
-be routed is rejected before the review starts, naming the alias.
+be routed is rejected before the review starts, naming the alias. Only aliases a
+review can call are checked, resolved as the Workflow does: an agent's step
+declaration `model`, else the alias named after the agent, else `default`; the
+verifier's `verify.model`, else `verifier`, else `default`.
 
 Profiles written for a manual setup, where `OPENAI_BASE_URL` pointed at the
 gateway's `/compat` endpoint and `AI_GATEWAY_URL` was blank, keep working: with

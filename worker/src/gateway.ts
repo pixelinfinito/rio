@@ -174,25 +174,46 @@ export function route(env: Env, identifier: string): Route {
   return result;
 }
 /**
- * Resolves every model alias a profile can call (the default, the verifier and
- * agent declarations), so a review with an unroutable model is rejected at
- * submission instead of failing after checks ran.
+ * The model aliases a profile can actually call, resolved exactly as the
+ * Workflow and the verifier do: an agent uses its step declaration's `model`,
+ * else the alias named after it, else `default`; the verifier uses
+ * `verify.model`, else `verifier`, else `default`.
+ */
+export function reachableAliases(profile: Profile): Set<string> {
+  const resolve = (alias: string) =>
+    profile.models[alias] !== undefined ? alias : "default";
+  const aliases = new Set<string>();
+  for (const step of profile.steps) {
+    const module = step.uses.split("@")[0];
+    if (module === "rio/verify")
+      aliases.add(
+        profile.verify?.model ??
+          (profile.models.verifier ? "verifier" : "default"),
+      );
+    if (module !== "rio/agents" && module !== "rio/security") continue;
+    // The security step runs only the security agent; the agents step any
+    // agent triage selects.
+    const candidates =
+      module === "rio/security"
+        ? ["security"]
+        : Object.keys(agents).filter(
+            (a) => a !== "security" && a !== "verifier",
+          );
+    for (const agent of candidates) {
+      const declaration = (step.agents ?? []).find((a) =>
+        Object.hasOwn(a, agent),
+      );
+      aliases.add(resolve((declaration?.[agent] as any)?.model ?? agent));
+    }
+  }
+  return aliases;
+}
+/**
+ * Routes every reachable model alias, so a review with an unroutable model is
+ * rejected at submission instead of failing after checks ran.
  */
 export function checkProfileModels(env: Env, profile: Profile) {
-  const aliases = new Set<string>(["default"]);
-  aliases.add(
-    profile.verify?.model ?? (profile.models.verifier ? "verifier" : "default"),
-  );
-  // Agents selected by triage use the alias named after them when it exists.
-  for (const agent of Object.keys(agents))
-    if (profile.models[agent]) aliases.add(agent);
-  for (const step of profile.steps)
-    for (const declaration of step.agents ?? [])
-      for (const [agent, config] of Object.entries(declaration))
-        aliases.add(
-          (config as any)?.model ?? (profile.models[agent] ? agent : "default"),
-        );
-  for (const alias of aliases) {
+  for (const alias of reachableAliases(profile)) {
     const model = profile.models[alias];
     if (!model) continue;
     try {

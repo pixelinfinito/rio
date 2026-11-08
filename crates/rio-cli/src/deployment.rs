@@ -226,6 +226,15 @@ pub fn choices(args: &DeployArgs, directory: &Path) -> Result<Deployment> {
     for provider in &mut deployment.custom_providers {
         provider.normalize();
     }
+    // Route element files in an imported configuration are relative to that
+    // file; keep them valid for later deployments from the user configuration.
+    if let Some(source) = args.from.as_deref().and_then(Path::parent) {
+        for route in &mut deployment.dynamic_routes {
+            if route.elements_file.is_relative() {
+                route.elements_file = std::path::absolute(source.join(&route.elements_file))?;
+            }
+        }
+    }
     for spec in &args.custom_providers {
         let provider = CustomProvider::parse(spec)?;
         deployment
@@ -376,7 +385,9 @@ impl Secrets {
     /// Secrets uploaded to the Worker: custom provider keys stay in the gateway.
     fn worker(&self) -> impl Iterator<Item = (&String, &String)> {
         self.0.iter().filter(|(name, _)| {
-            !name.starts_with(providers::KEY_PREFIX) && !name.starts_with(providers::APPLIED_PREFIX)
+            !name.starts_with(providers::KEY_PREFIX)
+                && !name.starts_with(providers::APPLIED_PREFIX)
+                && !name.starts_with(providers::STATE_PREFIX)
         })
     }
 }
@@ -466,7 +477,12 @@ impl Cloudflare {
                     .join(","))
                 .unwrap_or_default()
         );
-        Ok(body.get("result").cloned().unwrap_or(Value::Null))
+        // Some AI Gateway endpoints answer with `data` instead of `result`.
+        Ok(body
+            .get("result")
+            .or_else(|| body.get("data"))
+            .cloned()
+            .unwrap_or(Value::Null))
     }
     pub(crate) async fn list(&self, path: &str) -> Result<Vec<Value>> {
         let mut values = Vec::new();
@@ -621,7 +637,7 @@ fn metadata(
     ];
     // Always written, so removing every custom provider clears it.
     bindings.push(json!({"type":"plain_text","name":"AI_GATEWAY_PROVIDERS","text":providers::runtime(&deployment.custom_providers)}));
-    if !deployment.model_prices.is_empty() {
+    if !deployment.model_prices.is_empty() || secrets.0.contains_key(providers::PRICES_MARKER) {
         bindings.push(json!({"type":"plain_text","name":"MODEL_PRICES","text":providers::prices(&deployment.model_prices)}));
     }
     for (name, text) in secrets.worker() {
@@ -804,6 +820,8 @@ async fn provision(
     let account = deployment.account_id.as_deref().unwrap();
     let name = &deployment.name;
     let base = format!("/accounts/{account}");
+    // Unreadable route definitions fail before anything is created or changed.
+    providers::check_routes(directory, &deployment.dynamic_routes)?;
     eprintln!("Deploying {name} to Cloudflare account {account}…");
     let image = if deployment.runner == Runner::Sandbox {
         Some(runner_image(cf, deployment).await?)
@@ -908,6 +926,12 @@ async fn provision(
         }
     }
     let upload_path = format!("{base}/workers/scripts/{name}");
+    if !deployment.model_prices.is_empty() && !secrets.0.contains_key(providers::PRICES_MARKER) {
+        secrets
+            .0
+            .insert(providers::PRICES_MARKER.into(), "1".into());
+        secrets.save(directory, deployment)?;
+    }
     let meta = metadata(deployment, db_id, queue_id, secrets, migration_tag);
     let form = multipart::Form::new()
         .text("metadata", serde_json::to_string(&meta)?)
@@ -928,6 +952,10 @@ async fn provision(
         &upload_path,
     )
     .await?;
+    // The empty MODEL_PRICES just uploaded replaced Rio's earlier prices.
+    if deployment.model_prices.is_empty() && secrets.0.remove(providers::PRICES_MARKER).is_some() {
+        secrets.save(directory, deployment)?;
+    }
     for (suffix, class) in [
         ("review", "ReviewWorkflow"),
         ("migrate", "MigrationWorkflow"),
@@ -1328,13 +1356,14 @@ mod tests {
                     }
                     let mut parts = header.lines().next().unwrap().split_whitespace();
                     let method = parts.next().unwrap();
-                    let path = parts.next().unwrap().split('?').next().unwrap();
+                    let target = parts.next().unwrap();
+                    let path = target.split('?').next().unwrap();
                     let body = String::from_utf8_lossy(&bytes[end..]).into_owned();
                     records
                         .lock()
                         .unwrap()
                         .push((method.into(), path.into(), body.clone()));
-                    let result = if let Some(result) = handler(method, path, &body) {
+                    let result = if let Some(result) = handler(method, target, &body) {
                         result
                     } else if path.ends_with("/d1/database") {
                         if method == "GET" {
@@ -1401,7 +1430,10 @@ mod tests {
                     } else {
                         json!({})
                     };
-                    let response = if fail {
+                    // A handler answers `{"__data": …}` for endpoints that use `data`.
+                    let response = if let Some(data) = result.get("__data") {
+                        json!({"success":true,"data":data})
+                    } else if fail {
                         json!({"success":false,"errors":[{"code":123,"message":"secret-echo-must-never-appear"}]})
                     } else {
                         json!({"success":true,"result":result})
@@ -1508,9 +1540,13 @@ mod tests {
         providers: Vec<Value>,
         routes: Vec<Value>,
         versions: u32,
+        /// Route lists come in pages of 100 under `data.routes`, as the AI
+        /// Gateway API answers; `bad_routes` answers an unknown shape instead.
+        bad_routes: bool,
     }
     fn gateway_handler(state: Arc<Mutex<Gateway>>) -> Handler {
-        Arc::new(move |method, path, body| {
+        Arc::new(move |method, target, body| {
+            let (path, query) = target.split_once('?').unwrap_or((target, ""));
             let mut state = state.lock().unwrap();
             let body: Value = serde_json::from_str(body).unwrap_or(Value::Null);
             if path.ends_with("/ai-gateway/custom-providers") {
@@ -1541,16 +1577,29 @@ mod tests {
                         json!({"id":"route-1","name":body["name"],"elements":body["elements"]});
                     state.routes.push(created.clone());
                     created
+                } else if state.bad_routes {
+                    json!({"items": []})
                 } else {
-                    json!({"routes": state.routes})
+                    let page: usize = query
+                        .split('&')
+                        .find_map(|p| p.strip_prefix("page="))
+                        .map_or(1, |p| p.parse().unwrap());
+                    let routes: Vec<_> = state
+                        .routes
+                        .iter()
+                        .skip((page - 1) * 100)
+                        .take(100)
+                        .collect();
+                    json!({"__data": {"routes": routes, "page": page, "per_page": 100}})
                 });
             }
+            let route = state.routes.iter().position(|r| r["id"] == "route-1");
             if path.ends_with("/routes/route-1") {
-                return Some(state.routes[0].clone());
+                return Some(state.routes[route.unwrap()].clone());
             }
             if path.ends_with("/routes/route-1/versions") {
                 state.versions += 1;
-                state.routes[0]["elements"] = body["elements"].clone();
+                state.routes[route.unwrap()]["elements"] = body["elements"].clone();
                 return Some(json!({"id": format!("version-{}", state.versions)}));
             }
             if path.ends_with("/routes/route-1/deployments") {
@@ -1834,7 +1883,12 @@ mod tests {
         .unwrap();
         assert_eq!(replayed.custom_providers, deployment.custom_providers);
         assert_eq!(replayed.model_prices, deployment.model_prices);
-        assert_eq!(replayed.dynamic_routes, deployment.dynamic_routes);
+        // Route files of an imported configuration resolve against its directory.
+        assert_eq!(replayed.dynamic_routes[0].name, "support");
+        assert_eq!(
+            replayed.dynamic_routes[0].elements_file,
+            std::path::absolute(dir.path().join("support.json")).unwrap()
+        );
         // A flag replaces a provider by slug and adds new ones.
         let changed = choices(
             &DeployArgs {
@@ -1937,6 +1991,145 @@ mod tests {
                 .iter()
                 .all(|n| !n.starts_with("AI_GATEWAY_PROVIDER_KEY"))
         );
+    }
+    #[tokio::test]
+    async fn routes_are_found_on_later_pages_and_unknown_list_shapes_stop_the_deployment() {
+        let directory = tempfile::tempdir().unwrap();
+        let mut deployment = custom_deployment(directory.path());
+        let elements: Value = serde_json::from_str(
+            &std::fs::read_to_string(directory.path().join("support.json")).unwrap(),
+        )
+        .unwrap();
+        // 150 routes; the configured one is on the second page.
+        let mut routes: Vec<Value> = (0..149)
+            .map(|i| json!({"id":format!("other-{i}"),"name":format!("other-{i}")}))
+            .collect();
+        routes.push(json!({"id":"route-1","name":"support","elements":elements}));
+        let state = Arc::new(Mutex::new(Gateway {
+            providers: vec![
+                json!({"id":"a","slug":"node-openai","base_url":"https://api.llm.example/v1","enable":true}),
+                json!({"id":"b","slug":"node-anthropic","base_url":"https://api.llm.example/v1","enable":true}),
+            ],
+            routes,
+            ..Default::default()
+        }));
+        let mut secrets = custom_secrets();
+        secrets
+            .0
+            .retain(|k, _| !k.starts_with(providers::KEY_PREFIX));
+        let records = deploy(&state, &deployment, directory.path(), &mut secrets).await;
+        assert_eq!(gateway_writes(&records), vec![]);
+        // An unknown list shape is an error, never "no routes".
+        state.lock().unwrap().bad_routes = true;
+        let mock = Mock::start_with(true, false, gateway_handler(state.clone()));
+        let cf = Cloudflare {
+            base: mock.url.clone(),
+            ..Cloudflare::new("deployment-secret".into()).unwrap()
+        };
+        let error = provision(&cf, directory.path(), &deployment, &mut secrets, None)
+            .await
+            .unwrap_err()
+            .to_string();
+        assert!(error.contains("unexpected dynamic route list"), "{error}");
+        assert!(gateway_writes(&mock.requests.lock().unwrap()).is_empty());
+        drop(mock);
+        // Unreadable route elements fail before any Cloudflare request.
+        deployment.dynamic_routes[0].elements_file = "missing.json".into();
+        let mock = Mock::start_with(true, false, gateway_handler(state.clone()));
+        let cf = Cloudflare {
+            base: mock.url.clone(),
+            ..Cloudflare::new("deployment-secret".into()).unwrap()
+        };
+        let error = provision(&cf, directory.path(), &deployment, &mut secrets, None)
+            .await
+            .unwrap_err()
+            .to_string();
+        assert!(error.contains("missing.json"), "{error}");
+        assert!(mock.requests.lock().unwrap().is_empty());
+    }
+    #[test]
+    fn imported_route_files_resolve_against_the_imported_configuration() {
+        let source = tempfile::tempdir().unwrap();
+        let destination = tempfile::tempdir().unwrap();
+        std::fs::create_dir_all(source.path().join("routes")).unwrap();
+        std::fs::write(
+            source.path().join("routes/support.json"),
+            "[{\"id\":\"start\"}]",
+        )
+        .unwrap();
+        std::fs::write(
+            source.path().join("config.toml"),
+            "[deployment]\n[[deployment.dynamic_routes]]\nname = 'support'\nelements_file = 'routes/support.json'\n",
+        )
+        .unwrap();
+        let deployment = choices(
+            &DeployArgs {
+                from: Some(source.path().join("config.toml")),
+                ..Default::default()
+            },
+            destination.path(),
+        )
+        .unwrap();
+        let file = &deployment.dynamic_routes[0].elements_file;
+        assert!(file.is_absolute());
+        assert_eq!(
+            std::fs::canonicalize(file).unwrap(),
+            std::fs::canonicalize(source.path().join("routes/support.json")).unwrap()
+        );
+        // The saved destination configuration keeps a path that still works.
+        providers::check_routes(destination.path(), &deployment.dynamic_routes).unwrap();
+        save_choices(destination.path(), &deployment, None).unwrap();
+        let again = choices(&DeployArgs::default(), destination.path()).unwrap();
+        providers::check_routes(destination.path(), &again.dynamic_routes).unwrap();
+    }
+    #[tokio::test]
+    async fn removing_every_price_clears_rio_prices_and_keeps_hand_set_ones() {
+        let directory = tempfile::tempdir().unwrap();
+        let mut deployment = custom_deployment(directory.path());
+        deployment.dynamic_routes.clear();
+        let state = Arc::new(Mutex::new(Gateway::default()));
+        let mut secrets = custom_secrets();
+        let prices_in = |records: &Records| {
+            let upload = &records
+                .iter()
+                .find(|(m, p, _)| m == "PUT" && p.ends_with("/workers/scripts/rio"))
+                .unwrap()
+                .2;
+            let start = upload.find('{').unwrap();
+            let meta: Value = serde_json::Deserializer::from_str(&upload[start..])
+                .into_iter::<Value>()
+                .next()
+                .unwrap()
+                .unwrap();
+            meta["bindings"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|b| b["name"] == "MODEL_PRICES")
+                .map(|b| b["text"].as_str().unwrap().to_owned())
+        };
+        let records = deploy(&state, &deployment, directory.path(), &mut secrets).await;
+        assert!(prices_in(&records).unwrap().contains("gpt-6.1-sol"));
+        assert!(secrets.0.contains_key(providers::PRICES_MARKER));
+        assert!(
+            !records
+                .iter()
+                .any(|(_, _, b)| b.contains(providers::PRICES_MARKER))
+        );
+        // The last price removed: the binding is cleared once.
+        deployment.model_prices.clear();
+        let records = deploy(&state, &deployment, directory.path(), &mut secrets).await;
+        assert_eq!(prices_in(&records).as_deref(), Some("{}"));
+        assert!(!secrets.0.contains_key(providers::PRICES_MARKER));
+        assert!(
+            !Secrets::load(directory.path(), &deployment)
+                .unwrap()
+                .0
+                .contains_key(providers::PRICES_MARKER)
+        );
+        // Then left alone, so a value set by hand is kept by keep_bindings.
+        let records = deploy(&state, &deployment, directory.path(), &mut secrets).await;
+        assert_eq!(prices_in(&records), None);
     }
     #[tokio::test]
     async fn api_errors_never_echo_remote_credentials() {

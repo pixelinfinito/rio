@@ -22,6 +22,11 @@ pub const KEY_PREFIX: &str = "AI_GATEWAY_PROVIDER_KEY_";
 /// Fingerprint of the base URL and headers last applied to a provider, so a
 /// redeployment rewrites the write-only headers only when the key changed.
 pub const APPLIED_PREFIX: &str = "AI_GATEWAY_PROVIDER_APPLIED_";
+/// Deployment state kept with the credentials and never uploaded.
+pub const STATE_PREFIX: &str = "RIO_DEPLOY_STATE_";
+/// Set once Rio uploaded `MODEL_PRICES`, so removing every price clears the
+/// binding instead of leaving stale prices, while a hand-set value is kept.
+pub const PRICES_MARKER: &str = "RIO_DEPLOY_STATE_MODEL_PRICES";
 
 #[derive(Clone, Copy, Debug, Deserialize, Serialize, PartialEq, Eq, clap::ValueEnum)]
 #[serde(rename_all = "lowercase")]
@@ -405,12 +410,42 @@ pub async fn reconcile_providers(
     Ok(changed)
 }
 
-fn routes_of(value: &Value) -> Vec<Value> {
+/// One page of routes: a bare array or `{ "routes": [...] }`. Any other shape is
+/// an error, never an empty list, so an unreadable response cannot recreate
+/// routes that exist.
+fn routes_of(value: &Value) -> Result<Vec<Value>> {
     value
         .as_array()
-        .or_else(|| value["routes"].as_array())
+        .or_else(|| value.get("routes").and_then(Value::as_array))
         .cloned()
-        .unwrap_or_default()
+        .context("Cloudflare returned an unexpected dynamic route list")
+}
+/// Every dynamic route of the gateway, across pages.
+async fn list_routes(cf: &Cloudflare, path: &str) -> Result<Vec<Value>> {
+    let mut routes = Vec::new();
+    for page in 1..=100 {
+        let items = routes_of(
+            &cf.request(
+                Method::GET,
+                &format!("{path}?page={page}&per_page=100"),
+                None,
+            )
+            .await?,
+        )?;
+        let last = items.len() < 100;
+        routes.extend(items);
+        if last {
+            return Ok(routes);
+        }
+    }
+    bail!("too many dynamic routes to enumerate safely")
+}
+/// Reads and checks every route's elements before anything is changed.
+pub fn check_routes(directory: &Path, routes: &[DynamicRoute]) -> Result<()> {
+    for route in routes {
+        elements(directory, route)?;
+    }
+    Ok(())
 }
 fn elements(directory: &Path, route: &DynamicRoute) -> Result<Value> {
     let path = directory.join(&route.elements_file);
@@ -438,10 +473,7 @@ pub async fn reconcile_routes(
         return Ok(());
     }
     let path = format!("{gateway}/routes");
-    let existing = routes_of(
-        &cf.request(Method::GET, &format!("{path}?per_page=100"), None)
-            .await?,
-    );
+    let existing = list_routes(cf, &path).await?;
     for route in routes {
         let local = elements(directory, route)?;
         match existing.iter().find(|r| r["name"] == route.name.as_str()) {
