@@ -125,7 +125,7 @@ jobs:
           toolchain: '1.99.1'
       - uses: Swatinem/rust-cache@v2
       - run: cargo build --locked -p rio-runner
-      - run: docker build -f worker/Dockerfile -t rio-runner:0.2.0 .
+      - run: docker build -f worker/Dockerfile -t rio-runner:0.3.0 .
       - name: Runner protocol and Docker isolation
-        run: RIO_TEST_DOCKER=1 python3 -m unittest discover -s worker/runner/tests -v
+        run: RIO_TEST_DOCKER=1 RIO_RUNNER_IMAGE=rio-runner:0.3.0 python3 -m unittest discover -s worker/runner/tests -v
       - run: npm run dry-run --prefix worker

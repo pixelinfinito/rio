@@ -1,7 +1,7 @@
 import { DurableObject } from "cloudflare:workers";
 import type { Env, Execution } from "./types";
 import { invariant } from "./validation";
-import { ARTIFACT_LIMIT, validateResult } from "./jobs";
+import { ARTIFACT_LIMIT, PREPARE_WALL_MS, validateResult } from "./jobs";
 import { jobInput } from "./archive";
 export class Sandbox extends DurableObject<Env> {
   async fetch(request: Request): Promise<Response> {
@@ -10,7 +10,8 @@ export class Sandbox extends DurableObject<Env> {
       job.network === false &&
         job.limits.memory_mb <= 8192 &&
         job.limits.cpu <= 2 &&
-        job.limits.wall_ms <= 120000 &&
+        job.limits.wall_ms <=
+          (job.kind === "prepare" ? PREPARE_WALL_MS : 120000) &&
         job.limits.output_bytes <= 1048576 &&
         (job.limits.artifact_bytes ?? 0) <= ARTIFACT_LIMIT,
       "invalid sandbox limits",
@@ -20,7 +21,10 @@ export class Sandbox extends DurableObject<Env> {
     if (container.running) await container.destroy();
     container.start({
       enableInternet: false,
-      entrypoint: ["/bin/sleep", "180"],
+      entrypoint: [
+        "/bin/sleep",
+        String(Math.ceil(job.limits.wall_ms / 1000) + 60),
+      ],
     });
     try {
       const process = await container.exec(

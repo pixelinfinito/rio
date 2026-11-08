@@ -103,6 +103,7 @@ fn every_sarif_mapping_property_appears_in_the_fixtures() {
             "complete-review",
             "error-status",
             "lineage-history",
+            "pr-lineage",
             "risks-and-plausible"
         ]
     );

@@ -50,6 +50,12 @@ pub struct Deployment {
     /// Gateway dynamic routes, called as `dynamic/<name>`.
     #[serde(skip_serializing_if = "Vec::is_empty")]
     pub dynamic_routes: Vec<DynamicRoute>,
+    /// The GitHub App step was chosen (`rio init --github-app`); replayed by `--from`.
+    #[serde(skip_serializing_if = "std::ops::Not::not")]
+    pub github_app: bool,
+    /// Organization that owns the GitHub App, when not the user.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub github_org: Option<String>,
 }
 impl Default for Deployment {
     fn default() -> Self {
@@ -64,8 +70,14 @@ impl Default for Deployment {
             custom_providers: Vec::new(),
             model_prices: BTreeMap::new(),
             dynamic_routes: Vec::new(),
+            github_app: false,
+            github_org: None,
         }
     }
+}
+/// Constant-time string equality for secrets and one-time values.
+pub fn constant_eq(a: &str, b: &str) -> bool {
+    a.len() == b.len() && a.bytes().zip(b.bytes()).fold(0u8, |n, (x, y)| n | (x ^ y)) == 0
 }
 impl Deployment {
     pub fn validate(&self) -> Result<()> {
@@ -415,7 +427,15 @@ pub(crate) struct Cloudflare {
     token: String,
 }
 impl Cloudflare {
-    fn new(token: String) -> Result<Self> {
+    /// A client for another API root (recorded tests).
+    #[cfg(test)]
+    pub(crate) fn at(base: &str, token: &str) -> Result<Self> {
+        Ok(Self {
+            base: base.into(),
+            ..Self::new(token.into())?
+        })
+    }
+    pub(crate) fn new(token: String) -> Result<Self> {
         Ok(Self {
             client: Client::builder()
                 .timeout(Duration::from_secs(90))
@@ -518,7 +538,7 @@ impl Cloudflare {
         self.request(Method::POST, path, Some(body)).await
     }
 }
-async fn authentication(profile: &str) -> Result<String> {
+pub(crate) async fn authentication(profile: &str) -> Result<String> {
     if let Ok(token) = std::env::var("CLOUDFLARE_API_TOKEN") {
         ensure!(!token.is_empty(), "empty CLOUDFLARE_API_TOKEN");
         return Ok(token);
@@ -790,6 +810,10 @@ pub async fn run(args: DeployArgs) -> Result<()> {
     secrets.save(&directory, &deployment)?;
     save_choices(&directory, &deployment, None)?;
     provision(&cf, &directory, &deployment, &mut secrets, models).await
+}
+/// Records deployment choices (no secrets) without touching the endpoint URL.
+pub fn save_deployment(directory: &Path, deployment: &Deployment) -> Result<()> {
+    save_choices(directory, deployment, None)
 }
 fn save_choices(directory: &Path, deployment: &Deployment, endpoint: Option<&str>) -> Result<()> {
     let file = directory.join("config.toml");

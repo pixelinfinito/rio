@@ -131,8 +131,11 @@ a 16 KiB excerpt of each graph in their prompt and query the rest through
 `graph_query`. Submodule entries are omitted from snapshots; the diff lists them as
 `submodule_not_reviewed`. `--offline`, or no endpoint, retains the local deterministic review.
 `--fork` forces a static-only review; model execution is denied after manifest
-overrides. PR fetching, publication and convergence flags (`--pr`, `--publish`,
-`--since-last`) are outside the implemented transport and return an explicit error.
+overrides. `--since-last` reviews the branch as a lineage held by the endpoint.
+`rio review --pr <n>` asks the endpoint to prepare and review pull request `n` of the
+repository's GitHub `origin` (the endpoint needs the GitHub App, see
+[GitHub App](github-app.md)); nothing is built from the local checkout, and
+`--publish` is the consent a `publish: ask` profile requires.
 
 Models belong in the review profile, for example:
 
@@ -262,10 +265,10 @@ OpenRouter's own endpoint only.
 ## Self-hosted runner
 
 ```sh
-docker build -f worker/Dockerfile -t rio-runner:0.2.0 .
+docker build -f worker/Dockerfile -t rio-runner:0.3.0 .
 # RIO_RUNNER_SECRET is the endpoint's RUNNER_SECRET, supplied via secret environment.
 RIO_ENDPOINT_URL=https://rio.YOUR-SUBDOMAIN.workers.dev \
-  cargo run --locked -p rio-runner -- serve --image rio-runner:0.2.0
+  cargo run --locked -p rio-runner -- serve --image rio-runner:0.3.0
 ```
 
 The host only polls jobs, downloads job archives, starts Docker and signs
@@ -391,7 +394,7 @@ To repeat the local runner protocol and container-isolation checks:
 
 ```sh
 cargo build --locked -p rio-runner
-docker build -f worker/Dockerfile -t rio-runner:0.2.0 .
+docker build -f worker/Dockerfile -t rio-runner:0.3.0 .
 RIO_TEST_DOCKER=1 python3 -m unittest discover -s worker/runner/tests -v
 ```
 

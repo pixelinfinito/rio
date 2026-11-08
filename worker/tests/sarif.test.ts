@@ -20,6 +20,10 @@ import lineageExpected from "../../tests/fixtures/sarif/lineage-history/expected
 import risksReport from "../../tests/fixtures/sarif/risks-and-plausible/report.json";
 import risksRender from "../../tests/fixtures/sarif/risks-and-plausible/render.json";
 import risksExpected from "../../tests/fixtures/sarif/risks-and-plausible/expected.sarif?raw";
+// Recorded from the PR-mode end-to-end test (tests/pr-mode.test.ts).
+import prReport from "../../tests/fixtures/sarif/pr-lineage/report.json";
+import prRender from "../../tests/fixtures/sarif/pr-lineage/render.json";
+import prExpected from "../../tests/fixtures/sarif/pr-lineage/expected.sarif?raw";
 
 const runtime = env as Env;
 beforeAll(async () => {
@@ -30,6 +34,7 @@ const cases = {
   "error-status": [errorReport, errorRender, errorExpected],
   "lineage-history": [lineageReport, lineageRender, lineageExpected],
   "risks-and-plausible": [risksReport, risksRender, risksExpected],
+  "pr-lineage": [prReport, prRender, prExpected],
 } as const;
 
 /** Canonical key order, as the mapping's byte-identity rule compares. */

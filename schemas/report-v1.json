@@ -56,6 +56,89 @@
         "rio_version": {
           "type": "string",
           "minLength": 1
+        },
+        "pull_request": {
+          "description": "Pull request metadata recorded by the endpoint for PR-mode reviews.",
+          "type": "object",
+          "properties": {
+            "repository": {
+              "type": "string",
+              "minLength": 1
+            },
+            "number": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "base_sha": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "head_sha": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "author": {
+              "type": "object",
+              "properties": {
+                "login": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "type": {
+                  "enum": [
+                    "user",
+                    "bot"
+                  ]
+                }
+              },
+              "required": [
+                "login",
+                "type"
+              ],
+              "additionalProperties": false
+            },
+            "fork": {
+              "type": "boolean"
+            },
+            "agent": {
+              "description": "Agent attribution the host exposes: a bot author or a recognized commit trailer.",
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "source": {
+                  "enum": [
+                    "bot_author",
+                    "commit_trailer"
+                  ]
+                }
+              },
+              "required": [
+                "name",
+                "source"
+              ],
+              "additionalProperties": false
+            },
+            "trigger": {
+              "enum": [
+                "webhook",
+                "cli",
+                "command"
+              ]
+            }
+          },
+          "required": [
+            "repository",
+            "number",
+            "base_sha",
+            "head_sha",
+            "author",
+            "fork",
+            "trigger"
+          ],
+          "additionalProperties": false
         }
       },
       "required": [
@@ -554,6 +637,44 @@
             "string",
             "null"
           ]
+        },
+        "reason": {
+          "description": "Why nothing, or only the check run, was published.",
+          "enum": [
+            "policy_never",
+            "ask_without_consent",
+            "fork_not_escalated",
+            "no_installation"
+          ]
+        },
+        "failures": {
+          "description": "Items the host rejected; each is retried on the next round of the lineage.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "kind": {
+                "enum": [
+                  "finding",
+                  "summary",
+                  "check_run"
+                ]
+              },
+              "error": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "kind",
+              "error"
+            ],
+            "additionalProperties": false
+          }
         }
       },
       "required": [

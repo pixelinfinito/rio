@@ -1,5 +1,13 @@
 import { defineConfig } from "vitest/config";
 import { cloudflareTest } from "@cloudflare/vitest-plugin";
+import { generateKeyPairSync } from "node:crypto";
+// A GitHub App key for the recorded GitHub double, generated per run so no
+// private key is ever committed. GitHub issues PKCS#1 keys.
+const app = generateKeyPairSync("rsa", {
+  modulusLength: 2048,
+  publicKeyEncoding: { type: "spki", format: "pem" },
+  privateKeyEncoding: { type: "pkcs1", format: "pem" },
+});
 export default defineConfig({
   plugins: [
     cloudflareTest({
@@ -25,6 +33,12 @@ export default defineConfig({
           RIO_API_TOKEN: "test-owner-token-at-least-32-characters",
           RUNNER_SECRET: "test-runner-secret-at-least-32-characters",
           RUNNER_BACKEND: "self-hosted",
+          GITHUB_APP_ID: "4242",
+          GITHUB_APP_PRIVATE_KEY: app.privateKey,
+          GITHUB_WEBHOOK_SECRET: "test-webhook-secret-at-least-32-characters",
+          GITHUB_API_URL: "https://api.github.test",
+          PUBLIC_URL: "https://rio.example.test",
+          TEST_GITHUB_PUBLIC_KEY: app.publicKey,
         },
         durableObjects: { SANDBOX: "Sandbox" },
       },

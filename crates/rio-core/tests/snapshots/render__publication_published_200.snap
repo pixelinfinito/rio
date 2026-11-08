@@ -1,0 +1,32 @@
+---
+source: crates/rio-core/tests/render.rs
+expression: terminal
+---
+Rio 0.2.0 — complete
+Review: prepared-header  Run: —
+Mode: branch  Base: —  Head: —
+Pull request: acme/shop#7  Head: 863716ec9d7c42f3d2a859380ebf9e6415f4ca7b  Author: octocat (user)
+Risk tier: low ()
+
+Findings
+2 finding(s).
+  correctness/throw [new; error; static_proven] FAIL
+    src/cart.ts:1 (total) [new]
+    The call to total now throws
+    Verification: 3/3 voters; blind: [None, None, None]; split: false
+    Lineage: round 1; status open; first posted in b46fb851d56ab91aa42d98fc7efafb215208a42049173b56f5290af44b375ca6
+    Trigger: total()
+  correctness/throw [new; error; static_proven] FAIL
+    src/cart.ts:2 (tax) [new]
+    The call to tax now throws
+    Verification: 3/3 voters; blind: [None, None, None]; split: false
+    Lineage: round 1; status open; first posted in b46fb851d56ab91aa42d98fc7efafb215208a42049173b56f5290af44b375ca6
+    Trigger: tax()
+
+Footer
+Round 1 of cap 3 — pr lineage 7, generation 1
+Held back as already posted: 0
+Hypothesis board coordination is deferred; agents and verifier voters run independently.
+Verifier usage: 960 input tokens, 600 output tokens; cost USD null
+Publication (auto): 2 posted, 0 edited, 0 resolved, 0 unanchored (in the summary), 0 failed
+Total: 0 ms

@@ -111,5 +111,6 @@ When the report `status` is `error`, the log still has one run. The run has `"re
 | `risks-and-plausible` | `risks` entries and plausible security entries as `note`, a static-proven security entry as `error`, an `unclassified` entry without `baselineState`, skipped checks as warning notifications (one with an empty hint, which adds no ` — `) |
 | `lineage-history` | a round 2 lineage review: lifecycle status, author response, history, `round` on results and `rio.lineage` and the risk tier on the run |
 | `error-status` | a review that could not start: no results, `executionSuccessful` false, exit code 3 and the error in the invocation properties |
+| `pr-lineage` | recorded from the PR-mode end-to-end test (`worker/tests/pr-mode.test.ts`): round 1 of a `pr` lineage with the report's pull request header and `publication` object, as the endpoint served it; both renderers must reproduce the endpoint's log |
 
 A documentation test (`crates/rio-core/tests/documentation.rs`) checks that every property named in the first column of the tables above appears as a key in at least one fixture's `expected.sarif`, and that every fixture report validates against report-v1.

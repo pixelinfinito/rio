@@ -61,6 +61,7 @@ import {
   type RegistryRecord,
 } from "./history";
 import { updateProposals } from "./proposals";
+import { publishReview } from "./publish";
 import {
   changeHunks,
   context as cacheContext,
@@ -1140,6 +1141,28 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             max_lines: submission.profile.max_lines,
           })
         : null;
+      // A PR review is run under the profile at its merge base, which the CLI
+      // does not have; it reads the fail policy for its exit code from here.
+      if (report.review?.pull_request)
+        report.agent_audit.fail_on = submission.profile.fail_on;
+      // PR mode: publication under the resolved profile's policy (pr-publishing).
+      const publication = await step.do("publish", () =>
+        publishReview(this.env, {
+          review: id,
+          report,
+          policy: submission.profile.publish,
+          fail_on: submission.profile.fail_on,
+          lineage: lineage
+            ? { id: lineage.id, snapshot_id: lineage.snapshot_id }
+            : null,
+          updates: outcome?.updates ?? [],
+          prior: (lineage?.prior ?? []).map((p) => ({
+            id: p.id,
+            finding: p.finding,
+          })),
+        }),
+      );
+      if (publication) report.publication = publication;
       const key = await store.put(`reviews/${id}/report.json`, report);
       // The registry is written in its own durable step, so a later failure
       // never replays it; its statements are idempotent per review anyway.
