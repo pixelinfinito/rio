@@ -392,6 +392,11 @@
           "type": "string",
           "minLength": 1,
           "description": "Review id or pull request reference where the identity was dismissed."
+        },
+        "fixed_in": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Review id that recorded the identity fixed; present when previous_status is fixed, so a recurrence reads as a regression of that fix."
         }
       },
       "required": [
