@@ -7,6 +7,8 @@ pub struct RenderOptions<'a> {
     pub width: usize,
     pub color: bool,
     pub show_pre_existing: bool,
+    /// `--show-remembered`: list remembered dismissals in their own section.
+    pub show_remembered: bool,
     pub policy: Option<&'a CompiledFailOn>,
     /// Finding identities the review's lineage had already posted before this
     /// review. Only consulted for reports that carry `lineage`.
@@ -18,6 +20,7 @@ impl Default for RenderOptions<'_> {
             width: 80,
             color: false,
             show_pre_existing: false,
+            show_remembered: false,
             policy: None,
             posted: None,
         }
@@ -371,6 +374,26 @@ fn footer(report: &Report) -> Vec<String> {
         }
         lines.push(line);
     }
+    lines.extend(remembered_footer(report));
+    for proposal in report.suppression_proposals.iter().flatten() {
+        lines.push(format!(
+            "Suppression proposal {}: {} ({} dismissal(s) since {}); apply with `rio suppressions apply {}`",
+            proposal.id,
+            proposal_entry(&proposal.entry),
+            proposal.evidence_count,
+            proposal.since,
+            proposal.id
+        ));
+    }
+    if let Some(cache) = report.cache.as_ref().filter(|c| c.lookups > 0) {
+        lines.push(format!(
+            "Agent cache: {} of {} lookup(s) served from cache (hit rate {}); about {} tokens saved",
+            cache.hits,
+            cache.lookups,
+            cache.hit_rate.map_or_else(|| "n/a".into(), ratio),
+            cache.tokens_saved_estimate
+        ));
+    }
     for suppression in &report.footer.suppressions {
         lines.push(format!(
             "Suppression {}: {} finding(s)",
@@ -382,6 +405,81 @@ fn footer(report: &Report) -> Vec<String> {
     }
     lines.push(format!("Total: {} ms", report.metrics.wall_time_ms));
     lines
+}
+fn proposal_entry(entry: &ProposalEntry) -> String {
+    match entry {
+        ProposalEntry::Rule { rule } => format!("rule {rule}"),
+        ProposalEntry::Path { path } => format!("path {path}"),
+    }
+}
+/// Where and why a remembered finding was dismissed: `intentional in github.com/o/r#41`.
+fn remembered_reason(finding: &Finding) -> String {
+    let history = finding.history.as_ref();
+    let reason = history
+        .and_then(|h| h.previous_response.as_ref())
+        .map_or("dismissed", |r| r.reason.as_str());
+    match history.and_then(|h| h.dismissed_in.as_deref()) {
+        Some(origin) => format!("{reason} in {origin}"),
+        None => reason.to_owned(),
+    }
+}
+/// The remembered count by reason and origin; the findings themselves are
+/// listed only with `--show-remembered`.
+fn remembered_footer(report: &Report) -> Vec<String> {
+    if report.remembered.is_empty() {
+        return Vec::new();
+    }
+    let mut groups: Vec<(String, usize)> = Vec::new();
+    for finding in &report.remembered {
+        let key = remembered_reason(finding);
+        match groups.iter_mut().find(|(k, _)| *k == key) {
+            Some((_, count)) => *count += 1,
+            None => groups.push((key, 1)),
+        }
+    }
+    vec![format!(
+        "Remembered: {} finding(s) dismissed earlier on unchanged code and not re-reported ({}); run with --show-remembered to list them",
+        report.remembered.len(),
+        groups
+            .iter()
+            .map(|(key, count)| format!("{count} {key}"))
+            .collect::<Vec<_>>()
+            .join("; ")
+    )]
+}
+/// The finding's earlier registry record: recurrence, earlier answer, regression.
+fn history_line(finding: &Finding) -> Option<String> {
+    let history = finding.history.as_ref()?;
+    let mut parts = vec![format!(
+        "seen in {} earlier review(s) since {}, last {}",
+        history.seen_count, history.first_seen, history.last_seen
+    )];
+    if history.previous_status == LifecycleStatus::Fixed {
+        parts.push(format!(
+            "regression of a finding fixed in {}",
+            history.fixed_in.as_deref().unwrap_or(&history.last_seen)
+        ));
+    } else {
+        parts.push(format!("previously {}", label(&history.previous_status)));
+    }
+    if let Some(response) = &history.previous_response {
+        parts.push(format!(
+            "answered {} by {}{}{}",
+            response.reason.as_str(),
+            response.actor,
+            response
+                .note
+                .as_ref()
+                .map(|note| format!(" ({note})"))
+                .unwrap_or_default(),
+            history
+                .dismissed_in
+                .as_ref()
+                .map(|origin| format!(" in {origin}"))
+                .unwrap_or_default()
+        ));
+    }
+    Some(format!("History: {}", parts.join("; ")))
 }
 fn ratio(value: Ratio) -> String {
     let text = format!("{:.2}", value.get());
@@ -634,6 +732,9 @@ fn groups<'a>(
                 .collect(),
         ));
     }
+    if options.show_remembered && !report.remembered.is_empty() {
+        groups.push(("Remembered findings", ordered(&report.remembered)));
+    }
     if options.show_pre_existing {
         groups.push((
             "Pre-existing findings",
@@ -746,8 +847,10 @@ pub fn render_markdown(report: &Report, options: &RenderOptions<'_>) -> String {
             out.push('\n');
         }
         for finding in findings {
-            let failing = options.policy.is_some_and(|policy| policy.matches(finding))
-                || AuditSignals::matches(report, &finding.id);
+            // Remembered findings are never evaluated by fail policies.
+            let failing = name != "Remembered findings"
+                && (options.policy.is_some_and(|policy| policy.matches(finding))
+                    || AuditSignals::matches(report, &finding.id));
             out.push_str(&format!(
                 "- **{}** [{}; {}; {}]{}{} — {}\n",
                 safe(&finding.rule_id),
@@ -795,7 +898,16 @@ pub fn render_markdown(report: &Report, options: &RenderOptions<'_>) -> String {
                     v.agreeing, v.voters, v.blind_match, v.split
                 ));
             }
+            if name == "Remembered findings" {
+                out.push_str(&format!(
+                    "  - Remembered: {}\n",
+                    markdown_text(&remembered_reason(finding))
+                ));
+            }
             if let Some(text) = lifecycle(finding) {
+                out.push_str(&format!("  - {}\n", markdown_text(&text)));
+            }
+            if let Some(text) = history_line(finding) {
                 out.push_str(&format!("  - {}\n", markdown_text(&text)));
             }
             if !finding.trigger.is_empty() {
@@ -925,8 +1037,9 @@ pub fn render_terminal(report: &Report, options: &RenderOptions<'_>) -> String {
                 label(&finding.state),
                 label(&finding.severity),
                 label(&finding.evidence_level),
-                if options.policy.is_some_and(|p| p.matches(finding))
-                    || AuditSignals::matches(report, &finding.id)
+                if name != "Remembered findings"
+                    && (options.policy.is_some_and(|p| p.matches(finding))
+                        || AuditSignals::matches(report, &finding.id))
                 {
                     " FAIL"
                 } else {
@@ -970,7 +1083,13 @@ pub fn render_terminal(report: &Report, options: &RenderOptions<'_>) -> String {
                     v.agreeing, v.voters, v.blind_match, v.split
                 ));
             }
+            if name == "Remembered findings" {
+                lines.push(format!("    Remembered: {}", remembered_reason(finding)));
+            }
             if let Some(text) = lifecycle(finding) {
+                lines.push(format!("    {text}"));
+            }
+            if let Some(text) = history_line(finding) {
                 lines.push(format!("    {text}"));
             }
             if !finding.trigger.is_empty() {
