@@ -1,0 +1,14 @@
+# Single-verifier baseline arm for the v0.2 verifier comparison on the custom route.
+# The pinned models of rio/openrouter (claude-sonnet-5.5 generator, gpt-6.1-sol
+# voters) reached through the account's AI Gateway custom providers instead of
+# OpenRouter, after OpenRouter's credit limit ended the 2026-11-08 run halfway.
+# Same models, same budgets, same verification settings; only the route differs.
+version: 1
+name: v0.2-verifier-single-custom
+extends: rio/openrouter
+models:
+  default: openai/custom-node-anthropic/claude-sonnet-5-5
+  verifier: openai/custom-node-openai/gpt-6.1-sol
+verify:
+  voters: 1
+  quorum: 1
