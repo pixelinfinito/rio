@@ -11,6 +11,8 @@ use std::{
     time::Duration,
 };
 
+use crate::providers::{self, CustomProvider, DynamicRoute, ModelPrice, ProfileModels};
+
 const BUNDLE: &str = include_str!("../../../worker/bundle/worker.mjs");
 const API: &str = "https://api.cloudflare.com/client/v4";
 const GATEWAY_RUN: &str = "644535f4ed854494a59cb289d634b257";
@@ -39,6 +41,15 @@ pub struct Deployment {
     pub runner_image: Option<String>,
     pub workers_subdomain: Option<String>,
     pub credential_store: CredentialStore,
+    /// Custom OpenAI-compatible or Anthropic endpoints in the AI Gateway.
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    pub custom_providers: Vec<CustomProvider>,
+    /// Explicit model prices in USD per million tokens (the Worker's MODEL_PRICES).
+    #[serde(skip_serializing_if = "BTreeMap::is_empty")]
+    pub model_prices: BTreeMap<String, ModelPrice>,
+    /// Gateway dynamic routes, called as `dynamic/<name>`.
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    pub dynamic_routes: Vec<DynamicRoute>,
 }
 impl Default for Deployment {
     fn default() -> Self {
@@ -50,6 +61,9 @@ impl Default for Deployment {
             runner_image: None,
             workers_subdomain: None,
             credential_store: CredentialStore::Keychain,
+            custom_providers: Vec::new(),
+            model_prices: BTreeMap::new(),
+            dynamic_routes: Vec::new(),
         }
     }
 }
@@ -98,7 +112,11 @@ impl Deployment {
                 "invalid workers.dev subdomain"
             );
         }
-        Ok(())
+        providers::validate(
+            &self.custom_providers,
+            &self.model_prices,
+            &self.dynamic_routes,
+        )
     }
 }
 #[derive(Args, Default)]
@@ -123,9 +141,23 @@ pub struct DeployArgs {
     /// Default: OS keychain. Use file explicitly on a headless host.
     #[arg(long, value_enum)]
     pub credential_store: Option<CredentialStore>,
-    /// Private JSON file containing model provider keys or AI_GATEWAY_TOKEN; never copied to config.
+    /// Private JSON file containing model provider keys, AI_GATEWAY_TOKEN or
+    /// AI_GATEWAY_PROVIDER_KEY_<SLUG> custom provider keys; never copied to config.
     #[arg(long)]
     pub secrets_file: Option<PathBuf>,
+    /// Add or replace a custom AI Gateway provider: SLUG:PROTOCOL:BASE_URL, where
+    /// PROTOCOL is openai or anthropic and BASE_URL is the API root that
+    /// /chat/completions or /messages is appended to. Repeatable.
+    #[arg(long = "custom-provider", value_name = "SLUG:PROTOCOL:BASE_URL")]
+    pub custom_providers: Vec<String>,
+    /// Generation model for a newly written personal default profile, e.g.
+    /// custom-SLUG/MODEL; required with custom providers when that profile is absent.
+    #[arg(long, value_name = "MODEL")]
+    pub default_model: Option<String>,
+    /// Verification model for a newly written personal default profile
+    /// (defaults to --default-model).
+    #[arg(long, value_name = "MODEL", requires = "default_model")]
+    pub verifier_model: Option<String>,
     /// Print an offline plan without authentication, credential writes or account mutations.
     #[arg(long)]
     pub dry_run: bool,
@@ -191,6 +223,16 @@ pub fn choices(args: &DeployArgs, directory: &Path) -> Result<Deployment> {
     if let Some(store) = args.credential_store {
         deployment.credential_store = store;
     }
+    for provider in &mut deployment.custom_providers {
+        provider.normalize();
+    }
+    for spec in &args.custom_providers {
+        let provider = CustomProvider::parse(spec)?;
+        deployment
+            .custom_providers
+            .retain(|p| p.slug != provider.slug);
+        deployment.custom_providers.push(provider);
+    }
     deployment.validate()?;
     Ok(deployment)
 }
@@ -251,13 +293,15 @@ impl Secrets {
             }
         }
     }
-    fn collect(&mut self, file: Option<&Path>) -> Result<()> {
+    fn collect(&mut self, file: Option<&Path>, custom: &[CustomProvider]) -> Result<()> {
         const ALLOWED: &[&str] = &[
             "OPENAI_API_KEY",
             "ANTHROPIC_API_KEY",
             "OPENROUTER_API_KEY",
             "AI_GATEWAY_TOKEN",
         ];
+        let keys: Vec<String> = custom.iter().map(CustomProvider::key_name).collect();
+        let allowed = |name: &str| ALLOWED.contains(&name) || keys.iter().any(|k| k == name);
         if let Some(file) = file {
             let values: BTreeMap<String, String> = serde_json::from_slice(&std::fs::read(file)?)
                 .map_err(|_| {
@@ -267,41 +311,21 @@ impl Secrets {
                 })?;
             for (key, value) in values {
                 ensure!(
-                    ALLOWED.contains(&key.as_str()),
-                    "unsupported name in --secrets-file"
+                    allowed(&key),
+                    "unsupported name in --secrets-file (custom provider keys must name a configured provider)"
                 );
                 ensure!(!value.trim().is_empty(), "empty value in --secrets-file");
                 self.0.insert(key, value.trim().into());
             }
         }
-        for key in ALLOWED {
-            if let Ok(value) = std::env::var(key) {
+        for key in ALLOWED.iter().map(|k| k.to_string()).chain(keys) {
+            if let Ok(value) = std::env::var(&key) {
                 ensure!(
                     !value.trim().is_empty(),
                     "empty secret environment variable {key}"
                 );
-                self.0.insert((*key).into(), value.trim().into());
+                self.0.insert(key, value.trim().into());
             }
-        }
-        if !["OPENAI_API_KEY", "ANTHROPIC_API_KEY", "OPENROUTER_API_KEY"]
-            .iter()
-            .any(|key| self.0.contains_key(*key))
-            && io::stdin().is_terminal()
-        {
-            eprintln!("Model provider: 1. OpenRouter (default)  2. OpenAI  3. Anthropic");
-            eprint!("Select provider [1]: ");
-            io::stderr().flush()?;
-            let mut selection = String::new();
-            io::stdin().read_line(&mut selection)?;
-            let key = match selection.trim() {
-                "" | "1" => "OPENROUTER_API_KEY",
-                "2" => "OPENAI_API_KEY",
-                "3" => "ANTHROPIC_API_KEY",
-                _ => bail!("invalid provider selection"),
-            };
-            let value = rpassword::prompt_password("Provider API key (hidden): ")?;
-            ensure!(!value.trim().is_empty(), "provider key cannot be empty");
-            self.0.insert(key.into(), value.trim().into());
         }
         for key in ["RIO_API_TOKEN", "RUNNER_SECRET"] {
             if !self.0.contains_key(key) {
@@ -314,15 +338,49 @@ impl Secrets {
                 );
             }
         }
-        ensure!(
-            ["OPENAI_API_KEY", "ANTHROPIC_API_KEY", "OPENROUTER_API_KEY"]
-                .iter()
-                .any(|key| self.0.contains_key(*key)),
-            "provide a model key using OPENROUTER_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY or --secrets-file"
-        );
         Ok(())
     }
+    fn has_builtin_key(&self) -> bool {
+        BUILTIN_KEYS.iter().any(|key| self.0.contains_key(*key))
+    }
+    /// Interactive provider choice when no model access is configured yet.
+    fn prompt_provider(&mut self, deployment: &mut Deployment) -> Result<Option<ProfileModels>> {
+        eprintln!(
+            "Model provider: 1. OpenRouter (default)  2. OpenAI  3. Anthropic  4. Custom endpoint via AI Gateway (OpenAI-compatible or Anthropic)"
+        );
+        eprint!("Select provider [1]: ");
+        io::stderr().flush()?;
+        let mut selection = String::new();
+        io::stdin().read_line(&mut selection)?;
+        let key = match selection.trim() {
+            "" | "1" => "OPENROUTER_API_KEY",
+            "2" => "OPENAI_API_KEY",
+            "3" => "ANTHROPIC_API_KEY",
+            "4" => {
+                let (provider, key, models) = providers::prompt()?;
+                self.0.insert(provider.key_name(), key);
+                deployment
+                    .custom_providers
+                    .retain(|p| p.slug != provider.slug);
+                deployment.custom_providers.push(provider);
+                deployment.validate()?;
+                return Ok(Some(models));
+            }
+            _ => bail!("invalid provider selection"),
+        };
+        let value = rpassword::prompt_password("Provider API key (hidden): ")?;
+        ensure!(!value.trim().is_empty(), "provider key cannot be empty");
+        self.0.insert(key.into(), value.trim().into());
+        Ok(None)
+    }
+    /// Secrets uploaded to the Worker: custom provider keys stay in the gateway.
+    fn worker(&self) -> impl Iterator<Item = (&String, &String)> {
+        self.0.iter().filter(|(name, _)| {
+            !name.starts_with(providers::KEY_PREFIX) && !name.starts_with(providers::APPLIED_PREFIX)
+        })
+    }
 }
+const BUILTIN_KEYS: [&str; 3] = ["OPENAI_API_KEY", "ANTHROPIC_API_KEY", "OPENROUTER_API_KEY"];
 pub fn endpoint_token(directory: &Path, endpoint: &str) -> Result<Option<String>> {
     let value = document(&directory.join("config.toml"))?;
     if configured_url(&value) != Some(endpoint) {
@@ -340,7 +398,7 @@ pub fn endpoint_token(directory: &Path, endpoint: &str) -> Result<Option<String>
         .remove("RIO_API_TOKEN"))
 }
 
-struct Cloudflare {
+pub(crate) struct Cloudflare {
     client: Client,
     base: String,
     token: String,
@@ -356,7 +414,12 @@ impl Cloudflare {
             token,
         })
     }
-    async fn request(&self, method: Method, path: &str, body: Option<Value>) -> Result<Value> {
+    pub(crate) async fn request(
+        &self,
+        method: Method,
+        path: &str,
+        body: Option<Value>,
+    ) -> Result<Value> {
         let mut request = self
             .client
             .request(method, format!("{}{path}", self.base))
@@ -405,7 +468,7 @@ impl Cloudflare {
         );
         Ok(body.get("result").cloned().unwrap_or(Value::Null))
     }
-    async fn list(&self, path: &str) -> Result<Vec<Value>> {
+    pub(crate) async fn list(&self, path: &str) -> Result<Vec<Value>> {
         let mut values = Vec::new();
         for page in 1..=100 {
             let separator = if path.contains('?') { '&' } else { '?' };
@@ -556,7 +619,12 @@ fn metadata(
         json!({"type":"plain_text","name":"RUNNER_BACKEND","text":if deployment.runner == Runner::Sandbox {"sandbox"} else {"self-hosted"}}),
         json!({"type":"plain_text","name":"AI_GATEWAY_URL","text":format!("https://gateway.ai.cloudflare.com/v1/{account}/{name}")}),
     ];
-    for (name, text) in &secrets.0 {
+    // Always written, so removing every custom provider clears it.
+    bindings.push(json!({"type":"plain_text","name":"AI_GATEWAY_PROVIDERS","text":providers::runtime(&deployment.custom_providers)}));
+    if !deployment.model_prices.is_empty() {
+        bindings.push(json!({"type":"plain_text","name":"MODEL_PRICES","text":providers::prices(&deployment.model_prices)}));
+    }
+    for (name, text) in secrets.worker() {
         bindings.push(json!({"type":"secret_text","name":name,"text":text}));
     }
     let _ = queue; // Queue binding uses the account-local name; consumer setup uses its ID.
@@ -678,11 +746,34 @@ pub async fn run(args: DeployArgs) -> Result<()> {
     deployment.validate()?;
     rio_git::private_directory(&directory)?;
     let mut secrets = Secrets::load(&directory, &deployment)?;
-    secrets.collect(args.secrets_file.as_deref())?;
+    secrets.collect(args.secrets_file.as_deref(), &deployment.custom_providers)?;
+    let mut models = args.default_model.as_ref().map(|default| ProfileModels {
+        default: default.clone(),
+        verifier: args
+            .verifier_model
+            .clone()
+            .unwrap_or_else(|| default.clone()),
+    });
+    if !secrets.has_builtin_key()
+        && deployment.custom_providers.is_empty()
+        && io::stdin().is_terminal()
+    {
+        models = secrets.prompt_provider(&mut deployment)?.or(models);
+    }
+    ensure!(
+        secrets.has_builtin_key() || !deployment.custom_providers.is_empty(),
+        "provide a model key using OPENROUTER_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY or --secrets-file, or configure a custom provider with --custom-provider"
+    );
+    let profile_needed = !directory.join("profiles/default.yaml").exists();
+    ensure!(
+        !profile_needed || models.is_some() || secrets.has_builtin_key(),
+        "with only custom providers, pass --default-model custom-SLUG/MODEL (and optionally --verifier-model) so the default profile can be written, or create {} first",
+        directory.join("profiles/default.yaml").display()
+    );
     // Persist generated credentials before any resource mutation so a partial deployment is recoverable.
     secrets.save(&directory, &deployment)?;
     save_choices(&directory, &deployment, None)?;
-    provision(&cf, &directory, &deployment, &mut secrets).await
+    provision(&cf, &directory, &deployment, &mut secrets, models).await
 }
 fn save_choices(directory: &Path, deployment: &Deployment, endpoint: Option<&str>) -> Result<()> {
     let file = directory.join("config.toml");
@@ -708,6 +799,7 @@ async fn provision(
     directory: &Path,
     deployment: &Deployment,
     secrets: &mut Secrets,
+    models: Option<ProfileModels>,
 ) -> Result<()> {
     let account = deployment.account_id.as_deref().unwrap();
     let name = &deployment.name;
@@ -767,6 +859,24 @@ async fn provision(
             .insert("AI_GATEWAY_TOKEN".into(), string(&token, "value")?.into());
         secrets.save(directory, deployment)?;
     }
+    if providers::reconcile_providers(
+        cf,
+        &base,
+        name,
+        &deployment.custom_providers,
+        &mut secrets.0,
+    )
+    .await?
+    {
+        secrets.save(directory, deployment)?;
+    }
+    providers::reconcile_routes(
+        cf,
+        &format!("{base}/ai-gateway/gateways/{name}"),
+        directory,
+        &deployment.dynamic_routes,
+    )
+    .await?;
     let scripts = cf.list(&format!("{base}/workers/scripts")).await?;
     let existing = scripts.iter().find(|s| s["id"] == *name);
     if let Some(existing) = existing {
@@ -889,7 +999,12 @@ async fn provision(
     let default_profile = profiles.join("default.yaml");
     if !default_profile.exists() {
         rio_git::private_directory(&profiles)?;
-        let profile = if secrets.0.contains_key("OPENROUTER_API_KEY") {
+        let profile = if let Some(models) = &models {
+            include_str!("../../../modules/profiles/openrouter.yaml")
+                .replace("name: rio/openrouter", "name: rio-default")
+                .replace("openrouter/anthropic/claude-sonnet-5.5", &models.default)
+                .replace("openrouter/openai/gpt-6.1-sol", &models.verifier)
+        } else if secrets.0.contains_key("OPENROUTER_API_KEY") {
             "version: 1\nname: rio-default\nextends: rio/openrouter\n".to_owned()
         } else {
             let model = if secrets.0.contains_key("OPENAI_API_KEY") {
@@ -1157,8 +1272,13 @@ mod tests {
             self.thread.take().unwrap().join().unwrap();
         }
     }
+    /// Answers a request before the default fixtures: `(method, path, body)`.
+    type Handler = Arc<dyn Fn(&str, &str, &str) -> Option<Value> + Send + Sync>;
     impl Mock {
         fn start(existing: bool, fail: bool) -> Self {
+            Self::start_with(existing, fail, Arc::new(|_, _, _| None))
+        }
+        fn start_with(existing: bool, fail: bool, handler: Handler) -> Self {
             let listener = TcpListener::bind("127.0.0.1:0").unwrap();
             listener.set_nonblocking(true).unwrap();
             let url = format!("http://{}", listener.local_addr().unwrap());
@@ -1213,8 +1333,10 @@ mod tests {
                     records
                         .lock()
                         .unwrap()
-                        .push((method.into(), path.into(), body));
-                    let result = if path.ends_with("/d1/database") {
+                        .push((method.into(), path.into(), body.clone()));
+                    let result = if let Some(result) = handler(method, path, &body) {
+                        result
+                    } else if path.ends_with("/d1/database") {
                         if method == "GET" {
                             if existing {
                                 json!([{"name":"rio","uuid":"db-test"}])
@@ -1320,7 +1442,7 @@ mod tests {
                 .into_iter()
                 .collect(),
             );
-            provision(&cf, directory.path(), &deployment, &mut secrets)
+            provision(&cf, directory.path(), &deployment, &mut secrets, None)
                 .await
                 .unwrap();
             let records = mock.requests.lock().unwrap();
@@ -1379,6 +1501,442 @@ mod tests {
             assert!(saved.contains("rio.account-test.workers.dev"));
             assert!(!saved.contains("secret"));
         }
+    }
+    /// Account-level custom providers and gateway routes, as Cloudflare keeps them.
+    #[derive(Default)]
+    struct Gateway {
+        providers: Vec<Value>,
+        routes: Vec<Value>,
+        versions: u32,
+    }
+    fn gateway_handler(state: Arc<Mutex<Gateway>>) -> Handler {
+        Arc::new(move |method, path, body| {
+            let mut state = state.lock().unwrap();
+            let body: Value = serde_json::from_str(body).unwrap_or(Value::Null);
+            if path.ends_with("/ai-gateway/custom-providers") {
+                return Some(if method == "POST" {
+                    let mut created = body.clone();
+                    created["id"] = json!(format!("id-{}", body["slug"].as_str().unwrap()));
+                    created.as_object_mut().unwrap().remove("headers");
+                    state.providers.push(created.clone());
+                    created
+                } else {
+                    json!(state.providers)
+                });
+            }
+            if let Some(id) = path
+                .split("/ai-gateway/custom-providers/")
+                .nth(1)
+                .filter(|_| method == "PATCH")
+            {
+                let provider = state.providers.iter_mut().find(|p| p["id"] == id).unwrap();
+                if let Some(base) = body.get("base_url") {
+                    provider["base_url"] = base.clone();
+                }
+                return Some(provider.clone());
+            }
+            if path.ends_with("/routes") {
+                return Some(if method == "POST" {
+                    let created =
+                        json!({"id":"route-1","name":body["name"],"elements":body["elements"]});
+                    state.routes.push(created.clone());
+                    created
+                } else {
+                    json!({"routes": state.routes})
+                });
+            }
+            if path.ends_with("/routes/route-1") {
+                return Some(state.routes[0].clone());
+            }
+            if path.ends_with("/routes/route-1/versions") {
+                state.versions += 1;
+                state.routes[0]["elements"] = body["elements"].clone();
+                return Some(json!({"id": format!("version-{}", state.versions)}));
+            }
+            if path.ends_with("/routes/route-1/deployments") {
+                return Some(json!({"version_id": body["version_id"]}));
+            }
+            None
+        })
+    }
+    fn custom_deployment(directory: &Path) -> Deployment {
+        std::fs::write(
+            directory.join("support.json"),
+            r#"[{"id":"start","type":"start","outputs":{"next":{"elementId":"m"}}}]"#,
+        )
+        .unwrap();
+        Deployment {
+            account_id: Some("c".repeat(32)),
+            runner: Runner::SelfHosted,
+            credential_store: CredentialStore::File,
+            custom_providers: vec![
+                CustomProvider::parse("node-openai:openai:https://api.llm.example/v1").unwrap(),
+                CustomProvider::parse("node-anthropic:anthropic:https://api.llm.example/v1")
+                    .unwrap(),
+            ],
+            model_prices: [(
+                "custom-node-openai/gpt-6.1-sol".to_owned(),
+                ModelPrice {
+                    input: 1.25,
+                    output: 10.0,
+                },
+            )]
+            .into_iter()
+            .collect(),
+            dynamic_routes: vec![DynamicRoute {
+                name: "support".into(),
+                elements_file: "support.json".into(),
+            }],
+            ..Default::default()
+        }
+    }
+    fn custom_secrets() -> Secrets {
+        Secrets(
+            [
+                ("RIO_API_TOKEN", "api-secret"),
+                ("RUNNER_SECRET", "runner-secret"),
+                ("AI_GATEWAY_TOKEN", "gateway-secret-value"),
+                ("AI_GATEWAY_PROVIDER_KEY_NODE_OPENAI", "upstream-key-openai"),
+                (
+                    "AI_GATEWAY_PROVIDER_KEY_NODE_ANTHROPIC",
+                    "upstream-key-anthropic",
+                ),
+            ]
+            .into_iter()
+            .map(|(k, v)| (k.into(), v.into()))
+            .collect(),
+        )
+    }
+    type Records = Vec<(String, String, String)>;
+    async fn deploy(
+        state: &Arc<Mutex<Gateway>>,
+        deployment: &Deployment,
+        directory: &Path,
+        secrets: &mut Secrets,
+    ) -> Records {
+        let mock = Mock::start_with(true, false, gateway_handler(state.clone()));
+        let cf = Cloudflare {
+            base: mock.url.clone(),
+            ..Cloudflare::new("deployment-secret".into()).unwrap()
+        };
+        let models = Some(ProfileModels {
+            default: "custom-node-anthropic/claude-sonnet-5-5".into(),
+            verifier: "custom-node-openai/gpt-6.1-sol".into(),
+        });
+        provision(&cf, directory, deployment, secrets, models)
+            .await
+            .unwrap();
+        mock.requests.lock().unwrap().clone()
+    }
+    fn gateway_writes(records: &Records) -> Vec<(String, String, Value)> {
+        records
+            .iter()
+            .filter(|(m, p, _)| {
+                m != "GET" && (p.contains("/ai-gateway/custom-providers") || p.contains("/routes"))
+            })
+            .map(|(m, p, b)| {
+                let at = p.find("/ai-gateway/").unwrap();
+                (
+                    m.clone(),
+                    p[at..].to_owned(),
+                    serde_json::from_str(b).unwrap_or(Value::Null),
+                )
+            })
+            .collect()
+    }
+    #[tokio::test]
+    async fn custom_providers_and_routes_are_provisioned_once_and_keys_stay_in_the_gateway() {
+        let directory = tempfile::tempdir().unwrap();
+        let deployment = custom_deployment(directory.path());
+        let state = Arc::new(Mutex::new(Gateway::default()));
+        let mut secrets = custom_secrets();
+        let records = deploy(&state, &deployment, directory.path(), &mut secrets).await;
+        let writes = gateway_writes(&records);
+        assert_eq!(writes.len(), 3, "{writes:?}");
+        for (slug, protocol_header) in [
+            ("node-openai", "Authorization"),
+            ("node-anthropic", "x-api-key"),
+        ] {
+            let (_, _, body) = writes
+                .iter()
+                .find(|(m, p, b)| {
+                    m == "POST" && p.ends_with("/custom-providers") && b["slug"] == slug
+                })
+                .unwrap();
+            assert_eq!(body["base_url"], "https://api.llm.example/v1");
+            assert_eq!(body["enable"], true);
+            // Cloudflare takes headers as a JSON-encoded string, not an object.
+            let headers: Value = serde_json::from_str(body["headers"].as_str().unwrap()).unwrap();
+            assert!(
+                headers[protocol_header]
+                    .as_str()
+                    .unwrap()
+                    .contains("upstream-key")
+            );
+        }
+        let (_, path, route) = &writes[2];
+        assert!(path.ends_with("/gateways/rio/routes"));
+        assert_eq!(route["name"], "support");
+        assert_eq!(route["elements"][0]["type"], "start");
+        // The Worker gets protocols, prices and its own secrets; never upstream keys.
+        let upload = records
+            .iter()
+            .find(|(m, p, _)| m == "PUT" && p.ends_with("/workers/scripts/rio"))
+            .unwrap();
+        assert!(!upload.2.contains("upstream-key"));
+        assert!(
+            !upload.2.contains("AI_GATEWAY_PROVIDER_KEY")
+                && !upload.2.contains("AI_GATEWAY_PROVIDER_APPLIED")
+        );
+        let meta = metadata(&deployment, "db", "queue", &secrets, Some("v1"));
+        let binding = |name: &str| {
+            meta["bindings"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|b| b["name"] == name)
+                .cloned()
+        };
+        assert_eq!(
+            serde_json::from_str::<Value>(
+                binding("AI_GATEWAY_PROVIDERS").unwrap()["text"]
+                    .as_str()
+                    .unwrap()
+            )
+            .unwrap(),
+            json!({"node-anthropic":{"protocol":"anthropic"},"node-openai":{"protocol":"openai"}})
+        );
+        assert_eq!(
+            serde_json::from_str::<Value>(
+                binding("MODEL_PRICES").unwrap()["text"].as_str().unwrap()
+            )
+            .unwrap(),
+            json!({"custom-node-openai/gpt-6.1-sol":{"input":1.25,"output":10.0}})
+        );
+        assert!(
+            binding("AI_GATEWAY_URL").unwrap()["text"]
+                .as_str()
+                .unwrap()
+                .ends_with(&format!("{}/rio", "c".repeat(32)))
+        );
+        // Fingerprints of the applied headers are saved; the keys are not in config.
+        let saved = Secrets::load(directory.path(), &deployment).unwrap();
+        assert!(
+            saved
+                .0
+                .contains_key("AI_GATEWAY_PROVIDER_APPLIED_NODE_OPENAI")
+        );
+        let config = std::fs::read_to_string(directory.path().join("config.toml")).unwrap();
+        assert!(!config.contains("upstream-key"));
+        let profile =
+            std::fs::read_to_string(directory.path().join("profiles/default.yaml")).unwrap();
+        assert!(profile.contains("default: custom-node-anthropic/claude-sonnet-5-5"));
+        assert!(profile.contains("verifier: custom-node-openai/gpt-6.1-sol"));
+        assert!(!profile.contains("upstream-key"));
+
+        // Redeploying the same choices changes nothing in the gateway.
+        let mut secrets = saved;
+        let records = deploy(&state, &deployment, directory.path(), &mut secrets).await;
+        assert_eq!(gateway_writes(&records), vec![]);
+        // A rotated key rewrites only that provider's headers.
+        secrets.0.insert(
+            "AI_GATEWAY_PROVIDER_KEY_NODE_OPENAI".into(),
+            "rotated-upstream-key".into(),
+        );
+        let records = deploy(&state, &deployment, directory.path(), &mut secrets).await;
+        let writes = gateway_writes(&records);
+        assert_eq!(writes.len(), 1, "{writes:?}");
+        assert_eq!(writes[0].0, "PATCH");
+        assert!(writes[0].1.ends_with("/custom-providers/id-node-openai"));
+        assert!(
+            writes[0].2["headers"]
+                .as_str()
+                .unwrap()
+                .contains("rotated-upstream-key")
+        );
+        assert!(writes[0].2.get("base_url").is_none());
+        // Edited route elements deploy one new version.
+        std::fs::write(
+            directory.path().join("support.json"),
+            r#"[{"id":"start","type":"start","outputs":{"next":{"elementId":"other"}}}]"#,
+        )
+        .unwrap();
+        let records = deploy(&state, &deployment, directory.path(), &mut secrets).await;
+        let writes = gateway_writes(&records);
+        assert_eq!(
+            writes
+                .iter()
+                .map(|(m, p, _)| (m.as_str(), p.rsplit('/').next().unwrap()))
+                .collect::<Vec<_>>(),
+            vec![("POST", "versions"), ("POST", "deployments")]
+        );
+        assert_eq!(writes[1].2["version_id"], "version-1");
+    }
+    #[tokio::test]
+    async fn existing_custom_providers_are_adopted_without_a_key_and_missing_ones_need_one() {
+        let directory = tempfile::tempdir().unwrap();
+        let mut deployment = custom_deployment(directory.path());
+        deployment.dynamic_routes.clear();
+        // Created by hand earlier: same slugs, one with an outdated base URL.
+        let state = Arc::new(Mutex::new(Gateway {
+            providers: vec![
+                json!({"id":"db0f","slug":"node-openai","base_url":"https://api.llm.example/v1","enable":true}),
+                json!({"id":"bf23","slug":"node-anthropic","base_url":"https://old.example/v1","enable":true}),
+            ],
+            ..Default::default()
+        }));
+        let mut secrets = custom_secrets();
+        secrets
+            .0
+            .retain(|k, _| !k.starts_with(providers::KEY_PREFIX));
+        let records = deploy(&state, &deployment, directory.path(), &mut secrets).await;
+        assert_eq!(
+            gateway_writes(&records),
+            vec![(
+                "PATCH".into(),
+                "/ai-gateway/custom-providers/bf23".into(),
+                json!({"base_url":"https://api.llm.example/v1"})
+            )]
+        );
+        // A provider the account does not have cannot be created without its key.
+        let mut fresh = custom_deployment(directory.path());
+        fresh
+            .custom_providers
+            .push(CustomProvider::parse("other:openai:https://other.example/v1").unwrap());
+        fresh.dynamic_routes.clear();
+        let mock = Mock::start_with(true, false, gateway_handler(state.clone()));
+        let cf = Cloudflare {
+            base: mock.url.clone(),
+            ..Cloudflare::new("deployment-secret".into()).unwrap()
+        };
+        let error = provision(&cf, directory.path(), &fresh, &mut secrets, None)
+            .await
+            .unwrap_err()
+            .to_string();
+        assert!(error.contains("AI_GATEWAY_PROVIDER_KEY_OTHER"), "{error}");
+        assert!(!error.contains("gateway-secret-value"));
+    }
+    #[test]
+    fn custom_provider_choices_replay_from_config_and_keys_come_only_from_secrets() {
+        let dir = tempfile::tempdir().unwrap();
+        let deployment = custom_deployment(dir.path());
+        save_choices(dir.path(), &deployment, None).unwrap();
+        let config = std::fs::read_to_string(dir.path().join("config.toml")).unwrap();
+        assert!(config.contains("[[deployment.custom_providers]]"));
+        assert!(!config.contains("upstream-key"));
+        let replayed = choices(
+            &DeployArgs {
+                from: Some(dir.path().join("config.toml")),
+                ..Default::default()
+            },
+            dir.path(),
+        )
+        .unwrap();
+        assert_eq!(replayed.custom_providers, deployment.custom_providers);
+        assert_eq!(replayed.model_prices, deployment.model_prices);
+        assert_eq!(replayed.dynamic_routes, deployment.dynamic_routes);
+        // A flag replaces a provider by slug and adds new ones.
+        let changed = choices(
+            &DeployArgs {
+                from: Some(dir.path().join("config.toml")),
+                custom_providers: vec![
+                    "node-openai:openai:https://api.other.example/v1/".into(),
+                    "extra:anthropic:https://extra.example/v1".into(),
+                ],
+                ..Default::default()
+            },
+            dir.path(),
+        )
+        .unwrap();
+        assert_eq!(changed.custom_providers.len(), 3);
+        assert_eq!(
+            changed
+                .custom_providers
+                .iter()
+                .find(|p| p.slug == "node-openai")
+                .unwrap()
+                .base_url,
+            "https://api.other.example/v1"
+        );
+        // A deployment without custom choices keeps its earlier config shape.
+        let plain = toml::to_string(&Deployment::default()).unwrap();
+        assert!(!plain.contains("custom_providers") && !plain.contains("model_prices"));
+        // Keys are accepted from a secrets file only for configured providers.
+        let file = dir.path().join("secrets.json");
+        std::fs::write(
+            &file,
+            r#"{"AI_GATEWAY_PROVIDER_KEY_NODE_OPENAI":" key-from-file "}"#,
+        )
+        .unwrap();
+        let mut secrets = Secrets::default();
+        secrets
+            .collect(Some(&file), &deployment.custom_providers)
+            .unwrap();
+        assert_eq!(
+            secrets.0["AI_GATEWAY_PROVIDER_KEY_NODE_OPENAI"],
+            "key-from-file"
+        );
+        assert!(!secrets.has_builtin_key());
+        assert!(
+            secrets
+                .worker()
+                .all(|(k, _)| !k.starts_with("AI_GATEWAY_PROVIDER"))
+        );
+        std::fs::write(&file, r#"{"AI_GATEWAY_PROVIDER_KEY_UNKNOWN":"x"}"#).unwrap();
+        assert!(
+            Secrets::default()
+                .collect(Some(&file), &deployment.custom_providers)
+                .is_err()
+        );
+    }
+    #[test]
+    fn sandbox_metadata_keeps_its_bindings_and_container_declaration_with_custom_providers() {
+        let directory = tempfile::tempdir().unwrap();
+        let mut deployment = custom_deployment(directory.path());
+        deployment.runner = Runner::Sandbox;
+        let plain = Deployment {
+            runner: Runner::Sandbox,
+            account_id: deployment.account_id.clone(),
+            ..Default::default()
+        };
+        let secrets = custom_secrets();
+        let with = metadata(&deployment, "db", "queue", &secrets, Some("v1"));
+        let without = metadata(&plain, "db", "queue", &secrets, Some("v1"));
+        let names = |m: &Value| {
+            m["bindings"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|b| b["name"].as_str().unwrap().to_owned())
+                .collect::<std::collections::BTreeSet<_>>()
+        };
+        // Custom providers add MODEL_PRICES only; every other binding is shared.
+        let added: Vec<_> = names(&with).difference(&names(&without)).cloned().collect();
+        assert_eq!(added, vec!["MODEL_PRICES".to_owned()]);
+        assert!(names(&without).contains("AI_GATEWAY_PROVIDERS"));
+        let sandbox = with["bindings"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|b| b["name"] == "SANDBOX")
+            .unwrap();
+        assert_eq!(
+            sandbox,
+            &json!({"type":"durable_object_namespace","name":"SANDBOX","class_name":"Sandbox"})
+        );
+        assert_eq!(with["containers"], json!([{"class_name":"Sandbox"}]));
+        assert_eq!(
+            with["keep_bindings"],
+            json!(["plain_text", "json", "secret_text"])
+        );
+        for name in ["RIO_API_TOKEN", "RUNNER_SECRET", "AI_GATEWAY_TOKEN"] {
+            assert!(names(&with).contains(name), "{name}");
+        }
+        assert!(
+            names(&with)
+                .iter()
+                .all(|n| !n.starts_with("AI_GATEWAY_PROVIDER_KEY"))
+        );
     }
     #[tokio::test]
     async fn api_errors_never_echo_remote_credentials() {
