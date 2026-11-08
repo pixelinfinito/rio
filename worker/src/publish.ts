@@ -449,9 +449,44 @@ function failureText(error: unknown): string {
 
 /**
  * Publishes a finished PR review under the profile's policy. Returns null for
- * reviews outside PR mode (no publication step ran).
+ * reviews outside PR mode (no publication step ran). A host outage never fails
+ * the review: it is recorded as a failed publication, retried next round.
  */
 export async function publishReview(
+  env: Env,
+  input: PublishInput,
+  host?: (
+    token: InstallationToken,
+    row: PullRow,
+    bot: string,
+    slug: string,
+  ) => Host,
+): Promise<Publication | null> {
+  try {
+    return await publishWith(env, input, host);
+  } catch (error) {
+    return {
+      policy: ["never", "ask", "auto"].includes(input.policy)
+        ? input.policy
+        : "never",
+      posted: 0,
+      edited: 0,
+      resolved: 0,
+      failed: 1,
+      unanchored: 0,
+      check_run_url: null,
+      summary_comment_url: null,
+      failures: [
+        { id: "publication", kind: "summary", error: failureText(error) },
+      ],
+    };
+  }
+}
+/**
+ * Publishes a finished PR review under the profile's policy. Returns null for
+ * reviews outside PR mode (no publication step ran).
+ */
+async function publishWith(
   env: Env,
   input: PublishInput,
   host?: (

@@ -2749,8 +2749,9 @@ fn doctor_reports_the_github_app_and_warns_about_a_missing_installation() {
     let document: Value = serde_json::from_slice(&output.stdout).unwrap();
     // A missing installation is a warning; it never changes the exit code.
     assert_eq!(output.status.code(), Some(0), "{document:#}");
+    assert_eq!(document["endpoint"], endpoint.url.as_str());
     assert_eq!(
-        document["endpoint"],
+        document["endpoint_status"],
         serde_json::json!({
             "url": endpoint.url,
             "version": "0.3.0",

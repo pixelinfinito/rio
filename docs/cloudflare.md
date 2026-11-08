@@ -131,8 +131,11 @@ a 16 KiB excerpt of each graph in their prompt and query the rest through
 `graph_query`. Submodule entries are omitted from snapshots; the diff lists them as
 `submodule_not_reviewed`. `--offline`, or no endpoint, retains the local deterministic review.
 `--fork` forces a static-only review; model execution is denied after manifest
-overrides. PR fetching, publication and convergence flags (`--pr`, `--publish`,
-`--since-last`) are outside the implemented transport and return an explicit error.
+overrides. `--since-last` reviews the branch as a lineage held by the endpoint.
+`rio review --pr <n>` asks the endpoint to prepare and review pull request `n` of the
+repository's GitHub `origin` (the endpoint needs the GitHub App, see
+[GitHub App](github-app.md)); nothing is built from the local checkout, and
+`--publish` is the consent a `publish: ask` profile requires.
 
 Models belong in the review profile, for example:
 

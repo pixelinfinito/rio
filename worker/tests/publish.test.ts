@@ -603,6 +603,26 @@ describe("publisher", () => {
     ).toBeNull();
   });
 
+  it("records a GitHub outage as a failed publication instead of failing the review", async () => {
+    const s = await pull();
+    github.failures.push({
+      method: "POST",
+      pattern: /\/access_tokens$/,
+      status: 503,
+      message: "Service Unavailable",
+    });
+    const result = await publish(s, report([finding("outage", 1)]));
+    expect(result).toMatchObject({ policy: "auto", posted: 0, failed: 1 });
+    expect(result!.failures).toEqual([
+      {
+        id: "publication",
+        kind: "summary",
+        error:
+          "GitHub /app/installations/81/access_tokens returned HTTP 503: Service Unavailable",
+      },
+    ]);
+  });
+
   it("keeps repository text from planting markers or mentions", () => {
     const body = findingBody(
       finding("evil", 1, {

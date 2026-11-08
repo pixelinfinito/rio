@@ -700,7 +700,7 @@ fn render(
         Format::Md => Ok(render_markdown(&report, &options).into_bytes()),
         Format::Terminal => Ok(render_terminal(&report, &options).into_bytes()),
     };
-    let code = match output {
+    match output {
         Ok(bytes) => match write_stdout(&bytes) {
             Ok(()) => exit,
             Err(error) => {
@@ -709,8 +709,7 @@ fn render(
             }
         },
         Err(error) => error_report(args.format, 3, "invalid_report", error, Vec::new()),
-    };
-    code
+    }
 }
 fn run_profile(command: ProfileCommand) -> u8 {
     let result = (|| -> anyhow::Result<()> {
@@ -1116,9 +1115,10 @@ async fn run_doctor(args: DoctorArgs) -> u8 {
         let publish = loader(repo.as_ref().map(|r| r.root().into()), config, cwd.clone())
             .load(None)
             .ok()
-            .and_then(|p| serde_json::to_value(&p.profile.publish).ok())
+            .and_then(|p| serde_json::to_value(p.profile.publish).ok())
             .and_then(|v| v.as_str().map(str::to_owned));
-        document["endpoint"] =
+        // `endpoint` stays the URL; the readiness details are additive.
+        document["endpoint_status"] =
             endpoint_diagnostics(config, url, repository, publish, &mut warnings).await;
     }
     document["blocking_problems"] = json!(problems);
