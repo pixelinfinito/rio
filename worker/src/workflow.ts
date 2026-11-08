@@ -1141,6 +1141,10 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             max_lines: submission.profile.max_lines,
           })
         : null;
+      // A PR review is run under the profile at its merge base, which the CLI
+      // does not have; it reads the fail policy for its exit code from here.
+      if (report.review?.pull_request)
+        report.agent_audit.fail_on = submission.profile.fail_on;
       // PR mode: publication under the resolved profile's policy (pr-publishing).
       const publication = await step.do("publish", () =>
         publishReview(this.env, {

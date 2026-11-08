@@ -170,7 +170,17 @@
       "cost_usd": null
     },
     "already_posted": [],
-    "lineage_updates": []
+    "lineage_updates": [],
+    "fail_on": {
+      "evidence": "static_proven",
+      "categories": [
+        "defect"
+      ],
+      "states": [
+        "new",
+        "worsened"
+      ]
+    }
   },
   "cache": {
     "lookups": 0,

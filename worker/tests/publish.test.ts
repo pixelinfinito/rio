@@ -631,6 +631,65 @@ describe("publisher", () => {
     ]);
   });
 
+  it("serializes concurrent publishers of one lineage", async () => {
+    const s = await pull();
+    github.setFiles("acme/pub", s.number, [
+      { filename: "src/a.ts", lines: [1, 2] },
+    ]);
+    const r = report([finding("race-1", 1), finding("race-2", 2)]);
+    const results = await Promise.all([
+      publish(s, r),
+      publish(s, r),
+      publish(s, r),
+    ]);
+    expect(results.map((x) => x!.posted).sort()).toEqual([0, 0, 2]);
+    expect(results.every((x) => x!.failed === 0)).toBe(true);
+    expect(github.comments).toHaveLength(2);
+    expect(github.issueComments).toHaveLength(1);
+    expect(github.checkRuns).toHaveLength(1);
+  });
+
+  it("applies a dismissal recorded after the report was written", async () => {
+    const s = await pull();
+    github.setFiles("acme/pub", s.number, [
+      { filename: "src/a.ts", lines: [1, 2] },
+    ]);
+    const posted = finding("late-posted", 1),
+      fresh = finding("late-fresh", 2);
+    await runtime.DB.prepare(
+      "INSERT INTO lineages(id,tenant,repository,kind,ref,generation,round,posted_json,updated_at) VALUES(?,'owner','github.com/acme/pub','pr',?,1,1,'{}',0)",
+    )
+      .bind(s.lineage, String(s.number))
+      .run();
+    // An earlier round posted the first finding.
+    await publish(s, report([posted]));
+    expect(github.comments).toHaveLength(1);
+    // Both are then dismissed through the feedback path, after this report.
+    const response = {
+      reason: "wrong",
+      actor: "cole",
+      at: "2026-11-08T00:00:00Z",
+    };
+    for (const f of [posted, fresh])
+      await runtime.DB.prepare(
+        "INSERT INTO findings(tenant,lineage_id,generation,identity,review_id,snapshot_id,repository,rule_id,category,source_kind,state,status,round,first_posted_in,author_response_json,location_json,finding_json,created_at,updated_at) VALUES('owner',?,1,?,'r','s','github.com/acme/pub','correctness/throw','defect','agent','new','dismissed',1,'s',?,'{}',?,0,0)",
+      )
+        .bind(
+          s.lineage,
+          f.id,
+          JSON.stringify(response),
+          JSON.stringify({ finding: f }),
+        )
+        .run();
+    const result = await publish(s, report([posted, fresh]));
+    expect(result).toMatchObject({ posted: 0, edited: 1, resolved: 1 });
+    expect(github.comments).toHaveLength(1);
+    expect(github.comments[0].body).toContain(
+      "**Status: dismissed: wrong** (by cole)",
+    );
+    expect(github.threads.get(github.comments[0].id)!.resolved).toBe(true);
+  });
+
   it("keeps repository text from planting markers or mentions", () => {
     const body = findingBody(
       finding("evil", 1, {

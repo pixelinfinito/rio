@@ -432,18 +432,19 @@ export async function preparedBy(
   bearer: string,
 ): Promise<PullRow | null> {
   if (!bearer.startsWith("rio_prepare_")) return null;
-  const digest = hash(bearer);
+  const digest = hash(bearer),
+    now = Date.now();
+  // One conditional update consumes the credential: exactly one caller wins,
+  // and only while it is unexpired and its review is live.
   const row = await env.DB.prepare(
-    "SELECT * FROM pull_requests WHERE prepare_token_hash=? AND state='preparing'",
+    "UPDATE pull_requests SET prepare_token_hash=NULL WHERE prepare_token_hash=? AND state='preparing' AND EXISTS (SELECT 1 FROM api_tokens t WHERE t.hash=? AND t.scope='prepare' AND t.expires_at>?) AND EXISTS (SELECT 1 FROM reviews r WHERE r.id=pull_requests.review_id AND r.cancelled=0 AND r.deadline>?) RETURNING *",
+  )
+    .bind(digest, digest, now, now)
+    .first<PullRow>();
+  await env.DB.prepare(
+    "DELETE FROM api_tokens WHERE hash=? AND scope='prepare'",
   )
     .bind(digest)
-    .first<PullRow>();
-  if (!row) return null;
-  await env.DB.batch([
-    env.DB.prepare("DELETE FROM api_tokens WHERE hash=?").bind(digest),
-    env.DB.prepare(
-      "UPDATE pull_requests SET prepare_token_hash=NULL WHERE review_id=?",
-    ).bind(row.review_id),
-  ]);
+    .run();
   return row;
 }

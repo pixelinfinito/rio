@@ -2442,8 +2442,15 @@ fn pull_request_reviews_run_on_the_endpoint_with_their_exit_codes() {
             "https://github.com/acme/shop.git",
         ],
     );
-    // Local edits never reach a PR review.
+    // Local edits never reach a PR review, and neither does the local profile:
+    // the endpoint's policy decides the exit code, even when this one is invalid.
     fs::write(root.join("a.txt"), "uncommitted local edit\n").unwrap();
+    fs::create_dir_all(root.join(".rio/profiles")).unwrap();
+    fs::write(
+        root.join(".rio/profiles/default.yaml"),
+        "version: 1\nname: broken\nposture: nonsense\n",
+    )
+    .unwrap();
     let review = |endpoint: &MockEndpoint, args: &[&str]| {
         rio(root)
             .env("RIO_ENDPOINT_URL", &endpoint.url)

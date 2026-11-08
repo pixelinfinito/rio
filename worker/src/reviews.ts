@@ -68,8 +68,12 @@ export async function createReview(
       "guidance does not match snapshot",
     );
   }
+  // A prepared review's submission gets its own key, published by the row's
+  // compare-and-set below, so a rejected second hand-off cannot replace it.
   const id = existing ?? crypto.randomUUID(),
-    key = `reviews/${id}/submission.json`;
+    key = existing
+      ? `reviews/${id}/prepared/${crypto.randomUUID()}/submission.json`
+      : `reviews/${id}/submission.json`;
   await store.put(key, value);
   const active =
     value.mode === "deep"

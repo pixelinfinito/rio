@@ -324,6 +324,8 @@ describe("PR mode end to end", () => {
       round: 1,
       repository: "github.com/acme/shop",
     });
+    // The CLI takes its exit policy from the endpoint's profile.
+    expect(report.agent_audit.fail_on).toEqual(submission().profile.fail_on);
     expect(report.findings.map((f: any) => f.id).sort()).toEqual(
       [total, tax].sort(),
     );

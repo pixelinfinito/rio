@@ -513,6 +513,82 @@ describe("self-hosted preparation", () => {
     expect(stored_text).not.toContain(credential);
   });
 
+  it("accepts a prepare credential once, and never after it expired", async () => {
+    const as = (bearer: string) => ({
+      authorization: `Bearer ${bearer}`,
+      "content-type": "application/json",
+    });
+    const prepare = async (number: number) => {
+      github.pull("acme/fork", number);
+      const { env: e } = capture();
+      await handleReviewRequest(e, {
+        ...request("acme/fork", number),
+        installation_id: 73,
+      });
+      const [row] = await pullRows("acme/fork", number);
+      const claim: any = await (
+        await app.request(
+          "https://rio/v1/runner/claim",
+          {
+            method: "POST",
+            headers: {
+              authorization: "Bearer test-runner-secret-at-least-32-characters",
+            },
+          },
+          runtime,
+        )
+      ).json();
+      expect(claim.job.review_id).toBe(row.review_id);
+      const snapshot = {
+        base: { "src/a.ts": { mode: 0o100644, content: `base ${number}\n` } },
+        head: { "src/a.ts": { mode: 0o100644, content: `head ${number}\n` } },
+      };
+      await uploadSnapshot(
+        (path, method, body) =>
+          app.request(
+            `https://rio${path}`,
+            { method, headers: as(claim.prepare.credential), body },
+            runtime,
+          ),
+        snapshot,
+      );
+      const s: any = submission();
+      s.snapshot_id = manifestOf(snapshot).id;
+      return {
+        row,
+        credential: claim.prepare.credential as string,
+        body: JSON.stringify(s),
+      };
+    };
+    const submit = (credential: string, body: string) =>
+      app.request(
+        "https://rio/v1/reviews",
+        { method: "POST", headers: as(credential), body },
+        runtime,
+      );
+    // Concurrent hand-offs: exactly one wins.
+    const race = await prepare(14);
+    const statuses = (
+      await Promise.all([1, 2, 3].map(() => submit(race.credential, race.body)))
+    ).map((r) => r.status);
+    expect(statuses.sort()).toEqual([202, 401, 401]);
+    await using instance = await introspectWorkflowInstance(
+      runtime.REVIEWS,
+      race.row.review_id,
+    );
+    await instance.waitForStatus("complete");
+    // An expired credential is refused even though the upload succeeded.
+    const late = await prepare(15);
+    await runtime.DB.prepare(
+      "UPDATE api_tokens SET expires_at=0 WHERE scope='prepare'",
+    ).run();
+    expect((await submit(late.credential, late.body)).status).toBe(401);
+    expect((await pullRows("acme/fork", 15))[0]).toMatchObject({
+      state: "preparing",
+      review_status: "preparing",
+    });
+  });
+
   it("fails the review cleanly when the runner cannot clone", async () => {
     github.pull("acme/fork", 13);
     const { env: e } = capture();

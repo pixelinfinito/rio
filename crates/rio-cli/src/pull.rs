@@ -1,7 +1,7 @@
 //! `rio review --pr <n>` (cli/review, "Pull request review"): the endpoint
 //! prepares and reviews the pull request head; nothing is built from the local
 //! checkout. `--publish` is the `ask` policy's consent.
-use crate::{ReviewArgs, config::MachineConfig, error_report, lineage, loader};
+use crate::{ReviewArgs, config::MachineConfig, error_report, lineage};
 use rio_core::*;
 use rio_git::{GixRepo, Repo};
 use std::{
@@ -104,19 +104,13 @@ pub async fn review(args: ReviewArgs, started: String) -> u8 {
             Vec::new(),
         );
     };
-    let profile = match loader(Some(repo.root().into()), &config, cwd).load(args.profile.as_deref())
-    {
-        Ok(profile) => profile,
-        Err(error) => {
-            return error_report(
-                format,
-                2,
-                "invalid_profile",
-                error.to_string(),
-                error.to_string().lines().map(str::to_owned).collect(),
-            );
-        }
-    };
+    // The endpoint reviews under the profile at the PR's merge base; the local
+    // profile, valid or not, plays no part.
+    if args.profile.is_some() {
+        eprintln!(
+            "Note: --profile does not apply to --pr; the endpoint uses the repository profile at the pull request's merge base."
+        );
+    }
     let repository = lineage::repository_key(repo.root(), repo.remote_url("origin").as_deref())
         .ok()
         .filter(|key| key.starts_with("github.com/") && key.matches('/').count() == 2);
@@ -166,11 +160,6 @@ pub async fn review(args: ReviewArgs, started: String) -> u8 {
             );
         }
     }
-    let policy = profile
-        .profile
-        .fail_on
-        .compile()
-        .expect("validated fail_on");
     let cancellation = CancellationToken::new();
     let signal = cancellation.clone();
     let signals = tokio::spawn(async move {
@@ -233,7 +222,20 @@ pub async fn review(args: ReviewArgs, started: String) -> u8 {
             }
         }
     }
+    let policy = endpoint_policy(&report);
     crate::render_and_exit(report, &args, started, &policy)
+}
+
+/// The `fail_on` the endpoint reviewed under, as it records it for PR reviews;
+/// the default policy when an older endpoint does not.
+fn endpoint_policy(report: &Report) -> CompiledFailOn {
+    report
+        .agent_audit
+        .as_ref()
+        .and_then(|audit| audit.get("fail_on"))
+        .and_then(|value| serde_json::from_value::<FailOn>(value.clone()).ok())
+        .and_then(|policy| policy.compile().ok())
+        .unwrap_or_else(|| FailOn::default().compile().expect("default fail_on"))
 }
 
 fn confirm(prompt: &str) -> bool {
