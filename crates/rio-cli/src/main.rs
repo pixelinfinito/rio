@@ -3,6 +3,7 @@ mod deployment;
 mod endpoint;
 mod lineage;
 mod providers;
+mod registry;
 use clap::{Args, Parser, Subcommand, ValueEnum};
 use config::MachineConfig;
 use rio_adapters::{ProcessSupervisor, ToolResolver};
@@ -43,6 +44,13 @@ enum Command {
     Deploy(deployment::DeployArgs),
     /// Answer a posted finding through the configured endpoint.
     Feedback(FeedbackArgs),
+    /// List the repository's finding registry held by the endpoint.
+    Findings(registry::FindingsArgs),
+    /// List, apply or decline suppression proposals from repeated dismissals.
+    Suppressions {
+        #[command(subcommand)]
+        command: registry::SuppressionsCommand,
+    },
     /// Run the evaluation harness (requires python3 and Rio's `eval/` directory).
     Eval {
         #[command(subcommand)]
@@ -81,6 +89,7 @@ enum Format {
     Terminal,
     Json,
     Md,
+    Sarif,
 }
 #[derive(Args, Default)]
 struct SelectionArgs {
@@ -124,6 +133,9 @@ struct ReviewArgs {
     no_color: bool,
     #[arg(long)]
     show_pre_existing: bool,
+    /// List findings remembered as dismissed on unchanged code in their own section.
+    #[arg(long)]
+    show_remembered: bool,
     #[arg(long)]
     pr: Option<String>,
     #[arg(long)]
@@ -203,6 +215,8 @@ async fn main() -> ExitCode {
         }
         Command::Deploy(args) => run_deploy(args).await,
         Command::Feedback(args) => run_feedback(args).await,
+        Command::Findings(args) => registry::findings(args).await,
+        Command::Suppressions { command } => registry::suppressions(command).await,
         Command::Eval { command } => run_eval(command),
     };
     ExitCode::from(code)
@@ -255,22 +269,59 @@ async fn run_deploy(args: deployment::DeployArgs) -> u8 {
         }
     }
 }
-fn write_stdout(bytes: &[u8]) -> io::Result<()> {
+pub(crate) fn write_stdout(bytes: &[u8]) -> io::Result<()> {
     let stdout = io::stdout();
     let mut output = stdout.lock();
     output.write_all(bytes)?;
     output.flush()
 }
+/// RFC 3339 UTC time with second precision, as SARIF invocations record it.
+fn utc_now() -> String {
+    let seconds = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map_or(0, |d| d.as_secs()) as i64;
+    let (days, time) = (seconds.div_euclid(86400), seconds.rem_euclid(86400));
+    // Civil date from days since 1970-01-01 (Howard Hinnant's algorithm).
+    let z = days + 719468;
+    let era = z.div_euclid(146097);
+    let doe = z - era * 146097;
+    let yoe = (doe - doe / 1460 + doe / 36524 - doe / 146096) / 365;
+    let doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
+    let mp = (5 * doy + 2) / 153;
+    let day = doy - (153 * mp + 2) / 5 + 1;
+    let month = if mp < 10 { mp + 3 } else { mp - 9 };
+    let year = yoe + era * 400 + i64::from(month <= 2);
+    format!(
+        "{year:04}-{month:02}-{day:02}T{:02}:{:02}:{:02}Z",
+        time / 3600,
+        time % 3600 / 60,
+        time % 60
+    )
+}
+fn sarif_inputs(start: String, exit_code: u8, include_pre_existing: bool) -> SarifInputs {
+    SarifInputs {
+        start_time_utc: start,
+        end_time_utc: utc_now(),
+        exit_code: Some(exit_code),
+        include_pre_existing,
+    }
+}
 fn error_report(format: Format, code: u8, name: &str, message: String, details: Vec<String>) -> u8 {
     eprintln!("{}", redact(&message));
-    if format == Format::Json {
+    if matches!(format, Format::Json | Format::Sarif) {
         let mut report = Report::empty(ReportStatus::Error);
         report.error = Some(ReportError {
             code: name.into(),
             message,
             details,
         });
-        match render_json(&report) {
+        let now = utc_now();
+        let rendered = if format == Format::Sarif {
+            render_sarif(&report, &sarif_inputs(now, code, false))
+        } else {
+            render_json(&report)
+        };
+        match rendered {
             Ok(bytes) => {
                 if let Err(error) = write_stdout(&bytes) {
                     eprintln!("{error}");
@@ -288,6 +339,7 @@ fn loader(root: Option<PathBuf>, config: &MachineConfig, cwd: PathBuf) -> Profil
     ProfileLoader::new(root, config.config_dir.clone(), cwd)
 }
 async fn run_review(args: ReviewArgs) -> u8 {
+    let started = utc_now();
     for (flag, present) in [("--pr", args.pr.is_some()), ("--publish", args.publish)] {
         if present {
             return error_report(
@@ -479,6 +531,13 @@ async fn run_review(args: ReviewArgs) -> u8 {
                 cache: config.cache.clone(),
                 deep: args.deep || matches!(args.preset, Some(Preset::Deep)),
                 fork: args.fork,
+                repository: match &lineage {
+                    Some(lineage) => Some(lineage.repository.clone()),
+                    None => {
+                        lineage::repository_key(repo.root(), repo.remote_url("origin").as_deref())
+                            .ok()
+                    }
+                },
                 lineage: lineage.clone(),
             })
     } else {
@@ -569,7 +628,9 @@ async fn run_review(args: ReviewArgs) -> u8 {
             );
         }
     };
-    if report.status == ReportStatus::NoChanges && args.format == Format::Json {
+    if report.status == ReportStatus::NoChanges
+        && matches!(args.format, Format::Json | Format::Sarif)
+    {
         eprintln!("No changes to review");
     }
     let width = std::env::var("COLUMNS")
@@ -580,17 +641,24 @@ async fn run_review(args: ReviewArgs) -> u8 {
         width,
         color: io::stdout().is_terminal() && !args.no_color,
         show_pre_existing: args.show_pre_existing,
+        show_remembered: args.show_remembered,
         policy: Some(&policy),
         posted: posted.as_ref(),
     };
+    // SARIF records the exit code, so it is decided before rendering.
+    let exit = exit_code(&report, &policy, ExitContext::default());
     let output = match args.format {
         Format::Json => render_json(&report),
+        Format::Sarif => render_sarif(
+            &report,
+            &sarif_inputs(started, exit, args.show_pre_existing),
+        ),
         Format::Md => Ok(render_markdown(&report, &options).into_bytes()),
         Format::Terminal => Ok(render_terminal(&report, &options).into_bytes()),
     };
     let code = match output {
         Ok(bytes) => match write_stdout(&bytes) {
-            Ok(()) => exit_code(&report, &policy, ExitContext::default()),
+            Ok(()) => exit,
             Err(error) => {
                 eprintln!("{error}");
                 3

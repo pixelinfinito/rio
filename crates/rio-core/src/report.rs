@@ -191,6 +191,10 @@ pub struct Report {
     /// Open suppression proposals for the repository.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub suppression_proposals: Option<Vec<SuppressionProposal>>,
+    /// Findings removed from the main sections as remembered dismissals; each
+    /// carries its `history`. Never consulted by fail policies.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub remembered: Vec<Finding>,
     /// Catalog coverage; present when the security step ran.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub security_coverage: Option<SecurityCoverage>,
@@ -385,6 +389,7 @@ impl Report {
             publication: None,
             cache: None,
             suppression_proposals: None,
+            remembered: Vec::new(),
             security_coverage: None,
         }
     }

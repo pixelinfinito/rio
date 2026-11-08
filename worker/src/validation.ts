@@ -258,6 +258,14 @@ export function validateSubmission(value: any): asserts value is Submission {
     "invalid snapshot id",
   );
   if (value.lineage !== undefined) validateLineageRef(value.lineage);
+  invariant(
+    value.repository === undefined ||
+      (typeof value.repository === "string" &&
+        value.repository.length > 0 &&
+        value.repository.length <= 512 &&
+        !/[\u0000-\u001f]/.test(value.repository)),
+    "invalid repository",
+  );
 }
 export function validateHypotheses(value: any): Hypothesis[] {
   invariant(

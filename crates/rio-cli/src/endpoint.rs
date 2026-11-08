@@ -24,6 +24,8 @@ pub struct EndpointRequest<'a> {
     pub cache: CacheOptions,
     pub deep: bool,
     pub fork: bool,
+    /// Repository key for the finding registry (`origin`, else the directory name).
+    pub repository: Option<String>,
     /// `--since-last` branch lineage, with the reset request.
     pub lineage: Option<BranchLineage>,
 }
@@ -77,6 +79,7 @@ pub async fn review(
         cache,
         deep,
         fork,
+        repository,
         lineage,
     } = request;
     let client = client(url, config_dir)?;
@@ -169,6 +172,9 @@ pub async fn review(
     let mut submission = json!({"protocol":1,"snapshot_id":snapshot_id,"profile":profile,"report":report,"changed":changed,"graphs":{"base":submitted.base,"head":submitted.head},"owner_guidance":guidance,"intent":format!("Review the change from {} to {}",changes.base_id,changes.head_id),"fork":fork,"mode":if deep{"deep"}else{"fast"}});
     if let Some(lineage) = &lineage {
         submission["lineage"] = lineage.submission();
+    }
+    if let Some(repository) = &repository {
+        submission["repository"] = json!(repository);
     }
     let remote_id = client.submit(&submission).await?;
     eprintln!("Endpoint review: {remote_id}");

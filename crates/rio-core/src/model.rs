@@ -147,6 +147,9 @@ pub struct FindingHistory {
     pub previous_response: Option<AuthorResponse>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub dismissed_in: Option<String>,
+    /// Review that recorded the identity fixed; a recurrence is a regression.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub fixed_in: Option<String>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]

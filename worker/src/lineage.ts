@@ -500,8 +500,14 @@ export function applyLineage(
   for (const check of report.checks ?? []) stampAll(check.findings);
   const complete = report.status === "complete";
   const updates: LineageOutcome["updates"] = [];
+  // A remembered dismissal reproduced the identity; it is neither fixed nor
+  // unreassessed.
+  const remembered = new Set(
+    (report.remembered ?? []).map((f: Finding) => f.id),
+  );
   for (const p of context.prior) {
-    if (produced.has(p.id) || p.status !== "open") continue;
+    if (produced.has(p.id) || remembered.has(p.id) || p.status !== "open")
+      continue;
     const reassessed =
       complete &&
       (p.source_kind === "tool"

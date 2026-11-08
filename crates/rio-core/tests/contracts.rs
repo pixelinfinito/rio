@@ -444,3 +444,48 @@ fn v03_history_reasons_and_report_objects_are_strict() {
         );
     }
 }
+
+#[test]
+fn stage3_history_fixed_in_and_remembered_list_are_optional_and_strict() {
+    let finding_validator = jsonschema::validator_for(&schema("finding")).unwrap();
+    let report_validator = jsonschema::validator_for(&schema("report")).unwrap();
+    let mut regression = lineage_finding();
+    regression["history"] = json!({"first_seen": "rev-1", "last_seen": "rev-1", "seen_count": 1,
+        "previous_status": "fixed", "fixed_in": "rev-2"});
+    assert!(finding_validator.is_valid(&regression));
+    let typed: rio_core::Finding = serde_json::from_value(regression.clone()).unwrap();
+    assert_eq!(
+        typed.history.as_ref().unwrap().fixed_in.as_deref(),
+        Some("rev-2")
+    );
+    assert_eq!(serde_json::to_value(&typed).unwrap(), regression);
+    let mut remembered = lineage_finding();
+    remembered["history"] = history();
+    remembered["history"]["previous_response"]["reason"] = json!("intentional");
+    let plain: Value = serde_json::from_str(include_str!("fixtures/complete.json")).unwrap();
+    let mut report = plain.clone();
+    report["findings"] = json!([regression]);
+    report["remembered"] = json!([remembered]);
+    let errors: Vec<_> = report_validator
+        .iter_errors(&report)
+        .map(|e| e.to_string())
+        .collect();
+    assert!(errors.is_empty(), "{errors:?}");
+    let typed: rio_core::Report = serde_json::from_value(report.clone()).unwrap();
+    assert_eq!(typed.remembered.len(), 1);
+    assert_eq!(serde_json::to_value(&typed).unwrap(), report);
+    // Without the list nothing is serialized.
+    let typed: rio_core::Report = serde_json::from_value(plain.clone()).unwrap();
+    assert!(typed.remembered.is_empty());
+    assert!(
+        serde_json::to_value(&typed)
+            .unwrap()
+            .get("remembered")
+            .is_none()
+    );
+    // Remembered entries are findings: an unknown history key is rejected.
+    report["remembered"][0]["history"]["fixed_by"] = json!("rev-3");
+    assert!(!report_validator.is_valid(&report));
+    report["remembered"] = json!([{"id": "x"}]);
+    assert!(!report_validator.is_valid(&report));
+}

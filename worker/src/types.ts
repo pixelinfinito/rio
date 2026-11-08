@@ -133,6 +133,7 @@ export interface FindingHistory {
   previous_status: LifecycleStatus;
   previous_response?: AuthorResponse;
   dismissed_in?: string;
+  fixed_in?: string;
 }
 export type UnassessedReason = "budget" | "no_evidence" | "tools_unavailable";
 export interface SecurityCoverage {
@@ -201,6 +202,8 @@ export interface Submission {
   fork: boolean;
   mode: "fast" | "deep";
   lineage?: LineageRef;
+  // Repository key for the finding registry; a lineage's repository wins.
+  repository?: string;
 }
 export interface Execution {
   protocol: 1;

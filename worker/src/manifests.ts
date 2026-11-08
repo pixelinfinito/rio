@@ -6,5 +6,11 @@ import verifier from "../../modules/agents/verifier/manifest.json";
 import security from "../../modules/agents/security/manifest.json";
 export const agents: Record<
   string,
-  { name: string; run: boolean; available: boolean; contracts?: boolean }
+  {
+    version: number;
+    name: string;
+    run: boolean;
+    available: boolean;
+    contracts?: boolean;
+  }
 > = { correctness, contracts, tests, performance, verifier, security };

@@ -13,3 +13,5 @@ mod redaction;
 pub use redaction::*;
 mod render;
 pub use render::*;
+mod sarif;
+pub use sarif::*;

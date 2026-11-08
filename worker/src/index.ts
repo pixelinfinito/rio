@@ -32,6 +32,9 @@ import { Store } from "./storage";
 import { failJob, finishJob } from "./jobs";
 import { parseWall } from "./budget";
 import { checkProfileModels } from "./gateway";
+import { renderSarif, utc } from "./sarif";
+import { publicRecord } from "./history";
+import { publicProposal } from "./proposals";
 export { ReviewWorkflow } from "./workflow";
 export { MigrationWorkflow } from "./migrate";
 export { Sandbox } from "./sandbox";
@@ -265,8 +268,29 @@ app.get("/v1/reviews/:id", async (c) => {
 });
 app.get("/v1/reviews/:id/report", async (c) => {
   const row = await reviewAccess(c.req.raw, c.env, c.req.param("id"));
+  const format = c.req.query("format") ?? "json";
+  invariant(
+    format === "json" || format === "sarif",
+    "invalid format: expected json or sarif",
+  );
   invariant(row.report_key, "report is not ready");
-  return c.json(await new Store(c.env).get(row.report_key));
+  const report = await new Store(c.env).get<any>(row.report_key);
+  if (format === "json") return c.json(report);
+  // The invocation spans the review's creation and its final event.
+  const finished = await c.env.DB.prepare(
+    "SELECT created_at FROM events WHERE review_id=? AND event IN ('review:done','review:partial') ORDER BY seq DESC LIMIT 1",
+  )
+    .bind(row.id)
+    .first<{ created_at: number }>();
+  return c.json(
+    renderSarif(report, {
+      start_time_utc: utc(row.created_at),
+      end_time_utc: utc(finished?.created_at ?? row.created_at),
+      exit_code: null,
+    }),
+    200,
+    { "content-type": "application/sarif+json" },
+  );
 });
 app.get("/v1/reviews/:id/audit", async (c) => {
   await reviewAccess(c.req.raw, c.env, c.req.param("id"));
@@ -389,8 +413,126 @@ app.get("/v1/lineages", async (c) => {
     rounds_to_pass: row.rounds_to_pass,
   });
 });
-// Answers a posted lineage finding. It writes author_response and a feedback
-// record only; posture, budgets, rules and suppressions are never touched.
+const STATUSES = ["open", "fixed", "dismissed"];
+function since(value: string | undefined): number | null {
+  if (value === undefined) return null;
+  const ms = Date.parse(value);
+  invariant(
+    /^\d{4}-\d{2}-\d{2}(T[\d:.]+(Z|[+-]\d{2}:\d{2}))?$/.test(value) &&
+      Number.isFinite(ms),
+    "invalid since: expected an RFC 3339 timestamp",
+  );
+  return ms;
+}
+// The caller's repository finding registry (finding-history).
+app.get("/v1/findings", async (c) => {
+  const tenant = await authenticate(c.req.raw, c.env, "reviews:read");
+  const repository = c.req.query("repository"),
+    status = c.req.query("status"),
+    rule = c.req.query("rule"),
+    after = since(c.req.query("since"));
+  invariant(!status || STATUSES.includes(status), "invalid status");
+  invariant(
+    repository === undefined ||
+      (repository.length > 0 && repository.length <= 512),
+    "invalid repository",
+  );
+  if (repository) {
+    const known = await c.env.DB.prepare(
+      "SELECT 1 AS known FROM finding_history WHERE tenant=? AND repository=? LIMIT 1",
+    )
+      .bind(tenant, repository)
+      .first();
+    if (!known)
+      return c.json({ error: "no findings recorded for repository" }, 404);
+  }
+  const where = ["tenant=?"],
+    binds: unknown[] = [tenant];
+  for (const [column, value] of [
+    ["repository", repository],
+    ["status", status],
+    ["rule_id", rule],
+  ] as const)
+    if (value) {
+      where.push(`${column}=?`);
+      binds.push(value);
+    }
+  if (after !== null) {
+    where.push("updated_at>=?");
+    binds.push(after);
+  }
+  const rows = await c.env.DB.prepare(
+    `SELECT * FROM finding_history WHERE ${where.join(" AND ")} ORDER BY updated_at DESC,identity LIMIT 1000`,
+  )
+    .bind(...binds)
+    .all<any>();
+  return c.json({ findings: rows.results.map(publicRecord) });
+});
+// Suppression proposals; the endpoint never writes repository files.
+app.get("/v1/suppressions", async (c) => {
+  const tenant = await authenticate(c.req.raw, c.env, "reviews:read");
+  const repository = c.req.query("repository"),
+    status = c.req.query("status");
+  invariant(
+    !status || ["proposed", "applied", "declined"].includes(status),
+    "invalid status",
+  );
+  const where = ["tenant=?"],
+    binds: unknown[] = [tenant];
+  if (repository) {
+    where.push("repository=?");
+    binds.push(repository);
+  }
+  if (status) {
+    where.push("status=?");
+    binds.push(status);
+  }
+  const rows = await c.env.DB.prepare(
+    `SELECT * FROM suppressions WHERE ${where.join(" AND ")} ORDER BY created_at,id LIMIT 1000`,
+  )
+    .bind(...binds)
+    .all<any>();
+  return c.json({ suppressions: rows.results.map(publicProposal) });
+});
+// Records the human decision on a proposal; applying edits the profile locally.
+app.post("/v1/suppressions/:id", async (c) => {
+  const tenant = await authenticate(c.req.raw, c.env, "reviews:write"),
+    value = await body(c.req.raw, 16 * 1024);
+  invariant(
+    value &&
+      typeof value === "object" &&
+      !Array.isArray(value) &&
+      Object.keys(value).every((k) => ["status", "note"].includes(k)) &&
+      ["applied", "declined"].includes(value.status) &&
+      (value.note === undefined ||
+        (typeof value.note === "string" && value.note.length <= 4000)),
+    "invalid decision: expected status applied or declined and an optional note",
+  );
+  const row = await c.env.DB.prepare(
+    "SELECT * FROM suppressions WHERE id=? AND tenant=?",
+  )
+    .bind(c.req.param("id"), tenant)
+    .first<any>();
+  if (!row) return c.json({ error: "proposal not found" }, 404);
+  if (row.status !== "proposed")
+    return c.json({ error: `proposal is ${row.status}` }, 409);
+  await c.env.DB.prepare(
+    "UPDATE suppressions SET status=?,note=?,decided_at=? WHERE id=? AND tenant=? AND status='proposed'",
+  )
+    .bind(value.status, value.note ?? null, Date.now(), row.id, tenant)
+    .run();
+  return c.json(
+    publicProposal({
+      ...row,
+      status: value.status,
+      note: value.note ?? null,
+      decided_at: Date.now(),
+    }),
+  );
+});
+// Answers a posted lineage finding, or a finding of the repository registry.
+// It writes author_response and a feedback record only; posture, budgets,
+// rules and suppressions are never touched.
 app.post("/v1/findings/:id/feedback", async (c) => {
   const tenant = await authenticate(c.req.raw, c.env, "reviews:write"),
     value = await body(c.req.raw, 64 * 1024),
@@ -425,35 +567,76 @@ app.post("/v1/findings/:id/feedback", async (c) => {
   const row = await (
     value.lineage
       ? c.env.DB.prepare(
-          "SELECT lineage_id,generation FROM findings WHERE tenant=? AND identity=? AND lineage_id=? AND first_posted_in IS NOT NULL ORDER BY generation DESC LIMIT 1",
+          "SELECT f.lineage_id,f.generation,f.review_id,f.repository,l.kind,l.ref FROM findings f JOIN lineages l ON l.id=f.lineage_id WHERE f.tenant=? AND f.identity=? AND f.lineage_id=? AND f.first_posted_in IS NOT NULL ORDER BY f.generation DESC LIMIT 1",
         ).bind(tenant, id, lineageId(tenant, value.lineage))
       : c.env.DB.prepare(
-          "SELECT lineage_id,generation FROM findings WHERE tenant=? AND identity=? AND first_posted_in IS NOT NULL ORDER BY updated_at DESC,generation DESC LIMIT 1",
+          "SELECT f.lineage_id,f.generation,f.review_id,f.repository,l.kind,l.ref FROM findings f JOIN lineages l ON l.id=f.lineage_id WHERE f.tenant=? AND f.identity=? AND f.first_posted_in IS NOT NULL ORDER BY f.updated_at DESC,f.generation DESC LIMIT 1",
         ).bind(tenant, id)
-  ).first<{ lineage_id: string; generation: number }>();
-  if (!row) return c.json({ error: "finding not found" }, 404);
+  ).first<{
+    lineage_id: string;
+    generation: number;
+    review_id: string;
+    repository: string;
+    kind: string;
+    ref: string;
+  }>();
+  // Outside lineages the registry's last sighting is the finding answered.
+  const registry = row
+    ? null
+    : value.lineage
+      ? null
+      : await c.env.DB.prepare(
+          "SELECT repository,last_seen_review FROM finding_history WHERE tenant=? AND identity=? ORDER BY updated_at DESC LIMIT 1",
+        )
+          .bind(tenant, id)
+          .first<{ repository: string; last_seen_review: string }>();
+  if (!row && !registry) return c.json({ error: "finding not found" }, 404);
   const response = {
     reason: value.reason,
     actor: value.actor ?? tenant,
     at: new Date().toISOString(),
     ...(value.note ? { note: value.note } : {}),
   };
+  const repository = row?.repository ?? registry!.repository;
+  const dismissedIn = row
+    ? row.kind === "pr"
+      ? `${row.repository}#${row.ref}`
+      : row.review_id
+    : registry!.last_seen_review;
   await c.env.DB.batch([
+    ...(row
+      ? [
+          c.env.DB.prepare(
+            "UPDATE findings SET status='dismissed',author_response_json=?,updated_at=? WHERE tenant=? AND lineage_id=? AND generation=? AND identity=?",
+          ).bind(
+            JSON.stringify(response),
+            Date.now(),
+            tenant,
+            row.lineage_id,
+            row.generation,
+            id,
+          ),
+        ]
+      : []),
+    // The answer is given on the code last seen: its hash becomes the
+    // dismissal's, and status_at tells running reviews not to overwrite it.
     c.env.DB.prepare(
-      "UPDATE findings SET status='dismissed',author_response_json=?,updated_at=? WHERE tenant=? AND lineage_id=? AND generation=? AND identity=?",
+      "UPDATE finding_history SET status='dismissed',author_response_json=?,dismissed_in=?,code_hash=COALESCE(seen_code_hash,code_hash),status_at=?,updated_at=? WHERE tenant=? AND repository=? AND identity=?",
     ).bind(
       JSON.stringify(response),
+      dismissedIn,
+      Date.now(),
       Date.now(),
       tenant,
-      row.lineage_id,
-      row.generation,
+      repository,
       id,
     ),
     c.env.DB.prepare(
-      "INSERT INTO feedback(id,tenant,finding_id,reason,actor,note,created_at) VALUES(?,?,?,?,?,?,?)",
+      "INSERT INTO feedback(id,tenant,repository,finding_id,reason,actor,note,created_at) VALUES(?,?,?,?,?,?,?,?)",
     ).bind(
       crypto.randomUUID(),
       tenant,
+      repository,
       id,
       response.reason,
       response.actor,
