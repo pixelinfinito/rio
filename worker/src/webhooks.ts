@@ -307,7 +307,9 @@ export async function handleGitHubWebhook(
     // Forget the id so GitHub's redelivery of this event is acted on.
     await env.DB.prepare("DELETE FROM deliveries WHERE id=?")
       .bind(delivery)
-      .run();
+      .run()
+      // The original failure is the one reported.
+      .catch(() => {});
     throw error;
   }
   return Response.json({ accepted: true }, { status: 202 });
