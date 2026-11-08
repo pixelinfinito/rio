@@ -25,7 +25,7 @@ The provider definitions, explicit model prices and dynamic routes SHALL be save
 - **THEN** the deployment plan contains both providers and the price
 
 ### Requirement: Idempotent gateway reconciliation
-A deployment SHALL create missing custom providers with their key as the provider's JSON-encoded headers, adopt existing providers with the same slug, correct their base URL, and rewrite their headers only when the key or base URL changed since Rio last applied them. A missing provider without a key SHALL fail naming its key variable. Dynamic routes SHALL be created when missing and get one new deployed version when their elements differ.
+A deployment SHALL create missing custom providers with their key as the provider's JSON-encoded headers, adopt existing providers with the same slug, correct their base URL, and rewrite their headers only when the base URL or the rendered headers (the key and its authentication header) changed since Rio last applied them. A missing provider without a key SHALL fail naming its key variable. Dynamic routes SHALL be created when missing and get one new deployed version when their elements differ.
 
 #### Scenario: Unchanged redeployment
 - **WHEN** a deployment is repeated with the same providers, keys and routes
@@ -33,6 +33,10 @@ A deployment SHALL create missing custom providers with their key as the provide
 
 #### Scenario: Rotated key
 - **WHEN** one provider's key changes and the deployment runs again
+- **THEN** only that provider's headers are updated
+
+#### Scenario: Authentication header changed
+- **WHEN** one provider's `auth_header` changes while its key and base URL stay the same, and the deployment runs again
 - **THEN** only that provider's headers are updated
 
 ### Requirement: Keys never reach the Worker
