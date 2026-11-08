@@ -284,6 +284,47 @@ describe("contracts agent", () => {
     ).not.toContain("contracts/api/broken");
   }, 60000);
 
+  it("rejects a malformed hypothesis on its own and keeps the agent's well-formed ones", async () => {
+    const { report } = await review({
+      base,
+      head,
+      changed: ["src/api.ts"],
+      steps: agentSteps([{ correctness: { model: "default" } }]),
+      agents: {
+        correctness: [
+          {
+            rule_id: "correctness/unchecked-input",
+            category: "risk",
+            severity: "warning",
+            location: at("src/api.ts", 1, "api.createUser"),
+            message: "createUser trusts its email argument.",
+            trigger: "createUser(name, email) with an empty email",
+          },
+          {
+            rule_id: "correctness/bad-trace",
+            category: "risk",
+            severity: "warning",
+            location: at("src/api.ts", 1, "api.createUser"),
+            message: "Carries an agent key with a value outside its enum.",
+            trigger: "any call",
+            trace_change: "not-a-valid-value",
+          },
+        ],
+      },
+    });
+    expect(report.status).not.toBe("partial");
+    expect(
+      [...report.findings, ...report.risks].map((f: any) => f.rule_id),
+    ).toEqual(["correctness/unchecked-input"]);
+    const rejected = report.agent_audit.rejected;
+    expect(rejected).toHaveLength(1);
+    expect(rejected[0]).toMatchObject({
+      agent: "correctness",
+      rule_id: "correctness/bad-trace",
+    });
+    expect(rejected[0].reason).toMatch(/^malformed hypothesis: .*trace_change/);
+  }, 60000);
+
   it("does not run on body-only changes and records why", async () => {
     const { report, calls } = await review({
       base: { "src/a.ts": "function a() { return 0; }\n" },
