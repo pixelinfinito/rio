@@ -64,13 +64,14 @@ rio review --staged              # index against HEAD
 rio review --base origin/main    # committed HEAD against merge base
 rio review --format json > report.json
 rio review --format md > report.md
+rio review --format sarif > rio.sarif
 rio review --offline --no-color
 rio review --show-pre-existing
 ```
 
 Selection flags are mutually exclusive. Typecheck runs over each affected project, lint over changed files, and tests run for coverage. In workspaces, dependent roots also receive typecheck and coverage. Reports identify every check that passed, found issues, failed, was skipped or was cancelled. An incomplete review with no findings names the unfinished checks.
 
-The first Ctrl-C terminates tool process trees and keeps a partial report. A second Ctrl-C kills remaining process groups or Windows jobs and exits 130 without emitting a JSON or Markdown document. JSON writes one final schema-validated document; progress and warnings go to stderr. Markdown also keeps progress on stderr. Terminal mode streams progress and check outcomes. `NO_COLOR`, `--no-color`, and redirected stdout disable color.
+The first Ctrl-C terminates tool process trees and keeps a partial report. A second Ctrl-C kills remaining process groups or Windows jobs and exits 130 without emitting a JSON or Markdown document. JSON writes one final schema-validated document; progress and warnings go to stderr. SARIF follows the same rules: one SARIF 2.1.0 log on stdout for every exit after argument parsing, including exits 2 and 3, where the log has no results and its invocation carries the error (see [the SARIF mapping](docs/sarif-mapping.md)), so `rio review --format sarif > rio.sarif` can feed a code-scanning upload. Markdown also keeps progress on stderr. Terminal mode streams progress and check outcomes. `NO_COLOR`, `--no-color`, and redirected stdout disable color.
 
 TypeScript tools are `tsc`, ESLint, Vitest or Jest. Python tools are Pyright or mypy, Ruff, pytest and coverage.py. Rust uses installed Cargo/toolchain components for `cargo check`, configured Clippy/rustfmt checks, and optional `cargo llvm-cov` coverage. Rust member changes check each scheduled member and its dependents; workspace-wide changes check the workspace. Project-local executables take precedence over PATH. See [adapter details](docs/adapters.md).
 
@@ -99,6 +100,22 @@ rio feedback 8c1e --dismiss intentional --note "documented behavior"
 `--since-last` reviews the current branch as a lineage held by the endpoint; it needs a configured endpoint and online mode (otherwise exit 2) and a checked-out branch (a detached HEAD exits 2). The lineage is keyed by the normalized `origin` URL (scheme, credentials, port and `.git` removed), or the repository directory name without an `origin`, plus the branch name, so rebases and force-pushes keep it. The endpoint assigns the round, re-reviews only the diff since the previous head after the first round, holds back findings it already posted and, once the round exceeds `rounds.cap`, summarizes unresolved findings in a "reconsider" message. Reports always list every finding, so `fail_on` and exit codes are unchanged; the footer shows the round and cap state, the author-response ratio when answers exist and the held-back count, and already-posted findings are marked. Rio keeps a versioned copy of the endpoint's lineage state at `<cache>/lineages/<hash>.json`. It is a cache: a missing copy is refetched from the endpoint, never treated as a reset, and it is pruned with the rest of the review cache. Only `--reset-lineage` (which requires `--since-last`) starts a new generation.
 
 `rio feedback <id> --dismiss <reason> [--note TEXT]` answers a posted finding through the endpoint. Accepted reasons are `fixed`, `wrong`, `intentional`, `irrelevant` and `style`; any other reason exits 2 before contacting the endpoint. The actor is your `git config user.email` when set. It exits 0 when the response is recorded, 2 for an invalid reason, a missing endpoint or a missing API token, and 3 when the endpoint rejects the response or does not know the finding. A dismissal never changes posture, budgets, rules or suppressions.
+
+### Finding history and suppression proposals
+
+```sh
+rio findings --status dismissed              # the repository's finding registry
+rio review --show-remembered                 # also list remembered dismissals
+rio suppressions list
+rio suppressions apply sp-3f2a9c1b7d4e       # asks before editing .rio/profiles/default.yaml
+rio suppressions decline sp-3f2a9c1b7d4e --note "we want these"
+```
+
+With an endpoint, every review updates a per-repository registry of finding identities (keyed like `--since-last` lineages: the normalized `origin`, else the directory name). A finding dismissed `intentional`, `irrelevant` or `style` is remembered while its enclosing symbol is unchanged: later reviews leave it out of the findings, risks and security sections and count it in the footer with the reason and where it was dismissed; `--show-remembered` lists those findings in their own section without changing the exit code. A `wrong` dismissal is never remembered: the recurrence is reported with a history line naming the earlier answer, and a finding recorded fixed that comes back is labelled a regression. `rio findings [--status open|fixed|dismissed] [--rule RULE] [--since TIMESTAMP] [--format json]` lists the registry; it exits 2 without an endpoint.
+
+Repeated `irrelevant` or `style` dismissals (three by default within 90 days, `proposal_threshold` on `rio/report`) of one rule, or of differing rules under one directory, become suppression proposals listed in the report footer. Nothing is suppressed until you apply one: `rio suppressions apply <id>` prints the entry and its evidence, asks for confirmation (or `--yes`), appends the entry under `suppress` in `.rio/profiles/default.yaml` (creating it, extending `rio/base`, when absent), validates the profile, restores the file byte for byte if it does not validate, and marks the proposal applied. Answering anything but `y` leaves the file and the proposal unchanged and exits 1. `rio suppressions decline <id> [--note TEXT]` stops the entry from being proposed again for 180 days. `rio suppressions list [--status S] [--format json]` shows every proposal with its evidence count. Commit the profile change with your code; the endpoint never writes repository files.
+
+The endpoint also caches agent hypotheses per changed hunk and context, so an unchanged hunk in a later round, branch or pull request is not sent to the model again; replayed hypotheses are still verified and are marked `cached`. The footer shows the hit rate; `with: {cache: false}` on `rio/agents` turns the cache off. See [finding history, proposals, SARIF and the agent cache](docs/finding-history.md).
 
 When resolved dependency versions change, Rio sends the changed package names, ecosystems and versions to `https://api.osv.dev/v1/querybatch` and `/v1/query`, then fetches advisory details from `/v1/vulns/<id>`. It caches advisory records. `--offline` prevents network requests by Rio. Tools, plugins and project tests are **not network-isolated**; reports say so when an offline review executes a subprocess. Use external network isolation to block their network access as well.
 
