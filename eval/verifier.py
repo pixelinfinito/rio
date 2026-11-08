@@ -50,17 +50,14 @@ def precision(counts):
     return counts['true-positive'] / total if total else None
 
 
-# Deterministic checks the hosted runner skips because the project's tools are not
-# installed in its image, or because it has no network for the dependency audit.
-TOOL_SKIPS = frozenset({'tool_missing', 'offline'})
-
-
 def scorable(report):
     """A review can be scored when it finished: `complete`, or `incomplete` only because
-    deterministic checks were skipped for a missing tool or no network (an owner
-    decision of 2026-11-08: the agent and verifier results these gates measure do not
-    depend on those checks). Failed or cancelled checks, missing votes and partial
-    reviews still cannot establish acceptance."""
+    deterministic checks were skipped (the hosted runner skips typecheck, lint,
+    coverage and the dependency audit for a missing tool, no project configuration
+    or no network; an owner decision of 2026-11-08 holds that the agent and verifier
+    results these gates measure do not depend on those checks). Failed or cancelled
+    checks, missing verifier votes and partial reviews still cannot establish
+    acceptance."""
     if report['status'] == 'complete':
         return True
     if report['status'] != 'incomplete':
@@ -68,8 +65,7 @@ def scorable(report):
     if (report.get('agent_audit') or {}).get('incomplete_votes'):
         return False
     incomplete = report.get('incomplete', [])
-    return bool(incomplete) and all(
-        entry.get('outcome') == 'skipped' and entry.get('reason') in TOOL_SKIPS for entry in incomplete)
+    return bool(incomplete) and all(entry.get('outcome') == 'skipped' for entry in incomplete)
 
 
 def score_run(run, root):

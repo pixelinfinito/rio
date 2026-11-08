@@ -74,8 +74,9 @@ class Comparison(unittest.TestCase):
             {'id': 'clean', 'generator_model': 'p/g', 'voter_model': 'p/v', 'profile_hash': 'pinned',
              'high_controls': [], 'independently_clean': True, 'single': clean, 'quorum': clean}]}
 
-    def test_tool_missing_skips_are_scorable_but_failures_and_lost_votes_are_not(self):
+    def test_skipped_checks_are_scorable_but_failures_and_lost_votes_are_not(self):
         skipped = [{'kind': 'typecheck', 'outcome': 'skipped', 'reason': 'tool_missing'},
+                   {'kind': 'lint', 'outcome': 'skipped', 'reason': 'no_project_config'},
                    {'kind': 'dependencies', 'outcome': 'skipped', 'reason': 'offline'}]
         self.assertTrue(verifier.scorable({'status': 'complete', 'incomplete': []}))
         self.assertTrue(verifier.scorable({'status': 'incomplete', 'incomplete': skipped}))
