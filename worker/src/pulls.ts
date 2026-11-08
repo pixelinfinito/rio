@@ -308,7 +308,10 @@ export async function handleReviewRequest(
       // The Sandbox has no network: the Worker fetches both trees with this
       // token and the container prepares from the stored snapshot.
       const snapshot = await ingestTarballs(env, message.tenant, token, spec);
-      await createPrepareJob(env, review, { snapshot_id: snapshot });
+      await createPrepareJob(env, review, {
+        snapshot_id: snapshot,
+        prepare: spec,
+      });
     } else await createPrepareJob(env, review, { prepare: spec });
   } finally {
     await token.revoke();

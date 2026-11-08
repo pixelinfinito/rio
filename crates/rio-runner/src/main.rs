@@ -15,6 +15,7 @@ use std::{
     time::Duration,
 };
 use tokio_util::sync::CancellationToken;
+mod prepare;
 /// Maximum completion body accepted by the worker. Executor output is capped at 1 MiB
 /// per stream, but JSON escaping (up to 6x) and the parsed artifact copy can expand it.
 const COMPLETION_LIMIT: usize = 16 * 1024 * 1024;
@@ -61,8 +62,11 @@ struct Limits {
 }
 #[derive(Deserialize)]
 struct Header {
-    context: JobContext,
+    // Absent for prepare jobs, which resolve the profile at the base commit.
+    context: Option<JobContext>,
     limits: Limits,
+    #[serde(default)]
+    prepare: Option<Value>,
     #[serde(default)]
     links: BTreeMap<String, BTreeMap<String, String>>,
 }
@@ -139,7 +143,7 @@ async fn inside(kind: String, base_dir: PathBuf, root: PathBuf) -> Result<()> {
         "inside is available only in the runner container"
     );
     ensure!(
-        kind == "checks" || kind == "graph" || kind == "static",
+        ["checks", "graph", "static", "prepare"].contains(&kind.as_str()),
         "unknown analysis kind"
     );
     let mut input = Vec::new();
@@ -148,7 +152,6 @@ async fn inside(kind: String, base_dir: PathBuf, root: PathBuf) -> Result<()> {
         .read_to_end(&mut input)?;
     ensure!(input.len() <= HEADER_LIMIT, "job header exceeds limit");
     let mut header: Header = serde_json::from_slice(&input)?;
-    let context = header.context;
     ensure!(
         header.links.keys().all(|v| v == "base" || v == "head"),
         "unknown link version"
@@ -156,6 +159,47 @@ async fn inside(kind: String, base_dir: PathBuf, root: PathBuf) -> Result<()> {
     // Both trees are read before the head directory gains any repository metadata.
     let base = load_tree(&base_dir, &header.links.remove("base").unwrap_or_default())?;
     let head = load_tree(&root, &header.links.remove("head").unwrap_or_default())?;
+    if kind == "prepare" {
+        // Sandbox preparation: the Worker fetched both commits; nothing here has network.
+        let spec = header
+            .prepare
+            .context("prepare job without its pull request")?;
+        let commit = |key: &str| -> Result<String> {
+            let value = spec[key].as_str().context("missing commit")?;
+            ensure!(
+                value.len() == 40 && value.bytes().all(|b| b.is_ascii_hexdigit()),
+                "invalid commit"
+            );
+            Ok(value.to_owned())
+        };
+        let changes = ChangeSet {
+            selection: Selection::Branch {
+                reference: commit("base_sha")?,
+            },
+            base_id: commit("base_sha")?,
+            head_id: commit("head_sha")?,
+            base,
+            head,
+        };
+        let profile = rio_engine::base_profile(&changes.base)?;
+        let snapshot = rio_git::Snapshot::from_changes(&changes);
+        let deadline = graph_deadline(start, header.limits.wall_ms);
+        let prepared = rio_engine::build_submission(
+            &changes,
+            &profile,
+            &rio_engine::SubmissionOptions {
+                graph_budget: deadline.saturating_duration_since(std::time::Instant::now()),
+                deep: false,
+                fork: false,
+                repository: None,
+                run_id: format!("prepare-{}", &snapshot.key[..16]),
+            },
+        )?
+        .context("the pull request changes nothing reviewable")?;
+        println!("{}", json!({"submission": prepared.submission}));
+        return Ok(());
+    }
+    let context = header.context.context("analysis job without its profile")?;
     let base_id = blake3::hash(&serde_json::to_vec(&base)?)
         .to_hex()
         .to_string();
@@ -400,6 +444,9 @@ async fn next_job(
         "invalid job identity"
     );
     let attempt = job["attempt"].as_u64().context("missing attempt")?;
+    if job["kind"] == "prepare" && job["network"] == "clone" {
+        return serve_prepare(client, base, &claim, token, review, id, attempt, image).await;
+    }
     // Trees arrive only as the job archive; an embedded snapshot is an older protocol.
     let valid = job["network"] == false
         && job["limits"]["wall_ms"]
@@ -434,6 +481,63 @@ async fn next_job(
         _ => Ok(Served::Job),
     }
 }
+/// A self-hosted prepare job: its secrets arrive with the claim and live in memory only.
+#[allow(clippy::too_many_arguments)]
+async fn serve_prepare(
+    client: &reqwest::Client,
+    base: &reqwest::Url,
+    claim: &Value,
+    token: &str,
+    review: &str,
+    id: &str,
+    attempt: u64,
+    image: &str,
+) -> Result<Served> {
+    let job = &claim["job"];
+    let secrets = match (
+        claim["prepare"]["github_token"].as_str(),
+        claim["prepare"]["credential"].as_str(),
+    ) {
+        (Some(github_token), Some(credential)) => Some(prepare::PrepareSecrets {
+            github_token: github_token.to_owned(),
+            credential: credential.to_owned(),
+        }),
+        _ => None,
+    };
+    let valid = job["limits"]["wall_ms"]
+        .as_u64()
+        .is_some_and(|n| n <= PREPARE_WALL_MS)
+        && job["prepare"].is_object()
+        && job["context"].is_null();
+    let (result, fatal) = match secrets {
+        Some(secrets) if valid => match prepare::run(client, base, job, secrets, image).await {
+            Ok(result) => (result, None),
+            Err(error) => {
+                eprintln!("rio-runner: prepare job {id}: {error:#}");
+                let message = if error.is::<CleanupUnconfirmed>() {
+                    "runner could not confirm container cleanup".to_owned()
+                } else {
+                    rio_core::redact(&format!("runner prepare failed: {error:#}"))
+                        .chars()
+                        .take(300)
+                        .collect()
+                };
+                (failure(job, 125, &message, false), Some(error))
+            }
+        },
+        _ => (
+            failure(job, 125, "runner rejected prepare job", false),
+            None,
+        ),
+    };
+    complete(client, base, token, review, id, attempt, &result).await?;
+    match fatal {
+        Some(error) if error.is::<CleanupUnconfirmed>() => Err(error),
+        _ => Ok(Served::Job),
+    }
+}
+/// Wall limit of a prepare job (clone, snapshot, graph and upload).
+const PREPARE_WALL_MS: u64 = 600000;
 /// Host-side failures are marked `runner_failed` so verification never treats their
 /// nonzero exit codes as a reproduced failure.
 fn failure(job: &Value, exit_code: i32, message: &str, timed_out: bool) -> Value {

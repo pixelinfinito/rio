@@ -25,3 +25,4 @@ rio-profile = { path = "../rio-profile" }
 rio-adapters = { path = "../rio-adapters" }
 rio-engine = { path = "../rio-engine" }
 rio-graph = { path = "../rio-graph" }
+rio-client = { path = "../rio-client" }

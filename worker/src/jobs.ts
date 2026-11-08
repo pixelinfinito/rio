@@ -62,10 +62,10 @@ export const PREPARE_WALL_MS = 600000;
 export async function createPrepareJob(
   env: Env,
   review: string,
-  source: { prepare: PrepareSpec } | { snapshot_id: string },
+  source: { prepare: PrepareSpec; snapshot_id?: string },
 ): Promise<string> {
   const job = hash(`${review}-prepare`).slice(0, 32);
-  const sandbox = "snapshot_id" in source;
+  const sandbox = source.snapshot_id !== undefined;
   const execution: Execution = {
     protocol: 1,
     review_id: review,
@@ -74,7 +74,7 @@ export async function createPrepareJob(
     kind: "prepare",
     command: ["rio-internal", "prepare"],
     version: "head",
-    snapshot_id: sandbox ? source.snapshot_id : "",
+    snapshot_id: source.snapshot_id ?? "",
     needs: sandbox ? ["base", "head"] : [],
     limits: {
       wall_ms: PREPARE_WALL_MS,
@@ -84,7 +84,8 @@ export async function createPrepareJob(
       artifact_bytes: ARTIFACT_LIMIT,
     },
     network: sandbox ? false : "clone",
-    ...(sandbox ? {} : { prepare: source.prepare }),
+    // The PR's commits; never a secret.
+    prepare: source.prepare,
   };
   const key = `reviews/${review}/jobs/${job}/1/payload.json`;
   await new Store(env).put(key, execution);

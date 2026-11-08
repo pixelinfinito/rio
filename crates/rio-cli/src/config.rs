@@ -12,6 +12,8 @@ use std::{
 pub struct MachineConfig {
     pub config_dir: PathBuf,
     pub endpoint_url: Option<String>,
+    /// The registered GitHub App's identifiers (`[github_app]`), if any.
+    pub github_app: Option<crate::github_app::AppRecord>,
     pub cache: CacheOptions,
     pub parallelism: usize,
     pub output_limit: usize,
@@ -67,6 +69,7 @@ impl MachineConfig {
         let config_dir = config_directory()?;
         let file = config_dir.join("config.toml");
         let mut values = BTreeMap::<String, (toml::Value, String)>::new();
+        let mut github_app = None;
         let known = [
             "endpoint.url",
             "cache.dir",
@@ -114,6 +117,14 @@ impl MachineConfig {
                 {
                     let deployment: crate::deployment::Deployment = deployment.try_into()?;
                     deployment.validate()?;
+                }
+                if let Some(table) = document.as_table_mut()
+                    && let Some(app) = table.remove("github_app")
+                {
+                    github_app = Some(
+                        app.try_into()
+                            .with_context(|| format!("github_app in {}", file.display()))?,
+                    );
                 }
                 flatten(
                     "",
@@ -163,6 +174,7 @@ impl MachineConfig {
         let mut config = Self {
             config_dir,
             endpoint_url: None,
+            github_app,
             cache: CacheOptions::for_repository(root),
             parallelism: sysinfo::System::physical_core_count()
                 .unwrap_or(1)

@@ -285,7 +285,10 @@ describe("Sandbox preparation", () => {
       snapshot_id: expected,
       needs: ["base", "head"],
     });
-    expect(job.prepare).toBeUndefined();
+    expect(job.prepare).toMatchObject({
+      base_sha: pr.base.sha,
+      head_sha: pr.head.sha,
+    });
     expect(sent).toHaveLength(1);
     expect([...github.tokens.values()].every((t) => t.revoked)).toBe(true);
     // The container's artifact becomes the review; policy keys come from the record.

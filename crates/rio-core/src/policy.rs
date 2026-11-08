@@ -209,7 +209,8 @@ pub struct ExitContext {
 
 /// Precedence: usage/configuration or repository/internal errors, then a second
 /// interrupt, policy-matching findings, incomplete required analysis (including
-/// partial reports and missing votes, per `fail_on.incomplete`), success.
+/// partial reports and missing votes, per `fail_on.incomplete`), a failed
+/// publication, success.
 pub fn exit_code(report: &Report, policy: &CompiledFailOn, context: ExitContext) -> u8 {
     if let Some(error) = context.error {
         return match error {
@@ -242,6 +243,10 @@ pub fn exit_code(report: &Report, policy: &CompiledFailOn, context: ExitContext)
     // An unreadable verifier outcome could hide a policy failure; never report success.
     if audit.is_err() || policy.is_incomplete(report) {
         return 4;
+    }
+    // Publication was attempted and the host rejected part of it; the report stands.
+    if report.publication.as_ref().is_some_and(|p| p.failed > 0) {
+        return 5;
     }
     0
 }

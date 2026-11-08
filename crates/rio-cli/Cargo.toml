@@ -27,6 +27,9 @@ sysinfo.workspace = true
 blake3.workspace = true
 reqwest = { workspace = true, features = ["multipart"] }
 getrandom = "0.3"
+base64 = "0.22"
+hmac = "0.12"
+sha2 = "0.10"
 rpassword = "7.4"
 keyring = { version = "3.6.3", features = ["apple-native", "windows-native", "sync-secret-service", "crypto-rust", "vendored"] }
 rio-graph = { path = "../rio-graph" }

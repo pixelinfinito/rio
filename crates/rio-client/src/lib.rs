@@ -187,9 +187,21 @@ impl Client {
                     )?);
                 }
                 Some("error" | "cancelled") => {
-                    anyhow::bail!("endpoint review did not complete: {id}")
+                    // The endpoint's own short reason (for example
+                    // fork_requires_self_hosted_runner); never a raw body.
+                    let reason = status["error"]
+                        .as_str()
+                        .filter(|e| {
+                            !e.is_empty()
+                                && e.len() <= 300
+                                && e.chars().all(|c| c == ' ' || c.is_ascii_graphic())
+                        })
+                        .map(|e| format!(" ({e})"))
+                        .unwrap_or_default();
+                    anyhow::bail!("endpoint review did not complete: {id}{reason}")
                 }
-                Some("queued" | "running") => {}
+                // A pull request review is prepared on the endpoint first.
+                Some("queued" | "running" | "preparing") => {}
                 _ => anyhow::bail!("unknown endpoint review status"),
             }
             tokio::select! { _=cancellation.cancelled()=>{}, _=tokio::time::sleep(Duration::from_secs(1))=>{} }
@@ -246,6 +258,71 @@ impl Client {
             Some(body),
         )
         .await
+    }
+    /// Asks the endpoint to prepare and review a pull request (`POST /v1/pulls`).
+    pub async fn pull_review(
+        &self,
+        repository: &str,
+        number: u64,
+        publish: bool,
+    ) -> Result<String> {
+        let result = self
+            .request(
+                reqwest::Method::POST,
+                "v1/pulls",
+                Some(&json!({"repository": repository, "number": number, "publish": publish})),
+            )
+            .await?;
+        Ok(path_id(
+            result["id"]
+                .as_str()
+                .context("pull request response omitted id")?,
+        )?
+        .into())
+    }
+    /// The endpoint's GitHub App state for a repository (`GET /v1/github/installation`).
+    pub async fn github_installation(&self, repository: &str) -> Result<Value> {
+        self.get_query("v1/github/installation", &[("repository", repository)])
+            .await
+    }
+    /// Sets the app's webhook secret through the endpoint (`POST /v1/github/hook-config`).
+    pub async fn hook_config(&self, body: &Value) -> Result<Value> {
+        self.request(reqwest::Method::POST, "v1/github/hook-config", Some(body))
+            .await
+    }
+    /// Consent to publish a finished `ask` review (`POST /v1/reviews/{id}/publish`).
+    pub async fn publish(&self, id: &str) -> Result<()> {
+        self.request(
+            reqwest::Method::POST,
+            &format!("v1/reviews/{}/publish", path_id(id)?),
+            Some(&json!({})),
+        )
+        .await?;
+        Ok(())
+    }
+    pub async fn report(&self, id: &str) -> Result<Report> {
+        Ok(serde_json::from_value(
+            self.request(
+                reqwest::Method::GET,
+                &format!("v1/reviews/{}/report", path_id(id)?),
+                None,
+            )
+            .await?,
+        )?)
+    }
+    /// The endpoint's version (`GET /health`), without authentication.
+    pub async fn health(&self) -> Result<Value> {
+        let response = self
+            .http
+            .get(self.base.join("health")?)
+            .send()
+            .await
+            .context("contacting Rio endpoint")?;
+        ensure!(
+            response.status().is_success(),
+            HttpStatus(response.status().as_u16())
+        );
+        Ok(response.json().await?)
     }
     pub async fn audit(&self, id: &str) -> Result<Value> {
         self.request(

@@ -1,9 +1,13 @@
 mod config;
 mod deployment;
 mod endpoint;
+mod github_app;
 mod lineage;
+mod prepare;
 mod providers;
+mod pull;
 mod registry;
+use anyhow::Context;
 use clap::{Args, Parser, Subcommand, ValueEnum};
 use config::MachineConfig;
 use rio_adapters::{ProcessSupervisor, ToolResolver};
@@ -34,10 +38,19 @@ enum Command {
     },
     Doctor(DoctorArgs),
     Init {
-        #[arg(long, conflicts_with_all = ["from", "account", "name", "cf_profile", "runner", "runner_image", "workers_subdomain", "credential_store", "secrets_file", "custom_providers", "default_model", "verifier_model", "dry_run"])]
+        #[arg(long, conflicts_with_all = ["from", "account", "name", "cf_profile", "runner", "runner_image", "workers_subdomain", "credential_store", "secrets_file", "custom_providers", "default_model", "verifier_model", "dry_run", "github_app", "github_org", "replace_private_key"])]
         endpoint: Option<String>,
         #[arg(long, requires = "endpoint")]
         token_stdin: bool,
+        /// Register a GitHub App for PR mode after deploying (skippable; replayed by --from).
+        #[arg(long)]
+        github_app: bool,
+        /// Register the app under this GitHub organization instead of your account.
+        #[arg(long, value_name = "ORG")]
+        github_org: Option<String>,
+        /// Store a new private key (PEM file) for the registered app on the endpoint.
+        #[arg(long, value_name = "PEM")]
+        replace_private_key: Option<PathBuf>,
         #[command(flatten)]
         deployment: deployment::DeployArgs,
     },
@@ -51,6 +64,9 @@ enum Command {
         #[command(subcommand)]
         command: registry::SuppressionsCommand,
     },
+    /// Internal: hosted preparation of a pull request review (runner only).
+    #[command(hide = true)]
+    Prepare(prepare::PrepareArgs),
     /// Run the evaluation harness (requires python3 and Rio's `eval/` directory).
     Eval {
         #[command(subcommand)]
@@ -173,6 +189,9 @@ enum ProfileCommand {
 }
 #[derive(Args)]
 struct DoctorArgs {
+    /// Rotate the GitHub App webhook secret on the app and the endpoint.
+    #[arg(long)]
+    rotate: bool,
     /// Inspect every detected project, including roots outside the current diff.
     #[arg(long)]
     all_roots: bool,
@@ -205,18 +224,30 @@ async fn main() -> ExitCode {
         Command::Init {
             endpoint,
             token_stdin,
+            github_app,
+            github_org,
+            replace_private_key,
             deployment,
         } => {
             if let Some(endpoint) = endpoint {
                 run_init(endpoint, token_stdin)
             } else {
-                run_deploy(deployment).await
+                let dry_run = deployment.dry_run;
+                let replay = deployment.from.is_some();
+                match run_deploy(deployment).await {
+                    0 if !dry_run => {
+                        run_github_app_step(github_app, github_org, replace_private_key, replay)
+                            .await
+                    }
+                    code => code,
+                }
             }
         }
         Command::Deploy(args) => run_deploy(args).await,
         Command::Feedback(args) => run_feedback(args).await,
         Command::Findings(args) => registry::findings(args).await,
         Command::Suppressions { command } => registry::suppressions(command).await,
+        Command::Prepare(args) => prepare::run(args).await,
         Command::Eval { command } => run_eval(command),
     };
     ExitCode::from(code)
@@ -340,16 +371,9 @@ fn loader(root: Option<PathBuf>, config: &MachineConfig, cwd: PathBuf) -> Profil
 }
 async fn run_review(args: ReviewArgs) -> u8 {
     let started = utc_now();
-    for (flag, present) in [("--pr", args.pr.is_some()), ("--publish", args.publish)] {
-        if present {
-            return error_report(
-                args.format,
-                2,
-                "endpoint_required",
-                format!("{flag} is not implemented by the current endpoint protocol"),
-                Vec::new(),
-            );
-        }
+    // A pull request is prepared and reviewed by the endpoint, never locally.
+    if args.pr.is_some() || args.publish {
+        return pull::review(args, started).await;
     }
     let cwd = match current_dir() {
         Ok(cwd) => cwd,
@@ -633,6 +657,26 @@ async fn run_review(args: ReviewArgs) -> u8 {
     {
         eprintln!("No changes to review");
     }
+    let code = render(report, &args, started, &policy, posted.as_ref());
+    signals.abort();
+    code
+}
+/// Renders a finished review in the requested format; returns the exit code.
+fn render_and_exit(
+    report: Report,
+    args: &ReviewArgs,
+    started: String,
+    policy: &CompiledFailOn,
+) -> u8 {
+    render(report, args, started, policy, None)
+}
+fn render(
+    report: Report,
+    args: &ReviewArgs,
+    started: String,
+    policy: &CompiledFailOn,
+    posted: Option<&std::collections::BTreeSet<String>>,
+) -> u8 {
     let width = std::env::var("COLUMNS")
         .ok()
         .and_then(|v| v.parse().ok())
@@ -642,11 +686,11 @@ async fn run_review(args: ReviewArgs) -> u8 {
         color: io::stdout().is_terminal() && !args.no_color,
         show_pre_existing: args.show_pre_existing,
         show_remembered: args.show_remembered,
-        policy: Some(&policy),
-        posted: posted.as_ref(),
+        policy: Some(policy),
+        posted,
     };
     // SARIF records the exit code, so it is decided before rendering.
-    let exit = exit_code(&report, &policy, ExitContext::default());
+    let exit = exit_code(&report, policy, ExitContext::default());
     let output = match args.format {
         Format::Json => render_json(&report),
         Format::Sarif => render_sarif(
@@ -666,7 +710,6 @@ async fn run_review(args: ReviewArgs) -> u8 {
         },
         Err(error) => error_report(args.format, 3, "invalid_report", error, Vec::new()),
     };
-    signals.abort();
     code
 }
 fn run_profile(command: ProfileCommand) -> u8 {
@@ -734,7 +777,206 @@ fn run_profile(command: ProfileCommand) -> u8 {
         }
     }
 }
+/// `rio init`'s GitHub App step (docs/github-app.md): register through the
+/// manifest flow, or replace the private key of the registered app.
+async fn run_github_app_step(
+    flag: bool,
+    organization: Option<String>,
+    replace_key: Option<PathBuf>,
+    replay: bool,
+) -> u8 {
+    let result = async {
+        let directory = config::config_directory()?;
+        let mut deployment =
+            deployment::choices(&deployment::DeployArgs::default(), &directory)?;
+        let config = MachineConfig::load(&directory)?;
+        let endpoint = config
+            .endpoint_url
+            .clone()
+            .context("the deployment did not record an endpoint")?;
+        let wanted = flag
+            || replace_key.is_some()
+            || (replay && deployment.github_app)
+            || (!replay
+                && config.github_app.is_none()
+                && io::stdin().is_terminal()
+                && {
+                    eprint!("Register a GitHub App for pull request reviews (PR mode)? [y/N] ");
+                    let _ = io::stderr().flush();
+                    let mut answer = String::new();
+                    io::stdin().read_line(&mut answer).is_ok()
+                        && matches!(answer.trim().to_ascii_lowercase().as_str(), "y" | "yes")
+                });
+        if !wanted {
+            eprintln!("GitHub App step skipped; CLI reviews work without it (rio init --github-app adds it later).");
+            return Ok(());
+        }
+        let cf = deployment::Cloudflare::new(deployment::authentication(&deployment.cf_profile).await?)?;
+        if let Some(path) = replace_key {
+            let pem = std::fs::read_to_string(&path)
+                .with_context(|| format!("reading {}", path.display()))?;
+            anyhow::ensure!(
+                pem.contains("PRIVATE KEY-----"),
+                "{} is not a PEM private key",
+                path.display()
+            );
+            github_app::put_secret(&cf, &deployment, "GITHUB_APP_PRIVATE_KEY", pem.trim()).await?;
+            eprintln!("Stored the new GitHub App private key on the endpoint; confirm with rio doctor, then delete the old key on GitHub.");
+            return Ok(());
+        }
+        if let Some(record) = &config.github_app {
+            // A replay on a new machine keeps the registered app and its secrets.
+            let client = endpoint::client(&endpoint, &config.config_dir)?;
+            let status = client.github_installation("github.com/rio/probe").await;
+            if status.is_ok_and(|s| s["configured"] == true) {
+                eprintln!(
+                    "GitHub App {} is already registered and configured on the endpoint; install it at {}",
+                    record.slug, record.installation_url
+                );
+                return Ok(());
+            }
+        }
+        let record = github_app::register(
+            &cf,
+            &deployment,
+            &endpoint,
+            organization.as_deref().or(deployment.github_org.as_deref()),
+            &github_app::open_browser,
+        )
+        .await?;
+        github_app::save_record(&directory, &record)?;
+        deployment.github_app = true;
+        if organization.is_some() {
+            deployment.github_org = organization;
+        }
+        deployment::save_deployment(&directory, &deployment)?;
+        eprintln!(
+            "GitHub App {} registered (id {}); its secrets are stored on the endpoint only.\nInstall it on your repositories: {}",
+            record.slug, record.app_id, record.installation_url
+        );
+        anyhow::Ok(())
+    }
+    .await;
+    match result {
+        Ok(()) => 0,
+        Err(error) => {
+            eprintln!("GitHub App step failed: {}", redact(&format!("{error:#}")));
+            3
+        }
+    }
+}
+/// The endpoint's GitHub App state for doctor; warnings never change the exit code.
+async fn endpoint_diagnostics(
+    config: &MachineConfig,
+    url: &str,
+    repository: Option<String>,
+    publish: Option<String>,
+    warnings: &mut Vec<String>,
+) -> serde_json::Value {
+    let mut section = json!({"url": url, "publish_policy": publish});
+    let client = match endpoint::client(url, &config.config_dir) {
+        Ok(client) => client,
+        Err(error) => {
+            warnings.push(format!("Endpoint credentials unavailable: {error:#}"));
+            return section;
+        }
+    };
+    match client.health().await {
+        Ok(health) => {
+            section["version"] = health["version"].clone();
+            section["paired"] = json!(health["protocol"] == 1);
+            if health["protocol"] != 1 {
+                warnings.push(
+                    "The endpoint speaks another protocol version; redeploy it with rio deploy"
+                        .into(),
+                );
+            }
+        }
+        Err(error) => warnings.push(format!("Endpoint unreachable: {error:#}")),
+    }
+    let Some(repository) = repository.filter(|r| r.starts_with("github.com/")) else {
+        return section;
+    };
+    match client.github_installation(&repository).await {
+        Ok(status) => {
+            section["github_app"] = json!({"configured": status["configured"], "installed": status["installed"], "repository": repository});
+            if status["configured"] != true {
+                warnings.push("No GitHub App is configured on the endpoint; PR mode needs rio init --github-app".into());
+            } else if status["installed"] != true {
+                let url = config
+                    .github_app
+                    .as_ref()
+                    .map(|app| app.installation_url.clone())
+                    .unwrap_or_else(|| "https://github.com/settings/installations".into());
+                warnings.push(format!(
+                    "The GitHub App is not installed on {repository}; install it at {url}"
+                ));
+            }
+        }
+        Err(error) if rio_client::http_status(&error) == Some(404) => {
+            section["github_app"] =
+                json!({"configured": null, "installed": null, "repository": repository});
+            warnings.push(
+                "The endpoint does not report GitHub App state; redeploy it with rio deploy".into(),
+            );
+        }
+        Err(error) => warnings.push(format!("GitHub App state unavailable: {error:#}")),
+    }
+    section
+}
+async fn run_rotate() -> u8 {
+    let result = async {
+        let directory = config::config_directory()?;
+        let deployment = deployment::choices(&deployment::DeployArgs::default(), &directory)?;
+        let config = MachineConfig::load(&directory)?;
+        let url = config
+            .endpoint_url
+            .clone()
+            .context("rio doctor --rotate needs a configured endpoint")?;
+        anyhow::ensure!(
+            deployment.account_id.is_some(),
+            "rio doctor --rotate needs a deployment made with rio init (the Worker's secrets are set through Cloudflare)"
+        );
+        let client = endpoint::client(&url, &config.config_dir)?;
+        let cf = deployment::Cloudflare::new(deployment::authentication(&deployment.cf_profile).await?)?;
+        anyhow::Ok((cf, deployment, url, client))
+    }
+    .await;
+    let (cf, deployment, url, client) = match result {
+        Ok(values) => values,
+        Err(error) => {
+            eprintln!("{}", redact(&format!("{error:#}")));
+            return 2;
+        }
+    };
+    match github_app::rotate(
+        &cf,
+        &deployment,
+        &url,
+        &client,
+        std::time::Duration::from_secs(60),
+    )
+    .await
+    {
+        Ok(()) => {
+            eprintln!(
+                "Webhook secret rotated: the GitHub App and the endpoint share the new secret, and a signed ping verified."
+            );
+            0
+        }
+        Err((step, error)) => {
+            eprintln!(
+                "Rotation failed at the {step} step: {}; the previous secret stays in effect on the app and the endpoint.",
+                redact(&format!("{error:#}"))
+            );
+            1
+        }
+    }
+}
 async fn run_doctor(args: DoctorArgs) -> u8 {
+    if args.rotate {
+        return run_rotate().await;
+    }
     let mut problems = Vec::<String>::new();
     let mut warnings = Vec::<String>::new();
     let mut document = json!({"repository":null,"head":null,"profile":null,"configuration":null,"cache":null,"plan":null});
@@ -862,6 +1104,20 @@ async fn run_doctor(args: DoctorArgs) -> u8 {
         }
     }
     document["endpoint"] = json!(config.as_ref().and_then(|c| c.endpoint_url.as_ref()));
+    if let Some(config) = &config
+        && let Some(url) = &config.endpoint_url
+    {
+        let repository = repo.as_ref().and_then(|repo| {
+            lineage::repository_key(repo.root(), repo.remote_url("origin").as_deref()).ok()
+        });
+        let publish = loader(repo.as_ref().map(|r| r.root().into()), config, cwd.clone())
+            .load(None)
+            .ok()
+            .and_then(|p| serde_json::to_value(&p.profile.publish).ok())
+            .and_then(|v| v.as_str().map(str::to_owned));
+        document["endpoint"] =
+            endpoint_diagnostics(config, url, repository, publish, &mut warnings).await;
+    }
     document["blocking_problems"] = json!(problems);
     document["warnings"] = json!(warnings);
     if args.format == DoctorFormat::Json {

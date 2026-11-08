@@ -1,8 +1,7 @@
 use anyhow::{Context, Result, ensure};
-use rio_core::{Report, ReportStatus, ReviewHeader, ReviewMode};
+use rio_core::{Report, ReportStatus};
 use rio_engine::{CacheOptions, RunCache, profile_excludes};
-use rio_git::{ChangeSet, Selection, Snapshot, diff};
-use rio_graph::{GraphBuilder, GraphOptions};
+use rio_git::{ChangeSet, Snapshot, diff};
 use rio_profile::ResolvedProfile;
 use serde_json::json;
 use std::{collections::BTreeSet, path::Path, time::Duration};
@@ -10,11 +9,7 @@ use std::{collections::BTreeSet, path::Path, time::Duration};
 use crate::lineage::{BranchLineage, LocalLineage};
 use tokio_util::sync::CancellationToken;
 /// Wall-time budget for building the impact graph before an endpoint review.
-const GRAPH_BUDGET: std::time::Duration = std::time::Duration::from_secs(120);
-/// JSON bytes per graph version in the submission. Edges dominate large slices
-/// (tens of thousands at two hops in big repositories), and the endpoint caps the
-/// submission body; the runner rebuilds the complete graph from the snapshot.
-const SUBMITTED_GRAPH_BYTES: usize = 2 * 1024 * 1024;
+pub const GRAPH_BUDGET: std::time::Duration = std::time::Duration::from_secs(120);
 
 pub struct EndpointRequest<'a> {
     pub url: &'a str,
@@ -83,77 +78,46 @@ pub async fn review(
         lineage,
     } = request;
     let client = client(url, config_dir)?;
-    let delta = diff(&changes, &profile_excludes(&profile))?;
-    if delta.files.is_empty() {
+    if diff(&changes, &profile_excludes(&profile))?
+        .files
+        .is_empty()
+    {
         return Ok(EndpointOutcome {
             report: Report::empty(ReportStatus::NoChanges),
             posted: None,
         });
     }
     let snapshot = Snapshot::from_changes(&changes);
-    let id = blake3::hash(format!("{}|{}", snapshot.key, profile.hash()?).as_bytes()).to_hex()
-        [..16]
-        .to_owned();
+    let id = rio_engine::review_id(&snapshot.key, &profile)?;
+    // Triage can select either budget after submission. Allow the longest configured deadline.
+    let timeout = review_timeout(&profile)?;
     let cache = RunCache::begin(cache, id.clone())?;
+    // Snapshot parsing only. Repository commands run exclusively in the remote runner.
+    let Some(prepared) = rio_engine::build_submission(
+        &changes,
+        &profile,
+        &rio_engine::SubmissionOptions {
+            graph_budget: graph_budget(),
+            deep,
+            fork,
+            repository: repository.clone(),
+            run_id: cache.run_id.clone(),
+        },
+    )?
+    else {
+        return Ok(EndpointOutcome {
+            report: Report::empty(ReportStatus::NoChanges),
+            posted: None,
+        });
+    };
     cache.reference(&format!("snapshots/{}.tar.zst", snapshot.key))?;
     snapshot.write(&cache.options.dir)?;
     cache.write("profile.resolved.yaml", profile.to_yaml()?.as_bytes())?;
-    let guidance = rio_engine::owner_guidance(&changes.head, &delta);
     cache.write(
         "owner_guidance.json",
-        &serde_json::to_vec_pretty(&guidance)?,
+        &serde_json::to_vec_pretty(&prepared.guidance)?,
     )?;
-    let graph_step = profile.profile.step("rio/graph");
-    let options = GraphOptions {
-        hops: graph_step
-            .and_then(|s| s.options["hops"].as_u64())
-            .unwrap_or(2) as usize,
-        max_nodes: graph_step
-            .and_then(|s| s.options["max_nodes"].as_u64())
-            .unwrap_or(2000) as usize,
-        exclude: profile_excludes(&profile),
-    };
-    // Snapshot parsing only. Repository commands run exclusively in the remote runner.
-    // The graph has a budget so a large repository yields a truncated graph, not a hang.
-    let budget = std::env::var("RIO_GRAPH_BUDGET_SECS")
-        .ok()
-        .and_then(|value| value.parse().ok())
-        .map_or(GRAPH_BUDGET, std::time::Duration::from_secs);
-    let deadline = std::time::Instant::now() + budget;
-    let graph = GraphBuilder::default().build_until(&changes, &delta, &options, &|| {
-        std::time::Instant::now() >= deadline
-    })?;
-    graph.write(&cache.path)?;
-    let mut report = Report::empty(ReportStatus::Complete);
-    report.review = ReviewHeader {
-        id: Some(id),
-        run_id: Some(cache.run_id.clone()),
-        mode: Some(match changes.selection {
-            Selection::WorkingTree => ReviewMode::WorkingTree,
-            Selection::Staged => ReviewMode::Staged,
-            Selection::Branch { .. } => ReviewMode::Branch,
-        }),
-        base: Some(changes.base_id.clone()),
-        head: Some(changes.head_id.clone()),
-        profile: Some(profile.profile.name.clone()),
-        chain: Some(profile.chain.clone()),
-        ..Default::default()
-    };
-    report.impact = graph.impact(options.hops);
-    if let Some(note) = graph.truncation_note(
-        false,
-        std::time::Instant::now() >= deadline,
-        "the graph deadline",
-    ) {
-        report.footer.notes.push(note);
-    }
-    let mut submitted = graph.clone();
-    if submitted.bound(SUBMITTED_GRAPH_BYTES) {
-        report.footer.notes.push(format!(
-            "Submitted impact graph bounded to {} per version; the runner rebuilds the complete graph",
-            rio_client::format_bytes(SUBMITTED_GRAPH_BYTES as u64)
-        ));
-    }
+    prepared.graphs.write(&cache.path)?;
     let upload = client.upload_snapshot(&changes.base, &changes.head).await?;
     eprintln!(
         "snapshot: uploaded {} in {} new contents ({} in {} distinct contents, {} files total)",
@@ -164,17 +128,14 @@ pub async fn review(
         rio_client::format_count(upload.files as u64)
     );
     let snapshot_id = upload.id;
-    let changed:Vec<_>=delta.files.iter().filter(|f|f.excluded.is_none()).map(|f|json!({"path":f.path,"old_path":f.old_path,"lines_changed":f.hunks.iter().map(|h|h.base.count.max(h.head.count) as u64).sum::<u64>()})).collect();
     let before = match &lineage {
         Some(lineage) => Some(lineage_before(&client, &cache.options, lineage).await?),
         None => None,
     };
-    let mut submission = json!({"protocol":1,"snapshot_id":snapshot_id,"profile":profile,"report":report,"changed":changed,"graphs":{"base":submitted.base,"head":submitted.head},"owner_guidance":guidance,"intent":format!("Review the change from {} to {}",changes.base_id,changes.head_id),"fork":fork,"mode":if deep{"deep"}else{"fast"}});
+    let mut submission = prepared.submission;
+    submission["snapshot_id"] = json!(snapshot_id);
     if let Some(lineage) = &lineage {
         submission["lineage"] = lineage.submission();
-    }
-    if let Some(repository) = &repository {
-        submission["repository"] = json!(repository);
     }
     let remote_id = client.submit(&submission).await?;
     eprintln!("Endpoint review: {remote_id}");
@@ -182,16 +143,6 @@ pub async fn review(
         "endpoint.json",
         &serde_json::to_vec(&json!({"id":remote_id,"url":url}))?,
     )?;
-    // Triage can select either budget after submission. Allow the longest configured deadline.
-    let timeout = [&profile.profile.budget.fast]
-        .into_iter()
-        .chain(profile.profile.budget.deep.as_ref())
-        .map(|budget| rio_profile::parse_duration(&budget.wall_time).map_err(anyhow::Error::msg))
-        .collect::<Result<Vec<_>>>()?
-        .into_iter()
-        .max()
-        .unwrap_or_default()
-        + Duration::from_secs(60);
     let mut report = client.wait(&remote_id, cancellation, timeout).await?;
     ensure!(
         report.review.id
@@ -226,4 +177,26 @@ pub async fn review(
         eprintln!("Warning: cache pruning failed: {error:#}");
     }
     Ok(EndpointOutcome { report, posted })
+}
+
+/// The longest configured review deadline plus a minute: triage can select
+/// either budget after submission.
+pub fn review_timeout(profile: &ResolvedProfile) -> Result<Duration> {
+    Ok([&profile.profile.budget.fast]
+        .into_iter()
+        .chain(profile.profile.budget.deep.as_ref())
+        .map(|budget| rio_profile::parse_duration(&budget.wall_time).map_err(anyhow::Error::msg))
+        .collect::<Result<Vec<_>>>()?
+        .into_iter()
+        .max()
+        .unwrap_or_default()
+        + Duration::from_secs(60))
+}
+
+/// The graph budget, overridable with `RIO_GRAPH_BUDGET_SECS`.
+pub fn graph_budget() -> Duration {
+    std::env::var("RIO_GRAPH_BUDGET_SECS")
+        .ok()
+        .and_then(|value| value.parse().ok())
+        .map_or(GRAPH_BUDGET, Duration::from_secs)
 }

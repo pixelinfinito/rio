@@ -2394,3 +2394,331 @@ fn suppressions_append_to_an_existing_profile_and_decline_with_a_note() {
     );
     assert!(!temp.path().join(".rio/profiles/default.yaml").exists());
 }
+
+/// An endpoint with the GitHub App installed on `acme/shop` that prepares and
+/// reviews PR 7, answering with `report`.
+fn pull_request_endpoint(installed: bool, report: Value) -> MockEndpoint {
+    let mut polls = 0;
+    MockEndpoint::start(move |method, path, _| {
+        let route = path.split('?').next().unwrap_or(path);
+        match (method, route) {
+            ("GET", "/v1/github/installation") => (
+                200,
+                serde_json::json!({"configured": true, "repository": "acme/shop", "installed": installed}),
+            ),
+            ("POST", "/v1/pulls") => (
+                202,
+                serde_json::json!({"id": "pr-review-1", "status": "preparing"}),
+            ),
+            ("GET", "/v1/reviews/pr-review-1") => {
+                polls += 1;
+                let status = if polls < 2 { "preparing" } else { "complete" };
+                (
+                    200,
+                    serde_json::json!({"id": "pr-review-1", "status": status, "error": null}),
+                )
+            }
+            ("GET", "/v1/reviews/pr-review-1/report") => (200, report.clone()),
+            _ => (404, serde_json::json!({"error": "not found"})),
+        }
+    })
+}
+fn pr_report() -> Value {
+    serde_json::from_str(include_str!(
+        "../../../tests/fixtures/sarif/pr-lineage/report.json"
+    ))
+    .unwrap()
+}
+#[test]
+fn pull_request_reviews_run_on_the_endpoint_with_their_exit_codes() {
+    let temp = repository();
+    let root = temp.path();
+    git(
+        root,
+        &[
+            "remote",
+            "add",
+            "origin",
+            "https://github.com/acme/shop.git",
+        ],
+    );
+    // Local edits never reach a PR review.
+    fs::write(root.join("a.txt"), "uncommitted local edit\n").unwrap();
+    let review = |endpoint: &MockEndpoint, args: &[&str]| {
+        rio(root)
+            .env("RIO_ENDPOINT_URL", &endpoint.url)
+            .env("RIO_API_TOKEN", TOKEN)
+            .env("COLUMNS", "300")
+            .args(["review", "--pr", "7"])
+            .args(args)
+            .output()
+            .unwrap()
+    };
+    // Selection flags cannot be combined with --pr.
+    let endpoint = pull_request_endpoint(true, pr_report());
+    let output = review(&endpoint, &["--base", "main", "--format", "json"]);
+    assert_eq!(output.status.code(), Some(2));
+    assert!(
+        json_report(&output)["error"]["message"]
+            .as_str()
+            .unwrap()
+            .contains("--pr cannot be combined with selection flags")
+    );
+    assert!(endpoint.take().is_empty());
+    // Without an installation covering origin: exit 2 naming rio init's GitHub App step.
+    let missing = pull_request_endpoint(false, pr_report());
+    let output = review(&missing, &["--format", "json"]);
+    assert_eq!(output.status.code(), Some(2));
+    let report = json_report(&output);
+    assert_eq!(report["error"]["code"], "no_installation");
+    let message = report["error"]["message"].as_str().unwrap();
+    assert!(
+        message.contains("rio init --github-app") && message.contains("GitHub App step"),
+        "{message}"
+    );
+    assert_eq!(
+        missing
+            .take()
+            .iter()
+            .map(|r| r.1.as_str())
+            .collect::<Vec<_>>(),
+        ["/v1/github/installation?repository=github.com%2Facme%2Fshop"]
+    );
+    // The recorded PR-mode review: the report, header and publication footer render;
+    // its two new static-proven defects fail the default policy.
+    let output = review(&endpoint, &[]);
+    assert_eq!(
+        output.status.code(),
+        Some(1),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let text = String::from_utf8_lossy(&output.stdout);
+    assert!(text.contains("Pull request: acme/shop#7  Head: "), "{text}");
+    assert!(text.contains("Author: octocat (user)"), "{text}");
+    assert!(
+        text.contains("Publication (auto): 2 posted, 0 edited, 0 resolved, 0 unanchored (in the summary), 0 failed"),
+        "{text}"
+    );
+    let requests = endpoint.take();
+    assert_eq!(
+        requests.iter().find(|r| r.1 == "/v1/pulls").unwrap().2,
+        serde_json::json!({"repository": "github.com/acme/shop", "number": 7, "publish": false})
+    );
+    // Nothing is built or uploaded from the local checkout.
+    assert!(
+        requests
+            .iter()
+            .all(|r| !r.1.starts_with("/v1/contents") && r.1 != "/v1/reviews")
+    );
+    // A clean review whose publication failed exits 5 with the report written.
+    let mut failed = pr_report();
+    failed["findings"] = serde_json::json!([]);
+    failed["agent_audit"]["policy_failed"] = serde_json::json!(false);
+    failed["publication"]["failed"] = serde_json::json!(1);
+    failed["publication"]["failures"] = serde_json::json!([{"id": "summary", "kind": "summary", "error": "GitHub returned HTTP 502"}]);
+    let endpoint = pull_request_endpoint(true, failed);
+    let output = review(&endpoint, &["--publish", "--format", "json"]);
+    assert_eq!(
+        output.status.code(),
+        Some(5),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    assert_eq!(json_report(&output)["publication"]["failed"], 1);
+    assert_eq!(
+        endpoint
+            .take()
+            .iter()
+            .find(|r| r.1 == "/v1/pulls")
+            .unwrap()
+            .2["publish"],
+        true
+    );
+    // --publish under `never` publishes nothing and says why.
+    let mut never = pr_report();
+    never["findings"] = serde_json::json!([]);
+    never["publication"] = serde_json::json!({"policy": "never", "posted": 0, "edited": 0, "resolved": 0, "failed": 0, "unanchored": 0, "check_run_url": null, "summary_comment_url": null, "reason": "policy_never"});
+    let endpoint = pull_request_endpoint(true, never);
+    let output = review(&endpoint, &["--publish"]);
+    assert_eq!(
+        output.status.code(),
+        Some(0),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    assert!(
+        String::from_utf8_lossy(&output.stderr)
+            .contains("The profile forbids publication (publish: never)")
+    );
+    assert!(
+        String::from_utf8_lossy(&output.stdout).contains("the profile's publish policy is never")
+    );
+}
+
+/// Accepts snapshot uploads and records every submission; reviews then fail
+/// fast, since only the submission is compared.
+fn submission_endpoint() -> MockEndpoint {
+    MockEndpoint::start(|method, path, _| {
+        let route = path.split('?').next().unwrap_or(path);
+        match (method, route) {
+            ("POST", "/v1/contents/missing") => (200, serde_json::json!({"missing": []})),
+            ("PUT", p) if p.starts_with("/v1/manifests/") => (201, serde_json::json!({"chunk": 0})),
+            ("POST", p) if p.starts_with("/v1/manifests/") && p.ends_with("/seal") => (
+                201,
+                serde_json::json!({"id": p.trim_start_matches("/v1/manifests/").trim_end_matches("/seal")}),
+            ),
+            ("POST", "/v1/reviews") => (
+                202,
+                serde_json::json!({"id": "submitted-review", "status": "queued"}),
+            ),
+            ("GET", "/v1/reviews/submitted-review") => (
+                200,
+                serde_json::json!({"id": "submitted-review", "status": "error", "error": "stop"}),
+            ),
+            _ => (404, serde_json::json!({"error": "not found"})),
+        }
+    })
+}
+#[test]
+fn hosted_prepare_submits_what_rio_review_submits_under_the_base_profile() {
+    let temp = repository();
+    let root = temp.path();
+    let head_sha = |root: &Path| {
+        String::from_utf8(
+            std::process::Command::new("git")
+                .arg("-C")
+                .arg(root)
+                .args(["rev-parse", "HEAD"])
+                .output()
+                .unwrap()
+                .stdout,
+        )
+        .unwrap()
+        .trim()
+        .to_owned()
+    };
+    fs::create_dir_all(root.join("src")).unwrap();
+    fs::write(root.join("src/app.py"), "def total():\n    return 1\n").unwrap();
+    fs::write(root.join("AGENTS.md"), "Keep totals exact.\n").unwrap();
+    git(root, &["add", "."]);
+    git(root, &["commit", "-m", "app"]);
+    let base = head_sha(root);
+    git(root, &["checkout", "-b", "feature"]);
+    fs::write(
+        root.join("src/app.py"),
+        "def total():\n    return 2\n\ndef tax():\n    return total() * 2\n",
+    )
+    .unwrap();
+    git(root, &["add", "."]);
+    git(root, &["commit", "-m", "change"]);
+    let head = head_sha(root);
+    let endpoint = submission_endpoint();
+    let run = |args: &[&str]| {
+        rio(root)
+            .env("RIO_ENDPOINT_URL", &endpoint.url)
+            .env("RIO_API_TOKEN", TOKEN)
+            .args(args)
+            .output()
+            .unwrap()
+    };
+    run(&["review", "--base", &base, "--format", "json"]);
+    // `rio review` keys the registry by the directory without an origin; a PR's
+    // key is set by the endpoint, so the hosted job passes it here.
+    let directory = root.file_name().unwrap().to_string_lossy().to_string();
+    let output = run(&[
+        "prepare",
+        "--base",
+        &base,
+        "--head",
+        &head,
+        "--repository",
+        &directory,
+        "--submit",
+    ]);
+    assert_eq!(
+        output.status.code(),
+        Some(0),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    assert_eq!(
+        serde_json::from_slice::<Value>(&output.stdout).unwrap(),
+        serde_json::json!({"id": "submitted-review"})
+    );
+    let submissions: Vec<Value> = endpoint
+        .take()
+        .into_iter()
+        .filter(|r| r.1 == "/v1/reviews")
+        .map(|r| r.2)
+        .collect();
+    assert_eq!(submissions.len(), 2);
+    // Same snapshot, changed files, graph node set, guidance, intent and header;
+    // only the local run id differs.
+    let normalized = |s: &Value| {
+        let mut s = s.clone();
+        s["report"]["review"]["run_id"] = Value::Null;
+        s
+    };
+    assert_eq!(normalized(&submissions[0]), normalized(&submissions[1]));
+    assert_eq!(submissions[1]["report"]["review"]["base"], base.as_str());
+    assert_eq!(submissions[1]["report"]["review"]["head"], head.as_str());
+    assert_eq!(submissions[1]["owner_guidance"][0]["path"], "AGENTS.md");
+    // --output writes the same submission and both trees for the runner's uploader.
+    let out = root.join("prepared");
+    let output = rio(root)
+        .args([
+            "prepare",
+            "--base",
+            &base,
+            "--head",
+            &head,
+            "--repository",
+            &directory,
+            "--output",
+        ])
+        .arg(&out)
+        .output()
+        .unwrap();
+    assert_eq!(
+        output.status.code(),
+        Some(0),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let written: Value =
+        serde_json::from_slice(&fs::read(out.join("submission.json")).unwrap()).unwrap();
+    let mut expected = normalized(&submissions[1]);
+    expected.as_object_mut().unwrap().remove("snapshot_id");
+    assert_eq!(normalized(&written), expected);
+    assert_eq!(
+        fs::read_to_string(out.join("head/src/app.py"))
+            .unwrap()
+            .lines()
+            .count(),
+        5
+    );
+    assert_eq!(
+        fs::read_to_string(out.join("base/src/app.py")).unwrap(),
+        "def total():\n    return 1\n"
+    );
+    // The PR's own profile change never sets its policy: the base profile does.
+    fs::create_dir_all(root.join(".rio/profiles")).unwrap();
+    fs::write(
+        root.join(".rio/profiles/default.yaml"),
+        "version: 1\nname: pr-policy\nextends: rio/base\npublish: auto\n",
+    )
+    .unwrap();
+    git(root, &["add", "."]);
+    git(root, &["commit", "-m", "policy"]);
+    let head = head_sha(root);
+    run(&["prepare", "--base", &base, "--head", &head, "--submit"]);
+    let submitted = endpoint
+        .take()
+        .into_iter()
+        .find(|r| r.1 == "/v1/reviews")
+        .unwrap()
+        .2;
+    assert_eq!(submitted["profile"]["name"], "rio/base");
+    assert_eq!(submitted["profile"]["publish"], "never");
+}

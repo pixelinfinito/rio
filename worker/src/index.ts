@@ -661,7 +661,11 @@ app.post("/v1/runner/claim", async (c) => {
     .first<any>();
   if (!row) return c.json({ job: null });
   const payload = await new Store(c.env).get<Execution>(row.payload_key);
-  if (payload.kind !== "prepare" || !payload.prepare)
+  if (
+    payload.kind !== "prepare" ||
+    payload.network !== "clone" ||
+    !payload.prepare
+  )
     return c.json({
       job: payload,
       token: await jobToken(
