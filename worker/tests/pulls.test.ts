@@ -343,8 +343,9 @@ describe("Sandbox preparation", () => {
     expect(sent).toHaveLength(1);
     expect([...github.tokens.values()].every((t) => t.revoked)).toBe(true);
     // The container's artifact becomes the review; policy keys come from the record.
+    // The container's artifact carries no snapshot id; the job's is used.
     const s: any = submission();
-    s.snapshot_id = expected;
+    delete s.snapshot_id;
     s.changed = [{ path: "src/a.ts", lines_changed: 1 }];
     s.graphs = {
       base: { nodes: [], edges: [] },
@@ -378,6 +379,7 @@ describe("Sandbox preparation", () => {
       .first<any>();
     const stored = await new Store(runtime).get<any>(review.submission_key);
     expect(stored.fork).toBe(false);
+    expect(stored.snapshot_id).toBe(expected);
     expect(stored.lineage).toEqual({
       repository: "github.com/acme/svc",
       kind: "pr",
@@ -472,6 +474,11 @@ describe("self-hosted preparation", () => {
     const s: any = submission();
     s.snapshot_id = manifestOf(snapshot).id;
     s.fork = false;
+    // Preparation took a while: the review's budget starts at the hand-off.
+    await runtime.DB.prepare("UPDATE reviews SET created_at=? WHERE id=?")
+      .bind(Date.now() - 14 * 60 * 1000, row.review_id)
+      .run();
+    const handedOff = Date.now();
     const submitted = await app.request(
       "https://rio/v1/reviews",
       { method: "POST", headers: as(credential), body: JSON.stringify(s) },
@@ -498,6 +505,8 @@ describe("self-hosted preparation", () => {
       .first<any>();
     const stored = await new Store(runtime).get<any>(review.submission_key);
     expect(stored.fork).toBe(true);
+    expect(review.created_at).toBeGreaterThanOrEqual(handedOff);
+    expect(review.status).toBe("complete");
     expect(stored.report.review.pull_request).toMatchObject({
       fork: true,
       head_sha: pr.head.sha,
@@ -587,6 +596,87 @@ describe("self-hosted preparation", () => {
       state: "preparing",
       review_status: "preparing",
     });
+  });
+
+  it("schedules again when dispatch failed and follows the head a retry reads", async () => {
+    github.pull("acme/fork", 16, { head: sha("first-head") });
+    let down = true;
+    const sent: any[] = [];
+    const e = {
+      ...runtime,
+      JOBS: {
+        send: async (m: any) => {
+          if (down) throw new Error("queue unavailable");
+          sent.push(m);
+        },
+      } as any,
+    } as Env;
+    const cli = { ...request("acme/fork", 16), installation_id: 73 };
+    // A webhook attempt for the first head fails to dispatch its job.
+    await expect(handleReviewRequest(e, cli)).rejects.toThrow(
+      /queue unavailable/,
+    );
+    const [first] = await pullRows("acme/fork", 16);
+    expect(first).toMatchObject({
+      state: "preparing",
+      head_sha: sha("first-head"),
+    });
+    expect(
+      await runtime.DB.prepare(
+        "SELECT COUNT(*) AS n FROM jobs WHERE review_id=?",
+      )
+        .bind(first.review_id)
+        .first(),
+    ).toEqual({ n: 0 });
+    // The PR moves on; the retry reviews the new head and retires the stale one.
+    github.pull("acme/fork", 16, { head: sha("second-head") });
+    down = false;
+    await handleReviewRequest(e, cli);
+    const rows = await pullRows("acme/fork", 16);
+    expect(rows.map((r) => [r.head_sha, r.state, r.reason])).toEqual([
+      [sha("first-head"), "failed", "superseded by a newer head"],
+      [sha("second-head"), "preparing", null],
+    ]);
+    const job = await payloadOf(rows[1].review_id);
+    expect(job.prepare!.head_sha).toBe(sha("second-head"));
+    expect(sent).toEqual([
+      { review_id: rows[1].review_id, job_id: job.job_id, attempt: 1 },
+    ]);
+    // A CLI request retried after a failed dispatch keeps its review and takes the new head.
+    github.pull("acme/fork", 17, { head: sha("cli-first") });
+    down = true;
+    const { env: c } = capture();
+    const created = await app.request(
+      "https://rio/v1/pulls",
+      {
+        method: "POST",
+        headers: owner,
+        body: JSON.stringify({
+          repository: "github.com/acme/fork",
+          number: 17,
+        }),
+      },
+      c,
+    );
+    const { id } = (await created.json()) as any;
+    const message = {
+      ...request("acme/fork", 17),
+      installation_id: 73,
+      trigger: "cli" as const,
+      review_id: id,
+    };
+    await expect(handleReviewRequest(e, message)).rejects.toThrow(
+      /queue unavailable/,
+    );
+    github.pull("acme/fork", 17, { head: sha("cli-second") });
+    down = false;
+    await handleReviewRequest(e, message);
+    const [cliRow] = await pullRows("acme/fork", 17);
+    expect(cliRow).toMatchObject({
+      review_id: id,
+      head_sha: sha("cli-second"),
+    });
+    expect((await payloadOf(id)).prepare!.head_sha).toBe(sha("cli-second"));
   });
 
   it("fails the review cleanly when the runner cannot clone", async () => {

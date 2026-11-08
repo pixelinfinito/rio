@@ -8,6 +8,8 @@ import { invariant } from "./validation";
 // holder revokes its token when its job phase ends.
 
 export const API = "https://api.github.com";
+/** Longest wait for one GitHub API call. */
+export const REQUEST_TIMEOUT_MS = 30 * 1000;
 /** Rio's lease on an installation token; GitHub's own lifetime is one hour. */
 export const TOKEN_LEASE_MS = 10 * 60 * 1000;
 
@@ -154,6 +156,8 @@ async function call(
       ...(body === undefined ? {} : { "content-type": "application/json" }),
     },
     body: body === undefined ? undefined : JSON.stringify(body),
+    // Bounded, so a publisher never writes long after its lease was checked.
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
   });
   const text = await response.text();
   let data: any = null;

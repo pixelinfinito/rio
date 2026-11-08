@@ -94,7 +94,17 @@ export async function createPrepareJob(
   )
     .bind(job, review, key, Date.now())
     .run();
-  await env.JOBS.send({ review_id: review, job_id: job, attempt: 1 });
+  try {
+    await env.JOBS.send({ review_id: review, job_id: job, attempt: 1 });
+  } catch (error) {
+    // An undispatched job is no job: the request's retry schedules it again.
+    await env.DB.prepare(
+      "DELETE FROM jobs WHERE id=? AND review_id=? AND status='pending'",
+    )
+      .bind(job, review)
+      .run();
+    throw error;
+  }
   return job;
 }
 // The trusted runner's analysis artifact is bounded apart from command output.
@@ -195,7 +205,8 @@ export async function finishJob(
     .first<{ result_key: string }>();
   invariant(published?.result_key === key, "conflicting runner completion");
   // A prepare job hands its review over (Sandbox) or reports why it could not.
-  if (payload.kind === "prepare") return finishPrepare(env, review, result);
+  if (payload.kind === "prepare")
+    return finishPrepare(env, review, result, payload.snapshot_id);
   // Keep completed artifacts for audit after cancellation, without resuming model work.
   if (await store.cancelled(review)) return;
   // Re-sending after a transport failure is safe; event type includes the immutable attempt.
@@ -207,6 +218,7 @@ async function finishPrepare(
   env: Env,
   review: string,
   result: ExecutionResult,
+  snapshot: string,
 ) {
   const { pullOf, submitPrepared, failPrepare } = await import("./pulls");
   const row = await pullOf(env, review);
@@ -216,7 +228,12 @@ async function finishPrepare(
     !result.timed_out &&
     result.artifact?.submission
   )
-    await submitPrepared(env, row, result.artifact.submission);
+    // The container prepared from the job's snapshot; its id comes from the
+    // trusted job, never from the artifact.
+    await submitPrepared(env, row, {
+      ...result.artifact.submission,
+      snapshot_id: snapshot,
+    });
   // The self-hosted runner submits through its prepare credential before it completes.
   else if (result.exit_code === 0 && !result.timed_out && result.stdout.trim())
     return;

@@ -442,17 +442,29 @@ function summaryBody(
 /** How long one publication may hold its lineage, and how long another waits. */
 const LEASE_MS = 5 * 60 * 1000;
 const LEASE_WAIT_MS = 60 * 1000;
+/** A publisher whose lease expired or was taken stops before its next write. */
+export class LeaseLost extends Error {
+  constructor() {
+    super("publication lease lost; retried on the next round");
+  }
+}
+export interface Lease {
+  env: Env;
+  tenant: string;
+  lineage: string;
+  holder: string;
+}
 /**
- * Serializes publication per lineage: reconciliation, external writes and
- * records of one publisher never interleave with another's.
+ * Serializes publication and `/rio dismiss` effects per lineage:
+ * reconciliation, external writes and records never interleave.
  */
-async function acquireLease(
+export async function acquireLease(
   env: Env,
   tenant: string,
   lineage: string,
-  holder: string,
   wait = LEASE_WAIT_MS,
-): Promise<boolean> {
+): Promise<Lease | null> {
+  const holder = crypto.randomUUID();
   const deadline = Date.now() + wait;
   while (true) {
     const now = Date.now();
@@ -461,22 +473,78 @@ async function acquireLease(
     )
       .bind(tenant, lineage, holder, now + LEASE_MS, now)
       .first<{ holder: string }>();
-    if (row?.holder === holder) return true;
-    if (Date.now() >= deadline) return false;
+    if (row?.holder === holder) return { env, tenant, lineage, holder };
+    if (Date.now() >= deadline) return null;
     await new Promise((resolve) => setTimeout(resolve, 250));
   }
 }
-async function releaseLease(
+/** Extends a held lease before an external write; throws when it was lost. */
+export async function renewLease(lease: Lease): Promise<void> {
+  const now = Date.now();
+  const result = await lease.env.DB.prepare(
+    "UPDATE publication_leases SET until=? WHERE tenant=? AND lineage_id=? AND holder=? AND until>?",
+  )
+    .bind(now + LEASE_MS, lease.tenant, lease.lineage, lease.holder, now)
+    .run();
+  if (!result.meta.changes) throw new LeaseLost();
+}
+/** Releases the lease; the row keeps the lineage's last published round. */
+export async function releaseLease(lease: Lease): Promise<void> {
+  await lease.env.DB.prepare(
+    "UPDATE publication_leases SET holder='',until=0 WHERE tenant=? AND lineage_id=? AND holder=?",
+  )
+    .bind(lease.tenant, lease.lineage, lease.holder)
+    .run();
+}
+/** Every write to the host first renews the lease. */
+function guarded(host: Host, lease: Lease): Host {
+  const renewed =
+    <A extends unknown[], R>(write: (...args: A) => Promise<R>) =>
+    async (...args: A): Promise<R> => {
+      await renewLease(lease);
+      return write(...args);
+    };
+  return {
+    files: () => host.files(),
+    reviewComments: () => host.reviewComments(),
+    issueComments: () => host.issueComments(),
+    threads: () => host.threads(),
+    postReviewComment: renewed((input) => host.postReviewComment(input)),
+    editReviewComment: renewed((id: number, body: string) =>
+      host.editReviewComment(id, body),
+    ),
+    postIssueComment: renewed((body: string) => host.postIssueComment(body)),
+    editIssueComment: renewed((id: number, body: string) =>
+      host.editIssueComment(id, body),
+    ),
+    resolveThread: renewed((id: string, resolved: boolean) =>
+      host.resolveThread(id, resolved),
+    ),
+    checkRun: renewed(
+      (
+        head: string,
+        output: { title: string; summary: string },
+        existing?: number,
+      ) => host.checkRun(head, output, existing),
+    ),
+    react: renewed((comment: number, content: "+1" | "-1" | "confused") =>
+      host.react(comment, content),
+    ),
+  };
+}
+/** The lineage's recorded answer to an identity, if any (current generation). */
+async function answerOf(
   env: Env,
   tenant: string,
   lineage: string,
-  holder: string,
-) {
-  await env.DB.prepare(
-    "DELETE FROM publication_leases WHERE tenant=? AND lineage_id=? AND holder=?",
+  identity: string,
+): Promise<AuthorResponse | null> {
+  const row = await env.DB.prepare(
+    "SELECT f.author_response_json FROM findings f JOIN lineages l ON l.id=f.lineage_id AND l.generation=f.generation WHERE f.tenant=? AND f.lineage_id=? AND f.identity=? AND f.author_response_json IS NOT NULL",
   )
-    .bind(tenant, lineage, holder)
-    .run();
+    .bind(tenant, lineage, identity)
+    .first<{ author_response_json: string }>();
+  return row ? JSON.parse(row.author_response_json) : null;
 }
 
 function failureText(error: unknown): string {
@@ -563,331 +631,440 @@ async function publishWith(
   const decision = decide(policy, row, escalated);
   if (!decision.check) return empty(decision.reason);
   const publication = empty(decision.reason);
-  const failures: NonNullable<Publication["failures"]> = [];
   const link = `${(input.publicUrl ?? env.PUBLIC_URL ?? "").replace(/\/$/, "")}/v1/reviews/${input.review}/report`;
-  const holder = crypto.randomUUID();
-  if (!(await acquireLease(env, row.tenant, input.lineage.id, holder)))
-    return {
-      ...publication,
-      failed: 1,
-      failures: [
-        {
-          id: "publication",
-          kind: "summary",
-          error:
-            "another publication of this pull request is in progress; retried on the next round",
-        },
-      ],
-    };
+  const busy = (error: string): Publication => ({
+    ...publication,
+    failed: 1,
+    failures: [{ id: "publication", kind: "summary", error }],
+  });
+  const lease = await acquireLease(env, row.tenant, input.lineage.id);
+  if (!lease)
+    return busy(
+      "another publication of this pull request is in progress; retried on the next round",
+    );
   try {
-    return await (async () => {
-      const app = await appRequest(env, "GET", "/app");
-      const slug = String(app?.slug ?? "");
-      const token = await InstallationToken.mint(
-        env,
-        row.installation_id,
-        row.repository,
-        PUBLISH_PERMISSIONS,
+    // Rounds publish in order: an older round never writes over a newer one.
+    const mine = await env.DB.prepare(
+      "SELECT seq FROM lineage_reviews WHERE review_id=?",
+    )
+      .bind(input.review)
+      .first<{ seq: number }>();
+    const last = await env.DB.prepare(
+      "SELECT published_seq FROM publication_leases WHERE tenant=? AND lineage_id=?",
+    )
+      .bind(row.tenant, input.lineage.id)
+      .first<{ published_seq: number }>();
+    if (mine && last && last.published_seq > mine.seq)
+      return busy(
+        "a later round of this pull request was already published; this round is not published over it",
       );
-      const records = new Map<string, any>();
-      const save = async (
-        kind: "finding" | "summary" | "check_run",
-        identity: string,
-        state: "posted" | "edited" | "resolved" | "failed",
-        values: {
-          external?: number | null;
-          thread?: string | null;
-          error?: string | null;
-          body?: string;
-          url?: string | null;
-        },
-      ) => {
-        await env.DB.prepare(
-          "INSERT INTO publications(tenant,lineage_id,identity,review_id,kind,state,external_id,thread_id,error,attempts,updated_at,body_hash,url) VALUES(?,?,?,?,?,?,?,?,?,1,?,?,?) ON CONFLICT(tenant,lineage_id,kind,identity) DO UPDATE SET review_id=excluded.review_id,state=excluded.state,external_id=COALESCE(excluded.external_id,publications.external_id),thread_id=COALESCE(excluded.thread_id,publications.thread_id),error=excluded.error,attempts=publications.attempts+1,updated_at=excluded.updated_at,body_hash=COALESCE(excluded.body_hash,publications.body_hash),url=COALESCE(excluded.url,publications.url)",
-        )
-          .bind(
-            row.tenant,
-            input.lineage!.id,
-            identity,
-            input.review,
-            kind,
-            state,
-            values.external === undefined || values.external === null
-              ? null
-              : String(values.external),
-            values.thread ?? null,
-            values.error ?? null,
-            Date.now(),
-            values.body === undefined ? null : hash(values.body),
-            values.url ?? null,
-          )
-          .run();
-      };
-      try {
-        for (const r of (
-          await env.DB.prepare(
-            "SELECT * FROM publications WHERE tenant=? AND lineage_id=?",
-          )
-            .bind(row.tenant, input.lineage!.id)
-            .all<any>()
-        ).results)
-          records.set(`${r.kind}:${r.identity}`, r);
-        const github = host
-          ? host(token, row, `${slug}[bot]`, slug)
-          : new GitHubHost(
-              token,
-              row.repository,
-              row.number,
-              `${slug}[bot]`,
-              slug,
-            );
-        if (decision.full) {
-          const files = await github.files();
-          // Marker reconciliation: a lost record never causes a duplicate.
-          const comments = new Map<string, HostComment>();
-          for (const c of await github.reviewComments()) {
-            const id = FINDING_MARKER.exec(c.body)?.[1];
-            if (id && !comments.has(id)) comments.set(id, c);
-          }
-          const unanchored: Finding[] = [],
-            rejected: { f: Finding; error: string }[] = [],
-            wrong: Finding[] = [];
-          const settle = async (
-            id: string,
-            comment: HostComment,
-            body: string,
-            wantResolved: boolean | null,
-          ) => {
-            let current = comment;
-            let state: "posted" | "edited" | "resolved" = "posted";
-            if (comment.body !== body) {
-              current = await github.editReviewComment(comment.id, body);
-              publication.edited++;
-              state = "edited";
-            }
-            let thread: string | null = null;
-            if (wantResolved !== null) {
-              const t = (await github.threads()).get(comment.id);
-              if (t) {
-                thread = t.id;
-                if (t.resolved !== wantResolved) {
-                  await github.resolveThread(t.id, wantResolved);
-                  if (wantResolved) publication.resolved++;
-                }
-                if (wantResolved) state = "resolved";
-              }
-            }
-            await save("finding", id, state, {
-              external: comment.id,
-              thread,
-              body,
-              url: current.url,
-            });
-          };
-          // Answers recorded in the lineage win over the report's: a dismissal
-          // given after the report was written is never ignored or undone.
-          const answered = new Map<string, AuthorResponse>();
-          for (const r of (
-            await env.DB.prepare(
-              "SELECT f.identity,f.author_response_json FROM findings f JOIN lineages l ON l.id=f.lineage_id AND l.generation=f.generation WHERE f.tenant=? AND f.lineage_id=? AND f.author_response_json IS NOT NULL",
-            )
-              .bind(row.tenant, input.lineage!.id)
-              .all<{ identity: string; author_response_json: string }>()
-          ).results)
-            answered.set(r.identity, JSON.parse(r.author_response_json));
-          for (const report of lists(input.report)) {
-            const response = answered.get(report.id);
-            const f: Finding = response
-              ? { ...report, status: "dismissed", author_response: response }
-              : report;
-            const state: FindingState =
-              f.status === "dismissed"
-                ? { status: "dismissed", response: f.author_response }
-                : { status: "open" };
-            const body = findingBody(f, state);
-            const existing = comments.get(f.id);
-            try {
-              if (existing) {
-                // A reopened finding's thread is unresolved only when Rio resolved
-                // it; a thread a person resolved stays resolved.
-                const resolvedByRio =
-                  records.get(`finding:${f.id}`)?.state === "resolved";
-                await settle(
-                  f.id,
-                  existing,
-                  body,
-                  state.status === "dismissed"
-                    ? true
-                    : resolvedByRio
-                      ? false
-                      : null,
-                );
-                continue;
-              }
-              const record = records.get(`finding:${f.id}`);
-              // Posted once per lineage: a recorded post whose comment is gone is not re-posted.
-              if (record && record.state !== "failed") continue;
-              // Capped agent findings are summarized; dismissed ones are never posted.
-              if (!f.first_posted_in || f.status === "dismissed") continue;
-              if (f.history?.previous_response?.reason === "wrong") {
-                wrong.push(f);
-                continue;
-              }
-              const file = files.get(f.location.path);
-              if (
-                !anchorable(f) ||
-                !file ||
-                file.removed ||
-                !file.lines.has(f.location.line_start)
-              ) {
-                unanchored.push(f);
-                publication.unanchored++;
-                continue;
-              }
-              const posted = await github.postReviewComment({
-                body,
-                commit: row.head_sha!,
-                path: f.location.path,
-                line: f.location.line_start,
-              });
-              publication.posted++;
-              await save("finding", f.id, "posted", {
-                external: posted.id,
-                body,
-                url: posted.url,
-              });
-            } catch (error) {
-              const message = failureText(error);
-              publication.failed++;
-              failures.push({ id: f.id, kind: "finding", error: message });
-              rejected.push({ f, error: message });
-              await save("finding", f.id, "failed", { error: message });
-            }
-          }
-          // Earlier findings fixed by this round: edit and resolve their threads.
-          const prior = new Map(input.prior.map((p) => [p.id, p.finding]));
-          for (const u of input.updates) {
-            const comment = comments.get(u.id),
-              f = prior.get(u.id);
-            if (!comment || !f || u.status !== "fixed") continue;
-            try {
-              await settle(
-                u.id,
-                comment,
-                findingBody(f, {
-                  status: "fixed",
-                  fixed_in: row.head_sha ?? undefined,
-                }),
-                true,
-              );
-            } catch (error) {
-              publication.failed++;
-              failures.push({
-                id: u.id,
-                kind: "finding",
-                error: failureText(error),
-              });
-            }
-          }
-          const body = summaryBody(
-            input.report,
-            input.lineage!.id,
-            unanchored,
-            rejected,
-            wrong,
-            link,
-          );
-          try {
-            const existing = (await github.issueComments()).find(
-              (c) => SUMMARY_MARKER.exec(c.body)?.[1] === input.lineage!.id,
-            );
-            const summary = existing
-              ? existing.body === body
-                ? existing
-                : await github.editIssueComment(existing.id, body)
-              : await github.postIssueComment(body);
-            publication.summary_comment_url = summary.url || null;
-            await save("summary", "summary", existing ? "edited" : "posted", {
-              external: summary.id,
-              body,
-              url: summary.url,
-            });
-          } catch (error) {
-            publication.failed++;
-            failures.push({
-              id: "summary",
-              kind: "summary",
-              error: failureText(error),
-            });
-            await save("summary", "summary", "failed", {
-              error: failureText(error),
-            });
-          }
-        }
-        try {
-          const record = records.get(`check_run:${row.head_sha}`);
-          const run = await github.checkRun(
-            row.head_sha!,
-            checkOutput(input.report, input.fail_on, {
-              askNote: decision.full ? undefined : row.number,
-              link,
-            }),
-            record?.external_id ? Number(record.external_id) : undefined,
-          );
-          publication.check_run_url = run.url || null;
-          await save("check_run", row.head_sha!, record ? "edited" : "posted", {
-            external: run.id,
-            url: run.url,
-          });
-        } catch (error) {
-          publication.failed++;
-          failures.push({
-            id: row.head_sha!,
-            kind: "check_run",
-            error: failureText(error),
-          });
-          await save("check_run", row.head_sha!, "failed", {
-            error: failureText(error),
-          });
-        }
-      } finally {
-        await token.revoke();
-      }
-      if (failures.length) publication.failures = failures;
-      return publication;
-    })();
+    const result = await publishLeased(
+      env,
+      input,
+      row,
+      decision,
+      publication,
+      link,
+      lease,
+      host,
+    );
+    if (mine)
+      await env.DB.prepare(
+        "UPDATE publication_leases SET published_seq=MAX(published_seq,?) WHERE tenant=? AND lineage_id=? AND holder=?",
+      )
+        .bind(mine.seq, row.tenant, input.lineage.id, lease.holder)
+        .run();
+    return result;
   } finally {
-    await releaseLease(env, row.tenant, input.lineage.id, holder);
+    await releaseLease(lease);
   }
 }
 
-/** Shows a `/rio dismiss` on the finding's comment and resolves its thread. */
+async function publishLeased(
+  env: Env,
+  input: PublishInput,
+  row: PullRow,
+  decision: { full: boolean; check: boolean; reason?: Unpublished },
+  publication: Publication,
+  link: string,
+  lease: Lease,
+  host?: (
+    token: InstallationToken,
+    row: PullRow,
+    bot: string,
+    slug: string,
+  ) => Host,
+): Promise<Publication> {
+  const lineage = input.lineage!.id;
+  const failures: NonNullable<Publication["failures"]> = [];
+  const app = await appRequest(env, "GET", "/app");
+  const slug = String(app?.slug ?? "");
+  const token = await InstallationToken.mint(
+    env,
+    row.installation_id,
+    row.repository,
+    PUBLISH_PERMISSIONS,
+  );
+  const records = new Map<string, any>();
+  const save = async (
+    kind: "finding" | "summary" | "check_run",
+    identity: string,
+    state: "posted" | "edited" | "resolved" | "failed",
+    values: {
+      external?: number | null;
+      thread?: string | null;
+      error?: string | null;
+      body?: string;
+      url?: string | null;
+    },
+  ) => {
+    await env.DB.prepare(
+      "INSERT INTO publications(tenant,lineage_id,identity,review_id,kind,state,external_id,thread_id,error,attempts,updated_at,body_hash,url) VALUES(?,?,?,?,?,?,?,?,?,1,?,?,?) ON CONFLICT(tenant,lineage_id,kind,identity) DO UPDATE SET review_id=excluded.review_id,state=excluded.state,external_id=COALESCE(excluded.external_id,publications.external_id),thread_id=COALESCE(excluded.thread_id,publications.thread_id),error=excluded.error,attempts=publications.attempts+1,updated_at=excluded.updated_at,body_hash=COALESCE(excluded.body_hash,publications.body_hash),url=COALESCE(excluded.url,publications.url)",
+    )
+      .bind(
+        row.tenant,
+        lineage,
+        identity,
+        input.review,
+        kind,
+        state,
+        values.external === undefined || values.external === null
+          ? null
+          : String(values.external),
+        values.thread ?? null,
+        values.error ?? null,
+        Date.now(),
+        values.body === undefined ? null : hash(values.body),
+        values.url ?? null,
+      )
+      .run();
+  };
+  try {
+    for (const r of (
+      await env.DB.prepare(
+        "SELECT * FROM publications WHERE tenant=? AND lineage_id=?",
+      )
+        .bind(row.tenant, lineage)
+        .all<any>()
+    ).results)
+      records.set(`${r.kind}:${r.identity}`, r);
+    const github = guarded(
+      host
+        ? host(token, row, `${slug}[bot]`, slug)
+        : new GitHubHost(
+            token,
+            row.repository,
+            row.number,
+            `${slug}[bot]`,
+            slug,
+          ),
+      lease,
+    );
+    if (decision.full) {
+      const files = await github.files();
+      // Marker reconciliation: a lost record never causes a duplicate.
+      const comments = new Map<string, HostComment>();
+      for (const c of await github.reviewComments()) {
+        const id = FINDING_MARKER.exec(c.body)?.[1];
+        if (id && !comments.has(id)) comments.set(id, c);
+      }
+      const unanchored: Finding[] = [],
+        rejected: { f: Finding; error: string }[] = [],
+        wrong: Finding[] = [];
+      /**
+       * Brings a posted comment to `body` and its thread to `wantResolved`
+       * (null leaves it). A thread counts as Rio's only when Rio resolved it.
+       */
+      const settle = async (
+        id: string,
+        comment: HostComment,
+        body: string,
+        wantResolved: boolean | null,
+      ) => {
+        const rioResolved = records.get(`finding:${id}`)?.state === "resolved";
+        let current = comment;
+        let state: "posted" | "edited" | "resolved" = "posted";
+        if (comment.body !== body) {
+          current = await github.editReviewComment(comment.id, body);
+          publication.edited++;
+          state = "edited";
+        }
+        let thread: string | null = null;
+        if (wantResolved !== null) {
+          const t = (await github.threads()).get(comment.id);
+          if (t) {
+            thread = t.id;
+            if (t.resolved !== wantResolved) {
+              await github.resolveThread(t.id, wantResolved);
+              if (wantResolved) {
+                publication.resolved++;
+                state = "resolved";
+              }
+            } else if (wantResolved && rioResolved) state = "resolved";
+          }
+        }
+        await save("finding", id, state, {
+          external: comment.id,
+          thread,
+          body,
+          url: current.url,
+        });
+      };
+      const failed = async (id: string, error: unknown, comment?: number) => {
+        if (error instanceof LeaseLost) throw error;
+        const message = failureText(error);
+        publication.failed++;
+        failures.push({ id, kind: "finding", error: message });
+        await save("finding", id, "failed", {
+          error: message,
+          external: comment ?? null,
+        });
+        return message;
+      };
+      // Answers recorded in the lineage win over the report's: a dismissal
+      // given after the report was written is never ignored or undone.
+      const answered = new Map<string, AuthorResponse>();
+      for (const r of (
+        await env.DB.prepare(
+          "SELECT f.identity,f.author_response_json FROM findings f JOIN lineages l ON l.id=f.lineage_id AND l.generation=f.generation WHERE f.tenant=? AND f.lineage_id=? AND f.author_response_json IS NOT NULL",
+        )
+          .bind(row.tenant, lineage)
+          .all<{ identity: string; author_response_json: string }>()
+      ).results)
+        answered.set(r.identity, JSON.parse(r.author_response_json));
+      const handled = new Set<string>();
+      for (const report of lists(input.report)) {
+        handled.add(report.id);
+        const response = answered.get(report.id);
+        const f: Finding = response
+          ? { ...report, status: "dismissed", author_response: response }
+          : report;
+        const state: FindingState =
+          f.status === "dismissed"
+            ? { status: "dismissed", response: f.author_response }
+            : { status: "open" };
+        const body = findingBody(f, state);
+        const existing = comments.get(f.id);
+        try {
+          if (existing) {
+            // A reopened finding's thread is unresolved only when Rio resolved
+            // it; a thread a person resolved stays resolved.
+            const resolvedByRio =
+              records.get(`finding:${f.id}`)?.state === "resolved";
+            await settle(
+              f.id,
+              existing,
+              body,
+              state.status === "dismissed"
+                ? true
+                : resolvedByRio
+                  ? false
+                  : null,
+            );
+            continue;
+          }
+          const record = records.get(`finding:${f.id}`);
+          // Posted once per lineage: a recorded post, even one whose later edit
+          // failed or whose comment is gone, is never posted again.
+          if (record && (record.state !== "failed" || record.external_id))
+            continue;
+          // Capped agent findings are summarized; dismissed ones are never posted.
+          if (!f.first_posted_in || f.status === "dismissed") continue;
+          if (f.history?.previous_response?.reason === "wrong") {
+            wrong.push(f);
+            continue;
+          }
+          const file = files.get(f.location.path);
+          if (
+            !anchorable(f) ||
+            !file ||
+            file.removed ||
+            !file.lines.has(f.location.line_start)
+          ) {
+            unanchored.push(f);
+            publication.unanchored++;
+            continue;
+          }
+          // A dismissal recorded while this publication ran is honored too;
+          // `/rio dismiss` edits comments only under the same lease.
+          if (await answerOf(env, row.tenant, lineage, f.id)) continue;
+          const posted = await github.postReviewComment({
+            body,
+            commit: row.head_sha!,
+            path: f.location.path,
+            line: f.location.line_start,
+          });
+          publication.posted++;
+          await save("finding", f.id, "posted", {
+            external: posted.id,
+            body,
+            url: posted.url,
+          });
+        } catch (error) {
+          rejected.push({ f, error: await failed(f.id, error) });
+        }
+      }
+      // Earlier findings fixed by this round: edit and resolve their threads,
+      // unless the lineage has since recorded an answer.
+      const prior = new Map(input.prior.map((p) => [p.id, p.finding]));
+      const closing = (id: string, f: Finding, fixedIn?: string) => {
+        const response = answered.get(id);
+        return findingBody(
+          f,
+          response
+            ? { status: "dismissed", response }
+            : { status: "fixed", fixed_in: fixedIn },
+        );
+      };
+      for (const u of input.updates) {
+        const comment = comments.get(u.id),
+          f = prior.get(u.id);
+        if (!comment || !f || u.status !== "fixed") continue;
+        handled.add(u.id);
+        try {
+          await settle(
+            u.id,
+            comment,
+            closing(u.id, f, row.head_sha ?? undefined),
+            true,
+          );
+        } catch (error) {
+          await failed(u.id, error, comment.id);
+        }
+      }
+      // Closing edits that failed in an earlier round are retried.
+      for (const r of (
+        await env.DB.prepare(
+          "SELECT f.identity,f.status,f.finding_json FROM findings f JOIN lineages l ON l.id=f.lineage_id AND l.generation=f.generation JOIN publications p ON p.tenant=f.tenant AND p.lineage_id=f.lineage_id AND p.kind='finding' AND p.identity=f.identity WHERE f.tenant=? AND f.lineage_id=? AND p.state='failed' AND p.external_id IS NOT NULL AND f.status IN ('fixed','dismissed')",
+        )
+          .bind(row.tenant, lineage)
+          .all<{ identity: string; status: string; finding_json: string }>()
+      ).results) {
+        const comment = comments.get(r.identity);
+        if (handled.has(r.identity) || !comment) continue;
+        try {
+          await settle(
+            r.identity,
+            comment,
+            closing(r.identity, JSON.parse(r.finding_json).finding),
+            true,
+          );
+        } catch (error) {
+          await failed(r.identity, error, comment.id);
+        }
+      }
+      const body = summaryBody(
+        input.report,
+        lineage,
+        unanchored,
+        rejected,
+        wrong,
+        link,
+      );
+      try {
+        const existing = (await github.issueComments()).find(
+          (c) => SUMMARY_MARKER.exec(c.body)?.[1] === lineage,
+        );
+        const summary = existing
+          ? existing.body === body
+            ? existing
+            : await github.editIssueComment(existing.id, body)
+          : await github.postIssueComment(body);
+        publication.summary_comment_url = summary.url || null;
+        await save("summary", "summary", existing ? "edited" : "posted", {
+          external: summary.id,
+          body,
+          url: summary.url,
+        });
+      } catch (error) {
+        if (error instanceof LeaseLost) throw error;
+        publication.failed++;
+        failures.push({
+          id: "summary",
+          kind: "summary",
+          error: failureText(error),
+        });
+        await save("summary", "summary", "failed", {
+          error: failureText(error),
+        });
+      }
+    }
+    try {
+      const record = records.get(`check_run:${row.head_sha}`);
+      const run = await github.checkRun(
+        row.head_sha!,
+        checkOutput(input.report, input.fail_on, {
+          askNote: decision.full ? undefined : row.number,
+          link,
+        }),
+        record?.external_id ? Number(record.external_id) : undefined,
+      );
+      publication.check_run_url = run.url || null;
+      await save("check_run", row.head_sha!, record ? "edited" : "posted", {
+        external: run.id,
+        url: run.url,
+      });
+    } catch (error) {
+      if (error instanceof LeaseLost) throw error;
+      publication.failed++;
+      failures.push({
+        id: row.head_sha!,
+        kind: "check_run",
+        error: failureText(error),
+      });
+      await save("check_run", row.head_sha!, "failed", {
+        error: failureText(error),
+      });
+    }
+  } finally {
+    await token.revoke();
+  }
+  if (failures.length) publication.failures = failures;
+  return publication;
+}
+
+/**
+ * Shows a `/rio dismiss` on the finding's comment and resolves its thread,
+ * under the lineage's publication lease so it cannot interleave with a
+ * publisher; without the lease the next publication applies the answer.
+ */
 export async function reflectDismissal(
   env: Env,
   token: InstallationToken,
-  row: { repository: string; number: number },
+  row: { tenant: string; lineage: string; repository: string; number: number },
   finding: Finding,
   response: AuthorResponse,
 ): Promise<void> {
-  const app = await appRequest(env, "GET", "/app");
-  const slug = String(app?.slug ?? "");
-  const github = new GitHubHost(
-    token,
-    row.repository,
-    row.number,
-    `${slug}[bot]`,
-    slug,
-  );
-  const comment = (await github.reviewComments()).find(
-    (c) => FINDING_MARKER.exec(c.body)?.[1] === finding.id,
-  );
-  if (!comment) return;
-  await github.editReviewComment(
-    comment.id,
-    findingBody(finding, { status: "dismissed", response }),
-  );
-  const thread = (await github.threads()).get(comment.id);
-  if (thread && !thread.resolved) await github.resolveThread(thread.id, true);
+  const lease = await acquireLease(env, row.tenant, row.lineage);
+  if (!lease) return;
+  try {
+    const app = await appRequest(env, "GET", "/app");
+    const slug = String(app?.slug ?? "");
+    const github = guarded(
+      new GitHubHost(token, row.repository, row.number, `${slug}[bot]`, slug),
+      lease,
+    );
+    const comment = (await github.reviewComments()).find(
+      (c) => FINDING_MARKER.exec(c.body)?.[1] === finding.id,
+    );
+    if (!comment) return;
+    await github.editReviewComment(
+      comment.id,
+      findingBody(finding, { status: "dismissed", response }),
+    );
+    const thread = (await github.threads()).get(comment.id);
+    if (thread && !thread.resolved) {
+      await github.resolveThread(thread.id, true);
+      // Rio resolved it, so a later reopening may unresolve it.
+      await env.DB.prepare(
+        "UPDATE publications SET state='resolved',thread_id=?,updated_at=? WHERE tenant=? AND lineage_id=? AND kind='finding' AND identity=?",
+      )
+        .bind(thread.id, Date.now(), row.tenant, row.lineage, finding.id)
+        .run();
+    }
+  } finally {
+    await releaseLease(lease);
+  }
 }
 
 /** Publishes a finished review again after CLI consent (`POST /v1/reviews/{id}/publish`). */

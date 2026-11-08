@@ -86,8 +86,10 @@ export async function createReview(
   const results = await env.DB.batch([
     existing
       ? env.DB.prepare(
-          "UPDATE reviews SET submission_key=?,status='queued',token_limit=?,deadline=? WHERE id=? AND tenant=? AND status='preparing' AND submission_key=''",
-        ).bind(key, active.tokens ?? 100000, now + wall, id, tenant)
+          "UPDATE reviews SET submission_key=?,status='queued',created_at=?,token_limit=?,deadline=? WHERE id=? AND tenant=? AND status='preparing' AND submission_key=''",
+          // The review starts at the hand-off: budgets count from here, not
+          // from the request that waited for preparation.
+        ).bind(key, now, active.tokens ?? 100000, now + wall, id, tenant)
       : env.DB.prepare(
           "INSERT INTO reviews(id,tenant,submission_key,status,created_at,token_limit,deadline) VALUES(?,?,?,'queued',?,?,?)",
         ).bind(id, tenant, key, now, active.tokens ?? 100000, now + wall),

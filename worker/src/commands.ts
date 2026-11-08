@@ -153,7 +153,18 @@ export async function handleCommand(
       return { applied: false, actor };
     }
     await react("+1");
-    await reflectDismissal(env, token, message, match.finding, response);
+    await reflectDismissal(
+      env,
+      token,
+      {
+        tenant: message.tenant,
+        lineage: lineageId(message.tenant, lineage),
+        repository: message.repository,
+        number: message.number,
+      },
+      match.finding,
+      response,
+    );
     return { applied: true, actor };
   } finally {
     await token.revoke();

@@ -23,6 +23,45 @@ beforeAll(async () => {
 });
 
 let pr = 100;
+/** The PR's lineage row and one review in it, with its position. */
+async function lineage(s: { lineage: string; number: number }) {
+  await runtime.DB.prepare(
+    "INSERT INTO lineages(id,tenant,repository,kind,ref,generation,round,posted_json,updated_at) VALUES(?,'owner','github.com/acme/pub','pr',?,1,1,'{}',0) ON CONFLICT(id) DO NOTHING",
+  )
+    .bind(s.lineage, String(s.number))
+    .run();
+}
+async function inLineage(s: {
+  review: string;
+  lineage: string;
+  number: number;
+}) {
+  await lineage(s);
+  await runtime.DB.prepare(
+    "INSERT INTO lineage_reviews(review_id,tenant,lineage_id,generation,snapshot_id,created_at) VALUES(?,'owner',?,1,'s',0)",
+  )
+    .bind(s.review, s.lineage)
+    .run();
+}
+/** A lineage finding row, as the Workflow persists it. */
+async function recorded(
+  s: { lineage: string },
+  f: Finding,
+  status: "open" | "fixed" | "dismissed",
+  response?: object,
+) {
+  await runtime.DB.prepare(
+    "INSERT INTO findings(tenant,lineage_id,generation,identity,review_id,snapshot_id,repository,rule_id,category,source_kind,state,status,round,first_posted_in,author_response_json,location_json,finding_json,created_at,updated_at) VALUES('owner',?,1,?,'r','s','github.com/acme/pub','correctness/throw','defect','agent','new',?,1,'s',?,'{}',?,0,0) ON CONFLICT(tenant,lineage_id,generation,identity) DO UPDATE SET status=excluded.status,author_response_json=excluded.author_response_json",
+  )
+    .bind(
+      s.lineage,
+      f.id,
+      status,
+      response ? JSON.stringify(response) : null,
+      JSON.stringify({ finding: f }),
+    )
+    .run();
+}
 let current: GitHubDouble | undefined;
 interface Setup {
   review: string;
@@ -686,6 +725,182 @@ describe("publisher", () => {
     expect(github.comments).toHaveLength(1);
     expect(github.comments[0].body).toContain(
       "**Status: dismissed: wrong** (by cole)",
+    );
+    expect(github.threads.get(github.comments[0].id)!.resolved).toBe(true);
+  });
+
+  it("honors a dismissal recorded while it publishes", async () => {
+    const s = await pull();
+    await lineage(s);
+    github.setFiles("acme/pub", s.number, [
+      { filename: "src/a.ts", lines: [1, 2] },
+    ]);
+    const first = finding("mid-1", 1),
+      second = finding("mid-2", 2);
+    const original = github.handle.bind(github);
+    let dismissed = false;
+    github.handle = async (url, init) => {
+      const response = await original(url, init);
+      if (
+        !dismissed &&
+        init?.method === "POST" &&
+        /\/pulls\/\d+\/comments$/.test(url)
+      ) {
+        dismissed = true;
+        await recorded(s, second, "dismissed", {
+          reason: "wrong",
+          actor: "cole",
+          at: "2026-11-08T00:00:00Z",
+        });
+      }
+      return response;
+    };
+    expect(await publish(s, report([first, second]))).toMatchObject({
+      posted: 1,
+      failed: 0,
+    });
+    expect(github.comments.map((c) => c.body.slice(-85))).toEqual([
+      `<!-- rio:finding:${first.id} -->`,
+    ]);
+  });
+
+  it("never publishes an older round over a newer one", async () => {
+    const older = await pull();
+    const newer = await pull({ number: older.number, head: older.head });
+    await inLineage(older);
+    await inLineage(newer);
+    github.setFiles("acme/pub", older.number, [
+      { filename: "src/a.ts", lines: [1] },
+    ]);
+    const f = finding("order", 1);
+    await publish(newer, report([{ ...f, message: "newer text" }]));
+    const result = await publish(
+      older,
+      report([{ ...f, message: "older text" }]),
+    );
+    expect(result).toMatchObject({ posted: 0, edited: 0, failed: 1 });
+    expect(result!.failures![0].error).toContain(
+      "a later round of this pull request was already published",
+    );
+    expect(github.comments[0].body).toContain("newer text");
+  });
+
+  it("stops writing once its lease is lost", async () => {
+    const s = await pull();
+    github.setFiles("acme/pub", s.number, [
+      { filename: "src/a.ts", lines: [1, 2] },
+    ]);
+    const original = github.handle.bind(github);
+    github.handle = async (url, init) => {
+      const response = await original(url, init);
+      // The first post outlives the lease; another publisher could now hold it.
+      if (init?.method === "POST" && /\/pulls\/\d+\/comments$/.test(url))
+        await runtime.DB.prepare(
+          "UPDATE publication_leases SET until=0 WHERE lineage_id=?",
+        )
+          .bind(s.lineage)
+          .run();
+      return response;
+    };
+    const result = await publish(
+      s,
+      report([finding("lease-1", 1), finding("lease-2", 2)]),
+    );
+    expect(result).toMatchObject({ failed: 1 });
+    expect(result!.failures![0].error).toContain("publication lease lost");
+    expect(github.comments).toHaveLength(1);
+    expect(github.issueComments).toHaveLength(0);
+  });
+
+  it("never posts an identity again after a failed edit lost its comment", async () => {
+    const s = await pull();
+    github.setFiles("acme/pub", s.number, [
+      { filename: "src/a.ts", lines: [1] },
+    ]);
+    const f = finding("edit-fails", 1);
+    await publish(s, report([f]));
+    github.failures.push({
+      method: "PATCH",
+      pattern: /\/pulls\/comments\/\d+$/,
+      status: 502,
+      message: "Bad Gateway",
+      times: 1,
+    });
+    expect(
+      await publish(s, report([{ ...f, message: "changed" }])),
+    ).toMatchObject({ failed: 1 });
+    github.comments.length = 0;
+    expect(
+      await publish(s, report([{ ...f, message: "changed again" }])),
+    ).toMatchObject({ posted: 0, failed: 0 });
+    expect(github.comments).toHaveLength(0);
+  });
+
+  it("keeps a later dismissal on a finding this round fixed, and only Rio's resolutions are Rio's", async () => {
+    const s = await pull();
+    await lineage(s);
+    github.setFiles("acme/pub", s.number, [
+      { filename: "src/a.ts", lines: [1, 2] },
+    ]);
+    const dismissedLater = finding("fix-dismissed", 1),
+      humanResolved = finding("fix-human", 2);
+    await publish(s, report([dismissedLater, humanResolved]));
+    const comment = (f: Finding) =>
+      github.comments.find((c) =>
+        c.body.endsWith(`<!-- rio:finding:${f.id} -->`),
+      )!;
+    await recorded(s, dismissedLater, "dismissed", {
+      reason: "wrong",
+      actor: "cole",
+      at: "2026-11-08T00:00:00Z",
+    });
+    github.threads.get(comment(humanResolved).id)!.resolved = true;
+    await publish(s, report([]), "auto", {
+      updates: [dismissedLater, humanResolved].map((f) => ({
+        id: f.id,
+        status: "fixed",
+        resolution: {},
+      })),
+      prior: [dismissedLater, humanResolved].map((f) => ({
+        id: f.id,
+        finding: f,
+      })),
+    });
+    expect(comment(dismissedLater).body).toContain(
+      "**Status: dismissed: wrong** (by cole)",
+    );
+    expect(comment(humanResolved).body).toContain("**Status: fixed in");
+    // The person's resolution stays theirs: a recurrence does not unresolve it.
+    await publish(s, report([humanResolved]));
+    expect(github.threads.get(comment(humanResolved).id)!.resolved).toBe(true);
+  });
+
+  it("retries a failed closing edit in the next round", async () => {
+    const s = await pull();
+    await lineage(s);
+    github.setFiles("acme/pub", s.number, [
+      { filename: "src/a.ts", lines: [1] },
+    ]);
+    const f = finding("close-later", 1);
+    await publish(s, report([f]));
+    github.failures.push({
+      method: "PATCH",
+      pattern: /\/pulls\/comments\/\d+$/,
+      status: 502,
+      message: "Bad Gateway",
+      times: 1,
+    });
+    const fixing = await publish(s, report([]), "auto", {
+      updates: [{ id: f.id, status: "fixed", resolution: {} }],
+      prior: [{ id: f.id, finding: f }],
+    });
+    expect(fixing).toMatchObject({ failed: 1 });
+    // The Workflow records the finding fixed; the next round has no update for it.
+    await recorded(s, f, "fixed");
+    const retried = await publish(s, report([]));
+    expect(retried).toMatchObject({ edited: 1, resolved: 1, failed: 0 });
+    expect(github.comments[0].body).toContain(
+      "**Status: fixed in a later push**",
     );
     expect(github.threads.get(github.comments[0].id)!.resolved).toBe(true);
   });

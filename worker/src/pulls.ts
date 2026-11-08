@@ -309,7 +309,7 @@ export async function handleReviewRequest(
       }
     }
     await env.DB.prepare(
-      "UPDATE pull_requests SET base_sha=?,head_sha=?,fork=?,author_login=?,author_type=?,agent_json=?,state='preparing' WHERE review_id=? AND state='requested'",
+      "UPDATE pull_requests SET base_sha=?,head_sha=?,fork=?,author_login=?,author_type=?,agent_json=?,state='preparing' WHERE review_id=? AND state IN ('requested','preparing') AND NOT EXISTS (SELECT 1 FROM jobs WHERE jobs.review_id=pull_requests.review_id)",
     )
       .bind(
         mergeBase,
@@ -321,6 +321,17 @@ export async function handleReviewRequest(
         review,
       )
       .run();
+    // A retry reviews the head it just read; until its job exists the record
+    // follows. Older webhook reviews of this PR that never got a job are stale.
+    if (message.trigger === "webhook") {
+      const stale = await env.DB.prepare(
+        "SELECT p.review_id FROM pull_requests p WHERE p.tenant=? AND p.repository=? AND p.number=? AND p.trigger='webhook' AND p.review_id!=? AND p.state IN ('requested','preparing') AND NOT EXISTS (SELECT 1 FROM jobs j WHERE j.review_id=p.review_id)",
+      )
+        .bind(message.tenant, message.repository, message.number, review)
+        .all<{ review_id: string }>();
+      for (const old of stale.results)
+        await fail(env, old.review_id, "failed", "superseded by a newer head");
+    }
     await new Store(env).event(review, "review:preparing", {
       repository: message.repository,
       number: message.number,
