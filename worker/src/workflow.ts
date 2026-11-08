@@ -721,16 +721,46 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
               if (agent !== "security") continue;
             }
           }
+          // Generation agents sometimes wrap their array the way the security
+          // agent must ({"hypotheses": [...]}); the wrapper is accepted.
+          if (
+            agent !== "security" &&
+            output &&
+            typeof output === "object" &&
+            !Array.isArray(output) &&
+            Array.isArray(output.hypotheses)
+          )
+            output = output.hypotheses;
+          // A result of the wrong shape fails this agent only, like a failed
+          // conversation: the review stays partial with a note and the other
+          // agents' hypotheses still reach the verifier.
+          const shaped =
+            agent === "security"
+              ? output &&
+                typeof output === "object" &&
+                !Array.isArray(output) &&
+                Array.isArray(output.hypotheses) &&
+                Array.isArray(output.assessed) &&
+                Array.isArray(output.unassessed)
+              : Array.isArray(output);
+          if (!shaped) {
+            report.status = "partial";
+            report.footer.notes.push(
+              `${agent} agent failed: ${agent === "security" ? "security result must be an object with hypotheses, assessed and unassessed" : "expected hypothesis array"}; its findings are missing from this review.`,
+            );
+            if (agent !== "security") continue;
+            output = {
+              hypotheses: [],
+              assessed: [],
+              unassessed: applicable.map((i) => ({
+                item: i.id,
+                reason: "tools_unavailable",
+              })),
+            };
+          }
           let assessedByAgent: unknown = [],
             unassessedByAgent: unknown = [];
           if (agent === "security") {
-            invariant(
-              output &&
-                typeof output === "object" &&
-                !Array.isArray(output) &&
-                Array.isArray(output.hypotheses),
-              "security result must be an object with hypotheses, assessed and unassessed",
-            );
             assessedByAgent = output.assessed;
             unassessedByAgent = output.unassessed;
             output = output.hypotheses;

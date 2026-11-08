@@ -203,6 +203,32 @@ it("repairs an empty tool list and answers calls past the batch limit instead of
   expect(results[8].error).toMatch(/limited to 8 calls per turn/);
   expect(results[9].error).toMatch(/resend it/);
 });
+it("offers up to 16k output tokens per turn within the allowance", async () => {
+  const ledger: Ledger = {
+    remaining: async () => 1000000,
+    reserve: async () => "id",
+    settle: async () => {},
+  };
+  const seen: number[] = [];
+  const base = {
+    ledger,
+    actor: "agent",
+    phase: "generation",
+    model: "openrouter/anthropic/test",
+    dispatch: async () => ({}),
+    gateway: {
+      complete: async (request: any) => {
+        seen.push(request.max_tokens);
+        return { content: '{"result":[]}', input_tokens: 80, output_tokens: 50, cost_usd: null };
+      },
+    },
+  };
+  await converse({ ...base, allowance: { remaining: 400000 }, messages: [{ role: "user", content: "review" }] });
+  await converse({ ...base, allowance: { remaining: 20000 }, messages: [{ role: "user", content: "review" }] });
+  expect(seen[0]).toBe(16384);
+  expect(seen[1]).toBeLessThan(16384);
+  expect(seen[1]).toBeGreaterThan(0);
+});
 it("elides tool results older than the most recent ones once the history exceeds its budget", () => {
   const big = JSON.stringify({ tool_results: [{ name: "read_file", result: "x".repeat(50000) }] });
   const messages = [
