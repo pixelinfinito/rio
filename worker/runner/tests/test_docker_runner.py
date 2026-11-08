@@ -431,14 +431,14 @@ class RunnerImage(unittest.TestCase):
     """Hosted checks run with the image's toolchains when dependencies are vendored and
     are skipped with the dependency rule's reason and hint when they are not."""
 
-    def checks(self, files):
+    def checks(self, files, every=False):
         image = IMAGE
         trees = {'base': {k: (v.replace(b'2', b'1'), 0o644) for k, v in files.items()}, 'head': {k: (v, 0o644) for k, v in files.items()}}
         profile = {'version': 1, 'name': 'image-test', 'chain': [], 'modules': {}, 'engine_version': '0.2.0',
                    'posture_policy': {'defect_severity_floor': 'warning', 'render_plausible_risks': True, 'plausible_risk_limit': 5},
                    'steps': [{'id': 'prepare', 'uses': 'rio/prepare@0.1.0'},
                              {'id': 'checks', 'uses': 'rio/checks@0.1.0', 'needs': ['prepare'],
-                              'with': {'typecheck': True, 'lint': False, 'coverage': False, 'secrets': True, 'dependencies': False}},
+                              'with': {'typecheck': True, 'lint': every, 'coverage': every, 'secrets': True, 'dependencies': every}},
                              {'id': 'graph', 'uses': 'rio/graph@0.1.0', 'needs': ['prepare']},
                              {'id': 'report', 'uses': 'rio/report@0.1.0', 'needs': ['checks', 'graph']}]}
         job = {'protocol': 1, 'network': False, 'kind': 'checks', 'job_id': uuid.uuid4().hex, 'attempt': 1, 'version': 'head',
@@ -467,14 +467,26 @@ class RunnerImage(unittest.TestCase):
                     'node_modules/tiny/index.js': b'exports.tiny = (n) => n;\n'}
         ran = [c for c in self.checks(vendored) if c['kind'] == 'typecheck' and c['version'] == 'head']
         self.assertEqual([c['outcome'] for c in ran], ['passed'], ran)
-        missing = {k: v for k, v in vendored.items() if not k.startswith('node_modules/')}
-        checks = self.checks(missing)
-        [skipped] = [c for c in checks if c['kind'] == 'typecheck']
-        self.assertEqual(skipped['outcome'], 'skipped')
-        self.assertEqual(skipped['reason'], 'dependency_mismatch')
-        self.assertIn('node_modules/.package-lock.json is missing', skipped['hint'])
-        # Secrets still run when typecheck cannot.
-        self.assertEqual([c['outcome'] for c in checks if c['kind'] == 'secrets'], ['passed'])
+        # Without node_modules, with a linter and a test runner declared and a
+        # lockfile the PR changes (the base side differs by the 1 -> 2 edit).
+        package = (b'{"name":"app","version":"1.0.0","scripts":{"test":"vitest"},"dependencies":{"tiny":"1.0.2"},'
+                   b'"devDependencies":{"vitest":"4.1.0","eslint":"9.39.1"}}')
+        lock = (b'{"name":"app","version":"1.0.0","lockfileVersion":3,"requires":true,"packages":{"":{"name":"app","version":"1.0.0",'
+                b'"dependencies":{"tiny":"1.0.2"}},"node_modules/tiny":{"version":"1.0.2"}}}')
+        missing = {'package.json': package, 'package-lock.json': lock, 'tsconfig.json': vendored['tsconfig.json'],
+                   'src/a.ts': vendored['src/a.ts'], 'eslint.config.js': b'export default [];\n',
+                   'vitest.config.ts': b'export default {};\n',
+                   'src/a.test.ts': b'import { test } from "vitest";\ntest("a", () => {});\n'}
+        checks = {c['kind']: c for c in self.checks(missing, every=True) if c.get('version', 'head') == 'head'}
+        for kind in ['typecheck', 'lint']:
+            self.assertEqual((checks[kind]['outcome'], checks[kind]['reason']), ('skipped', 'dependency_mismatch'), kind)
+            self.assertIn('node_modules/.package-lock.json is missing', checks[kind]['hint'])
+        self.assertEqual((checks['coverage']['outcome'], checks['coverage']['reason']), ('skipped', 'tool_missing'))
+        self.assertIn('vitest', checks['coverage']['hint'])
+        # The audit needs its advisory service; the analysis has no network.
+        self.assertEqual((checks['dependencies']['outcome'], checks['dependencies']['reason']), ('skipped', 'offline'))
+        # Secrets still run when the dependency-bound checks cannot.
+        self.assertEqual(checks['secrets']['outcome'], 'passed')
 
     def test_sandbox_prepare_builds_the_submission_from_the_snapshot_without_network(self):
         image = IMAGE

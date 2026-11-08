@@ -110,11 +110,18 @@ A pull request review SHALL be prepared by a `prepare` runner job that clones ba
 - **THEN** both submissions contain the same changed files, snapshot id and graph node set
 
 ### Requirement: Hosted check availability
-Deterministic checks in a hosted preparation SHALL follow the existing skip rules; a check whose project tools or dependencies are not present SHALL end `skipped` with reason `dependency_missing` and a hint, while secrets, dependency audit and the graph SHALL still run. The footer SHALL report every skipped check.
+Deterministic checks in a hosted preparation SHALL follow the skip rules of local reviews. A check whose project dependencies are not installed in the prepared clone, or cannot be verified against its lockfile, SHALL end `skipped` with reason `dependency_mismatch` and a hint naming the cause; a check whose tool is not available SHALL end `skipped` with reason `tool_missing` and a hint. Secrets and the graph SHALL still run, and the footer SHALL report every skipped check.
 
 #### Scenario: Dependencies not vendored
 - **WHEN** a TypeScript pull request's `node_modules` are not present in the prepared clone
-- **THEN** `typecheck`, `lint` and `coverage` are `skipped` with reason `dependency_missing`, and secrets, dependency audit and the graph still complete
+- **THEN** `typecheck` and `lint` are `skipped` with reason `dependency_mismatch` and a hint naming the missing installation metadata, `coverage` is `skipped` with reason `tool_missing` because the project's test runner is not installed, and secrets and the graph still complete
+
+### Requirement: Hosted dependency audit
+The dependency audit needs its advisory service, which the network-less analysis of a hosted preparation cannot reach. It SHALL end `skipped` with reason `offline` and a hint naming the service, and the footer SHALL report it.
+
+#### Scenario: Audit without network
+- **WHEN** a pull request that changes a lockfile is prepared on a runner
+- **THEN** the dependency audit is `skipped` with reason `offline` and the review still completes
 
 ### Requirement: Preparation backend eligibility
 The self-hosted runner SHALL prepare any pull request. The Cloudflare Sandbox backend SHALL prepare non-fork pull requests only; a fork pull request on an endpoint with only the Sandbox backend SHALL be recorded as not prepared with reason `fork_requires_self_hosted_runner` and SHALL post nothing.
