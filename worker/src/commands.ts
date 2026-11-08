@@ -87,10 +87,11 @@ export async function handleCommand(
       "",
       "",
     );
-    const react = (content: "+1" | "-1" | "confused") =>
+    const react = (content: "+1" | "-1") =>
       host.react(message.comment_id, content);
+    // Every command that is not applied gets the same reaction.
     if (command.kind === "invalid") {
-      await react("confused");
+      await react("-1");
       return { applied: false };
     }
     const permission = await token.request(

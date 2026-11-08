@@ -30,7 +30,7 @@ fn cases() -> Vec<PathBuf> {
         .map(|e| e.unwrap().path())
         .collect();
     cases.sort();
-    assert_eq!(cases.len(), 4);
+    assert_eq!(cases.len(), 5);
     cases
 }
 

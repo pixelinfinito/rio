@@ -1,0 +1,205 @@
+{
+  "schema": "rio-report-v1",
+  "status": "complete",
+  "review": {
+    "id": "prepared-header",
+    "mode": "branch",
+    "rio_version": "0.2.0",
+    "pull_request": {
+      "repository": "acme/shop",
+      "number": 7,
+      "base_sha": "2258669caad0ee142258669caad0ee142258669c",
+      "head_sha": "863716ec9d7c42f3d2a859380ebf9e6415f4ca7b",
+      "author": {
+        "login": "octocat",
+        "type": "user"
+      },
+      "fork": false,
+      "trigger": "webhook"
+    }
+  },
+  "risk_tier": {
+    "tier": "low",
+    "reasons": [],
+    "source": "triage"
+  },
+  "checks": [],
+  "impact": {
+    "symbols": [],
+    "unresolved": 0,
+    "truncated": false
+  },
+  "findings": [
+    {
+      "id": "e5a5af34820fa2cf7e7dffa4652d4fbe7de14d6eba28b37849d161f2a3f06b89",
+      "rule_id": "correctness/throw",
+      "category": "defect",
+      "severity": "error",
+      "location": {
+        "path": "src/cart.ts",
+        "line_start": 1,
+        "line_end": 1,
+        "symbol_path": "total",
+        "occurrence_state": "new"
+      },
+      "message": "The call to total now throws",
+      "trigger": "total()",
+      "impact": "Callers fail",
+      "state": "new",
+      "source": {
+        "agent": "correctness"
+      },
+      "evidence_level": "static_proven",
+      "verification": {
+        "voters": 3,
+        "agreeing": 3,
+        "blind_match": [
+          "none",
+          "none",
+          "none"
+        ],
+        "split": false
+      },
+      "evidence": [
+        "code:head:src/cart.ts:src/cart.ts#total"
+      ],
+      "locations": [
+        {
+          "path": "src/cart.ts",
+          "line_start": 1,
+          "line_end": 1,
+          "symbol_path": "total",
+          "occurrence_state": "new"
+        }
+      ],
+      "round": 1,
+      "first_posted_in": "b46fb851d56ab91aa42d98fc7efafb215208a42049173b56f5290af44b375ca6",
+      "status": "open"
+    },
+    {
+      "id": "bcbf2a73b9f9aa0392b21e03185b9ca5dd3840ce989cf21d558cdaad2f32138a",
+      "rule_id": "correctness/throw",
+      "category": "defect",
+      "severity": "error",
+      "location": {
+        "path": "src/cart.ts",
+        "line_start": 2,
+        "line_end": 2,
+        "symbol_path": "tax",
+        "occurrence_state": "new"
+      },
+      "message": "The call to tax now throws",
+      "trigger": "tax()",
+      "impact": "Callers fail",
+      "state": "new",
+      "source": {
+        "agent": "correctness"
+      },
+      "evidence_level": "static_proven",
+      "verification": {
+        "voters": 3,
+        "agreeing": 3,
+        "blind_match": [
+          "none",
+          "none",
+          "none"
+        ],
+        "split": false
+      },
+      "evidence": [
+        "code:head:src/cart.ts:src/cart.ts#tax"
+      ],
+      "locations": [
+        {
+          "path": "src/cart.ts",
+          "line_start": 2,
+          "line_end": 2,
+          "symbol_path": "tax",
+          "occurrence_state": "new"
+        }
+      ],
+      "round": 1,
+      "first_posted_in": "b46fb851d56ab91aa42d98fc7efafb215208a42049173b56f5290af44b375ca6",
+      "status": "open"
+    }
+  ],
+  "risks": [],
+  "incomplete": [],
+  "deferred": [],
+  "excluded": [],
+  "summary": {
+    "pre_existing": 0,
+    "fixed": 0,
+    "suppressed": 0
+  },
+  "footer": {
+    "notes": [
+      "Hypothesis board coordination is deferred; agents and verifier voters run independently."
+    ],
+    "suppressions": [],
+    "tool_versions": {}
+  },
+  "metrics": {
+    "wall_time_ms": 0,
+    "checks": [],
+    "tool_versions": {}
+  },
+  "agent_audit": {
+    "held_back": {
+      "defects": [],
+      "risks": [],
+      "security": []
+    },
+    "category_drops": {},
+    "suppressed": 0,
+    "refuted": 0,
+    "classes": {},
+    "policy_failed": false,
+    "policy_matches": [],
+    "require_human": false,
+    "board_deferred": true,
+    "agents": {
+      "correctness": "default"
+    },
+    "agents_skipped": {
+      "contracts": "not selected: triage's public_contracts signal did not fire (no exported declaration, route, table, event, CLI flag or configuration key changed)"
+    },
+    "verification_usage": {
+      "input_tokens": 960,
+      "output_tokens": 600,
+      "cost_usd": null
+    },
+    "already_posted": [],
+    "lineage_updates": []
+  },
+  "cache": {
+    "lookups": 0,
+    "hits": 0,
+    "tokens_saved_estimate": 0,
+    "hit_rate": null
+  },
+  "lineage": {
+    "repository": "github.com/acme/shop",
+    "kind": "pr",
+    "ref": "7",
+    "generation": 1,
+    "round": 1,
+    "cap": 3,
+    "capped": false,
+    "diff_only": false,
+    "previous_head": null,
+    "held_back": 0,
+    "rounds_to_pass": null,
+    "author_response_ratio": null
+  },
+  "publication": {
+    "policy": "auto",
+    "posted": 2,
+    "edited": 0,
+    "resolved": 0,
+    "failed": 0,
+    "unanchored": 0,
+    "check_run_url": "https://github.com/acme/shop/runs/1007",
+    "summary_comment_url": "https://github.com/acme/shop/pull/7#issuecomment-1006"
+  }
+}

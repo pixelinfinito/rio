@@ -1,0 +1,153 @@
+{
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "rio",
+          "version": "0.2.0",
+          "informationUri": "https://github.com/pixelinfinito/rio",
+          "rules": [
+            {
+              "id": "correctness/throw",
+              "shortDescription": {
+                "text": "The call to total now throws"
+              },
+              "properties": {
+                "category": "defect"
+              }
+            }
+          ]
+        }
+      },
+      "originalUriBaseIds": {
+        "SRCROOT": {
+          "description": {
+            "text": "Repository root"
+          }
+        }
+      },
+      "results": [
+        {
+          "ruleId": "correctness/throw",
+          "ruleIndex": 0,
+          "level": "error",
+          "message": {
+            "text": "The call to total now throws\nTrigger: total()"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/cart.ts",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "endLine": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "rioFindingId/v1": "e5a5af34820fa2cf7e7dffa4652d4fbe7de14d6eba28b37849d161f2a3f06b89"
+          },
+          "baselineState": "new",
+          "properties": {
+            "evidence_level": "static_proven",
+            "category": "defect",
+            "state": "new",
+            "severity": "error",
+            "status": "open",
+            "verification": {
+              "voters": 3,
+              "agreeing": 3,
+              "blind_match": [
+                "none",
+                "none",
+                "none"
+              ],
+              "split": false
+            },
+            "round": 1
+          }
+        },
+        {
+          "ruleId": "correctness/throw",
+          "ruleIndex": 0,
+          "level": "error",
+          "message": {
+            "text": "The call to tax now throws\nTrigger: tax()"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/cart.ts",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 2,
+                  "endLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "rioFindingId/v1": "bcbf2a73b9f9aa0392b21e03185b9ca5dd3840ce989cf21d558cdaad2f32138a"
+          },
+          "baselineState": "new",
+          "properties": {
+            "evidence_level": "static_proven",
+            "category": "defect",
+            "state": "new",
+            "severity": "error",
+            "status": "open",
+            "verification": {
+              "voters": 3,
+              "agreeing": 3,
+              "blind_match": [
+                "none",
+                "none",
+                "none"
+              ],
+              "split": false
+            },
+            "round": 1
+          }
+        }
+      ],
+      "invocations": [
+        {
+          "executionSuccessful": true,
+          "startTimeUtc": "2026-11-08T12:00:00Z",
+          "endTimeUtc": "2026-11-08T12:03:00Z"
+        }
+      ],
+      "properties": {
+        "rio.status": "complete",
+        "rio.risk_tier": {
+          "tier": "low",
+          "reasons": [],
+          "source": "triage"
+        },
+        "rio.review_id": "prepared-header",
+        "rio.lineage": {
+          "repository": "github.com/acme/shop",
+          "kind": "pr",
+          "ref": "7",
+          "generation": 1,
+          "round": 1,
+          "cap": 3,
+          "capped": false,
+          "diff_only": false,
+          "previous_head": null,
+          "held_back": 0,
+          "rounds_to_pass": null,
+          "author_response_ratio": null
+        }
+      }
+    }
+  ]
+}

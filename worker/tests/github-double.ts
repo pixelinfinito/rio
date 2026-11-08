@@ -31,6 +31,8 @@ interface Token {
 }
 export interface Comment {
   id: number;
+  // "owner/repo#number"; comments listed for another PR are not returned.
+  pr?: string;
   body: string;
   path?: string;
   line?: number;
@@ -369,7 +371,13 @@ export class GitHubDouble {
         : this.error(404, "Not Found");
     }
     if ((r = m(/^\/repos\/([^/]+\/[^/]+)\/pulls\/(\d+)\/comments$/))) {
-      if (method === "GET") return this.json(this.page(this.comments, url));
+      if (method === "GET")
+        return this.json(
+          this.page(
+            this.comments.filter((c) => !c.pr || c.pr === `${r![1]}#${r![2]}`),
+            url,
+          ),
+        );
       const head = this.pulls.get(`${r[1]}#${r[2]}`)?.head?.sha;
       const lines = (this.files.get(`${r[1]}#${r[2]}`) ?? []).find(
         (f) => f.filename === body.path,
@@ -386,6 +394,7 @@ export class GitHubDouble {
         );
       const comment: Comment = {
         id: this.next++,
+        pr: `${r[1]}#${r[2]}`,
         body: body.body,
         path: body.path,
         line: body.line,
@@ -499,11 +508,20 @@ export class GitHubDouble {
             pullRequest: {
               reviewThreads: {
                 pageInfo: { hasNextPage: false, endCursor: null },
-                nodes: [...this.threads].map(([comment, t]) => ({
-                  id: t.id,
-                  isResolved: t.resolved,
-                  comments: { nodes: [{ databaseId: comment }] },
-                })),
+                nodes: [...this.threads]
+                  .filter(([comment]) => {
+                    const pr = this.comments.find((c) => c.id === comment)?.pr;
+                    return (
+                      !pr ||
+                      pr ===
+                        `${body.variables.owner}/${body.variables.name}#${body.variables.number}`
+                    );
+                  })
+                  .map(([comment, t]) => ({
+                    id: t.id,
+                    isResolved: t.resolved,
+                    comments: { nodes: [{ databaseId: comment }] },
+                  })),
               },
             },
           },
