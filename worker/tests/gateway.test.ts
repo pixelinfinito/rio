@@ -1,7 +1,9 @@
-import { it, expect, vi } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import {
   ProviderGateway,
   converse,
+  joinUrl,
+  route,
   elideOldToolResults,
   parseModelOutput,
   type Ledger,
@@ -457,4 +459,238 @@ it("charges both verification turns to the same allowance and respects the revie
     }),
   ).rejects.toThrow("wall budget exhausted");
   expect(calls).toBe(1);
+});
+describe("model routes", () => {
+  const GW = "https://gateway.ai.cloudflare.com/v1/acct/rio";
+  const gateway = {
+    AI_GATEWAY_URL: `${GW}/`,
+    AI_GATEWAY_TOKEN: "gateway-token",
+    AI_GATEWAY_PROVIDERS: JSON.stringify({
+      "node-openai": { protocol: "openai" },
+      "node-anthropic": { protocol: "anthropic" },
+    }),
+    OPENAI_API_KEY: "openai-key",
+    ANTHROPIC_API_KEY: "anthropic-key",
+    OPENROUTER_API_KEY: "openrouter-key",
+  } as Env;
+  const plain = (r: ReturnType<typeof route>) => ({
+    url: String(r.url),
+    protocol: r.protocol,
+    model: r.model,
+    auth: r.headers.authorization ?? r.headers["x-api-key"] ?? null,
+    gateway: r.headers["cf-aig-authorization"] ?? null,
+  });
+  it("joins URLs with one slash and never duplicates the version segment", () => {
+    expect(joinUrl("https://a/v1/", "/chat/completions")).toBe(
+      "https://a/v1/chat/completions",
+    );
+    expect(joinUrl("https://a/x", "openai", "", "chat/completions")).toBe(
+      "https://a/x/openai/chat/completions",
+    );
+  });
+  it.each([
+    [
+      "openai/gpt",
+      `${GW}/openai/chat/completions`,
+      "openai",
+      "gpt",
+      "Bearer openai-key",
+    ],
+    [
+      "anthropic/claude",
+      `${GW}/anthropic/v1/messages`,
+      "anthropic",
+      "claude",
+      "anthropic-key",
+    ],
+    [
+      "openrouter/anthropic/claude",
+      `${GW}/openrouter/chat/completions`,
+      "openai",
+      "anthropic/claude",
+      "Bearer openrouter-key",
+    ],
+    // Custom providers: the native endpoint in the provider's protocol; the
+    // gateway adds the upstream credential, so no provider key is sent.
+    [
+      "custom-node-openai/gpt-6.1-sol",
+      `${GW}/custom-node-openai/chat/completions`,
+      "openai",
+      "gpt-6.1-sol",
+      null,
+    ],
+    [
+      "custom-node-anthropic/claude-sonnet-5-5",
+      `${GW}/custom-node-anthropic/messages`,
+      "anthropic",
+      "claude-sonnet-5-5",
+      null,
+    ],
+    // The unified endpoint and dynamic routes.
+    [
+      "compat/custom-node-anthropic/claude-sonnet-5-5",
+      `${GW}/compat/chat/completions`,
+      "openai",
+      "custom-node-anthropic/claude-sonnet-5-5",
+      null,
+    ],
+    [
+      "dynamic/support",
+      `${GW}/compat/chat/completions`,
+      "openai",
+      "dynamic/support",
+      null,
+    ],
+    // Profiles written for OPENAI_BASE_URL=<gateway>/compat keep working.
+    [
+      "openai/custom-node-anthropic/claude-sonnet-5-5",
+      `${GW}/compat/chat/completions`,
+      "openai",
+      "custom-node-anthropic/claude-sonnet-5-5",
+      null,
+    ],
+    [
+      "openai/dynamic/support",
+      `${GW}/compat/chat/completions`,
+      "openai",
+      "dynamic/support",
+      null,
+    ],
+  ])("routes %s through the gateway", (model, url, protocol, sent, auth) => {
+    expect(plain(route(gateway, model))).toEqual({
+      url,
+      protocol,
+      model: sent,
+      auth,
+      gateway: "Bearer gateway-token",
+    });
+  });
+  it("keeps direct provider APIs and an OPENAI_BASE_URL without a gateway", () => {
+    const direct = {
+      OPENAI_API_KEY: "k",
+      ANTHROPIC_API_KEY: "a",
+      OPENROUTER_API_KEY: "o",
+    } as Env;
+    expect(String(route(direct, "openai/gpt").url)).toBe(
+      "https://api.openai.com/v1/chat/completions",
+    );
+    expect(String(route(direct, "anthropic/c").url)).toBe(
+      "https://api.anthropic.com/v1/messages",
+    );
+    expect(String(route(direct, "openrouter/x/y").url)).toBe(
+      "https://openrouter.ai/api/v1/chat/completions",
+    );
+    // The manual setup: OPENAI_BASE_URL at the gateway's /compat, its token as key.
+    const manual = route(
+      {
+        OPENAI_API_KEY: "gateway-token",
+        OPENAI_BASE_URL: `${GW}/compat/`,
+        AI_GATEWAY_URL: "",
+      } as Env,
+      "openai/custom-node-anthropic/claude-sonnet-5-5",
+    );
+    expect(plain(manual)).toEqual({
+      url: `${GW}/compat/chat/completions`,
+      protocol: "openai",
+      model: "custom-node-anthropic/claude-sonnet-5-5",
+      auth: "Bearer gateway-token",
+      gateway: null,
+    });
+  });
+  it("rejects routes it cannot serve before sending anything", () => {
+    const fail = (env: Partial<Env>, model: string, message: string | RegExp) =>
+      expect(() => route(env as Env, model)).toThrow(message);
+    fail({}, "custom-node-openai/gpt", "requires AI Gateway");
+    fail(
+      { ...gateway, AI_GATEWAY_TOKEN: undefined },
+      "custom-node-openai/gpt",
+      "Gateway token",
+    );
+    fail(
+      gateway,
+      "custom-unknown/gpt",
+      "custom provider unknown is not configured",
+    );
+    fail(
+      { ...gateway, AI_GATEWAY_PROVIDERS: "{" },
+      "custom-node-openai/gpt",
+      "not valid JSON",
+    );
+    fail(
+      { ...gateway, AI_GATEWAY_PROVIDERS: '{"x":{"protocol":"grpc"}}' },
+      "custom-x/gpt",
+      "protocol",
+    );
+    fail(gateway, "compat/gpt", "provider/model");
+    fail({}, "dynamic/support", "requires AI Gateway");
+    fail(gateway, "mistral/large", "unsupported model provider");
+    fail(gateway, "openai/", "provider/model");
+    fail(
+      { OPENAI_API_KEY: "k", OPENAI_BASE_URL: "http://example.com/v1" },
+      "openai/gpt",
+      "TLS",
+    );
+    // Error messages never carry credentials.
+    for (const model of ["custom-unknown/gpt", "mistral/large"])
+      try {
+        route(gateway, model);
+      } catch (error) {
+        expect(String(error)).not.toMatch(
+          /gateway-token|openai-key|anthropic-key/,
+        );
+      }
+  });
+  it("sends each protocol's body and keeps unknown cost unknown", async () => {
+    const sent: any[] = [];
+    const transport = (async (url: any, init: any) => {
+      sent.push({
+        url: String(url),
+        headers: init.headers,
+        body: JSON.parse(init.body),
+      });
+      return Response.json(
+        String(url).endsWith("/messages")
+          ? {
+              content: [{ type: "text", text: "{}" }],
+              usage: { input_tokens: 10, output_tokens: 20 },
+            }
+          : {
+              choices: [{ message: { content: "{}" } }],
+              usage: { prompt_tokens: 10, completion_tokens: 20, cost: 0.5 },
+            },
+      );
+    }) as typeof fetch;
+    const provider = new ProviderGateway(gateway, transport);
+    const anthropic = await provider.complete({
+      ...request,
+      model: "custom-node-anthropic/claude-sonnet-5-5",
+    });
+    expect(sent[0].body).toEqual({
+      model: "claude-sonnet-5-5",
+      system: "safe system",
+      messages: request.messages,
+      max_tokens: 100,
+    });
+    expect(sent[0].headers["anthropic-version"]).toBe("2023-06-01");
+    expect(sent[0].headers["x-api-key"]).toBeUndefined();
+    // A custom route's usage cost field is not trusted; without a price it is unknown.
+    const openai = await provider.complete({
+      ...request,
+      model: "compat/custom-node-openai/gpt-6.1-sol",
+    });
+    expect(sent[1].body.model).toBe("custom-node-openai/gpt-6.1-sol");
+    expect(sent[1].body.response_format).toEqual({ type: "json_object" });
+    expect(sent[1].body.provider).toBeUndefined();
+    for (const r of [anthropic, openai]) expect(r.cost_usd).toBeNull();
+    const priced = await new ProviderGateway(
+      {
+        ...gateway,
+        MODEL_PRICES: JSON.stringify({
+          "custom-node-openai/gpt-6.1-sol": { input: 1, output: 2 },
+        }),
+      },
+      transport,
+    ).complete({ ...request, model: "custom-node-openai/gpt-6.1-sol" });
+    expect(priced.cost_usd).toBe(0.00005);
+  });
 });

@@ -31,6 +31,7 @@ import { attachStatements, lineageId } from "./lineage";
 import { Store } from "./storage";
 import { failJob, finishJob } from "./jobs";
 import { parseWall } from "./budget";
+import { checkProfileModels } from "./gateway";
 export { ReviewWorkflow } from "./workflow";
 export { MigrationWorkflow } from "./migrate";
 export { Sandbox } from "./sandbox";
@@ -173,6 +174,7 @@ app.post("/v1/reviews", async (c) => {
   const tenant = await authenticate(c.req.raw, c.env, "reviews:write"),
     value = await body(c.req.raw, 8 * 1024 * 1024);
   validateSubmission(value);
+  checkProfileModels(c.env, value.profile);
   const snapshotRow = await c.env.DB.prepare(
     "SELECT object_key FROM snapshots WHERE id=? AND tenant=?",
   )
