@@ -35,6 +35,7 @@ import {
   screenHypotheses,
   validateHypotheses,
   type Rejection,
+  validateHypothesesLenient,
 } from "./validation";
 import agentPrompts from "./agent-prompts.json";
 import { agents } from "./manifests";
@@ -199,6 +200,8 @@ export function securityCoverage(
       .map((i) => ({ item: i.id, title: i.title, reason: reasons.get(i.id)! })),
   };
 }
+/** Dispatches of one runner job when the backend itself fails. */
+const RUNNER_ATTEMPTS = 2;
 export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
   async run(event: WorkflowEvent<WorkflowParams>, step: WorkflowStep) {
     const id = event.payload.review_id,
@@ -284,44 +287,57 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
         !submission.fork || kind === "static",
         "fork reviews are static-only",
       );
-      const job = hash(`${id}-${name}`).slice(0, 32),
-        attempt = 1;
-      await step.do(`dispatch-${job}`, async () => {
-        await createJob(
-          this.env,
-          id,
-          job,
-          kind,
-          command,
-          version,
-          submission.snapshot_id,
-          attempt,
-          kind === "run" ? undefined : { profile: submission.profile },
+      // A job the backend could not run at all (container lost, sandbox failed)
+      // is dispatched once more under its own job id; the command's own failures
+      // are never retried. The first attempt keeps its historical id and step names.
+      for (let attempt = 1; ; attempt++) {
+        const job = hash(
+          attempt === 1 ? `${id}-${name}` : `${id}-${name}-${attempt}`,
+        ).slice(0, 32);
+                await step.do(`dispatch-${job}`, async () => {
+          await createJob(
+            this.env,
+            id,
+            job,
+            kind,
+            command,
+            version,
+            submission.snapshot_id,
+            attempt,
+            kind === "run" ? undefined : { profile: submission.profile },
+          );
+          return job;
+        });
+        // The unique attempt is part of the event type and result path.
+        const remaining = await step.do(`remaining-${job}`, async () => {
+          const ms = await store.remainingMs(id);
+          invariant(ms > 0, "review wall budget exhausted");
+          return Math.max(1, Math.ceil(ms / 1000));
+        });
+        const completed = await step.waitForEvent<{ key: string }>(
+          `wait-${job}`,
+          {
+            type: `job-${job}-${attempt}`,
+            timeout: `${Math.min(240, remaining)} seconds`,
+          },
         );
-        return job;
-      });
-      // The unique attempt is part of the event type and result path.
-      const remaining = await step.do(`remaining-${job}`, async () => {
-        const ms = await store.remainingMs(id);
-        invariant(ms > 0, "review wall budget exhausted");
-        return Math.max(1, Math.ceil(ms / 1000));
-      });
-      const completed = await step.waitForEvent<{ key: string }>(
-        `wait-${job}`,
-        {
-          type: `job-${job}-${attempt}`,
-          timeout: `${Math.min(240, remaining)} seconds`,
-        },
-      );
-      const result = await store.get<ExecutionResult>(completed.payload.key);
-      invariant(
-        result.job_id === job &&
-          result.attempt === attempt &&
-          result.version === version,
-        "wrong runner completion",
-      );
-      executions[job] = result;
-      return result;
+        const result = await store.get<ExecutionResult>(completed.payload.key);
+        invariant(
+          result.job_id === job &&
+            result.attempt === attempt &&
+            result.version === version,
+          "wrong runner completion",
+        );
+        if (result.outcome === "runner_failed" && attempt < RUNNER_ATTEMPTS) {
+          report.footer.notes.push(
+            `${name}: runner attempt ${attempt} failed (${redact(result.stderr).slice(0, 120)}); retried`,
+          );
+          executions[job] = result;
+          continue;
+        }
+        executions[job] = result;
+        return result;
+      }
     };
     const done = new Set<string>();
     const perform = async (s: Submission["profile"]["steps"][number]) => {
@@ -617,13 +633,14 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             unassessedByAgent = output.unassessed;
             output = output.hypotheses;
           }
-          const screened = screenHypotheses(
+          const checked = validateHypothesesLenient(
             agent,
-            validateHypotheses(clampAgentOutput(output)),
-            {
-              catalogItems: new Set(applicable.map((i) => i.id)),
-            },
+            clampAgentOutput(output),
           );
+          rejected.push(...checked.rejected);
+          const screened = screenHypotheses(agent, checked.accepted, {
+            catalogItems: new Set(applicable.map((i) => i.id)),
+          });
           rejected.push(...screened.rejected);
           for (const h of screened.accepted) {
             h.source = { agent };

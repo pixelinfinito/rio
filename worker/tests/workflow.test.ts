@@ -266,9 +266,23 @@ it("resumes an isolated runner job using an attempt-specific event", async () =>
   });
   const job = hash(`${id}-checks`).slice(0, 32);
   await instance.waitForStepResult({ name: `dispatch-${job}` });
+  // The backend lost the first attempt; the workflow dispatches a second one.
   await finishJob(runtime, id, job, 1, {
+    outcome: "runner_failed",
     job_id: job,
     attempt: 1,
+    version: "head",
+    exit_code: 1,
+    stdout: "",
+    stderr: "runner backend: Network connection lost",
+    timed_out: false,
+    truncated: false,
+  });
+  const retry = hash(`${id}-checks-2`).slice(0, 32);
+  await instance.waitForStepResult({ name: `dispatch-${retry}` });
+  await finishJob(runtime, id, retry, 2, {
+    job_id: retry,
+    attempt: 2,
     version: "head",
     exit_code: 0,
     stdout: "",
@@ -289,14 +303,30 @@ it("resumes an isolated runner job using an attempt-specific event", async () =>
   const audit = (await (
     await app.request(`https://rio/v1/reviews/${id}/audit`, { headers }, runtime)
   ).json()) as any;
-  expect(audit.executions).toHaveLength(1);
-  expect(audit.executions[0].artifact.graphs.head).toEqual({
+  const report = await store.get<any>(
+    (
+      await runtime.DB.prepare("SELECT report_key FROM reviews WHERE id=?")
+        .bind(id)
+        .first<any>()
+    ).report_key,
+  );
+  expect(report.status).toBe("complete");
+  expect(
+    report.footer.notes.some((n: string) =>
+      /^checks: runner attempt 1 failed \(runner backend: Network connection lost\); retried$/.test(n),
+    ),
+  ).toBe(true);
+  // Both attempts are kept as completed jobs; only the second carries the artifact.
+  expect(audit.executions).toHaveLength(2);
+  const analysis = audit.executions.find((e: any) => e.artifact);
+  expect(analysis.attempt).toBe(2);
+  expect(analysis.artifact.graphs.head).toEqual({
     nodes: 1,
     edges: 0,
     truncated: false,
     omitted: true,
   });
-  expect(audit.executions[0].artifact.report.schema).toBe("rio-report-v1");
+  expect(analysis.artifact.report.schema).toBe("rio-report-v1");
 }, 60000);
 
 it("retains reproduced evidence when every blind pass misses, with runner artifacts and risk-selected budget", async () => {
