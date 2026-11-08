@@ -41,6 +41,7 @@ import { APP_TENANT, handleGitHubWebhook, installationFor } from "./webhooks";
 import {
   handleReviewRequest,
   failPrepare,
+  failUnscheduled,
   prepareCredential,
   preparedBy,
   pullOf,
@@ -790,11 +791,15 @@ export default {
             message.retry({ delaySeconds: 10 });
             continue;
           }
-          if (body.type === "review-request" && body.review_id)
-            await failPrepare(
-              env,
-              body.review_id,
-              "pull request review request failed",
+          if (body.type === "review-request")
+            await (
+              body.review_id
+                ? failPrepare(
+                    env,
+                    body.review_id,
+                    "pull request review request failed",
+                  )
+                : failUnscheduled(env, body)
             ).catch(() => {});
           message.ack();
         }

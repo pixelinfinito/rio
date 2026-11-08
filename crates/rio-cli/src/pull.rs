@@ -12,6 +12,9 @@ use tokio_util::sync::CancellationToken;
 
 /// How long the endpoint may spend preparing before the review itself starts.
 const PREPARE_ALLOWANCE: Duration = Duration::from_secs(15 * 60);
+/// The endpoint's longest review deadline. The PR runs under the profile at
+/// its merge base, not the local one, so the local budget cannot bound the wait.
+const ENDPOINT_REVIEW_LIMIT: Duration = Duration::from_secs(60 * 60 + 60);
 
 pub const NO_INSTALLATION: &str = "no_installation";
 
@@ -192,7 +195,7 @@ pub async fn review(args: ReviewArgs, started: String) -> u8 {
     eprintln!(
         "Endpoint pull request review: {id} ({repository}#{number}); the endpoint prepares the PR head"
     );
-    let timeout = crate::endpoint::review_timeout(&profile).unwrap_or_default() + PREPARE_ALLOWANCE;
+    let timeout = ENDPOINT_REVIEW_LIMIT + PREPARE_ALLOWANCE;
     let mut report = match client.wait(&id, cancellation, timeout).await {
         Ok(report) => report,
         Err(error) => {

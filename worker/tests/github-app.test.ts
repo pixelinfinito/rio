@@ -489,6 +489,35 @@ describe("POST /v1/hooks/github", () => {
     expect(jobs).toHaveLength(2);
   });
 
+  it("forgets a delivery whose event could not be queued, so a redelivery is acted on", async () => {
+    const jobs: any[] = [];
+    await deliver("installation", installationPayload(45), {
+      env: testEnv(jobs),
+    });
+    let down = true;
+    const flaky = testEnv(jobs, {
+      JOBS: {
+        send: async (m: any) => {
+          if (down) throw new Error("queue unavailable");
+          jobs.push(m);
+        },
+      } as any,
+    });
+    const failed = await deliver("pull_request", prPayload(45, "opened"), {
+      env: flaky,
+      id: "flaky-1",
+    });
+    expect(failed.status).toBe(400);
+    down = false;
+    const redelivered = await deliver("pull_request", prPayload(45, "opened"), {
+      env: flaky,
+      id: "flaky-1",
+    });
+    expect(redelivered.status).toBe(202);
+    expect(await redelivered.json()).toEqual({ accepted: true });
+    expect(jobs).toHaveLength(1);
+  });
+
   it("rejects an unknown installation with 403 and queues /rio comments from users only", async () => {
     const jobs: any[] = [];
     const e = testEnv(jobs);

@@ -308,6 +308,14 @@ describe("publisher", () => {
       "auto",
     );
     expect(github.threads.get(byId(c).id)!.resolved).toBe(false);
+    // A thread a person resolved stays resolved while its finding is open.
+    github.threads.get(byId(a).id)!.resolved = true;
+    await publish(
+      round2,
+      report([{ ...a, message: "a now throws on empty input" }]),
+      "auto",
+    );
+    expect(github.threads.get(byId(a).id)!.resolved).toBe(true);
   });
 
   it("reconciles from markers when its records are lost", async () => {

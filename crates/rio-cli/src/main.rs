@@ -966,6 +966,13 @@ async fn run_rotate() -> u8 {
             );
             0
         }
+        Err((step, error)) if step == github_app::FINAL_PING => {
+            eprintln!(
+                "Rotation failed at the {step} step: {}; the new secret is in effect on the app and the endpoint but the endpoint did not accept a ping signed with it. Run rio doctor --rotate again once the endpoint answers.",
+                redact(&format!("{error:#}"))
+            );
+            1
+        }
         Err((step, error)) => {
             eprintln!(
                 "Rotation failed at the {step} step: {}; the previous secret stays in effect on the app and the endpoint.",

@@ -138,6 +138,34 @@ export async function requestReview(
   return id;
 }
 
+/**
+ * After the queue gives up on a request without a review id (webhook or
+ * command), its review is failed instead of waiting in `preparing`.
+ */
+export async function failUnscheduled(
+  env: Env,
+  message: ReviewRequestMessage,
+): Promise<void> {
+  const rows = await env.DB.prepare(
+    "SELECT p.review_id FROM pull_requests p WHERE p.tenant=? AND p.repository=? AND p.number=? AND p.trigger=? AND p.state IN ('requested','preparing') AND (? IS NULL OR p.request_key=?) AND NOT EXISTS (SELECT 1 FROM jobs j WHERE j.review_id=p.review_id)",
+  )
+    .bind(
+      message.tenant,
+      message.repository,
+      message.number,
+      message.trigger,
+      message.comment_id === undefined ? null : `command:${message.comment_id}`,
+      message.comment_id === undefined ? null : `command:${message.comment_id}`,
+    )
+    .all<{ review_id: string }>();
+  for (const row of rows.results)
+    await fail(
+      env,
+      row.review_id,
+      "failed",
+      "pull request review request failed",
+    );
+}
 export async function failPrepare(env: Env, review: string, reason: string) {
   await fail(env, review, "failed", reason);
 }
@@ -265,9 +293,20 @@ export async function handleReviewRequest(
       )
         .bind(message.tenant, message.repository, message.number, key)
         .first<{ review_id: string; state: string }>();
-      // Another delivery already owns this head.
-      if (owner?.review_id !== id) return;
-      review = id;
+      if (!owner) return;
+      if (owner.review_id === id) review = id;
+      else {
+        // Another delivery owns this request. A retry of this very request,
+        // whose earlier attempt failed before scheduling a job, resumes it.
+        const scheduled = await env.DB.prepare(
+          "SELECT 1 AS scheduled FROM jobs WHERE review_id=? LIMIT 1",
+        )
+          .bind(owner.review_id)
+          .first();
+        if (scheduled || !["requested", "preparing"].includes(owner.state))
+          return;
+        review = owner.review_id;
+      }
     }
     await env.DB.prepare(
       "UPDATE pull_requests SET base_sha=?,head_sha=?,fork=?,author_login=?,author_type=?,agent_json=?,state='preparing' WHERE review_id=? AND state='requested'",

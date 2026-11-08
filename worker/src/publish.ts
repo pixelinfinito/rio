@@ -631,11 +631,19 @@ async function publishWith(
         const existing = comments.get(f.id);
         try {
           if (existing) {
+            // A reopened finding's thread is unresolved only when Rio resolved
+            // it; a thread a person resolved stays resolved.
+            const resolvedByRio =
+              records.get(`finding:${f.id}`)?.state === "resolved";
             await settle(
               f.id,
               existing,
               body,
-              state.status === "dismissed" ? true : false,
+              state.status === "dismissed"
+                ? true
+                : resolvedByRio
+                  ? false
+                  : null,
             );
             continue;
           }

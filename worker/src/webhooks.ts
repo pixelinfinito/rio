@@ -300,7 +300,15 @@ export async function handleGitHubWebhook(
   ]);
   if (!inserted.results.length)
     return Response.json({ duplicate: true }, { status: 202 });
-  await outcome.apply?.(env);
-  if (outcome.message) await env.JOBS.send(outcome.message);
+  try {
+    await outcome.apply?.(env);
+    if (outcome.message) await env.JOBS.send(outcome.message);
+  } catch (error) {
+    // Forget the id so GitHub's redelivery of this event is acted on.
+    await env.DB.prepare("DELETE FROM deliveries WHERE id=?")
+      .bind(delivery)
+      .run();
+    throw error;
+  }
   return Response.json({ accepted: true }, { status: 202 });
 }

@@ -6,7 +6,11 @@ import {
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { app } from "../src/index";
 import type { Env, Execution, Snapshot } from "../src/types";
-import { handleReviewRequest, trailerAgent } from "../src/pulls";
+import {
+  failUnscheduled,
+  handleReviewRequest,
+  trailerAgent,
+} from "../src/pulls";
 import { finishJob } from "../src/jobs";
 import { Store } from "../src/storage";
 import { memberHeader } from "../src/archive";
@@ -244,6 +248,53 @@ describe("Sandbox preparation", () => {
     await install(72, ["acme/svc"]);
   });
   afterEach(() => github.restore());
+
+  it("resumes a retried request that failed before its job and fails it once the queue gives up", async () => {
+    const pr = github.pull("acme/svc", 5);
+    const files = { "src/a.ts": "export const a = 2;\n" };
+    github.tarballs.set(pr.base.sha, await gzipTar("acme-svc-base", files));
+    github.tarballs.set(pr.head.sha, await gzipTar("acme-svc-head", files));
+    const { env: e, sent } = capture({ RUNNER_BACKEND: "sandbox" });
+    const message = { ...request("acme/svc", 5), installation_id: 72 };
+    github.failures.push({
+      method: "GET",
+      pattern: /\/tarball\//,
+      status: 502,
+      message: "Bad Gateway",
+      times: 1,
+    });
+    await expect(handleReviewRequest(e, message)).rejects.toThrow(/HTTP 502/);
+    const [first] = await pullRows("acme/svc", 5);
+    expect(first.state).toBe("preparing");
+    // The queue's retry resumes the same review instead of leaving it stuck.
+    await handleReviewRequest(e, message);
+    const rows = await pullRows("acme/svc", 5);
+    expect(rows.map((r) => r.review_id)).toEqual([first.review_id]);
+    expect(sent).toEqual([
+      { review_id: first.review_id, job_id: expect.any(String), attempt: 1 },
+    ]);
+    // A later delivery for the scheduled head does nothing.
+    await handleReviewRequest(e, message);
+    expect(sent).toHaveLength(1);
+    // When every attempt fails, the review is failed rather than left preparing.
+    const next = github.pull("acme/svc", 6);
+    github.failures.push({
+      method: "GET",
+      pattern: /\/tarball\//,
+      status: 502,
+      message: "Bad Gateway",
+    });
+    const stuck = { ...request("acme/svc", 6), installation_id: 72 };
+    await expect(handleReviewRequest(e, stuck)).rejects.toThrow(/HTTP 502/);
+    await failUnscheduled(e, stuck);
+    expect((await pullRows("acme/svc", 6))[0]).toMatchObject({
+      state: "failed",
+      review_status: "error",
+      error: "pull request review request failed",
+    });
+    void next;
+    github.failures.length = 0;
+  });
 
   it("fetches both trees into a snapshot and prepares from it without network", async () => {
     const pr = github.pull("acme/svc", 2);

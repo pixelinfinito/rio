@@ -464,10 +464,13 @@ pub async fn rotate(
             "Warning: the temporary GITHUB_WEBHOOK_SECRET_NEXT could not be removed ({error:#}); it equals the new secret"
         );
     }
+    // Both sides already hold the new secret; only its verification is left.
     ping(endpoint, &fresh, wait)
         .await
-        .map_err(|e| (step("ping verification"), e))
+        .map_err(|e| (step(FINAL_PING), e))
 }
+/// The last rotation step, after which the new secret is in effect everywhere.
+pub const FINAL_PING: &str = "final ping verification";
 
 #[cfg(test)]
 mod tests {
@@ -905,6 +908,39 @@ mod tests {
         assert_eq!(s.app, s.main);
         assert_eq!(s.next, None);
         assert_eq!(s.pings, [true, true]);
+    }
+
+    #[tokio::test]
+    async fn a_failed_final_ping_is_reported_as_its_own_step() {
+        let s = state(false, false);
+        let double = rotation_double(s.clone());
+        let cf = Cloudflare::at(&double.url, "cloudflare-token").unwrap();
+        let client =
+            rio_client::Client::new(&double.url, "rotation-owner-token-32-characters".into())
+                .unwrap();
+        // Every second ping fails: the first verifies the new secret, the final one does not.
+        let pings = Arc::new(Mutex::new(0));
+        let failing = Double::start({
+            let pings = pings.clone();
+            Arc::new(move |_, _, _, _| {
+                let mut n = pings.lock().unwrap();
+                *n += 1;
+                (if *n == 1 { 204 } else { 503 }, String::new())
+            })
+        });
+        let (step, _) = rotate(
+            &cf,
+            &deployment(),
+            &failing.url,
+            &client,
+            Duration::from_millis(300),
+        )
+        .await
+        .unwrap_err();
+        assert_eq!(step, FINAL_PING);
+        let s = s.lock().unwrap();
+        assert_ne!(s.main, "old-secret");
+        assert_eq!(s.app, s.main);
     }
 
     #[tokio::test]
