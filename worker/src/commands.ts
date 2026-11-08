@@ -9,6 +9,7 @@ import { installation, covers } from "./webhooks";
 import { recordFeedback } from "./feedback";
 import { lineageId } from "./lineage";
 import { RESPONSE_REASONS } from "./validation";
+import { redact } from "./redaction";
 import { repositoryKey } from "./pulls";
 import { reflectDismissal, GitHubHost } from "./publish";
 
@@ -152,19 +153,28 @@ export async function handleCommand(
       await react("-1");
       return { applied: false, actor };
     }
-    await react("+1");
-    await reflectDismissal(
-      env,
-      token,
-      {
-        tenant: message.tenant,
-        lineage: lineageId(message.tenant, lineage),
-        repository: message.repository,
-        number: message.number,
-      },
-      match.finding,
-      response,
-    );
+    // The answer is recorded; the reaction and the comment edit are
+    // best-effort, so a GitHub failure never makes the queue record it twice.
+    // The next publication applies the answer to the comment anyway.
+    try {
+      await react("+1");
+      await reflectDismissal(
+        env,
+        token,
+        {
+          tenant: message.tenant,
+          lineage: lineageId(message.tenant, lineage),
+          repository: message.repository,
+          number: message.number,
+        },
+        match.finding,
+        response,
+      );
+    } catch (error) {
+      console.log(
+        `rio: /rio dismiss recorded for ${message.repository}#${message.number}, but its GitHub update failed: ${redact(error instanceof Error ? error.message : String(error)).slice(0, 200)}`,
+      );
+    }
     return { applied: true, actor };
   } finally {
     await token.revoke();

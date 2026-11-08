@@ -947,6 +947,50 @@ describe("/rio commands", () => {
     };
   }
 
+  it("keeps a recorded dismissal when GitHub fails afterwards", async () => {
+    const number = 302;
+    const lineage = lineageId("owner", {
+      repository: "github.com/acme/pub",
+      kind: "pr",
+      ref: String(number),
+    });
+    const id = hash("best-effort");
+    await runtime.DB.prepare(
+      "INSERT INTO lineages(id,tenant,repository,kind,ref,generation,round,posted_json,updated_at) VALUES(?,'owner','github.com/acme/pub','pr',?,1,1,'{}',0)",
+    )
+      .bind(lineage, String(number))
+      .run();
+    await runtime.DB.prepare(
+      "INSERT INTO findings(tenant,lineage_id,generation,identity,review_id,snapshot_id,repository,rule_id,category,source_kind,state,status,round,first_posted_in,location_json,finding_json,created_at,updated_at) VALUES('owner',?,1,?,'r','s','github.com/acme/pub','correctness/throw','defect','agent','new','open',1,'s','{}',?,0,0)",
+    )
+      .bind(
+        lineage,
+        id,
+        JSON.stringify({ finding: finding(id, 1, { id } as any) }),
+      )
+      .run();
+    github.failures.push({
+      method: "POST",
+      pattern: /\/reactions$/,
+      status: 502,
+      message: "Bad Gateway",
+    });
+    const { env: e } = capture();
+    const result = await handleCommand(
+      e,
+      message(`/rio dismiss ${id.slice(0, 12)} style`, "cole", number),
+    );
+    expect(result).toEqual({ applied: true, actor: "collaborator" });
+    expect(
+      await runtime.DB.prepare(
+        "SELECT COUNT(*) AS n FROM feedback WHERE finding_id=?",
+      )
+        .bind(id)
+        .first(),
+    ).toEqual({ n: 1 });
+    github.failures.length = 0;
+  });
+
   it("parses only the two commands", () => {
     expect(parseCommand("/rio review")).toEqual({ kind: "review" });
     expect(parseCommand("/rio dismiss 8C1E2F4A style looks fine")).toEqual({

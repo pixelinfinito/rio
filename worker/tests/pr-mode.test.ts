@@ -108,15 +108,18 @@ async function gateway(
     const h =
       block(body.messages.at(-1).content, "hypothesis") ??
       block(text, "hypothesis");
+    // Voters prove what the agents still report and refute the rest, such as
+    // an earlier finding a diff-only round re-verifies after its code changed.
+    const holds = agentSymbols.includes(h.location.symbol_path);
     result = {
-      evidence_level: "static_proven",
+      evidence_level: holds ? "static_proven" : "refuted",
       evidence: [
         {
           kind: "code",
           version: "head",
           path: h.location.path,
           node_ids: [`${h.location.path}#${h.location.symbol_path}`],
-          demonstrates: "regression",
+          demonstrates: holds ? "regression" : "protection",
         },
       ],
     };
@@ -197,7 +200,8 @@ async function runPrepare(base: Files, head: Files) {
     .filter((p) => base[p] !== head[p])
     .map((path) => ({ path, lines_changed: 1 }));
   s.profile.publish = "auto";
-  s.profile.rounds = { cap: 3, diff_only_after: 10 };
+  // Rounds after the first are diff-only, as `rio/base` sets.
+  s.profile.rounds = { cap: 3, diff_only_after: 1 };
   s.profile.steps = [
     {
       id: "agents",
@@ -362,7 +366,11 @@ describe("PR mode end to end", () => {
     await drain();
     const { report } = await runPrepare(BASE, HEAD2);
     rounds.push({ report });
-    expect(report.lineage).toMatchObject({ round: 2, held_back: 1 });
+    expect(report.lineage).toMatchObject({
+      round: 2,
+      held_back: 1,
+      diff_only: true,
+    });
     expect(report.agent_audit.lineage_updates).toEqual([
       {
         id: tax,
