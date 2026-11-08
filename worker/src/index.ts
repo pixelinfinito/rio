@@ -616,22 +616,25 @@ app.post("/v1/findings/:id/feedback", async (c) => {
           ),
         ]
       : []),
-    // The registry keeps the code hash of the head the finding was last seen on.
+    // The answer is given on the code last seen: its hash becomes the
+    // dismissal's, and status_at tells running reviews not to overwrite it.
     c.env.DB.prepare(
-      "UPDATE finding_history SET status='dismissed',author_response_json=?,dismissed_in=?,updated_at=? WHERE tenant=? AND repository=? AND identity=?",
+      "UPDATE finding_history SET status='dismissed',author_response_json=?,dismissed_in=?,code_hash=COALESCE(seen_code_hash,code_hash),status_at=?,updated_at=? WHERE tenant=? AND repository=? AND identity=?",
     ).bind(
       JSON.stringify(response),
       dismissedIn,
+      Date.now(),
       Date.now(),
       tenant,
       repository,
       id,
     ),
     c.env.DB.prepare(
-      "INSERT INTO feedback(id,tenant,finding_id,reason,actor,note,created_at) VALUES(?,?,?,?,?,?,?)",
+      "INSERT INTO feedback(id,tenant,repository,finding_id,reason,actor,note,created_at) VALUES(?,?,?,?,?,?,?,?)",
     ).bind(
       crypto.randomUUID(),
       tenant,
+      repository,
       id,
       response.reason,
       response.actor,

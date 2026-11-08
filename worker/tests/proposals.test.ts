@@ -230,6 +230,51 @@ describe("proposal computation", () => {
   });
 });
 
+describe("proposal provenance", () => {
+  it("counts a response only for the repository it was given in", async () => {
+    const [a, b] = ["github.com/acme/one", "github.com/acme/two"];
+    const ids = [1, 2, 3].map((n) => hash(`shared-identity-${n}`));
+    const statements: D1PreparedStatement[] = [];
+    for (const repository of [a, b])
+      for (const identity of ids)
+        statements.push(
+          runtime.DB.prepare(
+            "INSERT INTO finding_history(tenant,repository,identity,rule_id,first_seen_review,last_seen_review,seen_count,status,location_json,updated_at) VALUES('owner',?,?,'lint/shared','rev','rev',1,'open',?,1)",
+          ).bind(
+            repository,
+            identity,
+            JSON.stringify({ path: "src/x.ts", line_start: 1, line_end: 1 }),
+          ),
+        );
+    await runtime.DB.batch(statements);
+    // Answered through the endpoint in repository A only.
+    for (const identity of ids) {
+      await runtime.DB.prepare(
+        "UPDATE finding_history SET status='dismissed' WHERE tenant='owner' AND repository=? AND identity=?",
+      )
+        .bind(a, identity)
+        .run();
+      await runtime.DB.prepare(
+        "INSERT INTO feedback(id,tenant,repository,finding_id,reason,actor,created_at) VALUES(?,?,?,?,?,?,?)",
+      )
+        .bind(
+          crypto.randomUUID(),
+          "owner",
+          a,
+          identity,
+          "style",
+          "dev",
+          Date.now(),
+        )
+        .run();
+    }
+    expect(
+      (await updateProposals(runtime, "owner", a, 3)).map((p) => p.entry),
+    ).toEqual([{ rule: "lint/shared" }]);
+    expect(await updateProposals(runtime, "owner", b, 3)).toEqual([]);
+  });
+});
+
 describe("GET /v1/suppressions", () => {
   it("lists the caller's proposals by repository and status only", async () => {
     const repo = "github.com/acme/listed";

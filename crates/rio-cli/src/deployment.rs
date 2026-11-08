@@ -1359,6 +1359,7 @@ mod tests {
                 "0002_convergence.sql",
                 "0003_snapshot_contents.sql",
                 "0004_pr_mode.sql",
+                "0005_registry_integrity.sql",
             ] {
                 assert!(upload.2.contains(name), "{name}");
             }

@@ -29,13 +29,20 @@ export interface RegistryRecord {
   dismissed_in: string | null;
   location_json: string;
   code_hash: string | null;
+  // Migration 0005: the hash at the last sighting (a new answer is given on
+  // it), the sighting times, and the time the status was last set.
+  seen_code_hash?: string | null;
+  first_seen_at?: number | null;
+  last_seen_at?: number | null;
+  status_at?: number | null;
   updated_at: number;
 }
 
 /**
- * Hash of the normalized text of the symbol enclosing a location: the
- * smallest head graph node containing it, else the location's own lines.
- * Whitespace and blank lines do not change it.
+ * Hash of the text of the symbol enclosing a location: the smallest head
+ * graph node containing it, else the location's own lines. Only trailing
+ * whitespace, line endings and blank lines are normalized; indentation and
+ * whitespace inside a line can change behavior, so they count.
  */
 export function codeHash(
   location: Pick<Location, "path" | "line_start" | "line_end">,
@@ -61,10 +68,29 @@ export function codeHash(
   const normalized = text
     .split("\n")
     .slice(start - 1, end)
-    .map((line) => line.trim().replace(/\s+/g, " "))
+    .map((line) => line.trimEnd())
     .filter(Boolean)
     .join("\n");
   return hash(`${location.path}\0${normalized}`);
+}
+
+/**
+ * The code hash of a finding: its primary location, or for a class finding
+ * every instance location, so a new or changed occurrence changes it.
+ */
+export function findingHash(
+  f: Pick<Finding, "location" | "locations">,
+  graph: Graph,
+  text: (path: string) => string | null,
+): string | null {
+  const locations = f.locations.length > 1 ? f.locations : [f.location];
+  const parts: string[] = [];
+  for (const l of locations) {
+    const h = codeHash(l, graph, text(l.path));
+    if (h === null) return null;
+    parts.push(h);
+  }
+  return parts.length === 1 ? parts[0] : hash(parts.sort().join("\n"));
 }
 
 /** Where a lineage's dismissals are said to come from: `repo#41` for PRs. */
@@ -188,25 +214,37 @@ export interface Sighting {
   finding: Finding;
   code_hash: string | null;
 }
+const LATEST =
+  "finding_history.last_seen_at IS NULL OR excluded.last_seen_at>=finding_history.last_seen_at";
+const EARLIER =
+  "finding_history.first_seen_at IS NOT NULL AND excluded.first_seen_at<finding_history.first_seen_at";
+// The status columns change only if nobody set the status since it was read.
+const UNCHANGED = "finding_history.status_at IS ?";
 /**
- * Registry writes for a finished review: every produced or remembered
- * identity is seen once more. A dismissal is kept with its code hash; a
- * lineage dismissal or a new sighting records the current hash; a fixed
- * identity that reappears is open again.
+ * Registry writes for a finished review, one group per identity; each group
+ * must run in one batch. A sighting is recorded once per review in
+ * `finding_sightings`, so a replayed step never counts twice, and the first
+ * and last review follow the reviews' creation times, not the order in which
+ * they finish. The status, its answer, origin and code hash are written only
+ * when the status was not set since the registry was read: a dismissal given
+ * while this review ran is never overwritten by a stale value. A dismissal
+ * keeps the code hash it was given on; a new lineage dismissal or a reopened
+ * fixed identity takes the current one.
  */
 export function registryStatements(
   env: Env,
   tenant: string,
   repository: string,
   review: string,
+  seenAt: number,
   dismissedIn: string,
   sightings: Sighting[],
   records: RegistryRecord[],
-  fixed: { id: string; code_hash: string | null }[],
+  fixed: string[],
   now = Date.now(),
-): D1PreparedStatement[] {
+): D1PreparedStatement[][] {
   const byId = new Map(records.map((r) => [r.identity, r]));
-  const statements: D1PreparedStatement[] = [];
+  const groups: D1PreparedStatement[][] = [];
   const seen = new Set<string>();
   for (const { finding: f, code_hash } of sightings) {
     if (seen.has(f.id)) continue;
@@ -232,9 +270,13 @@ export function registryStatements(
       where = record.dismissed_in;
       codeHash = record.code_hash;
     }
-    statements.push(
+    const changed =
+      !record ||
+      record.status !== status ||
+      record.author_response_json !== response;
+    groups.push([
       env.DB.prepare(
-        "INSERT INTO finding_history(tenant,repository,identity,rule_id,first_seen_review,last_seen_review,seen_count,status,author_response_json,dismissed_in,location_json,code_hash,updated_at) VALUES(?,?,?,?,?,?,1,?,?,?,?,?,?) ON CONFLICT(tenant,repository,identity) DO UPDATE SET rule_id=excluded.rule_id,seen_count=CASE WHEN finding_history.last_seen_review=excluded.last_seen_review THEN finding_history.seen_count ELSE finding_history.seen_count+1 END,last_seen_review=excluded.last_seen_review,status=excluded.status,author_response_json=excluded.author_response_json,dismissed_in=excluded.dismissed_in,location_json=excluded.location_json,code_hash=excluded.code_hash,updated_at=excluded.updated_at",
+        `INSERT INTO finding_history(tenant,repository,identity,rule_id,first_seen_review,last_seen_review,first_seen_at,last_seen_at,seen_count,status,author_response_json,dismissed_in,location_json,code_hash,seen_code_hash,status_at,updated_at) SELECT ?,?,?,?,?,?,?,?,1,?,?,?,?,?,?,?,? WHERE NOT EXISTS(SELECT 1 FROM finding_sightings WHERE tenant=? AND repository=? AND identity=? AND review_id=?) ON CONFLICT(tenant,repository,identity) DO UPDATE SET rule_id=excluded.rule_id,seen_count=finding_history.seen_count+1,first_seen_review=CASE WHEN ${EARLIER} THEN excluded.first_seen_review ELSE finding_history.first_seen_review END,first_seen_at=CASE WHEN ${EARLIER} THEN excluded.first_seen_at ELSE finding_history.first_seen_at END,last_seen_review=CASE WHEN ${LATEST} THEN excluded.last_seen_review ELSE finding_history.last_seen_review END,location_json=CASE WHEN ${LATEST} THEN excluded.location_json ELSE finding_history.location_json END,seen_code_hash=CASE WHEN ${LATEST} THEN excluded.seen_code_hash ELSE finding_history.seen_code_hash END,last_seen_at=CASE WHEN ${LATEST} THEN excluded.last_seen_at ELSE finding_history.last_seen_at END,status=CASE WHEN ${UNCHANGED} THEN excluded.status ELSE finding_history.status END,author_response_json=CASE WHEN ${UNCHANGED} THEN excluded.author_response_json ELSE finding_history.author_response_json END,dismissed_in=CASE WHEN ${UNCHANGED} THEN excluded.dismissed_in ELSE finding_history.dismissed_in END,code_hash=CASE WHEN ${UNCHANGED} THEN excluded.code_hash ELSE finding_history.code_hash END,status_at=CASE WHEN ${UNCHANGED} THEN excluded.status_at ELSE finding_history.status_at END,updated_at=excluded.updated_at`,
       ).bind(
         tenant,
         repository,
@@ -242,23 +284,35 @@ export function registryStatements(
         f.rule_id,
         review,
         review,
+        seenAt,
+        seenAt,
         status,
         response,
         where,
         JSON.stringify(f.location),
         codeHash,
+        code_hash,
+        changed ? now : (record?.status_at ?? null),
         now,
+        tenant,
+        repository,
+        f.id,
+        review,
+        ...Array(5).fill(record?.status_at ?? null),
       ),
-    );
+      env.DB.prepare(
+        "INSERT INTO finding_sightings(tenant,repository,identity,review_id,seen_at) VALUES(?,?,?,?,?) ON CONFLICT DO NOTHING",
+      ).bind(tenant, repository, f.id, review, seenAt),
+    ]);
   }
-  for (const { id, code_hash } of fixed)
+  for (const id of fixed)
     if (!seen.has(id))
-      statements.push(
+      groups.push([
         env.DB.prepare(
-          "UPDATE finding_history SET status='fixed',author_response_json=NULL,dismissed_in=?,code_hash=COALESCE(?,code_hash),updated_at=? WHERE tenant=? AND repository=? AND identity=? AND status='open'",
-        ).bind(review, code_hash, now, tenant, repository, id),
-      );
-  return statements;
+          "UPDATE finding_history SET status='fixed',author_response_json=NULL,dismissed_in=?,status_at=?,updated_at=? WHERE tenant=? AND repository=? AND identity=? AND status='open'",
+        ).bind(review, now, now, tenant, repository, id),
+      ]);
+  return groups;
 }
 
 /** `GET /v1/findings` record form. */

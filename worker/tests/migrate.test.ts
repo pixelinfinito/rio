@@ -57,6 +57,31 @@ async function prModeConstraints() {
   ).rejects.toThrow(/CHECK/);
 }
 
+// 0005_registry_integrity: sighting ledger, status versions, feedback provenance.
+async function registryColumns() {
+  const columns = async (table: string) =>
+    (
+      await env.DB.prepare(`PRAGMA table_info(${table})`).all<{
+        name: string;
+      }>()
+    ).results.map((c) => c.name);
+  expect(await columns("finding_history")).toEqual(
+    expect.arrayContaining([
+      "seen_code_hash",
+      "first_seen_at",
+      "last_seen_at",
+      "status_at",
+    ]),
+  );
+  expect(await columns("feedback")).toContain("repository");
+  const sighting = () =>
+    env.DB.prepare(
+      "INSERT INTO finding_sightings(tenant,repository,identity,review_id,seen_at) VALUES('owner','o/r','f','r1',1)",
+    ).run();
+  await sighting();
+  await expect(sighting()).rejects.toThrow(/UNIQUE|PRIMARY/);
+}
+
 it("applies forward migrations once and leaves no deployment lock", async () => {
   for (let i = 0; i < 2; i++) await migrate(`migration-${i}`);
   const ledger = await env.DB.prepare("SELECT name FROM rio_migrations").all();
@@ -78,9 +103,11 @@ it("applies forward migrations once and leaves no deployment lock", async () => 
       "finding_history",
       "suppressions",
       "agent_cache",
+      "finding_sightings",
     ]),
   );
   expect(await tables()).not.toContain("feedback_next");
+  await registryColumns();
   await prModeConstraints();
   // The fresh feedback table accepts only the standardized reasons.
   for (const reason of ["false_positive", "known", "other"])
@@ -109,6 +136,7 @@ it("upgrades a v0.2 database and converts draft feedback reasons", async () => {
     "finding_history",
     "suppressions",
     "agent_cache",
+    "finding_sightings",
   ])
     await env.DB.prepare(`DROP TABLE IF EXISTS ${table}`).run();
   const core = migrations.find((m) => m.name === "0001_core.sql")!;
@@ -166,7 +194,9 @@ it("upgrades a v0.2 database and converts draft feedback reasons", async () => {
       "finding_history",
       "suppressions",
       "agent_cache",
+      "finding_sightings",
     ]),
   );
   await prModeConstraints();
+  await registryColumns();
 });

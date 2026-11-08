@@ -7,7 +7,14 @@ import { beforeAll, describe, expect, it, vi } from "vitest";
 import { app } from "../src/index";
 import { Store } from "../src/storage";
 import { hash, normalizeTrigger, validateSubmission } from "../src/validation";
-import { applyHistory, codeHash, type RegistryRecord } from "../src/history";
+import {
+  applyHistory,
+  codeHash,
+  findingHash,
+  loadRecords,
+  registryStatements,
+  type RegistryRecord,
+} from "../src/history";
 import { allMigrations, submission } from "./fixtures";
 import { storeSnapshot } from "./snapshots";
 import type { Env, Graph, Snapshot, Submission } from "../src/types";
@@ -169,16 +176,28 @@ describe("code hash", () => {
   });
   const text =
     "function f() {\n  const x = 1;\n  return x;\n}\nfunction g() {}\n";
-  it("hashes the enclosing symbol, ignores whitespace and changes with its body", () => {
+  it("hashes the enclosing symbol, ignores only trailing whitespace and changes with its body", () => {
     const h = codeHash(at(2), graph, text);
     expect(codeHash(at(3), graph, text)).toBe(h);
     expect(
       codeHash(
         at(2),
         graph,
-        text.replace("  const x = 1;", "\tconst   x = 1;  "),
+        text.replace("  const x = 1;", "  const x = 1;  \r"),
       ),
     ).toBe(h);
+    // Indentation and whitespace inside a line can change behavior.
+    for (const edit of [
+      "\tconst x = 1;",
+      "    const x = 1;",
+      "  const  x = 1;",
+    ])
+      expect(
+        codeHash(at(2), graph, text.replace("  const x = 1;", edit)),
+      ).not.toBe(h);
+    expect(
+      codeHash(at(1), graph, 'function f() {\n  return "a b";\n}\n'),
+    ).not.toBe(codeHash(at(1), graph, 'function f() {\n  return "a  b";\n}\n'));
     expect(codeHash(at(2), graph, text.replace("x = 1", "x = 2"))).not.toBe(h);
     // Another symbol's edit does not change it.
     expect(
@@ -191,6 +210,141 @@ describe("code hash", () => {
       codeHash({ path: "b.ts", line_start: 1, line_end: 1 }, graph, "x\nz\n"),
     );
     expect(codeHash(at(1), graph, null)).toBeNull();
+  });
+
+  it("covers every instance of a class finding", () => {
+    const files: Record<string, string> = {
+      "a.ts": text,
+      "b.ts": "function b() {\n  const x = 1;\n}\n",
+    };
+    const loc = (path: string, line: number) => ({
+      path,
+      line_start: line,
+      line_end: line,
+      symbol_path: "",
+      occurrence_state: "new",
+    });
+    const read = (path: string) => files[path] ?? null;
+    const single = { location: loc("a.ts", 2), locations: [loc("a.ts", 2)] };
+    expect(findingHash(single, graph, read)).toBe(codeHash(at(2), graph, text));
+    const four = [
+      loc("a.ts", 2),
+      loc("a.ts", 6),
+      loc("b.ts", 2),
+      loc("b.ts", 1),
+    ];
+    const cls = { location: four[0], locations: four };
+    const h = findingHash(cls, graph, read);
+    // A new occurrence, or a change at any occurrence, changes the hash even
+    // though the primary location's symbol is unchanged.
+    expect(
+      findingHash(
+        { ...cls, locations: [...four, loc("b.ts", 3)] },
+        graph,
+        read,
+      ),
+    ).not.toBe(h);
+    expect(
+      findingHash(cls, graph, (p) =>
+        p === "b.ts" ? "function b() {\n  const x = 2;\n}\n" : read(p),
+      ),
+    ).not.toBe(h);
+    expect(
+      findingHash({ ...cls, locations: [...four].reverse() }, graph, read),
+    ).toBe(h);
+    expect(
+      findingHash(cls, graph, (p) => (p === "b.ts" ? null : read(p))),
+    ).toBeNull();
+  });
+});
+
+describe("registry writes", () => {
+  const repository = "github.com/acme/registry-writes";
+  const finding = (id: string, extra: any = {}) =>
+    ({
+      id,
+      rule_id: "r",
+      location: {
+        path: "a.ts",
+        line_start: 1,
+        line_end: 1,
+        symbol_path: "a",
+        occurrence_state: "new",
+      },
+      locations: [],
+      ...extra,
+    }) as any;
+  const apply = async (
+    review: string,
+    seenAt: number,
+    records: RegistryRecord[],
+    sightings: { finding: any; code_hash: string | null }[],
+  ) => {
+    for (const group of registryStatements(
+      runtime,
+      "owner",
+      repository,
+      review,
+      seenAt,
+      review,
+      sightings,
+      records,
+      [],
+    ))
+      await runtime.DB.batch(group);
+  };
+  const read = (id: string) => loadRecords(runtime, "owner", repository, [id]);
+  it("counts a review once, orders sightings by review creation and never overwrites a newer status", async () => {
+    const id = "c".repeat(64);
+    // R2 (created later) finishes first, then R1, then R1's step replays.
+    await apply("R2", 2000, [], [{ finding: finding(id), code_hash: "h2" }]);
+    await apply("R1", 1000, await read(id), [
+      { finding: finding(id), code_hash: "h1" },
+    ]);
+    await apply("R1", 1000, await read(id), [
+      { finding: finding(id), code_hash: "h1" },
+    ]);
+    let [row] = await read(id);
+    expect(row).toMatchObject({
+      seen_count: 2,
+      first_seen_review: "R1",
+      last_seen_review: "R2",
+      seen_code_hash: "h2",
+    });
+    // R3 reads the record, a dismissal arrives while it runs, then it writes.
+    const stale = await read(id);
+    const response = await app.request(
+      `https://rio/v1/findings/${id}/feedback`,
+      {
+        method: "POST",
+        headers: owner,
+        body: JSON.stringify({ reason: "style", actor: "dev" }),
+      },
+      runtime,
+    );
+    expect(response.status).toBe(200);
+    await apply("R3", 3000, stale, [{ finding: finding(id), code_hash: "h3" }]);
+    [row] = await read(id);
+    expect(row).toMatchObject({
+      status: "dismissed",
+      seen_count: 3,
+      last_seen_review: "R3",
+      seen_code_hash: "h3",
+      // The dismissal was given on the code last seen before it, R2's.
+      code_hash: "h2",
+    });
+    expect(JSON.parse(row.author_response_json!).reason).toBe("style");
+    // A first sighting sets first_seen and keeps it for later, newer reviews.
+    const other = "d".repeat(64);
+    await apply("R5", 5000, [], [{ finding: finding(other), code_hash: "x" }]);
+    await apply("R4", 4000, await read(other), [
+      { finding: finding(other), code_hash: "x" },
+    ]);
+    expect((await read(other))[0]).toMatchObject({
+      first_seen_review: "R4",
+      last_seen_review: "R5",
+      seen_count: 2,
+    });
   });
 });
 
@@ -442,6 +596,42 @@ describe("finding registry", () => {
       seen_count: 3,
     });
     expect(r4.report.remembered).toBeUndefined();
+    // Dismissing the changed occurrence remembers it on the changed code, and
+    // reverting to the earlier code no longer matches.
+    const redismissed = await app.request(
+      `https://rio/v1/findings/${idOf(fa)}/feedback`,
+      {
+        method: "POST",
+        headers: owner,
+        body: JSON.stringify({
+          reason: "intentional",
+          actor: "dev@example.com",
+        }),
+      },
+      runtime,
+    );
+    expect(redismissed.status).toBe(200);
+    const moved = {
+      ...fa,
+      location: { ...fa.location, line_start: 3, line_end: 3 },
+    };
+    const r4b = await review({
+      base,
+      head: edited,
+      agents: [moved],
+      repository,
+    });
+    expect(reported(r4b.report).map((f) => f.id)).not.toContain(idOf(fa));
+    expect(r4b.report.remembered.map((f: any) => f.id)).toEqual([idOf(fa)]);
+    expect(r4b.report.remembered[0].history.previous_response.reason).toBe(
+      "intentional",
+    );
+    const r4c = await review({ base, head, agents: [fa], repository });
+    expect(
+      reported(r4c.report).find((f) => f.id === idOf(fa)).history,
+    ).toMatchObject({
+      previous_response: { reason: "intentional" },
+    });
     // A fixed identity that comes back is a regression of that fix.
     await runtime.DB.prepare(
       "UPDATE finding_history SET status='fixed',author_response_json=NULL,dismissed_in='rev-fix' WHERE tenant='owner' AND repository=? AND identity=?",

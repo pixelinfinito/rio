@@ -106,8 +106,10 @@ export async function updateProposals(
   threshold: number,
   now = Date.now(),
 ) {
+  // Responses recorded before migration 0005 carry no repository and are
+  // attributed by identity alone.
   const responses = await env.DB.prepare(
-    "SELECT f.finding_id,f.reason,f.actor,f.created_at,h.rule_id,h.location_json FROM feedback f JOIN finding_history h ON h.tenant=f.tenant AND h.identity=f.finding_id WHERE f.tenant=? AND h.repository=? AND f.created_at>=?",
+    "SELECT f.finding_id,f.reason,f.actor,f.created_at,h.rule_id,h.location_json FROM feedback f JOIN finding_history h ON h.tenant=f.tenant AND h.identity=f.finding_id AND (f.repository IS NULL OR f.repository=h.repository) WHERE f.tenant=? AND h.repository=? AND f.created_at>=?",
   )
     .bind(tenant, repository, now - PROPOSAL_WINDOW)
     .all<Response>();
