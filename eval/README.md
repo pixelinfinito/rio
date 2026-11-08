@@ -148,7 +148,11 @@ Acceptance (`accepted: true`) requires every gate: a reference set with known
 high-severity issues and independently clean controls; quorum precision >= 0.80;
 no high-severity control detected by the single-verifier baseline but missed by
 the quorum; complete data (every case scored, verification cost known); and
-`execution: live-model`. A failing or unusable comparison is still written, with
+`execution: live-model`. A case is scorable when its review finished: status
+`complete`, or `incomplete` only because deterministic checks were skipped (for a
+missing tool, no project configuration or no network, which the hosted runner
+reports for every project); failed or cancelled checks, missing verifier votes and
+partial reviews are not scorable (owner decision of 2026-11-08). A failing or unusable comparison is still written, with
 the quorum false positives (`quorum_false_positives`), the lost controls
 (`lost_high_controls`, as `case/control`) and unscorable cases (`errors`) named,
 and the command exits 1. Recorded test fixtures never establish acceptance.

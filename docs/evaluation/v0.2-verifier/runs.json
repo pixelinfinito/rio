@@ -10,28 +10,58 @@
         "hs-py-01"
       ],
       "single": {
-        "exit_code": 3,
-        "wall_seconds": 3,
-        "endpoint_review": null,
-        "snapshot": null,
-        "status": "error",
-        "report_sha256": "a552d77e8bc9f55c93e0f2aded053a472c2d4702194777bf244cd8b3df0af605",
-        "error": "unsupported file mode 160000 for vendor/llhttp (base)",
-        "notes": [],
-        "agent_findings": 0,
-        "incomplete_checks": []
+        "exit_code": 0,
+        "wall_seconds": 229,
+        "endpoint_review": "392b1dba-5184-41e7-b366-b0edc08de2d6",
+        "snapshot": "4.4 MiB in 444 distinct contents, 882 files total",
+        "status": "incomplete",
+        "report_sha256": "33c2aaa04f2a4bcc9a06a185c6459672c8593ee33492e566b38b583ca7a2f07a",
+        "notes": [
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
+        ],
+        "agent_findings": 2,
+        "incomplete_checks": [
+          "coverage:tool_missing",
+          "dependencies:offline",
+          "lint:no_project_config",
+          "typecheck:tool_missing"
+        ],
+        "mode": "branch",
+        "profile_hash": "49c673184d81c8ef41723a934e72c676109bbbccf92dc1a26b330cca6b28c0f7",
+        "audit_sha256": "a0bbd0ff08391c9344960055d1f78791052fed91e0893f45ab6cd4bb3bdc291d",
+        "model_calls": 18,
+        "verification_tokens": 247559,
+        "cost_usd": 0.8636,
+        "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
+        "voter_model": "openrouter/openai/gpt-6.1-sol",
+        "route": "openrouter"
       },
       "quorum": {
-        "exit_code": 3,
-        "wall_seconds": 2,
-        "endpoint_review": null,
-        "snapshot": null,
-        "status": "error",
-        "report_sha256": "a552d77e8bc9f55c93e0f2aded053a472c2d4702194777bf244cd8b3df0af605",
-        "error": "unsupported file mode 160000 for vendor/llhttp (base)",
-        "notes": [],
-        "agent_findings": 0,
-        "incomplete_checks": []
+        "exit_code": 0,
+        "wall_seconds": 110,
+        "endpoint_review": "81e5d2bc-015a-4c05-8318-39d491ba2a9c",
+        "snapshot": "4.4 MiB in 444 distinct contents, 882 files total",
+        "status": "incomplete",
+        "report_sha256": "9156e20e297c5a4e1218b85676dddbdb5315bf3f054e6651e873be8b57ff2ae0",
+        "notes": [
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
+        ],
+        "agent_findings": 1,
+        "incomplete_checks": [
+          "coverage:tool_missing",
+          "dependencies:offline",
+          "lint:no_project_config",
+          "typecheck:tool_missing"
+        ],
+        "mode": "branch",
+        "profile_hash": "bdcb94aad2775ee9c3fa0af467dcba04906a2faec88b1559bf14fc8dc2875ba6",
+        "audit_sha256": "de1b412db0c265fb98d4e7a0ef86dc09d0d3ab17b9bc2808736eb0edb0d4ec09",
+        "model_calls": 21,
+        "verification_tokens": 153065,
+        "cost_usd": 0.589,
+        "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
+        "voter_model": "openrouter/openai/gpt-6.1-sol",
+        "route": "openrouter"
       }
     },
     {
@@ -43,50 +73,58 @@
         "hs-py-02"
       ],
       "single": {
-        "exit_code": 4,
-        "wall_seconds": 40,
-        "endpoint_review": "f34c9c4c-191c-450d-a825-a1927afacfd9",
+        "exit_code": 0,
+        "wall_seconds": 148,
+        "endpoint_review": "2376e036-6e3a-4636-896d-e83939c2d0a5",
         "snapshot": "2.2 MiB in 169 distinct contents, 341 files total",
-        "status": "partial",
-        "report_sha256": "4ee2604820a3417dcf43abf77e1cfb79191852b2f92be2cd39dc29b6bf20f9f7",
+        "status": "incomplete",
+        "report_sha256": "ed384266c6f60f646b6a9b2c8fc5c3f0471c48bae61b27eafccc8f45ee7f5176",
         "notes": [
-          "token budget exhausted"
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
         ],
-        "agent_findings": 0,
+        "agent_findings": 2,
         "incomplete_checks": [
           "coverage:tool_missing",
           "dependencies:offline",
           "lint:no_project_config",
           "typecheck:tool_missing"
         ],
-        "profile_hash": "d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
-        "audit_sha256": "e99dbe8c37cbc9632fa7b0e473512eb1ad97f7b7f93b8320fd637ea6d20d6389",
-        "model_calls": 0,
-        "verification_tokens": 0,
-        "runner_graph_json_bytes": 244616
+        "mode": "branch",
+        "profile_hash": "49c673184d81c8ef41723a934e72c676109bbbccf92dc1a26b330cca6b28c0f7",
+        "audit_sha256": "df379de346336c6bce7ffa077150a5b2efe8c0172fe28011d83a905515635fec",
+        "model_calls": 14,
+        "verification_tokens": 133890,
+        "cost_usd": 0.3592,
+        "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
+        "voter_model": "openrouter/openai/gpt-6.1-sol",
+        "route": "openrouter"
       },
       "quorum": {
-        "exit_code": 4,
-        "wall_seconds": 70,
-        "endpoint_review": "3e9476e7-e570-40e6-a8d4-248c38c2da7b",
+        "exit_code": 0,
+        "wall_seconds": 172,
+        "endpoint_review": "651a53fe-cc6b-43d0-989e-3010cd9baede",
         "snapshot": "2.2 MiB in 169 distinct contents, 341 files total",
-        "status": "partial",
-        "report_sha256": "ee598d888ff8ac3858e7c878ee013c82441fe26b7430875d55f282c94da4d01e",
+        "status": "incomplete",
+        "report_sha256": "abbc3d06a82963e4234b7a6873de532418690c4b9ce62b13ad5746e6907e8a01",
         "notes": [
-          "token budget exhausted"
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
         ],
-        "agent_findings": 0,
+        "agent_findings": 2,
         "incomplete_checks": [
           "coverage:tool_missing",
           "dependencies:offline",
           "lint:no_project_config",
           "typecheck:tool_missing"
         ],
-        "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
-        "audit_sha256": "8fe9ef6bbfbecd973012d802e08b5c08c8089ed52a66afbc91601352fa276395",
-        "model_calls": 0,
-        "verification_tokens": 0,
-        "runner_graph_json_bytes": 244616
+        "mode": "branch",
+        "profile_hash": "bdcb94aad2775ee9c3fa0af467dcba04906a2faec88b1559bf14fc8dc2875ba6",
+        "audit_sha256": "35f1f197801e4eba4ae4e0dae369aa3f723102064717ade223950ac9a214ca38",
+        "model_calls": 37,
+        "verification_tokens": 418528,
+        "cost_usd": 0.6561,
+        "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
+        "voter_model": "openrouter/openai/gpt-6.1-sol",
+        "route": "openrouter"
       }
     },
     {
@@ -98,14 +136,14 @@
         "hs-py-03"
       ],
       "single": {
-        "exit_code": 4,
-        "wall_seconds": 67,
-        "endpoint_review": "ce08f46f-9c7c-4f6f-8f79-d641bd4dc773",
+        "exit_code": 0,
+        "wall_seconds": 116,
+        "endpoint_review": "98013e30-d9d3-4bb9-8ae0-c3dac79b85f1",
         "snapshot": "14.6 MiB in 924 distinct contents, 2,029 files total",
-        "status": "partial",
-        "report_sha256": "81c0e53ba540bedca7f74201a98af970f570de61eb8137850a3c8e1b1958c53e",
+        "status": "incomplete",
+        "report_sha256": "99084f7264865bf119c4aa89a15e5e0293170b21ed05c7d7b432a2c9e8aef035",
         "notes": [
-          "token budget exhausted"
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
         ],
         "agent_findings": 0,
         "incomplete_checks": [
@@ -114,21 +152,25 @@
           "lint:tool_missing",
           "typecheck:tool_missing"
         ],
-        "profile_hash": "d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
-        "audit_sha256": "40a704b81558f93f5b1191bec788398778b92b45962833f7fe47490b0de590fe",
-        "model_calls": 0,
+        "mode": "branch",
+        "profile_hash": "49c673184d81c8ef41723a934e72c676109bbbccf92dc1a26b330cca6b28c0f7",
+        "audit_sha256": "5afc366d1d65f877f3f74eb3dbf41a37877fb53522bf9b505f23ec03797061aa",
+        "model_calls": 6,
         "verification_tokens": 0,
-        "runner_graph_json_bytes": 959621
+        "cost_usd": 0.4453,
+        "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
+        "voter_model": "openrouter/openai/gpt-6.1-sol",
+        "route": "openrouter"
       },
       "quorum": {
-        "exit_code": 4,
-        "wall_seconds": 54,
-        "endpoint_review": "099dc9ad-f4ee-4708-87d8-4d640af02500",
+        "exit_code": 0,
+        "wall_seconds": 76,
+        "endpoint_review": "bb049f91-92d9-4a18-b2b6-0fc63016e332",
         "snapshot": "14.6 MiB in 924 distinct contents, 2,029 files total",
-        "status": "partial",
-        "report_sha256": "4d9cb0cb63ae71add542b883d03f84239d9eedd0492641e46ff65f531959b57c",
+        "status": "incomplete",
+        "report_sha256": "83eb6ef565e501b19ebd14c3bb1626aaa31a7c304e91eb3cfc16a2988efe0864",
         "notes": [
-          "token budget exhausted"
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
         ],
         "agent_findings": 0,
         "incomplete_checks": [
@@ -137,11 +179,15 @@
           "lint:tool_missing",
           "typecheck:tool_missing"
         ],
-        "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
-        "audit_sha256": "f74643fa0d25c4b9328b1cf924ace537d9f1692dbd6408a0af5471a13af43b3f",
-        "model_calls": 0,
+        "mode": "branch",
+        "profile_hash": "bdcb94aad2775ee9c3fa0af467dcba04906a2faec88b1559bf14fc8dc2875ba6",
+        "audit_sha256": "43652789f1a7ecbf57fa15c3aa0ddc2ae8e5e80c6f6af41428f37b62716ae1ee",
+        "model_calls": 6,
         "verification_tokens": 0,
-        "runner_graph_json_bytes": 959621
+        "cost_usd": 0.4184,
+        "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
+        "voter_model": "openrouter/openai/gpt-6.1-sol",
+        "route": "openrouter"
       }
     },
     {
@@ -153,50 +199,58 @@
         "hs-py-04"
       ],
       "single": {
-        "exit_code": 4,
-        "wall_seconds": 59,
-        "endpoint_review": "e0f030bf-66ff-4b5f-8d04-ab8258d28441",
+        "exit_code": 1,
+        "wall_seconds": 276,
+        "endpoint_review": "53184490-eef6-4101-b22c-cb671eefa701",
         "snapshot": "27.3 MiB in 2,468 distinct contents, 5,190 files total",
-        "status": "partial",
-        "report_sha256": "8fba38fc75041fbe806983155e8d64aea05ac401a61260d445e32351861dcfd6",
+        "status": "incomplete",
+        "report_sha256": "78ad9d31d6555cc4d86f3f79330d04e894c60aa2c04407d5cdcd4fb2129c05ca",
         "notes": [
-          "token budget exhausted"
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
         ],
-        "agent_findings": 0,
+        "agent_findings": 1,
         "incomplete_checks": [
           "coverage:tool_missing",
           "dependencies:offline",
           "lint:tool_missing",
           "typecheck:tool_missing"
         ],
-        "profile_hash": "d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
-        "audit_sha256": "7c496919fefbefe9b85e39002ebe93bcc9a3ed79eacb763ee1740419d47585f5",
-        "model_calls": 0,
-        "verification_tokens": 0,
-        "runner_graph_json_bytes": 336910
+        "mode": "branch",
+        "profile_hash": "49c673184d81c8ef41723a934e72c676109bbbccf92dc1a26b330cca6b28c0f7",
+        "audit_sha256": "13aceac1e5b85dd5609021cfb9ce614fc2333c9662b61f1f16c766766d08bcf8",
+        "model_calls": 14,
+        "verification_tokens": 72176,
+        "cost_usd": 0.7636,
+        "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
+        "voter_model": "openrouter/openai/gpt-6.1-sol",
+        "route": "openrouter"
       },
       "quorum": {
-        "exit_code": 4,
-        "wall_seconds": 33,
-        "endpoint_review": "8e8133d4-0201-4a0b-bd57-21529dbf154e",
+        "exit_code": 1,
+        "wall_seconds": 285,
+        "endpoint_review": "3b642a31-630b-47e6-ae15-ef13ebc11c1f",
         "snapshot": "27.3 MiB in 2,468 distinct contents, 5,190 files total",
-        "status": "partial",
-        "report_sha256": "458e37363bab9d2009b0711d03ca9edd69f8f162de2401e0b3e46b5a0f100af4",
+        "status": "incomplete",
+        "report_sha256": "fa7b76ab95aa09995e5db2b169e38e3eb1c1f0565cedc2f9ba02d4eac3a0b7ed",
         "notes": [
-          "token budget exhausted"
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
         ],
-        "agent_findings": 0,
+        "agent_findings": 1,
         "incomplete_checks": [
           "coverage:tool_missing",
           "dependencies:offline",
           "lint:tool_missing",
           "typecheck:tool_missing"
         ],
-        "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
-        "audit_sha256": "c334e35dcdbe7390c99f30ab7d211db8d562a556981aaaccf047dc0ce3519b09",
-        "model_calls": 0,
-        "verification_tokens": 0,
-        "runner_graph_json_bytes": 336910
+        "mode": "branch",
+        "profile_hash": "bdcb94aad2775ee9c3fa0af467dcba04906a2faec88b1559bf14fc8dc2875ba6",
+        "audit_sha256": "108a61f5b8aa1647db62137cd0e583ff528d60828412a7a8ac12db5b99ef1216",
+        "model_calls": 25,
+        "verification_tokens": 215869,
+        "cost_usd": 0.7701,
+        "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
+        "voter_model": "openrouter/openai/gpt-6.1-sol",
+        "route": "openrouter"
       }
     },
     {
@@ -208,50 +262,58 @@
         "hs-ts-01"
       ],
       "single": {
-        "exit_code": 4,
-        "wall_seconds": 69,
-        "endpoint_review": "8c8091f6-8ffd-4014-adf9-f24539d42227",
+        "exit_code": 0,
+        "wall_seconds": 260,
+        "endpoint_review": "ceca8ac2-bf14-4ce0-bc8b-63c67d74ca83",
         "snapshot": "4.5 MiB in 1,273 distinct contents, 2,641 files total",
-        "status": "partial",
-        "report_sha256": "52d38f6741825d7707cf5feb7dba21c3d614cc82de827cd03690295379d3eaa7",
+        "status": "incomplete",
+        "report_sha256": "5dcdd2184a505f7dda16539489e7df663d834e781ef0982f7fc0d4baafb878c2",
         "notes": [
-          "token budget exhausted"
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
         ],
-        "agent_findings": 0,
+        "agent_findings": 2,
         "incomplete_checks": [
           "coverage:tool_missing",
           "dependencies:offline",
           "lint:tool_missing",
           "typecheck:tool_missing"
         ],
-        "profile_hash": "d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
-        "audit_sha256": "3732778e8a46569bca34ee2f37aa9ea907f18f11cfd0d17ba7c9b0d66339816f",
-        "model_calls": 0,
-        "verification_tokens": 0,
-        "runner_graph_json_bytes": 446124
+        "mode": "branch",
+        "profile_hash": "49c673184d81c8ef41723a934e72c676109bbbccf92dc1a26b330cca6b28c0f7",
+        "audit_sha256": "fd2ea309d888cb6a9743cfe3316137948123d67eb144457f23a73d9c846c81a6",
+        "model_calls": 19,
+        "verification_tokens": 170883,
+        "cost_usd": 0.8881,
+        "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
+        "voter_model": "openrouter/openai/gpt-6.1-sol",
+        "route": "openrouter"
       },
       "quorum": {
-        "exit_code": 4,
-        "wall_seconds": 45,
-        "endpoint_review": "4fda62e9-9cc0-44ff-977a-7d4e324fb05b",
+        "exit_code": 0,
+        "wall_seconds": 163,
+        "endpoint_review": "8168bc32-f584-4955-a7ab-df4920ab2052",
         "snapshot": "4.5 MiB in 1,273 distinct contents, 2,641 files total",
-        "status": "partial",
-        "report_sha256": "1e48d54788ab8eade44e69d534aee02c2508f777adf177037043989ad1d011b5",
+        "status": "incomplete",
+        "report_sha256": "5b08a46647def248777db5dcbd875183da458fbcbade0aa39d401a813543e1f5",
         "notes": [
-          "token budget exhausted"
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
         ],
-        "agent_findings": 0,
+        "agent_findings": 1,
         "incomplete_checks": [
           "coverage:tool_missing",
           "dependencies:offline",
           "lint:tool_missing",
           "typecheck:tool_missing"
         ],
-        "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
-        "audit_sha256": "7d33a724427cd6678fcde64daf013c5e5182ca20d084cba69914ee2677e5a69b",
-        "model_calls": 0,
-        "verification_tokens": 0,
-        "runner_graph_json_bytes": 446124
+        "mode": "branch",
+        "profile_hash": "bdcb94aad2775ee9c3fa0af467dcba04906a2faec88b1559bf14fc8dc2875ba6",
+        "audit_sha256": "c4ad28f71d56a869c7079f65a1c3563dd49d2bb3776ad14bdd8a9757da3b93c6",
+        "model_calls": 26,
+        "verification_tokens": 409945,
+        "cost_usd": 0.7174,
+        "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
+        "voter_model": "openrouter/openai/gpt-6.1-sol",
+        "route": "openrouter"
       }
     },
     {
@@ -263,50 +325,64 @@
         "hs-ts-02"
       ],
       "single": {
-        "exit_code": 4,
-        "wall_seconds": 50,
-        "endpoint_review": "87af9d44-08ac-4cbc-8ef9-28983c3bee48",
+        "exit_code": 1,
+        "wall_seconds": 84,
+        "endpoint_review": "42a93bfc-d2d4-44f9-8029-c7dbae937121",
         "snapshot": "4.9 MiB in 1,381 distinct contents, 2,883 files total",
-        "status": "partial",
-        "report_sha256": "2fc98047ef2d5fd29b56eba16db1c1ad810910cbd3748f0adbee81815b9edc3c",
+        "status": "incomplete",
+        "report_sha256": "ce7af0d3e5752182562ace698ec5e51b1e02661b553c7caa1e35958048e0897f",
         "notes": [
-          "token budget exhausted"
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
         ],
-        "agent_findings": 0,
+        "agent_findings": 1,
         "incomplete_checks": [
           "coverage:tool_missing",
           "dependencies:offline",
           "lint:tool_missing",
           "typecheck:tool_missing"
         ],
-        "profile_hash": "d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
-        "audit_sha256": "78cacf8772274fbb8534d20d50bc553cb3a0595e5b8876c9b7f4cf88d8fc6b30",
-        "model_calls": 0,
-        "verification_tokens": 0,
-        "runner_graph_json_bytes": 569565
+        "mode": "branch",
+        "profile_hash": "49c673184d81c8ef41723a934e72c676109bbbccf92dc1a26b330cca6b28c0f7",
+        "audit_sha256": "2520ea8a8e583b281bf300de29df1330a727c66d364312812c0bbb0e379d9475",
+        "model_calls": 9,
+        "verification_tokens": 74187,
+        "cost_usd": 0.304,
+        "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
+        "voter_model": "openrouter/openai/gpt-6.1-sol",
+        "route": "openrouter"
       },
       "quorum": {
-        "exit_code": 4,
-        "wall_seconds": 71,
-        "endpoint_review": "6a157c09-0a9b-4215-9717-5f2bcf4c9a6d",
+        "exit_code": 1,
+        "wall_seconds": 159,
+        "endpoint_review": "293f478f-3a8f-4509-9962-2211e78c3569",
         "snapshot": "4.9 MiB in 1,381 distinct contents, 2,883 files total",
-        "status": "partial",
-        "report_sha256": "79cc8191523ff3f4f93130d884469ea60550ec3614a1f6662888cedde03b94a3",
+        "status": "incomplete",
+        "report_sha256": "5bdbf0908fc47d543f08b4d3f2e966f19233b000e8d2eb77263bdcdc4c958203",
         "notes": [
-          "token budget exhausted"
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
         ],
-        "agent_findings": 0,
+        "agent_findings": 1,
         "incomplete_checks": [
           "coverage:tool_missing",
           "dependencies:offline",
           "lint:tool_missing",
           "typecheck:tool_missing"
         ],
-        "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
-        "audit_sha256": "c0c57fbbcba7c3e69415865237254fac416e2de7c3fc5a0c4c5218cae36822be",
-        "model_calls": 0,
-        "verification_tokens": 0,
-        "runner_graph_json_bytes": 569565
+        "mode": "branch",
+        "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
+        "audit_sha256": "111810658bf35786fce085f4e1bdf83931417f4fe771f8675cc2c5d2321d4758",
+        "model_calls": 16,
+        "verification_tokens": 124203,
+        "cost_usd": 0.2828,
+        "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+        "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+        "route": "ai-gateway-custom",
+        "cache": {
+          "hit_rate": 0.0,
+          "hits": 0,
+          "lookups": 4,
+          "tokens_saved_estimate": 0
+        }
       }
     },
     {
@@ -318,38 +394,58 @@
         "hs-ts-03"
       ],
       "single": {
-        "exit_code": 4,
-        "wall_seconds": 58,
-        "endpoint_review": "28f69a7d-289d-462c-b257-6ecf60ceced6",
+        "exit_code": 0,
+        "wall_seconds": 202,
+        "endpoint_review": "bc087f43-0019-492b-9f66-33cb3d4c4c1a",
         "snapshot": "27.8 MiB in 5,600 distinct contents, 12,954 files total",
-        "status": "partial",
-        "report_sha256": "51cfa6371480e7b94b7ec21db4b7d8461f4248ee068b6f573e423c9ef6efb385",
+        "status": "incomplete",
+        "report_sha256": "7eb7c71abb37ee74d63e3e51fab28acd5edb22619f6f7676e6cfba7758f80761",
         "notes": [
-          "checks: runner analysis failed"
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
         ],
-        "agent_findings": 0,
-        "incomplete_checks": [],
-        "profile_hash": "d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
-        "audit_sha256": "a1237a0425931e2050019dc7d8d9e818a8581d8625e85b86c42d1cbbfb998a6a",
-        "model_calls": 0,
-        "verification_tokens": 0
+        "agent_findings": 1,
+        "incomplete_checks": [
+          "coverage:tool_missing",
+          "dependencies:offline",
+          "lint:tool_missing",
+          "typecheck:tool_missing"
+        ],
+        "mode": "branch",
+        "profile_hash": "49c673184d81c8ef41723a934e72c676109bbbccf92dc1a26b330cca6b28c0f7",
+        "audit_sha256": "c83dfac32a79c68828620f5fce3b2ba2a984ce660bddcd65027b78b5cd952f9a",
+        "model_calls": 13,
+        "verification_tokens": 63258,
+        "cost_usd": 0.5232,
+        "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
+        "voter_model": "openrouter/openai/gpt-6.1-sol",
+        "route": "openrouter"
       },
       "quorum": {
-        "exit_code": 4,
-        "wall_seconds": 261,
-        "endpoint_review": "99d5edb8-d560-41f0-b88c-93c76f3f556a",
+        "exit_code": 0,
+        "wall_seconds": 230,
+        "endpoint_review": "95590a42-0e2f-426e-9d6f-3357fcb1f4a6",
         "snapshot": "27.8 MiB in 5,600 distinct contents, 12,954 files total",
-        "status": "partial",
-        "report_sha256": "ca00e54884bf4f404e845fcc662b8a689fd066db323bd2543ea0f09ac9f25c3b",
+        "status": "incomplete",
+        "report_sha256": "73424a22cb0e73e574966f9dac11c4c84a8794d94b2291dbdc559b60d9a36c24",
         "notes": [
-          "WorkflowTimeoutError: Execution timed out after 240000ms"
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
         ],
-        "agent_findings": 0,
-        "incomplete_checks": [],
-        "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
-        "audit_sha256": "3116c867ec696ffdc0884302f0d85f43086f1206ff4d1165588f859f109143a6",
-        "model_calls": 0,
-        "verification_tokens": 0
+        "agent_findings": 1,
+        "incomplete_checks": [
+          "coverage:tool_missing",
+          "dependencies:offline",
+          "lint:tool_missing",
+          "typecheck:tool_missing"
+        ],
+        "mode": "branch",
+        "profile_hash": "bdcb94aad2775ee9c3fa0af467dcba04906a2faec88b1559bf14fc8dc2875ba6",
+        "audit_sha256": "e6091f85d4e03a55dfe9a0bdb8dddcc942ddc4b37cb27a32ec3801322c7c6ec2",
+        "model_calls": 25,
+        "verification_tokens": 178633,
+        "cost_usd": 0.5758,
+        "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
+        "voter_model": "openrouter/openai/gpt-6.1-sol",
+        "route": "openrouter"
       }
     },
     {
@@ -361,28 +457,64 @@
         "hs-ts-04"
       ],
       "single": {
-        "exit_code": 3,
-        "wall_seconds": 3,
-        "endpoint_review": null,
-        "snapshot": null,
-        "status": "error",
-        "report_sha256": "a58143e88b150045c40516a60ec561423645380ef3c77a82cace8bbb5a0ba48b",
-        "error": "unsupported file mode 160000 for test/fixtures/cache-tests (base)",
-        "notes": [],
+        "exit_code": 0,
+        "wall_seconds": 339,
+        "endpoint_review": "fe867c3d-28d2-4ca3-8f1c-802ed120eb93",
+        "snapshot": "6.8 MiB in 785 distinct contents, 1,566 files total",
+        "status": "incomplete",
+        "report_sha256": "1111e7d9cd963e4fbd80960370938ace66025c48ef461bff10889b76236fab05",
+        "notes": [
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
+        ],
         "agent_findings": 0,
-        "incomplete_checks": []
+        "incomplete_checks": [
+          "coverage:tool_missing",
+          "dependencies:offline",
+          "lint:tool_missing",
+          "typecheck:tool_missing"
+        ],
+        "mode": "branch",
+        "profile_hash": "5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca",
+        "audit_sha256": "bc2cb9c0338b846babe3b3fd3277bde4ff8949f674e29a2ac95876a616dcb768",
+        "model_calls": 9,
+        "verification_tokens": 0,
+        "cost_usd": 1.0225,
+        "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+        "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+        "route": "ai-gateway-custom",
+        "cache": {
+          "hit_rate": 0.0,
+          "hits": 0,
+          "lookups": 54,
+          "tokens_saved_estimate": 0
+        }
       },
       "quorum": {
-        "exit_code": 3,
-        "wall_seconds": 3,
-        "endpoint_review": null,
-        "snapshot": null,
-        "status": "error",
-        "report_sha256": "a58143e88b150045c40516a60ec561423645380ef3c77a82cace8bbb5a0ba48b",
-        "error": "unsupported file mode 160000 for test/fixtures/cache-tests (base)",
-        "notes": [],
+        "exit_code": 0,
+        "wall_seconds": 195,
+        "endpoint_review": "9cf0a9f6-33b5-4975-bc37-2802e9e9b6b6",
+        "snapshot": "6.8 MiB in 785 distinct contents, 1,566 files total",
+        "status": "incomplete",
+        "report_sha256": "30c83bbef4989a932425c7d5f23552763607d5bd327d3e0b685a91056a70233a",
+        "notes": [
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
+        ],
         "agent_findings": 0,
-        "incomplete_checks": []
+        "incomplete_checks": [
+          "coverage:tool_missing",
+          "dependencies:offline",
+          "lint:tool_missing",
+          "typecheck:tool_missing"
+        ],
+        "mode": "branch",
+        "profile_hash": "bdcb94aad2775ee9c3fa0af467dcba04906a2faec88b1559bf14fc8dc2875ba6",
+        "audit_sha256": "eeae44f582c25945df1b6bf71fbeb5c88cd9b4a222fcf720e976aa21eb54eb8c",
+        "model_calls": 11,
+        "verification_tokens": 0,
+        "cost_usd": 1.137,
+        "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
+        "voter_model": "openrouter/openai/gpt-6.1-sol",
+        "route": "openrouter"
       }
     },
     {
@@ -394,39 +526,64 @@
         "hs-rs-01"
       ],
       "single": {
-        "exit_code": 4,
-        "wall_seconds": 55,
-        "endpoint_review": "aa0bb86c-a614-4362-84d4-d587d5f4648c",
+        "exit_code": 1,
+        "wall_seconds": 171,
+        "endpoint_review": "6bfb5fe5-6771-4f0a-8564-2577af0b8f8e",
         "snapshot": "16 MiB in 1,900 distinct contents, 5,800 files total",
-        "status": "partial",
-        "report_sha256": "5a287265dab8d35f2de8d7e768ff7b783d269b46b217198df478ee815ed10c8e",
+        "status": "incomplete",
+        "report_sha256": "80ccf40f6429d6c873b17152a523164f1730fd55ca4f337ec9e0f2323fbb284a",
         "notes": [
-          "checks: runner analysis failed"
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
         ],
-        "agent_findings": 0,
-        "incomplete_checks": [],
-        "profile_hash": "d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
-        "audit_sha256": "390fea8e845a3953e77a1883e28713c92c71e0f1d520bb5b70e8144a1c633fe7",
-        "model_calls": 0,
-        "verification_tokens": 0
+        "agent_findings": 1,
+        "incomplete_checks": [
+          "coverage:tool_missing",
+          "dependencies:offline",
+          "lint:tool_missing",
+          "typecheck:tool_missing"
+        ],
+        "mode": "branch",
+        "profile_hash": "49c673184d81c8ef41723a934e72c676109bbbccf92dc1a26b330cca6b28c0f7",
+        "audit_sha256": "e9e708dc6070c2f51c550781a0b25e5638b007cc7f8de5c791168d49745fe63f",
+        "model_calls": 11,
+        "verification_tokens": 139697,
+        "cost_usd": 0.6467,
+        "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
+        "voter_model": "openrouter/openai/gpt-6.1-sol",
+        "route": "openrouter"
       },
       "quorum": {
-        "exit_code": 4,
-        "wall_seconds": 48,
-        "endpoint_review": "12d9855a-0526-4b2c-9775-6dce86f0fa15",
+        "exit_code": 1,
+        "wall_seconds": 300,
+        "endpoint_review": "b1627eb3-96f2-4c8c-b11c-f7958bab7b60",
         "snapshot": "16 MiB in 1,900 distinct contents, 5,800 files total",
-        "status": "partial",
-        "report_sha256": "7852a073d41a76bcb69623a878706a09e2fc26eadd42ca0490e84d9dbdf6cf2c",
+        "status": "incomplete",
+        "report_sha256": "be10991d364a58846827c8476ff59abcfc03a9cd53ed189f05cf745a36f81cbb",
         "notes": [
-          "checks: runner analysis failed"
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
         ],
-        "agent_findings": 0,
-        "incomplete_checks": [],
-        "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
-        "audit_sha256": "6b447c8001d1a494cbcb3584426d1f1668d8989fdc2c7de70fddf2ffd6d61f4e",
-        "model_calls": 0,
-        "verification_tokens": 0,
-        "runner_graph_json_bytes": 479150
+        "agent_findings": 2,
+        "incomplete_checks": [
+          "coverage:tool_missing",
+          "dependencies:offline",
+          "lint:tool_missing",
+          "typecheck:tool_missing"
+        ],
+        "mode": "branch",
+        "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
+        "audit_sha256": "a02851fe297cab57efecbf04c3fa1503acf736524748165b21ecc4756d8ac27e",
+        "model_calls": 55,
+        "verification_tokens": 835659,
+        "cost_usd": 1.3555,
+        "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+        "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+        "route": "ai-gateway-custom",
+        "cache": {
+          "hit_rate": 0.0,
+          "hits": 0,
+          "lookups": 9,
+          "tokens_saved_estimate": 0
+        }
       }
     },
     {
@@ -438,39 +595,64 @@
         "hs-rs-02"
       ],
       "single": {
-        "exit_code": 4,
-        "wall_seconds": 277,
-        "endpoint_review": "b12de2d8-0294-4fee-a71f-c6a7b809a4dc",
+        "exit_code": 1,
+        "wall_seconds": 165,
+        "endpoint_review": "1826dfa9-1a79-4170-84ab-310cef0e8f3e",
         "snapshot": "16.5 MiB in 1,927 distinct contents, 5,896 files total",
-        "status": "partial",
-        "report_sha256": "0acc936b5ca7d230d744b7d285d3226bc883a716efe9b7b99ecdd931ed64a448",
+        "status": "incomplete",
+        "report_sha256": "28cc49be7268edc54dabaf045aa3e55338edd01d86fe78fe0f3cfabc7502ba18",
         "notes": [
-          "WorkflowTimeoutError: Execution timed out after 240000ms"
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
         ],
-        "agent_findings": 0,
-        "incomplete_checks": [],
-        "profile_hash": "d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
-        "audit_sha256": "62dc1d49435a7511743bef093f5f02a5a87be71597b0e5b8225919e1ae4e2535",
-        "model_calls": 0,
-        "verification_tokens": 0,
-        "runner_graph_json_bytes": 1316608
+        "agent_findings": 1,
+        "incomplete_checks": [
+          "coverage:tool_missing",
+          "dependencies:offline",
+          "lint:tool_missing",
+          "typecheck:tool_missing"
+        ],
+        "mode": "branch",
+        "profile_hash": "49c673184d81c8ef41723a934e72c676109bbbccf92dc1a26b330cca6b28c0f7",
+        "audit_sha256": "47f5cf2ffe8a3040e3b491af8643d5fb8f5a9c639ce18df34059b24e987a4979",
+        "model_calls": 11,
+        "verification_tokens": 106695,
+        "cost_usd": 0.4269,
+        "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
+        "voter_model": "openrouter/openai/gpt-6.1-sol",
+        "route": "openrouter"
       },
       "quorum": {
-        "exit_code": 4,
-        "wall_seconds": 51,
-        "endpoint_review": "e8dc646f-cdbb-413e-9966-f9ced825f6f9",
+        "exit_code": 1,
+        "wall_seconds": 315,
+        "endpoint_review": "2981221f-e5e2-4641-9cdb-6355d6d93627",
         "snapshot": "16.5 MiB in 1,927 distinct contents, 5,896 files total",
-        "status": "partial",
-        "report_sha256": "d8f47738fcf51a5b97f8c41dceae2ad6b508eea72f9e49a80e8baeaadcd6a3e0",
+        "status": "incomplete",
+        "report_sha256": "8d977cfd877a994a168b7dea574d0d41b28634f931303f1d21131e27596032d6",
         "notes": [
-          "checks: runner analysis failed"
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
         ],
-        "agent_findings": 0,
-        "incomplete_checks": [],
-        "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
-        "audit_sha256": "37f5a2f770bd071b16c2cfe3f20ff9a04143505c651e26afdc98b66cd2492c3f",
-        "model_calls": 0,
-        "verification_tokens": 0
+        "agent_findings": 2,
+        "incomplete_checks": [
+          "coverage:tool_missing",
+          "dependencies:offline",
+          "lint:tool_missing",
+          "typecheck:tool_missing"
+        ],
+        "mode": "branch",
+        "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
+        "audit_sha256": "3e52df7a12894ebe055248f30ac40568bcab7e0b44505000dc0da6942a6c7e53",
+        "model_calls": 41,
+        "verification_tokens": 529811,
+        "cost_usd": 0.7561,
+        "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+        "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+        "route": "ai-gateway-custom",
+        "cache": {
+          "hit_rate": 0.0,
+          "hits": 0,
+          "lookups": 62,
+          "tokens_saved_estimate": 0
+        }
       }
     },
     {
@@ -482,53 +664,52 @@
         "hs-rs-03"
       ],
       "single": {
-        "exit_code": 4,
-        "wall_seconds": 114,
-        "endpoint_review": "3dd23be7-2194-4b31-9894-1700a3e55a59",
+        "exit_code": 3,
+        "wall_seconds": 982,
+        "endpoint_review": "94578d1d-a5a8-4fc0-94e6-dde278feadc6",
         "snapshot": "24.6 MiB in 1,064 distinct contents, 2,224 files total",
-        "status": "partial",
-        "report_sha256": "536f25cfa632e0979c75ea798fd7cfdd865db95755dbbbab0bea61673e4e69a9",
-        "notes": [
-          "Impact graph truncated at max_nodes",
-          "token budget exhausted"
-        ],
+        "status": "error",
+        "report_sha256": "bc8b47a90bd459cb829f9658d671497de317477b1a88190028f7b1e1b63d3cf3",
+        "error": "endpoint review cancelled; partial evidence is retained at review 94578d1d-a5a8-4fc0-94e6-dde278feadc6",
+        "notes": [],
         "agent_findings": 0,
-        "incomplete_checks": [
-          "coverage:tool_missing",
-          "dependencies:offline",
-          "lint:tool_missing",
-          "typecheck:tool_missing"
-        ],
-        "profile_hash": "d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
-        "audit_sha256": "6a28b1cceb05d6a5f991a5c16f613b5069cdd8709b911e6c16178a7cdddf4376",
+        "incomplete_checks": [],
+        "mode": null,
+        "profile_hash": "5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca",
+        "audit_sha256": "2cba1e6dcc01cd55ea62e36219157f58b48a740eacb4d2820cafc6b697471ccf",
         "model_calls": 0,
         "verification_tokens": 0,
-        "runner_graph_json_bytes": 2771532
+        "cost_usd": 0,
+        "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+        "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+        "route": "ai-gateway-custom",
+        "generation": "served by the agent result cache"
       },
       "quorum": {
         "exit_code": 4,
-        "wall_seconds": 84,
-        "endpoint_review": "03f52209-6bd0-4d50-b18d-1e796bc1190e",
+        "wall_seconds": 949,
+        "endpoint_review": "26d94fde-5862-409e-a676-7a040c2a79f0",
         "snapshot": "24.6 MiB in 1,064 distinct contents, 2,224 files total",
         "status": "partial",
-        "report_sha256": "37c4b577e83bfcdbe0debc19948f58b5d6794893c441b8615d63ae4185d374d5",
+        "report_sha256": "515fa09fa8b24359462036bec2a359c1e6306cb0f35ca417c721e239c408737b",
         "notes": [
           "Impact graph truncated at max_nodes",
-          "token budget exhausted"
+          "cancelled"
         ],
         "agent_findings": 0,
-        "incomplete_checks": [
-          "coverage:tool_missing",
-          "dependencies:offline",
-          "lint:tool_missing",
-          "typecheck:tool_missing"
-        ],
-        "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
-        "audit_sha256": "f01697561bddce81f21a916ca87714637d9a25b602e4fd026064e36b30ab912e",
+        "incomplete_checks": [],
+        "mode": "branch",
+        "profile_hash": "6142140529cb6fa375b0da0258cc0a677b35c0c916ac814c0d034282095fe320",
+        "audit_sha256": "c76ab00a071fad1414aa3f6c34a958a2a7b8f40f73de2e6f50ec98438c491e14",
         "model_calls": 0,
         "verification_tokens": 0,
-        "runner_graph_json_bytes": 2771532
-      }
+        "cost_usd": 0,
+        "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+        "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+        "route": "ai-gateway-custom",
+        "generation": "served by the agent result cache"
+      },
+      "dropped": "owner decision 2026-11-08: unrunnable within the wall budget (fast 8 min and deep 15 min both cancelled); not scored"
     },
     {
       "id": "HS-RS-04",
@@ -539,46 +720,74 @@
         "hs-rs-04"
       ],
       "single": {
-        "exit_code": 4,
-        "wall_seconds": 175,
-        "endpoint_review": "cd509956-cfee-4432-bfd8-3feee2eb17b2",
+        "exit_code": 1,
+        "wall_seconds": 313,
+        "endpoint_review": "f941d347-2e94-43b2-a3ac-5a90d8d87b92",
         "snapshot": "72.1 MiB in 9,319 distinct contents, 20,056 files total",
-        "status": "partial",
-        "report_sha256": "16d92385f56318e03fd1b4f176312d2539e6ef575302c111849967d15bc75788",
+        "status": "incomplete",
+        "report_sha256": "45186cd2ece5807828cd581eb5a3d56882fd1b017e8573def7971803c38aeef6",
         "notes": [
           "Impact graph truncated at max_nodes",
-          "token budget exhausted"
+          "graph: runner attempt 1 failed (runner backend: Network connection lost.); retried",
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
         ],
-        "agent_findings": 0,
+        "agent_findings": 1,
         "incomplete_checks": [
           "coverage:tool_missing",
           "dependencies:offline",
           "lint:tool_missing",
           "typecheck:tool_missing"
         ],
-        "profile_hash": "d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
-        "audit_sha256": "afc5aa4f291bcc4e0cd16ae77e86a40d8cda00963963f66650d0565f9f190fbe",
-        "model_calls": 0,
-        "verification_tokens": 0,
-        "runner_graph_json_bytes": 3156332
+        "mode": "branch",
+        "profile_hash": "5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca",
+        "audit_sha256": "c713ec9013913121264d302ba69c980a3fe54e6e25df3699cdb13fb17368d650",
+        "model_calls": 9,
+        "verification_tokens": 41685,
+        "cost_usd": 0.3726,
+        "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+        "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+        "route": "ai-gateway-custom",
+        "cache": {
+          "hit_rate": 0.0,
+          "hits": 0,
+          "lookups": 14,
+          "tokens_saved_estimate": 0
+        }
       },
       "quorum": {
-        "exit_code": 4,
-        "wall_seconds": 300,
-        "endpoint_review": "e4cccf98-e991-4d4c-a825-79dc89538cbc",
+        "exit_code": 1,
+        "wall_seconds": 231,
+        "endpoint_review": "ce9e52cc-9204-4f75-9150-74782c8d5e3d",
         "snapshot": "72.1 MiB in 9,319 distinct contents, 20,056 files total",
-        "status": "partial",
-        "report_sha256": "d689e845a5dfd8f0abb66759aa2d8a9863085c29a0f959fbf1d4cf24c6bdc651",
+        "status": "incomplete",
+        "report_sha256": "53373a24b340e06fc38bd740ab24afb0f4b917cfd82d3b0972bc3229674bac1a",
         "notes": [
           "Impact graph truncated at max_nodes",
-          "WorkflowTimeoutError: Execution timed out after 240000ms"
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
         ],
-        "agent_findings": 0,
-        "incomplete_checks": [],
-        "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
-        "audit_sha256": "3116c867ec696ffdc0884302f0d85f43086f1206ff4d1165588f859f109143a6",
-        "model_calls": 0,
-        "verification_tokens": 0
+        "agent_findings": 1,
+        "incomplete_checks": [
+          "coverage:tool_missing",
+          "dependencies:offline",
+          "lint:tool_missing",
+          "typecheck:tool_missing"
+        ],
+        "mode": "branch",
+        "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
+        "audit_sha256": "f6f9e1a0682dda66ca618319c730b902672b5ba10a2fd9c16824fcbf4df396dd",
+        "model_calls": 15,
+        "verification_tokens": 143160,
+        "cost_usd": 0.1399,
+        "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+        "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+        "route": "ai-gateway-custom",
+        "generation": "served by the agent result cache",
+        "cache": {
+          "hit_rate": 1.0,
+          "hits": 14,
+          "lookups": 14,
+          "tokens_saved_estimate": 156380
+        }
       }
     },
     {
@@ -588,14 +797,14 @@
       "head": "9f1b31d7daab252962d3400f64c3574c0ccb122f",
       "high_controls": [],
       "single": {
-        "exit_code": 4,
-        "wall_seconds": 33,
-        "endpoint_review": "b6df6c42-b911-451a-94ab-e8dc92724f64",
+        "exit_code": 0,
+        "wall_seconds": 69,
+        "endpoint_review": "b26b5a0a-065c-4604-bec4-f74d5ee03679",
         "snapshot": "1.8 MiB in 158 distinct contents, 319 files total",
-        "status": "partial",
-        "report_sha256": "51fe3c549c8541db962334e5cf919142d264db7ad72ab299207360b0f8b3d171",
+        "status": "incomplete",
+        "report_sha256": "857f06b72fc7c81a0255210b8fdbd9ea35a24c36435012ea14bfa0b956310bdb",
         "notes": [
-          "token budget exhausted"
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
         ],
         "agent_findings": 0,
         "incomplete_checks": [
@@ -604,21 +813,31 @@
           "lint:no_project_config",
           "typecheck:tool_missing"
         ],
-        "profile_hash": "d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
-        "audit_sha256": "5d5c54ecbe783c5f3f2ebbbe7c3c1e1cfcb31edf1323f7694adc7ad8a0c3fcc6",
-        "model_calls": 0,
+        "mode": "branch",
+        "profile_hash": "5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca",
+        "audit_sha256": "c4eecaf2713d1aff36d734e02a516081b42cacf251e705bc4152376f5165e15c",
+        "model_calls": 4,
         "verification_tokens": 0,
-        "runner_graph_json_bytes": 679505
+        "cost_usd": 0.2794,
+        "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+        "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+        "route": "ai-gateway-custom",
+        "cache": {
+          "hit_rate": 0.0,
+          "hits": 0,
+          "lookups": 5,
+          "tokens_saved_estimate": 0
+        }
       },
       "quorum": {
-        "exit_code": 4,
-        "wall_seconds": 184,
-        "endpoint_review": "af256e36-9839-4bfb-b7e0-5830d5fd9b23",
+        "exit_code": 0,
+        "wall_seconds": 51,
+        "endpoint_review": "de9459a2-15fc-4c68-835c-8b3d2f1ff49d",
         "snapshot": "1.8 MiB in 158 distinct contents, 319 files total",
-        "status": "partial",
-        "report_sha256": "7d34f6f9c0b19e9e39593e61a2e337caa262e2bcfc46784841241ba2f0a9d1b0",
+        "status": "incomplete",
+        "report_sha256": "300f10543c9899c4c5892029b665b7315712256e3e11227039f619b0a56e5cbe",
         "notes": [
-          "token budget exhausted"
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
         ],
         "agent_findings": 0,
         "incomplete_checks": [
@@ -627,11 +846,22 @@
           "lint:no_project_config",
           "typecheck:tool_missing"
         ],
-        "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
-        "audit_sha256": "c13c3ab12703253db85cf7ab31529d69bdb84ec5594b928b63a7a7c59bb287b9",
+        "mode": "branch",
+        "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
+        "audit_sha256": "33e79e6b09a73dda54a0c0e82953fca4f7429bc7b05aabf18effba385f1f5d73",
         "model_calls": 0,
         "verification_tokens": 0,
-        "runner_graph_json_bytes": 679505
+        "cost_usd": 0,
+        "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+        "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+        "route": "ai-gateway-custom",
+        "generation": "served by the agent result cache",
+        "cache": {
+          "hit_rate": 1.0,
+          "hits": 5,
+          "lookups": 5,
+          "tokens_saved_estimate": 135150
+        }
       }
     },
     {
@@ -641,15 +871,15 @@
       "head": "d62354434b2e508fe89024213b220ca8e67dea5e",
       "high_controls": [],
       "single": {
-        "exit_code": 4,
-        "wall_seconds": 278,
-        "endpoint_review": "181bf9fe-0f9a-4da5-8f41-2dc25bbe4f1b",
+        "exit_code": 0,
+        "wall_seconds": 175,
+        "endpoint_review": "80e54fd8-064e-4bf4-98f1-29fc7d1faf64",
         "snapshot": "33.4 MiB in 2,950 distinct contents, 6,274 files total",
-        "status": "partial",
-        "report_sha256": "fa143e33ad3199e15794a4368cd50c6a92d99d5a3e15f79094aad61331b252c0",
+        "status": "incomplete",
+        "report_sha256": "413ee2f51e12ecf00c3e3bcbcc9a932c78dc7c14fdddc6a1e8335118409efc94",
         "notes": [
           "Impact graph truncated at max_nodes",
-          "WorkflowTimeoutError: Execution timed out after 240000ms"
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
         ],
         "agent_findings": 0,
         "incomplete_checks": [
@@ -658,22 +888,32 @@
           "lint:tool_missing",
           "typecheck:tool_missing"
         ],
-        "profile_hash": "d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
-        "audit_sha256": "ecd927dfce89be4fde0d80fd89864ede86e81493c8e778c54d7653974bf775b9",
-        "model_calls": 0,
+        "mode": "branch",
+        "profile_hash": "5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca",
+        "audit_sha256": "1ecde5d1156c2e32d8549e24f4caa5d598043a31f92a67fb1d6187dd92ea58d3",
+        "model_calls": 5,
         "verification_tokens": 0,
-        "runner_graph_json_bytes": 2666830
+        "cost_usd": 0.4132,
+        "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+        "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+        "route": "ai-gateway-custom",
+        "cache": {
+          "hit_rate": 0.0,
+          "hits": 0,
+          "lookups": 4,
+          "tokens_saved_estimate": 0
+        }
       },
       "quorum": {
-        "exit_code": 4,
-        "wall_seconds": 258,
-        "endpoint_review": "a2ede2a1-648b-4c09-853e-3950b0b92e73",
+        "exit_code": 0,
+        "wall_seconds": 109,
+        "endpoint_review": "577ebc72-9f5c-43c4-bf2f-a08656c92cae",
         "snapshot": "33.4 MiB in 2,950 distinct contents, 6,274 files total",
-        "status": "partial",
-        "report_sha256": "5326a5434680a771f88e0b8607cc8bb2cd77aa0c6382cdab96567502c87c4348",
+        "status": "incomplete",
+        "report_sha256": "bcc8ca127f2ac4de3b80e8a1358c0ef0445e3155aa3e7b8b6ac0102f17f85b9d",
         "notes": [
           "Impact graph truncated at max_nodes",
-          "WorkflowTimeoutError: Execution timed out after 240000ms"
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
         ],
         "agent_findings": 0,
         "incomplete_checks": [
@@ -682,11 +922,22 @@
           "lint:tool_missing",
           "typecheck:tool_missing"
         ],
-        "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
-        "audit_sha256": "754dc427000bd4de0a26e77b3c799b98e46c99c4b1d6996272debc5a56dee792",
+        "mode": "branch",
+        "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
+        "audit_sha256": "b623c27bebeb6832543a1a95a26371f05bcaf4da1d603d0783b6fb203a72d731",
         "model_calls": 0,
         "verification_tokens": 0,
-        "runner_graph_json_bytes": 2666830
+        "cost_usd": 0,
+        "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+        "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+        "route": "ai-gateway-custom",
+        "generation": "served by the agent result cache",
+        "cache": {
+          "hit_rate": 1.0,
+          "hits": 4,
+          "lookups": 4,
+          "tokens_saved_estimate": 195760
+        }
       }
     },
     {
@@ -696,28 +947,73 @@
       "head": "4647e532bbed7a5f60c9972ddba3f5fb4a79e1f9",
       "high_controls": [],
       "single": {
-        "exit_code": 3,
-        "wall_seconds": 10,
-        "endpoint_review": null,
+        "exit_code": 1,
+        "wall_seconds": 372,
+        "endpoint_review": "94d45d21-a361-459f-baea-d3524169dd2a",
         "snapshot": "3.6 MiB in 127 distinct contents, 252 files total",
-        "status": "error",
-        "report_sha256": "229eb62265ea1ebc9156d652d2187f55877cacb7b599bafe5b212ec2f108118d",
-        "error": "Rio endpoint returned HTTP 400",
-        "notes": [],
-        "agent_findings": 0,
-        "incomplete_checks": []
+        "status": "incomplete",
+        "report_sha256": "ddd3ba567b56d83fbaeda0c8b61c046b3ee244a70a24557129cf541bf3d68b36",
+        "notes": [
+          "Submitted impact graph bounded to 2 MiB per version; the runner rebuilds the complete graph",
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
+        ],
+        "agent_findings": 3,
+        "incomplete_checks": [
+          "coverage:tool_missing",
+          "dependencies:offline",
+          "lint:tool_missing",
+          "typecheck:tool_missing"
+        ],
+        "mode": "branch",
+        "profile_hash": "5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca",
+        "audit_sha256": "05f2e0e51dc17b737dba29b4a9fef5d02446b060741cde4f73dc52cb8a20b6a1",
+        "model_calls": 24,
+        "verification_tokens": 234001,
+        "cost_usd": 0.5427,
+        "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+        "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+        "route": "ai-gateway-custom",
+        "cache": {
+          "hit_rate": 0.0,
+          "hits": 0,
+          "lookups": 15,
+          "tokens_saved_estimate": 0
+        }
       },
       "quorum": {
-        "exit_code": 3,
-        "wall_seconds": 4,
-        "endpoint_review": null,
+        "exit_code": 1,
+        "wall_seconds": 361,
+        "endpoint_review": "125874c6-3a10-41b4-8986-b41b1c946627",
         "snapshot": "3.6 MiB in 127 distinct contents, 252 files total",
-        "status": "error",
-        "report_sha256": "229eb62265ea1ebc9156d652d2187f55877cacb7b599bafe5b212ec2f108118d",
-        "error": "Rio endpoint returned HTTP 400",
-        "notes": [],
-        "agent_findings": 0,
-        "incomplete_checks": []
+        "status": "incomplete",
+        "report_sha256": "399e9507d85acef8e840e40559826cc59ed5ab56d311672fa7bb76130ead2d91",
+        "notes": [
+          "Submitted impact graph bounded to 2 MiB per version; the runner rebuilds the complete graph",
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
+        ],
+        "agent_findings": 3,
+        "incomplete_checks": [
+          "coverage:tool_missing",
+          "dependencies:offline",
+          "lint:tool_missing",
+          "typecheck:tool_missing"
+        ],
+        "mode": "branch",
+        "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
+        "audit_sha256": "e5169dc4461d83718436aa3f7430375d5dd59943af6c82d3768dcab7c9868515",
+        "model_calls": 58,
+        "verification_tokens": 665359,
+        "cost_usd": 0.6682,
+        "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+        "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+        "route": "ai-gateway-custom",
+        "generation": "served by the agent result cache",
+        "cache": {
+          "hit_rate": 1.0,
+          "hits": 15,
+          "lookups": 15,
+          "tokens_saved_estimate": 133725
+        }
       }
     },
     {
@@ -727,50 +1023,70 @@
       "head": "0f758fe54a8742110f730ebbaf146e79f3937c8d",
       "high_controls": [],
       "single": {
-        "exit_code": 4,
-        "wall_seconds": 42,
-        "endpoint_review": "f8945005-b9a4-4eb0-ba2a-b78741443312",
+        "exit_code": 1,
+        "wall_seconds": 204,
+        "endpoint_review": "8895b1db-19bf-4d5e-a15b-ba2f8b933b0f",
         "snapshot": "2.2 MiB in 133 distinct contents, 259 files total",
-        "status": "partial",
-        "report_sha256": "bd8f4ff9fcec54e33c7dad3410d833cf65afb452468d07d9751e43152df9dff0",
+        "status": "incomplete",
+        "report_sha256": "50c4ceb0408e4d466638143c9d5f4a5f4dc1d9711a518aa8d03fc4a0a6de7a20",
         "notes": [
-          "token budget exhausted"
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
         ],
-        "agent_findings": 0,
+        "agent_findings": 1,
         "incomplete_checks": [
           "coverage:tool_missing",
           "dependencies:offline",
           "lint:tool_missing",
           "typecheck:tool_missing"
         ],
-        "profile_hash": "d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
-        "audit_sha256": "e053a5f766835a82638ce59639a11c498f51ba3598c9375c927c204bdedc6f75",
-        "model_calls": 0,
-        "verification_tokens": 0,
-        "runner_graph_json_bytes": 2313685
+        "mode": "branch",
+        "profile_hash": "5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca",
+        "audit_sha256": "f3bd1aed54b86e10641f7ee45897a28c38177743e7b07d9eb184e7e41880e5ac",
+        "model_calls": 16,
+        "verification_tokens": 43042,
+        "cost_usd": 0.8903,
+        "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+        "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+        "route": "ai-gateway-custom",
+        "cache": {
+          "hit_rate": 0.0,
+          "hits": 0,
+          "lookups": 10,
+          "tokens_saved_estimate": 0
+        }
       },
       "quorum": {
-        "exit_code": 4,
-        "wall_seconds": 45,
-        "endpoint_review": "57cc1664-47d3-4b87-8b9b-83b319e5ce1e",
+        "exit_code": 1,
+        "wall_seconds": 332,
+        "endpoint_review": "5df2b657-1b8a-46e9-a28c-d42f04af86d1",
         "snapshot": "2.2 MiB in 133 distinct contents, 259 files total",
-        "status": "partial",
-        "report_sha256": "282002e6b1270d285ae9108f8862a66a72a0b03ab9b45ebf49313e5daa97ca4b",
+        "status": "incomplete",
+        "report_sha256": "f282fb9c104d40da5dc7bf59160aee01eb04b4c46301e6d31d464c5e1f92e2e8",
         "notes": [
-          "token budget exhausted"
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
         ],
-        "agent_findings": 0,
+        "agent_findings": 2,
         "incomplete_checks": [
           "coverage:tool_missing",
           "dependencies:offline",
           "lint:tool_missing",
           "typecheck:tool_missing"
         ],
-        "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
-        "audit_sha256": "948c698e9329fa8dd6f8d4d85c166aca3968e96ee6437adb9a31c06ec2ccfe87",
-        "model_calls": 0,
-        "verification_tokens": 0,
-        "runner_graph_json_bytes": 2313685
+        "mode": "branch",
+        "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
+        "audit_sha256": "dde900010394dfc3d601848e46f550e8a7159eddee6ac2e96656358a0caeb4be",
+        "model_calls": 49,
+        "verification_tokens": 544190,
+        "cost_usd": 1.2264,
+        "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+        "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+        "route": "ai-gateway-custom",
+        "cache": {
+          "hit_rate": 0.0,
+          "hits": 0,
+          "lookups": 10,
+          "tokens_saved_estimate": 0
+        }
       }
     },
     {
@@ -780,28 +1096,70 @@
       "head": "d34204aadc468ef63b11c9931559a15885b19706",
       "high_controls": [],
       "single": {
-        "exit_code": 3,
-        "wall_seconds": 1,
-        "endpoint_review": null,
-        "snapshot": null,
-        "status": "error",
-        "report_sha256": "bb2cd1c237b509ccf888a349d85352cc321cf2e079819a827cae4c1044b44ed1",
-        "error": "unsupported file mode 160000 for standard-context (base)",
-        "notes": [],
-        "agent_findings": 0,
-        "incomplete_checks": []
+        "exit_code": 0,
+        "wall_seconds": 182,
+        "endpoint_review": "f1d71b02-718f-4f7b-994b-99b1f2d4acc9",
+        "snapshot": "1.5 MiB in 216 distinct contents, 418 files total",
+        "status": "incomplete",
+        "report_sha256": "3d97872bda2860efb6b3974b39544722ff2d75f4787ebe968dfe5bcfb85e1f13",
+        "notes": [
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
+        ],
+        "agent_findings": 2,
+        "incomplete_checks": [
+          "coverage:tool_missing",
+          "dependencies:offline",
+          "lint:no_project_config",
+          "typecheck:tool_missing"
+        ],
+        "mode": "branch",
+        "profile_hash": "5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca",
+        "audit_sha256": "88d82f9a6a85159475a092d9a17cc476ec1b9519d358880abd1a5e805941ca4d",
+        "model_calls": 17,
+        "verification_tokens": 177614,
+        "cost_usd": 0.4561,
+        "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+        "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+        "route": "ai-gateway-custom",
+        "cache": {
+          "hit_rate": 0.0,
+          "hits": 0,
+          "lookups": 15,
+          "tokens_saved_estimate": 0
+        }
       },
       "quorum": {
-        "exit_code": 3,
-        "wall_seconds": 1,
-        "endpoint_review": null,
-        "snapshot": null,
-        "status": "error",
-        "report_sha256": "bb2cd1c237b509ccf888a349d85352cc321cf2e079819a827cae4c1044b44ed1",
-        "error": "unsupported file mode 160000 for standard-context (base)",
-        "notes": [],
-        "agent_findings": 0,
-        "incomplete_checks": []
+        "exit_code": 0,
+        "wall_seconds": 156,
+        "endpoint_review": "b8fe787f-ac48-429a-8358-d7ceacc4b2cb",
+        "snapshot": "1.5 MiB in 216 distinct contents, 418 files total",
+        "status": "incomplete",
+        "report_sha256": "2090ba319e5ec3d096f20d5c6e27682e9bae82faad29e9f7aa8a0336ebadf76c",
+        "notes": [
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
+        ],
+        "agent_findings": 1,
+        "incomplete_checks": [
+          "coverage:tool_missing",
+          "dependencies:offline",
+          "lint:no_project_config",
+          "typecheck:tool_missing"
+        ],
+        "mode": "branch",
+        "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
+        "audit_sha256": "a29632c66b88764ca0327e0013a32e7d4a8bd0860e14e3ac3832faea5d7d2f9a",
+        "model_calls": 21,
+        "verification_tokens": 261329,
+        "cost_usd": 0.3975,
+        "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+        "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+        "route": "ai-gateway-custom",
+        "cache": {
+          "hit_rate": 0.9333333333333332,
+          "hits": 14,
+          "lookups": 15,
+          "tokens_saved_estimate": 121366
+        }
       }
     },
     {
@@ -811,28 +1169,70 @@
       "head": "fe9477f0e4e25cba6455ad0e88c6d7476bfc8d40",
       "high_controls": [],
       "single": {
-        "exit_code": 3,
-        "wall_seconds": 1,
-        "endpoint_review": null,
-        "snapshot": null,
-        "status": "error",
-        "report_sha256": "bb2cd1c237b509ccf888a349d85352cc321cf2e079819a827cae4c1044b44ed1",
-        "error": "unsupported file mode 160000 for standard-context (base)",
-        "notes": [],
-        "agent_findings": 0,
-        "incomplete_checks": []
+        "exit_code": 1,
+        "wall_seconds": 146,
+        "endpoint_review": "c7b6b572-95c6-497b-891d-c0b86ed35838",
+        "snapshot": "1.5 MiB in 213 distinct contents, 418 files total",
+        "status": "incomplete",
+        "report_sha256": "9dcce76b0001ba30237500cd245f01f61ef1898109a348f882ffd9ed92ef6956",
+        "notes": [
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
+        ],
+        "agent_findings": 1,
+        "incomplete_checks": [
+          "coverage:tool_missing",
+          "dependencies:offline",
+          "lint:no_project_config",
+          "typecheck:tool_missing"
+        ],
+        "mode": "branch",
+        "profile_hash": "5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca",
+        "audit_sha256": "c67f9bfbe66f9a54375ff4abca6bb05535b035f751c21a278e5b453b87aa80b9",
+        "model_calls": 8,
+        "verification_tokens": 65544,
+        "cost_usd": 0.3237,
+        "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+        "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+        "route": "ai-gateway-custom",
+        "cache": {
+          "hit_rate": 0.0,
+          "hits": 0,
+          "lookups": 7,
+          "tokens_saved_estimate": 0
+        }
       },
       "quorum": {
-        "exit_code": 3,
-        "wall_seconds": 1,
-        "endpoint_review": null,
-        "snapshot": null,
-        "status": "error",
-        "report_sha256": "bb2cd1c237b509ccf888a349d85352cc321cf2e079819a827cae4c1044b44ed1",
-        "error": "unsupported file mode 160000 for standard-context (base)",
-        "notes": [],
-        "agent_findings": 0,
-        "incomplete_checks": []
+        "exit_code": 0,
+        "wall_seconds": 169,
+        "endpoint_review": "2943d391-3808-42ea-ae62-2308b2ad5b94",
+        "snapshot": "1.5 MiB in 213 distinct contents, 418 files total",
+        "status": "incomplete",
+        "report_sha256": "f3eb4f0f177fb88994c464d5ad1aca2a1fff2b29082ffacb8e58781040982796",
+        "notes": [
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
+        ],
+        "agent_findings": 1,
+        "incomplete_checks": [
+          "coverage:tool_missing",
+          "dependencies:offline",
+          "lint:no_project_config",
+          "typecheck:tool_missing"
+        ],
+        "mode": "branch",
+        "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
+        "audit_sha256": "ec77a1771bdb33bc40ef9678ba2ca8ffea186d1ef7e27faa260d0e841f41da88",
+        "model_calls": 21,
+        "verification_tokens": 230626,
+        "cost_usd": 0.6178,
+        "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+        "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+        "route": "ai-gateway-custom",
+        "cache": {
+          "hit_rate": 0.8571428571428571,
+          "hits": 6,
+          "lookups": 7,
+          "tokens_saved_estimate": 102582
+        }
       }
     },
     {
@@ -842,14 +1242,14 @@
       "head": "6213fc11bdf096301a82ae5c236b5a666a4ee3ca",
       "high_controls": [],
       "single": {
-        "exit_code": 4,
-        "wall_seconds": 29,
-        "endpoint_review": "b07e9bf8-d3ff-4d47-8595-8b7f01163130",
+        "exit_code": 0,
+        "wall_seconds": 33,
+        "endpoint_review": "09ae728c-7b3f-45fe-8640-4af457b56412",
         "snapshot": "1.6 MiB in 142 distinct contents, 286 files total",
-        "status": "partial",
-        "report_sha256": "2b87751eadeebe8c9ac40d076533add10b7053575ad5410242b6c8b51c2ac541",
+        "status": "incomplete",
+        "report_sha256": "726ef98c0f87bc153b1c02a3ae18348f8420f330c4ab7df6222ea82b4eeca141",
         "notes": [
-          "malformed model output"
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
         ],
         "agent_findings": 0,
         "incomplete_checks": [
@@ -858,21 +1258,32 @@
           "lint:tool_missing",
           "typecheck:tool_missing"
         ],
-        "profile_hash": "d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
-        "audit_sha256": "d79c517022c644ab4a267dcfd54353da0ec98b2fdce5977cd2a8bf5e1c36079d",
-        "model_calls": 1,
+        "mode": "branch",
+        "profile_hash": "5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca",
+        "audit_sha256": "07c282865609e80706d23f6275f18f8ea499078e2acdfb1027c9fc53d46d10e2",
+        "model_calls": 0,
         "verification_tokens": 0,
-        "runner_graph_json_bytes": 17426
+        "cost_usd": 0,
+        "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+        "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+        "route": "ai-gateway-custom",
+        "generation": "served by the agent result cache",
+        "cache": {
+          "hit_rate": 1.0,
+          "hits": 2,
+          "lookups": 2,
+          "tokens_saved_estimate": 33186
+        }
       },
       "quorum": {
-        "exit_code": 4,
-        "wall_seconds": 26,
-        "endpoint_review": "993a4eac-561d-4f48-9923-a33eea7217f5",
+        "exit_code": 0,
+        "wall_seconds": 31,
+        "endpoint_review": "0793f672-06e9-4b56-bd61-37a358ad1cc8",
         "snapshot": "1.6 MiB in 142 distinct contents, 286 files total",
-        "status": "partial",
-        "report_sha256": "123adcc2a3e4a7dce720a1d0fd7bee64a0b50107c66f1f6717918df8b023d40c",
+        "status": "incomplete",
+        "report_sha256": "66dc451ddd6082d1b9958e350a377ccd090f33a2ec2ec7e33e8fb312437fe0ea",
         "notes": [
-          "malformed model output"
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
         ],
         "agent_findings": 0,
         "incomplete_checks": [
@@ -881,11 +1292,22 @@
           "lint:tool_missing",
           "typecheck:tool_missing"
         ],
-        "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
-        "audit_sha256": "183f88ca78037f750da9bfce98ffbcfcb0a796b462c85b78e0f1bbc4bba336d0",
-        "model_calls": 1,
+        "mode": "branch",
+        "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
+        "audit_sha256": "294451acd52984abcd0a045fcdcba15d544969ac3af329acc14deddeb37dfe14",
+        "model_calls": 0,
         "verification_tokens": 0,
-        "runner_graph_json_bytes": 17426
+        "cost_usd": 0,
+        "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+        "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+        "route": "ai-gateway-custom",
+        "generation": "served by the agent result cache",
+        "cache": {
+          "hit_rate": 1.0,
+          "hits": 2,
+          "lookups": 2,
+          "tokens_saved_estimate": 33186
+        }
       }
     },
     {
@@ -895,50 +1317,70 @@
       "head": "29bdcbb91f1318dc90ae8c0e52ab6f4e13c42744",
       "high_controls": [],
       "single": {
-        "exit_code": 4,
-        "wall_seconds": 44,
-        "endpoint_review": "1802b2d8-36d3-4088-aa74-ab8130e19a22",
+        "exit_code": 1,
+        "wall_seconds": 453,
+        "endpoint_review": "ed5b7858-b6f3-4b19-ba7e-e41153cf6dab",
         "snapshot": "2.9 MiB in 395 distinct contents, 790 files total",
-        "status": "partial",
-        "report_sha256": "0786fe837dbbab82c6a52c6e780ef350de7bf9ad07e71f905feda25b10c9fbcc",
+        "status": "incomplete",
+        "report_sha256": "5604d1f4b55e8a6c6f63b533e88feacd8e7767dd6861614ccaa0af3db473a928",
         "notes": [
-          "token budget exhausted"
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
         ],
-        "agent_findings": 0,
+        "agent_findings": 2,
         "incomplete_checks": [
           "coverage:tool_missing",
           "dependencies:offline",
           "lint:tool_missing",
           "typecheck:tool_missing"
         ],
-        "profile_hash": "d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
-        "audit_sha256": "9f5015a9d35eb8843035423129b08fe8d0b5c3030abeb14d21f561e57df41913",
-        "model_calls": 0,
-        "verification_tokens": 0,
-        "runner_graph_json_bytes": 458953
+        "mode": "branch",
+        "profile_hash": "5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca",
+        "audit_sha256": "b78e93a42cf4fdcd28df70a41ae87fba75205e47c383bf84e229f7f14c5ba53c",
+        "model_calls": 20,
+        "verification_tokens": 176453,
+        "cost_usd": 0.8018,
+        "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+        "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+        "route": "ai-gateway-custom",
+        "cache": {
+          "hit_rate": 0.0,
+          "hits": 0,
+          "lookups": 12,
+          "tokens_saved_estimate": 0
+        }
       },
       "quorum": {
-        "exit_code": 4,
-        "wall_seconds": 27,
-        "endpoint_review": "8a2726b1-f6d3-47a1-9b2b-290bf335a8ec",
+        "exit_code": 0,
+        "wall_seconds": 389,
+        "endpoint_review": "a9b291da-966f-49da-b431-a2aa6eb669b6",
         "snapshot": "2.9 MiB in 395 distinct contents, 790 files total",
-        "status": "partial",
-        "report_sha256": "940b18aa378d22c6d230917575c43b2602705832496f0030481ca6f788be41f5",
+        "status": "incomplete",
+        "report_sha256": "bbb47d8aa4a59075d202c04f2432d6220b3facb1abe3388c9af776b6b850283e",
         "notes": [
-          "token budget exhausted"
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
         ],
-        "agent_findings": 0,
+        "agent_findings": 2,
         "incomplete_checks": [
           "coverage:tool_missing",
           "dependencies:offline",
           "lint:tool_missing",
           "typecheck:tool_missing"
         ],
-        "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
-        "audit_sha256": "704a726b05816536d22db3d3d8331f8cbd1d4c8f9c4df8d57d86669ae2963328",
-        "model_calls": 0,
-        "verification_tokens": 0,
-        "runner_graph_json_bytes": 458953
+        "mode": "branch",
+        "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
+        "audit_sha256": "c5482847a2b7416830c9ed859ba2f6dd42634b08feedec9866d3e55883adbb78",
+        "model_calls": 46,
+        "verification_tokens": 433583,
+        "cost_usd": 0.7588,
+        "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+        "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+        "route": "ai-gateway-custom",
+        "cache": {
+          "hit_rate": 0.8333333333333334,
+          "hits": 10,
+          "lookups": 12,
+          "tokens_saved_estimate": 219950
+        }
       }
     },
     {
@@ -948,28 +1390,74 @@
       "head": "fccc28f1d0041fc5bdd798dc2645dc3b5fc71ef1",
       "high_controls": [],
       "single": {
-        "exit_code": 3,
-        "wall_seconds": 16,
-        "endpoint_review": null,
+        "exit_code": 0,
+        "wall_seconds": 202,
+        "endpoint_review": "69612855-90ce-4645-9db1-5b5dfe6f29b9",
         "snapshot": "5.7 MiB in 847 distinct contents, 1,697 files total",
-        "status": "error",
-        "report_sha256": "229eb62265ea1ebc9156d652d2187f55877cacb7b599bafe5b212ec2f108118d",
-        "error": "Rio endpoint returned HTTP 400",
-        "notes": [],
-        "agent_findings": 0,
-        "incomplete_checks": []
+        "status": "incomplete",
+        "report_sha256": "12e66ae3347563a8658778bfeef4546887bef2c9b8b00629c1166f1df7656242",
+        "notes": [
+          "Impact graph truncated at max_nodes",
+          "Submitted impact graph bounded to 2 MiB per version; the runner rebuilds the complete graph",
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
+        ],
+        "agent_findings": 1,
+        "incomplete_checks": [
+          "coverage:tool_missing",
+          "dependencies:offline",
+          "lint:tool_missing",
+          "typecheck:tool_missing"
+        ],
+        "mode": "branch",
+        "profile_hash": "5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca",
+        "audit_sha256": "cf017b38ced4b938f3b738cd259bca8284da9dff277d466271a597fd631478fe",
+        "model_calls": 9,
+        "verification_tokens": 59729,
+        "cost_usd": 0.228,
+        "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+        "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+        "route": "ai-gateway-custom",
+        "cache": {
+          "hit_rate": 0.0,
+          "hits": 0,
+          "lookups": 37,
+          "tokens_saved_estimate": 0
+        }
       },
       "quorum": {
-        "exit_code": 3,
-        "wall_seconds": 10,
-        "endpoint_review": null,
+        "exit_code": 0,
+        "wall_seconds": 231,
+        "endpoint_review": "3f3efa11-295e-479c-8f07-db907e485e30",
         "snapshot": "5.7 MiB in 847 distinct contents, 1,697 files total",
-        "status": "error",
-        "report_sha256": "229eb62265ea1ebc9156d652d2187f55877cacb7b599bafe5b212ec2f108118d",
-        "error": "Rio endpoint returned HTTP 400",
-        "notes": [],
+        "status": "incomplete",
+        "report_sha256": "c22a735a77c45e2d9038581343caf8366b86406f2f3fb55b36e7e0b7e2860f68",
+        "notes": [
+          "Impact graph truncated at max_nodes",
+          "Submitted impact graph bounded to 2 MiB per version; the runner rebuilds the complete graph",
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
+        ],
         "agent_findings": 0,
-        "incomplete_checks": []
+        "incomplete_checks": [
+          "coverage:tool_missing",
+          "dependencies:offline",
+          "lint:tool_missing",
+          "typecheck:tool_missing"
+        ],
+        "mode": "branch",
+        "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
+        "audit_sha256": "c10cf43ef1f3a802870b82f7c3b9f51c8cc36bfbab4d21ba2e5b941fb31e3914",
+        "model_calls": 26,
+        "verification_tokens": 162371,
+        "cost_usd": 0.6621,
+        "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+        "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+        "route": "ai-gateway-custom",
+        "cache": {
+          "hit_rate": 0.972972972972973,
+          "hits": 36,
+          "lookups": 37,
+          "tokens_saved_estimate": 73368
+        }
       }
     },
     {
@@ -979,45 +1467,70 @@
       "head": "37ced33efddccc6721588af6fbe095d34fa17d7d",
       "high_controls": [],
       "single": {
-        "exit_code": 4,
-        "wall_seconds": 266,
-        "endpoint_review": "5f126b81-2d31-4d34-a715-8ef716a88e10",
+        "exit_code": 0,
+        "wall_seconds": 268,
+        "endpoint_review": "76d7e87a-a9a9-41ac-8bb8-8e34f3e82ba3",
         "snapshot": "5.6 MiB in 849 distinct contents, 1,706 files total",
-        "status": "partial",
-        "report_sha256": "6f914ddb10de2a6984eec5be90f63427e8f43f959e48a391fc908fa76e5d9a79",
+        "status": "incomplete",
+        "report_sha256": "f5b5d5f166e29812a0b8c17f539c97eda93d246767c1906a519e1c824f5a33a0",
         "notes": [
-          "WorkflowTimeoutError: Execution timed out after 240000ms"
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
         ],
-        "agent_findings": 0,
+        "agent_findings": 1,
         "incomplete_checks": [
           "coverage:tool_missing",
           "dependencies:offline",
           "lint:tool_missing",
           "typecheck:tool_missing"
         ],
-        "profile_hash": "d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
-        "audit_sha256": "512e861fc40807eaeb1dad4d6863695c124cb55f204277b7a5f0ada9bf55cb47",
-        "model_calls": 0,
-        "verification_tokens": 0,
-        "runner_graph_json_bytes": 2117215
+        "mode": "branch",
+        "profile_hash": "5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca",
+        "audit_sha256": "8dd58a21be356d685258f0625f9c9c3b21f72a025c1fea627e56962e15b416db",
+        "model_calls": 16,
+        "verification_tokens": 128168,
+        "cost_usd": 0.8534,
+        "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+        "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+        "route": "ai-gateway-custom",
+        "cache": {
+          "hit_rate": 0.0,
+          "hits": 0,
+          "lookups": 6,
+          "tokens_saved_estimate": 0
+        }
       },
       "quorum": {
-        "exit_code": 4,
-        "wall_seconds": 260,
-        "endpoint_review": "fc07c3a7-272f-428a-b6d7-ed16e4e5e477",
+        "exit_code": 0,
+        "wall_seconds": 215,
+        "endpoint_review": "7b3f2849-22e8-4313-9a59-18bc37901cd0",
         "snapshot": "5.6 MiB in 849 distinct contents, 1,706 files total",
-        "status": "partial",
-        "report_sha256": "e2c5ca0c14d7e66373c3170e4607468cf4fc13b6d4c1e3555ad55e6f82991eba",
+        "status": "incomplete",
+        "report_sha256": "7b3baff38a08ec66c1dbc8df496f0f999d64a4dfd19f9f6bead73221232e16af",
         "notes": [
-          "WorkflowTimeoutError: Execution timed out after 240000ms"
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
         ],
-        "agent_findings": 0,
-        "incomplete_checks": [],
-        "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
-        "audit_sha256": "ac4d3f702f25c326f104e061d5ad5747df1ba6a91500f6f4d96514830235c526",
-        "model_calls": 0,
-        "verification_tokens": 0,
-        "runner_graph_json_bytes": 2117215
+        "agent_findings": 1,
+        "incomplete_checks": [
+          "coverage:tool_missing",
+          "dependencies:offline",
+          "lint:tool_missing",
+          "typecheck:tool_missing"
+        ],
+        "mode": "branch",
+        "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
+        "audit_sha256": "3510e1d6046d2fe1eed384e9287790d5db1e5694e0d14db480ee65f6ba8851d9",
+        "model_calls": 28,
+        "verification_tokens": 322636,
+        "cost_usd": 0.8757,
+        "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+        "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+        "route": "ai-gateway-custom",
+        "cache": {
+          "hit_rate": 0.8333333333333334,
+          "hits": 5,
+          "lookups": 6,
+          "tokens_saved_estimate": 258565
+        }
       }
     },
     {
@@ -1027,39 +1540,71 @@
       "head": "1ca55413c8e79c3b437054c0d9dc7e4691bd3e71",
       "high_controls": [],
       "single": {
-        "exit_code": 4,
-        "wall_seconds": 261,
-        "endpoint_review": "6134e31f-b2e4-4030-865f-436cde8cb891",
+        "exit_code": 0,
+        "wall_seconds": 95,
+        "endpoint_review": "2efd1ea4-e4ca-4b71-8892-b189a57ea3c3",
         "snapshot": "3.7 MiB in 603 distinct contents, 1,242 files total",
-        "status": "partial",
-        "report_sha256": "4c33a3907a3192f9f5cd0daf0cebc5bf679bf4b1871b510bc8e470d53af441de",
+        "status": "incomplete",
+        "report_sha256": "1a12835ede3f6c967a4530f998afd02cefc4393f1586cb19695da61746fbc5e9",
         "notes": [
-          "WorkflowTimeoutError: Execution timed out after 240000ms"
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
         ],
         "agent_findings": 0,
-        "incomplete_checks": [],
-        "profile_hash": "d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
-        "audit_sha256": "c1ae955821690849ea80d39a0329914d4ab44ab64c6e3bbd9218084ca7b9bf8d",
-        "model_calls": 0,
+        "incomplete_checks": [
+          "coverage:tool_missing",
+          "dependencies:offline",
+          "lint:tool_missing",
+          "typecheck:tool_missing"
+        ],
+        "mode": "branch",
+        "profile_hash": "5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca",
+        "audit_sha256": "14c1ab31eb90bbf5b09143e6c09a1f463acf994a37afd9a1803af48446c3d63e",
+        "model_calls": 4,
         "verification_tokens": 0,
-        "runner_graph_json_bytes": 961932
+        "cost_usd": 0.2684,
+        "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+        "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+        "route": "ai-gateway-custom",
+        "cache": {
+          "hit_rate": 0.0,
+          "hits": 0,
+          "lookups": 6,
+          "tokens_saved_estimate": 0
+        }
       },
       "quorum": {
-        "exit_code": 4,
-        "wall_seconds": 257,
-        "endpoint_review": "942b9726-3686-4207-9b43-f3247eb2cbda",
+        "exit_code": 0,
+        "wall_seconds": 56,
+        "endpoint_review": "14eaee7c-ce8f-4825-a773-78f67ebd5311",
         "snapshot": "3.7 MiB in 603 distinct contents, 1,242 files total",
-        "status": "partial",
-        "report_sha256": "713ef9b748aad0f19dc9e31aa979b4765e1dbbb06d6a298e87f6af24639a24c7",
+        "status": "incomplete",
+        "report_sha256": "c9bb43c95a15c7b74b42f437da464d4ba4b439651c14078f66659d5e8362b2d2",
         "notes": [
-          "WorkflowTimeoutError: Execution timed out after 240000ms"
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
         ],
         "agent_findings": 0,
-        "incomplete_checks": [],
-        "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
-        "audit_sha256": "3116c867ec696ffdc0884302f0d85f43086f1206ff4d1165588f859f109143a6",
+        "incomplete_checks": [
+          "coverage:tool_missing",
+          "dependencies:offline",
+          "lint:tool_missing",
+          "typecheck:tool_missing"
+        ],
+        "mode": "branch",
+        "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
+        "audit_sha256": "a7ac1f1d89456c57d20585604fa5d2e8ee6e0ae44a6cea07c49c84b58cdee7de",
         "model_calls": 0,
-        "verification_tokens": 0
+        "verification_tokens": 0,
+        "cost_usd": 0,
+        "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+        "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+        "route": "ai-gateway-custom",
+        "generation": "served by the agent result cache",
+        "cache": {
+          "hit_rate": 1.0,
+          "hits": 6,
+          "lookups": 6,
+          "tokens_saved_estimate": 126942
+        }
       }
     },
     {
@@ -1069,44 +1614,70 @@
       "head": "ac0d148f7e21068fd1f544230456f30c95311f78",
       "high_controls": [],
       "single": {
-        "exit_code": 4,
-        "wall_seconds": 262,
-        "endpoint_review": "f8cf776c-9827-424f-8005-32def2bd3572",
+        "exit_code": 1,
+        "wall_seconds": 153,
+        "endpoint_review": "8926c289-0910-4456-8e8c-fa33fc499657",
         "snapshot": "3.4 MiB in 602 distinct contents, 1,236 files total",
-        "status": "partial",
-        "report_sha256": "d01537225ecc9b970e7ad9d179db1b5db41521b3051d32dc89c58b14543e86f1",
+        "status": "incomplete",
+        "report_sha256": "2850ad1509bfc3aa07cb4afff02d69da63f1e509b40e51d645dcff406344769d",
         "notes": [
-          "WorkflowTimeoutError: Execution timed out after 240000ms"
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
         ],
-        "agent_findings": 0,
+        "agent_findings": 1,
         "incomplete_checks": [
           "coverage:tool_missing",
           "dependencies:offline",
           "lint:tool_missing",
           "typecheck:tool_missing"
         ],
-        "profile_hash": "d7dbb6e1a5c42caddfd50099b3ead042f5cb75490e9fbc4c9205539c097cbb64",
-        "audit_sha256": "37c4d94e2d2e15e182b75af8f732be92770f8a4868ffb602d064b1dd3ea6b5cb",
-        "model_calls": 0,
-        "verification_tokens": 0,
-        "runner_graph_json_bytes": 171290
+        "mode": "branch",
+        "profile_hash": "5e9aab90ccc4b6b25baa02b94c0c14d8c84dabe2720e2570b08efe5996d5baca",
+        "audit_sha256": "0d8bcc052cc61fbb0d81edaa939b590901fe985b0695145928837102c844cffe",
+        "model_calls": 12,
+        "verification_tokens": 122330,
+        "cost_usd": 0.4463,
+        "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+        "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+        "route": "ai-gateway-custom",
+        "cache": {
+          "hit_rate": 0.0,
+          "hits": 0,
+          "lookups": 11,
+          "tokens_saved_estimate": 0
+        }
       },
       "quorum": {
-        "exit_code": 4,
-        "wall_seconds": 256,
-        "endpoint_review": "46a21ed7-428c-433a-9438-06eaedd40a92",
+        "exit_code": 1,
+        "wall_seconds": 163,
+        "endpoint_review": "12f07d2a-aead-4a48-ad63-252f173e1ba0",
         "snapshot": "3.4 MiB in 602 distinct contents, 1,236 files total",
-        "status": "partial",
-        "report_sha256": "62838acafba4cb3d307e277cdb2cf6dbc5dd3240bfde0634ce7897c52ce963af",
+        "status": "incomplete",
+        "report_sha256": "acf89bbe6c954c8c6faef1ebab4227c5384382bc90970fc629fe4c64df80fc72",
         "notes": [
-          "WorkflowTimeoutError: Execution timed out after 240000ms"
+          "Hypothesis board coordination is deferred; agents and verifier voters run independently."
         ],
-        "agent_findings": 0,
-        "incomplete_checks": [],
-        "profile_hash": "68472a8e18ee60350c5f16ca298a8ce69c13c76b204313fe84417c4ddc23342b",
-        "audit_sha256": "3116c867ec696ffdc0884302f0d85f43086f1206ff4d1165588f859f109143a6",
-        "model_calls": 0,
-        "verification_tokens": 0
+        "agent_findings": 1,
+        "incomplete_checks": [
+          "coverage:tool_missing",
+          "dependencies:offline",
+          "lint:tool_missing",
+          "typecheck:tool_missing"
+        ],
+        "mode": "branch",
+        "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
+        "audit_sha256": "1b3905d938440844f5d9723b94be5c3a7f3d740da77d6e8f3e34041fb35344f5",
+        "model_calls": 26,
+        "verification_tokens": 306667,
+        "cost_usd": 0.6725,
+        "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+        "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+        "route": "ai-gateway-custom",
+        "cache": {
+          "hit_rate": 0.9090909090909092,
+          "hits": 10,
+          "lookups": 11,
+          "tokens_saved_estimate": 137080
+        }
       }
     }
   ]

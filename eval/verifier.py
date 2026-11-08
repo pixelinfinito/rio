@@ -50,6 +50,24 @@ def precision(counts):
     return counts['true-positive'] / total if total else None
 
 
+def scorable(report):
+    """A review can be scored when it finished: `complete`, or `incomplete` only because
+    deterministic checks were skipped (the hosted runner skips typecheck, lint,
+    coverage and the dependency audit for a missing tool, no project configuration
+    or no network; an owner decision of 2026-11-08 holds that the agent and verifier
+    results these gates measure do not depend on those checks). Failed or cancelled
+    checks, missing verifier votes and partial reviews still cannot establish
+    acceptance."""
+    if report['status'] == 'complete':
+        return True
+    if report['status'] != 'incomplete':
+        return False
+    if (report.get('agent_audit') or {}).get('incomplete_votes'):
+        return False
+    incomplete = report.get('incomplete', [])
+    return bool(incomplete) and all(entry.get('outcome') == 'skipped' for entry in incomplete)
+
+
 def score_run(run, root):
     report_path = root / run['report']
     audit_path = root / run['audit']
@@ -58,7 +76,7 @@ def score_run(run, root):
         if digest(path) != run[key]:
             raise ValueError(f'pinned artifact changed: {path}')
     report, audit, verdicts = map(read, [report_path, audit_path, verdict_path])
-    if report['status'] != 'complete':
+    if not scorable(report):
         raise ValueError('only completed reviews can establish acceptance')
     if not verdicts.get('reviewer') or verdicts['reviewer'].startswith('TODO'):
         raise ValueError('independent reviewer identity is required')

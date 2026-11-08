@@ -1,104 +1,2294 @@
 {
   "schema": "rio-verifier-comparison-v1",
   "execution": "live-model",
-  "manifest_sha256": "198204cf3e4757c6265f3d779383c450f11b1189304e4154e0a84d94e821fba3",
-  "cases": [],
-  "errors": [
+  "manifest_sha256": "e33f6b9c6ba0947e5f366f3752ff03bcd4d35a9768a52ab86f4367d905753910",
+  "cases": [
+    {
+      "id": "HS-PY-01",
+      "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
+      "voter_model": "openrouter/openai/gpt-6.1-sol",
+      "profile_hash": "bdcb94aad2775ee9c3fa0af467dcba04906a2faec88b1559bf14fc8dc2875ba6",
+      "independently_clean": false,
+      "high_controls": [
+        "hs-py-01"
+      ],
+      "single": {
+        "counts": {
+          "true-positive": 2,
+          "false-positive": 0
+        },
+        "precision": 1.0,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "static_proven": {
+            "true-positive": 1,
+            "false-positive": 0,
+            "precision": 1.0
+          },
+          "reproduced": {
+            "true-positive": 1,
+            "false-positive": 0,
+            "precision": 1.0
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 1,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 1,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [],
+        "false_positives": [],
+        "verification_tokens": 247559,
+        "verification_cost_usd": 0.345358332,
+        "base": "f049588a8ab5b6b6757677b539845c63698d61f7",
+        "head": "63a411d09af23a9c9945c03f64285c0310f088f7"
+      },
+      "quorum": {
+        "counts": {
+          "true-positive": 1,
+          "false-positive": 0
+        },
+        "precision": 1.0,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "static_proven": {
+            "true-positive": 1,
+            "false-positive": 0,
+            "precision": 1.0
+          },
+          "reproduced": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 1,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 0,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [],
+        "false_positives": [],
+        "verification_tokens": 153065,
+        "verification_cost_usd": 0.162389997,
+        "base": "f049588a8ab5b6b6757677b539845c63698d61f7",
+        "head": "63a411d09af23a9c9945c03f64285c0310f088f7"
+      }
+    },
     {
       "id": "HS-PY-02",
-      "error": "only completed reviews can establish acceptance"
+      "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
+      "voter_model": "openrouter/openai/gpt-6.1-sol",
+      "profile_hash": "bdcb94aad2775ee9c3fa0af467dcba04906a2faec88b1559bf14fc8dc2875ba6",
+      "independently_clean": false,
+      "high_controls": [
+        "hs-py-02"
+      ],
+      "single": {
+        "counts": {
+          "true-positive": 2,
+          "false-positive": 0
+        },
+        "precision": 1.0,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 1,
+            "false-positive": 0,
+            "precision": 1.0
+          },
+          "static_proven": {
+            "true-positive": 1,
+            "false-positive": 0,
+            "precision": 1.0
+          },
+          "reproduced": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 2,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 0,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [
+          "hs-py-02"
+        ],
+        "false_positives": [],
+        "verification_tokens": 133890,
+        "verification_cost_usd": 0.146395458,
+        "base": "470374abd485b6705dfea82689b1e29c345785f1",
+        "head": "13fa1e033b37405b228599ee590af485dc3e38aa"
+      },
+      "quorum": {
+        "counts": {
+          "true-positive": 2,
+          "false-positive": 0
+        },
+        "precision": 1.0,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 1,
+            "false-positive": 0,
+            "precision": 1.0
+          },
+          "static_proven": {
+            "true-positive": 1,
+            "false-positive": 0,
+            "precision": 1.0
+          },
+          "reproduced": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 2,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 0,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [
+          "hs-py-02"
+        ],
+        "false_positives": [],
+        "verification_tokens": 418528,
+        "verification_cost_usd": 0.37998873,
+        "base": "470374abd485b6705dfea82689b1e29c345785f1",
+        "head": "13fa1e033b37405b228599ee590af485dc3e38aa"
+      }
     },
     {
       "id": "HS-PY-03",
-      "error": "only completed reviews can establish acceptance"
+      "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
+      "voter_model": "openrouter/openai/gpt-6.1-sol",
+      "profile_hash": "bdcb94aad2775ee9c3fa0af467dcba04906a2faec88b1559bf14fc8dc2875ba6",
+      "independently_clean": false,
+      "high_controls": [
+        "hs-py-03"
+      ],
+      "single": {
+        "counts": {
+          "true-positive": 0,
+          "false-positive": 0
+        },
+        "precision": null,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "static_proven": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "reproduced": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 0,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [],
+        "false_positives": [],
+        "verification_tokens": 0,
+        "verification_cost_usd": 0,
+        "base": "8936feef3bc181d04c16ee5ade9731d745ee4200",
+        "head": "34fc0e20bd91f7facd1ba735c892a487309003f3"
+      },
+      "quorum": {
+        "counts": {
+          "true-positive": 0,
+          "false-positive": 0
+        },
+        "precision": null,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "static_proven": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "reproduced": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 0,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [],
+        "false_positives": [],
+        "verification_tokens": 0,
+        "verification_cost_usd": 0,
+        "base": "8936feef3bc181d04c16ee5ade9731d745ee4200",
+        "head": "34fc0e20bd91f7facd1ba735c892a487309003f3"
+      }
     },
     {
       "id": "HS-PY-04",
-      "error": "only completed reviews can establish acceptance"
+      "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
+      "voter_model": "openrouter/openai/gpt-6.1-sol",
+      "profile_hash": "bdcb94aad2775ee9c3fa0af467dcba04906a2faec88b1559bf14fc8dc2875ba6",
+      "independently_clean": false,
+      "high_controls": [
+        "hs-py-04"
+      ],
+      "single": {
+        "counts": {
+          "true-positive": 1,
+          "false-positive": 0
+        },
+        "precision": 1.0,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "static_proven": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "reproduced": {
+            "true-positive": 1,
+            "false-positive": 0,
+            "precision": 1.0
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 1,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 0,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [
+          "hs-py-04"
+        ],
+        "false_positives": [],
+        "verification_tokens": 72176,
+        "verification_cost_usd": 0.090954666,
+        "base": "c57ac7bdf3613798c94caceff562a41fa16d4a2d",
+        "head": "bba4d4c95e0de8fc9c99f88c269909d37d64d494"
+      },
+      "quorum": {
+        "counts": {
+          "true-positive": 1,
+          "false-positive": 0
+        },
+        "precision": 1.0,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "static_proven": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "reproduced": {
+            "true-positive": 1,
+            "false-positive": 0,
+            "precision": 1.0
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 1,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 0,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [
+          "hs-py-04"
+        ],
+        "false_positives": [],
+        "verification_tokens": 215869,
+        "verification_cost_usd": 0.225848106,
+        "base": "c57ac7bdf3613798c94caceff562a41fa16d4a2d",
+        "head": "bba4d4c95e0de8fc9c99f88c269909d37d64d494"
+      }
     },
     {
       "id": "HS-TS-01",
-      "error": "only completed reviews can establish acceptance"
+      "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
+      "voter_model": "openrouter/openai/gpt-6.1-sol",
+      "profile_hash": "bdcb94aad2775ee9c3fa0af467dcba04906a2faec88b1559bf14fc8dc2875ba6",
+      "independently_clean": false,
+      "high_controls": [
+        "hs-ts-01"
+      ],
+      "single": {
+        "counts": {
+          "true-positive": 2,
+          "false-positive": 0
+        },
+        "precision": 1.0,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 2,
+            "false-positive": 0,
+            "precision": 1.0
+          },
+          "static_proven": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "reproduced": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 1,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 1,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [
+          "hs-ts-01"
+        ],
+        "false_positives": [],
+        "verification_tokens": 170883,
+        "verification_cost_usd": 0.232493679,
+        "base": "becfbee63dc6243f6a7306510df30ff5db0926e2",
+        "head": "3822f69b19d2c05bb80d6bc665595100c37bc40a"
+      },
+      "quorum": {
+        "counts": {
+          "true-positive": 1,
+          "false-positive": 0
+        },
+        "precision": 1.0,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 1,
+            "false-positive": 0,
+            "precision": 1.0
+          },
+          "static_proven": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "reproduced": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 1,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 0,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [
+          "hs-ts-01"
+        ],
+        "false_positives": [],
+        "verification_tokens": 409945,
+        "verification_cost_usd": 0.329254002,
+        "base": "becfbee63dc6243f6a7306510df30ff5db0926e2",
+        "head": "3822f69b19d2c05bb80d6bc665595100c37bc40a"
+      }
     },
     {
       "id": "HS-TS-02",
-      "error": "only completed reviews can establish acceptance"
+      "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+      "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+      "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
+      "independently_clean": false,
+      "high_controls": [
+        "hs-ts-02"
+      ],
+      "single": {
+        "counts": {
+          "true-positive": 1,
+          "false-positive": 0
+        },
+        "precision": 1.0,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "static_proven": {
+            "true-positive": 1,
+            "false-positive": 0,
+            "precision": 1.0
+          },
+          "reproduced": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 1,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 0,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [
+          "hs-ts-02"
+        ],
+        "false_positives": [],
+        "verification_tokens": 74187,
+        "verification_cost_usd": 0.085207221,
+        "base": "78ff8d38cf8a69aad62db28acb1b661b29b9e0e9",
+        "head": "6d4051f58ea152896407622fdc0022e9578e9113"
+      },
+      "quorum": {
+        "counts": {
+          "true-positive": 1,
+          "false-positive": 0
+        },
+        "precision": 1.0,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "static_proven": {
+            "true-positive": 1,
+            "false-positive": 0,
+            "precision": 1.0
+          },
+          "reproduced": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 1,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 0,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [
+          "hs-ts-02"
+        ],
+        "false_positives": [],
+        "verification_tokens": 124203,
+        "verification_cost_usd": 0.12473136,
+        "base": "78ff8d38cf8a69aad62db28acb1b661b29b9e0e9",
+        "head": "6d4051f58ea152896407622fdc0022e9578e9113"
+      }
     },
     {
       "id": "HS-TS-03",
-      "error": "only completed reviews can establish acceptance"
+      "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
+      "voter_model": "openrouter/openai/gpt-6.1-sol",
+      "profile_hash": "bdcb94aad2775ee9c3fa0af467dcba04906a2faec88b1559bf14fc8dc2875ba6",
+      "independently_clean": false,
+      "high_controls": [
+        "hs-ts-03"
+      ],
+      "single": {
+        "counts": {
+          "true-positive": 1,
+          "false-positive": 0
+        },
+        "precision": 1.0,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 1,
+            "false-positive": 0,
+            "precision": 1.0
+          },
+          "static_proven": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "reproduced": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 1,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [
+          "hs-ts-03"
+        ],
+        "false_positives": [],
+        "verification_tokens": 63258,
+        "verification_cost_usd": 0.071916174,
+        "base": "b4791e38683619858c0bf539119dc3ce004d8cf8",
+        "head": "7746a136c867e148e8c2f4fedcb3be28a7dc307f"
+      },
+      "quorum": {
+        "counts": {
+          "true-positive": 1,
+          "false-positive": 0
+        },
+        "precision": 1.0,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 1,
+            "false-positive": 0,
+            "precision": 1.0
+          },
+          "static_proven": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "reproduced": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 1,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [
+          "hs-ts-03"
+        ],
+        "false_positives": [],
+        "verification_tokens": 178633,
+        "verification_cost_usd": 0.175853799,
+        "base": "b4791e38683619858c0bf539119dc3ce004d8cf8",
+        "head": "7746a136c867e148e8c2f4fedcb3be28a7dc307f"
+      }
+    },
+    {
+      "id": "HS-TS-04",
+      "generator_model": "openrouter/anthropic/claude-sonnet-5.5",
+      "voter_model": "openrouter/openai/gpt-6.1-sol",
+      "profile_hash": "bdcb94aad2775ee9c3fa0af467dcba04906a2faec88b1559bf14fc8dc2875ba6",
+      "independently_clean": false,
+      "high_controls": [
+        "hs-ts-04"
+      ],
+      "single": {
+        "counts": {
+          "true-positive": 0,
+          "false-positive": 0
+        },
+        "precision": null,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "static_proven": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "reproduced": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 0,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [],
+        "false_positives": [],
+        "verification_tokens": 0,
+        "verification_cost_usd": 0,
+        "base": "5d1e53b3c5c3ae7cfbb315ad508b9f54d0a33e75",
+        "head": "b39c77d7162060c4257ee18aa9069ac1a4bb3740"
+      },
+      "quorum": {
+        "counts": {
+          "true-positive": 0,
+          "false-positive": 0
+        },
+        "precision": null,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "static_proven": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "reproduced": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 0,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [],
+        "false_positives": [],
+        "verification_tokens": 0,
+        "verification_cost_usd": 0,
+        "base": "5d1e53b3c5c3ae7cfbb315ad508b9f54d0a33e75",
+        "head": "b39c77d7162060c4257ee18aa9069ac1a4bb3740"
+      }
     },
     {
       "id": "HS-RS-01",
-      "error": "only completed reviews can establish acceptance"
+      "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+      "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+      "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
+      "independently_clean": false,
+      "high_controls": [
+        "hs-rs-01"
+      ],
+      "single": {
+        "counts": {
+          "true-positive": 1,
+          "false-positive": 0
+        },
+        "precision": 1.0,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "static_proven": {
+            "true-positive": 1,
+            "false-positive": 0,
+            "precision": 1.0
+          },
+          "reproduced": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 1,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 0,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [
+          "hs-rs-01"
+        ],
+        "false_positives": [],
+        "verification_tokens": 139697,
+        "verification_cost_usd": 0.187471647,
+        "base": "2aa0773e6120798d11160a635cb4be9cc9599a68",
+        "head": "2c283a9a5c5968eeb9a8f12313f04feb1ff8dfac"
+      },
+      "quorum": {
+        "counts": {
+          "true-positive": 2,
+          "false-positive": 0
+        },
+        "precision": 1.0,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "static_proven": {
+            "true-positive": 2,
+            "false-positive": 0,
+            "precision": 1.0
+          },
+          "reproduced": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 2,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 1,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [
+          "hs-rs-01"
+        ],
+        "false_positives": [],
+        "verification_tokens": 835659,
+        "verification_cost_usd": 0.7959588200000001,
+        "base": "2aa0773e6120798d11160a635cb4be9cc9599a68",
+        "head": "2c283a9a5c5968eeb9a8f12313f04feb1ff8dfac"
+      }
     },
     {
       "id": "HS-RS-02",
-      "error": "only completed reviews can establish acceptance"
-    },
-    {
-      "id": "HS-RS-03",
-      "error": "only completed reviews can establish acceptance"
+      "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+      "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+      "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
+      "independently_clean": false,
+      "high_controls": [
+        "hs-rs-02"
+      ],
+      "single": {
+        "counts": {
+          "true-positive": 1,
+          "false-positive": 0
+        },
+        "precision": 1.0,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "static_proven": {
+            "true-positive": 1,
+            "false-positive": 0,
+            "precision": 1.0
+          },
+          "reproduced": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 1,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 0,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [
+          "hs-rs-02"
+        ],
+        "false_positives": [],
+        "verification_tokens": 106695,
+        "verification_cost_usd": 0.102674088,
+        "base": "b54051b1505281ec7a45a250140a0ff25d33f319",
+        "head": "5d927cd53cbb3548ded28f35bb2b2b051172568b"
+      },
+      "quorum": {
+        "counts": {
+          "true-positive": 2,
+          "false-positive": 0
+        },
+        "precision": 1.0,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "static_proven": {
+            "true-positive": 2,
+            "false-positive": 0,
+            "precision": 1.0
+          },
+          "reproduced": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 2,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 0,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [
+          "hs-rs-02"
+        ],
+        "false_positives": [],
+        "verification_tokens": 529811,
+        "verification_cost_usd": 0.5104515000000001,
+        "base": "b54051b1505281ec7a45a250140a0ff25d33f319",
+        "head": "5d927cd53cbb3548ded28f35bb2b2b051172568b"
+      }
     },
     {
       "id": "HS-RS-04",
-      "error": "only completed reviews can establish acceptance"
+      "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+      "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+      "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
+      "independently_clean": false,
+      "high_controls": [
+        "hs-rs-04"
+      ],
+      "single": {
+        "counts": {
+          "true-positive": 1,
+          "false-positive": 0
+        },
+        "precision": 1.0,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "static_proven": {
+            "true-positive": 1,
+            "false-positive": 0,
+            "precision": 1.0
+          },
+          "reproduced": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 1,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 0,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [
+          "hs-rs-04"
+        ],
+        "false_positives": [],
+        "verification_tokens": 41685,
+        "verification_cost_usd": 0.04126138,
+        "base": "2a959ef3f212a88e9ee0ba374aa1d31e029b384d",
+        "head": "5b475b45aa02daf7084567fe2be32c0fb9659567"
+      },
+      "quorum": {
+        "counts": {
+          "true-positive": 1,
+          "false-positive": 0
+        },
+        "precision": 1.0,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "static_proven": {
+            "true-positive": 1,
+            "false-positive": 0,
+            "precision": 1.0
+          },
+          "reproduced": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 1,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 0,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [
+          "hs-rs-04"
+        ],
+        "false_positives": [],
+        "verification_tokens": 143160,
+        "verification_cost_usd": 0.13991262,
+        "base": "2a959ef3f212a88e9ee0ba374aa1d31e029b384d",
+        "head": "5b475b45aa02daf7084567fe2be32c0fb9659567"
+      }
     },
     {
       "id": "CL-PY-01",
-      "error": "only completed reviews can establish acceptance"
+      "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+      "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+      "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
+      "independently_clean": true,
+      "high_controls": [],
+      "single": {
+        "counts": {
+          "true-positive": 0,
+          "false-positive": 0
+        },
+        "precision": null,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "static_proven": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "reproduced": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 0,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [],
+        "false_positives": [],
+        "verification_tokens": 0,
+        "verification_cost_usd": 0,
+        "base": "29ae1419530857dc43f5d28907da5d6fbc229739",
+        "head": "9f1b31d7daab252962d3400f64c3574c0ccb122f"
+      },
+      "quorum": {
+        "counts": {
+          "true-positive": 0,
+          "false-positive": 0
+        },
+        "precision": null,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "static_proven": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "reproduced": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 0,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [],
+        "false_positives": [],
+        "verification_tokens": 0,
+        "verification_cost_usd": 0,
+        "base": "29ae1419530857dc43f5d28907da5d6fbc229739",
+        "head": "9f1b31d7daab252962d3400f64c3574c0ccb122f"
+      }
     },
     {
       "id": "CL-PY-02",
-      "error": "only completed reviews can establish acceptance"
+      "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+      "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+      "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
+      "independently_clean": true,
+      "high_controls": [],
+      "single": {
+        "counts": {
+          "true-positive": 0,
+          "false-positive": 0
+        },
+        "precision": null,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "static_proven": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "reproduced": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 0,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [],
+        "false_positives": [],
+        "verification_tokens": 0,
+        "verification_cost_usd": 0,
+        "base": "1d211b9c1009d577f39fa2b19b10d9a93a72a0ed",
+        "head": "d62354434b2e508fe89024213b220ca8e67dea5e"
+      },
+      "quorum": {
+        "counts": {
+          "true-positive": 0,
+          "false-positive": 0
+        },
+        "precision": null,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "static_proven": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "reproduced": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 0,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [],
+        "false_positives": [],
+        "verification_tokens": 0,
+        "verification_cost_usd": 0,
+        "base": "1d211b9c1009d577f39fa2b19b10d9a93a72a0ed",
+        "head": "d62354434b2e508fe89024213b220ca8e67dea5e"
+      }
+    },
+    {
+      "id": "CL-PY-03",
+      "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+      "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+      "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
+      "independently_clean": true,
+      "high_controls": [],
+      "single": {
+        "counts": {
+          "true-positive": 3,
+          "false-positive": 0
+        },
+        "precision": 1.0,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "static_proven": {
+            "true-positive": 3,
+            "false-positive": 0,
+            "precision": 1.0
+          },
+          "reproduced": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 3,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 0,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [],
+        "false_positives": [],
+        "verification_tokens": 234001,
+        "verification_cost_usd": 0.23268932,
+        "base": "fb49d243e2082f9bb30b59fd532e6062bbd676b7",
+        "head": "4647e532bbed7a5f60c9972ddba3f5fb4a79e1f9"
+      },
+      "quorum": {
+        "counts": {
+          "true-positive": 3,
+          "false-positive": 0
+        },
+        "precision": 1.0,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "static_proven": {
+            "true-positive": 2,
+            "false-positive": 0,
+            "precision": 1.0
+          },
+          "reproduced": {
+            "true-positive": 1,
+            "false-positive": 0,
+            "precision": 1.0
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 3,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 0,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [],
+        "false_positives": [],
+        "verification_tokens": 665359,
+        "verification_cost_usd": 0.6682251,
+        "base": "fb49d243e2082f9bb30b59fd532e6062bbd676b7",
+        "head": "4647e532bbed7a5f60c9972ddba3f5fb4a79e1f9"
+      }
     },
     {
       "id": "CL-PY-04",
-      "error": "only completed reviews can establish acceptance"
+      "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+      "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+      "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
+      "independently_clean": true,
+      "high_controls": [],
+      "single": {
+        "counts": {
+          "true-positive": 1,
+          "false-positive": 0
+        },
+        "precision": 1.0,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "static_proven": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "reproduced": {
+            "true-positive": 1,
+            "false-positive": 0,
+            "precision": 1.0
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 1,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [],
+        "false_positives": [],
+        "verification_tokens": 43042,
+        "verification_cost_usd": 0.04379752,
+        "base": "57b314c0dc8e0b80c0ed8f61c0be81965137ea41",
+        "head": "0f758fe54a8742110f730ebbaf146e79f3937c8d"
+      },
+      "quorum": {
+        "counts": {
+          "true-positive": 2,
+          "false-positive": 0
+        },
+        "precision": 1.0,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "static_proven": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "reproduced": {
+            "true-positive": 2,
+            "false-positive": 0,
+            "precision": 1.0
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 2,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 1,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [],
+        "false_positives": [],
+        "verification_tokens": 544190,
+        "verification_cost_usd": 0.53434038,
+        "base": "57b314c0dc8e0b80c0ed8f61c0be81965137ea41",
+        "head": "0f758fe54a8742110f730ebbaf146e79f3937c8d"
+      }
+    },
+    {
+      "id": "CL-TS-01",
+      "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+      "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+      "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
+      "independently_clean": true,
+      "high_controls": [],
+      "single": {
+        "counts": {
+          "true-positive": 2,
+          "false-positive": 0
+        },
+        "precision": 1.0,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "static_proven": {
+            "true-positive": 2,
+            "false-positive": 0,
+            "precision": 1.0
+          },
+          "reproduced": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 2,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [],
+        "false_positives": [],
+        "verification_tokens": 177614,
+        "verification_cost_usd": 0.1699151,
+        "base": "e5c660d965e683c24ebd99c06e4e9ede32132a88",
+        "head": "d34204aadc468ef63b11c9931559a15885b19706"
+      },
+      "quorum": {
+        "counts": {
+          "true-positive": 1,
+          "false-positive": 0
+        },
+        "precision": 1.0,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "static_proven": {
+            "true-positive": 1,
+            "false-positive": 0,
+            "precision": 1.0
+          },
+          "reproduced": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 1,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 1,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [],
+        "false_positives": [],
+        "verification_tokens": 261329,
+        "verification_cost_usd": 0.25253358,
+        "base": "e5c660d965e683c24ebd99c06e4e9ede32132a88",
+        "head": "d34204aadc468ef63b11c9931559a15885b19706"
+      }
+    },
+    {
+      "id": "CL-TS-02",
+      "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+      "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+      "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
+      "independently_clean": true,
+      "high_controls": [],
+      "single": {
+        "counts": {
+          "true-positive": 1,
+          "false-positive": 0
+        },
+        "precision": 1.0,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "static_proven": {
+            "true-positive": 1,
+            "false-positive": 0,
+            "precision": 1.0
+          },
+          "reproduced": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 1,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 0,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [],
+        "false_positives": [],
+        "verification_tokens": 65544,
+        "verification_cost_usd": 0.06356374000000001,
+        "base": "96fae17528f6631032c0dcd338a53c069a483a1d",
+        "head": "fe9477f0e4e25cba6455ad0e88c6d7476bfc8d40"
+      },
+      "quorum": {
+        "counts": {
+          "true-positive": 1,
+          "false-positive": 0
+        },
+        "precision": 1.0,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 1,
+            "false-positive": 0,
+            "precision": 1.0
+          },
+          "static_proven": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "reproduced": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 1,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 0,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [],
+        "false_positives": [],
+        "verification_tokens": 230626,
+        "verification_cost_usd": 0.22307084000000002,
+        "base": "96fae17528f6631032c0dcd338a53c069a483a1d",
+        "head": "fe9477f0e4e25cba6455ad0e88c6d7476bfc8d40"
+      }
     },
     {
       "id": "CL-TS-03",
-      "error": "only completed reviews can establish acceptance"
+      "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+      "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+      "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
+      "independently_clean": true,
+      "high_controls": [],
+      "single": {
+        "counts": {
+          "true-positive": 0,
+          "false-positive": 0
+        },
+        "precision": null,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "static_proven": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "reproduced": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 0,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [],
+        "false_positives": [],
+        "verification_tokens": 0,
+        "verification_cost_usd": 0,
+        "base": "a3869ca4eb1d397d8bf2a6f350661115fff18a5a",
+        "head": "6213fc11bdf096301a82ae5c236b5a666a4ee3ca"
+      },
+      "quorum": {
+        "counts": {
+          "true-positive": 0,
+          "false-positive": 0
+        },
+        "precision": null,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "static_proven": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "reproduced": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 0,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [],
+        "false_positives": [],
+        "verification_tokens": 0,
+        "verification_cost_usd": 0,
+        "base": "a3869ca4eb1d397d8bf2a6f350661115fff18a5a",
+        "head": "6213fc11bdf096301a82ae5c236b5a666a4ee3ca"
+      }
     },
     {
       "id": "CL-TS-04",
-      "error": "only completed reviews can establish acceptance"
+      "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+      "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+      "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
+      "independently_clean": true,
+      "high_controls": [],
+      "single": {
+        "counts": {
+          "true-positive": 2,
+          "false-positive": 0
+        },
+        "precision": 1.0,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "static_proven": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "reproduced": {
+            "true-positive": 2,
+            "false-positive": 0,
+            "precision": 1.0
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 2,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 0,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [],
+        "false_positives": [],
+        "verification_tokens": 176453,
+        "verification_cost_usd": 0.176596,
+        "base": "01ca8393b9d10a897f0d2daedbe2f9eb90076ef5",
+        "head": "29bdcbb91f1318dc90ae8c0e52ab6f4e13c42744"
+      },
+      "quorum": {
+        "counts": {
+          "true-positive": 2,
+          "false-positive": 0
+        },
+        "precision": 1.0,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "static_proven": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "reproduced": {
+            "true-positive": 2,
+            "false-positive": 0,
+            "precision": 1.0
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 2,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 1,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [],
+        "false_positives": [],
+        "verification_tokens": 433583,
+        "verification_cost_usd": 0.43803918,
+        "base": "01ca8393b9d10a897f0d2daedbe2f9eb90076ef5",
+        "head": "29bdcbb91f1318dc90ae8c0e52ab6f4e13c42744"
+      }
+    },
+    {
+      "id": "CL-RS-01",
+      "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+      "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+      "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
+      "independently_clean": true,
+      "high_controls": [],
+      "single": {
+        "counts": {
+          "true-positive": 1,
+          "false-positive": 0
+        },
+        "precision": 1.0,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 1,
+            "false-positive": 0,
+            "precision": 1.0
+          },
+          "static_proven": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "reproduced": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 1,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [],
+        "false_positives": [],
+        "verification_tokens": 59729,
+        "verification_cost_usd": 0.0579401,
+        "base": "927df0e9d936ef6995a6b9abedabc032b8ef655c",
+        "head": "fccc28f1d0041fc5bdd798dc2645dc3b5fc71ef1"
+      },
+      "quorum": {
+        "counts": {
+          "true-positive": 0,
+          "false-positive": 0
+        },
+        "precision": null,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "static_proven": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "reproduced": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 0,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [],
+        "false_positives": [],
+        "verification_tokens": 162371,
+        "verification_cost_usd": 0.16038056,
+        "base": "927df0e9d936ef6995a6b9abedabc032b8ef655c",
+        "head": "fccc28f1d0041fc5bdd798dc2645dc3b5fc71ef1"
+      }
     },
     {
       "id": "CL-RS-02",
-      "error": "only completed reviews can establish acceptance"
+      "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+      "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+      "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
+      "independently_clean": true,
+      "high_controls": [],
+      "single": {
+        "counts": {
+          "true-positive": 1,
+          "false-positive": 0
+        },
+        "precision": 1.0,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 1,
+            "false-positive": 0,
+            "precision": 1.0
+          },
+          "static_proven": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "reproduced": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 1,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 0,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [],
+        "false_positives": [],
+        "verification_tokens": 128168,
+        "verification_cost_usd": 0.12362282,
+        "base": "923e72345c77aef4d11875d874ba67421b0412d3",
+        "head": "37ced33efddccc6721588af6fbe095d34fa17d7d"
+      },
+      "quorum": {
+        "counts": {
+          "true-positive": 1,
+          "false-positive": 0
+        },
+        "precision": 1.0,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 1,
+            "false-positive": 0,
+            "precision": 1.0
+          },
+          "static_proven": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "reproduced": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 1,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 0,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [],
+        "false_positives": [],
+        "verification_tokens": 322636,
+        "verification_cost_usd": 0.31637208,
+        "base": "923e72345c77aef4d11875d874ba67421b0412d3",
+        "head": "37ced33efddccc6721588af6fbe095d34fa17d7d"
+      }
     },
     {
       "id": "CL-RS-03",
-      "error": "only completed reviews can establish acceptance"
+      "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+      "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+      "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
+      "independently_clean": true,
+      "high_controls": [],
+      "single": {
+        "counts": {
+          "true-positive": 0,
+          "false-positive": 0
+        },
+        "precision": null,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "static_proven": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "reproduced": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 0,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [],
+        "false_positives": [],
+        "verification_tokens": 0,
+        "verification_cost_usd": 0,
+        "base": "f8ac8c5f1b3554657b557ba2d21279930434b401",
+        "head": "1ca55413c8e79c3b437054c0d9dc7e4691bd3e71"
+      },
+      "quorum": {
+        "counts": {
+          "true-positive": 0,
+          "false-positive": 0
+        },
+        "precision": null,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "static_proven": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "reproduced": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 0,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [],
+        "false_positives": [],
+        "verification_tokens": 0,
+        "verification_cost_usd": 0,
+        "base": "f8ac8c5f1b3554657b557ba2d21279930434b401",
+        "head": "1ca55413c8e79c3b437054c0d9dc7e4691bd3e71"
+      }
     },
     {
       "id": "CL-RS-04",
-      "error": "only completed reviews can establish acceptance"
+      "generator_model": "openai/custom-node-anthropic/claude-sonnet-5-5",
+      "voter_model": "openai/custom-node-openai/gpt-6.1-sol",
+      "profile_hash": "8f6dab7c1d07accfce3b6307b4bf5e1642e89a1f6e65c7666c9e7a6619f082a1",
+      "independently_clean": true,
+      "high_controls": [],
+      "single": {
+        "counts": {
+          "true-positive": 1,
+          "false-positive": 0
+        },
+        "precision": 1.0,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "static_proven": {
+            "true-positive": 1,
+            "false-positive": 0,
+            "precision": 1.0
+          },
+          "reproduced": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 1,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 0,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [],
+        "false_positives": [],
+        "verification_tokens": 122330,
+        "verification_cost_usd": 0.11679464,
+        "base": "48fc10ae88e4d723fd581745cbbff40eea9ebc88",
+        "head": "ac0d148f7e21068fd1f544230456f30c95311f78"
+      },
+      "quorum": {
+        "counts": {
+          "true-positive": 1,
+          "false-positive": 0
+        },
+        "precision": 1.0,
+        "by_evidence": {
+          "plausible": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          },
+          "static_proven": {
+            "true-positive": 1,
+            "false-positive": 0,
+            "precision": 1.0
+          },
+          "reproduced": {
+            "true-positive": 0,
+            "false-positive": 0,
+            "precision": null
+          }
+        },
+        "blind_match": {
+          "same": {
+            "true-positive": 0,
+            "false-positive": 0
+          },
+          "related": {
+            "true-positive": 1,
+            "false-positive": 0
+          },
+          "none": {
+            "true-positive": 0,
+            "false-positive": 0
+          }
+        },
+        "detected_high_controls": [],
+        "false_positives": [],
+        "verification_tokens": 306667,
+        "verification_cost_usd": 0.29480526,
+        "base": "48fc10ae88e4d723fd581745cbbff40eea9ebc88",
+        "head": "ac0d148f7e21068fd1f544230456f30c95311f78"
+      }
     }
   ],
+  "errors": [],
   "arms": {
     "single": {
       "counts": {
-        "true-positive": 0,
+        "true-positive": 24,
         "false-positive": 0
       },
-      "precision": null,
+      "precision": 1.0,
       "by_evidence": {
         "plausible": {
-          "true-positive": 0,
+          "true-positive": 6,
           "false-positive": 0,
-          "precision": null
+          "precision": 1.0
         },
         "static_proven": {
-          "true-positive": 0,
+          "true-positive": 13,
           "false-positive": 0,
-          "precision": null
+          "precision": 1.0
         },
         "reproduced": {
-          "true-positive": 0,
+          "true-positive": 5,
           "false-positive": 0,
-          "precision": null
+          "precision": 1.0
         }
       },
       "blind_match": {
@@ -107,41 +2297,41 @@
           "false-positive": 0
         },
         "related": {
-          "true-positive": 0,
+          "true-positive": 17,
           "false-positive": 0
         },
         "none": {
-          "true-positive": 0,
+          "true-positive": 7,
           "false-positive": 0
         }
       },
-      "verification_tokens": 0,
-      "verification_cost_usd": 0.0,
-      "high_controls_expected": 0,
-      "high_controls_detected": 0,
-      "high_severity_recall": null
+      "verification_tokens": 2056911,
+      "verification_cost_usd": 2.288651885,
+      "high_controls_expected": 11,
+      "high_controls_detected": 8,
+      "high_severity_recall": 0.7272727272727273
     },
     "quorum": {
       "counts": {
-        "true-positive": 0,
+        "true-positive": 23,
         "false-positive": 0
       },
-      "precision": null,
+      "precision": 1.0,
       "by_evidence": {
         "plausible": {
-          "true-positive": 0,
+          "true-positive": 5,
           "false-positive": 0,
-          "precision": null
+          "precision": 1.0
         },
         "static_proven": {
-          "true-positive": 0,
+          "true-positive": 12,
           "false-positive": 0,
-          "precision": null
+          "precision": 1.0
         },
         "reproduced": {
-          "true-positive": 0,
+          "true-positive": 6,
           "false-positive": 0,
-          "precision": null
+          "precision": 1.0
         }
       },
       "blind_match": {
@@ -150,54 +2340,33 @@
           "false-positive": 0
         },
         "related": {
-          "true-positive": 0,
+          "true-positive": 22,
           "false-positive": 0
         },
         "none": {
-          "true-positive": 0,
+          "true-positive": 5,
           "false-positive": 0
         }
       },
-      "verification_tokens": 0,
-      "verification_cost_usd": 0.0,
-      "high_controls_expected": 0,
-      "high_controls_detected": 0,
-      "high_severity_recall": null
+      "verification_tokens": 5935634,
+      "verification_cost_usd": 5.732155914,
+      "high_controls_expected": 11,
+      "high_controls_detected": 8,
+      "high_severity_recall": 0.7272727272727273
     }
   },
-  "precision": null,
+  "precision": 1.0,
   "gate": 0.8,
-  "high_severity_recall_preserved": false,
+  "high_severity_recall_preserved": true,
   "lost_high_controls": [],
   "quorum_false_positives": [],
   "gates": {
-    "reference_set": false,
-    "precision": null,
-    "high_severity_recall": null,
-    "complete_data": false,
+    "reference_set": true,
+    "precision": true,
+    "high_severity_recall": true,
+    "complete_data": true,
     "live_model": true
   },
-  "accepted": false,
-  "reasons": [
-    "case HS-PY-02 could not be scored: only completed reviews can establish acceptance",
-    "case HS-PY-03 could not be scored: only completed reviews can establish acceptance",
-    "case HS-PY-04 could not be scored: only completed reviews can establish acceptance",
-    "case HS-TS-01 could not be scored: only completed reviews can establish acceptance",
-    "case HS-TS-02 could not be scored: only completed reviews can establish acceptance",
-    "case HS-TS-03 could not be scored: only completed reviews can establish acceptance",
-    "case HS-RS-01 could not be scored: only completed reviews can establish acceptance",
-    "case HS-RS-02 could not be scored: only completed reviews can establish acceptance",
-    "case HS-RS-03 could not be scored: only completed reviews can establish acceptance",
-    "case HS-RS-04 could not be scored: only completed reviews can establish acceptance",
-    "case CL-PY-01 could not be scored: only completed reviews can establish acceptance",
-    "case CL-PY-02 could not be scored: only completed reviews can establish acceptance",
-    "case CL-PY-04 could not be scored: only completed reviews can establish acceptance",
-    "case CL-TS-03 could not be scored: only completed reviews can establish acceptance",
-    "case CL-TS-04 could not be scored: only completed reviews can establish acceptance",
-    "case CL-RS-02 could not be scored: only completed reviews can establish acceptance",
-    "case CL-RS-03 could not be scored: only completed reviews can establish acceptance",
-    "case CL-RS-04 could not be scored: only completed reviews can establish acceptance",
-    "reference set requires high-severity issues and independently clean controls",
-    "quorum precision has no denominator (no adjudicated agent findings)"
-  ]
+  "accepted": true,
+  "reasons": []
 }
