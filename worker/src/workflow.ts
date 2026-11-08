@@ -721,6 +721,16 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
               if (agent !== "security") continue;
             }
           }
+          // Generation agents sometimes wrap their array the way the security
+          // agent must ({"hypotheses": [...]}); the wrapper is accepted.
+          if (
+            agent !== "security" &&
+            output &&
+            typeof output === "object" &&
+            !Array.isArray(output) &&
+            Array.isArray(output.hypotheses)
+          )
+            output = output.hypotheses;
           // A result of the wrong shape fails this agent only, like a failed
           // conversation: the review stays partial with a note and the other
           // agents' hypotheses still reach the verifier.

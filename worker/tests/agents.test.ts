@@ -284,6 +284,34 @@ describe("contracts agent", () => {
     ).not.toContain("contracts/api/broken");
   }, 60000);
 
+  it("accepts a generation result wrapped as {hypotheses: [...]}", async () => {
+    const { report } = await review({
+      base,
+      head,
+      changed: ["src/api.ts"],
+      steps: agentSteps([{ correctness: { model: "default" } }]),
+      agents: {
+        correctness: {
+          hypotheses: [
+            {
+              rule_id: "correctness/unchecked-input",
+              category: "risk",
+              severity: "warning",
+              location: at("src/api.ts", 1, "api.createUser"),
+              message: "createUser trusts its email argument.",
+              trigger: "createUser(name, email) with an empty email",
+              limitations: ["read only, no test run"],
+            },
+          ],
+        },
+      },
+    });
+    expect(report.status).not.toBe("partial");
+    expect(
+      [...report.findings, ...report.risks].map((f: any) => f.rule_id),
+    ).toEqual(["correctness/unchecked-input"]);
+  }, 60000);
+
   it("ends only the agent whose result is not a hypothesis array", async () => {
     const { report, calls } = await review({
       base,
