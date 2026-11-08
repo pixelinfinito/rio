@@ -2210,6 +2210,31 @@ fn suppressions_list_apply_and_decline() {
     assert!(String::from_utf8_lossy(&output.stderr).contains("does not validate"));
     assert_eq!(fs::read_to_string(&profile).unwrap(), broken);
     assert!(endpoint.take().iter().all(|(m, _, _)| m == "GET"));
+    let leftovers = |dir: &Path| {
+        fs::read_dir(dir)
+            .unwrap()
+            .map(|e| e.unwrap().file_name().to_string_lossy().to_string())
+            .filter(|n| n.starts_with(".default.rio-apply-"))
+            .collect::<Vec<_>>()
+    };
+    assert!(leftovers(profile.parent().unwrap()).is_empty());
+    // A write that cannot happen (read-only directory) leaves the profile intact.
+    #[cfg(unix)]
+    if unsafe { libc::geteuid() } != 0 {
+        use std::os::unix::fs::PermissionsExt;
+        let valid = "version: 1\nname: default\nextends: rio/base\n";
+        fs::write(&profile, valid).unwrap();
+        let dir = profile.parent().unwrap().to_owned();
+        fs::set_permissions(&dir, fs::Permissions::from_mode(0o555)).unwrap();
+        let failed = rio_s(&["apply", "sp-1", "--yes"], "")
+            .code(2)
+            .get_output()
+            .clone();
+        fs::set_permissions(&dir, fs::Permissions::from_mode(0o755)).unwrap();
+        assert!(!String::from_utf8_lossy(&failed.stderr).is_empty());
+        assert_eq!(fs::read_to_string(&profile).unwrap(), valid);
+        assert!(endpoint.take().iter().all(|(m, _, _)| m == "GET"));
+    }
     // Missing profile: created extending rio/base with the single entry.
     fs::remove_file(&profile).unwrap();
     rio_s(&["apply", "sp-1"], "y\n").success();
@@ -2227,6 +2252,7 @@ fn suppressions_list_apply_and_decline() {
     assert_eq!(posts[0].1, "/v1/suppressions/sp-1");
     assert_eq!(posts[0].2, serde_json::json!({"status":"applied"}));
     rio(root).args(["profile", "validate"]).assert().success();
+    assert!(leftovers(profile.parent().unwrap()).is_empty());
     // Already applied: refused.
     rio_s(&["apply", "sp-1", "--yes"], "").code(2);
     rio_s(&["decline", "sp-2"], "").code(2);

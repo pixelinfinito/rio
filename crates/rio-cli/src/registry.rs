@@ -342,8 +342,10 @@ async fn apply(ctx: &Scope, id: &str, yes: bool) -> Result<(), Failure> {
     Ok(())
 }
 
-/// Appends the entry, validates the resulting default profile and restores the
-/// previous bytes (or removes a created file) when validation fails.
+/// Writes the appended profile to a sibling temporary file, validates it there
+/// and only then renames it over the default profile, so the original is never
+/// truncated: a failed write or validation leaves it byte for byte unchanged.
+/// The original's permissions are kept; a new file gets 0644 on Unix.
 fn write_entry(ctx: &Scope, path: &Path, entry: &str) -> Result<()> {
     let previous = match std::fs::read(path) {
         Ok(bytes) => Some(bytes),
@@ -359,25 +361,40 @@ fn write_entry(ctx: &Scope, path: &Path, entry: &str) -> Result<()> {
             "# Created by `rio suppressions apply`.\nversion: 1\nname: default\nextends: rio/base\nsuppress:\n  - {entry}\n"
         ),
     };
-    if let Some(parent) = path.parent() {
-        std::fs::create_dir_all(parent)?;
+    let parent = path.parent().context("the profile path has no directory")?;
+    std::fs::create_dir_all(parent)?;
+    let mut candidate = tempfile::Builder::new()
+        .prefix(".default.rio-apply-")
+        .suffix(".yaml")
+        .tempfile_in(parent)?;
+    candidate.write_all(next.as_bytes())?;
+    candidate.as_file().sync_all()?;
+    match std::fs::metadata(path) {
+        Ok(metadata) => candidate
+            .as_file()
+            .set_permissions(metadata.permissions())?,
+        #[cfg(unix)]
+        Err(_) => {
+            use std::os::unix::fs::PermissionsExt;
+            candidate
+                .as_file()
+                .set_permissions(std::fs::Permissions::from_mode(0o644))?
+        }
+        #[cfg(not(unix))]
+        Err(_) => {}
     }
-    std::fs::write(path, next.as_bytes())?;
     let loader = rio_profile::ProfileLoader::new(
         Some(ctx.root.clone()),
         ctx.config.config_dir.clone(),
         ctx.root.clone(),
     );
-    if let Err(error) = loader.load(Some(&path.to_string_lossy())) {
-        match &previous {
-            Some(bytes) => std::fs::write(path, bytes)?,
-            None => std::fs::remove_file(path)?,
-        }
+    if let Err(error) = loader.load(Some(&candidate.path().to_string_lossy())) {
         bail!(
-            "the profile does not validate with the entry, so {} was restored: {error}",
+            "the profile does not validate with the entry, so {} was left unchanged: {error}",
             path.display()
         );
     }
+    candidate.persist(path).map_err(|error| error.error)?;
     Ok(())
 }
 
