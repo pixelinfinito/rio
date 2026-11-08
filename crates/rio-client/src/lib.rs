@@ -315,6 +315,7 @@ impl Client {
         let response = self
             .http
             .get(self.base.join("health")?)
+            .bearer_auth(&self.token)
             .send()
             .await
             .context("contacting Rio endpoint")?;

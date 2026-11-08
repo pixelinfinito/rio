@@ -427,6 +427,14 @@ pub(crate) struct Cloudflare {
     token: String,
 }
 impl Cloudflare {
+    /// A client for another API root (recorded tests).
+    #[cfg(test)]
+    pub(crate) fn at(base: &str, token: &str) -> Result<Self> {
+        Ok(Self {
+            base: base.into(),
+            ..Self::new(token.into())?
+        })
+    }
     pub(crate) fn new(token: String) -> Result<Self> {
         Ok(Self {
             client: Client::builder()

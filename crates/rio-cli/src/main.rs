@@ -794,19 +794,21 @@ async fn run_github_app_step(
             .endpoint_url
             .clone()
             .context("the deployment did not record an endpoint")?;
-        let wanted = flag
-            || replace_key.is_some()
-            || (replay && deployment.github_app)
-            || (!replay
-                && config.github_app.is_none()
-                && io::stdin().is_terminal()
-                && {
+        let wanted = replace_key.is_some()
+            || github_app::wanted(
+                flag,
+                replay,
+                deployment.github_app,
+                config.github_app.is_some(),
+                io::stdin().is_terminal(),
+                || {
                     eprint!("Register a GitHub App for pull request reviews (PR mode)? [y/N] ");
                     let _ = io::stderr().flush();
                     let mut answer = String::new();
                     io::stdin().read_line(&mut answer).is_ok()
                         && matches!(answer.trim().to_ascii_lowercase().as_str(), "y" | "yes")
-                });
+                },
+            );
         if !wanted {
             eprintln!("GitHub App step skipped; CLI reviews work without it (rio init --github-app adds it later).");
             return Ok(());
@@ -841,6 +843,7 @@ async fn run_github_app_step(
             &deployment,
             &endpoint,
             organization.as_deref().or(deployment.github_org.as_deref()),
+            &github_app::GitHubUrls::from_environment(),
             &github_app::open_browser,
         )
         .await?;

@@ -639,3 +639,92 @@ fn history_remembered_proposals_and_cache_render_in_every_format() {
         );
     }
 }
+
+/// The recorded PR-mode round 1 (worker/tests/pr-mode.test.ts) under three
+/// publication outcomes: published, partly failed, and `ask` on a webhook.
+#[test]
+fn pull_request_header_and_publication_render_in_every_format() {
+    let recorded: Report = serde_json::from_str(include_str!(
+        "../../../tests/fixtures/sarif/pr-lineage/report.json"
+    ))
+    .unwrap();
+    let policy = FailOn::default().compile().unwrap();
+    let options = RenderOptions {
+        width: 200,
+        policy: Some(&policy),
+        ..Default::default()
+    };
+    let mut failed = recorded.clone();
+    let publication = failed.publication.as_mut().unwrap();
+    publication.posted = 1;
+    publication.failed = 1;
+    publication.failures = vec![PublicationFailure {
+        id: recorded.findings[1].id.clone(),
+        kind: PublicationKind::Finding,
+        error: "GitHub /repos/acme/shop/pulls/7/comments returned HTTP 422: Validation Failed"
+            .into(),
+    }];
+    let mut ask = recorded.clone();
+    ask.publication = Some(Publication {
+        policy: PublishPolicy::Ask,
+        posted: 0,
+        edited: 0,
+        resolved: 0,
+        failed: 0,
+        unanchored: 0,
+        check_run_url: Some("https://github.com/acme/shop/runs/1007".into()),
+        summary_comment_url: None,
+        reason: Some(UnpublishedReason::AskWithoutConsent),
+        failures: Vec::new(),
+    });
+    for (name, report, line) in [
+        (
+            "publication_published",
+            &recorded,
+            "Publication (auto): 2 posted, 0 edited, 0 resolved, 0 unanchored (in the summary), 0 failed",
+        ),
+        (
+            "publication_failed",
+            &failed,
+            "Publication failed for finding",
+        ),
+        (
+            "publication_ask_webhook",
+            &ask,
+            "Publication (ask): check run only; comments require `publish: auto` or `rio review --pr <n> --publish`",
+        ),
+    ] {
+        let terminal = render_terminal(report, &options);
+        let markdown = render_markdown(report, &options);
+        assert!(
+            terminal.contains("Pull request: acme/shop#7  Head: "),
+            "{name}"
+        );
+        // Markdown escapes `#`, `_`, `<` and `>`; compare its text unescaped.
+        let unescaped = markdown
+            .replace('\\', "")
+            .replace("&lt;", "<")
+            .replace("&gt;", ">");
+        for output in [&terminal, &unescaped] {
+            assert!(output.contains(line), "{name}: {output}");
+        }
+        insta::assert_snapshot!(format!("{name}_200"), terminal);
+        insta::assert_snapshot!(format!("{name}_markdown"), markdown);
+        // JSON carries the object as is and validates.
+        let json: serde_json::Value =
+            serde_json::from_slice(&render_json(report).unwrap()).unwrap();
+        assert_eq!(
+            json["publication"],
+            serde_json::to_value(report.publication.as_ref().unwrap()).unwrap()
+        );
+        assert_eq!(json["review"]["pull_request"]["number"], 7);
+    }
+    assert!(render_markdown(&failed, &options).contains("retried on the next round"));
+    // A failed publication after a clean review exits 5; a policy match still wins.
+    let mut clean = failed.clone();
+    clean.findings.clear();
+    clean.agent_audit.as_mut().unwrap()["policy_failed"] = serde_json::json!(false);
+    assert_eq!(exit_code(&clean, &policy, ExitContext::default()), 5);
+    assert_eq!(exit_code(&failed, &policy, ExitContext::default()), 1);
+    assert_eq!(exit_code(&recorded, &policy, ExitContext::default()), 1);
+}

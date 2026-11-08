@@ -2722,3 +2722,57 @@ fn hosted_prepare_submits_what_rio_review_submits_under_the_base_profile() {
     assert_eq!(submitted["profile"]["name"], "rio/base");
     assert_eq!(submitted["profile"]["publish"], "never");
 }
+#[test]
+fn doctor_reports_the_github_app_and_warns_about_a_missing_installation() {
+    let temp = repository();
+    let root = temp.path();
+    git(
+        root,
+        &["remote", "add", "origin", "git@github.com:acme/shop.git"],
+    );
+    let endpoint = MockEndpoint::start(|method, path, _| {
+        match (method, path.split('?').next().unwrap()) {
+            ("GET", "/health") => (200, serde_json::json!({"version": "0.3.0", "protocol": 1})),
+            ("GET", "/v1/github/installation") => (
+                200,
+                serde_json::json!({"configured": true, "repository": "acme/shop", "installed": false}),
+            ),
+            _ => (404, serde_json::json!({"error": "not found"})),
+        }
+    });
+    let output = rio(root)
+        .env("RIO_ENDPOINT_URL", &endpoint.url)
+        .env("RIO_API_TOKEN", TOKEN)
+        .args(["doctor", "--format", "json"])
+        .output()
+        .unwrap();
+    let document: Value = serde_json::from_slice(&output.stdout).unwrap();
+    // A missing installation is a warning; it never changes the exit code.
+    assert_eq!(output.status.code(), Some(0), "{document:#}");
+    assert_eq!(
+        document["endpoint"],
+        serde_json::json!({
+            "url": endpoint.url,
+            "version": "0.3.0",
+            "paired": true,
+            "publish_policy": "never",
+            "github_app": {"configured": true, "installed": false, "repository": "github.com/acme/shop"}
+        })
+    );
+    let warnings: Vec<&str> = document["warnings"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|w| w.as_str().unwrap())
+        .collect();
+    assert!(
+        warnings.contains(&"The GitHub App is not installed on github.com/acme/shop; install it at https://github.com/settings/installations"),
+        "{warnings:?}"
+    );
+    assert!(
+        endpoint
+            .take()
+            .iter()
+            .any(|r| r.1 == "/v1/github/installation?repository=github.com%2Facme%2Fshop")
+    );
+}
