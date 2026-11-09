@@ -61,6 +61,12 @@ fn built_in_manifests_and_base_profile_validate() {
         "steps/agents",
         "steps/verify",
         "steps/report",
+        "steps/council",
+        "members/skeptic",
+        "members/exploit-author",
+        "members/code-owner",
+        "members/maintainer",
+        "members/tester",
     ];
     for path in paths {
         let manifest: Value =
@@ -71,7 +77,9 @@ fn built_in_manifests_and_base_profile_validate() {
             .map(|e| e.to_string())
             .collect();
         assert!(errors.is_empty(), "{path}: {errors:?}");
-        jsonschema::validator_for(&manifest["schema"]).unwrap();
+        if manifest["kind"] != "member" {
+            jsonschema::validator_for(&manifest["schema"]).unwrap();
+        }
     }
     let profile: Value =
         serde_yaml::from_str(&fs::read_to_string(root.join("profiles/base.yaml")).unwrap())
@@ -194,4 +202,117 @@ fn agent_manifests_validate_and_declare_v03_roles() {
             .unwrap();
     assert_eq!(security["available"], true);
     assert_eq!(security["run"], true);
+}
+
+fn member() -> Value {
+    json!({"kind": "member", "name": "rio/council-example", "version": "0.1.0",
+        "description": "Example member", "provider": "openai", "model": "gpt-5",
+        "prompt": "prompt.md", "context_pack": "diff-only", "role": "skeptic", "weight": 1,
+        "family": "gpt"})
+}
+
+#[test]
+fn member_manifests_validate_each_field_and_name_the_offender() {
+    use rio_profile::validate_member_manifest;
+    assert!(validate_member_manifest(&member(), "example").is_ok());
+    let error = |pointer: &str, value: Value| {
+        let mut manifest = member();
+        if value.is_null() {
+            manifest
+                .as_object_mut()
+                .unwrap()
+                .remove(pointer.trim_start_matches('/'));
+        } else {
+            manifest[pointer.trim_start_matches('/')] = value;
+        }
+        validate_member_manifest(&manifest, "example")
+            .unwrap_err()
+            .to_string()
+    };
+    let role = error("/role", json!("judge"));
+    assert!(role.contains("$.role"), "{role}");
+    assert!(
+        role.contains("skeptic, exploit-author, code-owner, maintainer, tester"),
+        "{role}"
+    );
+    let pack = error("/context_pack", json!("everything"));
+    assert!(pack.contains("$.context_pack"), "{pack}");
+    assert!(pack.contains("diff-only, graph-heavy, execution"), "{pack}");
+    let extra = error("/reasoning", json!(true));
+    assert!(extra.contains("$.reasoning"), "{extra}");
+    for (field, value) in [
+        ("weight", json!(0)),
+        ("weight", json!("heavy")),
+        ("provider", json!("Open AI")),
+        ("family", json!("")),
+        ("prompt", json!("../prompt.md")),
+        ("self_hosted", json!("yes")),
+        ("model", json!("")),
+    ] {
+        let message = error(field, value);
+        assert!(
+            message.contains(&format!("$.{field}")),
+            "{field}: {message}"
+        );
+    }
+    for field in [
+        "provider",
+        "model",
+        "prompt",
+        "context_pack",
+        "role",
+        "weight",
+        "family",
+    ] {
+        let message = error(field, Value::Null);
+        assert!(message.contains(field), "{field}: {message}");
+    }
+    // Member fields are confined to the member kind.
+    let validator = jsonschema::validator_for(&schema("module")).unwrap();
+    let mut step = json!({"kind": "step", "name": "rio/example", "version": "0.1.0",
+        "description": "Example", "schema": {"type": "object"}, "inputs": [], "outputs": [],
+        "local": false});
+    assert!(validator.is_valid(&step));
+    step["role"] = json!("skeptic");
+    assert!(!validator.is_valid(&step));
+}
+
+#[test]
+fn the_five_built_in_members_load_with_unique_roles_and_prompts() {
+    let modules = rio_profile::builtin_modules().unwrap();
+    let members: Vec<_> = modules
+        .values()
+        .filter(|module| module.kind == rio_profile::ModuleKind::Member)
+        .collect();
+    assert_eq!(members.len(), 5);
+    let mut roles: Vec<_> = members
+        .iter()
+        .map(|module| {
+            let fields = module.member.as_ref().unwrap();
+            assert!(fields.weight > 0.0);
+            assert_eq!(fields.provider, rio_profile::PLACEHOLDER);
+            let prompt = Path::new(env!("CARGO_MANIFEST_DIR"))
+                .join("../../modules/members")
+                .join(&fields.role)
+                .join(&fields.prompt);
+            let text = fs::read_to_string(&prompt).unwrap();
+            assert!(
+                text.contains("`repository_data` blocks"),
+                "{}",
+                prompt.display()
+            );
+            (fields.role.as_str(), fields.context_pack.as_str())
+        })
+        .collect();
+    roles.sort();
+    assert_eq!(
+        roles,
+        [
+            ("code-owner", "graph-heavy"),
+            ("exploit-author", "execution"),
+            ("maintainer", "graph-heavy"),
+            ("skeptic", "diff-only"),
+            ("tester", "execution"),
+        ]
+    );
 }

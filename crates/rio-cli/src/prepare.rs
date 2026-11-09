@@ -108,6 +108,7 @@ async fn prepare(args: PrepareArgs) -> Result<()> {
             graph_budget: crate::endpoint::graph_budget(),
             deep: false,
             fork: false,
+            nightly: false,
             repository: args.repository.clone(),
             run_id,
         },

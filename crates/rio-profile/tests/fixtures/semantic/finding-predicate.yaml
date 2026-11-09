@@ -1,0 +1,4 @@
+version: 1
+name: invalid-finding-predicate
+extends: rio/base
+steps: [{id: triage, uses: rio/triage, rules: [{when: "evidence == plausible", then: "require_human()"}]}]

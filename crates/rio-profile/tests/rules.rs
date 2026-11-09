@@ -1,3 +1,4 @@
+use rio_core::{EvidenceLevel, Severity};
 use rio_profile::{Action, BudgetMode, Expression, parse_action, parse_expression};
 
 #[test]
@@ -11,6 +12,18 @@ fn every_predicate_and_action_parses() {
         ),
         ("risk >= high", Expression::RiskAtLeast("high".into())),
         ("language == python", Expression::Language("python".into())),
+        ("risk_tier == high", Expression::RiskTier("high".into())),
+        ("mode == deep", Expression::Mode(BudgetMode::Deep)),
+        ("nightly", Expression::Nightly),
+        (
+            "evidence == plausible",
+            Expression::Evidence(EvidenceLevel::Plausible),
+        ),
+        (
+            "severity >= error",
+            Expression::SeverityAtLeast(Severity::Error),
+        ),
+        ("verify.split", Expression::VerifySplit),
     ] {
         assert_eq!(parse_expression(input).unwrap(), expected);
     }
@@ -93,4 +106,37 @@ fn invalid_syntax_and_unknown_names_are_rejected_with_offsets() {
     ] {
         assert!(parse_action(input).is_err());
     }
+}
+
+#[test]
+fn council_predicates_check_their_values_and_are_finding_level() {
+    for (input, message) in [
+        (
+            "severity >= high",
+            "severity must be error, warning or info",
+        ),
+        ("evidence == likely", "evidence must be"),
+        (
+            "risk_tier == extreme",
+            "risk_tier must be low, medium or high",
+        ),
+        ("mode == slow", "mode must be fast or deep"),
+    ] {
+        let error = parse_expression(input).unwrap_err();
+        assert!(error.message.contains(message), "{input}: {error}");
+    }
+    let expression = parse_expression("evidence == plausible and severity >= error").unwrap();
+    assert_eq!(expression.finding_predicate(), Some("evidence"));
+    assert_eq!(
+        parse_expression("not (nightly or verify.split)")
+            .unwrap()
+            .finding_predicate(),
+        Some("verify.split")
+    );
+    assert_eq!(
+        parse_expression("risk_tier == high or mode == deep or nightly")
+            .unwrap()
+            .finding_predicate(),
+        None
+    );
 }

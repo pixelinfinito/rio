@@ -81,5 +81,15 @@
       "ALTER TABLE publications ADD COLUMN body_hash TEXT",
       "ALTER TABLE publications ADD COLUMN url TEXT"
     ]
+  },
+  {
+    "name": "0007_council.sql",
+    "statements": [
+      "CREATE TABLE IF NOT EXISTS council_assessments (review_id TEXT NOT NULL REFERENCES reviews(id), tenant TEXT NOT NULL, finding_id TEXT NOT NULL, member TEXT NOT NULL CHECK(member IN ('skeptic','exploit-author','code-owner','maintainer','tester')), round INTEGER NOT NULL CHECK(round IN (1,2)), assessment_key TEXT, abstained INTEGER NOT NULL DEFAULT 0 CHECK(abstained IN (0,1)), cause TEXT CHECK(cause IS NULL OR cause IN ('invalid','no_evidence_refs','timeout','vendor_error','budget')), vendor TEXT, model TEXT NOT NULL, pack_hash TEXT NOT NULL, pack_bytes INTEGER NOT NULL CHECK(pack_bytes >= 0), rendering_hash TEXT NOT NULL, rendering_bytes INTEGER NOT NULL CHECK(rendering_bytes >= 0), created_at INTEGER NOT NULL, expired INTEGER NOT NULL DEFAULT 0 CHECK(expired IN (0,1)), PRIMARY KEY(review_id,finding_id,member,round), CHECK(abstained = 1 OR cause IS NULL))",
+      "CREATE INDEX IF NOT EXISTS council_assessments_tenant ON council_assessments(tenant,created_at)",
+      "CREATE TABLE IF NOT EXISTS runner_capabilities (name TEXT PRIMARY KEY, seen_at INTEGER NOT NULL, model_seen_at INTEGER)",
+      "ALTER TABLE jobs ADD COLUMN kind TEXT",
+      "ALTER TABLE jobs ADD COLUMN completed_at INTEGER"
+    ]
   }
 ]

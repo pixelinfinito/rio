@@ -55,6 +55,7 @@ export function memberHeader(path: string, size: number, mode: number) {
 }
 /** Versions a job reads: run jobs their own tree; analysis jobs both. */
 export function needs(kind: Execution["kind"], version: Version): Version[] {
+  if (kind === "model") return [];
   return kind === "run" ? [version] : ["base", "head"];
 }
 export async function snapshotFor(

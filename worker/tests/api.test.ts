@@ -4,7 +4,8 @@ import worker, { app } from "../src/index";
 import { D1Ledger, Store } from "../src/storage";
 import { hash, canonical } from "../src/validation";
 import { jobToken, sign } from "../src/auth";
-import { createJob, finishJob } from "../src/jobs";
+import { createJob, createModelJob, finishJob } from "../src/jobs";
+import { RUNNER_SEEN_MS, runnerModelEndpoint } from "../src/council-audit";
 import { allMigrations, profile, snapshot, submission } from "./fixtures";
 import type { Env } from "../src/types";
 import contracts from "../../docs/verifier-contracts.md?raw";
@@ -105,7 +106,13 @@ describe("Worker API and storage", () => {
     const uploaded = await upload();
     const { id } = (await uploaded.json()) as any;
     const steps = (declaration: Record<string, any>[] = []) => [
-      { id: "agents", uses: "rio/agents@0.1.0", needs: [], with: {}, agents: declaration },
+      {
+        id: "agents",
+        uses: "rio/agents@0.1.0",
+        needs: [],
+        with: {},
+        agents: declaration,
+      },
       { id: "verify", uses: "rio/verify@0.1.0", needs: ["agents"], with: {} },
     ];
     const post = async (
@@ -123,7 +130,10 @@ describe("Worker API and storage", () => {
         env,
       );
     };
-    const rejected = await post({ default: "custom-node-openai/gpt", verifier: "anthropic/test" });
+    const rejected = await post({
+      default: "custom-node-openai/gpt",
+      verifier: "anthropic/test",
+    });
     expect(rejected.status).toBe(400);
     expect(((await rejected.json()) as any).error).toBe(
       "model alias default (custom-node-openai/gpt): model custom-node-openai/… requires AI Gateway (AI_GATEWAY_URL is not configured)",
@@ -131,7 +141,11 @@ describe("Worker API and storage", () => {
     // An agent-named alias that a step declaration overrides is never called,
     // as in the Workflow; it does not block the submission.
     const overridden = await post(
-      { default: "openai/test", verifier: "anthropic/test", correctness: "custom-unused/x" },
+      {
+        default: "openai/test",
+        verifier: "anthropic/test",
+        correctness: "custom-unused/x",
+      },
       runtime,
       [{ correctness: { model: "default" } }],
     );
@@ -143,20 +157,29 @@ describe("Worker API and storage", () => {
       correctness: "custom-unused/x",
     });
     expect(reachable.status).toBe(400);
-    expect(((await reachable.json()) as any).error).toMatch(/^model alias correctness /);
+    expect(((await reachable.json()) as any).error).toMatch(
+      /^model alias correctness /,
+    );
     // With the gateway and the provider configured, custom models are accepted.
     const configured = {
       ...runtime,
       AI_GATEWAY_URL: "https://gateway.ai.cloudflare.com/v1/acct/rio",
       AI_GATEWAY_TOKEN: "gateway-token-value",
-      AI_GATEWAY_PROVIDERS: JSON.stringify({ "node-openai": { protocol: "openai" } }),
+      AI_GATEWAY_PROVIDERS: JSON.stringify({
+        "node-openai": { protocol: "openai" },
+      }),
     } as Env;
     const accepted = await post(
-      { default: "custom-node-openai/gpt", verifier: "compat/custom-node-openai/other" },
+      {
+        default: "custom-node-openai/gpt",
+        verifier: "compat/custom-node-openai/other",
+      },
       configured,
     );
     expect(accepted.status).toBe(202);
-    expect(JSON.stringify(await accepted.json())).not.toContain("gateway-token-value");
+    expect(JSON.stringify(await accepted.json())).not.toContain(
+      "gateway-token-value",
+    );
   });
   it("negotiates version and rejects unauthorized or cross-tenant access", async () => {
     expect((await request("/health")).status).toBe(200);
@@ -239,6 +262,106 @@ describe("Worker API and storage", () => {
     await ledger.settle(first, usage);
     await ledger.settle(first, usage);
     expect(await ledger.remaining()).toBe(40);
+  });
+  it("leases model jobs only to a runner that advertises a model endpoint", async () => {
+    const id = await createReview();
+    await createModelJob(
+      runtime,
+      id,
+      "model1",
+      {
+        model: "llama-4",
+        system: "You are the skeptic.",
+        content: '<repository_data label="hypothesis">PACK</repository_data>',
+        max_tokens: 1024,
+      },
+      60000,
+    );
+    // Only a running review's model jobs are served.
+    await testEnv.DB.prepare("UPDATE reviews SET status='running' WHERE id=?")
+      .bind(id)
+      .run();
+    // Model jobs are claimed, never queued for the Sandbox.
+    expect(jobs.some((j) => j.job_id === "model1")).toBe(false);
+    const runner = {
+      authorization: "Bearer test-runner-secret-at-least-32-characters",
+    };
+    const selfHosted = { ...runtime, RUNNER_BACKEND: "self-hosted" } as Env;
+    const plain = await request("/v1/runner/claim", "POST", {}, runner);
+    expect(((await plain.json()) as any).job).toBeNull();
+    expect(await runnerModelEndpoint(selfHosted)).toBe(false);
+    const capable = await request(
+      "/v1/runner/claim",
+      "POST",
+      { capabilities: { model_endpoint: true } },
+      runner,
+    );
+    const claimed = (await capable.json()) as any;
+    expect(claimed.job).toMatchObject({
+      kind: "model",
+      needs: [],
+      snapshot_id: "",
+    });
+    expect(claimed.job.model.content).toContain("PACK");
+    expect(await runnerModelEndpoint(selfHosted)).toBe(true);
+    // The Sandbox backend never serves self-hosted members.
+    expect(
+      await runnerModelEndpoint({
+        ...runtime,
+        RUNNER_BACKEND: "sandbox",
+      } as Env),
+    ).toBe(false);
+    const path = `/v1/runner/${id}/model1/1/complete`;
+    const complete = async (artifact: unknown) => {
+      const body = JSON.stringify({
+        outcome: "exited",
+        job_id: "model1",
+        attempt: 1,
+        version: "head",
+        exit_code: 0,
+        stdout: "",
+        stderr: "",
+        timed_out: false,
+        truncated: false,
+        artifact,
+      });
+      return request(path, "POST", body, {
+        authorization: `Bearer ${claimed.token}`,
+        "rio-signature": await sign(claimed.token, body),
+      });
+    };
+    expect((await complete({ content: 42 })).status).toBe(400);
+    expect(
+      (await complete({ content: "{}", input_tokens: 9, output_tokens: 1 }))
+        .status,
+    ).toBe(200);
+    // A plain runner claiming later does not hide the capable one; the
+    // capability lapses only when no capable runner has claimed recently.
+    await request("/v1/runner/claim", "POST", {}, runner);
+    expect(await runnerModelEndpoint(selfHosted)).toBe(true);
+    expect(
+      await runnerModelEndpoint(selfHosted, Date.now() + RUNNER_SEEN_MS + 1000),
+    ).toBe(false);
+  });
+  it("never serves a model job once its review has finished", async () => {
+    const id = await createReview();
+    await createModelJob(
+      runtime,
+      id,
+      "model-late",
+      { model: "llama-4", system: "s", content: "PACK", max_tokens: 16 },
+      60000,
+    );
+    await testEnv.DB.prepare("UPDATE reviews SET status='complete' WHERE id=?")
+      .bind(id)
+      .run();
+    const claim = await request(
+      "/v1/runner/claim",
+      "POST",
+      { capabilities: { model_endpoint: true } },
+      { authorization: "Bearer test-runner-secret-at-least-32-characters" },
+    );
+    expect(((await claim.json()) as any).job).toBeNull();
   });
   it("signs completion capabilities for one review, job and attempt, with idempotent replay", async () => {
     const id = await createReview(),
@@ -323,9 +446,26 @@ describe("Worker API and storage", () => {
     await runtime.DB.prepare(
       "INSERT INTO reviews(id,tenant,submission_key,status,created_at,token_limit,deadline) VALUES(?,?,?,'queued',?,?,?)",
     )
-      .bind(id, "owner", `reviews/${id}/submission.json`, Date.now(), 100000, Date.now() + 60000)
+      .bind(
+        id,
+        "owner",
+        `reviews/${id}/submission.json`,
+        Date.now(),
+        100000,
+        Date.now() + 60000,
+      )
       .run();
-    await createJob(runtime, id, "job-fail", "checks", ["rio-internal", "rio/checks"], "head", snapshotId, 1, { profile });
+    await createJob(
+      runtime,
+      id,
+      "job-fail",
+      "checks",
+      ["rio-internal", "rio/checks"],
+      "head",
+      snapshotId,
+      1,
+      { profile },
+    );
     const sandboxEnv = {
       ...runtime,
       RUNNER_BACKEND: "sandbox",
@@ -345,20 +485,36 @@ describe("Worker API and storage", () => {
       ack: () => outcomes.push(`ack:${attempts}`),
       retry: () => outcomes.push(`retry:${attempts}`),
     });
-    await worker.queue({ messages: [message(1), message(2)] } as any, sandboxEnv);
+    await worker.queue(
+      { messages: [message(1), message(2)] } as any,
+      sandboxEnv,
+    );
     expect(outcomes).toEqual(["retry:1", "retry:2"]);
     expect(
-      (await runtime.DB.prepare("SELECT status FROM jobs WHERE id=?").bind("job-fail").first<any>()).status,
+      (
+        await runtime.DB.prepare("SELECT status FROM jobs WHERE id=?")
+          .bind("job-fail")
+          .first<any>()
+      ).status,
     ).toBe("leased");
     await worker.queue({ messages: [message(3)] } as any, sandboxEnv);
     expect(outcomes.at(-1)).toBe("ack:3");
-    const row = await runtime.DB.prepare("SELECT status,result_key FROM jobs WHERE id=?").bind("job-fail").first<any>();
+    const row = await runtime.DB.prepare(
+      "SELECT status,result_key FROM jobs WHERE id=?",
+    )
+      .bind("job-fail")
+      .first<any>();
     expect(row.status).toBe("completed");
     const result = await new Store(runtime).get<any>(row.result_key);
     expect(result.outcome).toBe("runner_failed");
     expect(result.exit_code).toBe(1);
-    expect(result.stderr).toBe("runner backend: Cloudflare Container is unavailable");
-    expect(fakeWorkflow.events.at(-1)).toMatchObject({ id, type: "job-job-fail-1" });
+    expect(result.stderr).toBe(
+      "runner backend: Cloudflare Container is unavailable",
+    );
+    expect(fakeWorkflow.events.at(-1)).toMatchObject({
+      id,
+      type: "job-job-fail-1",
+    });
   });
 
   it("publishes one immutable winner for racing completions and retains cancelled job evidence", async () => {

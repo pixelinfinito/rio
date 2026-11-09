@@ -2,9 +2,11 @@ version: 1
 name: rio/security
 extends: rio/base
 # The security community profile: rio/base with the security step enabled,
-# thorough posture and the ASVS 5.0 catalog. A child's `steps` replaces the
-# inherited list, so every base step is repeated unchanged. The council step
-# (rio-v0-3-council) is added here when that change lands.
+# thorough posture, the ASVS 5.0 catalog and the council with its five default
+# triggers. A child's `steps` replaces the inherited list, so every base step is
+# repeated. The council's members stay placeholders until `rio init` writes the
+# repository's council allowlist, which is the opt-in; the profile allows the
+# vendors Rio knows.
 steps:
   - id: prepare
     uses: rio/prepare@0.1.0
@@ -41,6 +43,18 @@ steps:
   - id: verify
     uses: rio/verify@0.1.0
     needs: [agents, security]
+  - id: council
+    uses: rio/council@0.1.0
+    needs: [verify]
+    with: { enabled: true }
+    rules:
+      - when: "evidence == plausible and severity >= error"
+      - when: verify.split
+      - when: "risk_tier == high"
+      - when: "mode == deep"
+      - when: nightly
   - id: report
     uses: rio/report@0.1.0
-    needs: [checks, graph, verify]
+    needs: [checks, graph, council]
+council:
+  vendors_allowed: [anthropic, openai, google, mistral, xai, deepseek]

@@ -56,6 +56,11 @@ pub struct Deployment {
     /// Organization that owns the GitHub App, when not the user.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub github_org: Option<String>,
+    /// The council allowlist (`rio init` council step): the endpoint's
+    /// `COUNCIL_VENDORS` and the entries that fill placeholder members. Empty
+    /// means no council. Keys are never stored here.
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    pub council_vendors: Vec<rio_profile::VendorEntry>,
 }
 impl Default for Deployment {
     fn default() -> Self {
@@ -72,6 +77,7 @@ impl Default for Deployment {
             dynamic_routes: Vec::new(),
             github_app: false,
             github_org: None,
+            council_vendors: Vec::new(),
         }
     }
 }
@@ -128,8 +134,66 @@ impl Deployment {
             &self.custom_providers,
             &self.model_prices,
             &self.dynamic_routes,
-        )
+        )?;
+        for entry in &self.council_vendors {
+            entry
+                .validate()
+                .map_err(|message| anyhow::anyhow!("deployment.council_vendors: {message}"))?;
+            let provider = entry.model.split('/').next().unwrap_or_default();
+            if let Some(slug) = provider.strip_prefix("custom-") {
+                ensure!(
+                    self.custom_providers.iter().any(|p| p.slug == slug),
+                    "deployment.council_vendors: route {} names custom provider {slug}, which is not configured",
+                    entry.model
+                );
+            } else {
+                ensure!(
+                    matches!(
+                        provider,
+                        "openai" | "anthropic" | "openrouter" | "compat" | "dynamic"
+                    ),
+                    "deployment.council_vendors: route {} must start with openai/, anthropic/, openrouter/, custom-SLUG/, compat/ or dynamic/",
+                    entry.model
+                );
+            }
+        }
+        Ok(())
     }
+    /// The Worker key a council route needs, when it is a built-in provider's.
+    fn council_keys(&self) -> Vec<&'static str> {
+        let mut keys: Vec<_> = self
+            .council_vendors
+            .iter()
+            .filter_map(|e| match e.model.split('/').next() {
+                Some("openai") => Some("OPENAI_API_KEY"),
+                Some("anthropic") => Some("ANTHROPIC_API_KEY"),
+                Some("openrouter") => Some("OPENROUTER_API_KEY"),
+                _ => None,
+            })
+            .collect();
+        keys.sort_unstable();
+        keys.dedup();
+        keys
+    }
+}
+/// Parse `VENDOR:FAMILY:ROUTE` from `--council-vendor`.
+pub fn council_vendor(spec: &str) -> Result<rio_profile::VendorEntry> {
+    let mut parts = spec.splitn(3, ':');
+    let (Some(vendor), Some(family), Some(model)) = (parts.next(), parts.next(), parts.next())
+    else {
+        bail!(
+            "--council-vendor must be VENDOR:FAMILY:ROUTE, for example google:gemini:compat/google-ai-studio/gemini-3-pro"
+        );
+    };
+    let entry = rio_profile::VendorEntry {
+        vendor: vendor.trim().into(),
+        family: family.trim().into(),
+        model: model.trim().into(),
+    };
+    entry
+        .validate()
+        .map_err(|message| anyhow::anyhow!("--council-vendor: {message}"))?;
+    Ok(entry)
 }
 #[derive(Args, Default)]
 pub struct DeployArgs {
@@ -173,6 +237,19 @@ pub struct DeployArgs {
     /// Print an offline plan without authentication, credential writes or account mutations.
     #[arg(long)]
     pub dry_run: bool,
+    /// Allow a council vendor: VENDOR:FAMILY:ROUTE, where ROUTE is a model route
+    /// such as anthropic/claude-sonnet-5.5 or custom-SLUG/MODEL. Repeatable;
+    /// replaces the saved council allowlist. Built-in provider routes need that
+    /// provider's key from the environment or --secrets-file.
+    #[arg(
+        long = "council-vendor",
+        value_name = "VENDOR:FAMILY:ROUTE",
+        conflicts_with = "no_council"
+    )]
+    pub council_vendors: Vec<String>,
+    /// Skip the council step and clear any saved council allowlist.
+    #[arg(long)]
+    pub no_council: bool,
 }
 fn configured_url(value: &toml::Value) -> Option<&str> {
     value
@@ -253,6 +330,15 @@ pub fn choices(args: &DeployArgs, directory: &Path) -> Result<Deployment> {
             .custom_providers
             .retain(|p| p.slug != provider.slug);
         deployment.custom_providers.push(provider);
+    }
+    if args.no_council {
+        deployment.council_vendors.clear();
+    } else if !args.council_vendors.is_empty() {
+        deployment.council_vendors = args
+            .council_vendors
+            .iter()
+            .map(|spec| council_vendor(spec))
+            .collect::<Result<_>>()?;
     }
     deployment.validate()?;
     Ok(deployment)
@@ -394,6 +480,41 @@ impl Secrets {
         self.0.insert(key.into(), value.trim().into());
         Ok(None)
     }
+    /// The opt-in council step after the primary provider: default no council.
+    fn prompt_council(&mut self, deployment: &mut Deployment) -> Result<()> {
+        eprint!(
+            "Council: review unsettled findings with models from other vendors? Evidence packs go to every vendor you add. [y/N]: "
+        );
+        io::stderr().flush()?;
+        let mut answer = String::new();
+        io::stdin().read_line(&mut answer)?;
+        if !matches!(answer.trim(), "y" | "Y" | "yes") {
+            return Ok(());
+        }
+        loop {
+            eprint!(
+                "Council vendor as VENDOR:FAMILY:ROUTE (e.g. anthropic:claude:anthropic/claude-sonnet-5.5), empty to finish: "
+            );
+            io::stderr().flush()?;
+            let mut line = String::new();
+            io::stdin().read_line(&mut line)?;
+            if line.trim().is_empty() {
+                break;
+            }
+            let entry = council_vendor(line.trim())?;
+            deployment.council_vendors.retain(|e| e != &entry);
+            deployment.council_vendors.push(entry);
+            deployment.validate()?;
+        }
+        for key in deployment.council_keys() {
+            if !self.0.contains_key(key) {
+                let value = rpassword::prompt_password(format!("{key} (hidden): "))?;
+                ensure!(!value.trim().is_empty(), "provider key cannot be empty");
+                self.0.insert(key.into(), value.trim().into());
+            }
+        }
+        Ok(())
+    }
     /// Secrets uploaded to the Worker: custom provider keys stay in the gateway.
     fn worker(&self) -> impl Iterator<Item = (&String, &String)> {
         self.0.iter().filter(|(name, _)| {
@@ -404,6 +525,29 @@ impl Secrets {
     }
 }
 const BUILTIN_KEYS: [&str; 3] = ["OPENAI_API_KEY", "ANTHROPIC_API_KEY", "OPENROUTER_API_KEY"];
+/// The default profile's models for the primary provider keys, chosen as the
+/// default profile would choose them from those keys alone.
+fn primary_models(primary: &[&str]) -> Option<ProfileModels> {
+    let (default, verifier) = if primary.contains(&"OPENROUTER_API_KEY") {
+        (
+            "openrouter/anthropic/claude-sonnet-5.5",
+            "openrouter/openai/gpt-6.1-sol",
+        )
+    } else if primary.contains(&"OPENAI_API_KEY") {
+        ("openai/gpt-4.1-mini", "openai/gpt-4.1-mini")
+    } else if primary.contains(&"ANTHROPIC_API_KEY") {
+        (
+            "anthropic/claude-haiku-4-5-20251001",
+            "anthropic/claude-haiku-4-5-20251001",
+        )
+    } else {
+        return None;
+    };
+    Some(ProfileModels {
+        default: default.into(),
+        verifier: verifier.into(),
+    })
+}
 pub fn endpoint_token(directory: &Path, endpoint: &str) -> Result<Option<String>> {
     let value = document(&directory.join("config.toml"))?;
     if configured_url(&value) != Some(endpoint) {
@@ -657,6 +801,8 @@ fn metadata(
     ];
     // Always written, so removing every custom provider clears it.
     bindings.push(json!({"type":"plain_text","name":"AI_GATEWAY_PROVIDERS","text":providers::runtime(&deployment.custom_providers)}));
+    // Always written, so skipping the council step clears the allowlist.
+    bindings.push(json!({"type":"plain_text","name":"COUNCIL_VENDORS","text":serde_json::to_string(&deployment.council_vendors).unwrap()}));
     if !deployment.model_prices.is_empty() || secrets.0.contains_key(providers::PRICES_MARKER) {
         bindings.push(json!({"type":"plain_text","name":"MODEL_PRICES","text":providers::prices(&deployment.model_prices)}));
     }
@@ -764,6 +910,10 @@ async fn runner_image(cf: &Cloudflare, deployment: &Deployment) -> Result<String
 
 pub async fn run(args: DeployArgs) -> Result<()> {
     let directory = crate::config::config_directory()?;
+    // The council question is asked once, on a first deployment.
+    let fresh = document(&directory.join("config.toml"))?
+        .get("deployment")
+        .is_none();
     let mut deployment = choices(&args, &directory)?;
     if args.dry_run {
         println!(
@@ -799,6 +949,37 @@ pub async fn run(args: DeployArgs) -> Result<()> {
     ensure!(
         secrets.has_builtin_key() || !deployment.custom_providers.is_empty(),
         "provide a model key using OPENROUTER_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY or --secrets-file, or configure a custom provider with --custom-provider"
+    );
+    if fresh
+        && args.from.is_none()
+        && args.council_vendors.is_empty()
+        && !args.no_council
+        && io::stdin().is_terminal()
+    {
+        // Council keys must not change which provider ordinary reviews use.
+        let primary: Vec<_> = BUILTIN_KEYS
+            .iter()
+            .filter(|key| secrets.0.contains_key(**key))
+            .copied()
+            .collect();
+        secrets.prompt_council(&mut deployment)?;
+        if models.is_none()
+            && BUILTIN_KEYS
+                .iter()
+                .any(|k| secrets.0.contains_key(*k) && !primary.contains(k))
+        {
+            models = primary_models(&primary);
+        }
+    }
+    let missing: Vec<_> = deployment
+        .council_keys()
+        .into_iter()
+        .filter(|key| !secrets.0.contains_key(*key))
+        .collect();
+    ensure!(
+        missing.is_empty(),
+        "council routes need {} from the environment or --secrets-file",
+        missing.join(", ")
     );
     let profile_needed = !directory.join("profiles/default.yaml").exists();
     ensure!(
@@ -1472,6 +1653,138 @@ mod tests {
                 stop,
                 thread: Some(thread),
             }
+        }
+    }
+    #[test]
+    fn council_keys_never_change_the_primary_provider_models() {
+        let models = primary_models(&["ANTHROPIC_API_KEY"]).unwrap();
+        assert_eq!(models.default, "anthropic/claude-haiku-4-5-20251001");
+        assert_eq!(models.verifier, models.default);
+        assert!(primary_models(&[]).is_none());
+        assert!(
+            primary_models(&["OPENAI_API_KEY", "OPENROUTER_API_KEY"])
+                .unwrap()
+                .default
+                .starts_with("openrouter/")
+        );
+    }
+    #[tokio::test]
+    async fn council_step_is_chosen_skipped_and_replayed_without_storing_keys() {
+        let dir = tempfile::tempdir().unwrap();
+        let base = Deployment {
+            account_id: Some("b".repeat(32)),
+            runner: Runner::SelfHosted,
+            credential_store: CredentialStore::File,
+            ..Default::default()
+        };
+        save_choices(dir.path(), &base, None).unwrap();
+        // Chosen: two vendors from flags; the anthropic route needs its key.
+        let chosen = choices(
+            &DeployArgs {
+                council_vendors: vec![
+                    "anthropic:claude:anthropic/claude-sonnet-5.5".into(),
+                    "google:gemini:compat/google-ai-studio/gemini-3-pro".into(),
+                ],
+                ..Default::default()
+            },
+            dir.path(),
+        )
+        .unwrap();
+        assert_eq!(chosen.council_vendors.len(), 2);
+        assert_eq!(chosen.council_keys(), ["ANTHROPIC_API_KEY"]);
+        save_choices(dir.path(), &chosen, None).unwrap();
+        let config = std::fs::read_to_string(dir.path().join("config.toml")).unwrap();
+        assert!(
+            config.contains("[[deployment.council_vendors]]"),
+            "{config}"
+        );
+        assert!(!config.contains("council-secret"));
+        // The profile loader fills placeholder members from the saved allowlist.
+        assert_eq!(
+            rio_profile::configured_vendors(dir.path()).unwrap(),
+            chosen.council_vendors
+        );
+        let mock = Mock::start(false, false);
+        let cf = Cloudflare {
+            base: mock.url.clone(),
+            ..Cloudflare::new("deployment-secret".into()).unwrap()
+        };
+        let mut secrets = Secrets(
+            [
+                ("RIO_API_TOKEN".into(), "api-secret".into()),
+                ("RUNNER_SECRET".into(), "runner-secret".into()),
+                ("OPENROUTER_API_KEY".into(), "provider-secret".into()),
+                ("ANTHROPIC_API_KEY".into(), "council-secret".into()),
+            ]
+            .into_iter()
+            .collect(),
+        );
+        provision(&cf, dir.path(), &chosen, &mut secrets, None)
+            .await
+            .unwrap();
+        let upload = |records: &Records| {
+            records
+                .iter()
+                .find(|(m, p, _)| m == "PUT" && p.ends_with("/workers/scripts/rio"))
+                .unwrap()
+                .2
+                .clone()
+        };
+        let body = upload(&mock.requests.lock().unwrap());
+        assert!(body.contains(r#""name":"COUNCIL_VENDORS""#));
+        assert!(body.contains(r#"compat/google-ai-studio/gemini-3-pro"#));
+        assert!(
+            body.contains("council-secret"),
+            "the council key is a Worker secret"
+        );
+        let saved = std::fs::read_to_string(dir.path().join("config.toml")).unwrap();
+        assert!(!saved.contains("secret"));
+        // Replayed: `--from` reproduces the allowlist with no prompt and no keys.
+        let replayed = choices(
+            &DeployArgs {
+                from: Some(dir.path().join("config.toml")),
+                ..Default::default()
+            },
+            dir.path(),
+        )
+        .unwrap();
+        assert_eq!(replayed.council_vendors, chosen.council_vendors);
+        // Skipped: no vendors, an empty endpoint allowlist, no council key needed.
+        let skipped = choices(
+            &DeployArgs {
+                no_council: true,
+                ..Default::default()
+            },
+            dir.path(),
+        )
+        .unwrap();
+        assert!(skipped.council_vendors.is_empty() && skipped.council_keys().is_empty());
+        let meta = metadata(&skipped, "db", "queue", &Secrets::default(), Some("v1"));
+        let binding = meta["bindings"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|b| b["name"] == "COUNCIL_VENDORS")
+            .unwrap();
+        assert_eq!(binding["text"], "[]");
+        // Routes must name a configured provider.
+        for spec in [
+            "acme:acme:custom-missing/model",
+            "acme:acme:elsewhere/model",
+            "Acme:acme:openai/gpt",
+            "acme:acme:no-route",
+        ] {
+            assert!(
+                choices(
+                    &DeployArgs {
+                        council_vendors: vec![spec.into()],
+                        ..Default::default()
+                    },
+                    dir.path(),
+                )
+                .is_err(),
+                "{spec}"
+            );
         }
     }
     #[tokio::test]

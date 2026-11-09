@@ -67,6 +67,12 @@ pub fn render_json(report: &Report) -> Result<Vec<u8>, String> {
         .chain(&report.security)
         .chain(
             report
+                .council
+                .iter()
+                .flat_map(|c| c.refuted.iter().chain(&c.held)),
+        )
+        .chain(
+            report
                 .checks
                 .iter()
                 .flat_map(|c| &c.outcome.details().findings),
@@ -396,6 +402,7 @@ fn footer(report: &Report) -> Vec<String> {
         ));
     }
     lines.extend(publication_footer(report));
+    lines.extend(council_footer(report));
     for suppression in &report.footer.suppressions {
         lines.push(format!(
             "Suppression {}: {} finding(s)",
@@ -409,6 +416,249 @@ fn footer(report: &Report) -> Vec<String> {
     lines
 }
 /// The publication outcome (pr-publishing): what reached the pull request.
+/// Councilled findings in the council's selection order, refuted ones included.
+fn councilled(report: &Report) -> Vec<&Finding> {
+    let Some(council) = &report.council else {
+        return Vec::new();
+    };
+    let all: Vec<&Finding> = report
+        .findings
+        .iter()
+        .chain(&report.risks)
+        .chain(&report.security)
+        .chain(&report.remembered)
+        .chain(&council.refuted)
+        .chain(&council.held)
+        .filter(|f| f.council.is_some())
+        .collect();
+    let mut ordered: Vec<&Finding> = council
+        .findings
+        .iter()
+        .filter_map(|cost| all.iter().find(|f| f.id == cost.id).copied())
+        .collect();
+    for finding in all {
+        if !ordered.iter().any(|f| f.id == finding.id) {
+            ordered.push(finding);
+        }
+    }
+    ordered
+}
+
+fn marker(review: &CouncilReview) -> String {
+    format!(
+        "{} ({}/{})",
+        if review.skipped {
+            "skipped"
+        } else if review.partial {
+            "partial"
+        } else {
+            "complete"
+        },
+        review.answered,
+        review.total
+    )
+}
+
+fn denied_by(list: &str) -> &str {
+    match list {
+        "profile" => "the profile's vendors_allowed",
+        "repository" => "the repository allowlist",
+        "runner" => "no runner model endpoint",
+        other => other,
+    }
+}
+
+/// The council section: per councilled finding a heading and its details.
+fn council_section(report: &Report) -> Vec<(String, Vec<String>)> {
+    councilled(report)
+        .into_iter()
+        .map(|finding| {
+            let review = finding.council.as_ref().unwrap();
+            let heading = format!(
+                "{} at {} — {}",
+                finding.rule_id,
+                location(&finding.location),
+                match (&review.decision, &review.tier) {
+                    (Some(decision), Some(tier)) if !review.skipped =>
+                        format!("{} (tier {})", label(decision), label(tier)),
+                    _ => "no decision; the verifier result stands".into(),
+                }
+            );
+            let mut lines = vec![format!(
+                "Council: {}; evidence {}",
+                marker(review),
+                label(&finding.evidence_level)
+            )];
+            if report
+                .council
+                .as_ref()
+                .is_some_and(|c| c.held.iter().any(|f| f.id == finding.id))
+            {
+                lines.push(
+                    "Not in the findings lists: below the profile's presentation floors or caps"
+                        .into(),
+                );
+            }
+            let answered: Vec<_> = review
+                .members
+                .iter()
+                .filter(|m| !m.abstained)
+                .map(|m| m.role.as_str())
+                .collect();
+            let abstained: Vec<_> = review
+                .members
+                .iter()
+                .filter(|m| m.abstained)
+                .map(|m| match &m.cause {
+                    Some(cause) => format!("{} ({})", m.role, cause.replace('_', " ")),
+                    None => m.role.clone(),
+                })
+                .collect();
+            lines.push(format!(
+                "Members: {}{}",
+                if answered.is_empty() {
+                    "none answered".to_string()
+                } else {
+                    answered.join(", ")
+                },
+                if abstained.is_empty() {
+                    String::new()
+                } else {
+                    format!("; abstained: {}", abstained.join(", "))
+                }
+            ));
+            if review.experiments.is_empty() {
+                lines.push("Experiments: none requested".into());
+            }
+            for experiment in &review.experiments {
+                let command = experiment.command.join(" ");
+                lines.push(if experiment.run {
+                    let outcome = experiment
+                        .outcome
+                        .as_ref()
+                        .map(|o| {
+                            [("base", &o.base), ("head", &o.head)]
+                                .into_iter()
+                                .filter_map(|(v, r)| r.as_ref().map(|r| format!("{r} on {v}")))
+                                .collect::<Vec<_>>()
+                                .join(", ")
+                        })
+                        .unwrap_or_default();
+                    format!(
+                        "Experiment {}: `{command}` on {}: {outcome}",
+                        experiment.artifact.as_deref().unwrap_or("-"),
+                        experiment.version
+                    )
+                } else {
+                    format!(
+                        "Experiment `{command}` on {} not run: {}",
+                        experiment.version,
+                        match experiment.reason.as_deref() {
+                            Some("fork") => "fork pull request",
+                            Some("cap") => "max_experiments reached",
+                            Some(other) => other,
+                            None => "not selected",
+                        }
+                    )
+                });
+            }
+            if let Some(protection) = &review.protection {
+                lines.push(format!("Protection cited: {protection}"));
+            }
+            if let Some(note) = &review.note {
+                lines.push(format!("Note: {note}"));
+            }
+            if review.static_only {
+                lines.push(
+                    "Static-only: fork pull request; no runnable artifacts and no experiments"
+                        .into(),
+                );
+            }
+            match &review.author_family {
+                Some(rule) if rule.status == "not_applicable" => lines.push(
+                    "Author-family rule: not applicable (no agent attribution in pull request metadata)"
+                        .into(),
+                ),
+                Some(rule) => {
+                    let mut parts = Vec::new();
+                    for s in &rule.substituted {
+                        parts.push(format!("{} served by {} ({})", s.role, s.vendor, s.family));
+                    }
+                    for role in &rule.dropped {
+                        parts.push(format!("{role} dropped"));
+                    }
+                    lines.push(format!(
+                        "Author-family rule: applied for {}{}",
+                        rule.family.as_deref().unwrap_or("unknown"),
+                        if parts.is_empty() {
+                            String::new()
+                        } else {
+                            format!("; {}", parts.join("; "))
+                        }
+                    ));
+                }
+                None => {}
+            }
+            for exclusion in &review.excluded {
+                lines.push(format!(
+                    "Excluded: {} ({}), denied by {}",
+                    exclusion.vendor,
+                    exclusion.role,
+                    denied_by(&exclusion.denied_by)
+                ));
+            }
+            (heading, lines)
+        })
+        .collect()
+}
+
+fn cost_text(cost: &CouncilCost) -> String {
+    let tokens = if cost.tokens.is_empty() {
+        "no tokens".to_string()
+    } else {
+        cost.tokens
+            .iter()
+            .map(|(vendor, n)| format!("{vendor} {n}"))
+            .collect::<Vec<_>>()
+            .join(", ")
+    };
+    format!(
+        "{} members × {} rounds × {} experiments; tokens {tokens}; runner {} s",
+        cost.members, cost.rounds, cost.experiments, cost.runner_seconds
+    )
+}
+
+/// Footer lines when the council step ran; none otherwise.
+fn council_footer(report: &Report) -> Vec<String> {
+    let Some(council) = &report.council else {
+        return Vec::new();
+    };
+    let mut lines = vec![format!(
+        "Council: {} councilled; {} selected not councilled because of max_findings",
+        council.councilled, council.not_councilled
+    )];
+    let findings = councilled(report);
+    for cost in &council.findings {
+        let name = findings
+            .iter()
+            .find(|f| f.id == cost.id)
+            .map(|f| format!("{} at {}", f.rule_id, location(&f.location)))
+            .unwrap_or_else(|| cost.id.chars().take(12).collect());
+        if cost.status != "complete" {
+            lines.push(format!(
+                "council: {} ({}/{}) for {name}",
+                cost.status, cost.answered, cost.total
+            ));
+        }
+        lines.push(format!(
+            "Council cost for {name}: {}",
+            cost_text(&cost.cost)
+        ));
+    }
+    lines.push(format!("Council total: {}", cost_text(&council.total)));
+    lines
+}
+
 fn publication_footer(report: &Report) -> Vec<String> {
     let Some(p) = &report.publication else {
         return Vec::new();
@@ -892,7 +1142,26 @@ pub fn render_markdown(report: &Report, options: &RenderOptions<'_>) -> String {
             ));
         }
     }
+    let council_markdown = |out: &mut String| {
+        let section = council_section(report);
+        if section.is_empty() {
+            return;
+        }
+        out.push_str("\n## Council\n\n");
+        for (heading, lines) in section {
+            out.push_str(&format!("- **{}**\n", markdown_text(&heading)));
+            for line in lines {
+                out.push_str(&format!("  - {}\n", markdown_text(&line)));
+            }
+        }
+    };
+    let mut council_done = false;
     for (name, findings) in groups(report, options) {
+        // The council section follows security and precedes everything else.
+        if !council_done && !matches!(name, "Findings" | "Risks" | "Security") {
+            council_markdown(&mut out);
+            council_done = true;
+        }
         let coverage = if name == "Security" {
             security_statement(report)
         } else {
@@ -994,6 +1263,9 @@ pub fn render_markdown(report: &Report, options: &RenderOptions<'_>) -> String {
             }
         }
     }
+    if !council_done {
+        council_markdown(&mut out);
+    }
     if report.summary != Summary::default() {
         out.push_str(&format!(
             "\n## Summary\n\nPre-existing: {}; fixed: {}; suppressed: {}.\n",
@@ -1081,7 +1353,23 @@ pub fn render_terminal(report: &Report, options: &RenderOptions<'_>) -> String {
             lines.push(format!("  Proposed split: {}", parts.join("; ")));
         }
     }
+    let council_terminal = |lines: &mut Vec<String>| {
+        let section = council_section(report);
+        if section.is_empty() {
+            return;
+        }
+        lines.push("\nCouncil".into());
+        for (heading, details) in section {
+            lines.push(format!("  {heading}"));
+            lines.extend(details.into_iter().map(|line| format!("    {line}")));
+        }
+    };
+    let mut council_done = false;
     for (name, findings) in groups(report, options) {
+        if !council_done && !matches!(name, "Findings" | "Risks" | "Security") {
+            council_terminal(&mut lines);
+            council_done = true;
+        }
         let coverage = if name == "Security" {
             security_statement(report)
         } else {
@@ -1164,6 +1452,9 @@ pub fn render_terminal(report: &Report, options: &RenderOptions<'_>) -> String {
                 lines.push(format!("    Suggested fix: {fix}"));
             }
         }
+    }
+    if !council_done {
+        council_terminal(&mut lines);
     }
     if report.summary != Summary::default() {
         lines.push(format!(

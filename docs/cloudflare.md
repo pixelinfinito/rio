@@ -262,6 +262,19 @@ as before. Custom endpoints usually report no price, so their cost stays unknown
 (`null`) unless `model_prices` names the model; a usage `cost` field is trusted for
 OpenRouter's own endpoint only.
 
+## Council vendors
+
+The `rio/council` step (enabled in `rio/security` and `rio/critical`) sends one evidence pack per councilled finding to every member's vendor. It runs only with vendors you allow. After the primary provider, a first `rio init` asks whether to add a council (default no). Non-interactively, pass one `--council-vendor VENDOR:FAMILY:ROUTE` per vendor, or `--no-council` to skip the step and clear a saved allowlist:
+
+```sh
+ANTHROPIC_API_KEY=... rio init \
+  --council-vendor anthropic:claude:anthropic/claude-sonnet-5.5 \
+  --council-vendor openai:gpt:openai/gpt-6.1 \
+  --council-vendor google:gemini:compat/google-ai-studio/gemini-3-pro
+```
+
+`ROUTE` is a model route as in profiles: `openai/`, `anthropic/` and `openrouter/` routes need that provider's key (environment or `--secrets-file`; stored as Worker secrets), `custom-SLUG/` routes need the custom provider, and `compat/` and `dynamic/` routes go through AI Gateway. The allowlist is saved as `[[deployment.council_vendors]]` in `config.toml` (no keys), replayed by `rio init --from config.toml`, and written to the Worker as `COUNCIL_VENDORS`. Placeholder council members are filled from it in turn across families; `rio profile show rio/security` lists members still unconfigured. A member runs only when its vendor is in both the profile's `council.vendors_allowed` and this allowlist. Every transfer is listed by hash and size in `GET /v1/reviews/:id/audit` (`council`) and in `reviews/<id>/council/audit.json`; packs and assessments follow the evidence retention, the audit rows stay.
+
 ## Self-hosted runner
 
 ```sh

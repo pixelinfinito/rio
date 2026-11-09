@@ -1,0 +1,8 @@
+version: 1
+name: invalid-council-member-kind
+extends: rio/base
+steps:
+  - {id: agents, uses: rio/agents}
+  - {id: verify, uses: rio/verify, needs: [agents]}
+  - {id: council, uses: rio/council, needs: [verify]}
+council: {members: [{uses: rio/verify}]}

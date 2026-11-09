@@ -1,0 +1,7 @@
+version: 1
+name: invalid-council-then
+extends: rio/base
+steps:
+  - {id: agents, uses: rio/agents}
+  - {id: verify, uses: rio/verify, needs: [agents]}
+  - {id: council, uses: rio/council, needs: [verify], rules: [{when: verify.split, then: "require_human()"}]}

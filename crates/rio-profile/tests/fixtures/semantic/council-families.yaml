@@ -1,0 +1,14 @@
+version: 1
+name: invalid-council-families
+extends: rio/base
+steps:
+  - {id: agents, uses: rio/agents}
+  - {id: verify, uses: rio/verify, needs: [agents]}
+  - {id: council, uses: rio/council, needs: [verify], with: {enabled: true}}
+council:
+  members:
+    - {uses: rio/council-skeptic, provider: anthropic, model: claude-sonnet-5.5, family: claude}
+    - {uses: rio/council-exploit-author, provider: anthropic, model: claude-opus-5.5, family: claude}
+    - {uses: rio/council-code-owner, provider: anthropic, model: claude-haiku-5.5, family: claude}
+    - {uses: rio/council-maintainer, provider: openai, model: gpt-6.1, family: gpt}
+    - {uses: rio/council-tester, provider: openai, model: gpt-6.1-mini, family: gpt}

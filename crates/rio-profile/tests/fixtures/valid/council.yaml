@@ -1,0 +1,22 @@
+version: 1
+name: council
+steps:
+  - {id: verify, uses: rio/verify}
+  - id: council
+    uses: rio/council@0.1.0
+    needs: [verify]
+    with: {enabled: true}
+    rules:
+      - {when: "evidence == plausible and severity >= error"}
+      - {when: verify.split}
+      - {when: "risk_tier == high"}
+      - {when: "mode == deep"}
+      - {when: nightly}
+council:
+  members: [{uses: rio/council-skeptic, provider: openai, model: gpt-6.1, family: gpt}]
+  max_findings: 3
+  max_experiments: 1
+  max_rounds: 1
+  min_members: 1
+  timeout: 60s
+  vendors_allowed: [openai]

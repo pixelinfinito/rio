@@ -117,10 +117,10 @@
                 }
               },
               "required": [
-                "when",
-                "then"
+                "when"
               ],
-              "additionalProperties": false
+              "additionalProperties": false,
+              "description": "Council step rules select findings and carry only `when`; every other step's rules carry `then`."
             }
           },
           "agents": {
@@ -336,6 +336,82 @@
         "model": {
           "type": "string",
           "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "council": {
+      "description": "Council settings, used when the profile enables the rio/council step.",
+      "type": "object",
+      "properties": {
+        "members": {
+          "description": "Member modules with optional provider, model and family overrides; defaults to the five built-in members.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "uses": {
+                "type": "string",
+                "pattern": "^rio/[a-z][a-z0-9-]*(@[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9A-Za-z.-]+)?)?$"
+              },
+              "provider": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9-]*$"
+              },
+              "model": {
+                "type": "string",
+                "minLength": 1
+              },
+              "family": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9-]*$"
+              },
+              "self_hosted": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "uses"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1,
+          "maxItems": 9
+        },
+        "max_findings": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 5
+        },
+        "max_experiments": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 2
+        },
+        "max_rounds": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2,
+          "default": 2
+        },
+        "min_members": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 3
+        },
+        "timeout": {
+          "type": "string",
+          "pattern": "^([0-9]+(\\.[0-9]+)?)(ms|s|m|h|d)$",
+          "default": "90s"
+        },
+        "vendors_allowed": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "uniqueItems": true,
+          "default": []
         }
       },
       "additionalProperties": false

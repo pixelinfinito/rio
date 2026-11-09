@@ -10,8 +10,9 @@ use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 
 use crate::{
-    Diagnostic, ModuleKind, ProfileErrors, ProfileLoader, ProfileSource, Rule, parse_action,
-    parse_expression, resolve_module, yaml_path,
+    Council, Diagnostic, ModuleKind, ProfileErrors, ProfileLoader, ProfileSource, ResolvedMember,
+    Rule, configured_vendors, council_status, parse_action, parse_expression, resolve_members,
+    resolve_module, yaml_path,
 };
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -159,6 +160,9 @@ pub struct Profile {
     pub always_human: Vec<String>,
     #[serde(default)]
     pub verify: Verify,
+    /// Present when the profile has a council step or a `council` block.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub council: Option<Council>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -185,6 +189,10 @@ impl Profile {
             .iter()
             .find(|step| step.uses.split('@').next() == Some(module))
     }
+    /// Whether a step is enabled; steps without an `enabled` option always are.
+    pub fn enabled(step: &Step) -> bool {
+        step.options.get("enabled").and_then(Value::as_bool) != Some(false)
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -195,6 +203,9 @@ pub struct ResolvedProfile {
     pub modules: BTreeMap<String, String>,
     pub engine_version: String,
     pub posture_policy: PosturePolicy,
+    /// The council's member modules with the profile's overrides applied.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub council_members: Vec<ResolvedMember>,
     #[serde(skip)]
     pub sources: Vec<ProfileSource>,
     #[serde(skip)]
@@ -408,6 +419,21 @@ impl ProfileLoader {
         verify
             .entry("quorum")
             .or_insert(json!(if voters == 1 { 1 } else { 2 }));
+        let has_council_step = values
+            .get("steps")
+            .and_then(Value::as_array)
+            .is_some_and(|steps| {
+                steps.iter().any(|step| {
+                    step["uses"]
+                        .as_str()
+                        .is_some_and(|uses| uses.split('@').next() == Some("rio/council"))
+                })
+            });
+        if has_council_step || values.contains_key("council") {
+            let mut council = Council::defaults();
+            deep_merge(&mut council, values.remove("council").unwrap_or(json!({})));
+            values.insert("council".into(), council);
+        }
         let mut diagnostics = Vec::new();
         let mut warnings = Vec::new();
         let mut modules = BTreeMap::new();
@@ -611,26 +637,58 @@ impl ProfileLoader {
                     add(&format!("/steps/{index}/with/fail_on"), error.to_string());
                 }
             }
+            let council_step = step.uses.starts_with("rio/council@");
             for (rule_index, rule) in step.rules.iter().enumerate() {
-                if matches!(parse_action(&rule.then),Ok(crate::Action::Disable(ref agent) | crate::Action::Enable(ref agent)) if matches!(agent.as_str(),"verify"|"verifier"|"rio/verify"))
-                {
-                    add(
-                        &format!("/steps/{index}/rules/{rule_index}/then"),
-                        "triage cannot disable or replace verification".into(),
-                    );
+                let pointer = format!("/steps/{index}/rules/{rule_index}");
+                match parse_expression(&rule.when) {
+                    Err(error) => add(&format!("{pointer}/when"), error.to_string()),
+                    Ok(expression) => {
+                        if let Some(predicate) = expression.finding_predicate()
+                            && !council_step
+                        {
+                            add(
+                                &format!("{pointer}/when"),
+                                format!(
+                                    "{predicate} is a predicate allowed only in the council step's rules"
+                                ),
+                            );
+                        }
+                    }
                 }
-                if let Err(error) = parse_expression(&rule.when) {
-                    add(
-                        &format!("/steps/{index}/rules/{rule_index}/when"),
-                        error.to_string(),
-                    );
+                match (&rule.then, council_step) {
+                    (Some(_), true) => add(
+                        &format!("{pointer}/then"),
+                        "council rules select findings and carry no action".into(),
+                    ),
+                    (None, false) => add(&pointer, "rule needs an action in then".into()),
+                    (Some(then), false) => match parse_action(then) {
+                        Ok(
+                            crate::Action::Disable(ref agent) | crate::Action::Enable(ref agent),
+                        ) if matches!(agent.as_str(), "verify" | "verifier" | "rio/verify") => add(
+                            &format!("{pointer}/then"),
+                            "triage cannot disable or replace verification".into(),
+                        ),
+                        Ok(_) => {}
+                        Err(error) => add(&format!("{pointer}/then"), error.to_string()),
+                    },
+                    (None, true) => {}
                 }
-                if let Err(error) = parse_action(&rule.then) {
-                    add(
-                        &format!("/steps/{index}/rules/{rule_index}/then"),
-                        error.to_string(),
-                    );
-                }
+            }
+            if council_step
+                && !profile.steps.iter().any(|candidate| {
+                    candidate.uses.starts_with("rio/verify@")
+                        && depends_on(
+                            &profile.steps,
+                            &step.id,
+                            &candidate.id,
+                            &mut BTreeSet::new(),
+                        )
+                })
+            {
+                add(
+                    &format!("/steps/{index}/needs"),
+                    "the council step requires the verify step in its needs".into(),
+                );
             }
             if (step.uses.starts_with("rio/agents@") || step.uses.starts_with("rio/security@"))
                 && step.options.get("enabled").and_then(Value::as_bool) != Some(false)
@@ -671,8 +729,39 @@ impl ProfileLoader {
         if let Err(error) = profile.fail_on.compile() {
             add("/fail_on/rules", error.to_string());
         }
+        let mut council_members = Vec::new();
+        if let Some(council) = &profile.council {
+            let vendors = configured_vendors(&self.config_dir).unwrap_or_else(|error| {
+                warnings.push(Diagnostic {
+                    source: self.config_dir.join("config.toml").display().to_string(),
+                    path: "$.deployment.council_vendors".into(),
+                    message: format!("council allowlist ignored: {error}"),
+                });
+                Vec::new()
+            });
+            let enabled = profile.step("rio/council").is_some_and(Profile::enabled);
+            match resolve_members(council, &vendors, enabled) {
+                Ok(members) => council_members = members,
+                Err(errors) => {
+                    for (pointer, message) in errors {
+                        add(&pointer, message);
+                    }
+                }
+            }
+        }
         if !diagnostics.is_empty() {
             return Err(ProfileErrors { diagnostics });
+        }
+        if let (Some(council), Some(step)) = (&profile.council, profile.step("rio/council"))
+            && Profile::enabled(step)
+        {
+            for message in council_status(council, &council_members) {
+                warnings.push(Diagnostic {
+                    source: source_for("/council"),
+                    path: "$.council".into(),
+                    message,
+                });
+            }
         }
         warnings.push(Diagnostic {
             source: document.sources[0].label(),
@@ -695,6 +784,7 @@ impl ProfileLoader {
             modules,
             engine_version: env!("CARGO_PKG_VERSION").into(),
             posture_policy,
+            council_members,
             warnings,
         })
     }

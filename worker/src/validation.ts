@@ -167,8 +167,14 @@ export function validateGraph(graph: Graph, lines: Map<string, number>) {
 export function validateSubmission(value: any): asserts value is Submission {
   invariant(value?.protocol === 1, "unsupported protocol");
   // Resolved-only metadata is outside the source profile schema.
-  const { chain, modules, engine_version, posture_policy, ...source } =
-    value.profile ?? {};
+  const {
+    chain,
+    modules,
+    engine_version,
+    posture_policy,
+    council_members,
+    ...source
+  } = value.profile ?? {};
   invariant(
     profileValidator(source),
     `invalid profile: ${ajv.errorsText(profileValidator.errors)}`,
@@ -217,12 +223,38 @@ export function validateSubmission(value: any): asserts value is Submission {
         ),
         "verifier is mandatory for hypothesis producers",
       );
+  const roles = (value.profile.council_members ?? []).map((m: any) => m?.role);
+  invariant(
+    new Set(roles).size === roles.length,
+    "council members must have distinct roles",
+  );
+  // Council rules select and carry only `when`; every other rule acts.
+  for (const step of value.profile.steps)
+    for (const rule of step.rules ?? [])
+      invariant(
+        step.uses.startsWith("rio/council@")
+          ? rule.then === undefined
+          : typeof rule.then === "string",
+        `invalid rule in step ${step.id}: ${step.uses.startsWith("rio/council@") ? "council rules carry no action" : "a rule needs an action in then"}`,
+      );
+  for (const step of value.profile.steps)
+    if (step.uses.startsWith("rio/council@"))
+      invariant(
+        value.profile.steps.some(
+          (v: any) =>
+            v.uses.startsWith("rio/verify@") &&
+            v.id !== step.id &&
+            depends(step.id, v.id),
+        ),
+        "the council step requires the verify step in its needs",
+      );
   invariant(
     Array.isArray(value.changed) &&
       value.changed.length <= 100000 &&
       typeof value.intent === "string" &&
       value.intent.length <= 65536 &&
       typeof value.fork === "boolean" &&
+      (value.nightly === undefined || typeof value.nightly === "boolean") &&
       ["fast", "deep"].includes(value.mode),
     "invalid review",
   );
@@ -411,8 +443,12 @@ export function validateHypothesesLenient(
       rejected.push({
         agent,
         id: typeof h?.id === "string" ? h.id.slice(0, 64) : "unknown",
-        rule_id: typeof h?.rule_id === "string" ? h.rule_id.slice(0, 150) : "unknown",
-        reason: (error instanceof Error ? error.message : "malformed hypothesis").slice(0, 300),
+        rule_id:
+          typeof h?.rule_id === "string" ? h.rule_id.slice(0, 150) : "unknown",
+        reason: (error instanceof Error
+          ? error.message
+          : "malformed hypothesis"
+        ).slice(0, 300),
       });
     }
   }

@@ -90,6 +90,7 @@ fn result(entry: &Value, risk: bool, rule_index: usize) -> Value {
         "round",
         "author_response",
         "history",
+        "council",
     ] {
         if let Some(value) = entry.get(key).filter(|v| !v.is_null()) {
             properties.insert(key.into(), value.clone());
@@ -186,6 +187,9 @@ pub fn render_sarif(report: &Report, inputs: &SarifInputs) -> Result<Vec<u8>, St
     });
     if let Some(lineage) = document.get("lineage").filter(|l| !l.is_null()) {
         properties["rio.lineage"] = lineage.clone();
+    }
+    if let Some(council) = document.get("council").filter(|c| !c.is_null()) {
+        properties["rio.council"] = council.clone();
     }
     let mut log = json!({
         "$schema": SARIF_SCHEMA,

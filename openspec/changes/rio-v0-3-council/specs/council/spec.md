@@ -7,10 +7,10 @@ Settle the findings the verifier leaves unsettled by asking several independent 
 ## ADDED Requirements
 
 ### Requirement: Step placement and trigger selection
-`rio/council` SHALL be a non-local step that runs after `rio/verify` and before `rio/report`, and SHALL select a verified finding when any of the step's trigger rules matches it. The `security` and `critical` built-in profiles SHALL carry the default triggers `evidence == plausible and severity >= high`, `verify.split`, `risk_tier == high`, `mode == deep` and `nightly`. `rio/base` SHALL NOT enable the step.
+`rio/council` SHALL be a non-local step that runs after `rio/verify` and before `rio/report`, and SHALL select a verified finding when any of the step's trigger rules matches it. The `security` and `critical` built-in profiles SHALL carry the default triggers `evidence == plausible and severity >= error`, `verify.split`, `risk_tier == high`, `mode == deep` and `nightly`. `rio/base` SHALL NOT enable the step.
 
-#### Scenario: Plausible high-severity finding is selected
-- **WHEN** a review under the `security` profile verifies a hypothesis at `plausible` with severity `high` and no other trigger applies
+#### Scenario: Plausible error-severity finding is selected
+- **WHEN** a review under the `security` profile verifies a hypothesis at `plausible` with severity `error` and no other trigger applies
 - **THEN** the finding is councilled and the plan records the matching rule
 
 #### Scenario: Base profile never councils

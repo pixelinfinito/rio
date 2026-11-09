@@ -130,6 +130,7 @@ fn finding(
         resolution: None,
         author_response: None,
         history: None,
+        council: None,
     })
 }
 fn number(value: &Value, default: u32) -> Result<u32> {

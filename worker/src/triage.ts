@@ -187,10 +187,13 @@ export function triage(submission: Submission, snapshot: Snapshot): Plan {
         plan.agents.push(name);
         plan.agent_reasons[name] = "public_contract_change";
       }
-  for (const step of p.steps)
+  for (const step of p.steps) {
+    // Council rules select findings after verification; they have no action.
+    if (step.uses.startsWith("rio/council@")) continue;
     for (const rule of step.rules ?? [])
-      if (evaluate(rule.when, plan, changed))
-        applyAction(rule.then, plan, `rule: ${rule.when}`);
+      if (evaluate(rule.when, plan, changed, { nightly: submission.nightly }))
+        applyAction(rule.then!, plan, `rule: ${rule.when}`);
+  }
   invariant(
     !plan.agents.includes("verify") && !plan.agents.includes("verifier"),
     "verifier cannot be selected or disabled by triage",
@@ -198,12 +201,30 @@ export function triage(submission: Submission, snapshot: Snapshot): Plan {
   if (overrides.length) plan.require_human = true;
   return plan;
 }
+/** What a rule may observe beyond the plan: the nightly flag and, for council rules, the finding. */
+export interface RuleContext {
+  nightly?: boolean;
+  finding?: {
+    evidence_level: string;
+    severity: "error" | "warning" | "info";
+    split: boolean;
+  };
+}
+const SEVERITY = ["info", "warning", "error"];
 // Recursive descent; no executable repository expressions.
 export function evaluate(
   input: string,
   plan: Plan,
   changed: string[],
+  context: RuleContext = {},
 ): boolean {
+  const finding = (name: string) => {
+    invariant(
+      context.finding,
+      `${name} is a predicate allowed only in the council step's rules`,
+    );
+    return context.finding;
+  };
   const tokens =
     input.match(
       /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|>=|==|>|\(|\)|\d+|[A-Za-z_][\w/.-]*/g,
@@ -268,6 +289,37 @@ export function evaluate(
     if (name === "language") {
       expect("==");
       return plan.signals.languages.includes(atom());
+    }
+    if (name === "risk_tier") {
+      expect("==");
+      const tier = atom();
+      invariant(["low", "medium", "high"].includes(tier), "unknown risk tier");
+      return plan.risk.tier === tier;
+    }
+    if (name === "mode") {
+      expect("==");
+      const mode = atom();
+      invariant(mode === "fast" || mode === "deep", "unknown mode");
+      return plan.mode === mode;
+    }
+    if (name === "nightly") return context.nightly === true;
+    if (name === "verify.split") return finding(name).split;
+    if (name === "evidence") {
+      expect("==");
+      const level = atom();
+      invariant(
+        ["refuted", "plausible", "static_proven", "reproduced"].includes(level),
+        "unknown evidence level",
+      );
+      return finding(name).evidence_level === level;
+    }
+    if (name === "severity") {
+      expect(">=");
+      const level = atom();
+      invariant(SEVERITY.includes(level), "unknown severity");
+      return (
+        SEVERITY.indexOf(finding(name).severity) >= SEVERITY.indexOf(level)
+      );
     }
     throw new Error("unknown rule predicate");
   }

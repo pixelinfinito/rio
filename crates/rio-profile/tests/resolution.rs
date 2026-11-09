@@ -89,7 +89,7 @@ fn resolved_base_has_pinned_modules_stable_hash_and_writes_exact_document() {
     let loader = loader(root.path());
     let resolved = loader.load(Some("rio/base")).unwrap();
     assert_eq!(resolved.warnings.len(), 4);
-    assert_eq!(resolved.modules.len(), 8);
+    assert_eq!(resolved.modules.len(), 9);
     assert!(
         resolved
             .profile
@@ -99,8 +99,11 @@ fn resolved_base_has_pinned_modules_stable_hash_and_writes_exact_document() {
     );
     assert_eq!(
         execution_order(&resolved.profile.steps).unwrap(),
-        [0, 1, 2, 3, 4, 5, 6, 7]
+        [0, 1, 2, 3, 4, 5, 6, 7, 8]
     );
+    // The council step is present and disabled: no warning, no council call.
+    let council = resolved.profile.step("rio/council").unwrap();
+    assert_eq!(council.options["enabled"], false);
     insta::assert_snapshot!("resolved_base", resolved.to_yaml().unwrap());
     let path = root.path().join("profile.resolved.yaml");
     resolved.write(&path).unwrap();
@@ -194,6 +197,31 @@ fn every_validation_rule_rejects_its_failing_fixture() {
         ("glob", "$.steps[0].with.exclude[0]"),
         ("rounds", "diff_only_after must be below rounds.cap"),
         ("always-human", "$.always_human[0]"),
+        ("missing-then", "rule needs an action in then"),
+        (
+            "finding-predicate",
+            "$.steps[0].rules[0].when: evidence is a predicate allowed only in the council step's rules",
+        ),
+        (
+            "council-needs",
+            "$.steps[2].needs: the council step requires the verify step",
+        ),
+        (
+            "council-then",
+            "$.steps[2].rules[0].then: council rules select findings and carry no action",
+        ),
+        (
+            "council-min-members",
+            "$.council.min_members: min_members 5 exceeds the council's 4 members",
+        ),
+        (
+            "council-families",
+            "council members span 2 model families (claude, gpt); at least three are required",
+        ),
+        (
+            "council-member-kind",
+            "$.council.members[0].uses: uses must reference a council member module",
+        ),
     ] {
         let error = loader
             .load(Some(&format!("{fixture}.yaml")))
@@ -438,4 +466,151 @@ fn security_and_triage_options_have_strict_schemas_and_verifier_dependencies() {
         "version: 1\nname: test\nextends: rio/base\nsteps: [{id: triage, uses: rio/triage, with: {fan_out_high: 0}}]\n",
     );
     assert!(loader(root.path()).load(Some("p.yaml")).is_err());
+}
+
+const COUNCIL_STEPS: &str = "steps:\n  - {id: agents, uses: rio/agents}\n  - {id: verify, uses: rio/verify, needs: [agents]}\n  - {id: council, uses: rio/council, needs: [verify], with: {enabled: true}, rules: [{when: verify.split}]}\n";
+
+#[test]
+fn legacy_profiles_have_no_council_and_a_council_step_gets_the_defaults() {
+    let root = tempfile::tempdir().unwrap();
+    write(
+        root.path(),
+        "legacy.yaml",
+        "version: 1\nname: legacy\nsteps: [{id: agents, uses: rio/agents}, {id: verify, uses: rio/verify, needs: [agents]}]\n",
+    );
+    let legacy = loader(root.path()).load(Some("legacy.yaml")).unwrap();
+    assert!(legacy.profile.council.is_none());
+    assert!(legacy.council_members.is_empty());
+    assert!(!legacy.to_yaml().unwrap().contains("council"));
+
+    write(
+        root.path(),
+        "council.yaml",
+        &format!("version: 1\nname: council\n{COUNCIL_STEPS}"),
+    );
+    let resolved = loader(root.path()).load(Some("council.yaml")).unwrap();
+    let council = resolved.profile.council.as_ref().unwrap();
+    assert_eq!(
+        (
+            council.max_findings,
+            council.max_experiments,
+            council.max_rounds,
+            council.min_members,
+            council.timeout.as_str(),
+        ),
+        (5, 2, 2, 3, "90s")
+    );
+    assert!(council.vendors_allowed.is_empty());
+    let roles: Vec<_> = resolved
+        .council_members
+        .iter()
+        .map(|m| (m.role.as_str(), m.context_pack.as_str(), m.vendor.as_str()))
+        .collect();
+    assert_eq!(
+        roles,
+        [
+            ("skeptic", "diff-only", "placeholder"),
+            ("exploit-author", "execution", "placeholder"),
+            ("code-owner", "graph-heavy", "placeholder"),
+            ("maintainer", "graph-heavy", "placeholder"),
+            ("tester", "execution", "placeholder"),
+        ]
+    );
+    assert_eq!(resolved.profile.steps[2].rules[0].then, None);
+}
+
+#[test]
+fn a_third_round_is_rejected_at_its_location_naming_the_maximum() {
+    let root = tempfile::tempdir().unwrap();
+    write(
+        root.path(),
+        "rounds.yaml",
+        &format!("version: 1\nname: rounds\n{COUNCIL_STEPS}council: {{max_rounds: 3}}\n"),
+    );
+    let error = loader(root.path())
+        .load(Some("rounds.yaml"))
+        .unwrap_err()
+        .to_string();
+    assert!(error.contains("$.council.max_rounds"), "{error}");
+    assert!(error.contains("maximum of 2"), "{error}");
+}
+
+#[test]
+fn placeholders_are_unconfigured_warnings_and_a_configured_council_has_none() {
+    let root = tempfile::tempdir().unwrap();
+    write(
+        root.path(),
+        "placeholders.yaml",
+        &format!("version: 1\nname: placeholders\n{COUNCIL_STEPS}"),
+    );
+    let resolved = loader(root.path()).load(Some("placeholders.yaml")).unwrap();
+    let warnings: Vec<_> = resolved
+        .warnings
+        .iter()
+        .map(|w| w.message.as_str())
+        .filter(|m| m.contains("council"))
+        .collect();
+    assert_eq!(
+        warnings
+            .iter()
+            .filter(|m| m.contains("is unconfigured; run `rio init`"))
+            .count(),
+        5
+    );
+    assert!(warnings.iter().any(|m| m.contains("will be skipped")));
+
+    write(
+        root.path(),
+        "configured.yaml",
+        &format!(
+            "version: 1\nname: configured\n{COUNCIL_STEPS}council:\n  vendors_allowed: [anthropic, openai, google]\n  members:\n    - {{uses: rio/council-skeptic, provider: anthropic, model: claude-sonnet-5.5, family: claude}}\n    - {{uses: rio/council-tester, provider: openai, model: gpt-6.1, family: gpt}}\n    - {{uses: rio/council-maintainer, provider: google, model: gemini-3-pro, family: gemini}}\n"
+        ),
+    );
+    let resolved = loader(root.path()).load(Some("configured.yaml")).unwrap();
+    assert!(resolved.warnings.iter().all(|w| w.path != "$.council"));
+    assert_eq!(resolved.council_members.len(), 3);
+    assert_eq!(resolved.council_members[2].vendor, "google");
+}
+
+#[test]
+fn a_disabled_council_is_never_rejected_for_its_families() {
+    // `rio init` accepts two vendors; rio/base's disabled council must still load.
+    let root = tempfile::tempdir().unwrap();
+    write(
+        root.path(),
+        "config/config.toml",
+        "[deployment]\n[[deployment.council_vendors]]\nvendor = \"anthropic\"\nfamily = \"claude\"\nmodel = \"anthropic/claude-sonnet-5.5\"\n[[deployment.council_vendors]]\nvendor = \"openai\"\nfamily = \"gpt\"\nmodel = \"openai/gpt-6.1\"\n",
+    );
+    let loader = loader(root.path());
+    let base = loader.load(Some("rio/base")).unwrap();
+    assert_eq!(base.council_members[0].family, "claude");
+    assert_eq!(
+        base.council_members[1].route.as_deref(),
+        Some("openai/gpt-6.1")
+    );
+    let error = loader.load(Some("rio/security")).unwrap_err().to_string();
+    assert!(
+        error.contains("council members span 2 model families"),
+        "{error}"
+    );
+}
+
+#[test]
+fn a_council_role_may_appear_only_once() {
+    let root = tempfile::tempdir().unwrap();
+    write(
+        root.path(),
+        "twice.yaml",
+        &format!(
+            "version: 1\nname: twice\n{COUNCIL_STEPS}council:\n  members: [{{uses: rio/council-skeptic}}, {{uses: rio/council-tester}}, {{uses: rio/council-skeptic}}]\n"
+        ),
+    );
+    let error = loader(root.path())
+        .load(Some("twice.yaml"))
+        .unwrap_err()
+        .to_string();
+    assert!(
+        error.contains("$.council.members[2].uses: council role skeptic appears more than once"),
+        "{error}"
+    );
 }

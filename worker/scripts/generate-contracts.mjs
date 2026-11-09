@@ -37,9 +37,43 @@ for (const name of readdirSync(`${root}/modules/agents`).sort()) {
     if (error.code !== "ENOENT") throw error;
   }
 }
+// Council member prompts by role, and the adapters' test commands by language
+// for the execution context pack.
+const members = {};
+for (const name of readdirSync(`${root}/modules/members`).sort()) {
+  if (!name.match(/^[a-z-]+$/)) continue;
+  const manifest = parse(
+    readFileSync(`${root}/modules/members/${name}/module.yaml`, "utf8"),
+  );
+  members[manifest.role] = readFileSync(
+    `${root}/modules/members/${name}/${manifest.prompt}`,
+    "utf8",
+  );
+}
+const tests = {};
+for (const name of readdirSync(`${root}/modules/adapters`).sort()) {
+  try {
+    const manifest = parse(
+      readFileSync(`${root}/modules/adapters/${name}/module.yaml`, "utf8"),
+    );
+    // Commands with runner placeholders are not runnable as written.
+    const command = manifest.tools?.test
+      ?.map((tool) => tool.command)
+      .find((argv) => !argv.some((arg) => arg.includes("{")));
+    if (command) for (const language of manifest.languages) tests[language] = command;
+  } catch (error) {
+    if (error.code !== "ENOENT") throw error;
+  }
+}
 for (const [file, value] of [
   ["catalogs.json", catalogs],
   ["agent-prompts.json", prompts],
+  ["member-prompts.json", members],
+  ["test-commands.json", tests],
+  [
+    "member-weights.json",
+    JSON.parse(readFileSync(`${root}/modules/members/weights.json`, "utf8")),
+  ],
 ]) {
   const path = `${root}/worker/src/${file}`,
     output = await format(JSON.stringify(value), { parser: "json" });
@@ -97,6 +131,7 @@ for (const [name, file] of Object.entries({
   finding: "finding-v1",
   hypothesis: "hypothesis-v1",
   answer: "vote-answer-v1",
+  assessment: "council-assessment-v1",
 })) {
   ajv.addSchema(
     JSON.parse(readFileSync(`${root}/schemas/${file}.json`, "utf8")),
@@ -104,6 +139,8 @@ for (const [name, file] of Object.entries({
   );
   exports[name] = name;
 }
+// A malformed experiment request drops only the request, not the assessment.
+exports.experimentRequest = "assessment#/$defs/experiment_request";
 Object.entries(modules).forEach(([, schema], i) => {
   const name = `module${i}`;
   ajv.addSchema(schema, name);
