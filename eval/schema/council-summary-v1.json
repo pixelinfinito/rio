@@ -1,0 +1,394 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rio.dev/eval/schema/council-summary-v1.json",
+  "title": "Rio council evaluation summary v1",
+  "description": "One council A/B run by eval/council.py: disagreement, accuracy of both arms on the plausible bucket, cost and member weights.",
+  "type": "object",
+  "properties": {
+    "schema": {
+      "const": "rio-eval-council-v1"
+    },
+    "case_set": {
+      "type": "string",
+      "minLength": 1
+    },
+    "date": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "disagreement": {
+      "type": "object",
+      "properties": {
+        "councilled": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "disagreeing": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "basis_disagreeing": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rate": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "basis_rate": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "required": [
+        "councilled",
+        "disagreeing",
+        "basis_disagreeing",
+        "rate",
+        "basis_rate"
+      ],
+      "additionalProperties": false
+    },
+    "accuracy": {
+      "type": "object",
+      "properties": {
+        "council": {
+          "type": "object",
+          "properties": {
+            "cases": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "correct": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "promoted": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "promoted_correctly": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "refuted": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "refuted_correctly": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "accuracy": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0,
+              "maximum": 1
+            }
+          },
+          "required": [
+            "cases",
+            "correct",
+            "promoted",
+            "promoted_correctly",
+            "refuted",
+            "refuted_correctly",
+            "accuracy"
+          ],
+          "additionalProperties": false
+        },
+        "verifier_only": {
+          "type": "object",
+          "properties": {
+            "cases": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "correct": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "promoted": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "promoted_correctly": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "refuted": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "refuted_correctly": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "accuracy": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0,
+              "maximum": 1
+            }
+          },
+          "required": [
+            "cases",
+            "correct",
+            "promoted",
+            "promoted_correctly",
+            "refuted",
+            "refuted_correctly",
+            "accuracy"
+          ],
+          "additionalProperties": false
+        },
+        "difference": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "council",
+        "verifier_only",
+        "difference"
+      ],
+      "additionalProperties": false
+    },
+    "cost": {
+      "type": "object",
+      "properties": {
+        "per_finding": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "case": {
+                "type": "string",
+                "minLength": 1
+              },
+              "finding": {
+                "type": "string",
+                "minLength": 1
+              },
+              "status": {
+                "enum": [
+                  "complete",
+                  "partial",
+                  "skipped"
+                ]
+              },
+              "cost": {
+                "type": "object",
+                "properties": {
+                  "members": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "rounds": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "experiments": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "tokens": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "runner_seconds": {
+                    "type": "integer",
+                    "minimum": 0
+                  }
+                },
+                "required": [
+                  "members",
+                  "rounds",
+                  "experiments",
+                  "tokens",
+                  "runner_seconds"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "case",
+              "finding",
+              "status",
+              "cost"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "per_review": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "case": {
+                "type": "string",
+                "minLength": 1
+              },
+              "total": {
+                "type": "object",
+                "properties": {
+                  "members": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "rounds": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "experiments": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "tokens": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "runner_seconds": {
+                    "type": "integer",
+                    "minimum": 0
+                  }
+                },
+                "required": [
+                  "members",
+                  "rounds",
+                  "experiments",
+                  "tokens",
+                  "runner_seconds"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "case",
+              "total"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "total": {
+          "type": "object",
+          "properties": {
+            "members": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "rounds": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "experiments": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "tokens": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "runner_seconds": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "members",
+            "rounds",
+            "experiments",
+            "tokens",
+            "runner_seconds"
+          ],
+          "additionalProperties": false
+        },
+        "mean_tokens_per_finding": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        }
+      },
+      "required": [
+        "per_finding",
+        "per_review",
+        "total",
+        "mean_tokens_per_finding"
+      ],
+      "additionalProperties": false
+    },
+    "weights": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "object",
+          "properties": {
+            "weight": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "samples": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "precision": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "recall": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "weight",
+            "samples"
+          ],
+          "additionalProperties": false
+        }
+      }
+    }
+  },
+  "required": [
+    "schema",
+    "case_set",
+    "date",
+    "disagreement",
+    "accuracy",
+    "cost",
+    "weights"
+  ],
+  "additionalProperties": false
+}

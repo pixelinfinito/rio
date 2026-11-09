@@ -115,7 +115,7 @@ fn every_sarif_mapping_property_appears_in_the_fixtures() {
 }
 
 // ---------------------------------------------------------------------------
-// Delta composition (rio-v0-3-core task 0.5).
+// Delta composition (rio-v0-3-core task 0.5, rio-v0-3-council task 0.7).
 //
 // `openspec archive` writes a MODIFIED requirement whole, so the change that
 // archives last must carry every addition made by the earlier ones
@@ -127,14 +127,32 @@ struct Requirement {
     delta: &'static str,
     /// Changes that modify the requirement, in archive order.
     changes: &'static [&'static str],
+    /// Compare the backticked names (predicates, actions) rather than clauses,
+    /// for a requirement whose additions extend one list in place.
+    by_names: bool,
 }
 
-const REQUIREMENTS: [Requirement; 2] = [
+const REQUIREMENTS: [Requirement; 4] = [
     Requirement {
         name: "Built-in step options",
         main: "openspec/specs/review-profiles/spec.md",
         delta: "specs/review-profiles/spec.md",
         changes: &["rio-v0-3-core", "rio-v0-3-qa"],
+        by_names: false,
+    },
+    Requirement {
+        name: "Rule expressions are validated syntactically",
+        main: "openspec/specs/review-profiles/spec.md",
+        delta: "specs/review-profiles/spec.md",
+        changes: &["rio-v0-3-council"],
+        by_names: true,
+    },
+    Requirement {
+        name: "Section order",
+        main: "openspec/specs/review-report/spec.md",
+        delta: "specs/review-report/spec.md",
+        changes: &["rio-v0-3-council", "rio-v0-3-qa"],
+        by_names: false,
     },
     Requirement {
         name: "Footer content",
@@ -145,6 +163,7 @@ const REQUIREMENTS: [Requirement; 2] = [
             "rio-v0-3-core",
             "rio-v0-3-qa",
         ],
+        by_names: false,
     },
 ];
 
@@ -209,6 +228,15 @@ fn normalize(clause: &str) -> String {
 enum Item {
     Step(String, BTreeSet<String>),
     Clause(String),
+    Name(String),
+}
+
+fn items_of(requirement: &Requirement, body: &str) -> Vec<Item> {
+    if requirement.by_names {
+        backticked(body).into_iter().map(Item::Name).collect()
+    } else {
+        items(body)
+    }
 }
 
 fn items(body: &str) -> Vec<Item> {
@@ -241,6 +269,9 @@ fn carried(item: &Item, later: &[Item]) -> bool {
         Item::Clause(clause) => later
             .iter()
             .any(|other| matches!(other, Item::Clause(c) if c.starts_with(clause.as_str()))),
+        Item::Name(name) => later
+            .iter()
+            .any(|other| matches!(other, Item::Name(n) if n == name)),
     }
 }
 
@@ -276,6 +307,22 @@ fn composition_check_detects_dropped_additions() {
         "Options:\n- `rio/report`: `class_threshold`;\n- `rio/graph`: `hops` and `max_nodes`.";
     assert_eq!(lost(&items(steps), &items(narrowed)).len(), 1);
     assert!(lost(&items(narrowed), &items(steps)).len() == 1);
+    // Council additions: a predicate dropped from the rule language, a section
+    // dropped from the order.
+    let rules = &REQUIREMENTS[1];
+    let main = "predicates `touches(glob)`, `risk >= level` and actions `require_human()`.";
+    let council = "predicates `touches(glob)`, `risk >= level`, `verify.split` and actions `require_human()`.";
+    assert!(lost(&items_of(rules, main), &items_of(rules, council)).is_empty());
+    assert_eq!(
+        lost(&items_of(rules, council), &items_of(rules, main)),
+        ["Name(\"verify.split\")"]
+    );
+    let order = "header (review id); risks; security findings when present; council results when present (decision, tier); footer (timings).";
+    let without = "header (review id); risks; security findings when present; QA results when present; footer (timings).";
+    assert_eq!(
+        lost(&items(order), &items(without)),
+        ["Clause(\"council results when present (decision, tier)\")"]
+    );
 }
 
 #[test]
@@ -283,7 +330,10 @@ fn overlapping_deltas_carry_every_earlier_addition() {
     let sequence = read("docs/v0.3-sequence.md");
     let mut pending = Vec::new();
     for requirement in &REQUIREMENTS {
-        let main = items(&body(&read(requirement.main), requirement.name).unwrap());
+        let main = items_of(
+            requirement,
+            &body(&read(requirement.main), requirement.name).unwrap(),
+        );
         assert!(main.len() > 3, "{}: {main:?}", requirement.name);
         let deltas: Vec<_> = requirement
             .changes
@@ -295,7 +345,7 @@ fn overlapping_deltas_carry_every_earlier_addition() {
                     *name,
                     directory,
                     archived,
-                    items(&body(&text, requirement.name)?),
+                    items_of(requirement, &body(&text, requirement.name)?),
                 ))
             })
             .collect();

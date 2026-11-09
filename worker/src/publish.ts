@@ -281,6 +281,17 @@ export function findingBody(f: Finding, state: FindingState): string {
   if (f.impact) lines.push("", `Impact: ${plain(f.impact, 500)}`);
   if (f.suggested_fix)
     lines.push("", `Suggested fix: ${plain(f.suggested_fix, 1000)}`);
+  if (f.council) {
+    const c = f.council;
+    const marker = `${c.skipped ? "skipped" : c.partial ? "partial" : "complete"} (${c.answered}/${c.total})`;
+    lines.push(
+      "",
+      c.skipped || !c.decision
+        ? `Council: ${marker}; the verifier result stands.`
+        : `Council: ${c.decision} (tier ${c.tier}) · ${marker}`,
+    );
+    if (c.note) lines.push(`Council note: ${plain(c.note, 1000)}`);
+  }
   if (f.locations.length > 1)
     lines.push(
       "",

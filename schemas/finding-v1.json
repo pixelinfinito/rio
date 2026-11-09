@@ -406,6 +406,293 @@
         "previous_status"
       ],
       "additionalProperties": false
+    },
+    "council": {
+      "description": "Council review of the finding; present only when the council reviewed it. Never carries a numeric confidence.",
+      "type": "object",
+      "properties": {
+        "decision": {
+          "enum": [
+            "reproduced",
+            "refuted",
+            "plausible"
+          ]
+        },
+        "tier": {
+          "enum": [
+            "experiment",
+            "protection",
+            "judgment"
+          ]
+        },
+        "members": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "role": {
+                "enum": [
+                  "skeptic",
+                  "exploit-author",
+                  "code-owner",
+                  "maintainer",
+                  "tester"
+                ]
+              },
+              "abstained": {
+                "type": "boolean"
+              },
+              "cause": {
+                "description": "Why the member abstained or did not take part.",
+                "enum": [
+                  "invalid",
+                  "no_evidence_refs",
+                  "timeout",
+                  "vendor_error",
+                  "budget",
+                  "excluded",
+                  "unavailable"
+                ]
+              }
+            },
+            "required": [
+              "role",
+              "abstained"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "experiments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "command": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 1
+              },
+              "version": {
+                "enum": [
+                  "base",
+                  "head",
+                  "both"
+                ]
+              },
+              "expect": {
+                "enum": [
+                  "fails",
+                  "passes",
+                  "output_contains"
+                ]
+              },
+              "run": {
+                "type": "boolean"
+              },
+              "reason": {
+                "description": "Why the experiment did not run.",
+                "enum": [
+                  "fork",
+                  "cap",
+                  "runner_unavailable"
+                ]
+              },
+              "outcome": {
+                "description": "Exit outcome per version that ran.",
+                "type": "object",
+                "properties": {
+                  "base": {
+                    "enum": [
+                      "passed",
+                      "failed"
+                    ]
+                  },
+                  "head": {
+                    "enum": [
+                      "passed",
+                      "failed"
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              },
+              "artifact": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "command",
+              "version",
+              "expect",
+              "run"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "note": {
+          "description": "Positions by basis and dissent, in words; never percentages.",
+          "type": "string",
+          "minLength": 1
+        },
+        "protection": {
+          "description": "Artifact reference of the protection a `refuted` decision cites.",
+          "type": "string",
+          "minLength": 1
+        },
+        "partial": {
+          "type": "boolean"
+        },
+        "skipped": {
+          "description": "Fewer than min_members answered; the finding keeps its verifier result.",
+          "type": "boolean"
+        },
+        "answered": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "total": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "static_only": {
+          "description": "Fork pull request: no runnable artifacts and no experiments.",
+          "type": "boolean"
+        },
+        "weight_category": {
+          "description": "The category member weights were looked up under; evaluation estimates them under the same.",
+          "enum": [
+            "defect",
+            "risk",
+            "security"
+          ]
+        },
+        "author_family": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "enum": [
+                "applied",
+                "not_applicable"
+              ]
+            },
+            "family": {
+              "type": "string",
+              "minLength": 1
+            },
+            "substituted": {
+              "description": "Members of the author's family replaced by an allowlisted vendor of another family.",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "role": {
+                    "enum": [
+                      "skeptic",
+                      "exploit-author",
+                      "code-owner",
+                      "maintainer",
+                      "tester"
+                    ]
+                  },
+                  "vendor": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "family": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "role",
+                  "vendor",
+                  "family"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "dropped": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "skeptic",
+                  "exploit-author",
+                  "code-owner",
+                  "maintainer",
+                  "tester"
+                ]
+              }
+            }
+          },
+          "required": [
+            "status"
+          ],
+          "additionalProperties": false
+        },
+        "excluded": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "role": {
+                "enum": [
+                  "skeptic",
+                  "exploit-author",
+                  "code-owner",
+                  "maintainer",
+                  "tester"
+                ]
+              },
+              "vendor": {
+                "type": "string",
+                "minLength": 1
+              },
+              "denied_by": {
+                "enum": [
+                  "profile",
+                  "repository",
+                  "runner"
+                ]
+              }
+            },
+            "required": [
+              "role",
+              "vendor",
+              "denied_by"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "members",
+        "experiments",
+        "partial",
+        "answered",
+        "total"
+      ],
+      "additionalProperties": false,
+      "if": {
+        "properties": {
+          "skipped": {
+            "const": true
+          }
+        },
+        "required": [
+          "skipped"
+        ]
+      },
+      "else": {
+        "required": [
+          "decision",
+          "tier",
+          "note"
+        ]
+      }
     }
   },
   "required": [

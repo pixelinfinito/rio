@@ -134,6 +134,9 @@ pub struct Finding {
     /// consulted by `state`, `status` or fail policies.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub history: Option<FindingHistory>,
+    /// Present only when the council reviewed the finding.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub council: Option<CouncilReview>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -399,4 +402,112 @@ impl TryFrom<VerificationWire> for Verification {
             split: v.split,
         })
     }
+}
+
+/// The council's review of one finding (`council` in finding-v1). Carries
+/// decisions and evidence references, never a numeric confidence.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct CouncilReview {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub decision: Option<CouncilDecision>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub tier: Option<CouncilTier>,
+    pub members: Vec<CouncilMember>,
+    pub experiments: Vec<CouncilExperiment>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub note: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub protection: Option<String>,
+    pub partial: bool,
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub skipped: bool,
+    pub answered: u32,
+    pub total: u32,
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub static_only: bool,
+    /// The category member weights were looked up under.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub weight_category: Option<Category>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub author_family: Option<AuthorFamily>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub excluded: Vec<CouncilExclusion>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum CouncilDecision {
+    Reproduced,
+    Refuted,
+    Plausible,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum CouncilTier {
+    Experiment,
+    Protection,
+    Judgment,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct CouncilMember {
+    pub role: String,
+    pub abstained: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub cause: Option<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct CouncilExperiment {
+    pub command: Vec<String>,
+    pub version: String,
+    pub expect: String,
+    pub run: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub reason: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub outcome: Option<ExperimentOutcome>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub artifact: Option<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ExperimentOutcome {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub base: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub head: Option<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct AuthorFamily {
+    pub status: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub family: Option<String>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub substituted: Vec<Substitution>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub dropped: Vec<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Substitution {
+    pub role: String,
+    pub vendor: String,
+    pub family: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct CouncilExclusion {
+    pub role: String,
+    pub vendor: String,
+    pub denied_by: String,
 }

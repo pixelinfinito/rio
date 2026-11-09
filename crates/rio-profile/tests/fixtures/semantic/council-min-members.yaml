@@ -1,0 +1,10 @@
+version: 1
+name: invalid-council-min-members
+extends: rio/base
+steps:
+  - {id: agents, uses: rio/agents}
+  - {id: verify, uses: rio/verify, needs: [agents]}
+  - {id: council, uses: rio/council, needs: [verify]}
+council:
+  min_members: 5
+  members: [{uses: rio/council-skeptic}, {uses: rio/council-tester}, {uses: rio/council-maintainer}, {uses: rio/council-code-owner}]

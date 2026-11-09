@@ -1,0 +1,12 @@
+version: 1
+name: rio/critical
+extends: rio/security
+# For code where a wrong call costs most: rio/security with the council's cap and
+# experiment budget raised, and security findings failing the review alongside
+# defects. The steps, including the council's five default triggers, are
+# inherited unchanged.
+fail_on:
+  categories: [defect, security]
+council:
+  max_findings: 10
+  max_experiments: 3

@@ -38,7 +38,7 @@ enum Command {
     },
     Doctor(DoctorArgs),
     Init {
-        #[arg(long, conflicts_with_all = ["from", "account", "name", "cf_profile", "runner", "runner_image", "workers_subdomain", "credential_store", "secrets_file", "custom_providers", "default_model", "verifier_model", "dry_run", "github_app", "github_org", "replace_private_key"])]
+        #[arg(long, conflicts_with_all = ["from", "account", "name", "cf_profile", "runner", "runner_image", "workers_subdomain", "credential_store", "secrets_file", "custom_providers", "default_model", "verifier_model", "dry_run", "github_app", "github_org", "replace_private_key", "council_vendors", "no_council"])]
         endpoint: Option<String>,
         #[arg(long, requires = "endpoint")]
         token_stdin: bool,
@@ -160,6 +160,10 @@ struct ReviewArgs {
     preset: Option<Preset>,
     #[arg(long)]
     fork: bool,
+    /// Mark the review as started by the nightly evaluation job, for the
+    /// council's `nightly` trigger.
+    #[arg(long)]
+    nightly: bool,
     #[arg(long)]
     publish: bool,
     /// Review the current branch as a lineage held by the endpoint.
@@ -555,6 +559,7 @@ async fn run_review(args: ReviewArgs) -> u8 {
                 cache: config.cache.clone(),
                 deep: args.deep || matches!(args.preset, Some(Preset::Deep)),
                 fork: args.fork,
+                nightly: args.nightly,
                 repository: match &lineage {
                     Some(lineage) => Some(lineage.repository.clone()),
                     None => {
@@ -752,6 +757,10 @@ fn run_profile(command: ProfileCommand) -> u8 {
                         .unwrap_or_default(),
                     profile.chain.join(" -> ")
                 );
+                // Unconfigured council members and a council that will be skipped.
+                for warning in profile.warnings.iter().filter(|w| w.path == "$.council") {
+                    println!("# Council: {}", warning.message);
+                }
                 if raw {
                     print!("{}", loader.discover(Some(&reference))?.read()?);
                 } else {

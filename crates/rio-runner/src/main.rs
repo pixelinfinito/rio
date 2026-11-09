@@ -15,6 +15,7 @@ use std::{
     time::Duration,
 };
 use tokio_util::sync::CancellationToken;
+mod model;
 mod prepare;
 /// Maximum completion body accepted by the worker. Executor output is capped at 1 MiB
 /// per stream, but JSON escaping (up to 6x) and the parsed artifact copy can expand it.
@@ -42,6 +43,11 @@ enum Command {
         image: String,
         #[arg(long)]
         once: bool,
+        /// OpenAI-compatible endpoint (for example http://127.0.0.1:8080/v1) that
+        /// serves self-hosted council members; advertised to the Worker on every
+        /// claim. `RIO_MODEL_API_KEY` is sent as its bearer token when set.
+        #[arg(long, env = "RIO_MODEL_ENDPOINT")]
+        model_endpoint: Option<String>,
     },
     /// Container-only entry point; never invokes untrusted code on the host.
     Inside {
@@ -77,7 +83,8 @@ async fn main() -> Result<()> {
             endpoint,
             image,
             once,
-        } => serve(endpoint, image, once).await,
+            model_endpoint,
+        } => serve(endpoint, image, once, model_endpoint).await,
         Command::Inside { kind, base, head } => inside(kind, base, head).await,
     }
 }
@@ -191,6 +198,7 @@ async fn inside(kind: String, base_dir: PathBuf, root: PathBuf) -> Result<()> {
                 graph_budget: deadline.saturating_duration_since(std::time::Instant::now()),
                 deep: false,
                 fork: false,
+                nightly: false,
                 repository: None,
                 run_id: format!("prepare-{}", &snapshot.key[..16]),
             },
@@ -347,7 +355,13 @@ fn artifact(report: &mut rio_core::Report, mut graphs: Value) -> Result<Value> {
     }
     Ok(json!({"report": report, "graphs": graphs}))
 }
-async fn serve(endpoint: String, image: String, once: bool) -> Result<()> {
+async fn serve(
+    endpoint: String,
+    image: String,
+    once: bool,
+    model_endpoint: Option<String>,
+) -> Result<()> {
+    let model_endpoint = model_endpoint.as_deref().map(model::endpoint).transpose()?;
     let secret = std::env::var("RIO_RUNNER_SECRET")
         .context("set RIO_RUNNER_SECRET in the runner environment")?;
     ensure!(
@@ -382,7 +396,7 @@ async fn serve(endpoint: String, image: String, once: bool) -> Result<()> {
     loop {
         // A single job or transient endpoint failure must not stop the daemon; only
         // unconfirmed container cleanup is fatal, because isolation is then unknown.
-        match next_job(&client, &base, &secret, &image).await {
+        match next_job(&client, &base, &secret, &image, model_endpoint.as_ref()).await {
             Ok(Served::Idle) if !once => tokio::time::sleep(Duration::from_secs(2)).await,
             Ok(_) if once => return Ok(()),
             Ok(_) => {}
@@ -418,10 +432,12 @@ async fn next_job(
     base: &reqwest::Url,
     secret: &str,
     image: &str,
+    model_endpoint: Option<&reqwest::Url>,
 ) -> Result<Served> {
     let response = client
         .post(base.join("v1/runner/claim")?)
         .bearer_auth(secret)
+        .json(&json!({"capabilities": {"model_endpoint": model_endpoint.is_some()}}))
         .send()
         .await?;
     ensure!(
@@ -446,6 +462,11 @@ async fn next_job(
     let attempt = job["attempt"].as_u64().context("missing attempt")?;
     if job["kind"] == "prepare" && job["network"] == "clone" {
         return serve_prepare(client, base, &claim, token, review, id, attempt, image).await;
+    }
+    if job["kind"] == "model" {
+        let result = model::serve(model_endpoint, job).await;
+        complete(client, base, token, review, id, attempt, &result).await?;
+        return Ok(Served::Job);
     }
     // Trees arrive only as the job archive; an embedded snapshot is an older protocol.
     let valid = job["network"] == false

@@ -1,0 +1,13 @@
+kind: member
+name: rio/council-skeptic
+version: 0.1.0
+description: Council member skeptic (diff-only context pack)
+# Placeholders until `rio init` configures the council's vendors.
+provider: placeholder
+model: placeholder
+family: placeholder
+prompt: prompt.md
+context_pack: diff-only
+role: skeptic
+weight: 1.0
+self_hosted: false

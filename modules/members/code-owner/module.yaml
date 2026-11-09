@@ -1,0 +1,13 @@
+kind: member
+name: rio/council-code-owner
+version: 0.1.0
+description: Council member code-owner (graph-heavy context pack)
+# Placeholders until `rio init` configures the council's vendors.
+provider: placeholder
+model: placeholder
+family: placeholder
+prompt: prompt.md
+context_pack: graph-heavy
+role: code-owner
+weight: 1.0
+self_hosted: false

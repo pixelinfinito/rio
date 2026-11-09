@@ -8,7 +8,8 @@
       "enum": [
         "adapter",
         "step",
-        "catalog"
+        "catalog",
+        "member"
       ]
     },
     "name": {
@@ -572,6 +573,52 @@
         ],
         "additionalProperties": false
       }
+    },
+    "provider": {
+      "description": "Model provider; the member's vendor for the allowlist and audit. `placeholder` until `rio init` configures the council.",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$"
+    },
+    "model": {
+      "description": "Model identifier at the provider, `placeholder` until configured.",
+      "type": "string",
+      "minLength": 1
+    },
+    "prompt": {
+      "description": "Prompt file relative to the manifest.",
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.-]+\\.md$"
+    },
+    "context_pack": {
+      "enum": [
+        "diff-only",
+        "graph-heavy",
+        "execution"
+      ]
+    },
+    "role": {
+      "enum": [
+        "skeptic",
+        "exploit-author",
+        "code-owner",
+        "maintainer",
+        "tester"
+      ]
+    },
+    "weight": {
+      "description": "Initial weight; a learned weight with at least 30 cases replaces it. Orders experiments and the council note only.",
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "family": {
+      "description": "Model family, for council diversity and the author-family rule.",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$"
+    },
+    "self_hosted": {
+      "description": "Served through a self-hosted runner's model endpoint; the pack never leaves the account.",
+      "type": "boolean",
+      "default": false
     }
   },
   "required": [
@@ -623,6 +670,46 @@
             {
               "required": [
                 "items"
+              ]
+            },
+            {
+              "required": [
+                "provider"
+              ]
+            },
+            {
+              "required": [
+                "model"
+              ]
+            },
+            {
+              "required": [
+                "prompt"
+              ]
+            },
+            {
+              "required": [
+                "context_pack"
+              ]
+            },
+            {
+              "required": [
+                "role"
+              ]
+            },
+            {
+              "required": [
+                "weight"
+              ]
+            },
+            {
+              "required": [
+                "family"
+              ]
+            },
+            {
+              "required": [
+                "self_hosted"
               ]
             }
           ]
@@ -679,6 +766,46 @@
             {
               "required": [
                 "items"
+              ]
+            },
+            {
+              "required": [
+                "provider"
+              ]
+            },
+            {
+              "required": [
+                "model"
+              ]
+            },
+            {
+              "required": [
+                "prompt"
+              ]
+            },
+            {
+              "required": [
+                "context_pack"
+              ]
+            },
+            {
+              "required": [
+                "role"
+              ]
+            },
+            {
+              "required": [
+                "weight"
+              ]
+            },
+            {
+              "required": [
+                "family"
+              ]
+            },
+            {
+              "required": [
+                "self_hosted"
               ]
             }
           ]
@@ -744,8 +871,127 @@
               "required": [
                 "local"
               ]
+            },
+            {
+              "required": [
+                "provider"
+              ]
+            },
+            {
+              "required": [
+                "model"
+              ]
+            },
+            {
+              "required": [
+                "prompt"
+              ]
+            },
+            {
+              "required": [
+                "context_pack"
+              ]
+            },
+            {
+              "required": [
+                "role"
+              ]
+            },
+            {
+              "required": [
+                "weight"
+              ]
+            },
+            {
+              "required": [
+                "family"
+              ]
+            },
+            {
+              "required": [
+                "self_hosted"
+              ]
             }
           ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "member"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "provider",
+          "model",
+          "prompt",
+          "context_pack",
+          "role",
+          "weight",
+          "family"
+        ],
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "schema"
+              ]
+            },
+            {
+              "required": [
+                "languages"
+              ]
+            },
+            {
+              "required": [
+                "files"
+              ]
+            },
+            {
+              "required": [
+                "capabilities"
+              ]
+            },
+            {
+              "required": [
+                "tools"
+              ]
+            },
+            {
+              "required": [
+                "inputs"
+              ]
+            },
+            {
+              "required": [
+                "outputs"
+              ]
+            },
+            {
+              "required": [
+                "local"
+              ]
+            },
+            {
+              "required": [
+                "attribution"
+              ]
+            },
+            {
+              "required": [
+                "items"
+              ]
+            }
+          ]
+        },
+        "properties": {
+          "name": {
+            "pattern": "^rio/[a-z][a-z0-9-]*$"
+          }
         }
       }
     }

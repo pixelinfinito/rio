@@ -58,6 +58,7 @@ function result(entry: any, risk: boolean, ruleIndex: number) {
     "round",
     "author_response",
     "history",
+    "council",
   ])
     if (entry[key] != null) properties[key] = entry[key];
   const baseline = (
@@ -158,6 +159,7 @@ export function renderSarif(report: any, inputs: SarifInputs) {
           "rio.risk_tier": report.risk_tier ?? null,
           "rio.review_id": report.review?.id ?? null,
           ...(report.lineage ? { "rio.lineage": report.lineage } : {}),
+          ...(report.council ? { "rio.council": report.council } : {}),
         },
       },
     ],

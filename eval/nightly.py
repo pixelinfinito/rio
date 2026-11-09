@@ -114,6 +114,8 @@ def run(config, run_date, credentials, execute=subprocess.run, now=None):
         '--limit', str(config['limit']),
         '--date', run_date,
         '--out-root', str(store),
+        # The council's `nightly` trigger reads this flag from each review.
+        '--rio-arg=--nightly',
     ]
     if config.get('repository'):
         command += ['--repository', config['repository']]

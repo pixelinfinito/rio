@@ -390,8 +390,15 @@ app.get("/v1/reviews/:id/audit", async (c) => {
   )
     .bind(id)
     .all();
+  // Council transfers per finding and member, by hash and size; kept past retention.
+  const council = await c.env.DB.prepare(
+    "SELECT finding_id,member,round,vendor,model,pack_hash,pack_bytes,rendering_hash,rendering_bytes,abstained,cause,created_at FROM council_assessments WHERE review_id=? ORDER BY finding_id,member,round",
+  )
+    .bind(id)
+    .all();
   const store = new Store(c.env);
   return c.json({
+    ...(council.results.length ? { council: council.results } : {}),
     hypotheses: await Promise.all(
       hypotheses.results.map((r) => store.get(r.object_key)),
     ),
@@ -405,14 +412,18 @@ app.get("/v1/reviews/:id/audit", async (c) => {
     executions: await Promise.all(
       (
         await c.env.DB.prepare(
-          "SELECT result_key FROM jobs WHERE review_id=? AND status='completed'",
+          "SELECT id,result_key FROM jobs WHERE review_id=? AND status='completed'",
         )
           .bind(id)
-          .all<{ result_key: string }>()
+          .all<{ id: string; result_key: string }>()
       ).results.map(async (r) => {
+        // Council job results expire with the evidence retention; the audit
+        // still answers, naming the job as expired.
+        const stored = await c.env.ARTIFACTS.get(r.result_key);
+        if (!stored) return { job_id: r.id, expired: true };
         // Runner graphs reach megabytes per version and are not verification
         // evidence; the audit keeps their size, not their content.
-        const result = await store.get<any>(r.result_key);
+        const result = await stored.json<any>();
         const graphs = result?.artifact?.graphs;
         if (graphs && typeof graphs === "object") {
           result.artifact = {
@@ -655,10 +666,24 @@ app.post("/v1/runner/claim", async (c) => {
       equal(hash(bearer), hash(c.env.RUNNER_SECRET)),
     "unauthorized",
   );
-  const row = await c.env.DB.prepare(
-    "UPDATE jobs SET status='leased',lease_until=? WHERE id=(SELECT j.id FROM jobs j JOIN reviews r ON r.id=j.review_id WHERE r.cancelled=0 AND r.deadline>? AND (j.status='pending' OR (j.status='leased' AND j.lease_until<?)) ORDER BY j.created_at LIMIT 1) RETURNING *",
+  // A runner may advertise an OpenAI-compatible model endpoint; only such a
+  // runner leases model jobs (self-hosted council members).
+  let models = false;
+  try {
+    const body: any = await c.req.raw.clone().json();
+    models = body?.capabilities?.model_endpoint === true;
+  } catch {
+    // Older runners send no body.
+  }
+  await c.env.DB.prepare(
+    "INSERT INTO runner_capabilities(name,seen_at,model_seen_at) VALUES('self-hosted',?,?) ON CONFLICT(name) DO UPDATE SET seen_at=excluded.seen_at,model_seen_at=COALESCE(excluded.model_seen_at,runner_capabilities.model_seen_at)",
   )
-    .bind(Date.now() + 180000, Date.now(), Date.now())
+    .bind(Date.now(), models ? Date.now() : null)
+    .run();
+  const row = await c.env.DB.prepare(
+    "UPDATE jobs SET status='leased',lease_until=? WHERE id=(SELECT j.id FROM jobs j JOIN reviews r ON r.id=j.review_id WHERE r.cancelled=0 AND r.deadline>? AND (j.status='pending' OR (j.status='leased' AND j.lease_until<?)) AND (j.kind IS NULL OR j.kind!='model' OR (? AND r.status='running')) ORDER BY j.created_at LIMIT 1) RETURNING *",
+  )
+    .bind(Date.now() + 180000, Date.now(), Date.now(), models ? 1 : 0)
     .first<any>();
   if (!row) return c.json({ job: null });
   const payload = await new Store(c.env).get<Execution>(row.payload_key);
