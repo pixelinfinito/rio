@@ -84,8 +84,22 @@ The finding-feedback auto-resolution rule SHALL apply to QA findings with this r
 - **THEN** the finding stays `open` and records that it did not reproduce
 
 ### Requirement: Journey drift reported on the PR
-When `rio qa sync --check` finds journeys whose covered paths changed and whose file did not, publication SHALL add a `journeys possibly stale` line to the summary comment naming them, and SHALL NOT fail the check run for that reason alone.
+When `rio qa sync --check` finds journeys whose covered paths or applicable owner guidance changed and whose file did not, publication SHALL add a `journeys possibly stale` line to the summary comment naming them, and SHALL NOT fail the check run for that reason alone.
 
 #### Scenario: Stale journey noted
 - **WHEN** a PR edits `src/pages/checkout/**` and `checkout.yaml` is unchanged
 - **THEN** the summary comment lists `checkout` as possibly stale with a hint to run `rio qa sync`
+
+### Requirement: Publish supported UX recommendations in the summary
+The existing QA summary comment SHALL include supported UX recommendations with evidence, proposed improvement, expected benefit, trade-offs, priority and confidence, under a distinct heading. Unverified, inconclusive and rejected candidates SHALL NOT be published as recommendations. Recommendations SHALL NOT create inline defect annotations or change the check conclusion.
+
+#### Scenario: Recommendations on a passing PR
+- **WHEN** all journeys pass and a supported recommendation remains after the cap
+- **THEN** the summary includes it, the check remains neutral unless a separate finding matches policy, and later rounds edit the same summary
+
+### Requirement: Recommendation continuity
+Recommendation ids SHALL be stable across wording and cell changes, keyed by rule, journey, normalized route and structured friction target. Later rounds SHALL record reassessment or not assessed without claiming improvement from non-observation. Recommendation dismissal SHALL record an owner response and prevent re-presentation of that id; it SHALL NOT suppress related defect findings.
+
+#### Scenario: Recommendation dismissed as intentional
+- **WHEN** an owner dismisses a recommendation as intentional and the same friction is observed in a later round
+- **THEN** the run record retains the observation and response but the summary does not repeat the dismissed recommendation

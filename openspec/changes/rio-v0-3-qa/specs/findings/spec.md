@@ -26,7 +26,7 @@ A finding SHALL have: `id` (stable identity), `rule_id`, `category` (`defect`, `
 - **THEN** it validates; a `ux` finding without `qa`, or a `defect` finding with `qa`, is rejected
 
 ### Requirement: Stable identity
-The id SHALL be `blake3(rule_id | normalized_location | trigger_hash)` where `normalized_location` is the repository-relative path plus the enclosing symbol path with line numbers removed, and `trigger_hash` is the hash of the message with only known volatile fragments normalized: line and column references, absolute path prefixes and the repository root, and tool-generated identifiers. Semantic content of the message, including numeric literals, type names and casing, SHALL be preserved. The id SHALL be stable when code moves within a file and when unrelated lines are inserted above it, and SHALL differ for findings whose messages differ in semantic content. A class-level finding, as defined by the review-convergence capability, SHALL instead have id `blake3(rule_id | "class" | trigger_hash)`, and its instances SHALL keep their own ids in `locations`. A QA finding SHALL instead have id `blake3(rule_id | "qa" | journey | step | route_pattern | trigger_hash)`, where `trigger_hash` for a probe is the predicate id plus the element role signature (tag, role, accessible name) and never a measured value, and for an observation is the hash of its structured `expected` and `observed` fields and never free text.
+The id SHALL be `blake3(rule_id | normalized_location | trigger_hash)` where `normalized_location` is the repository-relative path plus the enclosing symbol path with line numbers removed, and `trigger_hash` is the hash of the message with only known volatile fragments normalized: line and column references, absolute path prefixes and the repository root, and tool-generated identifiers. Semantic content of the message, including numeric literals, type names and casing, SHALL be preserved. The id SHALL be stable when code moves within a file and when unrelated lines are inserted above it, and SHALL differ for findings whose messages differ in semantic content. A class-level finding, as defined by the review-convergence capability, SHALL instead have id `blake3(rule_id | "class" | trigger_hash)`, and its instances SHALL keep their own ids in `locations`. A QA finding SHALL instead have id `blake3(rule_id | "qa" | journey | step | route_pattern | trigger_hash)`, where `trigger_hash` for a probe is the predicate id plus the element role signature (tag, role, accessible name) and never a measured value, and for an observation is the hash of the host-loaded committed step requirement (`do` and `expect`) plus the browser-derived target signatures. For host-authored exploration, the exact planned step supplies the requirement. Observation target signatures SHALL contain the resolved element tag, role, name, element key, disambiguating ordinal and shadow-host scope when applicable; selector spelling, measurements, cell and model-written `expected`/`observed` descriptions SHALL NOT enter identity. Distinct resolved controls SHALL remain distinct. For action-feedback rules (`ui/no-feedback`, `ux/system-feedback`), the target SHALL be the last successful targeted interaction before that step boundary, captured before the control can detach; explicit affected elements are the fallback when no such action was recorded. The descriptions SHALL remain in the verification evidence pack.
 
 #### Scenario: Line shift keeps the id
 - **WHEN** ten lines are inserted above a function that has a type error, and the review is run again
@@ -43,6 +43,14 @@ The id SHALL be `blake3(rule_id | normalized_location | trigger_hash)` where `no
 #### Scenario: QA identity ignores measurements and cells
 - **WHEN** a tap-target probe fires on the same button at 28 px in one run and 30 px in the next, in a different set of viewports
 - **THEN** the finding keeps the same id and its `locations` reflect the cells of each run
+
+#### Scenario: Observation wording differs across cells
+- **WHEN** two cells report the same rule at the same committed step and route for the same browser-derived target using different expected/observed wording or equivalent selectors
+- **THEN** they share an identity and retain their separate evidence and descriptions for verification
+
+#### Scenario: Distinct observation targets or requirements
+- **WHEN** the affected browser control or the committed step requirement changes
+- **THEN** the observation identity differs even if the model reuses its description
 
 ### Requirement: Category separates defects from risks
 `category` SHALL be `defect` for type errors, lint errors, secrets and vulnerable dependencies, `risk` for untested changes, and `ux` for every finding produced by the QA step, whether functional, visual or accessibility. Agent hypotheses SHALL additionally distinguish `security`, `style` and `diagnostic`. Verified security findings SHALL retain category `security`; `style` and `diagnostic` SHALL be confined to the category-floor audit footer, except that QA style findings carry category `ux` with `qa.kind: style` and are rendered in the QA section. Renderers SHALL present risks in a section separate from defects and SHALL NOT call a risk a bug. Plausible agent hypotheses SHALL never be presented as proven defects, including in the security and QA sections.
@@ -89,3 +97,10 @@ Attribution SHALL try, in order: framework development annotations on the elemen
 #### Scenario: Stack trace wins over text
 - **WHEN** the element has no annotation and a console error at the step points to `src/pages/Billing.tsx:40`
 - **THEN** the finding is located at that file and line with `qa.attribution: source`
+
+### Requirement: Recommendations are distinct from defect findings
+UX recommendations SHALL use the separate QA recommendation record rather than `finding-v1` defect semantics. A requirement violation SHALL remain eligible for a verified QA finding. A related recommendation SHALL link to its finding and SHALL NOT duplicate the same issue in counts. Recommendation priority SHALL express user impact and SHALL NOT be treated as defect severity or regression state.
+
+#### Scenario: Recommendation does not change a pass
+- **WHEN** a successful flow has a supported task-efficiency recommendation
+- **THEN** the journey remains passed, the defect count is unchanged and the recommendation appears with its own priority and confidence

@@ -104,6 +104,10 @@ for (const [name, file] of Object.entries({
   );
   exports[name] = name;
 }
+// QA recommendations are a separate output contract, never finding hypotheses.
+const qaRecommendation = JSON.parse(readFileSync(`${root}/schemas/report-v1.json`, "utf8")).properties.qa.properties.recommendations.items;
+ajv.addSchema(qaRecommendation, "qaRecommendation");
+exports.qaRecommendation = "qaRecommendation";
 Object.entries(modules).forEach(([, schema], i) => {
   const name = `module${i}`;
   ajv.addSchema(schema, name);

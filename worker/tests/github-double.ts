@@ -82,6 +82,11 @@ async function verifyJwt(jwt: string): Promise<boolean> {
 
 const PERMISSION_OF: [RegExp, string, string][] = [
   [
+    /^GET \/repos\/[^/]+\/[^/]+\/check-runs\/\d+\/annotations$/,
+    "checks",
+    "read",
+  ],
+  [
     /^GET \/repos\/[^/]+\/[^/]+\/pulls\/\d+(\/(files|commits|comments))?$/,
     "pull_requests",
     "read",
@@ -458,6 +463,15 @@ export class GitHubDouble {
       );
       return this.json({ total_count: runs.length, check_runs: runs });
     }
+    if (
+      (r = m(/^\/repos\/([^/]+\/[^/]+)\/check-runs\/(\d+)\/annotations$/)) &&
+      method === "GET"
+    ) {
+      const run = this.checkRuns.find((c) => c.id === Number(r![2]));
+      return run
+        ? this.json(run.output.annotations ?? [])
+        : this.error(404, "Not Found");
+    }
     if ((r = m(/^\/repos\/([^/]+\/[^/]+)\/check-runs$/)) && method === "POST") {
       const run = {
         id: this.next++,
@@ -474,6 +488,11 @@ export class GitHubDouble {
     ) {
       const run = this.checkRuns.find((c) => c.id === Number(r![2]));
       if (!run) return this.error(404, "Not Found");
+      if (body.output)
+        body.output.annotations = [
+          ...(run.output.annotations ?? []),
+          ...(body.output.annotations ?? []),
+        ];
       Object.assign(run, body);
       return this.json(run);
     }

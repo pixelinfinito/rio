@@ -43,6 +43,13 @@ Each step SHALL have `do` (a natural-language action) and MAY have `at` (route p
 - **WHEN** a step declares `do: Type hunter2 into the password field`
 - **THEN** validation warns that the step appears to contain a credential and recommends the persona login tool
 
+### Requirement: Compatible chain clocks
+Validation SHALL reject incompatible effective times within a chain after applying fixture defaults. Equivalent instants with different UTC offsets SHALL be accepted; fixed and live time SHALL NOT be mixed. Proposed replacements SHALL satisfy the same rule for all affected dependencies.
+
+#### Scenario: Proposed clock change breaks a dependent
+- **WHEN** a proposed add-to-cart replacement uses a different effective time from its checkout dependent
+- **THEN** validation rejects the proposal and names the affected dependency
+
 ### Requirement: Journey data preconditions and chains
 `preconditions[]` SHALL be natural-language statements about seeded state that the agent checks before step 1. `after[]` SHALL name journeys whose final state this journey starts from; `resets: true` SHALL mean the journey starts from a freshly restored seed and SHALL NOT be combined with `after`. Validation SHALL reject unknown names and cycles in `after`. A precondition that does not hold SHALL end the journey `skipped` with reason `precondition_failed` and the evidence of the check.
 
@@ -59,7 +66,15 @@ Each step SHALL have `do` (a natural-language action) and MAY have `at` (route p
 - **THEN** the journey is `skipped` with reason `precondition_failed` and the check's screenshot is attached
 
 ### Requirement: Journey viewport override
-A journey MAY declare `viewports[]` to narrow the matrix it runs in, naming viewports from the resolved contract. The override SHALL NOT remove every mobile viewport unless the journey also declares `desktop_only: true` with a `reason`, which the report SHALL show beside the journey.
+A journey MAY declare `viewports[]` to narrow the matrix it runs in, naming viewports from the resolved contract. The override SHALL NOT remove every mobile viewport unless the journey also declares `desktop_only: true` with a `reason`, which the report SHALL show beside the journey. Each dependent journey’s resolved viewport set SHALL be a subset of every direct prerequisite’s set; validation SHALL reject incompatible matrices, including proposed replacements.
+
+#### Scenario: Incompatible prerequisite viewports rejected
+- **WHEN** `checkout` declares `after: [add-to-cart]` and includes desktop, but `add-to-cart` declares only mobile
+- **THEN** validation fails naming both journeys and the unsupported desktop viewport; no pod starts, no viewport override is expanded, and no dependent cell is silently skipped
+
+#### Scenario: Narrower dependent matrix accepted
+- **WHEN** `add-to-cart` runs in mobile and desktop while its dependent checkout declares only mobile
+- **THEN** validation passes and checkout retains the cart in its declared mobile cells
 
 #### Scenario: Admin console is desktop only
 - **WHEN** journey `admin-audit` declares `desktop_only: true`, `reason: "The admin console is not offered on phones"` and `viewports: [desktop, wide]`
@@ -81,11 +96,15 @@ A journey MAY declare `viewports[]` to narrow the matrix it runs in, naming view
 - **THEN** validation fails stating that a journey needs at least one covered path or route
 
 ### Requirement: Generation with the agent
-`rio qa init` SHALL start the app under the environment contract after the seed is built, run the configured harness with the shipped skill to explore it, and write journeys to `.rio/qa/journeys/` that validate before they are written. It SHALL write at least one `smoke` journey and SHALL set `resets: true` on journeys that create or delete records.
+`rio qa init` SHALL start the app under the environment contract after the seed is built, run the configured harness with the shipped skill to explore it, and write journeys to `.rio/qa/journeys/` that validate before they are written. It SHALL write at least one `smoke` journey. Generated journeys that create or delete records SHALL set `resets: true` only when they have no `after` dependencies; dependent journeys SHALL retain predecessor state.
 
 #### Scenario: First generation
 - **WHEN** `rio qa init` runs in a repository with `.rio/qa.yaml`, a built seed and no journeys
 - **THEN** `.rio/qa/journeys/` contains one or more valid journeys, one of which is tagged `smoke`, and nothing is committed
+
+#### Scenario: Generated checkout preserves the cart
+- **WHEN** init generates add-to-cart followed by checkout that creates an order
+- **THEN** add-to-cart sets `resets: true`, checkout declares `after: [add-to-cart]` without `resets: true`, both validate, and each cell restores the seed before the chain rather than between its journeys
 
 ### Requirement: Overwrite protection
 `rio qa init` SHALL NOT overwrite an existing journey file unless `--force` is given; a new candidate for an existing name SHALL be written as `<name>.proposed.yaml`.
@@ -95,7 +114,7 @@ A journey MAY declare `viewports[]` to narrow the matrix it runs in, naming view
 - **THEN** the existing file is unchanged and a different candidate for the same flow is written as `login.proposed.yaml`
 
 ### Requirement: Synchronizing journeys with the app
-`rio qa sync` SHALL compare journeys with the current snapshot: journeys whose covered paths changed in the selected diff SHALL be re-walked by the agent, and the agent's proposed edits SHALL be written as `<name>.proposed.yaml` with a `sync_reason`. `rio qa sync --check` SHALL exit non-zero listing journeys whose covered paths changed and whose file did not, without starting a pod.
+`rio qa sync` SHALL compare journeys with the current snapshot: journeys whose covered paths or applicable owner guidance changed in the selected diff SHALL be re-walked by the agent, and the agent's proposed edits SHALL be written as `<name>.proposed.yaml` with a `sync_reason`. `rio qa sync --check` SHALL exit non-zero listing journeys whose covered paths or applicable owner guidance changed and whose file did not, without starting a pod.
 
 #### Scenario: Check mode in CI
 - **WHEN** a change edits `src/pages/checkout/Summary.tsx`, journey `checkout` covers `src/pages/checkout/**`, and `rio qa sync --check` runs
@@ -122,3 +141,18 @@ A journey MAY declare `viewports[]` to narrow the matrix it runs in, naming view
 #### Scenario: User text outside the fence survives
 - **WHEN** `AGENTS.md` has a paragraph before the fenced section and `rio qa init` runs again with a newer skill
 - **THEN** the paragraph is unchanged and only the fenced section is rewritten
+
+### Requirement: Author journeys from user goals and guidance
+Init, sync and the shipped skill SHALL use applicable owner guidance to author goals and success criteria rather than copying current behavior as the expected behavior. Journey documents SHALL accept optional `goal`, `guidance_refs[]` (path, hash, original line range) and `ux_criteria[]` (rule ids). Generated journeys SHALL include these fields and propose coverage of relevant recovery and alternate paths.
+
+#### Scenario: Generation exposes a missing experience
+- **WHEN** `REVIEW.md` requires preserving entered data after a payment decline but the running app clears it
+- **THEN** the proposed journey expects preservation, cites the requirement and exercises decline then retry rather than recording data loss as success
+
+#### Scenario: Existing journeys remain valid
+- **WHEN** a committed version-1 journey lacks the new optional fields
+- **THEN** it remains valid and QA still resolves its applicable guidance and default UX rubric
+
+#### Scenario: Guidance-only sync
+- **WHEN** applicable guidance changes but covered source files do not
+- **THEN** sync re-evaluates the affected journey and writes a candidate with guidance citations, and sync check names it as possibly stale without starting a pod

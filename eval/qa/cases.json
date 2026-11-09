@@ -1,0 +1,245 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "disabled-save",
+      "flags": [
+        "disabled-save"
+      ],
+      "kind": "defect",
+      "rules": [
+        "ui/unreachable-action"
+      ],
+      "journeys": [
+        "profile-address"
+      ]
+    },
+    {
+      "id": "missing-confirmation",
+      "flags": [
+        "missing-confirmation"
+      ],
+      "kind": "defect",
+      "rules": [
+        "ui/no-feedback"
+      ],
+      "journeys": [
+        "checkout",
+        "payment-recovery"
+      ]
+    },
+    {
+      "id": "gradient-hero",
+      "flags": [
+        "gradient-hero"
+      ],
+      "kind": "defect",
+      "rules": [
+        "ui/gradient-background"
+      ],
+      "journeys": []
+    },
+    {
+      "id": "accent-border-cards",
+      "flags": [
+        "accent-border-cards"
+      ],
+      "kind": "defect",
+      "rules": [
+        "ui/accent-border-card"
+      ],
+      "journeys": []
+    },
+    {
+      "id": "raw-primitive",
+      "flags": [
+        "raw-primitive"
+      ],
+      "kind": "defect",
+      "rules": [
+        "ui/raw-primitive"
+      ],
+      "journeys": []
+    },
+    {
+      "id": "low-contrast-dark",
+      "flags": [
+        "low-contrast-dark"
+      ],
+      "kind": "defect",
+      "rules": [
+        "ui/low-contrast"
+      ],
+      "journeys": []
+    },
+    {
+      "id": "console-error",
+      "flags": [
+        "console-error"
+      ],
+      "kind": "defect",
+      "rules": [
+        "ui/console-error"
+      ],
+      "journeys": []
+    },
+    {
+      "id": "fixed-banner",
+      "flags": [
+        "fixed-banner"
+      ],
+      "kind": "defect",
+      "rules": [
+        "mobile/fixed-overlap",
+        "ui/unreachable-action"
+      ],
+      "journeys": [
+        "checkout",
+        "payment-recovery"
+      ]
+    },
+    {
+      "id": "small-icon-buttons",
+      "flags": [
+        "small-icon-buttons"
+      ],
+      "kind": "defect",
+      "rules": [
+        "mobile/tap-target"
+      ],
+      "journeys": []
+    },
+    {
+      "id": "small-email-input",
+      "flags": [
+        "small-email-input"
+      ],
+      "kind": "defect",
+      "rules": [
+        "mobile/input-zoom"
+      ],
+      "journeys": []
+    },
+    {
+      "id": "hover-only-menu",
+      "flags": [
+        "hover-only-menu"
+      ],
+      "kind": "defect",
+      "rules": [
+        "mobile/hover-only",
+        "mobile/navigation-reachable"
+      ],
+      "journeys": []
+    },
+    {
+      "id": "duplicate-address",
+      "flags": [
+        "duplicate-address"
+      ],
+      "kind": "ux",
+      "rules": [
+        "ux/task-efficiency"
+      ],
+      "journeys": [],
+      "goal": "Complete checkout without entering an identical billing address again",
+      "human_review": [
+        "guidance_adherence",
+        "relevance",
+        "actionability",
+        "unsupported_benefit_claim"
+      ]
+    },
+    {
+      "id": "ambiguous-next",
+      "flags": [
+        "ambiguous-next"
+      ],
+      "kind": "ux",
+      "rules": [
+        "ux/task-clarity",
+        "ux/error-prevention"
+      ],
+      "journeys": [],
+      "goal": "Understand that the next action pays the displayed total",
+      "human_review": [
+        "guidance_adherence",
+        "relevance",
+        "actionability",
+        "unsupported_benefit_claim"
+      ]
+    },
+    {
+      "id": "lost-input",
+      "flags": [
+        "lost-input"
+      ],
+      "kind": "ux",
+      "rules": [
+        "ux/error-recovery"
+      ],
+      "journeys": [],
+      "goal": "Recover from a declined payment while retaining entered details",
+      "human_review": [
+        "guidance_adherence",
+        "relevance",
+        "actionability",
+        "unsupported_benefit_claim"
+      ]
+    },
+    {
+      "id": "missing-cancel",
+      "flags": [
+        "missing-cancel"
+      ],
+      "kind": "ux",
+      "rules": [
+        "ux/user-control"
+      ],
+      "journeys": [],
+      "goal": "Leave checkout without losing the cart",
+      "human_review": [
+        "guidance_adherence",
+        "relevance",
+        "actionability",
+        "unsupported_benefit_claim"
+      ]
+    },
+    {
+      "id": "keyboard-barrier",
+      "flags": [
+        "keyboard-barrier"
+      ],
+      "kind": "ux",
+      "rules": [
+        "ux/inclusive-interaction"
+      ],
+      "journeys": [],
+      "goal": "Reach and activate shopping actions with the keyboard",
+      "human_review": [
+        "guidance_adherence",
+        "relevance",
+        "actionability",
+        "unsupported_benefit_claim"
+      ]
+    },
+    {
+      "id": "intentional-brand",
+      "flags": [
+        "intentional-brand"
+      ],
+      "kind": "clean",
+      "rules": [],
+      "journeys": [],
+      "goal": "Respect the explicit brand exception in REVIEW.md"
+    },
+    {
+      "id": "clean",
+      "flags": [],
+      "kind": "clean",
+      "rules": [],
+      "journeys": [],
+      "goal": "Complete the intended flow without unsupported defects or recommendations"
+    }
+  ]
+}

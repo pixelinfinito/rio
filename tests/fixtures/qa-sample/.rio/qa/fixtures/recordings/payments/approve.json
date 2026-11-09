@@ -1,0 +1,1 @@
+{"behavior":"approve","request":{"method":"POST","path":"/v1/charges"},"response":{"status":200,"headers":{"content-type":"application/json"},"body":{"id":"charge_synthetic","status":"succeeded"}}}

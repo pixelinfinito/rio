@@ -2,12 +2,12 @@
 
 ## Purpose
 
-A versioned, built-in ruleset names the interface defects and generated-looking styling Rio looks for, defines each probe precisely enough to implement once, separates what a probe can measure from what the agent judges, and lets a project adjust it.
+A versioned ruleset evaluates functional usability, accessibility and visual consistency. It defines measurable probes and contextual UX criteria, grounds improvement recommendations in observed user friction, and lets explicit project requirements guide intended behavior.
 
 ## ADDED Requirements
 
 ### Requirement: Built-in ruleset
-`modules/qa/rules/ui-v1.yaml` SHALL be a module of kind `ruleset` listing rules with `id` (`ui/<name>` or `mobile/<name>`), `kind` (`probe` or `judged`), `category` (`functional`, `ux`, `style`, `accessibility`), default `severity`, a description and, for probes, `eligible` (element selector), `measure`, `threshold`, `exclude` and `scope` (`step` or `run`).
+`modules/qa/rules/ui-v1.yaml` SHALL be a module of kind `ruleset` listing rules with `id` (`ui/<name>`, `mobile/<name>` or `ux/<name>`), `kind` (`probe` or `judged`), `category` (`functional`, `ux`, `style`, `accessibility`), default `severity`, a description and, for probes, `eligible` (element selector), `measure`, `threshold`, `exclude` and `scope` (`step` or `run`).
 
 #### Scenario: Ruleset validates as a module
 - **WHEN** the built-in ruleset is loaded
@@ -86,11 +86,26 @@ Probes with the `mobile/` prefix SHALL run only in cells whose viewport has `mob
 - **THEN** no `mobile/*` finding is emitted for that viewport
 
 ### Requirement: Mobile layout predicates
-`mobile/fixed-overlap` SHALL match `position: fixed` or `sticky` elements covering an interactive element's box or more than 30 % of the viewport. `mobile/offscreen-content` SHALL match text or interactive elements whose boxes lie beyond the layout viewport. `mobile/text-truncation` SHALL match text clipped by `overflow: hidden` without `text-overflow: ellipsis`. `mobile/hover-only` SHALL match elements revealed only by `:hover` rules with no `:focus` or touch equivalent.
+`mobile/fixed-overlap` SHALL match `position: fixed` or `sticky` elements covering an interactive element's box or more than 30 % of the viewport. `mobile/text-truncation` SHALL match text clipped by `overflow: hidden` without `text-overflow: ellipsis`. `mobile/hover-only` SHALL match elements revealed only by `:hover` rules with no `:focus` or touch equivalent.
 
 #### Scenario: Pay button under a fixed footer
 - **WHEN** in `mobile` a fixed cookie banner covers the pay button's bounding box
 - **THEN** a `mobile/fixed-overlap` finding names both elements with the step screenshot
+
+### Requirement: Reachable mobile content
+`mobile/offscreen-content` SHALL match text or interactive elements clipped by a non-scrollable ancestor or positioned beyond reachable scroll bounds. Normal document and nested scrolling SHALL be allowed. Focus-revealed skip links SHALL be excluded only after confirming they become visible and unclipped on keyboard focus.
+
+#### Scenario: Normal scrolling is reachable
+- **WHEN** a footer lies below the fold or a control is reachable through a nested scroll container
+- **THEN** `mobile/offscreen-content` does not flag it, including after the document or container has scrolled
+
+#### Scenario: Clipped or unreachable content
+- **WHEN** a control is clipped by `overflow: hidden` or lies outside reachable scroll bounds, including a fixed control outside the viewport
+- **THEN** `mobile/offscreen-content` records the control, clipping ancestor, affected axis and reachable bounds
+
+#### Scenario: Skip link reveals on focus
+- **WHEN** an offscreen link to an existing page anchor becomes visible and unclipped under keyboard focus styling
+- **THEN** it is excluded from `mobile/offscreen-content` without firing application focus handlers; a link that stays offscreen is still reported
 
 ### Requirement: Minority test for style probes
 Style probes (`ui/gradient-background`, `ui/accent-border-card`, `ui/raw-primitive`, `ui/spacing-scale`, `ui/type-scale`) SHALL be `run`-scoped and SHALL emit a finding only when, across all pages visited in the run, the matched elements are fewer than the rule's `threshold` ratio (default 0.2) of the eligible elements and at least `min_sample` (default 5) eligible elements were observed. The ratio, counts and visited pages SHALL be recorded with the finding.
@@ -115,7 +130,7 @@ Style probe findings SHALL default to severity `info`, so they render in the QA 
 - **THEN** the finding renders at `warning` and matches the default QA fail policy
 
 ### Requirement: Judged rules produce hypotheses
-Judged rules SHALL be given to the agent as named criteria with the evidence each requires; an observation matching a judged rule SHALL be a hypothesis carrying the rule id and SHALL be settled by the verifier against the evidence. A judged rule SHALL never be reported above `plausible` without a verifier quorum supported by a recorded browser artifact.
+Judged rules SHALL be named criteria with required evidence. A claimed violation SHALL produce a defect hypothesis; an improvement opportunity SHALL produce a recommendation candidate under the recommendation contract. Both SHALL carry the rule id and undergo verification. A defect hypothesis SHALL never be reported above `plausible` without a verifier quorum supported by a recorded browser artifact.
 
 #### Scenario: Missing feedback
 - **WHEN** the agent submits a form and sees no confirmation, error or state change within the wait budget
@@ -131,3 +146,25 @@ Judged rules SHALL be given to the agent as named criteria with the evidence eac
 #### Scenario: Project rule
 - **WHEN** `rules.add` declares `project/brand-voice` with a description
 - **THEN** the agent receives it as a judged criterion and findings use that rule id
+
+### Requirement: Built-in usability rubric
+The ruleset SHALL include judged `ux/` criteria for task clarity, system feedback, error prevention, recovery, user control, consistency, recognition over recall, task efficiency and inclusive interaction. Each SHALL name its principle source and version, applicability, required evidence and examples. Nielsen usability heuristics and relevant WCAG 2.2 criteria SHALL be references; stylistic taste SHALL NOT be represented as a universal usability standard.
+
+#### Scenario: Rubric content
+- **WHEN** `rio qa rules` lists the UX rubric
+- **THEN** it includes `ux/task-clarity`, `ux/system-feedback`, `ux/error-prevention`, `ux/error-recovery`, `ux/user-control`, `ux/consistency`, `ux/recognition`, `ux/task-efficiency` and `ux/inclusive-interaction`, covering discoverability, loading and empty states, actionable errors, preserved input, cancel or undo, familiar language, repeated entry, keyboard access and focus management
+
+### Requirement: Classify context before recommending changes
+UX assessment SHALL distinguish a demonstrated requirement violation from an improvement opportunity. Probe evidence SHALL prove only its stated measurement; a measured style or platform heuristic SHALL NOT alone prove user harm or accessibility nonconformance. Recommendations SHALL consider persona, task, applicable guidance and trade-offs, with uncertain impact labeled explicitly.
+
+#### Scenario: Intentional brand styling
+- **WHEN** a gradient probe matches but applicable guidance explicitly permits the brand gradient
+- **THEN** QA does not recommend removing it solely for its appearance; separately evidenced readability problems remain assessable and the guidance does not silently change configured probe policy
+
+#### Scenario: Touch guidance differs from conformance
+- **WHEN** a target is smaller than the 44 px heuristic
+- **THEN** QA reports the measured size and heuristic basis and does not claim a WCAG 2.2 AA failure without assessing the relevant criterion and its exceptions
+
+#### Scenario: Platform-specific input heuristic
+- **WHEN** Chromium detects an input font smaller than 16 px
+- **THEN** the measurement does not establish that Safari zoom behavior was reproduced

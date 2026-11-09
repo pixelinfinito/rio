@@ -167,8 +167,27 @@ export function validateGraph(graph: Graph, lines: Map<string, number>) {
 export function validateSubmission(value: any): asserts value is Submission {
   invariant(value?.protocol === 1, "unsupported protocol");
   // Resolved-only metadata is outside the source profile schema.
-  const { chain, modules, engine_version, posture_policy, ...source } =
-    value.profile ?? {};
+  const {
+    chain,
+    modules,
+    engine_version,
+    posture_policy,
+    qa_deadlines,
+    qa_standalone,
+    ...source
+  } = value.profile ?? {};
+  invariant(
+    qa_standalone === undefined || typeof qa_standalone === "boolean",
+    "invalid standalone QA selection",
+  );
+  if (qa_standalone)
+    invariant(
+      value.profile.steps?.some(
+        (step: any) =>
+          step.uses?.startsWith("rio/qa@") && step.with?.enabled === true,
+      ),
+      "standalone QA requires an enabled QA step",
+    );
   invariant(
     profileValidator(source),
     `invalid profile: ${ajv.errorsText(profileValidator.errors)}`,
@@ -207,7 +226,8 @@ export function validateSubmission(value: any): asserts value is Submission {
   for (const step of value.profile.steps)
     if (
       (step.uses.startsWith("rio/agents@") ||
-        step.uses.startsWith("rio/security@")) &&
+        step.uses.startsWith("rio/security@") ||
+        step.uses.startsWith("rio/qa@")) &&
       step.with.enabled !== false
     )
       invariant(
@@ -411,8 +431,12 @@ export function validateHypothesesLenient(
       rejected.push({
         agent,
         id: typeof h?.id === "string" ? h.id.slice(0, 64) : "unknown",
-        rule_id: typeof h?.rule_id === "string" ? h.rule_id.slice(0, 150) : "unknown",
-        reason: (error instanceof Error ? error.message : "malformed hypothesis").slice(0, 300),
+        rule_id:
+          typeof h?.rule_id === "string" ? h.rule_id.slice(0, 150) : "unknown",
+        reason: (error instanceof Error
+          ? error.message
+          : "malformed hypothesis"
+        ).slice(0, 300),
       });
     }
   }

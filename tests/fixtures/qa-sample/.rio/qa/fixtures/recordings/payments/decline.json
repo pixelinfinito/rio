@@ -1,0 +1,1 @@
+{"behavior":"decline","request":{"method":"POST","path":"/v1/charges"},"response":{"status":402,"headers":{"content-type":"application/json"},"body":{"error":{"code":"card_declined","message":"Synthetic decline"}}}}

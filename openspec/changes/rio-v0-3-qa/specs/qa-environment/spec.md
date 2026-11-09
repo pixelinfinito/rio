@@ -89,7 +89,7 @@ A QA run SHALL execute as three containers on a private per-run network: `app` (
 
 #### Scenario: Harness container holds no source
 - **WHEN** the harness lists its working directory
-- **THEN** it contains the skill, the journeys, the contract and the fixtures manifest, and no file from the repository snapshot
+- **THEN** it contains only the supplied skill, journeys, contract, fixtures manifest and immutable scoped owner-guidance artifact, with no repository checkout or additional source files
 
 ### Requirement: Egress policy
 `app` and `browser` SHALL have no egress. `controller` SHALL have egress only to the model gateway host (or the local loopback proxy) and the evidence and seed upload endpoint. The policy SHALL be enforced by the runner host's network configuration, not by harness configuration, and the job record SHALL state the policy that applied.
@@ -103,15 +103,29 @@ A QA run SHALL execute as three containers on a private per-run network: `app` (
 - **THEN** the connection is refused and the transcript records the rejection
 
 ### Requirement: Backend eligibility
-Hosted QA SHALL run on the self-hosted Docker runner by default. The Cloudflare Sandbox backend SHALL run QA only when the step sets `sandbox: allow`; then subscription credentials SHALL be refused, only a run-scoped gateway token SHALL be present, the report SHALL state `app isolation: none (sandbox)`, and the run SHALL be marked `partial` for isolation. Without `sandbox: allow`, a Sandbox-only deployment SHALL defer QA with reason `no_runtime`.
+Hosted QA SHALL use the self-hosted Docker runner by default. Cloudflare Sandbox SHALL require `sandbox: allow`; without it, a Sandbox-only deployment SHALL defer QA with `no_runtime`.
 
 #### Scenario: Sandbox without opt-in
 - **WHEN** the endpoint's runner backend is `sandbox` and the profile does not set `sandbox: allow`
 - **THEN** the QA step is deferred with reason `no_runtime` and the footer explains that QA needs the Docker runner or `sandbox: allow`
 
+### Requirement: Sandbox isolation disclosure
+Sandbox QA SHALL refuse subscription credentials and use only a run-scoped gateway token. The report SHALL state `app isolation: none (sandbox)` and mark the run `partial` for isolation.
+
 #### Scenario: Sandbox with opt-in
-- **WHEN** `sandbox: allow` is set
+- **WHEN** `sandbox: allow` is set and a static or vendored app is provisioned in the configured Sandbox image or snapshot
 - **THEN** QA runs, the job record carries `egress: provider_pinned (sandbox)` and `app_isolation: none`, and the report header status is `partial`
+
+### Requirement: Sandbox provisioned packaging
+Sandbox SHALL run only `static` or `vendored` apps with runtime, tools and dependencies provisioned in the configured image or snapshot. It SHALL NOT build repository Dockerfiles, install dependencies or provision cloud images during a run. For `packaging: image`, it SHALL defer QA with `no_runtime`, record `unsupported_packaging`, and direct the operator to Docker.
+
+#### Scenario: Sandbox Dockerfile packaging deferred
+- **WHEN** `sandbox: allow` is set but the contract uses `packaging: image`
+- **THEN** QA is deferred with `no_runtime` and an `unsupported_packaging` explanation requiring the Docker runner; no repository Dockerfile is built and no app or harness starts
+
+#### Scenario: Sandbox missing provisioning
+- **WHEN** a static or vendored app requires a dependency or tool absent from both the configured Sandbox image and snapshot
+- **THEN** QA reports `dependencies_unavailable` or `missing_tool`, retains stage diagnostics, and installs nothing
 
 ### Requirement: Snapshot materialization and teardown
 Repository contents SHALL be materialized inside `app` from the snapshot, never bind-mounted from the developer's working tree. Every container of the pod SHALL be destroyed when the run ends, including after a timeout or an interruption.

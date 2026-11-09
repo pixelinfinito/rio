@@ -16,6 +16,7 @@ pub enum Category {
     Defect,
     Risk,
     Security,
+    Ux,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
@@ -57,6 +58,44 @@ pub struct Location {
     /// Instance identity when this location belongs to a class-level finding.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub cell: Option<QaCell>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub evidence: Option<Vec<String>>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+pub struct QaCell {
+    pub viewport: String,
+    pub color_scheme: String,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum QaKind {
+    Functional,
+    Ux,
+    Style,
+    Accessibility,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum QaAttribution {
+    Source,
+    Journey,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct QaFinding {
+    pub journey: String,
+    pub step: u32,
+    pub kind: QaKind,
+    pub route: String,
+    pub element_paths: Vec<String>,
+    pub attribution: QaAttribution,
+    #[serde(default, skip_serializing_if = "serde_json::Map::is_empty")]
+    pub measurements: serde_json::Map<String, serde_json::Value>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -134,6 +173,8 @@ pub struct Finding {
     /// consulted by `state`, `status` or fail policies.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub history: Option<FindingHistory>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub qa: Option<QaFinding>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

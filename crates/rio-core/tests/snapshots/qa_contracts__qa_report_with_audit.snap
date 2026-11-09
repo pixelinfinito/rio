@@ -1,0 +1,68 @@
+---
+source: crates/rio-core/tests/qa_contracts.rs
+expression: "rio_core::render_markdown(&report, &options)"
+---
+# Rio 0.1.0 — complete
+
+Review: 1234567890abcdef  Run: 01J00000000000000000000000  
+Mode: working-tree  Base: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb  Head: snapshot:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc  
+Profile: rio/base  Chain: rio/base  
+
+
+## Deterministic results
+
+### typecheck
+
+| Root | Language | Version | Scheduled as | Outcome | Time (ms) |
+| --- | --- | --- | --- | --- | ---: |
+| . | typescript | head | changed | findings | 100 |
+
+## Findings
+
+1 finding(s).
+
+
+## QA results
+
+checkout: failed
+
+| Viewport | Scheme | Outcome | Step | Reason | Evidence |
+| --- | --- | --- | --- | --- | --- |
+| mobile | light | failed | 4 |  | qa/checkout/mobile-light/4.png |
+| desktop | light | failed | 4 |  | qa/checkout/desktop-light/4.png |
+
+- ui/no-feedback [new; warning; reproduced]: No confirmation after checkout
+  mobile/light: .rio/qa/journeys/checkout.yaml:12
+  Evidence: qa/checkout/mobile-light/4.png
+  desktop/light: .rio/qa/journeys/checkout.yaml:12
+  Evidence: qa/checkout/desktop-light/4.png
+
+### UX recommendations
+
+- ux/task-efficiency [supported; priority medium; confidence high]
+  Persona: shopper
+  Goal: Buy a product
+  Observed friction: User re-enters the same address for billing
+  Proposed improvement: Offer to reuse the shipping address, with an edit option
+  Expected benefit (untested): May reduce repeated entry; benefit has not been user-tested
+  Verification rationale: Both steps visibly require the same information
+  Journey: checkout; steps 2, 3
+  Basis: Nielsen usability heuristics (1994) — Flexibility and efficiency of use
+  Trade-offs: Shipping and billing addresses can differ
+  Evidence: qa/checkout/mobile-light/2.png, qa/checkout/mobile-light/3.png
+
+UX assessment (ui-v1@0.1.0)
+  assessed: 1
+  not_applicable: 0
+  not_assessed: 0
+  Recommendations held back: 0; dropped: 0
+
+## Footer
+
+- QA selected checkout: guidance: REVIEW.md.
+- QA evidence evidence_unsanitized: checkout (mobile/dark).
+- QA harness: codex (gateway); isolation: pod; egress: host_firewall_pinned.
+- QA seed: restored (2.1 s); fingerprint: abc123.
+- QA evidence: local; 4096 bytes; quota: 10000 bytes (reached); expiry: with run-record pruning.
+- QA wall time: 12.4 s; tokens: 3400; cost: unknown.
+- Total: 105 ms

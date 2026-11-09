@@ -7,7 +7,7 @@ QA execution runs selected journeys in a browser through an agent harness, again
 ## ADDED Requirements
 
 ### Requirement: The rio/qa step
-`rio/qa` SHALL be a step that needs `graph`, consumes the snapshot, the graph delta, the environment contract, the seed and fixture manifests and the journeys, and outputs `qa_findings` (deterministic probe findings), `hypotheses`, `journey_outcomes` and `evidence`. `rio/verify` SHALL need it when it is enabled, and `rio/report` SHALL consume `qa_findings` and `journey_outcomes`.
+`rio/qa` SHALL need `graph` and consume the snapshot, scoped owner guidance, graph delta, environment contract, seed and fixture manifests, and journeys. It SHALL output `qa_findings`, `hypotheses`, `journey_outcomes`, `qa_recommendations`, `ux_assessment` and `evidence`. When enabled, `rio/verify` SHALL depend on QA. `rio/report` SHALL consume probe findings, journey outcomes, assessment coverage and recommendation records with verification status.
 
 #### Scenario: Full profile DAG
 - **WHEN** the `rio/qa` built-in profile is resolved
@@ -51,7 +51,7 @@ Selection SHALL be capped by `max_journeys`, keeping `smoke` journeys first, the
 - **THEN** the two smoke journeys and the one with the most matching files run, and the footer lists the three not run as `held_back`
 
 ### Requirement: Chains and cells
-Journeys MAY declare `after: [journey]` to run on the state left by those journeys; the plan SHALL group them into chains. The unit of execution SHALL be one chain in one cell (viewport and color scheme): the seed snapshot is restored, the chain's journeys run in order in a fresh browser context, mobile cells first. Journeys with `resets: true` SHALL be chain heads.
+Journeys declaring `after` SHALL share their predecessors’ state. Execution SHALL use chain × cell units: restore the seed once, create a fresh browser context, and run the chain in order, with mobile cells first. `resets: true` journeys SHALL be chain heads. Validation SHALL reject dependents whose viewport sets are not subsets of every prerequisite’s set; valid chains SHALL honor all overrides.
 
 #### Scenario: Registration in every cell
 - **WHEN** `account-registration` declares `resets: true` and the matrix has two viewports and two schemes
@@ -60,6 +60,13 @@ Journeys MAY declare `after: [journey]` to run on the state left by those journe
 #### Scenario: Shared state in order
 - **WHEN** `checkout` declares `after: [add-to-cart]`
 - **THEN** in each cell `add-to-cart` runs first and `checkout` sees the cart it created
+
+### Requirement: Chain clock execution
+Every journey in a chain SHALL resolve to the same fixed instant or all use live time, validated before startup. The chain time SHALL be passed to app startup and the browser, without restarting the app between dependent journeys.
+
+#### Scenario: Clock and state survive checkout dependency
+- **WHEN** checkout follows add-to-cart with equivalent effective fixed times
+- **THEN** one app startup supplies that instant to app and browser, and checkout retains both the server cart and browser cookies
 
 ### Requirement: Every journey runs across the matrix
 Each selected journey SHALL run in every cell of its resolved matrix. A journey SHALL be `passed` only when it passed in every cell; a pass in `desktop` with a failure in `mobile` SHALL be `failed` with the mobile step named. The exploratory pass SHALL visit each derived route in every cell of the default matrix.
@@ -113,7 +120,7 @@ Each selected journey SHALL end `passed`, `failed`, `skipped` (reason `missing_c
 - **THEN** the cell is `cancelled` with reason `budget`, steps 1 and 2 keep their evidence, and later cells still run within the run budget
 
 ### Requirement: Hypotheses from observations
-The agent SHALL report observations as hypotheses with `rule_id`, kind (`functional`, `ux`, `style`, `accessibility`), journey, step, cell, route, structured `expected` and `observed` fields, the evidence references supporting it, and a suggested fix. Hypotheses without at least one evidence reference SHALL be dropped and counted in the footer. Hypotheses SHALL pass through `rio/verify` before reporting.
+The agent SHALL report claimed violations as hypotheses with `rule_id`, kind (`functional`, `ux`, `style`, `accessibility`), journey, step, cell, route, structured `expected` and `observed` fields, the evidence references supporting it, and a suggested fix. Hypotheses without at least one evidence reference SHALL be dropped and counted in the footer. Hypotheses SHALL pass through `rio/verify` before reporting.
 
 #### Scenario: Unsupported observation dropped
 - **WHEN** the agent reports that a tooltip is confusing without referencing a screenshot
@@ -166,3 +173,58 @@ QA SHALL NOT run for fork PRs; the step SHALL be skipped with reason `fork` and 
 #### Scenario: Fork PR
 - **WHEN** a QA-enabled profile reviews a fork PR
 - **THEN** the step is skipped with reason `fork` and no pod is started
+
+### Requirement: QA consumes scoped owner guidance
+QA authoring, execution and verification SHALL consume immutable `owner_guidance` with path/hash/line citations under owner-guidance data and permission boundaries. Scope SHALL cover selected journeys' source files and mapped routes, including unchanged files in full and explicit runs. Authoring and exploration SHALL resolve scope from visited route mappings. Unknown scope SHALL use root guidance; unrelated nested guidance SHALL be excluded.
+
+#### Scenario: Full run includes unchanged guidance
+- **WHEN** an explicit checkout journey covers unchanged checkout source with a nested `REVIEW.md`
+- **THEN** the QA agent and voters receive root and checkout guidance from the selected snapshot with citations, even when the diff is empty, and receive no unrelated admin guidance
+
+#### Scenario: Guidance stays immutable
+- **WHEN** the working tree's `REVIEW.md` changes after the snapshot was captured
+- **THEN** authoring, execution and verification for that run use the captured version
+
+#### Scenario: First generation has no journey coverage
+- **WHEN** init explores checkout before any journey file exists and its route maps to source beneath a nested `REVIEW.md`
+- **THEN** the author receives that scoped guidance before deriving checkout expectations from the running app
+
+#### Scenario: Repository has no owner guidance
+- **WHEN** no applicable guidance exists for a selected journey
+- **THEN** QA uses the committed journey and built-in UX rubric, records the absence of guidance, and does not invent project requirements
+
+### Requirement: Resolve product expectations explicitly
+Applicable `REVIEW.md` requirements SHALL steer personas, goals, expectations and UX assessment. Explicit project requirements SHALL take precedence over generic heuristic preferences. More specific scoped guidance SHALL refine ancestor guidance; incompatible requirements or journey expectations SHALL be reported with citations as unresolved expectations, without silently rewriting journeys or asserting a product defect from the conflict alone.
+
+#### Scenario: Guidance contradicts an old journey
+- **WHEN** checkout guidance requires guest checkout but a committed journey requires account creation
+- **THEN** QA reports both sources and the observed behavior, proposes journey reconciliation, and does not treat the old journey as the sole UX oracle
+
+#### Scenario: Guidance cannot change runtime policy
+- **WHEN** a guidance line asks QA to publish automatically, disable verification or increase its budget
+- **THEN** it cannot change tools, budgets, suppressions, fail policy or publishing permissions
+
+### Requirement: Guidance changes select affected journeys
+Changed-mode selection SHALL include journeys whose applicable owner guidance changed, including deletion, with reason `guidance` and the changed path. Scope SHALL be resolved against base and head so deleted guidance still selects affected journeys. Selection caps and held-back reporting SHALL remain applicable.
+
+#### Scenario: UX requirement changes alone
+- **WHEN** only checkout's `REVIEW.md` changes and checkout is not a smoke journey
+- **THEN** checkout is selected with reason `guidance`, or explicitly reported as held back by the cap
+
+### Requirement: Assess usability of completed journeys
+QA SHALL assess the applicable UX rubric during selected journeys, including passed journeys, within existing run budgets. It SHALL record each criterion as assessed, not applicable with reason, or not assessed with reason. Missing UX assessment SHALL be visible as incomplete assessment coverage and SHALL NOT turn a successful functional journey into a failure.
+
+#### Scenario: Successful but cumbersome checkout
+- **WHEN** checkout succeeds but asks the shopper to re-enter the same address without an applicable product requirement
+- **THEN** QA records the repeated entry with step evidence and evaluates an improvement recommendation despite the passed journey
+
+#### Scenario: Assessment budget expires
+- **WHEN** the run budget expires before recovery behavior can be assessed
+- **THEN** that criterion is reported as not assessed due to budget rather than as satisfactory
+
+### Requirement: Recommendation output
+QA SHALL emit recommendation candidates separately from defect hypotheses. Each SHALL include a stable id, rule, persona, goal, journey, steps, cells, structured friction target, observed friction, artifact references, cited guidance or heuristic, proposed improvement, expected benefit, trade-offs, priority and confidence. Evidence-free or generic advice SHALL be dropped with a counted reason. Candidates SHALL undergo the recommendation verification contract.
+
+#### Scenario: Grounded recommendation
+- **WHEN** a passed checkout requires duplicate address entry in two recorded steps
+- **THEN** a candidate cites both steps, proposes reusing the address with an edit option, explains reduced effort and the risk of assuming identical addresses, and labels the benefit as expected

@@ -1,0 +1,456 @@
+{
+  "finding_id": "e85c655151c99638cb200cbb4202267826084fdf6e57a043dbb64c929fc59711",
+  "snapshot": "snapshot:97524498c3842451c3043e511e76ed5d42da887a197c7d907eb5c4f4a2c1f034",
+  "hosted": {
+    "endpoint_review": "5f51198a-ac1e-4b7a-b188-ecbdbfe287f4",
+    "report_status": "incomplete",
+    "review": {
+      "base": "f32718dc54fa5d833fb1810ab2c33254442547d3",
+      "chain": [
+        "rio/qa",
+        "rio/base"
+      ],
+      "head": "snapshot:97524498c3842451c3043e511e76ed5d42da887a197c7d907eb5c4f4a2c1f034",
+      "id": "939ac93bcddfd7b4",
+      "mode": "working-tree",
+      "profile": "rio/qa",
+      "rio_version": "0.2.0",
+      "run_id": "01M70C07YVAH7T1AN5FBVTC16S"
+    },
+    "evidence_level": "reproduced",
+    "occurrences": [
+      {
+        "cell": {
+          "color_scheme": "light",
+          "viewport": "mobile"
+        },
+        "evidence": [
+          "1e13e2966d3708b758867c25e99709c66befc0156e54ad478f9080b766876a54",
+          "5b68f61da3631fe005f6cb1a12fc61c4c538d8d803205913a2233a1635ad3bda",
+          "92d5cfe9fc43c88b783fda01e13cc2e3280f0309b068832f5c338de7b27df3ff",
+          "b0919400f80d7ec8da5520345689cc7d98a003f13d6285ed7bbe1a51b12148aa",
+          "c2cde355a51cfea972736f83d0c3ed274da9efe5ede5e6dbdca148d708f8a7f2",
+          "cc2b75acc346fbcb0c5a5a9eabd6502a63c89402a01acbb8a4a3adb24690083c",
+          "da53c79c5b9114e21479396251e5674857fafbb0035a6d1f28cbbfb7cb3dd00c"
+        ],
+        "line_end": 26,
+        "line_start": 26,
+        "occurrence_state": "unclassified",
+        "path": ".rio/qa/journeys/checkout.yaml",
+        "symbol_path": ""
+      },
+      {
+        "cell": {
+          "color_scheme": "light",
+          "viewport": "desktop"
+        },
+        "evidence": [
+          "02a0e31dc3f6c55c73cdec33eed69bbeabccd1dcc286bb1c662c2ff8e062cec7",
+          "1ba1126a7b2740c5bc3197f47118d77464302f554e0c73618a492ec551a7acbf",
+          "1fb02ff7fb3a0d972eba425707367fc7f89505d29bf186874af4f5a0947fec1f",
+          "8c708eb528f26049170260170f9732cdc000684fa91b4dfe2e532fe56032bd04",
+          "967910ef802af55c96d1066e04ef27716d5c91f480fb554f8a1142c582fa04cd",
+          "aec0ef81cf9d90710d1e3b384a12e2c5adb059eb726da266137547ad36aadba1",
+          "e2963473729ea875d9e650848292676aba2fe77625c81ad28e05c0aa9454ff70"
+        ],
+        "line_end": 26,
+        "line_start": 26,
+        "occurrence_state": "unclassified",
+        "path": ".rio/qa/journeys/checkout.yaml",
+        "symbol_path": ""
+      }
+    ],
+    "qa_cost": {
+      "tokens": 587623,
+      "usd": null,
+      "wall_time_ms": 579549
+    },
+    "votes": [
+      {
+        "id": "e85c655151c99638cb200cbb4202267826084fdf6e57a043dbb64c929fc59711",
+        "cell": {
+          "color_scheme": "light",
+          "viewport": "mobile"
+        },
+        "version": "head",
+        "finding": {
+          "category": "ux",
+          "evidence": [
+            "1e13e2966d3708b758867c25e99709c66befc0156e54ad478f9080b766876a54",
+            "5b68f61da3631fe005f6cb1a12fc61c4c538d8d803205913a2233a1635ad3bda",
+            "92d5cfe9fc43c88b783fda01e13cc2e3280f0309b068832f5c338de7b27df3ff",
+            "b0919400f80d7ec8da5520345689cc7d98a003f13d6285ed7bbe1a51b12148aa",
+            "c2cde355a51cfea972736f83d0c3ed274da9efe5ede5e6dbdca148d708f8a7f2",
+            "cc2b75acc346fbcb0c5a5a9eabd6502a63c89402a01acbb8a4a3adb24690083c",
+            "da53c79c5b9114e21479396251e5674857fafbb0035a6d1f28cbbfb7cb3dd00c"
+          ],
+          "evidence_level": "reproduced",
+          "id": "e85c655151c99638cb200cbb4202267826084fdf6e57a043dbb64c929fc59711",
+          "location": {
+            "line_end": 26,
+            "line_start": 26,
+            "occurrence_state": "unclassified",
+            "path": ".rio/qa/journeys/checkout.yaml",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "cell": {
+                "color_scheme": "light",
+                "viewport": "mobile"
+              },
+              "evidence": [
+                "1e13e2966d3708b758867c25e99709c66befc0156e54ad478f9080b766876a54",
+                "5b68f61da3631fe005f6cb1a12fc61c4c538d8d803205913a2233a1635ad3bda",
+                "92d5cfe9fc43c88b783fda01e13cc2e3280f0309b068832f5c338de7b27df3ff",
+                "b0919400f80d7ec8da5520345689cc7d98a003f13d6285ed7bbe1a51b12148aa",
+                "c2cde355a51cfea972736f83d0c3ed274da9efe5ede5e6dbdca148d708f8a7f2",
+                "cc2b75acc346fbcb0c5a5a9eabd6502a63c89402a01acbb8a4a3adb24690083c",
+                "da53c79c5b9114e21479396251e5674857fafbb0035a6d1f28cbbfb7cb3dd00c"
+              ],
+              "line_end": 26,
+              "line_start": 26,
+              "occurrence_state": "unclassified",
+              "path": ".rio/qa/journeys/checkout.yaml",
+              "symbol_path": ""
+            }
+          ],
+          "message": "ui/no-feedback: expected {\"step\":2,\"result\":\"Visible order confirmation and empty cart after successful payment; actionable error if payment fails.\",\"guidance\":\"REVIEW.md lines 5\u20136 require clear confirmation after payment and actionable payment errors.\"}; observed {\"result\":\"Pay $24.00 removes the checkout form and leaves an empty Order result region, with no confirmation or error after a 10-second wait.\",\"cart_indicator\":\"Cart (1)\",\"dependencies\":\"No recorded unavailable external hosts.\"}",
+          "qa": {
+            "attribution": "journey",
+            "element_paths": [
+              "[role='region'][aria-label='Order result']",
+              "main"
+            ],
+            "journey": "checkout",
+            "kind": "ux",
+            "route": "/checkout",
+            "step": 2
+          },
+          "rule_id": "ui/no-feedback",
+          "severity": "warning",
+          "source": {
+            "agent": "qa"
+          },
+          "state": "unclassified",
+          "suggested_fix": "Render a clear payment outcome; on success show confirmation and update the cart, and on failure retain details and cart with actionable retry and cancellation controls.",
+          "trigger": "Expected {\"guidance\":\"REVIEW.md lines 5\u20136 require clear confirmation after payment and actionable payment errors.\",\"result\":\"Visible order confirmation and empty cart after successful payment; actionable error if payment fails.\",\"step\":2}; observed {\"cart_indicator\":\"Cart (1)\",\"dependencies\":\"No recorded unavailable external hosts.\",\"result\":\"Pay $24.00 removes the checkout form and leaves an empty Order result region, with no confirmation or error after a 10-second wait.\"}",
+          "verification": {
+            "voters": 3,
+            "agreeing": 3,
+            "blind_match": [
+              "same",
+              "same",
+              "same"
+            ],
+            "split": false
+          }
+        },
+        "votes": [
+          {
+            "voter": 0,
+            "status": "completed",
+            "blind": [
+              {
+                "rule_id": "ui/no-feedback",
+                "journey": "checkout",
+                "step": 2,
+                "route": "/checkout"
+              }
+            ],
+            "blind_match": "same",
+            "answer": {
+              "evidence_level": "reproduced",
+              "evidence": [
+                {
+                  "kind": "browser",
+                  "ids": [
+                    "1e13e2966d3708b758867c25e99709c66befc0156e54ad478f9080b766876a54",
+                    "92d5cfe9fc43c88b783fda01e13cc2e3280f0309b068832f5c338de7b27df3ff",
+                    "5b68f61da3631fe005f6cb1a12fc61c4c538d8d803205913a2233a1635ad3bda",
+                    "c2cde355a51cfea972736f83d0c3ed274da9efe5ede5e6dbdca148d708f8a7f2"
+                  ],
+                  "demonstrates": "regression"
+                }
+              ],
+              "rationale": "The original mobile/light interaction records clicking Pay and waiting 10 seconds for \u201cOrder confirmed.\u201d The checkout request returns HTTP 201 with order 1 and confirmation false. The step-2 screenshot shows no payment outcome, and its DOM contains an empty Order result section and empty status region. This reproduces the missing-feedback finding for the same trigger and cell. Cart (1) remains displayed, but the evidence does not establish the underlying post-payment cart contents or behavior on payment failure."
+            },
+            "validated_level": "reproduced"
+          },
+          {
+            "voter": 1,
+            "status": "completed",
+            "blind": [
+              {
+                "rule_id": "ui/no-feedback",
+                "journey": "checkout",
+                "step": 2,
+                "route": "/checkout"
+              }
+            ],
+            "blind_match": "same",
+            "answer": {
+              "evidence_level": "reproduced",
+              "evidence": [
+                {
+                  "kind": "browser",
+                  "ids": [
+                    "1e13e2966d3708b758867c25e99709c66befc0156e54ad478f9080b766876a54",
+                    "92d5cfe9fc43c88b783fda01e13cc2e3280f0309b068832f5c338de7b27df3ff",
+                    "5b68f61da3631fe005f6cb1a12fc61c4c538d8d803205913a2233a1635ad3bda",
+                    "c2cde355a51cfea972736f83d0c3ed274da9efe5ede5e6dbdca148d708f8a7f2"
+                  ],
+                  "demonstrates": "regression"
+                }
+              ],
+              "rationale": "The original mobile/light checkout interaction clicks Pay and waits 10 seconds for \u201cOrder confirmed.\u201d The resulting screenshot shows no payment outcome, and the DOM contains an empty Order result section and empty status region. The checkout request returned HTTP 201 with order 1 and confirmation:false. This reproduces missing feedback after payment, contrary to REVIEW.md lines 5\u20136. Cart (1) remains displayed, but the evidence does not establish whether underlying cart contents were cleared. No payment-failure recovery behavior was exercised."
+            },
+            "validated_level": "reproduced"
+          },
+          {
+            "voter": 2,
+            "status": "completed",
+            "blind": [
+              {
+                "rule_id": "ui/no-feedback",
+                "journey": "checkout",
+                "step": 2,
+                "route": "/checkout"
+              }
+            ],
+            "blind_match": "same",
+            "answer": {
+              "evidence_level": "reproduced",
+              "evidence": [
+                {
+                  "kind": "browser",
+                  "ids": [
+                    "1e13e2966d3708b758867c25e99709c66befc0156e54ad478f9080b766876a54",
+                    "92d5cfe9fc43c88b783fda01e13cc2e3280f0309b068832f5c338de7b27df3ff",
+                    "5b68f61da3631fe005f6cb1a12fc61c4c538d8d803205913a2233a1635ad3bda",
+                    "c2cde355a51cfea972736f83d0c3ed274da9efe5ede5e6dbdca148d708f8a7f2"
+                  ],
+                  "demonstrates": "regression"
+                }
+              ],
+              "rationale": "The original mobile/light checkout sequence clicks Pay and waits up to 10 seconds for Order confirmed. The captured step-2 screenshot shows no payment outcome, and its DOM contains an empty Order result section and empty status region. The checkout request returned HTTP 201 with order 1 and confirmation:false, yet no confirmation or error was displayed. This reproduces ui/no-feedback for the same trigger and cell. Cart (1) remains displayed, but the evidence does not establish whether the underlying cart was emptied."
+            },
+            "validated_level": "reproduced"
+          }
+        ],
+        "incomplete": false
+      },
+      {
+        "id": "e85c655151c99638cb200cbb4202267826084fdf6e57a043dbb64c929fc59711",
+        "cell": {
+          "color_scheme": "light",
+          "viewport": "desktop"
+        },
+        "version": "head",
+        "finding": {
+          "category": "ux",
+          "evidence": [
+            "02a0e31dc3f6c55c73cdec33eed69bbeabccd1dcc286bb1c662c2ff8e062cec7",
+            "1ba1126a7b2740c5bc3197f47118d77464302f554e0c73618a492ec551a7acbf",
+            "1fb02ff7fb3a0d972eba425707367fc7f89505d29bf186874af4f5a0947fec1f",
+            "8c708eb528f26049170260170f9732cdc000684fa91b4dfe2e532fe56032bd04",
+            "967910ef802af55c96d1066e04ef27716d5c91f480fb554f8a1142c582fa04cd",
+            "aec0ef81cf9d90710d1e3b384a12e2c5adb059eb726da266137547ad36aadba1",
+            "e2963473729ea875d9e650848292676aba2fe77625c81ad28e05c0aa9454ff70"
+          ],
+          "evidence_level": "reproduced",
+          "id": "e85c655151c99638cb200cbb4202267826084fdf6e57a043dbb64c929fc59711",
+          "location": {
+            "line_end": 26,
+            "line_start": 26,
+            "occurrence_state": "unclassified",
+            "path": ".rio/qa/journeys/checkout.yaml",
+            "symbol_path": ""
+          },
+          "locations": [
+            {
+              "cell": {
+                "color_scheme": "light",
+                "viewport": "desktop"
+              },
+              "evidence": [
+                "02a0e31dc3f6c55c73cdec33eed69bbeabccd1dcc286bb1c662c2ff8e062cec7",
+                "1ba1126a7b2740c5bc3197f47118d77464302f554e0c73618a492ec551a7acbf",
+                "1fb02ff7fb3a0d972eba425707367fc7f89505d29bf186874af4f5a0947fec1f",
+                "8c708eb528f26049170260170f9732cdc000684fa91b4dfe2e532fe56032bd04",
+                "967910ef802af55c96d1066e04ef27716d5c91f480fb554f8a1142c582fa04cd",
+                "aec0ef81cf9d90710d1e3b384a12e2c5adb059eb726da266137547ad36aadba1",
+                "e2963473729ea875d9e650848292676aba2fe77625c81ad28e05c0aa9454ff70"
+              ],
+              "line_end": 26,
+              "line_start": 26,
+              "occurrence_state": "unclassified",
+              "path": ".rio/qa/journeys/checkout.yaml",
+              "symbol_path": ""
+            }
+          ],
+          "message": "ui/no-feedback: expected {\"step\":2,\"confirmation\":\"Visible clear order confirmation after payment, per journey and REVIEW.md lines 5\u20136.\"}; observed {\"action\":\"Submitted Pay $24.00 and waited an additional 2 seconds.\",\"result\":\"Form disappeared, leaving empty Order result region and no confirmation, actionable error or pending message. Cart (1) remains visible.\"}",
+          "qa": {
+            "attribution": "journey",
+            "element_paths": [
+              "[role=region]",
+              "main"
+            ],
+            "journey": "checkout",
+            "kind": "ux",
+            "route": "/checkout",
+            "step": 2
+          },
+          "rule_id": "ui/no-feedback",
+          "severity": "warning",
+          "source": {
+            "agent": "qa"
+          },
+          "state": "unclassified",
+          "suggested_fix": "Render an understandable payment outcome in the Order result region; on success confirm the order and synchronize the emptied cart, and on failure preserve details and offer retry or return to cart.",
+          "trigger": "Expected {\"confirmation\":\"Visible clear order confirmation after payment, per journey and REVIEW.md lines 5\u20136.\",\"step\":2}; observed {\"action\":\"Submitted Pay $24.00 and waited an additional 2 seconds.\",\"result\":\"Form disappeared, leaving empty Order result region and no confirmation, actionable error or pending message. Cart (1) remains visible.\"}",
+          "verification": {
+            "voters": 3,
+            "agreeing": 3,
+            "blind_match": [
+              "same",
+              "same",
+              "same"
+            ],
+            "split": false
+          }
+        },
+        "votes": [
+          {
+            "voter": 0,
+            "status": "completed",
+            "blind": [
+              {
+                "rule_id": "ui/no-feedback",
+                "journey": "checkout",
+                "step": 2,
+                "route": "/checkout"
+              }
+            ],
+            "blind_match": "same",
+            "answer": {
+              "evidence_level": "reproduced",
+              "evidence": [
+                {
+                  "kind": "browser",
+                  "ids": [
+                    "e2963473729ea875d9e650848292676aba2fe77625c81ad28e05c0aa9454ff70",
+                    "1ba1126a7b2740c5bc3197f47118d77464302f554e0c73618a492ec551a7acbf",
+                    "02a0e31dc3f6c55c73cdec33eed69bbeabccd1dcc286bb1c662c2ff8e062cec7",
+                    "967910ef802af55c96d1066e04ef27716d5c91f480fb554f8a1142c582fa04cd"
+                  ],
+                  "demonstrates": "regression"
+                }
+              ],
+              "rationale": "The original desktop/light checkout sequence records clicking Pay and waiting 2 seconds. The payment request returns HTTP 201 with order 1, but the step-2 screenshot shows no payment outcome, and its DOM contains an empty Order result section and empty status region. This reproduces the missing-feedback hypothesis for the same trigger and cell and contradicts the required clear confirmation after payment. The visible Cart (1) label does not independently establish the underlying cart contents."
+            },
+            "validated_level": "reproduced"
+          },
+          {
+            "voter": 1,
+            "status": "completed",
+            "blind": [
+              {
+                "rule_id": "ui/no-feedback",
+                "journey": "checkout",
+                "step": 2,
+                "route": "/checkout"
+              }
+            ],
+            "blind_match": "same",
+            "answer": {
+              "evidence_level": "reproduced",
+              "evidence": [
+                {
+                  "kind": "browser",
+                  "ids": [
+                    "e2963473729ea875d9e650848292676aba2fe77625c81ad28e05c0aa9454ff70",
+                    "1ba1126a7b2740c5bc3197f47118d77464302f554e0c73618a492ec551a7acbf",
+                    "02a0e31dc3f6c55c73cdec33eed69bbeabccd1dcc286bb1c662c2ff8e062cec7"
+                  ],
+                  "demonstrates": "regression"
+                },
+                {
+                  "kind": "browser",
+                  "ids": [
+                    "967910ef802af55c96d1066e04ef27716d5c91f480fb554f8a1142c582fa04cd"
+                  ],
+                  "demonstrates": "regression"
+                }
+              ],
+              "rationale": "The original desktop/light checkout sequence records clicking Pay and waiting 2 seconds. Step 2's screenshot shows no payment outcome, and its DOM contains an empty Order result section and empty status region. The checkout POST returned HTTP 201 with order 1 and confirmation false, but no confirmation, error, or pending message was rendered. This reproduces ui/no-feedback for the same trigger and cell and conflicts with the journey expectation and REVIEW.md requirement for clear confirmation after payment."
+            },
+            "validated_level": "reproduced"
+          },
+          {
+            "voter": 2,
+            "status": "completed",
+            "blind": [
+              {
+                "rule_id": "ui/no-feedback",
+                "journey": "checkout",
+                "step": 2,
+                "route": "/checkout"
+              }
+            ],
+            "blind_match": "same",
+            "answer": {
+              "evidence_level": "reproduced",
+              "evidence": [
+                {
+                  "kind": "browser",
+                  "ids": [
+                    "e2963473729ea875d9e650848292676aba2fe77625c81ad28e05c0aa9454ff70",
+                    "1ba1126a7b2740c5bc3197f47118d77464302f554e0c73618a492ec551a7acbf",
+                    "02a0e31dc3f6c55c73cdec33eed69bbeabccd1dcc286bb1c662c2ff8e062cec7",
+                    "967910ef802af55c96d1066e04ef27716d5c91f480fb554f8a1142c582fa04cd"
+                  ],
+                  "demonstrates": "regression"
+                }
+              ],
+              "rationale": "In the original desktop/light checkout sequence, the shopper clicked Pay and waited 2 seconds. The checkout POST returned HTTP 201 with order 1, but the step-2 screenshot shows no payment outcome, and the DOM contains an empty Order result section and empty status region. This reproduces missing feedback for the same trigger and cell, contrary to the required visible confirmation. The visible Cart (1) label does not independently establish the underlying cart contents."
+            },
+            "validated_level": "reproduced"
+          }
+        ],
+        "incomplete": false
+      }
+    ],
+    "voter_tokens": {
+      "qa-head-e85c655151c99638cb200cbb4202267826084fdf6e57a043dbb64c929fc59711-mobile-light-2": 31316,
+      "qa-head-e85c655151c99638cb200cbb4202267826084fdf6e57a043dbb64c929fc59711-mobile-light-1": 31333,
+      "qa-head-e85c655151c99638cb200cbb4202267826084fdf6e57a043dbb64c929fc59711-mobile-light-0": 31363,
+      "qa-head-e85c655151c99638cb200cbb4202267826084fdf6e57a043dbb64c929fc59711-desktop-light-0": 23127,
+      "qa-head-e85c655151c99638cb200cbb4202267826084fdf6e57a043dbb64c929fc59711-desktop-light-2": 23159,
+      "qa-head-e85c655151c99638cb200cbb4202267826084fdf6e57a043dbb64c929fc59711-desktop-light-1": 23161
+    }
+  },
+  "local": {
+    "report_status": "complete",
+    "review": {
+      "base": "f32718dc54fa5d833fb1810ab2c33254442547d3",
+      "chain": [
+        "rio/qa",
+        "rio/base"
+      ],
+      "head": "snapshot:97524498c3842451c3043e511e76ed5d42da887a197c7d907eb5c4f4a2c1f034",
+      "id": "309cf208e0729ae9",
+      "mode": "working-tree",
+      "profile": "rio/qa",
+      "rio_version": "0.1.0",
+      "run_id": "01M709S7NR6NYPHC43TJHX6WGX"
+    },
+    "observations_unverified": 2,
+    "qa_cost": {
+      "tokens": 416276,
+      "usd": null,
+      "wall_time_ms": 630872
+    }
+  },
+  "limits": "Local observations are unverified. Hosted verification proves the recorded failure, not a proposed UX benefit. Dollar pricing was unavailable."
+}

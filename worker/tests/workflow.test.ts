@@ -301,7 +301,11 @@ it("resumes an isolated runner job using an attempt-specific event", async () =>
   ).toBe("complete");
   // Runner graphs are summarized in the audit, never copied.
   const audit = (await (
-    await app.request(`https://rio/v1/reviews/${id}/audit`, { headers }, runtime)
+    await app.request(
+      `https://rio/v1/reviews/${id}/audit`,
+      { headers },
+      runtime,
+    )
   ).json()) as any;
   const report = await store.get<any>(
     (
@@ -313,7 +317,9 @@ it("resumes an isolated runner job using an attempt-specific event", async () =>
   expect(report.status).toBe("complete");
   expect(
     report.footer.notes.some((n: string) =>
-      /^checks: runner attempt 1 failed \(runner backend: Network connection lost\); retried$/.test(n),
+      /^checks: runner attempt 1 failed \(runner backend: Network connection lost\); retried$/.test(
+        n,
+      ),
     ),
   ).toBe(true);
   // Both attempts are kept as completed jobs; only the second carries the artifact.
@@ -530,3 +536,493 @@ it.each(["cancelled", "invalid-triage"])(
   },
   60000,
 );
+
+it.each([false, true])(
+  "dispatches QA and retains neutral recommendations (baseline=%s)",
+  async (baseline) => {
+    const store = new Store(runtime),
+      id = crypto.randomUUID(),
+      s = submission();
+    s.profile.steps = [
+      {
+        id: "qa",
+        uses: "rio/qa@0.1.0",
+        needs: [],
+        with: { enabled: true, baseline },
+      },
+      { id: "verify", uses: "rio/verify@0.1.0", needs: ["qa"], with: {} },
+      {
+        id: "report",
+        uses: "rio/report@0.1.0",
+        needs: ["qa", "verify"],
+        with: {},
+      },
+    ];
+    if (!baseline) {
+      s.profile.qa_standalone = true;
+      s.profile.steps.unshift(
+        { id: "checks", uses: "rio/checks@0.1.0", needs: [], with: {} },
+        { id: "agents", uses: "rio/agents@0.1.0", needs: ["checks"], with: {} },
+      );
+      s.profile.steps
+        .find((step) => step.id === "verify")!
+        .needs.push("agents");
+    }
+    const stored = await storeSnapshot(runtime, snapshot);
+    s.snapshot_id = stored.id;
+    const submissionKey = await store.put(`reviews/${id}/submission.json`, s);
+    await runtime.DB.prepare(
+      "INSERT INTO reviews(id,tenant,submission_key,status,created_at,token_limit,deadline) VALUES(?,?,?,'queued',?,?,?)",
+    )
+      .bind(id, "owner", submissionKey, Date.now(), 100000, Date.now() + 240000)
+      .run();
+    await using instance = await introspectWorkflowInstance(
+      runtime.REVIEWS,
+      id,
+    );
+    await runtime.REVIEWS.create({
+      id,
+      params: { review_id: id, snapshot_key: stored.key },
+    });
+    const job = hash(`${id}-qa-qa-head`).slice(0, 32);
+    await instance.waitForStepResult({ name: `dispatch-${job}` });
+    const cell = { viewport: "mobile", color_scheme: "light" };
+    const recommendation = {
+      id: "candidate",
+      rule_id: "ux/task-efficiency",
+      persona: "shopper",
+      goal: "Complete checkout",
+      journey: "checkout",
+      steps: [1],
+      cells: [cell],
+      route_pattern: "/checkout",
+      friction_target: { kind: "duplicate-entry", target: "address" },
+      observed_friction: "The form asks for the same address twice.",
+      evidence: ["screenshot"],
+      basis: {
+        heuristic: {
+          source: "Nielsen",
+          version: "1994",
+          reference: "Efficiency",
+        },
+      },
+      proposed_improvement: "Offer address reuse.",
+      expected_benefit: "May reduce typing; untested.",
+      trade_offs: ["Addresses may differ."],
+      priority: "medium",
+      confidence: "high",
+      verification_status: "unverified",
+      rationale: "Verification pending.",
+    };
+    await finishJob(runtime, id, job, 1, {
+      outcome: "exited",
+      job_id: job,
+      attempt: 1,
+      version: "head",
+      exit_code: 0,
+      stdout: "",
+      stderr: "",
+      timed_out: false,
+      truncated: false,
+      artifact: {
+        outcome: "complete",
+        harness: "codex",
+        harness_auth: "gateway",
+        policy: { app_isolation: "container" },
+        plan: {
+          selected: { checkout: ["guidance: REVIEW.md"] },
+          cell_count: 1,
+        },
+        journey_outcomes: [
+          {
+            journey: "checkout",
+            cell,
+            outcome: "passed",
+            steps: [{ step: 1 }],
+            evidence: ["screenshot"],
+          },
+        ],
+        qa_recommendations: [recommendation],
+        ux_assessment: [
+          {
+            rule_id: "ux/error-recovery",
+            journey: "checkout",
+            cell,
+            status: "not_assessed",
+            reason: "budget",
+            evidence: [],
+          },
+        ],
+        hypotheses: [],
+        findings: [],
+        evidence: { bytes: 100, artifacts: [] },
+        seed: { status: "restored", duration_ms: 1 },
+        tokens: 10,
+        wall_time_ms: 100,
+      },
+    });
+    if (baseline) {
+      const baseJob = hash(`${id}-qa-qa-base`).slice(0, 32);
+      await instance.waitForStepResult({ name: `dispatch-${baseJob}` });
+      const runs = (
+        await runtime.DB.prepare(
+          "SELECT version,deadline FROM qa_runs WHERE review_id=? ORDER BY version",
+        )
+          .bind(id)
+          .all<any>()
+      ).results;
+      expect(runs).toHaveLength(2);
+      expect(runs[0].deadline).toBe(runs[1].deadline);
+      expect(runs.map((row) => row.version)).toEqual(["base", "head"]);
+      await finishJob(runtime, id, baseJob, 1, {
+        outcome: "exited",
+        job_id: baseJob,
+        attempt: 1,
+        version: "base",
+        exit_code: 0,
+        stdout: "",
+        stderr: "",
+        timed_out: false,
+        truncated: false,
+        artifact: {
+          outcome: "complete",
+          journey_outcomes: [],
+          findings: [],
+          evidence: { bytes: 20, artifacts: [] },
+          tokens: 5,
+          wall_time_ms: 50,
+        },
+      });
+    }
+    await instance.waitForStatus("complete");
+    const row = await runtime.DB.prepare(
+      "SELECT report_key FROM reviews WHERE id=?",
+    )
+      .bind(id)
+      .first<any>();
+    const report = await store.get<any>(row.report_key);
+    expect(report.qa.journeys[0].outcome).toBe("passed");
+    expect(report.qa.recommendations[0].verification_status).toBe("unverified");
+    expect(report.qa.assessment[0].reason).toBe("budget");
+    expect(report.findings).toHaveLength(0);
+    expect(report.agent_audit.qa.policy_failed).toBe(false);
+    expect(report.agent_audit.qa_incomplete).toBe(false);
+    expect(await store.get(`reviews/${id}/qa/policy.json`)).toEqual(
+      report.agent_audit.qa,
+    );
+    expect(report.status).toBe("complete");
+    expect(report.qa.cost.wall_time_ms).toBe(baseline ? 150 : 100);
+    if (!baseline) {
+      expect(report.footer.notes).toContain("checks skipped: standalone");
+      expect(report.footer.notes).toContain("agents skipped: standalone");
+      expect(report.checks).toHaveLength(0);
+    }
+    if (baseline)
+      expect(
+        (await store.get<any>(`reviews/${id}/qa/baseline.json`)).outcome,
+      ).toBe("complete");
+
+    const recommendationAudit = await store.get<any[]>(
+      `reviews/${id}/qa/recommendations.json`,
+    );
+    expect(recommendationAudit[0].candidate.id).toBe(
+      (await import("../src/qa-recommendations")).recommendationId(
+        recommendation as any,
+      ),
+    );
+    expect(recommendationAudit[0].candidate.verification_status).toBe(
+      "unverified",
+    );
+    expect(
+      (
+        await runtime.DB.prepare(
+          "SELECT state,token_hash FROM qa_runs WHERE review_id=?",
+        )
+          .bind(id)
+          .first<any>()
+      ).token_hash,
+    ).toBeNull();
+  },
+  60000,
+);
+
+it("verifies stored QA browser artifacts and publishes only a separate supported recommendation in the report", async () => {
+  const fixture = (
+    await import("../../crates/rio-core/tests/qa-fixtures/report.json")
+  ).default;
+  const { canonical } = await import("../src/validation");
+  const { recommendationId } = await import("../src/qa-recommendations");
+  const store = new Store(runtime),
+    id = crypto.randomUUID(),
+    s = submission();
+  s.profile.budget.fast.tokens = 1000000;
+  s.profile.budget.fast.verify_tokens = 100000;
+  s.profile.steps = [
+    { id: "qa", uses: "rio/qa@0.1.0", needs: [], with: { enabled: true } },
+    { id: "verify", uses: "rio/verify@0.1.0", needs: ["qa"], with: {} },
+    {
+      id: "report",
+      uses: "rio/report@0.1.0",
+      needs: ["qa", "verify"],
+      with: {},
+    },
+  ];
+  const stored = await storeSnapshot(runtime, snapshot);
+  s.snapshot_id = stored.id;
+  const key = await store.put(`reviews/${id}/submission.json`, s);
+  await runtime.DB.prepare(
+    "INSERT INTO reviews(id,tenant,submission_key,status,created_at,token_limit,deadline) VALUES(?,?,?,'queued',?,?,?)",
+  )
+    .bind(id, "owner", key, Date.now(), 1000000, Date.now() + 240000)
+    .run();
+  const prompts: any[] = [];
+  const transport = vi
+    .spyOn(globalThis, "fetch")
+    .mockImplementation(async (_input, init) => {
+      const request = JSON.parse(init!.body as string);
+      prompts.push(request);
+      const text = request.messages.at(-1).content;
+      const result =
+        typeof text === "string" && text.includes("structured hypothesis")
+          ? {
+              evidence_level: "reproduced",
+              evidence: [
+                {
+                  kind: "browser",
+                  ids: ["shot", "dom", "trace"],
+                  demonstrates: "regression",
+                },
+              ],
+              rationale: "Original step shows the missing confirmation.",
+            }
+          : typeof text === "string" &&
+              text.includes("recommendation candidate")
+            ? {
+                verdict: "support",
+                evidence: ["dom"],
+                rationale:
+                  "Two address entry fields show the reported friction; reuse addresses it.",
+              }
+            : [];
+      return Response.json({
+        content: [{ type: "text", text: JSON.stringify({ result }) }],
+        usage: { input_tokens: 100, output_tokens: 100 },
+      });
+    });
+  try {
+    await using instance = await introspectWorkflowInstance(
+      runtime.REVIEWS,
+      id,
+    );
+    await runtime.REVIEWS.create({
+      id,
+      params: { review_id: id, snapshot_key: stored.key },
+    });
+    const job = hash(`${id}-qa-qa-head`).slice(0, 32);
+    await instance.waitForStepResult({ name: `dispatch-${job}` });
+    const run = await runtime.DB.prepare(
+      "SELECT id FROM qa_runs WHERE review_id=? AND version='head'",
+    )
+      .bind(id)
+      .first<any>();
+    const cell = { viewport: "mobile", color_scheme: "light" };
+    const png = Uint8Array.from(
+      atob(
+        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScLbtAAAAABJRU5ErkJggg==",
+      ),
+      (c) => c.charCodeAt(0),
+    );
+    const artifacts: any[] = [];
+    for (const [artifactId, kind, data] of [
+      ["shot", "screenshot", png],
+      [
+        "dom",
+        "dom",
+        new TextEncoder().encode(
+          '{"text":"No confirmation; enter address twice"}',
+        ),
+      ],
+      ["trace", "trace", new Uint8Array([1])],
+    ] as const) {
+      const { blake3 } = await import("@noble/hashes/blake3.js"),
+        { bytesToHex } = await import("@noble/hashes/utils.js");
+      const descriptor = {
+        id: artifactId,
+        kind,
+        journey: "checkout",
+        ...(kind === "trace" ? {} : { step: 1 }),
+        cell,
+        bytes: data.length,
+        content_hash: bytesToHex(blake3(data)),
+        sanitized: true,
+      };
+      const objectKey = `qa-test/${id}/${artifactId}`;
+      await runtime.ARTIFACTS.put(objectKey, data);
+      await runtime.DB.prepare(
+        "INSERT INTO qa_evidence(run_id,id,tenant,review_id,generation,object_key,descriptor,bytes,state,expires_at,created_at) VALUES(?,?, 'owner',?, 'test',?,?,?,'stored',?,?)",
+      )
+        .bind(
+          run.id,
+          artifactId,
+          id,
+          objectKey,
+          canonical(descriptor),
+          data.length,
+          Date.now() + 3600000,
+          Date.now(),
+        )
+        .run();
+      artifacts.push(descriptor);
+    }
+    const finding: any = {
+      ...structuredClone(fixture.findings[0]),
+      id: "d".repeat(64),
+      rule_id: "ui/no-feedback",
+      state: "new",
+      severity: "warning",
+      source: { agent: "qa" },
+      evidence: ["shot", "dom"],
+      qa: {
+        ...fixture.findings[0].qa,
+        journey: "checkout",
+        step: 1,
+        route: "/checkout",
+        attribution: "journey",
+      },
+    };
+    finding.locations = [
+      {
+        ...finding.location,
+        cell,
+        evidence: ["shot", "dom"],
+        occurrence_state: "new",
+      },
+    ];
+    const criterion = {
+      id: "ux/task-efficiency",
+      source: {
+        title: "Nielsen",
+        version: "1994",
+        url: "https://example.test/efficiency",
+      },
+      applicability: "Repeated entry",
+      required_evidence: ["DOM"],
+    };
+    const recommendation: any = {
+      ...structuredClone(fixture.qa.recommendations[0]),
+      journey: "checkout",
+      rule_id: criterion.id,
+      steps: [1],
+      cells: [cell],
+      evidence: ["dom"],
+      basis: {
+        heuristic: {
+          source: "Nielsen",
+          version: "1994",
+          reference: criterion.source.url,
+        },
+      },
+    };
+    recommendation.id = recommendationId(recommendation);
+    const observation = {
+      rule_id: finding.rule_id,
+      kind: finding.qa.kind,
+      journey: "checkout",
+      step: 1,
+      cell,
+      route: "/checkout",
+      expected: { confirmation: true },
+      observed: { confirmation: false },
+      evidence: ["shot", "dom"],
+    };
+    await finishJob(runtime, id, job, 1, {
+      outcome: "exited",
+      job_id: job,
+      attempt: 1,
+      version: "head",
+      exit_code: 0,
+      stdout: "",
+      stderr: "",
+      timed_out: false,
+      truncated: false,
+      artifact: {
+        outcome: "complete",
+        harness: "codex",
+        harness_auth: "gateway",
+        policy: { app_isolation: "container" },
+        plan: { selected: { checkout: ["full"] }, cell_count: 1 },
+        journey_outcomes: [
+          {
+            journey: "checkout",
+            cell,
+            outcome: "failed",
+            failed_step: 1,
+            steps: [{ step: 1 }],
+            evidence: ["shot"],
+            verification_context: {
+              journey: {
+                name: "checkout",
+                persona: "shopper",
+                goal: "Buy",
+                steps: [{ do: "Pay", expect: "Confirmation" }],
+              },
+              guidance: [
+                {
+                  path: "REVIEW.md",
+                  scope_dir: "",
+                  content_hash: "a".repeat(64),
+                  lines: ["Show confirmation after checkout."],
+                },
+              ],
+              criteria: [criterion],
+            },
+          },
+        ],
+        hypotheses: [observation],
+        observation_candidates: [
+          {
+            finding,
+            expected: observation.expected,
+            observed: observation.observed,
+            cell,
+          },
+        ],
+        findings: [],
+        qa_recommendations: [recommendation],
+        ux_assessment: [],
+        evidence: { bytes: 100, artifacts },
+      },
+    });
+    await instance.waitForStatus("complete");
+    const row = await runtime.DB.prepare(
+      "SELECT report_key FROM reviews WHERE id=?",
+    )
+      .bind(id)
+      .first<any>();
+    const report = await store.get<any>(row.report_key);
+    expect(report.status).toBe("complete");
+    expect(report.findings[0].evidence_level).toBe("reproduced");
+    expect(report.findings[0].category).toBe("ux");
+    expect(report.qa.observations_unverified).toEqual([]);
+    expect(report.qa.recommendations[0].verification_status).toBe("supported");
+    expect(report.qa.recommendations[0].rationale).toContain(
+      "expected benefit remains untested",
+    );
+    expect(report.agent_audit.qa.policy_matches).toEqual([finding.id]);
+    expect(prompts).toHaveLength(12);
+    expect(
+      prompts.some(
+        (request) =>
+          Array.isArray(request.messages[0].content) &&
+          request.messages[0].content.some(
+            (block: any) => block.type === "image",
+          ),
+      ),
+    ).toBe(true);
+    expect(
+      (await store.get<any[]>(`reviews/${id}/qa/verification.json`))[0].votes,
+    ).toHaveLength(3);
+  } finally {
+    transport.mockRestore();
+  }
+}, 60000);

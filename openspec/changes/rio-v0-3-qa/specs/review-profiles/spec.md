@@ -10,7 +10,7 @@ The `with` schemas of the built-in steps SHALL define the review settings that t
 - `rio/agents`: `cache` (boolean, default `true`) controlling the agent result cache;
 - `rio/security`: `enabled` (default false in base), `posture`, `fail_on`, `max_defects`, and `catalog` with the security-step contract;
 - `rio/report`: `class_threshold` (integer, default 3, consumed by review convergence) and `proposal_threshold` (integer of at least 1, default 3, the dismissal count that yields a suppression proposal);
-- `rio/qa`: `enabled` (default false in base), `mode` (`changed` default, `full`), `harness` (`codex` default, `pi`), `baseline` (default false), `max_journeys` (default 12), `max_defects` (default 15), `viewports` (names from the contract, default all), `rules` (`disable[]`, `add[]`, `adopt[]`, merged over the contract), `sandbox` (`deny` default, `allow`) and `fail_on` with the same shape as the security policy, defaulting to category `ux` at evidence `plausible` for `new` and `worsened` findings of severity `warning` or above;
+- `rio/qa`: `enabled` (default false in base), `mode` (`changed` default, `full`), `harness` (`codex` default, `pi`), `baseline` (default false), `max_journeys` (default 12), `max_defects` (default 15), `max_recommendations` (default 5), `viewports` (names from the contract, default all), `rules` (`disable[]`, `add[]`, `adopt[]`, merged over the contract), `sandbox` (`deny` default, `allow`) and `fail_on` with the same shape as the security policy, defaulting to category `ux` at evidence `plausible` for `new` and `worsened` findings of severity `warning` or above;
 - `rio/triage`: explicit risk thresholds for sensitive-path globs, public-contract changes, dependency changes, missing coverage and graph fan-out.
 
 #### Scenario: Exclusion glob from the profile
@@ -94,3 +94,29 @@ A built-in profile `rio/qa` SHALL extend `rio/base`, enable `rio/qa` in `changed
 #### Scenario: Base makes no QA calls
 - **WHEN** `rio/base` is reviewed
 - **THEN** no pod is started for QA and no QA model call is made
+
+#### Scenario: Standalone selection remains explicit in the resolved run
+- **WHEN** `rio qa --journey checkout` uses an enabled QA profile
+- **THEN** resolved run metadata records `qa_standalone: true`, the QA step carries `journeys: [checkout]`, and local and hosted execution skip steps outside prepare, graph, QA, verify and report with reason `standalone`; verifier requirements and configured spending limits remain enforced
+
+### Requirement: Recommendation capacity and policy
+The QA step SHALL accept `max_recommendations` (non-negative integer, default 5) independently of `max_defects`. Recommendations SHALL NOT match `fail_on`, regardless of priority or verification status. Ranking SHALL use evidenced user impact, task criticality and confidence, with stable-id tie-breaking. Zero SHALL suppress recommendation presentation while retaining assessment coverage and held-back counts.
+
+#### Scenario: Defect cap does not hide UX recommendations
+- **WHEN** the defect cap is exhausted and two supported recommendations are within the recommendation cap
+- **THEN** both remain visible without changing the check conclusion
+
+#### Scenario: Supported recommendations receive presentation priority
+- **WHEN** supported and unverified or inconclusive candidates compete for the recommendation cap
+- **THEN** supported recommendations are selected first, remaining slots may show labeled candidates locally, rejected and dismissed candidates are excluded, and publishing includes only supported recommendations
+
+#### Scenario: Recommendation cap exhausted
+- **WHEN** seven supported recommendations exist and the cap is five
+- **THEN** five are shown in ranked order, two are counted as held back, and the full records remain in the run record
+
+### Requirement: QA profile verification budgets
+The `rio/qa` profile SHALL allocate 500 000 review tokens with 60 000 per verifier voter in fast mode and 1 000 000 review tokens with 120 000 per voter in deep mode. Both voter turns SHALL share that allowance and remain subject to the shared review ledger. User budget overrides SHALL remain supported.
+
+#### Scenario: Screenshot and guidance allowance
+- **WHEN** the built-in QA profile resolves without overrides
+- **THEN** its fast and deep verifier budgets use the explicit allowances above rather than the inherited text-only defaults

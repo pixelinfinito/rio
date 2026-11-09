@@ -400,3 +400,88 @@ RIO_TEST_DOCKER=1 python3 -m unittest discover -s worker/runner/tests -v
 
 These tests exercise authenticated claims, signed completions, cleanup, denied
 network/secret access, resource limits and the trusted graph/fork-static engine.
+
+## Browser QA on the Docker runner
+
+QA uses a separate paired image and a three-container pod. Provision the runner
+host with Docker, Python 3, OpenSSL and host `iptables` control, then build and
+check the image from this source checkout:
+
+```sh
+cargo build --locked -p rio-runner -p rio-cli
+docker build -f worker/Dockerfile.qa -t rio-qa:0.1.0 .
+target/debug/rio-runner qa --self-test
+target/debug/rio-runner qa --pod-self-test
+```
+
+Start the self-hosted runner using the command above, with `RIO_QA_IMAGE` selecting
+the QA image (default `rio-qa:0.1.0`). Supply `RIO_QA_CREDENTIALS_FILE`, if needed,
+as a private host JSON file containing only named synthetic persona credentials.
+The runner forwards only names declared by the environment contract; provider
+keys and the runner registration secret do not enter the application container.
+
+The app receives an immutable snapshot, datastore processes and service doubles.
+The browser receives Chromium and named fixture uploads. The controller receives
+the harness, restricted MCP tools, journeys, scoped owner guidance and run-scoped
+model/evidence/seed capabilities. It has no source checkout. Host firewall rules
+block app/browser internet access and restrict controller egress to the endpoint
+and approved upload hosts. Each run creates its own network and removes all pod
+resources after completion, timeout or interruption. The report records the
+actual isolation and egress policy.
+
+QA jobs renew their leases every 60 seconds and use the configured QA wall
+allocation rather than the ordinary two-minute tool timeout. Model requests are
+charged to both the cell allowance and the shared review ledger. Cancellation
+revokes model/storage access while allowing the runner to retain partial results
+for audit. Evidence and seed uploads are scoped to the run, with independent
+quotas and content hashes.
+
+Hosted evidence is private. Reports use expiring signed URLs for individual
+objects. `rio init` and `rio deploy` register the scheduled handler that deletes
+artifacts at each run's configured `evidence.retention_days` expiry. This uses
+Worker-bound storage permissions; it does not require bucket-management
+credentials. `rio qa evidence prune --review REVIEW_ID` requests early removal
+and revokes download links. Seed snapshots have their own leased pruning protocol.
+
+A Sandbox-only deployment defers QA as `no_runtime` unless the step explicitly
+sets `sandbox: allow`. With opt-in, the configured deployment image can run
+static files or vendored Node/Python apps whose dependencies and required tools
+are already supplied in the image or snapshot. Rio installs nothing during QA.
+Repository Dockerfiles (`packaging: image`) return `no_runtime` with an
+`unsupported_packaging` explanation; use the Docker runner for those apps.
+
+Sandbox uses gateway authentication through a run-scoped Worker interceptor,
+with general internet access disabled. App, browser and controller share one
+container, so the report states `app_isolation: none`,
+`egress: provider_pinned (sandbox)` and remains partial for isolation. Durable
+Object alarms renew the run lease every 60 seconds, retain the final checkpoint
+on cancellation, revoke capabilities and destroy the container. Subscription
+reuse is available only for local Codex runs on Docker.
+
+The deployment image includes Chromium and the QA harnesses. Provision any
+additional app dependencies when building that image. Supply synthetic persona
+credentials through the Worker's `QA_PERSONA_CREDENTIALS` secret, a JSON object
+mapping the environment variable names in `.rio/qa.yaml` to their test values.
+The local image integration test uses an isolated HTTP storage double; Worker
+tests cover the interceptor's authorization and lease behavior:
+
+```sh
+docker build -f worker/Dockerfile -t rio-runner:qa-sandbox .
+RIO_TEST_QA_DOCKER=1 python3 -m unittest worker/qa/test_sandbox.py -v
+```
+
+The [QA guide](qa.md) covers application packaging, seed/fixture definitions,
+local model authentication, owner-guided UX recommendations and evidence replay.
+To exercise synthetic app startup, service doubles and seed commands without
+model spend:
+
+```sh
+docker build -f tests/fixtures/qa-sample/Dockerfile.qa -t rio-qa-sample tests/fixtures/qa-sample
+RIO_TEST_QA_DOCKER=1 RIO_QA_SAMPLE_IMAGE=rio-qa-sample python3 worker/qa/test_app_runtime.py -v
+RIO_TEST_QA_DOCKER=1 python3 worker/qa/test_seed_cli.py -v
+RIO_TEST_QA_DOCKER=1 python3 worker/qa/test_author.py -v
+```
+
+The authoring test uses a scripted harness and real screenshots. It establishes
+orchestration and evidence delivery; live model quality remains a separate
+[evaluation](../eval/qa/README.md).

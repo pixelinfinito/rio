@@ -13,6 +13,7 @@ import type {
 } from "./types";
 import type { Verified } from "./consolidate";
 import { hash } from "./validation";
+import picomatch from "picomatch";
 
 // Review lineages (openspec rio-v0-2-review-convergence). The endpoint is the
 // single authority: lineage identity is tenant + repository + kind + ref and never
@@ -299,7 +300,10 @@ export function planReverification(
 ): Reverification {
   const open = new Map(
     context.prior
-      .filter((p) => p.source_kind === "agent" && p.status === "open")
+      .filter(
+        (p) =>
+          p.source_kind === "agent" && p.status === "open" && !p.finding.qa,
+      )
       .map((p) => [p.id, p]),
   );
   const plan: Reverification = { verify: [], carried: [], skipped: [] };
@@ -414,6 +418,29 @@ export interface ApplyOptions {
   agents_reassessed: boolean;
   changed: ChangedFile[];
   max_lines?: number;
+  qa_changes?: Map<string, Set<string>>;
+  qa_journeys?: Record<string, { covers?: { paths?: string[] } }>;
+}
+
+function qaReassessed(finding: Finding, report: any): boolean {
+  const qa = finding.qa!;
+  const journey = report.qa?.journeys?.find(
+    (row: any) => row.name === qa.journey,
+  );
+  return (
+    finding.locations.length > 0 &&
+    finding.locations.every(
+      (location) =>
+        location.cell &&
+        journey?.cells?.some(
+          (cell: any) =>
+            cell.viewport === location.cell!.viewport &&
+            cell.color_scheme === location.cell!.color_scheme &&
+            ["passed", "failed"].includes(cell.outcome) &&
+            cell.step_reached >= qa.step,
+        ),
+    )
+  );
 }
 function checkOf(report: any, id: string) {
   const check = (report.checks ?? []).find((c: any) =>
@@ -459,7 +486,9 @@ export function applyLineage(
   ];
   const produced = new Map<string, Finding>();
   for (const list of lists)
-    for (const f of list) if (!produced.has(f.id)) produced.set(f.id, f);
+    for (const f of list)
+      if (!produced.has(f.id) && !(f.qa && f.state === "fixed"))
+        produced.set(f.id, f);
   const posted = { ...context.posted },
     held: string[] = [],
     stamps = new Map<string, Partial<Finding>>(),
@@ -471,7 +500,10 @@ export function applyLineage(
     if (posted[f.id]) {
       held.push(f.id);
       stamp.first_posted_in = posted[f.id].first_posted_in;
-    } else if (!capped || deterministic) {
+    } else if (
+      (!capped || deterministic) &&
+      !(f.qa && f.state === "pre-existing")
+    ) {
       posted[f.id] = {
         first_posted_in: context.snapshot_id,
         round: context.round,
@@ -505,20 +537,37 @@ export function applyLineage(
   const remembered = new Set(
     (report.remembered ?? []).map((f: Finding) => f.id),
   );
+  for (const held of report.agent_audit?.qa?.held_back ?? [])
+    remembered.add(held.id);
   for (const p of context.prior) {
     if (produced.has(p.id) || remembered.has(p.id) || p.status !== "open")
       continue;
     const reassessed =
       complete &&
-      (p.source_kind === "tool"
-        ? covered(p.check, report.checks, p.finding.location.path)
-        : options.agents_reassessed);
-    const code = relocate(
+      (p.finding.qa
+        ? qaReassessed(p.finding, report)
+        : p.source_kind === "tool"
+          ? covered(p.check, report.checks, p.finding.location.path)
+          : options.agents_reassessed);
+    let code = relocate(
       options.trees.get(p.snapshot_id),
       options.head,
       p.finding.location,
       options.graph,
     ).status;
+    if (p.finding.qa?.attribution === "journey") {
+      const changed = options.qa_changes?.get(p.snapshot_id);
+      const covers = options.qa_journeys?.[p.finding.qa.journey]?.covers?.paths;
+      code = changed?.has(p.finding.location.path)
+        ? "changed"
+        : !changed || !covers
+          ? "unknown"
+          : [...changed].some((path) =>
+                covers.some((glob) => picomatch(glob, { dot: true })(path)),
+              )
+            ? "changed"
+            : "unchanged";
+    }
     if (!reassessed || code === "unknown")
       updates.push({
         id: p.id,
@@ -541,10 +590,16 @@ export function applyLineage(
   const isOpen = (f: Finding) =>
     (stamps.get(f.id)?.status ?? "open") !== "dismissed";
   const openDefects =
-    report.findings.filter((f: Finding) => f.category === "defect" && isOpen(f))
-      .length +
+    report.findings.filter(
+      (f: Finding) =>
+        (f.category === "defect" ||
+          (f.qa && !["fixed", "pre-existing"].includes(f.state))) &&
+        isOpen(f),
+    ).length +
     updates.filter(
-      (u) => u.status === "open" && prior.get(u.id)?.category === "defect",
+      (u) =>
+        u.status === "open" &&
+        ["defect", "ux"].includes(prior.get(u.id)?.category ?? ""),
     ).length;
   const rounds_to_pass =
     context.rounds_to_pass ??

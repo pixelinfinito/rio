@@ -83,11 +83,37 @@ steps:
       - worsened
     max_defects: 15
     posture: thorough
+- id: qa
+  uses: rio/qa@0.1.0
+  needs:
+  - graph
+  parallel: false
+  with:
+    baseline: false
+    enabled: false
+    fail_on:
+      categories:
+      - ux
+      evidence: plausible
+      incomplete: true
+      required_checks: []
+      rules: []
+      states:
+      - new
+      - worsened
+    harness: codex
+    max_defects: 15
+    max_journeys: 12
+    max_recommendations: 5
+    mode: changed
+    rules: {}
+    sandbox: deny
 - id: verify
   uses: rio/verify@0.1.0
   needs:
   - agents
   - security
+  - qa
   parallel: false
   with:
     run: true
@@ -97,6 +123,7 @@ steps:
   - checks
   - graph
   - verify
+  - qa
   parallel: false
   with:
     class_threshold: 3
@@ -131,6 +158,7 @@ modules:
   rio/checks: 0.1.0
   rio/graph: 0.1.0
   rio/prepare: 0.1.0
+  rio/qa: 0.1.0
   rio/report: 0.1.0
   rio/security: 0.2.0
   rio/triage: 0.1.0

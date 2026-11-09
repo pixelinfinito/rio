@@ -10,6 +10,7 @@ import { pullOf, type PullRow } from "./pulls";
 import { policyMatches } from "./consolidate";
 import { hash } from "./validation";
 import { Store } from "./storage";
+import { refreshQaReportLinks } from "./qa-evidence";
 
 // The publisher (pr-publishing). One host interface, one GitHub
 // implementation. Every comment carries a hidden marker so a later round, or a
@@ -62,7 +63,7 @@ export interface Host {
   resolveThread(id: string, resolved: boolean): Promise<void>;
   checkRun(
     head: string,
-    output: { title: string; summary: string },
+    output: CheckOutput,
     existing?: number,
   ): Promise<{ id: number; url: string }>;
   react(comment: number, content: "+1" | "-1" | "confused"): Promise<void>;
@@ -71,6 +72,20 @@ export interface HostComment {
   id: number;
   body: string;
   url: string;
+}
+export interface CheckOutput {
+  title: string;
+  summary: string;
+  name?: "rio/review" | "rio/qa";
+  conclusion?: "neutral" | "failure";
+  annotations?: {
+    path: string;
+    start_line: number;
+    end_line: number;
+    annotation_level: "failure" | "warning" | "notice";
+    title: string;
+    message: string;
+  }[];
 }
 
 /** Right-side line numbers present in a unified diff patch (added and context lines). */
@@ -205,30 +220,48 @@ export class GitHubHost implements Host {
       { id },
     );
   }
-  async checkRun(
-    head: string,
-    output: { title: string; summary: string },
-    existing?: number,
-  ) {
+  async checkRun(head: string, output: CheckOutput, existing?: number) {
     let id = existing;
+    const name = output.name ?? "rio/review";
     if (!id) {
       const runs = await this.token.request(
         "GET",
-        `${this.base}/commits/${head}/check-runs?check_name=${encodeURIComponent("rio/review")}&filter=latest`,
+        `${this.base}/commits/${head}/check-runs?check_name=${encodeURIComponent(name)}&filter=latest`,
       );
       id = (runs?.check_runs ?? []).find(
         (r: any) => r?.app?.slug === this.slug,
       )?.id;
     }
-    // Always neutral: the check run never approves and never blocks.
+    // QA can fail its own explicit policy. The general review check stays neutral.
+    let annotations = output.annotations ?? [];
+    if (id && annotations.length) {
+      const prior = await this.token.list(
+        `${this.base}/check-runs/${id}/annotations`,
+      );
+      const key = (row: any) =>
+        JSON.stringify([
+          row.path,
+          row.start_line,
+          row.end_line,
+          row.annotation_level,
+          row.title,
+          row.message,
+        ]);
+      const seen = new Set(prior.map(key));
+      annotations = annotations.filter((row) => !seen.has(key(row)));
+    }
     const body = {
-      name: "rio/review",
+      name,
       status: "completed",
-      conclusion: "neutral",
+      conclusion:
+        name === "rio/qa" ? (output.conclusion ?? "neutral") : "neutral",
       completed_at: new Date().toISOString(),
       output: {
         title: output.title.slice(0, 255),
         summary: output.summary.slice(0, 60000),
+        ...(annotations.length
+          ? { annotations: annotations.slice(0, 50) }
+          : {}),
       },
     };
     const run = id
@@ -237,6 +270,14 @@ export class GitHubHost implements Host {
           ...body,
           head_sha: head,
         });
+    for (let offset = 50; offset < annotations.length; offset += 50)
+      await this.token.request("PATCH", `${this.base}/check-runs/${run.id}`, {
+        output: {
+          title: body.output.title,
+          summary: body.output.summary,
+          annotations: annotations.slice(offset, offset + 50),
+        },
+      });
     return { id: run.id, url: run.html_url ?? "" };
   }
   async react(comment: number, content: "+1" | "-1" | "confused") {
@@ -264,7 +305,12 @@ export interface FindingState {
   fixed_in?: string;
   response?: AuthorResponse;
 }
-export function findingBody(f: Finding, state: FindingState): string {
+export function findingBody(
+  f: Finding,
+  state: FindingState,
+  qa?: any,
+  anchor?: number,
+): string {
   const lines = [
     `**Rio ${f.category}** · ${f.severity} · \`${plain(f.rule_id, 150)}\` · evidence \`${f.evidence_level}\``,
   ];
@@ -281,6 +327,18 @@ export function findingBody(f: Finding, state: FindingState): string {
   if (f.impact) lines.push("", `Impact: ${plain(f.impact, 500)}`);
   if (f.suggested_fix)
     lines.push("", `Suggested fix: ${plain(f.suggested_fix, 1000)}`);
+  if (f.qa) {
+    lines.push(
+      "",
+      `Journey: ${plain(f.qa.journey)} · step ${f.qa.step}`,
+      `Cells: ${f.locations.map((location) => `${location.cell?.viewport}/${location.cell?.color_scheme}`).join(", ")}`,
+    );
+    if (anchor !== undefined && anchor !== f.location.line_start)
+      lines.push(
+        `Attributed to ${where(f)}; shown at the file's first diff hunk.`,
+      );
+    lines.push(...qaEvidenceBody(qa, f.evidence, true));
+  }
   if (f.locations.length > 1)
     lines.push(
       "",
@@ -335,14 +393,177 @@ const lists = (report: any): Finding[] => {
     ...report.findings,
     ...report.risks,
     ...(report.security ?? []),
-  ].filter((f: Finding) => !seen.has(f.id) && seen.add(f.id));
+  ].filter(
+    (f: Finding) =>
+      !seen.has(f.id) &&
+      seen.add(f.id) &&
+      (!f.qa || !["fixed", "pre-existing"].includes(f.state)),
+  );
 };
 function anchorable(f: Finding): boolean {
+  if (f.qa) return f.qa.attribution === "source";
   // Class findings and multi-file findings belong in the summary.
   return (
     !f.locations.some((l) => l.id) &&
     new Set(f.locations.map((l) => l.path)).size <= 1
   );
+}
+
+export function findingAnchor(
+  f: Finding,
+  files: Map<string, { removed: boolean; lines: Set<number> }>,
+): number | undefined {
+  const file = files.get(f.location.path);
+  if (!anchorable(f) || !file || file.removed) return undefined;
+  if (file.lines.has(f.location.line_start)) return f.location.line_start;
+  if (f.qa?.attribution === "source" && file.lines.size)
+    return [...file.lines].reduce((first, line) => Math.min(first, line));
+  return undefined;
+}
+
+/** Only signed, unexpired report links enter publication. Transcript content
+ * never belongs in a PR comment, even if a caller supplies a transcript id. */
+export function qaEvidenceBody(
+  qa: any,
+  ids: string[] = [],
+  images = false,
+): string[] {
+  const rows = (qa?.evidence?.artifacts ?? []).filter(
+    (row: any) =>
+      ids.includes(row.id) &&
+      ["screenshot", "trace", "dom"].includes(row.kind) &&
+      !row.expired &&
+      !row.unavailable &&
+      (!row.expires_at || row.expires_at > Date.now()) &&
+      (!row.link_expires_at || row.link_expires_at > Date.now()),
+  );
+  const lines: string[] = [],
+    expiries: number[] = [];
+  for (const row of rows) {
+    let url: URL;
+    try {
+      url = new URL(row.link);
+    } catch {
+      continue;
+    }
+    if (url.protocol !== "https:" || url.username || url.password) continue;
+    const link = url.href.replace(/[<>\s]/g, (value) =>
+      encodeURIComponent(value),
+    );
+    lines.push(
+      `${images && row.kind === "screenshot" ? "!" : ""}[${row.kind}](<${link}>)`,
+    );
+    if (row.expires_at) expiries.push(row.expires_at);
+    if (row.link_expires_at) expiries.push(row.link_expires_at);
+  }
+  if (lines.length)
+    lines.push(
+      `Evidence expires ${expiries.length ? new Date(Math.min(...expiries)).toISOString() : plain(qa?.evidence?.expires_at ?? "at the configured retention deadline")}. Copies cached by GitHub's image proxy may outlive this expiry.`,
+    );
+  return lines;
+}
+
+export function qaSummary(qa: any): string[] {
+  if (!qa) return [];
+  const lines = [
+    "",
+    "### QA results",
+    "",
+    `Isolation: **${plain(qa.isolation)}** · Evidence expiry: ${plain(qa.evidence?.expires_at ?? "unavailable")}`,
+  ];
+  for (const selection of qa.selection ?? [])
+    lines.push(
+      `Selected ${plain(selection.journey)}: ${(selection.reasons ?? []).map((reason: string) => plain(reason)).join(", ")}`,
+    );
+  for (const journey of qa.journeys ?? []) {
+    lines.push("", `**${plain(journey.name)}**`);
+    for (const cell of journey.cells ?? []) {
+      lines.push(
+        `- ${plain(cell.viewport)}/${plain(cell.color_scheme)}: ${plain(cell.outcome)} · step ${cell.step_reached ?? 0}${cell.reason ? ` (${plain(cell.reason)})` : ""}`,
+      );
+      lines.push(
+        ...qaEvidenceBody(qa, cell.evidence, cell.outcome === "failed"),
+      );
+    }
+  }
+  for (const note of qa.audit?.notes ?? [])
+    if (/held back|possibly stale/i.test(note)) lines.push(plain(note));
+  const recommendations = (qa.recommendations ?? []).filter(
+    (row: any) =>
+      row.verification_status === "supported" &&
+      !row.dismissal &&
+      !row.related_finding_id,
+  );
+  if (recommendations.length) lines.push("", "### UX recommendations", "");
+  for (const row of recommendations) {
+    lines.push(
+      `- **${plain(row.observed_friction)}** · priority ${plain(row.priority)} · confidence ${plain(row.confidence)}`,
+      `Proposed improvement: ${plain(row.proposed_improvement)}`,
+      `Expected benefit (untested): ${plain(row.expected_benefit)}`,
+      `Trade-offs: ${(row.trade_offs ?? []).map((value: string) => plain(value)).join("; ")}`,
+      ...qaEvidenceBody(qa, row.evidence),
+    );
+    if (row.basis?.guidance)
+      lines.push(
+        `Guidance: ${plain(row.basis.guidance.path)}:${row.basis.guidance.start_line}-${row.basis.guidance.end_line}`,
+      );
+  }
+  const coverage = new Map<string, number>();
+  for (const row of qa.assessment ?? [])
+    coverage.set(row.status, (coverage.get(row.status) ?? 0) + 1);
+  lines.push(
+    "",
+    `UX assessment (${plain(qa.rubric_version ?? "unknown rubric")}): ${[...coverage].map(([status, count]) => `${plain(status)}: ${count}`).join(", ") || "none recorded"}. Recommendations held back: ${qa.recommendations_held_back ?? 0}.`,
+  );
+  return lines;
+}
+
+export function qaCheckOutput(
+  report: any,
+  files: Map<string, { removed: boolean; lines: Set<number> }>,
+): CheckOutput {
+  const counts = new Map<string, number>();
+  for (const journey of report.qa.journeys ?? [])
+    counts.set(journey.outcome, (counts.get(journey.outcome) ?? 0) + 1);
+  const summary = ["passed", "failed", "skipped", "not_run", "cancelled"]
+    .map((state) => `${state}: ${counts.get(state) ?? 0}`)
+    .join(" · ");
+  const failed = report.agent_audit?.qa?.policy_failed === true;
+  const annotations: NonNullable<CheckOutput["annotations"]> = [];
+  for (const finding of report.findings ?? []) {
+    if (
+      !finding.qa ||
+      finding.evidence_level === "refuted" ||
+      ["fixed", "pre-existing"].includes(finding.state) ||
+      ["fixed", "dismissed"].includes(finding.status)
+    )
+      continue;
+    const line = findingAnchor(finding, files);
+    if (line === undefined) continue;
+    annotations.push({
+      path: finding.location.path,
+      start_line: line,
+      end_line: line,
+      annotation_level:
+        finding.severity === "error"
+          ? "failure"
+          : finding.severity === "warning"
+            ? "warning"
+            : "notice",
+      title: plain(`${finding.rule_id} (${finding.id.slice(0, 12)})`, 255),
+      message: plain(
+        `${finding.message}\nJourney: ${finding.qa.journey}; step ${finding.qa.step}; cells: ${finding.locations.map((row: any) => `${row.cell?.viewport}/${row.cell?.color_scheme}`).join(", ")}${line !== finding.location.line_start ? `\nAttributed to ${finding.location.path}:${finding.location.line_start}` : ""}`,
+        60000,
+      ),
+    });
+  }
+  return {
+    name: "rio/qa",
+    conclusion: failed ? "failure" : "neutral",
+    title: `QA ${failed ? "failed its policy" : "completed"} · ${summary}`,
+    summary: `Journeys — ${summary}\n\nIsolation: **${plain(report.qa.isolation)}**. QA never approves a review.`,
+    annotations,
+  };
 }
 
 export function checkOutput(
@@ -435,6 +656,15 @@ function summaryBody(
       "",
       `${wrong.length} recurring finding(s) earlier dismissed as \`wrong\` are in the report and were not posted.`,
     );
+  lines.push(...qaSummary(report.qa));
+  for (const finding of unanchored.filter((f) => f.qa)) {
+    lines.push(
+      "",
+      `QA finding ${finding.id.slice(0, 12)}: ${plain(finding.message)}`,
+      `Journey: ${plain(finding.qa!.journey)} · step ${finding.qa!.step} · Cells: ${finding.locations.map((location) => `${location.cell?.viewport}/${location.cell?.color_scheme}`).join(", ")}`,
+      ...qaEvidenceBody(report.qa, finding.evidence, true),
+    );
+  }
   lines.push("", `Full report: ${link}`, summaryMarker(lineage));
   return lines.join("\n");
 }
@@ -520,12 +750,8 @@ function guarded(host: Host, lease: Lease): Host {
     resolveThread: renewed((id: string, resolved: boolean) =>
       host.resolveThread(id, resolved),
     ),
-    checkRun: renewed(
-      (
-        head: string,
-        output: { title: string; summary: string },
-        existing?: number,
-      ) => host.checkRun(head, output, existing),
+    checkRun: renewed((head: string, output: CheckOutput, existing?: number) =>
+      host.checkRun(head, output, existing),
     ),
     react: renewed((comment: number, content: "+1" | "-1" | "confused") =>
       host.react(comment, content),
@@ -761,6 +987,13 @@ async function publishLeased(
       lease,
     );
     if (decision.full) {
+      await refreshQaReportLinks(
+        env,
+        row.tenant,
+        input.review,
+        input.report,
+        input.publicUrl ?? env.PUBLIC_URL ?? "https://rio.invalid",
+      );
       const files = await github.files();
       // Marker reconciliation: a lost record never causes a duplicate.
       const comments = new Map<string, HostComment>();
@@ -843,7 +1076,8 @@ async function publishLeased(
           f.status === "dismissed"
             ? { status: "dismissed", response: f.author_response }
             : { status: "open" };
-        const body = findingBody(f, state);
+        const anchor = findingAnchor(f, files);
+        const body = findingBody(f, state, input.report.qa, anchor);
         const existing = comments.get(f.id);
         try {
           if (existing) {
@@ -874,13 +1108,7 @@ async function publishLeased(
             wrong.push(f);
             continue;
           }
-          const file = files.get(f.location.path);
-          if (
-            !anchorable(f) ||
-            !file ||
-            file.removed ||
-            !file.lines.has(f.location.line_start)
-          ) {
+          if (anchor === undefined) {
             unanchored.push(f);
             publication.unanchored++;
             continue;
@@ -892,7 +1120,7 @@ async function publishLeased(
             body,
             commit: row.head_sha!,
             path: f.location.path,
-            line: f.location.line_start,
+            line: anchor,
           });
           publication.posted++;
           await save("finding", f.id, "posted", {
@@ -1015,6 +1243,33 @@ async function publishLeased(
       await save("check_run", row.head_sha!, "failed", {
         error: failureText(error),
       });
+    }
+    if (input.report.qa) {
+      const identity = `${row.head_sha}:qa`;
+      try {
+        const output = qaCheckOutput(input.report, await github.files());
+        const record = records.get(`check_run:${identity}`);
+        const run = await github.checkRun(
+          row.head_sha!,
+          output,
+          record?.external_id ? Number(record.external_id) : undefined,
+        );
+        await save("check_run", identity, record ? "edited" : "posted", {
+          external: run.id,
+          url: run.url,
+        });
+      } catch (error) {
+        if (error instanceof LeaseLost) throw error;
+        publication.failed++;
+        failures.push({
+          id: identity,
+          kind: "check_run",
+          error: failureText(error),
+        });
+        await save("check_run", identity, "failed", {
+          error: failureText(error),
+        });
+      }
     }
   } finally {
     await token.revoke();

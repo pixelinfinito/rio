@@ -3543,6 +3543,7 @@ dependencies = [
  "rio-git",
  "rio-graph",
  "rio-profile",
+ "rio-qa",
  "rpassword",
  "serde",
  "serde_json",
@@ -3578,6 +3579,7 @@ dependencies = [
  "blake3",
  "globset",
  "insta",
+ "jiff",
  "jsonschema",
  "proptest",
  "regex",
@@ -3603,6 +3605,7 @@ dependencies = [
  "rio-git",
  "rio-graph",
  "rio-profile",
+ "rio-qa",
  "serde",
  "serde_json",
  "tempfile",
@@ -3674,6 +3677,32 @@ dependencies = [
 ]
 
 [[package]]
+name = "rio-qa"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "blake3",
+ "cap-fs-ext",
+ "cap-std",
+ "fs4",
+ "globset",
+ "jiff",
+ "jsonschema",
+ "keyring",
+ "regex",
+ "rio-adapters",
+ "rio-core",
+ "serde",
+ "serde_json",
+ "serde_yaml",
+ "tar",
+ "tempfile",
+ "thiserror 2.0.21",
+ "tokio",
+ "tokio-util",
+]
+
+[[package]]
 name = "rio-runner"
 version = "0.1.0"
 dependencies = [
@@ -3691,6 +3720,7 @@ dependencies = [
  "rio-git",
  "rio-graph",
  "rio-profile",
+ "rio-qa",
  "serde",
  "serde_json",
  "sha2 0.10.9",

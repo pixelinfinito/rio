@@ -5,3 +5,4 @@ docs/evaluation/rust/** -whitespace
 crates/rio-adapters/tests/fixtures/diagnostics/cargo-fmt.stdout -whitespace
 # Two spaces intentionally encode Markdown hard line breaks in renderer snapshots.
 crates/rio-core/tests/snapshots/*markdown.snap whitespace=-blank-at-eol
+crates/rio-core/tests/snapshots/qa_contracts__qa_report_with_audit.snap whitespace=-blank-at-eol

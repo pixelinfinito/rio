@@ -24,6 +24,8 @@ pub struct BudgetLimit {
     pub agents_max: Option<u64>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub verify_tokens: Option<u64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub qa: Option<QaBudget>,
 }
 impl Default for BudgetLimit {
     fn default() -> Self {
@@ -32,6 +34,32 @@ impl Default for BudgetLimit {
             tokens: None,
             agents_max: None,
             verify_tokens: None,
+            qa: None,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct QaBudget {
+    pub wall: String,
+    pub cell_wall: String,
+    pub tokens: u64,
+    pub evidence_bytes: u64,
+    pub replay_wall: String,
+}
+
+impl QaBudget {
+    pub fn defaults(deep: bool) -> Self {
+        Self {
+            wall: if deep { "90m" } else { "30m" }.into(),
+            cell_wall: if deep { "15m" } else { "8m" }.into(),
+            tokens: if deep { 300_000 } else { 150_000 },
+            evidence_bytes: if deep {
+                1024 * 1024 * 1024
+            } else {
+                512 * 1024 * 1024
+            },
+            replay_wall: if deep { "10m" } else { "5m" }.into(),
         }
     }
 }
@@ -180,6 +208,35 @@ impl Default for Verify {
 }
 
 impl Profile {
+    pub fn qa_enabled(&self) -> bool {
+        self.steps.iter().any(|step| {
+            step.uses.split('@').next() == Some("rio/qa")
+                && step.options["enabled"].as_bool() == Some(true)
+        })
+    }
+
+    /// Compose the review deadline while preserving the configured verifier reserve.
+    pub fn review_wall(
+        &self,
+        deep: bool,
+        verification_reserve: Duration,
+    ) -> Result<Duration, String> {
+        let budget = if deep {
+            self.budget.deep.as_ref().unwrap_or(&self.budget.fast)
+        } else {
+            &self.budget.fast
+        };
+        let wall = parse_duration(&budget.wall_time)?;
+        if !self.qa_enabled() {
+            return Ok(wall);
+        }
+        let defaults = QaBudget::defaults(deep);
+        let qa = budget.qa.as_ref().unwrap_or(&defaults);
+        wall.checked_add(parse_duration(&qa.wall)?)
+            .and_then(|wall| wall.checked_add(verification_reserve))
+            .ok_or_else(|| "review deadline exceeds supported duration".into())
+    }
+
     pub fn step(&self, module: &str) -> Option<&Step> {
         self.steps
             .iter()
@@ -195,10 +252,58 @@ pub struct ResolvedProfile {
     pub modules: BTreeMap<String, String>,
     pub engine_version: String,
     pub posture_policy: PosturePolicy,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub qa_deadlines: Option<BTreeMap<String, QaDeadline>>,
+    /// Runtime command selection, outside the repository profile schema.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub qa_standalone: bool,
     #[serde(skip)]
     pub sources: Vec<ProfileSource>,
     #[serde(skip)]
     pub warnings: Vec<Diagnostic>,
+}
+
+pub const QA_VERIFICATION_RESERVE: Duration = Duration::from_secs(5 * 60);
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct QaDeadline {
+    pub review_wall_ms: u64,
+    pub qa_wall_ms: u64,
+    pub verification_reserve_ms: u64,
+    pub total_ms: u64,
+}
+
+fn qa_deadlines(profile: &Profile) -> Result<Option<BTreeMap<String, QaDeadline>>, ProfileErrors> {
+    if !profile.qa_enabled() {
+        return Ok(None);
+    }
+    let mut result = BTreeMap::new();
+    for (name, deep) in [("fast", false), ("deep", true)] {
+        let budget = if deep {
+            profile.budget.deep.as_ref().unwrap_or(&profile.budget.fast)
+        } else {
+            &profile.budget.fast
+        };
+        let defaults = QaBudget::defaults(deep);
+        let qa = budget.qa.as_ref().unwrap_or(&defaults);
+        let durations = (|| -> Result<QaDeadline, String> {
+            let millis = |duration: Duration| {
+                u64::try_from(duration.as_millis())
+                    .map_err(|_| "deadline is out of range".to_string())
+            };
+            Ok(QaDeadline {
+                review_wall_ms: millis(parse_duration(&budget.wall_time)?)?,
+                qa_wall_ms: millis(parse_duration(&qa.wall)?)?,
+                verification_reserve_ms: millis(QA_VERIFICATION_RESERVE)?,
+                total_ms: millis(profile.review_wall(deep, QA_VERIFICATION_RESERVE)?)?,
+            })
+        })()
+        .map_err(|message| {
+            ProfileErrors::one(&profile.name, format!("$.budget.{name}.qa"), message)
+        })?;
+        result.insert(name.into(), durations);
+    }
+    Ok(Some(result))
 }
 
 impl ResolvedProfile {
@@ -492,6 +597,32 @@ impl ProfileLoader {
         if !diagnostics.is_empty() {
             return Err(ProfileErrors { diagnostics });
         }
+        let qa_enabled = document.value["steps"].as_array().is_some_and(|steps| {
+            steps.iter().any(|step| {
+                step["uses"]
+                    .as_str()
+                    .is_some_and(|name| name.starts_with("rio/qa@"))
+                    && step["with"]["enabled"].as_bool() == Some(true)
+            })
+        });
+        for (name, deep) in [("fast", false), ("deep", true)] {
+            if qa_enabled || document.value["budget"][name].get("qa").is_some() {
+                let mut defaults = serde_json::to_value(QaBudget::defaults(deep)).unwrap();
+                if let Some(overrides) = document.value["budget"][name].get("qa") {
+                    deep_merge(&mut defaults, overrides.clone());
+                }
+                let mut mode_defaults = if deep {
+                    json!({"wall_time":"10m","tokens":300_000,"agents_max":5,"verify_tokens":12_000})
+                } else {
+                    json!({"wall_time":"4m"})
+                };
+                if document.value["budget"][name].is_object() {
+                    deep_merge(&mut mode_defaults, document.value["budget"][name].clone());
+                }
+                document.value["budget"][name] = mode_defaults;
+                document.value["budget"][name]["qa"] = defaults;
+            }
+        }
         let mut profile: Profile = serde_json::from_value(document.value).map_err(|error| {
             ProfileErrors::one(document.sources[0].label(), "$", error.to_string())
         })?;
@@ -525,6 +656,7 @@ impl ProfileLoader {
                 tokens: Some(300_000),
                 agents_max: Some(5),
                 verify_tokens: Some(12_000),
+                qa: None,
             });
         }
         let mut add = |pointer: &str, message: String| {
@@ -587,6 +719,17 @@ impl ProfileLoader {
             {
                 add(&format!("/budget/{name}/wall_time"), message);
             }
+            if let Some(qa) = budget.and_then(|budget| budget.qa.as_ref()) {
+                for (field, value) in [
+                    ("wall", &qa.wall),
+                    ("cell_wall", &qa.cell_wall),
+                    ("replay_wall", &qa.replay_wall),
+                ] {
+                    if let Err(message) = parse_duration(value) {
+                        add(&format!("/budget/{name}/qa/{field}"), message);
+                    }
+                }
+            }
         }
         if let Err(error) = execution_order(&profile.steps) {
             add("/steps", error);
@@ -604,7 +747,7 @@ impl ProfileLoader {
                     }
                 }
             }
-            if step.uses.starts_with("rio/security@") {
+            if step.uses.starts_with("rio/security@") || step.uses.starts_with("rio/qa@") {
                 let policy: FailOn =
                     serde_json::from_value(step.options["fail_on"].clone()).unwrap_or_default();
                 if let Err(error) = policy.compile() {
@@ -632,7 +775,9 @@ impl ProfileLoader {
                     );
                 }
             }
-            if (step.uses.starts_with("rio/agents@") || step.uses.starts_with("rio/security@"))
+            if (step.uses.starts_with("rio/agents@")
+                || step.uses.starts_with("rio/security@")
+                || step.uses.starts_with("rio/qa@"))
                 && step.options.get("enabled").and_then(Value::as_bool) != Some(false)
                 && !profile.steps.iter().any(|candidate| {
                     candidate.uses.starts_with("rio/verify@")
@@ -647,7 +792,7 @@ impl ProfileLoader {
             {
                 add(
                     &format!("/steps/{index}"),
-                    "verifier step is mandatory and must depend on every agents step".into(),
+                    "verifier step is mandatory and must depend on every enabled agents, security or QA step".into(),
                 );
             }
             if step.uses.starts_with("rio/prepare@")
@@ -688,6 +833,7 @@ impl ProfileLoader {
                 Posture::Thorough => None,
             },
         };
+        let qa_deadlines = qa_deadlines(&profile)?;
         Ok(ResolvedProfile {
             profile,
             chain: document.chain,
@@ -695,6 +841,8 @@ impl ProfileLoader {
             modules,
             engine_version: env!("CARGO_PKG_VERSION").into(),
             posture_policy,
+            qa_deadlines,
+            qa_standalone: false,
             warnings,
         })
     }

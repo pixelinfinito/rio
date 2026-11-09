@@ -53,7 +53,8 @@ export function memberHeader(path: string, size: number, mode: number) {
   parts.push(header(fallback, size, mode, "0"));
   return parts;
 }
-/** Versions a job reads: run jobs their own tree; analysis jobs both. */
+/** Run commands need their own tree. QA also reads both trees to select journeys
+ * affected by removed guidance and route mappings; only one enters its app pod. */
 export function needs(kind: Execution["kind"], version: Version): Version[] {
   return kind === "run" ? [version] : ["base", "head"];
 }

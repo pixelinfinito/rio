@@ -15,11 +15,23 @@ Profiles describe a review. Machine settings such as the cache path and parallel
 | `budget.fast.tokens` | `integer` | no |
 | `budget.fast.agents_max` | `integer` | no |
 | `budget.fast.verify_tokens` | `integer` | no |
+| `budget.fast.qa` | `object` | no |
+| `budget.fast.qa.wall` | `string` | no |
+| `budget.fast.qa.cell_wall` | `string` | no |
+| `budget.fast.qa.tokens` | `integer` | no |
+| `budget.fast.qa.evidence_bytes` | `integer` | no |
+| `budget.fast.qa.replay_wall` | `string` | no |
 | `budget.deep` | `object` | no |
 | `budget.deep.wall_time` | `string` | no |
 | `budget.deep.tokens` | `integer` | no |
 | `budget.deep.agents_max` | `integer` | no |
 | `budget.deep.verify_tokens` | `integer` | no |
+| `budget.deep.qa` | `object` | no |
+| `budget.deep.qa.wall` | `string` | no |
+| `budget.deep.qa.cell_wall` | `string` | no |
+| `budget.deep.qa.tokens` | `integer` | no |
+| `budget.deep.qa.evidence_bytes` | `integer` | no |
+| `budget.deep.qa.replay_wall` | `string` | no |
 | `models` | `object` | no |
 | `steps` | `array` | no |
 | `steps[].id` | `string` | yes |
@@ -144,6 +156,11 @@ active review token budget divided by `agents_max`. Resolution records the deriv
 allowances in the hashed profile. Defaults are fast 100,000 tokens / three agents
 and deep 300,000 / five, with four- and ten-minute wall budgets. Every model call
 reserves from the review-wide ledger; failed calls retain unknown-usage reservations.
+
+The `rio/qa` profile explicitly raises the review token limit to 500,000 in fast
+mode and 1,000,000 in deep mode, with 60,000 and 120,000 tokens per verifier voter
+respectively. Screenshots and scoped `REVIEW.md` guidance consume these allowances.
+Both voter turns share one allowance; user profile overrides remain supported.
 
 Quick selects critical-only/fast; Standard balanced/fast; Deep thorough/deep.
 Use `--preset quick|standard|deep` or `--deep`. Explicit profile evidence/cap values

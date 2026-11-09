@@ -11,6 +11,7 @@ use crate::{BUILT_INS, ProfileErrors};
 pub enum ModuleKind {
     Step,
     Adapter,
+    Ruleset,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -19,6 +20,7 @@ pub struct ModuleManifest {
     pub name: String,
     pub version: String,
     pub description: String,
+    #[serde(default)]
     pub schema: Value,
     #[serde(default)]
     pub local: bool,
@@ -34,6 +36,8 @@ pub struct ModuleManifest {
     pub capabilities: Vec<String>,
     #[serde(default)]
     pub tools: BTreeMap<String, Value>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub rules: Vec<Value>,
 }
 
 fn collect(
@@ -45,9 +49,23 @@ fn collect(
             .path()
             .file_name()
             .is_some_and(|name| name == "module.yaml")
+            || (file.path().starts_with("qa/rules")
+                && file
+                    .path()
+                    .extension()
+                    .is_some_and(|extension| extension == "yaml"))
         {
             let manifest: ModuleManifest =
                 serde_yaml::from_slice(file.contents()).map_err(|error| error.to_string())?;
+            if manifest.kind == ModuleKind::Ruleset {
+                let mut ids = std::collections::BTreeSet::new();
+                for rule in &manifest.rules {
+                    let id = rule["id"].as_str().ok_or("ruleset rule needs an id")?;
+                    if !ids.insert(id) {
+                        return Err(format!("duplicate rule id {id} in {}", manifest.name));
+                    }
+                }
+            }
             if modules.insert(manifest.name.clone(), manifest).is_some() {
                 return Err("duplicate embedded module name".into());
             }

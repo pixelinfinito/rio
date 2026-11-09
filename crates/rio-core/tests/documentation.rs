@@ -129,7 +129,13 @@ struct Requirement {
     changes: &'static [&'static str],
 }
 
-const REQUIREMENTS: [Requirement; 2] = [
+const REQUIREMENTS: [Requirement; 3] = [
+    Requirement {
+        name: "Finding model",
+        main: "openspec/specs/findings/spec.md",
+        delta: "specs/findings/spec.md",
+        changes: &["rio-v0-2-review-convergence", "rio-v0-3-qa"],
+    },
     Requirement {
         name: "Built-in step options",
         main: "openspec/specs/review-profiles/spec.md",
@@ -209,10 +215,23 @@ fn normalize(clause: &str) -> String {
 enum Item {
     Step(String, BTreeSet<String>),
     Clause(String),
+    ModelSentence(Vec<String>),
+}
+
+fn model_words(sentence: &str) -> Vec<String> {
+    sentence
+        .split(|c: char| !c.is_alphanumeric() && c != '_' && c != '/')
+        .filter(|word| !word.is_empty() && *word != "or")
+        .map(str::to_lowercase)
+        .collect()
 }
 
 fn items(body: &str) -> Vec<Item> {
-    if body.contains("\n- `rio/") {
+    if body.starts_with("A finding SHALL have:") {
+        body.split(". ")
+            .map(|sentence| Item::ModelSentence(model_words(sentence)))
+            .collect()
+    } else if body.contains("\n- `rio/") {
         body.lines()
             .filter(|line| line.starts_with("- `"))
             .map(|line| {
@@ -235,6 +254,13 @@ fn items(body: &str) -> Vec<Item> {
 /// step's option list; it may not drop either.
 fn carried(item: &Item, later: &[Item]) -> bool {
     match item {
+        Item::ModelSentence(words) => later.iter().any(|other| {
+            let Item::ModelSentence(candidate) = other else {
+                return false;
+            };
+            let mut remaining = candidate.iter();
+            words.iter().all(|word| remaining.any(|next| next == word))
+        }),
         Item::Step(step, names) => later
             .iter()
             .any(|other| matches!(other, Item::Step(s, n) if s == step && n.is_superset(names))),
@@ -271,6 +297,12 @@ fn composition_check_detects_dropped_additions() {
         lost(&items(&extended), &items(dropped)),
         ["Clause(\"excluded files with reasons\")"]
     );
+    let model = "A finding SHALL have: `category` (`defect` or `risk`). An optional `status` SHALL be emitted for posted findings; it is independent of `state`.";
+    let added = model.replace("`risk`", "`risk` or `ux`");
+    assert!(lost(&items(model), &items(&added)).is_empty());
+    assert_eq!(lost(&items(&added), &items(model)).len(), 1);
+    let dropped = added.replace("; it is independent of `state`", "");
+    assert_eq!(lost(&items(model), &items(&dropped)).len(), 1);
     let steps = "Options:\n- `rio/report`: `class_threshold` and `proposal_threshold`;\n- `rio/graph`: `hops`.";
     let narrowed =
         "Options:\n- `rio/report`: `class_threshold`;\n- `rio/graph`: `hops` and `max_nodes`.";

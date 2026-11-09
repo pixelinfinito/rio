@@ -6,6 +6,10 @@ import {
   findingBody,
   publishReview,
   rightLines,
+  findingAnchor,
+  qaEvidenceBody,
+  qaSummary,
+  qaCheckOutput,
   type Policy,
 } from "../src/publish";
 import { handleCommand, parseCommand } from "../src/commands";
@@ -13,6 +17,7 @@ import { hash } from "../src/validation";
 import { lineageId } from "../src/lineage";
 import { allMigrations, profile } from "./fixtures";
 import { BOT, GitHubDouble, sha } from "./github-double";
+import qaFixture from "../../crates/rio-core/tests/qa-fixtures/report.json";
 
 const runtime = env as Env;
 beforeAll(async () => {
@@ -1174,5 +1179,169 @@ describe("/rio commands", () => {
     );
     expect(github.threads.get(555)!.resolved).toBe(true);
     expect([...github.tokens.values()].every((t) => t.revoked)).toBe(true);
+  });
+});
+
+describe("QA publication", () => {
+  let github: GitHubDouble;
+  beforeEach(() => {
+    github = current = new GitHubDouble().install();
+  });
+  afterEach(() => {
+    github.restore();
+  });
+  const qaFinding = (
+    name: string,
+    line: number,
+    attribution = "source",
+    path = "src/a.ts",
+  ) => {
+    const f = finding(name, line, {
+      category: "ux",
+      qa: { ...qaFixture.findings[0].qa, attribution } as any,
+    });
+    f.location.path = path;
+    f.locations = [
+      {
+        ...f.location,
+        cell: { viewport: "mobile", color_scheme: "light" },
+        evidence: [],
+      },
+      {
+        ...f.location,
+        cell: { viewport: "desktop", color_scheme: "dark" },
+        evidence: [],
+      },
+    ];
+    return f;
+  };
+  it("anchors source findings at the attributed line or first hunk and puts journey/unchanged findings in one summary", async () => {
+    const s = await pull(),
+      files = new Map([
+        ["src/a.ts", { removed: false, lines: new Set([3, 80]) }],
+      ]);
+    github.setFiles("acme/pub", s.number, [
+      { filename: "src/a.ts", lines: [3, 80] },
+    ]);
+    const findings = [
+      qaFinding("direct", 3),
+      qaFinding("fallback", 12),
+      qaFinding("unchanged", 4, "source", "src/unchanged.ts"),
+      qaFinding("journey", 3, "journey"),
+    ];
+    expect(findings.map((f) => findingAnchor(f, files))).toEqual([
+      3,
+      3,
+      undefined,
+      undefined,
+    ]);
+    const r = report([], { findings, qa: structuredClone(qaFixture.qa) });
+    const result = await publish(s, r);
+    expect(result).toMatchObject({ posted: 2, unanchored: 2, failed: 0 });
+    expect(github.comments.map((c) => c.line)).toEqual([3, 3]);
+    expect(github.comments[1].body).toContain("Attributed to `src/a.ts:12`");
+    expect(github.comments[1].body).toContain("mobile/light, desktop/dark");
+    expect(github.issueComments).toHaveLength(1);
+    expect(github.issueComments[0].body).toContain("QA results");
+    expect(github.issueComments[0].body).toContain(findings[3].id.slice(0, 12));
+    const first = github.issueComments[0].id;
+    r.qa.journeys[0].cells[0].outcome = "passed";
+    await publish(s, r);
+    expect(github.comments).toHaveLength(2);
+    expect(github.issueComments).toHaveLength(1);
+    expect(github.issueComments[0].id).toBe(first);
+    expect(github.issueComments[0].body).toContain("mobile/light: passed");
+    expect(
+      github.checkRuns.filter((run) => run.name === "rio/qa"),
+    ).toHaveLength(1);
+    const check = github.checkRuns.find((run) => run.name === "rio/qa");
+    expect(check.conclusion).toBe("neutral");
+    expect(check.output.annotations).toHaveLength(2);
+    expect(
+      check.output.annotations.every((row: any) => row.path === "src/a.ts"),
+    ).toBe(true);
+  });
+  it("publishes only supported recommendations and preserves guidance, coverage and held-back counts", () => {
+    const qa = structuredClone(qaFixture.qa) as any;
+    const supported = qa.recommendations[0];
+    supported.verification_status = "supported";
+    qa.recommendations.push(
+      ...["unverified", "inconclusive", "rejected"].map(
+        (verification_status) => ({
+          ...supported,
+          verification_status,
+          observed_friction: `private ${verification_status}`,
+        }),
+      ),
+    );
+    qa.recommendations_held_back = 2;
+    qa.audit = {
+      notes: ["QA journeys possibly stale: checkout. Run rio qa sync."],
+    };
+    const body = qaSummary(qa).join("\n");
+    expect(body).toContain("UX recommendations");
+    expect(body).toContain("Expected benefit (untested)");
+    expect(body).toContain("Trade-offs:");
+    expect(body).toContain("Recommendations held back: 2");
+    expect(body).toContain("journeys possibly stale");
+    expect(body).not.toContain("private unverified");
+    expect(body).not.toContain("private inconclusive");
+    expect(body).not.toContain("private rejected");
+    expect(body).not.toContain("rio:finding:");
+    expect(body).toMatchSnapshot();
+  });
+  it("only fails the QA check when its QA policy matched and never annotates recommendations", async () => {
+    const s = await pull();
+    const qa = structuredClone(qaFixture.qa);
+    const r = report([], { qa, agent_audit: { qa: { policy_failed: false } } });
+    const neutral = qaCheckOutput(r, new Map());
+    expect(neutral.conclusion).toBe("neutral");
+    expect(neutral.summary).toContain("failed: 1");
+    expect(neutral.annotations).toEqual([]);
+    r.agent_audit.qa.policy_failed = true;
+    await publish(s, r);
+    expect(
+      github.checkRuns.find((run) => run.name === "rio/qa").conclusion,
+    ).toBe("failure");
+    expect(
+      github.checkRuns.find((run) => run.name === "rio/review").conclusion,
+    ).toBe("neutral");
+    expect(github.comments).toHaveLength(0);
+  });
+  it("embeds only unexpired screenshots and links trace/DOM evidence without transcript prose", () => {
+    const future = 4102444800000;
+    const qa = {
+      evidence: {
+        artifacts: ["screenshot", "dom", "trace", "transcript"]
+          .map((kind) => ({
+            id: kind,
+            kind,
+            link: `https://rio.example/evidence/${kind}?signature=abc`,
+            expires_at: future,
+          }))
+          .concat([
+            {
+              id: "old",
+              kind: "screenshot",
+              link: "https://rio.example/old",
+              expires_at: 1,
+            },
+          ]),
+      },
+    };
+    const body = qaEvidenceBody(
+      qa,
+      ["screenshot", "dom", "trace", "transcript", "old"],
+      true,
+    ).join("\n");
+    expect(body).toContain(
+      "![screenshot](<https://rio.example/evidence/screenshot?signature=abc>)",
+    );
+    expect(body).toContain("[trace]");
+    expect(body).toContain("[dom]");
+    expect(body).toContain("2100-01-01");
+    expect(body).toContain("image proxy may outlive");
+    expect(body).not.toContain("transcript");
+    expect(body).not.toContain("/old");
   });
 });

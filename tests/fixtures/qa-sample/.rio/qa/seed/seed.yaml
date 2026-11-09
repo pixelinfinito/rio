@@ -1,0 +1,9 @@
+version: 1
+datastores:
+  - { name: shop, kind: sqlite, connection_env: DATABASE_URL }
+steps:
+  - { file: schema.sql, applies_to: [shop] }
+users:
+  - { persona: shopper, apply: 'node scripts/seed.mjs shopper' }
+  - { persona: admin, apply: 'node scripts/seed.mjs admin' }
+paths: []

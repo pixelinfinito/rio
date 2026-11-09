@@ -26,6 +26,7 @@ rio-git = { path = "../rio-git" }
 rio-profile = { path = "../rio-profile" }
 rio-adapters = { path = "../rio-adapters" }
 rio-graph = { path = "../rio-graph" }
+rio-qa = { path = "../rio-qa" }
 
 [dev-dependencies]
 jsonschema.workspace = true

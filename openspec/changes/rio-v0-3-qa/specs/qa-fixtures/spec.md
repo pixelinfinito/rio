@@ -64,6 +64,26 @@ A double with `claims[]` SHALL answer for those hostnames: the app image entrypo
 - **WHEN** a journey declares `context.time: 2026-12-31T23:59:00Z`
 - **THEN** the browser clock and `QA_FAKE_TIME` report that instant and the app's countdown renders accordingly
 
+
+### Requirement: Chain time compatibility
+Each journey SHALL resolve time against fixture defaults independently of its predecessors. Every chain member SHALL resolve to the same instant or all leave time unset. Validation SHALL compare normalized instants, accept equivalent UTC offsets, and reject different instants or fixed/live mismatches, including proposed replacements.
+
+#### Scenario: Different fixed times in a chain
+- **WHEN** checkout follows add-to-cart and their effective fixed times differ
+- **THEN** validation rejects the chain before application startup, naming the incompatible dependency
+
+#### Scenario: Shared default and equivalent instants
+- **WHEN** fixtures default to `2026-12-31T23:59:00Z`, add-to-cart inherits that time, and checkout overrides it with `2027-01-01T00:59:00+01:00`
+- **THEN** the chain validates and both browser and app use the same fixed instant without restarting between journeys
+
+#### Scenario: Fixed and live time cannot share a chain
+- **WHEN** no fixture time is set, the chain head fixes its time, and a dependent leaves its time unset
+- **THEN** validation rejects the mismatch; an omitted time does not inherit the predecessor's override
+
+#### Scenario: Proposed replacement invalidates chain time
+- **WHEN** a proposed replacement changes the effective time of a journey while its dependency or dependent keeps a different time
+- **THEN** validation rejects the proposal and identifies the affected chain relationship
+
 ### Requirement: Service behaviors per step
 The harness SHALL have a `set_service_behavior(service, behavior)` tool limited to behaviors declared in the manifest. Behavior changes SHALL be replay events, recorded in the transcript, and reset to the manifest default at the start of each chain.
 

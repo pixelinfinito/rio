@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "name": "admin-import",
+  "title": "Admin Import",
+  "persona": "admin",
+  "tags": [],
+  "covers": {
+    "paths": [
+      "src/**",
+      "server.mjs"
+    ],
+    "routes": [
+      "/login",
+      "/profile"
+    ]
+  },
+  "preconditions": [
+    "Synthetic products and persona accounts are seeded"
+  ],
+  "steps": [
+    {
+      "do": "Sign in using the admin persona",
+      "at": "/login",
+      "expect": "Admin profile is visible"
+    },
+    {
+      "do": "Upload the contacts fixture",
+      "at": "/profile",
+      "expect": "Imported 20 rows"
+    }
+  ],
+  "success": [
+    "All synthetic contact rows are imported"
+  ],
+  "goal": "Import synthetic contacts",
+  "ux_criteria": [
+    "ux/task-clarity",
+    "ux/error-recovery",
+    "ux/task-efficiency"
+  ],
+  "resets": true
+}

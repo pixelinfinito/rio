@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "name": "registration",
+  "title": "Registration",
+  "persona": "guest",
+  "tags": [],
+  "covers": {
+    "paths": [
+      "src/**",
+      "server.mjs"
+    ],
+    "routes": [
+      "/register",
+      "/verify"
+    ]
+  },
+  "preconditions": [
+    "Synthetic products and persona accounts are seeded"
+  ],
+  "steps": [
+    {
+      "do": "Open registration and create a synthetic account with fresh registration details",
+      "at": "/register",
+      "expect": "A verification email is sent"
+    },
+    {
+      "do": "Read the captured verification email and follow its link",
+      "at": "/verify",
+      "expect": "Email verified"
+    }
+  ],
+  "success": [
+    "New account can sign in"
+  ],
+  "goal": "Create and verify an account",
+  "ux_criteria": [
+    "ux/task-clarity",
+    "ux/error-recovery",
+    "ux/task-efficiency"
+  ],
+  "resets": true
+}

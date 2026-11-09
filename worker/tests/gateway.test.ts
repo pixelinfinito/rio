@@ -94,7 +94,9 @@ it("asks once more for the protocol after native tool syntax and gives up after 
     ...base,
     gateway: {
       complete: async (request) => {
-        seen.push(request.messages.map((m) => `${m.role}:${m.content.slice(0, 24)}`));
+        seen.push(
+          request.messages.map((m) => `${m.role}:${m.content.slice(0, 24)}`),
+        );
         return {
           content: seen.length === 1 ? xml : '{"result":[]}',
           input_tokens: 80,
@@ -115,7 +117,8 @@ it("asks once more for the protocol after native tool syntax and gives up after 
     "user:Your previous reply was ",
   ]);
   // A model that relapses after each correction is repaired again, up to the cap.
-  const tool = '{"tools":[{"name":"read_file","args":{"path":"a.ts","version":"head"}}]}';
+  const tool =
+    '{"tools":[{"name":"read_file","args":{"path":"a.ts","version":"head"}}]}';
   let relapses = 0;
   const relapsing = await converse({
     ...base,
@@ -143,7 +146,12 @@ it("asks once more for the protocol after native tool syntax and gives up after 
       gateway: {
         complete: async () => {
           calls++;
-          return { content: xml, input_tokens: 80, output_tokens: 50, cost_usd: null };
+          return {
+            content: xml,
+            input_tokens: 80,
+            output_tokens: 50,
+            cost_usd: null,
+          };
         },
       },
       allowance: { remaining: 16000 },
@@ -173,7 +181,15 @@ it("repairs an empty tool list and answers calls past the batch limit instead of
   const sent: any[] = [];
   // null, a bare array, a tool without a name and an empty list are all repaired.
   const single = JSON.stringify({ tools: tools.slice(0, 1) });
-  const replies = ["null", "[]", single, '{"tools":[null]}', '{"tools":[]}', JSON.stringify({ tools }), '{"result":[]}'];
+  const replies = [
+    "null",
+    "[]",
+    single,
+    '{"tools":[null]}',
+    '{"tools":[]}',
+    JSON.stringify({ tools }),
+    '{"result":[]}',
+  ];
   const result = await converse({
     ...base,
     gateway: {
@@ -195,7 +211,9 @@ it("repairs an empty tool list and answers calls past the batch limit instead of
   // them resets the consecutive-repair count, then the batch ran its first eight.
   expect(dispatch).toHaveBeenCalledTimes(9);
   for (const i of [1, 2, 4, 5])
-    expect(sent[i].content).toMatch(/^Your previous reply was not the protocol/);
+    expect(sent[i].content).toMatch(
+      /^Your previous reply was not the protocol/,
+    );
   expect(JSON.parse(sent[3].content).tool_results).toHaveLength(1);
   const results = JSON.parse(sent[6].content).tool_results;
   expect(results).toHaveLength(10);
@@ -219,27 +237,54 @@ it("offers up to 16k output tokens per turn within the allowance", async () => {
     gateway: {
       complete: async (request: any) => {
         seen.push(request.max_tokens);
-        return { content: '{"result":[]}', input_tokens: 80, output_tokens: 50, cost_usd: null };
+        return {
+          content: '{"result":[]}',
+          input_tokens: 80,
+          output_tokens: 50,
+          cost_usd: null,
+        };
       },
     },
   };
-  await converse({ ...base, allowance: { remaining: 400000 }, messages: [{ role: "user", content: "review" }] });
-  await converse({ ...base, allowance: { remaining: 20000 }, messages: [{ role: "user", content: "review" }] });
+  await converse({
+    ...base,
+    allowance: { remaining: 400000 },
+    messages: [{ role: "user", content: "review" }],
+  });
+  await converse({
+    ...base,
+    allowance: { remaining: 20000 },
+    messages: [{ role: "user", content: "review" }],
+  });
   expect(seen[0]).toBe(16384);
   expect(seen[1]).toBeLessThan(16384);
   expect(seen[1]).toBeGreaterThan(0);
 });
 it("elides tool results older than the most recent ones once the history exceeds its budget", () => {
-  const big = JSON.stringify({ tool_results: [{ name: "read_file", result: "x".repeat(50000) }] });
+  const big = JSON.stringify({
+    tool_results: [{ name: "read_file", result: "x".repeat(50000) }],
+  });
   const messages = [
     { role: "user" as const, content: "review" },
-    { role: "assistant" as const, content: '{"tools":[{"name":"read_file","args":{}}]}' },
+    {
+      role: "assistant" as const,
+      content: '{"tools":[{"name":"read_file","args":{}}]}',
+    },
     { role: "user" as const, content: big },
-    { role: "assistant" as const, content: '{"tools":[{"name":"read_file","args":{}}]}' },
+    {
+      role: "assistant" as const,
+      content: '{"tools":[{"name":"read_file","args":{}}]}',
+    },
     { role: "user" as const, content: big },
-    { role: "assistant" as const, content: '{"tools":[{"name":"read_file","args":{}}]}' },
+    {
+      role: "assistant" as const,
+      content: '{"tools":[{"name":"read_file","args":{}}]}',
+    },
     { role: "user" as const, content: big },
-    { role: "assistant" as const, content: '{"tools":[{"name":"read_file","args":{}}]}' },
+    {
+      role: "assistant" as const,
+      content: '{"tools":[{"name":"read_file","args":{}}]}',
+    },
     { role: "user" as const, content: big },
   ];
   const untouched = structuredClone(messages);
@@ -271,7 +316,10 @@ it("retries one transient provider failure and never a client error", async () =
         });
   };
   const env = { OPENAI_API_KEY: "key" } as Env;
-  const response = await new ProviderGateway(env, flaky as typeof fetch).complete(request);
+  const response = await new ProviderGateway(
+    env,
+    flaky as typeof fetch,
+  ).complete(request);
   expect(response.input_tokens).toBe(10);
   expect(attempts).toHaveLength(2);
   let calls = 0;
@@ -289,7 +337,9 @@ it("retries one transient provider failure and never a client error", async () =
     return new Response("overloaded", { status: 529 });
   };
   await expect(
-    new ProviderGateway(env, alwaysOverloaded as typeof fetch).complete(request),
+    new ProviderGateway(env, alwaysOverloaded as typeof fetch).complete(
+      request,
+    ),
   ).rejects.toThrow("provider failed (529)");
   expect(overloaded).toBe(2);
 }, 15000);
@@ -723,19 +773,95 @@ describe("model routes", () => {
 });
 
 it("resolves reachable model aliases with the Workflow's and verifier's precedence", () => {
-  const profile = (models: Record<string, string>, steps: any[], verify: any = {}) =>
-    ({ models, steps, verify: { voters: 3, quorum: 2, ...verify } }) as any;
-  const agentsStep = (agents: any[] = [], uses = "rio/agents@0.1.0") => ({ id: "a", uses, needs: [], with: {}, agents });
+  const profile = (
+    models: Record<string, string>,
+    steps: any[],
+    verify: any = {},
+  ) => ({ models, steps, verify: { voters: 3, quorum: 2, ...verify } }) as any;
+  const agentsStep = (agents: any[] = [], uses = "rio/agents@0.1.0") => ({
+    id: "a",
+    uses,
+    needs: [],
+    with: {},
+    agents,
+  });
   const verify = { id: "v", uses: "rio/verify@0.1.0", needs: [], with: {} };
   const set = (p: any) => [...reachableAliases(p)].sort();
   // No model step: nothing is called.
   expect(set(profile({ default: "x/y" }, []))).toEqual([]);
-  expect(set(profile({ default: "x/y", verifier: "x/z" }, [agentsStep(), verify]))).toEqual(["default", "verifier"]);
+  expect(
+    set(profile({ default: "x/y", verifier: "x/z" }, [agentsStep(), verify])),
+  ).toEqual(["default", "verifier"]);
   // Agent-named aliases are reachable unless every agents step overrides them.
-  const models = { default: "x/y", correctness: "x/c", security: "x/s", fast: "x/f" };
-  expect(set(profile(models, [agentsStep()]))).toEqual(["correctness", "default"]);
-  expect(set(profile(models, [agentsStep([{ correctness: { model: "fast" } }])]))).toEqual(["default", "fast"]);
-  expect(set(profile(models, [agentsStep([{ correctness: { model: "missing" } }])]))).toEqual(["default"]);
-  expect(set(profile(models, [agentsStep([], "rio/security@0.2.0")]))).toEqual(["security"]);
+  const models = {
+    default: "x/y",
+    correctness: "x/c",
+    security: "x/s",
+    fast: "x/f",
+  };
+  expect(set(profile(models, [agentsStep()]))).toEqual([
+    "correctness",
+    "default",
+  ]);
+  expect(
+    set(profile(models, [agentsStep([{ correctness: { model: "fast" } }])])),
+  ).toEqual(["default", "fast"]);
+  expect(
+    set(profile(models, [agentsStep([{ correctness: { model: "missing" } }])])),
+  ).toEqual(["default"]);
+  expect(set(profile(models, [agentsStep([], "rio/security@0.2.0")]))).toEqual([
+    "security",
+  ]);
   expect(set(profile(models, [verify], { model: "fast" }))).toEqual(["fast"]);
 });
+
+it.each(["openai", "anthropic"])(
+  "sends QA screenshots as %s image content, without internal budget fields",
+  async (provider) => {
+    let body: any;
+    const gateway = new ProviderGateway(
+      { OPENAI_API_KEY: "key", ANTHROPIC_API_KEY: "key" } as Env,
+      (async (_url, init) => {
+        body = JSON.parse(init!.body as string);
+        return Response.json(
+          provider === "anthropic"
+            ? {
+                content: [{ type: "text", text: '{"result":[]}' }],
+                usage: { input_tokens: 10, output_tokens: 5 },
+              }
+            : {
+                choices: [{ message: { content: '{"result":[]}' } }],
+                usage: { prompt_tokens: 10, completion_tokens: 5 },
+              },
+        );
+      }) as typeof fetch,
+    );
+    await gateway.complete({
+      ...request,
+      model: `${provider}/test`,
+      messages: [
+        {
+          role: "user",
+          content: "captured evidence",
+          images: [
+            { data: "cG5n", media_type: "image/png", token_bound: 4000 },
+          ],
+        },
+      ],
+    });
+    const content = body.messages.at(-1).content;
+    expect(content[0]).toEqual({ type: "text", text: "captured evidence" });
+    expect(content[1]).toEqual(
+      provider === "anthropic"
+        ? {
+            type: "image",
+            source: { type: "base64", media_type: "image/png", data: "cG5n" },
+          }
+        : {
+            type: "image_url",
+            image_url: { url: "data:image/png;base64,cG5n", detail: "high" },
+          },
+    );
+    expect(JSON.stringify(body)).not.toContain("token_bound");
+  },
+);

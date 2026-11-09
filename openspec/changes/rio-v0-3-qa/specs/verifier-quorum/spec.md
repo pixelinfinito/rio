@@ -49,9 +49,40 @@ In the blind first turn a voter for a QA hypothesis SHALL receive the step evide
 - **WHEN** a voter's blind observation names the same rule at the same journey step and route
 - **THEN** the voter's blind match is `same` even though the finding has no source symbol
 
+#### Scenario: Before and after evidence accepted by the host
+- **WHEN** an observation cites sanitized evidence from the current and immediately preceding step in the same journey and cell
+- **THEN** host construction retains both, requires current-step evidence, and rejects future-step, other-journey or other-cell artifacts; rejected candidates are counted in the audit
+
 ### Requirement: Evidence pack for QA hypotheses
 In the second turn voters SHALL additionally receive the hypothesis with its structured `expected` and `observed` fields, the base and head content of the attributed source file when attribution succeeded, and the tool call sequence from the transcript. Voters SHALL NOT receive the agent's narrative text.
 
 #### Scenario: Transcript prose excluded
 - **WHEN** a voter's evidence pack is assembled
 - **THEN** it contains the tool call sequence from the transcript and none of the agent's narrative text
+
+### Requirement: Guidance in QA verification
+Both verifier turns SHALL receive the same applicable owner guidance and criterion definitions as execution, with immutable citations. The first turn SHALL still omit the candidate text. Voters SHALL check that cited requirements apply to the persona and journey; guidance alone SHALL NOT prove the observed behavior or harm.
+
+#### Scenario: Project-specific behavior verified
+- **WHEN** the candidate cites checkout's requirement to preserve entered data on retry
+- **THEN** voters receive that recorded requirement in both turns and evaluate it against the captured interaction, not a generic preference
+
+#### Scenario: Evidence remains available within bounded prompts
+- **WHEN** a later journey step has its own before/after captures and a large text artifact
+- **THEN** verification uses those captures without an unrelated journey-opening screenshot, retains the immutable guidance and criterion definitions in the conversation for both turns without duplicating them, and exposes the complete text through bounded pages
+- **AND** artifact identities, browser scope, original evidence validation and configured token limits remain unchanged
+
+### Requirement: Verify recommendation grounding separately
+Recommendation candidates SHALL use the shared verifier quorum to assess observed friction, source applicability and whether the proposal addresses it. Output SHALL be supported, rejected or inconclusive, with rationale; a deferred verifier SHALL leave it unverified. A supported recommendation SHALL NOT imply reproduced benefit, a failed requirement, or permission to change the product.
+
+#### Scenario: Evidence supports friction only
+- **WHEN** artifacts demonstrate duplicate entry but no users have tested the proposed simplification
+- **THEN** the verifier can support the recommendation's grounding while the benefit remains an untested expectation
+
+#### Scenario: Quorum outcomes for recommendations
+- **WHEN** recommendation votes are aggregated using the configured voter count, quorum and verification budgets
+- **THEN** a support quorum alone yields supported, a rejection quorum alone yields rejected, both or neither yield inconclusive, failed or malformed votes supply no support, and the audit record retains each voter's evidence and rationale
+
+#### Scenario: Generic advice rejected
+- **WHEN** a candidate recommends a shorter checkout without identifying observed unnecessary steps
+- **THEN** it is rejected for insufficient grounding and is not published as a supported recommendation

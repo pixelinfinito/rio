@@ -1,0 +1,19 @@
+{
+  "disabled-save": false,
+  "missing-confirmation": false,
+  "gradient-hero": false,
+  "accent-border-cards": false,
+  "raw-primitive": false,
+  "low-contrast-dark": false,
+  "console-error": false,
+  "fixed-banner": false,
+  "small-icon-buttons": false,
+  "small-email-input": false,
+  "hover-only-menu": false,
+  "duplicate-address": false,
+  "ambiguous-next": false,
+  "lost-input": false,
+  "missing-cancel": false,
+  "keyboard-barrier": false,
+  "intentional-brand": false
+}

@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "name": "add-to-cart",
+  "title": "Add To Cart",
+  "persona": "shopper",
+  "tags": [
+    "smoke"
+  ],
+  "covers": {
+    "paths": [
+      "src/**",
+      "server.mjs"
+    ],
+    "routes": [
+      "/login",
+      "/",
+      "/cart"
+    ]
+  },
+  "preconditions": [
+    "Synthetic products and persona accounts are seeded"
+  ],
+  "steps": [
+    {
+      "do": "Sign in using the shopper persona",
+      "at": "/login",
+      "expect": "Profile shows the saved address"
+    },
+    {
+      "do": "Open the shop and add a Canvas bag to the cart",
+      "at": "/",
+      "expect": "Added to cart"
+    },
+    {
+      "do": "Open the cart",
+      "at": "/cart",
+      "expect": "Canvas bag and the total are visible"
+    }
+  ],
+  "success": [
+    "The cart contains a Canvas bag"
+  ],
+  "goal": "Choose an item for purchase",
+  "ux_criteria": [
+    "ux/task-clarity",
+    "ux/error-recovery",
+    "ux/task-efficiency"
+  ],
+  "resets": true
+}

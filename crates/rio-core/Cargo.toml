@@ -19,6 +19,7 @@ thiserror.workspace = true
 toml.workspace = true
 jsonschema.workspace = true
 textwrap.workspace = true
+jiff = "0.2"
 
 [dev-dependencies]
 insta.workspace = true

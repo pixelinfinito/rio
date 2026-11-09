@@ -71,6 +71,19 @@ export async function verifyJobToken(
 ) {
   const token =
     request.headers.get("authorization")?.replace(/^Bearer /, "") ?? "";
+  if (token.startsWith("qa-job.")) {
+    invariant(
+      /^qa-job\.[a-f0-9]{64}$/.test(token),
+      "unauthorized runner capability",
+    );
+    const run = await env.DB.prepare(
+      "SELECT 1 FROM qa_runs WHERE review_id=? AND job_id=? AND attempt=? AND control_hash=? AND control_expires_at>?",
+    )
+      .bind(review, job, attempt, hash(token), Date.now())
+      .first();
+    invariant(run, "unauthorized runner capability");
+    return token;
+  }
   const expires = Number(token.split(".")[0]);
   invariant(
     Number.isSafeInteger(expires) && expires > Date.now(),
@@ -79,6 +92,12 @@ export async function verifyJobToken(
   invariant(
     equal(token, await jobToken(env, review, job, attempt, expires)),
     "unauthorized runner capability",
+  );
+  invariant(
+    !(await env.DB.prepare("SELECT 1 FROM qa_runs WHERE job_id=? AND attempt=?")
+      .bind(job, attempt)
+      .first()),
+    "unauthorized QA runner capability",
   );
   return token;
 }

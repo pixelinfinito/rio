@@ -137,6 +137,12 @@ impl FailOn {
 
 impl CompiledFailOn {
     pub fn matches(&self, finding: &Finding) -> bool {
+        if finding.category == Category::Ux
+            && (finding.severity == crate::Severity::Info
+                || finding.evidence_level == EvidenceLevel::Refuted)
+        {
+            return false;
+        }
         self.rules
             .iter()
             .any(|rule| rule.is_match(&finding.rule_id))
@@ -229,7 +235,14 @@ pub fn exit_code(report: &Report, policy: &CompiledFailOn, context: ExitContext)
         .iter()
         .chain(&report.risks)
         .chain(&report.security)
-        .any(|f| policy.matches(f))
+        .any(|f| {
+            (f.category != Category::Ux
+                || report
+                    .agent_audit
+                    .as_ref()
+                    .is_none_or(|audit| audit.get("qa").is_none()))
+                && policy.matches(f)
+        })
     {
         return 1;
     }
@@ -241,7 +254,12 @@ pub fn exit_code(report: &Report, policy: &CompiledFailOn, context: ExitContext)
         return 1;
     }
     // An unreadable verifier outcome could hide a policy failure; never report success.
-    if audit.is_err() || policy.is_incomplete(report) {
+    if audit.is_err()
+        || audit
+            .as_ref()
+            .is_ok_and(|audit| audit.as_ref().is_some_and(|a| a.qa_incomplete))
+        || policy.is_incomplete(report)
+    {
         return 4;
     }
     // Publication was attempted and the host rejected part of it; the report stands.
@@ -260,6 +278,8 @@ pub struct AuditSignals {
     pub policy_matches: Vec<String>,
     #[serde(default)]
     pub incomplete_votes: u64,
+    #[serde(default)]
+    pub qa_incomplete: bool,
 }
 impl AuditSignals {
     pub fn of(report: &Report) -> Result<Option<Self>, serde_json::Error> {

@@ -16,6 +16,8 @@ use std::{
 };
 use tokio_util::sync::CancellationToken;
 mod prepare;
+mod qa;
+mod qa_sandbox;
 /// Maximum completion body accepted by the worker. Executor output is capped at 1 MiB
 /// per stream, but JSON escaping (up to 6x) and the parsed artifact copy can expand it.
 const COMPLETION_LIMIT: usize = 16 * 1024 * 1024;
@@ -35,6 +37,23 @@ struct Args {
 }
 #[derive(Subcommand)]
 enum Command {
+    /// Verify the QA image with a bundled browser interaction and no network egress.
+    #[command(subcommand_negates_reqs = true)]
+    Qa {
+        #[command(subcommand)]
+        command: Option<QaCommand>,
+        #[arg(
+            long,
+            required_unless_present = "pod_self_test",
+            conflicts_with = "pod_self_test"
+        )]
+        self_test: bool,
+        /// Verify all three containers, host firewall rules and remote Chromium.
+        #[arg(long)]
+        pod_self_test: bool,
+        #[arg(long, env = "RIO_QA_IMAGE", default_value = "rio-qa:0.1.0")]
+        image: String,
+    },
     Serve {
         #[arg(long, env = "RIO_ENDPOINT_URL")]
         endpoint: String,
@@ -50,6 +69,36 @@ enum Command {
         base: PathBuf,
         #[arg(long)]
         head: PathBuf,
+    },
+}
+#[derive(Subcommand)]
+enum QaCommand {
+    #[command(hide = true)]
+    Sandbox {
+        #[arg(value_parser = ["plan", "finish"])]
+        stage: String,
+        #[arg(long, default_value = "/run/rio-sandbox")]
+        directory: PathBuf,
+    },
+    /// Replay retained events in a fresh seeded pod, without a model or harness.
+    Replay {
+        /// Immutable tar snapshot with head/ or base/ paths, as in runner archives.
+        #[arg(long)]
+        archive: PathBuf,
+        /// Sanitized qa-replay-v1 JSONL from the original chain and cell.
+        #[arg(long)]
+        events: PathBuf,
+        /// Original evidence manifest with boundary content hashes.
+        #[arg(long)]
+        manifest: PathBuf,
+        #[arg(long, value_parser = qa::parse_until)]
+        until: String,
+        #[arg(long, default_value = "head", value_parser = ["base", "head"])]
+        version: String,
+        #[arg(long)]
+        cache_dir: PathBuf,
+        #[arg(long, default_value_t = 300, value_parser = clap::value_parser!(u64).range(1..))]
+        wall_seconds: u64,
     },
 }
 #[derive(Deserialize)]
@@ -73,6 +122,42 @@ struct Header {
 #[tokio::main(worker_threads = 2)]
 async fn main() -> Result<()> {
     match Args::parse().command {
+        Command::Qa {
+            command,
+            self_test: _,
+            pod_self_test,
+            image,
+        } => {
+            if let Some(QaCommand::Sandbox { stage, directory }) = &command {
+                return qa_sandbox::execute(stage, directory);
+            }
+            if let Some(QaCommand::Replay {
+                archive,
+                events,
+                manifest,
+                until,
+                version,
+                cache_dir,
+                wall_seconds,
+            }) = command
+            {
+                qa::replay(
+                    archive,
+                    events,
+                    manifest,
+                    until,
+                    version,
+                    cache_dir,
+                    wall_seconds,
+                    image,
+                )
+                .await
+            } else if pod_self_test {
+                qa::pod_self_test(image).await
+            } else {
+                qa::self_test(image).await
+            }
+        }
         Command::Serve {
             endpoint,
             image,
@@ -383,6 +468,7 @@ async fn serve(endpoint: String, image: String, once: bool) -> Result<()> {
         // A single job or transient endpoint failure must not stop the daemon; only
         // unconfirmed container cleanup is fatal, because isolation is then unknown.
         match next_job(&client, &base, &secret, &image).await {
+            Ok(Served::Stopped) => return Ok(()),
             Ok(Served::Idle) if !once => tokio::time::sleep(Duration::from_secs(2)).await,
             Ok(_) if once => return Ok(()),
             Ok(_) => {}
@@ -395,6 +481,7 @@ async fn serve(endpoint: String, image: String, once: bool) -> Result<()> {
     }
 }
 enum Served {
+    Stopped,
     Idle,
     Job,
 }
@@ -446,6 +533,9 @@ async fn next_job(
     let attempt = job["attempt"].as_u64().context("missing attempt")?;
     if job["kind"] == "prepare" && job["network"] == "clone" {
         return serve_prepare(client, base, &claim, token, review, id, attempt, image).await;
+    }
+    if job["kind"] == "qa" {
+        return qa::serve(client, base, &claim).await;
     }
     // Trees arrive only as the job archive; an embedded snapshot is an older protocol.
     let valid = job["network"] == false
@@ -750,6 +840,38 @@ async fn run_docker(
 mod tests {
     use super::*;
     use std::os::unix::fs::PermissionsExt;
+    #[test]
+    fn qa_replay_cli_requires_retained_inputs_and_a_valid_target() {
+        let args = [
+            "rio-runner",
+            "qa",
+            "replay",
+            "--archive",
+            "snapshot.tar",
+            "--events",
+            "replay.jsonl",
+            "--manifest",
+            "manifest.json",
+            "--cache-dir",
+            "cache",
+            "--until",
+            "checkout:4",
+        ];
+        assert!(matches!(
+            Args::try_parse_from(args).unwrap().command,
+            Command::Qa {
+                command: Some(QaCommand::Replay { .. }),
+                ..
+            }
+        ));
+        for target in ["checkout", "checkout:0", "../checkout:1", "checkout:1:2"] {
+            let mut invalid = args;
+            invalid[args.len() - 1] = target;
+            assert!(Args::try_parse_from(invalid).is_err(), "{target}");
+        }
+        assert!(Args::try_parse_from(["rio-runner", "qa"]).is_err());
+        assert!(Args::try_parse_from(["rio-runner", "qa", "--self-test"]).is_ok());
+    }
     #[test]
     fn artifact_graphs_are_bounded_to_the_artifact_budget_with_a_report_note() {
         let node = |id: &str, hop: usize, seed: bool| {

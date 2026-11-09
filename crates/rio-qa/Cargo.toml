@@ -1,0 +1,36 @@
+[package]
+name = "rio-qa"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Browser QA contracts, journey validation and execution"
+
+[lints]
+workspace = true
+
+[dependencies]
+rio-core = { path = "../rio-core" }
+serde.workspace = true
+serde_json.workspace = true
+serde_yaml.workspace = true
+jsonschema.workspace = true
+regex.workspace = true
+globset.workspace = true
+thiserror.workspace = true
+anyhow.workspace = true
+tokio.workspace = true
+tempfile.workspace = true
+keyring = { version = "3.6.3", features = ["apple-native", "windows-native", "sync-secret-service", "crypto-rust", "vendored"] }
+jiff = "0.2"
+
+blake3.workspace = true
+cap-std.workspace = true
+cap-fs-ext.workspace = true
+fs4.workspace = true
+
+rio-adapters = { path = "../rio-adapters" }
+tokio-util.workspace = true
+tar.workspace = true
+
+[dev-dependencies]

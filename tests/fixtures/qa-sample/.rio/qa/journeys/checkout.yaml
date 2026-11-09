@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "name": "checkout",
+  "title": "Checkout",
+  "persona": "shopper",
+  "tags": [],
+  "covers": {
+    "paths": [
+      "src/**",
+      "server.mjs"
+    ],
+    "routes": [
+      "/checkout"
+    ]
+  },
+  "preconditions": [
+    "Synthetic products and persona accounts are seeded"
+  ],
+  "steps": [
+    {
+      "do": "Open checkout",
+      "at": "/checkout",
+      "expect": "Saved email and delivery address are filled in"
+    },
+    {
+      "do": "Review the price and pay",
+      "at": "/checkout",
+      "expect": "An order confirmation is visible"
+    }
+  ],
+  "success": [
+    "The order is confirmed and the cart is empty"
+  ],
+  "goal": "Buy the item without repeating saved information",
+  "ux_criteria": [
+    "ux/task-clarity",
+    "ux/error-recovery",
+    "ux/task-efficiency"
+  ],
+  "after": [
+    "add-to-cart"
+  ]
+}

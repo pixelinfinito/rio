@@ -1,0 +1,51 @@
+{
+  "version": 1,
+  "name": "payment-recovery",
+  "title": "Payment Recovery",
+  "persona": "shopper",
+  "tags": [],
+  "covers": {
+    "paths": [
+      "src/**",
+      "server.mjs"
+    ],
+    "routes": [
+      "/checkout"
+    ]
+  },
+  "preconditions": [
+    "Synthetic products and persona accounts are seeded"
+  ],
+  "steps": [
+    {
+      "do": "Sign in using the shopper persona, open the shop and add a Canvas bag to the cart",
+      "at": "/",
+      "expect": "Cart contains the Canvas bag"
+    },
+    {
+      "do": "Open checkout and set the payments service to decline",
+      "at": "/checkout",
+      "expect": "Saved details are filled in"
+    },
+    {
+      "do": "Pay and inspect the recovery message",
+      "at": "/checkout",
+      "expect": "Decline explains retry and cancel; entered details remain"
+    },
+    {
+      "do": "Set payments to approve and retry",
+      "at": "/checkout",
+      "expect": "Order is confirmed"
+    }
+  ],
+  "success": [
+    "Retry completes the order without re-entering the address"
+  ],
+  "goal": "Recover from a declined payment without losing work",
+  "ux_criteria": [
+    "ux/task-clarity",
+    "ux/error-recovery",
+    "ux/task-efficiency"
+  ],
+  "resets": true
+}

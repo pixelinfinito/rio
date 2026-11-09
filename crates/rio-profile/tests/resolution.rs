@@ -89,7 +89,7 @@ fn resolved_base_has_pinned_modules_stable_hash_and_writes_exact_document() {
     let loader = loader(root.path());
     let resolved = loader.load(Some("rio/base")).unwrap();
     assert_eq!(resolved.warnings.len(), 4);
-    assert_eq!(resolved.modules.len(), 8);
+    assert_eq!(resolved.modules.len(), 9);
     assert!(
         resolved
             .profile
@@ -99,7 +99,7 @@ fn resolved_base_has_pinned_modules_stable_hash_and_writes_exact_document() {
     );
     assert_eq!(
         execution_order(&resolved.profile.steps).unwrap(),
-        [0, 1, 2, 3, 4, 5, 6, 7]
+        [0, 1, 2, 3, 4, 5, 6, 7, 8]
     );
     insta::assert_snapshot!("resolved_base", resolved.to_yaml().unwrap());
     let path = root.path().join("profile.resolved.yaml");
@@ -187,7 +187,10 @@ fn every_validation_rule_rejects_its_failing_fixture() {
         ("models", "verifier alias must differ"),
         ("evidence", "min_evidence must be at least plausible"),
         ("verifier", "verifier step is mandatory"),
-        ("verifier-order", "must depend on every agents step"),
+        (
+            "verifier-order",
+            "must depend on every enabled agents, security or QA step",
+        ),
         ("required-check", "$.fail_on.required_checks[0]"),
         ("rule", "unknown predicate"),
         ("action", "unknown action"),

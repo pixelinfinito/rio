@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "labels": [
+    {
+      "run_id": "01M707WHBFE4B0H5WSDK1AESSY",
+      "id": "6dc1634162bfa78d57aefffe7d6cbf201b3db6ea589e37989aa7c91ea86ee516",
+      "reviewer": "Project owner, conversation on 2026-11-09",
+      "evidence_notes": "Reviewed docs/evaluation/v0.3-qa-ux-review.md. Initial response: 2, 2, 2, yes. The owner then clarified: the stated bennefit is legit. Final assessment retains scores 2/2/2 and records no false proven-benefit claim. This assesses wording and grounding, not measured user benefit.",
+      "guidance_adherence": 2,
+      "relevance": 2,
+      "actionability": 2,
+      "unsupported_benefit_claim": false
+    },
+    {
+      "run_id": "01M70AGJSNSNGREMR3PP9M36MK",
+      "id": "440a1ecfc60c1b5600eb951abf49b937e8de17e5f9dda0acc7f7617b09e4125b",
+      "reviewer": "Project owner, conversation on 2026-11-09",
+      "evidence_notes": "Reviewed docs/evaluation/v0.3-qa-cancel-review.md. Response: 2, no; recorded as 2 for each requested quality dimension and no false proven-benefit claim. This assesses the recommendation, not measured user benefit.",
+      "guidance_adherence": 2,
+      "relevance": 2,
+      "actionability": 2,
+      "unsupported_benefit_claim": false
+    }
+  ]
+}

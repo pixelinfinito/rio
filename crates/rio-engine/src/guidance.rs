@@ -28,6 +28,10 @@ pub fn owner_guidance(head: &Tree, diff: &Diff) -> Vec<OwnerGuidance> {
             directory = scope.parent();
         }
     }
+    read_guidance(head, paths)
+}
+
+fn read_guidance(head: &Tree, paths: BTreeSet<String>) -> Vec<OwnerGuidance> {
     paths
         .into_iter()
         .map(|path| {
@@ -47,6 +51,26 @@ pub fn owner_guidance(head: &Tree, diff: &Diff) -> Vec<OwnerGuidance> {
             }
         })
         .collect()
+}
+
+/// QA may discover a route after preparation, before a journey file exists.
+/// Capture the guidance documents now; the QA consumer narrows this immutable
+/// catalog to each journey/visited route before constructing either prompt.
+/// This does not grant broader tools or execution permissions.
+pub fn review_owner_guidance(head: &Tree, diff: &Diff, qa_enabled: bool) -> Vec<OwnerGuidance> {
+    if !qa_enabled {
+        return owner_guidance(head, diff);
+    }
+    let paths = head
+        .iter()
+        .filter(|(path, entry)| {
+            [0o100644, 0o100755].contains(&entry.mode)
+                && ["REVIEW.md", "AGENTS.md", "CLAUDE.md"]
+                    .contains(&path.rsplit('/').next().unwrap_or(path))
+        })
+        .map(|(path, _)| path.clone())
+        .collect();
+    read_guidance(head, paths)
 }
 
 pub(crate) fn risk_tier(patterns: &[String], diff: &Diff) -> Result<Option<RiskTier>> {

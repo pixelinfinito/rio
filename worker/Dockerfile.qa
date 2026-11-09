@@ -1,0 +1,26 @@
+FROM node:22-bookworm-slim
+# This image is provisioned at build time. QA never installs app dependencies.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3 ca-certificates openssl util-linux sqlite3 postgresql-client default-mysql-client redis-tools \
+    && rm -rf /var/lib/apt/lists/*
+WORKDIR /opt/rio-qa
+COPY crates/rio-qa/controller/package.json crates/rio-qa/controller/package-lock.json ./
+RUN npm ci --omit=dev --no-audit --no-fund \
+    && npm install --global --no-audit --no-fund @openai/codex@0.167.0 @mariozechner/pi-coding-agent@0.73.1 \
+    && npx playwright install --with-deps chromium \
+    && npm cache clean --force \
+    && chmod -R a+rX /root/.cache/ms-playwright \
+    && mv /root/.cache/ms-playwright /opt/rio-browsers
+ENV PLAYWRIGHT_BROWSERS_PATH=/opt/rio-browsers \
+    NODE_EXTRA_CA_CERTS=/etc/ssl/certs/ca-certificates.crt \
+    SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt \
+    REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
+COPY crates/rio-qa/controller/src ./src
+COPY modules/qa/skill /opt/rio-qa/skill
+COPY modules/qa/rules /opt/rio-qa/rules
+COPY schemas/qa-*.json schemas/journey-v1.json schemas/report-v1.json /opt/rio-qa/schemas/
+COPY worker/qa/entrypoint.py /opt/rio-qa/entrypoint.py
+COPY worker/qa/subscription-entrypoint.py /opt/rio-qa/subscription-entrypoint.py
+WORKDIR /home/node
+ENTRYPOINT ["python3", "/opt/rio-qa/entrypoint.py"]
+CMD ["node", "/opt/rio-qa/src/self-test.mjs"]

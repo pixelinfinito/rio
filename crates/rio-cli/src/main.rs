@@ -6,6 +6,7 @@ mod lineage;
 mod prepare;
 mod providers;
 mod pull;
+mod qa;
 mod registry;
 use anyhow::Context;
 use clap::{Args, Parser, Subcommand, ValueEnum};
@@ -32,6 +33,13 @@ struct Cli {
 #[derive(Subcommand)]
 enum Command {
     Review(ReviewArgs),
+    /// Inspect and validate browser QA contracts and journey coverage.
+    Qa {
+        #[command(subcommand)]
+        command: Option<qa::QaCommand>,
+        #[command(flatten)]
+        args: qa::QaRunArgs,
+    },
     Profile {
         #[command(subcommand)]
         command: ProfileCommand,
@@ -137,6 +145,8 @@ impl SelectionArgs {
 }
 #[derive(Args)]
 struct ReviewArgs {
+    #[arg(skip)]
+    qa: Option<qa::QaRunOptions>,
     #[command(flatten)]
     selection: SelectionArgs,
     #[arg(long)]
@@ -219,6 +229,10 @@ async fn main() -> ExitCode {
     };
     let code = match cli.command {
         Command::Review(args) => run_review(args).await,
+        Command::Qa { command, args } => match command {
+            Some(command) => qa::run(command).await,
+            None => qa::run_journeys(args).await,
+        },
         Command::Profile { command } => run_profile(command),
         Command::Doctor(args) => run_doctor(args).await,
         Command::Init {
@@ -507,7 +521,7 @@ async fn run_review(args: ReviewArgs) -> u8 {
             Vec::new(),
         );
     }
-    let profile = match loader(Some(repo.root().into()), &config, cwd)
+    let mut profile = match loader(Some(repo.root().into()), &config, cwd)
         .load_with_preset(args.profile.as_deref(), preset)
     {
         Ok(profile) => profile,
@@ -521,6 +535,17 @@ async fn run_review(args: ReviewArgs) -> u8 {
             );
         }
     };
+    if let Some(options) = &args.qa {
+        if let Err(error) = qa::configure_run(&mut profile, options) {
+            return error_report(
+                args.format,
+                2,
+                "invalid_qa_profile",
+                error.to_string(),
+                Vec::new(),
+            );
+        }
+    }
     for warning in &profile.warnings {
         if config.endpoint_url.is_some()
             && !args.offline
@@ -1127,6 +1152,20 @@ async fn run_doctor(args: DoctorArgs) -> u8 {
         // `endpoint` stays the URL; the readiness details are additive.
         document["endpoint_status"] =
             endpoint_diagnostics(config, url, repository, publish, &mut warnings).await;
+    }
+    if let Some(repo) = &repo {
+        match qa::doctor(
+            repo,
+            config.as_ref().is_some_and(|c| c.endpoint_url.is_some()),
+        )
+        .await
+        {
+            Ok(status) => document["qa"] = status,
+            Err(error) => {
+                warnings.push(format!("QA readiness: {error}"));
+                document["qa"] = json!({"configured":true,"error":error.to_string()});
+            }
+        }
     }
     document["blocking_problems"] = json!(problems);
     document["warnings"] = json!(warnings);

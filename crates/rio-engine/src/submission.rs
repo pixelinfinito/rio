@@ -10,7 +10,7 @@ use rio_profile::{ProfileLoader, ResolvedProfile};
 use serde_json::{Value, json};
 use std::time::{Duration, Instant};
 
-use crate::{owner_guidance, profile_excludes};
+use crate::{profile_excludes, review_owner_guidance};
 
 /// JSON bytes per graph version in the submission. Edges dominate large slices
 /// (tens of thousands at two hops in big repositories), and the endpoint caps the
@@ -77,12 +77,12 @@ pub fn build_submission(
     options: &SubmissionOptions,
 ) -> Result<Option<Prepared>> {
     let delta = diff(changes, &profile_excludes(profile))?;
-    if delta.files.is_empty() {
+    if delta.files.is_empty() && !profile.profile.qa_enabled() {
         return Ok(None);
     }
     let snapshot = rio_git::Snapshot::from_changes(changes);
     let id = review_id(&snapshot.key, profile)?;
-    let guidance = owner_guidance(&changes.head, &delta);
+    let guidance = review_owner_guidance(&changes.head, &delta, profile.profile.qa_enabled());
     let graph_step = profile.profile.step("rio/graph");
     let graph_options = GraphOptions {
         hops: graph_step

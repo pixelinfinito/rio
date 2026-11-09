@@ -1,4 +1,18 @@
 import { Hono } from "hono";
+import {
+  qaEvidenceRoutes,
+  expireQaEvidence,
+  refreshQaReportLinks,
+} from "./qa-evidence";
+import { qaModelRoutes } from "./qa-model";
+import { qaSeedRoutes } from "./qa-seed-routes";
+import {
+  claimQaRun,
+  configureQaRun,
+  heartbeatQaRun,
+  qaControl,
+  revokeQaRun,
+} from "./qa-jobs";
 import type { Env, Execution, JobMessage, QueueMessage } from "./types";
 import { authenticate, equal, jobToken, sign, verifyJobToken } from "./auth";
 import {
@@ -37,6 +51,7 @@ import { publicRecord } from "./history";
 import { publicProposal } from "./proposals";
 import { createReview } from "./reviews";
 import { recordFeedback } from "./feedback";
+import { dismissRecommendation } from "./qa-recommendation-history";
 import { APP_TENANT, handleGitHubWebhook, installationFor } from "./webhooks";
 import {
   handleReviewRequest,
@@ -61,6 +76,7 @@ import {
 export { ReviewWorkflow } from "./workflow";
 export { MigrationWorkflow } from "./migrate";
 export { Sandbox } from "./sandbox";
+export { QaSandboxGateway } from "./qa-sandbox-gateway";
 const app = new Hono<{ Bindings: Env }>();
 app.onError((error, c) =>
   c.json(
@@ -78,6 +94,9 @@ app.use("/v1/*", async (c, next) => {
   invariant(!protocol || protocol === "1", "unsupported protocol");
   await next();
 });
+app.route("/v1/qa/seeds", qaSeedRoutes);
+app.route("/v1/qa/model", qaModelRoutes);
+app.route("/v1/qa", qaEvidenceRoutes);
 async function bytes(request: Request, max: number): Promise<Uint8Array> {
   invariant(
     Number(request.headers.get("content-length") ?? 0) <= max,
@@ -355,6 +374,8 @@ app.get("/v1/reviews/:id/report", async (c) => {
   );
   invariant(row.report_key, "report is not ready");
   const report = await new Store(c.env).get<any>(row.report_key);
+  await refreshQaReportLinks(c.env, row.tenant, row.id, report, c.req.url);
+  c.header("cache-control", "private, no-store");
   if (format === "json") return c.json(report);
   // The invocation spans the review's creation and its final event.
   const finished = await c.env.DB.prepare(
@@ -391,7 +412,27 @@ app.get("/v1/reviews/:id/audit", async (c) => {
     .bind(id)
     .all();
   const store = new Store(c.env);
+  const qaRecords: Record<string, unknown> = {};
+  for (const name of [
+    "plan.json",
+    "outcomes.json",
+    "manifest.json",
+    "recommendations.json",
+    "assessment.json",
+    "observations.json",
+    "observation-candidates.json",
+    "baseline.json",
+    "audit.json",
+    "verification.json",
+    "recommendation-history.json",
+    "policy.json",
+  ]) {
+    const record = await c.env.ARTIFACTS.get(`reviews/${id}/qa/${name}`);
+    if (record) qaRecords[name] = await record.json();
+  }
+  c.header("cache-control", "private, no-store");
   return c.json({
+    ...(Object.keys(qaRecords).length ? { qa_records: qaRecords } : {}),
     hypotheses: await Promise.all(
       hypotheses.results.map((r) => store.get(r.object_key)),
     ),
@@ -466,6 +507,12 @@ app.post("/v1/reviews/:id/cancel", async (c) => {
   )
     .bind(row.id)
     .run();
+  const qa = await c.env.DB.prepare(
+    "SELECT q.id FROM qa_runs q JOIN reviews r ON r.id=q.review_id WHERE q.review_id=? AND r.cancelled=1",
+  )
+    .bind(row.id)
+    .all<{ id: string }>();
+  for (const run of qa.results) await revokeQaRun(c.env, run.id);
   return c.json({ id: row.id, status: "cancelled" });
 });
 app.get("/v1/lineages", async (c) => {
@@ -613,6 +660,60 @@ app.post("/v1/suppressions/:id", async (c) => {
 // Answers a posted lineage finding, or a finding of the repository registry.
 // It writes author_response and a feedback record only; posture, budgets,
 // rules and suppressions are never touched.
+app.post("/v1/qa/recommendations/:id/feedback", async (c) => {
+  const tenant = await authenticate(c.req.raw, c.env, "reviews:write");
+  const value = await body(c.req.raw, 64 * 1024),
+    id = c.req.param("id");
+  invariant(/^[a-f0-9]{64}$/.test(id), "invalid recommendation id");
+  invariant(
+    value &&
+      typeof value === "object" &&
+      !Array.isArray(value) &&
+      Object.keys(value).every((key) =>
+        ["repository", "reason", "note", "actor"].includes(key),
+      ),
+    "invalid recommendation feedback",
+  );
+  invariant(
+    typeof value.repository === "string" &&
+      value.repository.length > 0 &&
+      value.repository.length <= 512,
+    "invalid repository",
+  );
+  invariant(
+    ["wrong", "intentional", "irrelevant", "style"].includes(value.reason),
+    "invalid recommendation dismissal reason",
+  );
+  invariant(
+    value.note === undefined ||
+      (typeof value.note === "string" && value.note.length <= 4000),
+    "invalid note",
+  );
+  invariant(
+    value.actor === undefined ||
+      (typeof value.actor === "string" &&
+        value.actor.length > 0 &&
+        value.actor.length <= 256),
+    "invalid actor",
+  );
+  const response = {
+    reason: value.reason,
+    actor: value.actor ?? tenant,
+    at: new Date().toISOString(),
+    ...(value.note ? { note: value.note } : {}),
+  };
+  if (
+    !(await dismissRecommendation(
+      c.env,
+      tenant,
+      value.repository,
+      id,
+      response,
+    ))
+  )
+    return c.json({ error: "recommendation not found" }, 404);
+  return c.json({ id, status: "dismissed", dismissal: response });
+});
 app.post("/v1/findings/:id/feedback", async (c) => {
   const tenant = await authenticate(c.req.raw, c.env, "reviews:write"),
     value = await body(c.req.raw, 64 * 1024),
@@ -656,12 +757,14 @@ app.post("/v1/runner/claim", async (c) => {
     "unauthorized",
   );
   const row = await c.env.DB.prepare(
-    "UPDATE jobs SET status='leased',lease_until=? WHERE id=(SELECT j.id FROM jobs j JOIN reviews r ON r.id=j.review_id WHERE r.cancelled=0 AND r.deadline>? AND (j.status='pending' OR (j.status='leased' AND j.lease_until<?)) ORDER BY j.created_at LIMIT 1) RETURNING *",
+    "UPDATE jobs SET status='leased',lease_until=? WHERE id=(SELECT j.id FROM jobs j JOIN reviews r ON r.id=j.review_id WHERE r.cancelled=0 AND r.deadline>? AND (j.status='pending' OR (j.status='leased' AND j.lease_until<?)) AND NOT EXISTS(SELECT 1 FROM qa_runs q WHERE q.job_id=j.id AND (q.deadline<=? OR q.state NOT IN ('pending','running'))) ORDER BY j.created_at LIMIT 1) RETURNING *",
   )
-    .bind(Date.now() + 180000, Date.now(), Date.now())
+    .bind(Date.now() + 180000, Date.now(), Date.now(), Date.now())
     .first<any>();
   if (!row) return c.json({ job: null });
   const payload = await new Store(c.env).get<Execution>(row.payload_key);
+  if (payload.kind === "qa")
+    return c.json({ job: payload, ...(await claimQaRun(c.env, payload)) });
   if (
     payload.kind !== "prepare" ||
     payload.network !== "clone" ||
@@ -726,6 +829,31 @@ app.post("/v1/runner/claim", async (c) => {
   });
 });
 // A self-hosted runner downloads exactly the executor input the Sandbox streams.
+app.post("/v1/runner/:review/:job/:attempt/heartbeat", async (c) => {
+  const review = c.req.param("review"),
+    job = c.req.param("job"),
+    attempt = Number(c.req.param("attempt"));
+  const token = await verifyJobToken(c.req.raw, c.env, review, job, attempt);
+  return c.json(
+    await heartbeatQaRun(
+      c.env,
+      await qaControl(c.env, review, job, attempt, token),
+    ),
+  );
+});
+app.post("/v1/runner/:review/:job/:attempt/qa-configure", async (c) => {
+  const review = c.req.param("review"),
+    job = c.req.param("job"),
+    attempt = Number(c.req.param("attempt"));
+  const token = await verifyJobToken(c.req.raw, c.env, review, job, attempt);
+  return c.json(
+    await configureQaRun(
+      c.env,
+      await qaControl(c.env, review, job, attempt, token),
+      await body(c.req.raw, 1024 * 1024),
+    ),
+  );
+});
 app.get("/v1/runner/:review/:job/:attempt/archive", async (c) => {
   const review = c.req.param("review"),
     job = c.req.param("job"),
@@ -738,6 +866,14 @@ app.get("/v1/runner/:review/:job/:attempt/archive", async (c) => {
     .first<{ payload_key: string }>();
   invariant(row, "unknown job attempt");
   const payload = await new Store(c.env).get<Execution>(row.payload_key);
+  if (payload.kind === "qa") {
+    const live = await c.env.DB.prepare(
+      "SELECT q.id FROM qa_runs q JOIN reviews r ON r.id=q.review_id JOIN jobs j ON j.id=q.job_id AND j.attempt=q.attempt WHERE q.job_id=? AND q.attempt=? AND q.state='running' AND q.deadline>? AND r.cancelled=0 AND r.deadline>? AND j.status='leased' AND j.lease_until>?",
+    )
+      .bind(job, attempt, Date.now(), Date.now(), Date.now())
+      .first();
+    invariant(live, "unauthorized stopped QA job");
+  }
   return new Response(await jobInput(c.env, payload), {
     headers: {
       "content-type": "application/octet-stream",
@@ -762,7 +898,7 @@ app.post("/v1/runner/:review/:job/:attempt/complete", async (c) => {
     equal(c.req.header("rio-signature") ?? "", expected),
     "unauthorized completion signature",
   );
-  await finishJob(c.env, review, job, attempt, JSON.parse(raw));
+  await finishJob(c.env, review, job, attempt, JSON.parse(raw), token);
   return c.json({ accepted: true });
 });
 export { app };
@@ -770,6 +906,9 @@ export { app };
 const JOB_DELIVERIES = 3;
 export default {
   fetch: app.fetch,
+  async scheduled(_controller: ScheduledController, env: Env) {
+    await expireQaEvidence(env);
+  },
   async queue(batch: MessageBatch<QueueMessage>, env: Env) {
     for (const message of batch.messages) {
       const body = message.body;
@@ -834,7 +973,14 @@ export default {
           body: JSON.stringify(payload),
         });
         invariant(response.ok, "sandbox execution failed");
-        await finishJob(env, review_id, job_id, attempt, await response.json());
+        if (payload.kind !== "qa")
+          await finishJob(
+            env,
+            review_id,
+            job_id,
+            attempt,
+            await response.json(),
+          );
         message.ack();
       } catch (error) {
         // The last delivery (max_retries in wrangler.jsonc) records the failure so
