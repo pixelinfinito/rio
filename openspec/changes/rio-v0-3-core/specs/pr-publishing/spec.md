@@ -65,6 +65,17 @@ Publication SHALL create or update a check run named `rio/review` on the head co
 - **WHEN** a review with no findings completes
 - **THEN** the check run's conclusion is `neutral` and its title states no findings were produced
 
+### Requirement: In-progress signal
+Once a pull request review's publish policy is known (from the repository's last review or this review's profile), a policy that posts a check run SHALL start the `rio/review` check run on the head as `in_progress`, and under `auto` the summary comment SHALL show a review is running. Publication SHALL complete that check run; a review that ends without publishing SHALL complete it as `neutral` with the reason and remove the banner.
+
+#### Scenario: Review announced
+- **WHEN** a push arrives on a pull request of a repository whose last review resolved `publish: auto`
+- **THEN** an in-progress `rio/review` check run and a "Rio is reviewing" summary banner appear before the review runs, and the finished review completes that check run and replaces the banner
+
+#### Scenario: Review fails after the announcement
+- **WHEN** an announced review stops before publishing
+- **THEN** its check run is completed as `neutral` with the reason and no check run stays in progress
+
 ### Requirement: Thread resolution
 When a posted finding's lifecycle status becomes `fixed` or `dismissed` per the finding-feedback capability, the publisher SHALL edit its comment with the status and reason text and SHALL resolve its review thread. A finding that is reopened SHALL have its thread unresolved.
 

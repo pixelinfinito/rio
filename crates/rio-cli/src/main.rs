@@ -865,6 +865,15 @@ async fn run_github_app_step(
             "GitHub App {} registered (id {}); its secrets are stored on the endpoint only.\nInstall it on your repositories: {}",
             record.slug, record.app_id, record.installation_url
         );
+        // Best effort: the logo is cosmetic and GitHub takes it only in the browser.
+        if let Ok((logo, settings)) =
+            github_app::save_logo(&directory, &record.slug, deployment.github_org.as_deref())
+        {
+            eprintln!(
+                "Give the app Rio's logo: open {settings}, choose \"Upload a logo\" under Display information, and pick {}",
+                logo.display()
+            );
+        }
         anyhow::Ok(())
     }
     .await;

@@ -305,7 +305,8 @@ export class GitHubDouble {
           {
             token,
             expires_at: new Date(Date.now() + 3600_000).toISOString(),
-            permissions: body.permissions,
+            // Like GitHub, every token also carries metadata: read.
+            permissions: { ...body.permissions, metadata: "read" },
             repository_selection: "selected",
             repositories: [{ full_name: owner, name: repository }],
           },
@@ -342,7 +343,8 @@ export class GitHubDouble {
   ): Response {
     const m = (re: RegExp) => re.exec(path);
     let r: RegExpExecArray | null;
-    if (method === "POST" && path === "/graphql") return this.graphql(body);
+    if (method === "POST" && path === "/graphql")
+      return this.graphql(body, token);
     if (
       (r = m(/^\/repos\/([^/]+\/[^/]+)\/pulls\/(\d+)$/)) &&
       method === "GET"
@@ -499,8 +501,22 @@ export class GitHubDouble {
     return items.slice((page - 1) * size, page * size);
   }
 
-  private graphql(body: any): Response {
+  private graphql(body: any, token: Token): Response {
     const query: string = body.query;
+    // Like GitHub, (un)resolving a thread needs contents: write as well.
+    if (
+      query.includes("resolveReviewThread") &&
+      token.permissions.contents !== "write"
+    )
+      return this.json({
+        data: { resolveReviewThread: null },
+        errors: [
+          {
+            type: "FORBIDDEN",
+            message: "Resource not accessible by integration",
+          },
+        ],
+      });
     if (query.includes("reviewThreads"))
       return this.json({
         data: {

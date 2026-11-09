@@ -10,21 +10,26 @@ use serde_json::{Value, json};
 use std::{
     io::{BufRead, BufReader, Write},
     net::TcpListener,
-    path::Path,
+    path::{Path, PathBuf},
     time::{Duration, Instant},
 };
 
 use crate::deployment::{Cloudflare, Deployment};
 
 /// Exactly the permissions the app needs; `docs/github-app.md` lists the same.
-pub const PERMISSIONS: [(&str, &str); 5] = [
-    ("contents", "read"),
+pub const PERMISSIONS: [(&str, &str); 6] = [
+    ("contents", "write"),
     ("pull_requests", "write"),
     ("checks", "write"),
     ("metadata", "read"),
     ("members", "read"),
+    ("issues", "read"),
 ];
 pub const EVENTS: [&str; 2] = ["pull_request", "issue_comment"];
+/// The app's description on GitHub (the manifest sets it; GitHub has no API for the logo).
+pub const DESCRIPTION: &str = "Rio reviews pull requests on an endpoint you run. Deterministic checks and an impact graph come first; model agents propose findings and independent verifiers must prove them from the code before anything is posted.\n\n- Inline comments for proven findings and one summary comment per pull request\n- A `rio/review` check run that shows progress and is always neutral: it never blocks a merge\n- Comment `/rio review` to re-run, or `/rio dismiss <id> <reason>` to answer a finding\n\nSource and documentation: https://github.com/pixelinfinito/rio";
+/// The app logo `rio init` saves for upload (docs/assets/rio-app-logo.png).
+pub const LOGO: &[u8] = include_bytes!("../../../docs/assets/rio-app-logo.png");
 /// GitHub limits app names to 34 characters.
 const NAME_LIMIT: usize = 34;
 const FLOW_TIMEOUT: Duration = Duration::from_secs(600);
@@ -60,6 +65,7 @@ pub fn manifest(endpoint: &str, redirect: &str) -> Value {
     json!({
         "name": name.trim_end(),
         "url": "https://github.com/pixelinfinito/rio",
+        "description": DESCRIPTION,
         "hook_attributes": {"url": format!("{}/v1/hooks/github", endpoint.trim_end_matches('/')), "active": true},
         "redirect_url": redirect,
         "public": false,
@@ -351,6 +357,26 @@ pub fn save_record(directory: &Path, record: &AppRecord) -> Result<()> {
     rio_engine::atomic_write(&file, toml::to_string_pretty(&value)?.as_bytes())
 }
 
+/// Saves the logo next to `config.toml` and returns the app settings page to
+/// upload it on: GitHub accepts an app logo only through its web interface.
+pub fn save_logo(
+    directory: &Path,
+    slug: &str,
+    organization: Option<&str>,
+) -> Result<(PathBuf, String)> {
+    let path = directory.join("rio-app-logo.png");
+    rio_engine::atomic_write(&path, LOGO)?;
+    let base = web_base();
+    let settings = match organization {
+        Some(org) => format!(
+            "{}/organizations/{org}/settings/apps/{slug}",
+            base.trim_end_matches('/')
+        ),
+        None => format!("{}/settings/apps/{slug}", base.trim_end_matches('/')),
+    };
+    Ok((path, settings))
+}
+
 /// Opens a URL in the user's browser, best effort; the URL is always printed.
 pub fn open_browser(url: &str) {
     eprintln!("Open {url} to register the Rio GitHub App (the page continues to GitHub).");
@@ -616,19 +642,31 @@ mod tests {
         );
         assert_eq!(manifest["default_events"], documented["default_events"]);
         assert_eq!(manifest["public"], false);
+        assert_eq!(manifest["description"], DESCRIPTION);
         assert_eq!(
             manifest["hook_attributes"],
             json!({"url": "https://rio.rio-210f84d0a5c4.workers.dev/v1/hooks/github", "active": true})
         );
         assert_eq!(manifest["name"], "Rio review rio.rio-210f84d0a5c4");
         assert!(manifest["name"].as_str().unwrap().len() <= NAME_LIMIT);
-        // The documentation's permission table lists the same five.
+        // The documentation's permission table lists the same six.
         for (name, access) in PERMISSIONS {
             assert!(
                 doc.contains(&format!("| `{name}` | `{access}` |")),
                 "{name}"
             );
         }
+    }
+
+    #[test]
+    fn the_logo_is_saved_for_upload_with_the_app_settings_page() {
+        let directory = tempfile::tempdir().unwrap();
+        let (path, settings) = save_logo(directory.path(), "rio-review", None).unwrap();
+        assert_eq!(std::fs::read(&path).unwrap(), LOGO);
+        assert!(LOGO.starts_with(b"\x89PNG"));
+        assert!(settings.ends_with("/settings/apps/rio-review"));
+        let (_, org) = save_logo(directory.path(), "rio-review", Some("acme")).unwrap();
+        assert!(org.ends_with("/organizations/acme/settings/apps/rio-review"));
     }
 
     #[tokio::test(flavor = "multi_thread", worker_threads = 2)]

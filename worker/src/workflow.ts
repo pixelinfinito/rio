@@ -91,6 +91,7 @@ import {
 } from "./history";
 import { updateProposals } from "./proposals";
 import { publishReview } from "./publish";
+import { announceReview, settleAnnouncement } from "./announce";
 import {
   changeHunks,
   context as cacheContext,
@@ -274,11 +275,23 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
         .run();
       return row;
     });
-    const submission = await store.get<Submission>(load.submission_key),
-      snapshot = await StoredSnapshot.open(
-        this.env,
-        event.payload.snapshot_key,
-      );
+    const submission = await store.get<Submission>(load.submission_key);
+    // PR mode: the resolved policy is recorded, so the next push of this
+    // repository is announced at once, and this review announces itself.
+    if (submission.report?.review?.pull_request)
+      await step.do("announce", async () => {
+        await this.env.DB.prepare(
+          "UPDATE pull_requests SET publish_policy=? WHERE review_id=?",
+        )
+          .bind(submission.profile.publish ?? "never", id)
+          .run();
+        await announceReview(this.env, id, submission.profile.publish);
+        return true;
+      });
+    const snapshot = await StoredSnapshot.open(
+      this.env,
+      event.payload.snapshot_key,
+    );
     // Steps read files on demand; triage needs only the changed files.
     const changedFiles: Snapshot = {
       base: await materialize(
@@ -1748,6 +1761,12 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           .bind(key, "runtime did not complete", id)
           .run();
         await store.event(id, "review:partial", { report });
+        await settleAnnouncement(
+          this.env,
+          id,
+          "Review did not complete",
+          "Rio's runtime stopped before the review finished, so nothing was published for this head. Push again or comment `/rio review` to retry.",
+        );
       });
       return { report_key: key };
     }
