@@ -1,0 +1,102 @@
+{
+ "schema": "rio-council-ab-labels-v1",
+ "status": "proposed; owner adjudication pending for null labels and confirmation of carried labels",
+ "issues": [
+  {
+   "case": "CL-RS-01",
+   "issue": "park.rs:234 zero-duration park reports had_driver",
+   "finding_ids": [
+    "2609193401d7f0993c29352f1f640ccb5ec16b2571f56c0723b9e4684c3b47ec",
+    "095bedfea77fd4a277ce21bb430907fc239485966fa781dd66c2653b26a55a00"
+   ],
+   "label": "real",
+   "source": "carried: v0.2 owner TP at park.rs (eager-handoff spurious wake)"
+  },
+  {
+   "case": "CL-RS-01",
+   "issue": "worker.rs:630 eager-handoff flag not cleared",
+   "finding_ids": [
+    "467f371219024229609f6402366abfd927dbc38aea07bf663cc4f0435b994ca8"
+   ],
+   "label": null,
+   "source": "new; council arm only"
+  },
+  {
+   "case": "CL-TS-02",
+   "issue": "route.ts:92 route removal state divergence",
+   "finding_ids": [
+    "18bb30dc1c7e7476bfa03b5f846bd38a1c86d784967a5593a8b928af45db06bb",
+    "95d4384c90995979fe5547c5f9ac3021a28dc25986ce950280170859b360751b"
+   ],
+   "label": "real",
+   "source": "carried: v0.2 owner TP at route.ts (remove-route method mismatch)"
+  },
+  {
+   "case": "CT-POS-03",
+   "issue": "package.json:102 types peer dependencies required",
+   "finding_ids": [
+    "eb1ec6308a20dff28f384f59ced33c8977de72207fbd2ebd6f77835db4723aad"
+   ],
+   "label": null,
+   "source": "new; promoted to reproduced by the council"
+  },
+  {
+   "case": "CT-POS-04",
+   "issue": "schemas.py:29 guild_token removed",
+   "finding_ids": [
+    "0b3364ac17a9599697a07f87f2c577181ba564a18cd391264b06424eb10fd50b",
+    "bc90fdc03cf3f1a9fe08e9f3c749b289b7316075a5bba99a08f731463d01e872"
+   ],
+   "label": "real",
+   "source": "carried: v0.3 owner TP contracts/schema/changed at schemas.py"
+  },
+  {
+   "case": "CT-POS-04",
+   "issue": "service.py:198 existing benefits not migrated",
+   "finding_ids": [
+    "30706857ca87ee5b30c4d8a4386804580aa0b50110d58a30969fd7bf83bb513d",
+    "26e8df623e52b6ff4d45bd86bffac3363bff425f93ba1825cabd7981bbad425b"
+   ],
+   "label": null,
+   "source": "new"
+  },
+  {
+   "case": "HS-PY-02",
+   "issue": "pyopenssl.py:505 password ignored for unencrypted key",
+   "finding_ids": [
+    "230110902f1665b678fdc75228f93fde0a1e36b0b437cd5600deb23a32032d5f"
+   ],
+   "label": "real",
+   "source": "carried: v0.2 owner TP at pyopenssl.py"
+  },
+  {
+   "case": "HS-TS-01",
+   "issue": "app.ts:16 SSR URL decode/canonicalization",
+   "finding_ids": [
+    "4f8e1c8da0c4de0adc8bd56d4a4917970cefe72591503401a8de66d3a20e9d79",
+    "a1e84dc01cc791671a037ac320ef44d4af62b5dc23c0910e2bfd946d272edccb"
+   ],
+   "label": "real",
+   "source": "carried: v0.2 owner TP at app.ts (ssr-url double decode)"
+  },
+  {
+   "case": "HS-TS-01",
+   "issue": "pages/utils.ts:363 static segment encoding removed",
+   "finding_ids": [
+    "d12a0fc01f515350dfc500e6523b581e7e47dda406888cc6e23f5acad868dbfb"
+   ],
+   "label": null,
+   "source": "new"
+  },
+  {
+   "case": "HS-TS-03",
+   "issue": "wrangler.ts kv_namespaces duplicated on merge",
+   "finding_ids": [
+    "b2782e9b72119a53a78ef4318cf023d0551eb8c395d360e299ca1c403aa7a83f",
+    "632d66bb5d9a23759ec0c2fde0d42d3e4c2d4f830998faff5863476702798d21"
+   ],
+   "label": "real",
+   "source": "carried: v0.2 owner TP at wrangler.ts"
+  }
+ ]
+}
