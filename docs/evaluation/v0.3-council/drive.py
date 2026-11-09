@@ -46,8 +46,8 @@ def fetch(case):
 
 def audit(review, target):
     token = json.loads(SECRETS.read_text())['RIO_API_TOKEN']
-    subprocess.run(['curl', '-s', '-o', str(target / 'audit.json'), '-H', f'Authorization: Bearer {token}',
-                    f'{ENDPOINT}/v1/reviews/{review}/audit'], check=True)
+    subprocess.run(['curl', '-sS', '--fail', '--max-time', '60', '-o', str(target / 'audit.json'),
+                    '-H', f'Authorization: Bearer {token}', f'{ENDPOINT}/v1/reviews/{review}/audit'], check=True)
 
 
 def answers(review, report, target):
@@ -81,9 +81,14 @@ def review(case, path, arm, profile, args):
         return f'{case["id"]} {arm}: exit {code}, no usable report ({error})'
     if match:
         (target / 'endpoint_review').write_text(match.group(1) + '\n')
-        audit(match.group(1), target)
-        if arm == 'council':
-            answers(match.group(1), report, target)
+        try:
+            audit(match.group(1), target)
+            if arm == 'council':
+                answers(match.group(1), report, target)
+        except (subprocess.CalledProcessError, OSError) as error:
+            # The review is kept (rerunning it would repeat its cost); fetch the audit by hand.
+            (target / 'audit.json').unlink(missing_ok=True)
+            return f'{case["id"]} {arm}: exit {code}, audit fetch failed ({error})'
     return f'{case["id"]} {arm}: exit {code} status {report.get("status")}'
 
 
