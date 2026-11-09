@@ -10,7 +10,10 @@
       "$ref": "#/$defs/role"
     },
     "round": {
-      "enum": [1, 2]
+      "enum": [
+        1,
+        2
+      ]
     },
     "real": {
       "$ref": "#/$defs/answer"
@@ -67,9 +70,18 @@
   ],
   "additionalProperties": false,
   "dependentRequired": {
-    "changed_from": ["changed_to", "cites"],
-    "changed_to": ["changed_from", "cites"],
-    "cites": ["changed_from", "changed_to"]
+    "changed_from": [
+      "changed_to",
+      "cites"
+    ],
+    "changed_to": [
+      "changed_from",
+      "cites"
+    ],
+    "cites": [
+      "changed_from",
+      "changed_to"
+    ]
   },
   "if": {
     "properties": {
@@ -82,23 +94,39 @@
     "not": {
       "anyOf": [
         {
-          "required": ["changed_from"]
+          "required": [
+            "changed_from"
+          ]
         },
         {
-          "required": ["changed_to"]
+          "required": [
+            "changed_to"
+          ]
         },
         {
-          "required": ["cites"]
+          "required": [
+            "cites"
+          ]
         }
       ]
     }
   },
   "$defs": {
     "role": {
-      "enum": ["skeptic", "exploit-author", "code-owner", "maintainer", "tester"]
+      "enum": [
+        "skeptic",
+        "exploit-author",
+        "code-owner",
+        "maintainer",
+        "tester"
+      ]
     },
     "answer": {
-      "enum": ["yes", "no", "unknown"]
+      "enum": [
+        "yes",
+        "no",
+        "unknown"
+      ]
     },
     "ref": {
       "type": "string",
@@ -114,16 +142,23 @@
         },
         "introduced_by_change": {
           "$ref": "#/$defs/answer"
+        },
+        "basis": {
+          "$ref": "#/properties/basis"
         }
       },
       "minProperties": 1,
-      "additionalProperties": false
+      "additionalProperties": false,
+      "description": "The fields of a position that changed: any of real, introduced_by_change and basis."
     },
     "citation": {
       "type": "object",
       "properties": {
         "kind": {
-          "enum": ["artifact", "assessment"]
+          "enum": [
+            "artifact",
+            "assessment"
+          ]
         },
         "ref": {
           "description": "An artifact id from the pack, or an anonymized assessment letter.",
@@ -139,7 +174,11 @@
           ]
         }
       },
-      "required": ["kind", "ref", "reason_code"],
+      "required": [
+        "kind",
+        "ref",
+        "reason_code"
+      ],
       "additionalProperties": false
     },
     "experiment_request": {
@@ -157,10 +196,18 @@
           "maxItems": 64
         },
         "version": {
-          "enum": ["base", "head", "both"]
+          "enum": [
+            "base",
+            "head",
+            "both"
+          ]
         },
         "expect": {
-          "enum": ["fails", "passes", "output_contains"]
+          "enum": [
+            "fails",
+            "passes",
+            "output_contains"
+          ]
         },
         "contains": {
           "description": "The text the output must contain; required with `expect: output_contains`.",
@@ -169,7 +216,11 @@
           "maxLength": 1000
         }
       },
-      "required": ["command", "version", "expect"],
+      "required": [
+        "command",
+        "version",
+        "expect"
+      ],
       "additionalProperties": false,
       "if": {
         "properties": {
@@ -179,7 +230,9 @@
         }
       },
       "then": {
-        "required": ["contains"]
+        "required": [
+          "contains"
+        ]
       }
     }
   }

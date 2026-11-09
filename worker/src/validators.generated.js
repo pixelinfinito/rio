@@ -62402,9 +62402,12 @@ const schema44 = {
       properties: {
         real: { $ref: "#/$defs/answer" },
         introduced_by_change: { $ref: "#/$defs/answer" },
+        basis: { $ref: "#/properties/basis" },
       },
       minProperties: 1,
       additionalProperties: false,
+      description:
+        "The fields of a position that changed: any of real, introduced_by_change and basis.",
     },
     citation: {
       type: "object",
@@ -62496,9 +62499,15 @@ const schema50 = {
   properties: {
     real: { $ref: "#/$defs/answer" },
     introduced_by_change: { $ref: "#/$defs/answer" },
+    basis: { $ref: "#/properties/basis" },
   },
   minProperties: 1,
   additionalProperties: false,
+  description:
+    "The fields of a position that changed: any of real, introduced_by_change and basis.",
+};
+const schema53 = {
+  enum: ["reproduction", "static_path", "protection_found", "contract", "none"],
 };
 function validate29(
   data,
@@ -62536,7 +62545,11 @@ function validate29(
       errors++;
     }
     for (const key0 in data) {
-      if (!(key0 === "real" || key0 === "introduced_by_change")) {
+      if (!(
+        key0 === "real" ||
+        key0 === "introduced_by_change" ||
+        key0 === "basis"
+      )) {
         const err1 = {
           instancePath,
           schemaPath: "#/additionalProperties",
@@ -62588,8 +62601,32 @@ function validate29(
         errors++;
       }
     }
+    if (data.basis !== undefined) {
+      let data2 = data.basis;
+      if (!(
+        data2 === "reproduction" ||
+        data2 === "static_path" ||
+        data2 === "protection_found" ||
+        data2 === "contract" ||
+        data2 === "none"
+      )) {
+        const err4 = {
+          instancePath: instancePath + "/basis",
+          schemaPath: "#/properties/basis/enum",
+          keyword: "enum",
+          params: { allowedValues: schema53.enum },
+          message: "must be equal to one of the allowed values",
+        };
+        if (vErrors === null) {
+          vErrors = [err4];
+        } else {
+          vErrors.push(err4);
+        }
+        errors++;
+      }
+    }
   } else {
-    const err4 = {
+    const err5 = {
       instancePath,
       schemaPath: "#/type",
       keyword: "type",
@@ -62597,9 +62634,9 @@ function validate29(
       message: "must be object",
     };
     if (vErrors === null) {
-      vErrors = [err4];
+      vErrors = [err5];
     } else {
-      vErrors.push(err4);
+      vErrors.push(err5);
     }
     errors++;
   }
@@ -62611,7 +62648,7 @@ validate29.evaluated = {
   dynamicProps: false,
   dynamicItems: false,
 };
-const schema53 = {
+const schema54 = {
   type: "object",
   properties: {
     kind: { enum: ["artifact", "assessment"] },
@@ -62722,7 +62759,7 @@ function validate32(
           instancePath: instancePath + "/kind",
           schemaPath: "#/properties/kind/enum",
           keyword: "enum",
-          params: { allowedValues: schema53.properties.kind.enum },
+          params: { allowedValues: schema54.properties.kind.enum },
           message: "must be equal to one of the allowed values",
         };
         if (vErrors === null) {
@@ -62811,7 +62848,7 @@ function validate32(
           instancePath: instancePath + "/reason_code",
           schemaPath: "#/properties/reason_code/enum",
           keyword: "enum",
-          params: { allowedValues: schema53.properties.reason_code.enum },
+          params: { allowedValues: schema54.properties.reason_code.enum },
           message: "must be equal to one of the allowed values",
         };
         if (vErrors === null) {
@@ -64336,7 +64373,7 @@ validate34.evaluated = {
   dynamicItems: false,
 };
 export const module0 = validate35;
-const schema56 = {
+const schema57 = {
   type: "object",
   additionalProperties: false,
   properties: {
@@ -64426,7 +64463,7 @@ validate35.evaluated = {
   dynamicItems: false,
 };
 export const module1 = validate36;
-const schema57 = {
+const schema58 = {
   type: "object",
   additionalProperties: false,
   properties: {
@@ -64627,7 +64664,7 @@ validate36.evaluated = {
   dynamicItems: false,
 };
 export const module2 = validate37;
-const schema58 = {
+const schema59 = {
   type: "object",
   additionalProperties: false,
   properties: {
@@ -64716,7 +64753,7 @@ validate37.evaluated = {
   dynamicItems: false,
 };
 export const module3 = validate38;
-const schema59 = {
+const schema60 = {
   type: "object",
   additionalProperties: false,
   properties: {
@@ -64855,7 +64892,7 @@ validate38.evaluated = {
   dynamicItems: false,
 };
 export const module4 = validate39;
-const schema60 = {
+const schema61 = {
   type: "object",
   additionalProperties: false,
   properties: {
@@ -64960,7 +64997,7 @@ validate39.evaluated = {
   dynamicItems: false,
 };
 export const module5 = validate40;
-const schema61 = {
+const schema62 = {
   type: "object",
   additionalProperties: false,
   properties: {
@@ -65111,7 +65148,7 @@ validate40.evaluated = {
   dynamicItems: false,
 };
 export const module6 = validate41;
-const schema62 = {
+const schema63 = {
   type: "object",
   additionalProperties: false,
   properties: {
@@ -65237,7 +65274,7 @@ function validate41(
           instancePath: instancePath + "/posture",
           schemaPath: "#/properties/posture/enum",
           keyword: "enum",
-          params: { allowedValues: schema62.properties.posture.enum },
+          params: { allowedValues: schema63.properties.posture.enum },
           message: "must be equal to one of the allowed values",
         };
         if (vErrors === null) {
@@ -65290,7 +65327,7 @@ function validate41(
           instancePath: instancePath + "/catalog",
           schemaPath: "#/properties/catalog/enum",
           keyword: "enum",
-          params: { allowedValues: schema62.properties.catalog.enum },
+          params: { allowedValues: schema63.properties.catalog.enum },
           message: "must be equal to one of the allowed values",
         };
         if (vErrors === null) {
@@ -65342,7 +65379,7 @@ function validate41(
               keyword: "enum",
               params: {
                 allowedValues:
-                  schema62.properties.fail_on.properties.evidence.enum,
+                  schema63.properties.fail_on.properties.evidence.enum,
               },
               message: "must be equal to one of the allowed values",
             };
@@ -65372,7 +65409,7 @@ function validate41(
                   keyword: "enum",
                   params: {
                     allowedValues:
-                      schema62.properties.fail_on.properties.categories.items
+                      schema63.properties.fail_on.properties.categories.items
                         .enum,
                   },
                   message: "must be equal to one of the allowed values",
@@ -65451,7 +65488,7 @@ function validate41(
                   keyword: "enum",
                   params: {
                     allowedValues:
-                      schema62.properties.fail_on.properties.states.items.enum,
+                      schema63.properties.fail_on.properties.states.items.enum,
                   },
                   message: "must be equal to one of the allowed values",
                 };
@@ -65602,7 +65639,7 @@ function validate41(
                   keyword: "enum",
                   params: {
                     allowedValues:
-                      schema62.properties.fail_on.properties.required_checks
+                      schema63.properties.fail_on.properties.required_checks
                         .items.enum,
                   },
                   message: "must be equal to one of the allowed values",
@@ -65702,7 +65739,7 @@ validate41.evaluated = {
   dynamicItems: false,
 };
 export const module7 = validate42;
-const schema63 = {
+const schema64 = {
   type: "object",
   additionalProperties: false,
   properties: {
@@ -65924,7 +65961,7 @@ validate42.evaluated = {
   dynamicItems: false,
 };
 export const module8 = validate43;
-const schema64 = {
+const schema65 = {
   type: "object",
   additionalProperties: false,
   properties: { run: { type: "boolean", default: true } },

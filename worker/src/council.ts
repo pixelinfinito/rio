@@ -21,6 +21,7 @@ export type Basis =
 export interface Position {
   real?: Answer;
   introduced_by_change?: Answer;
+  basis?: Basis;
 }
 export type ReasonCode =
   | "new_artifact"

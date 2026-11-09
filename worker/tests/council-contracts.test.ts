@@ -307,3 +307,23 @@ describe("council results in SARIF and PR comments", () => {
     expect(log.runs[0].properties["rio.council"].councilled).toBe(1);
   });
 });
+
+describe("round-2 position objects", () => {
+  it("accept a basis change and reject a bare string, as seen in the live council", () => {
+    const basis = {
+      ...roundTwo,
+      basis: "reproduction",
+      real: "yes",
+      changed_from: { basis: "static_path" },
+      changed_to: { basis: "reproduction" },
+      cites: { kind: "artifact", ref: "exp-1", reason_code: "new_artifact" },
+    };
+    expect(validateAssessment(basis, 2)).toEqual({ assessment: basis });
+    expect(
+      validateAssessment(
+        { ...basis, changed_from: "unknown", changed_to: "yes" },
+        2,
+      ),
+    ).toMatchObject({ abstained: "invalid" });
+  });
+});
