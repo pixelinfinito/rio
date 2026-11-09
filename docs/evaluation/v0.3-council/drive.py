@@ -51,6 +51,12 @@ def audit(review, target):
 
 
 def answers(review, report, target):
+    """Store the members' round-1 answers; returns the roles not fetched as role@finding.
+
+    A member that abstained without a stored answer (budget, a failed call) is also
+    missing; compare with the report's council members before scoring.
+    """
+    missing = []
     selected = ((report.get('agent_audit') or {}).get('council') or {}).get('selected', [])
     for item in selected:
         folder = target / 'council' / item['id']
@@ -61,6 +67,9 @@ def answers(review, report, target):
                                  capture_output=True, text=True)
             if out.returncode == 0 and out.stdout.strip().startswith('{'):
                 (folder / f'{role}-r1.json').write_text(out.stdout)
+            else:
+                missing.append(f'{role}@{item["id"][:8]}')
+    return missing
 
 
 def review(case, path, arm, profile, args):
@@ -81,14 +90,18 @@ def review(case, path, arm, profile, args):
         return f'{case["id"]} {arm}: exit {code}, no usable report ({error})'
     if match:
         (target / 'endpoint_review').write_text(match.group(1) + '\n')
+        missing = []
         try:
             audit(match.group(1), target)
             if arm == 'council':
-                answers(match.group(1), report, target)
+                missing = answers(match.group(1), report, target)
         except (subprocess.CalledProcessError, OSError) as error:
             # The review is kept (rerunning it would repeat its cost); fetch the audit by hand.
             (target / 'audit.json').unlink(missing_ok=True)
             return f'{case["id"]} {arm}: exit {code}, audit fetch failed ({error})'
+        if missing:
+            return (f'{case["id"]} {arm}: exit {code} status {report.get("status")}; '
+                    f'answers not fetched: {", ".join(missing)}')
     return f'{case["id"]} {arm}: exit {code} status {report.get("status")}'
 
 

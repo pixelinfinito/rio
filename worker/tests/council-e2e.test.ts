@@ -159,7 +159,11 @@ it("councils four findings with an experiment, a protection, a note and a partia
             version: "both",
             expect: "fails",
           };
-        if (marker === "M2" && role === "skeptic")
+        // A protection refutes only with at least half of the weight behind it.
+        if (
+          marker === "M2" &&
+          ["skeptic", "code-owner", "maintainer"].includes(role)
+        )
           Object.assign(answer, {
             real: "no",
             basis: "protection_found",

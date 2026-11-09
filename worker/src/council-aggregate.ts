@@ -283,7 +283,8 @@ export function note(positions: Position[], experiments: Experiment[]): string {
 
 /**
  * Decide in order: an experiment that fails on head and passes on base
- * reproduces the finding; a protection found on the path refutes it; anything
+ * reproduces the finding; a protection found on the path, cited by members
+ * holding at least half of the answering weight, refutes it; anything
  * else stays plausible with a note. The evidence level never drops below the
  * verifier's unless refuted, and the category is never touched here.
  */
@@ -303,11 +304,23 @@ export function aggregate(
       note: text,
       evidence_level: "reproduced",
     };
-  // Each cited reference is checked once, and the first on the path decides.
-  const cited = positions
-    .filter((p) => p.assessment.basis === "protection_found")
-    .sort((a, b) => b.weight - a.weight || a.role.localeCompare(b.role))
-    .flatMap((p) => p.assessment.evidence_refs);
+  // The path check cannot show that the cited code stops the defect (the
+  // location's own symbol is always on the path), so a protection refutes only
+  // when the members citing one and answering `real: no` hold at least half
+  // of the answering weight. Each cited reference is checked once, and the
+  // first on the path decides.
+  const protecting = positions.filter(
+    (p) =>
+      p.assessment.basis === "protection_found" && p.assessment.real === "no",
+  );
+  const weight = (list: Position[]) => list.reduce((n, p) => n + p.weight, 0);
+  const backed =
+    protecting.length > 0 && 2 * weight(protecting) >= weight(positions);
+  const cited = backed
+    ? protecting
+        .sort((a, b) => b.weight - a.weight || a.role.localeCompare(b.role))
+        .flatMap((p) => p.assessment.evidence_refs)
+    : [];
   const found = [...new Set(cited)].find((ref) => onPath(pack, ref));
   const protections = found ? [found] : [];
   if (protections.length)

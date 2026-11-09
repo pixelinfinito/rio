@@ -57,4 +57,4 @@ steps:
     uses: rio/report@0.1.0
     needs: [checks, graph, council]
 council:
-  vendors_allowed: [anthropic, openai, google, mistral, xai, deepseek]
+  vendors_allowed: [anthropic, openai, google, mistral, xai, deepseek, openrouter]

@@ -225,14 +225,16 @@ model families. Members whose provider is still `placeholder` are reported as
 unconfigured by `rio profile validate` and `rio profile show` until `rio init`
 writes the council allowlist; the profile stays valid. `rio/security` and
 `rio/critical` allow the vendors Rio knows (`anthropic`, `openai`, `google`,
-`mistral`, `xai`, `deepseek`); the repository allowlist, empty by default, is
+`mistral`, `xai`, `deepseek`, and `openrouter`, which forwards each pack to the
+vendor that serves the model); the repository allowlist, empty by default, is
 the opt-in, and a member runs only when both lists allow its vendor.
 `rio/critical` extends `rio/security`, fails on security findings as well as
 defects, and raises `max_findings` to 10 and `max_experiments` to 3.
 
 Members get one identical evidence pack per finding and no tools; the decision is
 deterministic (an experiment failing on head and passing on base reproduces the
-finding, a protection the graph places on the path refutes it, anything else
+finding, a protection the graph places on the path refutes it when members
+holding at least half of the weight cite it and answer `real: no`, anything else
 stays plausible with a council note), and agreement is never evidence. A council
 never changes a finding's category and never fails or blocks a review: with
 fewer than `min_members` answers it is skipped and the verifier's result stands.

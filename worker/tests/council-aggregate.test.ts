@@ -103,19 +103,21 @@ describe("deterministic aggregator", () => {
     );
     expect(decision.decision).toBe("plausible");
   });
-  it("refutes on a protection the graph places on the path, regardless of votes", () => {
+  it("refutes on a protection on the path cited by at least half of the weight", () => {
+    const protection = (r: Role) =>
+      position(r, {
+        real: "no",
+        basis: "protection_found",
+        evidence_refs: [head("caller")],
+      });
     const decision = aggregate(
       [
+        ...roles.slice(2).map(protection),
         ...roles
-          .slice(1)
+          .slice(0, 2)
           .map((r) =>
             position(r, { basis: "static_path", evidence_refs: ["file-1"] }),
           ),
-        position("skeptic", {
-          real: "no",
-          basis: "protection_found",
-          evidence_refs: [head("caller")],
-        }),
       ],
       [],
       pack,
@@ -127,6 +129,57 @@ describe("deterministic aggregator", () => {
       protection: head("caller"),
       evidence_level: "refuted",
     });
+    // Half of the weight is enough: one heavy member against two light ones.
+    expect(
+      aggregate(
+        [
+          { ...protection("skeptic"), weight: 2 },
+          position("tester", { basis: "static_path" }),
+          position("maintainer", { basis: "static_path" }),
+        ],
+        [],
+        pack,
+        "plausible",
+      ).decision,
+    ).toBe("refuted");
+  });
+  it("does not refute on a protection cited by less than half of the weight", () => {
+    // One member citing the finding's own symbol, which is always on the path.
+    for (const ref of [head("caller"), head("location")]) {
+      const decision = aggregate(
+        [
+          ...roles
+            .slice(1)
+            .map((r) =>
+              position(r, { basis: "static_path", evidence_refs: ["file-1"] }),
+            ),
+          position("skeptic", {
+            real: "no",
+            basis: "protection_found",
+            evidence_refs: [ref],
+          }),
+        ],
+        [],
+        pack,
+        "plausible",
+      );
+      expect(decision.decision, ref).toBe("plausible");
+    }
+  });
+  it("does not count a protection_found basis that still answers real", () => {
+    const decision = aggregate(
+      roles.map((r) =>
+        position(r, {
+          real: r === "skeptic" ? "no" : "unknown",
+          basis: "protection_found",
+          evidence_refs: [head("caller")],
+        }),
+      ),
+      [],
+      pack,
+      "plausible",
+    );
+    expect(decision.decision).toBe("plausible");
   });
   it("does not refute on a protection off the path or in base", () => {
     for (const ref of [
