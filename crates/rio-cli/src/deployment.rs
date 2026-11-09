@@ -968,8 +968,29 @@ pub async fn run(args: DeployArgs) -> Result<()> {
                 .iter()
                 .any(|k| secrets.0.contains_key(*k) && !primary.contains(k))
         {
+            ensure!(
+                !primary.is_empty() || directory.join("profiles/default.yaml").exists(),
+                "with only custom providers, pass --default-model custom-SLUG/MODEL; council keys never choose the default profile's models"
+            );
             models = primary_models(&primary);
         }
+    }
+    // The default council members need three families to run.
+    let families: std::collections::BTreeSet<_> = deployment
+        .council_vendors
+        .iter()
+        .map(|entry| entry.family.as_str())
+        .collect();
+    if !families.is_empty() && families.len() < 3 {
+        eprintln!(
+            "Warning: the council allowlist spans {} model {}; rio/security and rio/critical need at least three",
+            families.len(),
+            if families.len() == 1 {
+                "family"
+            } else {
+                "families"
+            }
+        );
     }
     let missing: Vec<_> = deployment
         .council_keys()

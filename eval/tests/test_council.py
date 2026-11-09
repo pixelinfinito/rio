@@ -250,9 +250,6 @@ class CouncilGateTests(unittest.TestCase):
         self.assertIn('KEEP', out.getvalue())
 
 
-if __name__ == '__main__':
-    unittest.main()
-
 
 class IncompleteReviewTests(unittest.TestCase):
     def test_an_incomplete_review_earns_no_refutation_by_omission(self):
@@ -318,3 +315,7 @@ class AliasTests(unittest.TestCase):
             _, loaded = council.read_run(run)
             self.assertEqual(council.disagreement(run, loaded)['councilled'], 1)
             self.assertEqual(council.estimate([run])['rio/council-tester']['security']['samples'], 1)
+
+
+if __name__ == '__main__':
+    unittest.main()

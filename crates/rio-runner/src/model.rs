@@ -8,13 +8,16 @@ use std::time::Duration;
 /// Validate the operator's endpoint: http(s), no credentials, query or fragment.
 pub fn endpoint(value: &str) -> Result<reqwest::Url> {
     let mut url = reqwest::Url::parse(value).context("invalid model endpoint")?;
+    // Plain HTTP only on loopback: the request carries the pack and the key.
     ensure!(
-        matches!(url.scheme(), "https" | "http")
+        (url.scheme() == "https"
+            || (url.scheme() == "http"
+                && matches!(url.host_str(), Some("localhost" | "127.0.0.1" | "[::1]"))))
             && url.username().is_empty()
             && url.password().is_none()
             && url.query().is_none()
             && url.fragment().is_none(),
-        "model endpoint must be an http(s) URL without credentials, query or fragment"
+        "model endpoint must be https (or http on loopback) without credentials, query or fragment"
     );
     if !url.path().ends_with('/') {
         url.set_path(&format!("{}/", url.path()));
@@ -148,6 +151,7 @@ mod tests {
             "https://user:pw@x/v1",
             "https://x/v1?k=1",
             "not a url",
+            "http://models.internal/v1",
         ] {
             assert!(endpoint(bad).is_err(), "{bad}");
         }
