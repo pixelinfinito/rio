@@ -13,6 +13,11 @@ import {
   type Policy,
 } from "../src/publish";
 import { handleCommand, parseCommand } from "../src/commands";
+import {
+  announceReview,
+  knownPolicy,
+  settleAnnouncement,
+} from "../src/announce";
 import { hash } from "../src/validation";
 import { lineageId } from "../src/lineage";
 import { allMigrations, profile } from "./fixtures";
@@ -200,6 +205,26 @@ describe("publisher", () => {
     // The check run never approves and never blocks.
     for (const run of github.checkRuns) expect(run.conclusion).toBe("neutral");
     github.restore();
+  });
+
+  it("anchors a finding that cites other files at its primary location", async () => {
+    const s = await pull();
+    github.setFiles("acme/pub", s.number, [
+      { filename: "src/a.ts", lines: [3] },
+    ]);
+    const caller = {
+      path: "src/b.ts",
+      line_start: 9,
+      line_end: 9,
+      symbol_path: "caller",
+      occurrence_state: "new",
+    };
+    const f = finding("cited", 3);
+    f.locations = [...f.locations, caller] as any;
+    const result = await publish(s, report([f]));
+    expect(result).toMatchObject({ posted: 1, unanchored: 0 });
+    expect(github.comments[0]).toMatchObject({ path: "src/a.ts", line: 3 });
+    expect(github.comments[0].body).toContain("- `src/b.ts:9`");
   });
 
   it("parses right-side diff lines", () => {
@@ -1343,5 +1368,137 @@ describe("QA publication", () => {
     expect(body).toContain("image proxy may outlive");
     expect(body).not.toContain("transcript");
     expect(body).not.toContain("/old");
+  });
+});
+
+describe("in-progress announcement", () => {
+  let github: GitHubDouble;
+  beforeEach(() => {
+    github = current = new GitHubDouble().install();
+  });
+  afterEach(() => {
+    // Every announced check run ends completed and neutral.
+    for (const run of github.checkRuns) {
+      expect(run.status).toBe("completed");
+      expect(run.conclusion).toBe("neutral");
+    }
+    github.restore();
+  });
+  const pending = async (review: string) =>
+    (
+      await runtime.DB.prepare(
+        "SELECT announced_check FROM pull_requests WHERE review_id=?",
+      )
+        .bind(review)
+        .first<{ announced_check: number | null }>()
+    )?.announced_check ?? null;
+
+  it("starts a check run and a summary banner that the publication replaces", async () => {
+    const s = await pull();
+    github.setFiles("acme/pub", s.number, [
+      { filename: "src/a.ts", lines: [3] },
+    ]);
+    await announceReview(runtime, s.review, "auto");
+    expect(github.checkRuns).toHaveLength(1);
+    expect(github.checkRuns[0]).toMatchObject({
+      name: "rio/review",
+      head_sha: s.head,
+      status: "in_progress",
+    });
+    expect(github.issueComments).toHaveLength(1);
+    expect(github.issueComments[0].body).toContain(
+      `Rio is reviewing \`${s.head.slice(0, 12)}\``,
+    );
+    expect(github.issueComments[0].body).toMatch(
+      /<!-- rio:summary:[a-f0-9]{64} -->$/,
+    );
+    // A second announcement of the same review changes nothing.
+    await announceReview(runtime, s.review, "auto");
+    expect(github.checkRuns).toHaveLength(1);
+    expect(github.issueComments).toHaveLength(1);
+    await publish(s, report([finding("inline", 3)]));
+    // The same check run and the same comment carry the result.
+    expect(github.checkRuns).toHaveLength(1);
+    expect(github.checkRuns[0].output.title).toMatch(
+      /^Review failed its policy/,
+    );
+    expect(github.issueComments).toHaveLength(1);
+    expect(github.issueComments[0].body).not.toContain("Rio is reviewing");
+    expect(github.issueComments[0].body).toContain("### Findings");
+    expect(await pending(s.review)).toBeNull();
+  });
+
+  it("keeps the previous summary below the banner on a later push", async () => {
+    const first = await pull();
+    github.setFiles("acme/pub", first.number, [
+      { filename: "src/a.ts", lines: [3] },
+    ]);
+    await publish(first, report([finding("inline", 3)]));
+    const second = await pull({ number: first.number, head: sha("next") });
+    await announceReview(runtime, second.review, "auto");
+    const body = github.issueComments[0].body;
+    expect(github.issueComments).toHaveLength(1);
+    expect(body).toContain(`Rio is reviewing \`${sha("next").slice(0, 12)}\``);
+    expect(body).toContain("### Findings");
+    expect(body.indexOf("Rio is reviewing")).toBeLessThan(
+      body.indexOf("### Findings"),
+    );
+    await settleAnnouncement(
+      runtime,
+      second.review,
+      "Review did not run",
+      "superseded",
+    );
+    expect(github.issueComments[0].body).not.toContain("Rio is reviewing");
+  });
+
+  it("announces under ask with a check run only, and never under never", async () => {
+    const ask = await pull();
+    await announceReview(runtime, ask.review, "ask");
+    expect(github.checkRuns).toHaveLength(1);
+    expect(github.issueComments).toHaveLength(0);
+    const never = await pull();
+    await announceReview(runtime, never.review, "never");
+    expect(github.checkRuns).toHaveLength(1);
+    // The ask review publishes its check run, completing the announced one.
+    await publish(ask, report([]), "ask");
+    expect(github.checkRuns).toHaveLength(1);
+    expect(await pending(ask.review)).toBeNull();
+  });
+
+  it("adds the banner when a review announced under ask resolves auto", async () => {
+    const s = await pull();
+    await announceReview(runtime, s.review, "ask");
+    expect(github.issueComments).toHaveLength(0);
+    await announceReview(runtime, s.review, "auto");
+    expect(github.checkRuns).toHaveLength(1);
+    expect(github.issueComments).toHaveLength(1);
+    expect(github.issueComments[0].body).toContain("Rio is reviewing");
+    await publish(s, report([]));
+    expect(github.issueComments[0].body).not.toContain("Rio is reviewing");
+  });
+
+  it("completes the announced check run when the review publishes nothing", async () => {
+    // Announced under the policy last seen, then the profile says never.
+    const s = await pull();
+    await announceReview(runtime, s.review, "auto");
+    const result = await publish(s, report([]), "never");
+    expect(result).toMatchObject({ reason: "policy_never" });
+    expect(github.checkRuns[0].output.title).toBe(
+      "Review finished; nothing was published",
+    );
+    expect(github.issueComments[0].body).not.toContain("Rio is reviewing");
+    expect(await pending(s.review)).toBeNull();
+  });
+
+  it("remembers the last policy a review of the repository resolved", async () => {
+    const s = await pull();
+    await runtime.DB.prepare(
+      "UPDATE pull_requests SET publish_policy='ask' WHERE review_id=?",
+    )
+      .bind(s.review)
+      .run();
+    expect(await knownPolicy(runtime, "owner", "acme/pub")).toBe("ask");
+    expect(await knownPolicy(runtime, "owner", "acme/other")).toBeNull();
   });
 });

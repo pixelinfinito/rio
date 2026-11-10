@@ -19,6 +19,7 @@ pub struct EndpointRequest<'a> {
     pub cache: CacheOptions,
     pub deep: bool,
     pub fork: bool,
+    pub nightly: bool,
     /// Repository key for the finding registry (`origin`, else the directory name).
     pub repository: Option<String>,
     /// `--since-last` branch lineage, with the reset request.
@@ -74,6 +75,7 @@ pub async fn review(
         cache,
         deep,
         fork,
+        nightly,
         repository,
         lineage,
     } = request;
@@ -100,6 +102,7 @@ pub async fn review(
             graph_budget: graph_budget(),
             deep,
             fork,
+            nightly,
             repository: repository.clone(),
             run_id: cache.run_id.clone(),
         },

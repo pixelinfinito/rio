@@ -30,6 +30,21 @@ export default defineConfig({
           RIO_VERSION: "0.2.0",
           OPENAI_API_KEY: "recorded-key",
           ANTHROPIC_API_KEY: "recorded-key",
+          OPENROUTER_API_KEY: "recorded-key",
+          // The council allowlist of the recorded council review (tests/council-e2e).
+          COUNCIL_VENDORS: JSON.stringify([
+            {
+              vendor: "anthropic",
+              family: "claude",
+              model: "anthropic/test-claude",
+            },
+            { vendor: "openai", family: "gpt", model: "openai/test-gpt" },
+            {
+              vendor: "openrouter",
+              family: "gemini",
+              model: "openrouter/google/gemini",
+            },
+          ]),
           RIO_API_TOKEN: "test-owner-token-at-least-32-characters",
           RUNNER_SECRET: "test-runner-secret-at-least-32-characters",
           RUNNER_BACKEND: "self-hosted",

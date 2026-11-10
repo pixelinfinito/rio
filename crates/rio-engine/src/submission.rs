@@ -22,6 +22,8 @@ pub struct SubmissionOptions {
     pub graph_budget: Duration,
     pub deep: bool,
     pub fork: bool,
+    /// Started by the nightly evaluation job (the council's `nightly` trigger).
+    pub nightly: bool,
     /// Repository key for the finding registry.
     pub repository: Option<String>,
     /// The local run id (`report.review.run_id`).
@@ -136,6 +138,9 @@ pub fn build_submission(
         })
         .collect();
     let mut submission = json!({"protocol":1,"profile":profile,"report":report,"changed":changed,"graphs":{"base":submitted.base,"head":submitted.head},"owner_guidance":guidance,"intent":format!("Review the change from {} to {}",changes.base_id,changes.head_id),"fork":options.fork,"mode":if options.deep{"deep"}else{"fast"}});
+    if options.nightly {
+        submission["nightly"] = json!(true);
+    }
     if let Some(repository) = &options.repository {
         submission["repository"] = json!(repository);
     }

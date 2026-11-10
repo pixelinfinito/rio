@@ -7,10 +7,10 @@ Settle the findings the verifier leaves unsettled by asking several independent 
 ## ADDED Requirements
 
 ### Requirement: Step placement and trigger selection
-`rio/council` SHALL be a non-local step that runs after `rio/verify` and before `rio/report`, and SHALL select a verified finding when any of the step's trigger rules matches it. The `security` and `critical` built-in profiles SHALL carry the default triggers `evidence == plausible and severity >= high`, `verify.split`, `risk_tier == high`, `mode == deep` and `nightly`. `rio/base` SHALL NOT enable the step.
+`rio/council` SHALL be a non-local step that runs after `rio/verify` and before `rio/report`, and SHALL select a verified finding when any of the step's trigger rules matches it. The `security` and `critical` built-in profiles SHALL carry the default triggers `evidence == plausible and severity >= error`, `verify.split`, `risk_tier == high`, `mode == deep` and `nightly`. `rio/base` SHALL NOT enable the step.
 
-#### Scenario: Plausible high-severity finding is selected
-- **WHEN** a review under the `security` profile verifies a hypothesis at `plausible` with severity `high` and no other trigger applies
+#### Scenario: Plausible error-severity finding is selected
+- **WHEN** a review under the `security` profile verifies a hypothesis at `plausible` with severity `error` and no other trigger applies
 - **THEN** the finding is councilled and the plan records the matching rule
 
 #### Scenario: Base profile never councils
@@ -72,18 +72,22 @@ With `max_rounds` 2, round 2 SHALL show each member the other round-1 assessment
 - **THEN** validation rejects the value at its location
 
 ### Requirement: Deterministic aggregation by evidence tier
-The decision SHALL be computed without a model call, applying these rules in order: an experiment failing on head and passing on base decides `reproduced` with the artifact attached; an assessment with basis `protection_found` citing head code that the graph places on the trigger-to-location path decides `refuted` citing the protection; otherwise the decision is `plausible` with a council note.
+The decision SHALL be computed without a model call, applying these rules in order: an experiment failing on head and passing on base decides `reproduced` with the artifact attached; assessments with basis `protection_found` and `real: no`, held by members with at least half of the answering weight, citing head code that the graph places on the trigger-to-location path decide `refuted` citing the protection; otherwise the decision is `plausible` with a council note.
 
 #### Scenario: Experiment reproduces the defect
 - **WHEN** an experiment on `both` versions fails on head and passes on base
 - **THEN** the finding's evidence level becomes `reproduced` with the experiment artifact referenced
 
 #### Scenario: Protection found on the path
-- **WHEN** one member cites a guard in head that the graph places between the trigger and the location
-- **THEN** the finding is `refuted` citing that guard, regardless of how many members said it was real
+- **WHEN** members holding at least half of the answering weight answer `real: no` with basis `protection_found` and one of them cites a guard in head that the graph places between the trigger and the location
+- **THEN** the finding is `refuted` citing that guard
+
+#### Scenario: A lone protection claim does not refute
+- **WHEN** one member of five with equal weights cites the finding's own symbol as `protection_found`
+- **THEN** the decision is `plausible`, because the path check cannot show that the cited code stops the defect
 
 ### Requirement: Agreement is never evidence
-A council decision SHALL NOT depend on how many members agree. Assessments with basis `none` SHALL NOT raise the evidence level. The council note SHALL describe weighted positions by basis and dissent in words and SHALL NOT contain percentages or confidence scores.
+Agreement SHALL NOT decide a council decision by itself: no number of agreeing members reproduces a finding or raises its evidence level, and a refutation additionally needs an on-path protection citation. Assessments with basis `none` SHALL NOT raise the evidence level. The council note SHALL describe weighted positions by basis and dissent in words and SHALL NOT contain percentages or confidence scores.
 
 #### Scenario: Unanimous without basis stays plausible
 - **WHEN** five members answer `real: yes` with basis `none`

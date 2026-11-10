@@ -136,7 +136,39 @@ export type Finding = Hypothesis & {
   author_response?: AuthorResponse;
   // Present only when the repository registry has an earlier record.
   history?: FindingHistory;
+  // Present only when the council reviewed the finding.
+  council?: CouncilReview;
 };
+/** finding-v1 `council`: decisions and references, never a numeric confidence. */
+export interface CouncilReview {
+  decision?: "reproduced" | "refuted" | "plausible";
+  tier?: "experiment" | "protection" | "judgment";
+  members: { role: string; abstained: boolean; cause?: string }[];
+  experiments: {
+    command: string[];
+    version: "base" | "head" | "both";
+    expect: "fails" | "passes" | "output_contains";
+    run: boolean;
+    reason?: "fork" | "cap" | "runner_unavailable";
+    outcome?: { base?: "passed" | "failed"; head?: "passed" | "failed" };
+    artifact?: string;
+  }[];
+  note?: string;
+  protection?: string;
+  partial: boolean;
+  skipped?: boolean;
+  answered: number;
+  total: number;
+  static_only?: boolean;
+  weight_category?: "defect" | "risk" | "security";
+  author_family?: {
+    status: "applied" | "not_applicable";
+    family?: string;
+    substituted?: { role: string; vendor: string; family: string }[];
+    dropped?: string[];
+  };
+  excluded?: { role: string; vendor: string; denied_by: string }[];
+}
 export interface FindingHistory {
   first_seen: string;
   last_seen: string;
@@ -166,7 +198,7 @@ export interface Step {
   parallel?: boolean;
   with: Record<string, any>;
   agents?: Record<string, any>[];
-  rules?: { when: string; then: string }[];
+  rules?: { when: string; then?: string }[];
 }
 export interface Budget {
   tokens?: number;
@@ -219,6 +251,8 @@ export interface Submission {
   intent: string;
   fork: boolean;
   mode: "fast" | "deep";
+  /** Started by the nightly evaluation job; the `nightly` rule predicate. */
+  nightly?: boolean;
   lineage?: LineageRef;
   // Repository key for the finding registry; a lineage's repository wins.
   repository?: string;
@@ -229,8 +263,16 @@ export interface Execution {
   job_id: string;
   attempt: number;
   version: Version;
-  kind: "run" | "checks" | "graph" | "static" | "prepare" | "qa";
+  kind: "run" | "checks" | "graph" | "static" | "prepare" | "qa" | "model";
   command: string[];
+  // Model jobs: a self-hosted council member's request, served by a runner
+  // that advertises a model endpoint, so the pack stays in the account.
+  model?: {
+    model: string;
+    system: string;
+    content: string;
+    max_tokens: number;
+  };
   // Prepare jobs of the self-hosted runner: what to clone (no snapshot yet).
   prepare?: PrepareSpec;
   qa?: QaExecution;
@@ -345,6 +387,9 @@ export interface Env {
   AI_GATEWAY_PROVIDERS?: string;
   /** Operator-provisioned synthetic persona values; never provider credentials. */
   QA_PERSONA_CREDENTIALS?: string;
+  // JSON: the council vendor allowlist written by `rio init`, a list of
+  // { vendor, family, model } or an object of such lists by repository ("*" fallback).
+  COUNCIL_VENDORS?: string;
   MODEL_PRICES?: string;
   // GitHub App (PR mode); without them the webhook route returns 404.
   GITHUB_APP_ID?: string;

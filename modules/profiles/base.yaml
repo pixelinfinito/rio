@@ -43,9 +43,13 @@ steps:
   - id: verify
     uses: rio/verify@0.1.0
     needs: [agents, security, qa]
+  - id: council
+    uses: rio/council@0.1.0
+    needs: [verify]
+    with: { enabled: false }
   - id: report
     uses: rio/report@0.1.0
-    needs: [checks, graph, verify, qa]
+    needs: [checks, graph, council, qa]
 suppress: []
 publish: never
 fail_on:

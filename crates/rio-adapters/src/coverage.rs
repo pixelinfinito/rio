@@ -461,6 +461,7 @@ pub fn diff_coverage(
                 resolution: None,
                 author_response: None,
                 history: None,
+                council: None,
             });
         }
     }

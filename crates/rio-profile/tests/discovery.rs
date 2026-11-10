@@ -72,19 +72,23 @@ fn listing_keeps_shadowed_profiles_and_marks_only_the_actual_default() {
         root.path().into(),
     );
     let initial = loader.list().unwrap();
-    assert_eq!(initial.len(), 4);
-    assert_eq!(initial[0].name, "rio/base");
+    let names: Vec<_> = initial.iter().map(|p| p.name.as_str()).collect();
+    assert_eq!(
+        names,
+        [
+            "rio/base",
+            "rio/critical",
+            "rio/openrouter",
+            "rio/qa",
+            "rio/security"
+        ]
+    );
     assert!(initial[0].is_default);
-    assert_eq!(initial[1].name, "rio/openrouter");
-    assert!(!initial[1].is_default);
-    assert_eq!(initial[2].name, "rio/qa");
-    assert!(!initial[2].is_default);
-    assert_eq!(initial[3].name, "rio/security");
-    assert!(!initial[3].is_default);
+    assert!(initial[1..].iter().all(|p| !p.is_default));
     write(root.path(), ".rio/profiles/default.yaml", "default");
     write(config.path(), "profiles/default.yaml", "default");
     let listed = loader.list().unwrap();
-    assert_eq!(listed.len(), 6);
+    assert_eq!(listed.len(), 7);
     assert_eq!(listed.iter().filter(|p| p.is_default).count(), 1);
     assert!(
         listed
@@ -94,7 +98,9 @@ fn listing_keeps_shadowed_profiles_and_marks_only_the_actual_default() {
     assert!(
         listed
             .iter()
-            .all(|p| p.extends.as_deref().is_some_and(|p| p == "rio/base") || p.name == "rio/base")
+            .all(|p| p.extends.as_deref().is_some_and(|p| p == "rio/base")
+                || p.name == "rio/base"
+                || p.name == "rio/critical" && p.extends.as_deref() == Some("rio/security"))
     );
 }
 

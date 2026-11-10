@@ -12,6 +12,7 @@ pub enum ModuleKind {
     Step,
     Adapter,
     Ruleset,
+    Member,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -38,6 +39,23 @@ pub struct ModuleManifest {
     pub tools: BTreeMap<String, Value>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub rules: Vec<Value>,
+    /// Council member fields (`kind: member`).
+    #[serde(flatten, skip_serializing_if = "Option::is_none")]
+    pub member: Option<MemberFields>,
+}
+
+/// The member-specific manifest fields; `vendor` is derived from `provider`.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct MemberFields {
+    pub provider: String,
+    pub model: String,
+    pub prompt: String,
+    pub context_pack: String,
+    pub role: String,
+    pub weight: f64,
+    pub family: String,
+    #[serde(default)]
+    pub self_hosted: bool,
 }
 
 fn collect(
@@ -55,8 +73,14 @@ fn collect(
                     .extension()
                     .is_some_and(|extension| extension == "yaml"))
         {
-            let manifest: ModuleManifest =
+            let value: Value =
                 serde_yaml::from_slice(file.contents()).map_err(|error| error.to_string())?;
+            if value["kind"] == "member" {
+                validate_member_manifest(&value, &file.path().display().to_string())
+                    .map_err(|error| error.to_string())?;
+            }
+            let manifest: ModuleManifest =
+                serde_json::from_value(value).map_err(|error| error.to_string())?;
             if manifest.kind == ModuleKind::Ruleset {
                 let mut ids = std::collections::BTreeSet::new();
                 for rule in &manifest.rules {
@@ -75,6 +99,94 @@ fn collect(
         collect(subdirectory, modules)?;
     }
     Ok(())
+}
+
+static MODULE_SCHEMA: LazyLock<Result<jsonschema::Validator, String>> = LazyLock::new(|| {
+    let schema: Value = serde_json::from_str(include_str!("../../../schemas/module-v1.json"))
+        .map_err(|e| e.to_string())?;
+    jsonschema::validator_for(&schema).map_err(|e| e.to_string())
+});
+
+const MEMBER_KEYS: [&str; 12] = [
+    "kind",
+    "name",
+    "version",
+    "description",
+    "provider",
+    "model",
+    "prompt",
+    "context_pack",
+    "role",
+    "weight",
+    "family",
+    "self_hosted",
+];
+
+/// Validate a `kind: member` manifest against module-v1, naming the offending
+/// field and, for enumerations, the accepted values.
+pub fn validate_member_manifest(value: &Value, source: &str) -> Result<(), ProfileErrors> {
+    let validator = MODULE_SCHEMA
+        .as_ref()
+        .map_err(|error| ProfileErrors::one("module schema", "$", error))?;
+    let mut diagnostics = Vec::new();
+    let diagnostic = |pointer: &str, message: String| crate::Diagnostic {
+        source: source.into(),
+        path: crate::yaml_path(pointer),
+        message,
+    };
+    if let Some(object) = value.as_object() {
+        for key in object.keys() {
+            if !MEMBER_KEYS.contains(&key.as_str()) {
+                diagnostics.push(diagnostic(
+                    &format!("/{key}"),
+                    format!("unknown key {key:?} in a member manifest"),
+                ));
+            }
+        }
+    }
+    for (field, accepted) in [
+        (
+            "role",
+            &[
+                "skeptic",
+                "exploit-author",
+                "code-owner",
+                "maintainer",
+                "tester",
+            ][..],
+        ),
+        (
+            "context_pack",
+            &["diff-only", "graph-heavy", "execution"][..],
+        ),
+    ] {
+        if let Some(found) = value.get(field)
+            && !found
+                .as_str()
+                .is_some_and(|found| accepted.contains(&found))
+        {
+            diagnostics.push(diagnostic(
+                &format!("/{field}"),
+                format!(
+                    "{field} {found} is not accepted; accepted values: {}",
+                    accepted.join(", ")
+                ),
+            ));
+        }
+    }
+    if diagnostics.is_empty() {
+        for error in validator.iter_errors(value) {
+            diagnostics.push(diagnostic(
+                &error.instance_path.to_string(),
+                error.to_string(),
+            ));
+        }
+    }
+    if diagnostics.is_empty() {
+        Ok(())
+    } else {
+        Err(ProfileErrors { diagnostics })
+    }
 }
 
 static MODULES: LazyLock<Result<BTreeMap<String, ModuleManifest>, String>> = LazyLock::new(|| {

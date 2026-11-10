@@ -93,6 +93,7 @@ pub async fn run_journeys(args: QaRunArgs) -> u8 {
         deep: false,
         preset: None,
         fork: false,
+        nightly: false,
         publish: false,
         since_last: false,
         reset_lineage: false,

@@ -6,7 +6,7 @@ After the verifier quorum (`rio-v0-2-verifier`), a residue of findings remains t
 
 ## What Changes
 
-- **New step `rio/council`** after `rio/verify`, with profile block `council: { members, max_experiments, max_rounds, min_members, vendors_allowed }` and trigger rules in the step's `rules`: `evidence == plausible && severity >= high`, `verify.split`, `risk_tier == high`, `mode == deep`, `nightly`.
+- **New step `rio/council`** after `rio/verify`, with profile block `council: { members, max_experiments, max_rounds, min_members, vendors_allowed }` and trigger rules in the step's `rules`: `evidence == plausible && severity >= error`, `verify.split`, `risk_tier == high`, `mode == deep`, `nightly`.
 - **New module kind `member`** in module manifest v1: `provider`, `model`, `prompt`, `context_pack` (`diff-only | graph-heavy | execution`), `role` (`skeptic | exploit-author | code-owner | maintainer | tester`), `weight`, output schema `council-assessment-v1`. At most one member may share the model family of the PR author when the author is an agent; the author family is read from PR metadata when available.
 - **Identical evidence pack** for every member: the hypothesis, the graph slice, base and head of the affected files, and the verifier's artifacts. Members get no live tools. A member may request one experiment in structured form; Rio runs at most `max_experiments` (default 2) as runner jobs and shares results in round 2.
 - **New schema `schemas/council-assessment-v1.json`**: `real`, `introduced_by_change`, `impact`, `basis`, `evidence_refs[]`, optional `experiment_request`, and the round-2 position-change fields. Assessments without evidence refs or failing validation count as abstentions.

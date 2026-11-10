@@ -15,6 +15,7 @@ import {
   InstallationToken,
   PREPARE_PERMISSIONS,
   PUBLISH_PERMISSIONS,
+  RESOLVE_PERMISSIONS,
   TOKEN_LEASE_MS,
   appJwt,
   classify,
@@ -76,6 +77,7 @@ describe("installation tokens", () => {
     for (const permissions of [
       PREPARE_PERMISSIONS,
       PUBLISH_PERMISSIONS,
+      RESOLVE_PERMISSIONS,
       COMMAND_PERMISSIONS,
     ]) {
       const token = await InstallationToken.mint(

@@ -1,0 +1,29 @@
+{
+  "schema": "rio-eval-council-gate-v1",
+  "passed": true,
+  "reasons": [],
+  "action": null,
+  "disagreement": {
+    "councilled": 8,
+    "disagreeing": 4,
+    "rate": 0.5
+  },
+  "accuracy": {
+    "council": {
+      "cases": 12,
+      "correct": 1,
+      "accuracy": 0.08333333333333333
+    },
+    "verifier_only": {
+      "cases": 12,
+      "correct": 0,
+      "accuracy": 0.0
+    }
+  },
+  "runs": [
+    {
+      "case_set": "v0.3-council-plausible-bucket",
+      "date": "2026-11-09"
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+version: 1
+name: invalid-council-rounds
+council: {max_rounds: 3}

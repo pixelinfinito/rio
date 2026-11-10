@@ -19,6 +19,7 @@ blake3.workspace = true
 regex.workspace = true
 globset.workspace = true
 include_dir.workspace = true
+toml.workspace = true
 rio-core = { path = "../rio-core" }
 
 [dev-dependencies]

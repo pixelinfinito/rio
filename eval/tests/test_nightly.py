@@ -51,6 +51,8 @@ class Nightly(unittest.TestCase):
         self.assertEqual(code, 0)
         command, env = rio.calls[0]
         self.assertEqual(command[:3], ['/opt/rio', 'eval', 'noise'])
+        # Every nightly review carries the council's `nightly` trigger flag.
+        self.assertIn('--rio-arg=--nightly', command)
         self.assertIn('rio/openrouter', command)
         self.assertEqual(env['RIO_EVAL_DIR'], str(nightly.EVAL_DIR))
         # Secrets never travel on the command line; rio reads its saved config.

@@ -57,6 +57,7 @@ fn enabled_qa_can_prepare_an_empty_diff_without_changing_base_profile_behavior()
         graph_budget: Duration::from_secs(5),
         deep: false,
         fork: false,
+        nightly: false,
         repository: None,
         run_id: "qa-empty-diff".into(),
     };

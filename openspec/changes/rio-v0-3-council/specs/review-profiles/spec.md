@@ -3,7 +3,7 @@
 ## MODIFIED Requirements
 
 ### Requirement: Rule expressions are validated syntactically
-`rules` entries SHALL use the expression language with predicates `touches(glob)`, `adds_dependency()`, `lines_changed > n`, `risk >= level`, `language == x`, `risk_tier == tier`, `mode == fast|deep`, `nightly`, and the finding-level predicates `evidence == level`, `severity >= level` and `verify.split`, combined with `and`, `or`, `not`, and actions `enable(agent)`, `disable(agent)`, `budget(fast|deep)`, `require_human()`. The finding-level predicates SHALL be valid only in the council step's `rules` and SHALL be rejected in any other step's rules. Validation SHALL reject unknown predicates or actions. When the endpoint runtime is available, triage SHALL evaluate rules using the computed risk tier. Without that runtime, rules SHALL remain deferred and the footer SHALL explain why.
+`rules` entries SHALL use the expression language with predicates `touches(glob)`, `adds_dependency()`, `lines_changed > n`, `risk >= level`, `language == x`, `risk_tier == tier`, `mode == fast|deep`, `nightly`, and the finding-level predicates `evidence == level`, `severity >= level` (on the finding severity scale `info` < `warning` < `error`) and `verify.split`, combined with `and`, `or`, `not`, and actions `enable(agent)`, `disable(agent)`, `budget(fast|deep)`, `require_human()`. The finding-level predicates SHALL be valid only in the council step's `rules` and SHALL be rejected in any other step's rules. A council step's rules select findings and carry only `when`; every other step's rules SHALL carry `then`. Validation SHALL reject unknown predicates or actions. When the endpoint runtime is available, triage SHALL evaluate rules using the computed risk tier. Without that runtime, rules SHALL remain deferred and the footer SHALL explain why.
 
 #### Scenario: Unknown predicate
 - **WHEN** a rule reads `when: owns("src/**")`
@@ -39,7 +39,7 @@ Profiles SHALL accept an optional `council: { members, max_findings, max_experim
 - **THEN** validation rejects `min_members` naming the member count
 
 ### Requirement: Council step in built-in profiles
-`rio/base` SHALL carry no enabled council step. The `security` and `critical` built-in profiles SHALL enable the council step with the five default trigger rules (`evidence == plausible and severity >= high`, `verify.split`, `risk_tier == high`, `mode == deep`, `nightly`) and placeholder member providers, and `rio profile show` SHALL report placeholder providers as unconfigured until the vendor allowlist is written.
+`rio/base` SHALL carry no enabled council step. The `security` and `critical` built-in profiles SHALL enable the council step with the five default trigger rules (`evidence == plausible and severity >= error`, `verify.split`, `risk_tier == high`, `mode == deep`, `nightly`) and placeholder member providers, and `rio profile show` SHALL report placeholder providers as unconfigured until the vendor allowlist is written.
 
 #### Scenario: Security profile before configuration
 - **WHEN** `rio profile show rio/security` runs before any council vendor is configured

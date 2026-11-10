@@ -419,6 +419,7 @@ pub fn construct_qa_finding(
         resolution: None,
         author_response: None,
         history: None,
+        council: None,
         qa: Some(QaFinding {
             journey: candidate.journey.clone(),
             step: candidate.step,

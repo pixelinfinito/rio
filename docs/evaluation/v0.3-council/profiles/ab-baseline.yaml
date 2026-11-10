@@ -1,0 +1,63 @@
+version: 1
+name: ab-baseline
+extends: rio/security
+# rio-v0-3-council task 7.3 A/B, arm verifier-only. Both arms are identical except the
+# council step: it is disabled. Agents and verifier on the
+# gateway routes of the `node` profile; council members filled from the council
+# allowlist (OpenRouter: Sonnet 5.5, GPT 6.1 Sol, Kimi K3.1 Pro, Gemini 4 Argon).
+models:
+  default: openai/custom-node-anthropic/claude-sonnet-5-5
+  verifier: openai/custom-node-openai/gpt-6.1-sol
+budget:
+  fast: { tokens: 2400000, agents_max: 1, wall_time: 12m, verify_tokens: 320000 }
+  deep: { tokens: 6000000, agents_max: 2, wall_time: 25m, verify_tokens: 400000 }
+verify: { voters: 3, quorum: 2 }
+council:
+  vendors_allowed: [openrouter]
+  max_findings: 5
+  timeout: 240s
+steps:
+  - id: prepare
+    uses: rio/prepare@0.1.0
+    with: { exclude: [] }
+  - id: checks
+    uses: rio/checks@0.1.0
+    needs: [prepare]
+    parallel: true
+    with:
+      typecheck: true
+      lint: true
+      secrets: true
+      coverage: true
+      dependencies: true
+      baseline: true
+      trust_installed_dependencies: false
+  - id: graph
+    uses: rio/graph@0.1.0
+    needs: [prepare]
+    parallel: true
+    with: { hops: 2, max_nodes: 2000 }
+  - id: triage
+    uses: rio/triage@0.1.0
+    needs: [checks, graph]
+    rules: []
+  - id: agents
+    uses: rio/agents@0.1.0
+    needs: [triage]
+    agents: []
+  - id: security
+    uses: rio/security@0.2.0
+    needs: [triage]
+    with: { enabled: true, posture: thorough, catalog: asvs-5.0 }
+  - id: verify
+    uses: rio/verify@0.1.0
+    needs: [agents, security]
+  - id: council
+    uses: rio/council@0.1.0
+    needs: [verify]
+    with: { enabled: false }
+    rules:
+      - when: "evidence == plausible"
+  - id: report
+    uses: rio/report@0.1.0
+    needs: [checks, graph, council]

@@ -23,6 +23,17 @@
       "trust_installed_dependencies": { "type": "boolean", "default": false }
     }
   },
+  "rio/council@0.1.0": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "enabled": {
+        "type": "boolean",
+        "default": false,
+        "description": "Run the council on findings that match the step's rules"
+      }
+    }
+  },
   "rio/graph@0.1.0": {
     "type": "object",
     "additionalProperties": false,

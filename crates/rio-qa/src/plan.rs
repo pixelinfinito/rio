@@ -39,10 +39,10 @@ pub fn selection_graph(
                     explained.insert(*path);
                 }
                 for edge in graph["edges"].as_array().into_iter().flatten() {
-                    if edge["to"].as_str() == Some(id) {
-                        if let Some(from) = edge["from"].as_str() {
-                            pending.push(from);
-                        }
+                    if edge["to"].as_str() == Some(id)
+                        && let Some(from) = edge["from"].as_str()
+                    {
+                        pending.push(from);
                     }
                 }
             }

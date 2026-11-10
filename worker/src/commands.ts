@@ -166,6 +166,7 @@ export async function handleCommand(
           lineage: lineageId(message.tenant, lineage),
           repository: message.repository,
           number: message.number,
+          installation: message.installation_id,
         },
         match.finding,
         response,

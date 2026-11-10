@@ -281,6 +281,7 @@
     "category_drops": {},
     "suppressed": 0,
     "refuted": 0,
+    "refuted_ids": [],
     "classes": {},
     "policy_failed": false,
     "policy_matches": [],

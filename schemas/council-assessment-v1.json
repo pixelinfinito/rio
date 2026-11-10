@@ -1,0 +1,239 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rio.dev/schemas/council-assessment-v1.json",
+  "title": "Rio council assessment v1",
+  "description": "One council member's structured assessment of one finding in one round. Only `impact` is free text; it is shown to humans and never parsed. An assessment that fails validation, has no evidence references, or arrives after the step timeout is an abstention.",
+  "type": "object",
+  "properties": {
+    "member": {
+      "description": "The member's role, never a provider identity.",
+      "$ref": "#/$defs/role"
+    },
+    "round": {
+      "enum": [
+        1,
+        2
+      ]
+    },
+    "real": {
+      "$ref": "#/$defs/answer"
+    },
+    "introduced_by_change": {
+      "$ref": "#/$defs/answer"
+    },
+    "impact": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4000
+    },
+    "basis": {
+      "enum": [
+        "reproduction",
+        "static_path",
+        "protection_found",
+        "contract",
+        "none"
+      ]
+    },
+    "evidence_refs": {
+      "description": "Artifact ids from the evidence pack the assessment rests on.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ref"
+      },
+      "minItems": 1,
+      "maxItems": 50,
+      "uniqueItems": true
+    },
+    "experiment_request": {
+      "description": "Round 1 only; a request in round 2 is dropped by the Worker.",
+      "$ref": "#/$defs/experiment_request"
+    },
+    "changed_from": {
+      "$ref": "#/$defs/position"
+    },
+    "changed_to": {
+      "$ref": "#/$defs/position"
+    },
+    "cites": {
+      "$ref": "#/$defs/citation"
+    }
+  },
+  "required": [
+    "member",
+    "round",
+    "real",
+    "introduced_by_change",
+    "impact",
+    "basis",
+    "evidence_refs"
+  ],
+  "additionalProperties": false,
+  "dependentRequired": {
+    "changed_from": [
+      "changed_to",
+      "cites"
+    ],
+    "changed_to": [
+      "changed_from",
+      "cites"
+    ],
+    "cites": [
+      "changed_from",
+      "changed_to"
+    ]
+  },
+  "if": {
+    "properties": {
+      "round": {
+        "const": 1
+      }
+    }
+  },
+  "then": {
+    "not": {
+      "anyOf": [
+        {
+          "required": [
+            "changed_from"
+          ]
+        },
+        {
+          "required": [
+            "changed_to"
+          ]
+        },
+        {
+          "required": [
+            "cites"
+          ]
+        }
+      ]
+    }
+  },
+  "$defs": {
+    "role": {
+      "enum": [
+        "skeptic",
+        "exploit-author",
+        "code-owner",
+        "maintainer",
+        "tester"
+      ]
+    },
+    "answer": {
+      "enum": [
+        "yes",
+        "no",
+        "unknown"
+      ]
+    },
+    "ref": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]*$"
+    },
+    "position": {
+      "type": "object",
+      "properties": {
+        "real": {
+          "$ref": "#/$defs/answer"
+        },
+        "introduced_by_change": {
+          "$ref": "#/$defs/answer"
+        },
+        "basis": {
+          "$ref": "#/properties/basis"
+        }
+      },
+      "minProperties": 1,
+      "additionalProperties": false,
+      "description": "The fields of a position that changed: any of real, introduced_by_change and basis."
+    },
+    "citation": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "enum": [
+            "artifact",
+            "assessment"
+          ]
+        },
+        "ref": {
+          "description": "An artifact id from the pack, or an anonymized assessment letter.",
+          "$ref": "#/$defs/ref"
+        },
+        "reason_code": {
+          "enum": [
+            "new_artifact",
+            "missing_protection",
+            "wrong_path",
+            "wrong_version",
+            "contract_misread"
+          ]
+        }
+      },
+      "required": [
+        "kind",
+        "ref",
+        "reason_code"
+      ],
+      "additionalProperties": false
+    },
+    "experiment_request": {
+      "type": "object",
+      "properties": {
+        "command": {
+          "description": "An argv list, never a shell string.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "minItems": 1,
+          "maxItems": 64
+        },
+        "version": {
+          "enum": [
+            "base",
+            "head",
+            "both"
+          ]
+        },
+        "expect": {
+          "enum": [
+            "fails",
+            "passes",
+            "output_contains"
+          ]
+        },
+        "contains": {
+          "description": "The text the output must contain; required with `expect: output_contains`.",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        }
+      },
+      "required": [
+        "command",
+        "version",
+        "expect"
+      ],
+      "additionalProperties": false,
+      "if": {
+        "properties": {
+          "expect": {
+            "const": "output_contains"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "contains"
+        ]
+      }
+    }
+  }
+}

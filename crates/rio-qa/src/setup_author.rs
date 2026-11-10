@@ -266,16 +266,15 @@ pub fn setup_undoubled_dependencies(
                 missing.insert(host.to_string());
             }
         }
-        if let Some(name) = entry.strip_prefix("env:") {
-            if ["_API_BASE", "_API_URL", "_BASE_URL", "_ENDPOINT"]
+        if let Some(name) = entry.strip_prefix("env:")
+            && ["_API_BASE", "_API_URL", "_BASE_URL", "_ENDPOINT"]
                 .iter()
                 .any(|suffix| name.ends_with(suffix))
-                && !services
-                    .iter()
-                    .any(|service| service.env.contains_key(name))
-            {
-                missing.insert(entry.to_string());
-            }
+            && !services
+                .iter()
+                .any(|service| service.env.contains_key(name))
+        {
+            missing.insert(entry.to_string());
         }
     }
     Ok(missing.into_iter().collect())

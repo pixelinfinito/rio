@@ -46,7 +46,7 @@ enum Command {
     },
     Doctor(DoctorArgs),
     Init {
-        #[arg(long, conflicts_with_all = ["from", "account", "name", "cf_profile", "runner", "runner_image", "workers_subdomain", "credential_store", "secrets_file", "custom_providers", "default_model", "verifier_model", "dry_run", "github_app", "github_org", "replace_private_key"])]
+        #[arg(long, conflicts_with_all = ["from", "account", "name", "cf_profile", "runner", "runner_image", "workers_subdomain", "credential_store", "secrets_file", "custom_providers", "default_model", "verifier_model", "dry_run", "github_app", "github_org", "replace_private_key", "council_vendors", "no_council"])]
         endpoint: Option<String>,
         #[arg(long, requires = "endpoint")]
         token_stdin: bool,
@@ -170,6 +170,10 @@ struct ReviewArgs {
     preset: Option<Preset>,
     #[arg(long)]
     fork: bool,
+    /// Mark the review as started by the nightly evaluation job, for the
+    /// council's `nightly` trigger.
+    #[arg(long)]
+    nightly: bool,
     #[arg(long)]
     publish: bool,
     /// Review the current branch as a lineage held by the endpoint.
@@ -535,16 +539,16 @@ async fn run_review(args: ReviewArgs) -> u8 {
             );
         }
     };
-    if let Some(options) = &args.qa {
-        if let Err(error) = qa::configure_run(&mut profile, options) {
-            return error_report(
-                args.format,
-                2,
-                "invalid_qa_profile",
-                error.to_string(),
-                Vec::new(),
-            );
-        }
+    if let Some(options) = &args.qa
+        && let Err(error) = qa::configure_run(&mut profile, options)
+    {
+        return error_report(
+            args.format,
+            2,
+            "invalid_qa_profile",
+            error.to_string(),
+            Vec::new(),
+        );
     }
     for warning in &profile.warnings {
         if config.endpoint_url.is_some()
@@ -580,6 +584,7 @@ async fn run_review(args: ReviewArgs) -> u8 {
                 cache: config.cache.clone(),
                 deep: args.deep || matches!(args.preset, Some(Preset::Deep)),
                 fork: args.fork,
+                nightly: args.nightly,
                 repository: match &lineage {
                     Some(lineage) => Some(lineage.repository.clone()),
                     None => {
@@ -777,6 +782,10 @@ fn run_profile(command: ProfileCommand) -> u8 {
                         .unwrap_or_default(),
                     profile.chain.join(" -> ")
                 );
+                // Unconfigured council members and a council that will be skipped.
+                for warning in profile.warnings.iter().filter(|w| w.path == "$.council") {
+                    println!("# Council: {}", warning.message);
+                }
                 if raw {
                     print!("{}", loader.discover(Some(&reference))?.read()?);
                 } else {
@@ -881,6 +890,15 @@ async fn run_github_app_step(
             "GitHub App {} registered (id {}); its secrets are stored on the endpoint only.\nInstall it on your repositories: {}",
             record.slug, record.app_id, record.installation_url
         );
+        // Best effort: the logo is cosmetic and GitHub takes it only in the browser.
+        if let Ok((logo, settings)) =
+            github_app::save_logo(&directory, &record.slug, deployment.github_org.as_deref())
+        {
+            eprintln!(
+                "Give the app Rio's logo: open {settings}, choose \"Upload a logo\" under Display information, and pick {}",
+                logo.display()
+            );
+        }
         anyhow::Ok(())
     }
     .await;

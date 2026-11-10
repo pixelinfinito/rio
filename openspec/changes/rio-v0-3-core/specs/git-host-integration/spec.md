@@ -7,7 +7,7 @@ Connect a Rio endpoint to a git host so pull requests are reviewed without a dev
 ## ADDED Requirements
 
 ### Requirement: GitHub App registration with minimal permissions
-`rio init` SHALL offer an optional step that registers a GitHub App from a manifest declaring only `contents: read`, `pull_requests: write`, `checks: write`, `metadata: read` and `members: read`, with the endpoint's webhook URL. The step SHALL store the app id, private key and webhook secret as endpoint secrets and SHALL NOT write them to disk unencrypted. Declining the step SHALL leave the endpoint fully usable from the CLI.
+`rio init` SHALL offer an optional step that registers a GitHub App from a manifest declaring only `contents: write`, `pull_requests: write`, `checks: write`, `metadata: read`, `members: read` and `issues: read` (GitHub requires the last for `issue_comment`), with the endpoint's webhook URL. The step SHALL store the app id, private key and webhook secret as endpoint secrets and SHALL NOT write them to disk unencrypted. Declining the step SHALL leave the endpoint fully usable from the CLI.
 
 #### Scenario: App registered
 - **WHEN** the user accepts the GitHub App step during `rio init`
@@ -33,7 +33,7 @@ The endpoint SHALL record each installation of the app with its account and the 
 - **THEN** its repositories are no longer connected, later pull request events for them are ignored, and no publication is attempted
 
 ### Requirement: Installation tokens per job
-Every call to the git host and every hosted preparation SHALL use an installation token minted for that job, scoped to one repository and to the permissions that job needs (`contents: read` for preparation; `pull_requests: write` and `checks: write` for publication), valid for at most ten minutes. Tokens SHALL be passed only inside the job payload and SHALL NOT be persisted, logged or included in reports.
+Every call to the git host and every hosted preparation SHALL use an installation token minted for that job, scoped to one repository and to the permissions that job needs (`contents: read` for preparation; `pull_requests: write` and `checks: write` for publication; `contents: write` only to resolve a thread), valid for at most ten minutes. Tokens SHALL be passed only inside the job payload and SHALL NOT be persisted, logged or included in reports.
 
 #### Scenario: Preparation token scope
 - **WHEN** a prepare job is created for a pull request in `acme/api`

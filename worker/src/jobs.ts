@@ -21,6 +21,8 @@ export async function createJob(
   snapshotId: string,
   attempt = 1,
   context?: { profile: Profile },
+  /** A caller's own wall bound, below the review's remaining time. */
+  wallCapMs?: number,
 ): Promise<void> {
   const store = new Store(env);
   invariant(!(await store.cancelled(review)), "cancelled");
@@ -35,7 +37,11 @@ export async function createJob(
     snapshot_id: snapshotId,
     needs: needs(kind, version),
     limits: {
-      wall_ms: Math.min(120000, await store.remainingMs(review)),
+      wall_ms: Math.min(
+        120000,
+        await store.remainingMs(review),
+        wallCapMs ?? Infinity,
+      ),
       memory_mb: env.RUNNER_BACKEND === "sandbox" ? 8192 : 2048,
       cpu: 2,
       output_bytes: 1024 * 1024,
@@ -47,11 +53,53 @@ export async function createJob(
   const key = `reviews/${review}/jobs/${job}/${attempt}/payload.json`;
   await store.put(key, execution);
   await env.DB.prepare(
-    "INSERT INTO jobs(id,review_id,attempt,status,payload_key,created_at) VALUES(?,?,?,'pending',?,?) ON CONFLICT(id) DO NOTHING",
+    "INSERT INTO jobs(id,review_id,attempt,status,payload_key,created_at,kind) VALUES(?,?,?,'pending',?,?,?) ON CONFLICT(id) DO NOTHING",
   )
-    .bind(job, review, attempt, key, Date.now())
+    .bind(job, review, attempt, key, Date.now(), kind)
     .run();
   await env.JOBS.send({ review_id: review, job_id: job, attempt });
+}
+/**
+ * A self-hosted council member's request as a runner job. Only a self-hosted
+ * runner that advertises a model endpoint claims it; the request never
+ * reaches the model gateway.
+ */
+export async function createModelJob(
+  env: Env,
+  review: string,
+  job: string,
+  model: NonNullable<Execution["model"]>,
+  wallMs: number,
+): Promise<void> {
+  const store = new Store(env);
+  invariant(!(await store.cancelled(review)), "cancelled");
+  const execution: Execution = {
+    protocol: 1,
+    review_id: review,
+    job_id: job,
+    attempt: 1,
+    kind: "model",
+    command: ["rio-internal", "model"],
+    version: "head",
+    snapshot_id: "",
+    needs: [],
+    limits: {
+      wall_ms: Math.max(1000, Math.min(120000, wallMs)),
+      memory_mb: 0,
+      cpu: 0,
+      output_bytes: 1024 * 1024,
+      artifact_bytes: 1024 * 1024,
+    },
+    network: false,
+    model,
+  };
+  const key = `reviews/${review}/jobs/${job}/1/payload.json`;
+  await store.put(key, execution);
+  await env.DB.prepare(
+    "INSERT INTO jobs(id,review_id,attempt,status,payload_key,created_at,kind) VALUES(?,?,1,'pending',?,?,'model') ON CONFLICT(id) DO NOTHING",
+  )
+    .bind(job, review, key, Date.now())
+    .run();
 }
 /** Wall limit of a prepare job: clone (self-hosted only), snapshot and graph. */
 export const PREPARE_WALL_MS = 600000;
@@ -133,6 +181,16 @@ export function validateResult(
       payload.limits.output_bytes + 4096,
     "runner output limit exceeded",
   );
+  if (payload.kind === "model")
+    invariant(
+      value.artifact === undefined ||
+        (typeof value.artifact?.content === "string" &&
+          // Null when the endpoint reported no usage: the reservation stays.
+          [value.artifact.input_tokens, value.artifact.output_tokens].every(
+            (n: unknown) => n === null || Number.isInteger(n),
+          )),
+      "invalid model result",
+    );
   if (value.artifact !== undefined)
     invariant(
       payload.kind !== "run" &&
@@ -204,10 +262,10 @@ export async function finishJob(
   if (row.status !== "completed") {
     await store.put(key, result);
     await env.DB.prepare(
-      "UPDATE jobs SET status='completed',result_key=? WHERE id=? AND attempt=? AND status IN ('pending','leased')" +
+      "UPDATE jobs SET status='completed',result_key=?,completed_at=? WHERE id=? AND attempt=? AND status IN ('pending','leased')" +
         fence,
     )
-      .bind(key, job, attempt, ...fenceArgs())
+      .bind(key, Date.now(), job, attempt, ...fenceArgs())
       .run();
   }
   const published = await env.DB.prepare(

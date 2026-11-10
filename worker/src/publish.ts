@@ -3,7 +3,9 @@ import {
   GitHubError,
   InstallationToken,
   PUBLISH_PERMISSIONS,
+  RESOLVE_PERMISSIONS,
   appRequest,
+  withToken,
 } from "./github";
 import { installation, covers } from "./webhooks";
 import { pullOf, type PullRow } from "./pulls";
@@ -11,6 +13,7 @@ import { policyMatches } from "./consolidate";
 import { hash } from "./validation";
 import { Store } from "./storage";
 import { refreshQaReportLinks } from "./qa-evidence";
+import { announcementPublished, settleAnnouncement } from "./announce";
 
 // The publisher (pr-publishing). One host interface, one GitHub
 // implementation. Every comment carries a hidden marker so a later round, or a
@@ -43,7 +46,7 @@ export const findingMarker = (id: string) => `<!-- rio:finding:${id} -->`;
 export const summaryMarker = (lineage: string) =>
   `<!-- rio:summary:${lineage} -->`;
 const FINDING_MARKER = /<!-- rio:finding:([a-f0-9]{64}) -->\s*$/;
-const SUMMARY_MARKER = /<!-- rio:summary:([a-f0-9]{64}) -->\s*$/;
+export const SUMMARY_MARKER = /<!-- rio:summary:([a-f0-9]{64}) -->\s*$/;
 
 /** Host operations the publisher needs; GitHub is the only implementation. */
 export interface Host {
@@ -113,6 +116,8 @@ export class GitHubHost implements Host {
     private readonly number: number,
     private readonly bot: string,
     private readonly slug: string,
+    /** Mints the resolve token; without it the host token is used. */
+    private readonly installation?: { env: Env; id: number },
   ) {}
   private get base() {
     return `/repos/${this.repository}`;
@@ -213,11 +218,20 @@ export class GitHubHost implements Host {
     return map;
   }
   async resolveThread(id: string, resolved: boolean) {
-    await this.token.graphql(
-      resolved
-        ? "mutation($id:ID!){resolveReviewThread(input:{threadId:$id}){thread{id isResolved}}}"
-        : "mutation($id:ID!){unresolveReviewThread(input:{threadId:$id}){thread{id isResolved}}}",
-      { id },
+    const mutate = (token: InstallationToken) =>
+      token.graphql(
+        resolved
+          ? "mutation($id:ID!){resolveReviewThread(input:{threadId:$id}){thread{id isResolved}}}"
+          : "mutation($id:ID!){unresolveReviewThread(input:{threadId:$id}){thread{id isResolved}}}",
+        { id },
+      );
+    if (!this.installation) return void (await mutate(this.token));
+    await withToken(
+      this.installation.env,
+      this.installation.id,
+      this.repository,
+      RESOLVE_PERMISSIONS,
+      mutate,
     );
   }
   async checkRun(head: string, output: CheckOutput, existing?: number) {
@@ -280,6 +294,21 @@ export class GitHubHost implements Host {
       });
     return { id: run.id, url: run.html_url ?? "" };
   }
+  /** The in-progress check run a review starts with; `checkRun` completes it. */
+  async startCheckRun(head: string) {
+    const run = await this.token.request("POST", `${this.base}/check-runs`, {
+      name: "rio/review",
+      head_sha: head,
+      status: "in_progress",
+      started_at: new Date().toISOString(),
+      output: {
+        title: `Reviewing ${head.slice(0, 7)}…`,
+        summary:
+          "Rio is reviewing this pull request. Findings appear inline and in the summary comment when the review finishes, usually within a few minutes.\n\nRio's check run is always neutral: it never approves and never blocks a merge.",
+      },
+    });
+    return { id: run.id as number, url: run.html_url ?? "" };
+  }
   async react(comment: number, content: "+1" | "-1" | "confused") {
     await this.token.request(
       "POST",
@@ -291,15 +320,49 @@ export class GitHubHost implements Host {
 
 /** Repository text placed in a comment: no markers, no mentions, bounded. */
 export function plain(text: string, max = 2000): string {
-  return text
+  const safe = text
     .replace(/<!--/g, "&lt;!--")
     .replace(/-->/g, "--&gt;")
-    .replace(/@(?=[A-Za-z0-9])/g, "@​")
-    .slice(0, max);
+    .replace(/@(?=[A-Za-z0-9])/g, "@​");
+  if (safe.length <= max) return safe;
+  // Cut at a word boundary and say so, never mid-word.
+  const cut = safe.slice(0, max - 1);
+  const space = cut.lastIndexOf(" ");
+  return `${space > max * 0.6 ? cut.slice(0, space) : cut}…`;
 }
 function where(f: { location: { path: string; line_start: number } }) {
   return `\`${plain(f.location.path, 300)}:${f.location.line_start}\``;
 }
+const SEVERITY: Record<string, string> = {
+  error: "🔴 Error",
+  warning: "🟠 Warning",
+  info: "🔵 Info",
+};
+const CATEGORY: Record<string, string> = {
+  defect: "Defect",
+  risk: "Risk",
+  security: "Security",
+};
+const EVIDENCE: Record<string, string> = {
+  reproduced: "✅ Reproduced",
+  static_proven: "✅ Proven from the code",
+  plausible: "❔ Plausible, not proven",
+  refuted: "❌ Refuted",
+};
+const label = (table: Record<string, string>, key: string) =>
+  table[key] ?? plain(key, 50);
+/** Splits a message into its first sentence (the heading) and the rest. */
+function sentences(message: string): [string, string] {
+  const first = message.split("\n")[0];
+  const end = first.search(/[.!?](\s|$)/);
+  if (end <= 20) return [first, message.slice(first.length).trim()];
+  return [first.slice(0, end + 1), message.slice(end + 1).trim()];
+}
+/** The first sentence of a message, for headings and summary lines. */
+export function headline(message: string, max = 160): string {
+  return plain(sentences(message)[0], max);
+}
+const FOOTER_REASONS = "fixed|wrong|intentional|irrelevant|style";
 export interface FindingState {
   status: "open" | "fixed" | "dismissed";
   fixed_in?: string;
@@ -311,45 +374,86 @@ export function findingBody(
   qa?: any,
   anchor?: number,
 ): string {
-  const lines = [
-    `**Rio ${f.category}** · ${f.severity} · \`${plain(f.rule_id, 150)}\` · evidence \`${f.evidence_level}\``,
-  ];
+  const id = f.id.slice(0, 12);
+  const votes = f.verification?.voters
+    ? ` · ${f.verification.agreeing}/${f.verification.voters} verifiers agree`
+    : "";
+  const lines: string[] = [];
   if (state.status === "fixed")
     lines.push(
-      `**Status: fixed in ${state.fixed_in ? `\`${state.fixed_in.slice(0, 12)}\`` : "a later push"}**`,
+      `> ✅ **Status: fixed in ${state.fixed_in ? `\`${state.fixed_in.slice(0, 12)}\`` : "a later push"}**`,
+      "",
     );
   else if (state.status === "dismissed")
     lines.push(
-      `**Status: dismissed: ${state.response?.reason ?? "dismissed"}**${state.response?.actor ? ` (by ${plain(state.response.actor, 100)})` : ""}`,
-    );
-  lines.push("", plain(f.message));
-  if (f.trigger) lines.push("", `Trigger: ${plain(f.trigger, 500)}`);
-  if (f.impact) lines.push("", `Impact: ${plain(f.impact, 500)}`);
-  if (f.suggested_fix)
-    lines.push("", `Suggested fix: ${plain(f.suggested_fix, 1000)}`);
-  if (f.qa) {
-    lines.push(
+      `> 💤 **Status: dismissed: ${state.response?.reason ?? "dismissed"}**${state.response?.actor ? ` (by ${plain(state.response.actor, 100)})` : ""}`,
       "",
+    );
+  lines.push(
+    `**${label(SEVERITY, f.severity)} · ${label(CATEGORY, f.category)}** · ${label(EVIDENCE, f.evidence_level)}${votes}`,
+    "",
+    `### ${headline(f.message)}`,
+    "",
+  );
+  // A closed finding keeps its explanation, folded away.
+  const detail: string[] = [];
+  const section = (...text: string[]) =>
+    detail.push(...(detail.length ? [""] : []), ...text);
+  const rest = sentences(f.message)[1];
+  if (rest) section(plain(rest, 4000));
+  if (f.trigger) section("**When it happens**", "", plain(f.trigger, 2000));
+  if (f.impact) section("**Impact**", "", plain(f.impact, 2000));
+  if (f.suggested_fix)
+    section("**💡 Suggested fix**", "", plain(f.suggested_fix, 2000));
+  if (f.council) {
+    const c = f.council;
+    const marker = `${c.skipped ? "skipped" : c.partial ? "partial" : "complete"} (${c.answered}/${c.total})`;
+    section(
+      c.skipped || !c.decision
+        ? `Council: ${marker}; the verifier result stands.`
+        : `Council: ${c.decision} (tier ${c.tier}) · ${marker}`,
+    );
+    if (c.note) section(`Council note: ${plain(c.note, 1000)}`);
+  }
+  if (f.qa) {
+    section(
       `Journey: ${plain(f.qa.journey)} · step ${f.qa.step}`,
       `Cells: ${f.locations.map((location) => `${location.cell?.viewport}/${location.cell?.color_scheme}`).join(", ")}`,
     );
     if (anchor !== undefined && anchor !== f.location.line_start)
-      lines.push(
+      detail.push(
         `Attributed to ${where(f)}; shown at the file's first diff hunk.`,
       );
-    lines.push(...qaEvidenceBody(qa, f.evidence, true));
+    detail.push(...qaEvidenceBody(qa, f.evidence, true));
   }
-  if (f.locations.length > 1)
-    lines.push(
+  // Other places the finding cites; the commented line itself is not repeated.
+  const seen = new Set([`${f.location.path}:${f.location.line_start}`]);
+  const others = f.locations
+    .filter((l) => {
+      const key = `${l.path}:${l.line_start}`;
+      return !seen.has(key) && seen.add(key);
+    })
+    .slice(0, 10);
+  if (others.length)
+    section(
+      `<details><summary>Also at ${others.length} other location(s)</summary>`,
       "",
-      `Locations: ${f.locations
-        .slice(0, 10)
-        .map((l) => where({ location: l }))
-        .join(", ")}`,
+      ...others.map((l) => `- ${where({ location: l })}`),
+      "",
+      "</details>",
+    );
+  if (state.status === "open") lines.push(...detail);
+  else
+    lines.push(
+      "<details><summary>Original finding</summary>",
+      "",
+      ...detail,
+      "",
+      "</details>",
     );
   lines.push(
     "",
-    `<sub>Finding \`${f.id.slice(0, 12)}\` · answer with \`/rio dismiss ${f.id.slice(0, 12)} <fixed|wrong|intentional|irrelevant|style>\`</sub>`,
+    `<sub>🌊 Rio · \`${plain(f.rule_id, 150)}\` · finding \`${id}\` · reply \`/rio dismiss ${id} <${FOOTER_REASONS}>\` if this is not right</sub>`,
     findingMarker(f.id),
   );
   return lines.join("\n");
@@ -368,7 +472,7 @@ export interface PublishInput {
   publicUrl?: string;
 }
 
-function decide(
+export function decide(
   policy: Policy,
   row: PullRow,
   escalated: boolean,
@@ -402,11 +506,77 @@ const lists = (report: any): Finding[] => {
 };
 function anchorable(f: Finding): boolean {
   if (f.qa) return f.qa.attribution === "source";
-  // Class findings and multi-file findings belong in the summary.
-  return (
-    !f.locations.some((l) => l.id) &&
-    new Set(f.locations.map((l) => l.path)).size <= 1
-  );
+  // Class findings belong in the summary; any other finding is anchored at its
+  // primary location, and the comment lists the other places it cites.
+  return !f.locations.some((l) => l.id);
+}
+
+const TIER: Record<string, string> = { low: "🟢", medium: "🟡", high: "🔴" };
+/** Where the full report lives: the endpoint URL when it is public, else the CLI. */
+function reportLine(link: string, number?: number): string {
+  const cli = number ? `\`rio review --pr ${number}\`` : "the Rio CLI";
+  return /^https?:\/\//.test(link)
+    ? `Full report: [${link.replace(/^https?:\/\//, "").slice(0, 120)}](${link}) (needs a Rio API token) or ${cli}`
+    : `Full report: ${cli}`;
+}
+/** One row per finding of this round, linked to its inline comment when posted. */
+function findingRows(report: any, urls: Map<string, string>): string[] {
+  const all = lists(report);
+  if (!all.length) return [];
+  return [
+    "| | Finding | Where | Evidence |",
+    "| --- | --- | --- | --- |",
+    ...all.slice(0, 25).map((f) => {
+      const url = urls.get(f.id);
+      const title = headline(f.message, 120).replace(/\|/g, "\\|");
+      return `| ${label(SEVERITY, f.severity).split(" ")[0]} | ${url ? `[${title}](${url})` : title} | ${where(f)} | ${label(EVIDENCE, f.evidence_level)} |`;
+    }),
+    ...(all.length > 25
+      ? [`| | …and ${all.length - 25} more in the full report | | |`]
+      : []),
+  ];
+}
+/** The header block both the summary comment and the check run show. */
+function overview(report: any, failOn: any): string[] {
+  const tier = report.risk_tier;
+  const all = lists(report);
+  const matching = all.filter((f) => policyMatches(f, failOn ?? {})).length;
+  const verdict = !all.length
+    ? "> [!TIP]\n> No findings in this change."
+    : matching
+      ? `> [!WARNING]\n> ${matching} finding(s) match this repository's \`fail_on\` policy.`
+      : "> [!NOTE]\n> Findings were reported; none match this repository's `fail_on` policy.";
+  const incomplete =
+    report.status === "complete"
+      ? []
+      : [
+          "",
+          `> [!CAUTION]\n> The review is **${report.status}**: some checks could not run, so earlier findings are not marked fixed. See the full report for what was skipped.`,
+        ];
+  return [
+    verdict,
+    ...incomplete,
+    "",
+    "| | |",
+    "| --- | --- |",
+    `| Risk | ${TIER[tier?.tier] ? `${TIER[tier.tier]} ` : ""}Risk tier: **${tier?.tier ?? "unknown"}**${tier?.reasons?.length ? ` (${tier.reasons.map((r: string) => plain(r, 200)).join("; ")})` : ""} |`,
+    `| Findings | ${report.findings.length} finding(s) · ${report.risks.length} risk(s) · ${report.security?.length ?? 0} security |`,
+    ...(report.lineage?.held_back
+      ? [
+          `| Already posted | ${report.lineage.held_back} finding(s) from earlier rounds |`,
+        ]
+      : []),
+    ...(report.remembered?.length
+      ? [
+          `| Remembered | ${report.remembered.length} earlier dismissal(s) applied |`,
+        ]
+      : []),
+    ...(report.review?.head
+      ? [
+          `| Reviewed | \`${String(report.review.head).slice(0, 12)}\`${report.lineage?.round ? ` · round ${report.lineage.round}` : ""} |`,
+        ]
+      : []),
+  ];
 }
 
 export function findingAnchor(
@@ -583,16 +753,19 @@ export function checkOutput(
       ? `Review failed its policy: ${matching} match fail_on · ${counts} · risk tier ${tier}${status}`
       : `${counts}; none match fail_on · risk tier ${tier}${status}`;
   const summary = [
-    `Status: **${report.status}** · risk tier **${tier}**${report.risk_tier?.reasons?.length ? ` (${report.risk_tier.reasons.map((r: string) => plain(r, 200)).join("; ")})` : ""}`,
-    `Findings: ${report.findings.length} · Risks: ${report.risks.length} · Security: ${report.security?.length ?? 0} · Held back (already posted): ${report.lineage?.held_back ?? 0} · Remembered: ${report.remembered?.length ?? 0}`,
+    ...overview(report, failOn),
     ...(options.askNote
       ? [
           "",
           `Comments were not posted: this repository's profile sets \`publish: ask\`. Set \`publish: auto\`, or run \`rio review --pr ${options.askNote} --publish\`.`,
         ]
       : []),
+    ...(all.length ? ["", ...findingRows(report, new Map())] : []),
     "",
-    `Full report: ${options.link}`,
+    reportLine(
+      options.link,
+      options.askNote ?? report.review?.pull_request?.number,
+    ),
     "",
     "Rio's check run is always neutral: it never approves and never blocks a merge.",
   ].join("\n");
@@ -606,20 +779,20 @@ function summaryBody(
   rejected: { f: Finding; error: string }[],
   wrong: Finding[],
   link: string,
+  failOn: any,
+  urls: Map<string, string>,
 ): string {
-  const tier = report.risk_tier;
-  const lines = [
-    `## Rio review · ${report.status}`,
-    "",
-    `Risk tier: **${tier?.tier ?? "unknown"}**${tier?.reasons?.length ? ` (${tier.reasons.map((r: string) => plain(r, 200)).join("; ")})` : ""}`,
-    `Findings: ${report.findings.length} · Risks: ${report.risks.length} · Security: ${report.security?.length ?? 0} · Held back (already posted): ${report.lineage?.held_back ?? 0} · Remembered: ${report.remembered?.length ?? 0}`,
-  ];
+  const lines = [`## 🌊 Rio review`, "", ...overview(report, failOn)];
+  const rows = findingRows(report, urls);
+  if (rows.length) lines.push("", "### Findings", "", ...rows);
   const reconsider = report.lineage?.reconsider;
   if (reconsider) {
     lines.push(
       "",
       `### Round ${report.lineage.round} exceeds the cap of ${report.lineage.cap}`,
-      `${reconsider.unresolved} agent finding(s) remain unresolved. Please reconsider the approach${reconsider.split ? " or split the change" : ""}.`,
+      "",
+      `${reconsider.unresolved} agent finding(s) remain unresolved, so new ones are listed here instead of inline. Please reconsider the approach${reconsider.split ? " or split the change" : ""}.`,
+      "",
       ...reconsider.top.map(
         (t: any) =>
           `- ${plain(t.title, 200)} (\`${plain(t.path, 300)}:${t.line_start}\`)`,
@@ -637,15 +810,17 @@ function summaryBody(
     lines.push(
       "",
       "### Findings outside the diff",
+      "",
       ...unanchored.map(
         (f) =>
-          `- ${where(f)} \`${plain(f.rule_id, 150)}\` · ${plain(f.message.split("\n")[0], 300)} (\`${f.id.slice(0, 12)}\`)`,
+          `- ${where(f)} \`${plain(f.rule_id, 150)}\` · ${headline(f.message, 300)} (\`${f.id.slice(0, 12)}\`)`,
       ),
     );
   if (rejected.length)
     lines.push(
       "",
       "### Not posted inline (retried next round)",
+      "",
       ...rejected.map(
         (r) =>
           `- ${where(r.f)} \`${plain(r.f.rule_id, 150)}\` · ${plain(r.error, 200)} (\`${r.f.id.slice(0, 12)}\`)`,
@@ -665,7 +840,12 @@ function summaryBody(
       ...qaEvidenceBody(report.qa, finding.evidence, true),
     );
   }
-  lines.push("", `Full report: ${link}`, summaryMarker(lineage));
+  lines.push(
+    "",
+    "---",
+    `<sub>🌊 Rio · ${reportLine(link, report.review?.pull_request?.number)} · reply \`/rio review\` to re-run · the \`rio/review\` check is always neutral and never blocks a merge</sub>`,
+    summaryMarker(lineage),
+  );
   return lines.join("\n");
 }
 
@@ -786,6 +966,14 @@ function failureText(error: unknown): string {
  * reviews outside PR mode (no publication step ran). A host outage never fails
  * the review: it is recorded as a failed publication, retried next round.
  */
+/** Whether a maintainer escalated this pull request with `/rio review`. */
+export async function escalatedPull(env: Env, row: PullRow): Promise<boolean> {
+  return !!(await env.DB.prepare(
+    "SELECT 1 AS e FROM pull_requests WHERE tenant=? AND repository=? AND number=? AND escalated=1 LIMIT 1",
+  )
+    .bind(row.tenant, row.repository, row.number)
+    .first());
+}
 export async function publishReview(
   env: Env,
   input: PublishInput,
@@ -796,10 +984,11 @@ export async function publishReview(
     slug: string,
   ) => Host,
 ): Promise<Publication | null> {
+  let result: Publication | null;
   try {
-    return await publishWith(env, input, host);
+    result = await publishWith(env, input, host);
   } catch (error) {
-    return {
+    result = {
       policy: ["never", "ask", "auto"].includes(input.policy)
         ? input.policy
         : "never",
@@ -815,6 +1004,21 @@ export async function publishReview(
       ],
     };
   }
+  // The in-progress check run is either completed by this publication or
+  // completed here with the reason nothing was published.
+  if (result?.check_run_url) await announcementPublished(env, input.review);
+  else
+    await settleAnnouncement(
+      env,
+      input.review,
+      "Review finished; nothing was published",
+      result?.reason === "policy_never"
+        ? "This repository's profile sets `publish: never`, so Rio posts nothing on this pull request."
+        : result?.failures?.length
+          ? `The review finished, but publishing failed: ${plain(result.failures[0].error, 300)}. The next push retries it.`
+          : "The review finished without a publication for this head.",
+    );
+  return result;
 }
 /**
  * Publishes a finished PR review under the profile's policy. Returns null for
@@ -849,12 +1053,7 @@ async function publishWith(
   const install = await installation(env, row.installation_id);
   if (!install || !covers(install, row.repository))
     return empty("no_installation");
-  const escalated = !!(await env.DB.prepare(
-    "SELECT 1 AS e FROM pull_requests WHERE tenant=? AND repository=? AND number=? AND escalated=1 LIMIT 1",
-  )
-    .bind(row.tenant, row.repository, row.number)
-    .first());
-  const decision = decide(policy, row, escalated);
+  const decision = decide(policy, row, await escalatedPull(env, row));
   if (!decision.check) return empty(decision.reason);
   const publication = empty(decision.reason);
   const link = `${(input.publicUrl ?? env.PUBLIC_URL ?? "").replace(/\/$/, "")}/v1/reviews/${input.review}/report`;
@@ -932,6 +1131,8 @@ async function publishLeased(
     PUBLISH_PERMISSIONS,
   );
   const records = new Map<string, any>();
+  // Inline comment links, for the summary's findings table.
+  const urls = new Map<string, string>();
   const save = async (
     kind: "finding" | "summary" | "check_run",
     identity: string,
@@ -944,6 +1145,7 @@ async function publishLeased(
       url?: string | null;
     },
   ) => {
+    if (kind === "finding" && values.url) urls.set(identity, values.url);
     await env.DB.prepare(
       "INSERT INTO publications(tenant,lineage_id,identity,review_id,kind,state,external_id,thread_id,error,attempts,updated_at,body_hash,url) VALUES(?,?,?,?,?,?,?,?,?,1,?,?,?) ON CONFLICT(tenant,lineage_id,kind,identity) DO UPDATE SET review_id=excluded.review_id,state=excluded.state,external_id=COALESCE(excluded.external_id,publications.external_id),thread_id=COALESCE(excluded.thread_id,publications.thread_id),error=excluded.error,attempts=publications.attempts+1,updated_at=excluded.updated_at,body_hash=COALESCE(excluded.body_hash,publications.body_hash),url=COALESCE(excluded.url,publications.url)",
     )
@@ -972,8 +1174,10 @@ async function publishLeased(
       )
         .bind(row.tenant, lineage)
         .all<any>()
-    ).results)
+    ).results) {
       records.set(`${r.kind}:${r.identity}`, r);
+      if (r.kind === "finding" && r.url) urls.set(r.identity, r.url);
+    }
     const github = guarded(
       host
         ? host(token, row, `${slug}[bot]`, slug)
@@ -983,6 +1187,7 @@ async function publishLeased(
             row.number,
             `${slug}[bot]`,
             slug,
+            { env, id: row.installation_id },
           ),
       lease,
     );
@@ -1188,6 +1393,8 @@ async function publishLeased(
         rejected,
         wrong,
         link,
+        input.fail_on,
+        urls,
       );
       try {
         const existing = (await github.issueComments()).find(
@@ -1225,7 +1432,9 @@ async function publishLeased(
           askNote: decision.full ? undefined : row.number,
           link,
         }),
-        record?.external_id ? Number(record.external_id) : undefined,
+        record?.external_id
+          ? Number(record.external_id)
+          : (row.announced_check ?? undefined),
       );
       publication.check_run_url = run.url || null;
       await save("check_run", row.head_sha!, record ? "edited" : "posted", {
@@ -1286,7 +1495,13 @@ async function publishLeased(
 export async function reflectDismissal(
   env: Env,
   token: InstallationToken,
-  row: { tenant: string; lineage: string; repository: string; number: number },
+  row: {
+    tenant: string;
+    lineage: string;
+    repository: string;
+    number: number;
+    installation: number;
+  },
   finding: Finding,
   response: AuthorResponse,
 ): Promise<void> {
@@ -1296,7 +1511,10 @@ export async function reflectDismissal(
     const app = await appRequest(env, "GET", "/app");
     const slug = String(app?.slug ?? "");
     const github = guarded(
-      new GitHubHost(token, row.repository, row.number, `${slug}[bot]`, slug),
+      new GitHubHost(token, row.repository, row.number, `${slug}[bot]`, slug, {
+        env,
+        id: row.installation,
+      }),
       lease,
     );
     const comment = (await github.reviewComments()).find(

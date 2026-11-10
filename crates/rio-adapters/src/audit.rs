@@ -670,6 +670,7 @@ fn advisory_findings(package: &AuditPackage, mut records: Vec<Value>) -> Vec<Fin
             resolution: None,
             author_response: None,
             history: None,
+            council: None,
             advisory: Some(Advisory {
                 url: format!("https://osv.dev/vulnerability/{id}"),
                 id,

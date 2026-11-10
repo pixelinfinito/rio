@@ -1,0 +1,7 @@
+version: 1
+name: invalid-council-needs
+extends: rio/base
+steps:
+  - {id: agents, uses: rio/agents}
+  - {id: verify, uses: rio/verify, needs: [agents]}
+  - {id: council, uses: rio/council, needs: [agents], with: {enabled: true}}

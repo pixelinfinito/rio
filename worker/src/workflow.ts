@@ -50,8 +50,37 @@ import {
 import { applicability, catalog, changeContext, traceInputs } from "./catalogs";
 import { triage, type Plan } from "./triage";
 import { verifyHypothesis } from "./verifier";
-import { consolidate, type Verified } from "./consolidate";
-import { createJob } from "./jobs";
+import {
+  classId,
+  consolidate,
+  findingOf,
+  suppressedBy,
+  triggerHash,
+  type Verified,
+} from "./consolidate";
+import {
+  authorFamily,
+  compose,
+  councilVendors,
+  routeOf,
+  type CouncilSettings,
+  type Member,
+  type VendorEntry,
+} from "./council";
+import {
+  runCouncil,
+  type AuditEntry,
+  type CallOutcome,
+  type CouncilOutcome,
+} from "./council-step";
+import {
+  expireCouncil,
+  recordCouncil,
+  runnerModelEndpoint,
+} from "./council-audit";
+import memberWeights from "./member-weights.json";
+import { pullOf } from "./pulls";
+import { createJob, createModelJob } from "./jobs";
 import { createQaJob } from "./qa-jobs";
 import { qaReport, qaRecords, compareQaResults, qaUsage } from "./qa-results";
 import { applyQaPolicy, suppressQaFindings } from "./qa-policy";
@@ -74,6 +103,7 @@ import {
 } from "./history";
 import { updateProposals } from "./proposals";
 import { publishReview } from "./publish";
+import { announceReview, settleAnnouncement } from "./announce";
 import {
   changeHunks,
   context as cacheContext,
@@ -257,11 +287,23 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
         .run();
       return row;
     });
-    const submission = await store.get<Submission>(load.submission_key),
-      snapshot = await StoredSnapshot.open(
-        this.env,
-        event.payload.snapshot_key,
-      );
+    const submission = await store.get<Submission>(load.submission_key);
+    // PR mode: the resolved policy is recorded, so the next push of this
+    // repository is announced at once, and this review announces itself.
+    if (submission.report?.review?.pull_request)
+      await step.do("announce", async () => {
+        await this.env.DB.prepare(
+          "UPDATE pull_requests SET publish_policy=? WHERE review_id=?",
+        )
+          .bind(submission.profile.publish ?? "never", id)
+          .run();
+        await announceReview(this.env, id, submission.profile.publish);
+        return true;
+      });
+    const snapshot = await StoredSnapshot.open(
+      this.env,
+      event.payload.snapshot_key,
+    );
     // Steps read files on demand; triage needs only the changed files.
     const changedFiles: Snapshot = {
       base: await materialize(
@@ -317,6 +359,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
       submission.profile.steps.find((x) => x.uses.startsWith("rio/graph@"))
         ?.with?.hops ?? 2;
     let diffOnlyAudit: Record<string, string[]> | undefined;
+    let council: CouncilOutcome | undefined;
     const call = async (name: string, action: () => Promise<ModelResponse>) => {
       const key = await step.do(
         `model-${name}`,
@@ -335,6 +378,8 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
       kind: "run" | "checks" | "graph" | "static",
       command: string[],
       version: Version,
+      // Seconds the caller can spare; council experiments keep a reserve.
+      spare?: () => Promise<number>,
     ) => {
       invariant(
         !submission.fork || kind === "static",
@@ -347,6 +392,13 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
         const job = hash(
           attempt === 1 ? `${id}-${name}` : `${id}-${name}-${attempt}`,
         ).slice(0, 32);
+        // A caller with its own budget dispatches only while it has time, and
+        // the job's runner limit stays within that time.
+        const cap = spare
+          ? await step.do(`spare-${job}`, async () => await spare())
+          : undefined;
+        if (cap !== undefined && cap <= 0)
+          throw new Error("no wall time left for the job");
         await step.do(`dispatch-${job}`, async () => {
           await createJob(
             this.env,
@@ -358,12 +410,13 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             submission.snapshot_id,
             attempt,
             kind === "run" ? undefined : { profile: submission.profile },
+            cap,
           );
           return job;
         });
         // The unique attempt is part of the event type and result path.
         const remaining = await step.do(`remaining-${job}`, async () => {
-          const ms = await store.remainingMs(id);
+          const ms = spare ? await spare() : await store.remainingMs(id);
           invariant(ms > 0, "review wall budget exhausted");
           return Math.max(1, Math.ceil(ms / 1000));
         });
@@ -391,6 +444,435 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
         executions[job] = result;
         return result;
       }
+    };
+    /** Output tokens offered to a council member per call. */
+    const COUNCIL_OUTPUT_TOKENS = 8192;
+    // A council call reserves an upper bound: no tokenizer yields more tokens
+    // than UTF-8 bytes, and the output is capped.
+    const councilTokens = (request: { system: string; content: string }) =>
+      new TextEncoder().encode(request.system + request.content).length +
+      COUNCIL_OUTPUT_TOKENS;
+    // Runner jobs of the council, deleted with its packs at retention.
+    const councilJobs: string[] = [];
+    const jobsOf = (name: string) =>
+      Array.from({ length: RUNNER_ATTEMPTS }, (_, i) =>
+        hash(i === 0 ? `${id}-${name}` : `${id}-${name}-${i + 1}`).slice(0, 32),
+      );
+    /**
+     * A call's durable record. Model output goes to R2, never into a step
+     * result, so Workflow step logs carry no repository-derived text.
+     */
+    type Recorded =
+      | { key: string; at: number; usage: Usage; seconds?: number }
+      | {
+          error: "timeout" | "vendor_error" | "budget";
+          at: number;
+          usage?: Usage;
+          seconds?: number;
+        };
+    type Usage = { input_tokens: number; output_tokens: number };
+    const replay = async (recorded: Recorded): Promise<CallOutcome> =>
+      "key" in recorded
+        ? {
+            response: await store.get<ModelResponse>(recorded.key),
+            at: recorded.at,
+            ...(recorded.seconds ? { seconds: recorded.seconds } : {}),
+          }
+        : recorded;
+    // A self-hosted member's request runs on a runner with a model endpoint;
+    // it never reaches the model gateway, so the pack stays in the account.
+    const selfHosted = async (
+      member: Member,
+      name: string,
+      request: { system: string; content: string },
+      deadline: number,
+    ): Promise<CallOutcome> => {
+      const job = hash(`${id}-${name}`).slice(0, 32);
+      councilJobs.push(job);
+      // Self-hosted calls cost no vendor but still spend the review's tokens.
+      const admitted = await step.do(`${name}-admit`, async () => {
+        try {
+          return {
+            reservation: await ledger.reserve(
+              `council-${member.role}`,
+              "council",
+              councilTokens(request),
+            ),
+            at: Date.now(),
+          };
+        } catch {
+          // A refusal answers at once; it does not use up the round's time.
+          return { reservation: "", at: Date.now() };
+        }
+      });
+      const { reservation } = admitted;
+      if (!reservation) return { error: "budget", at: admitted.at };
+      // The deadline is checked when the job is dispatched, so a replay after
+      // it never dispatches; the wait is bounded by what was left then.
+      const remaining = await step.do(`dispatch-${job}`, async () => {
+        const left = deadline - Date.now();
+        if (left <= 0) {
+          await ledger.settle(reservation, {
+            phase: "council",
+            actor: `council-${member.role}`,
+            input_tokens: 0,
+            output_tokens: 0,
+            cost_usd: 0,
+            model: member.model,
+          });
+          return 0;
+        }
+        await createModelJob(
+          this.env,
+          id,
+          job,
+          {
+            model: member.model,
+            system: request.system,
+            content: request.content,
+            max_tokens: COUNCIL_OUTPUT_TOKENS,
+          },
+          left,
+        );
+        return left;
+      });
+      if (remaining <= 0) return { error: "timeout", at: deadline };
+      let key: string;
+      try {
+        const done = await step.waitForEvent<{ key: string }>(`wait-${job}`, {
+          type: `job-${job}-1`,
+          timeout: `${Math.max(1, Math.ceil(remaining / 1000))} seconds`,
+        });
+        key = done.payload.key;
+      } catch {
+        // A timed-out call is withdrawn so no runner serves it later; the
+        // runner time it may have spent is the whole wait.
+        await step.do(`${name}-withdraw`, async () => {
+          await this.env.DB.prepare(
+            "UPDATE jobs SET status='failed' WHERE id=? AND attempt=1 AND status IN ('pending','leased')",
+          )
+            .bind(job)
+            .run();
+          return true;
+        });
+        return { error: "timeout", at: deadline, seconds: remaining / 1000 };
+      }
+      const recorded = await step.do(
+        `${name}-result`,
+        async (): Promise<Recorded> => {
+          const result = await store.get<ExecutionResult>(key);
+          // Lateness is the runner's completion time, not when the Workflow resumed.
+          const row = await this.env.DB.prepare(
+            "SELECT created_at,completed_at FROM jobs WHERE id=? AND attempt=1",
+          )
+            .bind(job)
+            .first<{ created_at: number; completed_at: number | null }>();
+          const at = row?.completed_at ?? Date.now();
+          const seconds = row ? Math.max(0, at - row.created_at) / 1000 : 0;
+          if (result.outcome !== "exited" || !result.artifact)
+            return { error: "vendor_error", at, seconds };
+          const { input_tokens, output_tokens } = result.artifact;
+          const known =
+            Number.isInteger(input_tokens) && Number.isInteger(output_tokens);
+          // Unknown usage keeps the whole reservation, as for failed calls.
+          if (known)
+            await ledger.settle(reservation, {
+              phase: "council",
+              actor: `council-${member.role}`,
+              input_tokens,
+              output_tokens,
+              cost_usd: 0,
+              model: member.model,
+            });
+          const usage = known
+            ? { input_tokens, output_tokens }
+            : { input_tokens: 0, output_tokens: 0 };
+          if (at > deadline) return { error: "timeout", at, usage, seconds };
+          return {
+            key: await store.put(
+              `reviews/${id}/council/responses/${name}.json`,
+              {
+                content: result.artifact.content,
+                ...usage,
+                cost_usd: 0,
+              },
+            ),
+            at,
+            usage,
+            seconds,
+          };
+        },
+      );
+      return replay(recorded);
+    };
+    /** Wall time kept for the steps after the council (report, registry, publication). */
+    const COUNCIL_RESERVE_MS = 60_000;
+    const spareMs = async () =>
+      Math.max(0, (await store.remainingMs(id)) - COUNCIL_RESERVE_MS);
+    // The council (rio-v0-3-council): never fails or blocks the review on a member.
+    const councilStep = async (
+      s: Submission["profile"]["steps"][number],
+    ): Promise<CouncilOutcome | undefined> => {
+      const settings = submission.profile.council as
+        CouncilSettings | undefined;
+      const members = (submission.profile.council_members ?? []) as Member[];
+      if (!settings || !members.length) {
+        report.footer.notes.push(
+          "Council skipped: the resolved profile names no council members.",
+        );
+        return undefined;
+      }
+      const repository = lineage?.repository ?? submission.repository ?? null;
+      const context = await step.do(`council-context-${s.id}`, async () => {
+        let entries: VendorEntry[] = [],
+          error: string | null = null;
+        try {
+          entries = councilVendors(this.env.COUNCIL_VENDORS, repository);
+        } catch (e) {
+          error = e instanceof Error ? e.message : "invalid COUNCIL_VENDORS";
+        }
+        const pull = await pullOf(this.env, id);
+        const agent = pull?.agent_json
+          ? JSON.parse(pull.agent_json)
+          : undefined;
+        return {
+          entries,
+          error,
+          author: authorFamily(agent),
+          runner: await runnerModelEndpoint(this.env),
+        };
+      });
+      if (context.error)
+        report.footer.notes.push(
+          `Council allowlist ignored: ${context.error}.`,
+        );
+      const composition = compose(
+        members,
+        settings,
+        context.entries,
+        context.author,
+        context.runner,
+      );
+      // The Worker fills placeholders itself, so it checks family diversity as
+      // profile validation does: fewer than three families skip the council.
+      const families = new Set(composition.participants.map((m) => m.family));
+      if (composition.participants.length && families.size < 3) {
+        report.footer.notes.push(
+          `Council skipped: its members span ${families.size} model ${families.size === 1 ? "family" : "families"} (${[...families].sort().join(", ")}); at least three are required.`,
+        );
+        composition.participants = [];
+      }
+      const audit: AuditEntry[] = [];
+      const renames = Object.fromEntries(
+        submission.changed
+          .filter((f) => f.old_path && f.old_path !== f.path)
+          .map((f) => [f.path, f.old_path!]),
+      );
+      // Suppressed findings are never shown, so they are never councilled.
+      const suppressed = suppressedBy(submission.profile);
+      const eligible = verified.filter((v) => {
+        const f = findingOf(v);
+        return (
+          !suppressed(f) &&
+          !suppressed({ ...f, id: classId(f.rule_id, triggerHash(f.trigger)) })
+        );
+      });
+      const votes = async (hypothesis: string) => {
+        const rows = await this.env.DB.prepare(
+          "SELECT object_key FROM votes WHERE review_id=? AND hypothesis_id=? ORDER BY voter",
+        )
+          .bind(id, hypothesis)
+          .all<{ object_key: string }>();
+        return Promise.all(
+          rows.results.map((r) => store.get<Vote>(r.object_key)),
+        );
+      };
+      const record = () =>
+        step.do(`council-audit-${s.id}`, () =>
+          recordCouncil(this.env, store, id, load.tenant, audit, councilJobs),
+        );
+      let outcome: CouncilOutcome;
+      try {
+        outcome = await runCouncil(
+          {
+            review: id,
+            verified: eligible,
+            votes,
+            executions,
+            graphs,
+            hops: graphHops,
+            // A renamed file's base is read at its old path.
+            files: async (paths) => {
+              const files: Record<
+                string,
+                { base: string | null; head: string | null }
+              > = {};
+              for (const path of paths)
+                files[path] = {
+                  base: await textOf(snapshot.base, renames[path] ?? path),
+                  head: await textOf(snapshot.head, path),
+                };
+              return files;
+            },
+            renames,
+            intent: submission.intent,
+            guidance: submission.owner_guidance,
+            plan,
+            changed: submission.changed.map((f) => f.path),
+            nightly: submission.nightly === true,
+            fork: submission.fork,
+            rules: (s.rules ?? []).map((r) => ({ when: r.when })),
+            settings,
+            members,
+            composition,
+            weights: memberWeights,
+            audit,
+          },
+          {
+            // Never past the review's wall budget less the reserve the
+            // remaining steps need, so the verifier's results always land.
+            deadline: (name, ms) =>
+              step.do(`${name}-deadline`, async () =>
+                Math.min(Date.now() + ms, Date.now() + (await spareMs())),
+              ),
+            complete: (member, name, request, deadline) =>
+              member.self_hosted
+                ? selfHosted(member, name, request, deadline)
+                : step
+                    .do(
+                      `model-${name}`,
+                      {
+                        retries: { limit: 0, delay: "1 second" },
+                        // Longer than the call itself may run.
+                        timeout: `${Math.max(60, Math.ceil((deadline - Date.now()) / 1000) + 60)} seconds`,
+                      },
+                      async (): Promise<Recorded> => {
+                        const remaining = deadline - Date.now();
+                        if (remaining <= 0)
+                          return { error: "timeout", at: Date.now() };
+                        let reservation: string;
+                        try {
+                          reservation = await ledger.reserve(
+                            `council-${member.role}`,
+                            "council",
+                            councilTokens(request),
+                          );
+                        } catch {
+                          return { error: "budget", at: Date.now() };
+                        }
+                        try {
+                          const response = await gateway.complete({
+                            model: routeOf(member),
+                            system: request.system,
+                            messages: [
+                              { role: "user", content: request.content },
+                            ],
+                            max_tokens: COUNCIL_OUTPUT_TOKENS,
+                            signal: AbortSignal.timeout(remaining),
+                          });
+                          await ledger.settle(reservation, {
+                            phase: "council",
+                            actor: `council-${member.role}`,
+                            input_tokens: response.input_tokens,
+                            output_tokens: response.output_tokens,
+                            cost_usd: response.cost_usd,
+                            model: routeOf(member),
+                          });
+                          const at = Date.now();
+                          const usage = {
+                            input_tokens: response.input_tokens,
+                            output_tokens: response.output_tokens,
+                          };
+                          // A late answer is spent: its tokens count, its content does not.
+                          if (at > deadline)
+                            return { error: "timeout", at, usage };
+                          return {
+                            key: await store.put(
+                              `reviews/${id}/council/responses/${name}.json`,
+                              response,
+                            ),
+                            at,
+                            usage,
+                          };
+                        } catch (error) {
+                          // A failed call keeps its reservation: its usage is unknown.
+                          // Vendor errors are logged by class, never with content.
+                          console.warn(
+                            `council ${member.role} ${member.vendor}: ${error instanceof Error ? error.name : "error"}`,
+                          );
+                          return {
+                            error:
+                              error instanceof Error &&
+                              /abort|timeout/i.test(error.name + error.message)
+                                ? "timeout"
+                                : "vendor_error",
+                            at: Date.now(),
+                          };
+                        }
+                      },
+                    )
+                    // A step that fails outright is that member's timeout,
+                    // never the council's failure.
+                    .then(replay, (): CallOutcome => ({
+                      error: "timeout",
+                      at: deadline,
+                    })),
+            run: async (name, command, version) => {
+              councilJobs.push(...jobsOf(name));
+              const started = await step.do(`${name}-started`, async () =>
+                Date.now(),
+              );
+              let result: ExecutionResult;
+              try {
+                result = await execute(name, "run", command, version, spareMs);
+              } catch {
+                // Out of time or lost: withdraw what was dispatched and report
+                // the time spent as a runner failure.
+                const ended = await step.do(`${name}-withdrawn`, async () => {
+                  for (const job of jobsOf(name))
+                    await this.env.DB.prepare(
+                      "UPDATE jobs SET status='failed' WHERE id=? AND status IN ('pending','leased')",
+                    )
+                      .bind(job)
+                      .run();
+                  return Date.now();
+                });
+                return {
+                  outcome: "runner_failed",
+                  job_id: jobsOf(name)[0],
+                  attempt: 1,
+                  exit_code: 125,
+                  stdout: "",
+                  stderr: "experiment did not complete",
+                  timed_out: true,
+                  truncated: false,
+                  version,
+                  seconds: (ended - started) / 1000,
+                };
+              }
+              const ended = await step.do(`${name}-ended`, async () =>
+                Date.now(),
+              );
+              return { ...result, seconds: (ended - started) / 1000 };
+            },
+            put: (key, value) => store.put(key, value),
+          },
+        );
+      } catch (error) {
+        // Calls made before the failure are still audited and expire.
+        await record();
+        throw error;
+      }
+      await record();
+      // Selected findings take the council's evidence level and block.
+      const decided = new Map(
+        outcome.verified.map((v) => [v.hypothesis.id, v]),
+      );
+      for (const [i, v] of verified.entries()) {
+        const next = decided.get(v.hypothesis.id);
+        if (next) verified[i] = next;
+      }
+      return outcome;
     };
     const done = new Set<string>();
     const perform = async (s: Submission["profile"]["steps"][number]) => {
@@ -1188,6 +1670,15 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           );
         }
       }
+      if (module === "rio/council" && s.with.enabled === true)
+        try {
+          council = await councilStep(s);
+        } catch (error) {
+          // The council never fails a review: verified findings stand.
+          report.footer.notes.push(
+            `Council did not complete (${redact(error instanceof Error ? error.message : "error").slice(0, 160)}); verifier results stand.`,
+          );
+        }
       await step.do(`finished-${s.id}`, () =>
         store.event(id, "step:finished", { step: s.id }),
       );
@@ -1274,9 +1765,32 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
       });
       report.findings.push(...findings.defects);
       report.risks.push(...findings.risks);
+      if (council) {
+        report.council = {
+          ...council.metrics,
+          ...(findings.council_held.length
+            ? { held: findings.council_held }
+            : {}),
+          ...(council.refuted.length
+            ? {
+                refuted: verified
+                  .filter((v) => council!.refuted.includes(v.hypothesis.id))
+                  .map((v) => findingOf(v)),
+              }
+            : {}),
+        };
+      }
       if (findings.security.length) report.security = findings.security;
       report.agent_audit = {
         ...findings.audit,
+        ...(council
+          ? {
+              council: {
+                selected: council.selection,
+                not_councilled: council.metrics.not_councilled,
+              },
+            }
+          : {}),
         require_human: plan.require_human,
         board_deferred: true,
         agents: plan.agent_reasons,
@@ -1541,6 +2055,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             await this.env.DB.batch(groups.slice(i, i + 25).flat());
         }
         await expire(this.env, load.tenant);
+        await expireCouncil(this.env, load.tenant);
         return true;
       });
       await step.do("finish", async () => {
@@ -1593,6 +2108,12 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           .bind(key, "runtime did not complete", id)
           .run();
         await store.event(id, "review:partial", { report });
+        await settleAnnouncement(
+          this.env,
+          id,
+          "Review did not complete",
+          "Rio's runtime stopped before the review finished, so nothing was published for this head. Push again or comment `/rio review` to retry.",
+        );
       });
       return { report_key: key };
     }

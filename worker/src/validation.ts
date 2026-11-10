@@ -174,6 +174,7 @@ export function validateSubmission(value: any): asserts value is Submission {
     posture_policy,
     qa_deadlines,
     qa_standalone,
+    council_members,
     ...source
   } = value.profile ?? {};
   invariant(
@@ -237,12 +238,38 @@ export function validateSubmission(value: any): asserts value is Submission {
         ),
         "verifier is mandatory for hypothesis producers",
       );
+  const roles = (value.profile.council_members ?? []).map((m: any) => m?.role);
+  invariant(
+    new Set(roles).size === roles.length,
+    "council members must have distinct roles",
+  );
+  // Council rules select and carry only `when`; every other rule acts.
+  for (const step of value.profile.steps)
+    for (const rule of step.rules ?? [])
+      invariant(
+        step.uses.startsWith("rio/council@")
+          ? rule.then === undefined
+          : typeof rule.then === "string",
+        `invalid rule in step ${step.id}: ${step.uses.startsWith("rio/council@") ? "council rules carry no action" : "a rule needs an action in then"}`,
+      );
+  for (const step of value.profile.steps)
+    if (step.uses.startsWith("rio/council@"))
+      invariant(
+        value.profile.steps.some(
+          (v: any) =>
+            v.uses.startsWith("rio/verify@") &&
+            v.id !== step.id &&
+            depends(step.id, v.id),
+        ),
+        "the council step requires the verify step in its needs",
+      );
   invariant(
     Array.isArray(value.changed) &&
       value.changed.length <= 100000 &&
       typeof value.intent === "string" &&
       value.intent.length <= 65536 &&
       typeof value.fork === "boolean" &&
+      (value.nightly === undefined || typeof value.nightly === "boolean") &&
       ["fast", "deep"].includes(value.mode),
     "invalid review",
   );

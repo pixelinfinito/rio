@@ -728,3 +728,244 @@ fn pull_request_header_and_publication_render_in_every_format() {
     assert_eq!(exit_code(&failed, &policy, ExitContext::default()), 1);
     assert_eq!(exit_code(&recorded, &policy, ExitContext::default()), 1);
 }
+
+fn council_member(role: &str, cause: Option<&str>) -> CouncilMember {
+    CouncilMember {
+        role: role.into(),
+        abstained: cause.is_some(),
+        cause: cause.map(Into::into),
+    }
+}
+
+fn council_members(abstaining: &[(&str, &str)]) -> Vec<CouncilMember> {
+    [
+        "skeptic",
+        "exploit-author",
+        "code-owner",
+        "maintainer",
+        "tester",
+    ]
+    .into_iter()
+    .map(|role| {
+        council_member(
+            role,
+            abstaining.iter().find(|(r, _)| *r == role).map(|(_, c)| *c),
+        )
+    })
+    .collect()
+}
+
+fn council_cost(experiments: u32) -> CouncilCost {
+    CouncilCost {
+        members: 5,
+        rounds: 2,
+        experiments,
+        tokens: [
+            ("anthropic".to_string(), 4200),
+            ("openai".to_string(), 3900),
+        ]
+        .into(),
+        runner_seconds: if experiments > 0 { 14 } else { 0 },
+    }
+}
+
+/// Four councils: reproduced by an experiment, refuted by a protection,
+/// plausible with a note, and a partial council.
+fn council_run() -> Report {
+    let mut report = security_run();
+    let reproduced = CouncilReview {
+        decision: Some(CouncilDecision::Reproduced),
+        tier: Some(CouncilTier::Experiment),
+        members: council_members(&[]),
+        experiments: vec![CouncilExperiment {
+            command: vec!["npm".into(), "test".into(), "--".into(), "routes".into()],
+            version: "both".into(),
+            expect: "fails".into(),
+            run: true,
+            reason: None,
+            outcome: Some(ExperimentOutcome {
+                base: Some("passed".into()),
+                head: Some("failed".into()),
+            }),
+            artifact: Some("exp-1".into()),
+        }],
+        note: Some("Real: most of the weight answers yes (static_path; tester, maintainer). No experiment disagreed.".into()),
+        protection: None,
+        partial: false,
+        skipped: false,
+        answered: 5,
+        total: 5,
+        static_only: false,
+        weight_category: None,
+        author_family: Some(AuthorFamily {
+            status: "not_applicable".into(),
+            family: None,
+            substituted: vec![],
+            dropped: vec![],
+        }),
+        excluded: vec![],
+    };
+    report.risks[0].evidence_level = EvidenceLevel::Reproduced;
+    report.risks[0].council = Some(reproduced);
+    let plausible = CouncilReview {
+        decision: Some(CouncilDecision::Plausible),
+        tier: Some(CouncilTier::Judgment),
+        members: council_members(&[]),
+        experiments: vec![],
+        note: Some("Real: about half of the weight answers yes (static_path; exploit-author); about half of the weight answers no (contract; skeptic). No experiment ran.".into()),
+        protection: None,
+        partial: false,
+        skipped: false,
+        answered: 5,
+        total: 5,
+        static_only: false,
+        weight_category: None,
+        author_family: Some(AuthorFamily {
+            status: "applied".into(),
+            family: Some("claude".into()),
+            substituted: vec![Substitution {
+                role: "code-owner".into(),
+                vendor: "google".into(),
+                family: "gemini".into(),
+            }],
+            dropped: vec![],
+        }),
+        excluded: vec![],
+    };
+    report.security[0].council = Some(plausible);
+    let partial = CouncilReview {
+        decision: Some(CouncilDecision::Plausible),
+        tier: Some(CouncilTier::Judgment),
+        members: council_members(&[("tester", "excluded")]),
+        experiments: vec![CouncilExperiment {
+            command: vec!["make".into(), "check".into()],
+            version: "head".into(),
+            expect: "fails".into(),
+            run: false,
+            reason: Some("cap".into()),
+            outcome: None,
+            artifact: None,
+        }],
+        note: Some("No member cited evidence: every answer had basis none.".into()),
+        protection: None,
+        partial: true,
+        skipped: false,
+        answered: 4,
+        total: 5,
+        static_only: false,
+        weight_category: None,
+        author_family: None,
+        excluded: vec![CouncilExclusion {
+            role: "tester".into(),
+            vendor: "google".into(),
+            denied_by: "repository".into(),
+        }],
+    };
+    report.security[1].council = Some(partial);
+    let mut refuted = report.findings[0].clone();
+    refuted.id = "e".repeat(64);
+    refuted.rule_id = "correctness/null-dereference".into();
+    refuted.evidence_level = EvidenceLevel::Refuted;
+    refuted.council = Some(CouncilReview {
+        decision: Some(CouncilDecision::Refuted),
+        tier: Some(CouncilTier::Protection),
+        members: council_members(&[("maintainer", "timeout")]),
+        experiments: vec![],
+        note: Some(
+            "Real: most of the weight answers no (protection_found; skeptic, code-owner).".into(),
+        ),
+        protection: Some("head-2".into()),
+        partial: true,
+        skipped: false,
+        answered: 4,
+        total: 5,
+        static_only: false,
+        weight_category: None,
+        author_family: None,
+        excluded: vec![],
+    });
+    let finding = |f: &Finding, status: &str, answered: u32, experiments: u32| CouncilFindingCost {
+        id: f.id.clone(),
+        status: status.into(),
+        answered,
+        total: 5,
+        cost: council_cost(experiments),
+    };
+    report.council = Some(CouncilMetrics {
+        councilled: 4,
+        not_councilled: 2,
+        findings: vec![
+            finding(&report.risks[0], "complete", 5, 1),
+            finding(&refuted, "partial", 4, 0),
+            finding(&report.security[0], "complete", 5, 0),
+            finding(&report.security[1], "partial", 4, 0),
+        ],
+        total: CouncilCost {
+            members: 20,
+            rounds: 8,
+            experiments: 1,
+            tokens: [
+                ("anthropic".to_string(), 16800),
+                ("openai".to_string(), 15600),
+            ]
+            .into(),
+            runner_seconds: 14,
+        },
+        refuted: vec![refuted],
+        held: vec![],
+    });
+    report
+}
+
+#[test]
+fn council_section_and_footer_render_in_every_format() {
+    let report = council_run();
+    let wide = RenderOptions {
+        width: 200,
+        ..Default::default()
+    };
+    let terminal = render_terminal(&report, &wide);
+    let markdown = render_markdown(&report, &RenderOptions::default());
+    for output in [&terminal, &markdown] {
+        // Order: security, then council, then the footer.
+        let security = output.find("Security").unwrap();
+        let council = output.find("Council\n").unwrap();
+        let footer = output.find("Footer").unwrap();
+        assert!(security < council && council < footer, "{output}");
+        assert!(output.contains("reproduced (tier experiment)"));
+        assert!(output.contains("refuted (tier protection)"));
+        assert!(output.contains("Protection cited: head-2"));
+        assert!(output.contains("plausible (tier judgment)"));
+        assert!(output.contains("partial (4/5)"));
+        assert!(output.contains("Excluded: google (tester), denied by the repository allowlist"));
+        assert!(output.contains("Author-family rule: not applicable"));
+        assert!(output.contains("2 selected not councilled because of max_findings"));
+        assert!(output.contains("5 members × 2 rounds × 1 experiments"));
+        assert!(!output.contains('%'));
+    }
+    // A reproduced risk stays in the risks section.
+    let risks = terminal.find("\nRisks").unwrap();
+    let security = terminal.find("\nSecurity").unwrap();
+    let route = terminal.find("contracts/route/removed [").unwrap();
+    assert!(risks < route && route < security);
+    insta::assert_snapshot!("council_200", terminal);
+    insta::assert_snapshot!("council_markdown", markdown);
+    let json: serde_json::Value = serde_json::from_slice(&render_json(&report).unwrap()).unwrap();
+    assert_eq!(json["council"]["councilled"], 4);
+    assert_eq!(
+        json["council"]["refuted"][0]["council"]["decision"],
+        "refuted"
+    );
+    assert_eq!(json["risks"][0]["council"]["tier"], "experiment");
+    assert!(json["findings"][0].get("council").is_none());
+    // Without the council step: no section, no footer lines, no JSON object.
+    let none = security_run();
+    for output in [
+        render_terminal(&none, &wide),
+        render_markdown(&none, &RenderOptions::default()),
+    ] {
+        assert!(!output.contains("Council"));
+    }
+    let json: serde_json::Value = serde_json::from_slice(&render_json(&none).unwrap()).unwrap();
+    assert!(json.get("council").is_none());
+}

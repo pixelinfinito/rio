@@ -1,0 +1,10 @@
+kind: step
+name: rio/council
+version: 0.1.0
+description: Council of members from different model families for the findings the verifier leaves unsettled
+local: false
+inputs: ["verified_findings", "snapshot", "graph", "intent", "owner_guidance"]
+outputs: ["council"]
+# Members, caps, timeout and the vendor allowlist live in the profile's `council`
+# block; the step's `rules` select findings and carry only `when`.
+schema: {"type": "object", "additionalProperties": false, "properties": {"enabled": {"type": "boolean", "default": false, "description": "Run the council on findings that match the step's rules"}}}

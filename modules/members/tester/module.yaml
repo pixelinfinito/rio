@@ -1,0 +1,13 @@
+kind: member
+name: rio/council-tester
+version: 0.1.0
+description: Council member tester (execution context pack)
+# Placeholders until `rio init` configures the council's vendors.
+provider: placeholder
+model: placeholder
+family: placeholder
+prompt: prompt.md
+context_pack: execution
+role: tester
+weight: 1.1
+self_hosted: false

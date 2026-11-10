@@ -332,6 +332,10 @@ class Pod:
             subnet = ipaddress.ip_network(document['IPAM']['Config'][0]['Subnet'])
             if subnet.version != 4 or subnet.num_addresses < 8:
                 raise PodError('unsupported_docker_network')
+            # Docker before 29 accepts --ip only on a user-configured subnet:
+            # pin the free subnet Docker just allocated.
+            docker('network', 'rm', network)
+            docker(*args, '--subnet', str(subnet), network)
             subnets.append(subnet)
         app, browser, controller = [str(subnets[0][index]) for index in (2, 3, 4)]
         external = str(subnets[1][2])

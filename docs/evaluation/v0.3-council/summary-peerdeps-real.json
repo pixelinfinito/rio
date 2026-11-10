@@ -1,0 +1,282 @@
+{
+  "schema": "rio-eval-council-v1",
+  "case_set": "v0.3-council-plausible-bucket",
+  "date": "2026-11-09",
+  "disagreement": {
+    "councilled": 8,
+    "disagreeing": 4,
+    "basis_disagreeing": 3,
+    "rate": 0.5,
+    "basis_rate": 0.375
+  },
+  "accuracy": {
+    "council": {
+      "cases": 12,
+      "correct": 1,
+      "promoted": 1,
+      "promoted_correctly": 1,
+      "refuted": 0,
+      "refuted_correctly": 0,
+      "accuracy": 0.08333333333333333
+    },
+    "verifier_only": {
+      "cases": 12,
+      "correct": 0,
+      "promoted": 0,
+      "promoted_correctly": 0,
+      "refuted": 0,
+      "refuted_correctly": 0,
+      "accuracy": 0.0
+    },
+    "difference": 0.08333333333333333
+  },
+  "cost": {
+    "per_finding": [
+      {
+        "case": "CL-RS-01",
+        "finding": "467f371219024229609f6402366abfd927dbc38aea07bf663cc4f0435b994ca8",
+        "status": "complete",
+        "cost": {
+          "experiments": 0,
+          "members": 5,
+          "rounds": 2,
+          "runner_seconds": 0,
+          "tokens": {
+            "openrouter": 154231
+          }
+        }
+      },
+      {
+        "case": "CL-RS-01",
+        "finding": "095bedfea77fd4a277ce21bb430907fc239485966fa781dd66c2653b26a55a00",
+        "status": "complete",
+        "cost": {
+          "experiments": 0,
+          "members": 5,
+          "rounds": 2,
+          "runner_seconds": 0,
+          "tokens": {
+            "openrouter": 78824
+          }
+        }
+      },
+      {
+        "case": "CL-TS-02",
+        "finding": "95d4384c90995979fe5547c5f9ac3021a28dc25986ce950280170859b360751b",
+        "status": "complete",
+        "cost": {
+          "experiments": 2,
+          "members": 5,
+          "rounds": 2,
+          "runner_seconds": 17,
+          "tokens": {
+            "openrouter": 126849
+          }
+        }
+      },
+      {
+        "case": "CT-POS-03",
+        "finding": "eb1ec6308a20dff28f384f59ced33c8977de72207fbd2ebd6f77835db4723aad",
+        "status": "complete",
+        "cost": {
+          "experiments": 2,
+          "members": 5,
+          "rounds": 2,
+          "runner_seconds": 22,
+          "tokens": {
+            "openrouter": 31768
+          }
+        }
+      },
+      {
+        "case": "CT-POS-04",
+        "finding": "26e8df623e52b6ff4d45bd86bffac3363bff425f93ba1825cabd7981bbad425b",
+        "status": "skipped",
+        "cost": {
+          "members": 5,
+          "rounds": 1,
+          "experiments": 0,
+          "tokens": {
+            "openrouter": 25381
+          },
+          "runner_seconds": 0
+        }
+      },
+      {
+        "case": "CT-POS-04",
+        "finding": "bc90fdc03cf3f1a9fe08e9f3c749b289b7316075a5bba99a08f731463d01e872",
+        "status": "skipped",
+        "cost": {
+          "members": 5,
+          "rounds": 1,
+          "experiments": 0,
+          "tokens": {},
+          "runner_seconds": 0
+        }
+      },
+      {
+        "case": "HS-PY-02",
+        "finding": "230110902f1665b678fdc75228f93fde0a1e36b0b437cd5600deb23a32032d5f",
+        "status": "partial",
+        "cost": {
+          "experiments": 1,
+          "members": 5,
+          "rounds": 2,
+          "runner_seconds": 16,
+          "tokens": {
+            "openrouter": 144231
+          }
+        }
+      },
+      {
+        "case": "HS-TS-01",
+        "finding": "a1e84dc01cc791671a037ac320ef44d4af62b5dc23c0910e2bfd946d272edccb",
+        "status": "partial",
+        "cost": {
+          "members": 5,
+          "rounds": 2,
+          "experiments": 2,
+          "tokens": {
+            "openrouter": 83574
+          },
+          "runner_seconds": 21
+        }
+      },
+      {
+        "case": "HS-TS-01",
+        "finding": "d12a0fc01f515350dfc500e6523b581e7e47dda406888cc6e23f5acad868dbfb",
+        "status": "complete",
+        "cost": {
+          "members": 5,
+          "rounds": 2,
+          "experiments": 2,
+          "tokens": {
+            "openrouter": 47802
+          },
+          "runner_seconds": 32
+        }
+      },
+      {
+        "case": "HS-TS-03",
+        "finding": "632d66bb5d9a23759ec0c2fde0d42d3e4c2d4f830998faff5863476702798d21",
+        "status": "complete",
+        "cost": {
+          "experiments": 2,
+          "members": 5,
+          "rounds": 2,
+          "runner_seconds": 72,
+          "tokens": {
+            "openrouter": 88752
+          }
+        }
+      }
+    ],
+    "per_review": [
+      {
+        "case": "CL-RS-01",
+        "total": {
+          "experiments": 0,
+          "members": 10,
+          "rounds": 4,
+          "runner_seconds": 0,
+          "tokens": {
+            "openrouter": 233055
+          }
+        }
+      },
+      {
+        "case": "CL-RS-02",
+        "total": {
+          "experiments": 0,
+          "members": 0,
+          "rounds": 0,
+          "runner_seconds": 0,
+          "tokens": {}
+        }
+      },
+      {
+        "case": "CL-TS-02",
+        "total": {
+          "experiments": 2,
+          "members": 5,
+          "rounds": 2,
+          "runner_seconds": 17,
+          "tokens": {
+            "openrouter": 126849
+          }
+        }
+      },
+      {
+        "case": "CT-POS-03",
+        "total": {
+          "experiments": 2,
+          "members": 5,
+          "rounds": 2,
+          "runner_seconds": 22,
+          "tokens": {
+            "openrouter": 31768
+          }
+        }
+      },
+      {
+        "case": "CT-POS-04",
+        "total": {
+          "members": 10,
+          "rounds": 2,
+          "experiments": 0,
+          "tokens": {
+            "openrouter": 25381
+          },
+          "runner_seconds": 0
+        }
+      },
+      {
+        "case": "HS-PY-02",
+        "total": {
+          "experiments": 1,
+          "members": 5,
+          "rounds": 2,
+          "runner_seconds": 16,
+          "tokens": {
+            "openrouter": 144231
+          }
+        }
+      },
+      {
+        "case": "HS-TS-01",
+        "total": {
+          "members": 10,
+          "rounds": 4,
+          "experiments": 4,
+          "tokens": {
+            "openrouter": 131376
+          },
+          "runner_seconds": 53
+        }
+      },
+      {
+        "case": "HS-TS-03",
+        "total": {
+          "experiments": 2,
+          "members": 5,
+          "rounds": 2,
+          "runner_seconds": 72,
+          "tokens": {
+            "openrouter": 88752
+          }
+        }
+      }
+    ],
+    "total": {
+      "members": 50,
+      "rounds": 18,
+      "experiments": 11,
+      "tokens": {
+        "openrouter": 781412
+      },
+      "runner_seconds": 180
+    },
+    "mean_tokens_per_finding": 78141.2
+  },
+  "weights": {}
+}

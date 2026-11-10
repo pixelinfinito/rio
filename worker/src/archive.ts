@@ -56,6 +56,7 @@ export function memberHeader(path: string, size: number, mode: number) {
 /** Run commands need their own tree. QA also reads both trees to select journeys
  * affected by removed guidance and route mappings; only one enters its app pod. */
 export function needs(kind: Execution["kind"], version: Version): Version[] {
+  if (kind === "model") return [];
   return kind === "run" ? [version] : ["base", "head"];
 }
 export async function snapshotFor(

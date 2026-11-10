@@ -1,3 +1,4 @@
+use rio_core::{EvidenceLevel, Severity};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
@@ -8,6 +9,13 @@ pub enum Expression {
     LinesChangedGreaterThan(u64),
     RiskAtLeast(String),
     Language(String),
+    RiskTier(String),
+    Mode(BudgetMode),
+    Nightly,
+    /// Finding-level predicates, valid only in the council step's rules.
+    Evidence(EvidenceLevel),
+    SeverityAtLeast(Severity),
+    VerifySplit,
     Not(Box<Self>),
     And(Box<Self>, Box<Self>),
     Or(Box<Self>, Box<Self>),
@@ -28,10 +36,29 @@ pub enum Action {
     RequireHuman,
 }
 
+impl Expression {
+    /// The first finding-level predicate in the expression, by its name.
+    pub fn finding_predicate(&self) -> Option<&'static str> {
+        match self {
+            Self::Evidence(_) => Some("evidence"),
+            Self::SeverityAtLeast(_) => Some("severity"),
+            Self::VerifySplit => Some("verify.split"),
+            Self::Not(inner) => inner.finding_predicate(),
+            Self::And(left, right) | Self::Or(left, right) => left
+                .finding_predicate()
+                .or_else(|| right.finding_predicate()),
+            _ => None,
+        }
+    }
+}
+
+/// A council rule selects findings and carries only `when`; every other rule
+/// carries an action in `then`.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Rule {
     pub when: String,
-    pub then: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub then: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Error)]
@@ -170,6 +197,13 @@ impl Parser {
             message: message.into(),
         }
     }
+    /// An error at the token just consumed.
+    fn previous_error(&self, message: impl Into<String>) -> RuleError {
+        RuleError {
+            offset: self.tokens[self.cursor - 1].1,
+            message: message.into(),
+        }
+    }
     fn peek(&self) -> Option<&Token> {
         self.tokens.get(self.cursor).map(|(token, _)| token)
     }
@@ -260,6 +294,42 @@ impl Parser {
             "language" => {
                 self.expect(Token::Equal)?;
                 Ok(Expression::Language(self.atom()?))
+            }
+            "risk_tier" => {
+                self.expect(Token::Equal)?;
+                let tier = self.atom()?;
+                if !matches!(tier.as_str(), "low" | "medium" | "high") {
+                    return Err(self.previous_error("risk_tier must be low, medium or high"));
+                }
+                Ok(Expression::RiskTier(tier))
+            }
+            "mode" => {
+                self.expect(Token::Equal)?;
+                match self.atom()?.as_str() {
+                    "fast" => Ok(Expression::Mode(BudgetMode::Fast)),
+                    "deep" => Ok(Expression::Mode(BudgetMode::Deep)),
+                    _ => Err(self.previous_error("mode must be fast or deep")),
+                }
+            }
+            "nightly" => Ok(Expression::Nightly),
+            "verify.split" => Ok(Expression::VerifySplit),
+            "evidence" => {
+                self.expect(Token::Equal)?;
+                let level = self.atom()?;
+                serde_json::from_value(serde_json::Value::String(level))
+                    .map(Expression::Evidence)
+                    .map_err(|_| {
+                        self.previous_error(
+                            "evidence must be reproduced, static_proven, plausible or refuted",
+                        )
+                    })
+            }
+            "severity" => {
+                self.expect(Token::GreaterEqual)?;
+                let level = self.atom()?;
+                serde_json::from_value(serde_json::Value::String(level))
+                    .map(Expression::SeverityAtLeast)
+                    .map_err(|_| self.previous_error("severity must be error, warning or info"))
             }
             _ => Err(self.error(format!("unknown predicate {name:?}"))),
         }

@@ -489,3 +489,116 @@ fn stage3_history_fixed_in_and_remembered_list_are_optional_and_strict() {
     report["remembered"] = json!([{"id": "x"}]);
     assert!(!report_validator.is_valid(&report));
 }
+
+#[test]
+fn council_assessment_examples_validate_and_malformed_ones_do_not() {
+    let validator = jsonschema::validator_for(&schema("council-assessment")).unwrap();
+    let round_one = json!({"member": "tester", "round": 1, "real": "yes",
+        "introduced_by_change": "unknown", "impact": "Anonymous read of another account.",
+        "basis": "static_path", "evidence_refs": ["graph-1"],
+        "experiment_request": {"command": ["npm", "test", "--", "auth"], "version": "head",
+            "expect": "fails"}});
+    let mut round_two = round_one.clone();
+    round_two
+        .as_object_mut()
+        .unwrap()
+        .remove("experiment_request");
+    round_two["round"] = json!(2);
+    round_two["real"] = json!("no");
+    round_two["changed_from"] = json!({"real": "yes"});
+    round_two["changed_to"] = json!({"real": "no"});
+    round_two["cites"] = json!({"kind": "assessment", "ref": "B",
+        "reason_code": "missing_protection"});
+    assert!(validator.is_valid(&round_one));
+    assert!(validator.is_valid(&round_two));
+    for (pointer, value) in [
+        ("/evidence_refs", json!([])),
+        ("/round", json!(3)),
+        ("/cites/reason_code", json!("vibes")),
+        ("/member", json!("judge")),
+    ] {
+        let mut invalid = round_two.clone();
+        *invalid.pointer_mut(pointer).unwrap() = value;
+        assert!(!validator.is_valid(&invalid), "{pointer}");
+    }
+    let mut prose = round_one.clone();
+    prose["reasoning"] = json!("because");
+    assert!(!validator.is_valid(&prose));
+    let mut changed_in_round_one = round_two.clone();
+    changed_in_round_one["round"] = json!(1);
+    assert!(!validator.is_valid(&changed_in_round_one));
+}
+
+fn council_block() -> Value {
+    json!({"decision": "reproduced", "tier": "experiment",
+        "members": [{"role": "skeptic", "abstained": false},
+            {"role": "exploit-author", "abstained": false},
+            {"role": "code-owner", "abstained": false},
+            {"role": "maintainer", "abstained": true, "cause": "timeout"},
+            {"role": "tester", "abstained": true, "cause": "timeout"}],
+        "experiments": [{"command": ["npm", "test", "--", "auth"], "version": "both",
+            "expect": "fails", "run": true, "outcome": {"base": "passed", "head": "failed"},
+            "artifact": "exp-1"}],
+        "note": "Three members answered; an experiment failed on head and passed on base.",
+        "partial": true, "answered": 3, "total": 5,
+        "author_family": {"status": "not_applicable"}})
+}
+
+#[test]
+fn council_block_is_optional_typed_and_never_numeric() {
+    let finding_validator = jsonschema::validator_for(&schema("finding")).unwrap();
+    let report_validator = jsonschema::validator_for(&schema("report")).unwrap();
+    let plain: Value = serde_json::from_str(include_str!("fixtures/finding.json")).unwrap();
+    assert!(finding_validator.is_valid(&plain));
+    let typed: rio_core::Finding = serde_json::from_value(plain.clone()).unwrap();
+    assert!(typed.council.is_none());
+    assert_eq!(serde_json::to_value(&typed).unwrap(), plain);
+
+    let mut councilled = plain.clone();
+    councilled["council"] = council_block();
+    assert!(finding_validator.is_valid(&councilled));
+    let typed: rio_core::Finding = serde_json::from_value(councilled.clone()).unwrap();
+    let council = typed.council.as_ref().unwrap();
+    assert_eq!(
+        council.decision,
+        Some(rio_core::CouncilDecision::Reproduced)
+    );
+    assert_eq!(
+        (council.partial, council.answered, council.total),
+        (true, 3, 5)
+    );
+    assert_eq!(serde_json::to_value(&typed).unwrap(), councilled);
+
+    let mut skipped = plain.clone();
+    skipped["council"] = json!({"members": [{"role": "skeptic", "abstained": false}],
+        "experiments": [], "partial": false, "skipped": true, "answered": 1, "total": 5});
+    assert!(finding_validator.is_valid(&skipped));
+    skipped["council"]["skipped"] = json!(false);
+    assert!(
+        !finding_validator.is_valid(&skipped),
+        "a decided council needs a decision"
+    );
+
+    let mut numeric = councilled.clone();
+    numeric["council"]["confidence"] = json!(0.8);
+    assert!(!finding_validator.is_valid(&numeric));
+    assert!(serde_json::from_value::<rio_core::Finding>(numeric).is_err());
+
+    let mut report: Value = serde_json::from_str(include_str!("fixtures/complete.json")).unwrap();
+    assert!(report_validator.is_valid(&report));
+    report["risks"] = json!([councilled]);
+    let cost = json!({"members": 5, "rounds": 2, "experiments": 1,
+        "tokens": {"openai": 12000, "anthropic": 9000}, "runner_seconds": 14});
+    report["council"] = json!({"councilled": 1, "not_councilled": 2, "total": cost,
+        "findings": [{"id": councilled["id"], "status": "partial", "answered": 3, "total": 5,
+            "cost": cost}]});
+    let errors: Vec<_> = report_validator
+        .iter_errors(&report)
+        .map(|e| e.to_string())
+        .collect();
+    assert!(errors.is_empty(), "{errors:?}");
+    let typed: rio_core::Report = serde_json::from_value(report.clone()).unwrap();
+    assert_eq!(typed.council.as_ref().unwrap().not_councilled, 2);
+    report["council"]["total"]["confidence"] = json!(1);
+    assert!(!report_validator.is_valid(&report));
+}

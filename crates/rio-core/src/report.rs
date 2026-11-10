@@ -258,6 +258,9 @@ pub struct Report {
     /// Catalog coverage; present when the security step ran.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub security_coverage: Option<SecurityCoverage>,
+    /// Council coverage and cost; present only when the council step ran.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub council: Option<CouncilMetrics>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -483,6 +486,7 @@ impl Report {
             suppression_proposals: None,
             remembered: Vec::new(),
             security_coverage: None,
+            council: None,
         }
     }
 }
@@ -532,4 +536,41 @@ impl ReviewEvent {
         "review:done",
         "review:partial",
     ];
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct CouncilMetrics {
+    pub councilled: u32,
+    pub not_councilled: u32,
+    pub findings: Vec<CouncilFindingCost>,
+    pub total: CouncilCost,
+    /// Councilled findings the council refuted, with the cited protection.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub refuted: Vec<Finding>,
+    /// Councilled findings that presentation floors or caps keep out of the
+    /// findings lists; never evaluated by fail policies.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub held: Vec<Finding>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct CouncilFindingCost {
+    pub id: String,
+    pub status: String,
+    pub answered: u32,
+    pub total: u32,
+    pub cost: CouncilCost,
+}
+
+/// Members × rounds × experiments, with model tokens by vendor and runner seconds.
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct CouncilCost {
+    pub members: u32,
+    pub rounds: u32,
+    pub experiments: u32,
+    pub tokens: std::collections::BTreeMap<String, u64>,
+    pub runner_seconds: u64,
 }

@@ -31,6 +31,14 @@ responses. A SOURCE is a report-v1 file (.json or .json.gz), a rio-noise-adjudic
 file, or a noise run directory (its */adjudication.json files). The gate fails when
 an agent with at least 30 responses exceeds 15 %; agents under that floor are
 reported, never gated. Tool findings are not agents and are not counted.
+
+  council    the council keep-or-remove rule over a release cycle's A/B summaries:
+             python3 -I eval/gate.py council --summary SUMMARY.json [SUMMARY.json ...] [--out RESULT.json]
+
+The council stays in the `rio/security` and `rio/critical` profiles only when, over
+all of the cycle's eval/council.py summaries together, the disagreement rate is at
+least 5 % and the council's accuracy on the plausible bucket exceeds the verifier-only
+accuracy on the same cases. Otherwise the result fails and names the removal.
 Exit codes: 0 pass, 1 fail, 2 usage or input error.
 """
 import argparse
@@ -43,6 +51,7 @@ import cases as c  # noqa: E402
 import convergence as cv  # noqa: E402
 import evaluate as e  # noqa: E402
 import noise as nz  # noqa: E402
+import council as cl  # noqa: E402
 
 SCORECARD_SCHEMA = e.SCHEMA / 'scorecard-v1.json'
 METRICS = ('precision', 'recall', 'incident_recall')
@@ -197,6 +206,42 @@ def gate(baseline, candidate, fp_paths=None):
     return result
 
 
+COUNCIL_MIN_DISAGREEMENT = 0.05
+COUNCIL_PROFILES = ('rio/security', 'rio/critical')
+
+
+def council_gate(summaries):
+    """The release checklist's keep-or-remove rule for the council step."""
+    if not summaries:
+        raise ValueError('council gate needs at least one eval/council.py summary')
+    for summary in summaries:
+        e.validate(summary, cl.SUMMARY_SCHEMA)
+    councilled = sum(s['disagreement']['councilled'] for s in summaries)
+    disagreeing = sum(s['disagreement']['disagreeing'] for s in summaries)
+    arms = {arm: {k: sum(s['accuracy'][arm][k] for s in summaries) for k in ('cases', 'correct')}
+            for arm in ('council', 'verifier_only')}
+    for row in arms.values():
+        row['accuracy'] = row['correct'] / row['cases'] if row['cases'] else None
+    rate = disagreeing / councilled if councilled else None
+    reasons = []
+    if rate is None:
+        reasons.append('no councilled finding had two or more answers; disagreement is unmeasured')
+    elif rate < COUNCIL_MIN_DISAGREEMENT - EPSILON:
+        reasons.append(f'council disagreement {disagreeing}/{councilled} = {rate:.1%} is below '
+                       f'{COUNCIL_MIN_DISAGREEMENT:.0%}')
+    council, baseline = arms['council']['accuracy'], arms['verifier_only']['accuracy']
+    if council is None or baseline is None:
+        reasons.append('accuracy on the plausible bucket is unmeasured')
+    elif council <= baseline + EPSILON:
+        reasons.append(f'council accuracy {council:.1%} does not exceed verifier-only {baseline:.1%} '
+                       f'on the same cases')
+    return {'schema': 'rio-eval-council-gate-v1', 'passed': not reasons, 'reasons': reasons,
+            'action': None if not reasons else
+            'remove the rio/council step from ' + ' and '.join(COUNCIL_PROFILES) + ' in this release',
+            'disagreement': {'councilled': councilled, 'disagreeing': disagreeing, 'rate': rate},
+            'accuracy': arms, 'runs': [{'case_set': s['case_set'], 'date': s['date']} for s in summaries]}
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = parser.add_subparsers(dest='command', required=True)
@@ -212,7 +257,21 @@ def main(argv=None):
     p.add_argument('--out')
     p.add_argument('--false-positive-rate', nargs='+', metavar='SOURCE', dest='false_positive_rate',
                    help='report-v1 files and noise run directories; gate per-agent false positives at 15 %%')
+    p = sub.add_parser('council')
+    p.add_argument('--summary', nargs='+', required=True, help='eval/council.py summaries of one release cycle')
+    p.add_argument('--out')
     args = parser.parse_args(argv)
+    if args.command == 'council':
+        try:
+            result = council_gate([e.read_json(path) for path in args.summary])
+        except (ValueError, KeyError, OSError) as error:
+            print(f'gate error: {error}', file=sys.stderr)
+            return 2
+        if args.out:
+            e.write_json(args.out, result)
+        print(('KEEP' if result['passed'] else 'REMOVE') + ''.join(f'\n- {r}' for r in result['reasons'])
+              + (f'\n{result["action"]}' if result['action'] else ''))
+        return 0 if result['passed'] else 1
     try:
         if args.command == 'scorecard':
             card = scorecard(e.read_json(args.summary), args.cases, args.reports, args.label)

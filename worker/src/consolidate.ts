@@ -25,6 +25,50 @@ export interface Verified {
   evidence?: string[];
   // Carried-forward class findings keep every instance location.
   locations?: Location[];
+  /** The council's review (finding-v1 `council`); its decision already set `evidence_level`. */
+  council?: Finding["council"];
+}
+/** Whether a profile suppression applies to a finding. */
+export function suppressedBy(p: Profile) {
+  return (f: Finding) =>
+    p.suppress.some((s) =>
+      "finding" in s
+        ? s.finding === f.id
+        : "path" in s
+          ? f.locations.every((l) => matches(s.path, l.path))
+          : matches(s.rule, f.rule_id),
+    );
+}
+/** The finding-v1 form of a verified hypothesis. */
+export function findingOf(v: Verified): Finding {
+  const h = v.hypothesis;
+  const {
+    guidance,
+    catalog_item,
+    trace_change,
+    limitations,
+    locations,
+    ...publicHypothesis
+  } = h;
+  // finding-v1 has no slot for agent-only keys; their statements join the impact.
+  const impact = [
+    h.impact,
+    catalog_item &&
+      `Catalog item ${catalog_item}: the change ${trace_change ?? "affects"} a step of its trace.`,
+    limitations?.length && `Limitations: ${limitations.join("; ")}.`,
+  ]
+    .filter(Boolean)
+    .join(" ");
+  return {
+    ...publicHypothesis,
+    ...(impact ? { impact } : {}),
+    category: (v.category ?? h.category) as Finding["category"],
+    evidence_level: v.evidence_level,
+    verification: v.verification,
+    evidence: v.evidence ?? [],
+    locations: v.locations ?? locations ?? [h.location],
+    ...(v.council ? { council: v.council } : {}),
+  };
 }
 export function policyMatches(f: Finding, policy: FailOn): boolean {
   if (
@@ -75,6 +119,11 @@ export function classify(
     const symbols = new Set(
       members.map((m) => `${m.location.path}\0${m.location.symbol_path}`),
     );
+    // A councilled finding keeps its own identity and council result.
+    if (members.some((m) => m.council)) {
+      for (const m of members) result.push({ finding: m, members: [m] });
+      continue;
+    }
     if (members.length <= threshold || symbols.size < 2) {
       for (const m of members) result.push({ finding: m, members: [m] });
       continue;
@@ -120,6 +169,8 @@ export function consolidate(
     category_drops: {} as Record<string, number>,
     suppressed: 0,
     refuted: 0,
+    /** Ids of refuted findings, so evaluation tells refuted from held back. */
+    refuted_ids: [] as string[],
     classes: {} as Record<string, string[]>,
     policy_failed: false,
     policy_matches: [] as string[],
@@ -135,14 +186,7 @@ export function consolidate(
     states: ["new", "worsened"],
     ...security.fail_on,
   };
-  const suppressed = (f: Finding) =>
-    p.suppress.some((s) =>
-      "finding" in s
-        ? s.finding === f.id
-        : "path" in s
-          ? f.locations.every((l) => matches(s.path, l.path))
-          : matches(s.rule, f.rule_id),
-    );
+  const suppressed = suppressedBy(p);
   const candidates: Finding[] = [];
   for (const v of verified) {
     const category = v.category ?? v.hypothesis.category;
@@ -153,36 +197,17 @@ export function consolidate(
     }
     if (v.evidence_level === "refuted") {
       audit.refuted++;
+      audit.refuted_ids.push(v.hypothesis.id);
       continue;
     }
-    const h = v.hypothesis;
-    const {
-      guidance,
-      catalog_item,
-      trace_change,
-      limitations,
-      locations,
-      ...publicHypothesis
-    } = h;
-    // finding-v1 has no slot for agent-only keys; their statements join the impact.
-    const impact = [
-      h.impact,
-      catalog_item &&
-        `Catalog item ${catalog_item}: the change ${trace_change ?? "affects"} a step of its trace.`,
-      limitations?.length && `Limitations: ${limitations.join("; ")}.`,
-    ]
-      .filter(Boolean)
-      .join(" ");
-    const f: Finding = {
-      ...publicHypothesis,
-      ...(impact ? { impact } : {}),
-      category,
-      evidence_level: v.evidence_level,
-      verification: v.verification,
-      evidence: v.evidence ?? [],
-      locations: v.locations ?? locations ?? [h.location],
-    };
-    if (suppressed(f)) {
+    const f = findingOf(v);
+    // A councilled finding never merges into a class, so a suppression of the
+    // class it would form applies to it directly.
+    if (
+      suppressed(f) ||
+      (f.council &&
+        suppressed({ ...f, id: classId(f.rule_id, triggerHash(f.trigger)) }))
+    ) {
       audit.suppressed++;
       continue;
     }
@@ -269,5 +294,13 @@ export function consolidate(
       .map((f) => f.message);
     pools[pool] = pools[pool].slice(0, limits[pool]);
   }
-  return { ...pools, audit };
+  // Councilled findings the floors or caps keep out of the findings lists:
+  // their council result is still reported, and `fail_on` never sees them.
+  const presented = new Set(
+    [...pools.defects, ...pools.risks, ...pools.security].map((f) => f.id),
+  );
+  const council_held = classes
+    .map((c) => c.finding)
+    .filter((f) => f.council && !presented.has(f.id));
+  return { ...pools, audit, council_held };
 }

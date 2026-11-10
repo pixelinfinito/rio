@@ -72,10 +72,10 @@ pub fn authoring_context(snapshot: &QaSnapshot, project: &QaProject, mode: &Auth
         .flat_map(|journey| journey.after.clone())
         .collect();
     while let Some(name) = pending.pop() {
-        if dependencies.insert(name.clone()) {
-            if let Some(journey) = project.journeys.get(&name) {
-                pending.extend(journey.after.clone());
-            }
+        if dependencies.insert(name.clone())
+            && let Some(journey) = project.journeys.get(&name)
+        {
+            pending.extend(journey.after.clone());
         }
     }
     json!({

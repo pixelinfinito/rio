@@ -494,11 +494,65 @@ fn security_community_profile_validates_offline_and_enables_thorough_asvs() {
             .as_sequence()
             .unwrap()
             .iter()
-            .filter(|s| s["id"] != "security")
+            .filter(|s| s["id"] != "security" && s["id"] != "council")
             .cloned()
             .collect()
     };
     assert_eq!(steps(&resolved), steps(&base));
+    // The council: enabled with its five triggers in rio/security and
+    // rio/critical, members unconfigured until `rio init`; disabled in rio/base.
+    let council = |v: &serde_yaml::Value| -> serde_yaml::Value {
+        v["steps"]
+            .as_sequence()
+            .unwrap()
+            .iter()
+            .find(|s| s["id"] == "council")
+            .unwrap()
+            .clone()
+    };
+    assert_eq!(council(&base)["with"]["enabled"], false);
+    for name in ["rio/security", "rio/critical"] {
+        let output = rio(root)
+            .args(["profile", "show", name])
+            .assert()
+            .success()
+            .get_output()
+            .clone();
+        let resolved: serde_yaml::Value = serde_yaml::from_slice(&output.stdout).unwrap();
+        let step = council(&resolved);
+        assert_eq!(step["with"]["enabled"], true, "{name}");
+        let rules: Vec<_> = step["rules"]
+            .as_sequence()
+            .unwrap()
+            .iter()
+            .map(|r| r["when"].as_str().unwrap().to_owned())
+            .collect();
+        assert_eq!(
+            rules,
+            [
+                "evidence == plausible and severity >= error",
+                "verify.split",
+                "risk_tier == high",
+                "mode == deep",
+                "nightly"
+            ],
+            "{name}"
+        );
+        assert_eq!(resolved["council_members"].as_sequence().unwrap().len(), 5);
+        let text = String::from_utf8_lossy(&output.stdout);
+        assert_eq!(
+            text.matches("# Council: council member").count(),
+            5,
+            "{text}"
+        );
+    }
+    let output = rio(root)
+        .args(["profile", "show", "rio/base"])
+        .assert()
+        .success()
+        .get_output()
+        .clone();
+    assert!(!String::from_utf8_lossy(&output.stdout).contains("# Council:"));
 }
 #[test]
 fn configuration_precedence_sources_unknown_keys_and_endpoint_notice() {
@@ -2782,5 +2836,91 @@ fn doctor_reports_the_github_app_and_warns_about_a_missing_installation() {
             .take()
             .iter()
             .any(|r| r.1 == "/v1/github/installation?repository=github.com%2Facme%2Fshop")
+    );
+}
+
+#[test]
+fn profile_validate_reports_council_families_and_unconfigured_members() {
+    let temp = repository();
+    let root = temp.path();
+    let dir = root.join(".rio/profiles");
+    fs::create_dir_all(&dir).unwrap();
+    let profile = |members: &str| {
+        format!(
+            "version: 1\nname: council\nextends: rio/base\nsteps:\n  - {{id: prepare, uses: rio/prepare}}\n  - {{id: checks, uses: rio/checks, needs: [prepare]}}\n  - {{id: graph, uses: rio/graph, needs: [prepare]}}\n  - {{id: triage, uses: rio/triage, needs: [checks, graph]}}\n  - {{id: agents, uses: rio/agents, needs: [triage]}}\n  - {{id: verify, uses: rio/verify, needs: [agents]}}\n  - {{id: council, uses: rio/council, needs: [verify], with: {{enabled: true}}, rules: [{{when: verify.split}}]}}\n  - {{id: report, uses: rio/report, needs: [verify, council]}}\n{members}"
+        )
+    };
+    let member = |role: &str, provider: &str, family: &str| {
+        format!(
+            "    - {{uses: rio/council-{role}, provider: {provider}, model: m-{family}, family: {family}}}\n"
+        )
+    };
+    // Placeholders: valid, every member reported unconfigured with the init hint.
+    fs::write(dir.join("council.yaml"), profile("")).unwrap();
+    let output = rio(root)
+        .args(["profile", "validate", "council"])
+        .assert()
+        .success()
+        .get_output()
+        .clone();
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert_eq!(
+        stderr.matches("is unconfigured; run `rio init`").count(),
+        5,
+        "{stderr}"
+    );
+    let output = rio(root)
+        .args(["profile", "show", "council"])
+        .assert()
+        .success()
+        .get_output()
+        .clone();
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(
+        stdout.contains("# Council: council member rio/council-skeptic (skeptic) is unconfigured"),
+        "{stdout}"
+    );
+    // Two families: rejected naming them.
+    let two = format!(
+        "council:\n  vendors_allowed: [anthropic, openai]\n  members:\n{}{}{}{}{}",
+        member("skeptic", "anthropic", "claude"),
+        member("exploit-author", "anthropic", "claude"),
+        member("code-owner", "anthropic", "claude"),
+        member("maintainer", "openai", "gpt"),
+        member("tester", "openai", "gpt"),
+    );
+    fs::write(dir.join("council.yaml"), profile(&two)).unwrap();
+    let output = rio(root)
+        .args(["profile", "validate", "council"])
+        .assert()
+        .code(2)
+        .get_output()
+        .clone();
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(
+        stderr.contains(
+            "council members span 2 model families (claude, gpt); at least three are required"
+        ),
+        "{stderr}"
+    );
+    // Three families: valid with no council notes.
+    let three = two
+        .replacen(
+            "provider: openai, model: m-gpt, family: gpt",
+            "provider: google, model: m-gemini, family: gemini",
+            1,
+        )
+        .replace("[anthropic, openai]", "[anthropic, openai, google]");
+    fs::write(dir.join("council.yaml"), profile(&three)).unwrap();
+    let output = rio(root)
+        .args(["profile", "validate", "council"])
+        .assert()
+        .success()
+        .get_output()
+        .clone();
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(
+        !stderr.contains("unconfigured") && !stderr.contains("will be skipped"),
+        "{stderr}"
     );
 }

@@ -1,0 +1,32 @@
+{
+ "schema": "rio-council-outcomes-v1",
+ "case_set": "v0.3-council-plausible-bucket",
+ "cases": {
+  "CL-RS-01": {
+   "2609193401d7f0993c29352f1f640ccb5ec16b2571f56c0723b9e4684c3b47ec": "real",
+   "095bedfea77fd4a277ce21bb430907fc239485966fa781dd66c2653b26a55a00": "real"
+  },
+  "CL-RS-02": {},
+  "CL-TS-02": {
+   "18bb30dc1c7e7476bfa03b5f846bd38a1c86d784967a5593a8b928af45db06bb": "real",
+   "95d4384c90995979fe5547c5f9ac3021a28dc25986ce950280170859b360751b": "real"
+  },
+  "CT-POS-03": {},
+  "CT-POS-04": {
+   "0b3364ac17a9599697a07f87f2c577181ba564a18cd391264b06424eb10fd50b": "real",
+   "bc90fdc03cf3f1a9fe08e9f3c749b289b7316075a5bba99a08f731463d01e872": "real"
+  },
+  "CT-POS-05": {},
+  "HS-PY-02": {
+   "230110902f1665b678fdc75228f93fde0a1e36b0b437cd5600deb23a32032d5f": "real"
+  },
+  "HS-TS-01": {
+   "4f8e1c8da0c4de0adc8bd56d4a4917970cefe72591503401a8de66d3a20e9d79": "real",
+   "a1e84dc01cc791671a037ac320ef44d4af62b5dc23c0910e2bfd946d272edccb": "real"
+  },
+  "HS-TS-03": {
+   "b2782e9b72119a53a78ef4318cf023d0551eb8c395d360e299ca1c403aa7a83f": "real",
+   "632d66bb5d9a23759ec0c2fde0d42d3e4c2d4f830998faff5863476702798d21": "real"
+  }
+ }
+}

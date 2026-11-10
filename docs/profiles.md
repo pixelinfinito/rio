@@ -41,7 +41,7 @@ Profiles describe a review. Machine settings such as the cache path and parallel
 | `steps[].with` | `object` | no |
 | `steps[].rules` | `array` | no |
 | `steps[].rules[].when` | `string` | yes |
-| `steps[].rules[].then` | `string` | yes |
+| `steps[].rules[].then` | `string` | no |
 | `steps[].agents` | `array` | no |
 | `suppress` | `array` | no |
 | `publish` | `one of the schema alternatives` | no |
@@ -64,6 +64,19 @@ Profiles describe a review. Machine settings such as the cache path and parallel
 | `verify.voters` | `integer` | no |
 | `verify.quorum` | `integer` | no |
 | `verify.model` | `string` | no |
+| `council` | `object` | no |
+| `council.members` | `array` | no |
+| `council.members[].uses` | `string` | yes |
+| `council.members[].provider` | `string` | no |
+| `council.members[].model` | `string` | no |
+| `council.members[].family` | `string` | no |
+| `council.members[].self_hosted` | `boolean` | no |
+| `council.max_findings` | `integer` | no |
+| `council.max_experiments` | `integer` | no |
+| `council.max_rounds` | `integer` | no |
+| `council.min_members` | `integer` | no |
+| `council.timeout` | `string` | no |
+| `council.vendors_allowed` | `array` | no |
 
 <!-- schema:end -->
 
@@ -205,6 +218,43 @@ security review. On fork pull requests the agent is static-only.
 The built-in `rio/security` community profile extends `rio/base` and only enables
 the step with `posture: thorough` and `catalog: asvs-5.0`; every other base setting
 is unchanged. Select it with `--profile rio/security` or `extends: rio/security`.
+
+## Council
+
+`rio/council@0.1.0` runs after `rio/verify` and before `rio/report` on the
+findings the verifier leaves unsettled. It is present and disabled in `rio/base`,
+and enabled in `rio/security` and `rio/critical` with five triggers in the step's
+`rules`, which select findings and carry only `when`:
+`evidence == plausible and severity >= error`, `verify.split`,
+`risk_tier == high`, `mode == deep` and `nightly`. The finding-level predicates
+(`evidence`, `severity` on the scale `info` < `warning` < `error`, `verify.split`)
+are accepted only in the council step's rules; `risk_tier`, `mode` and `nightly`
+are accepted in every rule. A council step must have the verify step in its
+`needs`.
+
+The `council` block sets `members` (default: the five built-in members
+`rio/council-skeptic`, `-exploit-author`, `-code-owner`, `-maintainer` and
+`-tester`, each with optional `provider`, `model`, `family` and `self_hosted`
+overrides), `max_findings` (5), `max_experiments` (2), `max_rounds` (2, the
+maximum), `min_members` (3, at most the member count), `timeout` (`90s`) and
+`vendors_allowed` (empty). A fully configured council must span at least three
+model families. Members whose provider is still `placeholder` are reported as
+unconfigured by `rio profile validate` and `rio profile show` until `rio init`
+writes the council allowlist; the profile stays valid. `rio/security` and
+`rio/critical` allow the vendors Rio knows (`anthropic`, `openai`, `google`,
+`mistral`, `xai`, `deepseek`, and `openrouter`, which forwards each pack to the
+vendor that serves the model); the repository allowlist, empty by default, is
+the opt-in, and a member runs only when both lists allow its vendor.
+`rio/critical` extends `rio/security`, fails on security findings as well as
+defects, and raises `max_findings` to 10 and `max_experiments` to 3.
+
+Members get one identical evidence pack per finding and no tools; the decision is
+deterministic (an experiment failing on head and passing on base reproduces the
+finding, a protection the graph places on the path refutes it when members
+holding at least half of the weight cite it and answer `real: no`, anything else
+stays plausible with a council note), and agreement is never evidence. A council
+never changes a finding's category and never fails or blocks a review: with
+fewer than `min_members` answers it is skipped and the verifier's result stands.
 
 `rio/triage` options are `sensitive_paths` (globs), `public_contracts`,
 `dependency_changes`, `missing_coverage` (booleans), and `fan_out_high` (positive

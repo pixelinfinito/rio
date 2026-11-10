@@ -82,6 +82,52 @@ async function registryColumns() {
   await expect(sighting()).rejects.toThrow(/UNIQUE|PRIMARY/);
 }
 
+// 0007_council: one audit row per finding, member and round; never pack content.
+async function councilAssessments() {
+  const row = (
+    member: string,
+    round: number,
+    abstained = 0,
+    key: string | null = "k",
+  ) =>
+    env.DB.prepare(
+      "INSERT INTO council_assessments(review_id,tenant,finding_id,member,round,assessment_key,abstained,cause,vendor,model,pack_hash,pack_bytes,rendering_hash,rendering_bytes,created_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+    )
+      .bind(
+        "r-council",
+        "owner",
+        "f",
+        member,
+        round,
+        key,
+        abstained,
+        abstained ? "timeout" : null,
+        "openai",
+        "gpt-6.1",
+        "p",
+        10,
+        "q",
+        12,
+        1,
+      )
+      .run();
+  await env.DB.prepare(
+    "INSERT OR IGNORE INTO reviews(id,tenant,submission_key,status,created_at,token_limit,deadline) VALUES('r-council','owner','s','complete',1,1,1)",
+  ).run();
+  await row("skeptic", 1);
+  await row("tester", 2, 1, null);
+  await expect(row("skeptic", 1)).rejects.toThrow(/UNIQUE|PRIMARY/);
+  await expect(row("judge", 1)).rejects.toThrow(/CHECK/);
+  await expect(row("maintainer", 3)).rejects.toThrow(/CHECK/);
+  // Retention clears the assessment key; the audit row stays.
+  await row("code-owner", 1, 0, null);
+  await expect(
+    env.DB.prepare(
+      "UPDATE council_assessments SET cause='timeout' WHERE member='code-owner'",
+    ).run(),
+  ).rejects.toThrow(/CHECK/);
+}
+
 it("applies forward migrations once and leaves no deployment lock", async () => {
   for (let i = 0; i < 2; i++) await migrate(`migration-${i}`);
   const ledger = await env.DB.prepare("SELECT name FROM rio_migrations").all();
@@ -104,6 +150,7 @@ it("applies forward migrations once and leaves no deployment lock", async () => 
       "suppressions",
       "agent_cache",
       "finding_sightings",
+      "council_assessments",
       "qa_seed_parts",
       "qa_seed_heads",
       "qa_seed_leases",
@@ -120,6 +167,7 @@ it("applies forward migrations once and leaves no deployment lock", async () => 
   );
   expect(await tables()).not.toContain("feedback_next");
   await registryColumns();
+  await councilAssessments();
   await prModeConstraints();
   // The fresh feedback table accepts only the standardized reasons.
   for (const reason of ["false_positive", "known", "other"])
@@ -161,10 +209,15 @@ it("upgrades a v0.2 database and converts draft feedback reasons", async () => {
     "installations",
     "deliveries",
     "publications",
+    "publication_leases",
+    "pull_requests",
     "finding_history",
     "suppressions",
     "agent_cache",
     "finding_sightings",
+    "council_assessments",
+    "runner_capabilities",
+    "jobs",
   ])
     await env.DB.prepare(`DROP TABLE IF EXISTS ${table}`).run();
   const core = migrations.find((m) => m.name === "0001_core.sql")!;
@@ -223,8 +276,15 @@ it("upgrades a v0.2 database and converts draft feedback reasons", async () => {
       "suppressions",
       "agent_cache",
       "finding_sightings",
+      "council_assessments",
     ]),
   );
   await prModeConstraints();
+  await councilAssessments();
+  const jobColumns = (
+    await env.DB.prepare("PRAGMA table_info(jobs)").all<{ name: string }>()
+  ).results.map((c) => c.name);
+  expect(jobColumns).toContain("kind");
+  expect(await tables()).toContain("runner_capabilities");
   await registryColumns();
 });
