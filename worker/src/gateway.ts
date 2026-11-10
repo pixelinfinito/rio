@@ -9,6 +9,14 @@ import type {
 import { scrub } from "./redaction";
 import { invariant } from "./validation";
 import { agents } from "./manifests";
+import { costOf, normalizeUsage, usageConvention } from "./usage";
+import {
+  join,
+  layerHashes,
+  redactPartitions,
+  type Content,
+  type PromptPart,
+} from "./prompt";
 import hypothesisSchema from "../../schemas/hypothesis-v1.json";
 import voteSchema from "../../schemas/vote-answer-v1.json";
 /**
@@ -33,6 +41,9 @@ export function joinUrl(base: string, ...parts: string[]): string {
 }
 export interface GatewayProvider {
   protocol: "openai" | "anthropic";
+  // Declared by `rio deploy` for Anthropic-protocol providers that accept
+  // `cache_control` breakpoints.
+  prompt_cache?: "breakpoints";
 }
 /** `AI_GATEWAY_PROVIDERS`: custom providers by slug, written by `rio deploy`. */
 export function gatewayProviders(env: Env): Record<string, GatewayProvider> {
@@ -47,11 +58,18 @@ export function gatewayProviders(env: Env): Record<string, GatewayProvider> {
     parsed && typeof parsed === "object" && !Array.isArray(parsed),
     "AI_GATEWAY_PROVIDERS must map provider slugs to settings",
   );
-  for (const value of Object.values(parsed))
+  for (const value of Object.values(parsed)) {
     invariant(
       ["openai", "anthropic"].includes((value as any)?.protocol),
       "AI_GATEWAY_PROVIDERS protocol must be openai or anthropic",
     );
+    invariant(
+      (value as any).prompt_cache === undefined ||
+        ((value as any).prompt_cache === "breakpoints" &&
+          (value as any).protocol === "anthropic"),
+      "AI_GATEWAY_PROVIDERS prompt_cache must be breakpoints on an anthropic provider",
+    );
+  }
   return parsed as Record<string, GatewayProvider>;
 }
 /**
@@ -181,6 +199,142 @@ export function route(env: Env, identifier: string): Route {
   return result;
 }
 /**
+ * How a route accepts prompt-cache hints (design D9), from static rules and the
+ * review's enabled hint classes, never by probing: `breakpoints` (Anthropic
+ * `cache_control` blocks), `key` (OpenAI `prompt_cache_key`), `parts` (OpenRouter
+ * content-part `cache_control`), or `none` (the plain-string body).
+ */
+export type CacheCapability = "breakpoints" | "key" | "parts" | "none";
+export function cacheCapability(
+  env: Env,
+  identifier: string,
+  classes: readonly string[],
+): CacheCapability {
+  const r = route(env, identifier);
+  const [head] = identifier.split("/", 1);
+  if (head === "anthropic")
+    return classes.includes("anthropic") ? "breakpoints" : "none";
+  if (head.startsWith("custom-") && r.protocol === "anthropic")
+    return classes.includes("anthropic") &&
+      gatewayProviders(env)[head.slice("custom-".length)]?.prompt_cache ===
+        "breakpoints"
+      ? "breakpoints"
+      : "none";
+  if (head === "openai" && r.provider === "openai")
+    return classes.includes("openai") &&
+      (env.AI_GATEWAY_URL?.trim() || !env.OPENAI_BASE_URL?.trim())
+      ? "key"
+      : "none";
+  if (head === "openrouter" && /^(anthropic\/|google\/gemini)/.test(r.model))
+    return classes.includes("openrouter") ? "parts" : "none";
+  return "none";
+}
+const EPHEMERAL = { type: "ephemeral" } as const;
+/** Text blocks split after each cached part; the last block of a cached part is marked. */
+function blocks(content: Content, marked = false) {
+  const out: { type: "text"; text: string; cache_control?: typeof EPHEMERAL }[] =
+    [];
+  let text = "";
+  for (const p of typeof content === "string"
+    ? [{ text: content, cache: marked || undefined }]
+    : content) {
+    text += p.text;
+    if (p.cache && text) {
+      out.push({ type: "text", text, cache_control: EPHEMERAL });
+      text = "";
+    }
+  }
+  if (text) out.push({ type: "text", text });
+  return out;
+}
+/**
+ * The system and messages a route receives. `none` and `key` routes get plain
+ * strings, byte-identical to joining the parts. `breakpoints` and `parts` routes
+ * get text blocks with at most four markers: the system prompt, the cached parts
+ * of each message, and, in a conversation, the last message; the oldest message
+ * markers are dropped first if a request would exceed four.
+ */
+export function renderPrompt(
+  request: Pick<ModelRequest, "system" | "messages" | "cache">,
+  capability: CacheCapability,
+  anthropic = true,
+) {
+  // Screenshots follow a message's text, in the route's image form. On
+  // Anthropic a marker that ends the text moves to the last image, so the
+  // screenshots are inside the prefix later turns reread (design D16).
+  const withImages = (
+    m: ModelRequest["messages"][number],
+    content: string | ReturnType<typeof blocks>,
+  ) => {
+    if (!m.images?.length) return content;
+    const text =
+      typeof content === "string"
+        ? [{ type: "text" as const, text: content }]
+        : content;
+    const last = text.at(-1) as { cache_control?: typeof EPHEMERAL } | undefined;
+    const marked = anthropic && !!last?.cache_control;
+    if (marked) delete last!.cache_control;
+    return [
+      ...text,
+      ...m.images.map((image, i) =>
+        anthropic
+          ? {
+              type: "image",
+              source: {
+                type: "base64",
+                media_type: image.media_type,
+                data: image.data,
+              },
+              ...(marked && i === m.images!.length - 1
+                ? { cache_control: EPHEMERAL }
+                : {}),
+            }
+          : {
+              type: "image_url",
+              image_url: {
+                url: `data:${image.media_type};base64,${image.data}`,
+                detail: "high",
+              },
+            },
+      ),
+    ];
+  };
+  if (capability === "none" || capability === "key")
+    return {
+      system: join(request.system),
+      messages: request.messages.map((m) => ({
+        role: m.role,
+        content: withImages(m, join(m.content)),
+      })),
+    };
+  const tail = request.cache?.tail ? request.messages.length - 1 : -1;
+  const first = request.cache?.first ? 0 : -1;
+  const marked = (i: number) => i === tail || i === first;
+  const texts = request.messages.map((m, i) =>
+    typeof m.content === "string" && !marked(i)
+      ? m.content
+      : blocks(m.content, marked(i)),
+  );
+  for (const i of new Set([first, tail]))
+    if (i >= 0) {
+      const last = texts[i] as ReturnType<typeof blocks>;
+      if (last.length) last[last.length - 1].cache_control = EPHEMERAL;
+    }
+  // System (1) + message markers <= 4: drop the oldest message markers first.
+  const markers = texts.flatMap((t) =>
+    Array.isArray(t) ? t.filter((b) => b.cache_control) : [],
+  );
+  for (const block of markers.slice(0, Math.max(0, markers.length - 3)))
+    delete block.cache_control;
+  return {
+    system: blocks(join(request.system), true),
+    messages: request.messages.map((m, i) => ({
+      role: m.role,
+      content: withImages(m, texts[i]),
+    })),
+  };
+}
+/**
  * The model aliases a profile can actually call, resolved exactly as the
  * Workflow and the verifier do: an agent uses its step declaration's `model`,
  * else the alias named after it, else `default`; the verifier uses
@@ -244,46 +398,37 @@ export class ProviderGateway implements Gateway {
       request.model,
     );
     const anthropic = protocol === "anthropic";
-    const messages = request.messages.map(({ role, content, images }) => ({
-      role,
-      content: !images?.length
-        ? content
-        : [
-            { type: "text", text: content },
-            ...images.map((image) =>
-              anthropic
-                ? {
-                    type: "image",
-                    source: {
-                      type: "base64",
-                      media_type: image.media_type,
-                      data: image.data,
-                    },
-                  }
-                : {
-                    type: "image_url",
-                    image_url: {
-                      url: `data:${image.media_type};base64,${image.data}`,
-                      detail: "high",
-                    },
-                  },
-            ),
-          ],
-    }));
+    const convention = usageConvention(
+      this.env,
+      request.model,
+      protocol,
+      provider,
+    );
+    const capability = request.cache
+      ? cacheCapability(this.env, request.model, request.cache.classes)
+      : "none";
+    const { system, messages } = renderPrompt(
+      request,
+      capability,
+      anthropic,
+    );
     const body = anthropic
       ? {
           model,
-          system: request.system,
+          system,
           messages,
           max_tokens: request.max_tokens,
         }
       : {
           model,
-          messages: [{ role: "system", content: request.system }, ...messages],
+          messages: [{ role: "system", content: system }, ...messages],
           max_tokens: request.max_tokens,
           response_format: { type: "json_object" },
           ...(provider === "openrouter"
             ? { provider: { require_parameters: true } }
+            : {}),
+          ...(capability === "key" && request.cache?.key
+            ? { prompt_cache_key: request.cache.key }
             : {}),
         };
     // One transient failure (overload, rate limit, or a reply without content or
@@ -305,21 +450,11 @@ export class ProviderGateway implements Gateway {
             .map((b: any) => b.text)
             .join("\n")
         : result.choices?.[0]?.message?.content;
-      const input = anthropic
-        ? result.usage?.input_tokens
-        : result.usage?.prompt_tokens;
-      const output = anthropic
-        ? result.usage?.output_tokens
-        : result.usage?.completion_tokens;
-      invariant(
-        typeof content === "string" &&
-          Number.isSafeInteger(input) &&
-          input >= 0 &&
-          Number.isSafeInteger(output) &&
-          output >= 0,
-        "provider omitted content or usage",
-      );
-      return { result, content, input, output };
+      invariant(typeof content === "string", "provider omitted content or usage");
+      // Invalid cache fields on a verified route throw a message the retry rule
+      // below does not match: the reply was billed, so it is never sent again.
+      const usage = normalizeUsage(protocol, result.usage, convention);
+      return { result, content, usage };
     };
     let outcome: Awaited<ReturnType<typeof attempt>>;
     try {
@@ -336,22 +471,32 @@ export class ProviderGateway implements Gateway {
       await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
       outcome = await attempt();
     }
-    const { result, content, input, output } = outcome;
-    const prices = JSON.parse(this.env.MODEL_PRICES ?? "{}")[request.model];
+    const { result, usage } = outcome;
+    // A model may echo the review's partition; it never leaves the gateway.
+    const content = redactPartitions(outcome.content, request.redact ?? []);
+    const price = JSON.parse(this.env.MODEL_PRICES ?? "{}")[request.model];
     return {
       content,
-      input_tokens: input,
-      output_tokens: output,
-      cost_usd:
-        provider === "openrouter" &&
-        Number.isFinite(result.usage?.cost) &&
-        result.usage.cost >= 0
-          ? result.usage.cost
-          : prices
-            ? (input * prices.input + output * prices.output) / 1000000
-            : null,
+      ...usage,
+      ...costOf(
+        usage,
+        price,
+        provider === "openrouter" ? result.usage?.cost : undefined,
+      ),
     };
   }
+}
+/** The usage fields a response settles, cache counts and cost source included. */
+export function settledUsage(response: ModelResponse) {
+  return {
+    input_tokens: response.input_tokens,
+    output_tokens: response.output_tokens,
+    cost_usd: response.cost_usd,
+    cache_read_input_tokens: response.cache_read_input_tokens ?? null,
+    cache_write_input_tokens: response.cache_write_input_tokens ?? null,
+    usage_convention: response.usage_convention ?? null,
+    cost_source: response.cost_source ?? null,
+  };
 }
 export interface Ledger {
   reserve(actor: string, phase: string, tokens: number): Promise<string>;
@@ -448,35 +593,32 @@ export async function converse(options: {
     action: () => Promise<ModelResponse>,
   ) => Promise<ModelResponse>;
   cancelled?: () => Promise<boolean>;
+  // `verifier-system`: the disclosed turn keeps the blind turn's system prompt;
+  // the vote schema then arrives in the disclosure message.
+  singleSystem?: boolean;
+  // Hint classes and the OpenAI key root's hash (design D9); `first` marks the
+  // first message as the conversation's reusable context (QA voters, D16).
+  cache?: { classes: string[]; key?: string; first?: boolean };
+  // The review's partition values, never echoed into stored output.
+  redact?: string[];
+  // `compaction`: elide in checkpoints (design D12).
+  compaction?: boolean;
 }): Promise<any> {
   const o = options;
-  const system =
-    o.system ??
-    `${SYSTEM} ${
-      o.phase === "verify-disclosed"
-        ? `Verification result schema: ${JSON.stringify(voteSchema)}`
-        : `Generator and blind results are arrays (empty is valid) unless the request names a result object; item schema: ${JSON.stringify(hypothesisSchema)}`
-    }`;
+  const system = o.system ?? systemPrompt(o.phase, o.singleSystem);
+  // A compaction checkpoint is recorded with the next model call.
+  let checkpoint: { turn: number; elided: number } | undefined;
   let repairs = 0,
     consecutiveRepairs = 0;
   for (let turn = 0; turn < 16; turn++) {
     if (await o.cancelled?.()) throw new Error("cancelled");
     const action = async () => {
-      // UTF-8 byte count bounds text tokenization across supported providers. Include chat framing.
-      const inputBound =
-        new TextEncoder().encode(
-          system +
-            JSON.stringify(o.messages.map(({ images, ...message }) => message)),
-        ).length +
-        o.messages
-          .flatMap((message) => message.images ?? [])
-          .reduce((sum, image) => sum + image.token_bound, 0) +
-        256;
+      const inputBound = tokenBound(system, o.messages);
       const available = Math.min(
         o.allowance.remaining,
         await o.ledger.remaining(),
       );
-      invariant(available > inputBound + 16, "token budget exhausted");
+      invariant(fits(available, inputBound), "token budget exhausted");
       const output = Math.min(MAX_OUTPUT_TOKENS, available - inputBound);
       const reservation = await o.ledger.reserve(
         o.actor,
@@ -485,20 +627,23 @@ export async function converse(options: {
       );
       const remainingMs = (await o.ledger.remainingMs?.()) ?? 90000;
       invariant(remainingMs > 0, "review wall budget exhausted");
-      const response = await o.gateway.complete({
+      const response: ModelResponse = await o.gateway.complete({
         model: o.model,
         messages: o.messages,
         system,
         max_tokens: output,
         signal: AbortSignal.timeout(Math.min(90000, remainingMs)),
+        ...(o.cache ? { cache: { ...o.cache, tail: true } } : {}),
+        ...(o.redact?.length ? { redact: o.redact } : {}),
       });
+      // The model-call record carries layer hashes and sizes, never the text.
+      response.layers = layerHashes(system, o.messages);
+      if (checkpoint) response.compaction = checkpoint;
       await o.ledger.settle(reservation, {
         phase: o.phase,
         actor: o.actor,
         model: o.model,
-        input_tokens: response.input_tokens,
-        output_tokens: response.output_tokens,
-        cost_usd: response.cost_usd,
+        ...settledUsage(response),
       });
       invariant(
         response.input_tokens + response.output_tokens <= inputBound + output,
@@ -509,6 +654,7 @@ export async function converse(options: {
     const response = await (o.call
       ? o.call(`${o.actor}-${o.phase}-${turn}`, action)
       : action());
+    checkpoint = undefined;
     const total = response.input_tokens + response.output_tokens;
     o.allowance.remaining -= total;
     invariant(o.allowance.remaining >= 0, "provider exceeded token allowance");
@@ -604,12 +750,55 @@ export async function converse(options: {
       role: "user",
       content: JSON.stringify(scrub({ tool_results: results })).slice(0, 64000),
     });
-    elideOldToolResults(o.messages);
+    const elided = o.compaction
+      ? elideOldToolResults(o.messages, HISTORY_BYTES, COMPACTED_BYTES)
+      : elideOldToolResults(o.messages);
+    if (elided) checkpoint = { turn, elided };
   }
   throw new Error("model turn limit exhausted");
 }
+/**
+ * The system prompt of a phase. Generation and blind turns state the hypothesis
+ * schema; the disclosed turn states the vote schema unless `verifier-system`
+ * keeps one system prompt for both turns.
+ */
+export function systemPrompt(phase: string, single = false): PromptPart[] {
+  return [
+    {
+      layer: "system",
+      cache: true,
+      text: `${SYSTEM} ${
+        phase === "verify-disclosed" && !single
+          ? `Verification result schema: ${JSON.stringify(voteSchema)}`
+          : `Generator and blind results are arrays (empty is valid) unless the request names a result object; item schema: ${JSON.stringify(hypothesisSchema)}`
+      }`,
+    },
+  ];
+}
+/** An upper bound of a request's input tokens. */
+export function tokenBound(system: Content, messages: ModelRequest["messages"]) {
+  // UTF-8 byte count bounds text tokenization across supported providers. Include chat framing.
+  return (
+    new TextEncoder().encode(
+      join(system) +
+        JSON.stringify(
+          messages.map((m) => ({ role: m.role, content: join(m.content) })),
+        ),
+    ).length +
+    messages
+      .flatMap((m) => m.images ?? [])
+      .reduce((sum, image) => sum + image.token_bound, 0) +
+    256
+  );
+}
+/** Whether a request with this input bound may be sent within `available` tokens. */
+export const fits = (available: number, bound: number) => available > bound + 16;
+/** The vote-answer schema, sent with the disclosure under `verifier-system`. */
+export const VOTE_SCHEMA = `Verification result schema: ${JSON.stringify(voteSchema)}`;
 /** Conversation bytes above which earlier tool results are elided. */
 export const HISTORY_BYTES = 160 * 1024;
+/** With `compaction`, the size a checkpoint elides down to. */
+export const COMPACTED_BYTES = 96 * 1024;
 /** Tool-result messages kept whole at the end of the conversation. */
 export const RECENT_TOOL_RESULTS = 2;
 const ELIDED =
@@ -623,20 +812,29 @@ const ELIDED =
 export function elideOldToolResults(
   messages: ModelRequest["messages"],
   maxBytes = HISTORY_BYTES,
+  // With `compaction`, a checkpoint elides down to this size instead of
+  // just under `maxBytes`, so the prefix breaks once per checkpoint.
+  lowBytes = maxBytes,
 ): number {
-  const size = () => new TextEncoder().encode(JSON.stringify(messages)).length;
+  const size = () =>
+    new TextEncoder().encode(
+      JSON.stringify(
+        messages.map((m) => ({ role: m.role, content: join(m.content) })),
+      ),
+    ).length;
   if (size() <= maxBytes) return 0;
   const toolResults = messages
     .map((m, i) => ({ m, i }))
     .filter(
       ({ m }) =>
         m.role === "user" &&
+        typeof m.content === "string" &&
         m.content !== ELIDED &&
         m.content.startsWith('{"tool_results":'),
     );
   let elided = 0;
   for (const { m } of toolResults.slice(0, -RECENT_TOOL_RESULTS)) {
-    if (size() <= maxBytes) break;
+    if (size() <= lowBytes) break;
     m.content = ELIDED;
     elided++;
   }

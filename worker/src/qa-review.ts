@@ -35,6 +35,8 @@ type Options = Pick<
 > & {
   snapshot: import("./snapshot").SnapshotReader;
   result: any;
+  // The verifier model's partition and the review's hint classes (design D16).
+  prompt?: { partition?: string; cache?: { classes: string[]; key?: string } };
   load: (
     artifact: BrowserArtifact,
     version?: "head" | "base",

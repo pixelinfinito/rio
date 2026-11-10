@@ -15,6 +15,8 @@ import { verifyQaReview, qaReplayRegistry } from "../src/qa-review";
 import { compareQaResults } from "../src/qa-results";
 import { readerOf } from "../src/snapshot";
 import { Tools } from "../src/tools";
+import { ProviderGateway } from "../src/gateway";
+import type { Env } from "../src/types";
 import { profile, snapshot, graphs } from "./fixtures";
 import fixture from "../../crates/rio-core/tests/qa-fixtures/report.json";
 const cell = { viewport: "mobile", color_scheme: "light" as const };
@@ -965,4 +967,65 @@ it("reuses one replay per hypothesis across cells and snapshots without transfer
       first,
     ),
   ).toBeUndefined();
+});
+
+it("puts the partition immediately before the blind pack's first data block", () => {
+  const partition = "c".repeat(32);
+  const plain = qaBlindPrompt(pack()),
+    partitioned = qaBlindPrompt(pack(), partition);
+  const element = `\n<review_partition id="${partition}"/>`;
+  expect(partitioned.replace(element, "")).toBe(plain);
+  expect(partitioned).toContain(`${element}\n<repository_data label="journey">`);
+  expect(plain.indexOf("<repository_data")).toBe(
+    partitioned.indexOf("<repository_data") - element.length,
+  );
+});
+
+it("keeps a QA voter's screenshots inside the cached blind prefix on Anthropic routes", async () => {
+  const bodies: any[] = [];
+  const partition = "d".repeat(32);
+  const provider = new ProviderGateway(
+    { ANTHROPIC_API_KEY: "k" } as Env,
+    (async (_url: unknown, init: any) => {
+      const body = JSON.parse(init.body);
+      bodies.push(body);
+      return Response.json({
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify({
+              result: body.messages.length === 1 ? [blind] : answer(),
+            }),
+          },
+        ],
+        usage: { input_tokens: 10, output_tokens: 10 },
+      });
+    }) as typeof fetch,
+  );
+  const o = options();
+  o.profile.verify = { voters: 1, quorum: 1 };
+  o.profile.models = { ...o.profile.models, verifier: "anthropic/claude-test" };
+  await verifyQaCandidate({
+    ...o,
+    gateway: provider,
+    prompt: { partition, cache: { classes: ["anthropic"] } },
+  });
+  expect(bodies.length).toBeGreaterThanOrEqual(2);
+  const [first, second] = bodies;
+  const blindMessage = first.messages[0].content;
+  const images = blindMessage.filter((b: any) => b.type === "image");
+  expect(images).toHaveLength(2);
+  // The marker sits on the last screenshot; the text before it carries none.
+  expect(blindMessage.at(-1)).toMatchObject({
+    type: "image",
+    cache_control: { type: "ephemeral" },
+  });
+  expect(blindMessage.filter((b: any) => b.cache_control)).toHaveLength(1);
+  expect(JSON.stringify(blindMessage)).toContain(`<review_partition id=\\"${partition}\\"/>`);
+  // The second request rereads the blind message, marker included, unchanged.
+  expect(second.messages[0]).toEqual(first.messages[0]);
+  expect(second.system).toEqual(first.system);
+  expect(bodies.flatMap((b) => [JSON.stringify(b)]).join("")).not.toContain(
+    "prompt_cache_key",
+  );
 });

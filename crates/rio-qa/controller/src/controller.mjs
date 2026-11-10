@@ -32,9 +32,9 @@ const environmentReasons = new Set(['app_not_ready', 'dependencies_unavailable',
 export class QaBackend {
   constructor({ contract, fixtures = {}, viewports, criteria, guidance = {}, writer, appControl, browserEndpoint, browserFiles,
     budget, model, version = 'head', harness = 'codex', auth = 'gateway', authFile, forward, seedTransfer, signal, credentialEnv = {},
-    checkpoint = async () => {}, fetchImpl = fetch, browserFactory = openBrowser, harnessFactory = options => new Harness(options), maxFileBytes, replay = false }) {
+    checkpoint = async () => {}, fetchImpl = fetch, browserFactory = openBrowser, harnessFactory = options => new Harness(options), maxFileBytes, replay = false, prompt = {} }) {
     Object.assign(this, { contract, fixtures, viewports, criteria, guidance, writer, appControl, browserEndpoint, browserFiles, budget, model, version, harness,
-      auth, authFile, forward, seedTransfer, signal, credentialEnv, checkpoint, fetchImpl, browserFactory, harnessFactory, maxFileBytes, replay });
+      auth, authFile, forward, seedTransfer, signal, credentialEnv, checkpoint, fetchImpl, browserFactory, harnessFactory, maxFileBytes, replay, prompt });
     this.writer.sanitizer.add(Object.values(credentialEnv));
     this.probes = new ProbeRun({ rules: criteria, overrides: contract.rules || {} });
     this.spending = new Map(); this.usage = []; this.completed = new Map(); this.missingPersonas = []; this.cellMetrics = [];
@@ -115,7 +115,7 @@ export class QaBackend {
     }
     active.controller = new CellController({ browser: active.browser, writer: this.writer, cell, criteria: this.criteria, guidance: this.guidance,
       harness: this.harnessFactory({ kind: this.harness, auth: this.auth, authFile: this.authFile, model: this.model, sanitizer: this.writer.sanitizer }),
-      fixtures: active.tools, allowedOrigins: [...allowedOrigins], cellWallMs: this.budget.cell_wall_ms, modelProxy: active.proxy });
+      fixtures: active.tools, allowedOrigins: [...allowedOrigins], cellWallMs: this.budget.cell_wall_ms, modelProxy: active.proxy, prompt: this.prompt });
     signal.throwIfAborted();
     return active.controller;
   }

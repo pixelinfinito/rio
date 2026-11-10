@@ -10,6 +10,7 @@ import { attachStatements } from "./lineage";
 import { Store } from "./storage";
 import { reviewWall } from "./budget";
 import { checkProfileModels } from "./gateway";
+import { promptSettings } from "./prompt-config";
 
 /**
  * Validates a submission against its immutable snapshot and starts its review.
@@ -24,6 +25,8 @@ export async function createReview(
 ): Promise<string> {
   validateSubmission(value);
   checkProfileModels(env, value.profile);
+  // An unknown prompt-cache or layout switch rejects the review before it starts.
+  promptSettings(env);
   const snapshotRow = await env.DB.prepare(
     "SELECT object_key FROM snapshots WHERE id=? AND tenant=?",
   )

@@ -1,5 +1,6 @@
 /** Browser verification is separate from code hypothesis consolidation: QA keeps
  * its identity, cells, UX category and independent policy/cap. */
+import { partitionElement } from "./prompt";
 import { converse, type Ledger } from "./gateway";
 import { aggregate, evidenceLevel, type EvidenceContext } from "./quorum";
 import { dataBlock, filteredLines, readFile, type Tools } from "./tools";
@@ -294,7 +295,7 @@ function artifactMetadata({
 }
 const ARTIFACT_READ_HELP =
   "read_qa_artifact({id,offset?:0,limit?:6000}) pages captured text by character offset; use next_offset for the next page";
-export function qaBlindPrompt(pack: QaPack) {
+export function qaBlindPrompt(pack: QaPack, partition?: string) {
   const evidence = [...pack.artifacts.values()]
     .filter((row) => !["probe", "replay", "trace"].includes(row.kind))
     .map((row) => ({
@@ -306,7 +307,7 @@ export function qaBlindPrompt(pack: QaPack) {
           }
         : {}),
     }));
-  return `Independently state what, if anything, is wrong in the captured journey steps. Return {result:[{rule_id,journey,step,route}]}; [] is valid. For route, use the matching committed covers.routes pattern, or otherwise the pathname without query or fragment. Use ${ARTIFACT_READ_HELP}. Screenshots are attached in the same order as their artifact metadata. Missing before evidence: ${pack.beforeUnavailable}. Do not infer missing behavior from absent evidence.\n${dataBlock("journey", pack.journey)}\n${dataBlock("step evidence", evidence)}\n${qaCommonContext(pack)}`;
+  return `Independently state what, if anything, is wrong in the captured journey steps. Return {result:[{rule_id,journey,step,route}]}; [] is valid. For route, use the matching committed covers.routes pattern, or otherwise the pathname without query or fragment. Use ${ARTIFACT_READ_HELP}. Screenshots are attached in the same order as their artifact metadata. Missing before evidence: ${pack.beforeUnavailable}. Do not infer missing behavior from absent evidence.${partition ? `\n${partitionElement(partition)}` : ""}\n${dataBlock("journey", pack.journey)}\n${dataBlock("step evidence", evidence)}\n${qaCommonContext(pack)}`;
 }
 function qaCommonContext(pack: QaPack) {
   return `${dataBlock(
@@ -505,6 +506,8 @@ interface CommonOptions {
   call?: Parameters<typeof converse>[0]["call"];
   cancelled?: () => Promise<boolean>;
   pack: QaPack;
+  // The verifier model's partition and the review's hint classes (design D16).
+  prompt?: { partition?: string; cache?: { classes: string[]; key?: string } };
 }
 function voteStatus(error: unknown): Vote["status"] {
   const message = String(error);
@@ -538,6 +541,10 @@ function conversation(
     call: o.call,
     cancelled: o.cancelled,
     system: SYSTEM,
+    // The blind message, screenshots included, is the prefix every later turn
+    // of the voter rereads.
+    ...(o.prompt?.cache ? { cache: { ...o.prompt.cache, first: true } } : {}),
+    ...(o.prompt?.partition ? { redact: [o.prompt.partition] } : {}),
   };
 }
 function artifactTool(pack: QaPack, args: any) {
@@ -605,7 +612,7 @@ export async function verifyQaCandidate(
             const messages: ModelRequest["messages"] = [
               {
                 role: "user",
-                content: `Assess the ${version} snapshot.\n${qaBlindPrompt(o.pack)}`,
+                content: `Assess the ${version} snapshot.\n${qaBlindPrompt(o.pack, o.prompt?.partition)}`,
                 images: images(o.pack),
               },
             ];
@@ -842,7 +849,7 @@ export async function verifyQaRecommendation(
             const messages: ModelRequest["messages"] = [
               {
                 role: "user",
-                content: qaBlindPrompt(o.pack).replace(
+                content: qaBlindPrompt(o.pack, o.prompt?.partition).replace(
                   "what, if anything, is wrong",
                   "observed friction and goal completion",
                 ),

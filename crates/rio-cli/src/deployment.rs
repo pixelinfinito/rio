@@ -61,6 +61,65 @@ pub struct Deployment {
     /// means no council. Keys are never stored here.
     #[serde(skip_serializing_if = "Vec::is_empty")]
     pub council_vendors: Vec<rio_profile::VendorEntry>,
+    /// Prompt-cache hint classes and layout features: the Worker's
+    /// `PROMPT_CACHE` and `PROMPT_LAYOUT`. Unset settings leave them unset.
+    #[serde(skip_serializing_if = "PromptSettings::is_empty")]
+    pub prompt: PromptSettings,
+}
+/// `[deployment.prompt]`: comma lists, validated with the Worker's value sets.
+#[derive(Clone, Debug, Default, Deserialize, Serialize, PartialEq)]
+#[serde(default, deny_unknown_fields)]
+pub struct PromptSettings {
+    /// `off`, or hint classes from `anthropic`, `openai`, `openrouter`.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub cache: Option<String>,
+    /// Layout features from `agent-order`, `verifier-system`, `compaction`,
+    /// `council-order`, `qa-order`.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub layout: Option<String>,
+}
+pub const HINT_CLASSES: [&str; 3] = ["anthropic", "openai", "openrouter"];
+pub const LAYOUT_FEATURES: [&str; 5] = [
+    "agent-order",
+    "verifier-system",
+    "compaction",
+    "council-order",
+    "qa-order",
+];
+impl PromptSettings {
+    fn is_empty(&self) -> bool {
+        self.cache.is_none() && self.layout.is_none()
+    }
+    /// Rejects an unknown value, naming it, as the Worker would at submission.
+    pub fn validate(&self) -> Result<()> {
+        let values = |list: &str| -> Vec<String> {
+            list.split(',')
+                .map(str::trim)
+                .filter(|v| !v.is_empty())
+                .map(str::to_owned)
+                .collect()
+        };
+        if let Some(cache) = &self.cache {
+            let cache = values(cache);
+            if cache != ["off"] {
+                for value in &cache {
+                    ensure!(
+                        HINT_CLASSES.contains(&value.as_str()),
+                        "deployment.prompt.cache: unknown hint class {value} (use off or a comma list of {})",
+                        HINT_CLASSES.join(", ")
+                    );
+                }
+            }
+        }
+        for value in values(self.layout.as_deref().unwrap_or_default()) {
+            ensure!(
+                LAYOUT_FEATURES.contains(&value.as_str()),
+                "deployment.prompt.layout: unknown layout feature {value} (use a comma list of {})",
+                LAYOUT_FEATURES.join(", ")
+            );
+        }
+        Ok(())
+    }
 }
 impl Default for Deployment {
     fn default() -> Self {
@@ -78,6 +137,7 @@ impl Default for Deployment {
             github_app: false,
             github_org: None,
             council_vendors: Vec::new(),
+            prompt: PromptSettings::default(),
         }
     }
 }
@@ -135,6 +195,7 @@ impl Deployment {
             &self.model_prices,
             &self.dynamic_routes,
         )?;
+        self.prompt.validate()?;
         for entry in &self.council_vendors {
             entry
                 .validate()
@@ -803,6 +864,14 @@ fn metadata(
     bindings.push(json!({"type":"plain_text","name":"AI_GATEWAY_PROVIDERS","text":providers::runtime(&deployment.custom_providers)}));
     // Always written, so skipping the council step clears the allowlist.
     bindings.push(json!({"type":"plain_text","name":"COUNCIL_VENDORS","text":serde_json::to_string(&deployment.council_vendors).unwrap()}));
+    // Written only when configured; the Worker is uploaded whole, so removing a
+    // setting leaves the variable unset (no hints, no layout feature).
+    if let Some(cache) = &deployment.prompt.cache {
+        bindings.push(json!({"type":"plain_text","name":"PROMPT_CACHE","text":cache}));
+    }
+    if let Some(layout) = &deployment.prompt.layout {
+        bindings.push(json!({"type":"plain_text","name":"PROMPT_LAYOUT","text":layout}));
+    }
     if !deployment.model_prices.is_empty() || secrets.0.contains_key(providers::PRICES_MARKER) {
         bindings.push(json!({"type":"plain_text","name":"MODEL_PRICES","text":providers::prices(&deployment.model_prices)}));
     }
@@ -2001,6 +2070,8 @@ mod tests {
                 ModelPrice {
                     input: 1.25,
                     output: 10.0,
+                    cache_read: None,
+                    cache_write: None,
                 },
             )]
             .into_iter()
@@ -2237,6 +2308,75 @@ mod tests {
             .to_string();
         assert!(error.contains("AI_GATEWAY_PROVIDER_KEY_OTHER"), "{error}");
         assert!(!error.contains("gateway-secret-value"));
+    }
+    #[test]
+    fn prompt_settings_are_validated_before_account_access_and_uploaded() {
+        let dir = tempfile::tempdir().unwrap();
+        let from = |prompt: &str| {
+            let config = dir.path().join("prompt.toml");
+            std::fs::write(
+                &config,
+                format!("[deployment]\naccount_id='{}'\n{prompt}", "a".repeat(32)),
+            )
+            .unwrap();
+            choices(
+                &DeployArgs {
+                    from: Some(config),
+                    ..Default::default()
+                },
+                dir.path(),
+            )
+        };
+        let names = |deployment: &Deployment| -> Vec<(String, String)> {
+            metadata(deployment, "db", "queue", &Secrets::default(), None)["bindings"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .filter(|b| b["name"].as_str().unwrap().starts_with("PROMPT_"))
+                .map(|b| {
+                    (
+                        b["name"].as_str().unwrap().into(),
+                        b["text"].as_str().unwrap().into(),
+                    )
+                })
+                .collect()
+        };
+        let deployment =
+            from("[deployment.prompt]\ncache='anthropic,openai'\nlayout='verifier-system'\n")
+                .unwrap();
+        assert_eq!(
+            names(&deployment),
+            vec![
+                ("PROMPT_CACHE".into(), "anthropic,openai".into()),
+                ("PROMPT_LAYOUT".into(), "verifier-system".into())
+            ]
+        );
+        // Saved and replayed by `--from`.
+        save_choices(dir.path(), &deployment, None).unwrap();
+        let replayed = choices(
+            &DeployArgs {
+                from: Some(dir.path().join("config.toml")),
+                ..Default::default()
+            },
+            dir.path(),
+        )
+        .unwrap();
+        assert_eq!(replayed.prompt, deployment.prompt);
+        // Omitted settings leave both variables unset.
+        assert!(names(&from("").unwrap()).is_empty());
+        assert_eq!(
+            names(&from("[deployment.prompt]\ncache='off'\n").unwrap()).len(),
+            1
+        );
+        // Unknown values fail while choices are read, before any Cloudflare request.
+        for (prompt, value) in [
+            ("[deployment.prompt]\ncache='anthropic,gemini'\n", "gemini"),
+            ("[deployment.prompt]\nlayout='agent-order,fast'\n", "fast"),
+            ("[deployment.prompt]\ncache='off,openai'\n", "off"),
+        ] {
+            let error = from(prompt).err().unwrap().to_string();
+            assert!(error.contains(value), "{error}");
+        }
     }
     #[test]
     fn custom_provider_choices_replay_from_config_and_keys_come_only_from_secrets() {

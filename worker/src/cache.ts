@@ -99,8 +99,17 @@ const overlaps = (
   return node.line_start <= end && node.line_end >= start;
 };
 
+/**
+ * The generation prompt layout's version (design D5): bumped for the tenant
+ * partition line. With the enabled layout features it is part of the context
+ * hash, so entries made under another layout are not replayed. The partition
+ * value is not hashed: entries are already per tenant.
+ */
+export const PROMPT_LAYOUT_VERSION = 2;
 export interface ContextInputs {
   agent: string;
+  // Enabled layout features (`PROMPT_LAYOUT`), sorted.
+  layout?: string[];
   manifest_version: number | string;
   prompt: string;
   model: string;
@@ -193,6 +202,7 @@ export async function context(
     context_hash: hash(
       canonical({
         agent: inputs.agent,
+        layout: { version: PROMPT_LAYOUT_VERSION, features: inputs.layout ?? [] },
         manifest_version: inputs.manifest_version,
         prompt: hash(inputs.prompt),
         model: inputs.model,

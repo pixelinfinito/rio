@@ -30,6 +30,17 @@ import { readJobInput, treeOf, uploadSnapshot } from "./snapshots";
 import { jobInput } from "../src/archive";
 
 const runtime = env as Env;
+/** A pinned report as recorded with the active layout features (feature-on runs). */
+const withLayout = (report: any) => {
+  const features = (runtime.PROMPT_LAYOUT ?? "").split(",").filter(Boolean).sort();
+  return {
+    ...report,
+    agent_audit: {
+      ...report.agent_audit,
+      prompt_cache: { ...report.agent_audit.prompt_cache, layout_features: features },
+    },
+  };
+};
 const headers = {
   authorization: "Bearer test-owner-token-at-least-32-characters",
   "content-type": "application/json",
@@ -1319,7 +1330,7 @@ describe("end-to-end lineage", () => {
       ...pinned.checks.map((c: any) => c.findings),
     ])
       for (const f of list ?? []) delete f.history;
-    expect(pinned).toEqual(lineageRound4);
+    expect(pinned).toEqual(withLayout(lineageRound4));
     expect(() => validateReport(lineageRound4)).not.toThrow();
   }, 240000);
 });

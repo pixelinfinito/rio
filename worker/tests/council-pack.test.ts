@@ -93,4 +93,46 @@ describe("evidence pack", () => {
       expect(prompt).toContain("`repository_data` blocks");
     }
   });
+  describe("council-order", () => {
+    const { pack } = buildPack(packInput);
+    const { text } = render(pack, "execution", false);
+    const second = (order: boolean) =>
+      memberRequest(
+        "skeptic",
+        prompts.skeptic,
+        text,
+        2,
+        { others: [], experiments: [] },
+        undefined,
+        { partition: "p".repeat(32), order },
+      );
+    const first = (order: boolean) =>
+      memberRequest("skeptic", prompts.skeptic, text, 1, undefined, undefined, {
+        partition: "p".repeat(32),
+        order,
+      });
+    it("makes round 2 extend round 1 up to the end of the rendering", () => {
+      const one = first(true),
+        two = second(true);
+      expect(one.system).toBe(two.system);
+      const through = (r: typeof one) =>
+        r.content.slice(0, r.content.indexOf(text) + text.length);
+      expect(through(two)).toBe(through(one));
+      expect(two.content.startsWith(through(one))).toBe(true);
+      expect(one.parts!.content.find((p) => p.cache)?.text).toBe(text);
+    });
+    it("keeps the pre-change order after the partition while off", () => {
+      const one = first(false);
+      expect(one.content).toBe(
+        `<review_partition id="${"p".repeat(32)}"/>\n` +
+          memberRequest("skeptic", prompts.skeptic, text, 1).content,
+      );
+      // Round headers differ from the start, so off, round 2 shares nothing.
+      expect(second(false).content.indexOf(text)).toBeGreaterThan(0);
+    });
+    it("joins its parts to exactly the text the audit hashes", () => {
+      for (const r of [first(true), second(true), first(false), second(false)])
+        expect(r.parts!.content.map((p) => p.text).join("")).toBe(r.content);
+    });
+  });
 });

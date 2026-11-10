@@ -99,12 +99,16 @@ export class D1Ledger implements Ledger {
         "UPDATE reviews SET tokens_reserved=tokens_reserved-(SELECT reserved FROM usage WHERE id=?),tokens_used=tokens_used+? WHERE id=? AND EXISTS(SELECT 1 FROM usage WHERE id=? AND status='reserved')",
       ).bind(id, usage.input_tokens + usage.output_tokens, this.review, id),
       this.env.DB.prepare(
-        "UPDATE usage SET status='completed',input_tokens=?,output_tokens=?,cost_usd=?,model=? WHERE id=? AND review_id=? AND status='reserved'",
+        "UPDATE usage SET status='completed',input_tokens=?,output_tokens=?,cost_usd=?,model=?,cache_read_tokens=?,cache_write_tokens=?,usage_convention=?,cost_source=? WHERE id=? AND review_id=? AND status='reserved'",
       ).bind(
         usage.input_tokens,
         usage.output_tokens,
         usage.cost_usd,
         usage.model,
+        usage.cache_read_input_tokens ?? null,
+        usage.cache_write_input_tokens ?? null,
+        usage.usage_convention ?? null,
+        usage.cost_source ?? null,
         id,
         this.review,
       ),

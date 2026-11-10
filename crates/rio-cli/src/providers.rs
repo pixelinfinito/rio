@@ -67,15 +67,32 @@ pub struct CustomProvider {
     pub name: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub auth_header: Option<AuthHeader>,
+    /// `breakpoints`: the Anthropic-protocol endpoint accepts `cache_control`
+    /// blocks, so the Worker may send prompt-cache breakpoints to it.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub prompt_cache: Option<PromptCache>,
+}
+/// A custom provider's declared prompt-cache support.
+#[derive(Clone, Copy, Debug, Deserialize, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum PromptCache {
+    Breakpoints,
 }
 impl CustomProvider {
     /// `SLUG:PROTOCOL:BASE_URL`, for example `node:openai:https://api.example.com/v1`.
+    /// `PROTOCOL+breakpoints` declares prompt-cache breakpoint support, which
+    /// only the `anthropic` protocol accepts.
     pub fn parse(spec: &str) -> Result<Self> {
         let mut parts = spec.splitn(3, ':');
         let (Some(slug), Some(protocol), Some(base_url)) =
             (parts.next(), parts.next(), parts.next())
         else {
             bail!("--custom-provider expects SLUG:PROTOCOL:BASE_URL");
+        };
+        let (protocol, prompt_cache) = match protocol.split_once('+') {
+            Some((protocol, "breakpoints")) => (protocol, Some(PromptCache::Breakpoints)),
+            Some(_) => bail!("custom provider protocol suffix must be +breakpoints"),
+            None => (protocol, None),
         };
         let protocol = match protocol {
             "openai" => Protocol::Openai,
@@ -88,6 +105,7 @@ impl CustomProvider {
             base_url: base_url.into(),
             name: None,
             auth_header: None,
+            prompt_cache,
         };
         provider.normalize();
         provider.validate()?;
@@ -133,6 +151,10 @@ impl CustomProvider {
                 "custom provider {slug}: name must be 1–100 characters"
             );
         }
+        ensure!(
+            self.prompt_cache.is_none() || self.protocol == Protocol::Anthropic,
+            "custom provider {slug}: prompt_cache = \"breakpoints\" requires protocol anthropic"
+        );
         Ok(())
     }
     pub fn auth_header(&self) -> AuthHeader {
@@ -175,6 +197,12 @@ impl CustomProvider {
 pub struct ModelPrice {
     pub input: f64,
     pub output: f64,
+    /// Cache reads and (5-minute) cache writes; without them the Worker
+    /// records the cost of a call that used the cache as unknown.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub cache_read: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub cache_write: Option<f64>,
 }
 
 /// A gateway dynamic route; profiles call it as `dynamic/<name>`.
@@ -206,13 +234,17 @@ pub fn validate(
             model.contains('/') && !model.starts_with('/') && !model.ends_with('/'),
             "model_prices keys are full profile models such as custom-SLUG/MODEL"
         );
-        ensure!(
-            price.input.is_finite()
-                && price.output.is_finite()
-                && price.input >= 0.0
-                && price.output >= 0.0,
-            "model_prices for {model} must be non-negative USD per million tokens"
-        );
+        for (name, rate) in [
+            ("input", Some(price.input)),
+            ("output", Some(price.output)),
+            ("cache_read", price.cache_read),
+            ("cache_write", price.cache_write),
+        ] {
+            ensure!(
+                rate.is_none_or(|r| r.is_finite() && r >= 0.0),
+                "model_prices for {model}: {name} must be non-negative USD per million tokens"
+            );
+        }
     }
     let mut names = std::collections::BTreeSet::new();
     for route in routes {
@@ -233,7 +265,13 @@ pub fn validate(
 pub fn runtime(providers: &[CustomProvider]) -> String {
     let map: BTreeMap<_, _> = providers
         .iter()
-        .map(|p| (p.slug.clone(), json!({"protocol": p.protocol.label()})))
+        .map(|p| {
+            let mut value = json!({"protocol": p.protocol.label()});
+            if p.prompt_cache == Some(PromptCache::Breakpoints) {
+                value["prompt_cache"] = json!("breakpoints");
+            }
+            (p.slug.clone(), value)
+        })
         .collect();
     serde_json::to_string(&map).expect("provider map serializes")
 }
@@ -284,15 +322,16 @@ pub fn prompt_with(
         "Provider slug (lowercase letters, digits, hyphens)",
         Some("custom"),
     )?;
-    let protocol = match ask(
+    let (protocol, prompt_cache) = match ask(
         input,
-        "Protocol: 1. OpenAI-compatible  2. Anthropic Messages",
+        "Protocol: 1. OpenAI-compatible  2. Anthropic Messages  3. Anthropic Messages accepting prompt-cache breakpoints",
         Some("1"),
     )?
     .as_str()
     {
-        "1" | "openai" => Protocol::Openai,
-        "2" | "anthropic" => Protocol::Anthropic,
+        "1" | "openai" => (Protocol::Openai, None),
+        "2" | "anthropic" => (Protocol::Anthropic, None),
+        "3" => (Protocol::Anthropic, Some(PromptCache::Breakpoints)),
         _ => bail!("invalid protocol selection"),
     };
     let base_url = ask(
@@ -306,6 +345,7 @@ pub fn prompt_with(
         base_url,
         name: None,
         auth_header: None,
+        prompt_cache,
     };
     provider.normalize();
     provider.validate()?;
@@ -583,6 +623,35 @@ mod tests {
         assert_ne!(fingerprint, moved.fingerprint("key-1"));
     }
     #[test]
+    fn prompt_cache_breakpoints_are_declared_only_for_anthropic_providers() {
+        let p = CustomProvider::parse("node:anthropic+breakpoints:https://a.example/v1").unwrap();
+        assert_eq!(p.prompt_cache, Some(PromptCache::Breakpoints));
+        assert_eq!(
+            serde_json::from_str::<Value>(&runtime(std::slice::from_ref(&p))).unwrap(),
+            json!({"node":{"protocol":"anthropic","prompt_cache":"breakpoints"}})
+        );
+        let error = CustomProvider::parse("node:openai+breakpoints:https://a.example/v1")
+            .unwrap_err()
+            .to_string();
+        assert!(
+            error.contains("node") && error.contains("requires protocol anthropic"),
+            "{error}"
+        );
+        assert!(CustomProvider::parse("node:anthropic+always:https://a.example/v1").is_err());
+        // config.toml form, replayed by `rio deploy --from`.
+        let toml: CustomProvider = toml::from_str(
+            "slug = \"node\"\nprotocol = \"openai\"\nbase_url = \"https://a.example/v1\"\nprompt_cache = \"breakpoints\"\n",
+        )
+        .unwrap();
+        assert!(validate(&[toml], &BTreeMap::new(), &[]).is_err());
+        let mut input = io::Cursor::new("node\n3\nhttps://a.example/v1\nm\n\n");
+        let (provider, _, _) = prompt_with(&mut input, &|| Ok("k".into())).unwrap();
+        assert_eq!(
+            (provider.protocol, provider.prompt_cache),
+            (Protocol::Anthropic, Some(PromptCache::Breakpoints))
+        );
+    }
+    #[test]
     fn provider_specs_normalize_and_reject_endpoint_urls_and_bad_slugs() {
         let p = CustomProvider::parse("node-openai:openai:https://api.llm.example/v1/").unwrap();
         assert_eq!(p.base_url, "https://api.llm.example/v1");
@@ -631,7 +700,12 @@ mod tests {
     #[test]
     fn gateway_choices_validate_prices_routes_and_duplicates() {
         let p = CustomProvider::parse("node:openai:https://a.example/v1").unwrap();
-        let price = |input, output| ModelPrice { input, output };
+        let price = |input, output| ModelPrice {
+            input,
+            output,
+            cache_read: None,
+            cache_write: None,
+        };
         let route = |name: &str| DynamicRoute {
             name: name.into(),
             elements_file: "r.json".into(),
@@ -653,6 +727,39 @@ mod tests {
             .into_iter()
             .collect();
         assert!(validate(&[], &prices, &[]).is_err());
+        // Cache rates are optional and, when given, non-negative.
+        let cached = ModelPrice {
+            cache_read: Some(0.15),
+            cache_write: Some(3.75),
+            ..price(3.0, 15.0)
+        };
+        let prices: BTreeMap<_, _> = [("anthropic/claude-sonnet-5-5".to_owned(), cached)]
+            .into_iter()
+            .collect();
+        assert!(validate(&[], &prices, &[]).is_ok());
+        assert_eq!(
+            serde_json::from_str::<Value>(&super::prices(&prices)).unwrap(),
+            json!({"anthropic/claude-sonnet-5-5": {"input": 3.0, "output": 15.0, "cache_read": 0.15, "cache_write": 3.75}})
+        );
+        let old: BTreeMap<String, ModelPrice> =
+            serde_json::from_str(r#"{"custom-node/m":{"input":1,"output":2}}"#).unwrap();
+        assert_eq!(
+            super::prices(&old),
+            r#"{"custom-node/m":{"input":1.0,"output":2.0}}"#
+        );
+        for bad in [Some(-1.0), Some(f64::INFINITY)] {
+            let prices = [(
+                "custom-node/m".to_owned(),
+                ModelPrice {
+                    cache_read: bad,
+                    ..price(1.0, 1.0)
+                },
+            )]
+            .into_iter()
+            .collect();
+            let error = validate(&[], &prices, &[]).unwrap_err().to_string();
+            assert!(error.contains("cache_read"), "{error}");
+        }
         assert!(validate(&[], &BTreeMap::new(), &[route("a b")]).is_err());
         assert!(validate(&[], &BTreeMap::new(), &[route("a"), route("a")]).is_err());
     }

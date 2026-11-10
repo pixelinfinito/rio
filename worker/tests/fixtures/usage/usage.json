@@ -1,0 +1,114 @@
+{
+  "sources": {
+    "anthropic": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching (usage: input_tokens excludes cache_read_input_tokens and cache_creation_input_tokens), checked 2026-11-09",
+    "openai": "https://platform.openai.com/docs/guides/prompt-caching (usage.prompt_tokens_details.cached_tokens and cache_write_tokens, both inside prompt_tokens), checked 2026-11-09",
+    "openrouter": "https://openrouter.ai/docs/features/prompt-caching and https://openrouter.ai/docs/api-reference/overview (usage.prompt_tokens_details.cached_tokens, cache_write_tokens, cache_discount, cost), checked 2026-11-09"
+  },
+  "cases": [
+    {
+      "name": "anthropic none",
+      "source": "anthropic",
+      "model": "anthropic/claude-test",
+      "usage": { "input_tokens": 1200, "output_tokens": 300 },
+      "expected": { "input_tokens": 1200, "cache_read_input_tokens": null, "cache_write_input_tokens": null, "output_tokens": 300, "usage_convention": "verified" }
+    },
+    {
+      "name": "anthropic read",
+      "source": "anthropic",
+      "model": "anthropic/claude-test",
+      "usage": { "input_tokens": 50, "cache_read_input_tokens": 100000, "cache_creation_input_tokens": 0, "output_tokens": 300 },
+      "expected": { "input_tokens": 100050, "cache_read_input_tokens": 100000, "cache_write_input_tokens": 0, "output_tokens": 300, "usage_convention": "verified" }
+    },
+    {
+      "name": "anthropic write",
+      "source": "anthropic",
+      "model": "anthropic/claude-test",
+      "usage": { "input_tokens": 20, "cache_read_input_tokens": 0, "cache_creation_input_tokens": 9000, "cache_creation": { "ephemeral_5m_input_tokens": 9000, "ephemeral_1h_input_tokens": 0 }, "output_tokens": 40 },
+      "expected": { "input_tokens": 9020, "cache_read_input_tokens": 0, "cache_write_input_tokens": 9000, "output_tokens": 40, "usage_convention": "verified" }
+    },
+    {
+      "name": "anthropic both",
+      "source": "anthropic",
+      "model": "anthropic/claude-test",
+      "usage": { "input_tokens": 30, "cache_read_input_tokens": 8000, "cache_creation_input_tokens": 2000, "output_tokens": 60 },
+      "expected": { "input_tokens": 10030, "cache_read_input_tokens": 8000, "cache_write_input_tokens": 2000, "output_tokens": 60, "usage_convention": "verified" }
+    },
+    {
+      "name": "anthropic negative write",
+      "source": "anthropic",
+      "model": "anthropic/claude-test",
+      "usage": { "input_tokens": 30, "cache_read_input_tokens": 0, "cache_creation_input_tokens": -3, "output_tokens": 60 },
+      "error": "provider reported invalid cache usage"
+    },
+    {
+      "name": "openai none",
+      "source": "openai",
+      "model": "openai/gpt-test",
+      "usage": { "prompt_tokens": 900, "completion_tokens": 100 },
+      "expected": { "input_tokens": 900, "cache_read_input_tokens": null, "cache_write_input_tokens": null, "output_tokens": 100, "usage_convention": "verified" }
+    },
+    {
+      "name": "openai read",
+      "source": "openai",
+      "model": "openai/gpt-test",
+      "usage": { "prompt_tokens": 12000, "completion_tokens": 500, "prompt_tokens_details": { "cached_tokens": 10240 } },
+      "expected": { "input_tokens": 12000, "cache_read_input_tokens": 10240, "cache_write_input_tokens": null, "output_tokens": 500, "usage_convention": "verified" }
+    },
+    {
+      "name": "openai write",
+      "source": "openai",
+      "model": "openai/gpt-test",
+      "usage": { "prompt_tokens": 5000, "completion_tokens": 80, "prompt_tokens_details": { "cached_tokens": 0, "cache_write_tokens": 4096 } },
+      "expected": { "input_tokens": 5000, "cache_read_input_tokens": 0, "cache_write_input_tokens": 4096, "output_tokens": 80, "usage_convention": "verified" }
+    },
+    {
+      "name": "openai both",
+      "source": "openai",
+      "model": "openai/gpt-test",
+      "usage": { "prompt_tokens": 9000, "completion_tokens": 80, "prompt_tokens_details": { "cached_tokens": 6000, "cache_write_tokens": 2048 } },
+      "expected": { "input_tokens": 9000, "cache_read_input_tokens": 6000, "cache_write_input_tokens": 2048, "output_tokens": 80, "usage_convention": "verified" }
+    },
+    {
+      "name": "openai reads exceed prompt tokens",
+      "source": "openai",
+      "model": "openai/gpt-test",
+      "usage": { "prompt_tokens": 100, "completion_tokens": 40, "prompt_tokens_details": { "cached_tokens": 500 } },
+      "error": "provider reported invalid cache usage"
+    },
+    {
+      "name": "openai negative read",
+      "source": "openai",
+      "model": "openai/gpt-test",
+      "usage": { "prompt_tokens": 100, "completion_tokens": 40, "prompt_tokens_details": { "cached_tokens": -1 } },
+      "error": "provider reported invalid cache usage"
+    },
+    {
+      "name": "openrouter non-anthropic read",
+      "source": "openrouter",
+      "model": "openrouter/deepseek/deepseek-test",
+      "usage": { "prompt_tokens": 4000, "completion_tokens": 200, "prompt_tokens_details": { "cached_tokens": 3500 }, "cost": 0.0012 },
+      "expected": { "input_tokens": 4000, "cache_read_input_tokens": 3500, "cache_write_input_tokens": null, "output_tokens": 200, "usage_convention": "unverified" }
+    },
+    {
+      "name": "openrouter anthropic write",
+      "source": "openrouter",
+      "model": "openrouter/anthropic/claude-test",
+      "usage": { "prompt_tokens": 9020, "completion_tokens": 40, "prompt_tokens_details": { "cached_tokens": 0, "cache_write_tokens": 9000 }, "cache_discount": -0.0084, "cost": 0.0123 },
+      "expected": { "input_tokens": 9020, "cache_read_input_tokens": 0, "cache_write_input_tokens": 9000, "output_tokens": 40, "usage_convention": "unverified" }
+    },
+    {
+      "name": "openrouter writes beyond prompt tokens",
+      "source": "openrouter",
+      "model": "openrouter/anthropic/claude-test",
+      "usage": { "prompt_tokens": 1000, "completion_tokens": 40, "prompt_tokens_details": { "cached_tokens": 800, "cache_write_tokens": 600 } },
+      "expected": { "input_tokens": 1000, "cache_read_input_tokens": 800, "cache_write_input_tokens": 600, "output_tokens": 40, "usage_convention": "unverified" }
+    },
+    {
+      "name": "openrouter negative read",
+      "source": "openrouter",
+      "model": "openrouter/deepseek/deepseek-test",
+      "usage": { "prompt_tokens": 1000, "completion_tokens": 40, "prompt_tokens_details": { "cached_tokens": -5 } },
+      "expected": { "input_tokens": 1000, "cache_read_input_tokens": null, "cache_write_input_tokens": null, "output_tokens": 40, "usage_convention": "invalid" }
+    }
+  ]
+}

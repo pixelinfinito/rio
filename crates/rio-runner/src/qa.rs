@@ -384,7 +384,7 @@ async fn run_job(
     budget["wall_ms"] = json!(remaining().as_millis() as u64);
     let endpoint = base.as_str().trim_end_matches('/');
     let run = json!({"version":1,"snapshot_version":version,"review_id":job["review_id"],"run_id":qa["run_id"],"replay":qa.get("replay"),
-        "harness":qa["harness"],"auth":"gateway","model":qa["model"],"budget":budget,
+        "harness":qa["harness"],"auth":"gateway","model":qa["model"],"budget":budget,"prompt":qa.get("prompt"),
         "storage":{"kind":"hosted","endpoint":endpoint,"tenant":claim["qa"]["tenant"],"capability":claim["qa"]["capability"]},
         "gateway":{"url":format!("{endpoint}/v1/qa/model"),"capability":claim["qa"]["capability"]}});
     // The operator supplies a separate QA-only credential map. Never expose the

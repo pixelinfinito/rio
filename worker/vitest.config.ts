@@ -29,6 +29,10 @@ export default defineConfig({
         r2Buckets: ["ARTIFACTS"],
         bindings: {
           RIO_VERSION: "0.2.0",
+          // Feature-on runs of the whole suite (tasks 3.2, 4.2, 9.1):
+          // `PROMPT_LAYOUT=verifier-system,agent-order npm test`.
+          PROMPT_LAYOUT: process.env.PROMPT_LAYOUT ?? "",
+          PROMPT_CACHE: process.env.PROMPT_CACHE ?? "",
           OPENAI_API_KEY: "recorded-key",
           ANTHROPIC_API_KEY: "recorded-key",
           OPENROUTER_API_KEY: "recorded-key",

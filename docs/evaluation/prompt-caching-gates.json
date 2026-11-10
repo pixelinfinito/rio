@@ -1,0 +1,9 @@
+{
+  "records": [],
+  "pending": [
+    {
+      "gate": "partition",
+      "note": "The tenant partition line is model-visible and always on. Its gate (all features off against 2ac7b22) needs a paid eval run; until a passed record replaces this entry, the commit adding the partition must not merge to main."
+    }
+  ]
+}
