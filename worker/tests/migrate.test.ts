@@ -181,6 +181,8 @@ it("upgrades a v0.2 database and converts draft feedback reasons", async () => {
     "installations",
     "deliveries",
     "publications",
+    "publication_leases",
+    "pull_requests",
     "finding_history",
     "suppressions",
     "agent_cache",

@@ -16,6 +16,7 @@ import { createReview } from "./reviews";
 import { createPrepareJob } from "./jobs";
 import { ingestTarballs } from "./tarball";
 import { Store } from "./storage";
+import { announceReview, knownPolicy, settleAnnouncement } from "./announce";
 
 // Pull request reviews (git-host-integration): the review-request consumer,
 // fork detection and metadata, eligibility, and the hand-off from hosted
@@ -73,6 +74,8 @@ export interface PullRow {
   author_login: string | null;
   author_type: "user" | "bot" | null;
   agent_json: string | null;
+  publish_policy?: "never" | "ask" | "auto" | null;
+  announced_check?: number | null;
   consent: number;
   escalated: number;
   reset: number;
@@ -181,6 +184,7 @@ async function fail(env: Env, review: string, state: string, reason: string) {
     ).bind(reason, review),
   ]);
   await new Store(env).event(review, "review:error", { error: reason });
+  await settleAnnouncement(env, review, "Review did not run", reason);
 }
 
 /**
@@ -360,6 +364,10 @@ export async function handleReviewRequest(
         await fail(env, review, "not_prepared", FORK_REQUIRES_SELF_HOSTED);
         return;
       }
+      // Announced now when this repository's policy is already known;
+      // otherwise the review announces itself once it resolves its profile.
+      const known = await knownPolicy(env, message.tenant, message.repository);
+      if (known) await announceReview(env, review, known);
       const spec = {
         repository: message.repository,
         clone_url: String(

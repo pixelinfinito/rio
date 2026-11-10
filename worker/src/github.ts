@@ -23,6 +23,13 @@ export const PUBLISH_PERMISSIONS: Permissions = {
   pull_requests: "write",
   checks: "write",
 };
+// GitHub refuses resolveReviewThread to an installation token without
+// contents: write, so only the thread (un)resolve call holds it, on a token of
+// its own that is revoked as soon as the mutation returns.
+export const RESOLVE_PERMISSIONS: Permissions = {
+  pull_requests: "write",
+  contents: "write",
+};
 export const COMMAND_PERMISSIONS: Permissions = {
   pull_requests: "write",
   metadata: "read",
@@ -217,11 +224,13 @@ export class InstallationToken {
       typeof data?.token === "string" && data.token.length >= 20,
       "GitHub returned no installation token",
     );
-    // The token may grant less than requested, never more.
+    // The token may grant less than requested, never more; GitHub adds
+    // metadata: read to every installation token whether requested or not.
     for (const [name, access] of Object.entries(data.permissions ?? {}))
       invariant(
         permissions[name] === access ||
-          (permissions[name] === "write" && access === "read"),
+          (permissions[name] === "write" && access === "read") ||
+          (name === "metadata" && access === "read"),
         `GitHub granted unrequested permission ${name}`,
       );
     const repositories: any[] = data.repositories ?? [];
@@ -292,7 +301,13 @@ export class InstallationToken {
   }
   async graphql(query: string, variables: Record<string, unknown>) {
     const data = await this.request("POST", "/graphql", { query, variables });
-    invariant(!data?.errors?.length, "GitHub GraphQL request failed");
+    const error = data?.errors?.[0];
+    invariant(
+      !data?.errors?.length,
+      `GitHub GraphQL request failed: ${String(error?.type ?? "")} ${String(error?.message ?? "")}`
+        .trim()
+        .slice(0, 200),
+    );
     return data?.data;
   }
   async revoke(): Promise<void> {
