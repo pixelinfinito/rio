@@ -172,9 +172,23 @@ export function validateSubmission(value: any): asserts value is Submission {
     modules,
     engine_version,
     posture_policy,
+    qa_deadlines,
+    qa_standalone,
     council_members,
     ...source
   } = value.profile ?? {};
+  invariant(
+    qa_standalone === undefined || typeof qa_standalone === "boolean",
+    "invalid standalone QA selection",
+  );
+  if (qa_standalone)
+    invariant(
+      value.profile.steps?.some(
+        (step: any) =>
+          step.uses?.startsWith("rio/qa@") && step.with?.enabled === true,
+      ),
+      "standalone QA requires an enabled QA step",
+    );
   invariant(
     profileValidator(source),
     `invalid profile: ${ajv.errorsText(profileValidator.errors)}`,
@@ -213,7 +227,8 @@ export function validateSubmission(value: any): asserts value is Submission {
   for (const step of value.profile.steps)
     if (
       (step.uses.startsWith("rio/agents@") ||
-        step.uses.startsWith("rio/security@")) &&
+        step.uses.startsWith("rio/security@") ||
+        step.uses.startsWith("rio/qa@")) &&
       step.with.enabled !== false
     )
       invariant(

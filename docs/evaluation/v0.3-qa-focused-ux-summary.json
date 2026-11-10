@@ -1,0 +1,341 @@
+{
+  "scope": "Supplementary Codex mobile/light journeys only; not a full matrix acceptance or hosted verification.",
+  "model": "custom-node-openai/gpt-6.1-sol",
+  "ux_metrics": {
+    "recommendations": 2,
+    "human_labeled": 2,
+    "pending_human_labels": 0,
+    "mean_guidance_adherence": 2.0,
+    "mean_relevance": 2.0,
+    "mean_actionability": 2.0,
+    "unsupported_benefit_claims": 0
+  },
+  "cases": [
+    {
+      "case": "duplicate-address",
+      "run_id": "01M707GME4N8AJRKV5Y6M689DJ",
+      "report_status": "complete",
+      "completed_cells": 2,
+      "recommendation_ids": [],
+      "clean_noise_count": null,
+      "recommendation_review": [],
+      "cost": {
+        "cells": [
+          {
+            "id": "76431441f6b7b167c7a3b98a7acab8c4d457774326c52d3bf019cc7117187e0f",
+            "version": "head",
+            "scope": "browser_chain_cell",
+            "chain": [
+              "add-to-cart",
+              "checkout"
+            ],
+            "journeys": [
+              "add-to-cart",
+              "checkout"
+            ],
+            "cell": {
+              "color_scheme": "light",
+              "viewport": "mobile"
+            },
+            "wall_time_ms": 258526,
+            "tokens": 235278,
+            "usage_estimated": false,
+            "usd": null
+          }
+        ],
+        "cell_metrics_available": true,
+        "tokens": 235278,
+        "usd": null,
+        "wall_time_ms": 385349,
+        "command_wall_ms": null,
+        "average_usd_per_completed_cell": null,
+        "average_wall_ms_per_completed_cell": 192674.5
+      }
+    },
+    {
+      "case": "ambiguous-next",
+      "run_id": "01M707WHBFE4B0H5WSDK1AESSY",
+      "report_status": "complete",
+      "completed_cells": 2,
+      "recommendation_ids": [
+        "6dc1634162bfa78d57aefffe7d6cbf201b3db6ea589e37989aa7c91ea86ee516"
+      ],
+      "clean_noise_count": null,
+      "recommendation_review": [
+        {
+          "id": "6dc1634162bfa78d57aefffe7d6cbf201b3db6ea589e37989aa7c91ea86ee516",
+          "rule_id": "ux/task-clarity",
+          "verification_status": "unverified",
+          "has_evidence": true,
+          "has_basis": true,
+          "observed_friction": "Continue immediately completes the purchase rather than opening another review stage; surrounding payment copy mitigates ambiguity.",
+          "proposed_improvement": "Label final submit Pay $24.00 or Place order to match its immediate effect.",
+          "expected_benefit": "Expected to clarify the payment commitment before activation.",
+          "trade_offs": [
+            "Longer label needs more space.",
+            "Surrounding copy already explains payment."
+          ],
+          "guidance_adherence": 2,
+          "relevance": 2,
+          "actionability": 2,
+          "unsupported_benefit_claim": false,
+          "reviewer": "Project owner, conversation on 2026-11-09",
+          "evidence_notes": "Reviewed docs/evaluation/v0.3-qa-ux-review.md. Initial response: 2, 2, 2, yes. The owner then clarified: the stated bennefit is legit. Final assessment retains scores 2/2/2 and records no false proven-benefit claim. This assesses wording and grounding, not measured user benefit."
+        }
+      ],
+      "cost": {
+        "cells": [
+          {
+            "id": "76431441f6b7b167c7a3b98a7acab8c4d457774326c52d3bf019cc7117187e0f",
+            "version": "head",
+            "scope": "browser_chain_cell",
+            "chain": [
+              "add-to-cart",
+              "checkout"
+            ],
+            "journeys": [
+              "add-to-cart",
+              "checkout"
+            ],
+            "cell": {
+              "color_scheme": "light",
+              "viewport": "mobile"
+            },
+            "wall_time_ms": 262634,
+            "tokens": 219835,
+            "usage_estimated": false,
+            "usd": null
+          }
+        ],
+        "cell_metrics_available": true,
+        "tokens": 219835,
+        "usd": null,
+        "wall_time_ms": 410321,
+        "command_wall_ms": null,
+        "average_usd_per_completed_cell": null,
+        "average_wall_ms_per_completed_cell": 205160.5
+      }
+    },
+    {
+      "case": "lost-input",
+      "run_id": "01M70A6JW146GB8W5VZT2NRTNK",
+      "report_status": "complete",
+      "completed_cells": 1,
+      "recommendation_ids": [],
+      "clean_noise_count": null,
+      "recommendation_review": [],
+      "cost": {
+        "cells": [
+          {
+            "id": "1fab1096d2ef4dd3727dc0695a86c5ba1a4f90fc9c8b1b0741ea3e65420ed73f",
+            "version": "head",
+            "scope": "browser_chain_cell",
+            "chain": [
+              "payment-recovery"
+            ],
+            "journeys": [
+              "payment-recovery"
+            ],
+            "cell": {
+              "color_scheme": "light",
+              "viewport": "mobile"
+            },
+            "wall_time_ms": 198592,
+            "tokens": 213751,
+            "usage_estimated": false,
+            "usd": null
+          }
+        ],
+        "cell_metrics_available": true,
+        "tokens": 213751,
+        "usd": null,
+        "wall_time_ms": 321467,
+        "command_wall_ms": null,
+        "average_usd_per_completed_cell": null,
+        "average_wall_ms_per_completed_cell": 321467.0
+      }
+    },
+    {
+      "case": "missing-cancel",
+      "run_id": "01M70AGJSNSNGREMR3PP9M36MK",
+      "report_status": "complete",
+      "completed_cells": 1,
+      "recommendation_ids": [
+        "440a1ecfc60c1b5600eb951abf49b937e8de17e5f9dda0acc7f7617b09e4125b"
+      ],
+      "clean_noise_count": null,
+      "recommendation_review": [
+        {
+          "id": "440a1ecfc60c1b5600eb951abf49b937e8de17e5f9dda0acc7f7617b09e4125b",
+          "rule_id": "ux/user-control",
+          "verification_status": "unverified",
+          "has_evidence": true,
+          "has_basis": true,
+          "observed_friction": "Alert says 'Try again or cancel', but the visible actions are Pay $24.00 and the header Cart (1) link; no local cancel action identifies the return-to-cart path. No inability to cancel was demonstrated.",
+          "proposed_improvement": "Add a 'Back to cart' link beside the decline recovery message, keeping the existing cart and address intact.",
+          "expected_benefit": "May reduce effort to identify the cancellation path after a decline.",
+          "trade_offs": [
+            "Adds another control to the mobile checkout; the header cart link already provides navigation."
+          ],
+          "guidance_adherence": 2,
+          "relevance": 2,
+          "actionability": 2,
+          "unsupported_benefit_claim": false,
+          "reviewer": "Project owner, conversation on 2026-11-09",
+          "evidence_notes": "Reviewed docs/evaluation/v0.3-qa-cancel-review.md. Response: 2, no; recorded as 2 for each requested quality dimension and no false proven-benefit claim. This assesses the recommendation, not measured user benefit."
+        }
+      ],
+      "cost": {
+        "cells": [
+          {
+            "id": "1fab1096d2ef4dd3727dc0695a86c5ba1a4f90fc9c8b1b0741ea3e65420ed73f",
+            "version": "head",
+            "scope": "browser_chain_cell",
+            "chain": [
+              "payment-recovery"
+            ],
+            "journeys": [
+              "payment-recovery"
+            ],
+            "cell": {
+              "color_scheme": "light",
+              "viewport": "mobile"
+            },
+            "wall_time_ms": 184012,
+            "tokens": 196409,
+            "usage_estimated": false,
+            "usd": null
+          }
+        ],
+        "cell_metrics_available": true,
+        "tokens": 196409,
+        "usd": null,
+        "wall_time_ms": 287375,
+        "command_wall_ms": null,
+        "average_usd_per_completed_cell": null,
+        "average_wall_ms_per_completed_cell": 287375.0
+      }
+    },
+    {
+      "case": "keyboard-barrier",
+      "run_id": "01M70ASH7MKQDM28RKXXWKGEX6",
+      "report_status": "complete",
+      "completed_cells": 1,
+      "recommendation_ids": [],
+      "clean_noise_count": null,
+      "recommendation_review": [],
+      "cost": {
+        "cells": [
+          {
+            "id": "467a5d366b9f287f828fe44f7df91e6d62c474d0e198938af87d4382247bb9a1",
+            "version": "head",
+            "scope": "browser_chain_cell",
+            "chain": [
+              "keyboard-shopping"
+            ],
+            "journeys": [
+              "keyboard-shopping"
+            ],
+            "cell": {
+              "color_scheme": "light",
+              "viewport": "mobile"
+            },
+            "wall_time_ms": 156668,
+            "tokens": 238397,
+            "usage_estimated": false,
+            "usd": null
+          }
+        ],
+        "cell_metrics_available": true,
+        "tokens": 238397,
+        "usd": null,
+        "wall_time_ms": 214165,
+        "command_wall_ms": null,
+        "average_usd_per_completed_cell": null,
+        "average_wall_ms_per_completed_cell": 214165.0
+      }
+    },
+    {
+      "case": "intentional-brand",
+      "run_id": "01M7099XXKHVFKHCV7NGCJW3TZ",
+      "report_status": "complete",
+      "completed_cells": 2,
+      "recommendation_ids": [],
+      "clean_noise_count": 7,
+      "recommendation_review": [],
+      "cost": {
+        "cells": [
+          {
+            "id": "76431441f6b7b167c7a3b98a7acab8c4d457774326c52d3bf019cc7117187e0f",
+            "version": "head",
+            "scope": "browser_chain_cell",
+            "chain": [
+              "add-to-cart",
+              "checkout"
+            ],
+            "journeys": [
+              "add-to-cart",
+              "checkout"
+            ],
+            "cell": {
+              "color_scheme": "light",
+              "viewport": "mobile"
+            },
+            "wall_time_ms": 204331,
+            "tokens": 171735,
+            "usage_estimated": false,
+            "usd": null
+          }
+        ],
+        "cell_metrics_available": true,
+        "tokens": 171735,
+        "usd": null,
+        "wall_time_ms": 447802,
+        "command_wall_ms": null,
+        "average_usd_per_completed_cell": null,
+        "average_wall_ms_per_completed_cell": 223901.0
+      }
+    },
+    {
+      "case": "clean",
+      "run_id": "01M709R88WPREFWAXC6WS67FFR",
+      "report_status": "complete",
+      "completed_cells": 2,
+      "recommendation_ids": [],
+      "clean_noise_count": 7,
+      "recommendation_review": [],
+      "cost": {
+        "cells": [
+          {
+            "id": "76431441f6b7b167c7a3b98a7acab8c4d457774326c52d3bf019cc7117187e0f",
+            "version": "head",
+            "scope": "browser_chain_cell",
+            "chain": [
+              "add-to-cart",
+              "checkout"
+            ],
+            "journeys": [
+              "add-to-cart",
+              "checkout"
+            ],
+            "cell": {
+              "color_scheme": "light",
+              "viewport": "mobile"
+            },
+            "wall_time_ms": 248487,
+            "tokens": 176073,
+            "usage_estimated": false,
+            "usd": null
+          }
+        ],
+        "cell_metrics_available": true,
+        "tokens": 176073,
+        "usd": null,
+        "wall_time_ms": 372647,
+        "command_wall_ms": null,
+        "average_usd_per_completed_cell": null,
+        "average_wall_ms_per_completed_cell": 186323.5
+      }
+    }
+  ]
+}

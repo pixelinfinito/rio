@@ -10,6 +10,7 @@ import { Store } from "./storage";
 import { canonical, hash, invariant } from "./validation";
 import { needs } from "./archive";
 import { redact } from "./redaction";
+import { finishQaRun } from "./qa-jobs";
 export async function createJob(
   env: Env,
   review: string,
@@ -236,6 +237,7 @@ export async function finishJob(
   job: string,
   attempt: number,
   result: ExecutionResult,
+  controlToken?: string,
 ) {
   const store = new Store(env),
     row = await env.DB.prepare(
@@ -246,6 +248,13 @@ export async function finishJob(
   invariant(row, "unknown job attempt");
   const payload = await store.get<Execution>(row.payload_key);
   validateResult(result, payload);
+  // The runner may have been replaced while its result body or R2 write was
+  // in flight. Fence publication, not only the HTTP authentication step.
+  const fence =
+    payload.kind === "qa" && controlToken !== undefined
+      ? " AND EXISTS(SELECT 1 FROM qa_runs q WHERE q.job_id=jobs.id AND q.attempt=jobs.attempt AND q.control_hash=? AND q.control_expires_at>?)"
+      : "";
+  const fenceArgs = () => (fence ? [hash(controlToken!), Date.now()] : []);
   result.command = payload.command;
   result.kind = payload.kind;
   // Concurrent completions never overwrite the artifact selected by the D1 compare-and-set.
@@ -253,17 +262,29 @@ export async function finishJob(
   if (row.status !== "completed") {
     await store.put(key, result);
     await env.DB.prepare(
-      "UPDATE jobs SET status='completed',result_key=?,completed_at=? WHERE id=? AND attempt=? AND status IN ('pending','leased')",
+      "UPDATE jobs SET status='completed',result_key=?,completed_at=? WHERE id=? AND attempt=? AND status IN ('pending','leased')" +
+        fence,
     )
-      .bind(key, Date.now(), job, attempt)
+      .bind(key, Date.now(), job, attempt, ...fenceArgs())
       .run();
   }
   const published = await env.DB.prepare(
-    "SELECT result_key FROM jobs WHERE id=? AND review_id=? AND attempt=?",
+    "SELECT result_key FROM jobs WHERE id=? AND review_id=? AND attempt=?" +
+      fence,
   )
-    .bind(job, review, attempt)
+    .bind(job, review, attempt, ...fenceArgs())
     .first<{ result_key: string }>();
   invariant(published?.result_key === key, "conflicting runner completion");
+  await finishQaRun(
+    env,
+    payload,
+    key,
+    result.exit_code !== 0 ||
+      result.timed_out ||
+      (payload.qa?.replay
+        ? !["recurred", "not_recurred"].includes(result.artifact?.outcome)
+        : result.artifact?.outcome !== "complete"),
+  );
   // A prepare job hands its review over (Sandbox) or reports why it could not.
   if (payload.kind === "prepare")
     return finishPrepare(env, review, result, payload.snapshot_id);

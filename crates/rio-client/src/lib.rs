@@ -246,6 +246,15 @@ impl Client {
     pub async fn findings(&self, query: &[(&str, &str)]) -> Result<Value> {
         self.get_query("v1/findings", query).await
     }
+    /// Delete hosted browser evidence for one review and revoke its links.
+    pub async fn prune_qa_evidence(&self, review: &str) -> Result<Value> {
+        self.request(
+            reqwest::Method::DELETE,
+            &format!("v1/qa/reviews/{}/evidence", path_id(review)?),
+            None,
+        )
+        .await
+    }
     /// Suppression proposals (`GET /v1/suppressions`).
     pub async fn suppressions(&self, query: &[(&str, &str)]) -> Result<Value> {
         self.get_query("v1/suppressions", query).await

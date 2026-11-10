@@ -53,6 +53,133 @@
       }
     }
   },
+  "rio/qa@0.1.0": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "enabled": { "type": "boolean", "default": false },
+      "mode": { "enum": ["changed", "full"], "default": "changed" },
+      "harness": { "enum": ["codex", "pi"], "default": "codex" },
+      "baseline": { "type": "boolean", "default": false },
+      "max_journeys": { "type": "integer", "minimum": 1, "default": 12 },
+      "max_defects": { "type": "integer", "minimum": 1, "default": 15 },
+      "max_recommendations": { "type": "integer", "minimum": 0, "default": 5 },
+      "viewports": {
+        "type": "array",
+        "items": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+        "minItems": 1,
+        "uniqueItems": true,
+        "contains": { "not": { "enum": ["desktop", "wide"] } }
+      },
+      "rules": {
+        "type": "object",
+        "properties": {
+          "disable": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 },
+            "minItems": 0,
+            "uniqueItems": true
+          },
+          "adopt": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 },
+            "minItems": 0,
+            "uniqueItems": true
+          },
+          "add": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^project/[a-z][a-z0-9-]*$"
+                },
+                "category": {
+                  "enum": ["functional", "ux", "style", "accessibility"]
+                },
+                "severity": { "enum": ["error", "warning", "info"] },
+                "description": { "type": "string", "minLength": 1 }
+              },
+              "required": ["id", "category", "severity", "description"],
+              "additionalProperties": false
+            },
+            "minItems": 0
+          },
+          "ignore_console": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 },
+            "minItems": 0,
+            "uniqueItems": true
+          }
+        },
+        "required": [],
+        "additionalProperties": false,
+        "default": {}
+      },
+      "sandbox": { "enum": ["deny", "allow"], "default": "deny" },
+      "fail_on": {
+        "type": "object",
+        "properties": {
+          "evidence": {
+            "enum": ["reproduced", "static_proven", "plausible", "refuted"]
+          },
+          "categories": {
+            "type": "array",
+            "items": { "enum": ["defect", "risk", "security", "ux"] },
+            "uniqueItems": true
+          },
+          "states": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "new",
+                "worsened",
+                "pre-existing",
+                "fixed",
+                "unclassified"
+              ]
+            },
+            "uniqueItems": true
+          },
+          "rules": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "incomplete": { "type": "boolean" },
+          "required_checks": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "typecheck",
+                "lint",
+                "secrets",
+                "coverage",
+                "dependencies"
+              ]
+            },
+            "uniqueItems": true
+          }
+        },
+        "required": [],
+        "additionalProperties": false,
+        "default": {
+          "evidence": "plausible",
+          "categories": ["ux"],
+          "states": ["new", "worsened"],
+          "rules": [],
+          "incomplete": true,
+          "required_checks": []
+        }
+      },
+      "journeys": {
+        "type": "array",
+        "items": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+        "uniqueItems": true,
+        "minItems": 1
+      }
+    }
+  },
   "rio/report@0.1.0": {
     "type": "object",
     "additionalProperties": false,

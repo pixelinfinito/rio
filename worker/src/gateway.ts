@@ -244,19 +244,42 @@ export class ProviderGateway implements Gateway {
       request.model,
     );
     const anthropic = protocol === "anthropic";
+    const messages = request.messages.map(({ role, content, images }) => ({
+      role,
+      content: !images?.length
+        ? content
+        : [
+            { type: "text", text: content },
+            ...images.map((image) =>
+              anthropic
+                ? {
+                    type: "image",
+                    source: {
+                      type: "base64",
+                      media_type: image.media_type,
+                      data: image.data,
+                    },
+                  }
+                : {
+                    type: "image_url",
+                    image_url: {
+                      url: `data:${image.media_type};base64,${image.data}`,
+                      detail: "high",
+                    },
+                  },
+            ),
+          ],
+    }));
     const body = anthropic
       ? {
           model,
           system: request.system,
-          messages: request.messages,
+          messages,
           max_tokens: request.max_tokens,
         }
       : {
           model,
-          messages: [
-            { role: "system", content: request.system },
-            ...request.messages,
-          ],
+          messages: [{ role: "system", content: request.system }, ...messages],
           max_tokens: request.max_tokens,
           response_format: { type: "json_object" },
           ...(provider === "openrouter"
@@ -415,6 +438,11 @@ export async function converse(options: {
   allowance: { remaining: number };
   messages: ModelRequest["messages"];
   dispatch: (name: string, args: any) => Promise<any>;
+  /** Trusted host instructions for a separate result contract, such as QA. */
+  system?: string;
+  /** Validate a result before accepting it; invalid results use the same bounded,
+   * charged repair loop as malformed protocol documents. */
+  validateResult?: (value: any) => any;
   call?: (
     id: string,
     action: () => Promise<ModelResponse>,
@@ -422,11 +450,13 @@ export async function converse(options: {
   cancelled?: () => Promise<boolean>;
 }): Promise<any> {
   const o = options;
-  const system = `${SYSTEM} ${
-    o.phase === "verify-disclosed"
-      ? `Verification result schema: ${JSON.stringify(voteSchema)}`
-      : `Generator and blind results are arrays (empty is valid) unless the request names a result object; item schema: ${JSON.stringify(hypothesisSchema)}`
-  }`;
+  const system =
+    o.system ??
+    `${SYSTEM} ${
+      o.phase === "verify-disclosed"
+        ? `Verification result schema: ${JSON.stringify(voteSchema)}`
+        : `Generator and blind results are arrays (empty is valid) unless the request names a result object; item schema: ${JSON.stringify(hypothesisSchema)}`
+    }`;
   let repairs = 0,
     consecutiveRepairs = 0;
   for (let turn = 0; turn < 16; turn++) {
@@ -434,7 +464,13 @@ export async function converse(options: {
     const action = async () => {
       // UTF-8 byte count bounds text tokenization across supported providers. Include chat framing.
       const inputBound =
-        new TextEncoder().encode(system + JSON.stringify(o.messages)).length +
+        new TextEncoder().encode(
+          system +
+            JSON.stringify(o.messages.map(({ images, ...message }) => message)),
+        ).length +
+        o.messages
+          .flatMap((message) => message.images ?? [])
+          .reduce((sum, image) => sum + image.token_bound, 0) +
         256;
       const available = Math.min(
         o.allowance.remaining,
@@ -479,7 +515,7 @@ export async function converse(options: {
     // Models answer in their native tool syntax, or with no tools and no result,
     // despite the protocol. The host asks once more for the JSON document; the raw
     // output stays in the audit and is never interpreted as tool calls or evidence.
-    const repair = (error: unknown) => {
+    const repair = (error: unknown, resultSchema = false) => {
       if (
         consecutiveRepairs >= MAX_CONSECUTIVE_REPAIRS ||
         repairs >= MAX_REPAIRS
@@ -491,7 +527,12 @@ export async function converse(options: {
         role: "assistant",
         content: response.content.slice(0, 4000),
       });
-      o.messages.push({ role: "user", content: REPAIR });
+      o.messages.push({
+        role: "user",
+        content: resultSchema
+          ? `${REPAIR} The result must match the requested result schema, including its exact field names and allowed enum values.`
+          : REPAIR,
+      });
     };
     let parsed: any;
     try {
@@ -520,11 +561,22 @@ export async function converse(options: {
       repair(new Error("malformed tool output"));
       continue;
     }
+    let result: any;
+    if (Object.hasOwn(parsed, "result")) {
+      try {
+        result = o.validateResult
+          ? o.validateResult(parsed.result)
+          : parsed.result;
+      } catch (error) {
+        repair(error, true);
+        continue;
+      }
+    }
     consecutiveRepairs = 0;
     // Keep the accepted protocol document in context; raw provider output remains
     // in audit and its full usage remains charged.
     o.messages.push({ role: "assistant", content: JSON.stringify(parsed) });
-    if (Object.hasOwn(parsed, "result")) return parsed.result;
+    if (Object.hasOwn(parsed, "result")) return result;
     const results = [];
     for (const [index, tool] of parsed.tools.entries()) {
       // A batch over the limit runs its first calls; the rest are answered with

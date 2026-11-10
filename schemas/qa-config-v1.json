@@ -1,0 +1,467 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rio.dev/schemas/qa-config-v1.json",
+  "title": "Rio qa-config v1",
+  "type": "object",
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "app": {
+      "type": "object",
+      "properties": {
+        "packaging": {
+          "enum": [
+            "image",
+            "static",
+            "vendored"
+          ]
+        },
+        "dockerfile": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?!/)(?![A-Za-z]:)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\).+$"
+        },
+        "directory": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?!/)(?![A-Za-z]:)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\).+$"
+        },
+        "start": {
+          "type": "string",
+          "minLength": 1
+        },
+        "url": {
+          "type": "string",
+          "pattern": "^https?://[^ ]+$"
+        },
+        "ready": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "status": {
+              "type": "integer",
+              "minimum": 100,
+              "maximum": 599
+            },
+            "timeout": {
+              "oneOf": [
+                {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                {
+                  "type": "string",
+                  "pattern": "^[1-9][0-9]*(ms|s|m|h)$"
+                }
+              ]
+            }
+          },
+          "required": [
+            "path",
+            "status"
+          ],
+          "additionalProperties": false
+        },
+        "env": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+          },
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "seed": {
+          "type": "string",
+          "minLength": 1
+        },
+        "workdir": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?!/)(?![A-Za-z]:)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\).+$"
+        },
+        "routes_from": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "convention": {
+                  "enum": [
+                    "next-app",
+                    "next-pages",
+                    "sveltekit",
+                    "remix",
+                    "nuxt",
+                    "astro",
+                    "none"
+                  ]
+                }
+              },
+              "required": [
+                "convention"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "map": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "glob": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "route": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "glob",
+                      "route"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "minItems": 1
+                }
+              },
+              "required": [
+                "map"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        }
+      },
+      "required": [
+        "packaging",
+        "url",
+        "ready"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "packaging": {
+                "const": "vendored"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "start"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "packaging": {
+                "const": "static"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "directory"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "packaging": {
+                "const": "image"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "dockerfile"
+            ]
+          }
+        }
+      ]
+    },
+    "personas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1
+          },
+          "username_env": {
+            "type": "string",
+            "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+          },
+          "password_env": {
+            "type": "string",
+            "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+          }
+        },
+        "required": [
+          "name",
+          "description"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "browser": {
+      "type": "object",
+      "properties": {
+        "viewports": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9-]*$"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "pattern": "^[a-z][a-z0-9-]*$"
+                  },
+                  "width": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "height": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "device_scale_factor": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "mobile": {
+                    "type": "boolean"
+                  },
+                  "touch": {
+                    "type": "boolean"
+                  },
+                  "user_agent": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "orientation": {
+                    "enum": [
+                      "portrait",
+                      "landscape"
+                    ]
+                  }
+                },
+                "required": [
+                  "name",
+                  "width",
+                  "height",
+                  "mobile",
+                  "touch"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "color_schemes": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "light",
+              "dark"
+            ]
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "harness": {
+      "type": "object",
+      "properties": {
+        "default": {
+          "enum": [
+            "codex",
+            "pi"
+          ]
+        },
+        "model": {
+          "type": "string",
+          "minLength": 1
+        },
+        "auth": {
+          "enum": [
+            "auto",
+            "subscription",
+            "gateway"
+          ]
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "rules": {
+      "type": "object",
+      "properties": {
+        "disable": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "adopt": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "add": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^project/[a-z][a-z0-9-]*$"
+              },
+              "category": {
+                "enum": [
+                  "functional",
+                  "ux",
+                  "style",
+                  "accessibility"
+                ]
+              },
+              "severity": {
+                "enum": [
+                  "error",
+                  "warning",
+                  "info"
+                ]
+              },
+              "description": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "id",
+              "category",
+              "severity",
+              "description"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 0
+        },
+        "ignore_console": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "evidence": {
+      "type": "object",
+      "properties": {
+        "video": {
+          "type": "boolean"
+        },
+        "retention_days": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "seed": {
+      "type": "object",
+      "properties": {
+        "manifest": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?!/)(?![A-Za-z]:)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\).+$"
+        },
+        "migrations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "max_size": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "type": "string",
+              "pattern": "^[1-9][0-9]* ?(B|KiB|MiB|GiB)$"
+            }
+          ]
+        },
+        "fallback_rebuild": {
+          "type": "boolean"
+        },
+        "cache_version": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "integer",
+              "minimum": 0
+            }
+          ]
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "version",
+    "app",
+    "personas"
+  ],
+  "additionalProperties": false
+}

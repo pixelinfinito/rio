@@ -84,6 +84,35 @@ pub fn render_json(report: &Report) -> Result<Vec<u8>, String> {
             return Err("invalid verification counts".into());
         }
     }
+    let now = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap_or_default()
+        .as_millis();
+    if let Some(artifacts) = document
+        .pointer_mut("/qa/evidence/artifacts")
+        .and_then(serde_json::Value::as_array_mut)
+    {
+        for artifact in artifacts {
+            let expired = artifact["expired"] == true
+                || artifact["expires_at"]
+                    .as_u64()
+                    .is_some_and(|at| u128::from(at) <= now);
+            let link_expired = artifact["link_expires_at"]
+                .as_u64()
+                .is_some_and(|at| u128::from(at) <= now);
+            if let Some(fields) = artifact.as_object_mut() {
+                if expired
+                    || link_expired
+                    || fields.get("unavailable") == Some(&serde_json::Value::Bool(true))
+                {
+                    fields.remove("link");
+                }
+                if expired {
+                    fields.insert("expired".into(), serde_json::Value::Bool(true));
+                }
+            }
+        }
+    }
     scrub(&mut document);
     let errors: Vec<_> = VALIDATOR
         .iter_errors(&document)
@@ -308,12 +337,15 @@ fn footer(report: &Report) -> Vec<String> {
         ));
     }
     for step in &report.deferred {
-        lines.push(format!("{} deferred: no_endpoint", step.step));
+        lines.push(format!("{} deferred: {}", step.step, label(&step.reason)));
     }
     for file in &report.excluded {
         lines.push(format!("{}: {}", file.path, file.reason));
     }
     lines.extend(report.footer.notes.iter().cloned());
+    if let Some(qa) = &report.qa {
+        lines.extend(qa_footer(qa));
+    }
     if let Some(audit) = &report.agent_audit {
         if let Some(pools) = audit["held_back"].as_object() {
             for (pool, titles) in pools {
@@ -416,6 +448,71 @@ fn footer(report: &Report) -> Vec<String> {
     lines
 }
 /// The publication outcome (pr-publishing): what reached the pull request.
+fn qa_footer(qa: &serde_json::Value) -> Vec<String> {
+    let text = |value: &serde_json::Value| value.as_str().unwrap_or("unknown").to_owned();
+    let audit = &qa["audit"];
+    let mut lines: Vec<_> = audit["notes"]
+        .as_array()
+        .into_iter()
+        .flatten()
+        .filter_map(|note| note.as_str().map(str::to_owned))
+        .collect();
+    lines.push(format!(
+        "QA harness: {} ({}); isolation: {}; egress: {}.",
+        text(&qa["harness"]),
+        text(&audit["harness_auth"]),
+        text(&qa["isolation"]),
+        text(&audit["egress"])
+    ));
+    lines.push(format!(
+        "QA seed: {} ({:.1} s); fingerprint: {}.",
+        text(&qa["seed"]["status"]),
+        qa["seed"]["duration_ms"].as_u64().unwrap_or(0) as f64 / 1000.0,
+        text(&qa["seed"]["fingerprint"])
+    ));
+    let quota = audit["quota_bytes"]
+        .as_u64()
+        .map(|bytes| bytes.to_string())
+        .unwrap_or_else(|| "unknown".into());
+    lines.push(format!(
+        "QA evidence: {}; {} bytes; quota: {} bytes{}; expiry: {}.",
+        text(&qa["evidence"]["storage"]),
+        qa["evidence"]["bytes"].as_u64().unwrap_or(0),
+        quota,
+        if audit["quota_reached"] == true {
+            " (reached)"
+        } else {
+            ""
+        },
+        qa["evidence"]["expires_at"]
+            .as_str()
+            .unwrap_or(if qa["evidence"]["storage"] == "local" {
+                "with run-record pruning"
+            } else {
+                "unknown"
+            })
+    ));
+    let tokens = qa["cost"]["tokens"]
+        .as_u64()
+        .map(|tokens| tokens.to_string())
+        .unwrap_or_else(|| {
+            if audit["harness_auth"] == "subscription" {
+                "unmetered (subscription)".into()
+            } else {
+                "unknown".into()
+            }
+        });
+    let cost = qa["cost"]["usd"]
+        .as_f64()
+        .map(|usd| format!("${usd:.6}"))
+        .unwrap_or_else(|| "unknown".into());
+    lines.push(format!(
+        "QA wall time: {:.1} s; tokens: {tokens}; cost: {cost}.",
+        qa["cost"]["wall_time_ms"].as_u64().unwrap_or(0) as f64 / 1000.0
+    ));
+    lines
+}
+
 /// Councilled findings in the council's selection order, refuted ones included.
 fn councilled(report: &Report) -> Vec<&Finding> {
     let Some(council) = &report.council else {
@@ -1027,7 +1124,7 @@ fn groups<'a>(
             "Findings",
             ordered(&report.findings)
                 .into_iter()
-                .filter(|f| visible(f))
+                .filter(|f| visible(f) && (report.qa.is_none() || f.category != Category::Ux))
                 .collect(),
         ),
         (
@@ -1057,12 +1154,333 @@ fn groups<'a>(
                 .into_iter()
                 .chain(ordered(&report.risks))
                 .chain(ordered(&report.security))
-                .filter(|f| f.state == State::PreExisting)
+                .filter(|f| {
+                    f.state == State::PreExisting
+                        && (report.qa.is_none() || f.category != Category::Ux)
+                })
                 .collect(),
         ));
     }
     groups
 }
+fn qa_evidence_link(qa: &serde_json::Value, id: &str, markdown: bool) -> String {
+    let label = if markdown {
+        markdown_text(id)
+    } else {
+        id.to_owned()
+    };
+    let Some(artifact) = qa["evidence"]["artifacts"]
+        .as_array()
+        .and_then(|rows| rows.iter().find(|row| row["id"] == id))
+    else {
+        return label;
+    };
+    let now = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap_or_default()
+        .as_millis();
+    let expires = artifact["expires_at"].as_u64();
+    let date = expires
+        .and_then(|time| i64::try_from(time).ok())
+        .and_then(|time| jiff::Timestamp::from_millisecond(time).ok())
+        .map(|time| time.to_string());
+    if artifact["expired"] == true || expires.is_some_and(|at| u128::from(at) <= now) {
+        return format!(
+            "{label} (expired{})",
+            date.map(|date| format!(" {date}")).unwrap_or_default()
+        );
+    }
+    if artifact["unavailable"] == true {
+        return format!("{label} (unavailable)");
+    }
+    if artifact["link_expires_at"]
+        .as_u64()
+        .is_some_and(|at| u128::from(at) <= now)
+    {
+        return format!("{label} (download link expired; refresh from endpoint)");
+    }
+    let Some(link) = artifact["link"].as_str() else {
+        return label;
+    };
+    if markdown
+        && (link.starts_with("https://")
+            || link.starts_with("http://")
+            || std::path::Path::new(link).is_absolute())
+    {
+        let target: String = link
+            .chars()
+            .map(|character| match character {
+                '<' => "%3C".into(),
+                '>' => "%3E".into(),
+                '\\' => "%5C".into(),
+                '|' => "%7C".into(),
+                ' ' => "%20".into(),
+                '\n' => "%0A".into(),
+                '\r' => "%0D".into(),
+                c => c.to_string(),
+            })
+            .collect();
+        format!("[{label}](<{target}>)")
+    } else if markdown {
+        format!("{label} ({})", markdown_text(link))
+    } else {
+        format!("{label}: {link}")
+    }
+}
+
+fn render_qa(report: &Report, options: &RenderOptions<'_>, markdown: bool) -> String {
+    let Some(qa) = &report.qa else {
+        return String::new();
+    };
+    let text = |value: &serde_json::Value| {
+        let raw = value
+            .as_str()
+            .map(str::to_owned)
+            .unwrap_or_else(|| value.to_string());
+        if markdown { markdown_text(&raw) } else { raw }
+    };
+    let rows = |value: &serde_json::Value| value.as_array().cloned().unwrap_or_default();
+    let evidence_link = |value: &serde_json::Value| {
+        qa_evidence_link(qa, value.as_str().unwrap_or("unknown"), markdown)
+    };
+    let mut out = if markdown {
+        "\n## QA results\n\n"
+    } else {
+        "\nQA results\n"
+    }
+    .to_owned();
+    for journey in rows(&qa["journeys"]) {
+        out.push_str(&format!(
+            "{}: {}\n\n",
+            text(&journey["name"]),
+            text(&journey["outcome"])
+        ));
+        if markdown {
+            out.push_str("| Viewport | Scheme | Outcome | Step | Reason | Evidence |\n| --- | --- | --- | --- | --- | --- |\n");
+        }
+        for cell in rows(&journey["cells"]) {
+            let evidence = rows(&cell["evidence"])
+                .iter()
+                .map(&evidence_link)
+                .collect::<Vec<_>>()
+                .join(", ");
+            let reason = cell.get("reason").map(text).unwrap_or_default();
+            if markdown {
+                out.push_str(&format!(
+                    "| {} | {} | {} | {} | {} | {} |\n",
+                    text(&cell["viewport"]),
+                    text(&cell["color_scheme"]),
+                    text(&cell["outcome"]),
+                    text(&cell["step_reached"]),
+                    reason,
+                    evidence
+                ));
+            } else {
+                out.push_str(&format!(
+                    "  {}/{}: {}; step {}{}\n",
+                    text(&cell["viewport"]),
+                    text(&cell["color_scheme"]),
+                    text(&cell["outcome"]),
+                    text(&cell["step_reached"]),
+                    if reason.is_empty() {
+                        String::new()
+                    } else {
+                        format!(" ({reason})")
+                    }
+                ));
+                if !evidence.is_empty() {
+                    out.push_str(&format!("  Evidence: {evidence}\n"));
+                }
+            }
+        }
+        out.push('\n');
+    }
+    for finding in ordered(&report.findings).into_iter().filter(|finding| {
+        finding.category == Category::Ux
+            && (visible(finding)
+                || (options.show_pre_existing && finding.state == State::PreExisting))
+    }) {
+        out.push_str(&format!(
+            "- {} [{}; {}; {}]: {}\n",
+            if markdown {
+                markdown_text(&finding.rule_id)
+            } else {
+                finding.rule_id.clone()
+            },
+            label(&finding.state),
+            label(&finding.severity),
+            label(&finding.evidence_level),
+            if markdown {
+                markdown_text(&finding.message)
+            } else {
+                finding.message.clone()
+            }
+        ));
+        for occurrence in &finding.locations {
+            if let Some(cell) = &occurrence.cell {
+                let label = format!(
+                    "{}/{}: {}",
+                    cell.viewport,
+                    cell.color_scheme,
+                    location(occurrence)
+                );
+                out.push_str(&format!(
+                    "  {}\n",
+                    if markdown {
+                        markdown_text(&label)
+                    } else {
+                        label
+                    }
+                ));
+                if let Some(evidence) = &occurrence.evidence
+                    && !evidence.is_empty()
+                {
+                    out.push_str(&format!(
+                        "  Evidence: {}\n",
+                        evidence
+                            .iter()
+                            .map(|id| qa_evidence_link(qa, id, markdown))
+                            .collect::<Vec<_>>()
+                            .join(", ")
+                    ));
+                }
+            }
+        }
+    }
+    let observations = rows(&qa["observations_unverified"]);
+    if !observations.is_empty() {
+        out.push_str(if markdown {
+            "\n### Unverified observations\n\n"
+        } else {
+            "\nUnverified observations\n"
+        });
+        for observation in observations {
+            out.push_str(&format!(
+                "- {}: {} step {} — expected {}; observed {}. Evidence: {}\n",
+                text(&observation["rule_id"]),
+                text(&observation["journey"]),
+                text(&observation["step"]),
+                text(&observation["expected"]),
+                text(&observation["observed"]),
+                rows(&observation["evidence"])
+                    .iter()
+                    .map(&evidence_link)
+                    .collect::<Vec<_>>()
+                    .join(", ")
+            ));
+        }
+    }
+    let recommendations = rows(&qa["recommendations"]);
+    if !recommendations.is_empty() {
+        out.push_str(if markdown {
+            "\n### UX recommendations\n\n"
+        } else {
+            "\nUX recommendations\n"
+        });
+        for recommendation in recommendations
+            .iter()
+            .filter(|row| row["verification_status"] != "rejected")
+        {
+            out.push_str(&format!(
+                "- {} [{}; priority {}; confidence {}]\n",
+                text(&recommendation["rule_id"]),
+                text(&recommendation["verification_status"]),
+                text(&recommendation["priority"]),
+                text(&recommendation["confidence"])
+            ));
+            for (label, field) in [
+                ("Persona", "persona"),
+                ("Goal", "goal"),
+                ("Observed friction", "observed_friction"),
+                ("Proposed improvement", "proposed_improvement"),
+                ("Expected benefit (untested)", "expected_benefit"),
+                ("Verification rationale", "rationale"),
+            ] {
+                out.push_str(&format!("  {label}: {}\n", text(&recommendation[field])));
+            }
+            out.push_str(&format!(
+                "  Journey: {}; steps {}\n",
+                text(&recommendation["journey"]),
+                rows(&recommendation["steps"])
+                    .iter()
+                    .map(&text)
+                    .collect::<Vec<_>>()
+                    .join(", ")
+            ));
+            if let Some(heuristic) = recommendation["basis"].get("heuristic") {
+                out.push_str(&format!(
+                    "  Basis: {} ({}) — {}\n",
+                    text(&heuristic["source"]),
+                    text(&heuristic["version"]),
+                    text(&heuristic["reference"])
+                ));
+            }
+            for reference in rows(&recommendation["basis"]["guidance"]) {
+                out.push_str(&format!(
+                    "  Requirement: {}:{}–{}\n",
+                    text(&reference["path"]),
+                    text(&reference["start_line"]),
+                    text(&reference["end_line"])
+                ));
+            }
+            out.push_str(&format!(
+                "  Trade-offs: {}\n  Evidence: {}\n",
+                rows(&recommendation["trade_offs"])
+                    .iter()
+                    .map(&text)
+                    .collect::<Vec<_>>()
+                    .join("; "),
+                rows(&recommendation["evidence"])
+                    .iter()
+                    .map(&evidence_link)
+                    .collect::<Vec<_>>()
+                    .join(", ")
+            ));
+        }
+    }
+    out.push_str(&format!(
+        "\nUX assessment ({})\n",
+        text(&qa["rubric_version"])
+    ));
+    for status in ["assessed", "not_applicable", "not_assessed"] {
+        let assessment = rows(&qa["assessment"]);
+        out.push_str(&format!(
+            "  {status}: {}\n",
+            assessment
+                .iter()
+                .filter(|row| row["status"] == status)
+                .count()
+        ));
+    }
+    for assessment in rows(&qa["assessment"])
+        .iter()
+        .filter(|row| row["status"] != "assessed")
+    {
+        out.push_str(&format!(
+            "  {} / {}: {} ({})\n",
+            text(&assessment["journey"]),
+            text(&assessment["rule_id"]),
+            text(&assessment["status"]),
+            text(&assessment["reason"])
+        ));
+    }
+    for guidance in rows(&qa["guidance"]) {
+        out.push_str(&format!(
+            "  Guidance: {}:{}–{} (hash {})\n",
+            text(&guidance["path"]),
+            text(&guidance["start_line"]),
+            text(&guidance["end_line"]),
+            text(&guidance["hash"])
+        ));
+    }
+    out.push_str(&format!(
+        "  Recommendations held back: {}; dropped: {}\n",
+        text(&qa["recommendations_held_back"]),
+        text(&qa["recommendations_dropped"])
+    ));
+    out
+}
+
 pub fn render_markdown(report: &Report, options: &RenderOptions<'_>) -> String {
     if report.status == ReportStatus::NoChanges {
         return "No changes to review\n".into();
@@ -1266,6 +1684,7 @@ pub fn render_markdown(report: &Report, options: &RenderOptions<'_>) -> String {
     if !council_done {
         council_markdown(&mut out);
     }
+    out.push_str(&render_qa(report, options, true));
     if report.summary != Summary::default() {
         out.push_str(&format!(
             "\n## Summary\n\nPre-existing: {}; fixed: {}; suppressed: {}.\n",
@@ -1456,6 +1875,7 @@ pub fn render_terminal(report: &Report, options: &RenderOptions<'_>) -> String {
     if !council_done {
         council_terminal(&mut lines);
     }
+    lines.extend(render_qa(report, options, false).lines().map(str::to_owned));
     if report.summary != Summary::default() {
         lines.push(format!(
             "\nSummary: {} pre-existing; {} fixed; {} suppressed",

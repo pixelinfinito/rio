@@ -1,0 +1,3 @@
+-- Advice has its own history: dismissing it never suppresses a defect.
+CREATE TABLE qa_recommendation_history (tenant TEXT NOT NULL, repository TEXT NOT NULL, identity TEXT NOT NULL, first_review TEXT NOT NULL, first_seen_at INTEGER NOT NULL, last_review TEXT NOT NULL, last_seen_at INTEGER NOT NULL, candidate_json TEXT NOT NULL, dismissal_json TEXT, PRIMARY KEY(tenant,repository,identity));
+CREATE TABLE qa_recommendation_sightings (tenant TEXT NOT NULL, repository TEXT NOT NULL, identity TEXT NOT NULL, review_id TEXT NOT NULL, seen_at INTEGER NOT NULL, candidate_json TEXT NOT NULL, PRIMARY KEY(tenant,repository,identity,review_id));

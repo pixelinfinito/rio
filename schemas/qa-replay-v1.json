@@ -1,0 +1,1977 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rio.dev/schemas/qa-replay-v1.json",
+  "title": "Rio qa-replay v1",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": 1
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "journey": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "step": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cell": {
+          "type": "object",
+          "properties": {
+            "viewport": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "color_scheme": {
+              "enum": [
+                "light",
+                "dark"
+              ]
+            }
+          },
+          "required": [
+            "viewport",
+            "color_scheme"
+          ],
+          "additionalProperties": false
+        },
+        "action": {
+          "const": "navigate"
+        },
+        "arguments": {
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string",
+              "minLength": 1
+            },
+            "capture": {
+              "type": "object",
+              "properties": {
+                "sequence": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "message": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "link": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "sequence",
+                "message",
+                "link"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "url"
+          ],
+          "additionalProperties": false
+        },
+        "result": {
+          "enum": [
+            "completed",
+            "failed"
+          ]
+        }
+      },
+      "required": [
+        "version",
+        "sequence",
+        "journey",
+        "step",
+        "cell",
+        "action",
+        "arguments"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": 1
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "journey": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "step": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cell": {
+          "type": "object",
+          "properties": {
+            "viewport": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "color_scheme": {
+              "enum": [
+                "light",
+                "dark"
+              ]
+            }
+          },
+          "required": [
+            "viewport",
+            "color_scheme"
+          ],
+          "additionalProperties": false
+        },
+        "action": {
+          "const": "click"
+        },
+        "arguments": {
+          "type": "object",
+          "properties": {
+            "selector": {
+              "type": "string",
+              "minLength": 1
+            },
+            "doubleClick": {
+              "type": "boolean"
+            },
+            "button": {
+              "enum": [
+                "left",
+                "right",
+                "middle"
+              ]
+            },
+            "modifiers": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "Alt",
+                  "Control",
+                  "ControlOrMeta",
+                  "Meta",
+                  "Shift"
+                ]
+              }
+            }
+          },
+          "required": [
+            "selector"
+          ],
+          "additionalProperties": false
+        },
+        "result": {
+          "enum": [
+            "completed",
+            "failed"
+          ]
+        }
+      },
+      "required": [
+        "version",
+        "sequence",
+        "journey",
+        "step",
+        "cell",
+        "action",
+        "arguments"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": 1
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "journey": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "step": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cell": {
+          "type": "object",
+          "properties": {
+            "viewport": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "color_scheme": {
+              "enum": [
+                "light",
+                "dark"
+              ]
+            }
+          },
+          "required": [
+            "viewport",
+            "color_scheme"
+          ],
+          "additionalProperties": false
+        },
+        "action": {
+          "const": "type"
+        },
+        "arguments": {
+          "type": "object",
+          "properties": {
+            "selector": {
+              "type": "string",
+              "minLength": 1
+            },
+            "value": {
+              "type": "string"
+            },
+            "submit": {
+              "type": "boolean"
+            },
+            "slowly": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "selector",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        "result": {
+          "enum": [
+            "completed",
+            "failed"
+          ]
+        }
+      },
+      "required": [
+        "version",
+        "sequence",
+        "journey",
+        "step",
+        "cell",
+        "action",
+        "arguments"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": 1
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "journey": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "step": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cell": {
+          "type": "object",
+          "properties": {
+            "viewport": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "color_scheme": {
+              "enum": [
+                "light",
+                "dark"
+              ]
+            }
+          },
+          "required": [
+            "viewport",
+            "color_scheme"
+          ],
+          "additionalProperties": false
+        },
+        "action": {
+          "const": "select"
+        },
+        "arguments": {
+          "type": "object",
+          "properties": {
+            "selector": {
+              "type": "string",
+              "minLength": 1
+            },
+            "values": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 1
+            }
+          },
+          "required": [
+            "selector",
+            "values"
+          ],
+          "additionalProperties": false
+        },
+        "result": {
+          "enum": [
+            "completed",
+            "failed"
+          ]
+        }
+      },
+      "required": [
+        "version",
+        "sequence",
+        "journey",
+        "step",
+        "cell",
+        "action",
+        "arguments"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": 1
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "journey": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "step": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cell": {
+          "type": "object",
+          "properties": {
+            "viewport": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "color_scheme": {
+              "enum": [
+                "light",
+                "dark"
+              ]
+            }
+          },
+          "required": [
+            "viewport",
+            "color_scheme"
+          ],
+          "additionalProperties": false
+        },
+        "action": {
+          "const": "press_key"
+        },
+        "arguments": {
+          "type": "object",
+          "properties": {
+            "key": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "key"
+          ],
+          "additionalProperties": false
+        },
+        "result": {
+          "enum": [
+            "completed",
+            "failed"
+          ]
+        }
+      },
+      "required": [
+        "version",
+        "sequence",
+        "journey",
+        "step",
+        "cell",
+        "action",
+        "arguments"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": 1
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "journey": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "step": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cell": {
+          "type": "object",
+          "properties": {
+            "viewport": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "color_scheme": {
+              "enum": [
+                "light",
+                "dark"
+              ]
+            }
+          },
+          "required": [
+            "viewport",
+            "color_scheme"
+          ],
+          "additionalProperties": false
+        },
+        "action": {
+          "const": "wait"
+        },
+        "arguments": {
+          "type": "object",
+          "properties": {
+            "milliseconds": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 30000
+            },
+            "text": {
+              "type": "string",
+              "minLength": 1
+            },
+            "textGone": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [],
+          "additionalProperties": false,
+          "minProperties": 1
+        },
+        "result": {
+          "enum": [
+            "completed",
+            "failed"
+          ]
+        }
+      },
+      "required": [
+        "version",
+        "sequence",
+        "journey",
+        "step",
+        "cell",
+        "action",
+        "arguments"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": 1
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "journey": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "step": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cell": {
+          "type": "object",
+          "properties": {
+            "viewport": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "color_scheme": {
+              "enum": [
+                "light",
+                "dark"
+              ]
+            }
+          },
+          "required": [
+            "viewport",
+            "color_scheme"
+          ],
+          "additionalProperties": false
+        },
+        "action": {
+          "const": "login"
+        },
+        "arguments": {
+          "type": "object",
+          "properties": {
+            "persona": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            }
+          },
+          "required": [
+            "persona"
+          ],
+          "additionalProperties": false
+        },
+        "result": {
+          "enum": [
+            "completed",
+            "failed"
+          ]
+        }
+      },
+      "required": [
+        "version",
+        "sequence",
+        "journey",
+        "step",
+        "cell",
+        "action",
+        "arguments"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": 1
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "journey": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "step": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cell": {
+          "type": "object",
+          "properties": {
+            "viewport": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "color_scheme": {
+              "enum": [
+                "light",
+                "dark"
+              ]
+            }
+          },
+          "required": [
+            "viewport",
+            "color_scheme"
+          ],
+          "additionalProperties": false
+        },
+        "action": {
+          "const": "set_viewport"
+        },
+        "arguments": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            }
+          },
+          "required": [
+            "name"
+          ],
+          "additionalProperties": false
+        },
+        "result": {
+          "enum": [
+            "completed",
+            "failed"
+          ]
+        }
+      },
+      "required": [
+        "version",
+        "sequence",
+        "journey",
+        "step",
+        "cell",
+        "action",
+        "arguments"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": 1
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "journey": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "step": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cell": {
+          "type": "object",
+          "properties": {
+            "viewport": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "color_scheme": {
+              "enum": [
+                "light",
+                "dark"
+              ]
+            }
+          },
+          "required": [
+            "viewport",
+            "color_scheme"
+          ],
+          "additionalProperties": false
+        },
+        "action": {
+          "const": "set_color_scheme"
+        },
+        "arguments": {
+          "type": "object",
+          "properties": {
+            "color_scheme": {
+              "enum": [
+                "light",
+                "dark"
+              ]
+            }
+          },
+          "required": [
+            "color_scheme"
+          ],
+          "additionalProperties": false
+        },
+        "result": {
+          "enum": [
+            "completed",
+            "failed"
+          ]
+        }
+      },
+      "required": [
+        "version",
+        "sequence",
+        "journey",
+        "step",
+        "cell",
+        "action",
+        "arguments"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": 1
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "journey": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "step": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cell": {
+          "type": "object",
+          "properties": {
+            "viewport": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "color_scheme": {
+              "enum": [
+                "light",
+                "dark"
+              ]
+            }
+          },
+          "required": [
+            "viewport",
+            "color_scheme"
+          ],
+          "additionalProperties": false
+        },
+        "action": {
+          "const": "upload_fixture"
+        },
+        "arguments": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "selector": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "name"
+          ],
+          "additionalProperties": false
+        },
+        "result": {
+          "enum": [
+            "completed",
+            "failed"
+          ]
+        }
+      },
+      "required": [
+        "version",
+        "sequence",
+        "journey",
+        "step",
+        "cell",
+        "action",
+        "arguments"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": 1
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "journey": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "step": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cell": {
+          "type": "object",
+          "properties": {
+            "viewport": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "color_scheme": {
+              "enum": [
+                "light",
+                "dark"
+              ]
+            }
+          },
+          "required": [
+            "viewport",
+            "color_scheme"
+          ],
+          "additionalProperties": false
+        },
+        "action": {
+          "const": "read_mail"
+        },
+        "arguments": {
+          "type": "object",
+          "properties": {
+            "persona": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            }
+          },
+          "required": [
+            "persona"
+          ],
+          "additionalProperties": false
+        },
+        "result": {
+          "enum": [
+            "completed",
+            "failed"
+          ]
+        }
+      },
+      "required": [
+        "version",
+        "sequence",
+        "journey",
+        "step",
+        "cell",
+        "action",
+        "arguments"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": 1
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "journey": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "step": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cell": {
+          "type": "object",
+          "properties": {
+            "viewport": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "color_scheme": {
+              "enum": [
+                "light",
+                "dark"
+              ]
+            }
+          },
+          "required": [
+            "viewport",
+            "color_scheme"
+          ],
+          "additionalProperties": false
+        },
+        "action": {
+          "const": "read_sms"
+        },
+        "arguments": {
+          "type": "object",
+          "properties": {
+            "persona": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            }
+          },
+          "required": [
+            "persona"
+          ],
+          "additionalProperties": false
+        },
+        "result": {
+          "enum": [
+            "completed",
+            "failed"
+          ]
+        }
+      },
+      "required": [
+        "version",
+        "sequence",
+        "journey",
+        "step",
+        "cell",
+        "action",
+        "arguments"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": 1
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "journey": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "step": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cell": {
+          "type": "object",
+          "properties": {
+            "viewport": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "color_scheme": {
+              "enum": [
+                "light",
+                "dark"
+              ]
+            }
+          },
+          "required": [
+            "viewport",
+            "color_scheme"
+          ],
+          "additionalProperties": false
+        },
+        "action": {
+          "const": "read_webhooks"
+        },
+        "arguments": {
+          "type": "object",
+          "properties": {
+            "service": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            }
+          },
+          "required": [
+            "service"
+          ],
+          "additionalProperties": false
+        },
+        "result": {
+          "enum": [
+            "completed",
+            "failed"
+          ]
+        }
+      },
+      "required": [
+        "version",
+        "sequence",
+        "journey",
+        "step",
+        "cell",
+        "action",
+        "arguments"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": 1
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "journey": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "step": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cell": {
+          "type": "object",
+          "properties": {
+            "viewport": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "color_scheme": {
+              "enum": [
+                "light",
+                "dark"
+              ]
+            }
+          },
+          "required": [
+            "viewport",
+            "color_scheme"
+          ],
+          "additionalProperties": false
+        },
+        "action": {
+          "const": "set_service_behavior"
+        },
+        "arguments": {
+          "type": "object",
+          "properties": {
+            "service": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "behavior": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            }
+          },
+          "required": [
+            "service",
+            "behavior"
+          ],
+          "additionalProperties": false
+        },
+        "result": {
+          "enum": [
+            "completed",
+            "failed"
+          ]
+        }
+      },
+      "required": [
+        "version",
+        "sequence",
+        "journey",
+        "step",
+        "cell",
+        "action",
+        "arguments"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": 1
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "journey": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "step": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cell": {
+          "type": "object",
+          "properties": {
+            "viewport": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "color_scheme": {
+              "enum": [
+                "light",
+                "dark"
+              ]
+            }
+          },
+          "required": [
+            "viewport",
+            "color_scheme"
+          ],
+          "additionalProperties": false
+        },
+        "action": {
+          "const": "set_network"
+        },
+        "arguments": {
+          "type": "object",
+          "properties": {
+            "network": {
+              "enum": [
+                "online",
+                "slow-3g",
+                "offline"
+              ]
+            }
+          },
+          "required": [
+            "network"
+          ],
+          "additionalProperties": false
+        },
+        "result": {
+          "enum": [
+            "completed",
+            "failed"
+          ]
+        }
+      },
+      "required": [
+        "version",
+        "sequence",
+        "journey",
+        "step",
+        "cell",
+        "action",
+        "arguments"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": 1
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "journey": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "step": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cell": {
+          "type": "object",
+          "properties": {
+            "viewport": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "color_scheme": {
+              "enum": [
+                "light",
+                "dark"
+              ]
+            }
+          },
+          "required": [
+            "viewport",
+            "color_scheme"
+          ],
+          "additionalProperties": false
+        },
+        "action": {
+          "const": "set_geolocation"
+        },
+        "arguments": {
+          "type": "object",
+          "properties": {
+            "geolocation": {
+              "type": "object",
+              "properties": {
+                "latitude": {
+                  "type": "number",
+                  "minimum": -90,
+                  "maximum": 90
+                },
+                "longitude": {
+                  "type": "number",
+                  "minimum": -180,
+                  "maximum": 180
+                },
+                "accuracy": {
+                  "type": "number",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "latitude",
+                "longitude"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "geolocation"
+          ],
+          "additionalProperties": false
+        },
+        "result": {
+          "enum": [
+            "completed",
+            "failed"
+          ]
+        }
+      },
+      "required": [
+        "version",
+        "sequence",
+        "journey",
+        "step",
+        "cell",
+        "action",
+        "arguments"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": 1
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "journey": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "step": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cell": {
+          "type": "object",
+          "properties": {
+            "viewport": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "color_scheme": {
+              "enum": [
+                "light",
+                "dark"
+              ]
+            }
+          },
+          "required": [
+            "viewport",
+            "color_scheme"
+          ],
+          "additionalProperties": false
+        },
+        "action": {
+          "const": "set_context"
+        },
+        "arguments": {
+          "type": "object",
+          "properties": {
+            "context": {
+              "type": "object",
+              "properties": {
+                "time": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "timezone": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "locale": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "geolocation": {
+                  "type": "object",
+                  "properties": {
+                    "latitude": {
+                      "type": "number",
+                      "minimum": -90,
+                      "maximum": 90
+                    },
+                    "longitude": {
+                      "type": "number",
+                      "minimum": -180,
+                      "maximum": 180
+                    },
+                    "accuracy": {
+                      "type": "number",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "latitude",
+                    "longitude"
+                  ],
+                  "additionalProperties": false
+                },
+                "network": {
+                  "enum": [
+                    "online",
+                    "slow-3g",
+                    "offline"
+                  ]
+                }
+              },
+              "required": [],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "context"
+          ],
+          "additionalProperties": false
+        },
+        "result": {
+          "enum": [
+            "completed",
+            "failed"
+          ]
+        }
+      },
+      "required": [
+        "version",
+        "sequence",
+        "journey",
+        "step",
+        "cell",
+        "action",
+        "arguments"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": 1
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "journey": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "step": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cell": {
+          "type": "object",
+          "properties": {
+            "viewport": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "color_scheme": {
+              "enum": [
+                "light",
+                "dark"
+              ]
+            }
+          },
+          "required": [
+            "viewport",
+            "color_scheme"
+          ],
+          "additionalProperties": false
+        },
+        "action": {
+          "const": "inspect"
+        },
+        "arguments": {
+          "type": "object",
+          "properties": {
+            "target": {
+              "type": "string",
+              "minLength": 1
+            },
+            "depth": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "boxes": {
+              "type": "boolean"
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        },
+        "result": {
+          "enum": [
+            "completed",
+            "failed"
+          ]
+        }
+      },
+      "required": [
+        "version",
+        "sequence",
+        "journey",
+        "step",
+        "cell",
+        "action",
+        "arguments"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": 1
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "journey": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "step": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cell": {
+          "type": "object",
+          "properties": {
+            "viewport": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "color_scheme": {
+              "enum": [
+                "light",
+                "dark"
+              ]
+            }
+          },
+          "required": [
+            "viewport",
+            "color_scheme"
+          ],
+          "additionalProperties": false
+        },
+        "action": {
+          "const": "step_done"
+        },
+        "arguments": {
+          "type": "object",
+          "properties": {
+            "outcome": {
+              "enum": [
+                "passed",
+                "failed",
+                "skipped"
+              ]
+            },
+            "evidence": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 0,
+              "uniqueItems": true
+            },
+            "reason": {
+              "type": "string"
+            },
+            "blocked_dependency": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "outcome",
+            "evidence"
+          ],
+          "additionalProperties": false
+        },
+        "result": {
+          "enum": [
+            "completed",
+            "failed"
+          ]
+        }
+      },
+      "required": [
+        "version",
+        "sequence",
+        "journey",
+        "step",
+        "cell",
+        "action",
+        "arguments"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": 1
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "journey": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "step": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cell": {
+          "type": "object",
+          "properties": {
+            "viewport": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "color_scheme": {
+              "enum": [
+                "light",
+                "dark"
+              ]
+            }
+          },
+          "required": [
+            "viewport",
+            "color_scheme"
+          ],
+          "additionalProperties": false
+        },
+        "action": {
+          "const": "observe"
+        },
+        "arguments": {
+          "type": "object",
+          "properties": {
+            "observation_id": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "observation_id"
+          ],
+          "additionalProperties": false
+        },
+        "result": {
+          "enum": [
+            "completed",
+            "failed"
+          ]
+        }
+      },
+      "required": [
+        "version",
+        "sequence",
+        "journey",
+        "step",
+        "cell",
+        "action",
+        "arguments"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": 1
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "journey": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "step": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cell": {
+          "type": "object",
+          "properties": {
+            "viewport": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "color_scheme": {
+              "enum": [
+                "light",
+                "dark"
+              ]
+            }
+          },
+          "required": [
+            "viewport",
+            "color_scheme"
+          ],
+          "additionalProperties": false
+        },
+        "action": {
+          "const": "hover"
+        },
+        "arguments": {
+          "type": "object",
+          "properties": {
+            "selector": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "selector"
+          ],
+          "additionalProperties": false
+        },
+        "result": {
+          "enum": [
+            "completed",
+            "failed"
+          ]
+        }
+      },
+      "required": [
+        "version",
+        "sequence",
+        "journey",
+        "step",
+        "cell",
+        "action",
+        "arguments"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": 1
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "journey": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "step": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cell": {
+          "type": "object",
+          "properties": {
+            "viewport": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "color_scheme": {
+              "enum": [
+                "light",
+                "dark"
+              ]
+            }
+          },
+          "required": [
+            "viewport",
+            "color_scheme"
+          ],
+          "additionalProperties": false
+        },
+        "action": {
+          "const": "navigate_back"
+        },
+        "arguments": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        },
+        "result": {
+          "enum": [
+            "completed",
+            "failed"
+          ]
+        }
+      },
+      "required": [
+        "version",
+        "sequence",
+        "journey",
+        "step",
+        "cell",
+        "action",
+        "arguments"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": 1
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "journey": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "step": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cell": {
+          "type": "object",
+          "properties": {
+            "viewport": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "color_scheme": {
+              "enum": [
+                "light",
+                "dark"
+              ]
+            }
+          },
+          "required": [
+            "viewport",
+            "color_scheme"
+          ],
+          "additionalProperties": false
+        },
+        "action": {
+          "const": "assess"
+        },
+        "arguments": {
+          "type": "object",
+          "properties": {
+            "rule_id": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "rule_id"
+          ],
+          "additionalProperties": false
+        },
+        "result": {
+          "enum": [
+            "completed",
+            "failed"
+          ]
+        }
+      },
+      "required": [
+        "version",
+        "sequence",
+        "journey",
+        "step",
+        "cell",
+        "action",
+        "arguments"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": 1
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "journey": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "step": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cell": {
+          "type": "object",
+          "properties": {
+            "viewport": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "color_scheme": {
+              "enum": [
+                "light",
+                "dark"
+              ]
+            }
+          },
+          "required": [
+            "viewport",
+            "color_scheme"
+          ],
+          "additionalProperties": false
+        },
+        "action": {
+          "const": "recommend"
+        },
+        "arguments": {
+          "type": "object",
+          "properties": {
+            "recommendation_id": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "recommendation_id"
+          ],
+          "additionalProperties": false
+        },
+        "result": {
+          "enum": [
+            "completed",
+            "failed"
+          ]
+        }
+      },
+      "required": [
+        "version",
+        "sequence",
+        "journey",
+        "step",
+        "cell",
+        "action",
+        "arguments"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": 1
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "journey": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "step": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cell": {
+          "type": "object",
+          "properties": {
+            "viewport": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "color_scheme": {
+              "enum": [
+                "light",
+                "dark"
+              ]
+            }
+          },
+          "required": [
+            "viewport",
+            "color_scheme"
+          ],
+          "additionalProperties": false
+        },
+        "action": {
+          "const": "report_expectation_conflict"
+        },
+        "arguments": {
+          "type": "object",
+          "properties": {
+            "conflict_id": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "conflict_id"
+          ],
+          "additionalProperties": false
+        },
+        "result": {
+          "enum": [
+            "completed",
+            "failed"
+          ]
+        }
+      },
+      "required": [
+        "version",
+        "sequence",
+        "journey",
+        "step",
+        "cell",
+        "action",
+        "arguments"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}

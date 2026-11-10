@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "name": "login",
+  "title": "Login",
+  "persona": "shopper",
+  "tags": [
+    "smoke"
+  ],
+  "covers": {
+    "paths": [
+      "src/**",
+      "server.mjs"
+    ],
+    "routes": [
+      "/login"
+    ]
+  },
+  "preconditions": [
+    "Synthetic products and persona accounts are seeded"
+  ],
+  "steps": [
+    {
+      "do": "Sign in using the shopper persona",
+      "at": "/login",
+      "expect": "Your saved delivery address is displayed"
+    }
+  ],
+  "success": [
+    "Profile shows the shopper email and saved address"
+  ],
+  "goal": "Use the saved address",
+  "ux_criteria": [
+    "ux/task-clarity",
+    "ux/error-recovery",
+    "ux/task-efficiency"
+  ]
+}

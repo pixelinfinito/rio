@@ -139,6 +139,10 @@ for (const [name, file] of Object.entries({
   );
   exports[name] = name;
 }
+// QA recommendations are a separate output contract, never finding hypotheses.
+const qaRecommendation = JSON.parse(readFileSync(`${root}/schemas/report-v1.json`, "utf8")).properties.qa.properties.recommendations.items;
+ajv.addSchema(qaRecommendation, "qaRecommendation");
+exports.qaRecommendation = "qaRecommendation";
 // A malformed experiment request drops only the request, not the assessment.
 exports.experimentRequest = "assessment#/$defs/experiment_request";
 Object.entries(modules).forEach(([, schema], i) => {

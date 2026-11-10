@@ -45,6 +45,8 @@ pub fn scan_secrets(diff: &Diff, head: &Tree) -> Result<Vec<Finding>> {
                 OccurrenceState::PreExisting
             };
             let location = Location {
+                cell: None,
+                evidence: None,
                 path: file.path.clone(),
                 line_start,
                 line_end,
@@ -65,6 +67,7 @@ pub fn scan_secrets(diff: &Diff, head: &Tree) -> Result<Vec<Finding>> {
             let trigger = redact_value(&content[found.start..found.end]);
             let message = format!("Potential {} credential: {trigger}", found.pattern);
             findings.push(Finding {
+                qa: None,
                 id: finding_id(&rule_id, &file.path, "", &message, ""),
                 rule_id,
                 category: Category::Defect,

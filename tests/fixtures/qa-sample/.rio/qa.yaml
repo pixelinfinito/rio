@@ -1,0 +1,29 @@
+version: 1
+app:
+  packaging: image
+  dockerfile: Dockerfile.qa
+  start: npm run build && node server.mjs
+  url: http://app.test:4173
+  ready: { path: /api/health, status: 200 }
+  env: { DATABASE_URL: data/shop.sqlite, APP_URL: 'http://app.test:4173' }
+  routes_from:
+    map:
+      - { glob: 'src/**', route: '/' }
+      - { glob: 'src/**', route: '/checkout' }
+      - { glob: 'server.mjs', route: '/profile' }
+personas:
+  - name: shopper
+    description: A shopper with a saved address
+    username_env: QA_SHOPPER_USERNAME
+    password_env: QA_SHOPPER_PASSWORD
+  - name: admin
+    description: A store administrator importing synthetic contacts
+    username_env: QA_ADMIN_USERNAME
+    password_env: QA_ADMIN_PASSWORD
+  - name: guest
+    description: A shopper without an account
+browser:
+  viewports: [mobile, desktop]
+  color_schemes: [light, dark]
+seed:
+  migrations: ['.rio/qa/seed/*.sql']

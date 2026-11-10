@@ -7,7 +7,7 @@ use rio_adapters::*;
 use rio_core::*;
 use rio_git::*;
 use rio_graph::{GraphBuilder, GraphOptions};
-use rio_profile::{ResolvedProfile, Step, parse_duration, resolve_module};
+use rio_profile::{ResolvedProfile, Step, resolve_module};
 use std::{
     collections::{BTreeMap, BTreeSet},
     path::PathBuf,
@@ -786,7 +786,10 @@ pub async fn review(
 ) -> Result<Report> {
     ensure!(request.parallelism > 0, "parallelism must be positive");
     let started = Instant::now();
-    let budget = parse_duration(&request.profile.profile.budget.fast.wall_time)
+    let budget = request
+        .profile
+        .profile
+        .review_wall(false, rio_profile::QA_VERIFICATION_RESERVE)
         .map_err(anyhow::Error::msg)?;
     let diff = diff(&request.changes, &profile_excludes(&request.profile))?;
     let snapshot = Snapshot::from_changes(&request.changes);
@@ -794,11 +797,13 @@ pub async fn review(
     let review_id = blake3::hash(format!("{}|{profile_hash}", snapshot.key).as_bytes()).to_hex()
         [..16]
         .to_owned();
-    let mut report = Report::empty(if diff.files.is_empty() {
-        ReportStatus::NoChanges
-    } else {
-        ReportStatus::Complete
-    });
+    let mut report = Report::empty(
+        if diff.files.is_empty() && !request.profile.profile.qa_enabled() {
+            ReportStatus::NoChanges
+        } else {
+            ReportStatus::Complete
+        },
+    );
     report.review = ReviewHeader {
         id: Some(review_id.clone()),
         run_id: Some(ulid::Ulid::new().to_string()),
@@ -813,7 +818,7 @@ pub async fn review(
         chain: Some(request.profile.chain.clone()),
         ..Default::default()
     };
-    if diff.files.is_empty() {
+    if diff.files.is_empty() && !request.profile.profile.qa_enabled() {
         return Ok(report);
     }
     let reachable = GixRepo::discover(&request.worktree).ok().and_then(|repo| {
@@ -840,6 +845,7 @@ pub async fn review(
         .await??;
     let mut plan: Option<ReviewPlan> = None;
     let mut tools_ran = false;
+    let mut qa_incomplete = false;
     let order = ordered_steps(&request.profile)?;
     let profile = request.profile.clone();
     let mut execution = Execution {
@@ -856,7 +862,61 @@ pub async fn review(
     };
     for step in order {
         let module = resolve_module(&step.uses)?;
+        if profile.qa_standalone
+            && !matches!(
+                module.name.as_str(),
+                "rio/prepare" | "rio/graph" | "rio/qa" | "rio/verify" | "rio/report"
+            )
+        {
+            report
+                .footer
+                .notes
+                .push(format!("{} skipped: standalone", step.id));
+            continue;
+        }
         if module.name == "rio/security" && step.options["enabled"].as_bool() != Some(true) {
+            continue;
+        }
+        if module.name == "rio/qa" {
+            if step.options["enabled"].as_bool() == Some(true) {
+                emit(
+                    &events,
+                    ReviewEvent::StepStarted {
+                        step: step.id.clone(),
+                    },
+                );
+                match crate::qa::execute(
+                    &execution.request,
+                    &execution.diff,
+                    &step,
+                    &cache,
+                    &mut report,
+                    cancellation.clone(),
+                    execution.deadline,
+                )
+                .await
+                {
+                    Ok(incomplete) => qa_incomplete |= incomplete,
+                    Err(error) => {
+                        qa_incomplete = true;
+                        if error.is::<rio_qa::QaCleanupUnconfirmed>() {
+                            return Err(error);
+                        }
+                        report.status = ReportStatus::Partial;
+                        report.footer.notes.push(format!(
+                            "QA execution failed: {}",
+                            redact(&error.to_string())
+                        ));
+                        cache.write("qa/failure.json", &serde_json::to_vec(&serde_json::json!({"outcome":"partial","reason":redact(&error.to_string())}))?)?;
+                    }
+                }
+                emit(
+                    &events,
+                    ReviewEvent::StepFinished {
+                        step: step.id.clone(),
+                    },
+                );
+            }
             continue;
         }
         if !module.local {
@@ -876,9 +936,10 @@ pub async fn review(
             "rio/prepare" => {
                 cache.write(
                     "owner_guidance.json",
-                    &serde_json::to_vec_pretty(&crate::guidance::owner_guidance(
+                    &serde_json::to_vec_pretty(&crate::guidance::review_owner_guidance(
                         &execution.request.changes.head,
                         &execution.diff,
+                        profile.profile.qa_enabled(),
                     ))?,
                 )?;
                 report.risk_tier =
@@ -1126,6 +1187,20 @@ pub async fn review(
     report.findings = deduplicate(report.findings);
     report.risks = deduplicate(report.risks);
     apply_suppressions(&mut report, &profile.profile.suppress)?;
+    if let Some(step) = profile
+        .profile
+        .step("rio/qa")
+        .filter(|step| step.options["enabled"] == true)
+    {
+        apply_qa_policy(&mut report, &step.options, qa_incomplete).map_err(anyhow::Error::msg)?;
+        if let Some(audit) = report
+            .agent_audit
+            .as_ref()
+            .and_then(|audit| audit.get("qa"))
+        {
+            cache.write("qa/policy.json", &serde_json::to_vec_pretty(audit)?)?;
+        }
+    }
     report.summary.pre_existing = report
         .findings
         .iter()

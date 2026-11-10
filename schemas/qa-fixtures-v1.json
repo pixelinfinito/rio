@@ -1,0 +1,266 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rio.dev/schemas/qa-fixtures-v1.json",
+  "title": "Rio qa-fixtures v1",
+  "type": "object",
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "path": {
+            "type": "string",
+            "pattern": "^\\.rio/qa/fixtures/files/(?!.*(?:^|/)\\.\\.(?:/|$))[^\\\\]+$"
+          },
+          "generate": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "enum": [
+                  "image",
+                  "pdf",
+                  "csv",
+                  "json",
+                  "text",
+                  "binary"
+                ]
+              },
+              "size": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "width": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "height": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "rows": {
+                "type": "integer",
+                "minimum": 1
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "additionalProperties": false,
+        "oneOf": [
+          {
+            "required": [
+              "path"
+            ],
+            "not": {
+              "required": [
+                "generate"
+              ]
+            }
+          },
+          {
+            "required": [
+              "generate"
+            ],
+            "not": {
+              "required": [
+                "path"
+              ]
+            }
+          }
+        ]
+      },
+      "minItems": 0
+    },
+    "services": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "kind": {
+            "enum": [
+              "http-mock",
+              "smtp-capture",
+              "sms-capture",
+              "webhook-sink",
+              "oauth-provider",
+              "s3",
+              "custom"
+            ]
+          },
+          "env": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string",
+              "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+            },
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "claims": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9](?:[a-zA-Z0-9.-]*[a-zA-Z0-9])?(?::(?:80|443))?$"
+            },
+            "minItems": 0,
+            "uniqueItems": true
+          },
+          "recordings": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^(?!/)(?![A-Za-z]:)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\).+$"
+          },
+          "behaviors": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "minItems": 0,
+            "uniqueItems": true
+          },
+          "default_behavior": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "start": {
+            "type": "string",
+            "minLength": 1
+          },
+          "ready": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "name",
+          "kind",
+          "env"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "kind": {
+                  "const": "http-mock"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "recordings",
+                "behaviors"
+              ]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "kind": {
+                  "const": "custom"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "start",
+                "ready"
+              ]
+            }
+          }
+        ]
+      },
+      "minItems": 0
+    },
+    "capture": {
+      "type": "object",
+      "properties": {
+        "mail": {
+          "type": "boolean"
+        },
+        "sms": {
+          "type": "boolean"
+        },
+        "webhooks": {
+          "type": "boolean"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "defaults": {
+      "type": "object",
+      "properties": {
+        "time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "timezone": {
+          "type": "string",
+          "minLength": 1
+        },
+        "locale": {
+          "type": "string",
+          "minLength": 1
+        },
+        "geolocation": {
+          "type": "object",
+          "properties": {
+            "latitude": {
+              "type": "number",
+              "minimum": -90,
+              "maximum": 90
+            },
+            "longitude": {
+              "type": "number",
+              "minimum": -180,
+              "maximum": 180
+            },
+            "accuracy": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "latitude",
+            "longitude"
+          ],
+          "additionalProperties": false
+        },
+        "network": {
+          "enum": [
+            "online",
+            "slow-3g",
+            "offline"
+          ]
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "version"
+  ],
+  "additionalProperties": false
+}

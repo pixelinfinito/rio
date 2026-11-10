@@ -134,6 +134,7 @@ pub struct ImpactSummary {
 #[serde(rename_all = "snake_case")]
 pub enum DeferredReason {
     NoEndpoint,
+    NoRuntime,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -227,6 +228,9 @@ pub struct Report {
     pub security: Vec<Finding>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub agent_audit: Option<serde_json::Value>,
+    /// Browser journeys, evidence-backed recommendations and assessment coverage.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub qa: Option<serde_json::Value>,
     pub incomplete: Vec<CheckEntry>,
     pub deferred: Vec<DeferredStep>,
     pub excluded: Vec<ExcludedFile>,
@@ -468,6 +472,7 @@ impl Report {
             risks: Vec::new(),
             security: Vec::new(),
             agent_audit: None,
+            qa: None,
             incomplete: Vec::new(),
             deferred: Vec::new(),
             excluded: Vec::new(),

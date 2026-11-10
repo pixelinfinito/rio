@@ -129,3 +129,66 @@ jobs:
       - name: Runner protocol and Docker isolation
         run: RIO_TEST_DOCKER=1 RIO_RUNNER_IMAGE=rio-runner:0.3.0 python3 -m unittest discover -s worker/runner/tests -v
       - run: npm run dry-run --prefix worker
+
+  qa-foundations:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: |
+            tests/fixtures/qa-sample/package-lock.json
+            crates/rio-qa/controller/package-lock.json
+      - run: npm ci --prefix tests/fixtures/qa-sample
+      - run: npm ci --prefix crates/rio-qa/controller
+      - name: Install matching browser versions
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg tesseract-ocr
+          cd tests/fixtures/qa-sample
+          npx playwright install --with-deps chromium
+          cd ../../../crates/rio-qa/controller
+          npx playwright install chromium
+      - run: npm test --prefix tests/fixtures/qa-sample
+      - run: npm test --prefix crates/rio-qa/controller
+      - run: python3 scripts/generate-qa-assets.py --check
+      - run: npm run test:browser --prefix crates/rio-qa/controller
+      - run: docker build -f tests/fixtures/qa-sample/Dockerfile.qa -t rio-qa-sample tests/fixtures/qa-sample
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: '1.99.1'
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo build -p rio-runner -p rio-cli --locked
+      - run: docker build -f worker/Dockerfile.qa -t rio-qa:0.1.0 .
+      - run: target/debug/rio-runner qa --self-test
+      - name: QA harness CLI and restricted MCP protocol
+        run: docker run --rm --network none --user 1000:1000 --entrypoint node -v "$PWD/crates/rio-qa/controller/tests:/opt/rio-qa/tests:ro" rio-qa:0.1.0 --test /opt/rio-qa/tests/harness-image.mjs
+      - run: python3 worker/qa/test_image.py
+      - name: QA pod host firewall and isolation
+        run: |
+          sudo modprobe br_netfilter
+          target/debug/rio-runner qa --pod-self-test
+      - name: QA controller authentication and host model relay isolation
+        run: RIO_TEST_QA_DOCKER=1 RIO_QA_IMAGE=rio-qa:0.1.0 python3 worker/qa/test_auth.py -v
+      - name: QA datastore round trips and safe extraction
+        run: |
+          docker run --rm --network none --user 1000:1000 --cap-drop ALL --security-opt no-new-privileges -v "$PWD/crates/rio-qa/controller/src:/opt/rio-qa/src:ro" -v "$PWD/crates/rio-qa/controller/tests:/opt/rio-qa/tests:ro" rio-qa-sample node --test /opt/rio-qa/tests/datastores-image.mjs /opt/rio-qa/tests/datastores.test.mjs
+          python3 worker/qa/test_seed_archive.py -v
+      - name: QA app startup and seed restoration
+        run: RIO_TEST_QA_DOCKER=1 RIO_QA_SAMPLE_IMAGE=rio-qa-sample python3 worker/qa/test_app_runtime.py -v
+      - name: QA seed CLI build, restore, force and export
+        run: RIO_TEST_QA_DOCKER=1 python3 worker/qa/test_seed_cli.py -v
+      - name: QA seed transfer and credential rotation
+        run: RIO_TEST_QA_DOCKER=1 RIO_QA_IMAGE=rio-qa:0.1.0 python3 worker/qa/test_seed_transfer.py -v
+      - name: QA journey authoring through the CLI and isolated browser
+        run: RIO_TEST_QA_DOCKER=1 RIO_QA_IMAGE=rio-qa:0.1.0 python3 worker/qa/test_author.py -v
+      - name: QA init first-start dependencies
+        run: RIO_TEST_QA_DOCKER=1 RIO_QA_IMAGE=rio-qa:0.1.0 python3 worker/qa/test_init_dependencies.py -v
+      - name: QA standalone working-tree CLI and browser cells
+        run: RIO_TEST_QA_DOCKER=1 RIO_QA_IMAGE=rio-qa:0.1.0 python3 worker/qa/test_standalone.py -v
+      - name: Provisioned Sandbox QA runtime
+        run: |
+          docker build -f worker/Dockerfile -t rio-runner:qa-sandbox .
+          RIO_TEST_QA_DOCKER=1 python3 -m unittest worker/qa/test_sandbox.py -v

@@ -89,6 +89,44 @@ rio review --deep
 
 Instead of OpenRouter, `rio init` can register your own OpenAI-compatible or Anthropic endpoints as AI Gateway custom providers (provider 4, or `--custom-provider SLUG:PROTOCOL:BASE_URL` with the key in `AI_GATEWAY_PROVIDER_KEY_<SLUG>`), and profiles can call them as `custom-SLUG/MODEL`, through the unified `compat/…` endpoint, or through gateway dynamic routes as `dynamic/ROUTE`; see [custom endpoints](docs/cloudflare.md#custom-endpoints-through-ai-gateway). Quick, Standard and Deep require an endpoint; `--offline` keeps local deterministic execution. With the [GitHub App](docs/github-app.md) (`rio init --github-app`), the endpoint reviews pull requests when they are opened or pushed, publishes under the repository profile's `publish` policy, and answers `/rio review` and `/rio dismiss <id> <reason>` comments; `rio review --pr <n>` runs the same hosted review from the CLI. An enabled security step (or `--profile rio/security`) reviews the change against the OWASP Top 10:2025 or ASVS 5.0 catalog and reports which catalog items it assessed. See [Cloudflare deployment and runners](docs/cloudflare.md) and [verification evidence](docs/verifier-contracts.md) for setup, isolation, budgets and the pending live model acceptance gate.
 
+### Browser QA and UX review
+
+Build the paired QA image from this source checkout on a Docker host with firewall
+control:
+
+```sh
+docker build -f worker/Dockerfile.qa -t rio-qa:0.1.0 .
+```
+
+In the application repository, define `.rio/qa.yaml`, synthetic seed and service
+fixtures, and `REVIEW.md` requirements for user goals, recovery, accessibility and
+intentional design choices. The [QA guide](docs/qa.md) includes the contracts and
+examples; `tests/fixtures/qa-sample` is a complete sample application. With those
+files in place and a local Codex subscription or host keychain model route:
+
+```sh
+rio qa validate
+rio qa seed build
+rio qa init
+rio qa --full
+rio qa --journey checkout --baseline
+rio qa sync --check
+```
+
+`sync --check` exits 1 when covered source or owner guidance has changed and a
+journey needs review; it does not rewrite journeys.
+
+QA captures masked screenshots, DOM and traces across mobile and desktop cells.
+Scoped owner guidance and the versioned UX rubric drive recommendations even when
+a journey passes. Recommendations distinguish observed friction from an untested
+proposed benefit and cannot fail the review. Without an endpoint, judged findings
+and recommendations remain explicitly unverified. Hosted verification inspects
+screenshots and guidance using the QA profile's explicit spending ceilings:
+500,000 review tokens / 60,000 per voter in fast mode, and 1,000,000 / 120,000 in
+deep mode. Profiles can override these ceilings. Use `rio review --profile rio/qa`
+to include QA in the review pipeline, and the existing GitHub App transport to
+publish PR summaries.
+
 ### Review lineages and feedback
 
 ```sh

@@ -124,6 +124,7 @@ P0 = required for v0.2 (first usable release with backend); P1 = v0.3; P2 = late
 | R29 | Security as its own step with its own posture and `fail_on` | P1 |
 | R30 | Council step for selected findings: five members from different model families and vendors, one structured exchange round, deterministic aggregation | P1 |
 | R31 | Noise measurement on known-clean PRs and incident import (`rio eval import-incident`) feeding the evaluation set | P1 |
+| R32 | Browser QA from committed journeys: isolated app/browser/controller runtime, synthetic seed and service fixtures, mobile-first viewport and color-scheme coverage, masked screenshot/DOM/trace evidence, and independent verification. Immutable scoped `REVIEW.md` requirements guide execution and UX assessment, including passing flows. Evidence-backed UX recommendations carry principle references, actionable proposals and explicitly untested expected benefits; they remain separate from defect findings and fail policy. Local runs label unverified results; hosted evidence expires through scheduled per-run deletion. | P1 |
 
 **Non-functional requirements**
 

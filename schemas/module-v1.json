@@ -9,7 +9,8 @@
         "adapter",
         "step",
         "catalog",
-        "member"
+        "member",
+        "ruleset"
       ]
     },
     "name": {
@@ -619,6 +620,14 @@
       "description": "Served through a self-hosted runner's model endpoint; the pack never leaves the account.",
       "type": "boolean",
       "default": false
+    },
+    "rules": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/qa_rule"
+      },
+      "minItems": 1,
+      "uniqueItems": true
     }
   },
   "required": [
@@ -710,6 +719,11 @@
             {
               "required": [
                 "self_hosted"
+              ]
+            },
+            {
+              "required": [
+                "rules"
               ]
             }
           ]
@@ -806,6 +820,11 @@
             {
               "required": [
                 "self_hosted"
+              ]
+            },
+            {
+              "required": [
+                "rules"
               ]
             }
           ]
@@ -911,6 +930,11 @@
               "required": [
                 "self_hosted"
               ]
+            },
+            {
+              "required": [
+                "rules"
+              ]
             }
           ]
         }
@@ -985,6 +1009,11 @@
               "required": [
                 "items"
               ]
+            },
+            {
+              "required": [
+                "rules"
+              ]
             }
           ]
         },
@@ -994,6 +1023,380 @@
           }
         }
       }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "ruleset"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "rules"
+        ],
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "schema"
+              ]
+            },
+            {
+              "required": [
+                "languages"
+              ]
+            },
+            {
+              "required": [
+                "files"
+              ]
+            },
+            {
+              "required": [
+                "capabilities"
+              ]
+            },
+            {
+              "required": [
+                "tools"
+              ]
+            },
+            {
+              "required": [
+                "inputs"
+              ]
+            },
+            {
+              "required": [
+                "outputs"
+              ]
+            },
+            {
+              "required": [
+                "local"
+              ]
+            },
+            {
+              "required": [
+                "attribution"
+              ]
+            },
+            {
+              "required": [
+                "items"
+              ]
+            },
+            {
+              "required": [
+                "provider"
+              ]
+            },
+            {
+              "required": [
+                "model"
+              ]
+            },
+            {
+              "required": [
+                "prompt"
+              ]
+            },
+            {
+              "required": [
+                "context_pack"
+              ]
+            },
+            {
+              "required": [
+                "role"
+              ]
+            },
+            {
+              "required": [
+                "weight"
+              ]
+            },
+            {
+              "required": [
+                "family"
+              ]
+            },
+            {
+              "required": [
+                "self_hosted"
+              ]
+            }
+          ]
+        }
+      }
     }
-  ]
+  ],
+  "$defs": {
+    "qa_rule": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^(ui|mobile|ux)/[a-z][a-z0-9-]*$"
+        },
+        "kind": {
+          "enum": [
+            "probe",
+            "judged"
+          ]
+        },
+        "category": {
+          "enum": [
+            "functional",
+            "ux",
+            "style",
+            "accessibility"
+          ]
+        },
+        "severity": {
+          "enum": [
+            "error",
+            "warning",
+            "info"
+          ]
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "eligible": {
+          "type": "string",
+          "minLength": 1
+        },
+        "measure": {
+          "type": "string",
+          "minLength": 1
+        },
+        "threshold": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "min": {
+                  "type": "number"
+                },
+                "max": {
+                  "type": "number"
+                },
+                "ratio": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "min_sample": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "unit": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "additionalProperties": false,
+              "anyOf": [
+                {
+                  "required": [
+                    "min"
+                  ]
+                },
+                {
+                  "required": [
+                    "max"
+                  ]
+                },
+                {
+                  "required": [
+                    "ratio"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "exclude": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "scope": {
+          "enum": [
+            "step",
+            "run"
+          ]
+        },
+        "source": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string",
+              "minLength": 1
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1
+            },
+            "url": {
+              "type": "string",
+              "pattern": "^https://[^ ]+$"
+            }
+          },
+          "required": [
+            "title",
+            "version",
+            "url"
+          ],
+          "additionalProperties": false
+        },
+        "applicability": {
+          "type": "string",
+          "minLength": 1
+        },
+        "required_evidence": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        },
+        "examples": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "category",
+        "severity",
+        "description"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "probe"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "eligible",
+              "measure",
+              "threshold",
+              "exclude",
+              "scope"
+            ],
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "source"
+                  ]
+                },
+                {
+                  "required": [
+                    "applicability"
+                  ]
+                },
+                {
+                  "required": [
+                    "required_evidence"
+                  ]
+                },
+                {
+                  "required": [
+                    "examples"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "judged"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "source",
+              "applicability",
+              "required_evidence",
+              "examples"
+            ],
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "eligible"
+                  ]
+                },
+                {
+                  "required": [
+                    "measure"
+                  ]
+                },
+                {
+                  "required": [
+                    "threshold"
+                  ]
+                },
+                {
+                  "required": [
+                    "exclude"
+                  ]
+                },
+                {
+                  "required": [
+                    "scope"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "id": {
+                "pattern": "^ux/"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "kind": {
+                "const": "judged"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
 }

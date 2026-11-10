@@ -75,14 +75,20 @@ fn listing_keeps_shadowed_profiles_and_marks_only_the_actual_default() {
     let names: Vec<_> = initial.iter().map(|p| p.name.as_str()).collect();
     assert_eq!(
         names,
-        ["rio/base", "rio/critical", "rio/openrouter", "rio/security"]
+        [
+            "rio/base",
+            "rio/critical",
+            "rio/openrouter",
+            "rio/qa",
+            "rio/security"
+        ]
     );
     assert!(initial[0].is_default);
     assert!(initial[1..].iter().all(|p| !p.is_default));
     write(root.path(), ".rio/profiles/default.yaml", "default");
     write(config.path(), "profiles/default.yaml", "default");
     let listed = loader.list().unwrap();
-    assert_eq!(listed.len(), 6);
+    assert_eq!(listed.len(), 7);
     assert_eq!(listed.iter().filter(|p| p.is_default).count(), 1);
     assert!(
         listed

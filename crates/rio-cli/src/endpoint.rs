@@ -159,6 +159,7 @@ pub async fn review(
         "verification/audit.json",
         &serde_json::to_vec_pretty(&audit)?,
     )?;
+    cache_qa_records(&cache, &audit)?;
     report = serde_json::from_slice(&rio_core::render_json(&report).map_err(anyhow::Error::msg)?)?;
     cache.finish(&report)?;
     let posted = match (&lineage, before) {
@@ -182,13 +183,41 @@ pub async fn review(
     Ok(EndpointOutcome { report, posted })
 }
 
+fn cache_qa_records(cache: &RunCache, audit: &serde_json::Value) -> Result<()> {
+    // Fixed record names only. The endpoint cannot choose a local output path,
+    // and artifact keys remain metadata rather than triggering downloads.
+    for name in [
+        "plan.json",
+        "outcomes.json",
+        "manifest.json",
+        "recommendations.json",
+        "assessment.json",
+        "observations.json",
+        "observation-candidates.json",
+        "baseline.json",
+        "audit.json",
+        "verification.json",
+        "recommendation-history.json",
+        "policy.json",
+    ] {
+        if let Some(record) = audit["qa_records"].get(name) {
+            cache.write(&format!("qa/{name}"), &serde_json::to_vec_pretty(record)?)?;
+        }
+    }
+    Ok(())
+}
+
 /// The longest configured review deadline plus a minute: triage can select
 /// either budget after submission.
 pub fn review_timeout(profile: &ResolvedProfile) -> Result<Duration> {
-    Ok([&profile.profile.budget.fast]
+    Ok([false, true]
         .into_iter()
-        .chain(profile.profile.budget.deep.as_ref())
-        .map(|budget| rio_profile::parse_duration(&budget.wall_time).map_err(anyhow::Error::msg))
+        .map(|deep| {
+            profile
+                .profile
+                .review_wall(deep, rio_profile::QA_VERIFICATION_RESERVE)
+                .map_err(anyhow::Error::msg)
+        })
         .collect::<Result<Vec<_>>>()?
         .into_iter()
         .max()
@@ -202,4 +231,29 @@ pub fn graph_budget() -> Duration {
         .ok()
         .and_then(|value| value.parse().ok())
         .map_or(GRAPH_BUDGET, Duration::from_secs)
+}
+
+#[cfg(test)]
+mod qa_record_tests {
+    use super::*;
+    #[test]
+    fn hosted_records_keep_keys_under_the_run_without_downloading_evidence() {
+        let root = tempfile::tempdir().unwrap();
+        let cache =
+            RunCache::begin(CacheOptions::for_repository(root.path()), "a".repeat(16)).unwrap();
+        let manifest = json!({"artifacts":[{"id":"shot","key":"qa/tenant/review/run/shot.png","expires_at":1800000000000_u64}]});
+        cache_qa_records(&cache, &json!({"qa_records":{"manifest.json":manifest,"plan.json":{"selected":{"checkout":["explicit"]}},
+            "outcomes.json":[],"../../escape.json":true,"shot.png":"must not be materialized"}})).unwrap();
+        assert_eq!(
+            serde_json::from_slice::<serde_json::Value>(
+                &std::fs::read(cache.path.join("qa/manifest.json")).unwrap()
+            )
+            .unwrap(),
+            manifest
+        );
+        assert!(cache.path.join("qa/plan.json").is_file());
+        assert!(cache.path.join("qa/outcomes.json").is_file());
+        assert!(!cache.path.join("qa/shot.png").exists());
+        assert!(!cache.path.parent().unwrap().join("escape.json").exists());
+    }
 }

@@ -71,6 +71,11 @@ export function findingOf(v: Verified): Finding {
   };
 }
 export function policyMatches(f: Finding, policy: FailOn): boolean {
+  if (
+    f.category === "ux" &&
+    (f.severity === "info" || f.evidence_level === "refuted")
+  )
+    return false;
   return (
     (policy.rules ?? []).some((rule) => matches(rule, f.rule_id)) ||
     (evidence[f.evidence_level] >=

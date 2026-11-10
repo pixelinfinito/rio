@@ -1,0 +1,122 @@
+---
+source: crates/rio-core/tests/qa_contracts.rs
+expression: "report[\"qa\"]"
+---
+{
+  "assessment": [
+    {
+      "cell": {
+        "color_scheme": "light",
+        "viewport": "mobile"
+      },
+      "evidence": [
+        "qa/checkout/mobile-light/2.png"
+      ],
+      "journey": "checkout",
+      "rule_id": "ux/task-efficiency",
+      "status": "assessed"
+    }
+  ],
+  "cost": {
+    "tokens": 10000,
+    "usd": 0.01,
+    "wall_time_ms": 30000
+  },
+  "evidence": {
+    "bytes": 4096,
+    "expires_at": null,
+    "storage": "local"
+  },
+  "guidance": [],
+  "harness": "codex",
+  "isolation": "pod",
+  "journeys": [
+    {
+      "cells": [
+        {
+          "color_scheme": "light",
+          "evidence": [
+            "qa/checkout/mobile-light/4.png"
+          ],
+          "outcome": "failed",
+          "step_reached": 4,
+          "viewport": "mobile"
+        },
+        {
+          "color_scheme": "light",
+          "evidence": [
+            "qa/checkout/desktop-light/4.png"
+          ],
+          "outcome": "failed",
+          "step_reached": 4,
+          "viewport": "desktop"
+        }
+      ],
+      "name": "checkout",
+      "outcome": "failed"
+    }
+  ],
+  "mode": "changed",
+  "observations_unverified": [],
+  "recommendations": [
+    {
+      "basis": {
+        "heuristic": {
+          "reference": "Flexibility and efficiency of use",
+          "source": "Nielsen usability heuristics",
+          "version": "1994"
+        }
+      },
+      "cells": [
+        {
+          "color_scheme": "light",
+          "viewport": "mobile"
+        }
+      ],
+      "confidence": "high",
+      "evidence": [
+        "qa/checkout/mobile-light/2.png",
+        "qa/checkout/mobile-light/3.png"
+      ],
+      "expected_benefit": "May reduce repeated entry; benefit has not been user-tested",
+      "friction_target": {
+        "kind": "duplicate-entry",
+        "target": "shipping-address"
+      },
+      "goal": "Buy a product",
+      "id": "ux-address-reuse",
+      "journey": "checkout",
+      "observed_friction": "User re-enters the same address for billing",
+      "persona": "shopper",
+      "priority": "medium",
+      "proposed_improvement": "Offer to reuse the shipping address, with an edit option",
+      "rationale": "Both steps visibly require the same information",
+      "route_pattern": "/checkout",
+      "rule_id": "ux/task-efficiency",
+      "steps": [
+        2,
+        3
+      ],
+      "trade_offs": [
+        "Shipping and billing addresses can differ"
+      ],
+      "verification_status": "supported"
+    }
+  ],
+  "recommendations_dropped": 0,
+  "recommendations_held_back": 0,
+  "rubric_version": "ui-v1@0.1.0",
+  "seed": {
+    "duration_ms": 2100,
+    "fingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "status": "restored"
+  },
+  "selection": [
+    {
+      "journey": "checkout",
+      "reasons": [
+        "smoke"
+      ]
+    }
+  ]
+}

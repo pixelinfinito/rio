@@ -3,9 +3,19 @@ import type { Env, Execution } from "./types";
 import { invariant } from "./validation";
 import { ARTIFACT_LIMIT, PREPARE_WALL_MS, validateResult } from "./jobs";
 import { jobInput } from "./archive";
+import { SandboxQa } from "./qa-sandbox";
 export class Sandbox extends DurableObject<Env> {
+  private qaStart?: Promise<void>;
+  async alarm() {
+    await new SandboxQa(this.ctx, this.env).alarm();
+  }
   async fetch(request: Request): Promise<Response> {
     const job: Execution = await request.json();
+    if (job.kind === "qa") {
+      this.qaStart ??= new SandboxQa(this.ctx, this.env).start(job);
+      await this.qaStart;
+      return Response.json({ accepted: true }, { status: 202 });
+    }
     invariant(
       job.network === false &&
         job.limits.memory_mb <= 8192 &&

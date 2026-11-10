@@ -1,0 +1,169 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rio.dev/schemas/qa-seed-v1.json",
+  "title": "Rio qa-seed v1",
+  "type": "object",
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "datastores": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "kind": {
+            "enum": [
+              "sqlite",
+              "postgres",
+              "mysql",
+              "redis",
+              "files",
+              "custom"
+            ]
+          },
+          "connection_env": {
+            "type": "string",
+            "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+          },
+          "start": {
+            "type": "string",
+            "minLength": 1
+          },
+          "ready": {
+            "type": "string",
+            "minLength": 1
+          },
+          "capture": {
+            "type": "string",
+            "minLength": 1
+          },
+          "restore": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "name",
+          "kind"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "kind": {
+                  "const": "custom"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "capture",
+                "restore"
+              ]
+            }
+          }
+        ]
+      },
+      "minItems": 0
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "command": {
+            "type": "string",
+            "minLength": 1
+          },
+          "file": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^(?!/)(?![A-Za-z]:)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\).+$"
+          },
+          "applies_to": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "applies_to"
+        ],
+        "additionalProperties": false,
+        "oneOf": [
+          {
+            "required": [
+              "command"
+            ],
+            "not": {
+              "required": [
+                "file"
+              ]
+            }
+          },
+          {
+            "required": [
+              "file"
+            ],
+            "not": {
+              "required": [
+                "command"
+              ]
+            }
+          }
+        ]
+      },
+      "minItems": 0
+    },
+    "users": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "persona": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "apply": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "persona",
+          "apply"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    },
+    "paths": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "^(?!/)(?![A-Za-z]:)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\).+$"
+      },
+      "minItems": 0,
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "version",
+    "datastores",
+    "steps",
+    "users",
+    "paths"
+  ],
+  "additionalProperties": false
+}

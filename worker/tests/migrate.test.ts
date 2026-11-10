@@ -151,6 +151,18 @@ it("applies forward migrations once and leaves no deployment lock", async () => 
       "agent_cache",
       "finding_sightings",
       "council_assessments",
+      "qa_seed_parts",
+      "qa_seed_heads",
+      "qa_seed_leases",
+      "qa_seed_garbage",
+      "qa_runs",
+      "qa_cells",
+      "qa_evidence",
+      "qa_evidence_manifests",
+      "qa_evidence_garbage",
+      "qa_model_usage",
+      "qa_recommendation_history",
+      "qa_recommendation_sightings",
     ]),
   );
   expect(await tables()).not.toContain("feedback_next");
@@ -170,7 +182,23 @@ it("applies forward migrations once and leaves no deployment lock", async () => 
 
 it("upgrades a v0.2 database and converts draft feedback reasons", async () => {
   // Simulate a database deployed with 0001 only, holding draft-era feedback rows.
+  await env.DB.prepare("DROP VIEW IF EXISTS qa_active_seed_leases").run();
   for (const table of [
+    "qa_recommendation_history",
+    "qa_recommendation_sightings",
+    "qa_evidence",
+    "qa_evidence_manifests",
+    "qa_evidence_garbage",
+    "qa_model_usage",
+    "qa_cells",
+    "qa_runs",
+    "qa_seed_heads",
+    "qa_seed_version_parts",
+    "qa_seed_versions",
+    "qa_seed_lease_parts",
+    "qa_seed_leases",
+    "qa_seed_parts",
+    "qa_seed_garbage",
     "rio_migrations",
     "rio_deploy_lock",
     "feedback",

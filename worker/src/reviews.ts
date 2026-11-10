@@ -8,7 +8,7 @@ import {
 import { SYMLINK, StoredSnapshot, lineCounts, materialize } from "./snapshot";
 import { attachStatements } from "./lineage";
 import { Store } from "./storage";
-import { parseWall } from "./budget";
+import { reviewWall } from "./budget";
 import { checkProfileModels } from "./gateway";
 
 /**
@@ -79,8 +79,10 @@ export async function createReview(
     value.mode === "deep"
       ? (value.profile.budget.deep ?? value.profile.budget.fast)
       : value.profile.budget.fast;
-  const wall = parseWall(active.wall_time);
-  invariant(wall <= 3600000, "review wall budget exceeds one hour");
+  const wall = reviewWall(
+    value.profile,
+    value.mode === "deep" ? "deep" : "fast",
+  );
   const now = Date.now();
   // The review and its lineage attachment (including a reset) commit together.
   const results = await env.DB.batch([

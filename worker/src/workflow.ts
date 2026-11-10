@@ -81,6 +81,18 @@ import {
 import memberWeights from "./member-weights.json";
 import { pullOf } from "./pulls";
 import { createJob, createModelJob } from "./jobs";
+import { createQaJob } from "./qa-jobs";
+import { qaReport, qaRecords, compareQaResults, qaUsage } from "./qa-results";
+import { applyQaPolicy, suppressQaFindings } from "./qa-policy";
+import { verifyQaReview } from "./qa-review";
+import { dispatchQaReplay } from "./qa-replay";
+import {
+  loadRecommendationHistory,
+  rememberRecommendations,
+  recommendationContinuity,
+} from "./qa-recommendation-history";
+import { readQaEvidence } from "./qa-evidence";
+import { selectRecommendations } from "./qa-recommendations";
 import {
   applyHistory,
   findingHash,
@@ -314,11 +326,23 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
     // Lineage state is read once, durably, so replays see the same round and history.
     let lineage: LineageContext | null = null;
     const trees = new Map<string, Tree>();
+    const qaChanges = new Map<string, Set<string>>();
     // Head files at the prior findings' locations, for relocation.
     let head: Record<string, File> = {};
     let previousHead: SnapshotReader | undefined;
     let incremental: Submission["changed"] = [];
     let agentsVerified = false;
+    let qaRuntimeIncomplete = false;
+    let qaRecommendations: import("./qa-recommendations").Recommendation[] = [];
+    let qaVerification:
+      | {
+          result: any;
+          run: string;
+          baseRun?: string;
+          step: string;
+          options: Record<string, any>;
+        }
+      | undefined;
     // Agent audit: why agents ran or were skipped, and screened-out hypotheses.
     const skippedAgents: Record<string, string> = {};
     const rejected: Rejection[] = [];
@@ -853,6 +877,22 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
     const done = new Set<string>();
     const perform = async (s: Submission["profile"]["steps"][number]) => {
       if (await store.cancelled(id)) throw new Error("cancelled");
+      if (
+        submission.profile.qa_standalone &&
+        ![
+          "rio/prepare",
+          "rio/graph",
+          "rio/qa",
+          "rio/verify",
+          "rio/report",
+        ].includes(s.uses.split("@")[0])
+      ) {
+        report.footer.notes.push(`${s.id} skipped: standalone`);
+        await step.do(`skipped-${s.id}`, () =>
+          store.event(id, "step:skipped", { step: s.id, reason: "standalone" }),
+        );
+        return;
+      }
       await step.do(`started-${s.id}`, () =>
         store.event(id, "step:started", { step: s.id }),
       );
@@ -862,6 +902,134 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
         await step.do(`budget-${s.id}`, () =>
           store.selectBudget(id, submission.profile, plan.mode),
         );
+      } else if (module === "rio/qa") {
+        if (s.with.enabled === true) {
+          const job = hash(`${id}-${s.id}-qa-head`).slice(0, 32);
+          const dispatched = await step.do(`dispatch-${job}`, () =>
+            createQaJob(this.env, {
+              review: id,
+              job,
+              step: s.id,
+              submission: { ...submission, graphs },
+              options: s.with,
+            }),
+          );
+          if ("deferred" in dispatched) {
+            if (dispatched.deferred === "fork")
+              report.footer.notes.push("QA skipped: fork");
+            else {
+              report.deferred.push({ step: s.id, reason: "no_runtime" });
+              report.footer.notes.push(
+                "QA needs the Docker runner or explicit Sandbox opt-in.",
+              );
+            }
+          } else {
+            const completed = await step.waitForEvent<{ key: string }>(
+              `wait-${job}`,
+              {
+                type: `job-${job}-1`,
+                timeout: `${Math.ceil(dispatched.job.limits.wall_ms / 1000) + 120} seconds`,
+              },
+            );
+            const result = await store.get<ExecutionResult>(
+              completed.payload.key,
+            );
+            invariant(
+              result.job_id === job &&
+                result.attempt === 1 &&
+                result.version === "head",
+              "wrong QA runner completion",
+            );
+            executions[job] = result;
+            invariant(
+              result.exit_code === 0 && result.artifact,
+              "QA runner failed; retained job output contains the failure",
+            );
+            let artifact = result.artifact;
+            let baseRun: string | undefined;
+            if (s.with.baseline && artifact.deferred !== "no_runtime") {
+              const baseJob = hash(`${id}-${s.id}-qa-base`).slice(0, 32);
+              let base: any;
+              try {
+                const dispatched = await step.do(`dispatch-${baseJob}`, () =>
+                  createQaJob(this.env, {
+                    review: id,
+                    job: baseJob,
+                    step: s.id,
+                    version: "base",
+                    submission: { ...submission, graphs },
+                    options: s.with,
+                  }),
+                );
+                invariant(
+                  "job" in dispatched,
+                  "QA baseline runtime unavailable",
+                );
+                const completed = await step.waitForEvent<{ key: string }>(
+                  `wait-${baseJob}`,
+                  {
+                    type: `job-${baseJob}-1`,
+                    timeout: `${Math.ceil(dispatched.job.limits.wall_ms / 1000) + 120} seconds`,
+                  },
+                );
+                const result = await store.get<ExecutionResult>(
+                  completed.payload.key,
+                );
+                invariant(
+                  result.job_id === baseJob &&
+                    result.attempt === 1 &&
+                    result.version === "base",
+                  "wrong QA baseline completion",
+                );
+                executions[baseJob] = result;
+                invariant(
+                  result.exit_code === 0 && result.artifact,
+                  "QA baseline failed",
+                );
+                base = result.artifact;
+                baseRun = dispatched.job.qa!.run_id;
+              } catch {
+                // Retain head evidence, but absence on an unfinished baseline
+                // is never evidence of a regression or a fix.
+                base = {
+                  outcome: "partial",
+                  reason: "baseline_unavailable",
+                  findings: [],
+                  journey_outcomes: [],
+                };
+              }
+              artifact = compareQaResults(artifact, base);
+            }
+            qaVerification = {
+              step: s.id,
+              result: artifact,
+              run: dispatched.job.qa!.run_id,
+              baseRun,
+              options: s.with,
+            };
+            if (artifact.deferred === "no_runtime") {
+              report.deferred.push({ step: s.id, reason: "no_runtime" });
+              report.footer.notes.push(
+                "QA unsupported_packaging: Sandbox supports provisioned static/vendored apps; use the Docker runner for packaging: image.",
+              );
+            }
+            report.qa = qaReport(artifact, s.with);
+            qaRecommendations = artifact.qa_recommendations ?? [];
+            report.findings.push(...(artifact.findings ?? []));
+            await step.do(`record-${job}`, async () => {
+              for (const [name, value] of Object.entries(qaRecords(artifact)))
+                await store.put(`reviews/${id}/qa/${name}`, value);
+              return true;
+            });
+            if (
+              artifact.outcome !== "complete" ||
+              artifact.policy?.app_isolation === "none"
+            ) {
+              qaRuntimeIncomplete = true;
+              report.status = "partial";
+            }
+          }
+        }
       } else if (module === "rio/checks" || module === "rio/graph") {
         {
           const result = await execute(
@@ -1306,6 +1474,117 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           plan.mode === "deep"
             ? (submission.profile.budget.deep ?? submission.profile.budget.fast)
             : submission.profile.budget.fast;
+        if (qaVerification) {
+          const qa = qaVerification;
+          const result = await verifyQaReview({
+            result: qa.result,
+            profile: submission.profile,
+            gateway,
+            ledger,
+            call,
+            cancelled: () => store.cancelled(id),
+            snapshot,
+            agentTokens: Math.floor(
+              (active.tokens ?? 100000) / (active.agents_max ?? 3),
+            ),
+            verifyTokens: active.verify_tokens,
+            context: {
+              snapshot: { head: {} },
+              head: graphs.head,
+              base: graphs.base,
+              executions,
+              guidance: submission.owner_guidance,
+            },
+            tools: () => new Tools(snapshot, graphs, undefined),
+            replay: async (candidate, version) => {
+              const sourceRun = version === "base" ? qa.baseRun : qa.run;
+              invariant(
+                sourceRun &&
+                  !(await store.cancelled(id)) &&
+                  (await ledger.remaining()) > 0,
+                "QA replay budget unavailable",
+              );
+              const replay = await dispatchQaReplay({
+                env: this.env,
+                step,
+                review: id,
+                tenant: load.tenant,
+                qaStep: qa.step,
+                submission: { ...submission, graphs },
+                options: qa.options,
+                candidate,
+                version,
+                sourceRun,
+                original: version === "base" ? qa.result.baseline : qa.result,
+              });
+              const artifacts = report.qa.evidence.artifacts;
+              if (
+                Number.isSafeInteger(replay.bytes) &&
+                Number(replay.bytes) > 0
+              )
+                report.qa.evidence.bytes += Number(replay.bytes);
+              if (
+                Number.isSafeInteger(replay.wall_time_ms) &&
+                Number(replay.wall_time_ms) > 0
+              )
+                report.qa.cost.wall_time_ms += Number(replay.wall_time_ms);
+              for (const artifact of replay.artifacts ?? [])
+                if (!artifacts.some((row: any) => row.id === artifact.id))
+                  artifacts.push({ id: artifact.id, kind: artifact.kind });
+              return replay;
+            },
+            load: (artifact, version = "head") => {
+              const run = version === "base" ? qa.baseRun : qa.run;
+              return run
+                ? readQaEvidence(this.env, load.tenant, id, run, artifact)
+                : Promise.resolve(null);
+            },
+            save: (key, value) => store.put(`reviews/${id}/qa/${key}`, value),
+          });
+          report.findings.push(...result.findings);
+          qaRecommendations = result.recommendations;
+          report.qa.observations_unverified = result.observations.map(
+            (row: any) => {
+              const {
+                rule_id,
+                kind,
+                journey,
+                step,
+                cell,
+                route,
+                expected,
+                observed,
+                evidence,
+                suggested_fix,
+              } = row;
+              return {
+                rule_id,
+                kind,
+                journey,
+                step,
+                cell,
+                route,
+                expected,
+                observed,
+                evidence,
+                ...(suggested_fix ? { suggested_fix } : {}),
+              };
+            },
+          );
+          const selected = selectRecommendations(result.recommendations, {
+            max: qa.options.max_recommendations ?? 5,
+          });
+          report.qa.recommendations = selected.recommendations;
+          report.qa.recommendations_held_back = selected.held_back;
+          qaRuntimeIncomplete ||= result.incomplete;
+          if (result.incomplete) {
+            report.status = "partial";
+            report.footer.notes.push(
+              "Some QA observations could not be independently verified; inspect qa/verification.json. Missing votes do not reduce quorum.",
+            );
+          }
+          qaVerification = undefined;
+        }
         let candidates = hypotheses;
         if (lineage?.diff_only) {
           const reverify = planReverification(
@@ -1424,14 +1703,21 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             w.paths.add(p.finding.location.path);
             wanted.set(p.snapshot_id, w);
           }
-        for (const [snapshotId, w] of wanted)
-          trees.set(
-            snapshotId,
-            await materialize(
-              (await StoredSnapshot.open(this.env, w.key)).head,
-              w.paths,
-            ),
-          );
+        for (const [snapshotId, w] of wanted) {
+          const priorSnapshot = await StoredSnapshot.open(this.env, w.key);
+          trees.set(snapshotId, await materialize(priorSnapshot.head, w.paths));
+          if (
+            lineage.prior.some(
+              (p) =>
+                p.snapshot_id === snapshotId &&
+                p.finding.qa?.attribution === "journey",
+            )
+          )
+            qaChanges.set(
+              snapshotId,
+              new Set(await differing(priorSnapshot.head, snapshot.head)),
+            );
+        }
         head = await materialize(
           snapshot.head,
           lineage.prior.map((p) => p.finding.location.path),
@@ -1544,6 +1830,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
       )
         .bind(id)
         .all<any>();
+      if (report.qa) Object.assign(report.qa.cost, await qaUsage(this.env, id));
       report.agent_audit.verification_usage = {
         input_tokens: usages.results
           .filter((u) => u.phase.startsWith("verify"))
@@ -1571,7 +1858,9 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           `${failed.count} verifier votes did not complete; inspect the vote audit. Missing votes do not reduce quorum.`,
         );
       }
-      report.deferred = [];
+      report.deferred = report.deferred.filter(
+        (entry: any) => entry.reason === "no_runtime",
+      );
       report.review.rio_version = this.env.RIO_VERSION;
       if (await store.cancelled(id)) report.status = "partial";
       if (diffOnlyAudit) report.agent_audit.diff_only = diffOnlyAudit;
@@ -1584,6 +1873,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
         };
       // The repository registry: remembered dismissals after the profile's
       // suppressions, history on recurrences, and suppression proposals.
+      suppressQaFindings(report, submission.profile.suppress);
       const repository = lineage?.repository ?? submission.repository ?? null;
       let records: RegistryRecord[] = [];
       let hashes: Record<string, string | null> = {};
@@ -1640,6 +1930,54 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
         report.footer.notes.push(
           "Finding history was not consulted: the submission names no repository.",
         );
+      const qaOptions = submission.profile.steps.find(
+        (s) => s.uses.startsWith("rio/qa@") && s.with.enabled === true,
+      )?.with;
+      if (report.qa && qaOptions) {
+        const continuityKey = await step.do(
+          "qa-recommendation-history",
+          async () => {
+            // Store the entire pool before capping it. Dismissal may arrive while
+            // voting runs, and must be honored on this and subsequent reviews.
+            const history = repository
+              ? await loadRecommendationHistory(
+                  this.env,
+                  load.tenant,
+                  repository,
+                )
+              : [];
+            if (repository)
+              await rememberRecommendations(
+                this.env,
+                load.tenant,
+                repository,
+                id,
+                load.created_at,
+                qaRecommendations,
+              );
+            return store.put(
+              `reviews/${id}/qa/recommendation-history.json`,
+              recommendationContinuity(qaRecommendations, history),
+            );
+          },
+        );
+        const continuity =
+          await store.get<ReturnType<typeof recommendationContinuity>>(
+            continuityKey,
+          );
+        const selected = selectRecommendations(continuity.candidates, {
+          max: qaOptions.max_recommendations ?? 5,
+        });
+        report.qa.recommendations = selected.recommendations;
+        report.qa.recommendations_held_back = selected.held_back;
+      }
+      if (qaOptions) {
+        applyQaPolicy(report, qaOptions, qaRuntimeIncomplete);
+        if (report.agent_audit?.qa)
+          await step.do("qa-policy-record", () =>
+            store.put(`reviews/${id}/qa/policy.json`, report.agent_audit.qa),
+          );
+      }
       agentsVerified =
         !failed?.count &&
         submission.profile.steps.some(
@@ -1651,6 +1989,15 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             trees,
             graph: graphs.head,
             agents_reassessed: agentsVerified,
+            qa_changes: qaChanges,
+            qa_journeys: Object.fromEntries(
+              (qaVerification?.result.journey_outcomes ?? [])
+                .filter((row: any) => row.verification_context?.journey)
+                .map((row: any) => [
+                  row.journey,
+                  row.verification_context.journey,
+                ]),
+            ),
             changed: submission.changed,
             max_lines: submission.profile.max_lines,
           })

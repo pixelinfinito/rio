@@ -12,3 +12,5 @@ export const module4: ValidateFunction<any>;
 export const module5: ValidateFunction<any>;
 export const module6: ValidateFunction<any>;
 export const module7: ValidateFunction<any>;
+
+export const qaRecommendation: ValidateFunction;

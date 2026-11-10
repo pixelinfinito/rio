@@ -98,5 +98,62 @@
       "ALTER TABLE pull_requests ADD COLUMN publish_policy TEXT CHECK(publish_policy IS NULL OR publish_policy IN ('never','ask','auto'))",
       "ALTER TABLE pull_requests ADD COLUMN announced_check INTEGER"
     ]
+  },
+  {
+    "name": "0009_qa_seeds.sql",
+    "statements": [
+      "-- Versioned physical objects let pruning delete an old upload without racing a\n-- concurrent writer of the same content hash. Heads are the only commit point.\nCREATE TABLE qa_seed_parts (tenant TEXT NOT NULL, hash TEXT NOT NULL, object_key TEXT NOT NULL, bytes INTEGER NOT NULL CHECK(bytes >= 0), created_at INTEGER NOT NULL, PRIMARY KEY(tenant,hash))",
+      "CREATE TABLE qa_seed_leases (tenant TEXT NOT NULL, id TEXT NOT NULL, fingerprint TEXT NOT NULL, max_size INTEGER NOT NULL CHECK(max_size > 0), expires_at INTEGER NOT NULL, PRIMARY KEY(tenant,id))",
+      "CREATE INDEX qa_seed_lease_fingerprint ON qa_seed_leases(tenant,fingerprint,expires_at)",
+      "CREATE TABLE qa_seed_lease_parts (tenant TEXT NOT NULL, lease_id TEXT NOT NULL, hash TEXT NOT NULL, PRIMARY KEY(tenant,lease_id,hash), FOREIGN KEY(tenant,lease_id) REFERENCES qa_seed_leases(tenant,id) ON DELETE CASCADE)",
+      "CREATE TABLE qa_seed_versions (tenant TEXT NOT NULL, id TEXT NOT NULL, fingerprint TEXT NOT NULL, object_key TEXT NOT NULL, lease_id TEXT NOT NULL, created_at INTEGER NOT NULL, PRIMARY KEY(tenant,id))",
+      "CREATE INDEX qa_seed_version_fingerprint ON qa_seed_versions(tenant,fingerprint)",
+      "CREATE TABLE qa_seed_version_parts (tenant TEXT NOT NULL, version_id TEXT NOT NULL, hash TEXT NOT NULL, object_key TEXT NOT NULL, PRIMARY KEY(tenant,version_id,hash), FOREIGN KEY(tenant,version_id) REFERENCES qa_seed_versions(tenant,id) ON DELETE CASCADE)",
+      "CREATE TABLE qa_seed_heads (tenant TEXT NOT NULL, fingerprint TEXT NOT NULL, version_id TEXT NOT NULL, created_at INTEGER NOT NULL, valid INTEGER NOT NULL DEFAULT 1, PRIMARY KEY(tenant,fingerprint), FOREIGN KEY(tenant,version_id) REFERENCES qa_seed_versions(tenant,id))",
+      "CREATE TABLE qa_seed_garbage (tenant TEXT NOT NULL, object_key TEXT NOT NULL, PRIMARY KEY(tenant,object_key))",
+      "CREATE INDEX qa_seed_part_object ON qa_seed_parts(tenant,object_key)",
+      "CREATE INDEX qa_seed_pending_part ON qa_seed_lease_parts(tenant,hash,lease_id)",
+      "CREATE INDEX qa_seed_version_part_hash ON qa_seed_version_parts(tenant,hash)",
+      "CREATE INDEX qa_seed_version_part_object ON qa_seed_version_parts(tenant,object_key)"
+    ]
+  },
+  {
+    "name": "0010_qa_runs.sql",
+    "statements": [
+      "CREATE TABLE qa_runs (id TEXT PRIMARY KEY, review_id TEXT NOT NULL REFERENCES reviews(id), job_id TEXT NOT NULL REFERENCES jobs(id), attempt INTEGER NOT NULL, step_id TEXT NOT NULL, version TEXT NOT NULL CHECK(version IN ('base','head')), state TEXT NOT NULL CHECK(state IN ('pending','running','complete','partial','cancelled','failed')), backend TEXT NOT NULL, model TEXT NOT NULL, deadline INTEGER NOT NULL, cell_tokens INTEGER NOT NULL, cell_wall_ms INTEGER NOT NULL, evidence_limit INTEGER NOT NULL, evidence_used INTEGER NOT NULL DEFAULT 0, seed_max_size INTEGER NOT NULL DEFAULT 2147483648, configuration TEXT, generation TEXT, token_hash TEXT, control_hash TEXT, control_expires_at INTEGER NOT NULL DEFAULT 0, result_key TEXT, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL, UNIQUE(job_id,attempt))",
+      "CREATE INDEX qa_runs_review_step ON qa_runs(review_id,step_id)",
+      "CREATE UNIQUE INDEX qa_runs_capability ON qa_runs(token_hash) WHERE token_hash IS NOT NULL",
+      "CREATE TABLE qa_cells (run_id TEXT NOT NULL REFERENCES qa_runs(id), id TEXT NOT NULL, descriptor TEXT NOT NULL, tokens_used INTEGER NOT NULL DEFAULT 0, tokens_reserved INTEGER NOT NULL DEFAULT 0, exhausted INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(run_id,id))",
+      "CREATE TABLE qa_model_usage (id TEXT PRIMARY KEY, run_id TEXT NOT NULL REFERENCES qa_runs(id), cell_id TEXT NOT NULL, generation TEXT NOT NULL, reserved INTEGER NOT NULL, state TEXT NOT NULL CHECK(state IN ('reserved','completed','failed')), input_tokens INTEGER, output_tokens INTEGER, charged_tokens INTEGER, estimated INTEGER, cost_usd REAL, model TEXT NOT NULL, created_at INTEGER NOT NULL, completed_at INTEGER)",
+      "CREATE INDEX qa_model_usage_cell ON qa_model_usage(run_id,cell_id,state)",
+      "ALTER TABLE qa_seed_leases ADD COLUMN run_id TEXT",
+      "ALTER TABLE qa_seed_leases ADD COLUMN generation TEXT",
+      "CREATE INDEX qa_seed_run_lease ON qa_seed_leases(run_id,generation)",
+      "CREATE VIEW qa_active_seed_leases AS SELECT tenant,id,fingerprint,max_size,expires_at,run_id,generation FROM qa_seed_leases WHERE run_id IS NULL UNION ALL SELECT l.tenant,l.id,l.fingerprint,l.max_size,MIN(l.expires_at,q.deadline,r.deadline,j.lease_until) AS expires_at,l.run_id,l.generation FROM qa_seed_leases l JOIN qa_runs q ON q.id=l.run_id AND q.generation=l.generation JOIN reviews r ON r.id=q.review_id AND r.tenant=l.tenant JOIN jobs j ON j.id=q.job_id AND j.attempt=q.attempt WHERE q.state='running' AND r.cancelled=0 AND j.status='leased'"
+    ]
+  },
+  {
+    "name": "0011_qa_evidence.sql",
+    "statements": [
+      "ALTER TABLE qa_runs ADD COLUMN evidence_pruned INTEGER NOT NULL DEFAULT 0",
+      "CREATE TABLE qa_evidence (run_id TEXT NOT NULL REFERENCES qa_runs(id), id TEXT NOT NULL, tenant TEXT NOT NULL, review_id TEXT NOT NULL, generation TEXT NOT NULL, object_key TEXT NOT NULL UNIQUE, descriptor TEXT NOT NULL, bytes INTEGER NOT NULL, state TEXT NOT NULL CHECK(state IN ('pending','stored')), expires_at INTEGER NOT NULL, created_at INTEGER NOT NULL, PRIMARY KEY(run_id,id))",
+      "CREATE INDEX qa_evidence_expiry ON qa_evidence(expires_at)",
+      "CREATE TABLE qa_evidence_manifests (run_id TEXT PRIMARY KEY REFERENCES qa_runs(id), notes TEXT NOT NULL, updated_at INTEGER NOT NULL)",
+      "CREATE TABLE qa_evidence_garbage (object_key TEXT PRIMARY KEY, tenant TEXT NOT NULL, review_id TEXT NOT NULL, pending INTEGER NOT NULL DEFAULT 0)"
+    ]
+  },
+  {
+    "name": "0012_qa_recommendations.sql",
+    "statements": [
+      "-- Advice has its own history: dismissing it never suppresses a defect.\nCREATE TABLE qa_recommendation_history (tenant TEXT NOT NULL, repository TEXT NOT NULL, identity TEXT NOT NULL, first_review TEXT NOT NULL, first_seen_at INTEGER NOT NULL, last_review TEXT NOT NULL, last_seen_at INTEGER NOT NULL, candidate_json TEXT NOT NULL, dismissal_json TEXT, PRIMARY KEY(tenant,repository,identity))",
+      "CREATE TABLE qa_recommendation_sightings (tenant TEXT NOT NULL, repository TEXT NOT NULL, identity TEXT NOT NULL, review_id TEXT NOT NULL, seen_at INTEGER NOT NULL, candidate_json TEXT NOT NULL, PRIMARY KEY(tenant,repository,identity,review_id))"
+    ]
+  },
+  {
+    "name": "0013_qa_retention.sql",
+    "statements": [
+      "-- Rotate retries so a stalled upload or transient deletion failure cannot\n-- starve newer expired objects in the bounded scheduled sweep.\nALTER TABLE qa_evidence_garbage ADD COLUMN next_attempt_at INTEGER NOT NULL DEFAULT 0",
+      "CREATE INDEX qa_evidence_garbage_retry ON qa_evidence_garbage(next_attempt_at,object_key)"
+    ]
   }
 ]

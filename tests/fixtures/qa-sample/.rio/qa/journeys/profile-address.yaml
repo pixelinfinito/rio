@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "name": "profile-address",
+  "title": "Update a saved delivery address",
+  "persona": "shopper",
+  "tags": [],
+  "resets": true,
+  "covers": {
+    "paths": [
+      "src/**",
+      "server.mjs"
+    ],
+    "routes": [
+      "/profile"
+    ]
+  },
+  "preconditions": [
+    "Synthetic products and persona accounts are seeded"
+  ],
+  "steps": [
+    {
+      "do": "Sign in using the shopper persona",
+      "at": "/login",
+      "expect": "Your saved delivery address is displayed"
+    },
+    {
+      "do": "Replace the saved address with 24 Example Lane and choose Save address",
+      "at": "/profile",
+      "expect": "A confirmation says the address was saved"
+    },
+    {
+      "do": "Reload the profile",
+      "at": "/profile",
+      "expect": "The saved delivery address is 24 Example Lane"
+    }
+  ],
+  "success": [
+    "The saved delivery address is 24 Example Lane"
+  ],
+  "goal": "Update a saved delivery address",
+  "ux_criteria": [
+    "ux/system-feedback",
+    "ux/user-control",
+    "ux/task-efficiency"
+  ]
+}

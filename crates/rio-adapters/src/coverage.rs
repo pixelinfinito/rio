@@ -404,6 +404,8 @@ pub fn diff_coverage(
             let locations: Vec<_> = ranges
                 .iter()
                 .map(|(start, end)| Location {
+                    cell: None,
+                    evidence: None,
                     path: file.path.clone(),
                     line_start: *start,
                     line_end: *end,
@@ -427,6 +429,7 @@ pub fn diff_coverage(
             let message =
                 format!("Changed executable lines are not covered by tests: {range_text}");
             result.findings.push(Finding {
+                qa: None,
                 id: finding_id(
                     "coverage/untested_change",
                     &file.path,

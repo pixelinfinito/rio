@@ -90,6 +90,8 @@ fn finding(
         .map(|symbol| symbol.symbol_path.clone())
         .unwrap_or_default();
     let location = Location {
+        cell: None,
+        evidence: None,
         path: path.clone(),
         line_start: diagnostic.line,
         line_end: diagnostic.end.max(diagnostic.line),
@@ -99,6 +101,7 @@ fn finding(
         id: None,
     };
     Ok(Finding {
+        qa: None,
         id: finding_id(
             &rule_id,
             &path,

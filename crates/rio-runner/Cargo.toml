@@ -11,7 +11,7 @@ clap.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 reqwest.workspace = true
-tokio.workspace = true
+tokio = { workspace = true, features = ["fs"] }
 tokio-util.workspace = true
 tempfile.workspace = true
 blake3.workspace = true
@@ -26,3 +26,4 @@ rio-adapters = { path = "../rio-adapters" }
 rio-engine = { path = "../rio-engine" }
 rio-graph = { path = "../rio-graph" }
 rio-client = { path = "../rio-client" }
+rio-qa = { path = "../rio-qa" }

@@ -10,6 +10,7 @@ The `with` schemas of the built-in steps SHALL define the review settings that t
 - `rio/agents`: `cache` (boolean, default `true`) controlling the agent result cache;
 - `rio/security`: `enabled` (default false in base), `posture`, `fail_on`, `max_defects`, and `catalog` with the security-step contract;
 - `rio/report`: `class_threshold` (integer, default 3, consumed by review convergence) and `proposal_threshold` (integer of at least 1, default 3, the dismissal count that yields a suppression proposal);
+- `rio/qa`: `enabled` (default false in base), `mode` (`changed` default, `full`), `harness` (`codex` default, `pi`), `baseline` (default false), `max_journeys` (default 12), `max_defects` (default 15), `max_recommendations` (default 5), `viewports` (names from the contract, default all), `rules` (`disable[]`, `add[]`, `adopt[]`, merged over the contract), `sandbox` (`deny` default, `allow`) and `fail_on` with the same shape as the security policy, defaulting to category `ux` at evidence `plausible` for `new` and `worsened` findings of severity `warning` or above;
 - `rio/triage`: explicit risk thresholds for sensitive-path globs, public-contract changes, dependency changes, missing coverage and graph fan-out.
 
 #### Scenario: Exclusion glob from the profile
@@ -23,6 +24,18 @@ The `with` schemas of the built-in steps SHALL define the review settings that t
 #### Scenario: Invalid proposal threshold
 - **WHEN** the `rio/report` step sets `with: { proposal_threshold: 0 }`
 - **THEN** validation fails at that option's location naming the minimum of 1
+
+#### Scenario: QA option fails its schema
+- **WHEN** a profile sets `rio/qa` with `with: { harness: claude }`
+- **THEN** validation fails naming the step, the option and the allowed values `codex` and `pi`
+
+#### Scenario: Profile narrows the matrix but keeps mobile
+- **WHEN** a profile sets the qa step's `viewports: [mobile-small, mobile, desktop]`
+- **THEN** the resolved profile runs those three viewports; `viewports: [desktop, wide]` is rejected because no mobile viewport remains
+
+#### Scenario: QA policy independent of general cap
+- **WHEN** a profile has `max_defects: 3` and the QA step sets `max_defects: 10`
+- **THEN** QA findings resolve their cap to ten and the general cap remains three
 
 ## ADDED Requirements
 

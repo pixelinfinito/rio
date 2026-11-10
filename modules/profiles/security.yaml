@@ -40,9 +40,13 @@ steps:
     uses: rio/security@0.2.0
     needs: [triage]
     with: { enabled: true, posture: thorough, catalog: asvs-5.0 }
+  - id: qa
+    uses: rio/qa@0.1.0
+    needs: [graph]
+    with: { enabled: false }
   - id: verify
     uses: rio/verify@0.1.0
-    needs: [agents, security]
+    needs: [agents, security, qa]
   - id: council
     uses: rio/council@0.1.0
     needs: [verify]
@@ -55,6 +59,6 @@ steps:
       - when: nightly
   - id: report
     uses: rio/report@0.1.0
-    needs: [checks, graph, council]
+    needs: [checks, graph, council, qa]
 council:
   vendors_allowed: [anthropic, openai, google, mistral, xai, deepseek, openrouter]

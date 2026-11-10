@@ -1,6 +1,7 @@
 export type Version = "base" | "head";
 export type Evidence = "refuted" | "plausible" | "static_proven" | "reproduced";
-export type Category = "defect" | "risk" | "security" | "style" | "diagnostic";
+export type Category =
+  "defect" | "risk" | "security" | "ux" | "style" | "diagnostic";
 export type BlindMatch = "same" | "related" | "none";
 export interface File {
   content: string;
@@ -24,6 +25,8 @@ export interface Location {
   occurrence_state: string;
   // Instance identity inside a class-level finding.
   id?: string;
+  cell?: { viewport: string; color_scheme: "light" | "dark" };
+  evidence?: string[];
 }
 export interface Hypothesis {
   id: string;
@@ -112,7 +115,15 @@ export interface AuthorResponse {
 }
 export type LifecycleStatus = "open" | "fixed" | "dismissed";
 export type Finding = Hypothesis & {
-  category: "defect" | "risk" | "security";
+  qa?: {
+    journey: string;
+    step: number;
+    route: string;
+    kind: string;
+    attribution: string;
+    element_paths: string[];
+  };
+  category: "defect" | "risk" | "security" | "ux";
   evidence_level: Evidence;
   evidence: string[];
   locations: Location[];
@@ -194,6 +205,13 @@ export interface Budget {
   agents_max?: number;
   wall_time: string;
   verify_tokens?: number;
+  qa?: {
+    wall?: string;
+    cell_wall?: string;
+    tokens?: number;
+    evidence_bytes?: number;
+    replay_wall?: string;
+  };
 }
 export interface FailOn {
   evidence?: Evidence;
@@ -245,7 +263,7 @@ export interface Execution {
   job_id: string;
   attempt: number;
   version: Version;
-  kind: "run" | "checks" | "graph" | "static" | "prepare" | "model";
+  kind: "run" | "checks" | "graph" | "static" | "prepare" | "qa" | "model";
   command: string[];
   // Model jobs: a self-hosted council member's request, served by a runner
   // that advertises a model endpoint, so the pack stays in the account.
@@ -257,6 +275,7 @@ export interface Execution {
   };
   // Prepare jobs of the self-hosted runner: what to clone (no snapshot yet).
   prepare?: PrepareSpec;
+  qa?: QaExecution;
   // The trees arrive as a streamed archive; jobs never embed file contents.
   snapshot_id: string;
   needs: Version[];
@@ -270,7 +289,40 @@ export interface Execution {
     artifact_bytes?: number;
   };
   // "clone": a self-hosted prepare job whose clone phase alone has network.
-  network: false | "clone";
+  network: false | "clone" | "qa";
+}
+/** Public QA job data. Credentials are attached to a claim, never persisted in
+ * the payload or streamed with repository contents into the app container. */
+export interface QaExecution {
+  replay?: {
+    hypothesis: string;
+    source_run: string;
+    seed_fingerprint?: string;
+    until: { journey: string; step: number };
+    events: Record<string, any>[];
+    artifacts: import("./qa-verifier").BrowserArtifact[];
+  };
+  run_id: string;
+  step_id: string;
+  harness: "codex" | "pi";
+  harness_auth: "gateway";
+  model: string;
+  options: Record<string, any>;
+  mode: "fast" | "deep";
+  changed: ChangedFile[];
+  graphs: { base: Graph; head: Graph };
+  owner_guidance: Guidance[];
+  budget: {
+    wall_ms: number;
+    cell_wall_ms: number;
+    tokens: number;
+    evidence_bytes: number;
+    replay_wall_ms: number;
+  };
+  policy: {
+    egress: "host_firewall_pinned" | "provider_pinned (sandbox)";
+    app_isolation: "container" | "none";
+  };
 }
 export interface ExecutionResult {
   outcome?: "exited" | "spawn_failed" | "runner_failed";
@@ -296,7 +348,11 @@ export interface Usage {
 }
 export interface ModelRequest {
   model: string;
-  messages: { role: "user" | "assistant"; content: string }[];
+  messages: {
+    role: "user" | "assistant";
+    content: string;
+    images?: { data: string; media_type: "image/png"; token_bound: number }[];
+  }[];
   system: string;
   max_tokens: number;
   signal?: AbortSignal;
@@ -329,6 +385,8 @@ export interface Env {
   AI_GATEWAY_TOKEN?: string;
   // JSON: custom AI Gateway providers by slug, { "SLUG": { "protocol": "openai" | "anthropic" } }.
   AI_GATEWAY_PROVIDERS?: string;
+  /** Operator-provisioned synthetic persona values; never provider credentials. */
+  QA_PERSONA_CREDENTIALS?: string;
   // JSON: the council vendor allowlist written by `rio init`, a list of
   // { vendor, family, model } or an object of such lists by repository ("*" fallback).
   COUNCIL_VENDORS?: string;

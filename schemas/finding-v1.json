@@ -16,7 +16,8 @@
       "enum": [
         "defect",
         "risk",
-        "security"
+        "security",
+        "ux"
       ]
     },
     "evidence_level": {
@@ -182,6 +183,34 @@
             "description": "Identity of the instance finding when this location belongs to a class-level finding.",
             "type": "string",
             "minLength": 1
+          },
+          "cell": {
+            "type": "object",
+            "properties": {
+              "viewport": {
+                "type": "string",
+                "minLength": 1
+              },
+              "color_scheme": {
+                "enum": [
+                  "light",
+                  "dark"
+                ]
+              }
+            },
+            "required": [
+              "viewport",
+              "color_scheme"
+            ],
+            "additionalProperties": false
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 0
           }
         },
         "required": [
@@ -693,6 +722,78 @@
           "note"
         ]
       }
+    },
+    "qa": {
+      "type": "object",
+      "properties": {
+        "journey": {
+          "type": "string",
+          "minLength": 1
+        },
+        "step": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "kind": {
+          "enum": [
+            "functional",
+            "ux",
+            "style",
+            "accessibility"
+          ]
+        },
+        "route": {
+          "type": "string",
+          "minLength": 1
+        },
+        "element_paths": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        },
+        "attribution": {
+          "enum": [
+            "source",
+            "journey"
+          ]
+        },
+        "measurements": {
+          "type": "object",
+          "additionalProperties": {
+            "oneOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 0
+              }
+            ]
+          }
+        }
+      },
+      "required": [
+        "journey",
+        "step",
+        "kind",
+        "route",
+        "element_paths",
+        "attribution"
+      ],
+      "additionalProperties": false
     }
   },
   "required": [
@@ -723,6 +824,37 @@
         "required": [
           "advisory"
         ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "category": {
+            "const": "ux"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "qa"
+        ],
+        "properties": {
+          "locations": {
+            "items": {
+              "required": [
+                "cell",
+                "evidence"
+              ]
+            }
+          }
+        }
+      },
+      "else": {
+        "not": {
+          "required": [
+            "qa"
+          ]
+        }
       }
     }
   ]

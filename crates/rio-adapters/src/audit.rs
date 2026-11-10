@@ -627,6 +627,8 @@ fn advisory_findings(package: &AuditPackage, mut records: Vec<Value>) -> Vec<Fin
             .unwrap_or_else(|| "unknown".into());
         let trigger = format!("{}@{}:{id}", package.name, package.version);
         let location = Location {
+            cell: None,
+            evidence: None,
             path: package.path.clone(),
             line_start: 1,
             line_end: 1,
@@ -636,6 +638,7 @@ fn advisory_findings(package: &AuditPackage, mut records: Vec<Value>) -> Vec<Fin
             id: None,
         };
         findings.push(Finding {
+            qa: None,
             id: finding_id(
                 "dependency/vulnerable_dependency",
                 &package.path,

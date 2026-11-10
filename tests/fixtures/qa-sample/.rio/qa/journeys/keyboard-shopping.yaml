@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "name": "keyboard-shopping",
+  "title": "Add an item and reach checkout using the keyboard",
+  "persona": "shopper",
+  "tags": [],
+  "resets": true,
+  "covers": {
+    "paths": [
+      "src/**",
+      "server.mjs"
+    ],
+    "routes": [
+      "/",
+      "/cart",
+      "/checkout"
+    ]
+  },
+  "preconditions": [
+    "Synthetic products and persona accounts are seeded"
+  ],
+  "steps": [
+    {
+      "do": "Open the shop and use Tab or Shift+Tab to reach Add Canvas bag to cart, then activate it with Enter",
+      "at": "/",
+      "expect": "The focused action has a visible indicator and the item is added"
+    },
+    {
+      "do": "Use only the keyboard to open Cart and activate Checkout",
+      "at": "/cart",
+      "expect": "Checkout is reachable and focus indicates the current control"
+    }
+  ],
+  "success": [
+    "Checkout is reachable and focus indicates the current control"
+  ],
+  "goal": "Add an item and reach checkout using the keyboard",
+  "ux_criteria": [
+    "ux/inclusive-interaction",
+    "ux/task-clarity"
+  ]
+}

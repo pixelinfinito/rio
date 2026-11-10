@@ -1,0 +1,14 @@
+{
+  "name": "rio-qa-sample",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build",
+    "start": "node server.mjs",
+    "seed": "node scripts/seed.mjs",
+    "test": "playwright test"
+  },
+  "devDependencies": { "vite": "^7.2.2", "@playwright/test": "^1.56.1" }
+}

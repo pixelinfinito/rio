@@ -36,6 +36,32 @@
             "verify_tokens": {
               "type": "integer",
               "minimum": 1
+            },
+            "qa": {
+              "type": "object",
+              "properties": {
+                "wall": {
+                  "type": "string",
+                  "pattern": "^[1-9][0-9]*(ms|s|m|h)$"
+                },
+                "cell_wall": {
+                  "type": "string",
+                  "pattern": "^[1-9][0-9]*(ms|s|m|h)$"
+                },
+                "tokens": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "evidence_bytes": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "replay_wall": {
+                  "type": "string",
+                  "pattern": "^[1-9][0-9]*(ms|s|m|h)$"
+                }
+              },
+              "additionalProperties": false
             }
           },
           "required": [],
@@ -59,6 +85,32 @@
             "verify_tokens": {
               "type": "integer",
               "minimum": 1
+            },
+            "qa": {
+              "type": "object",
+              "properties": {
+                "wall": {
+                  "type": "string",
+                  "pattern": "^[1-9][0-9]*(ms|s|m|h)$"
+                },
+                "cell_wall": {
+                  "type": "string",
+                  "pattern": "^[1-9][0-9]*(ms|s|m|h)$"
+                },
+                "tokens": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "evidence_bytes": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "replay_wall": {
+                  "type": "string",
+                  "pattern": "^[1-9][0-9]*(ms|s|m|h)$"
+                }
+              },
+              "additionalProperties": false
             }
           },
           "required": [],
@@ -224,7 +276,8 @@
             "enum": [
               "defect",
               "risk",
-              "security"
+              "security",
+              "ux"
             ]
           },
           "uniqueItems": true

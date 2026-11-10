@@ -1,0 +1,17 @@
+version: 1
+files:
+  - name: contacts
+    generate: { kind: csv, rows: 20 }
+services:
+  - name: payments
+    kind: http-mock
+    env: { PAYMENTS_API_BASE: '{{url}}' }
+    claims: [payments.example.test]
+    recordings: recordings/payments
+    behaviors: [approve, decline]
+    default_behavior: approve
+  - name: mail
+    kind: smtp-capture
+    env: { SMTP_HOST: '127.0.0.1', SMTP_PORT: '{{port}}' }
+capture: { mail: true }
+defaults: { timezone: UTC, locale: en-US, network: online }

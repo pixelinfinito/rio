@@ -1194,6 +1194,14 @@ async fn provision(
         .await?;
     }
     migrate(cf, &base, name).await?;
+    // Expiries are per run, not bucket-wide. Register the bounded evidence
+    // sweep after migrations; the Worker only needs its existing R2 binding.
+    cf.request(
+        Method::PUT,
+        &format!("{upload_path}/schedules"),
+        Some(json!([{"cron":"* * * * *"}])),
+    )
+    .await?;
     let consumers_path = format!("{base}/queues/{queue_id}/consumers");
     let consumers = cf.list(&consumers_path).await?;
     let consumer = consumers
@@ -1836,6 +1844,12 @@ mod tests {
                 .await
                 .unwrap();
             let records = mock.requests.lock().unwrap();
+            assert!(records.iter().any(|(method, path, body)| {
+                method == "PUT"
+                    && path.ends_with("/workers/scripts/rio/schedules")
+                    && serde_json::from_str::<Value>(body)
+                        .is_ok_and(|value| value == json!([{"cron":"* * * * *"}]))
+            }));
             assert!(
                 records
                     .iter()

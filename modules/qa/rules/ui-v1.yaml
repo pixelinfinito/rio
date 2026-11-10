@@ -1,0 +1,593 @@
+{
+  "kind": "ruleset",
+  "name": "rio/ui-v1",
+  "version": "0.1.0",
+  "description": "Measured interface probes and owner-guided usability criteria",
+  "rules": [
+    {
+      "id": "ui/gradient-background",
+      "kind": "probe",
+      "category": "style",
+      "severity": "warning",
+      "description": "Computed background-image contains linear-gradient, radial-gradient or conic-gradient and bounding box exceeds 25% of the viewport area. Finalize only when the run-wide matched/eligible ratio is below 0.2 with at least 5 eligible elements.",
+      "eligible": "Rendered elements except img and canvas",
+      "measure": "Computed background-image contains linear-gradient, radial-gradient or conic-gradient and bounding box exceeds 25% of the viewport area. Finalize only when the run-wide matched/eligible ratio is below 0.2 with at least 5 eligible elements.",
+      "threshold": {
+        "ratio": 0.2,
+        "min_sample": 5
+      },
+      "exclude": [
+        "Images and canvases"
+      ],
+      "scope": "run"
+    },
+    {
+      "id": "ui/accent-border-card",
+      "kind": "probe",
+      "category": "style",
+      "severity": "warning",
+      "description": "Left border is at least 3 CSS px, differs in color from the other three borders, has border radius or box shadow, and area is between 5% and 60% of the viewport. Apply the run-wide minority test.",
+      "eligible": "Rendered card-like elements",
+      "measure": "Left border is at least 3 CSS px, differs in color from the other three borders, has border radius or box shadow, and area is between 5% and 60% of the viewport. Apply the run-wide minority test.",
+      "threshold": {
+        "ratio": 0.2,
+        "min_sample": 5
+      },
+      "exclude": [],
+      "scope": "run"
+    },
+    {
+      "id": "ui/raw-primitive",
+      "kind": "probe",
+      "category": "style",
+      "severity": "warning",
+      "description": "Computed appearance is auto and border, background and font equal user-agent stylesheet values on a page where at least 80% of the same tag differ from user-agent defaults. Apply the run-wide minority test.",
+      "eligible": "button, input, select, textarea",
+      "measure": "Computed appearance is auto and border, background and font equal user-agent stylesheet values on a page where at least 80% of the same tag differ from user-agent defaults. Apply the run-wide minority test.",
+      "threshold": {
+        "ratio": 0.2,
+        "min_sample": 5
+      },
+      "exclude": [],
+      "scope": "run"
+    },
+    {
+      "id": "ui/spacing-scale",
+      "kind": "probe",
+      "category": "style",
+      "severity": "warning",
+      "description": "Margin or padding is not a multiple of the page base unit (most frequent spacing value) and differs from every other value in the group by more than 2 CSS px. Apply the run-wide minority test.",
+      "eligible": "Sibling groups of at least three block elements",
+      "measure": "Margin or padding is not a multiple of the page base unit (most frequent spacing value) and differs from every other value in the group by more than 2 CSS px. Apply the run-wide minority test.",
+      "threshold": {
+        "ratio": 0.2,
+        "min_sample": 5
+      },
+      "exclude": [],
+      "scope": "run"
+    },
+    {
+      "id": "ui/type-scale",
+      "kind": "probe",
+      "category": "style",
+      "severity": "warning",
+      "description": "Font size occurs on fewer than 2% of page text nodes and differs from the nearest common size by less than 2 CSS px. Apply the run-wide minority test.",
+      "eligible": "Rendered text nodes",
+      "measure": "Font size occurs on fewer than 2% of page text nodes and differs from the nearest common size by less than 2 CSS px. Apply the run-wide minority test.",
+      "threshold": {
+        "ratio": 0.2,
+        "min_sample": 5
+      },
+      "exclude": [],
+      "scope": "run"
+    },
+    {
+      "id": "ui/low-contrast",
+      "kind": "probe",
+      "category": "accessibility",
+      "severity": "warning",
+      "description": "WCAG contrast against the effective background is below 4.5:1, or 3:1 for text at least 24 CSS px or bold text at least 19 CSS px. Record text and background colors and the applicable threshold.",
+      "eligible": "Rendered text",
+      "measure": "WCAG contrast against the effective background is below 4.5:1, or 3:1 for text at least 24 CSS px or bold text at least 19 CSS px. Record text and background colors and the applicable threshold.",
+      "threshold": {
+        "min": 4.5,
+        "unit": "contrast ratio"
+      },
+      "exclude": [
+        "Large text uses the 3:1 threshold"
+      ],
+      "scope": "step"
+    },
+    {
+      "id": "ui/horizontal-overflow",
+      "kind": "probe",
+      "category": "ux",
+      "severity": "warning",
+      "description": "scrollWidth exceeds the viewport width by more than 2 CSS px.",
+      "eligible": "Document scrolling element",
+      "measure": "scrollWidth exceeds the viewport width by more than 2 CSS px.",
+      "threshold": {
+        "max": 2,
+        "unit": "CSS px"
+      },
+      "exclude": [],
+      "scope": "step"
+    },
+    {
+      "id": "ui/layout-shift",
+      "kind": "probe",
+      "category": "ux",
+      "severity": "warning",
+      "description": "Cumulative layout shift exceeds 0.1 during a step, measured with PerformanceObserver.",
+      "eligible": "Layout shifts observed during the step",
+      "measure": "Cumulative layout shift exceeds 0.1 during a step, measured with PerformanceObserver.",
+      "threshold": {
+        "max": 0.1
+      },
+      "exclude": [],
+      "scope": "step"
+    },
+    {
+      "id": "ui/console-error",
+      "kind": "probe",
+      "category": "functional",
+      "severity": "warning",
+      "description": "Console message has error level or an uncaught exception occurs during the step.",
+      "eligible": "Console error messages and uncaught exceptions",
+      "measure": "Console message has error level or an uncaught exception occurs during the step.",
+      "threshold": 0,
+      "exclude": [
+        "Messages matching rules.ignore_console"
+      ],
+      "scope": "step"
+    },
+    {
+      "id": "ui/broken-image",
+      "kind": "probe",
+      "category": "functional",
+      "severity": "warning",
+      "description": "An img has complete=true and naturalWidth=0, or a CSS background image request failed.",
+      "eligible": "img and elements with CSS background images",
+      "measure": "An img has complete=true and naturalWidth=0, or a CSS background image request failed.",
+      "threshold": 0,
+      "exclude": [],
+      "scope": "step"
+    },
+    {
+      "id": "ui/missing-focus-style",
+      "kind": "probe",
+      "category": "accessibility",
+      "severity": "warning",
+      "description": "Computed styles under :focus-visible equal the element unfocused styles.",
+      "eligible": "Focusable rendered elements",
+      "measure": "Computed styles under :focus-visible equal the element unfocused styles.",
+      "threshold": 0,
+      "exclude": [],
+      "scope": "step"
+    },
+    {
+      "id": "mobile/tap-target",
+      "kind": "probe",
+      "category": "accessibility",
+      "severity": "warning",
+      "description": "Bounding box is under 44 by 44 CSS px or is within 8 CSS px of another interactive element. This measures a usability heuristic, not WCAG conformance.",
+      "eligible": "Interactive elements in mobile or touch cells",
+      "measure": "Bounding box is under 44 by 44 CSS px or is within 8 CSS px of another interactive element. This measures a usability heuristic, not WCAG conformance.",
+      "threshold": {
+        "min": 44,
+        "unit": "CSS px"
+      },
+      "exclude": [],
+      "scope": "step"
+    },
+    {
+      "id": "mobile/viewport-meta",
+      "kind": "probe",
+      "category": "ux",
+      "severity": "warning",
+      "description": "No meta[name=viewport] exists, or its content lacks width=device-width.",
+      "eligible": "Document in mobile or touch cells",
+      "measure": "No meta[name=viewport] exists, or its content lacks width=device-width.",
+      "threshold": 0,
+      "exclude": [],
+      "scope": "step"
+    },
+    {
+      "id": "mobile/input-zoom",
+      "kind": "probe",
+      "category": "ux",
+      "severity": "warning",
+      "description": "Computed font-size is below 16 CSS px. A Chromium measurement does not reproduce Safari input zoom.",
+      "eligible": "Text inputs in mobile or touch cells",
+      "measure": "Computed font-size is below 16 CSS px. A Chromium measurement does not reproduce Safari input zoom.",
+      "threshold": {
+        "min": 16,
+        "unit": "CSS px"
+      },
+      "exclude": [],
+      "scope": "step"
+    },
+    {
+      "id": "mobile/fixed-overlap",
+      "kind": "probe",
+      "category": "ux",
+      "severity": "warning",
+      "description": "Bounding box covers an interactive element or more than 30% of the viewport.",
+      "eligible": "Fixed or sticky elements in mobile or touch cells",
+      "measure": "Bounding box covers an interactive element or more than 30% of the viewport.",
+      "threshold": {
+        "max": 0.3,
+        "unit": "viewport area fraction"
+      },
+      "exclude": [],
+      "scope": "step"
+    },
+    {
+      "id": "mobile/offscreen-content",
+      "kind": "probe",
+      "category": "ux",
+      "severity": "warning",
+      "description": "Content is clipped by a non-scrollable ancestor or lies beyond reachable scroll bounds; normal scrolling and verified focus-revealed skip links are excluded.",
+      "eligible": "Text or interactive elements in mobile or touch cells",
+      "measure": "Content is clipped by a non-scrollable ancestor or lies beyond reachable scroll bounds; normal scrolling and verified focus-revealed skip links are excluded.",
+      "threshold": 0,
+      "exclude": [],
+      "scope": "step"
+    },
+    {
+      "id": "mobile/text-truncation",
+      "kind": "probe",
+      "category": "ux",
+      "severity": "warning",
+      "description": "Text is clipped by overflow:hidden without text-overflow:ellipsis.",
+      "eligible": "Text in mobile or touch cells",
+      "measure": "Text is clipped by overflow:hidden without text-overflow:ellipsis.",
+      "threshold": 0,
+      "exclude": [],
+      "scope": "step"
+    },
+    {
+      "id": "mobile/hover-only",
+      "kind": "probe",
+      "category": "accessibility",
+      "severity": "warning",
+      "description": "Element is revealed only by :hover rules with no focus or touch equivalent.",
+      "eligible": "Elements revealed by hover in mobile or touch cells",
+      "measure": "Element is revealed only by :hover rules with no focus or touch equivalent.",
+      "threshold": 0,
+      "exclude": [],
+      "scope": "step"
+    },
+    {
+      "id": "ui/no-feedback",
+      "kind": "judged",
+      "category": "ux",
+      "severity": "warning",
+      "description": "Assess whether an action produces understandable feedback.",
+      "source": {
+        "title": "Nielsen ten usability heuristics",
+        "version": "1994",
+        "url": "https://www.nngroup.com/articles/ten-usability-heuristics/"
+      },
+      "applicability": "After a submitted user action within the configured wait budget.",
+      "required_evidence": [
+        "Before and after screenshots",
+        "DOM snapshot",
+        "Network log"
+      ],
+      "examples": [
+        "No confirmation, error or state change after submitting a form."
+      ]
+    },
+    {
+      "id": "ui/dead-end",
+      "kind": "judged",
+      "category": "ux",
+      "severity": "warning",
+      "description": "Assess whether the user can continue or recover.",
+      "source": {
+        "title": "Nielsen ten usability heuristics",
+        "version": "1994",
+        "url": "https://www.nngroup.com/articles/ten-usability-heuristics/"
+      },
+      "applicability": "At a journey state without an apparent next action.",
+      "required_evidence": [
+        "Screenshot",
+        "Accessibility snapshot",
+        "Interaction sequence"
+      ],
+      "examples": [
+        "An empty account page gives no path to create the first item."
+      ]
+    },
+    {
+      "id": "ui/inconsistent-copy",
+      "kind": "judged",
+      "category": "ux",
+      "severity": "warning",
+      "description": "Assess consistency of labels for the same concept.",
+      "source": {
+        "title": "Nielsen ten usability heuristics",
+        "version": "1994",
+        "url": "https://www.nngroup.com/articles/ten-usability-heuristics/"
+      },
+      "applicability": "The journey names the same action or object in multiple places.",
+      "required_evidence": [
+        "Screenshots of both labels",
+        "Persona and task context"
+      ],
+      "examples": [
+        "A Save control is later described as Send without a change in meaning."
+      ]
+    },
+    {
+      "id": "ui/unreachable-action",
+      "kind": "judged",
+      "category": "functional",
+      "severity": "warning",
+      "description": "Assess whether a required action can actually be performed.",
+      "source": {
+        "title": "Nielsen ten usability heuristics",
+        "version": "1994",
+        "url": "https://www.nngroup.com/articles/ten-usability-heuristics/"
+      },
+      "applicability": "A journey requires an action that appears present but cannot be invoked.",
+      "required_evidence": [
+        "Screenshot",
+        "DOM snapshot",
+        "Recorded attempts"
+      ],
+      "examples": [
+        "A valid form leaves its required submit action disabled."
+      ]
+    },
+    {
+      "id": "ui/placeholder-content",
+      "kind": "judged",
+      "category": "ux",
+      "severity": "warning",
+      "description": "Assess whether placeholder content prevents understanding or task completion.",
+      "source": {
+        "title": "Nielsen ten usability heuristics",
+        "version": "1994",
+        "url": "https://www.nngroup.com/articles/ten-usability-heuristics/"
+      },
+      "applicability": "Visible placeholder text appears in a user-facing flow.",
+      "required_evidence": [
+        "Screenshot",
+        "Applicable project guidance or journey expectation"
+      ],
+      "examples": [
+        "A checkout summary still displays a template product name."
+      ]
+    },
+    {
+      "id": "ui/decorative-emoji",
+      "kind": "judged",
+      "category": "style",
+      "severity": "info",
+      "description": "Assess decorative emoji against explicit project style requirements, without assuming emoji are universally poor UX.",
+      "source": {
+        "title": "Nielsen ten usability heuristics",
+        "version": "1994",
+        "url": "https://www.nngroup.com/articles/ten-usability-heuristics/"
+      },
+      "applicability": "Applicable guidance defines a style or observed emoji interfere with meaning.",
+      "required_evidence": [
+        "Screenshot",
+        "Guidance citation or evidence of confusing meaning"
+      ],
+      "examples": [
+        "A project explicitly forbids decorative emoji in billing alerts."
+      ]
+    },
+    {
+      "id": "mobile/navigation-reachable",
+      "kind": "judged",
+      "category": "ux",
+      "severity": "warning",
+      "description": "Assess navigation discoverability and reachability on touch screens.",
+      "source": {
+        "title": "Nielsen ten usability heuristics",
+        "version": "1994",
+        "url": "https://www.nngroup.com/articles/ten-usability-heuristics/"
+      },
+      "applicability": "The cell is mobile or touch and the journey requires navigation.",
+      "required_evidence": [
+        "Mobile screenshot",
+        "Accessibility snapshot",
+        "Recorded touch interaction"
+      ],
+      "examples": [
+        "An account menu is accessible only through desktop hover."
+      ]
+    },
+    {
+      "id": "ux/task-clarity",
+      "kind": "judged",
+      "category": "ux",
+      "severity": "warning",
+      "description": "Assess clarity of the user goal, next action and navigation using familiar language.",
+      "source": {
+        "title": "Nielsen ten usability heuristics",
+        "version": "1994",
+        "url": "https://www.nngroup.com/articles/ten-usability-heuristics/"
+      },
+      "applicability": "A persona must locate or understand the next step, including empty states.",
+      "required_evidence": [
+        "Persona and goal",
+        "Screenshot",
+        "Accessibility snapshot"
+      ],
+      "examples": [
+        "An empty project page lacks an understandable Create project action."
+      ]
+    },
+    {
+      "id": "ux/system-feedback",
+      "kind": "judged",
+      "category": "ux",
+      "severity": "warning",
+      "description": "Assess timely, understandable status during loading, saving and completion.",
+      "source": {
+        "title": "Nielsen ten usability heuristics",
+        "version": "1994",
+        "url": "https://www.nngroup.com/articles/ten-usability-heuristics/"
+      },
+      "applicability": "An action changes data, waits on a service or completes a task.",
+      "required_evidence": [
+        "Before and after screenshots",
+        "Recorded timing and interaction",
+        "Network log"
+      ],
+      "examples": [
+        "A slow save has no pending or completion state."
+      ]
+    },
+    {
+      "id": "ux/error-prevention",
+      "kind": "judged",
+      "category": "ux",
+      "severity": "warning",
+      "description": "Assess avoidable errors and safeguards proportional to the consequence.",
+      "source": {
+        "title": "Nielsen ten usability heuristics",
+        "version": "1994",
+        "url": "https://www.nngroup.com/articles/ten-usability-heuristics/"
+      },
+      "applicability": "The user provides constrained input or invokes a consequential action.",
+      "required_evidence": [
+        "Input constraints or applicable guidance",
+        "Interaction sequence",
+        "Screenshot"
+      ],
+      "examples": [
+        "An irreversible delete is easy to invoke accidentally without confirmation or recovery."
+      ]
+    },
+    {
+      "id": "ux/error-recovery",
+      "kind": "judged",
+      "category": "ux",
+      "severity": "warning",
+      "description": "Assess actionable errors, retry paths and preservation of entered data.",
+      "source": {
+        "title": "Nielsen ten usability heuristics",
+        "version": "1994",
+        "url": "https://www.nngroup.com/articles/ten-usability-heuristics/"
+      },
+      "applicability": "A simulated service decline, invalid input or network interruption affects a task.",
+      "required_evidence": [
+        "Before and after screenshots",
+        "Fixture behavior or network condition",
+        "Interaction sequence"
+      ],
+      "examples": [
+        "Payment decline clears unrelated address fields before retry."
+      ]
+    },
+    {
+      "id": "ux/user-control",
+      "kind": "judged",
+      "category": "ux",
+      "severity": "warning",
+      "description": "Assess cancel, back and undo paths appropriate to the task.",
+      "source": {
+        "title": "Nielsen ten usability heuristics",
+        "version": "1994",
+        "url": "https://www.nngroup.com/articles/ten-usability-heuristics/"
+      },
+      "applicability": "The user needs to leave, revise or reverse an action.",
+      "required_evidence": [
+        "Applicable guidance and task context",
+        "Interaction sequence",
+        "Screenshot"
+      ],
+      "examples": [
+        "A multi-step editor offers no way to leave without losing progress."
+      ]
+    },
+    {
+      "id": "ux/consistency",
+      "kind": "judged",
+      "category": "ux",
+      "severity": "warning",
+      "description": "Assess consistent concepts, labels and interactions across the flow.",
+      "source": {
+        "title": "Nielsen ten usability heuristics",
+        "version": "1994",
+        "url": "https://www.nngroup.com/articles/ten-usability-heuristics/"
+      },
+      "applicability": "The same persona encounters equivalent controls or concepts.",
+      "required_evidence": [
+        "Screenshots of compared states",
+        "Persona and task context"
+      ],
+      "examples": [
+        "Equivalent confirmation actions use conflicting names."
+      ]
+    },
+    {
+      "id": "ux/recognition",
+      "kind": "judged",
+      "category": "ux",
+      "severity": "warning",
+      "description": "Assess whether the interface makes relevant choices and context visible rather than requiring recall.",
+      "source": {
+        "title": "Nielsen ten usability heuristics",
+        "version": "1994",
+        "url": "https://www.nngroup.com/articles/ten-usability-heuristics/"
+      },
+      "applicability": "The task requires information from an earlier state or outside the current view.",
+      "required_evidence": [
+        "Screenshots across relevant steps",
+        "Interaction sequence"
+      ],
+      "examples": [
+        "Selecting a plan requires memorizing prices hidden on the previous page."
+      ]
+    },
+    {
+      "id": "ux/task-efficiency",
+      "kind": "judged",
+      "category": "ux",
+      "severity": "warning",
+      "description": "Assess avoidable repetition and unnecessary effort while preserving necessary controls.",
+      "source": {
+        "title": "Nielsen ten usability heuristics",
+        "version": "1994",
+        "url": "https://www.nngroup.com/articles/ten-usability-heuristics/"
+      },
+      "applicability": "A task succeeds but requires repeated entry, searching or steps without a contextual reason.",
+      "required_evidence": [
+        "Persona and goal",
+        "Evidence of repeated or avoidable actions",
+        "Applicable guidance or heuristic"
+      ],
+      "examples": [
+        "A checkout asks for the same address twice without offering reuse and edit."
+      ]
+    },
+    {
+      "id": "ux/inclusive-interaction",
+      "kind": "judged",
+      "category": "accessibility",
+      "severity": "warning",
+      "description": "Assess keyboard access, focus management, meaningful names and relevant WCAG 2.2 criteria with their exceptions.",
+      "source": {
+        "title": "WCAG 2.2",
+        "version": "2.2",
+        "url": "https://www.w3.org/TR/WCAG22/"
+      },
+      "applicability": "A persona uses keyboard or assistive interaction to complete the task.",
+      "required_evidence": [
+        "Keyboard interaction sequence",
+        "Accessibility snapshot",
+        "Applicable WCAG criterion and exceptions"
+      ],
+      "examples": [
+        "Opening a dialog leaves focus behind it or traps focus after closing."
+      ]
+    }
+  ]
+}
