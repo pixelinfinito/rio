@@ -30,6 +30,8 @@ COPY --from=build /build/rio-runner /usr/local/bin/rio-runner
 COPY --from=build /build/rio /usr/local/bin/rio
 COPY worker/runner/execute.py /opt/rio/execute.py
 # QA is provisioned at deployment, never from repository Dockerfiles at run time.
+# Only QA's own node copy may bind low app ports: the runner's checks drop every
+# capability, and a binary with file capabilities then cannot execute.
 WORKDIR /opt/rio-qa
 COPY crates/rio-qa/controller/package.json crates/rio-qa/controller/package-lock.json ./
 RUN npm ci --omit=dev --no-audit --no-fund \
@@ -38,7 +40,8 @@ RUN npm ci --omit=dev --no-audit --no-fund \
     && mv /root/.cache/ms-playwright /opt/rio-browsers \
     && chmod -R a+rX /opt/rio-browsers \
     && apt-get install -y --no-install-recommends sqlite3 postgresql-client default-mysql-client redis-tools openssl libcap2-bin \
-    && setcap cap_net_bind_service=+ep /usr/local/bin/node \
+    && mkdir -p /opt/rio-qa/bin && cp /usr/local/bin/node /opt/rio-qa/bin/node \
+    && setcap cap_net_bind_service=+ep /opt/rio-qa/bin/node \
     && useradd --uid 1000 --create-home node \
     && rm -rf /var/lib/apt/lists/* && npm cache clean --force
 COPY crates/rio-qa/controller/src ./src

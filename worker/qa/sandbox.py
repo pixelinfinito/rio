@@ -59,7 +59,9 @@ def prepare():
         output.write('\n127.0.0.1 app app.test browser controller ' + ' '.join(claims) + '\n')
     hooks = Path('/opt/rio-qa-app')
     shutil.copytree('/opt/rio-qa/src', hooks)
+    # /opt/rio-qa/bin/node alone may bind the contract's low app port.
     env = {**os.environ, 'HOME': str(NODE_HOME), 'USER': 'node', 'LOGNAME': 'node',
+           'PATH': '/opt/rio-qa/bin:' + os.environ.get('PATH', '/usr/local/bin:/usr/bin:/bin'),
            'RIO_QA_APP_CONTROL': 'http://127.0.0.1:9224', 'RIO_QA_BROWSER': 'http://127.0.0.1:9223',
            'RIO_QA_BROWSER_FILES': 'http://127.0.0.1:9226', 'NODE_EXTRA_CA_CERTS': '/etc/ssl/certs/ca-certificates.crt',
            'SSL_CERT_FILE': '/etc/ssl/certs/ca-certificates.crt', 'REQUESTS_CA_BUNDLE': '/etc/ssl/certs/ca-certificates.crt'}
