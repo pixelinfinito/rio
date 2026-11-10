@@ -13,16 +13,37 @@ use std::{
 };
 
 fn directory(path: &Path) -> Result<Dir> {
+    open_dir_nofollow_path(path)
+}
+/// Open a directory without following any symlink on its path, except
+/// root-owned system links such as macOS `/var` -> `/private/var`, which an
+/// unprivileged process cannot swap.
+pub(crate) fn open_dir_nofollow_path(path: &Path) -> Result<Dir> {
     let absolute = std::path::absolute(path)?;
-    let root = absolute
-        .ancestors()
-        .last()
-        .context("Invalid seed export path")?;
-    let mut dir = Dir::open_ambient_dir(root, ambient_authority())?;
+    let root = absolute.ancestors().last().context("Invalid path")?;
+    let mut resolved = root.to_path_buf();
     for component in absolute.strip_prefix(root)?.components() {
+        let candidate = resolved.join(component);
+        resolved = match std::fs::symlink_metadata(&candidate) {
+            Ok(info) if info.is_symlink() && system_link(&info) => {
+                std::fs::canonicalize(&candidate)?
+            }
+            _ => candidate,
+        };
+    }
+    let mut dir = Dir::open_ambient_dir(root, ambient_authority())?;
+    for component in resolved.strip_prefix(root)?.components() {
         dir = dir.open_dir_nofollow(component.as_os_str())?;
     }
     Ok(dir)
+}
+#[cfg(unix)]
+fn system_link(info: &std::fs::Metadata) -> bool {
+    std::os::unix::fs::MetadataExt::uid(info) == 0
+}
+#[cfg(not(unix))]
+fn system_link(_: &std::fs::Metadata) -> bool {
+    false
 }
 fn read(dir: &Dir, name: &str, maximum: u64) -> Result<Vec<u8>> {
     let mut options = OpenOptions::new();

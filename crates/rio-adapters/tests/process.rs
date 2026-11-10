@@ -90,7 +90,8 @@ async fn cancellation_terminates_all_workers_and_never_started_work_is_cancelled
         })
     };
     let deadline = tokio::time::Instant::now() + Duration::from_secs(30);
-    while !root.path().join("child.pid").exists() {
+    // The file exists before its contents are written; wait for the pid itself.
+    while fs::read_to_string(root.path().join("child.pid")).map_or(true, |pid| pid.is_empty()) {
         assert!(tokio::time::Instant::now() < deadline);
         tokio::time::sleep(Duration::from_millis(10)).await;
     }

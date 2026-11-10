@@ -323,10 +323,7 @@ pub fn seed_size_limit(value: &Value) -> Result<u64, QaErrors> {
 pub fn prune_seed_cache(cache: &std::path::Path, keep: usize) -> anyhow::Result<Vec<String>> {
     use anyhow::{Context, ensure};
     use cap_fs_ext::{DirExt, FollowSymlinks, OpenOptionsFollowExt};
-    use cap_std::{
-        ambient_authority,
-        fs::{Dir, OpenOptions},
-    };
+    use cap_std::fs::{Dir, OpenOptions};
     use fs4::fs_std::FileExt;
     use std::{collections::BTreeSet, io::Read};
     fn digest(value: &str) -> bool {
@@ -351,15 +348,7 @@ pub fn prune_seed_cache(cache: &std::path::Path, keep: usize) -> anyhow::Result<
     if !cache.try_exists()? {
         return Ok(Vec::new());
     }
-    let absolute = std::path::absolute(cache)?;
-    let root = absolute
-        .ancestors()
-        .last()
-        .context("Invalid seed cache path")?;
-    let mut directory = Dir::open_ambient_dir(root, ambient_authority())?;
-    for component in absolute.strip_prefix(root)?.components() {
-        directory = directory.open_dir_nofollow(component.as_os_str())?;
-    }
+    let directory = crate::seed_export::open_dir_nofollow_path(cache)?;
     let mut options = OpenOptions::new();
     options
         .read(true)
