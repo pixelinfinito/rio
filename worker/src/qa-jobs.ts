@@ -90,6 +90,8 @@ export interface QaRun {
   created_at: number;
   seed_max_size: number;
   configuration: string | null;
+  // The review's prompt-cache hint classes as a JSON array (design D16).
+  prompt_cache: string | null;
   generation: string;
   token_hash: string | null;
   control_hash: string | null;
@@ -108,6 +110,8 @@ export async function createQaJob(
     model?: string;
     harnessAuth?: string;
     replay?: QaExecution["replay"];
+    // The review's prompt configuration and the run provider's partition.
+    prompt?: { cache: string[]; layout: string[]; partition?: string };
   },
 ): Promise<{ deferred: "no_runtime" | "fork" } | { job: Execution }> {
   const { submission, options } = input;
@@ -192,6 +196,14 @@ export async function createQaJob(
     changed: submission.changed,
     graphs: submission.graphs,
     owner_guidance: submission.owner_guidance,
+    ...(input.prompt
+      ? {
+          prompt: {
+            layout: input.prompt.layout,
+            ...(input.prompt.partition ? { partition: input.prompt.partition } : {}),
+          },
+        }
+      : {}),
     budget: {
       ...budget,
       wall_ms: deadline - now,
@@ -230,7 +242,7 @@ export async function createQaJob(
       "INSERT INTO jobs(id,review_id,attempt,status,payload_key,created_at) VALUES(?,?,?,'pending',?,?) ON CONFLICT DO NOTHING",
     ).bind(input.job, input.review, attempt, key, now),
     env.DB.prepare(
-      "INSERT INTO qa_runs(id,review_id,job_id,attempt,step_id,version,state,backend,model,deadline,cell_tokens,cell_wall_ms,evidence_limit,created_at,updated_at) VALUES(?,?,?,?,?,?,'pending',?,?,?,?,?,?,?,?) ON CONFLICT DO NOTHING",
+      "INSERT INTO qa_runs(id,review_id,job_id,attempt,step_id,version,state,backend,model,deadline,cell_tokens,cell_wall_ms,evidence_limit,prompt_cache,created_at,updated_at) VALUES(?,?,?,?,?,?,'pending',?,?,?,?,?,?,?,?,?) ON CONFLICT DO NOTHING",
     ).bind(
       id,
       input.review,
@@ -244,6 +256,7 @@ export async function createQaJob(
       qa.budget.tokens,
       qa.budget.cell_wall_ms,
       budget.evidence_bytes,
+      input.prompt?.cache.length ? JSON.stringify(input.prompt.cache) : null,
       now,
       now,
     ),

@@ -170,7 +170,7 @@ pub fn execute(stage: &str, directory: &Path) -> Result<()> {
         let endpoint = "http://198.18.0.1";
         let claim = &metadata["claim"]["qa"];
         let run = json!({"version":1,"snapshot_version":job["version"],"review_id":job["review_id"],"run_id":qa["run_id"],"replay":qa.get("replay"),
-            "harness":qa["harness"],"auth":"gateway","model":qa["model"],"budget":qa["budget"],
+            "harness":qa["harness"],"auth":"gateway","model":qa["model"],"budget":qa["budget"],"prompt":qa.get("prompt"),
             "sandbox_gateway":true,"storage":{"kind":"hosted","endpoint":endpoint,"tenant":claim["tenant"],"capability":claim["capability"]},
             "gateway":{"url":format!("{endpoint}/v1/qa/model"),"capability":claim["capability"]}});
         let credentials: BTreeMap<String, String> =

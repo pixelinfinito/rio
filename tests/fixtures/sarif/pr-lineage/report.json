@@ -165,6 +165,51 @@
     "agents_skipped": {
       "contracts": "not selected: triage's public_contracts signal did not fire (no exported declaration, route, table, event, CLI flag or configuration key changed)"
     },
+    "prompt_cache": {
+      "hint_classes": [],
+      "layout_features": [],
+      "phases": {
+        "generation": {
+          "calls": 1,
+          "calls_reporting_cache": 0,
+          "unverified_calls": 0,
+          "input_tokens": 80,
+          "cache_read_input_tokens": null,
+          "cache_write_input_tokens": null,
+          "output_tokens": 50,
+          "cost_usd_by_source": {
+            "unknown": null
+          },
+          "read_ratio": null
+        },
+        "verify-blind": {
+          "calls": 6,
+          "calls_reporting_cache": 0,
+          "unverified_calls": 0,
+          "input_tokens": 480,
+          "cache_read_input_tokens": null,
+          "cache_write_input_tokens": null,
+          "output_tokens": 300,
+          "cost_usd_by_source": {
+            "unknown": null
+          },
+          "read_ratio": null
+        },
+        "verify-disclosed": {
+          "calls": 6,
+          "calls_reporting_cache": 0,
+          "unverified_calls": 0,
+          "input_tokens": 480,
+          "cache_read_input_tokens": null,
+          "cache_write_input_tokens": null,
+          "output_tokens": 300,
+          "cost_usd_by_source": {
+            "unknown": null
+          },
+          "read_ratio": null
+        }
+      }
+    },
     "verification_usage": {
       "input_tokens": 960,
       "output_tokens": 600,

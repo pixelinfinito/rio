@@ -1,6 +1,8 @@
 import { Hono } from "hono";
 import { authenticateQaRun, type QaRun } from "./qa-jobs";
-import { route } from "./gateway";
+import { cacheCapability, route } from "./gateway";
+import { promptCacheKey } from "./prompt-config";
+import { costOf, usageConvention, type NormalizedUsage } from "./usage";
 import type { Env } from "./types";
 import {
   boundedJson,
@@ -92,22 +94,25 @@ async function settle(
   amount: number,
   usage: ReturnType<typeof usageOf>,
   completed: boolean,
+  // The provider's usage as the transport normalized it, and its reported cost.
+  reported?: { usage: NormalizedUsage | null; cost: unknown },
 ) {
   const billed =
     completed && usage
       ? usage.input + usage.output
       : Math.max(amount, usage ? usage.input + usage.output : 0);
   const prices = JSON.parse(env.MODEL_PRICES ?? "{}")[run.model];
-  const cost =
-    completed &&
-    usage &&
+  const valid =
     prices &&
     Number.isFinite(prices.input) &&
     prices.input >= 0 &&
     Number.isFinite(prices.output) &&
-    prices.output >= 0
-      ? (usage.input * prices.input + usage.output * prices.output) / 1000000
-      : null;
+    prices.output >= 0;
+  const normalized = completed && usage ? reported?.usage : null;
+  // Priced as other calls (D11): cache tokens only at their own rates.
+  const { cost_usd: cost, cost_source } = normalized
+    ? costOf(normalized, valid ? prices : undefined, reported?.cost)
+    : { cost_usd: null, cost_source: null };
   await env.DB.batch([
     env.DB.prepare(
       `UPDATE qa_cells SET tokens_reserved=tokens_reserved-?,tokens_used=tokens_used+?,
@@ -115,7 +120,7 @@ async function settle(
       WHERE run_id=? AND id=? AND EXISTS(SELECT 1 FROM qa_model_usage WHERE id=? AND state='reserved')`,
     ).bind(amount, billed, billed, run.cell_tokens, run.id, cell, id),
     env.DB.prepare(
-      "UPDATE qa_model_usage SET state=?,input_tokens=?,output_tokens=?,charged_tokens=?,estimated=?,cost_usd=?,completed_at=? WHERE id=? AND state='reserved'",
+      "UPDATE qa_model_usage SET state=?,input_tokens=?,output_tokens=?,charged_tokens=?,estimated=?,cost_usd=?,cache_read_tokens=?,cache_write_tokens=?,usage_convention=?,cost_source=?,completed_at=? WHERE id=? AND state='reserved'",
     ).bind(
       completed && usage ? "completed" : "failed",
       completed && usage ? usage.input : null,
@@ -123,6 +128,10 @@ async function settle(
       billed,
       completed && usage ? 0 : 1,
       cost,
+      normalized?.cache_read_input_tokens ?? null,
+      normalized?.cache_write_input_tokens ?? null,
+      normalized?.usage_convention ?? null,
+      cost_source,
       Date.now(),
       id,
     ),
@@ -158,7 +167,27 @@ export async function qaModel(
     throw new ModelError("invalid_output_limit", 400);
   const bound = new TextEncoder().encode(JSON.stringify(value)).length + 256;
   const provider = route(env, run.model);
-  const forward = providerTransport({ ...provider, fetch: transport });
+  let reported: { usage: NormalizedUsage | null; cost: unknown } | undefined;
+  // The review's hint classes; the OpenAI key is scoped to tenant, run and cell.
+  const capability = cacheCapability(
+    env,
+    run.model,
+    run.prompt_cache ? JSON.parse(run.prompt_cache) : [],
+  );
+  const forward = providerTransport({
+    ...provider,
+    cache: {
+      capability,
+      ...(capability === "key"
+        ? { key: promptCacheKey(run.tenant, run.id, `qa\0${cell}`) }
+        : {}),
+    },
+    convention: usageConvention(env, run.model, provider.protocol, provider.provider),
+    usage: (usage, cost) => {
+      reported = { usage, cost: provider.provider === "openrouter" ? cost : undefined };
+    },
+    fetch: transport,
+  });
   const reservation = await reserve(env, run, cell, bound, wanted);
   const abort = new AbortController();
   const disconnected = () => abort.abort();
@@ -229,6 +258,7 @@ export async function qaModel(
       reservation.amount,
       usage,
       completed,
+      reported,
     );
   }
 }

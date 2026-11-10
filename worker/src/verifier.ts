@@ -12,7 +12,14 @@ import type {
 } from "./types";
 import { readerOf, type SnapshotReader } from "./snapshot";
 import type { Ledger } from "./gateway";
-import { converse } from "./gateway";
+import {
+  VOTE_SCHEMA,
+  converse,
+  fits,
+  systemPrompt,
+  tokenBound,
+} from "./gateway";
+import { blindPrompt, join } from "./prompt";
 import {
   dataBlock,
   filteredLines,
@@ -37,6 +44,14 @@ export interface VerifyOptions {
   cancelled?: () => Promise<boolean>;
   call?: Parameters<typeof converse>[0]["call"];
   save: (vote: Vote) => Promise<void>;
+  // Prompt settings (design D4, D9, D12, D14); absent means the pre-change layout.
+  prompt?: {
+    partition?: string;
+    // `verifier-system`: one system prompt; the vote schema with the disclosure.
+    single?: boolean;
+    compaction?: boolean;
+    cache?: { classes: string[]; key?: string };
+  };
 }
 /** The evidence context with the head modes of every cited path filled in. */
 async function cited(
@@ -59,7 +74,15 @@ export const CONTRACT_VERIFICATION =
 export const CONTEXT_BYTES = 24 * 1024;
 /** Lines of one symbol excerpted before the voter must read the file itself. */
 export const SYMBOL_LINES = 300;
+/** A voter's blind message: the question, then the blind context. */
 export async function blindContext(o: VerifyOptions): Promise<string> {
+  return join(blindPrompt(await blindBlocks(o)));
+}
+/**
+ * The blind context: location, selected code and direct callers, intent and
+ * scoped guidance. Only the location is copied from the hypothesis.
+ */
+export async function blindBlocks(o: VerifyOptions): Promise<string> {
   const location = o.hypothesis.location;
   const reader = readerOf(o.snapshot);
   const versions = await Promise.all(
@@ -126,7 +149,7 @@ export async function blindContext(o: VerifyOptions): Promise<string> {
     }),
   );
   // Only location is copied; no title, trigger, proposed impact, rationale, or id.
-  return `What, if anything, is wrong in this function? Return {result: hypotheses[]}; [] is valid. Excerpts marked truncated and omitted callers are available through read_file and graph_query. ${dataBlock("location", { path: location.path, symbol_path: location.symbol_path })}\n${dataBlock("selected code and direct callers", versions)}\n${dataBlock("intent", filteredLines(o.intent.split("\n")))}\n${guidanceBlock(o.guidance, [location.path])}`;
+  return `${dataBlock("location", { path: location.path, symbol_path: location.symbol_path })}\n${dataBlock("selected code and direct callers", versions)}\n${dataBlock("intent", filteredLines(o.intent.split("\n")))}\n${guidanceBlock(o.guidance, [location.path])}`;
 }
 export async function verifyHypothesis(
   o: VerifyOptions,
@@ -154,7 +177,10 @@ export async function verifyHypothesis(
               o.verifyTokens ?? Math.max(1, Math.floor(o.agentTokens / 5)),
           };
           const messages: ModelRequest["messages"] = [
-            { role: "user", content: await blindContext(o) },
+            {
+              role: "user",
+              content: blindPrompt(await blindBlocks(o), o.prompt?.partition),
+            },
           ];
           const tools = o.tools(voter);
           const options = {
@@ -167,18 +193,40 @@ export async function verifyHypothesis(
             dispatch: tools.dispatch.bind(tools),
             call: o.call,
             cancelled: o.cancelled,
+            singleSystem: o.prompt?.single,
+            compaction: o.prompt?.compaction,
+            ...(o.prompt?.cache ? { cache: o.prompt.cache } : {}),
+            ...(o.prompt?.partition ? { redact: [o.prompt.partition] } : {}),
           };
           const blind = await converse({ ...options, phase: "verify-blind" });
           vote.blind = validateHypotheses(blind);
           vote.blind_match = blindMatch(vote.blind, o.hypothesis);
           // Persist before disclosing the hypothesis; the audit distinguishes an unfinished second turn.
           await o.save(vote);
-          messages.push({
-            role: "user",
-            content: `Verify this hypothesis. Assess regression on base/head, reachability, protections and contracts. Return {result:{evidence_level,evidence:[{kind:execution|code,version:base|head,job_id?,path?,node_ids?,demonstrates:regression|protection}],category?,reclassification_reason?}}. Reproduced requires a failed head runner execution of the reproduction; refutation requires a passing head reproduction or a cited protection. Static proof must cite the actual head graph path. Keep the original category by omitting category. Only downward changes are permitted: defect/security to risk/diagnostic/style, risk to diagnostic/style, diagnostic to style, with reclassification_reason required. Never upgrade risk to defect, even if proven; category and evidence level are independent. Cite only job IDs returned by an actual host run tool. If you have not executed a reproduction, use static_proven with actual head graph node IDs or plausible; describing a command does not execute it.${o.hypothesis.rule_id.startsWith("contracts/") ? CONTRACT_VERIFICATION : ""}\n${dataBlock("hypothesis", o.hypothesis)}`,
+          const disclosure = (single: boolean) => ({
+            role: "user" as const,
+            content: `Verify this hypothesis. Assess regression on base/head, reachability, protections and contracts. Return {result:{evidence_level,evidence:[{kind:execution|code,version:base|head,job_id?,path?,node_ids?,demonstrates:regression|protection}],category?,reclassification_reason?}}. Reproduced requires a failed head runner execution of the reproduction; refutation requires a passing head reproduction or a cited protection. Static proof must cite the actual head graph path. Keep the original category by omitting category. Only downward changes are permitted: defect/security to risk/diagnostic/style, risk to diagnostic/style, diagnostic to style, with reclassification_reason required. Never upgrade risk to defect, even if proven; category and evidence level are independent. Cite only job IDs returned by an actual host run tool. If you have not executed a reproduction, use static_proven with actual head graph node IDs or plausible; describing a command does not execute it.${o.hypothesis.rule_id.startsWith("contracts/") ? CONTRACT_VERIFICATION : ""}\n${single ? `${VOTE_SCHEMA}\n` : ""}${dataBlock("hypothesis", o.hypothesis)}`,
           });
+          // `verifier-system` keeps the blind system prompt only while the
+          // disclosed turn, which then also carries the hypothesis schema, fits
+          // the voter's allowance; otherwise the voter falls back to the
+          // separate disclosed prompt rather than exhausting (design D4).
+          let single = !!o.prompt?.single;
+          if (single)
+            single = fits(
+              Math.min(allowance.remaining, await o.ledger.remaining()),
+              tokenBound(systemPrompt("verify-disclosed", true), [
+                ...messages,
+                disclosure(true),
+              ]),
+            );
+          messages.push(disclosure(single));
           vote.answer = validateAnswer(
-            await converse({ ...options, phase: "verify-disclosed" }),
+            await converse({
+              ...options,
+              singleSystem: single,
+              phase: "verify-disclosed",
+            }),
           );
           if (
             vote.answer.category &&

@@ -129,7 +129,11 @@ it("councils four findings with an experiment, a protection, a note and a partia
           anthropic
             ? {
                 content: [{ type: "text", text: content }],
-                usage: { input_tokens: 100, output_tokens: 20 },
+                usage: {
+                  input_tokens: 60,
+                  cache_read_input_tokens: 40,
+                  output_tokens: 20,
+                },
               }
             : {
                 choices: [{ message: { content } }],
@@ -398,6 +402,22 @@ it("councils four findings with an experiment, a protection, a note and a partia
     );
     expect(audit.entries).toHaveLength(calls);
     expect(JSON.stringify(audit)).not.toContain("function a");
+    // Each entry carries layer hashes and sizes beside rendering_hash, including
+    // the tenant partition, and no prompt text.
+    for (const entry of audit.entries) {
+      expect(entry.layers.map((l: any) => l.layer)).toEqual([
+        "system",
+        "partition",
+        "context",
+        // With `council-order` the round header follows the rendering in
+        // every round; without it only round 2 adds blocks after the header.
+        ...(entry.round === 2 || runtime.PROMPT_LAYOUT?.includes("council-order")
+          ? ["assignment"]
+          : []),
+      ]);
+      expect(entry.rendering_hash).toBeTruthy();
+    }
+    expect(JSON.stringify(audit)).not.toContain("review_partition");
     const rows = await runtime.DB.prepare(
       "SELECT member,round,vendor,model,pack_hash,abstained,cause FROM council_assessments WHERE review_id=?",
     )
@@ -417,15 +437,23 @@ it("councils four findings with an experiment, a protection, a note and a partia
     expect(api.council).toHaveLength(calls);
     // Each council call reserved its prompt and output from the review budget.
     const usage = await runtime.DB.prepare(
-      "SELECT reserved,input_tokens,output_tokens,status FROM usage WHERE review_id=? AND phase='council'",
+      "SELECT reserved,input_tokens,output_tokens,status,model,cache_read_tokens,usage_convention,cost_source FROM usage WHERE review_id=? AND phase='council'",
     )
       .bind(id)
       .all<any>();
     expect(usage.results.length).toBe(calls);
-    for (const u of usage.results.filter((u) => u.status === "completed"))
+    for (const u of usage.results.filter((u) => u.status === "completed")) {
       expect(u.reserved).toBeGreaterThanOrEqual(
         u.input_tokens + u.output_tokens,
       );
+      // Vendor settlement carries the normalized usage: Anthropic's total input
+      // includes its cache reads, and every row names its convention and cost source.
+      expect(u.input_tokens).toBe(100);
+      expect(u.usage_convention).not.toBeNull();
+      expect(u.cost_source).not.toBeNull();
+      if (u.model.startsWith("anthropic/"))
+        expect(u.cache_read_tokens).toBe(40);
+    }
     // Every member of one finding received the same pack.
     const packs = new Set(
       rows.results.filter((r) => r.round === 1).map((r) => r.pack_hash),

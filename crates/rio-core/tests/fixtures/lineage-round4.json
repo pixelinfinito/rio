@@ -307,7 +307,52 @@
       "716f75651c378757ae8dbc75b3fa9697e78d12014f928f8bc9f84bb77d91d690",
       "f2c1f01a75b4876475327fe504bfea213b65fb58e2653fb45157cb03469fe312"
     ],
-    "lineage_updates": []
+    "lineage_updates": [],
+    "prompt_cache": {
+      "hint_classes": [],
+      "layout_features": [],
+      "phases": {
+        "generation": {
+          "calls": 1,
+          "calls_reporting_cache": 0,
+          "unverified_calls": 0,
+          "input_tokens": 80,
+          "cache_read_input_tokens": null,
+          "cache_write_input_tokens": null,
+          "output_tokens": 50,
+          "cost_usd_by_source": {
+            "unknown": null
+          },
+          "read_ratio": null
+        },
+        "verify-blind": {
+          "calls": 3,
+          "calls_reporting_cache": 0,
+          "unverified_calls": 0,
+          "input_tokens": 240,
+          "cache_read_input_tokens": null,
+          "cache_write_input_tokens": null,
+          "output_tokens": 150,
+          "cost_usd_by_source": {
+            "unknown": null
+          },
+          "read_ratio": null
+        },
+        "verify-disclosed": {
+          "calls": 3,
+          "calls_reporting_cache": 0,
+          "unverified_calls": 0,
+          "input_tokens": 240,
+          "cache_read_input_tokens": null,
+          "cache_write_input_tokens": null,
+          "output_tokens": 150,
+          "cost_usd_by_source": {
+            "unknown": null
+          },
+          "read_ratio": null
+        }
+      }
+    }
   },
   "lineage": {
     "repository": "github.com/acme/e2e",

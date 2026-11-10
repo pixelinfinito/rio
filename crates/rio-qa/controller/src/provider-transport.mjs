@@ -2,7 +2,11 @@
  * Responses requests from either CLI and adapts function calls to providers
  * whose endpoint speaks Chat Completions or Anthropic Messages. Provider-side
  * tools, remote image fetches and stored conversations are not admitted. */
+import { MISSING_USAGE, normalizeUsage } from './usage.mjs';
+
 const fail = () => { throw new Error('Unsupported QA model request'); };
+/** The text `dropStaleImages` puts in place of an earlier screenshot. */
+export const OMITTED = '[earlier screenshot omitted]';
 const object = value => value && typeof value === 'object' && !Array.isArray(value);
 
 export function responseRequest(body) {
@@ -52,9 +56,12 @@ export function responseRequest(body) {
     } else if (item.type === 'function_call_output') {
       if (typeof item.call_id !== 'string') fail();
       let output = content(item.output);
-      if (Array.isArray(output) && output.some(part => part.type === 'image_url')) {
-        toolImages.push(...output.filter(part => part.type === 'image_url'));
-        output = output.filter(part => part.type !== 'image_url');
+      // A replaced screenshot keeps the screenshot's place (D16), so the tool
+      // message and the follow-up message keep their text when it is replaced.
+      const screenshot = part => part.type === 'image_url' || part.type === 'text' && part.text === OMITTED;
+      if (Array.isArray(output) && output.some(screenshot)) {
+        toolImages.push(...output.filter(screenshot));
+        output = output.filter(part => !screenshot(part));
         if (!output.length) output = 'Screenshot follows.';
       }
       messages.push({ role: 'tool', tool_call_id: item.call_id, content: output });
@@ -99,8 +106,19 @@ export function anthropicRequest(chat) {
     ...(chat.tools?.length ? { tools: chat.tools.map(tool => ({ name: tool.function.name, description: tool.function.description, input_schema: tool.function.parameters })), ...(tool_choice ? { tool_choice } : {}) } : {}) };
 }
 
-export function responseResult(result, names, model, protocol) {
-  const output = [], usage = result.usage;
+/** Normalized usage of a provider reply, or null when it reported none. Invalid
+ * cache fields throw on a verified route (D10). */
+export function replyUsage(result, protocol, convention = 'unverified') {
+  try {
+    return normalizeUsage(protocol, result?.usage, convention);
+  } catch (error) {
+    if (error.message === MISSING_USAGE) return null;
+    throw error;
+  }
+}
+
+export function responseResult(result, names, model, protocol, convention = 'unverified') {
+  const output = [], usage = replyUsage(result, protocol, convention);
   const message = protocol === 'anthropic' ? {
     content: result.content?.filter(part => part.type === 'text').map(part => part.text).join('\n'),
     tool_calls: result.content?.filter(part => part.type === 'tool_use').map(part => ({ id: part.id, function: { name: part.name, arguments: JSON.stringify(part.input) } })),
@@ -112,13 +130,15 @@ export function responseResult(result, names, model, protocol) {
     if (!name || typeof call.function.arguments !== 'string') throw new Error('Provider returned an unknown QA tool');
     output.push({ type: 'function_call', id: `fc_${crypto.randomUUID()}`, call_id: call.id, ...name, arguments: call.function.arguments, status: 'completed' });
   }
-  const input = usage?.input_tokens ?? usage?.prompt_tokens, completion = usage?.output_tokens ?? usage?.completion_tokens;
-  const valid = [input, completion].every(n => Number.isSafeInteger(n) && n >= 0) && Number.isSafeInteger(input + completion);
+  // Total input, cache reads included, so the harness and cell budgets see what
+  // the provider billed.
+  const input = usage?.input_tokens, completion = usage?.output_tokens;
+  const valid = usage && Number.isSafeInteger(input + completion);
   const incomplete = result.stop_reason === 'max_tokens' || result.choices?.[0]?.finish_reason === 'length';
   return { id: `resp_${crypto.randomUUID()}`, object: 'response', created_at: Math.floor(Date.now() / 1000), model, status: incomplete ? 'incomplete' : 'completed',
     output, ...(incomplete ? { incomplete_details: { reason: 'max_output_tokens' } } : {}),
     ...(valid ? { usage: { input_tokens: input, output_tokens: completion, total_tokens: input + completion,
-      input_tokens_details: { cached_tokens: 0 }, output_tokens_details: { reasoning_tokens: usage?.completion_tokens_details?.reasoning_tokens || 0 } } } : {}) };
+      input_tokens_details: { cached_tokens: usage.cache_read_input_tokens ?? 0 }, output_tokens_details: { reasoning_tokens: result.usage?.completion_tokens_details?.reasoning_tokens || 0 } } } : {}) };
 }
 
 export function responseStream(result) {
@@ -149,9 +169,57 @@ export async function boundedJson(response, limit = 32 * 1024 * 1024) {
   return JSON.parse(new TextDecoder().decode(bytes));
 }
 
+/** The line Rio's journey prompt puts between run-stable and journey data. */
+export const BOUNDARY = 'Journey task (changes per journey):';
+const EPHEMERAL = { type: 'ephemeral' };
+/** Places prompt-cache hints on a provider request (D16). `breakpoints`
+ * (Anthropic Messages) and `parts` (OpenRouter content parts) get at most four
+ * markers: the last system block, the last block, the block before the newest
+ * image, and the block before the latest replaced screenshot, else before the
+ * boundary line. `key` routes get Rio's key. Splits never change joined text. */
+export function cacheHints(payload, protocol, cache) {
+  if (!cache || cache.capability === 'none') return payload;
+  if (cache.capability === 'key') {
+    if (protocol === 'openai' && cache.key) payload.prompt_cache_key = cache.key;
+    return payload;
+  }
+  const anthropic = protocol === 'anthropic';
+  const text = value => typeof value === 'string' ? [{ type: 'text', text: value }] : value;
+  let system;
+  if (anthropic) system = payload.system;
+  else {
+    // Content parts everywhere, so a request's shape never depends on where
+    // its markers fall.
+    for (const message of payload.messages) if (message.content !== null && message.content !== undefined) message.content = text(message.content);
+    system = payload.messages.filter(m => m.role === 'system').flatMap(m => m.content);
+  }
+  const conversation = payload.messages.filter(m => anthropic || m.role !== 'system');
+  // Split the first user text at the boundary on every request of a journey.
+  const first = conversation.find(m => m.role === 'user');
+  const at = first?.content?.findIndex(b => b.type === 'text' && b.text.includes(BOUNDARY)) ?? -1;
+  let stable;
+  if (at >= 0) {
+    const block = first.content[at], i = block.text.indexOf(BOUNDARY);
+    if (i > 0) { stable = { type: 'text', text: block.text.slice(0, i) }; first.content.splice(at, 1, stable, { type: 'text', text: block.text.slice(i) }); }
+  }
+  const blocks = conversation.flatMap(m => Array.isArray(m.content) ? m.content : []);
+  const image = b => b.type === 'image' || b.type === 'image_url';
+  const placeholder = b => b.type === 'text' && b.text === OMITTED;
+  // A marker never sits on an empty text block: it goes to the nearest earlier
+  // block with content, which still ends a prefix of the same request.
+  const content = (list, index) => { for (let i = index; i >= 0; i--) if (list[i] && !(list[i].type === 'text' && !list[i].text)) return list[i]; };
+  const newest = blocks.findLastIndex(image), replaced = blocks.findLastIndex(placeholder);
+  for (const block of [content(system ?? [], (system?.length ?? 0) - 1), content(blocks, blocks.length - 1), content(blocks, newest - 1), replaced >= 0 ? content(blocks, replaced - 1) : stable])
+    if (block) block.cache_control = EPHEMERAL;
+  return payload;
+}
+
 /** `url` is the complete operator-selected endpoint. No request field can
- * override destination, provider model, headers or transport permissions. */
-export function providerTransport({ url, headers, model, protocol = 'openai', fetch: request = globalThis.fetch }) {
+ * override destination, provider model, headers or transport permissions.
+ * `convention` is the route's usage convention; `cache` the route's prompt-cache
+ * capability and Rio's key (harness cache fields are never forwarded); `usage`
+ * receives each reply's normalized usage and the provider-reported cost, if any. */
+export function providerTransport({ url, headers, model, protocol = 'openai', convention = 'unverified', cache, usage: observe, fetch: request = globalThis.fetch }) {
   const parsed = new URL(url);
   if (!['openai', 'anthropic'].includes(protocol) || (parsed.protocol !== 'https:' && !(parsed.protocol === 'http:' && ['127.0.0.1', '[::1]'].includes(parsed.hostname))) || parsed.username || parsed.password || parsed.hash || parsed.search) throw new Error('Invalid QA provider route');
   return async ({ path, body, signal }) => {
@@ -160,9 +228,11 @@ export function providerTransport({ url, headers, model, protocol = 'openai', fe
     const response = await request(parsed, { method: 'POST', headers: { ...headers, 'content-type': 'application/json' },
       // Workers rejects redirect:"error". Manual mode also prevents forwarding
       // credentials, and the non-2xx guard below refuses every redirect.
-      body: JSON.stringify(protocol === 'anthropic' ? anthropicRequest(chat) : chat), signal, redirect: 'manual' });
+      body: JSON.stringify(cacheHints(protocol === 'anthropic' ? anthropicRequest(chat) : chat, protocol, cache)), signal, redirect: 'manual' });
     if (!response.ok) { await response.body?.cancel(); return new Response(null, { status: response.status }); }
-    const result = responseResult(await boundedJson(response), names, body.model, protocol);
+    const reply = await boundedJson(response);
+    const result = responseResult(reply, names, body.model, protocol, convention);
+    observe?.(replyUsage(reply, protocol, convention), reply?.usage?.cost);
     return body.stream ? new Response(responseStream(result), { headers: { 'content-type': 'text/event-stream' } }) : Response.json(result);
   };
 }

@@ -57,6 +57,58 @@ async function prModeConstraints() {
   ).rejects.toThrow(/CHECK/);
 }
 
+// 0014_prompt_cache: nullable cache columns on usage and the partition table.
+async function promptCacheColumns() {
+  const columns = (
+    await env.DB.prepare("PRAGMA table_info(usage)").all<{ name: string }>()
+  ).results.map((c) => c.name);
+  expect(columns).toEqual(
+    expect.arrayContaining([
+      "cache_read_tokens",
+      "cache_write_tokens",
+      "usage_convention",
+      "cost_source",
+    ]),
+  );
+  expect(await tables()).toContain("prompt_partitions");
+  await env.DB.prepare(
+    "INSERT OR IGNORE INTO reviews(id,tenant,submission_key,status,created_at,token_limit,deadline) VALUES('r','owner','k','queued',1,1,1)",
+  ).run();
+  const usage = (convention: string | null, source: string | null) =>
+    env.DB.prepare(
+      "INSERT INTO usage(id,review_id,actor,phase,reserved,status,usage_convention,cost_source) VALUES(?,?,?,?,?,?,?,?)",
+    )
+      .bind(crypto.randomUUID(), "r", "a", "p", 1, "reserved", convention, source)
+      .run();
+  await usage(null, null);
+  await usage("invalid", "self-hosted");
+  await expect(usage("trusted", null)).rejects.toThrow(/CHECK/);
+  await expect(usage(null, "guess")).rejects.toThrow(/CHECK/);
+}
+
+// 0015_qa_prompt_cache: nullable cache columns on QA model usage.
+async function qaPromptCacheColumns() {
+  const columns = (
+    await env.DB.prepare("PRAGMA table_info(qa_model_usage)").all<{ name: string }>()
+  ).results.map((c) => c.name);
+  expect(columns).toEqual(
+    expect.arrayContaining([
+      "cache_read_tokens",
+      "cache_write_tokens",
+      "usage_convention",
+      "cost_source",
+    ]),
+  );
+  // The CHECKs reject unknown values; QA usage is never self-hosted.
+  const sql = (
+    await env.DB.prepare(
+      "SELECT sql FROM sqlite_master WHERE name='qa_model_usage'",
+    ).first<{ sql: string }>()
+  )!.sql;
+  expect(sql).toContain("usage_convention IN ('verified','unverified','invalid')");
+  expect(sql).toContain("cost_source IN ('provider','estimate','unknown')");
+}
+
 // 0005_registry_integrity: sighting ledger, status versions, feedback provenance.
 async function registryColumns() {
   const columns = async (table: string) =>
@@ -169,6 +221,8 @@ it("applies forward migrations once and leaves no deployment lock", async () => 
   await registryColumns();
   await councilAssessments();
   await prModeConstraints();
+  await promptCacheColumns();
+  await qaPromptCacheColumns();
   // The fresh feedback table accepts only the standardized reasons.
   for (const reason of ["false_positive", "known", "other"])
     await rejectsReason(reason);
@@ -218,6 +272,8 @@ it("upgrades a v0.2 database and converts draft feedback reasons", async () => {
     "council_assessments",
     "runner_capabilities",
     "jobs",
+    "usage",
+    "prompt_partitions",
   ])
     await env.DB.prepare(`DROP TABLE IF EXISTS ${table}`).run();
   const core = migrations.find((m) => m.name === "0001_core.sql")!;
@@ -281,6 +337,8 @@ it("upgrades a v0.2 database and converts draft feedback reasons", async () => {
   );
   await prModeConstraints();
   await councilAssessments();
+  await promptCacheColumns();
+  await qaPromptCacheColumns();
   const jobColumns = (
     await env.DB.prepare("PRAGMA table_info(jobs)").all<{ name: string }>()
   ).results.map((c) => c.name);

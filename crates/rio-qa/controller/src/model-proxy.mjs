@@ -2,6 +2,7 @@ import { createServer, request as httpRequest } from 'node:http';
 import { Readable } from 'node:stream';
 import { once } from 'node:events';
 import { randomBytes, timingSafeEqual } from 'node:crypto';
+import { OMITTED } from './provider-transport.mjs';
 
 const allowedPaths = new Set(['/v1/responses', '/v1/chat/completions']);
 const count = value => Number.isSafeInteger(value) && value >= 0;
@@ -55,7 +56,7 @@ export function dropStaleImages(body) {
   visit(body.input); visit(body.messages);
   for (const image of images.slice(0, -1)) {
     for (const key of Object.keys(image)) delete image[key];
-    Object.assign(image, { type: body.messages ? 'text' : 'input_text', text: '[earlier screenshot omitted]' });
+    Object.assign(image, { type: body.messages ? 'text' : 'input_text', text: OMITTED });
   }
   return images.length > 1;
 }

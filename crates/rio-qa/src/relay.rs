@@ -23,6 +23,10 @@ pub struct LocalModelRoute {
     pub keychain_field: Option<String>,
     /// `ai_gateway` sends the keychain token only in cf-aig-authorization.
     pub authentication: Option<String>,
+    /// Prompt-cache hint classes for this route (`anthropic`, `openai`,
+    /// `openrouter`); none by default.
+    #[serde(default)]
+    pub prompt_cache: Vec<String>,
 }
 
 pub struct LocalModelRelay {
@@ -69,6 +73,13 @@ impl LocalModelRelay {
             tokens > 0 && tokens <= 9_007_199_254_740_991,
             "Invalid QA relay token budget"
         );
+        ensure!(
+            route
+                .prompt_cache
+                .iter()
+                .all(|class| matches!(class.as_str(), "anthropic" | "openai" | "openrouter")),
+            "Invalid QA route prompt_cache; expected anthropic, openai or openrouter"
+        );
         let directory = tempfile::Builder::new().prefix("rio-qa-host-").tempdir()?;
         for (name, content) in [
             (
@@ -83,6 +94,7 @@ impl LocalModelRelay {
                 "provider-transport.mjs",
                 include_str!("../controller/src/provider-transport.mjs"),
             ),
+            ("usage.mjs", include_str!("../controller/src/usage.mjs")),
         ] {
             std::fs::write(directory.path().join(name), content)?;
         }
@@ -105,7 +117,7 @@ impl LocalModelRelay {
         let mut input = child.stdin.take().context("Missing QA relay input pipe")?;
         // Secret transport uses the child pipe only; never a config/cache file.
         let config = json!({"socket":directory.path().join("model.sock"),"key":key,"url":route.url,"protocol":route.protocol,
-            "model":route.model,"provider_model":route.provider_model,"authentication":route.authentication,"run_id":run_id,"tokens":tokens});
+            "model":route.model,"provider_model":route.provider_model,"authentication":route.authentication,"prompt_cache":route.prompt_cache,"run_id":run_id,"tokens":tokens});
         input.write_all(format!("{config}\n").as_bytes()).await?;
         let stdout = child
             .stdout

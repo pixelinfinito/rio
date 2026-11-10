@@ -56,6 +56,17 @@ pub fn result(job: &Value, response: &Value) -> Result<Value> {
             .as_u64()
             .map_or(Value::Null, Value::from)
     };
+    let mut artifact = json!({
+        "content": content,
+        "input_tokens": usage("prompt_tokens"),
+        "output_tokens": usage("completion_tokens"),
+    });
+    // Passed through as the endpoint's raw JSON value, never `as_u64`, which
+    // would hide a negative or fractional count: the Worker validates it.
+    let cached = &response["usage"]["prompt_tokens_details"]["cached_tokens"];
+    if !cached.is_null() {
+        artifact["cached_input_tokens"] = cached.clone();
+    }
     Ok(json!({
         "outcome": "exited",
         "job_id": job["job_id"],
@@ -66,11 +77,7 @@ pub fn result(job: &Value, response: &Value) -> Result<Value> {
         "stderr": "",
         "timed_out": false,
         "truncated": false,
-        "artifact": {
-            "content": content,
-            "input_tokens": usage("prompt_tokens"),
-            "output_tokens": usage("completion_tokens"),
-        },
+        "artifact": artifact,
     }))
 }
 
@@ -177,6 +184,25 @@ mod tests {
         )
         .unwrap();
         assert!(unknown["artifact"]["input_tokens"].is_null());
+        assert!(unknown["artifact"].get("cached_input_tokens").is_none());
+    }
+
+    #[test]
+    fn cached_tokens_pass_through_as_the_raw_value() {
+        let cached = |value: Value| {
+            result(
+                &job(),
+                &json!({"choices": [{"message": {"content": "{}"}}],
+                    "usage": {"prompt_tokens": 5000, "completion_tokens": 40,
+                        "prompt_tokens_details": {"cached_tokens": value}}}),
+            )
+            .unwrap()["artifact"]["cached_input_tokens"]
+                .clone()
+        };
+        assert_eq!(cached(json!(4096)), json!(4096));
+        assert_eq!(cached(json!(-1)), json!(-1));
+        assert_eq!(cached(json!(12.5)), json!(12.5));
+        assert!(cached(Value::Null).is_null());
     }
 
     #[tokio::test]
