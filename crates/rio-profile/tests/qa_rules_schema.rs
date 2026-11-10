@@ -179,7 +179,7 @@ fn shipped_rules_cover_every_spec_predicate_and_skill_reference() {
     assert_eq!(ids.len(), 34);
     let references = regex::Regex::new(r"`((?:ui|mobile|ux)/[a-z][a-z0-9-]*)`").unwrap();
     for document in [
-        include_str!("../../../openspec/changes/rio-v0-3-qa/specs/ui-quality-rules/spec.md"),
+        include_str!("../../../openspec/specs/ui-quality-rules/spec.md"),
         include_str!("../../../modules/qa/skill/SKILL.md"),
     ] {
         for reference in references.captures_iter(document) {
