@@ -76,3 +76,14 @@ with the same stable recommendation ID. Invalid or duplicate labels fail
 validation. Unlabeled recommendations remain pending. The separate `ux_metrics`
 reports human label coverage, mean scores, and unsupported-benefit claim count;
 it does not change defect precision/recall or imply demonstrated user benefit.
+
+## UX review hillclimb
+
+`hillclimb.py` runs the non-defect cases as focused mobile/light journeys and grades the model-authored review with
+`judge.py`, a Claude judge called through the AI Gateway (`gateway_client.py`). The judge compares each recommendation and
+unverified observation with grader-only ground truth in `frictions.json`; never copy that file into the fixture or a prompt.
+Cases with `focus_journey` select their journey; the original focused cases use the mapping in the runner. Results are written under `--flow`
+(`results.jsonl`, `traces/`, `reports/`, `judge/`, `stderr/`) and are machine-local; do not commit them. A run with a QA report is
+graded even when its cell was cancelled; only runs without a report are retried. `--regrade` re-judges stored reports without
+new QA runs. Install its pinned dependency with `pip install -r eval/qa/requirements.txt` in a virtualenv. See
+[the hillclimb record](../../docs/evaluation/v0.3-qa-ux-hillclimb.md).

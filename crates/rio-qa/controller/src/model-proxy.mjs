@@ -40,6 +40,26 @@ async function drain(response, signal) {
 /** One ledger and capability per chain × cell. Reservations are synchronous,
  * so concurrent harness requests cannot spend the same remaining allowance.
  * Only trusted host configuration may supply the forward function and model. */
+// Harnesses replay the whole conversation on every call. A step screenshot is
+// useful only until the next one; replace earlier ones so neither the provider
+// nor the cell's byte-based input bound pays for them again.
+export function dropStaleImages(body) {
+  const images = [];
+  const visit = value => {
+    if (Array.isArray(value)) value.forEach(visit);
+    else if (value && typeof value === 'object') {
+      if (value.type === 'input_image' || value.type === 'image_url') images.push(value);
+      else Object.values(value).forEach(visit);
+    }
+  };
+  visit(body.input); visit(body.messages);
+  for (const image of images.slice(0, -1)) {
+    for (const key of Object.keys(image)) delete image[key];
+    Object.assign(image, { type: body.messages ? 'text' : 'input_text', text: '[earlier screenshot omitted]' });
+  }
+  return images.length > 1;
+}
+
 export class ModelProxy {
   constructor({ forward, model, record = async () => {}, onExhausted = () => {}, requestBytes = 16 * 1024 * 1024,
     responseBytes = 32 * 1024 * 1024, requestTimeoutMs = 120000 }) {
@@ -93,6 +113,7 @@ export class ModelProxy {
       for await (const chunk of request) { bytes += chunk.length; if (bytes > this.requestBytes) return error(413, 'model_request_too_large'); chunks.push(chunk); }
       abort.signal.throwIfAborted();
       let body; try { body = JSON.parse(Buffer.concat(chunks).toString('utf8')); } catch { return error(400, 'invalid_model_request'); }
+      if (dropStaleImages(body)) bytes = Buffer.byteLength(JSON.stringify(body));
       if (!body || typeof body !== 'object' || Array.isArray(body) || body.model !== this.model || body.background || body.store === true || body.previous_response_id || body.conversation) return error(400, 'invalid_model_request');
       // Provider-side tools would bypass the controller's MCP permissions.
       const functionTool = tool => tool && (tool.type === 'function' || tool.type === 'namespace' && Array.isArray(tool.tools) && tool.tools.every(child => child?.type === 'function'));

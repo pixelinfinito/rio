@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { once } from 'node:events';
-import { ModelProxy, gatewayTransport } from '../src/model-proxy.mjs';
+import { ModelProxy, gatewayTransport, dropStaleImages } from '../src/model-proxy.mjs';
 
 const cell = { chain: ['cart', 'checkout'], viewport: 'mobile', color_scheme: 'light' };
 const body = { model: 'qa-model', input: 'observe', max_output_tokens: 100 };
@@ -134,4 +134,16 @@ test('trusted gateway transport pins route and authorization and refuses redirec
   const server = createServer((_, res) => { res.writeHead(307, { location: 'http://127.0.0.1:1/leak' }); res.end(); });
   server.listen(0, '127.0.0.1'); await once(server, 'listening'); t.after(() => { server.closeAllConnections(); return new Promise(resolve => server.close(resolve)); });
   await assert.rejects(gatewayTransport({ baseUrl: `http://127.0.0.1:${server.address().port}`, token: 'secret', runId: 'run' })({ path: '/v1/responses', body }));
+});
+
+test('only the latest screenshot is replayed to the provider', () => {
+  const image = n => ({ type: 'input_image', image_url: `data:image/jpeg;base64,${n}` });
+  const body = { input: [{ role: 'user', content: [image('MQ==')] },
+    { type: 'function_call_output', call_id: 'a', output: [{ type: 'input_text', text: 'step 1' }, image('Mg==')] },
+    { type: 'function_call_output', call_id: 'b', output: [image('Mw==')] }] };
+  assert.equal(dropStaleImages(body), true);
+  assert.deepEqual(body.input[0].content[0], { type: 'input_text', text: '[earlier screenshot omitted]' });
+  assert.deepEqual(body.input[1].output[1], { type: 'input_text', text: '[earlier screenshot omitted]' });
+  assert.equal(body.input[2].output[0].image_url, 'data:image/jpeg;base64,Mw==');
+  assert.equal(dropStaleImages({ input: [{ role: 'user', content: [image('MQ==')] }] }), false);
 });

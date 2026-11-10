@@ -33,10 +33,10 @@ export const RIO_TOOLS = [
   ['set_geolocation', 'Set the browser location.', schema({ latitude: { type: 'number', minimum: -90, maximum: 90 }, longitude: { type: 'number', minimum: -180, maximum: 180 } })],
   ['read_dependencies', 'Read recorded unavailable external hosts. A failure is a prerequisite only if the current journey needs that host.', schema({})],
   ['step_done', 'Mark a step boundary for independent evidence capture and probing. For an unavailable prerequisite use skipped, explain the dependency in reason, and cite its recorded host in blocked_dependency.', schema({ step: { type: 'integer', minimum: 1 }, outcome: { enum: ['passed', 'failed', 'skipped'] }, reason: { type: 'string' }, blocked_dependency: string }, ['step', 'outcome'])],
-  ['observe', 'Record an artifact-backed observation for verification.', schema({ rule_id: string, kind: { enum: ['functional', 'ux', 'style', 'accessibility'] }, expected: { type: 'object' }, observed: { type: 'object' }, evidence: { type: 'array', items: string, minItems: 1 }, suggested_fix: string, element_paths: { type: 'array', items: string } }, ['rule_id', 'kind', 'expected', 'observed', 'evidence', 'suggested_fix'])],
-  ['assess', 'Record UX criterion coverage, including passed journeys. Batch coverage in assessments to avoid repeated model turns. Assessed criteria require retained artifact IDs; other statuses require a reason.',
+  ['observe', 'Record an artifact-backed observation for verification. kind must equal the category of the cited rule in the supplied criteria (a rule with category ux takes kind ux). element_paths is optional; each entry is a CSS selector run with document.querySelector on the page that is open when you call observe, so it must match an element present there now. Build selectors only from tag names and attributes you know exist (for example input[name=email]); snapshot refs such as e12, routes or URLs, accessible names, visible text and descriptive phrases are not selectors, and an accessible name is usually not an aria-label attribute. If the element is not on the current page or you are unsure of a selector, omit element_paths. A reply with dropped means nothing was recorded: correct the field it names and resubmit the same finding under the same rule_id.', schema({ rule_id: string, kind: { enum: ['functional', 'ux', 'style', 'accessibility'] }, expected: { type: 'object' }, observed: { type: 'object' }, evidence: { type: 'array', items: string, minItems: 1 }, suggested_fix: string, element_paths: { type: 'array', items: string } }, ['rule_id', 'kind', 'expected', 'observed', 'evidence', 'suggested_fix'])],
+  ['assess', 'Record UX criterion coverage, including passed journeys. Batch coverage in assessments to avoid repeated model turns. Assessed means checked with nothing left to file: record each friction you noticed with observe or recommend first and cite it in the reason. Assessed criteria require retained artifact IDs; other statuses require a reason.',
     { type: 'object', oneOf: [assessmentInput, schema({ assessments: { type: 'array', minItems: 1, maxItems: 64, items: assessmentInput } })] }],
-  ['recommend', 'Propose an evidence-backed UX improvement. Cite applicable owner guidance or the supplied versioned heuristic. Benefits remain expected; this cannot fail a journey.', recommendationInput],
+  ['recommend', 'Propose an evidence-backed UX improvement for friction observed during the journey, including in steps that passed. Cite applicable owner guidance or the supplied versioned heuristic. basis.heuristic is checked verbatim against the cited rule\'s source: source is source.title, version is source.version and reference is source.url (the URL, not a principle name or rule id); name the specific principle in observed_friction instead. Every listed step needs at least one evidence ID captured at that step. A reply with dropped means nothing was recorded: correct the field it names and resubmit. Benefits remain expected; this cannot fail a journey.', recommendationInput],
   ['report_expectation_conflict', 'Record conflicting owner requirements or a committed expectation that needs reconciliation. Cite immutable guidance and observed step evidence. This is neither a defect nor permission to rewrite expectations.', expectationConflictInput],
 ].map(([name, description, inputSchema]) => ({ name, description, inputSchema }));
 const failure = message => ({ isError: true, content: [{ type: 'text', text: message }] });
@@ -117,7 +117,12 @@ export async function restrictedMcp(browser, { handlers = {}, record = async () 
           }
         }
         await after({ tool: name, arguments: args, result, state });
-        return presentToolResult(result, sanitize);
+        // Step screenshots are masked by the page style before capture; text
+        // sanitization cannot apply to pixels and must not rewrite image data.
+        const images = (result.content || []).filter(part => part.type === 'image');
+        if (!images.length) return presentToolResult(result, sanitize);
+        const presented = presentToolResult({ ...result, content: result.content.filter(part => part.type !== 'image') }, sanitize);
+        return { ...presented, content: [...(presented.content || []), ...images] };
       } catch {
         // Backend errors may contain credential values; do not echo them.
         return failure('QA tool failed; inspect the sanitized run evidence.');

@@ -240,6 +240,307 @@
       "rules": [],
       "journeys": [],
       "goal": "Complete the intended flow without unsupported defects or recommendations"
+    },
+    {
+      "id": "variant-1",
+      "flags": [
+        "variant-1"
+      ],
+      "kind": "ux",
+      "rules": [
+        "ux/error-recovery",
+        "ux/task-clarity"
+      ],
+      "journeys": [],
+      "goal": "Understand a declined payment and what to do next",
+      "human_review": [
+        "guidance_adherence",
+        "relevance",
+        "actionability",
+        "unsupported_benefit_claim"
+      ],
+      "focus_journey": "payment-recovery"
+    },
+    {
+      "id": "variant-2",
+      "flags": [
+        "variant-2"
+      ],
+      "kind": "ux",
+      "rules": [
+        "ux/recognition",
+        "ux/task-clarity",
+        "ux/error-prevention"
+      ],
+      "journeys": [],
+      "goal": "Know the amount that will be charged before paying",
+      "human_review": [
+        "guidance_adherence",
+        "relevance",
+        "actionability",
+        "unsupported_benefit_claim"
+      ],
+      "focus_journey": "checkout"
+    },
+    {
+      "id": "variant-3",
+      "flags": [
+        "variant-3"
+      ],
+      "kind": "ux",
+      "rules": [
+        "ux/recognition",
+        "ux/inclusive-interaction"
+      ],
+      "journeys": [],
+      "goal": "Identify which prefilled checkout field is which",
+      "human_review": [
+        "guidance_adherence",
+        "relevance",
+        "actionability",
+        "unsupported_benefit_claim"
+      ],
+      "focus_journey": "checkout"
+    },
+    {
+      "id": "variant-4",
+      "flags": [
+        "variant-4"
+      ],
+      "kind": "ux",
+      "rules": [
+        "ux/task-clarity",
+        "ux/consistency"
+      ],
+      "journeys": [],
+      "goal": "Understand checkout instructions written in plain language",
+      "human_review": [
+        "guidance_adherence",
+        "relevance",
+        "actionability",
+        "unsupported_benefit_claim"
+      ],
+      "focus_journey": "checkout"
+    },
+    {
+      "id": "variant-5",
+      "flags": [
+        "variant-5"
+      ],
+      "kind": "ux",
+      "rules": [
+        "ux/consistency"
+      ],
+      "journeys": [],
+      "goal": "Follow one consistent name for the cart and checkout across pages",
+      "human_review": [
+        "guidance_adherence",
+        "relevance",
+        "actionability",
+        "unsupported_benefit_claim"
+      ],
+      "focus_journey": "checkout"
+    },
+    {
+      "id": "variant-6",
+      "flags": [
+        "variant-6"
+      ],
+      "kind": "ux",
+      "rules": [
+        "ux/task-efficiency",
+        "ux/task-clarity"
+      ],
+      "journeys": [],
+      "goal": "Pay without an uninformative extra confirmation step",
+      "human_review": [
+        "guidance_adherence",
+        "relevance",
+        "actionability",
+        "unsupported_benefit_claim"
+      ],
+      "focus_journey": "checkout"
+    },
+    {
+      "id": "variant-7",
+      "flags": [
+        "variant-7"
+      ],
+      "kind": "ux",
+      "rules": [
+        "ux/error-prevention",
+        "ux/user-control",
+        "ux/error-recovery"
+      ],
+      "journeys": [],
+      "goal": "Retry a declined payment without a destructive action being emphasized",
+      "human_review": [
+        "guidance_adherence",
+        "relevance",
+        "actionability",
+        "unsupported_benefit_claim"
+      ],
+      "focus_journey": "payment-recovery"
+    },
+    {
+      "id": "variant-8",
+      "flags": [
+        "variant-8"
+      ],
+      "kind": "ux",
+      "rules": [
+        "ux/system-feedback",
+        "ux/recognition"
+      ],
+      "journeys": [],
+      "goal": "See the saved address after saving it",
+      "human_review": [
+        "guidance_adherence",
+        "relevance",
+        "actionability",
+        "unsupported_benefit_claim"
+      ],
+      "focus_journey": "profile-address"
+    },
+    {
+      "id": "variant-9",
+      "flags": [
+        "variant-9"
+      ],
+      "kind": "ux",
+      "rules": [
+        "ux/system-feedback",
+        "ux/consistency"
+      ],
+      "journeys": [],
+      "goal": "See the cart count update after adding an item",
+      "human_review": [
+        "guidance_adherence",
+        "relevance",
+        "actionability",
+        "unsupported_benefit_claim"
+      ],
+      "focus_journey": "add-to-cart"
+    },
+    {
+      "id": "variant-10",
+      "flags": [
+        "variant-10"
+      ],
+      "kind": "ux",
+      "rules": [
+        "ux/inclusive-interaction",
+        "ux/recognition"
+      ],
+      "journeys": [],
+      "goal": "Find and identify the cart link",
+      "human_review": [
+        "guidance_adherence",
+        "relevance",
+        "actionability",
+        "unsupported_benefit_claim"
+      ],
+      "focus_journey": "add-to-cart"
+    },
+    {
+      "id": "variant-11",
+      "flags": [
+        "variant-11"
+      ],
+      "kind": "ux",
+      "rules": [
+        "ux/task-efficiency",
+        "ux/user-control"
+      ],
+      "journeys": [],
+      "goal": "Check out as a guest without being pushed to register",
+      "human_review": [
+        "guidance_adherence",
+        "relevance",
+        "actionability",
+        "unsupported_benefit_claim"
+      ],
+      "focus_journey": "checkout"
+    },
+    {
+      "id": "variant-12",
+      "flags": [
+        "variant-12"
+      ],
+      "kind": "ux",
+      "rules": [
+        "ux/system-feedback",
+        "ux/error-recovery",
+        "ux/inclusive-interaction"
+      ],
+      "journeys": [],
+      "goal": "Notice that the payment was declined",
+      "human_review": [
+        "guidance_adherence",
+        "relevance",
+        "actionability",
+        "unsupported_benefit_claim"
+      ],
+      "focus_journey": "payment-recovery"
+    },
+    {
+      "id": "variant-13",
+      "flags": [
+        "variant-13"
+      ],
+      "kind": "ux",
+      "rules": [
+        "ux/inclusive-interaction"
+      ],
+      "journeys": [],
+      "goal": "See which control has keyboard focus",
+      "human_review": [
+        "guidance_adherence",
+        "relevance",
+        "actionability",
+        "unsupported_benefit_claim"
+      ],
+      "focus_journey": "keyboard-shopping"
+    },
+    {
+      "id": "variant-14",
+      "flags": [
+        "variant-14"
+      ],
+      "kind": "ux",
+      "rules": [
+        "ux/error-prevention",
+        "ux/system-feedback"
+      ],
+      "journeys": [],
+      "goal": "Save the full new delivery address",
+      "human_review": [
+        "guidance_adherence",
+        "relevance",
+        "actionability",
+        "unsupported_benefit_claim"
+      ],
+      "focus_journey": "profile-address"
+    },
+    {
+      "id": "variant-15",
+      "flags": [
+        "variant-15"
+      ],
+      "kind": "ux",
+      "rules": [
+        "ux/user-control",
+        "ux/task-clarity"
+      ],
+      "journeys": [],
+      "goal": "Add an item and keep shopping or review the cart",
+      "human_review": [
+        "guidance_adherence",
+        "relevance",
+        "actionability",
+        "unsupported_benefit_claim"
+      ],
+      "focus_journey": "add-to-cart"
     }
   ]
 }

@@ -30,10 +30,18 @@ export function responseRequest(body) {
     });
   };
   const messages = [];
+  // Chat Completions providers degrade or reject images inside tool messages.
+  // Deliver them in one user turn after the consecutive tool results.
+  let toolImages = [];
+  const flushToolImages = () => {
+    if (toolImages.length) messages.push({ role: 'user', content: [{ type: 'text', text: 'Screenshots returned by the preceding tool results.' }, ...toolImages] });
+    toolImages = [];
+  };
   if (body.instructions) messages.push({ role: 'system', content: body.instructions });
   const input = typeof body.input === 'string' ? [{ role: 'user', content: body.input }] : body.input;
   if (!Array.isArray(input)) fail();
   for (const item of input) {
+    if (item.type !== 'function_call_output') flushToolImages();
     if (item.type === 'reasoning') continue; // Provider-specific opaque thinking is not a user message.
     if (item.type === 'function_call') {
       if (typeof item.call_id !== 'string' || typeof item.arguments !== 'string') fail();
@@ -43,10 +51,18 @@ export function responseRequest(body) {
       else messages.push({ role: 'assistant', content: null, tool_calls: [call] });
     } else if (item.type === 'function_call_output') {
       if (typeof item.call_id !== 'string') fail();
-      messages.push({ role: 'tool', tool_call_id: item.call_id, content: content(item.output) });
+      let output = content(item.output);
+      if (Array.isArray(output) && output.some(part => part.type === 'image_url')) {
+        toolImages.push(...output.filter(part => part.type === 'image_url'));
+        output = output.filter(part => part.type !== 'image_url');
+        if (!output.length) output = 'Screenshot follows.';
+      }
+      messages.push({ role: 'tool', tool_call_id: item.call_id, content: output });
+      continue;
     } else if ((!item.type || item.type === 'message') && ['system', 'developer', 'user', 'assistant'].includes(item.role)) messages.push({ role: item.role === 'developer' ? 'system' : item.role, content: content(item.content) });
     else fail();
   }
+  flushToolImages();
   let tool_choice;
   if (body.tool_choice !== undefined) {
     if (['auto', 'none', 'required'].includes(body.tool_choice)) tool_choice = body.tool_choice;

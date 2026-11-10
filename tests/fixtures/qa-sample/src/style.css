@@ -25,6 +25,12 @@ footer { font-size: .9rem; }
 .small-email-input input[type=email] { font-size: 14px; }
 .hover-menu .menu-items { display: none; }
 .hover-menu:hover .menu-items { display: block; }
+.variant-7 .danger { background: #b3261e; border-color: #8c1d18; font-weight: 700; }
+.variant-7 .demoted { background: none; border: 0; color: #164ca4; text-decoration: underline; padding: 0; min-height: 0; font-size: .8rem; justify-self: start; }
+.variant-10 .icon-cart { font-size: 1.1rem; }
+.variant-11 .quiet { background: none; border: 0; color: #61718c; font-size: .8rem; text-decoration: underline; justify-self: start; }
+.variant-12 .late-error { max-width: 960px; margin: auto; padding: 0 24px 24px; font-size: .85rem; color: #61718c; }
+.variant-13 :focus-visible { outline: none !important; }
 .intentional-brand .hero { background: #28498d; color: #fff; border-radius: 20px; }
 @media (prefers-color-scheme: dark) {
   :root { color: #edf1f7; background: #121c2d; }

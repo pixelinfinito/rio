@@ -34,6 +34,23 @@ test('Responses translates namespaced tools, tool history and image evidence int
   assert.throws(() => responseResult({ choices: [{ message: { tool_calls: [{ function: { name: 'shell', arguments: '{}' } }] } }] }, names, body.model, 'openai'), /unknown QA tool/);
 });
 
+test('tool result screenshots follow the consecutive tool messages as one user turn', () => {
+  const image = { type: 'input_image', image_url: 'data:image/jpeg;base64,YQ==' };
+  const { chat } = responseRequest({ ...body, input: [
+    { role: 'user', content: 'Inspect checkout' },
+    { type: 'function_call', call_id: 'a', namespace: 'mcp__rio', name: 'step_done', arguments: '{"step":1}' },
+    { type: 'function_call', call_id: 'b', namespace: 'mcp__rio', name: 'step_done', arguments: '{"step":2}' },
+    { type: 'function_call_output', call_id: 'a', output: [{ type: 'input_text', text: 'recorded' }, image] },
+    { type: 'function_call_output', call_id: 'b', output: [image] },
+    { role: 'user', content: 'Continue' }] });
+  assert.deepEqual(chat.messages.slice(3).map(message => message.role), ['tool', 'tool', 'user', 'user']);
+  assert.deepEqual(chat.messages[3].content, [{ type: 'text', text: 'recorded' }]);
+  assert.equal(chat.messages[4].content, 'Screenshot follows.');
+  assert.equal(chat.messages[5].content.filter(part => part.type === 'image_url').length, 2);
+  const anthropic = anthropicRequest(chat);
+  assert.equal(anthropic.messages.at(-1).content.filter(part => part.type === 'image').length, 2);
+});
+
 test('provider adapter refuses remote inputs and executable hosted tools', () => {
   for (const change of [{ input: [{ role: 'user', content: [{ type: 'input_image', image_url: 'https://outside.example/secret' }] }] }, { input: [{ type: 'item_reference', id: 'stored-input' }] }, { tools: [{ type: 'web_search' }] }, { previous_response_id: 'stored' }]) assert.throws(() => responseRequest({ ...body, ...change }), /Unsupported/);
 });
