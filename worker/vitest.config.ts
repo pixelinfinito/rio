@@ -1,6 +1,7 @@
 import { defineConfig } from "vitest/config";
 import { cloudflareTest } from "@cloudflare/vitest-plugin";
 import { generateKeyPairSync } from "node:crypto";
+import { fileURLToPath } from "node:url";
 // A GitHub App key for the recorded GitHub double, generated per run so no
 // private key is ever committed. GitHub issues PKCS#1 keys.
 const app = generateKeyPairSync("rsa", {
@@ -59,6 +60,15 @@ export default defineConfig({
       },
     }),
   ],
+  // Tests import QA controller modules, whose own dependencies are not
+  // installed in the Worker CI job; resolve them from the Worker's packages.
+  resolve: {
+    alias: {
+      "@noble/hashes": fileURLToPath(
+        new URL("./node_modules/@noble/hashes", import.meta.url),
+      ),
+    },
+  },
   test: {
     include: ["tests/**/*.test.ts"],
     fileParallelism: false,
