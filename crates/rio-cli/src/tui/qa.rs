@@ -291,6 +291,63 @@ fn cell_of(step: &str) -> &str {
     step.splitn(3, ':').nth(2).unwrap_or(step)
 }
 
+/// The `rio qa` arguments that run one cell again, from `qa:rerun:<journey>/<viewport>/<scheme>`.
+pub fn rerun_args(step: &str) -> Option<Vec<String>> {
+    let cell = step.strip_prefix("qa:rerun:")?;
+    let (journey, rest) = cell.split_once('/')?;
+    rest.contains('/').then(|| {
+        ["qa", "--journey", journey, "--cell", rest]
+            .map(str::to_owned)
+            .to_vec()
+    })
+}
+
+/// A request to the running QA queue: `qa:pause`, `qa:resume`, `qa:cancel:…`.
+pub fn is_control(step: &str) -> bool {
+    matches!(step, "qa:pause" | "qa:resume") || step.starts_with("qa:cancel:")
+}
+
+/// Applies a [`is_control`] step to the running review's QA queue. A run on
+/// an endpoint, or no run, cannot take it, and the screen shows the queue as
+/// it was.
+pub fn control(step: &str, control: Option<&rio_qa::QaControl>) -> Outcome {
+    let Some(control) = control else {
+        return Outcome::Failed("no QA run is in progress".into());
+    };
+    if control.detached() {
+        return Outcome::Failed(
+            "this QA run is on the endpoint, which runs its queue to the end; ^C stops it and keeps a partial report".into(),
+        );
+    }
+    match step {
+        "qa:pause" => {
+            control.set_paused(true);
+            Outcome::Ok(
+                "paused: the running cell finishes, then the queue waits (p resumes)".into(),
+            )
+        }
+        "qa:resume" => {
+            control.set_paused(false);
+            Outcome::Ok("resumed".into())
+        }
+        _ => {
+            let cell = cell_of(step);
+            let mut parts = cell.rsplitn(3, '/');
+            let (Some(color_scheme), Some(viewport), Some(journey)) =
+                (parts.next(), parts.next(), parts.next())
+            else {
+                return Outcome::Failed(format!("{cell} is not a journey/viewport/scheme cell"));
+            };
+            control.cancel(rio_qa::QaCellRef {
+                journey: journey.into(),
+                viewport: viewport.into(),
+                color_scheme: color_scheme.into(),
+            });
+            Outcome::Ok(format!("cancelling {cell}; it is recorded cancelled"))
+        }
+    }
+}
+
 /// Runs a `qa:*` step. Steps that run a `rio qa` subcommand do it on a thread
 /// of their own (repository handles stay on one thread) and answer with a
 /// short text; nothing is printed to the screen.
@@ -327,31 +384,6 @@ pub fn step(
                 reply,
                 "accepting proposed journeys is not supported yet: review each \
                  .rio/qa/journeys/<name>.proposed.yaml and rename it to <name>.yaml",
-            );
-        }
-        "qa:pause" | "qa:resume" => {
-            return unsupported(
-                reply,
-                "pausing the queue is not supported by this runner yet; ^C stops the run and keeps a partial report",
-            );
-        }
-        other if other.starts_with("qa:cancel:") => {
-            return unsupported(
-                reply,
-                &format!(
-                    "cancelling one cell ({}) is not supported by this runner yet; ^C stops the run and keeps a partial report",
-                    cell_of(other)
-                ),
-            );
-        }
-        other if other.starts_with("qa:rerun:") => {
-            return unsupported(
-                reply,
-                &format!(
-                    "rerunning one cell ({}) is not supported by this runner yet; run rio qa --journey {} again",
-                    cell_of(other),
-                    cell_of(other).split('/').next().unwrap_or("")
-                ),
             );
         }
         _ => return false,
@@ -497,4 +529,48 @@ pub fn cells_line(report: &rio_core::Report) -> Option<String> {
             cells.join(" · ")
         }
     ))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn pause_and_cancel_reach_a_local_run_and_are_refused_elsewhere() {
+        assert!(
+            is_control("qa:pause")
+                && is_control("qa:cancel:a/b/c")
+                && !is_control("qa:rerun:a/b/c")
+        );
+        assert!(matches!(control("qa:pause", None), Outcome::Failed(m) if m.contains("no QA run")));
+        let local = rio_qa::QaControl::default();
+        assert!(matches!(control("qa:pause", Some(&local)), Outcome::Ok(_)));
+        assert!(local.paused());
+        assert!(matches!(control("qa:resume", Some(&local)), Outcome::Ok(_)));
+        assert!(!local.paused());
+        assert!(matches!(
+            control("qa:cancel:checkout/mobile/dark", Some(&local)),
+            Outcome::Ok(m) if m.contains("checkout/mobile/dark")
+        ));
+        assert!(matches!(
+            control("qa:cancel:checkout", Some(&local)),
+            Outcome::Failed(_)
+        ));
+        let endpoint = rio_qa::QaControl::default();
+        endpoint.detach();
+        assert!(
+            matches!(control("qa:pause", Some(&endpoint)), Outcome::Failed(m) if m.contains("endpoint"))
+        );
+        assert!(!endpoint.paused());
+    }
+
+    #[test]
+    fn a_rerun_runs_the_journey_on_its_one_cell() {
+        assert_eq!(
+            rerun_args("qa:rerun:checkout/mobile/dark").unwrap(),
+            ["qa", "--journey", "checkout", "--cell", "mobile/dark"]
+        );
+        assert_eq!(rerun_args("qa:rerun:checkout"), None);
+        assert_eq!(rerun_args("qa:rerun:checkout/mobile"), None);
+    }
 }

@@ -1747,6 +1747,38 @@
                   },
                   "unavailable": {
                     "type": "boolean"
+                  },
+                  "journey": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "step": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "cell": {
+                    "type": "object",
+                    "properties": {
+                      "viewport": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "color_scheme": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "viewport",
+                      "color_scheme"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "version": {
+                    "enum": [
+                      "base",
+                      "head"
+                    ]
                   }
                 },
                 "required": [

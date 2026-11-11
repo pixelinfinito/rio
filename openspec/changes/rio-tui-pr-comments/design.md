@@ -121,6 +121,20 @@ The cell detail draws the step's PNG with `ratatui-image` 11 (built for crosster
 - **Loading.** Images load when a cell is opened, never for the whole matrix: local runs read `.rio/cache/qa/…`, and endpoint runs download the signed URL through `Effect::Fetch("qa-image:<artifact id>")` into the run cache. Decoded images are cached per artifact and resized to the pane.
 - **Design conformance.** The golden test covers the frame around the pane and the text fallback. The image itself is checked by a test that renders a real masked screenshot with halfblocks and compares the pane's colors with the PNG's.
 - **Alternatives:** opening an external viewer only (today's `o`) keeps the terminal simple but hides the screenshot that explains the failure. Drawing the design's wireframe from the DOM snapshot would be an invention, not the evidence.
+- **Querying the terminal ourselves.** `Picker::from_query_stdio` leaves its reader thread blocked on standard input when the terminal never answers (silent terminals, and tmux, which drops ratatui-image's passthrough-wrapped queries). That thread then takes the user's keys. Rio writes the kitty graphics query, `CSI 16 t` and device attributes itself, polls for the replies for 300 ms, and builds the picker from the protocol and cell size it read. Under tmux or screen it does not ask and uses half-blocks. For the same reason, a full redraw clears the screen without `Terminal::clear`, which asks for the cursor position.
+
+### 15. Live control of a local QA run through files
+Pause, cancel and cell progress cross three processes: the TUI host, `runtime.py` on the host, and the controller inside its container.
+- **Channel.** The host writes `control.json` (`paused`, cells to cancel) in the run directory; `runtime.py` copies it into the controller with `docker cp` when it changes, and copies `qa-progress.json` (numbered events) out each second. The controller reads its control file before each cell and every 500 ms while one runs. Every copy is advisory: a failure is retried on the next tick and never fails the run.
+- **Semantics.** A pause holds the queue between cells, so seed restore and browser state are never interrupted halfway. A cancelled cell is aborted with reason `user`, recorded `cancelled` and makes the run `partial`. The baseline run gets the same control, so a cancelled cell is cancelled on both sides.
+- **Endpoint runs.** The hosted runner reports cells only when its run ends and has no control channel from the CLI, so the host refuses pause and cancel for endpoint runs and says why.
+- **Alternatives:** signals to the controller cannot name a cell. A bind-mounted control directory would give repository-adjacent containers a writable host path.
+
+### 16. Rerunning one cell
+`r` in a finished run's cell detail runs `rio qa --journey J --cell V/S`. The QA step's `cell` option narrows the plan after selection, so the matrix rules (a mobile viewport, chains) still validate the full plan. The rerun's report is kept beside the first run's: the screens show the rerun's outcome and screenshots for that cell (`Session::report_for`), while export, the exit code and the summary stay the first run's report, which is the one that reviewed the change.
+
+### 17. Events for covered screens
+Only the top screen receives messages. Review events that arrive while a screen is covered (the matrix under a cell detail) are queued for it and delivered in order when it is on top again, so a run that ends under another screen still finishes the matrix.
 
 ## Risks / Trade-offs
 

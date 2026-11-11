@@ -735,10 +735,10 @@ export async function refreshQaReportLinks(
 ) {
   if (report.qa?.evidence?.storage !== "hosted") return;
   const rows = await env.DB.prepare(
-    "SELECT * FROM qa_evidence WHERE tenant=? AND review_id=? AND state='stored' ORDER BY created_at,run_id,id",
+    "SELECT e.*,q.version AS run_version FROM qa_evidence e LEFT JOIN qa_runs q ON q.id=e.run_id WHERE e.tenant=? AND e.review_id=? AND e.state='stored' ORDER BY e.created_at,e.run_id,e.id",
   )
     .bind(tenant, review)
-    .all<Row>();
+    .all<Row & { run_version: string | null }>();
   const artifacts = new Map<string, any>(
     (report.qa.evidence.artifacts ?? []).map((artifact: any) => [
       artifact.id,
@@ -756,13 +756,20 @@ export async function refreshQaReportLinks(
   );
   for (const row of rows.results) {
     const meta = JSON.parse(row.descriptor) as Descriptor;
-    // Where the artifact belongs, so a client can show a step's screenshot.
-    artifacts.set(row.id, {
+    // Where the artifact belongs (journey, step, cell and the base or head
+    // run), so a client can show a step's screenshot and its base.
+    // Ids are content addressed: a base screenshot equal to its head one
+    // keeps an entry of its own.
+    const base = row.run_version === "base";
+    artifacts.set(base ? `base:${row.id}` : row.id, {
       id: row.id,
       kind: meta.kind,
       journey: meta.journey,
       ...(Number.isSafeInteger(meta.step) ? { step: meta.step } : {}),
       cell: meta.cell,
+      ...(row.run_version === "base" || row.run_version === "head"
+        ? { version: row.run_version }
+        : {}),
       ...(await link(env, row, origin)),
     });
   }

@@ -85,6 +85,24 @@ impl ProfileLoader {
         }
     }
 
+    /// The shortest `--profile` value that finds `source`: a built-in's name,
+    /// the bare name of a repository or personal profile when that name finds
+    /// the same file (nothing shadows it), else the file's path.
+    pub fn reference(&self, source: &ProfileSource) -> String {
+        match source {
+            ProfileSource::Repo(path) | ProfileSource::Personal(path) => path
+                .file_stem()
+                .and_then(|stem| stem.to_str())
+                .filter(|_| path.extension().is_some_and(|e| e == "yaml"))
+                .filter(|stem| {
+                    self.discover(Some(stem))
+                        .is_ok_and(|found| found.path() == Some(path.as_path()))
+                })
+                .map_or_else(|| source.label(), str::to_owned),
+            _ => source.label(),
+        }
+    }
+
     pub fn discover(&self, reference: Option<&str>) -> Result<ProfileSource, ProfileErrors> {
         let Some(reference) = reference else {
             if let Some(root) = &self.repository_root {

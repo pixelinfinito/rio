@@ -40,7 +40,7 @@
 
 ## 4. TUI crate and shell
 
-- [ ] 4.1 Add `ratatui`, `crossterm` and `unicode-width` to the workspace and create `crates/rio-tui` depending on `rio-core` only. Verify that `cargo build --release` succeeds for every `Cross.toml` target and that `cargo clippy` is clean.
+- [x] 4.1 Add `ratatui`, `crossterm` and `unicode-width` to the workspace and create `crates/rio-tui` depending on `rio-core` only. Verify that `cargo build --release` succeeds for every `Cross.toml` target and that `cargo clippy` is clean. (Both musl targets built with `cross`. macOS and Windows build and pass the tests in pull request #20's CI. Release-profile builds on all six targets stay a `release.yml` check.)
 - [x] 4.2 Implement the `App`/`Msg`/`Effect` reducer, the terminal guard (`Drop` + panic hook) and the 250 ms tick. Verify with a test that a panic inside `view` leaves raw mode and the alternate screen, plus reducer unit tests.
 - [x] 4.3 Implement the theme tokens from `tokens.json`, `NO_COLOR` (reset colors, reversed cursor row) and the glyph set selection. Verify with a test mapping every token in every `spans.json` to a theme color.
 - [x] 4.4 Implement the header bar, the key bar fed by per-screen keymap tables, the global keys, text-field focus precedence and the minimum-size screen below 80×24. Verify with `insta` snapshots at 80×24 and 79×24 and a reducer test that `q` in a focused field inserts text.
@@ -89,10 +89,25 @@
 - [x] 10.4 Fill each cell's screenshots in the host: local runs from `.rio/cache/qa/…`; endpoint runs by downloading the signed URL into the run cache when the cell opens (`Fetch("qa-image:<id>")`), reporting an expired link. Verify with a host test against a local file and a mock HTTP server, including an expired link.
 - [x] 10.5 Open the cell detail on a real local QA run's report and cache in a pseudo-terminal (`cargo run --example qa_cell`, the `missing-cancel` acceptance run) and take screenshots of two steps. Verify the masked page is drawn, the step timeline moves the screenshot, and detection falls back to halfblocks in a terminal that answers no image query. A live `rio qa` run to a failed cell stays a release check.
 
+## 11. Gaps closed after the first review round
+
+- [x] 11.1 Pause and cancel in the QA controller: `executePlan` waits before the next cell while paused, aborts a running cell the host cancels and skips a queued one, recording `cancelled` with reason `user`. It reports progress as cells start, reach a step and end. Verify with controller tests for a paused queue, a cancel in flight and a cancel before start.
+- [x] 11.2 The runtime's live channel: `runtime.py` copies `control.json` into the controller when it changes and `qa-progress.json` out each second; `DockerQaRuntime::execute_live` writes the host's `QaControl` and passes new progress on. The engine turns progress into `qa:cell` events. Verify with `LiveSync` and `LiveFiles` unit tests.
+- [x] 11.3 The TUI host applies `qa:pause`, `qa:resume` and `qa:cancel:` to the running review's `QaControl`. It refuses them for an endpoint run, with the reason, and the matrix rolls back. Verify with host unit tests.
+- [x] 11.4 `rio qa --cell <viewport>/<scheme>` and the QA step's `cell` option narrow the plan to one planned cell (engine, Docker runner and Sandbox runner). `r` in the cell detail of a finished run starts that rerun; its result replaces the cell and the first run's report stays the session's. Verify with plan, option-parsing and reducer tests.
+- [x] 11.5 Screens covered while a run reports receive its events when they are on top again (a run that ends under the cell detail reaches the matrix). Verify with a reducer test.
+- [x] 11.6 Endpoint base screenshots: refreshed report artifacts carry `version` (base or head) from `qa_runs`, base copies keep their own entry, and `b` finds the base screenshot by it. Verify with Worker and TUI tests; add the fields to `report-v1.json`.
+- [x] 11.7 Below 120 columns `v` switches Q3's right pane to the screenshot. Verify with a 100-column test and the updated 80×24 snapshot.
+- [x] 11.8 Downloaded screenshots are reused per object and pruned to seven days and 200 MB. Verify with host tests.
+- [x] 11.9 Terminals that answer no query: detection reads the replies itself with a deadline (half-blocks under tmux or screen), and redraws no longer ask for the cursor position. Verify with a pseudo-terminal test that fails without either fix, and a reply-parser test.
+- [x] 11.10 The palette and the quit dialog float over the faded screen they were opened from. Verify with a test.
+- [x] 11.11 Repository and personal profiles appear on the start screen and in its command line by name, unless the name finds another profile. Verify with a discovery test.
+- [x] 11.12 The Worker suite's 8 MB evidence test compares by digest; its deep equality had pushed the test runtime past its heap limit in CI. Verify that its peak memory drops from 2.1 GB to under 0.5 GB.
+
 ## 9. Integration
 
 - [x] 9.1 Run the full suites: `cargo test --workspace`, `cargo clippy --workspace`, worker `npm test` and `openspec validate rio-tui-pr-comments --strict`. Verify all pass.
-- [ ] 9.2 Run `rio review`, `rio qa` and `rio init --dry-run` in a real terminal at 120×40 and 80×24, and once in a terminal set to CJK ambiguous-as-wide with `RIO_ASCII=1`. Verify that the grid holds and Ctrl-C twice exits 130 with the terminal restored, and add the result to `docs/release-checklist.md`.
+- [x] 9.2 Run `rio review`, `rio qa` and `rio init --dry-run` in a real terminal at 120×40 and 80×24, and once in a terminal set to CJK ambiguous-as-wide with `RIO_ASCII=1`. Verify that the grid holds and Ctrl-C twice exits 130 with the terminal restored, and add the result to `docs/release-checklist.md`. (tmux 3.4 and GNU screen 4.09 with `cjkwidth on`; `rio init` opened in the UI, since `--dry-run` prints the plan without it.)
 - [x] 9.3 Run one PR round end to end against the live endpoint. Verify that comments render in the new format, a pasted footer reply dismisses the finding, a second round edits in place with no duplicate summary, and a fix shows Commit suggestion.
 
 ## Workflow follow-up

@@ -912,7 +912,64 @@ impl MatrixScreen {
         }
     }
 
+    /// A cell's detail from a report, with the journey's own step titles
+    /// when the run planned them.
+    fn detail_from(
+        report: &rio_core::Report,
+        j: &MatrixJourney,
+        id: &CellId,
+    ) -> Option<CellDetail> {
+        let mut detail = CellDetail::from_report(report, &j.name, id)?;
+        if !j.steps.is_empty() {
+            detail.steps = CellDetail::basic(
+                &j.name,
+                id.clone(),
+                &j.steps,
+                detail.outcome.clone(),
+                detail.step,
+            )
+            .steps;
+        }
+        Some(detail)
+    }
+
+    /// A cell run again (`r` in the cell detail): its outcome and detail
+    /// replace the first run's; the first run's report stays the session's.
+    fn merge_rerun(&mut self, report: &rio_core::Report, session: &mut Session) {
+        session.add_rerun(report);
+        let Some(qa) = &report.qa else {
+            return;
+        };
+        self.data.apply_qa(qa);
+        for journey in qa["journeys"].as_array().into_iter().flatten() {
+            let Some(j) = self
+                .data
+                .journeys
+                .iter()
+                .find(|j| journey["name"] == j.name.as_str())
+            else {
+                continue;
+            };
+            for id in journey["cells"]
+                .as_array()
+                .into_iter()
+                .flatten()
+                .filter_map(CellId::from_json)
+            {
+                if let Some(detail) = Self::detail_from(report, j, &id) {
+                    self.data
+                        .details
+                        .retain(|d| !(d.journey == j.name && d.cell == id));
+                    self.data.details.push(detail);
+                }
+            }
+        }
+    }
+
     fn finish(&mut self, report: &rio_core::Report, partial: bool, session: &mut Session) {
+        if self.finished {
+            return self.merge_rerun(report, session);
+        }
         session.report = Some(report.clone());
         self.finished = true;
         if let Some(qa) = &report.qa {
@@ -929,19 +986,8 @@ impl MatrixScreen {
                     .details
                     .iter()
                     .any(|d| d.journey == j.name && d.cell == *id)
-                    && let Some(mut detail) = CellDetail::from_report(report, &j.name, id)
+                    && let Some(detail) = Self::detail_from(report, j, id)
                 {
-                    // The journey's own step titles, when the run planned them.
-                    if !j.steps.is_empty() {
-                        detail.steps = CellDetail::basic(
-                            &j.name,
-                            id.clone(),
-                            &j.steps,
-                            detail.outcome.clone(),
-                            detail.step,
-                        )
-                        .steps;
-                    }
                     self.data.details.push(detail);
                 }
             }

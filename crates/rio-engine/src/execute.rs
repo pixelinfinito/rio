@@ -29,6 +29,8 @@ pub struct ReviewRequest {
     pub parallelism: usize,
     pub output_limit: usize,
     pub offline: bool,
+    /// Live pause and cancel requests to a local QA run.
+    pub qa_control: Option<std::sync::Arc<rio_qa::QaControl>>,
 }
 struct Execution {
     request: ReviewRequest,
@@ -893,6 +895,7 @@ pub async fn review(
                     &mut report,
                     cancellation.clone(),
                     execution.deadline,
+                    &events,
                 )
                 .await
                 {

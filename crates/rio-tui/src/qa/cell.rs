@@ -2,7 +2,7 @@
 //! the masked screenshot, the attributed source line and the evidence.
 
 use ratatui::crossterm::event::{KeyCode, KeyEvent};
-use rio_core::Finding;
+use rio_core::{Finding, ReviewEvent};
 
 use super::{
     CellId, CellOutcome, Pane, Tone, UxData, body_bottom, border, cell_key, clip, footer, mark,
@@ -357,12 +357,29 @@ const KEYS: &[Key] = &[
     key("esc", "matrix"),
 ];
 
+/// The key bar's keys and `v`, which swaps the details for the screenshot on
+/// a terminal too narrow for both.
+const PALETTE_KEYS: &[Key] = &[
+    key("←→", "step"),
+    key("[ ]", "cell"),
+    focus("o", "evidence"),
+    key("b", "vs base"),
+    key("v", "screenshot or details (narrow)"),
+    key("e", "editor"),
+    key("r", "rerun cell"),
+    key("4", "ux"),
+    key("esc", "matrix"),
+];
+
 pub(super) struct CellScreen {
     cells: Vec<CellDetail>,
     index: usize,
     step: usize,
     base: bool,
     ux: Option<UxData>,
+    /// Below 120 columns the right pane shows the screenshot instead of the
+    /// details (`v`).
+    shot_pane: bool,
 }
 
 impl CellScreen {
@@ -373,6 +390,7 @@ impl CellScreen {
             step: 0,
             base: false,
             ux,
+            shot_pane: false,
         };
         screen.step = screen.default_step();
         screen
@@ -613,7 +631,7 @@ impl CellScreen {
 
     /// The focused step's screenshot from the run's evidence, if the session has a run.
     fn real_shot(&self, d: &CellDetail, session: &Session) -> Option<Shot> {
-        let report = session.report.as_ref()?;
+        let report = session.report_for(&d.journey, &d.cell.viewport, &d.cell.color_scheme)?;
         let shot = session.images.locate(
             report,
             Query {
@@ -1030,6 +1048,9 @@ impl Screen for CellScreen {
     fn keys(&self) -> &'static [Key] {
         KEYS
     }
+    fn palette_keys(&self) -> &'static [Key] {
+        PALETTE_KEYS
+    }
 
     fn draw(&self, c: &mut Canvas<'_>, session: &Session) {
         c.clear(Token::Bg);
@@ -1062,16 +1083,28 @@ impl Screen for CellScreen {
         let w = c.width();
         border(c, 30, 2, bottom);
         self.draw_left(c, d, Pane::new(0, 30, bottom));
-        let right_x = if wide(c) {
+        if wide(c) {
             border(c, 70, 2, bottom);
             self.draw_screenshot(c, d, Pane::new(31, 70, bottom), session);
-            71
+            self.draw_right(c, d, Pane::new(71, w, bottom));
+        } else if self.shot_pane {
+            self.draw_screenshot(c, d, Pane::new(31, w, bottom), session);
         } else {
-            31
-        };
-        self.draw_right(c, d, Pane::new(right_x, w, bottom));
+            self.draw_right(c, d, Pane::new(31, w, bottom));
+        }
         let mut text =
             " o open evidence in $BROWSER · screenshots are masked before storage".to_owned();
+        if !wide(c) {
+            text = format!(
+                " v {} ·{}",
+                if self.shot_pane {
+                    "details"
+                } else {
+                    "screenshot"
+                },
+                text
+            );
+        }
         if let Some((path, line)) = self.source() {
             text.push_str(&format!(" · e opens {path}:{line} in $EDITOR"));
         }
@@ -1091,6 +1124,33 @@ impl Screen for CellScreen {
                     return Action::Effect(Effect::Fetch(format!("qa-image:{url}")));
                 }
             }
+            // The run (or a cell run again) finished while this detail was
+            // open: show each of its cells as it now stands.
+            Msg::Review(ReviewEvent::Done { report } | ReviewEvent::Partial { report }) => {
+                if session.report.is_none() {
+                    session.report = Some((**report).clone());
+                } else {
+                    session.add_rerun(report);
+                }
+                for d in &mut self.cells {
+                    if let Some(mut fresh) = CellDetail::from_report(report, &d.journey, &d.cell) {
+                        // Keep the journey's step titles the matrix gave this detail.
+                        let titles: Vec<String> = d.steps.iter().map(|s| s.title.clone()).collect();
+                        if !titles.is_empty() {
+                            fresh.steps = CellDetail::basic(
+                                &d.journey,
+                                d.cell.clone(),
+                                &titles,
+                                fresh.outcome.clone(),
+                                fresh.step,
+                            )
+                            .steps;
+                        }
+                        *d = fresh;
+                    }
+                }
+                self.step = self.default_step();
+            }
             Msg::Done(Outcome::Value(name, value)) if name == "qa-image" => {
                 if let Some(url) = value["url"].as_str() {
                     let result = match value["path"].as_str() {
@@ -1108,7 +1168,7 @@ impl Screen for CellScreen {
         Action::None
     }
 
-    fn on_key(&mut self, key: KeyEvent, _session: &mut Session) -> Action {
+    fn on_key(&mut self, key: KeyEvent, session: &mut Session) -> Action {
         let steps = self.detail().map_or(0, |d| d.steps.len());
         match key.code {
             KeyCode::Left | KeyCode::Char('h') => self.step = self.step.saturating_sub(1),
@@ -1130,12 +1190,13 @@ impl Screen for CellScreen {
                 }
             }
             KeyCode::Char('b') => self.base = !self.base,
+            KeyCode::Char('v') => self.shot_pane = !self.shot_pane,
             KeyCode::Char('o') => {
                 let Some(d) = self.detail() else {
                     return Action::None;
                 };
                 // The step's own screenshot first, then the evidence list.
-                if let Some(Shot::Local(path) | Shot::Remote(path)) = self.real_shot(d, _session) {
+                if let Some(Shot::Local(path) | Shot::Remote(path)) = self.real_shot(d, session) {
                     return Action::Effect(Effect::Open(path));
                 }
                 // Evidence names carry the step after `step-`, padded or not
@@ -1161,6 +1222,11 @@ impl Screen for CellScreen {
                 if let Some((path, line)) = self.source() {
                     return Action::Effect(Effect::Edit { path, line });
                 }
+            }
+            KeyCode::Char('r') if session.report.is_none() => {
+                session.notice = Some(Outcome::Failed(
+                    "the run is still going; r runs a cell again once it has finished".into(),
+                ));
             }
             KeyCode::Char('r') => {
                 if let Some(d) = self.detail() {

@@ -64,6 +64,15 @@
       "max_journeys": { "type": "integer", "minimum": 1, "default": 12 },
       "max_defects": { "type": "integer", "minimum": 1, "default": 15 },
       "max_recommendations": { "type": "integer", "minimum": 0, "default": 5 },
+      "cell": {
+        "type": "object",
+        "properties": {
+          "viewport": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+          "color_scheme": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" }
+        },
+        "required": ["viewport", "color_scheme"],
+        "additionalProperties": false
+      },
       "viewports": {
         "type": "array",
         "items": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },

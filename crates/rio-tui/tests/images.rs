@@ -236,13 +236,23 @@ fn endpoint_screenshots_are_found_by_step_metadata_or_real_names() {
     let evidence = json!({"storage": "hosted", "artifacts": [
         {"id": "1f2e", "kind": "screenshot", "journey": "checkout", "step": 3,
          "cell": {"viewport": "mobile", "color_scheme": "light"}, "link": "https://evidence.example/o/0000?sig=a"},
-        {"id": "9a9a", "kind": "screenshot", "journey": "checkout", "step": 4,
+        {"id": "9a9a", "kind": "screenshot", "journey": "checkout", "step": 4, "version": "base",
+         "cell": {"viewport": "mobile", "color_scheme": "light"}, "link": "https://evidence.example/base/9a9a?sig=c"},
+        {"id": "9a9a", "kind": "screenshot", "journey": "checkout", "step": 4, "version": "head",
          "cell": {"viewport": "mobile", "color_scheme": "light"}, "link": tagged}
     ]});
     let mut hosted = app(report(evidence, &[]), Images::halfblocks());
     assert_eq!(
         hosted.update(Msg::Tick),
         vec![Effect::Fetch(format!("qa-image:{tagged}"))]
+    );
+    // `b`: the base run's screenshot of the same step, tagged by the Worker.
+    hosted.update(press(KeyCode::Char('b')));
+    assert_eq!(
+        hosted.update(Msg::Tick),
+        vec![Effect::Fetch(
+            "qa-image:https://evidence.example/base/9a9a?sig=c".into()
+        )]
     );
 
     // Older reports: the cell's evidence, named as the runtime names it.

@@ -42,6 +42,13 @@ impl Screen for Probe {
     fn draw(&self, c: &mut Canvas<'_>, _: &Session) {
         c.clear(Token::Bg);
         header(c, rio_tui::chrome::Board::V2, "findings", &[]);
+        for y in [2, 30] {
+            c.put(
+                1,
+                y,
+                &rio_tui::canvas::bold("● 8c1e null deref parseHeader", Token::Fg, Token::Bg),
+            );
+        }
         keybar(c, FINDINGS);
     }
     fn on_key(&mut self, key: KeyEvent, _: &mut Session) -> Action {
@@ -205,6 +212,31 @@ fn palette_filter_lists_export_first_and_enter_opens_the_export_screen() {
     assert!(app.update(press(KeyCode::Enter)).is_empty());
     assert_eq!(app.top().title(), "Export");
     assert_eq!(app.stack.len(), 2);
+}
+
+#[test]
+fn the_palette_floats_over_the_faded_screen_it_was_opened_from() {
+    let mut app = app();
+    app.update(press(KeyCode::Char(':')));
+    let mut buf = Buffer::empty(Rect::new(0, 0, 120, 40));
+    let area = buf.area;
+    app.draw(&mut buf, area);
+    let text = common::lines(&buf);
+    let rows: Vec<&str> = text.lines().collect();
+    // The findings view shows above and below the box, faded.
+    assert!(rows[2].contains("● 8c1e null deref parseHeader"), "{text}");
+    assert!(rows[30].contains("● 8c1e null deref parseHeader"), "{text}");
+    let faint = Theme::default().style(Token::Faint, Token::Bg, false).fg;
+    assert_eq!(buf[(3, 2)].fg, faint.unwrap());
+    assert!(
+        !buf[(3, 2)]
+            .modifier
+            .contains(ratatui::style::Modifier::BOLD)
+    );
+    // The header is the screen's own, the box and key bar the palette's.
+    assert!(rows[0].contains("rio"), "{text}");
+    assert!(text.contains("command palette"), "{text}");
+    assert!(rows[39].contains("esc close"), "{text}");
 }
 
 #[test]

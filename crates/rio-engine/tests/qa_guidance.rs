@@ -103,6 +103,7 @@ async fn offline_qa_is_deferred_without_starting_a_model_or_app() {
         parallelism: 1,
         output_limit: 1024 * 1024,
         offline: true,
+        qa_control: None,
     };
     let report = rio_engine::review(
         request,

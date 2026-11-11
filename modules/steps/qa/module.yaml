@@ -63,6 +63,24 @@
         "minimum": 0,
         "default": 5
       },
+      "cell": {
+        "type": "object",
+        "properties": {
+          "viewport": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "color_scheme": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          }
+        },
+        "required": [
+          "viewport",
+          "color_scheme"
+        ],
+        "additionalProperties": false
+      },
       "viewports": {
         "type": "array",
         "items": {

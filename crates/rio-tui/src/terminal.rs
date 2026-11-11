@@ -23,6 +23,20 @@ pub struct Guard {
     terminal: Terminal<CrosstermBackend<Stdout>>,
 }
 
+impl Guard {
+    /// Clear the screen and repaint everything on the next draw. Unlike
+    /// `Terminal::clear`, this never asks the terminal where its cursor is,
+    /// which a terminal that does not answer would turn into an error.
+    fn clear(&mut self) -> io::Result<()> {
+        use ratatui::backend::{Backend, ClearType};
+        self.terminal.backend_mut().clear_region(ClearType::All)?;
+        // The last frame becomes the (reset) buffer drawn into, so the next
+        // draw differs from an empty one in every cell.
+        self.terminal.swap_buffers();
+        Ok(())
+    }
+}
+
 /// Leave raw mode and the alternate screen; safe to call more than once.
 pub fn restore() {
     let _ = disable_raw_mode();
@@ -99,7 +113,7 @@ pub fn run(
         let images_moved = app.session.images.enabled() && top != last_top;
         last_top = top;
         if host.take_redraw() || images_moved {
-            guard.terminal.clear()?;
+            guard.clear()?;
         }
         guard.terminal.draw(|frame| {
             let area = frame.area();

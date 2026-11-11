@@ -963,6 +963,86 @@ fn q2_l_follows_the_focused_cell() {
     assert!(text(&app).contains("LIVE · checkout × desktop·dark"));
 }
 
+fn fixture_report() -> Report {
+    serde_json::from_str(include_str!("../../rio-core/tests/qa-fixtures/report.json")).unwrap()
+}
+
+/// The fixture's report as a run of one cell again: `checkout` on
+/// mobile·light now passes, under another run id.
+fn rerun_report() -> Report {
+    let mut report = fixture_report();
+    report.review.run_id = Some(s("01J00000000000000000000099"));
+    let qa = report.qa.as_mut().unwrap();
+    let journey = &mut qa["journeys"][0];
+    let cell = journey["cells"][0].clone();
+    journey["cells"] = serde_json::json!([cell]);
+    journey["cells"][0]["outcome"] = serde_json::json!("passed");
+    journey["cells"][0]["step_reached"] = serde_json::json!(5);
+    report
+}
+
+#[test]
+fn q2_a_run_that_ends_while_a_cell_is_open_reaches_the_matrix() {
+    let mut app = App::new(qa::matrix(matrix_data()), Theme::default());
+    app.update(press(KeyCode::Enter));
+    assert_eq!(app.top().title(), "QA cell");
+    app.update(qa_cell("profile-address", "mobile", "light", 4, "passed"));
+    app.update(Msg::Review(ReviewEvent::Done {
+        report: Box::new(fixture_report()),
+    }));
+    // The open detail took the report; the matrix catches up on esc.
+    assert!(app.session.report.is_some());
+    app.update(press(KeyCode::Esc));
+    let screen = text(&app);
+    assert!(screen.contains("✓ run finished"), "{screen}");
+    assert!(screen.contains("profile-address     ✓ 4/4"), "{screen}");
+}
+
+#[test]
+fn q2_a_cell_run_again_replaces_its_outcome_and_keeps_the_first_report() {
+    let mut app = App::new(qa::matrix(matrix_data()), Theme::default());
+    app.update(Msg::Review(ReviewEvent::Done {
+        report: Box::new(fixture_report()),
+    }));
+    let first = app.session.report.clone().unwrap().review.run_id;
+    assert!(text(&app).contains("checkout            ✕ step 4"));
+    // `r` in the detail started the rerun; its events and report arrive there.
+    app.update(press(KeyCode::Enter));
+    app.update(qa_cell("checkout", "mobile", "light", 1, "running"));
+    app.update(Msg::Review(ReviewEvent::Done {
+        report: Box::new(rerun_report()),
+    }));
+    assert_eq!(app.session.reruns.len(), 1);
+    assert_eq!(app.session.report.as_ref().unwrap().review.run_id, first);
+    let holder = app
+        .session
+        .report_for("checkout", "mobile", "light")
+        .unwrap();
+    assert_eq!(
+        holder.review.run_id.as_deref(),
+        Some("01J00000000000000000000099")
+    );
+    let holder = app
+        .session
+        .report_for("checkout", "desktop", "light")
+        .unwrap();
+    assert_eq!(holder.review.run_id, first);
+    app.update(press(KeyCode::Esc));
+    // The matrix merged the same rerun once.
+    assert_eq!(app.session.reruns.len(), 1);
+    let mut app2 = App::new(qa::matrix(matrix_data()), Theme::default());
+    app2.update(Msg::Review(ReviewEvent::Done {
+        report: Box::new(fixture_report()),
+    }));
+    app2.update(Msg::Review(ReviewEvent::Done {
+        report: Box::new(rerun_report()),
+    }));
+    assert_eq!(app2.session.reruns.len(), 1);
+    assert_eq!(app2.session.report.as_ref().unwrap().review.run_id, first);
+    let screen = text(&app2);
+    assert!(screen.contains("checkout            ✓ 5/5"), "{screen}");
+}
+
 #[test]
 fn q2_done_and_partial_keep_the_report_and_the_matrix() {
     let report: Report =
@@ -1024,6 +1104,10 @@ fn q3_b_compares_with_base_and_e_r_o_are_effects() {
             line: 212
         }]
     );
+    // A cell runs again only once the run has finished.
+    assert!(app.update(press(KeyCode::Char('r'))).is_empty());
+    assert!(matches!(&app.session.notice, Some(Outcome::Failed(m)) if m.contains("still going")));
+    app.session.report = Some(fixture_report());
     assert_eq!(
         app.update(press(KeyCode::Char('r'))),
         vec![Effect::Step(s("qa:rerun:checkout/mobile/dark"))]
@@ -1153,6 +1237,28 @@ fn screens() -> Vec<(&'static str, Box<dyn rio_tui::Screen>)> {
             qa::ux_recommendations(ux_data()),
         ),
     ]
+}
+
+#[test]
+fn q3_v_shows_the_screenshot_on_a_narrow_terminal() {
+    let mut app = App::new(q3(), Theme::default());
+    let narrow = |app: &App| common::lines(&draw(app, 100, 30));
+    let details = narrow(&app);
+    assert!(details.contains("FINDING"), "{details}");
+    assert!(!details.contains("SCREENSHOT step 4"), "{details}");
+    assert!(details.contains("v screenshot"), "{details}");
+    app.update(press(KeyCode::Char('v')));
+    let shot = narrow(&app);
+    assert!(shot.contains("SCREENSHOT step 4"), "{shot}");
+    assert!(!shot.contains("FINDING"), "{shot}");
+    assert!(shot.contains("v details"), "{shot}");
+    for line in shot.lines() {
+        assert_eq!(unicode_width::UnicodeWidthStr::width(line), 100, "{line}");
+    }
+    // At 120 columns both panes show, and `v` changes nothing.
+    let wide = text(&app);
+    assert!(wide.contains("SCREENSHOT step 4") && wide.contains("FINDING"));
+    assert!(!wide.contains("v details"));
 }
 
 #[test]

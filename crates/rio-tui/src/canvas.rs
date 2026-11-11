@@ -118,6 +118,21 @@ impl<'a> Canvas<'a> {
         }
     }
 
+    /// Draw rows `from..` in the faint color, keeping their text and
+    /// background: what a dialog floats over.
+    pub fn fade(&mut self, from: u16) {
+        let fg = self.theme.style(Token::Faint, Token::Bg, false).fg;
+        for y in from..self.area.height {
+            for x in 0..self.area.width {
+                let cell = &mut self.buf[(self.area.x + x, self.area.y + y)];
+                if let Some(fg) = fg {
+                    cell.set_fg(fg);
+                }
+                cell.modifier.remove(ratatui::style::Modifier::BOLD);
+            }
+        }
+    }
+
     /// Fill the whole canvas with `bg`.
     pub fn clear(&mut self, bg: Token) {
         for y in 0..self.area.height {

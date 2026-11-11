@@ -403,6 +403,7 @@ async fn inside(kind: String, base_dir: PathBuf, root: PathBuf) -> Result<()> {
             parallelism: 2,
             output_limit: 1048576,
             offline: true,
+            qa_control: None,
         },
         ProcessSupervisor::default(),
         CancellationToken::new(),

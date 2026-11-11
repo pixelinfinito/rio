@@ -18,6 +18,9 @@ unicode-width.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 
+[target.'cfg(unix)'.dependencies]
+libc.workspace = true
+
 [features]
 # Each flow's screens; all on by default. Separate features let the flows be
 # built and tested independently.

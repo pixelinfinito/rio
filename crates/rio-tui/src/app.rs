@@ -119,6 +119,39 @@ pub struct Session {
     pub ticks: u64,
     /// How QA screenshots are drawn, and the ones loaded so far.
     pub images: crate::images::Images,
+    /// Reports of QA cells run again after the first run, oldest first.
+    pub reruns: Vec<Report>,
+}
+
+impl Session {
+    /// Keep the report of a cell run again (once, however many screens see it).
+    pub fn add_rerun(&mut self, report: &Report) {
+        let id = &report.review.run_id;
+        if id.is_none() || !self.reruns.iter().any(|r| r.review.run_id == *id) {
+            self.reruns.push(report.clone());
+        }
+    }
+
+    /// The report holding a QA cell's latest run: its last rerun, else the
+    /// first run's report.
+    pub fn report_for(&self, journey: &str, viewport: &str, color_scheme: &str) -> Option<&Report> {
+        let holds =
+            |report: &&Report| {
+                report.qa.as_ref().is_some_and(|qa| {
+                    qa["journeys"].as_array().into_iter().flatten().any(|j| {
+                        j["name"] == journey
+                            && j["cells"].as_array().into_iter().flatten().any(|c| {
+                                c["viewport"] == viewport && c["color_scheme"] == color_scheme
+                            })
+                    })
+                })
+            };
+        self.reruns
+            .iter()
+            .rev()
+            .find(holds)
+            .or(self.report.as_ref())
+    }
 }
 
 pub trait Screen {
@@ -147,6 +180,15 @@ pub trait Screen {
     fn owns_quit(&self) -> bool {
         false
     }
+    /// A dialog drawn over the screen below it (the command palette, quit),
+    /// which shows faded; see [`Screen::draw_over`].
+    fn floats(&self) -> bool {
+        false
+    }
+    /// Draw only what floats (the box and the key bar) over the screen below.
+    fn draw_over(&self, c: &mut Canvas<'_>, session: &Session) {
+        self.draw(c, session);
+    }
 }
 
 /// Opens the screens that every screen reaches through a global key.
@@ -163,6 +205,9 @@ pub struct App {
     pub theme: Theme,
     pub globals: Option<Globals>,
     pub done: bool,
+    /// Review events a covered screen has not seen, by its stack position;
+    /// it receives them in order when it is on top again.
+    missed: Vec<(usize, ReviewEvent)>,
 }
 
 impl App {
@@ -173,6 +218,7 @@ impl App {
             theme,
             globals: None,
             done: false,
+            missed: Vec::new(),
         }
     }
 
@@ -204,11 +250,17 @@ impl App {
                     self.stack.pop();
                 }
             }
+            if let Msg::Review(event) = &msg {
+                let covered = self.stack.len() - 1;
+                self.missed
+                    .extend((0..covered).map(|depth| (depth, event.clone())));
+            }
             let mut screen = self.stack.pop().expect("the stack is never empty");
             let action = screen.on_msg(&msg, &mut self.session);
             self.stack.push(screen);
             self.apply(action, &mut effects);
         }
+        self.catch_up(&mut effects);
         if effects
             .iter()
             .any(|e| matches!(e, Effect::Quit | Effect::Kill))
@@ -270,6 +322,28 @@ impl App {
         }
     }
 
+    /// Give the top screen the review events it missed while covered (a run
+    /// that finished while a detail was open still reaches its screen).
+    fn catch_up(&mut self, effects: &mut Vec<Effect>) {
+        loop {
+            // Events of screens that were closed are dropped with them.
+            let len = self.stack.len();
+            self.missed.retain(|(depth, _)| *depth < len);
+            let top = len - 1;
+            if is_overlay(self.top().title()) {
+                return;
+            }
+            let Some(index) = self.missed.iter().position(|(depth, _)| *depth == top) else {
+                return;
+            };
+            let (_, event) = self.missed.remove(index);
+            let mut screen = self.stack.pop().expect("the stack is never empty");
+            let action = screen.on_msg(&Msg::Review(event), &mut self.session);
+            self.stack.push(screen);
+            self.apply(action, effects);
+        }
+    }
+
     fn apply(&mut self, action: Action, effects: &mut Vec<Effect>) {
         match action {
             Action::None => {}
@@ -306,7 +380,15 @@ impl App {
             too_small(&mut c);
             return;
         }
-        self.top().draw(&mut c, &self.session);
+        let top = self.top();
+        match self.stack.len().checked_sub(2).map(|i| &self.stack[i]) {
+            Some(below) if top.floats() => {
+                below.draw(&mut c, &self.session);
+                c.fade(1);
+                top.draw_over(&mut c, &self.session);
+            }
+            _ => top.draw(&mut c, &self.session),
+        }
     }
 }
 
@@ -349,9 +431,15 @@ impl Screen for QuitDialog {
     fn keys(&self) -> &'static [Key] {
         QUIT_KEYS
     }
-    fn draw(&self, c: &mut Canvas<'_>, _session: &Session) {
+    fn floats(&self) -> bool {
+        true
+    }
+    fn draw(&self, c: &mut Canvas<'_>, session: &Session) {
         c.clear(Token::Bg);
         crate::chrome::header(c, Board::V2, "quit", &[]);
+        self.draw_over(c, session);
+    }
+    fn draw_over(&self, c: &mut Canvas<'_>, _session: &Session) {
         let (x, y) = (c.width() / 2 - 22, c.height() / 2 - 3);
         for row in 0..6 {
             c.fill(y + row, x, x + 44, Token::Raise);

@@ -444,9 +444,10 @@ class Pod:
         for role in ('app', 'browser', 'controller'):
             docker('start', self.containers[role])
 
-    def wait(self, wall_seconds, cancelled=lambda: False):
+    def wait(self, wall_seconds, cancelled=lambda: False, tick=lambda: None):
         deadline = time.monotonic() + wall_seconds
         while not cancelled() and time.monotonic() < deadline:
+            tick()
             state = json.loads(docker('inspect', '--format', '{{json .State}}', self.containers['controller']).stdout)
             if not state['Running']:
                 return {'outcome': 'complete' if state['ExitCode'] == 0 else 'failed', 'exit_code': state['ExitCode'], 'policy': self.policy, 'network_events': self.firewall.rejections()}

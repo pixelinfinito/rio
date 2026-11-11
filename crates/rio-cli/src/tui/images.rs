@@ -1,11 +1,19 @@
 //! Downloads of QA screenshots for the cell detail (terminal-ui "QA
 //! screenshots in the cell detail"): an endpoint run's signed URL, fetched
-//! when its cell is opened and kept in the run cache.
+//! when its cell is opened and kept in the run cache's `qa-images`, which is
+//! pruned to a week and 200 MB after each download.
 
-use std::path::{Path, PathBuf};
+use std::{
+    path::{Path, PathBuf},
+    time::{Duration, SystemTime},
+};
 
 /// The largest screenshot accepted, well above a full-page mobile capture.
 const MAX_BYTES: usize = 25 * 1024 * 1024;
+/// Downloads older than this are removed; their signed links expired anyway.
+const MAX_AGE: Duration = Duration::from_secs(7 * 24 * 3600);
+/// The most `qa-images` keeps; the oldest downloads go first.
+const MAX_TOTAL: u64 = 200 * 1024 * 1024;
 
 /// Download the PNG at `url` into `dir`; the error is what the pane shows.
 pub async fn fetch_image(url: &str, dir: &Path) -> Result<PathBuf, String> {
@@ -16,6 +24,15 @@ pub async fn fetch_image(url: &str, dir: &Path) -> Result<PathBuf, String> {
         .is_some_and(|h| h == "127.0.0.1" || h == "localhost");
     if parsed.scheme() != "https" && !(parsed.scheme() == "http" && loopback) {
         return Err("screenshots are only downloaded over https".into());
+    }
+    // One file per object: the signature in the query changes, the object does not.
+    let mut object = parsed.clone();
+    object.set_query(None);
+    let name = format!("{}.png", blake3::hash(object.as_str().as_bytes()).to_hex());
+    let dir = dir.join("qa-images");
+    let path = dir.join(name);
+    if std::fs::read(&path).is_ok_and(|bytes| bytes.starts_with(PNG)) {
+        return Ok(path);
     }
     let client = reqwest::Client::builder()
         .timeout(std::time::Duration::from_secs(30))
@@ -40,18 +57,39 @@ pub async fn fetch_image(url: &str, dir: &Path) -> Result<PathBuf, String> {
         }
         bytes.extend_from_slice(&chunk);
     }
-    if !bytes.starts_with(b"\x89PNG\r\n\x1a\n") {
+    if !bytes.starts_with(PNG) {
         return Err("the evidence link did not return a PNG".into());
     }
-    // One file per object: the signature in the query changes, the object does not.
-    let mut object = parsed;
-    object.set_query(None);
-    let name = format!("{}.png", blake3::hash(object.as_str().as_bytes()).to_hex());
-    let dir = dir.join("qa-images");
     rio_git::private_directory(&dir).map_err(|e| format!("{e:#}"))?;
-    let path = dir.join(name);
     std::fs::write(&path, &bytes).map_err(|e| e.to_string())?;
+    prune(&dir, &path, SystemTime::now(), MAX_AGE, MAX_TOTAL);
     Ok(path)
+}
+
+const PNG: &[u8] = b"\x89PNG\r\n\x1a\n";
+
+/// Remove downloads older than `max_age`, then the oldest until the folder
+/// holds at most `max_total` bytes. `keep` (the file just written) stays.
+fn prune(dir: &Path, keep: &Path, now: SystemTime, max_age: Duration, max_total: u64) {
+    let Ok(entries) = std::fs::read_dir(dir) else {
+        return;
+    };
+    let mut files: Vec<(SystemTime, u64, PathBuf)> = entries
+        .flatten()
+        .filter(|e| e.path().extension().is_some_and(|x| x == "png"))
+        .filter_map(|e| {
+            let meta = e.metadata().ok().filter(|m| m.is_file())?;
+            Some((meta.modified().ok()?, meta.len(), e.path()))
+        })
+        .collect();
+    files.sort();
+    let mut total: u64 = files.iter().map(|(_, len, _)| len).sum();
+    for (modified, len, path) in files {
+        let old = now.duration_since(modified).is_ok_and(|age| age > max_age);
+        if path != keep && (old || total > max_total) && std::fs::remove_file(&path).is_ok() {
+            total -= len;
+        }
+    }
 }
 
 #[cfg(test)]
@@ -126,5 +164,48 @@ mod tests {
                 .unwrap_err(),
             "screenshots are only downloaded over https"
         );
+    }
+
+    #[tokio::test]
+    async fn a_kept_screenshot_is_not_downloaded_again() {
+        let png = std::fs::read(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../docs/evaluation/qa-evidence/missing-cancel.png"
+        ))
+        .unwrap();
+        // The server answers once; a second request would hang and fail.
+        let base = serve(vec![("/ok.png", 200, png)]);
+        let dir = tempfile::tempdir().unwrap();
+        let first = fetch_image(&format!("{base}/ok.png?sig=1"), dir.path())
+            .await
+            .unwrap();
+        let again = fetch_image(&format!("{base}/ok.png?sig=expired"), dir.path())
+            .await
+            .unwrap();
+        assert_eq!(first, again);
+    }
+
+    #[test]
+    fn prune_drops_old_downloads_then_the_oldest_over_the_cap() {
+        let dir = tempfile::tempdir().unwrap();
+        let now = SystemTime::now();
+        let write = |name: &str, len: usize, age_days: u64| {
+            let path = dir.path().join(name);
+            std::fs::write(&path, vec![0u8; len]).unwrap();
+            let file = std::fs::File::options().write(true).open(&path).unwrap();
+            file.set_modified(now - Duration::from_secs(age_days * 86400))
+                .unwrap();
+            path
+        };
+        let stale = write("stale.png", 10, 9);
+        let oldest = write("oldest.png", 40, 3);
+        let older = write("older.png", 40, 2);
+        let newest = write("newest.png", 40, 0);
+        let other = write("notes.txt", 10, 30);
+        prune(dir.path(), &newest, now, MAX_AGE, 90);
+        assert!(!stale.exists(), "older than a week");
+        assert!(!oldest.exists(), "over the cap, oldest first");
+        assert!(older.exists() && newest.exists());
+        assert!(other.exists(), "only downloads are pruned");
     }
 }

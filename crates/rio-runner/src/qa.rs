@@ -345,6 +345,7 @@ async fn run_job(
     let mut planning = rio_qa::runtime_project(head_snapshot, options)?;
     let mut plan = planning.plan(base_snapshot, head_snapshot, &input)?;
     planning.add_exploration(&mut plan, &input)?;
+    rio_qa::restrict_to_cell(&mut plan, &planning, options, input.cell_wall_seconds)?;
     if plan.cell_count == 0 {
         let mut result = rio_qa::empty_runtime_result(&plan, qa["harness"].as_str().unwrap());
         rio_qa::annotate_runtime_result(

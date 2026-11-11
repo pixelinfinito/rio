@@ -99,9 +99,26 @@ In the UI, the first Ctrl-C during a run SHALL cancel in-flight checks, agents, 
 ### Requirement: Command palette and help
 `:` SHALL open a palette listing every action available from the current screen and every `rio` command, filtered as the user types. Running a command SHALL show the equivalent command line. `?` SHALL show the global keys, the current screen's keys and a map of the views with the keys that reach them.
 
+The palette and the quit dialog SHALL be drawn over the screen they were opened from, which stays visible in the faint color around them.
+
 #### Scenario: Palette filter
 - **WHEN** the user types `:` then `exp`
 - **THEN** the palette lists export actions first and `⏎` opens the export screen
+
+#### Scenario: Palette over the findings
+- **WHEN** the user opens the palette on the findings view
+- **THEN** the findings rows show faded above and below the palette's box, the header stays the view's own, and the key bar is the palette's
+
+### Requirement: Terminals that answer no query
+The UI SHALL keep reading keys and redrawing in a terminal that answers no query. Image detection SHALL read the terminal's replies itself with a deadline, so that no reader of standard input outlives it. Under tmux or GNU screen, which would answer for the outer terminal only through passthrough, it SHALL use half-blocks without asking. A full redraw SHALL NOT ask the terminal for its cursor position.
+
+#### Scenario: Silent terminal
+- **WHEN** `rio qa` opens in a terminal that answers neither device attributes nor cursor position, and the user presses `⏎`
+- **THEN** the matrix opens, and the UI does not exit with a cursor error
+
+#### Scenario: Inside tmux
+- **WHEN** `rio qa` opens inside tmux and the user presses Ctrl-C twice
+- **THEN** rio exits 130 and the terminal leaves the alternate screen
 
 ### Requirement: Evidence, never a percentage
 Wherever a finding appears, the UI SHALL show its evidence level (`reproduced`, `static_proven` or `plausible`). It SHALL NOT show a confidence percentage, and SHALL NOT show refuted findings except as a count.
@@ -134,6 +151,13 @@ Flags given on the command line SHALL preselect these. `⏎` SHALL start the rev
 #### Scenario: Copy command
 - **WHEN** the user presses `c`
 - **THEN** the shown command line is copied and running it without the UI performs the same review
+
+### Requirement: Profiles shown by name
+The start screen SHALL show a repository or personal profile, and put it in the command line, by its name. It SHALL use the profile's path only when that name would find another profile.
+
+#### Scenario: Personal profile
+- **WHEN** the personal profile `~/.config/rio/profiles/node.yaml` is the default and no repository profile is named `node`
+- **THEN** the start screen lists it as `node` and the command line reads `--profile node`
 
 ### Requirement: Live review screen
 While a review runs, the UI SHALL show each step (prepare, checks, graph, triage, agents, verify, report) with its state, elapsed time and counts, and the findings that have arrived. `⏎` on a step SHALL show that step's log. The findings screen SHALL open automatically when the review ends.
@@ -210,15 +234,44 @@ When a deployment step fails, the UI SHALL show the failed step, the provider's 
 ### Requirement: QA flow
 In the UI, `rio qa` SHALL show four screens:
 - the journeys with their selection and coverage;
-- a live matrix of journeys × cells (viewport × color scheme) updating as cells finish;
+- a live matrix of journeys × cells (viewport × color scheme) updating as cells start, reach a step and finish;
 - a cell's step-by-step detail with base vs head evidence;
 - the UX recommendations.
 
-`p` SHALL pause the queue. `c` SHALL cancel the focused cell and record it cancelled.
+A local run SHALL report each cell's progress as it happens. A run that ends while the cell detail or another screen covers the matrix SHALL still reach the matrix.
 
 #### Scenario: Failed cell detail
 - **WHEN** the user opens the failed `checkout` mobile/dark cell
 - **THEN** each step is listed with its outcome, the failed step's observation and evidence links are shown, and `b` compares with the base run
+
+#### Scenario: Run ends under the cell detail
+- **WHEN** the run finishes while a cell's detail is open and the user returns to the matrix
+- **THEN** the matrix shows the run finished with every cell's final outcome
+
+### Requirement: QA queue control
+`p` SHALL pause the queue: the running cell finishes and no other starts until `p` resumes it. `c` SHALL cancel the focused cell, stopping it if it runs and never starting it if queued, and record it `cancelled` with reason `user`; the baseline run cancels it too. A run on an endpoint runs its queue to the end: it SHALL refuse pause and cancel with that reason and leave the matrix as it was.
+
+#### Scenario: Pause and cancel a local run
+- **WHEN** the user presses `p` while the first cell of a local run runs, then `c` on a queued cell, then `p` again
+- **THEN** the first cell finishes, no cell starts until the second `p`, and the cancelled cell never starts and is recorded `cancelled` with reason `user`
+
+#### Scenario: Endpoint run refuses pause
+- **WHEN** the user presses `p` during a QA run on the endpoint
+- **THEN** the footer says the endpoint runs its queue to the end and the queue is not shown paused
+
+### Requirement: Rerun one QA cell
+In the cell detail of a finished run, `r` SHALL run that one cell again (`rio qa --journey <journey> --cell <viewport>/<color-scheme>`). Its outcome and detail SHALL replace the cell's in the matrix. The first run's report SHALL remain the session's report for export and the exit code.
+
+#### Scenario: Rerun one cell
+- **WHEN** the user presses `r` in the detail of the failed `checkout` mobile/dark cell after the run
+- **THEN** only that cell runs again, the matrix and detail show its new outcome, and exporting still saves the first run's report
+
+### Requirement: Screenshot on a narrow terminal
+Below 120 columns the cell detail SHALL keep the screenshot reachable: `v` SHALL switch the right pane between the details and the screenshot.
+
+#### Scenario: Narrow terminal
+- **WHEN** the cell detail is open in a 100-column terminal and the user presses `v`
+- **THEN** the right pane shows the step's screenshot instead of the details, and `v` switches back
 
 ### Requirement: QA screenshots in the cell detail
 The cell detail SHALL show the focused step's masked screenshot, with `b` switching between head and base. It SHALL be drawn as an image where the terminal supports kitty, iTerm2 or sixel, and with half-block characters otherwise. With `NO_COLOR` or the ASCII set it SHALL show the path with `o` to open it. A missing, unreadable or loading screenshot SHALL be named, never an empty pane.
@@ -238,6 +291,14 @@ The cell detail SHALL show the focused step's masked screenshot, with `b` switch
 #### Scenario: Endpoint run
 - **WHEN** the cell belongs to an endpoint QA run whose screenshots are signed URLs
 - **THEN** the screenshot is downloaded when the cell is opened, the pane says it is loading until then, and an expired link is reported as expired
+
+#### Scenario: Endpoint base screenshot
+- **WHEN** the user presses `b` in the cell detail of an endpoint run that ran a baseline
+- **THEN** the base run's screenshot of the same step is downloaded and drawn, found by the artifact's `version: base`
+
+#### Scenario: Downloads are kept a week
+- **WHEN** a screenshot is downloaded
+- **THEN** one already kept for the same object is used without a request, and downloads older than seven days, then the oldest beyond 200 MB, are removed
 
 ### Requirement: Advice never changes the exit code
 The UX recommendations screen SHALL label recommendations as advice. No action on it SHALL change the review's status or exit code.

@@ -437,6 +437,8 @@ struct Hooks {
     remote_events: bool,
     cancellation: CancellationToken,
     supervisor: ProcessSupervisor,
+    /// Live pause and cancel requests to a local QA run (the interactive UI).
+    qa_control: Option<std::sync::Arc<rio_qa::QaControl>>,
 }
 /// A finished (or partial) review and what rendering it needs.
 struct Executed {
@@ -657,6 +659,9 @@ async fn execute_review(args: &ReviewArgs, hooks: Hooks) -> Result<Executed, Rev
     let mut posted = None;
     let mut remote_id = None;
     let result = if let Some(request) = remote_request {
+        if let Some(control) = &hooks.qa_control {
+            control.detach();
+        }
         endpoint::review(
             request,
             hooks.cancellation.clone(),
@@ -679,6 +684,7 @@ async fn execute_review(args: &ReviewArgs, hooks: Hooks) -> Result<Executed, Rev
                 parallelism: config.parallelism,
                 output_limit: config.output_limit,
                 offline: args.offline,
+                qa_control: hooks.qa_control.clone(),
             },
             hooks.supervisor,
             hooks.cancellation,
@@ -745,6 +751,7 @@ async fn stream_review(args: ReviewArgs, started: String) -> u8 {
             remote_events: false,
             cancellation,
             supervisor,
+            qa_control: None,
         },
     )
     .await;

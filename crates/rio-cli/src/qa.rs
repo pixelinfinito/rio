@@ -45,6 +45,10 @@ pub struct QaRunOptions {
     baseline: bool,
     #[arg(long, value_parser = ["codex", "pi"])]
     harness: Option<String>,
+    /// Run only this cell of the matrix, as `<viewport>/<color-scheme>`
+    /// (with --journey, one cell run again).
+    #[arg(long, value_name = "VIEWPORT/SCHEME")]
+    cell: Option<String>,
 }
 
 pub fn configure_run(
@@ -69,6 +73,20 @@ pub fn configure_run(
     }
     if let Some(harness) = &options.harness {
         step.options["harness"] = json!(harness);
+    }
+    if let Some(cell) = &options.cell {
+        let name = |part: &str| {
+            !part.is_empty()
+                && part.starts_with(|c: char| c.is_ascii_lowercase())
+                && part
+                    .chars()
+                    .all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '-')
+        };
+        let (viewport, color_scheme) = cell
+            .split_once('/')
+            .filter(|(v, s)| name(v) && name(s))
+            .context("--cell takes <viewport>/<color-scheme>, like mobile/dark")?;
+        step.options["cell"] = json!({"viewport": viewport, "color_scheme": color_scheme});
     }
     if !options.journey.is_empty() {
         let names: BTreeSet<_> = options.journey.iter().cloned().collect();
@@ -560,4 +578,42 @@ pub async fn doctor(repo: &GixRepo, hosted: bool) -> Result<serde_json::Value> {
         "runtime": if available && image_available { "available" } else { "no_runtime" },
         "hint": if !available { "Start a Docker daemon with host firewall control." } else if !image_available { "Build the paired image with docker build -f worker/Dockerfile.qa -t rio-qa:0.1.0 ." } else { "Run rio-runner qa --pod-self-test to check host egress enforcement." }}),
     )
+}
+
+#[cfg(test)]
+mod cell_tests {
+    use super::*;
+
+    fn profile() -> rio_profile::ResolvedProfile {
+        let root = tempfile::tempdir().unwrap();
+        rio_profile::ProfileLoader::new(
+            Some(root.path().into()),
+            root.path().join("config"),
+            root.path().into(),
+        )
+        .load(Some("rio/qa"))
+        .unwrap()
+    }
+
+    #[test]
+    fn cell_runs_one_cell_and_rejects_anything_else() {
+        let mut qa = profile();
+        let options = QaRunOptions {
+            journey: vec!["checkout".into()],
+            cell: Some("mobile/dark".into()),
+            ..QaRunOptions::default()
+        };
+        configure_run(&mut qa, &options).unwrap();
+        assert_eq!(
+            qa.profile.step("rio/qa").unwrap().options["cell"],
+            json!({"viewport": "mobile", "color_scheme": "dark"})
+        );
+        for bad in ["mobile", "mobile/", "/dark", "Mobile/dark", "mobile/dark/x"] {
+            let options = QaRunOptions {
+                cell: Some(bad.into()),
+                ..QaRunOptions::default()
+            };
+            assert!(configure_run(&mut profile(), &options).is_err(), "{bad}");
+        }
+    }
 }

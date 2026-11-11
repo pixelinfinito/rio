@@ -172,7 +172,10 @@ it("streams a multipart artifact, checks its hash, and signs read access to exac
   expect(result.storage).toBe("hosted");
   const response = await app.request(result.link!, {}, runtime);
   expect(response.status).toBe(200);
-  expect(new Uint8Array(await response.arrayBuffer())).toEqual(data);
+  // Compared by digest: a deep equality of 8 MB arrays nears the runtime's heap limit.
+  const served = new Uint8Array(await response.arrayBuffer());
+  expect(served.length).toBe(data.length);
+  expect(bytesToHex(blake3(served))).toBe(bytesToHex(blake3(data)));
   const other = bytes("different");
   const otherResult = await (
     await send(claim, other, metadata(other, "dom", 2))
@@ -524,8 +527,17 @@ it("report downloads refresh only owned evidence links and keep expired cached a
       viewport: expect.any(String),
       color_scheme: expect.any(String),
     },
+    version: "head",
   });
   expect((await app.request(owned.link, {}, runtime)).status).toBe(200);
+  // A base run's copy of the same content keeps an entry of its own.
+  await runtime.DB.prepare("UPDATE qa_runs SET version='base'").run();
+  const based = (
+    await (await api("/v1/reviews/review/report")).json<any>()
+  ).qa.evidence.artifacts.filter((row: any) => row.id === receipt.id);
+  expect(based).toHaveLength(2);
+  expect(based.find((row: any) => row.version === "base")?.link).toBeTruthy();
+  await runtime.DB.prepare("UPDATE qa_runs SET version='head'").run();
   expect(
     fresh.qa.evidence.artifacts.find((row: any) => row.id === "foreign"),
   ).toEqual({ id: "foreign", unavailable: true });

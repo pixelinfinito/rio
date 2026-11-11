@@ -57,6 +57,22 @@ pub fn runtime_project(snapshot: &QaSnapshot, options: &Value) -> Result<QaProje
     Ok(QaProject::load(&effective)?)
 }
 
+/// Narrow `plan` to the QA step's `cell` option, when it names one (a rerun
+/// of one cell of the matrix).
+pub fn restrict_to_cell(
+    plan: &mut QaPlan,
+    project: &QaProject,
+    options: &Value,
+    cell_wall_seconds: u64,
+) -> Result<()> {
+    if options["cell"].is_null() {
+        return Ok(());
+    }
+    let cell: crate::Cell =
+        serde_json::from_value(options["cell"].clone()).context("invalid QA cell option")?;
+    Ok(plan.only_cell(project, &cell, cell_wall_seconds)?)
+}
+
 pub fn annotate_runtime_result(
     result: &mut Value,
     project: &QaProject,

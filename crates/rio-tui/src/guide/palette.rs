@@ -531,9 +531,15 @@ impl Screen for Palette {
     fn keys(&self) -> &'static [Key] {
         KEYS
     }
+    fn floats(&self) -> bool {
+        true
+    }
     fn draw(&self, c: &mut Canvas<'_>, _: &Session) {
         c.clear(Token::Bg);
         header(c, Board::V3, self.data.view, &[]);
+        self.draw_overlay(c);
+    }
+    fn draw_over(&self, c: &mut Canvas<'_>, _: &Session) {
         self.draw_overlay(c);
     }
     fn on_key(&mut self, key: KeyEvent, _: &mut Session) -> Action {

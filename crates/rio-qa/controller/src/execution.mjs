@@ -9,7 +9,14 @@ export class EnvironmentFailure extends Error {
   constructor(reason) { super(reason); this.reason = reason; }
 }
 const cancelled = (journey, cell, reason) => ({ journey, cell, outcome: 'cancelled', reason, evidence: [] });
-const reasonForAbort = signal => signal.reason === 'interrupted' ? 'interrupted' : 'budget';
+const reasonForAbort = signal => ['interrupted', 'user'].includes(signal.reason) ? signal.reason : 'budget';
+const sleep = (ms, signal) => new Promise(resolve => {
+  const done = () => { clearTimeout(timer); signal.removeEventListener('abort', done); resolve(); };
+  const timer = setTimeout(done, ms);
+  signal.addEventListener('abort', done, { once: true });
+});
+/** How often the host's pause and cancel requests are read. */
+export const CONTROL_POLL_MS = 500;
 
 async function bounded(operation, signal) {
   signal.throwIfAborted();
@@ -19,7 +26,11 @@ async function bounded(operation, signal) {
   finally { signal.removeEventListener('abort', abort); }
 }
 
-export async function executePlan({ plan, journeys, backend, defaults = {}, runWallMs, cellWallMs, signal = new AbortController().signal }) {
+/** `control` is the host's live requests: `paused()` holds the queue before the
+ * next cell and `cancelled(journey, cell)` cancels a cell (`reason: 'user'`).
+ * `progress` receives `{ journey, cell, step, outcome }` as cells start and end.
+ */
+export async function executePlan({ plan, journeys, backend, defaults = {}, runWallMs, cellWallMs, signal = new AbortController().signal, control = {}, progress = () => {} }) {
   // Validate the whole plan before any reset or application process can start.
   const resolved = new Map(plan.chains.map(chain => [chain, chainContexts(chain, journeys, defaults)]));
   const run = new AbortController();
@@ -33,14 +44,22 @@ export async function executePlan({ plan, journeys, backend, defaults = {}, runW
       for (const cell of plan.cells) {
         const names = chain.journeys.filter(name => !journeys[name].viewports || journeys[name].viewports.includes(cell.viewport));
         if (!names.length) continue;
-        if (run.signal.aborted) {
-          outcomes.push(...names.map(name => cancelled(name, cell, reasonForAbort(run.signal)))); partial = true; continue;
+        const report = (name, step, outcome) => { try { progress({ journey: name, cell, step, outcome }); } catch { /* Progress is advisory. */ } };
+        const userCancelled = () => names.some(name => control.cancelled?.(name, cell));
+        // A paused queue finishes the running cell and waits before the next one.
+        while (control.paused?.() && !run.signal.aborted && !userCancelled()) await sleep(CONTROL_POLL_MS, run.signal);
+        if (run.signal.aborted || userCancelled()) {
+          const reason = run.signal.aborted ? reasonForAbort(run.signal) : 'user';
+          for (const name of names) { outcomes.push(cancelled(name, cell, reason)); report(name, 0, 'cancelled'); }
+          partial = true; continue;
         }
+        for (const name of names) report(name, 0, 'running');
         const cellStarted = performance.now();
         const cellAbort = new AbortController();
         const abort = () => cellAbort.abort(run.signal.reason);
         run.signal.addEventListener('abort', abort, { once: true });
         const cellTimer = setTimeout(() => cellAbort.abort('budget'), cellWallMs);
+        const watch = setInterval(() => { if (userCancelled()) cellAbort.abort('user'); }, CONTROL_POLL_MS);
         let attemptOutcomes = [];
         try {
           for (let attempt = 0; attempt < 2; attempt++) {
@@ -65,7 +84,7 @@ export async function executePlan({ plan, journeys, backend, defaults = {}, runW
                 environment?.setReplayJourney?.(name);
                 environment?.setReplayStep?.(1);
                 if (environment?.controls?.context) await bounded(() => environment.controls.context(contexts[name]), cellAbort.signal);
-                const result = await bounded(() => backend.runJourney({ journey, cell, context: contexts[name], environment, signal: cellAbort.signal }), cellAbort.signal);
+                const result = await bounded(() => backend.runJourney({ journey, cell, context: contexts[name], environment, signal: cellAbort.signal, onStep: step => report(name, step, 'running') }), cellAbort.signal);
                 attemptOutcomes.push({ ...result, journey: name, cell });
                 if (result.outcome === 'cancelled' && result.reason === 'budget') { cellAbort.abort('budget'); cellAbort.signal.throwIfAborted(); }
               }
@@ -91,7 +110,7 @@ export async function executePlan({ plan, journeys, backend, defaults = {}, runW
             }
           }
         } finally {
-          clearTimeout(cellTimer); run.signal.removeEventListener('abort', abort);
+          clearTimeout(cellTimer); clearInterval(watch); run.signal.removeEventListener('abort', abort);
           // One measurement includes reset, retries, all dependent journeys and
           // cleanup. Never divide shared-chain work into invented journey costs.
           const metric = { chain: [...chain.journeys], journeys: names, cell: { ...cell }, wall_time_ms: Math.ceil(performance.now() - cellStarted) };
@@ -99,10 +118,17 @@ export async function executePlan({ plan, journeys, backend, defaults = {}, runW
           await backend.recordCellMetric?.(metric);
         }
         outcomes.push(...attemptOutcomes);
+        for (const row of attemptOutcomes) report(row.journey, stepReached(row), row.outcome);
       }
     }
   } finally { clearTimeout(timer); signal.removeEventListener('abort', stop); }
   return { outcome: partial ? 'partial' : 'complete', journey_outcomes: outcomes, cell_metrics: cellMetrics };
+}
+
+/** The last step a journey reached, from its step rows or failed step. */
+function stepReached(row) {
+  const steps = Array.isArray(row.steps) ? row.steps.map(step => step.step).filter(Number.isSafeInteger) : [];
+  return Math.max(0, row.failed_step ?? 0, ...steps);
 }
 
 export function aggregateJourney(outcomes) {

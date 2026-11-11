@@ -226,13 +226,13 @@ pub async fn start_data(args: &ReviewArgs) -> Result<StartData, ()> {
     } else {
         SelectionKind::WorkingTree
     };
-    // `--profile` takes a reference: a built-in name, or the profile's file.
-    let listed = crate::loader(Some(repo.root().into()), &config, cwd)
-        .list()
-        .unwrap_or_default();
+    // `--profile` takes a reference: a built-in or personal profile's name,
+    // or the profile's file when its name would find another.
+    let loader = crate::loader(Some(repo.root().into()), &config, cwd);
+    let listed = loader.list().unwrap_or_default();
     let reference = |p: &rio_profile::ProfileSummary| match &p.source {
         rio_profile::ProfileSource::BuiltIn(_) => p.name.clone(),
-        source => source.label(),
+        source => loader.reference(source),
     };
     let profiles: Vec<String> = listed.iter().map(reference).collect();
     let chosen = match &args.profile {
@@ -700,6 +700,8 @@ pub struct ReviewHost {
     runtime: tokio::runtime::Handle,
     reply: Sender<Msg>,
     running: Option<(CancellationToken, ProcessSupervisor)>,
+    /// The running review's live QA requests (pause, cancel a cell).
+    qa_control: Option<std::sync::Arc<rio_qa::QaControl>>,
     thread: Option<std::thread::JoinHandle<()>>,
     redraw: bool,
     /// The second Ctrl-C ended the session (exit 130).
@@ -713,13 +715,21 @@ impl ReviewHost {
             runtime,
             reply,
             running: None,
+            qa_control: None,
             thread: None,
             redraw: false,
             killed: false,
         }
     }
 
-    fn start(&mut self, mut args: Vec<String>) {
+    fn start(&mut self, args: Vec<String>) {
+        self.start_run(args, false);
+    }
+
+    /// Start a run; a `rerun` of one QA cell leaves the first run's report,
+    /// arguments and exit code as the session's (the rerun's report is kept in
+    /// its own run cache, and the screens merge its cell).
+    fn start_run(&mut self, mut args: Vec<String>, rerun: bool) {
         let qa = self.shared.lock().qa.clone();
         if let Some(qa) = &qa
             && args.first().is_some_and(|a| a == "qa")
@@ -751,14 +761,18 @@ impl ReviewHost {
             let mut state = self.shared.lock();
             review.no_color |= state.no_color;
             review.ascii |= state.ascii;
-            state.args = Some(args);
-            state.include_pre_existing = review.show_pre_existing;
+            if !rerun {
+                state.args = Some(args);
+                state.include_pre_existing = review.show_pre_existing;
+            }
         }
         review.no_tui = true;
         let cancellation = CancellationToken::new();
         let supervisor = ProcessSupervisor::default();
         supervisor.tap_output(log_tap(self.reply.clone()));
         self.running = Some((cancellation.clone(), supervisor.clone()));
+        let qa_control = std::sync::Arc::new(rio_qa::QaControl::default());
+        self.qa_control = Some(qa_control.clone());
         let reply = self.reply.clone();
         let shared = self.shared.clone();
         let runtime = self.runtime.clone();
@@ -786,6 +800,7 @@ impl ReviewHost {
                         remote_events: true,
                         cancellation,
                         supervisor,
+                        qa_control: Some(qa_control),
                     },
                 )
                 .await;
@@ -794,7 +809,9 @@ impl ReviewHost {
                     Ok(executed) => {
                         let report = Box::new(executed.report.clone());
                         let partial = executed.report.status == ReportStatus::Partial;
-                        shared.lock().executed = Some(executed);
+                        if !rerun {
+                            shared.lock().executed = Some(executed);
+                        }
                         let _ = reply.send(Msg::Review(if partial {
                             ReviewEvent::Partial { report }
                         } else {
@@ -1032,6 +1049,25 @@ impl rio_tui::terminal::Host for ReviewHost {
                     }
                 }
                 "review:doctor" => self.ok("run `rio doctor` for the full preflight"),
+                other if other.starts_with("qa:rerun:") => {
+                    if self.thread.as_ref().is_some_and(|t| !t.is_finished()) {
+                        self.failed(
+                            "a run is in progress; r runs a cell again once it has finished",
+                        );
+                    } else if let Some(args) = super::qa::rerun_args(other) {
+                        self.ok(format!(
+                            "running {} again",
+                            other.trim_start_matches("qa:rerun:")
+                        ));
+                        self.start_run(args, true);
+                    } else {
+                        self.failed(&format!("{other} names no journey/viewport/scheme cell"));
+                    }
+                }
+                other if super::qa::is_control(other) => {
+                    let outcome = super::qa::control(other, self.qa_control.as_deref());
+                    let _ = self.reply.send(Msg::Done(outcome));
+                }
                 other if other.starts_with("qa:") => {
                     let qa = self.shared.lock().qa.clone().unwrap_or_default();
                     if !super::qa::step(other, qa.staged, qa.base, &self.runtime, &self.reply) {

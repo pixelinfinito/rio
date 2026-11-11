@@ -79,13 +79,36 @@ impl Images {
     }
 
     /// Ask the terminal which image protocol it speaks (call once, in the
-    /// alternate screen, before reading keys). No color or ASCII glyphs mean
-    /// no images; a terminal that does not answer gets half-blocks.
+    /// alternate screen and raw mode, before reading keys). No color or ASCII
+    /// glyphs mean no images; a terminal that does not answer, or a
+    /// multiplexer between rio and the terminal, gets half-blocks.
     pub fn detect(theme: &crate::Theme) -> Self {
         if !theme.color || theme.glyphs == rio_core::glyphs::GlyphSet::Ascii {
             return Self::disabled();
         }
-        Self::with(Picker::from_query_stdio().unwrap_or_else(|_| Picker::halfblocks()))
+        // Inside tmux or screen, queries reach the outer terminal only through
+        // passthrough, which is often off; what answers is the multiplexer.
+        let multiplexed = std::env::var_os("TMUX").is_some()
+            || std::env::var("TERM")
+                .is_ok_and(|t| t.starts_with("screen") || t.starts_with("tmux"));
+        if multiplexed {
+            return Self::halfblocks();
+        }
+        let iterm2 = std::env::var("TERM_PROGRAM")
+            .is_ok_and(|p| p == "iTerm.app" || p == "WezTerm")
+            || std::env::var("LC_TERMINAL").is_ok_and(|t| t == "iTerm2");
+        let replies = query_terminal(std::time::Duration::from_millis(300));
+        match replies.and_then(|r| Some((r.protocol(iterm2)?, r.cell?))) {
+            Some((protocol, (width, height))) => {
+                // The cell size was asked here, not by ratatui-image's own
+                // query (whose reader thread outlives an unanswered query).
+                #[allow(deprecated)]
+                let mut picker = Picker::from_fontsize(ratatui_image::FontSize::new(width, height));
+                picker.set_protocol_type(protocol);
+                Self::with(picker)
+            }
+            None => Self::halfblocks(),
+        }
     }
 
     /// Images are drawn (not only named).
@@ -213,16 +236,16 @@ impl Images {
 }
 
 /// A signed URL of the step's screenshot in an endpoint run: the screenshot
-/// artifact recorded for this journey, step and cell, or, for reports without
-/// that metadata, the cell's screenshot whose name carries the step.
+/// artifact recorded for this journey, step, cell and run (base or head), or,
+/// for head screenshots of reports without that metadata, the cell's
+/// screenshot whose name carries the step.
 fn remote(report: &Report, query: Query<'_>) -> Option<String> {
-    // Endpoint reports do not tell base screenshots apart yet.
-    if query.base {
-        return None;
-    }
     let qa = report.qa.as_ref()?;
     let artifacts = qa["evidence"]["artifacts"].as_array()?;
-    let screenshots = artifacts.iter().filter(|a| a["kind"] == "screenshot");
+    // Artifacts of the base run say so; any other is the head run's.
+    let screenshots = artifacts
+        .iter()
+        .filter(|a| a["kind"] == "screenshot" && (a["version"] == "base") == query.base);
     let tagged = screenshots.clone().find(|a| {
         a["journey"] == query.journey
             && a["step"].as_u64() == Some(u64::from(query.step))
@@ -230,6 +253,9 @@ fn remote(report: &Report, query: Query<'_>) -> Option<String> {
             && a["cell"]["color_scheme"] == query.color_scheme
     });
     let found = tagged.or_else(|| {
+        if query.base {
+            return None;
+        }
         let cell = qa["journeys"]
             .as_array()?
             .iter()
@@ -269,4 +295,127 @@ fn remote(report: &Report, query: Query<'_>) -> Option<String> {
         .as_str()
         .filter(|link| link.starts_with("https://"))
         .map(str::to_owned)
+}
+
+/// What a terminal answered to rio's queries: kitty graphics, the device
+/// attributes (sixel is attribute 4) and the cell size in pixels.
+#[derive(Debug, Default, PartialEq, Eq)]
+struct Replies {
+    kitty: bool,
+    sixel: bool,
+    cell: Option<(u16, u16)>,
+    /// The device attributes reply, sent last, arrived.
+    done: bool,
+}
+
+impl Replies {
+    /// Parse what the terminal sent back (`ESC _ G i=31;OK ESC \`,
+    /// `CSI 6 ; h ; w t`, `CSI ? … c`).
+    fn parse(bytes: &[u8]) -> Self {
+        let text = String::from_utf8_lossy(bytes);
+        let mut replies = Self {
+            kitty: text.contains("\x1b_Gi=31;OK"),
+            ..Self::default()
+        };
+        for part in text.split("\x1b[").skip(1) {
+            if let Some(attributes) = part.strip_prefix('?').and_then(|p| p.split_once('c')) {
+                replies.done = true;
+                replies.sixel = attributes.0.split(';').any(|a| a == "4");
+            } else if let Some(size) = part.strip_prefix("6;").and_then(|p| p.split_once('t')) {
+                let mut numbers = size.0.split(';').map(str::parse::<u16>);
+                if let (Some(Ok(height)), Some(Ok(width))) = (numbers.next(), numbers.next())
+                    && width > 0
+                    && height > 0
+                {
+                    replies.cell = Some((width, height));
+                }
+            }
+        }
+        replies
+    }
+
+    /// The protocol to draw with, or `None` for half-blocks.
+    fn protocol(&self, iterm2: bool) -> Option<ratatui_image::picker::ProtocolType> {
+        use ratatui_image::picker::ProtocolType;
+        if self.kitty {
+            Some(ProtocolType::Kitty)
+        } else if iterm2 {
+            Some(ProtocolType::Iterm2)
+        } else if self.sixel {
+            Some(ProtocolType::Sixel)
+        } else {
+            None
+        }
+    }
+}
+
+/// Ask the terminal for kitty graphics support, its cell size and its device
+/// attributes, and read the replies for at most `wait`. Device attributes go
+/// last and every terminal answers them, so their reply ends the wait. Needs
+/// raw mode; replies are read here and never reach the UI as keys.
+#[cfg(unix)]
+fn query_terminal(wait: std::time::Duration) -> Option<Replies> {
+    use std::io::Write;
+    let mut out = std::io::stdout();
+    out.write_all(b"\x1b_Gi=31,s=1,v=1,a=q,t=d,f=24;AAAA\x1b\\\x1b[16t\x1b[c")
+        .and_then(|()| out.flush())
+        .ok()?;
+    let deadline = std::time::Instant::now() + wait;
+    let mut seen = Vec::new();
+    loop {
+        let left = deadline.saturating_duration_since(std::time::Instant::now());
+        let mut fd = libc::pollfd {
+            fd: libc::STDIN_FILENO,
+            events: libc::POLLIN,
+            revents: 0,
+        };
+        let millis = i32::try_from(left.as_millis()).unwrap_or(i32::MAX);
+        // SAFETY: one valid pollfd for the length given.
+        if left.is_zero() || unsafe { libc::poll(&mut fd, 1, millis) } <= 0 {
+            return None;
+        }
+        let mut buf = [0u8; 256];
+        // SAFETY: reads at most buf.len() bytes into buf.
+        let read = unsafe { libc::read(libc::STDIN_FILENO, buf.as_mut_ptr().cast(), buf.len()) };
+        match usize::try_from(read) {
+            Ok(0) | Err(_) => return None,
+            Ok(read) => seen.extend_from_slice(&buf[..read]),
+        }
+        let replies = Replies::parse(&seen);
+        if replies.done {
+            return Some(replies);
+        }
+    }
+}
+
+/// Without a way to wait on the console, no terminal is asked.
+#[cfg(not(unix))]
+fn query_terminal(_wait: std::time::Duration) -> Option<Replies> {
+    None
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use ratatui_image::picker::ProtocolType;
+
+    #[test]
+    fn replies_name_the_protocol_and_the_cell_size() {
+        let kitty = Replies::parse(b"\x1b_Gi=31;OK\x1b\\\x1b[6;20;10t\x1b[?62;22c");
+        assert_eq!(
+            (kitty.protocol(false), kitty.cell, kitty.done),
+            (Some(ProtocolType::Kitty), Some((10, 20)), true)
+        );
+        let sixel = Replies::parse(b"\x1b[6;16;8t\x1b[?62;4;22c");
+        assert_eq!(sixel.protocol(false), Some(ProtocolType::Sixel));
+        assert_eq!(sixel.protocol(true), Some(ProtocolType::Iterm2));
+        // Only device attributes: half-blocks, and no cell size to scale by.
+        let plain = Replies::parse(b"\x1b[?1;2c");
+        assert_eq!(
+            (plain.protocol(false), plain.cell, plain.done),
+            (None, None, true)
+        );
+        // Still waiting for the device attributes.
+        assert!(!Replies::parse(b"\x1b_Gi=31;OK\x1b\\").done);
+    }
 }
