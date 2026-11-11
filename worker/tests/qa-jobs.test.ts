@@ -858,3 +858,26 @@ it("Sandbox gateway denies general Worker routes, other runs and stale generatio
   const allowed = await call("/v1/qa/seeds/leases");
   expect(allowed.status, await allowed.text()).toBe(201);
 });
+
+it("carries the journey layout and partition in the job and the hint classes on the run", async () => {
+  const input = await setup();
+  const partition = "e".repeat(32);
+  const result = await createQaJob(runtime, {
+    ...input,
+    prompt: { cache: ["anthropic"], layout: ["qa-order"], partition },
+  });
+  expect("job" in result && result.job.qa?.prompt).toEqual({
+    layout: ["qa-order"],
+    partition,
+  });
+  const run = await runtime.DB.prepare("SELECT prompt_cache FROM qa_runs").first<any>();
+  expect(run.prompt_cache).toBe('["anthropic"]');
+  // Without settings the job and run are as before.
+  const plain = await setup("plain");
+  const other = await createQaJob(runtime, plain);
+  expect("job" in other && other.job.qa?.prompt).toBeUndefined();
+  const row = await runtime.DB.prepare(
+    "SELECT prompt_cache FROM qa_runs WHERE review_id='plain'",
+  ).first<any>();
+  expect(row.prompt_cache).toBeNull();
+});

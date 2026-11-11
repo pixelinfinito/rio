@@ -35,6 +35,7 @@ async fn keychain_backed_host_relay_exposes_only_a_run_capability_and_socket() {
             keychain_account: "provider".into(),
             keychain_field: Some("OPENAI_API_KEY".into()),
             authentication: None,
+            prompt_cache: vec![],
         },
         "local-run",
         1000,

@@ -113,3 +113,30 @@ test('real HTTP redirects never receive provider credentials at their destinatio
   assert.equal(response.headers.get('location'), null);
   assert.equal(destinationCalls, 0);
 });
+
+// Local hints follow the route's configured classes and its endpoint (D16).
+for (const [classes, path, hinted] of [[['openai'], '/v1/a/g/openai/chat/completions', true], [[], '/v1/a/g/openai/chat/completions', false], [['openai'], '/v1/a/g/compat/chat/completions', false]])
+  test(`host relay sends Rio's key only for configured classes on OpenAI's endpoint (${classes.join(',') || 'none'} ${path})`, async t => {
+    const directory = await mkdtemp(join(tmpdir(), 'rio-relay-test-')); t.after(() => rm(directory, { recursive: true, force: true }));
+    const sent = [];
+    const server = createServer(async (request, response) => {
+      let text = ''; for await (const chunk of request) text += chunk; sent.push(JSON.parse(text));
+      response.setHeader('content-type', 'application/json'); response.end(JSON.stringify({ choices: [{ message: { content: 'Saved' } }], usage: { prompt_tokens: 20, completion_tokens: 10, prompt_tokens_details: { cached_tokens: 16 } } }));
+    });
+    server.listen(0, '127.0.0.1'); await once(server, 'listening'); t.after(() => { server.closeAllConnections(); return new Promise(resolve => server.close(resolve)); });
+    const child = spawn(process.execPath, [fileURLToPath(new URL('../src/host-relay.mjs', import.meta.url))], { env: { PATH: process.env.PATH }, stdio: ['pipe', 'pipe', 'pipe'] });
+    t.after(() => child.kill());
+    const iterator = createInterface({ input: child.stdout })[Symbol.asyncIterator]();
+    const socket = join(directory, 'model.sock');
+    child.stdin.write(JSON.stringify({ authentication: 'ai_gateway', key: 'synthetic-provider-key', url: `http://127.0.0.1:${server.address().port}${path}`, protocol: 'openai', model: body.model, provider_model: 'gpt', socket, tokens: 50000, run_id: 'local-1', prompt_cache: classes }) + '\n');
+    const ready = JSON.parse((await iterator.next()).value);
+    const proxy = await new ModelProxy({ model: body.model, forward: localTransport({ socketPath: socket, token: ready.token }) }).listen(); t.after(() => proxy.close());
+    proxy.startCell({ viewport: 'mobile', color_scheme: 'light' }, 5000);
+    const result = await fetch(proxy.url + '/responses', { method: 'POST', headers: { authorization: `Bearer ${proxy.token}` }, body: JSON.stringify({ ...body, prompt_cache_key: 'harness' }) });
+    const reply = await result.text(); await Promise.all([...proxy.pending]);
+    assert.equal(typeof sent[0].prompt_cache_key === 'string' && /^[0-9a-f]{32}$/.test(sent[0].prompt_cache_key), hinted);
+    assert.doesNotMatch(JSON.stringify(sent), /"harness"/);
+    // The harness sees the provider's cached count, not 0.
+    assert.match(reply, /"cached_tokens":16/);
+    const exited = once(child, 'close'); child.stdin.end('stop\n'); await exited;
+  });

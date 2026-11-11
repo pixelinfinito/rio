@@ -27,6 +27,7 @@ import {
   artifactIds,
   buildPack,
   memberRequest,
+  type MemberRequest,
   render,
   type Pack,
 } from "./council-pack";
@@ -40,6 +41,7 @@ import {
   type Weights,
 } from "./council-aggregate";
 import { hash } from "./validation";
+import { layerHashes } from "./prompt";
 import { parseWall } from "./budget";
 import prompts from "./member-prompts.json";
 
@@ -121,6 +123,8 @@ export interface AuditEntry {
   pack_bytes: number;
   rendering_hash: string;
   rendering_bytes: number;
+  /** Hash and size of each prompt layer that was sent, never its text. */
+  layers?: { layer: string; sha256: string; bytes: number }[];
   at: number;
   abstained: boolean;
   cause?: AbstentionCause | "budget";
@@ -159,7 +163,7 @@ export interface CouncilDeps {
   complete(
     member: Member,
     name: string,
-    request: { system: string; content: string },
+    request: MemberRequest,
     deadline: number,
   ): Promise<CallOutcome>;
   /** Run an experiment command as a runner job under verifier isolation. */
@@ -172,6 +176,12 @@ export interface CouncilDeps {
 }
 export interface CouncilInput {
   review: string;
+  /** Prompt settings: a member's partition, `council-order`, the cache key. */
+  prompt?: {
+    partition: (member: Member) => string | undefined;
+    order: boolean;
+    key?: (finding: string, role: Role) => string;
+  };
   verified: Verified[];
   votes: (hypothesis: string) => Promise<Vote[]>;
   executions: Record<string, ExecutionResult>;
@@ -386,7 +396,7 @@ export async function runCouncil(
     const call = async (
       member: Member,
       round: 1 | 2,
-      content: { system: string; content: string },
+      content: MemberRequest,
       deadline: number,
     ): Promise<Assessment | null> => {
       // The audit hashes exactly what is sent: the rendering, and in round 2
@@ -402,6 +412,13 @@ export async function runCouncil(
         pack_bytes: packBytes,
         rendering_hash: hash(sent),
         rendering_bytes: new TextEncoder().encode(sent).length,
+        ...(content.parts
+          ? {
+              layers: layerHashes(content.parts.system, [
+                { content: content.parts.content },
+              ]),
+            }
+          : {}),
         at: 0,
         abstained: true,
       };
@@ -409,7 +426,7 @@ export async function runCouncil(
       const result = await deps.complete(
         member,
         `council-${h.id.slice(0, 16)}-${member.role}-r${round}`,
-        content,
+        { ...content, key: input.prompt?.key?.(h.id, member.role) },
         deadline,
       );
       entry.at = result.at;
@@ -575,7 +592,10 @@ export async function runCouncil(
           assessment: await call(
             m,
             1,
-            memberRequest(m.role, prompt, rendering, 1),
+            memberRequest(m.role, prompt, rendering, 1, undefined, undefined, {
+              partition: input.prompt?.partition(m),
+              order: input.prompt?.order,
+            }),
             deadline,
           ),
         };
@@ -778,6 +798,10 @@ export async function runCouncil(
             2,
             { others, experiments: results },
             assessment,
+            {
+              partition: input.prompt?.partition(member),
+              order: input.prompt?.order,
+            },
           );
           const answer = await call(member, 2, request, roundTwo);
           const settled = settle(assessment, answer, known, own);

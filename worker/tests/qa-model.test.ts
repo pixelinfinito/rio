@@ -4,6 +4,7 @@ import { app } from "../src/index";
 import { createQaJob } from "../src/qa-jobs";
 import { qaModel } from "../src/qa-model";
 import { qaUsage } from "../src/qa-results";
+import { promptCacheKey } from "../src/prompt-config";
 import { canonical, hash } from "../src/validation";
 import type { Env } from "../src/types";
 import { allMigrations, submission } from "./fixtures";
@@ -315,6 +316,138 @@ it("adapts the pinned Anthropic route without passing provider credentials to th
     },
   );
   expect((await response.json<any>()).usage.total_tokens).toBe(15);
+});
+
+it("charges the cell total input with cache reads and records cache usage and cost source", async () => {
+  const claim = await setup(100000, "anthropic/test");
+  const priced = {
+    ...runtime,
+    MODEL_PRICES: JSON.stringify({
+      "anthropic/test": { input: 3, output: 15, cache_read: 0.3, cache_write: 3.75 },
+    }),
+  } as Env;
+  const response = await qaModel(
+    request(claim, { model: "anthropic/test" }),
+    priced,
+    async () =>
+      Response.json({
+        content: [{ type: "text", text: "Ready" }],
+        usage: { input_tokens: 10, cache_read_input_tokens: 200, output_tokens: 30 },
+        stop_reason: "end_turn",
+      }),
+  );
+  const result = await response.json<any>();
+  expect(result.usage).toMatchObject({
+    input_tokens: 210,
+    output_tokens: 30,
+    total_tokens: 240,
+    input_tokens_details: { cached_tokens: 200 },
+  });
+  expect((await ledger()).tokens_used).toBe(240);
+  const row = await runtime.DB.prepare(
+    "SELECT charged_tokens,input_tokens,cache_read_tokens,cache_write_tokens,usage_convention,cost_source,cost_usd FROM qa_model_usage",
+  ).first<any>();
+  expect(row).toMatchObject({
+    charged_tokens: 240,
+    input_tokens: 210,
+    cache_read_tokens: 200,
+    cache_write_tokens: null,
+    usage_convention: "verified",
+    cost_source: "estimate",
+  });
+  expect(row.cost_usd).toBeCloseTo((10 * 3 + 200 * 0.3 + 30 * 15) / 1e6);
+});
+
+it("records OpenAI cached tokens and leaves a cached call without a cache price unpriced", async () => {
+  const claim = await setup(100000);
+  await qaModel(request(claim), runtime, async () =>
+    providerReply({
+      prompt_tokens: 300,
+      completion_tokens: 10,
+      prompt_tokens_details: { cached_tokens: 256 },
+    }),
+  );
+  const row = await runtime.DB.prepare(
+    "SELECT input_tokens,cache_read_tokens,usage_convention,cost_source,cost_usd FROM qa_model_usage",
+  ).first<any>();
+  // `openai/test` is priced without a cache-read rate.
+  expect(row).toMatchObject({
+    input_tokens: 300,
+    cache_read_tokens: 256,
+    usage_convention: "verified",
+    cost_source: "unknown",
+    cost_usd: null,
+  });
+});
+
+it("fails a verified reply with invalid cache usage and keeps the reservation charged", async () => {
+  const claim = await setup(100000);
+  await expect(
+    qaModel(request(claim), runtime, async () =>
+      providerReply({
+        prompt_tokens: 100,
+        completion_tokens: 10,
+        prompt_tokens_details: { cached_tokens: -1 },
+      }),
+    ),
+  ).rejects.toThrow("provider reported invalid cache usage");
+  const row = await runtime.DB.prepare(
+    "SELECT state,charged_tokens,reserved,usage_convention FROM qa_model_usage",
+  ).first<any>();
+  expect(row.state).toBe("failed");
+  expect(row.charged_tokens).toBe(row.reserved);
+  expect(row.usage_convention).toBeNull();
+});
+
+it("renders the run's prompt-cache hints and replaces the harness key", async () => {
+  const sent: any[] = [];
+  const capture = (reply: () => Response) => async (_url: unknown, init: any) => {
+    sent.push(JSON.parse(init.body));
+    return reply();
+  };
+  const anthropic = () =>
+    Response.json({
+      content: [{ type: "text", text: "Ready" }],
+      usage: { input_tokens: 10, output_tokens: 5 },
+      stop_reason: "end_turn",
+    });
+  for (const [model, reply] of [
+    ["anthropic/test", anthropic],
+    ["openai/test", () => providerReply()],
+  ] as const) {
+    for (const classes of [null, '["anthropic","openai"]']) {
+      await runtime.DB.batch(
+        ["qa_model_usage", "qa_cells", "qa_runs", "jobs", "reviews"].map(
+          (table) => runtime.DB.prepare(`DELETE FROM ${table}`),
+        ),
+      );
+      const claim = await setup(100000, model);
+      await runtime.DB.prepare("UPDATE qa_runs SET prompt_cache=?")
+        .bind(classes)
+        .run();
+      await qaModel(
+        request(claim, {
+          model,
+          instructions: "Harness instructions.",
+          prompt_cache_key: "harness-key",
+        }),
+        runtime,
+        capture(reply),
+      );
+    }
+  }
+  const [plainAnthropic, hintedAnthropic, plainOpenai, hintedOpenai] = sent;
+  expect(JSON.stringify(plainAnthropic)).not.toContain("cache_control");
+  expect(hintedAnthropic.system.at(-1).cache_control).toEqual({ type: "ephemeral" });
+  expect(hintedAnthropic.messages.at(-1).content.at(-1).cache_control).toEqual({
+    type: "ephemeral",
+  });
+  expect(plainOpenai.prompt_cache_key).toBeUndefined();
+  const run = await runtime.DB.prepare("SELECT id FROM qa_runs").first<any>();
+  expect(hintedOpenai.prompt_cache_key).toBe(
+    promptCacheKey("owner", run.id, `qa\0${cell.id}`),
+  );
+  expect(JSON.stringify(sent)).not.toContain("harness-key");
 });
 
 it("reports authoritative QA cost with verifier usage and preserves missing pricing", async () => {

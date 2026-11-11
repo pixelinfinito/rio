@@ -7,5 +7,11 @@ export function providerTransport(options: {
   headers: Record<string, string>;
   model: string;
   protocol?: "openai" | "anthropic";
+  convention?: "verified" | "unverified";
+  cache?: { capability: "breakpoints" | "key" | "parts" | "none"; key?: string };
+  usage?: (usage: ReturnType<typeof import("./usage.mjs").normalizeUsage> | null, cost: unknown) => void;
   fetch?: typeof fetch;
 }): (request: { path: string; body: any; signal: AbortSignal }) => Promise<Response>;
+export const BOUNDARY: string;
+export const OMITTED: string;
+export function cacheHints(payload: any, protocol: "openai" | "anthropic", cache?: { capability: string; key?: string }): any;

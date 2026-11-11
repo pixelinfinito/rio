@@ -102,6 +102,28 @@ beforeEach(async () => {
   jobs.length = 0;
 });
 describe("Worker API and storage", () => {
+  it.each([
+    [{ PROMPT_LAYOUT: "agent-order,fast" }, "fast"],
+    [{ PROMPT_CACHE: "anthropic,gemini" }, "gemini"],
+  ])(
+    "rejects a submission while a prompt switch is unknown (%j), naming the value",
+    async (switches, value) => {
+      const uploaded = await upload();
+      const s = submission();
+      s.snapshot_id = ((await uploaded.json()) as any).id;
+      const response = await app.request(
+        "https://rio.test/v1/reviews",
+        { method: "POST", headers: owner, body: JSON.stringify(s) },
+        { ...runtime, ...switches },
+      );
+      expect(response.status).toBe(400);
+      expect(await response.text()).toContain(value);
+      expect(
+        (await testEnv.DB.prepare("SELECT COUNT(*) AS n FROM reviews").first<any>())
+          .n,
+      ).toBe(0);
+    },
+  );
   it("rejects a submission whose reachable model aliases cannot be routed, naming the alias", async () => {
     const uploaded = await upload();
     const { id } = (await uploaded.json()) as any;
@@ -621,6 +643,46 @@ describe("Worker API and storage", () => {
       usage: [],
       executions: [],
     });
+  });
+  it("exposes cache usage per call and reads historical rows as not reported", async () => {
+    const id = await createReview();
+    await testEnv.DB.batch([
+      testEnv.DB.prepare(
+        "INSERT INTO usage(id,review_id,actor,phase,reserved,status,input_tokens,output_tokens,cost_usd,model) VALUES('u1',?,'a','generation',9,'completed',5,1,NULL,'openai/m')",
+      ).bind(id),
+      testEnv.DB.prepare(
+        "INSERT INTO usage(id,review_id,actor,phase,reserved,status,input_tokens,output_tokens,cost_usd,model,cache_read_tokens,cache_write_tokens,usage_convention,cost_source) VALUES('u2',?,'a','generation',99999,'completed',10050,300,NULL,'anthropic/m',10000,0,'verified','unknown')",
+      ).bind(id),
+    ]);
+    const audit: any = await (await request(`/v1/reviews/${id}/audit`)).json();
+    expect(audit.usage).toEqual([
+      {
+        actor: "a",
+        phase: "generation",
+        status: "completed",
+        input_tokens: 5,
+        cache_read_tokens: null,
+        cache_write_tokens: null,
+        usage_convention: null,
+        output_tokens: 1,
+        cost_usd: null,
+        cost_source: null,
+        model: "openai/m",
+      },
+      {
+        actor: "a",
+        phase: "generation",
+        status: "completed",
+        input_tokens: 10050,
+        cache_read_tokens: 10000,
+        cache_write_tokens: 0,
+        usage_convention: "verified",
+        output_tokens: 300,
+        cost_usd: null,
+        cost_source: "unknown",
+        model: "anthropic/m",
+      },
+    ]);
   });
 });
 

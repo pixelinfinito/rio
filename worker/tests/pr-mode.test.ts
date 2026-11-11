@@ -20,6 +20,17 @@ import prLineageSarif from "../../tests/fixtures/sarif/pr-lineage/expected.sarif
 // publisher against the GitHub double, `/rio` commands, and the SARIF route.
 
 const runtime = env as Env;
+/** A pinned report as recorded with the active layout features (feature-on runs). */
+const withLayout = (report: any) => {
+  const features = (runtime.PROMPT_LAYOUT ?? "").split(",").filter(Boolean).sort();
+  return {
+    ...report,
+    agent_audit: {
+      ...report.agent_audit,
+      prompt_cache: { ...report.agent_audit.prompt_cache, layout_features: features },
+    },
+  };
+};
 const SECRET = "test-webhook-secret-at-least-32-characters";
 const REPO = "acme/shop";
 const owner = {
@@ -517,7 +528,7 @@ describe("PR mode end to end", () => {
       text.replaceAll(id, "00000000-0000-4000-8000-000000000001");
     const fixedReport = JSON.parse(normalize(JSON.stringify(json)));
     expect(json).toEqual(report);
-    expect(fixedReport).toEqual(prLineageReport);
+    expect(fixedReport).toEqual(withLayout(prLineageReport));
     sarif.runs[0].invocations[0].startTimeUtc = "2026-11-08T12:00:00Z";
     sarif.runs[0].invocations[0].endTimeUtc = "2026-11-08T12:03:00Z";
     expect(JSON.parse(normalize(JSON.stringify(sarif)))).toEqual(

@@ -18,7 +18,19 @@ import type {
   Vote,
 } from "./types";
 import { Store, D1Ledger } from "./storage";
-import { ProviderGateway, converse } from "./gateway";
+import { ProviderGateway, converse, settledUsage } from "./gateway";
+import { promptCacheReport, selfHostedCache } from "./usage";
+import { generationPrompt, redactPartitions } from "./prompt";
+/** The provider identity of self-hosted council members' partition. */
+const SELF_HOSTED = "self-hosted/runner";
+import {
+  Partitions,
+  configureReview,
+  enabled,
+  partitionSecret,
+  promptCacheKey,
+  type PromptSettings,
+} from "./prompt-config";
 import {
   Tools,
   dataBlock,
@@ -360,6 +372,9 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
         ?.with?.hops ?? 2;
     let diffOnlyAudit: Record<string, string[]> | undefined;
     let council: CouncilOutcome | undefined;
+    // The review's prompt configuration (design D14, D15), fixed at its start.
+    let promptConfig: PromptSettings = { cache: [], layout: [] };
+    let partitions!: Partitions;
     const call = async (name: string, action: () => Promise<ModelResponse>) => {
       const key = await step.do(
         `model-${name}`,
@@ -372,6 +387,23 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
         },
       );
       return store.get<ModelResponse>(key);
+    };
+    // A verifier conversation's prompt settings: the partition of its model,
+    // its cache key root, and the layout features it follows.
+    const verifierPrompt = (hypothesis: string) => {
+      const alias =
+        submission.profile.verify.model ??
+        (submission.profile.models.verifier ? "verifier" : "default");
+      const partition = partitions.for(submission.profile.models[alias]);
+      return {
+        partition,
+        single: enabled(promptConfig, "verifier-system"),
+        compaction: enabled(promptConfig, "compaction"),
+        cache: {
+          classes: promptConfig.cache,
+          key: promptCacheKey(load.tenant, id, `verify:${hypothesis}`),
+        },
+      };
     };
     const execute = async (
       name: string,
@@ -518,6 +550,10 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             input_tokens: 0,
             output_tokens: 0,
             cost_usd: 0,
+            cache_read_input_tokens: null,
+            cache_write_input_tokens: null,
+            usage_convention: null,
+            cost_source: "self-hosted",
             model: member.model,
           });
           return 0;
@@ -582,6 +618,8 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
               input_tokens,
               output_tokens,
               cost_usd: 0,
+              cost_source: "self-hosted",
+              ...selfHostedCache(input_tokens, result.artifact.cached_input_tokens),
               model: member.model,
             });
           const usage = known
@@ -592,7 +630,10 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             key: await store.put(
               `reviews/${id}/council/responses/${name}.json`,
               {
-                content: result.artifact.content,
+                content: redactPartitions(
+                  String(result.artifact.content),
+                  [partitions.for(SELF_HOSTED)],
+                ),
                 ...usage,
                 cost_usd: 0,
               },
@@ -727,6 +768,15 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             composition,
             weights: memberWeights,
             audit,
+            prompt: {
+              partition: (member) =>
+                partitions.for(
+                  member.self_hosted ? SELF_HOSTED : routeOf(member),
+                ),
+              order: enabled(promptConfig, "council-order"),
+              key: (finding, role) =>
+                promptCacheKey(load.tenant, id, `council:${finding}:${role}`),
+            },
           },
           {
             // Never past the review's wall budget less the reserve the
@@ -763,19 +813,22 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
                         try {
                           const response = await gateway.complete({
                             model: routeOf(member),
-                            system: request.system,
+                            system: request.parts?.system ?? request.system,
                             messages: [
-                              { role: "user", content: request.content },
+                              {
+                                role: "user",
+                                content: request.parts?.content ?? request.content,
+                              },
                             ],
                             max_tokens: COUNCIL_OUTPUT_TOKENS,
                             signal: AbortSignal.timeout(remaining),
+                            cache: { classes: promptConfig.cache, key: request.key },
+                            redact: [partitions.for(routeOf(member))],
                           });
                           await ledger.settle(reservation, {
                             phase: "council",
                             actor: `council-${member.role}`,
-                            input_tokens: response.input_tokens,
-                            output_tokens: response.output_tokens,
-                            cost_usd: response.cost_usd,
+                            ...settledUsage(response),
                             model: routeOf(member),
                           });
                           const at = Date.now();
@@ -905,6 +958,12 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
       } else if (module === "rio/qa") {
         if (s.with.enabled === true) {
           const job = hash(`${id}-${s.id}-qa-head`).slice(0, 32);
+          // QA hints, the journey layout and the partition of the run's provider.
+          const qaPrompt = {
+            cache: promptConfig.cache,
+            layout: promptConfig.layout,
+            partition: partitions.for(submission.profile.models.default),
+          };
           const dispatched = await step.do(`dispatch-${job}`, () =>
             createQaJob(this.env, {
               review: id,
@@ -912,6 +971,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
               step: s.id,
               submission: { ...submission, graphs },
               options: s.with,
+              prompt: qaPrompt,
             }),
           );
           if ("deferred" in dispatched) {
@@ -959,6 +1019,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
                     version: "base",
                     submission: { ...submission, graphs },
                     options: s.with,
+                    prompt: qaPrompt,
                   }),
                 );
                 invariant(
@@ -1218,6 +1279,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
                     hunk_hash: hunkHash(hunk),
                     ...(await cacheContext(hunk, {
                       agent,
+                      layout: promptConfig.layout,
                       manifest_version: agents[agent]?.version ?? 0,
                       prompt:
                         (agentPrompts as Record<string, string>)[agent] ?? "",
@@ -1342,7 +1404,27 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
               })),
             })}\n${dataBlock("taint map", analysis!.trace)}`;
           }
-          const prompt = `Review the change independently for ${agent}. Inspect actual base and head code before making a claim; symbol names and graph hashes are not source code. Use read_file for omitted or truncated code. Suggested focus is only a hint; tools can read/search either entire repository snapshot. The graph excerpt holds the changed symbols and their nearest neighbours; query graph_query for anything beyond it. Classify concrete correctness regressions as defect, uncertain hazards as risk, style and repeated tool diagnostics accurately. Omit guidance unless citing a real owner-guidance document supplied below; source-code lines are not owner guidance. Check guidance/contradiction and guidance/stale risks against existing guidance lines: emit category risk, cite guidance:{path,line} and the changed code behavior. ${instructions ? "" : "Return {result:hypotheses[]}."}${instructions ? `\n${instructions}` : ""}${roundContext}\n${dataBlock("intent", filteredLines(intent.split("\n")))}\n${dataBlock("suggested_focus", scope.focus)}\n${dataBlock("graph excerpt", { base: promptGraph(graphs.base), head: promptGraph(graphs.head) })}\n${dataBlock("changed code excerpts", await changedCode(scope.changed, reviewed.snapshot))}\n${dataBlock("deterministic checks", report.checks)}${agentData}\n${guidanceBlock(submission.owner_guidance, reviewed.focus)}`;
+          const partition = partitions.for(model);
+          const prompt = generationPrompt({
+            agent,
+            instructions,
+            round: roundContext,
+            intent: dataBlock("intent", filteredLines(intent.split("\n"))),
+            focus: dataBlock("suggested_focus", scope.focus),
+            graph: dataBlock("graph excerpt", {
+              base: promptGraph(graphs.base),
+              head: promptGraph(graphs.head),
+            }),
+            changed: dataBlock(
+              "changed code excerpts",
+              await changedCode(scope.changed, reviewed.snapshot),
+            ),
+            checks: dataBlock("deterministic checks", report.checks),
+            data: agentData,
+            guidance: guidanceBlock(submission.owner_guidance, reviewed.focus),
+            partition,
+            order: enabled(promptConfig, "agent-order"),
+          });
           await step.do(`agent-started-${s.id}-${agent}`, () =>
             store.event(id, "agent:started", { agent }),
           );
@@ -1363,6 +1445,12 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
               dispatch: tools.dispatch.bind(tools),
               call,
               cancelled: () => store.cancelled(id),
+              cache: {
+                classes: promptConfig.cache,
+                key: promptCacheKey(load.tenant, id, "generation"),
+              },
+              redact: [partition],
+              compaction: enabled(promptConfig, "compaction"),
             });
           } catch (error) {
             const message = error instanceof Error ? error.message : "";
@@ -1505,6 +1593,13 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           const qa = qaVerification;
           const result = await verifyQaReview({
             result: qa.result,
+            prompt: {
+              partition: verifierPrompt("qa").partition,
+              cache: {
+                classes: promptConfig.cache,
+                key: promptCacheKey(load.tenant, id, "verify:qa"),
+              },
+            },
             profile: submission.profile,
             gateway,
             ledger,
@@ -1660,6 +1755,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             verifyTokens: active.verify_tokens,
             call,
             cancelled: () => store.cancelled(id),
+            prompt: verifierPrompt(h.id),
             tools: (voter) =>
               new Tools(
                 snapshot,
@@ -1717,6 +1813,17 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
       );
     };
     try {
+      // Memoized, so a replay after a restart or a variable change rebuilds the
+      // same requests. An unknown value fails here, before any reservation.
+      promptConfig = await step.do(
+        "prompt-config",
+        { retries: { limit: 0, delay: "1 second" } },
+        () => configureReview(this.env, load.tenant),
+      );
+      partitions = new Partitions(
+        this.env,
+        await partitionSecret(this.env, load.tenant),
+      );
       const lineageKey = await step.do("lineage", async () => {
         const context = await loadContext(this.env, id, submission.profile);
         return context
@@ -1859,11 +1966,15 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           "Fork PR: static-only; all agent and verifier execution tools are disabled.",
         );
       const usages = await this.env.DB.prepare(
-        "SELECT phase,status,input_tokens,output_tokens,cost_usd FROM usage WHERE review_id=?",
+        "SELECT phase,status,input_tokens,output_tokens,cost_usd,cache_read_tokens,cache_write_tokens,usage_convention,cost_source FROM usage WHERE review_id=?",
       )
         .bind(id)
         .all<any>();
       if (report.qa) Object.assign(report.qa.cost, await qaUsage(this.env, id));
+      report.agent_audit.prompt_cache = promptCacheReport(usages.results, {
+        hint_classes: promptConfig.cache,
+        layout_features: promptConfig.layout,
+      });
       report.agent_audit.verification_usage = {
         input_tokens: usages.results
           .filter((u) => u.phase.startsWith("verify"))

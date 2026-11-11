@@ -34,7 +34,12 @@ try {
     || Object.values(run.budget || {}).some(value => !Number.isSafeInteger(value) || value < 1)
     || !['wall_ms', 'cell_wall_ms', 'tokens', 'evidence_bytes'].every(key => Number.isSafeInteger(run.budget?.[key]) && run.budget[key] > 0)) throw new Error('Invalid controller configuration');
   if (run.auth === 'subscription' && (run.storage.kind !== 'local' || run.harness !== 'codex' || !process.env.RIO_QA_SUBSCRIPTION_FILE)) throw new Error('Invalid subscription configuration');
-  sanitizer = new Sanitizer([run.storage.capability, run.gateway?.capability, run.relay_token]);
+  // The review's layout features and, on hosted runs only, the partition value.
+  const prompt = run.prompt ?? {};
+  if (typeof prompt !== 'object' || Array.isArray(prompt) || Object.keys(prompt).some(key => !['layout', 'partition'].includes(key))
+    || (prompt.layout !== undefined && (!Array.isArray(prompt.layout) || prompt.layout.some(value => typeof value !== 'string')))
+    || (prompt.partition !== undefined && (run.storage.kind !== 'hosted' || !/^[0-9a-f]{32}$/.test(prompt.partition)))) throw new Error('Invalid controller configuration');
+  sanitizer = new Sanitizer([run.storage.capability, run.gateway?.capability, run.relay_token, prompt.partition]);
   const maxSize = seedSizeBytes(contract.seed?.max_size);
   const manifest = fixtureSeedManifest(run.seed || { datastores: [], steps: [], users: [], paths: [] }, fixtures);
   let sink, seedBackend, forward;
@@ -61,7 +66,7 @@ try {
   const result = await execute({ setup: run.setup, request: run.replay, author: run.author, plan, journeys, contract, fixtures, guidance, viewports: run.viewports, writer, seedTransfer,
     appControl: process.env.RIO_QA_APP_CONTROL, browserEndpoint: process.env.RIO_QA_BROWSER, browserFiles: process.env.RIO_QA_BROWSER_FILES,
     version: run.snapshot_version || 'head', budget: run.budget, model: run.model, harness: run.harness, auth: run.auth, authFile: process.env.RIO_QA_SUBSCRIPTION_FILE,
-    forward, credentialEnv, maxFileBytes: maxSize, checkpoint, signal: abort.signal });
+    forward, credentialEnv, maxFileBytes: maxSize, checkpoint, prompt, signal: abort.signal });
   process.stdout.write(JSON.stringify({ outcome: result.outcome, journeys: result.journey_outcomes.length }) + '\n');
 } catch {
   await checkpoint({ ...(last || { journey_outcomes: [] }), outcome: 'partial', controller_error: abort.signal.aborted ? 'interrupted' : 'controller_failed' }).catch(() => {});

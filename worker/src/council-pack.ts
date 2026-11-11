@@ -1,3 +1,4 @@
+import { councilContent, join, type PromptPart } from "./prompt";
 import type {
   ArtifactRef,
   ExecutionResult,
@@ -598,21 +599,36 @@ export function memberRequest(
   round: 1 | 2,
   second?: RoundTwoInput,
   own?: Assessment,
-): { system: string; content: string } {
-  const parts = [
-    `Round ${round}. Your role is ${role}. Assess the finding in the hypothesis data block. Cite artifacts by their "id" values.`,
-    rendering,
-  ];
+  // The member's tenant partition, and `council-order` (design D6).
+  options: { partition?: string; order?: boolean } = {},
+): MemberRequest {
+  const header = `Round ${round}. Your role is ${role}. Assess the finding in the hypothesis data block. Cite artifacts by their "id" values.`;
+  const rest: string[] = [];
   if (round === 2 && second) {
-    parts.push(
+    rest.push(
       "Your round-1 assessment, the other members' round-1 assessments under letters, and the experiment results follow. Keep your position, or change it only with changed_from, changed_to and cites.",
       dataBlock("your round-1 assessment", own ?? null),
       dataBlock("other assessments", second.others),
       dataBlock("experiment results", second.experiments),
     );
   }
-  return {
-    system: `${COUNCIL_SYSTEM}\n\n${prompt}`,
-    content: parts.join("\n"),
-  };
+  const system: PromptPart[] = [
+    { layer: "system", text: `${COUNCIL_SYSTEM}\n\n${prompt}`, cache: true },
+  ];
+  const content = councilContent(
+    header,
+    rendering,
+    rest,
+    options.partition,
+    options.order,
+  );
+  return { system: join(system), content: join(content), parts: { system, content } };
+}
+/** A member's request: the joined text, and the parts a capable route marks. */
+export interface MemberRequest {
+  system: string;
+  content: string;
+  parts?: { system: PromptPart[]; content: PromptPart[] };
+  // The OpenAI cache key root's hash for this finding and member.
+  key?: string;
 }

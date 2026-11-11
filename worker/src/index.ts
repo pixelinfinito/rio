@@ -413,7 +413,7 @@ app.get("/v1/reviews/:id/audit", async (c) => {
     .bind(id)
     .all<{ object_key: string }>();
   const usage = await c.env.DB.prepare(
-    "SELECT actor,phase,status,input_tokens,output_tokens,cost_usd,model FROM usage WHERE review_id=? ORDER BY id",
+    "SELECT actor,phase,status,input_tokens,cache_read_tokens,cache_write_tokens,usage_convention,output_tokens,cost_usd,cost_source,model FROM usage WHERE review_id=? ORDER BY id",
   )
     .bind(id)
     .all();

@@ -155,5 +155,25 @@
       "-- Rotate retries so a stalled upload or transient deletion failure cannot\n-- starve newer expired objects in the bounded scheduled sweep.\nALTER TABLE qa_evidence_garbage ADD COLUMN next_attempt_at INTEGER NOT NULL DEFAULT 0",
       "CREATE INDEX qa_evidence_garbage_retry ON qa_evidence_garbage(next_attempt_at,object_key)"
     ]
+  },
+  {
+    "name": "0014_prompt_cache.sql",
+    "statements": [
+      "ALTER TABLE usage ADD COLUMN cache_read_tokens INTEGER",
+      "ALTER TABLE usage ADD COLUMN cache_write_tokens INTEGER",
+      "ALTER TABLE usage ADD COLUMN usage_convention TEXT CHECK(usage_convention IS NULL OR usage_convention IN ('verified','unverified','invalid'))",
+      "ALTER TABLE usage ADD COLUMN cost_source TEXT CHECK(cost_source IS NULL OR cost_source IN ('provider','estimate','self-hosted','unknown'))",
+      "CREATE TABLE IF NOT EXISTS prompt_partitions (tenant TEXT PRIMARY KEY, secret TEXT NOT NULL)"
+    ]
+  },
+  {
+    "name": "0015_qa_prompt_cache.sql",
+    "statements": [
+      "ALTER TABLE qa_model_usage ADD COLUMN cache_read_tokens INTEGER",
+      "ALTER TABLE qa_model_usage ADD COLUMN cache_write_tokens INTEGER",
+      "ALTER TABLE qa_model_usage ADD COLUMN usage_convention TEXT CHECK(usage_convention IS NULL OR usage_convention IN ('verified','unverified','invalid'))",
+      "ALTER TABLE qa_model_usage ADD COLUMN cost_source TEXT CHECK(cost_source IS NULL OR cost_source IN ('provider','estimate','unknown'))",
+      "ALTER TABLE qa_runs ADD COLUMN prompt_cache TEXT"
+    ]
   }
 ]

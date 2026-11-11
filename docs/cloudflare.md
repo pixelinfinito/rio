@@ -199,10 +199,13 @@ slug = "node-openai"
 protocol = "openai"               # or "anthropic"
 base_url = "https://api.llm.example/v1"
 # auth_header = "authorization"   # default for openai; "x-api-key" for anthropic
+# prompt_cache = "breakpoints"    # anthropic only: the endpoint accepts cache_control
 
 [deployment.model_prices."custom-node-openai/gpt-6.1-sol"]
 input = 1.25                      # optional, USD per million tokens
 output = 10.0
+# cache_read = 0.125              # optional: cached input reads
+# cache_write = 1.5625            # optional: cache writes (5-minute entries)
 
 [[deployment.dynamic_routes]]
 name = "support"
@@ -261,6 +264,64 @@ sent to the unified endpoint. Without `AI_GATEWAY_URL`, `OPENAI_BASE_URL` is use
 as before. Custom endpoints usually report no price, so their cost stays unknown
 (`null`) unless `model_prices` names the model; a usage `cost` field is trusted for
 OpenRouter's own endpoint only.
+
+### Prompt caching and layout switches
+
+Two Worker variables control how Rio asks providers to reuse prompt prefixes.
+Set them in `config.toml`; `rio deploy` validates both before any account access,
+uploads them, and replays them with `--from`. An omitted setting leaves its
+variable unset. A review is also rejected at submission while a variable holds
+an unknown value.
+
+```toml
+[deployment.prompt]
+cache = "anthropic,openai"        # PROMPT_CACHE: off, or anthropic, openai, openrouter
+layout = "verifier-system"        # PROMPT_LAYOUT: agent-order, verifier-system, compaction, council-order, qa-order
+```
+
+| `PROMPT_CACHE` class | Routes | What is sent |
+| --- | --- | --- |
+| `anthropic` | `anthropic/…`, and `custom-SLUG/…` providers declared with `prompt_cache = "breakpoints"` (`--custom-provider SLUG:anthropic+breakpoints:URL`) | at most four `cache_control` breakpoints: the system prompt, the end of the reusable context, the conversation tail |
+| `openai` | `openai/…` on OpenAI's own API (not an `OPENAI_BASE_URL`) | a `prompt_cache_key` scoped to the tenant, the review and the conversation |
+| `openrouter` | `openrouter/anthropic/…`, `openrouter/google/gemini…` | content-part `cache_control` |
+
+Every other route receives exactly the body it received before. Every class
+and every layout feature is off by default; each becomes a default only after
+its gate in `docs/evaluation/prompt-caching.md` has passed.
+
+Every request also carries a tenant partition element before the first
+repository-derived content, so tenants of one deployment never share a cached
+private prefix. Its value is derived per provider from a random per-tenant
+secret in the D1 table `prompt_partitions`, created at the tenant's first review.
+The secret is never sent, logged or reported, and there is nothing to rotate:
+deleting a tenant's row gives it a new pseudonym from its next review, without
+affecting its agent result cache.
+
+### Usage, cache tokens and cost sources
+
+Every model call records its total input (cache reads and writes included),
+cache-read and cache-write tokens, output, cost and where the cost came from, in
+the `usage` rows of `GET /v1/reviews/{id}/audit` and per phase in the report's
+`agent_audit.prompt_cache`:
+
+| `cost_source` | Meaning |
+| --- | --- |
+| `provider` | the provider reported the charge (OpenRouter `usage.cost`) |
+| `estimate` | computed from `model_prices`: uncached input × `input`, cache reads × `cache_read`, cache writes × `cache_write`, output × `output` |
+| `self-hosted` | a self-hosted council member; cost 0 |
+| `unknown` | no price names the model, or the call used the cache and the price has no rate for it; the cost is `null` |
+
+Cache reads are never priced at the plain input rate. A `null` cache count means
+the provider reported no usable value. `usage_convention` says whether a call's
+cache counts are trusted: `verified` on the Anthropic Messages protocol and on
+OpenAI's own API; `unverified` on every other route (OpenRouter, `compat/`,
+`dynamic/`, custom providers, an `OPENAI_BASE_URL`, self-hosted endpoints), where
+Rio charges the reported prompt tokens exactly as before and leaves the call out
+of cache ratios; `invalid` when such a route reported a malformed cache count,
+which is then recorded as `null`. A malformed cache count on a verified route
+fails the call without a retry, because the reply was billed; the call keeps its
+whole reservation. Token budgets always charge total input plus output, so
+caching lowers cost and latency, never what a review may spend.
 
 ## Council vendors
 

@@ -1,0 +1,38 @@
+{
+  "generation": {
+    "replies": [
+      "{\"tools\":[{\"name\":\"read_file\",\"args\":{\"version\":\"head\",\"path\":\"src/a.ts\"}}]}",
+      "<invoke name=\"read_file\">not the protocol</invoke>",
+      "{\"tools\":[{\"name\":\"search\",\"args\":{\"version\":\"head\",\"pattern\":\"a(\"}}]}",
+      "{\"result\":[]}"
+    ],
+    "tool_result": {
+      "content": "function a(){ throw new Error(); }\n"
+    },
+    "blocks": {
+      "agent": "correctness",
+      "instructions": "",
+      "round": "",
+      "intent": "<repository_data label=\"intent\">[\"Fix behavior\"]</repository_data>",
+      "focus": "<repository_data label=\"suggested_focus\">[\"src/a.ts\"]</repository_data>",
+      "graph": "<repository_data label=\"graph excerpt\">{\"base\":{\"nodes\":[]},\"head\":{\"nodes\":[]}}</repository_data>",
+      "changed": "<repository_data label=\"changed code excerpts\">[{\"path\":\"src/a.ts\",\"head\":\"function a(){ throw new Error(); }\"}]</repository_data>",
+      "checks": "<repository_data label=\"deterministic checks\">[]</repository_data>",
+      "data": "",
+      "guidance": "<repository_data label=\"owner guidance\">[]</repository_data>"
+    }
+  },
+  "voter": {
+    "intent": "Fix behavior",
+    "replies": [
+      "{\"result\":[]}",
+      "{\"result\":{\"evidence_level\":\"plausible\",\"evidence\":[]}}"
+    ]
+  },
+  "council": {
+    "role": "skeptic",
+    "prompt": "Look for the strongest reason the finding is wrong.",
+    "rendering": "<repository_data label=\"hypothesis\">{\"id\":\"h\",\"rule_id\":\"correctness/throw\"}</repository_data>",
+    "reply": "{\"assessment\":\"refuted\"}"
+  }
+}

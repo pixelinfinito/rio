@@ -6,8 +6,8 @@ import { probeCandidates, observationCandidates } from './findings.mjs';
 /** Owns one chain's browser context. The pod backend restores seed/app state
  * before construction; this class never resets between dependent journeys. */
 export class CellController {
-  constructor({ browser, writer, cell, criteria, guidance = {}, harness, handlers = {}, capturedMessages, fixtures, allowedOrigins, cellWallMs, modelProxy }) {
-    Object.assign(this, { browser, writer, cell, criteria, guidance, harness, handlers, capturedMessages, fixtures, allowedOrigins, cellWallMs, modelProxy });
+  constructor({ browser, writer, cell, criteria, guidance = {}, harness, handlers = {}, capturedMessages, fixtures, allowedOrigins, cellWallMs, modelProxy, prompt = {} }) {
+    Object.assign(this, { browser, writer, cell, criteria, guidance, harness, handlers, capturedMessages, fixtures, allowedOrigins, cellWallMs, modelProxy, prompt });
     this.collector = new EvidenceCollector(browser, writer); this.sessions = []; this.bridges = []; this.transcript = [];
     this.controls = browser.controls;
   }
@@ -22,14 +22,16 @@ export class CellController {
     return this.activeRun;
   }
   async executeJourney({ journey, signal }) {
+    const guidance = this.guidance[journey.name] || [];
+    const sharedGuidance = Object.values(this.guidance).every(value => JSON.stringify(value) === JSON.stringify(guidance));
     const session = new JourneySession({ browser: this.browser, writer: this.writer, collector: this.collector, journey, cell: this.cell,
-      criteria: this.criteria, guidance: this.guidance[journey.name] || [], capturedMessages: this.capturedMessages, fixtures: this.fixtures });
+      criteria: this.criteria, guidance, capturedMessages: this.capturedMessages, fixtures: this.fixtures, prompt: this.prompt, sharedGuidance });
     this.sessions.push(session);
     const bridge = await session.bridge({ handlers: this.handlers, allowedOrigins: this.allowedOrigins }); this.bridges.push(bridge);
     let result;
     try {
       if (signal?.aborted) return await session.finish({ reason: signal.reason === 'budget' ? 'budget' : 'interrupted' });
-      result = await this.harness.run({ prompt: session.prompt() + `\nApplication origins: ${JSON.stringify(this.allowedOrigins)}`, bridge, signal, wallMs: this.cellWallMs,
+      result = await this.harness.run({ prompt: session.prompt(this.allowedOrigins), bridge, signal, wallMs: this.cellWallMs,
         onEvent: event => { this.transcript.push(event); } });
     } catch (error) {
       await session.finish({ reason: signal?.aborted ? signal.reason === 'budget' ? 'budget' : 'interrupted' : 'harness_error' });

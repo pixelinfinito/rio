@@ -436,7 +436,11 @@ example:
 ```
 
 Store the provider credential in that operating-system keychain entry. An optional
-`keychain_field` selects a string from an existing JSON credential entry. Route
+`keychain_field` selects a string from an existing JSON credential entry. An optional
+`prompt_cache` list (`anthropic`, `openai`, `openrouter`; empty by default) enables
+prompt-cache hints for this route: cache breakpoints on Anthropic, a per-run
+`prompt_cache_key` on OpenAI's API, and content-part breakpoints for Anthropic and
+Gemini models on OpenRouter. Other endpoints get no hints. Route
 metadata is read from the host, never from the repository. For an AI Gateway custom endpoint, set `authentication: "ai_gateway"`, point `url` at its compatible chat-completions endpoint, and store the gateway token in the named keychain entry. Rio sends it as `cf-aig-authorization`, disables gateway caching and prompt logging, and does not send it as a provider API key. Local persona credentials
 come from the environment variables named by the captured contract. Baseline runs
 retain their own manifest and use the same journey definitions and viewport matrix

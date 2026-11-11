@@ -1,3 +1,4 @@
+import type { Content } from "./prompt";
 export type Version = "base" | "head";
 export type Evidence = "refuted" | "plausible" | "static_proven" | "reproduced";
 export type Category =
@@ -344,6 +345,9 @@ export interface QaExecution {
   changed: ChangedFile[];
   graphs: { base: Graph; head: Graph };
   owner_guidance: Guidance[];
+  // The review's layout features and, on hosted runs, the partition value of
+  // the run's provider for the journey prompt (design D16).
+  prompt?: { layout: string[]; partition?: string };
   budget: {
     wall_ms: number;
     cell_wall_ms: number;
@@ -370,30 +374,59 @@ export interface ExecutionResult {
   version: Version;
   artifact?: any;
 }
+/**
+ * Whether a route's cache counts are trusted: `verified` where documentation and
+ * fixtures agree that they lie inside the reported input, `unverified` elsewhere,
+ * `invalid` when an unverified route reported a malformed cache field.
+ */
+export type UsageConvention = "verified" | "unverified" | "invalid";
+export type CostSource = "provider" | "estimate" | "self-hosted" | "unknown";
 export interface Usage {
   phase: string;
   actor: string;
+  // Total input, cache reads and writes included.
   input_tokens: number;
   output_tokens: number;
   cost_usd: number | null;
   model: string;
+  // Null (or absent) when the provider reported no usable value.
+  cache_read_input_tokens?: number | null;
+  cache_write_input_tokens?: number | null;
+  usage_convention?: UsageConvention | null;
+  cost_source?: CostSource | null;
 }
 export interface ModelRequest {
   model: string;
+  // Plain strings, or prompt parts whose cache breakpoints a capable route renders.
   messages: {
     role: "user" | "assistant";
-    content: string;
+    content: Content;
     images?: { data: string; media_type: "image/png"; token_bound: number }[];
   }[];
-  system: string;
+  system: Content;
   max_tokens: number;
   signal?: AbortSignal;
+  // Prompt-cache hints (design D9): enabled hint classes, the OpenAI cache key,
+  // and whether the last message is a conversation tail worth marking.
+  // `first`: the first message is the conversation's reusable context.
+  cache?: { classes: string[]; key?: string; tail?: boolean; first?: boolean };
+  // The review's partition values, replaced in the reply before it is returned.
+  redact?: string[];
 }
 export interface ModelResponse {
   content: string;
+  // Total input, cache reads and writes included.
   input_tokens: number;
   output_tokens: number;
   cost_usd: number | null;
+  cache_read_input_tokens?: number | null;
+  cache_write_input_tokens?: number | null;
+  usage_convention?: UsageConvention | null;
+  cost_source?: CostSource | null;
+  // Set by `converse` for the model-call record: layer hashes and sizes of the
+  // request (never its text), and a compaction checkpoint made before it.
+  layers?: { layer: string; sha256: string; bytes: number }[];
+  compaction?: { turn: number; elided: number };
 }
 export interface Gateway {
   complete(request: ModelRequest): Promise<ModelResponse>;
@@ -423,6 +456,9 @@ export interface Env {
   // { vendor, family, model } or an object of such lists by repository ("*" fallback).
   COUNCIL_VENDORS?: string;
   MODEL_PRICES?: string;
+  // Prompt-cache hint classes and layout features (design D15).
+  PROMPT_CACHE?: string;
+  PROMPT_LAYOUT?: string;
   // GitHub App (PR mode); without them the webhook route returns 404.
   GITHUB_APP_ID?: string;
   GITHUB_APP_PRIVATE_KEY?: string;

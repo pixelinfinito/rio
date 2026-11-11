@@ -7,7 +7,7 @@ import { beforeAll, it, expect, vi } from "vitest";
 import { app } from "../src/index";
 import { Store } from "../src/storage";
 import { finishJob } from "../src/jobs";
-import { hash, validateHypotheses } from "../src/validation";
+import { hash, validateHypotheses, validateReport } from "../src/validation";
 import { allMigrations, hypothesis, snapshot, submission } from "./fixtures";
 import { storeSnapshot, uploadSnapshot } from "./snapshots";
 import type { Env } from "../src/types";
@@ -133,6 +133,39 @@ it.each([false, true])(
         "none",
       ]);
       expect(report.agent_audit.verification_usage.input_tokens).toBe(480);
+      // The prompt-cache audit: every phase counted; no provider reported cache
+      // fields, so the totals and the ratio stay null rather than zero.
+      const cache = report.agent_audit.prompt_cache;
+      expect(cache.phases["verify-blind"].calls).toBe(3);
+      expect(cache.phases["verify-blind"].cache_read_input_tokens).toBeNull();
+      expect(cache.phases["verify-blind"].read_ratio).toBeNull();
+      expect(() => validateReport(report)).not.toThrow();
+      // The tenant partition reaches every request before repository data, one
+      // value per provider, and its secret appears in no stored artifact.
+      const partitioned = requests.map((r) =>
+        /<review_partition id="([0-9a-f]{32})"\/>/.exec(
+          JSON.stringify(r.messages.map((m: any) => m.content)).replaceAll('\\"', '"'),
+        ),
+      );
+      expect(partitioned.every(Boolean)).toBe(true);
+      const tenantSecret = (
+        await runtime.DB.prepare(
+          "SELECT secret FROM prompt_partitions WHERE tenant=(SELECT tenant FROM reviews WHERE id=?)",
+        )
+          .bind(id)
+          .first<{ secret: string }>()
+      )!.secret;
+      const stored = await runtime.ARTIFACTS.list({ prefix: `reviews/${id}/` });
+      expect(stored.objects.length).toBeGreaterThan(0);
+      for (const object of stored.objects) {
+        const text = await (await runtime.ARTIFACTS.get(object.key))!.text();
+        expect(text, object.key).not.toContain(tenantSecret);
+        // Model-call records carry layer hashes and sizes, not prompt text.
+        if (object.key.includes("/models/")) {
+          expect(JSON.parse(text).layers.length, object.key).toBeGreaterThan(1);
+          expect(text, object.key).not.toContain("repository_data");
+        }
+      }
       expect(requests).toHaveLength(7);
       // Progress for the live screen: each agent starts and finishes, then
       // verification counts the hypotheses it checked.
