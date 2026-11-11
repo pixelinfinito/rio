@@ -1,0 +1,40 @@
+ ▃▅▇▇▇▅▃▃▁▁▁▃ rio  feature/parser-guards → origin/main · graph                      graph · 41 nodes · 63 edges  2 hops 
+ Impact graph   head  base  delta   hops 2 · all kinds          41/2000 · complete │                                    
+───────────────────────────────────────────────────────────────────────────────────│ SELECTED NODE                      
+ HOP 0 changed                 HOP 1 dependents              HOP 2 transitive      │ ƒ parseHeader                      
+                               ┌──────────────────┐          ┌──────────────────┐  │ function · head · seed · hop 0     
+                       ┌─calls▶│ ƒ handleRequest  │──calls──▶│ ƒ createServer   │  │                                    
+                       │       │ router.ts:54     │          │ server.ts:10     │  │ path   src/parser/header.ts:38-46  
+                       │       └──────────────────┘          └──────────────────┘  │ delta  ~ changed a3f9 → 7c21       
+                       │                                                           │ edges  4 in · 1 out                
+                       │       ┌──────────────────┐          ┌──────────────────┐  │                                    
+                       ├─calls▶│ ƒ acceptUpload  ▲│──calls──▶│ ƒ uploadRoute    │  │ DEPENDENTS · HOP 1                 
+ ┏━━━━━━━━━━━━━━━━━━┓  │       │ upload.ts:21     │          │ routes/upload.ts:7  │ ← calls  handleRequest        res  
+ ┃ ƒ parseHeader  ~●┃──┤       └──────────────────┘          └──────────────────┘  │ ← calls  acceptUpload         res  
+ ┃ header.ts:38     ┃  │                                                           │ ← calls  Proxy.forward        res  
+ ┗━━━━━━━━━━━━━━━━━━┛  │       ┌──────────────────┐          ┌──────────────────┐  │ ← tests  parser.spec          res  
+   │                   ├─calls▶│ ◇ Proxy.forward  │┄┄refs┄┄┄▶│ ? legacy.js      │  │                                    
+   │                   │       │ proxy.ts:88      │          │ plugins · text   │  │ DEPENDS ON                         
+   │                   │       └──────────────────┘          └──────────────────┘  │ → calls  splitFields          res  
+   │ calls             │                                                           │                                    
+   │                   │       ┌──────────────────┐                                │ FINDINGS                           
+   │                   └─tests▶│ ◎ parser.spec    │                                │ ▌ ● 8c1e null deref          FAIL  
+   │                           │ parser.spec.ts   │                                │                                    
+   │                           └──────────────────┘                                │ BLAST RADIUS                       
+   ▼                                                                               │ ▲ acceptUpload has no test         
+ ┌──────────────────┐          ┌──────────────────┐          ┌──────────────────┐  │   path (1 of 3 callers)            
+ │ ƒ splitFields   ~│───calls─▶│ ƒ parseBody      │──tests──▶│ ◎ body.spec      │  │ ? 1 probable edge (text match)     
+ │ header.ts:12     │          │ body.ts:30       │          │ body.spec.ts     │  │   plugins/legacy.js                
+ └──────────────────┘          └──────────────────┘          └──────────────────┘  │ ✓ parser.spec covers it            
+                                                                                   │                                    
+                                                             +30 more · ⏎ expand   │                                    
+                                                                                   │                                    
+                                                                                   │                                    
+                                                                                   │                                    
+                                                                                   │                                    
+                                                                                   │                                    
+───────────────────────────────────────────────────────────────────────────────────│                                    
+ ƒ fn  ◇ method  ▣ class  ◎ test  ▤ file                                           │                                    
+ ━ selected  ─ resolved  ┄ probable   ~ changed  ● finding  ▲ untested             │ g finding  o open  b base          
+                                                                                   │                                    
+ ←→ hop  ↑↓ node  ⏎ focus  +/- hops  v head/base/delta  esc back                                                        

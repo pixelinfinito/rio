@@ -1,0 +1,40 @@
+ ▃▅▇▇▇▅▃▃▁▁▁▃  rio  findings · registry · pixelinfinito/rio                      1 regression  6 remembered  endpoint ✓ 
+                      │                                                         │                                       
+ STATUS               │ Findings 41   rio findings --status all                 │ 77ab null deref in getCached          
+ All              41  │ id   status      rule                path              l│ ▲ regression  lib/cache.ts:88         
+ ● open            9  │─────────────────────────────────────────────────────────│ symbol getCached()  changed           
+▌▲ regression      1  │ a7f3 ● open      authz/owner-check   api/orders.ts     #│───────────────────────────────────────
+ ✓ fixed          18  │ 8c1e ● open      ts/null-deref       parser/header.ts  #│ TIMELINE                              
+ ◆ dismissed      13  │ 51fd ● open      unhandled-reject    parser/body.ts    #│ #128 r1   ● first seen        open    
+   6 remembered       │▌77ab ▲ regressionts/null-deref       lib/cache.ts      #│           │                           
+                      │ 6d2c ◆ intention.legacy-endpoint     api/legacy.ts     #│ #128 r2   ● author: fixed     @ana    
+ REASONS              │ 2e90 ◆ style     ui/spacing-scale    src/legacy/grid   #│           │                           
+ fixed        4       │ 41c7 ◆ style     ui/spacing-scale    src/legacy/form   #│ #131 r1   ● verified fixed    gone    
+ wrong        3       │ 9bd2 ◆ irrelevantui/spacing-scale    src/legacy/nav    #│           │                           
+ intentional  3       │ b13c ◆ wrong     sql/concat          parser/util.ts    #│ #142 r2   ● seen again        head    
+ irrelevant   1       │ 3a10 ✓ fixed     ts/unused-await     api/cart.ts       #│             labelled regression,      
+ style        2       │ e81f ✓ fixed     lint/no-floating    worker/job.ts     #│             not new                   
+                      │ 0c55 ✓ fixed     coverage/diff       lib/money.ts      #│                                       
+ SINCE                │ ⋯ 29 more                                               │ WHY IT CAME BACK                      
+ 90 days              │                                                         │ #142 removed the guard added          
+                      │─────────────────────────────────────────────────────────│ in #131 (cache.ts:86)                 
+ RESPONSE RATIO       │ ◆ remembered 6 · left out of later reviews              │                                       
+ 0.62 authors answer  │   while the enclosing symbol is unchanged               │ ANSWER IT                             
+      62 % of posted  │   rio review --show-remembered lists them               │ d dismiss with a reason               
+                      │                                                         │ rio feedback 77ab --dismiss           
+ KEY                  │ ◆ wrong is never remembered:                            │   fixed|wrong|intentional|            
+ github.com/          │   a recurrence is reported again with a                 │   irrelevant|style                    
+ pixelinfinito/rio    │   history line naming the earlier answer                │ a dismissal never changes posture,    
+ origin, normalized   │                                                         │ budgets, rules or suppressions        
+                      │ 3 style dismissals of ui/spacing-scale under            │                                       
+                      │ src/legacy/** → proposal sp-3f2a  S                     │                                       
+                      │                                                         │                                       
+                      │                                                         │                                       
+                      │                                                         │                                       
+                      │                                                         │                                       
+                      │                                                         │                                       
+                      │                                                         │                                       
+                      │                                                         │                                       
+                      │                                                         │                                       
+ 41 findings across 9 PRs and 3 branches · registry lives on the endpoint · exits 2 without one                         
+ ↑↓ move  f status  r rule  ⏎ timeline  d dismiss…   S proposals  j json  esc back                                      

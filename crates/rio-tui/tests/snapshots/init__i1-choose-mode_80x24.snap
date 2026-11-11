@@ -1,0 +1,28 @@
+---
+source: crates/rio-tui/tests/init.rs
+expression: "common::lines(&buf)"
+---
+ ▃▅▇▇▇▅▃▃▁▁▁▃ rio  rio init · ~/.config/rio                  ● setup  rio 0.2.0 
+                                                                                
+  Set up rio                                                                    
+  choose where reviews run · change later with rio init or rio deploy           
+  nothing is written to the repository                                          
+────────────────────────────────────────────────│───────────────────────────────
+  HOW SHOULD RIO RUN REVIEWS?                   │ THIS MACHINE                  
+                                                │                               
+▌ (•) Deploy to my Cloudflare acc… recommended  │ ✓ cf 1.4 installed            
+▌     Worker · Workflows · D1 · R2 · Queues ·…  │ ✓ cf logged in · profile defa…
+▌     account. Agents, blind verifier, isolat…  │ ✓ docker daemon running       
+                                                │ ✓ OS keychain unlocked        
+  ( ) Connect an existing endpoint              │ · CLOUDFLARE_API_TOKEN not set
+      A teammate already deployed rio: paste …  │ · OPENROUTER_API_KEY not set  
+      rio init --endpoint URL --token-stdin     │   → key will be asked, echo o…
+                                                │                               
+  ( ) Local only                                │ EXISTING CONFIG               
+      Deterministic checks and the graph on t…  │ ~/.config/rio/config.toml     
+      Agents, triage and verify are deferred …  │ no deployment yet             
+                                                │                               
+                                                │ PRIVACY                       
+   ⏎ continue     p dry-run plan (no login, no… │                               
+                                                │                               
+ ↑↓ mode  ⏎ continue  p dry run  ? help  q quit

@@ -1,0 +1,482 @@
+{
+  "non_ascii": {
+    "§": {
+      "codepoint": "U+00A7",
+      "east_asian_width": "A",
+      "screens": 2
+    },
+    "·": {
+      "codepoint": "U+00B7",
+      "east_asian_width": "A",
+      "screens": 24
+    },
+    "×": {
+      "codepoint": "U+00D7",
+      "east_asian_width": "A",
+      "screens": 4
+    },
+    "ƒ": {
+      "codepoint": "U+0192",
+      "east_asian_width": "N",
+      "screens": 1
+    },
+    "Δ": {
+      "codepoint": "U+0394",
+      "east_asian_width": "A",
+      "screens": 1
+    },
+    "–": {
+      "codepoint": "U+2013",
+      "east_asian_width": "A",
+      "screens": 6
+    },
+    "—": {
+      "codepoint": "U+2014",
+      "east_asian_width": "A",
+      "screens": 4
+    },
+    "•": {
+      "codepoint": "U+2022",
+      "east_asian_width": "A",
+      "screens": 8
+    },
+    "…": {
+      "codepoint": "U+2026",
+      "east_asian_width": "A",
+      "screens": 14
+    },
+    "€": {
+      "codepoint": "U+20AC",
+      "east_asian_width": "A",
+      "screens": 2
+    },
+    "←": {
+      "codepoint": "U+2190",
+      "east_asian_width": "A",
+      "screens": 6
+    },
+    "↑": {
+      "codepoint": "U+2191",
+      "east_asian_width": "A",
+      "screens": 19
+    },
+    "→": {
+      "codepoint": "U+2192",
+      "east_asian_width": "A",
+      "screens": 21
+    },
+    "↓": {
+      "codepoint": "U+2193",
+      "east_asian_width": "A",
+      "screens": 19
+    },
+    "↳": {
+      "codepoint": "U+21B3",
+      "east_asian_width": "N",
+      "screens": 2
+    },
+    "↺": {
+      "codepoint": "U+21BA",
+      "east_asian_width": "N",
+      "screens": 3
+    },
+    "−": {
+      "codepoint": "U+2212",
+      "east_asian_width": "N",
+      "screens": 2
+    },
+    "∩": {
+      "codepoint": "U+2229",
+      "east_asian_width": "A",
+      "screens": 1
+    },
+    "⋯": {
+      "codepoint": "U+22EF",
+      "east_asian_width": "N",
+      "screens": 2
+    },
+    "⏎": {
+      "codepoint": "U+23CE",
+      "east_asian_width": "N",
+      "screens": 17
+    },
+    "①": {
+      "codepoint": "U+2460",
+      "east_asian_width": "A",
+      "screens": 1
+    },
+    "②": {
+      "codepoint": "U+2461",
+      "east_asian_width": "A",
+      "screens": 1
+    },
+    "③": {
+      "codepoint": "U+2462",
+      "east_asian_width": "A",
+      "screens": 1
+    },
+    "④": {
+      "codepoint": "U+2463",
+      "east_asian_width": "A",
+      "screens": 1
+    },
+    "─": {
+      "codepoint": "U+2500",
+      "east_asian_width": "A",
+      "screens": 20
+    },
+    "━": {
+      "codepoint": "U+2501",
+      "east_asian_width": "A",
+      "screens": 2
+    },
+    "│": {
+      "codepoint": "U+2502",
+      "east_asian_width": "A",
+      "screens": 19
+    },
+    "┃": {
+      "codepoint": "U+2503",
+      "east_asian_width": "A",
+      "screens": 2
+    },
+    "┄": {
+      "codepoint": "U+2504",
+      "east_asian_width": "A",
+      "screens": 1
+    },
+    "┌": {
+      "codepoint": "U+250C",
+      "east_asian_width": "A",
+      "screens": 7
+    },
+    "┏": {
+      "codepoint": "U+250F",
+      "east_asian_width": "A",
+      "screens": 1
+    },
+    "┐": {
+      "codepoint": "U+2510",
+      "east_asian_width": "A",
+      "screens": 6
+    },
+    "┓": {
+      "codepoint": "U+2513",
+      "east_asian_width": "A",
+      "screens": 1
+    },
+    "└": {
+      "codepoint": "U+2514",
+      "east_asian_width": "A",
+      "screens": 7
+    },
+    "┗": {
+      "codepoint": "U+2517",
+      "east_asian_width": "A",
+      "screens": 1
+    },
+    "┘": {
+      "codepoint": "U+2518",
+      "east_asian_width": "A",
+      "screens": 7
+    },
+    "┛": {
+      "codepoint": "U+251B",
+      "east_asian_width": "A",
+      "screens": 1
+    },
+    "├": {
+      "codepoint": "U+251C",
+      "east_asian_width": "A",
+      "screens": 1
+    },
+    "┤": {
+      "codepoint": "U+2524",
+      "east_asian_width": "A",
+      "screens": 1
+    },
+    "═": {
+      "codepoint": "U+2550",
+      "east_asian_width": "A",
+      "screens": 2
+    },
+    "║": {
+      "codepoint": "U+2551",
+      "east_asian_width": "A",
+      "screens": 2
+    },
+    "╔": {
+      "codepoint": "U+2554",
+      "east_asian_width": "A",
+      "screens": 2
+    },
+    "╗": {
+      "codepoint": "U+2557",
+      "east_asian_width": "A",
+      "screens": 2
+    },
+    "╚": {
+      "codepoint": "U+255A",
+      "east_asian_width": "A",
+      "screens": 2
+    },
+    "╝": {
+      "codepoint": "U+255D",
+      "east_asian_width": "A",
+      "screens": 2
+    },
+    "╭": {
+      "codepoint": "U+256D",
+      "east_asian_width": "A",
+      "screens": 1
+    },
+    "╮": {
+      "codepoint": "U+256E",
+      "east_asian_width": "A",
+      "screens": 1
+    },
+    "╯": {
+      "codepoint": "U+256F",
+      "east_asian_width": "A",
+      "screens": 1
+    },
+    "╰": {
+      "codepoint": "U+2570",
+      "east_asian_width": "A",
+      "screens": 1
+    },
+    "▁": {
+      "codepoint": "U+2581",
+      "east_asian_width": "A",
+      "screens": 23
+    },
+    "▂": {
+      "codepoint": "U+2582",
+      "east_asian_width": "A",
+      "screens": 1
+    },
+    "▃": {
+      "codepoint": "U+2583",
+      "east_asian_width": "A",
+      "screens": 23
+    },
+    "▄": {
+      "codepoint": "U+2584",
+      "east_asian_width": "A",
+      "screens": 1
+    },
+    "▅": {
+      "codepoint": "U+2585",
+      "east_asian_width": "A",
+      "screens": 23
+    },
+    "▆": {
+      "codepoint": "U+2586",
+      "east_asian_width": "A",
+      "screens": 1
+    },
+    "▇": {
+      "codepoint": "U+2587",
+      "east_asian_width": "A",
+      "screens": 23
+    },
+    "█": {
+      "codepoint": "U+2588",
+      "east_asian_width": "A",
+      "screens": 12
+    },
+    "▌": {
+      "codepoint": "U+258C",
+      "east_asian_width": "A",
+      "screens": 21
+    },
+    "▏": {
+      "codepoint": "U+258F",
+      "east_asian_width": "A",
+      "screens": 4
+    },
+    "░": {
+      "codepoint": "U+2591",
+      "east_asian_width": "N",
+      "screens": 5
+    },
+    "■": {
+      "codepoint": "U+25A0",
+      "east_asian_width": "A",
+      "screens": 1
+    },
+    "▣": {
+      "codepoint": "U+25A3",
+      "east_asian_width": "A",
+      "screens": 4
+    },
+    "▤": {
+      "codepoint": "U+25A4",
+      "east_asian_width": "A",
+      "screens": 1
+    },
+    "▮": {
+      "codepoint": "U+25AE",
+      "east_asian_width": "N",
+      "screens": 1
+    },
+    "▲": {
+      "codepoint": "U+25B2",
+      "east_asian_width": "A",
+      "screens": 7
+    },
+    "▶": {
+      "codepoint": "U+25B6",
+      "east_asian_width": "A",
+      "screens": 2
+    },
+    "▸": {
+      "codepoint": "U+25B8",
+      "east_asian_width": "N",
+      "screens": 1
+    },
+    "▼": {
+      "codepoint": "U+25BC",
+      "east_asian_width": "A",
+      "screens": 1
+    },
+    "▾": {
+      "codepoint": "U+25BE",
+      "east_asian_width": "N",
+      "screens": 2
+    },
+    "◂": {
+      "codepoint": "U+25C2",
+      "east_asian_width": "N",
+      "screens": 1
+    },
+    "◆": {
+      "codepoint": "U+25C6",
+      "east_asian_width": "A",
+      "screens": 6
+    },
+    "◇": {
+      "codepoint": "U+25C7",
+      "east_asian_width": "A",
+      "screens": 2
+    },
+    "○": {
+      "codepoint": "U+25CB",
+      "east_asian_width": "A",
+      "screens": 7
+    },
+    "◎": {
+      "codepoint": "U+25CE",
+      "east_asian_width": "A",
+      "screens": 1
+    },
+    "●": {
+      "codepoint": "U+25CF",
+      "east_asian_width": "A",
+      "screens": 12
+    },
+    "◐": {
+      "codepoint": "U+25D0",
+      "east_asian_width": "A",
+      "screens": 6
+    },
+    "✓": {
+      "codepoint": "U+2713",
+      "east_asian_width": "N",
+      "screens": 21
+    },
+    "✕": {
+      "codepoint": "U+2715",
+      "east_asian_width": "N",
+      "screens": 12
+    },
+    "⠏": {
+      "codepoint": "U+280F",
+      "east_asian_width": "N",
+      "screens": 1
+    },
+    "⠦": {
+      "codepoint": "U+2826",
+      "east_asian_width": "N",
+      "screens": 1
+    },
+    "⠧": {
+      "codepoint": "U+2827",
+      "east_asian_width": "N",
+      "screens": 1
+    },
+    "⠼": {
+      "codepoint": "U+283C",
+      "east_asian_width": "N",
+      "screens": 1
+    }
+  },
+  "ambiguous_width": [
+    "§",
+    "·",
+    "×",
+    "Δ",
+    "–",
+    "—",
+    "•",
+    "…",
+    "€",
+    "←",
+    "↑",
+    "→",
+    "↓",
+    "∩",
+    "①",
+    "②",
+    "③",
+    "④",
+    "─",
+    "━",
+    "│",
+    "┃",
+    "┄",
+    "┌",
+    "┏",
+    "┐",
+    "┓",
+    "└",
+    "┗",
+    "┘",
+    "┛",
+    "├",
+    "┤",
+    "═",
+    "║",
+    "╔",
+    "╗",
+    "╚",
+    "╝",
+    "╭",
+    "╮",
+    "╯",
+    "╰",
+    "▁",
+    "▂",
+    "▃",
+    "▄",
+    "▅",
+    "▆",
+    "▇",
+    "█",
+    "▌",
+    "▏",
+    "■",
+    "▣",
+    "▤",
+    "▲",
+    "▶",
+    "▼",
+    "◆",
+    "◇",
+    "○",
+    "◎",
+    "●",
+    "◐"
+  ],
+  "wide": []
+}

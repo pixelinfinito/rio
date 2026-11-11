@@ -1,0 +1,12 @@
+[
+  {
+    "row": 14,
+    "text": "  api/  typecheck   ✓ ║   ( ) SARIF      SARIF 2.1.0 · for code scanning uploads                 ║                      ",
+    "reason": "the spec offers md, json and sarif; the design shows a \"Both\" option that is not a format"
+  },
+  {
+    "row": 29,
+    "text": "                      ║   - `3a90c2d1` TS2322 string → number — src/a.ts:12                      ║                      ",
+    "reason": "8-character finding id; spec order: severity, evidence, then path and line (the design lists header.ts before src/a.ts)"
+  }
+]

@@ -602,3 +602,89 @@ fn council_block_is_optional_typed_and_never_numeric() {
     report["council"]["total"]["confidence"] = json!(1);
     assert!(!report_validator.is_valid(&report));
 }
+
+#[test]
+fn machine_applicable_fix_is_optional_typed_and_strict() {
+    let finding_validator = jsonschema::validator_for(&schema("finding")).unwrap();
+    let report_validator = jsonschema::validator_for(&schema("report")).unwrap();
+    let plain: Value = serde_json::from_str(include_str!("fixtures/finding.json")).unwrap();
+    assert!(
+        finding_validator.is_valid(&plain),
+        "historical findings carry no fix"
+    );
+    let typed: rio_core::Finding = serde_json::from_value(plain.clone()).unwrap();
+    assert!(typed.fix.is_none());
+
+    let mut fixed = plain.clone();
+    fixed["fix"] = json!({"line_start": 42, "line_end": 42,
+        "replacement": "  const [type, params] = (ctype ?? DEFAULT_CTYPE).split(';')"});
+    assert!(finding_validator.is_valid(&fixed));
+    let typed: rio_core::Finding = serde_json::from_value(fixed.clone()).unwrap();
+    assert!(typed.fix.as_ref().unwrap().is_valid());
+    assert_eq!(serde_json::to_value(&typed).unwrap(), fixed);
+
+    let mut report: Value = serde_json::from_str(include_str!("fixtures/complete.json")).unwrap();
+    report["findings"] = json!([fixed]);
+    assert!(report_validator.is_valid(&report));
+
+    for bad in [
+        json!({"line_start": 0, "line_end": 1, "replacement": ""}),
+        json!({"line_start": 1, "replacement": ""}),
+        json!({"line_start": 1, "line_end": 1, "replacement": "", "path": "x"}),
+    ] {
+        let mut malformed = plain.clone();
+        malformed["fix"] = bad;
+        assert!(!finding_validator.is_valid(&malformed));
+    }
+    // The schema cannot order two fields; the verifier drops inverted ranges.
+    let inverted: rio_core::Fix =
+        serde_json::from_value(json!({"line_start": 50, "line_end": 42, "replacement": ""}))
+            .unwrap();
+    assert!(!inverted.is_valid());
+
+    assert_eq!(
+        schema("hypothesis")["properties"]["fix"],
+        schema("finding")["properties"]["fix"],
+        "agents emit the same fix shape the finding carries"
+    );
+}
+
+#[test]
+fn council_member_detail_and_security_trace_are_optional_typed_and_strict() {
+    let finding_validator = jsonschema::validator_for(&schema("finding")).unwrap();
+    let plain: Value = serde_json::from_str(include_str!("fixtures/finding.json")).unwrap();
+    let mut councilled = plain.clone();
+    councilled["council"] = council_block();
+    councilled["council"]["members"][0]["family"] = json!("claude");
+    councilled["council"]["members"][0]["rounds"] =
+        json!([{"round": 1, "real": "no"}, {"round": 2, "real": "yes", "changed": true}]);
+    assert!(finding_validator.is_valid(&councilled));
+    let typed: rio_core::Finding = serde_json::from_value(councilled.clone()).unwrap();
+    let member = &typed.council.as_ref().unwrap().members[0];
+    assert_eq!(member.family.as_deref(), Some("claude"));
+    assert!(member.rounds[1].changed);
+    assert_eq!(serde_json::to_value(&typed).unwrap(), councilled);
+
+    let mut both = councilled.clone();
+    both["council"]["members"][0]["rounds"] =
+        json!([{"round": 1, "real": "no", "cause": "timeout"}]);
+    assert!(
+        !finding_validator.is_valid(&both),
+        "an answer or an abstention, not both"
+    );
+    let mut numeric = councilled.clone();
+    numeric["council"]["members"][0]["rounds"] = json!([{"round": 1, "confidence": 0.9}]);
+    assert!(!finding_validator.is_valid(&numeric));
+
+    let mut traced = plain.clone();
+    traced["trace"] = json!({"catalog_item": "A01", "change": "removed", "steps": [
+        {"role": "source", "path": "api/orders.ts", "line_start": 52},
+        {"role": "step", "path": "api/orders.ts", "line_start": 53, "missing": true},
+        {"role": "sink", "path": "api/orders.ts", "line_start": 57}]});
+    assert!(finding_validator.is_valid(&traced));
+    let typed: rio_core::Finding = serde_json::from_value(traced.clone()).unwrap();
+    assert!(typed.trace.as_ref().unwrap().steps[1].missing);
+    assert_eq!(serde_json::to_value(&typed).unwrap(), traced);
+    traced["trace"]["change"] = json!("added");
+    assert!(!finding_validator.is_valid(&traced));
+}

@@ -50,7 +50,7 @@ import { renderSarif, utc } from "./sarif";
 import { publicRecord } from "./history";
 import { publicProposal } from "./proposals";
 import { createReview } from "./reviews";
-import { recordFeedback } from "./feedback";
+import { DISPLAY_ID_LEN, recordFeedback, resolvePrefix } from "./feedback";
 import { dismissRecommendation } from "./qa-recommendation-history";
 import { APP_TENANT, handleGitHubWebhook, installationFor } from "./webhooks";
 import {
@@ -65,7 +65,7 @@ import {
   submitPrepared,
 } from "./pulls";
 import { handleCommand } from "./commands";
-import { publishFinished } from "./publish";
+import { previewFinished, publishFinished } from "./publish";
 import { redact } from "./redaction";
 import {
   InstallationToken,
@@ -355,6 +355,12 @@ app.post("/v1/reviews/:id/publish", async (c) => {
     row.status === "complete" || row.status === "partial",
     "review is not finished",
   );
+  // A dry run renders what consent would post and records no consent.
+  if (c.req.query("dry_run") === "1") {
+    const preview = await previewFinished(c.env, row.id);
+    if (!preview) return c.json({ error: "review has no publication" }, 404);
+    return c.json({ id: row.id, dry_run: true, ...preview });
+  }
   await c.env.DB.prepare("UPDATE pull_requests SET consent=1 WHERE review_id=?")
     .bind(row.id)
     .run();
@@ -728,8 +734,15 @@ app.post("/v1/qa/recommendations/:id/feedback", async (c) => {
 app.post("/v1/findings/:id/feedback", async (c) => {
   const tenant = await authenticate(c.req.raw, c.env, "reviews:write"),
     value = await body(c.req.raw, 64 * 1024),
-    id = c.req.param("id");
-  invariant(/^[a-f0-9]{64}$/.test(id), "invalid finding id");
+    given = c.req.param("id").toLowerCase();
+  invariant(/^[a-f0-9]{1,64}$/.test(given), "invalid finding id");
+  if (given.length < DISPLAY_ID_LEN)
+    return c.json(
+      {
+        error: `finding ids need at least ${DISPLAY_ID_LEN} characters`,
+      },
+      400,
+    );
   invariant(
     value &&
       typeof value === "object" &&
@@ -756,6 +769,32 @@ app.post("/v1/findings/:id/feedback", async (c) => {
     "invalid actor",
   );
   if (value.lineage !== undefined) validateLineageRef(value.lineage, false);
+  // A full identity is answered as given; a prefix must match one finding.
+  let id = given;
+  if (given.length < 64) {
+    const match = await resolvePrefix(
+      c.env,
+      tenant,
+      given,
+      value.lineage ? lineageId(tenant, value.lineage) : undefined,
+    );
+    if (match.kind === "ambiguous") {
+      // The short error names the candidates for `rio feedback`; the full
+      // identities are in `candidates`.
+      const shown = match.candidates.slice(0, 5).map((c) => c.slice(0, 16));
+      const more = match.candidates.length - shown.length;
+      return c.json(
+        {
+          error: `finding id ${given} is ambiguous; it matches ${shown.join(", ")}${more > 0 ? ` and ${more} more` : ""}`,
+          candidates: match.candidates,
+        },
+        409,
+      );
+    }
+    if (match.kind !== "found")
+      return c.json({ error: "finding not found" }, 404);
+    id = match.identity;
+  }
   const response = await recordFeedback(c.env, tenant, id, value);
   if (!response) return c.json({ error: "finding not found" }, 404);
   return c.json({ id, status: "dismissed", author_response: response });

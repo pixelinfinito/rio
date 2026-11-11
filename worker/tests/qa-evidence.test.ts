@@ -517,6 +517,14 @@ it("report downloads refresh only owned evidence links and keep expired cached a
     (row: any) => row.id === receipt.id,
   );
   expect(owned.link).not.toContain("untrusted");
+  // Where it belongs, so a client can show a step's screenshot.
+  expect(owned).toMatchObject({
+    journey: expect.any(String),
+    cell: {
+      viewport: expect.any(String),
+      color_scheme: expect.any(String),
+    },
+  });
   expect((await app.request(owned.link, {}, runtime)).status).toBe(200);
   expect(
     fresh.qa.evidence.artifacts.find((row: any) => row.id === "foreign"),

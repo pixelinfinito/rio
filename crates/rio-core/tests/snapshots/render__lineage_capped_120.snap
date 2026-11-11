@@ -19,13 +19,13 @@ below.
 
 Findings
 2 finding(s).
-  typecheck/tsc/TS2322 [worsened; error; static_proven] FAIL (already posted)
+  aaaaaaaa typecheck/tsc/TS2322 [worsened; error; static_proven] FAIL (already posted)
     src/a.ts:8 (a.run) [pre-existing]
     src/a.ts:12 (a.run) [new]
     Type 'string' is not assignable to type 'number'.
     Lineage: round 4; answered intentional by octocat (documented *behavior*); first posted in snap-1
     Trigger: Assigning a string to a number
-  typecheck/tsc/TS2322 [new; error; static_proven] FAIL
+  bbbbbbbb typecheck/tsc/TS2322 [new; error; static_proven] FAIL
     src/a.ts:8 (a.run) [pre-existing]
     src/a.ts:12 (a.run) [new]
     Missing guard on <input>

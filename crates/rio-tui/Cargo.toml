@@ -1,0 +1,33 @@
+[package]
+name = "rio-tui"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+rio-core = { path = "../rio-core" }
+ratatui.workspace = true
+ratatui-image.workspace = true
+image.workspace = true
+unicode-width.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+
+[features]
+# Each flow's screens; all on by default. Separate features let the flows be
+# built and tested independently.
+default = ["review", "guide", "qa", "init", "team"]
+review = []
+guide = []
+qa = []
+init = []
+team = []
+
+[dev-dependencies]
+insta.workspace = true
+tempfile.workspace = true

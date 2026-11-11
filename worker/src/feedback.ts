@@ -1,5 +1,54 @@
-import type { AuthorResponse, Env, ResponseReason } from "./types";
+import type { AuthorResponse, Env, Finding, ResponseReason } from "./types";
 import { lineageId } from "./lineage";
+
+/** Characters of an identity shown to people and the shortest prefix accepted. */
+export const DISPLAY_ID_LEN = 8;
+
+export type PrefixMatch =
+  | { kind: "found"; identity: string; finding?: Finding }
+  | { kind: "ambiguous"; candidates: string[] }
+  | { kind: "short" }
+  | { kind: "none" };
+
+/**
+ * Resolves a finding id given by a person: the full identity or a prefix of
+ * at least eight characters matching exactly one finding. With a lineage only
+ * its current generation's posted findings count (`/rio dismiss`); without
+ * one, the tenant's posted findings and its registry (`rio feedback` and
+ * `POST /v1/findings/{id}/feedback`). Shared so every entry point resolves
+ * the same id the same way.
+ */
+export async function resolvePrefix(
+  env: Env,
+  tenant: string,
+  prefix: string,
+  lineage?: string,
+): Promise<PrefixMatch> {
+  prefix = prefix.toLowerCase();
+  if (prefix.length < DISPLAY_ID_LEN) return { kind: "short" };
+  if (!/^[a-f0-9]{8,64}$/.test(prefix)) return { kind: "none" };
+  const rows = lineage
+    ? await env.DB.prepare(
+        "SELECT DISTINCT f.identity,f.finding_json FROM findings f JOIN lineages l ON l.id=f.lineage_id AND l.generation=f.generation WHERE f.tenant=? AND f.lineage_id=? AND f.first_posted_in IS NOT NULL AND substr(f.identity,1,?)=? LIMIT 11",
+      )
+        .bind(tenant, lineage, prefix.length, prefix)
+        .all<{ identity: string; finding_json: string | null }>()
+    : await env.DB.prepare(
+        "SELECT identity,NULL AS finding_json FROM findings WHERE tenant=? AND first_posted_in IS NOT NULL AND substr(identity,1,?)=? UNION SELECT identity,NULL AS finding_json FROM finding_history WHERE tenant=? AND substr(identity,1,?)=? LIMIT 11",
+      )
+        .bind(tenant, prefix.length, prefix, tenant, prefix.length, prefix)
+        .all<{ identity: string; finding_json: string | null }>();
+  const identities = [...new Set(rows.results.map((row) => row.identity))];
+  if (identities.length === 0) return { kind: "none" };
+  if (identities.length > 1)
+    return { kind: "ambiguous", candidates: identities.sort() };
+  const json = rows.results[0].finding_json;
+  return {
+    kind: "found",
+    identity: identities[0],
+    ...(json ? { finding: JSON.parse(json).finding } : {}),
+  };
+}
 
 /**
  * Writes an author response to a posted lineage finding, or to the

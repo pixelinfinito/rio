@@ -30,6 +30,8 @@ pub struct EndpointOutcome {
     /// Identities the lineage had posted before this review (for marking
     /// held-back findings); `None` outside lineages.
     pub posted: Option<BTreeSet<String>>,
+    /// The endpoint's id of the review (for its audit); `None` when nothing was submitted.
+    pub remote_id: Option<String>,
 }
 /// Saved tokens are bound to the configured URL; never send them elsewhere.
 pub fn client(url: &str, config_dir: &Path) -> Result<rio_client::Client> {
@@ -66,6 +68,7 @@ async fn lineage_before(
 pub async fn review(
     request: EndpointRequest<'_>,
     cancellation: CancellationToken,
+    events: Option<tokio::sync::mpsc::UnboundedSender<rio_core::ReviewEvent>>,
 ) -> Result<EndpointOutcome> {
     let EndpointRequest {
         url,
@@ -87,6 +90,7 @@ pub async fn review(
         return Ok(EndpointOutcome {
             report: Report::empty(ReportStatus::NoChanges),
             posted: None,
+            remote_id: None,
         });
     }
     let snapshot = Snapshot::from_changes(&changes);
@@ -111,6 +115,7 @@ pub async fn review(
         return Ok(EndpointOutcome {
             report: Report::empty(ReportStatus::NoChanges),
             posted: None,
+            remote_id: None,
         });
     };
     cache.reference(&format!("snapshots/{}.tar.zst", snapshot.key))?;
@@ -146,7 +151,9 @@ pub async fn review(
         "endpoint.json",
         &serde_json::to_vec(&json!({"id":remote_id,"url":url}))?,
     )?;
-    let mut report = client.wait(&remote_id, cancellation, timeout).await?;
+    let mut report = client
+        .wait_observed(&remote_id, cancellation, timeout, events.as_ref())
+        .await?;
     ensure!(
         report.review.id
             == submission["report"]["review"]["id"]
@@ -180,7 +187,11 @@ pub async fn review(
     if let Err(error) = rio_engine::prune_cache(&cache.options, None) {
         eprintln!("Warning: cache pruning failed: {error:#}");
     }
-    Ok(EndpointOutcome { report, posted })
+    Ok(EndpointOutcome {
+        report,
+        posted,
+        remote_id: Some(remote_id),
+    })
 }
 
 fn cache_qa_records(cache: &RunCache, audit: &serde_json::Value) -> Result<()> {

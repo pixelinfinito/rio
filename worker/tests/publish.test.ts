@@ -5,6 +5,7 @@ import type { Env, Finding } from "../src/types";
 import {
   findingBody,
   publishReview,
+  previewReview,
   rightLines,
   findingAnchor,
   qaEvidenceBody,
@@ -284,9 +285,9 @@ describe("publisher", () => {
     ).toBe(true);
     expect(github.issueComments).toHaveLength(1);
     const summary = github.issueComments[0].body;
-    expect(summary).toContain("Risk tier: **high** (sensitive path src/auth)");
+    expect(summary).toContain("risk **high**: sensitive path src/auth");
     expect(summary).toContain("`src/a.ts:40`");
-    expect(summary).toContain(cls.id.slice(0, 12));
+    expect(summary).toContain(cls.id.slice(0, 8));
     expect(summary).toContain(
       `https://rio.example.test/v1/reviews/${s.review}/report`,
     );
@@ -353,12 +354,8 @@ describe("publisher", () => {
         x.body.endsWith(`<!-- rio:finding:${f.id} -->`),
       )!;
     expect(byId(a).body).toContain("a now throws on empty input");
-    expect(byId(b).body).toContain(
-      `**Status: fixed in \`${s.head.slice(0, 12)}\`**`,
-    );
-    expect(byId(c).body).toContain(
-      "**Status: dismissed: irrelevant** (by maria)",
-    );
+    expect(byId(b).body).toContain(`✅ **Fixed in \`${s.head.slice(0, 7)}\`**`);
+    expect(byId(c).body).toContain("💤 **Dismissed as `irrelevant`** by maria");
     expect(github.threads.get(byId(b).id)!.resolved).toBe(true);
     expect(github.threads.get(byId(c).id)!.resolved).toBe(true);
     expect(github.threads.get(byId(a).id)!.resolved).toBe(false);
@@ -461,7 +458,7 @@ describe("publisher", () => {
     expect(github.issueComments[0].body).toContain(
       "### Not posted inline (retried next round)",
     );
-    expect(github.issueComments[0].body).toContain(bad.id.slice(0, 12));
+    expect(github.issueComments[0].body).toContain(bad.id.slice(0, 8));
     const row = await runtime.DB.prepare(
       "SELECT state,error FROM publications WHERE lineage_id=? AND identity=?",
     )
@@ -617,6 +614,83 @@ describe("publisher", () => {
     );
   });
 
+  it("previews exactly what consent would post, without writing to GitHub", async () => {
+    const s = await pull({ trigger: "cli" });
+    github.setFiles("acme/pub", s.number, [
+      { filename: "src/a.ts", lines: [3, 4, 5] },
+    ]);
+    const suggested = finding("suggested", 3, {
+      fix: { line_start: 3, line_end: 4, replacement: "a\nb" },
+    });
+    const r = report([suggested, finding("elsewhere", 40)]);
+    const input = {
+      review: s.review,
+      report: r,
+      policy: "ask" as Policy,
+      fail_on: profile.fail_on,
+      lineage: { id: s.lineage, snapshot_id: "snapshot-1" },
+      updates: [],
+      prior: [],
+    };
+    const preview = (await previewReview(runtime, input))!;
+    // Only a read-only token was minted, used for the diff, and revoked.
+    const writes = github.calls.filter(
+      (call) =>
+        !call.startsWith("GET ") &&
+        !/^POST \/app\/installations\/\d+\/access_tokens$/.test(call) &&
+        call !== "DELETE /installation/token",
+    );
+    expect(writes).toEqual([]);
+    expect(github.comments).toEqual([]);
+    expect(github.checkRuns).toEqual([]);
+    expect(preview.comments).toHaveLength(1);
+    expect(preview.comments[0]).toMatchObject({
+      id: suggested.id,
+      path: "src/a.ts",
+      line: 4,
+      start_line: 3,
+    });
+    expect(preview.comments[0].body).toContain("```suggestion\na\nb\n```");
+    expect(preview.unanchored).toEqual([finding("elsewhere", 40).id]);
+    expect(preview.summary).toContain("## 🌊 rio · 2 to fix before merge");
+    // Consent then posts the same bodies at the same lines.
+    await runtime.DB.prepare(
+      "UPDATE pull_requests SET consent=1 WHERE review_id=?",
+    )
+      .bind(s.review)
+      .run();
+    await publishReview(runtime, input);
+    expect(github.comments).toHaveLength(1);
+    expect(github.comments[0]).toMatchObject({
+      body: preview.comments[0].body,
+      line: 4,
+      start_line: 3,
+    });
+    expect(github.checkRuns[0].output.title).toBe(preview.check!.title);
+    expect(github.issueComments[0].body.split("\n")[0]).toBe(
+      preview.summary!.split("\n")[0],
+    );
+  });
+  it("previews nothing to post under publish: never", async () => {
+    const s = await pull({ trigger: "cli" });
+    const preview = await previewReview(runtime, {
+      review: s.review,
+      report: report([finding("never", 3)]),
+      policy: "never",
+      fail_on: profile.fail_on,
+      lineage: { id: s.lineage, snapshot_id: "snapshot-1" },
+      updates: [],
+      prior: [],
+    });
+    expect(preview).toMatchObject({
+      policy: "never",
+      reason: "policy_never",
+      comments: [],
+      summary: null,
+    });
+    expect(github.calls.filter((c) => !c.startsWith("GET "))).toEqual([]);
+  });
+
   it("holds a fork PR until a maintainer escalates it", async () => {
     const fork = await pull({ fork: true });
     github.setFiles("acme/pub", fork.number, [
@@ -754,7 +828,7 @@ describe("publisher", () => {
     expect(result).toMatchObject({ posted: 0, edited: 1, resolved: 1 });
     expect(github.comments).toHaveLength(1);
     expect(github.comments[0].body).toContain(
-      "**Status: dismissed: wrong** (by cole)",
+      "💤 **Dismissed as `wrong`** by cole",
     );
     expect(github.threads.get(github.comments[0].id)!.resolved).toBe(true);
   });
@@ -897,9 +971,9 @@ describe("publisher", () => {
       })),
     });
     expect(comment(dismissedLater).body).toContain(
-      "**Status: dismissed: wrong** (by cole)",
+      "💤 **Dismissed as `wrong`** by cole",
     );
-    expect(comment(humanResolved).body).toContain("**Status: fixed in");
+    expect(comment(humanResolved).body).toContain("✅ **Fixed in");
     // The person's resolution stays theirs: a recurrence does not unresolve it.
     await publish(s, report([humanResolved]));
     expect(github.threads.get(comment(humanResolved).id)!.resolved).toBe(true);
@@ -929,9 +1003,7 @@ describe("publisher", () => {
     await recorded(s, f, "fixed");
     const retried = await publish(s, report([]));
     expect(retried).toMatchObject({ edited: 1, resolved: 1, failed: 0 });
-    expect(github.comments[0].body).toContain(
-      "**Status: fixed in a later push**",
-    );
+    expect(github.comments[0].body).toContain("✅ **Fixed in a later push**");
     expect(github.threads.get(github.comments[0].id)!.resolved).toBe(true);
   });
 
@@ -1200,7 +1272,7 @@ describe("/rio commands", () => {
     });
     // The comment shows the dismissal and its thread is resolved.
     expect(github.comments.find((c) => c.id === 555)!.body).toContain(
-      "**Status: dismissed: style** (by cole)",
+      "💤 **Dismissed as `style`** by cole",
     );
     expect(github.threads.get(555)!.resolved).toBe(true);
     expect([...github.tokens.values()].every((t) => t.revoked)).toBe(true);
@@ -1265,17 +1337,19 @@ describe("QA publication", () => {
     expect(result).toMatchObject({ posted: 2, unanchored: 2, failed: 0 });
     expect(github.comments.map((c) => c.line)).toEqual([3, 3]);
     expect(github.comments[1].body).toContain("Attributed to `src/a.ts:12`");
-    expect(github.comments[1].body).toContain("mobile/light, desktop/dark");
+    // The failed cells are marked in the viewport × color scheme table.
+    expect(github.comments[1].body).toMatch(/\| light \| ❌ \*\*step \d+\*\*/);
+    expect(github.comments[1].body).toMatch(/\| dark \| .*❌ \*\*step \d+\*\*/);
     expect(github.issueComments).toHaveLength(1);
-    expect(github.issueComments[0].body).toContain("QA results");
-    expect(github.issueComments[0].body).toContain(findings[3].id.slice(0, 12));
+    expect(github.issueComments[0].body).toContain("### 🧭 QA · 1 journey");
+    expect(github.issueComments[0].body).toContain(findings[3].id.slice(0, 8));
     const first = github.issueComments[0].id;
     r.qa.journeys[0].cells[0].outcome = "passed";
     await publish(s, r);
     expect(github.comments).toHaveLength(2);
     expect(github.issueComments).toHaveLength(1);
     expect(github.issueComments[0].id).toBe(first);
-    expect(github.issueComments[0].body).toContain("mobile/light: passed");
+    expect(github.issueComments[0].body).toMatch(/\| `checkout` \| ✅ \|/);
     expect(
       github.checkRuns.filter((run) => run.name === "rio/qa"),
     ).toHaveLength(1);
@@ -1304,7 +1378,8 @@ describe("QA publication", () => {
       notes: ["QA journeys possibly stale: checkout. Run rio qa sync."],
     };
     const body = qaSummary(qa).join("\n");
-    expect(body).toContain("UX recommendations");
+    expect(body).toContain("UX suggestion");
+    expect(body).toContain("advice only, never blocks the merge");
     expect(body).toContain("Expected benefit (untested)");
     expect(body).toContain("Trade-offs:");
     expect(body).toContain("Recommendations held back: 2");
@@ -1424,7 +1499,9 @@ describe("in-progress announcement", () => {
     );
     expect(github.issueComments).toHaveLength(1);
     expect(github.issueComments[0].body).not.toContain("Rio is reviewing");
-    expect(github.issueComments[0].body).toContain("### Findings");
+    expect(github.issueComments[0].body).toContain(
+      "### 🔴 To fix before merge",
+    );
     expect(await pending(s.review)).toBeNull();
   });
 
@@ -1439,9 +1516,9 @@ describe("in-progress announcement", () => {
     const body = github.issueComments[0].body;
     expect(github.issueComments).toHaveLength(1);
     expect(body).toContain(`Rio is reviewing \`${sha("next").slice(0, 12)}\``);
-    expect(body).toContain("### Findings");
+    expect(body).toContain("### 🔴 To fix before merge");
     expect(body.indexOf("Rio is reviewing")).toBeLessThan(
-      body.indexOf("### Findings"),
+      body.indexOf("### 🔴 To fix before merge"),
     );
     await settleAnnouncement(
       runtime,

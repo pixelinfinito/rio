@@ -1,0 +1,17 @@
+---
+source: crates/rio-tui/tests/shell.rs
+expression: "common::lines(&small)"
+---
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                                                                               
+                        rio needs at least 80×24 cells                         
+                            this terminal is 79×24

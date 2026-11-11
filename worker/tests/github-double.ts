@@ -36,6 +36,8 @@ export interface Comment {
   body: string;
   path?: string;
   line?: number;
+  /** First line of a multi-line comment. */
+  start_line?: number;
   commit_id?: string;
   user: { login: string; type: string };
   html_url: string;
@@ -405,6 +407,9 @@ export class GitHubDouble {
         body: body.body,
         path: body.path,
         line: body.line,
+        ...(body.start_line !== undefined
+          ? { start_line: body.start_line }
+          : {}),
         commit_id: body.commit_id,
         user: { login: BOT, type: "Bot" },
         html_url: `https://github.com/${r[1]}/pull/${r[2]}#discussion_r${this.next}`,

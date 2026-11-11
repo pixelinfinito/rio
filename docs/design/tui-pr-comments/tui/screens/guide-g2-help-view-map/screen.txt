@@ -1,0 +1,40 @@
+ ▃▅▇▇▇▅▃▃▁▁▁▃  rio  help                                                                                       ? closes 
+                                            │                                                                           
+ EVERYWHERE                                 │ VIEW MAP                                                                  
+ ?        this help                         │                                                                           
+ :        command palette                   │ review ─⏎─▶ Live ─auto─▶ Findings ─x─▶ Summary ─q─▶ exit                  
+ tab      next pane                         │                              │ │ │ │                                      
+ 1–6      tabs in rio qa                    │                              │ │ │ └─g─▶ Impact graph                     
+ esc      back one view                     │                              │ │ └───d─▶ Lineage & feedback               
+ q        quit · offers to save             │                              │ └─────F─▶ History ─S─▶ Proposals           
+ ^C       stop, keep partial                │                              └───────⏎─▶ Finding ─c─▶ Council             
+ ^C ^C    kill tools · exit 130             │                                           │                               
+                                            │                                           └─P─▶ Publish ─y─▶ PR           
+ MOVE                                       │                                                                           
+ ↑↓ j k   items                             │ qa     ─▶ Journeys ─⏎─▶ Matrix ─⏎─▶ Cell ─4─▶ UX                          
+ ←→ h l   steps · cells                     │                    └─i─▶ init  └─s─▶ sync                                 
+ [ ]      prev/next cell                    │                                                                           
+ /        search                            │ init   ─▶ Mode ─⏎─▶ Configure ─⏎─▶ Deploy ─▶ Done                         
+                                            │                                                                           
+ ACT                                        │───────────────────────────────────────────────────────────────────────────
+ ⏎        open                              │ GLYPHS  readable without color                                            
+ d        dismiss with reason…              │ ● open      ✓ passed    ✕ failed    ◐ running   · queued                  
+ e        open in $EDITOR                   │ ▲ regress.  ◆ dismissed ○ unverif.  – skipped   ▌ cursor                  
+ o        open evidence                     │                                                                           
+ y        copy id / as issue                │ EVIDENCE  strongest first · never a percentage                            
+ x        export md · json · sarif          │ reproduced    an experiment fails on head, passes on base                 
+                                            │ static_proven a tool or probe measured it                                 
+ TEAM                                       │ plausible     verified as possible, not proven                            
+ P        publish preview                   │ refuted       never rendered as a finding                                 
+ F        finding history                   │                                                                           
+ S        suppression proposals             │ ADVICE                                                                    
+ c        council detail                    │ recommendations live in rio qa → 4 UX and never change the exit code      
+ a        vendor audit record               │                                                                           
+                                            │                                                                           
+                                            │                                                                           
+                                            │                                                                           
+                                            │                                                                           
+                                            │                                                                           
+                                            │                                                                           
+ every key here also appears in the bottom bar of the view that uses it                                                 
+  ? close  / search keys  : palette                                                                                     

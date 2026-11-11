@@ -1,0 +1,56 @@
+[
+  {
+    "row": 2,
+    "text": "  FILTER                │ Findings 7            sort: policy ▾ │ 8c1e4a9b Possible null dereference in parseHeader      ",
+    "reason": "8-character finding id"
+  },
+  {
+    "row": 4,
+    "text": "  ● new               3 │  ● 3a90c2d1 TS2322 string → nu… FAIL │                                                        ",
+    "reason": "8-character finding id; spec order: severity, evidence, then path and line (the design lists header.ts before src/a.ts); the cursor row moves with the order, so backgrounds differ",
+    "bg": false
+  },
+  {
+    "row": 5,
+    "text": "  ▲ worsened          1 │         src/a.ts:12           proven │ rule      correctness/null-deref                       ",
+    "reason": "spec order: severity, evidence, then path and line (the design lists header.ts before src/a.ts); the cursor row moves with the order, so backgrounds differ",
+    "bg": false
+  },
+  {
+    "row": 7,
+    "text": "  ○ pre-existing      2 │▌ ● 8c1e4a9b null deref in pars… FAIL │ trigger   request without content-type                 ",
+    "reason": "8-character finding id; spec order: severity, evidence, then path and line (the design lists header.ts before src/a.ts); the cursor row moves with the order, so backgrounds differ",
+    "bg": false
+  },
+  {
+    "row": 8,
+    "text": "                        │▌        header.ts:42          proven │ evidence  code:head:header.ts:n41,n42                  ",
+    "reason": "spec order: severity, evidence, then path and line (the design lists header.ts before src/a.ts); the cursor row moves with the order, so backgrounds differ",
+    "bg": false
+  },
+  {
+    "row": 10,
+    "text": "  ✓ typecheck      1.8s │  ◆ f7d26a40 token logged on re… risk │                                                        ",
+    "reason": "8-character finding id"
+  },
+  {
+    "row": 13,
+    "text": "  ✓ secrets        0.2s │  ▲ b41c7e02 coverage 81% → 64%  warn │ │ 39     const fields = splitFields(raw)             │ ",
+    "reason": "8-character finding id"
+  },
+  {
+    "row": 16,
+    "text": "  AGENTS · VERIFY       │  ● 0d6a5f13 no-floating-promis… warn │ │▌41 +   const charset = type.params.charset         │ ",
+    "reason": "8-character finding id"
+  },
+  {
+    "row": 19,
+    "text": "  ✓ performance       0 │  ● e2195b84 no test for empty … info │ │    └ type may be undefined; line 41 reads .params  │ ",
+    "reason": "8-character finding id"
+  },
+  {
+    "row": 23,
+    "text": "                        │  ○ 77ab0c35 unused import pre-exist. │ voter 1   ✓ agrees      blind: same                    ",
+    "reason": "8-character finding id"
+  }
+]

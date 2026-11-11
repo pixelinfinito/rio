@@ -1,0 +1,77 @@
+[
+  {
+    "row": 2,
+    "text": " STATUS               │ Findings 41   rio findings --status all                 │ 77ab0c3e null deref in getCached      ",
+    "reason": "8-character finding id"
+  },
+  {
+    "row": 3,
+    "text": " All              41  │ id       status      rule              path             │ ▲ regression  lib/cache.ts:88         ",
+    "reason": "8-character finding id: the id column takes 4 cells from the rule and path padding, so the clipped last-seen column starts at the pane edge; no rule or path is cut"
+  },
+  {
+    "row": 5,
+    "text": "▌▲ regression      1  │ a7f30c3e ● open      authz/owner-check api/orders.ts    │───────────────────────────────────────",
+    "reason": "8-character finding id: the id column takes 4 cells from the rule and path padding, so the clipped last-seen column starts at the pane edge; no rule or path is cut"
+  },
+  {
+    "row": 6,
+    "text": " ✓ fixed          18  │ 8c1e0c3e ● open      ts/null-deref     parser/header.ts │ TIMELINE                              ",
+    "reason": "8-character finding id: the id column takes 4 cells from the rule and path padding, so the clipped last-seen column starts at the pane edge; no rule or path is cut"
+  },
+  {
+    "row": 7,
+    "text": " ◆ dismissed      13  │ 51fd0c3e ● open      unhandled-reject  parser/body.ts   │ #128 r1   ● first seen        open    ",
+    "reason": "8-character finding id: the id column takes 4 cells from the rule and path padding, so the clipped last-seen column starts at the pane edge; no rule or path is cut"
+  },
+  {
+    "row": 8,
+    "text": "   6 remembered       │▌77ab0c3e ▲ regressionts/null-deref     lib/cache.ts     │           │                           ",
+    "reason": "8-character finding id: the id column takes 4 cells from the rule and path padding, so the clipped last-seen column starts at the pane edge; no rule or path is cut"
+  },
+  {
+    "row": 9,
+    "text": "                      │ 6d2c0c3e ◆ intention.legacy-endpoint   api/legacy.ts    │ #128 r2   ● author: fixed     @ana    ",
+    "reason": "8-character finding id: the id column takes 4 cells from the rule and path padding, so the clipped last-seen column starts at the pane edge; no rule or path is cut"
+  },
+  {
+    "row": 10,
+    "text": " REASONS              │ 2e900c3e ◆ style     ui/spacing-scale  src/legacy/grid  │           │                           ",
+    "reason": "8-character finding id: the id column takes 4 cells from the rule and path padding, so the clipped last-seen column starts at the pane edge; no rule or path is cut"
+  },
+  {
+    "row": 11,
+    "text": " fixed        4       │ 41c70c3e ◆ style     ui/spacing-scale  src/legacy/form  │ #131 r1   ● verified fixed    gone    ",
+    "reason": "8-character finding id: the id column takes 4 cells from the rule and path padding, so the clipped last-seen column starts at the pane edge; no rule or path is cut"
+  },
+  {
+    "row": 12,
+    "text": " wrong        3       │ 9bd20c3e ◆ irrelevantui/spacing-scale  src/legacy/nav   │           │                           ",
+    "reason": "8-character finding id: the id column takes 4 cells from the rule and path padding, so the clipped last-seen column starts at the pane edge; no rule or path is cut"
+  },
+  {
+    "row": 13,
+    "text": " intentional  3       │ b13c0c3e ◆ wrong     sql/concat        parser/util.ts   │ #142 r2   ● seen again        head    ",
+    "reason": "8-character finding id: the id column takes 4 cells from the rule and path padding, so the clipped last-seen column starts at the pane edge; no rule or path is cut"
+  },
+  {
+    "row": 14,
+    "text": " irrelevant   1       │ 3a100c3e ✓ fixed     ts/unused-await   api/cart.ts      │             labelled regression,      ",
+    "reason": "8-character finding id: the id column takes 4 cells from the rule and path padding, so the clipped last-seen column starts at the pane edge; no rule or path is cut"
+  },
+  {
+    "row": 15,
+    "text": " style        2       │ e81f0c3e ✓ fixed     lint/no-floating  worker/job.ts    │             not new                   ",
+    "reason": "8-character finding id: the id column takes 4 cells from the rule and path padding, so the clipped last-seen column starts at the pane edge; no rule or path is cut"
+  },
+  {
+    "row": 16,
+    "text": "                      │ 0c550c3e ✓ fixed     coverage/diff     lib/money.ts     │                                       ",
+    "reason": "8-character finding id: the id column takes 4 cells from the rule and path padding, so the clipped last-seen column starts at the pane edge; no rule or path is cut"
+  },
+  {
+    "row": 23,
+    "text": "                      │                                                         │ rio feedback 77ab0c3e --dismiss       ",
+    "reason": "8-character finding id"
+  }
+]

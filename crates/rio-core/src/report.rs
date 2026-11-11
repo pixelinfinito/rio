@@ -498,8 +498,10 @@ impl Report {
 /// assert_eq!(ReviewEvent::SSE_EVENTS, [
 ///     "step:started", "step:finished", "check:finished", "graph:ready",
 ///     "finding:verified", "review:done", "review:partial",
+///     "agent:started", "agent:finished", "verify:progress", "qa:cell",
 /// ]);
 /// ```
+/// `log` lines are local only: tool output may contain source code.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "event")]
 pub enum ReviewEvent {
@@ -524,10 +526,32 @@ pub enum ReviewEvent {
     Done { report: Box<Report> },
     #[serde(rename = "review:partial")]
     Partial { report: Box<Report> },
+    /// An agent of the agents step started.
+    #[serde(rename = "agent:started")]
+    AgentStarted { agent: String },
+    /// An agent finished with this many hypotheses.
+    #[serde(rename = "agent:finished")]
+    AgentFinished { agent: String, hypotheses: usize },
+    /// Hypotheses verified so far, of those the verify step checks.
+    #[serde(rename = "verify:progress")]
+    VerifyProgress { done: usize, total: usize },
+    /// A QA cell (journey × viewport × color scheme) reached a step or ended.
+    #[serde(rename = "qa:cell")]
+    QaCell {
+        journey: String,
+        viewport: String,
+        color_scheme: String,
+        step: u32,
+        /// `running`, `passed`, `failed`, `skipped` or `cancelled`.
+        outcome: String,
+    },
+    /// A line of a local tool's output; never sent to or from an endpoint.
+    #[serde(rename = "log")]
+    Log { source: String, line: String },
 }
 
 impl ReviewEvent {
-    pub const SSE_EVENTS: [&'static str; 7] = [
+    pub const SSE_EVENTS: [&'static str; 11] = [
         "step:started",
         "step:finished",
         "check:finished",
@@ -535,6 +559,10 @@ impl ReviewEvent {
         "finding:verified",
         "review:done",
         "review:partial",
+        "agent:started",
+        "agent:finished",
+        "verify:progress",
+        "qa:cell",
     ];
 }
 

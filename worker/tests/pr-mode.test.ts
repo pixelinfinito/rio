@@ -389,7 +389,7 @@ describe("PR mode end to end", () => {
       c.body.endsWith(`<!-- rio:finding:${tax} -->`),
     )!;
     expect(taxComment.body).toContain(
-      `**Status: fixed in \`${sha("head-2").slice(0, 12)}\`**`,
+      `✅ **Fixed in \`${sha("head-2").slice(0, 7)}\`**`,
     );
     expect(github.threads.get(taxComment.id)!.resolved).toBe(true);
     expect(github.issueComments).toHaveLength(1);
@@ -416,7 +416,7 @@ describe("PR mode end to end", () => {
       c.body.endsWith(`<!-- rio:finding:${total} -->`),
     )!;
     expect(totalComment.body).toContain(
-      "**Status: dismissed: intentional** (by collab-cole)",
+      "💤 **Dismissed as `intentional`** by collab-cole",
     );
     expect(github.threads.get(totalComment.id)!.resolved).toBe(true);
     github.pull(REPO, 7, { head: sha("head-3"), base: sha("base") });

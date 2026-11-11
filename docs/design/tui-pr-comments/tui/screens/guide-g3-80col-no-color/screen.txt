@@ -1,0 +1,40 @@
+rio 0.3.0 · review 7c2e41 · run 01JC9 · working tree vs HEAD                    
+profile rio/base · status partial                                               
+                                                                                
+checks                                                                          
+  ✓ typecheck  tsc        2 roots    4.1s                                       
+  ✕ lint       eslint     2 issues   1.2s                                       
+  ✓ secrets    gitleaks   0          0.3s                                       
+  ✓ audit      osv        0          0.8s                                       
+  – coverage   vitest     cancelled: interrupted                                
+                                                                                
+findings (3)                                                                    
+  ✕ error  static_proven  parser/header.ts:41  Possible null dereference in par…
+  ✕ error  static_proven  api/orders.ts:57  Guest session can read any order by…
+  ! warn   plausible      parser/body.ts:17  Unhandled promise rejection when t…
+                                                                                
+qa · checkout                                                                   
+                mobile    desktop                                               
+  light         ✓ 5/5     ✓ 5/5                                                 
+  dark          ✕ step 4  ✓ 5/5                                                 
+  evidence      .rio/cache/qa/01JC9/checkout/                                   
+                                                                                
+recommendations (advice, never fails)                                           
+  R1 ux/error-recovery  observed  declined card can't be retried                
+                                                                                
+footer                                                                          
+  cancelled   coverage · interrupted (^C)                                       
+  deferred    triage, agents, verify · no_endpoint                              
+  remembered  2 · intentional 1, style 1                                        
+  lineage     round 2 of 3 · 2 held back, already posted                        
+  proposals   sp-3f2a ui/spacing-scale · rio suppressions list                  
+                                                                                
+exit 1 · a finding matched fail_on                                              
+                                                                                
+$ █                                                                             
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                

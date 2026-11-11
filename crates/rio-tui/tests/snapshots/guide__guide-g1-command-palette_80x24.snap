@@ -1,0 +1,28 @@
+---
+source: crates/rio-tui/tests/guide.rs
+expression: "common::lines(&buf)"
+---
+ ▃▅▇▇▇▅▃▃▁▁▁▃  rio  Findings                                                    
+                                                                                
+  ┌─ :  command palette ─────────────────────────────────────────────────────┐  
+  │   : █                                      recent first                  │  
+  │ ──────────────────────────────────────────────────────────────────────── │  
+  │   QA                                                                     │  
+  │ ▌ rio qa --journey checkout           run one journey                    │  
+  │   rio qa --full                       every journey, every cell          │  
+  │   rio qa --baseline                   also run every journey on base     │  
+  │   rio qa sync --check                 journeys that need review          │  
+  │   rio qa init                         agent authors from REVIEW.md       │  
+  │   rio qa init --accept-contract       accept the reviewed proposal       │  
+  │   rio qa init --force                 replace committed journeys         │  
+  │   rio qa validate                     check journeys without an app      │  
+  │   rio qa list                         runnable journeys and dependencies │  
+  │   rio qa show checkout                a journey or the contract as JSON  │  
+  │   rio qa fixtures status              uploads, doubles and messages      │  
+  │   rio qa rules                        UI probes and the UX rubric        │  
+  │   rio qa seed build                   rebuild the seed snapshot          │  
+  │                                                                          │  
+  │   Every action prints its CLI line, so you can script it.                │  
+  └──────────────────────────────────────────────────────────────────────────┘  
+                                                                                
+ type filter  ↑↓ move   ⏎ run  tab insert args  esc close

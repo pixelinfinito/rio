@@ -1,0 +1,28 @@
+---
+source: crates/rio-tui/tests/review.rs
+expression: "common::lines(&buf)"
+---
+ ▃▅▇▇▇▅▃▃▁▁▁▃ rio  feature/parser-guards → origin/ma…  ✕ exit 1 · 2 fail  2m14s 
+                                     │                                          
+ Findings 7 · 2/7     sort: policy ▾ │ 8c1e4a9b Possible null dereference in p… 
+─────────────────────────────────────│ [new] [error] [defect] [static_proven] … 
+  ● 3a90c2d1 TS2322 string → n… FAIL │                                          
+         src/a.ts:12          proven │ rule      correctness/null-deref         
+─────────────────────────────────────│ location  src/parser/header.ts:42 parse… 
+▌ ● 8c1e4a9b null deref in par… FAIL │ trigger   request without content-type   
+▌        header.ts:42         proven │ evidence  code:head:header.ts:n41,n42    
+─────────────────────────────────────│ impact    3 callers · press g for graph  
+  ◆ f7d26a40 token logged on r… risk │                                          
+         client.ts:88      plausible │ ┌─ src/parser/header.ts                  
+─────────────────────────────────────│ │ 38   function parseHeader(raw: Raw):…│ 
+  ▲ b41c7e02 coverage 81% → 64% warn │ │ 39     const fields = splitFields(ra…│ 
+         parser/body.ts   reproduced │ │ 40 -   const type = fields.get('ctyp…│ 
+─────────────────────────────────────│ │ 40 +   const type = fields.get('ctyp…│ 
+  ● 0d6a5f13 no-floating-promi… warn │ │▌41 +   const charset = type.params.c…│ 
+         src/queue.ts:17      proven │ │▌42 +   return { type, cs: charset.to…│ 
+─────────────────────────────────────│ │ 43   }                               │ 
+                                     │ │    └ type may be undefined; line 41 …│ 
+────────────────────────── ↓ 2 more ─│ └──────────────────────────────────────┘ 
+ 2 pre-existing hidden · p show      │  d dismiss…   e editor  v votes  y copy… 
+ $0.41 · 182k in / 21k out           │                                          
+ ↑↓ move  ⏎ open  d dismiss  g graph  f filter  tab pane  x export  ? help  q qu

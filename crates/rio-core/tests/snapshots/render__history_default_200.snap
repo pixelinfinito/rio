@@ -10,14 +10,14 @@ Risk tier: high (always_human: migrations/**)
 
 Findings
 2 finding(s).
-  correctness/race [new; error; reproduced] FAIL
+  44444444 correctness/race [new; error; reproduced] FAIL
     src/cache.ts:50 (Cache.set) [new]
     Concurrent set calls lose an entry.
     Verification: 3/3 voters; blind: [Same, Same, Related]; split: false
     Lineage: round 2; status open; first posted in snap-1
     History: seen in 2 earlier review(s) since rev-a, last rev-b; previously dismissed; answered wrong by octocat (guarded by the lock) in github.com/acme/api#37
     Trigger: Two set calls for the same key within one tick
-  correctness/stale-read [new; error; reproduced] FAIL
+  66666666 correctness/stale-read [new; error; reproduced] FAIL
     src/cache.ts:50 (Cache.set) [new]
     Concurrent set calls lose an entry.
     Verification: 3/3 voters; blind: [Same, Same, Related]; split: false

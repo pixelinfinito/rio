@@ -1,0 +1,40 @@
+ ▃▅▇▇▇▅▃▃▁▁▁▃ rio  rio init · ~/.config/rio                                                          ● setup  rio 0.2.0 
+                                                                                                                        
+      ██████                                                                                                            
+    ██████████                Set up rio                                                                                
+  ████      ██████      ██    choose where reviews run · change later with rio init or rio deploy                       
+  ██          ████████████    nothing is written to the repository                                                      
+                  ██████                                                                                                
+                                                                                                                        
+────────────────────────────────────────────────────────────────────────│───────────────────────────────────────────────
+  HOW SHOULD RIO RUN REVIEWS?                                           │ THIS MACHINE                                  
+                                                                        │                                               
+▌ (•) Deploy to my Cloudflare account                      recommended  │ ✓ cf 1.4 installed                            
+▌     Worker · Workflows · D1 · R2 · Queues · AI Gateway, all in your   │ ✓ cf logged in · profile default              
+▌     account. Agents, blind verifier, isolated runners.                │ ✓ docker daemon running                       
+                                                                        │ ✓ OS keychain unlocked                        
+  ( ) Connect an existing endpoint                                      │ · CLOUDFLARE_API_TOKEN not set                
+      A teammate already deployed rio: paste its URL and an API token.  │ · OPENROUTER_API_KEY not set                  
+      rio init --endpoint URL --token-stdin                             │   → key will be asked, echo off               
+                                                                        │                                               
+  ( ) Local only                                                        │ EXISTING CONFIG                               
+      Deterministic checks and the graph on this machine.               │ ~/.config/rio/config.toml                     
+      Agents, triage and verify are deferred (no_endpoint).             │ no deployment yet                             
+                                                                        │                                               
+                                                                        │ PRIVACY                                       
+  WHAT DEPLOY NEEDS                                                     │ ✓ no account or resource IDs in the repo      
+  · Workers Paid plan with D1, R2, Queues, Workflows                    │ ✓ secrets: keychain, never in args            
+  · Containers enabled (Cloudflare Sandbox runner)                      │ ✓ gateway logs and cache disabled             
+  · a model key: OpenRouter, OpenAI or Anthropic                        │                                               
+  · Docker running locally to copy the runner image                     │                                               
+                                                                        │                                               
+  Your provider bills model usage; Cloudflare bills your account.       │                                               
+                                                                        │                                               
+                                                                        │                                               
+                                                                        │                                               
+                                                                        │                                               
+                                                                        │                                               
+                                                                        │                                               
+   ⏎ continue     p dry-run plan (no login, no changes)                 │                                               
+                                                                        │                                               
+ ↑↓ mode  ⏎ continue  p dry run  ? help  q quit                                                                         

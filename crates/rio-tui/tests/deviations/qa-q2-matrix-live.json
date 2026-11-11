@@ -1,0 +1,7 @@
+[
+  {
+    "row": 12,
+    "text": " tokens █████░░░░░░░ 212│  payment-recovery    ◐ step 2 ⠦     · queued       ◐ step 4 ⠧     · queued                    ",
+    "reason": "the token meter is drawn from its numbers: 212k of 500k fills 5 of 12 cells; the design fills 8, which contradicts its own label (the voter meter, 31k of 60k = 6 of 12, matches)"
+  }
+]

@@ -134,6 +134,20 @@ it.each([false, true])(
       ]);
       expect(report.agent_audit.verification_usage.input_tokens).toBe(480);
       expect(requests).toHaveLength(7);
+      // Progress for the live screen: each agent starts and finishes, then
+      // verification counts the hypotheses it checked.
+      const events = (
+        await runtime.DB.prepare(
+          "SELECT event,data FROM events WHERE review_id=? ORDER BY seq",
+        )
+          .bind(id)
+          .all<{ event: string; data: string }>()
+      ).results.filter((e) => /^(agent|verify):/.test(e.event));
+      expect(events.map((e) => [e.event, JSON.parse(e.data)])).toEqual([
+        ["agent:started", { agent: "correctness" }],
+        ["agent:finished", { agent: "correctness", hypotheses: 1 }],
+        ["verify:progress", { done: 1, total: 1 }],
+      ]);
       const votes = await runtime.DB.prepare(
         "SELECT status FROM votes WHERE review_id=?",
       )
@@ -199,6 +213,9 @@ it("marks failed remote votes incomplete and keeps the configured quorum", async
       { id: "agents", uses: "rio/agents@0.1.0", needs: [], with: {} },
       { id: "verify", uses: "rio/verify@0.1.0", needs: ["agents"], with: {} },
     ];
+    // Every repair turn resends the item schema: leave room for all of them,
+    // so the votes end malformed rather than out of budget.
+    s.profile.budget.fast.verify_tokens = 30000;
     const response = await app.request(
       "https://rio/v1/reviews",
       { method: "POST", headers, body: JSON.stringify(s) },
@@ -703,6 +720,26 @@ it.each([false, true])(
     const report = await store.get<any>(row.report_key);
     expect(report.qa.journeys[0].outcome).toBe("passed");
     expect(report.qa.recommendations[0].verification_status).toBe("unverified");
+    // Every cell the run reported is one qa:cell event for the live matrix.
+    const cells = (
+      await runtime.DB.prepare(
+        "SELECT data FROM events WHERE review_id=? AND event='qa:cell' ORDER BY seq",
+      )
+        .bind(id)
+        .all<{ data: string }>()
+    ).results.map((r) => JSON.parse(r.data));
+    expect(cells).toEqual(
+      report.qa.journeys.flatMap((j: any) =>
+        j.cells.map((c: any) => ({
+          journey: j.name,
+          viewport: c.viewport,
+          color_scheme: c.color_scheme,
+          step: c.step_reached ?? 0,
+          outcome: c.outcome,
+        })),
+      ),
+    );
+    expect(cells.length).toBeGreaterThan(0);
     expect(report.qa.assessment[0].reason).toBe("budget");
     expect(report.findings).toHaveLength(0);
     expect(report.agent_audit.qa.policy_failed).toBe(false);

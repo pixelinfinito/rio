@@ -1,0 +1,12 @@
+[
+  {
+    "row": 6,
+    "text": "   ● 8c1e4a9b  null deref in parseHea…  src/parser/header.ts:42   static_proven                                         ",
+    "reason": "8-character finding id"
+  },
+  {
+    "row": 7,
+    "text": "   ● 3a90c2d1  TS2322 string → number   src/a.ts:12               static_proven                                         ",
+    "reason": "8-character finding id"
+  }
+]

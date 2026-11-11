@@ -47,6 +47,16 @@ pub fn normalized_message(message: &str, repository_root: &str) -> String {
     TOOL_ID.replace_all(&message, "<tool-id>").into_owned()
 }
 
+/// Characters of a finding identity shown to people: the TUI, the terminal
+/// and Markdown reports and PR comments. `rio feedback`, the feedback API and
+/// `/rio dismiss` accept a unique prefix of at least this length.
+pub const DISPLAY_ID_LEN: usize = 8;
+
+/// The displayed form of a finding identity (its first eight characters).
+pub fn display_id(id: &str) -> &str {
+    id.get(..DISPLAY_ID_LEN).unwrap_or(id)
+}
+
 pub fn finding_id(
     rule_id: &str,
     path: &str,

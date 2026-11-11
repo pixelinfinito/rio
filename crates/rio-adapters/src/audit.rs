@@ -658,6 +658,7 @@ fn advisory_findings(package: &AuditPackage, mut records: Vec<Value>) -> Vec<Fin
             impact: None,
             suggested_fix: (fixed_version != "unknown")
                 .then(|| format!("Upgrade to {fixed_version}")),
+            fix: None,
             evidence: vec![format!("osv/{id}.json")],
             source: Source::Tool {
                 tool: "OSV".into(),
@@ -671,6 +672,7 @@ fn advisory_findings(package: &AuditPackage, mut records: Vec<Value>) -> Vec<Fin
             author_response: None,
             history: None,
             council: None,
+            trace: None,
             advisory: Some(Advisory {
                 url: format!("https://osv.dev/vulnerability/{id}"),
                 id,

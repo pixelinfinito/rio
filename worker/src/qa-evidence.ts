@@ -754,11 +754,17 @@ export async function refreshQaReportLinks(
       },
     ]),
   );
-  for (const row of rows.results)
+  for (const row of rows.results) {
+    const meta = JSON.parse(row.descriptor) as Descriptor;
+    // Where the artifact belongs, so a client can show a step's screenshot.
     artifacts.set(row.id, {
       id: row.id,
-      kind: JSON.parse(row.descriptor).kind,
+      kind: meta.kind,
+      journey: meta.journey,
+      ...(Number.isSafeInteger(meta.step) ? { step: meta.step } : {}),
+      cell: meta.cell,
       ...(await link(env, row, origin)),
     });
+  }
   report.qa.evidence.artifacts = [...artifacts.values()];
 }

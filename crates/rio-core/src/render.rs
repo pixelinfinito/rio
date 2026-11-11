@@ -13,6 +13,8 @@ pub struct RenderOptions<'a> {
     /// Finding identities the review's lineage had already posted before this
     /// review. Only consulted for reports that carry `lineage`.
     pub posted: Option<&'a BTreeSet<String>>,
+    /// `--ascii` / `RIO_ASCII=1`: terminal output uses only ASCII.
+    pub glyphs: crate::glyphs::GlyphSet,
 }
 impl Default for RenderOptions<'_> {
     fn default() -> Self {
@@ -23,6 +25,7 @@ impl Default for RenderOptions<'_> {
             show_remembered: false,
             policy: None,
             posted: None,
+            glyphs: crate::glyphs::GlyphSet::Unicode,
         }
     }
 }
@@ -740,7 +743,7 @@ fn council_footer(report: &Report) -> Vec<String> {
             .iter()
             .find(|f| f.id == cost.id)
             .map(|f| format!("{} at {}", f.rule_id, location(&f.location)))
-            .unwrap_or_else(|| cost.id.chars().take(12).collect());
+            .unwrap_or_else(|| display_id(&cost.id).to_owned());
         if cost.status != "complete" {
             lines.push(format!(
                 "council: {} ({}/{}) for {name}",
@@ -1604,7 +1607,8 @@ pub fn render_markdown(report: &Report, options: &RenderOptions<'_>) -> String {
                 && (options.policy.is_some_and(|policy| policy.matches(finding))
                     || AuditSignals::matches(report, &finding.id));
             out.push_str(&format!(
-                "- **{}** [{}; {}; {}]{}{} — {}\n",
+                "- `{}` **{}** [{}; {}; {}]{}{} — {}\n",
+                safe(display_id(&finding.id)),
                 safe(&finding.rule_id),
                 label(&finding.state),
                 label(&finding.severity),
@@ -1804,7 +1808,8 @@ pub fn render_terminal(report: &Report, options: &RenderOptions<'_>) -> String {
         lines.extend(coverage);
         for finding in findings {
             lines.push(format!(
-                "  {} [{}; {}; {}]{}{}",
+                "  {} {} [{}; {}; {}]{}{}",
+                display_id(&finding.id),
                 finding.rule_id,
                 label(&finding.state),
                 label(&finding.severity),
@@ -1905,6 +1910,7 @@ pub fn render_terminal(report: &Report, options: &RenderOptions<'_>) -> String {
         .collect::<Vec<_>>()
         .join("\n")
         + "\n";
+    let text = options.glyphs.apply(&text).into_owned();
     if options.color_enabled() {
         format!(
             "\x1b[1m{}\x1b[0m{}",

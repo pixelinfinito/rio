@@ -1,0 +1,28 @@
+---
+source: crates/rio-tui/tests/team.rs
+expression: lines
+---
+ ▃▅▇▇▇▅▃▃▁▁▁▃  rio  review · PR #142 · publish… awaiting your answer  round 2/3 
+                                        │                                       
+ Publish plan   8 actions               │ PREVIEW  rio[bot] on api/orders.ts:57 
+────────────────────────────────────────│───────────────────────────────────────
+ INLINE ┌─ Publish to pixelinfinito/rio#142? ──────────────────────────┐er      
+▌ + a7f3│                                                              │· A01   
+  + 8c1e│   3 inline comments   2 new · 1 edited in place              │        
+  ~ 51fd│   1 summary comment   edited, never duplicated               │        
+        │   2 threads resolved  each with its reason                   │r       
+ SUMMARY│   1 check run         neutral · rio/review                   │        
+   ~ edi│                                                              │        
+   + c90│   Comment bodies are data; a reply can't change policy.      │e 404   
+        │                                                              │ 4/5    
+        │    y  publish      n  keep local      e  edit selection      │        
+        │                                                              │n>      
+        └──────────────────────────────────────────────────────────────┘        
+                                        │ irrelevant · style                    
+                                        │                                       
+                                        │ <!-- rio:finding a7f3 pr-142 r2 -->   
+                                        │ By the marker, next round edits,      
+                                        │ this; no reposts                      
+                                        │                                       
+ nothing has been posted · n keeps the report local and still writes the run rec
+  y publish  n keep local  e edit selection  ↑↓ preview item  esc back

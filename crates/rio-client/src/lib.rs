@@ -164,8 +164,28 @@ impl Client {
         cancellation: CancellationToken,
         timeout: Duration,
     ) -> Result<Report> {
+        self.wait_observed(id, cancellation, timeout, None).await
+    }
+    /// Like `wait`, and sends the review's progress events as they are recorded.
+    pub async fn wait_observed(
+        &self,
+        id: &str,
+        cancellation: CancellationToken,
+        timeout: Duration,
+        events: Option<&tokio::sync::mpsc::UnboundedSender<rio_core::ReviewEvent>>,
+    ) -> Result<Report> {
         let deadline = tokio::time::Instant::now() + timeout;
+        let mut cursor = 0;
         loop {
+            // Progress is best effort: a failed poll never fails the review.
+            if let Some(sender) = events
+                && let Ok((next, batch)) = self.events(id, cursor).await
+            {
+                cursor = next;
+                for event in batch {
+                    let _ = sender.send(event);
+                }
+            }
             if cancellation.is_cancelled() || tokio::time::Instant::now() >= deadline {
                 self.cancel(id).await?;
                 anyhow::bail!(
@@ -206,6 +226,33 @@ impl Client {
             }
             tokio::select! { _=cancellation.cancelled()=>{}, _=tokio::time::sleep(Duration::from_secs(1))=>{} }
         }
+    }
+    /// Events recorded after `cursor` (`GET /v1/reviews/{id}/events`), and the new cursor.
+    pub async fn events(&self, id: &str, cursor: u64) -> Result<(u64, Vec<rio_core::ReviewEvent>)> {
+        let mut url = self
+            .base
+            .join(&format!("v1/reviews/{}/events", path_id(id)?))?;
+        url.query_pairs_mut()
+            .append_pair("after", &cursor.to_string());
+        let response = self
+            .http
+            .get(url)
+            .bearer_auth(&self.token)
+            .header("rio-protocol", "1")
+            .send()
+            .await
+            .context("contacting Rio endpoint")?;
+        let status = response.status();
+        if !status.is_success() {
+            return Err(anyhow::Error::from(HttpStatus(status.as_u16())));
+        }
+        let bytes = response.bytes().await?;
+        ensure!(
+            bytes.len() <= 16 * 1024 * 1024,
+            "endpoint response too large"
+        );
+        let (last, events) = parse_events(&String::from_utf8_lossy(&bytes));
+        Ok((last.unwrap_or(cursor).max(cursor), events))
     }
     /// Current generation of a lineage (`GET /v1/lineages`), or `None` when the
     /// endpoint has no such lineage (HTTP 404).
@@ -309,6 +356,22 @@ impl Client {
         .await?;
         Ok(())
     }
+    /// What publishing a finished review would post, without posting
+    /// (`POST /v1/reviews/{id}/publish?dry_run=1`): bodies, anchors and the check run.
+    pub async fn publish_preview(&self, id: &str) -> Result<Value> {
+        let mut url = self
+            .base
+            .join(&format!("v1/reviews/{}/publish", path_id(id)?))?;
+        url.query_pairs_mut().append_pair("dry_run", "1");
+        let body = serde_json::to_vec(&json!({}))?;
+        self.send_url(
+            reqwest::Method::POST,
+            url,
+            Some(("application/json", body)),
+            None,
+        )
+        .await
+    }
     pub async fn report(&self, id: &str) -> Result<Report> {
         Ok(serde_json::from_value(
             self.request(
@@ -344,9 +407,60 @@ impl Client {
     }
 }
 
+/// Server-sent events as `ReviewEvent`s, and the last event id. Events this
+/// client does not know, or whose data does not match, are skipped.
+pub fn parse_events(text: &str) -> (Option<u64>, Vec<rio_core::ReviewEvent>) {
+    let mut last = None;
+    let mut events = Vec::new();
+    for block in text.split("\n\n") {
+        let (mut name, mut data) = (None, None);
+        for line in block.lines() {
+            if let Some(id) = line.strip_prefix("id: ") {
+                last = id.trim().parse().ok().or(last);
+            } else if let Some(event) = line.strip_prefix("event: ") {
+                name = Some(event.trim());
+            } else if let Some(value) = line.strip_prefix("data: ") {
+                data = serde_json::from_str::<Value>(value).ok();
+            }
+        }
+        let (Some(name), Some(Value::Object(mut fields))) = (name, data) else {
+            continue;
+        };
+        // Local tool output never arrives from an endpoint.
+        if name == "log" {
+            continue;
+        }
+        fields.insert("event".into(), Value::String(name.into()));
+        if let Ok(event) = serde_json::from_value(Value::Object(fields)) {
+            events.push(event);
+        }
+    }
+    (last, events)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn server_sent_events_parse_into_review_events_and_skip_the_unknown() {
+        let text = "id: 3\nevent: agent:started\ndata: {\"agent\":\"security\"}\n\n\
+            id: 4\nevent: finding:verified\ndata: {\"id\":\"x\",\"voters\":3}\n\n\
+            id: 5\nevent: verify:progress\ndata: {\"done\":1,\"total\":2}\n\n\
+            id: 6\nevent: log\ndata: {\"source\":\"x\",\"line\":\"y\"}\n\n\
+            id: 7\nevent: future:thing\ndata: {}\n\n";
+        let (last, events) = parse_events(text);
+        assert_eq!(last, Some(7));
+        assert_eq!(
+            events,
+            vec![
+                rio_core::ReviewEvent::AgentStarted {
+                    agent: "security".into()
+                },
+                rio_core::ReviewEvent::VerifyProgress { done: 1, total: 2 },
+            ]
+        );
+        assert_eq!(parse_events(""), (None, vec![]));
+    }
     #[test]
     fn endpoint_requires_https_except_loopback_and_no_credentials() {
         for endpoint in [

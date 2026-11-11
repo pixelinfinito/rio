@@ -14,13 +14,13 @@ Risk tier: high (always_human: migrations/**)
 
 2 finding(s).
 
-- **correctness/race** [new; error; reproduced] **FAIL** — Concurrent set calls lose an entry.
+- `44444444` **correctness/race** [new; error; reproduced] **FAIL** — Concurrent set calls lose an entry.
   - `src/cache.ts:50 (Cache.set)` [new]
   - Verification: 3/3 voters; blind: [Same, Same, Related]; split: false
   - Lineage: round 2; status open; first posted in snap-1
   - History: seen in 2 earlier review(s) since rev-a, last rev-b; previously dismissed; answered wrong by octocat (guarded by the lock) in github.com/acme/api\#37
   - Trigger: Two set calls for the same key within one tick
-- **correctness/stale-read** [new; error; reproduced] **FAIL** — Concurrent set calls lose an entry.
+- `66666666` **correctness/stale-read** [new; error; reproduced] **FAIL** — Concurrent set calls lose an entry.
   - `src/cache.ts:50 (Cache.set)` [new]
   - Verification: 3/3 voters; blind: [Same, Same, Related]; split: false
   - History: seen in 1 earlier review(s) since rev-1, last rev-1; regression of a finding fixed in rev-2
@@ -28,13 +28,13 @@ Risk tier: high (always_human: migrations/**)
 
 ## Remembered findings
 
-- **correctness/timeout-unit** [new; warning; static_proven] — The timeout is passed in seconds to an API that expects milliseconds.
+- `55555555` **correctness/timeout-unit** [new; warning; static_proven] — The timeout is passed in seconds to an API that expects milliseconds.
   - `src/http.ts:12 (request)` [new]
   - Verification: 3/3 voters; blind: [Same, Same, Related]; split: false
   - Remembered: intentional in github.com/acme/api\#41
   - History: seen in 2 earlier review(s) since rev-1, last rev-2; previously dismissed; answered intentional by maintainer in github.com/acme/api\#41
   - Trigger: Any request with the default timeout
-- **correctness/timeout-unit** [new; warning; static_proven] — The timeout is passed in seconds to an API that expects milliseconds.
+- `77777777` **correctness/timeout-unit** [new; warning; static_proven] — The timeout is passed in seconds to an API that expects milliseconds.
   - `src/http.ts:30 (request)` [new]
   - Verification: 3/3 voters; blind: [Same, Same, Related]; split: false
   - Remembered: intentional in github.com/acme/api\#41

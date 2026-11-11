@@ -1,0 +1,28 @@
+---
+source: crates/rio-tui/tests/review.rs
+expression: "common::lines(&buf)"
+---
+ ▃▅▇▇▇▅▃▃▁▁▁▃ rio  feature/parser-guards → origin/…  ✕ exit 1 · complete  2m14s 
+                                                                                
+  ╔═ export review ══════════════════════════════════════════════════════════╗  
+  ║                                                                          ║  
+  ║  Export review                                                           ║  
+  ║  review 1234567890ab · run 01J9ZK4Q · 7 findings                         ║  
+  ║                                                                          ║  
+  ║  FORMAT                                                                  ║  
+  ║ ▌ (•) Markdown   report.md · for PR descriptions and chat                ║  
+  ║   ( ) JSON       report-v1 · schema-validated, for CI                    ║  
+  ║   ( ) SARIF      SARIF 2.1.0 · for code scanning uploads                 ║  
+  ║                                                                          ║  
+  ║  DESTINATION                                                             ║  
+  ║   ./rio-review-parser-guards.md▏                                         ║  
+  ║  tab completes paths · existing file asks before overwrite               ║  
+  ║                                                                          ║  
+  ║  OPTIONS                                                                 ║  
+  ║   [x] copy to clipboard (OSC 52)                                         ║  
+  ║   [ ] include pre-existing findings                                      ║  
+  ║   [ ] open in $EDITOR after saving                                       ║  
+  ║                                                                          ║  
+  ║   ⏎ save    esc cancel   p full preview                                  ║  
+  ╚══════════════════════════════════════════════════════════════════════════╝  
+ ↑↓ format  tab field  space toggle  ⏎ save  esc cancel

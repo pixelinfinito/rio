@@ -1,0 +1,218 @@
+[
+  {
+    "slug": "review-00-start",
+    "flow": "review",
+    "title": "00 — Start",
+    "size": "120x40",
+    "caption": "00 — Start   ·   `rio` in a TTY opens this · radio List · Tabs (preset) · checkbox List · doctor preflight · command preview",
+    "keybar": "↑↓ select  ←→ preset  space toggle  tab section  ⏎ start  c copy cmd  ? help  q quit",
+    "canvas_node": "z8Peio"
+  },
+  {
+    "slug": "review-01-live-review",
+    "flow": "review",
+    "title": "01 — Live Review",
+    "size": "120x40",
+    "caption": "01 — Live Review   ·   from 00: ⏎ · opens 02 when the report is written · ctrl-c → partial report → 02   ·   tree List · Gauge · LineGauge",
+    "keybar": "ctrl-c stop  ↑↓ move  ⏎ step log  l full log  f findings  ? help",
+    "canvas_node": "VyE5l"
+  },
+  {
+    "slug": "review-02-findings",
+    "flow": "review",
+    "title": "02 — Findings",
+    "size": "120x40",
+    "caption": "02 — Findings   ·   hub: d → 03 · g → 04 · x → 05 · q → 05 (save prompt)   ·   [24 | 38 | 56] List · Paragraph · Block",
+    "keybar": "↑↓ move  ⏎ open  d dismiss  g graph  f filter  tab pane  x export  ? help  q quit",
+    "canvas_node": "IOoxs"
+  },
+  {
+    "slug": "review-03-lineage-feedback",
+    "flow": "review",
+    "title": "03 — Lineage & Feedback",
+    "size": "120x40",
+    "caption": "03 — Lineage & Feedback   ·   from 02: d dismiss · esc back   ·   Clear + Block(Double) popup · radio List · input line",
+    "keybar": "↑↓ reason  tab note  ⏎ record  esc cancel",
+    "canvas_node": "v5cRD"
+  },
+  {
+    "slug": "review-04-impact-graph",
+    "flow": "review",
+    "title": "04 — Impact Graph",
+    "size": "120x40",
+    "caption": "04 — Impact Graph   ·   from 02: g graph · esc back   ·   custom Buffer widget, Block nodes, box-drawing edges",
+    "keybar": "←→ hop  ↑↓ node  ⏎ focus  +/- hops  v head/base/delta  esc back",
+    "canvas_node": "Q46Da7"
+  },
+  {
+    "slug": "review-05-summary-export",
+    "flow": "review",
+    "title": "05 — Summary & Export",
+    "size": "120x40",
+    "caption": "05 — Summary & Export   ·   from 02: x · or automatically on q   ·   summary Paragraph + Clear popup: radio List, path input, checkboxes, preview",
+    "keybar": "↑↓ format  tab field  space toggle  ⏎ save  esc cancel",
+    "canvas_node": "n9IVF"
+  },
+  {
+    "slug": "review-06-exit",
+    "flow": "review",
+    "title": "06 — Exit",
+    "size": "120x40",
+    "caption": "06 — Exit   ·   leave alternate screen (crossterm LeaveAlternateScreen), print a persistent summary to stderr, exit with policy code",
+    "keybar": "",
+    "canvas_node": "OcgsY"
+  },
+  {
+    "slug": "init-i1-choose-mode",
+    "flow": "init",
+    "title": "I1 — Choose Mode",
+    "size": "120x40",
+    "caption": "I1 — Choose mode   ·   `rio init` in a TTY   ·   radio List with 3-row items · local preflight (cf, docker, keychain, env)",
+    "keybar": "↑↓ mode  ⏎ continue  p dry run  ? help  q quit",
+    "canvas_node": "l4UpEm"
+  },
+  {
+    "slug": "init-i2-configure",
+    "flow": "init",
+    "title": "I2 — Configure",
+    "size": "120x40",
+    "caption": "I2 — Configure   ·   form: radio Lists, Tabs-style segmented choices, masked input (echo off) · right: live dry-run plan, bindings, scopes",
+    "keybar": "tab section  ↑↓ select  ←→ option  ⏎ deploy  p plan  esc back",
+    "canvas_node": "mAPcR"
+  },
+  {
+    "slug": "init-i3-deploying",
+    "flow": "init",
+    "title": "I3 — Deploying",
+    "size": "120x40",
+    "caption": "I3 — Deploying   ·   16 real steps from deployment.rs: create-or-reuse (↺) · Gauge for overall + migration · resource map · stderr log tail",
+    "keybar": "↑↓ step  ⏎ step log  l full log  ctrl-c stop safely",
+    "canvas_node": "i925RM"
+  },
+  {
+    "slug": "init-i4-failed-resumable",
+    "flow": "init",
+    "title": "I4 — Failed, Resumable",
+    "size": "120x40",
+    "caption": "I4 — Failed, resumable   ·   from I3 on error · r → back to I3 at the failed step   ·   steps kept, error Block, fixes, resume command",
+    "keybar": "r retry  s self-hosted  o dashboard  l log  q quit · resume later",
+    "canvas_node": "LL1QC"
+  },
+  {
+    "slug": "init-i5-deployed",
+    "flow": "init",
+    "title": "I5 — Deployed",
+    "size": "120x40",
+    "caption": "I5 — Deployed   ·   ⏎ hands off to the review flow (00 Start) · endpoint, saved artifacts (no secret values), resources, next commands",
+    "keybar": "⏎ first review  t teammate  c copy URL  l deploy log  q quit",
+    "canvas_node": "nI0Nc"
+  },
+  {
+    "slug": "init-i6-connect-existing",
+    "flow": "init",
+    "title": "I6 — Connect Existing",
+    "size": "120x40",
+    "caption": "I6 — Connect existing   ·   from I1: second option   ·   `rio init --endpoint URL --token-stdin` · URL input + token source radio",
+    "keybar": "tab field  ↑↓ token source  ⏎ connect  esc back",
+    "canvas_node": "waFek"
+  },
+  {
+    "slug": "qa-q1-journeys",
+    "flow": "qa",
+    "title": "Q1 — Journeys",
+    "size": "120x40",
+    "caption": "Q1 — Journeys   ·   rio qa list · select · sync   ·   hub: ⏎ → Q2 · s → reconcile · i → rio qa init (agent authors from REVIEW.md)",
+    "keybar": "↑↓ move  space select   ⏎ run  a --full  b baseline  s sync  i init  v validate  ? help  q quit",
+    "canvas_node": "VyiRq"
+  },
+  {
+    "slug": "qa-q2-matrix-live",
+    "flow": "qa",
+    "title": "Q2 — Matrix (live)",
+    "size": "120x40",
+    "caption": "Q2 — Matrix (live)   ·   rio qa --journey …   ·   cells stream in as they finish; a failure never stops the other cells   ·   ⏎ → Q3",
+    "keybar": "↑↓←→ cell   ⏎ open cell  l follow log  p pause queue  c cancel cell  ^C stop, keep partial  ? help",
+    "canvas_node": "pWMkE"
+  },
+  {
+    "slug": "qa-q3-cell-detail",
+    "flow": "qa",
+    "title": "Q3 — Cell detail",
+    "size": "120x40",
+    "caption": "Q3 — Cell detail   ·   one journey × one cell   ·   step timeline · masked screenshot · attributed source line · evidence   ·   esc → Q2 · 4 → Q4",
+    "keybar": "←→ step  [ ] cell   o evidence  b vs base  e editor  r rerun cell  4 ux  esc matrix",
+    "canvas_node": "W9tZFg"
+  },
+  {
+    "slug": "qa-q4-ux-recommendations",
+    "flow": "qa",
+    "title": "Q4 — UX recommendations",
+    "size": "120x40",
+    "caption": "Q4 — UX recommendations   ·   rubric coverage · observed vs untested · owner guidance can hold a recommendation back   ·   esc → Q2",
+    "keybar": "↑↓ move   ⏎ expand  g guidance  o evidence  y copy as issue  x export md  esc matrix",
+    "canvas_node": "mQHvS"
+  },
+  {
+    "slug": "team-p1-security-council",
+    "flow": "team",
+    "title": "P1 — Security finding + council",
+    "size": "120x40",
+    "caption": "P1 — Security finding + council   ·   OWASP catalog coverage · input→sink trace · 5 members, 2 rounds, 1 experiment · decision by evidence tier   ·   P → P2",
+    "keybar": "↑↓ finding  t trace  c council  a audit  d dismiss…   P publish  F history  esc back",
+    "canvas_node": "OWQ1S"
+  },
+  {
+    "slug": "team-p2-publish-preview",
+    "flow": "team",
+    "title": "P2 — Publish preview",
+    "size": "120x40",
+    "caption": "P2 — Publish preview   ·   rio review --pr 142 --publish under publish: ask   ·   y posts · n keeps local · F → P3",
+    "keybar": "y publish  n keep local  e edit selection  ↑↓ preview item  esc back",
+    "canvas_node": "PwNev"
+  },
+  {
+    "slug": "team-p3-finding-history",
+    "flow": "team",
+    "title": "P3 — Finding history",
+    "size": "120x40",
+    "caption": "P3 — Finding history   ·   rio findings   ·   one identity across rounds, branches and PRs · remembered dismissals · regressions   ·   S → P4",
+    "keybar": "↑↓ move  f status  r rule  ⏎ timeline  d dismiss…   S proposals  j json  esc back",
+    "canvas_node": "L6bcQ4"
+  },
+  {
+    "slug": "team-p4-suppression-proposals",
+    "flow": "team",
+    "title": "P4 — Suppression proposals",
+    "size": "120x40",
+    "caption": "P4 — Suppression proposals   ·   rio suppressions   ·   evidence first · exact profile diff · validated in a temp file · explicit y/N   ·   esc → P3",
+    "keybar": "y apply  N leave unchanged  x decline… (180 d)  ↑↓ proposal  esc history",
+    "canvas_node": "F0NIAo"
+  },
+  {
+    "slug": "guide-g1-command-palette",
+    "flow": "guide",
+    "title": "G1 — Command palette",
+    "size": "120x40",
+    "caption": "G1 — Command palette   ·   : from any view   ·   fuzzy over every rio subcommand, grouped by job, recent first; selection prints the exact CLI line",
+    "keybar": "type filter  ↑↓ move   ⏎ run  tab insert args  esc close",
+    "canvas_node": "jC5cy"
+  },
+  {
+    "slug": "guide-g2-help-view-map",
+    "flow": "guide",
+    "title": "G2 — Help & view map",
+    "size": "120x40",
+    "caption": "G2 — Help & view map   ·   ? from any view   ·   one keymap for review, qa, init and team views · the whole navigation graph · glyph and evidence legend",
+    "keybar": "? close  / search keys  : palette",
+    "canvas_node": "kkrwZ"
+  },
+  {
+    "slug": "guide-g3-80col-no-color",
+    "flow": "guide",
+    "title": "G3 — 80 cols · NO_COLOR",
+    "size": "80x40",
+    "caption": "G3 — 80 columns · NO_COLOR   ·   state is in the glyph (✓ ✕ – ! ◐) · locations never wrap; messages truncate with … · same section order as the TUI",
+    "keybar": "",
+    "canvas_node": "VcbY8"
+  }
+]

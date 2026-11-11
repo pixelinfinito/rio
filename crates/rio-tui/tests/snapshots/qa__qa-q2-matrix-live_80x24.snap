@@ -1,0 +1,28 @@
+---
+source: crates/rio-tui/tests/qa.rs
+expression: lines
+---
+ ▃▅▇▇▇▅▃▃▁▁▁▃  rio  qa · running 5 journeys × 4 ce…  ◐ 11/20  ✕ 1 failed  3m12s 
+  1 Journeys   2 Matrix   3 Cell   4 UX   5 Seed   6 Rules                      
+ Matrix 11 of 20 cells done                    ◐ 4 running   · 5 queued         
+────────────────────────────────────────────────────────────────────────────────
+                       mobile·light  mobile·dark   desktop·light desktop·dark   
+                       ────────────  ────────────  ────────────  ────────────   
+  ↳ login             ✓ 2/2  14s    ✓ 2/2  13s    ✓ 2/2  11s    ✓ 2/2  12s      
+▌ checkout            ✓ 5/5  58s    ✕ step 4      ✓ 5/5  49s    ◐ step 3 ⠼      
+  add-to-cart         ✓ 3/3  31s    ✓ 3/3  30s    ✓ 3/3  27s    ✓ 3/3  28s      
+  payment-recovery    ◐ step 2 ⠦    · queued      ◐ step 4 ⠧    · queued        
+  keyboard-shopping   – desktop on… – desktop on… ◐ step 5 ⠏    · queued        
+  profile-address     · queued      · queued      · queued      · queued        
+                                                                                
+────────────────────────────────────────────────────────────────────────────────
+ LIVE · checkout × desktop·dark   harness codex · step 3 of 5 · Pay with the tes
+  09:00:46  ✓ expect     Card form accepts the 4242 card                        
+  09:00:47  ▸ stripe     double · POST /v1/payment_intents → 200                
+  09:00:48  ▸ click      button  Pay €38.00                                     
+  09:00:48  ⠼ waiting    navigation …                                           
+                                                                                
+  first failure: checkout × mobile·dark at step 4 · ⏎ open cell  other cells kee
+                                                                                
+ ██████████████████████████░░░░░░░░░░░░░░░░░░░░░░░░ 11/20 · ~2m50s left · $0.17 
+ ↑↓←→ cell   ⏎ open cell  l follow log  p pause queue  c cancel cell  ^C stop, k

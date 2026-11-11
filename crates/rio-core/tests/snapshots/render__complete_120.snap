@@ -13,7 +13,7 @@ Deterministic results
 
 Findings
 1 finding(s).
-  typecheck/tsc/TS2322 [worsened; error; static_proven] FAIL
+  aaaaaaaa typecheck/tsc/TS2322 [worsened; error; static_proven] FAIL
     src/a.ts:8 (a.run) [pre-existing]
     src/a.ts:12 (a.run) [new]
     Type 'string' is not assignable to type 'number'.

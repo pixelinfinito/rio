@@ -501,7 +501,8 @@ it("charges both verification turns to the same allowance and respects the revie
     reserve: async () => "id",
     settle: async () => {},
   };
-  const allowance = { remaining: 9000 };
+  // The request bound counts the system prompt and its item schema too.
+  const allowance = { remaining: 9500 };
   const options = {
     gateway: {
       complete: async () => {
@@ -522,7 +523,7 @@ it("charges both verification turns to the same allowance and respects the revie
     dispatch: async () => {},
   };
   await converse({ ...options, phase: "verify-blind" });
-  expect(allowance.remaining).toBe(4000);
+  expect(allowance.remaining).toBe(4500);
   await expect(
     converse({ ...options, phase: "verify-disclosed" }),
   ).rejects.toThrow("budget exhausted");

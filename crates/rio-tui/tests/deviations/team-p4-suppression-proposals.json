@@ -1,0 +1,17 @@
+[
+  {
+    "row": 5,
+    "text": "            src/legacy/** · 3 style      │  #136  9bd20c3e  src/legacy/nav     @ana   style                             ",
+    "reason": "8-character finding id: the evidence columns after the id shift right into empty space; no path is cut"
+  },
+  {
+    "row": 7,
+    "text": "  sp-9c01  lint/max-params     open      │  #138  41c70c3e  src/legacy/form    @rui   style                             ",
+    "reason": "8-character finding id: the evidence columns after the id shift right into empty space; no path is cut"
+  },
+  {
+    "row": 8,
+    "text": "            scripts/** · 4 irrelevant    │  #139  2e900c3e  src/legacy/grid    @ana   style                             ",
+    "reason": "8-character finding id: the evidence columns after the id shift right into empty space; no path is cut"
+  }
+]

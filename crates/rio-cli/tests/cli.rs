@@ -1948,7 +1948,7 @@ fn feedback_validates_reasons_locally_and_maps_endpoint_answers_to_exit_codes() 
         let output = rio(root)
             .env("RIO_ENDPOINT_URL", &silent.url)
             .env("RIO_API_TOKEN", "long-enough-api-token-32-characters")
-            .args(["feedback", "8c1e", "--dismiss", reason])
+            .args(["feedback", "8c1e4a9b", "--dismiss", reason])
             .assert()
             .code(2)
             .get_output()
@@ -1963,7 +1963,7 @@ fn feedback_validates_reasons_locally_and_maps_endpoint_answers_to_exit_codes() 
     drop(silent);
     // No endpoint configured.
     let output = rio(root)
-        .args(["feedback", "8c1e", "--dismiss", "wrong"])
+        .args(["feedback", "8c1e4a9b", "--dismiss", "wrong"])
         .assert()
         .code(2)
         .get_output()
@@ -1973,13 +1973,18 @@ fn feedback_validates_reasons_locally_and_maps_endpoint_answers_to_exit_codes() 
     let endpoint = MockEndpoint::start(|method, path, body| {
         assert_eq!(method, "POST");
         match path {
-            "/v1/findings/8c1e/feedback" => (
+            "/v1/findings/8c1e4a9b/feedback" => (
                 200,
-                serde_json::json!({"id":"8c1e","status":"dismissed","author_response":{
+                serde_json::json!({"id":"8c1e4a9b","status":"dismissed","author_response":{
                     "reason":body["reason"],"actor":body["actor"],"at":"2026-11-06T10:00:00Z",
                     "note":body["note"]}}),
             ),
-            "/v1/findings/0bad/feedback" => (404, serde_json::json!({"error":"not_found"})),
+            "/v1/findings/0bad0bad/feedback" => (404, serde_json::json!({"error":"not_found"})),
+            "/v1/findings/5ca1ab1e/feedback" => (
+                409,
+                serde_json::json!({"error":"finding id 5ca1ab1e is ambiguous; it matches 5ca1ab1eaaaaaaaa, 5ca1ab1ebbbbbbbb",
+                    "candidates":["5ca1ab1e".to_owned() + &"a".repeat(56), "5ca1ab1e".to_owned() + &"b".repeat(56)]}),
+            ),
             _ => (400, serde_json::json!({"error":"invalid"})),
         }
     });
@@ -1992,7 +1997,7 @@ fn feedback_validates_reasons_locally_and_maps_endpoint_answers_to_exit_codes() 
             .assert()
     };
     let output = feedback(&[
-        "8c1e",
+        "8c1e4a9b",
         "--dismiss",
         "intentional",
         "--note",
@@ -2001,7 +2006,7 @@ fn feedback_validates_reasons_locally_and_maps_endpoint_answers_to_exit_codes() 
     .code(0)
     .get_output()
     .clone();
-    assert!(String::from_utf8_lossy(&output.stdout).contains("8c1e dismissed (intentional)"));
+    assert!(String::from_utf8_lossy(&output.stdout).contains("8c1e4a9b dismissed (intentional)"));
     let requests = endpoint.take();
     assert_eq!(requests.len(), 1);
     assert_eq!(
@@ -2009,14 +2014,31 @@ fn feedback_validates_reasons_locally_and_maps_endpoint_answers_to_exit_codes() 
         serde_json::json!({"reason":"intentional","note":"documented behavior",
             "actor":"rio@example.invalid"})
     );
-    let output = feedback(&["0bad", "--dismiss", "wrong"])
+    let output = feedback(&["0bad0bad", "--dismiss", "wrong"])
         .code(3)
         .get_output()
         .clone();
     assert!(String::from_utf8_lossy(&output.stderr).contains("not found"));
-    feedback(&["1bad", "--dismiss", "fixed"]).code(3);
+    feedback(&["1bad1bad", "--dismiss", "fixed"]).code(3);
     feedback(&["../reviews", "--dismiss", "fixed"]).code(2);
     assert_eq!(endpoint.take().len(), 2);
+    // Prefixes shorter than the displayed id are rejected before any request.
+    let output = feedback(&["8c1e", "--dismiss", "style"])
+        .code(2)
+        .get_output()
+        .clone();
+    assert!(String::from_utf8_lossy(&output.stderr).contains("at least 8 characters"));
+    assert!(endpoint.take().is_empty());
+    // An ambiguous prefix records nothing and names the matches.
+    let output = feedback(&["5ca1ab1e", "--dismiss", "style"])
+        .code(3)
+        .get_output()
+        .clone();
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(
+        stderr.contains("5ca1ab1eaaaaaaaa, 5ca1ab1ebbbbbbbb"),
+        "{stderr}"
+    );
 }
 #[test]
 fn eval_requires_the_harness_and_forwards_to_it() {
@@ -2261,9 +2283,7 @@ fn findings_lists_the_registry_and_needs_an_endpoint() {
     assert!(text.contains(": 3 record(s)"), "{text}");
     assert_eq!(text.matches("lint/eslint/no-unused-vars").count(), 3);
     assert!(
-        text.contains(
-            "aaaaaaaaaaaa  lint/eslint/no-unused-vars  src/a.ts:3  open  last seen rev-2"
-        )
+        text.contains("aaaaaaaa  lint/eslint/no-unused-vars  src/a.ts:3  open  last seen rev-2")
     );
     let requests = endpoint.take();
     let directory = root.file_name().unwrap().to_string_lossy().to_string();

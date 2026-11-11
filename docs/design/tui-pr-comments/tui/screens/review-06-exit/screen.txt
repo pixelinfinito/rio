@@ -1,0 +1,40 @@
+ ~/code/web-app (feature/parser-guards) $ rio                                                                           
+ ⋯ interactive session closed · terminal restored                                                                       
+                                                                                                                        
+ ▃▅▇▇▇▅▃▃▁▁▁▃ rio 0.2.0 — complete  feature/parser-guards → origin/main · standard                                      
+ ✕ policy failed: 2 findings match fail_on                                                                              
+                                                                                                                        
+   ● 8c1e  null deref in parseHeader    src/parser/header.ts:42   static_proven                                         
+   ● 3a90  TS2322 string → number       src/a.ts:12               static_proven                                         
+   7 findings · 3 new · 1 worsened · 1 security · 2 pre-existing hidden                                                 
+   1 dismissed (intentional) · round 4 of cap 3 → reconsider: split parser core / renderer                              
+                                                                                                                        
+ ✓ saved   ./rio-review-parser-guards.md  14.2 KB · copied to clipboard                                                 
+ ✓ kept    .rio/cache/1234567890ab/runs/01J9ZK4Q/  latest                                                               
+ → next    fix, then rio review --since-last (round 5, diff only)                                                       
+                                                                                                                        
+ ~/code/web-app (feature/parser-guards) $ echo $?                                                                       
+ 1                                                                                                                      
+ ~/code/web-app (feature/parser-guards) $ █                                                                             
+                                                                                                                        
+                                                                                                                        
+ ── same review without the TUI — CI, pipes, NO_COLOR ───────────────────────────────────────────────────────────────── 
+                                                                                                                        
+   $ rio review --base origin/main --preset standard --format md > report.md                                            
+   $ rio review --base origin/main --format json | jq '.findings | length'                                              
+   7                                                                                                                    
+   $ rio review --staged --offline --no-color                                                                           
+                                                                                                                        
+   JSON writes one schema-validated document to stdout; progress and warnings go to stderr.                             
+                                                                                                                        
+                                                                                                                        
+ ── exit codes ──────────────────────────────────────────────────────────────────────────────────────────────────────── 
+                                                                                                                        
+     0  no policy failure                    1  finding matches fail_on              2  usage / config / profile        
+                                                                                                                        
+     3  repository state / internal          4  incomplete under fail_on           130  second ctrl-c                   
+                                                                                                                        
+                                                                                                                        
+   The TUI only starts when stdout is a TTY; redirected output keeps today's line-based renderer.                       
+                                                                                                                        
+                                                                                                                        

@@ -1,0 +1,40 @@
+ ▃▅▇▇▇▅▃▃▁▁▁▃ rio  rio init · rio → Pixel Infinito                                                    ✓ deployed  2m31s 
+                                                                                                                        
+      ██████                                                                                                            
+    ██████████                rio is deployed                                                                           
+  ████      ██████      ██    Pixel Infinito · 16 steps · 1 reused · 1 retry · 2m31s                                    
+  ██          ████████████    everything runs in your own Cloudflare account                                            
+                  ██████                                                                                                
+                                                                                                                        
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                                        
+  ENDPOINT                                                                                                              
+   https://rio.pixel-labs.workers.dev                   c copy                                                          
+                                                                                                                        
+  SAVED                                                                                                                 
+  ✓ config    ~/.config/rio/config.toml             choices only · no secrets                                           
+  ✓ keychain  rio / 3f9c…a21e / rio                 api · runner · provider · gateway                                   
+  ✓ profile   ~/.config/rio/profiles/default.yaml   rio-default · OpenRouter                                            
+                                                                                                                        
+  RESOURCES                                                                                                             
+  ✓ Worker     rio             ✓ D1         rio ↺           ✓ R2         rio-artifacts   ✓ Queue      rio-jobs          
+  ✓ AI Gateway rio             ✓ Workflows  review · migrate✓ Sandbox    standard-3      ✓ Schema     v1 applied        
+                                                                                                                        
+  NEXT                                                                                                                  
+   ⏎ run your first review    rio review --preset standard                                                              
+                                                                                                                        
+   t  connect a teammate      rio init --endpoint https://rio.pixel-labs.workers.dev --token-stdin                      
+   u  upgrade later           rio deploy · reuses choices, resumes partial runs                                         
+   p  plan any time           rio deploy --dry-run · no login, no changes                                               
+   e  CI / another machine    rio init --from ~/.config/rio/config.toml                                                 
+                                                                                                                        
+                                                                                                                        
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  Billing  model usage → your OpenRouter account · Workers, D1, R2, Queues, Containers → Cloudflare                     
+  Share the endpoint and an API token through your secret manager, never in chat or the repo.                           
+                                                                                                                        
+                                                                                                                        
+                                                                                                                        
+                                                                                                                        
+                                                                                                                        
+ ⏎ first review  t teammate  c copy URL  l deploy log  q quit                                                           

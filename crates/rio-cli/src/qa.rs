@@ -2,7 +2,7 @@ use anyhow::{Context, Result};
 use clap::Subcommand;
 use rio_git::{GixRepo, Repo, Tree, select};
 use rio_qa::{QaProject, QaSnapshot};
-use serde_json::json;
+use serde_json::{Value, json};
 use std::collections::BTreeSet;
 
 #[path = "qa_author.rs"]
@@ -18,10 +18,17 @@ pub struct QaRunArgs {
     selection: crate::SelectionArgs,
     #[arg(long)]
     profile: Option<String>,
-    #[arg(long, value_enum, default_value = "terminal")]
-    format: crate::Format,
+    /// Output format; without it a terminal session opens the interactive UI.
+    #[arg(long, value_enum)]
+    format: Option<crate::Format>,
+    /// Stream plain output instead of opening the interactive UI (also `RIO_TUI=0`).
+    #[arg(long)]
+    no_tui: bool,
     #[arg(long)]
     no_color: bool,
+    /// Draw only ASCII characters (also `RIO_ASCII=1`).
+    #[arg(long)]
+    ascii: bool,
     #[arg(long)]
     publish: bool,
     #[command(flatten)]
@@ -78,31 +85,72 @@ pub fn configure_run(
     Ok(())
 }
 
+impl QaRunArgs {
+    /// The review `rio qa` runs: the QA profile (`rio/qa` unless `--profile`)
+    /// with the journey options.
+    pub fn review_args(self) -> crate::ReviewArgs {
+        crate::ReviewArgs {
+            qa: Some(self.options),
+            selection: self.selection,
+            profile: Some(self.profile.unwrap_or_else(|| "rio/qa".into())),
+            format: self.format,
+            no_color: self.no_color,
+            ascii: self.ascii,
+            no_tui: self.no_tui,
+            offline: false,
+            show_pre_existing: false,
+            show_remembered: false,
+            pr: None,
+            deep: false,
+            preset: None,
+            fork: false,
+            nightly: false,
+            publish: false,
+            since_last: false,
+            reset_lineage: false,
+        }
+    }
+}
+
+/// The flags of a review that `rio qa` arguments do not carry: the change
+/// selection, the profile and the harness, as command-line arguments.
+pub fn carried_flags(args: &crate::ReviewArgs) -> Vec<String> {
+    let mut flags = Vec::new();
+    if args.selection.staged {
+        flags.push("--staged".into());
+    }
+    if let Some(base) = &args.selection.base {
+        flags.extend(["--base".into(), base.clone()]);
+    }
+    if let Some(profile) = args.profile.as_ref().filter(|p| *p != "rio/qa") {
+        flags.extend(["--profile".into(), profile.clone()]);
+    }
+    if let Some(harness) = args.qa.as_ref().and_then(|qa| qa.harness.clone()) {
+        flags.extend(["--harness".into(), harness]);
+    }
+    flags
+}
+
+/// The options of a `rio qa` run, for the interactive UI's preselection.
+pub fn run_options(args: &crate::ReviewArgs) -> (bool, Vec<String>, bool) {
+    args.qa
+        .as_ref()
+        .map(|qa| (qa.full, qa.journey.clone(), qa.baseline))
+        .unwrap_or_default()
+}
+
+pub const PUBLISH_NOTICE: &str = "QA report retained. Publication requires the GitHub App pull request transport; use rio review --pr URL with a QA-enabled profile.";
+
 pub async fn run_journeys(args: QaRunArgs) -> u8 {
     let publish = args.publish;
-    let code = crate::run_review(crate::ReviewArgs {
-        qa: Some(args.options),
-        selection: args.selection,
-        profile: Some(args.profile.unwrap_or_else(|| "rio/qa".into())),
-        format: args.format,
-        no_color: args.no_color,
-        offline: false,
-        show_pre_existing: false,
-        show_remembered: false,
-        pr: None,
-        deep: false,
-        preset: None,
-        fork: false,
-        nightly: false,
-        publish: false,
-        since_last: false,
-        reset_lineage: false,
-    })
-    .await;
+    let review = args.review_args();
+    let code = if crate::tui::interactive(review.format.is_some(), review.no_tui) {
+        crate::tui::qa(review).await
+    } else {
+        crate::run_review(review).await
+    };
     if publish {
-        eprintln!(
-            "QA report retained. Publication requires the GitHub App pull request transport; use rio review --pr URL with a QA-enabled profile."
-        );
+        eprintln!("{PUBLISH_NOTICE}");
         return 2;
     }
     code
@@ -187,7 +235,7 @@ pub enum SeedCommand {
     },
 }
 
-fn snapshot(tree: Tree) -> Result<QaSnapshot> {
+pub(crate) fn snapshot(tree: Tree) -> Result<QaSnapshot> {
     tree.into_iter()
         .filter_map(|(name, entry)| {
             if entry.mode == 0o120000 {
@@ -204,6 +252,22 @@ fn snapshot(tree: Tree) -> Result<QaSnapshot> {
 }
 
 async fn execute(command: QaCommand) -> Result<u8> {
+    if matches!(command, QaCommand::Rules) {
+        print!("{}", include_str!("../../../modules/qa/rules/ui-v1.yaml"));
+        return Ok(0);
+    }
+    let (result, status) = evaluate(command).await?;
+    println!(
+        "{}",
+        rio_core::redact(&serde_json::to_string_pretty(&result)?)
+    );
+    Ok(status)
+}
+
+/// Runs a `rio qa` subcommand and returns the JSON document it prints and its
+/// exit status, printing nothing to standard output (the interactive UI runs
+/// these too). `Rules` prints a YAML file and is handled by `execute`.
+pub(crate) async fn evaluate(command: QaCommand) -> Result<(Value, u8)> {
     if let QaCommand::Seed {
         command: SeedCommand::Prune { keep },
     } = &command
@@ -214,18 +278,12 @@ async fn execute(command: QaCommand) -> Result<u8> {
             repo.as_ref().map_or(cwd.as_path(), |repo| repo.root()),
         )?;
         let removed = rio_qa::prune_seed_cache(&config.cache.dir.join("qa-seeds"), *keep)?;
-        println!(
-            "{}",
-            serde_json::to_string_pretty(
-                &json!({"storage":"local","removed":removed,"keep":keep})
-            )?
-        );
-        return Ok(0);
+        return Ok((json!({"storage":"local","removed":removed,"keep":keep}), 0));
     }
-    if matches!(command, QaCommand::Rules) {
-        print!("{}", include_str!("../../../modules/qa/rules/ui-v1.yaml"));
-        return Ok(0);
-    }
+    anyhow::ensure!(
+        !matches!(command, QaCommand::Rules),
+        "rio qa rules prints a file"
+    );
     if let QaCommand::Evidence {
         command: EvidenceCommand::Prune { review },
     } = &command
@@ -237,11 +295,7 @@ async fn execute(command: QaCommand) -> Result<u8> {
         let result = crate::endpoint::client(endpoint, &config.config_dir)?
             .prune_qa_evidence(review)
             .await?;
-        println!(
-            "{}",
-            rio_core::redact(&serde_json::to_string_pretty(&result)?)
-        );
-        return Ok(0);
+        return Ok((result, 0));
     }
     let repo = GixRepo::discover(&std::env::current_dir()?)?;
     let (head_tree, base) = if let QaCommand::Sync { selection, .. } = &command {
@@ -267,11 +321,7 @@ async fn execute(command: QaCommand) -> Result<u8> {
             accept_contract,
         )
         .await?;
-        println!(
-            "{}",
-            rio_core::redact(&serde_json::to_string_pretty(&result)?)
-        );
-        return Ok(0);
+        return Ok((result, 0));
     }
     let project = QaProject::load(&head)?;
     for warning in &project.warnings {
@@ -328,11 +378,7 @@ async fn execute(command: QaCommand) -> Result<u8> {
                     rio_qa::AuthorMode::Sync { reasons: stale },
                 )
                 .await?;
-                println!(
-                    "{}",
-                    rio_core::redact(&serde_json::to_string_pretty(&result)?)
-                );
-                return Ok(0);
+                return Ok((result, 0));
             }
             let status = u8::from(!stale.is_empty());
             (
@@ -434,11 +480,7 @@ async fn execute(command: QaCommand) -> Result<u8> {
             command: SeedCommand::Prune { .. },
         } => unreachable!(),
     };
-    println!(
-        "{}",
-        rio_core::redact(&serde_json::to_string_pretty(&result)?)
-    );
-    Ok(status)
+    Ok((result, status))
 }
 
 pub async fn run(command: QaCommand) -> u8 {

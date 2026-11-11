@@ -1,0 +1,22 @@
+[
+  {
+    "row": 5,
+    "text": " app    rio[bot] installed    │▌ + a7f3e2c1 api/orders.ts:57    new        │ error · security · reproduced · A01        ",
+    "reason": "8-character finding id: taken from the anchor column's padding; no path is cut"
+  },
+  {
+    "row": 6,
+    "text": " lineage pr · round 2 of 3    │  + 8c1e4a9b parser/header.ts:41 new        │                                            ",
+    "reason": "8-character finding id: taken from the anchor column's padding; no path is cut"
+  },
+  {
+    "row": 7,
+    "text": "──────────────────────────────│  ~ 51fd7c2e parser/body.ts:17   edit       │ A guest session reaches                    ",
+    "reason": "8-character finding id: taken from the anchor column's padding; no path is cut"
+  },
+  {
+    "row": 11,
+    "text": " never check run only         │   + c90b3d1a db/raw.ts   not in diff       │ Council   reproduced · partial 4/5         ",
+    "reason": "8-character finding id: taken from the anchor column's padding; no path is cut"
+  }
+]

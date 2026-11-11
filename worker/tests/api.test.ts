@@ -705,12 +705,15 @@ describe("lineages and finding feedback", () => {
     expect(response.status).toBe(400);
     expect(((await response.json()) as any).error).toMatch(/lineage/);
   });
-  async function postedFinding(tenant = "owner") {
-    const id = hash(`finding-${crypto.randomUUID()}`),
-      lineage = lineageId(tenant, {
+  async function postedFinding(
+    tenant = "owner",
+    id = hash(`finding-${crypto.randomUUID()}`),
+    ref = `feature/${id.slice(0, 8)}`,
+  ) {
+    const lineage = lineageId(tenant, {
         repository: "github.com/acme/app",
         kind: "branch",
-        ref: `feature/${id.slice(0, 8)}`,
+        ref,
       }),
       finding = {
         id,
@@ -727,7 +730,7 @@ describe("lineages and finding feedback", () => {
         tenant,
         "github.com/acme/app",
         "branch",
-        `feature/${id.slice(0, 8)}`,
+        ref,
         JSON.stringify({ [id]: { first_posted_in: "s1", round: 1 } }),
         Date.now(),
       ),
@@ -813,6 +816,90 @@ describe("lineages and finding feedback", () => {
       expect(before.profile.suppress).toEqual([]);
     },
   );
+  it("resolves an eight-character prefix like /rio dismiss does", async () => {
+    const id = await postedFinding();
+    const response = await request(
+      `/v1/findings/${id.slice(0, 8)}/feedback`,
+      "POST",
+      { reason: "style" },
+    );
+    expect(response.status).toBe(200);
+    expect(((await response.json()) as any).id).toBe(id);
+    expect(
+      (
+        await testEnv.DB.prepare("SELECT status FROM findings WHERE identity=?")
+          .bind(id)
+          .first<any>()
+      ).status,
+    ).toBe("dismissed");
+    // The full identity still works.
+    const full = await postedFinding();
+    expect(
+      (
+        await request(`/v1/findings/${full}/feedback`, "POST", {
+          reason: "wrong",
+        })
+      ).status,
+    ).toBe(200);
+  });
+  it("rejects short prefixes and lists the candidates of an ambiguous one", async () => {
+    const shared = hash(`shared-${crypto.randomUUID()}`).slice(0, 8);
+    const first = await postedFinding(
+      "owner",
+      shared + "a".repeat(56),
+      "feature/one",
+    );
+    const second = await postedFinding(
+      "owner",
+      shared + "b".repeat(56),
+      "feature/two",
+    );
+    const short = await request(
+      `/v1/findings/${shared.slice(0, 4)}/feedback`,
+      "POST",
+      {
+        reason: "style",
+      },
+    );
+    expect(short.status).toBe(400);
+    expect(((await short.json()) as any).error).toMatch(
+      /at least 8 characters/,
+    );
+    const ambiguous = await request(`/v1/findings/${shared}/feedback`, "POST", {
+      reason: "style",
+    });
+    expect(ambiguous.status).toBe(409);
+    expect(((await ambiguous.json()) as any).candidates).toEqual([
+      first,
+      second,
+    ]);
+    const rows = await testEnv.DB.prepare(
+      "SELECT status FROM findings WHERE identity IN (?,?)",
+    )
+      .bind(first, second)
+      .all<any>();
+    expect(rows.results.map((row) => row.status)).toEqual(["open", "open"]);
+    // A longer prefix, or a lineage, disambiguates.
+    expect(
+      (
+        await request(`/v1/findings/${shared}b/feedback`, "POST", {
+          reason: "style",
+        })
+      ).status,
+    ).toBe(200);
+    expect(
+      (
+        await request(`/v1/findings/${shared}/feedback`, "POST", {
+          reason: "style",
+          lineage: {
+            repository: "github.com/acme/app",
+            kind: "branch",
+            ref: "feature/one",
+          },
+        })
+      ).status,
+    ).toBe(200);
+  });
   it("rejects unknown reasons and hides other tenants' findings", async () => {
     const id = await postedFinding();
     const rejected = await request(`/v1/findings/${id}/feedback`, "POST", {

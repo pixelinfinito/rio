@@ -89,6 +89,23 @@ rio review --deep
 
 Instead of OpenRouter, `rio init` can register your own OpenAI-compatible or Anthropic endpoints as AI Gateway custom providers (provider 4, or `--custom-provider SLUG:PROTOCOL:BASE_URL` with the key in `AI_GATEWAY_PROVIDER_KEY_<SLUG>`), and profiles can call them as `custom-SLUG/MODEL`, through the unified `compat/…` endpoint, or through gateway dynamic routes as `dynamic/ROUTE`; see [custom endpoints](docs/cloudflare.md#custom-endpoints-through-ai-gateway). Quick, Standard and Deep require an endpoint; `--offline` keeps local deterministic execution. With the [GitHub App](docs/github-app.md) (`rio init --github-app`), the endpoint reviews pull requests when they are opened or pushed, publishes under the repository profile's `publish` policy, and answers `/rio review` and `/rio dismiss <id> <reason>` comments; `rio review --pr <n>` runs the same hosted review from the CLI. An enabled security step (or `--profile rio/security`) reviews the change against the OWASP Top 10:2025 or ASVS 5.0 catalog and reports which catalog items it assessed. See [Cloudflare deployment and runners](docs/cloudflare.md) and [verification evidence](docs/verifier-contracts.md) for setup, isolation, budgets and the pending live model acceptance gate.
 
+### Interactive terminal UI
+
+In a terminal, `rio review`, `rio qa` and `rio init` open an interactive UI: choose what to review and how deep, watch the checks, agents and verification run, open each finding with its hunk and verification quorum, answer it, follow it through the impact graph, and export the report. Leaving the UI restores the terminal, prints a short summary and exits with the review's exit code.
+
+The UI opens only when standard input and standard output are terminals, `--format` is not given and `CI` is unset. `--no-tui` or `RIO_TUI=0` keep the streaming output, which is also what pipes, CI and `--format` get, unchanged:
+
+```sh
+rio review --no-tui              # streaming output in a terminal
+RIO_TUI=0 rio qa                 # the same for QA
+rio review --ascii               # ASCII glyphs (also RIO_ASCII=1) for terminals that draw box drawing two cells wide
+NO_COLOR=1 rio review            # no color; every state still reads by its glyph
+```
+
+Keys work the same on every screen: `?` help and the view map, `:` the command palette, `tab` next pane, `↑↓` / `jk` move, `⏎` open, `esc` back, `/` search, and `q` quit (it offers to save an unsaved report). Ctrl-C once stops the running checks and keeps a partial report; twice, it kills every tool and exits 130. The UI needs at least 80×24 cells. Nothing is posted to a pull request and no profile is written without an explicit `y`.
+
+On the findings screen, `⏎` on the open detail of a security finding with a trace or a council shows its trace and council; `F` (finding history), `S` (suppression proposals) and `P` (publish preview, for `rio review --pr`) are listed in the `:` palette. `rio review --pr <n>` opens the findings screen once the endpoint review finishes. `rio init` without choice flags opens the setup screens; a deployment that stops records its step in the user config, and `r` on the failure screen or a later `rio deploy` resumes it there.
+
 ### Browser QA and UX review
 
 Build the paired QA image from this source checkout on a Docker host with firewall
@@ -132,12 +149,12 @@ publish PR summaries.
 ```sh
 rio review --since-last                  # next round of this branch's lineage
 rio review --since-last --reset-lineage  # new generation, back to round 1
-rio feedback 8c1e --dismiss intentional --note "documented behavior"
+rio feedback 8c1e4a9b --dismiss intentional --note "documented behavior"
 ```
 
 `--since-last` reviews the current branch as a lineage held by the endpoint; it needs a configured endpoint and online mode (otherwise exit 2) and a checked-out branch (a detached HEAD exits 2). The lineage is keyed by the normalized `origin` URL (scheme, credentials, port and `.git` removed), or the repository directory name without an `origin`, plus the branch name, so rebases and force-pushes keep it. The endpoint assigns the round, re-reviews only the diff since the previous head after the first round, holds back findings it already posted and, once the round exceeds `rounds.cap`, summarizes unresolved findings in a "reconsider" message. Reports always list every finding, so `fail_on` and exit codes are unchanged; the footer shows the round and cap state, the author-response ratio when answers exist and the held-back count, and already-posted findings are marked. Rio keeps a versioned copy of the endpoint's lineage state at `<cache>/lineages/<hash>.json`. It is a cache: a missing copy is refetched from the endpoint, never treated as a reset, and it is pruned with the rest of the review cache. Only `--reset-lineage` (which requires `--since-last`) starts a new generation.
 
-`rio feedback <id> --dismiss <reason> [--note TEXT]` answers a posted finding through the endpoint. Accepted reasons are `fixed`, `wrong`, `intentional`, `irrelevant` and `style`; any other reason exits 2 before contacting the endpoint. The actor is your `git config user.email` when set. It exits 0 when the response is recorded, 2 for an invalid reason, a missing endpoint or a missing API token, and 3 when the endpoint rejects the response or does not know the finding. A dismissal never changes posture, budgets, rules or suppressions.
+`rio feedback <id> --dismiss <reason> [--note TEXT]` answers a posted finding through the endpoint. `<id>` is the 8-character id the report, the TUI and PR comments show (or any longer prefix of the identity); it must match exactly one finding. Accepted reasons are `fixed`, `wrong`, `intentional`, `irrelevant` and `style`; any other reason exits 2 before contacting the endpoint. The actor is your `git config user.email` when set. It exits 0 when the response is recorded, 2 for an invalid reason, an id shorter than 8 characters, a missing endpoint or a missing API token, and 3 when the endpoint rejects the response, does not know the finding, or finds the id ambiguous (it then names the matching identities). A dismissal never changes posture, budgets, rules or suppressions.
 
 ### Finding history and suppression proposals
 

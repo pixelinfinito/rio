@@ -1,0 +1,40 @@
+ ▃▅▇▇▇▅▃▃▁▁▁▃  rio  qa · checkout × mobile·dark                                   ✕ failed · step 4  regression vs main 
+  1 Journeys   2 Matrix   3 Cell   4 UX   5 Seed   6 Rules                                                              
+ checkout × mobile·dark       │ SCREENSHOT step 4 · 390×844 · dark    │ FINDING  q-41d0                                 
+ ✕ failed at step 4           │                                       │[new] [error] [defect] [static_proven] [FAIL]    
+ base main ✓ passed → regressi│   ╭──────────────────────────────╮    │                                                 
+──────────────────────────────│   │ 09:00              ▂▄▆  ▮▮▮  │    │ Pay is covered by the cookie bar                
+ STEPS                        │   │ ◂  Checkout                  │    │ on mobile in dark mode                          
+ ✓ 1 Open the cart       6s   │   │                              │    │                                                 
+ ✓ 2 Proceed to checkout 9s   │   │  Ship to                     │    │ rule     mobile/fixed-overlap  probe            
+ ✓ 3 Pay with test card 14s   │   │  ████████ ██████             │    │ where    /checkout  button#pay                  
+▌✕ 4 Confirm the order 21s    │   │  ███ ████████ ██ ████        │    │ source   src/style.css:212  attributed          
+   expect Pay reachable,      │   │                              │    │ cells    1 of 4 · mobile·dark                   
+          order placed        │   │  Card   •••• 4242      12/30 │    │──────────────────────────────────────────────── 
+   saw    Pay under the       │   │                              │    │ src/style.css                    +6 −0          
+          cookie bar, y 780   │   │  Subtotal            €34.00  │    │  209  .cookie-bar {                             
+ · 5 View confirmation        │   │  Shipping             €4.00  │    │  210    position: fixed; bottom: 0;             
+   not run                    │   │  Total               €38.00  │    │+ 211    padding: var(--space-6);                
+                              │   │                              │    │+ 212    line-height: 2.4;                       
+ OTHER CELLS                  │   │                              │    │  213  }                                         
+ ✓ mobile·light   ✓ desktop·l │   │ ┌──────────────────────────┐ │    │        ▲ bar grows to 112 px in dark            
+ ◐ desktop·dark               │   │ │ We use cookies to keep   │ │    │          (font fallback is taller)              
+ Δ vs mobile·light            │   │ │ your cart. Learn more    │ │    │──────────────────────────────────────────────── 
+   cookie bar 64 → 112 px     │   │ │ [ Accept ]  [ Settings ] │ │    │ OBSERVATIONS · unverified                       
+                              │   │ │                          │ │    │ ○ Total shifts 8 px after card entry            
+ EVIDENCE  sanitized          │   │ └──────────────────────────┘ │    │   below ui/layout-shift threshold               
+ ▣ step-4.png     masked      │   │ ░░░░░░  Pay €38.00  ░░░░░░░  │    │   shown, never counted as a finding             
+ ▣ step-4.dom.html            │   ╰──────────────────────────────╯    │──────────────────────────────────────────────── 
+ ▣ trace.zip      1.8 MB      │                                       │ PROOF                                           
+ ▣ console.log    0 err       │   ▲ Pay ∩ #cookie-bar = 100 %         │ probe measured it: static_proven                
+   .rio/cache/qa · 7 d        │     tap at (195, 790) hit the bar     │ no model judged this finding                    
+                              │                                       │ PR comment anchors on style.css:212             
+                              │                                       │                                                 
+                              │                                       │                                                 
+                              │                                       │                                                 
+                              │                                       │                                                 
+                              │                                       │                                                 
+                              │                                       │                                                 
+                              │                                       │                                                 
+ o open evidence in $BROWSER · screenshots are masked before storage · e opens src/style.css:212 in $EDITOR             
+ ←→ step  [ ] cell   o evidence  b vs base  e editor  r rerun cell  4 ux  esc matrix                                    

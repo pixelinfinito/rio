@@ -1,0 +1,42 @@
+[
+  {
+    "row": 7,
+    "text": "  ROUNDS                                                  │ │ 8c1e4a9b null deref in parseHeader    header.ts:42     │  ",
+    "reason": "8-character finding id"
+  },
+  {
+    "row": 8,
+    "text": "  R1  ■■■■■  5 findings   full review               3e1a  │ │ 3a90c2d1 TS2322 string → number       src/a.ts:12      │  ",
+    "reason": "8-character finding id"
+  },
+  {
+    "row": 10,
+    "text": "  R2  ■■■    3 findings   ╔═ rio feedback 8c1e4a9b ══════════════════════════════════════════╗                       │  ",
+    "reason": "8-character finding id"
+  },
+  {
+    "row": 13,
+    "text": "                          ║  8c1e4a9b · Possible null dereference in parseHeader             ║                       │  ",
+    "reason": "8-character finding id"
+  },
+  {
+    "row": 25,
+    "text": "  8c1e4a9b  open       fir║  actor  you@example.com (git config user.email)                  ║                          ",
+    "reason": "8-character finding id"
+  },
+  {
+    "row": 26,
+    "text": "  3a90c2d1  open       fir║                                                                  ║                          ",
+    "reason": "8-character finding id"
+  },
+  {
+    "row": 27,
+    "text": "  b41c7e02  fixed      fix║   ⏎ record   esc cancel     never changes posture or rules       ║                          ",
+    "reason": "8-character finding id"
+  },
+  {
+    "row": 28,
+    "text": "  e2195b84  dismissed  int║                                                                  ║                          ",
+    "reason": "8-character finding id"
+  }
+]

@@ -61,6 +61,9 @@ pub struct Deployment {
     /// means no council. Keys are never stored here.
     #[serde(skip_serializing_if = "Vec::is_empty")]
     pub council_vendors: Vec<rio_profile::VendorEntry>,
+    /// The step a stopped deployment resumes at; cleared when it finishes.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub pending: Option<String>,
 }
 impl Default for Deployment {
     fn default() -> Self {
@@ -78,6 +81,7 @@ impl Default for Deployment {
             github_app: false,
             github_org: None,
             council_vendors: Vec::new(),
+            pending: None,
         }
     }
 }
@@ -250,6 +254,26 @@ pub struct DeployArgs {
     /// Skip the council step and clear any saved council allowlist.
     #[arg(long)]
     pub no_council: bool,
+}
+impl DeployArgs {
+    /// Choices were given on the command line (the non-interactive init).
+    pub fn chosen(&self) -> bool {
+        self.from.is_some()
+            || self.account.is_some()
+            || self.name.is_some()
+            || self.cf_profile.is_some()
+            || self.runner.is_some()
+            || self.runner_image.is_some()
+            || self.workers_subdomain.is_some()
+            || self.credential_store.is_some()
+            || self.secrets_file.is_some()
+            || !self.custom_providers.is_empty()
+            || self.default_model.is_some()
+            || self.verifier_model.is_some()
+            || self.dry_run
+            || !self.council_vendors.is_empty()
+            || self.no_council
+    }
 }
 fn configured_url(value: &toml::Value) -> Option<&str> {
     value
@@ -669,20 +693,32 @@ impl Cloudflare {
         }
         bail!("too many Cloudflare resources to enumerate safely")
     }
-    async fn named(&self, path: &str, field: &str, name: &str, body: Value) -> Result<Value> {
+    /// The resource named `name`, created when missing; `true` when it existed.
+    async fn named_or_created(
+        &self,
+        path: &str,
+        field: &str,
+        name: &str,
+        body: Value,
+    ) -> Result<(Value, bool)> {
         if let Some(value) = self
             .list(path)
             .await?
             .into_iter()
             .find(|v| v[field] == name)
         {
-            return Ok(value);
+            return Ok((value, true));
         }
         // A failed create is not retried blindly; rerunning rio discovers any successful creation.
-        self.request(Method::POST, path, Some(body)).await
+        Ok((self.request(Method::POST, path, Some(body)).await?, false))
     }
 }
 pub(crate) async fn authentication(profile: &str) -> Result<String> {
+    authenticate_with(profile, io::stdin().is_terminal()).await
+}
+/// The Cloudflare token: `CLOUDFLARE_API_TOKEN`, else the cf login, which is
+/// renewed with `cf auth login` only when `interactive`.
+async fn authenticate_with(profile: &str, interactive: bool) -> Result<String> {
     if let Ok(token) = std::env::var("CLOUDFLARE_API_TOKEN") {
         ensure!(!token.is_empty(), "empty CLOUDFLARE_API_TOKEN");
         return Ok(token);
@@ -698,8 +734,7 @@ pub(crate) async fn authentication(profile: &str) -> Result<String> {
     );
     let mut value: Value =
         serde_json::from_slice(&result.stdout).context("cf auth whoami did not return JSON")?;
-    if (value["authenticated"] != true || value["tokenValid"] == false) && io::stdin().is_terminal()
-    {
+    if (value["authenticated"] != true || value["tokenValid"] == false) && interactive {
         ensure!(
             tokio::process::Command::new("cf")
                 .args(["--profile", profile, "auth", "login"])
@@ -733,7 +768,11 @@ pub(crate) async fn authentication(profile: &str) -> Result<String> {
         .map(str::to_owned)
         .context("cf OAuth token missing; run cf auth login")
 }
-fn select_account(accounts: &[Value], requested: Option<&str>) -> Result<String> {
+fn select_account(
+    accounts: &[Value],
+    requested: Option<&str>,
+    interactive: bool,
+) -> Result<String> {
     if let Some(requested) = requested {
         ensure!(
             accounts.iter().any(|a| a["id"] == requested),
@@ -744,7 +783,7 @@ fn select_account(accounts: &[Value], requested: Option<&str>) -> Result<String>
     if accounts.len() == 1 {
         return Ok(string(&accounts[0], "id")?.into());
     }
-    if !io::stdin().is_terminal() {
+    if !interactive {
         bail!(
             "Cloudflare login has {} accounts; select one with --account ACCOUNT_ID",
             accounts.len()
@@ -822,196 +861,1115 @@ fn metadata(
     }
     value
 }
-async fn runner_image(cf: &Cloudflare, deployment: &Deployment) -> Result<String> {
-    let account = deployment.account_id.as_deref().unwrap();
-    let image = deployment
-        .runner_image
-        .clone()
-        .unwrap_or_else(|| format!("ghcr.io/pixelinfinito/rio-runner:{}", env!("RIO_VERSION")));
-    if image.starts_with(&format!("registry.cloudflare.com/{account}/")) {
-        return Ok(image);
+/// The deployment's named steps, in order. Each is idempotent: it reuses what
+/// exists and creates or updates only what is missing or different, so a
+/// stopped deployment resumes at any step. The interactive UI shows these ids
+/// (`rio_tui::init::STEPS`).
+pub const STEPS: [&str; 16] = [
+    "authenticate",
+    "account",
+    "secrets",
+    "runner-image",
+    "registry-copy",
+    "d1",
+    "r2",
+    "queue",
+    "ai-gateway",
+    "gateway-token",
+    "worker-upload",
+    "workflows",
+    "migrations",
+    "queue-consumer",
+    "sandbox-rollout",
+    "workers-dev",
+];
+/// The steps only the Cloudflare Sandbox runner has.
+const SANDBOX_STEPS: [&str; 3] = ["runner-image", "registry-copy", "sandbox-rollout"];
+fn step_index(step: &str) -> usize {
+    STEPS.iter().position(|s| *s == step).unwrap_or(0)
+}
+
+/// The state a step reports.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
+#[serde(rename_all = "lowercase")]
+pub enum StepState {
+    Running,
+    Done,
+    Reused,
+    Skipped,
+    Failed,
+}
+
+/// One progress update of a step, in the shape the interactive UI's
+/// `"init:step"` value takes. Never carries a secret value: secrets are named only.
+#[derive(Clone, Debug, Default, Serialize)]
+pub struct Progress {
+    pub step: &'static str,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub state: Option<StepState>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub detail: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub log: Option<String>,
+    /// `info`, `warn` or `error`.
+    pub level: &'static str,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub elapsed: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub resource: Option<Value>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub secret: Option<Value>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub migration: Option<Value>,
+}
+
+/// Receives every progress update.
+pub type Reporter = std::sync::Arc<dyn Fn(Progress) + Send + Sync>;
+
+/// A deployment stopped at `step`.
+#[derive(Debug)]
+pub struct Stopped {
+    pub step: &'static str,
+    pub error: anyhow::Error,
+}
+
+/// What a finished step did.
+enum Outcome {
+    Done(String),
+    Reused(String),
+    Skipped(String),
+}
+
+/// The deployment as named steps run in order, with the state they hand on
+/// (the borrowed token, the account, secrets, resource ids). A stopped
+/// deployment keeps that state, so a retry resumes at the stopped step
+/// without repeating the ones before it.
+pub struct Deployer {
+    args: DeployArgs,
+    directory: PathBuf,
+    /// Prompts may read standard input (the terminal path without the UI).
+    interactive: bool,
+    /// Progress lines are printed on standard error (the path without the UI).
+    echo: bool,
+    /// Secrets typed into the interactive UI, by environment name.
+    supplied: BTreeMap<String, String>,
+    report: Reporter,
+    /// Stop before the next step (Ctrl-C in the interactive UI).
+    pub cancel: std::sync::Arc<std::sync::atomic::AtomicBool>,
+    pub deployment: Deployment,
+    fresh: bool,
+    /// A token to use instead of the cf login, and another API root (tests).
+    token: Option<String>,
+    api: Option<String>,
+    cf: Option<Cloudflare>,
+    secrets: Secrets,
+    models: Option<ProfileModels>,
+    image: Option<String>,
+    db_id: String,
+    queue_id: String,
+    migration_tag: Option<String>,
+    endpoint: Option<String>,
+    /// Resources created or reused so far: `(kind, name, reused)`.
+    pub resources: Vec<(String, String, bool)>,
+    /// Retries during the deployment (registry pushes).
+    pub retries: u32,
+    /// Whether the default profile was written.
+    pub profile_written: bool,
+    /// The next step to run.
+    next: usize,
+}
+
+impl Deployer {
+    /// A deployment of the choices `args` and the user config resolve.
+    pub fn new(args: DeployArgs, interactive: bool, echo: bool, report: Reporter) -> Result<Self> {
+        Self::at(
+            crate::config::config_directory()?,
+            args,
+            interactive,
+            echo,
+            report,
+        )
     }
-    let inspected = tokio::process::Command::new("docker").args(["image", "inspect", &image]).output().await.context("Sandbox deployment requires Docker to copy its released runner image; install/start Docker or choose --runner self-hosted")?;
-    if !inspected.status.success() {
-        eprintln!("Pulling released runner image…");
-        let output = tokio::process::Command::new("docker")
-            .args(["pull", "--platform", "linux/amd64", &image])
+
+    pub(crate) fn at(
+        directory: PathBuf,
+        args: DeployArgs,
+        interactive: bool,
+        echo: bool,
+        report: Reporter,
+    ) -> Result<Self> {
+        let saved = document(&directory.join("config.toml"))?;
+        // The council question is asked once, on a first deployment: one that
+        // never finished counts as first.
+        let fresh = match saved.get("deployment") {
+            None => true,
+            Some(deployment) => {
+                deployment.get("pending").is_some() && configured_url(&saved).is_none()
+            }
+        };
+        let mut deployment = choices(&args, &directory)?;
+        deployment.pending = None;
+        Ok(Self {
+            args,
+            directory,
+            interactive,
+            echo,
+            supplied: BTreeMap::new(),
+            report,
+            cancel: Default::default(),
+            deployment,
+            fresh,
+            token: None,
+            api: None,
+            cf: None,
+            secrets: Secrets::default(),
+            models: None,
+            image: None,
+            db_id: String::new(),
+            queue_id: String::new(),
+            migration_tag: None,
+            endpoint: None,
+            resources: Vec::new(),
+            retries: 0,
+            profile_written: false,
+            next: 0,
+        })
+    }
+
+    /// Supply a secret typed into the interactive UI (a provider key).
+    pub fn supply(&mut self, name: &str, value: String) -> Result<()> {
+        ensure!(
+            BUILTIN_KEYS.contains(&name) || name == "AI_GATEWAY_TOKEN",
+            "unsupported secret name"
+        );
+        ensure!(!value.trim().is_empty(), "provider key cannot be empty");
+        self.supplied.insert(name.into(), value.trim().into());
+        Ok(())
+    }
+
+    /// A secret of that name is held (never its value).
+    pub fn has_secret(&self, name: &str) -> bool {
+        self.secrets.0.contains_key(name) || self.supplied.contains_key(name)
+    }
+
+    /// The step a retry starts at (the stopped one).
+    pub fn next_step(&self) -> &'static str {
+        STEPS[self.next.min(STEPS.len() - 1)]
+    }
+
+    /// The deployed endpoint, once the last step ran.
+    pub fn endpoint(&self) -> Option<&str> {
+        self.endpoint.as_deref()
+    }
+
+    pub fn directory(&self) -> &Path {
+        &self.directory
+    }
+
+    /// Continue with the self-hosted runner: the Sandbox steps are skipped, and
+    /// a Worker uploaded with the Sandbox declaration is uploaded again.
+    pub fn switch_to_self_hosted(&mut self) -> Result<()> {
+        self.deployment.runner = Runner::SelfHosted;
+        self.image = None;
+        self.next = self.next.min(step_index("worker-upload"));
+        if self.next > step_index("secrets") {
+            self.save_pending()?;
+        }
+        Ok(())
+    }
+
+    fn progress(&self, step: &'static str, update: Progress) {
+        (self.report)(Progress { step, ..update });
+    }
+
+    /// A line of the deployment log, also printed on standard error without the UI.
+    fn say(&self, step: &'static str, level: &'static str, text: String) {
+        if self.echo {
+            eprintln!("{text}");
+        }
+        self.progress(
+            step,
+            Progress {
+                log: Some(text),
+                level,
+                ..Progress::default()
+            },
+        );
+    }
+
+    fn resource(&mut self, step: &'static str, kind: &str, name: &str, id: &str, reused: bool) {
+        self.resources.push((kind.into(), name.into(), reused));
+        self.progress(
+            step,
+            Progress {
+                resource: Some(json!({"kind": kind, "name": name, "id": id,
+                    "state": if reused { "reused" } else { "done" }})),
+                level: "info",
+                ..Progress::default()
+            },
+        );
+    }
+
+    /// Record the step a stopped deployment resumes at, with the choices.
+    fn save_pending(&mut self) -> Result<()> {
+        self.deployment.pending = Some(self.next_step().into());
+        save_choices(&self.directory, &self.deployment, None)
+    }
+
+    /// Run the steps from the next one to the last. On failure the deployment
+    /// keeps its state and `deployment.pending` names the stopped step.
+    pub async fn run(&mut self) -> Result<(), Stopped> {
+        if self.next == 0 {
+            // The chosen configuration and the pending step are written before
+            // the first remote step, so `rio init` can offer to resume.
+            let written = rio_git::private_directory(&self.directory)
+                .map_err(anyhow::Error::from)
+                .and_then(|()| self.save_pending());
+            if let Err(error) = written {
+                return Err(Stopped {
+                    step: STEPS[0],
+                    error,
+                });
+            }
+        }
+        while self.next < STEPS.len() {
+            let step = STEPS[self.next];
+            if self.cancel.load(std::sync::atomic::Ordering::Relaxed) {
+                return Err(Stopped {
+                    step,
+                    error: anyhow::anyhow!("interrupted; rio deploy resumes it"),
+                });
+            }
+            if self.next > 0
+                && let Err(error) = self.save_pending()
+            {
+                return Err(Stopped { step, error });
+            }
+            let started = std::time::Instant::now();
+            self.progress(
+                step,
+                Progress {
+                    state: Some(StepState::Running),
+                    level: "info",
+                    ..Progress::default()
+                },
+            );
+            match self.step(step).await {
+                Ok(outcome) => {
+                    let (state, detail) = match outcome {
+                        Outcome::Done(detail) => (StepState::Done, detail),
+                        Outcome::Reused(detail) => (StepState::Reused, detail),
+                        Outcome::Skipped(detail) => (StepState::Skipped, detail),
+                    };
+                    self.progress(
+                        step,
+                        Progress {
+                            state: Some(state),
+                            detail: Some(detail),
+                            elapsed: Some(started.elapsed().as_secs_f64()),
+                            level: "info",
+                            ..Progress::default()
+                        },
+                    );
+                    self.next += 1;
+                }
+                Err(error) => {
+                    self.progress(
+                        step,
+                        Progress {
+                            state: Some(StepState::Failed),
+                            log: Some(rio_core::redact(&format!("{error:#}"))),
+                            level: "error",
+                            elapsed: Some(started.elapsed().as_secs_f64()),
+                            ..Progress::default()
+                        },
+                    );
+                    return Err(Stopped { step, error });
+                }
+            }
+        }
+        // Finished: nothing to resume.
+        self.deployment.pending = None;
+        save_choices(&self.directory, &self.deployment, None).map_err(|error| Stopped {
+            step: STEPS[STEPS.len() - 1],
+            error,
+        })?;
+        Ok(())
+    }
+
+    fn cf(&self) -> Result<&Cloudflare> {
+        self.cf.as_ref().context("not authenticated")
+    }
+
+    fn base(&self) -> String {
+        format!(
+            "/accounts/{}",
+            self.deployment.account_id.as_deref().unwrap_or_default()
+        )
+    }
+
+    async fn step(&mut self, step: &'static str) -> Result<Outcome> {
+        if SANDBOX_STEPS.contains(&step) && self.deployment.runner != Runner::Sandbox {
+            if step == "runner-image" {
+                self.preflight()?;
+            }
+            return Ok(Outcome::Skipped("self-hosted runner".into()));
+        }
+        match step {
+            "authenticate" => self.authenticate().await,
+            "account" => self.account().await,
+            "secrets" => self.collect_secrets(),
+            "runner-image" => {
+                self.preflight()?;
+                self.runner_image().await
+            }
+            "registry-copy" => self.registry_copy().await,
+            "d1" => self.d1().await,
+            "r2" => self.r2().await,
+            "queue" => self.queue().await,
+            "ai-gateway" => self.ai_gateway().await,
+            "gateway-token" => self.gateway_token().await,
+            "worker-upload" => self.worker_upload().await,
+            "workflows" => self.workflows().await,
+            "migrations" => self.migrations().await,
+            "queue-consumer" => self.queue_consumer().await,
+            "sandbox-rollout" => self.sandbox_rollout().await,
+            "workers-dev" => self.workers_dev().await,
+            other => bail!("unknown deployment step {other}"),
+        }
+    }
+
+    async fn authenticate(&mut self) -> Result<Outcome> {
+        let (token, how) = match self.token.take() {
+            Some(token) => (token, "supplied token"),
+            None if std::env::var_os("CLOUDFLARE_API_TOKEN").is_some() => (
+                authenticate_with(&self.deployment.cf_profile, self.interactive).await?,
+                "CLOUDFLARE_API_TOKEN",
+            ),
+            None => (
+                authenticate_with(&self.deployment.cf_profile, self.interactive).await?,
+                "cf OAuth",
+            ),
+        };
+        let mut cf = Cloudflare::new(token)?;
+        if let Some(api) = &self.api {
+            cf.base = api.clone();
+        }
+        self.cf = Some(cf);
+        Ok(Outcome::Done(how.into()))
+    }
+
+    async fn account(&mut self) -> Result<Outcome> {
+        let accounts = self.cf()?.list("/accounts").await?;
+        let id = select_account(
+            &accounts,
+            self.deployment.account_id.as_deref(),
+            self.interactive,
+        )?;
+        let name = accounts
+            .iter()
+            .find(|a| a["id"] == id)
+            .and_then(|a| a["name"].as_str())
+            .unwrap_or("Cloudflare account")
+            .to_owned();
+        self.deployment.account_id = Some(id);
+        self.deployment.validate()?;
+        rio_git::private_directory(&self.directory)?;
+        Ok(Outcome::Done(name))
+    }
+
+    fn collect_secrets(&mut self) -> Result<Outcome> {
+        let directory = self.directory.clone();
+        let mut secrets = Secrets::load(&directory, &self.deployment)?;
+        secrets.collect(
+            self.args.secrets_file.as_deref(),
+            &self.deployment.custom_providers,
+        )?;
+        for (name, value) in &self.supplied {
+            secrets.0.insert(name.clone(), value.clone());
+        }
+        let mut models = self
+            .args
+            .default_model
+            .as_ref()
+            .map(|default| ProfileModels {
+                default: default.clone(),
+                verifier: self
+                    .args
+                    .verifier_model
+                    .clone()
+                    .unwrap_or_else(|| default.clone()),
+            });
+        if !secrets.has_builtin_key()
+            && self.deployment.custom_providers.is_empty()
+            && self.interactive
+        {
+            models = secrets.prompt_provider(&mut self.deployment)?.or(models);
+        }
+        ensure!(
+            secrets.has_builtin_key() || !self.deployment.custom_providers.is_empty(),
+            "provide a model key using OPENROUTER_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY or --secrets-file, or configure a custom provider with --custom-provider"
+        );
+        if self.fresh
+            && self.args.from.is_none()
+            && self.args.council_vendors.is_empty()
+            && !self.args.no_council
+            && self.interactive
+        {
+            // Council keys must not change which provider ordinary reviews use.
+            let primary: Vec<_> = BUILTIN_KEYS
+                .iter()
+                .filter(|key| secrets.0.contains_key(**key))
+                .copied()
+                .collect();
+            secrets.prompt_council(&mut self.deployment)?;
+            if models.is_none()
+                && BUILTIN_KEYS
+                    .iter()
+                    .any(|k| secrets.0.contains_key(*k) && !primary.contains(k))
+            {
+                ensure!(
+                    !primary.is_empty() || directory.join("profiles/default.yaml").exists(),
+                    "with only custom providers, pass --default-model custom-SLUG/MODEL; council keys never choose the default profile's models"
+                );
+                models = primary_models(&primary);
+            }
+        }
+        // The default council members need three families to run.
+        let families: std::collections::BTreeSet<_> = self
+            .deployment
+            .council_vendors
+            .iter()
+            .map(|entry| entry.family.as_str())
+            .collect();
+        if !families.is_empty() && families.len() < 3 {
+            self.say(
+                "secrets",
+                "warn",
+                format!(
+                    "Warning: the council allowlist spans {} model {}; rio/security and rio/critical need at least three",
+                    families.len(),
+                    if families.len() == 1 {
+                        "family"
+                    } else {
+                        "families"
+                    }
+                ),
+            );
+        }
+        let missing: Vec<_> = self
+            .deployment
+            .council_keys()
+            .into_iter()
+            .filter(|key| !secrets.0.contains_key(*key))
+            .collect();
+        ensure!(
+            missing.is_empty(),
+            "council routes need {} from the environment or --secrets-file",
+            missing.join(", ")
+        );
+        let profile_needed = !directory.join("profiles/default.yaml").exists();
+        ensure!(
+            !profile_needed || models.is_some() || secrets.has_builtin_key(),
+            "with only custom providers, pass --default-model custom-SLUG/MODEL (and optionally --verifier-model) so the default profile can be written, or create {} first",
+            directory.join("profiles/default.yaml").display()
+        );
+        // Persist generated credentials before any resource mutation so a partial deployment is recoverable.
+        secrets.save(&directory, &self.deployment)?;
+        save_choices(&directory, &self.deployment, None)?;
+        for name in secrets
+            .worker()
+            .map(|(name, _)| name.clone())
+            .collect::<Vec<_>>()
+        {
+            self.progress(
+                "secrets",
+                Progress {
+                    secret: Some(json!({"name": name, "done": true})),
+                    level: "info",
+                    ..Progress::default()
+                },
+            );
+        }
+        self.secrets = secrets;
+        self.models = models;
+        Ok(Outcome::Done(match self.deployment.credential_store {
+            CredentialStore::Keychain => "saved in the OS keychain".into(),
+            CredentialStore::File => "saved in a private file".into(),
+        }))
+    }
+
+    /// Unreadable route definitions fail before anything is created or changed.
+    fn preflight(&self) -> Result<()> {
+        providers::check_routes(&self.directory, &self.deployment.dynamic_routes)?;
+        self.say(
+            "runner-image",
+            "info",
+            format!(
+                "Deploying {} to Cloudflare account {}…",
+                self.deployment.name,
+                self.deployment.account_id.as_deref().unwrap_or_default()
+            ),
+        );
+        Ok(())
+    }
+
+    /// The released (or supplied) runner image, pulled when Docker lacks it.
+    async fn runner_image(&mut self) -> Result<Outcome> {
+        let account = self.deployment.account_id.clone().unwrap_or_default();
+        let image =
+            self.deployment.runner_image.clone().unwrap_or_else(|| {
+                format!("ghcr.io/pixelinfinito/rio-runner:{}", env!("RIO_VERSION"))
+            });
+        if image.starts_with(&format!("registry.cloudflare.com/{account}/")) {
+            self.image = Some(image);
+            return Ok(Outcome::Reused("already in your registry".into()));
+        }
+        let inspected = tokio::process::Command::new("docker").args(["image", "inspect", &image]).output().await.context("Sandbox deployment requires Docker to copy its released runner image; install/start Docker or choose --runner self-hosted")?;
+        if !inspected.status.success() {
+            self.say(
+                "runner-image",
+                "info",
+                "Pulling released runner image…".into(),
+            );
+            let output = tokio::process::Command::new("docker")
+                .args(["pull", "--platform", "linux/amd64", &image])
+                .output()
+                .await?;
+            ensure!(
+                output.status.success(),
+                "runner image unavailable; release maintainers must publish the paired image, or supply --runner-image with an image you built"
+            );
+        }
+        self.image = None;
+        Ok(Outcome::Done(image))
+    }
+
+    /// The runner image copied to the account's registry, by digest.
+    async fn registry_copy(&mut self) -> Result<Outcome> {
+        if let Some(image) = &self.image {
+            return Ok(Outcome::Reused(image.clone()));
+        }
+        let token = self.cf()?.token.clone();
+        let deployment = self.deployment.clone();
+        let account = deployment.account_id.as_deref().unwrap_or_default();
+        let image = deployment
+            .runner_image
+            .clone()
+            .unwrap_or_else(|| format!("ghcr.io/pixelinfinito/rio-runner:{}", env!("RIO_VERSION")));
+        let tag = format!("{}-runner:{}", deployment.name, env!("RIO_VERSION"));
+        ensure!(
+            tokio::process::Command::new("docker")
+                .args(["tag", &image, &tag])
+                .output()
+                .await?
+                .status
+                .success(),
+            "could not tag runner image"
+        );
+        self.say(
+            "registry-copy",
+            "info",
+            "Copying runner image to your Cloudflare registry…".into(),
+        );
+        let mut pushed = false;
+        let mut retries = 0;
+        for attempt in 1..=3 {
+            let output = tokio::process::Command::new("cf")
+                .args([
+                    "--profile",
+                    &deployment.cf_profile,
+                    "containers",
+                    "push",
+                    "--tag",
+                    &tag,
+                ])
+                .env("CLOUDFLARE_API_TOKEN", &token)
+                .env("CLOUDFLARE_ACCOUNT_ID", account)
+                .output()
+                .await
+                .context("cf containers push requires the authenticated Cloudflare CLI")?;
+            if output.status.success() {
+                pushed = true;
+                break;
+            }
+            if attempt < 3 {
+                retries += 1;
+                self.say(
+                    "registry-copy",
+                    "warn",
+                    format!("Registry push interrupted; retrying ({}/3)…", attempt + 1),
+                );
+            }
+        }
+        self.retries += retries;
+        ensure!(
+            pushed,
+            "cf containers push failed; check registry permissions and Docker authentication"
+        );
+        let remote = format!("registry.cloudflare.com/{account}/{tag}");
+        let inspected = tokio::process::Command::new("docker")
+            .args(["image", "inspect", &remote])
             .output()
             .await?;
         ensure!(
-            output.status.success(),
-            "runner image unavailable; release maintainers must publish the paired image, or supply --runner-image with an image you built"
+            inspected.status.success(),
+            "could not inspect pushed runner image"
         );
+        let images: Value =
+            serde_json::from_slice(&inspected.stdout).context("invalid Docker image metadata")?;
+        let prefix = format!(
+            "registry.cloudflare.com/{account}/{}-runner@sha256:",
+            deployment.name
+        );
+        let digest = images[0]["RepoDigests"]
+            .as_array()
+            .and_then(|a| {
+                a.iter()
+                    .filter_map(Value::as_str)
+                    .find(|s| s.starts_with(&prefix))
+            })
+            .map(str::to_owned)
+            .context("Docker did not report the pushed image digest")?;
+        let name = format!("{}-runner", deployment.name);
+        self.image = Some(digest.clone());
+        self.resource("registry-copy", "Registry", &name, &digest, false);
+        Ok(Outcome::Done(digest))
     }
-    let tag = format!("{}-runner:{}", deployment.name, env!("RIO_VERSION"));
-    ensure!(
-        tokio::process::Command::new("docker")
-            .args(["tag", &image, &tag])
-            .output()
-            .await?
-            .status
-            .success(),
-        "could not tag runner image"
-    );
-    eprintln!("Copying runner image to your Cloudflare registry…");
-    let mut pushed = false;
-    for attempt in 1..=3 {
-        let output = tokio::process::Command::new("cf")
-            .args([
-                "--profile",
-                &deployment.cf_profile,
-                "containers",
-                "push",
-                "--tag",
-                &tag,
-            ])
-            .env("CLOUDFLARE_API_TOKEN", &cf.token)
-            .env("CLOUDFLARE_ACCOUNT_ID", account)
-            .output()
-            .await
-            .context("cf containers push requires the authenticated Cloudflare CLI")?;
-        if output.status.success() {
-            pushed = true;
-            break;
-        }
-        if attempt < 3 {
-            eprintln!("Registry push interrupted; retrying ({}/3)…", attempt + 1);
-        }
+
+    async fn d1(&mut self) -> Result<Outcome> {
+        let name = self.deployment.name.clone();
+        let (db, reused) = self
+            .cf()?
+            .named_or_created(
+                &format!("{}/d1/database", self.base()),
+                "name",
+                &name,
+                json!({"name":name}),
+            )
+            .await?;
+        self.db_id = string(&db, "uuid")?.to_owned();
+        let id = self.db_id.clone();
+        self.resource("d1", "D1", &name, &id, reused);
+        Ok(found(reused, name))
     }
-    ensure!(
-        pushed,
-        "cf containers push failed; check registry permissions and Docker authentication"
-    );
-    let remote = format!("registry.cloudflare.com/{account}/{tag}");
-    let inspected = tokio::process::Command::new("docker")
-        .args(["image", "inspect", &remote])
-        .output()
+
+    async fn r2(&mut self) -> Result<Outcome> {
+        let base = self.base();
+        let cf = self.cf()?;
+        let buckets = cf
+            .request(Method::GET, &format!("{base}/r2/buckets"), None)
+            .await?;
+        let bucket_name = format!("{}-artifacts", self.deployment.name);
+        let reused = buckets["buckets"]
+            .as_array()
+            .context("missing bucket list")?
+            .iter()
+            .any(|b| b["name"] == bucket_name);
+        if !reused {
+            cf.request(
+                Method::POST,
+                &format!("{base}/r2/buckets"),
+                Some(json!({"name":bucket_name})),
+            )
+            .await?;
+        }
+        self.resource("r2", "R2", &bucket_name, "—", reused);
+        Ok(found(reused, bucket_name))
+    }
+
+    async fn queue(&mut self) -> Result<Outcome> {
+        let queue_name = format!("{}-jobs", self.deployment.name);
+        let (queue, reused) = self
+            .cf()?
+            .named_or_created(
+                &format!("{}/queues", self.base()),
+                "queue_name",
+                &queue_name,
+                json!({"queue_name":queue_name}),
+            )
+            .await?;
+        self.queue_id = string(&queue, "queue_id")?.to_owned();
+        let id = self.queue_id.clone();
+        self.resource("queue", "Queue", &queue_name, &id, reused);
+        Ok(found(reused, queue_name))
+    }
+
+    async fn ai_gateway(&mut self) -> Result<Outcome> {
+        let base = self.base();
+        let name = self.deployment.name.clone();
+        let cf = self.cf()?;
+        let (gateway, reused) = cf.named_or_created(&format!("{base}/ai-gateway/gateways"), "id", &name, json!({"id":name,"authentication":true,"byok_only":true,"cache_invalidate_on_update":true,"cache_ttl":0,"collect_logs":false,"rate_limiting_interval":60,"rate_limiting_limit":120,"rate_limiting_technique":"fixed"})).await?;
+        if gateway["authentication"] != true
+            || gateway["collect_logs"] != false
+            || gateway["cache_ttl"] != 0
+        {
+            cf.request(Method::PUT, &format!("{base}/ai-gateway/gateways/{name}"), Some(json!({"authentication":true,"byok_only":true,"cache_invalidate_on_update":true,"cache_ttl":0,"collect_logs":false,"rate_limiting_interval":60,"rate_limiting_limit":120,"rate_limiting_technique":"fixed"}))).await?;
+        }
+        self.resource("ai-gateway", "Gateway", &name, &name, reused);
+        Ok(found(reused, format!("{name} · auth on · logs off")))
+    }
+
+    async fn gateway_token(&mut self) -> Result<Outcome> {
+        let base = self.base();
+        let account = self.deployment.account_id.clone().unwrap_or_default();
+        let name = self.deployment.name.clone();
+        let cf = self.cf.as_ref().context("not authenticated")?;
+        let mut reused = true;
+        if !self.secrets.0.contains_key("AI_GATEWAY_TOKEN") {
+            let token = cf.request(Method::POST, &format!("{base}/tokens"), Some(json!({"name":format!("{name} AI Gateway inference"),"policies":[{"effect":"allow","resources":{format!("com.cloudflare.api.account.{account}"):"*"},"permission_groups":[{"id":GATEWAY_RUN}]}]}))).await?;
+            self.secrets
+                .0
+                .insert("AI_GATEWAY_TOKEN".into(), string(&token, "value")?.into());
+            self.secrets.save(&self.directory, &self.deployment)?;
+            reused = false;
+        }
+        if providers::reconcile_providers(
+            cf,
+            &base,
+            &name,
+            &self.deployment.custom_providers,
+            &mut self.secrets.0,
+        )
+        .await?
+        {
+            self.secrets.save(&self.directory, &self.deployment)?;
+        }
+        providers::reconcile_routes(
+            cf,
+            &format!("{base}/ai-gateway/gateways/{name}"),
+            &self.directory,
+            &self.deployment.dynamic_routes,
+        )
         .await?;
-    ensure!(
-        inspected.status.success(),
-        "could not inspect pushed runner image"
-    );
-    let images: Value =
-        serde_json::from_slice(&inspected.stdout).context("invalid Docker image metadata")?;
-    let prefix = format!(
-        "registry.cloudflare.com/{account}/{}-runner@sha256:",
-        deployment.name
-    );
-    images[0]["RepoDigests"]
-        .as_array()
-        .and_then(|a| {
-            a.iter()
-                .filter_map(Value::as_str)
-                .find(|s| s.starts_with(&prefix))
+        Ok(found(reused, "AI Gateway Run · account".into()))
+    }
+
+    async fn worker_upload(&mut self) -> Result<Outcome> {
+        let base = self.base();
+        let name = self.deployment.name.clone();
+        let cf = self.cf.as_ref().context("not authenticated")?;
+        let scripts = cf.list(&format!("{base}/workers/scripts")).await?;
+        let existing = scripts.iter().find(|s| s["id"] == *name);
+        if let Some(existing) = existing {
+            ensure!(
+                existing["tags"]
+                    .as_array()
+                    .is_some_and(|tags| tags.iter().any(|tag| tag == "rio-managed")),
+                "Worker name already exists outside Rio; select an unused --name instead"
+            );
+        }
+        let migration_tag = existing
+            .and_then(|s| s["migration_tag"].as_str())
+            .map(str::to_owned);
+        ensure!(
+            migration_tag.is_none() || migration_tag.as_deref() == Some("v1"),
+            "Worker has an unsupported Durable Object migration tag; upgrade rather than downgrade"
+        );
+        for (suffix, class) in [
+            ("review", "ReviewWorkflow"),
+            ("migrate", "MigrationWorkflow"),
+        ] {
+            let workflows = cf.list(&format!("{base}/workflows")).await?;
+            if let Some(existing) = workflows
+                .iter()
+                .find(|w| w["name"] == format!("{name}-{suffix}"))
+            {
+                ensure!(
+                    existing["script_name"] == *name && existing["class_name"] == class,
+                    "Workflow name belongs to another Worker"
+                );
+            }
+        }
+        let upload_path = format!("{base}/workers/scripts/{name}");
+        if !self.deployment.model_prices.is_empty()
+            && !self.secrets.0.contains_key(providers::PRICES_MARKER)
+        {
+            self.secrets
+                .0
+                .insert(providers::PRICES_MARKER.into(), "1".into());
+            self.secrets.save(&self.directory, &self.deployment)?;
+        }
+        let meta = metadata(
+            &self.deployment,
+            &self.db_id,
+            &self.queue_id,
+            &self.secrets,
+            migration_tag.as_deref(),
+        );
+        let form = multipart::Form::new()
+            .text("metadata", serde_json::to_string(&meta)?)
+            .part(
+                "worker.mjs",
+                multipart::Part::text(BUNDLE)
+                    .file_name("worker.mjs")
+                    .mime_str("application/javascript+module")?,
+            );
+        let uploaded = cf
+            .response(
+                cf.client
+                    .put(format!("{}{upload_path}", cf.base))
+                    .bearer_auth(&cf.token)
+                    .multipart(form)
+                    .send()
+                    .await
+                    .context("Worker upload failed")?,
+                &upload_path,
+            )
+            .await?;
+        // The empty MODEL_PRICES just uploaded replaced Rio's earlier prices.
+        if self.deployment.model_prices.is_empty()
+            && self.secrets.0.remove(providers::PRICES_MARKER).is_some()
+        {
+            self.secrets.save(&self.directory, &self.deployment)?;
+        }
+        let reused = existing.is_some();
+        self.migration_tag = migration_tag;
+        let version = uploaded["id"]
+            .as_str()
+            .or(uploaded["etag"].as_str())
+            .unwrap_or("—")
+            .to_owned();
+        self.resource("worker-upload", "Worker", &name, &version, reused);
+        Ok(Outcome::Done(if reused {
+            "bundle · bindings · updated".into()
+        } else {
+            "bundle · bindings".into()
+        }))
+    }
+
+    async fn workflows(&mut self) -> Result<Outcome> {
+        let base = self.base();
+        let name = self.deployment.name.clone();
+        for (suffix, class) in [
+            ("review", "ReviewWorkflow"),
+            ("migrate", "MigrationWorkflow"),
+        ] {
+            self.cf()?
+                .request(
+                    Method::PUT,
+                    &format!("{base}/workflows/{name}-{suffix}"),
+                    Some(json!({"script_name":name,"class_name":class})),
+                )
+                .await?;
+        }
+        self.resource(
+            "workflows",
+            "Workflows",
+            &format!("{name}-review"),
+            "—",
+            false,
+        );
+        self.resource("workflows", "", &format!("{name}-migrate"), "—", false);
+        Ok(Outcome::Done(format!("{name}-review · {name}-migrate")))
+    }
+
+    async fn migrations(&mut self) -> Result<Outcome> {
+        let base = self.base();
+        let name = self.deployment.name.clone();
+        let cf = self.cf()?;
+        migrate(cf, &base, &name).await?;
+        // Expiries are per run, not bucket-wide. Register the bounded evidence
+        // sweep after migrations; the Worker only needs its existing R2 binding.
+        cf.request(
+            Method::PUT,
+            &format!("{base}/workers/scripts/{name}/schedules"),
+            Some(json!([{"cron":"* * * * *"}])),
+        )
+        .await?;
+        Ok(Outcome::Done("D1 schema · evidence sweep".into()))
+    }
+
+    async fn queue_consumer(&mut self) -> Result<Outcome> {
+        let base = self.base();
+        let name = self.deployment.name.clone();
+        let cf = self.cf()?;
+        let consumers_path = format!("{base}/queues/{}/consumers", self.queue_id);
+        let consumers = cf.list(&consumers_path).await?;
+        let consumer = consumers
+            .iter()
+            .find(|c| c["script"] == *name || c["script_name"] == *name);
+        ensure!(
+            consumers.is_empty() || consumer.is_some(),
+            "queue already has a consumer belonging to another Worker"
+        );
+        let body =
+            json!({"type":"worker","script_name":name,"settings":{"batch_size":1,"max_retries":2}});
+        let reused = consumer.is_some();
+        if let Some(consumer) = consumer {
+            cf.request(
+                Method::PUT,
+                &format!("{consumers_path}/{}", string(consumer, "consumer_id")?),
+                Some(body),
+            )
+            .await?;
+        } else {
+            cf.request(Method::POST, &consumers_path, Some(body))
+                .await?;
+        }
+        Ok(found(reused, format!("{name}-jobs → {name}")))
+    }
+
+    async fn sandbox_rollout(&mut self) -> Result<Outcome> {
+        let image = self
+            .image
+            .clone()
+            .context("the runner image was not copied; retry from the registry copy")?;
+        let name = self.deployment.name.clone();
+        configure_container(self.cf()?, &self.base(), &name, &image).await?;
+        self.resource("sandbox-rollout", "Sandbox", "standard-3", "—", false);
+        Ok(Outcome::Done("standard-3 · rolling".into()))
+    }
+
+    async fn workers_dev(&mut self) -> Result<Outcome> {
+        let base = self.base();
+        let account = self.deployment.account_id.clone().unwrap_or_default();
+        let name = self.deployment.name.clone();
+        let cf = self.cf()?;
+        let subdomain_path = format!("{base}/workers/subdomain");
+        let subdomain = cf
+            .optional(&subdomain_path)
+            .await?
+            .and_then(|s| s["subdomain"].as_str().map(str::to_owned))
+            .filter(|s| !s.is_empty());
+        let subdomain = match subdomain {
+            Some(subdomain) => subdomain,
+            None => {
+                let selected = self
+                    .deployment
+                    .workers_subdomain
+                    .clone()
+                    .unwrap_or_else(|| format!("rio-{}", &account[..12.min(account.len())]));
+                cf.request(
+                    Method::PUT,
+                    &subdomain_path,
+                    Some(json!({"subdomain":selected})),
+                )
+                .await?;
+                selected
+            }
+        };
+        cf.request(
+            Method::POST,
+            &format!("{base}/workers/scripts/{name}/subdomain"),
+            Some(json!({"enabled":true,"previews_enabled":false})),
+        )
+        .await?;
+        let endpoint = format!("https://{name}.{subdomain}.workers.dev");
+        save_choices(&self.directory, &self.deployment, Some(&endpoint))?;
+        let profiles = self.directory.join("profiles");
+        let default_profile = profiles.join("default.yaml");
+        if !default_profile.exists() {
+            rio_git::private_directory(&profiles)?;
+            let secrets = &self.secrets;
+            let profile = if let Some(models) = &self.models {
+                include_str!("../../../modules/profiles/openrouter.yaml")
+                    .replace("name: rio/openrouter", "name: rio-default")
+                    .replace("openrouter/anthropic/claude-sonnet-5.5", &models.default)
+                    .replace("openrouter/openai/gpt-6.1-sol", &models.verifier)
+            } else if secrets.0.contains_key("OPENROUTER_API_KEY") {
+                "version: 1\nname: rio-default\nextends: rio/openrouter\n".to_owned()
+            } else {
+                let model = if secrets.0.contains_key("OPENAI_API_KEY") {
+                    "openai/gpt-4.1-mini"
+                } else {
+                    "anthropic/claude-haiku-4-5-20251001"
+                };
+                include_str!("../../../modules/profiles/openrouter.yaml")
+                    .replace("name: rio/openrouter", "name: rio-default")
+                    .replace("openrouter/anthropic/claude-sonnet-5.5", model)
+                    .replace("openrouter/openai/gpt-6.1-sol", model)
+            };
+            rio_engine::atomic_write(&default_profile, profile.as_bytes())?;
+            self.profile_written = true;
+        }
+        self.say(
+            "workers-dev",
+            "info",
+            format!(
+                "Rio deployed: {endpoint}\nSaved account and resource choices in {}",
+                self.directory.join("config.toml").display()
+            ),
+        );
+        self.endpoint = Some(endpoint.clone());
+        Ok(Outcome::Done(
+            endpoint.trim_start_matches("https://").into(),
+        ))
+    }
+}
+
+fn found(reused: bool, detail: String) -> Outcome {
+    if reused {
+        Outcome::Reused(format!("{detail} · reused"))
+    } else {
+        Outcome::Done(detail)
+    }
+}
+
+/// The offline plan `--dry-run` prints: no authentication, credential writes
+/// or account mutations.
+pub fn plan(args: &DeployArgs) -> Result<Value> {
+    let directory = crate::config::config_directory()?;
+    let mut deployment = choices(args, &directory)?;
+    deployment.pending = None;
+    Ok(
+        json!({"deployment":deployment,"worker_version":env!("RIO_VERSION"),"bundle_hash":blake3::hash(BUNDLE.as_bytes()).to_hex().to_string(),"resources":["Worker", "ReviewWorkflow", "MigrationWorkflow", "D1", "R2", "Queue", "AI Gateway"],"sandbox":deployment.runner == Runner::Sandbox,"mutations":false}),
+    )
+}
+
+/// The accounts the Cloudflare login reaches as `(id, name)`, read without
+/// logging in again (the interactive UI's account choice).
+pub async fn accounts(profile: &str) -> Result<Vec<(String, String)>> {
+    let cf = Cloudflare::new(authenticate_with(profile, false).await?)?;
+    Ok(cf
+        .list("/accounts")
+        .await?
+        .iter()
+        .filter_map(|a| {
+            Some((
+                a["id"].as_str()?.to_owned(),
+                a["name"]
+                    .as_str()
+                    .unwrap_or("Cloudflare account")
+                    .to_owned(),
+            ))
         })
+        .collect())
+}
+
+/// The step a stopped deployment recorded in the user config, if any.
+pub fn pending() -> Option<String> {
+    let directory = crate::config::config_directory().ok()?;
+    document(&directory.join("config.toml"))
+        .ok()?
+        .get("deployment")?
+        .get("pending")?
+        .as_str()
         .map(str::to_owned)
-        .context("Docker did not report the pushed image digest")
 }
 
 pub async fn run(args: DeployArgs) -> Result<()> {
-    let directory = crate::config::config_directory()?;
-    // The council question is asked once, on a first deployment.
-    let fresh = document(&directory.join("config.toml"))?
-        .get("deployment")
-        .is_none();
-    let mut deployment = choices(&args, &directory)?;
     if args.dry_run {
-        println!(
-            "{}",
-            serde_json::to_string_pretty(
-                &json!({"deployment":deployment,"worker_version":env!("RIO_VERSION"),"bundle_hash":blake3::hash(BUNDLE.as_bytes()).to_hex().to_string(),"resources":["Worker", "ReviewWorkflow", "MigrationWorkflow", "D1", "R2", "Queue", "AI Gateway"],"sandbox":deployment.runner == Runner::Sandbox,"mutations":false})
-            )?
-        );
+        println!("{}", serde_json::to_string_pretty(&plan(&args)?)?);
         return Ok(());
     }
-    let cf = Cloudflare::new(authentication(&deployment.cf_profile).await?)?;
-    deployment.account_id = Some(select_account(
-        &cf.list("/accounts").await?,
-        deployment.account_id.as_deref(),
-    )?);
-    deployment.validate()?;
-    rio_git::private_directory(&directory)?;
-    let mut secrets = Secrets::load(&directory, &deployment)?;
-    secrets.collect(args.secrets_file.as_deref(), &deployment.custom_providers)?;
-    let mut models = args.default_model.as_ref().map(|default| ProfileModels {
-        default: default.clone(),
-        verifier: args
-            .verifier_model
-            .clone()
-            .unwrap_or_else(|| default.clone()),
-    });
-    if !secrets.has_builtin_key()
-        && deployment.custom_providers.is_empty()
-        && io::stdin().is_terminal()
-    {
-        models = secrets.prompt_provider(&mut deployment)?.or(models);
-    }
-    ensure!(
-        secrets.has_builtin_key() || !deployment.custom_providers.is_empty(),
-        "provide a model key using OPENROUTER_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY or --secrets-file, or configure a custom provider with --custom-provider"
-    );
-    if fresh
-        && args.from.is_none()
-        && args.council_vendors.is_empty()
-        && !args.no_council
-        && io::stdin().is_terminal()
-    {
-        // Council keys must not change which provider ordinary reviews use.
-        let primary: Vec<_> = BUILTIN_KEYS
-            .iter()
-            .filter(|key| secrets.0.contains_key(**key))
-            .copied()
-            .collect();
-        secrets.prompt_council(&mut deployment)?;
-        if models.is_none()
-            && BUILTIN_KEYS
-                .iter()
-                .any(|k| secrets.0.contains_key(*k) && !primary.contains(k))
-        {
-            ensure!(
-                !primary.is_empty() || directory.join("profiles/default.yaml").exists(),
-                "with only custom providers, pass --default-model custom-SLUG/MODEL; council keys never choose the default profile's models"
-            );
-            models = primary_models(&primary);
-        }
-    }
-    // The default council members need three families to run.
-    let families: std::collections::BTreeSet<_> = deployment
-        .council_vendors
-        .iter()
-        .map(|entry| entry.family.as_str())
-        .collect();
-    if !families.is_empty() && families.len() < 3 {
+    if let Some(step) = pending() {
         eprintln!(
-            "Warning: the council allowlist spans {} model {}; rio/security and rio/critical need at least three",
-            families.len(),
-            if families.len() == 1 {
-                "family"
-            } else {
-                "families"
-            }
+            "A previous deployment stopped at {step}; resuming with the saved choices (completed resources are reused)."
         );
     }
-    let missing: Vec<_> = deployment
-        .council_keys()
-        .into_iter()
-        .filter(|key| !secrets.0.contains_key(*key))
-        .collect();
-    ensure!(
-        missing.is_empty(),
-        "council routes need {} from the environment or --secrets-file",
-        missing.join(", ")
-    );
-    let profile_needed = !directory.join("profiles/default.yaml").exists();
-    ensure!(
-        !profile_needed || models.is_some() || secrets.has_builtin_key(),
-        "with only custom providers, pass --default-model custom-SLUG/MODEL (and optionally --verifier-model) so the default profile can be written, or create {} first",
-        directory.join("profiles/default.yaml").display()
-    );
-    // Persist generated credentials before any resource mutation so a partial deployment is recoverable.
-    secrets.save(&directory, &deployment)?;
-    save_choices(&directory, &deployment, None)?;
-    provision(&cf, &directory, &deployment, &mut secrets, models).await
+    let mut deployer = Deployer::new(
+        args,
+        io::stdin().is_terminal(),
+        true,
+        std::sync::Arc::new(|_| {}),
+    )?;
+    deployer.run().await.map_err(|stopped| {
+        stopped.error.context(format!(
+            "stopped at {}; rio deploy resumes it",
+            stopped.step
+        ))
+    })
 }
 /// Records deployment choices (no secrets) without touching the endpoint URL.
 pub fn save_deployment(directory: &Path, deployment: &Deployment) -> Result<()> {
@@ -1036,6 +1994,9 @@ fn save_choices(directory: &Path, deployment: &Deployment, endpoint: Option<&str
     }
     rio_engine::atomic_write(&file, toml::to_string_pretty(&value)?.as_bytes())
 }
+/// The steps after the secrets, with the given state (tests and callers that
+/// already hold a token and secrets).
+#[cfg(test)]
 async fn provision(
     cf: &Cloudflare,
     directory: &Path,
@@ -1043,249 +2004,25 @@ async fn provision(
     secrets: &mut Secrets,
     models: Option<ProfileModels>,
 ) -> Result<()> {
-    let account = deployment.account_id.as_deref().unwrap();
-    let name = &deployment.name;
-    let base = format!("/accounts/{account}");
-    // Unreadable route definitions fail before anything is created or changed.
-    providers::check_routes(directory, &deployment.dynamic_routes)?;
-    eprintln!("Deploying {name} to Cloudflare account {account}…");
-    let image = if deployment.runner == Runner::Sandbox {
-        Some(runner_image(cf, deployment).await?)
-    } else {
-        None
-    };
-    let db = cf
-        .named(
-            &format!("{base}/d1/database"),
-            "name",
-            name,
-            json!({"name":name}),
-        )
-        .await?;
-    let db_id = string(&db, "uuid")?;
-    let buckets = cf
-        .request(Method::GET, &format!("{base}/r2/buckets"), None)
-        .await?;
-    let bucket_name = format!("{name}-artifacts");
-    if !buckets["buckets"]
-        .as_array()
-        .context("missing bucket list")?
-        .iter()
-        .any(|b| b["name"] == bucket_name)
-    {
-        cf.request(
-            Method::POST,
-            &format!("{base}/r2/buckets"),
-            Some(json!({"name":bucket_name})),
-        )
-        .await?;
-    }
-    let queue = cf
-        .named(
-            &format!("{base}/queues"),
-            "queue_name",
-            &format!("{name}-jobs"),
-            json!({"queue_name":format!("{name}-jobs")}),
-        )
-        .await?;
-    let queue_id = string(&queue, "queue_id")?;
-    let gateway = cf.named(&format!("{base}/ai-gateway/gateways"), "id", name, json!({"id":name,"authentication":true,"byok_only":true,"cache_invalidate_on_update":true,"cache_ttl":0,"collect_logs":false,"rate_limiting_interval":60,"rate_limiting_limit":120,"rate_limiting_technique":"fixed"})).await?;
-    if gateway["authentication"] != true
-        || gateway["collect_logs"] != false
-        || gateway["cache_ttl"] != 0
-    {
-        cf.request(Method::PUT, &format!("{base}/ai-gateway/gateways/{name}"), Some(json!({"authentication":true,"byok_only":true,"cache_invalidate_on_update":true,"cache_ttl":0,"collect_logs":false,"rate_limiting_interval":60,"rate_limiting_limit":120,"rate_limiting_technique":"fixed"}))).await?;
-    }
-    if !secrets.0.contains_key("AI_GATEWAY_TOKEN") {
-        let token = cf.request(Method::POST, &format!("{base}/tokens"), Some(json!({"name":format!("{name} AI Gateway inference"),"policies":[{"effect":"allow","resources":{format!("com.cloudflare.api.account.{account}"):"*"},"permission_groups":[{"id":GATEWAY_RUN}]}]}))).await?;
-        secrets
-            .0
-            .insert("AI_GATEWAY_TOKEN".into(), string(&token, "value")?.into());
-        secrets.save(directory, deployment)?;
-    }
-    if providers::reconcile_providers(
-        cf,
-        &base,
-        name,
-        &deployment.custom_providers,
-        &mut secrets.0,
-    )
-    .await?
-    {
-        secrets.save(directory, deployment)?;
-    }
-    providers::reconcile_routes(
-        cf,
-        &format!("{base}/ai-gateway/gateways/{name}"),
-        directory,
-        &deployment.dynamic_routes,
-    )
-    .await?;
-    let scripts = cf.list(&format!("{base}/workers/scripts")).await?;
-    let existing = scripts.iter().find(|s| s["id"] == *name);
-    if let Some(existing) = existing {
-        ensure!(
-            existing["tags"]
-                .as_array()
-                .is_some_and(|tags| tags.iter().any(|tag| tag == "rio-managed")),
-            "Worker name already exists outside Rio; select an unused --name instead"
-        );
-    }
-    let migration_tag = existing.and_then(|s| s["migration_tag"].as_str());
-    ensure!(
-        migration_tag.is_none() || migration_tag == Some("v1"),
-        "Worker has an unsupported Durable Object migration tag; upgrade rather than downgrade"
-    );
-    for (suffix, class) in [
-        ("review", "ReviewWorkflow"),
-        ("migrate", "MigrationWorkflow"),
-    ] {
-        let workflows = cf.list(&format!("{base}/workflows")).await?;
-        if let Some(existing) = workflows
-            .iter()
-            .find(|w| w["name"] == format!("{name}-{suffix}"))
-        {
-            ensure!(
-                existing["script_name"] == *name && existing["class_name"] == class,
-                "Workflow name belongs to another Worker"
-            );
-        }
-    }
-    let upload_path = format!("{base}/workers/scripts/{name}");
-    if !deployment.model_prices.is_empty() && !secrets.0.contains_key(providers::PRICES_MARKER) {
-        secrets
-            .0
-            .insert(providers::PRICES_MARKER.into(), "1".into());
-        secrets.save(directory, deployment)?;
-    }
-    let meta = metadata(deployment, db_id, queue_id, secrets, migration_tag);
-    let form = multipart::Form::new()
-        .text("metadata", serde_json::to_string(&meta)?)
-        .part(
-            "worker.mjs",
-            multipart::Part::text(BUNDLE)
-                .file_name("worker.mjs")
-                .mime_str("application/javascript+module")?,
-        );
-    cf.response(
-        cf.client
-            .put(format!("{}{upload_path}", cf.base))
-            .bearer_auth(&cf.token)
-            .multipart(form)
-            .send()
-            .await
-            .context("Worker upload failed")?,
-        &upload_path,
-    )
-    .await?;
-    // The empty MODEL_PRICES just uploaded replaced Rio's earlier prices.
-    if deployment.model_prices.is_empty() && secrets.0.remove(providers::PRICES_MARKER).is_some() {
-        secrets.save(directory, deployment)?;
-    }
-    for (suffix, class) in [
-        ("review", "ReviewWorkflow"),
-        ("migrate", "MigrationWorkflow"),
-    ] {
-        cf.request(
-            Method::PUT,
-            &format!("{base}/workflows/{name}-{suffix}"),
-            Some(json!({"script_name":name,"class_name":class})),
-        )
-        .await?;
-    }
-    migrate(cf, &base, name).await?;
-    // Expiries are per run, not bucket-wide. Register the bounded evidence
-    // sweep after migrations; the Worker only needs its existing R2 binding.
-    cf.request(
-        Method::PUT,
-        &format!("{upload_path}/schedules"),
-        Some(json!([{"cron":"* * * * *"}])),
-    )
-    .await?;
-    let consumers_path = format!("{base}/queues/{queue_id}/consumers");
-    let consumers = cf.list(&consumers_path).await?;
-    let consumer = consumers
-        .iter()
-        .find(|c| c["script"] == *name || c["script_name"] == *name);
-    ensure!(
-        consumers.is_empty() || consumer.is_some(),
-        "queue already has a consumer belonging to another Worker"
-    );
-    let body =
-        json!({"type":"worker","script_name":name,"settings":{"batch_size":1,"max_retries":2}});
-    if let Some(consumer) = consumer {
-        cf.request(
-            Method::PUT,
-            &format!("{consumers_path}/{}", string(consumer, "consumer_id")?),
-            Some(body),
-        )
-        .await?;
-    } else {
-        cf.request(Method::POST, &consumers_path, Some(body))
-            .await?;
-    }
-    if let Some(image) = image {
-        configure_container(cf, &base, name, &image).await?;
-    }
-    let subdomain_path = format!("{base}/workers/subdomain");
-    let subdomain = cf
-        .optional(&subdomain_path)
-        .await?
-        .and_then(|s| s["subdomain"].as_str().map(str::to_owned))
-        .filter(|s| !s.is_empty());
-    let subdomain = match subdomain {
-        Some(subdomain) => subdomain,
-        None => {
-            let selected = deployment
-                .workers_subdomain
-                .clone()
-                .unwrap_or_else(|| format!("rio-{}", &account[..12]));
-            cf.request(
-                Method::PUT,
-                &subdomain_path,
-                Some(json!({"subdomain":selected})),
-            )
-            .await?;
-            selected
-        }
-    };
-    cf.request(
-        Method::POST,
-        &format!("{upload_path}/subdomain"),
-        Some(json!({"enabled":true,"previews_enabled":false})),
-    )
-    .await?;
-    let endpoint = format!("https://{name}.{subdomain}.workers.dev");
-    save_choices(directory, deployment, Some(&endpoint))?;
-    let profiles = directory.join("profiles");
-    let default_profile = profiles.join("default.yaml");
-    if !default_profile.exists() {
-        rio_git::private_directory(&profiles)?;
-        let profile = if let Some(models) = &models {
-            include_str!("../../../modules/profiles/openrouter.yaml")
-                .replace("name: rio/openrouter", "name: rio-default")
-                .replace("openrouter/anthropic/claude-sonnet-5.5", &models.default)
-                .replace("openrouter/openai/gpt-6.1-sol", &models.verifier)
-        } else if secrets.0.contains_key("OPENROUTER_API_KEY") {
-            "version: 1\nname: rio-default\nextends: rio/openrouter\n".to_owned()
-        } else {
-            let model = if secrets.0.contains_key("OPENAI_API_KEY") {
-                "openai/gpt-4.1-mini"
-            } else {
-                "anthropic/claude-haiku-4-5-20251001"
-            };
-            include_str!("../../../modules/profiles/openrouter.yaml")
-                .replace("name: rio/openrouter", "name: rio-default")
-                .replace("openrouter/anthropic/claude-sonnet-5.5", model)
-                .replace("openrouter/openai/gpt-6.1-sol", model)
-        };
-        rio_engine::atomic_write(&default_profile, profile.as_bytes())?;
-    }
-    eprintln!(
-        "Rio deployed: {endpoint}\nSaved account and resource choices in {}",
-        directory.join("config.toml").display()
-    );
-    Ok(())
+    let mut deployer = Deployer::at(
+        directory.into(),
+        DeployArgs::default(),
+        false,
+        false,
+        std::sync::Arc::new(|_| {}),
+    )?;
+    deployer.deployment = deployment.clone();
+    deployer.cf = Some(Cloudflare {
+        client: cf.client.clone(),
+        base: cf.base.clone(),
+        token: cf.token.clone(),
+    });
+    deployer.secrets = Secrets(std::mem::take(&mut secrets.0));
+    deployer.models = models;
+    deployer.next = step_index("runner-image");
+    let result = deployer.run().await;
+    secrets.0 = std::mem::take(&mut deployer.secrets.0);
+    result.map_err(|stopped| stopped.error)
 }
 async fn migrate(cf: &Cloudflare, base: &str, name: &str) -> Result<()> {
     let release = format!("deploy-{}", &blake3::hash(BUNDLE.as_bytes()).to_hex()[..24]);
@@ -1407,9 +2144,10 @@ mod tests {
     #[test]
     fn account_selection_never_substitutes_another_account() {
         let accounts = vec![json!({"id":"a"}), json!({"id":"b"})];
-        assert_eq!(select_account(&accounts, Some("b")).unwrap(), "b");
-        assert!(select_account(&accounts, Some("unknown")).is_err());
-        assert_eq!(select_account(&accounts[..1], None).unwrap(), "a");
+        assert_eq!(select_account(&accounts, Some("b"), false).unwrap(), "b");
+        assert!(select_account(&accounts, Some("unknown"), false).is_err());
+        assert_eq!(select_account(&accounts[..1], None, false).unwrap(), "a");
+        assert!(select_account(&accounts, None, false).is_err());
     }
     #[test]
     fn copied_choices_allow_account_override_and_reject_invalid_names() {
@@ -1683,6 +2421,104 @@ mod tests {
                 thread: Some(thread),
             }
         }
+    }
+    #[tokio::test]
+    async fn a_failure_at_the_secrets_step_resumes_there_without_repeating_earlier_steps() {
+        let dir = tempfile::tempdir().unwrap();
+        let account = "b".repeat(32);
+        let id = account.clone();
+        let mock = Mock::start_with(
+            false,
+            false,
+            Arc::new(move |method, target, _| {
+                (method == "GET" && target.split('?').next() == Some("/accounts"))
+                    .then(|| json!([{"id": id, "name": "Test account"}]))
+            }),
+        );
+        let updates: Arc<Mutex<Vec<Progress>>> = Arc::default();
+        let seen = updates.clone();
+        let args = DeployArgs {
+            account: Some(account.clone()),
+            runner: Some(Runner::SelfHosted),
+            credential_store: Some(CredentialStore::File),
+            ..Default::default()
+        };
+        let mut deployer = Deployer::at(
+            dir.path().into(),
+            args,
+            false,
+            false,
+            Arc::new(move |p| seen.lock().unwrap().push(p)),
+        )
+        .unwrap();
+        deployer.token = Some("deployment-secret".into());
+        deployer.api = Some(mock.url.clone());
+        // Saved credentials that cannot be read stop the secrets step.
+        let saved = Secrets::path(dir.path(), &deployer.deployment);
+        std::fs::write(&saved, "not json").unwrap();
+        let stopped = deployer.run().await.unwrap_err();
+        assert_eq!(stopped.step, "secrets");
+        let config = || std::fs::read_to_string(dir.path().join("config.toml")).unwrap();
+        // The choices and the stopped step were written before the first remote step.
+        let written: toml::Value = toml::from_str(&config()).unwrap();
+        assert_eq!(written["deployment"]["pending"].as_str(), Some("secrets"));
+        assert_eq!(
+            written["deployment"]["account_id"].as_str(),
+            Some(account.as_str())
+        );
+        assert!(written.get("endpoint").is_none());
+        assert!(
+            mock.requests
+                .lock()
+                .unwrap()
+                .iter()
+                .all(|(m, _, _)| m == "GET"),
+            "nothing is created before the secrets are saved"
+        );
+        // Fixed, the retry starts at the secrets step.
+        std::fs::remove_file(&saved).unwrap();
+        deployer
+            .supply("OPENROUTER_API_KEY", "provider-secret".into())
+            .unwrap();
+        deployer.run().await.unwrap();
+        let started = |step: &str| {
+            updates
+                .lock()
+                .unwrap()
+                .iter()
+                .filter(|p| p.step == step && p.state == Some(StepState::Running))
+                .count()
+        };
+        assert_eq!(started("authenticate"), 1);
+        assert_eq!(started("account"), 1);
+        assert_eq!(started("secrets"), 2);
+        assert_eq!(started("d1"), 1);
+        assert_eq!(started("workers-dev"), 1);
+        let records = mock.requests.lock().unwrap();
+        assert_eq!(
+            records
+                .iter()
+                .filter(|(m, p, _)| m == "GET" && p == "/accounts")
+                .count(),
+            1
+        );
+        let finished: toml::Value = toml::from_str(&config()).unwrap();
+        assert!(finished["deployment"].get("pending").is_none());
+        assert_eq!(
+            finished["endpoint"]["url"].as_str(),
+            Some("https://rio.account-test.workers.dev")
+        );
+        // Every update is an `"init:step"` value the UI applies.
+        for update in updates.lock().unwrap().iter() {
+            let value = serde_json::to_value(update).unwrap();
+            let parsed: rio_tui::init::StepUpdate = serde_json::from_value(value.clone()).unwrap();
+            assert_eq!(parsed.step, update.step, "{value}");
+        }
+        // Progress names secrets and never carries their values.
+        let progress = serde_json::to_string(&*updates.lock().unwrap()).unwrap();
+        assert!(progress.contains("OPENROUTER_API_KEY"));
+        assert!(!progress.contains("provider-secret") && !progress.contains("deployment-secret"));
+        assert!(!config().contains("provider-secret"));
     }
     #[test]
     fn council_keys_never_change_the_primary_provider_models() {
