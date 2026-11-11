@@ -1,0 +1,28 @@
+---
+source: crates/rio-tui/tests/team.rs
+expression: lines
+---
+ ▃▅▇▇▇▅▃▃▁▁▁▃  rio  suppressions · pixe… 2 open proposals  nothing auto-applied 
+                                  │                                             
+ Proposals 2 open · 1 declined    │ sp-3f2a Stop reporting ui/spacing-scale in …
+──────────────────────────────────│─────────────────────────────────────────────
+▌ sp-3f2a  ui/spacing-… open      │ EVIDENCE  3 dismissals · reason style · 90 d
+    src/legacy/** · 3 style       │  #136  9bd20c3e  src/legacy/nav   @ana style
+                                  │                 "legacy screens use the old 
+  sp-9c01  lint/max-pa… open      │  #138  41c70c3e  src/legacy/form  @rui style
+    scripts/** · 4 irrelevant     │  #139  2e900c3e  src/legacy/grid  @ana style
+                                  │                                             
+  sp-77de  coverage/di… declined  │ CHANGE  .rio/profiles/default.yaml          
+    quiet until 2027-05-09        │   1  version: 1                             
+                                  │   2  name: default                          
+                                  │   3  extends: rio/base                      
+                                  │ + 4  suppress:                              
+                                  │ + 5    - rule: ui/spacing-scale             
+                                  │ + 6      paths: ["src/legacy/**"]           
+                                  │ + 7      reason: style · proposal sp-3f2a   
+                                  │                                             
+                                  │─────────────────────────────────────────────
+                                  │ ✓ written to a temp file next to the profile
+                                  │ ✓ rio profile validate · ok                 
+ answering anything but y exits 1 and leaves both the file and the proposal unch
+  y apply  N leave unchanged  x decline… (180 d)  ↑↓ proposal  esc history

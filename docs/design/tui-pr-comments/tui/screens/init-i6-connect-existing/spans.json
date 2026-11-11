@@ -1,0 +1,915 @@
+{
+ "screen": "init-i6-connect-existing",
+ "cols": 120,
+ "rows": 40,
+ "lines": [
+  [
+   {
+    "text": " ▃▅▇▇▇▅▃▃▁▁▁▃ ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "rio",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": true
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "rio init · --endpoint",
+    "fg": "dim",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "                                                           ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "● connect",
+    "fg": "signal",
+    "bg": "panel",
+    "bold": true
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "rio 0.2.0",
+    "fg": "faint",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "Connect to an existing rio endpoint",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "                                                                                   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "a teammate already deployed rio in their Cloudflare account",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                           ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "ENDPOINT",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "                                                                                                              ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " https://rio.pixel-labs.workers.dev",
+    "fg": "fg",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "▏",
+    "fg": "signal",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "                        ",
+    "fg": "fg",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "                                                          ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "✓",
+    "fg": "pass",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "HTTPS (plain http only for loopback development)",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                                    ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "✓",
+    "fg": "pass",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "redirects disabled · the bearer token never leaves this origin",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "API TOKEN",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "                                                                                                             ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "▌",
+    "fg": "signal",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "(•)",
+    "fg": "signal",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "read from stdin",
+    "fg": "fg",
+    "bg": "raise",
+    "bold": true
+   },
+   {
+    "text": "                                                                                                   ",
+    "fg": "fg",
+    "bg": "raise",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "▌",
+    "fg": "signal",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "     ",
+    "fg": "fg",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "your-secret-manager read rio-api-token | rio init … --token-stdin",
+    "fg": "faint",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "                                                 ",
+    "fg": "fg",
+    "bg": "raise",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "( )",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "RIO_API_TOKEN",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                                                                     ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "environment variable · takes precedence over the stored token",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                     ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "token",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " •••••••••••••••••••••••••••••••        ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "✓ received on stdin",
+    "fg": "pass",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                              ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "WRITES",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "                                                                                                                ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "+",
+    "fg": "pass",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ~/.config/rio/config.toml       ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "endpoint.url · other machine settings preserved",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                     ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "+",
+    "fg": "pass",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ~/.config/rio/ (private dir)    ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "API token · mode 0600",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "OVERRIDES",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "                                                                                                             ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "RIO_ENDPOINT_URL",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "replaces the saved endpoint for one shell",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                           ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "RIO_API_TOKEN",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "     ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "replaces the stored token",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                                           ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "THEN",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "                                                                                                                  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  rio review --preset quick   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "checks run in the endpoint's isolated runner",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                              ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  rio review --offline        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "keeps the local deterministic review",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "signal",
+    "bold": false
+   },
+   {
+    "text": "⏎ connect",
+    "fg": "bg",
+    "bg": "signal",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "signal",
+    "bold": false
+   },
+   {
+    "text": "   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "esc",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "back to modes",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                                                       ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "tab",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "field",
+    "fg": "faint",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "↑↓",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "token source",
+    "fg": "faint",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "⏎",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "connect",
+    "fg": "faint",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "esc",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "back",
+    "fg": "faint",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "                                                                        ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   }
+  ]
+ ]
+}

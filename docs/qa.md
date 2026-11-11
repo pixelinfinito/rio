@@ -8,7 +8,19 @@ output. `--staged` and `--base REF` use the same snapshot selection as review.
 The standalone command uses `rio/qa` by default, or an enabled QA profile selected
 with `--profile`. It records other pipeline steps as `skipped: standalone` while
 preserving verification and spending limits. Locally, a missing endpoint leaves
-judged observations and recommendations unverified.
+judged observations and recommendations unverified. `--cell VIEWPORT/SCHEME`
+(for example `rio qa --journey checkout --cell mobile/dark`) runs only that cell
+of the matrix; a cell the matrix does not have is an error.
+
+In a terminal, `rio qa` opens the interactive UI. Its matrix follows a local run
+cell by cell. `p` pauses the queue: the running cell finishes and no other starts
+until `p` again. `c` cancels the focused cell, stopping it if it runs, and records
+it `cancelled` with reason `user` (on the baseline too). A run on the endpoint
+runs its queue to the end, so it refuses both. In a finished run's cell detail,
+`r` runs that cell again. The matrix shows its new outcome, while export and the
+exit code keep the first run's report. Below 120 columns, `v` swaps the details
+for the step's screenshot. Downloaded endpoint screenshots are kept in the run
+cache's `qa-images` for seven days, up to 200 MB.
 
 QA contracts live in `.rio/qa.yaml`, with journeys under `.rio/qa/journeys/`.
 Run these commands from a Git repository containing those files:

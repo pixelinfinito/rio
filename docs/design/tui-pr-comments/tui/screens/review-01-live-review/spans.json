@@ -1,0 +1,2463 @@
+{
+ "screen": "review-01-live-review",
+ "cols": 120,
+ "rows": 40,
+ "lines": [
+  [
+   {
+    "text": " ▃▅▇▇▇▅▃▃▁▁▁▃ ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "rio",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": true
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "feature/parser-guards → origin/main · rio/openrouter · standard",
+    "fg": "dim",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "        ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "◐ running · agents 3/5",
+    "fg": "warn",
+    "bg": "panel",
+    "bold": true
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "0m48s",
+    "fg": "faint",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "PIPELINE",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "                                              ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "rio review --base origin/main --preset standard",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "✓",
+    "fg": "pass",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "prepare",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "             ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "snapshot a41f…c09",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "         ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "0.4s",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "Reviewing feature/parser-guards",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "                               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "◐",
+    "fg": "warn",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "checks",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "              ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "2 roots",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "14.2s",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "·",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "web/",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "             ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "typescript",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "████████████████████████████████████",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "░░░░░░░░░░░░░░░░░░░░░░░░",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "·",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "✓",
+    "fg": "pass",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " typecheck     ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "tsc",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                       ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "1.8s",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "step 5 of 7 · agents",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                            ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "~1m20s left",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "·",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "✕",
+    "fg": "fail",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " lint          ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "eslint · 2 findings",
+    "fg": "fail",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "       ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "0.9s",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "·",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "◐",
+    "fg": "warn",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " coverage      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "vitest · running",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "         ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "12.0s",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│───────────────────────────────────────────────────────────────",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "·",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "api/",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "             ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "python",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                          ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "FINDINGS SO FAR",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "                                               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "·",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "✓",
+    "fg": "pass",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " typecheck     ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "pyright",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "2.3s",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "·",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "✓",
+    "fg": "pass",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " lint          ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "ruff",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "0.1s",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "3",
+    "fg": "fail",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "new",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "          ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "1",
+    "fg": "warn",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "worsened",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "     ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "1",
+    "fg": "sec",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "security",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "     ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "2",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "pre-existing",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "·",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "-",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " coverage      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "skipped: pytest missing",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "         ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "·",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "✓",
+    "fg": "pass",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " secrets          ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "0 found",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "0.2s",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│───────────────────────────────────────────────────────────────",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "·",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "◐",
+    "fg": "warn",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " audit            ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "osv.dev · 3 packages",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "            ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "USAGE",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "                                                         ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "✓",
+    "fg": "pass",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "graph",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "41 nodes · 63 edges",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "       ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "0.7s",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "141k in · 16k out",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                              ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "$0.32 / $2.00",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "✓",
+    "fg": "pass",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "triage",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "              ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "6 hypotheses",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "              ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "3.1s",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "━━━━━━━━━━",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "──────────────────────────────────────────────────",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "◐",
+    "fg": "warn",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "agents",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "              ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "3 of 5",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                          ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "·",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "✓",
+    "fg": "pass",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " correctness      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "2 hypotheses",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "              ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "9.8s",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│───────────────────────────────────────────────────────────────",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "·",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "✓",
+    "fg": "pass",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " security         ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "1 hypothesis",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "              ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "7.2s",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "STDERR · TAIL",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "                                                 ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "·",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "◐",
+    "fg": "warn",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " performance      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "reading graph slice…",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "            ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "▌",
+    "fg": "signal",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "·",
+    "fg": "rule",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "◐",
+    "fg": "warn",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "tests",
+    "fg": "fg",
+    "bg": "raise",
+    "bold": true
+   },
+   {
+    "text": "            ",
+    "fg": "fg",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "vitest job 7…",
+    "fg": "dim",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "                   ",
+    "fg": "fg",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "00:41",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "vitest",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "✓ parser.spec.ts · 14 tests · 812ms",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "             ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "·",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "○",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " contracts        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "queued",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                          ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "00:42",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "eslint",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "src/queue.ts:17 no-floating-promises",
+    "fg": "fail",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "            ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "○",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "verify",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "              ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "quorum 2 of 3 · waiting",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "         ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "00:44",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "agents",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "correctness → 2 hypotheses to verify",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "            ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "○",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "report",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "                                              ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "00:45",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "osv",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "     ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "querybatch 3 packages · cache hit 2",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "             ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "00:46",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "agents",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "tests → spawned job 7 (vitest)",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "00:47",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "vitest",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "◐ body.spec.ts running…",
+    "fg": "warn",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                         ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "hops 2 · max 2000 nodes · tools not network-isolated",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "00:48",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "agents",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "performance → graph slice parseHeader",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "           ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "ctrl-c",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "stop · keep partial report  (twice: exit 130)",
+    "fg": "faint",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "          ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "ctrl-c",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "stop",
+    "fg": "faint",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "↑↓",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "move",
+    "fg": "faint",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "⏎",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "step log",
+    "fg": "faint",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "l",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "full log",
+    "fg": "faint",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "f",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "findings",
+    "fg": "faint",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "?",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "help",
+    "fg": "faint",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "                                                       ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   }
+  ]
+ ]
+}

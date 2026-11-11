@@ -1075,6 +1075,19 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
               );
             }
             report.qa = qaReport(artifact, s.with);
+            // The runner reports cells when the run ends; each becomes one event.
+            await step.do(`qa-cells-${job}`, async () => {
+              for (const journey of report.qa.journeys ?? [])
+                for (const cell of journey.cells ?? [])
+                  await store.event(id, "qa:cell", {
+                    journey: journey.name,
+                    viewport: cell.viewport,
+                    color_scheme: cell.color_scheme,
+                    step: cell.step_reached ?? 0,
+                    outcome: cell.outcome,
+                  });
+              return true;
+            });
             qaRecommendations = artifact.qa_recommendations ?? [];
             report.findings.push(...(artifact.findings ?? []));
             await step.do(`record-${job}`, async () => {
@@ -1412,6 +1425,13 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             partition,
             order: enabled(promptConfig, "agent-order"),
           });
+          await step.do(`agent-started-${s.id}-${agent}`, () =>
+            store.event(id, "agent:started", { agent }),
+          );
+          const finished = (count: number) =>
+            step.do(`agent-finished-${s.id}-${agent}`, () =>
+              store.event(id, "agent:finished", { agent, hypotheses: count }),
+            );
           let output: any;
           try {
             output = await converse({
@@ -1457,7 +1477,10 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
               report.footer.notes.push(
                 `${agent} agent failed: ${redact(message).slice(0, 200)}; its findings are missing from this review.`,
               );
-              if (agent !== "security") continue;
+              if (agent !== "security") {
+                await finished(0);
+                continue;
+              }
             }
           }
           // Generation agents sometimes wrap their array the way the security
@@ -1487,7 +1510,10 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             report.footer.notes.push(
               `${agent} agent failed: ${agent === "security" ? "security result must be an object with hypotheses, assessed and unassessed" : "expected hypothesis array"}; its findings are missing from this review.`,
             );
-            if (agent !== "security") continue;
+            if (agent !== "security") {
+              await finished(0);
+              continue;
+            }
             output = {
               hypotheses: [],
               assessed: [],
@@ -1518,6 +1544,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             if (!hypotheses.some((x) => x.id === h.id)) hypotheses.push(h);
             if (h.catalog_item) catalogOf.set(h.id, h.catalog_item);
           }
+          await finished(screened.accepted.length);
           // Only a run that completed within budget populates the cache.
           if (caching && misses.length)
             await step.do(`cache-store-${s.id}-${agent}`, async () => {
@@ -1698,7 +1725,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             not_reverified: reverify.skipped,
           };
         }
-        for (const h of candidates) {
+        for (const [index, h] of candidates.entries()) {
           const key = `reviews/${id}/hypotheses/${h.id}.json`;
           await store.put(key, h);
           await this.env.DB.prepare(
@@ -1762,6 +1789,12 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
               id: h.id,
               ...result.verified.verification,
               evidence_level: result.verified.evidence_level,
+            }),
+          );
+          await step.do(`verify-progress-${s.id}-${h.id}`, () =>
+            store.event(id, "verify:progress", {
+              done: index + 1,
+              total: candidates.length,
             }),
           );
         }

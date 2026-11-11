@@ -1,4 +1,4 @@
-import { constants } from 'node:fs';
+import { constants, closeSync, fstatSync, openSync, readSync } from 'node:fs';
 import { open, writeFile, rename } from 'node:fs/promises';
 import { runQa } from './controller.mjs';
 import { runReplay } from './replay-backend.mjs';
@@ -23,6 +23,40 @@ const read = async name => {
 const abort = new AbortController();
 for (const signal of ['SIGTERM', 'SIGINT']) process.on(signal, () => abort.abort('interrupted'));
 let last, sanitizer = new Sanitizer();
+// The host's live requests (pause, cancel a cell), copied in by the runtime.
+// Unreadable or malformed control is no request at all.
+const readControl = () => {
+  let descriptor;
+  try {
+    descriptor = openSync('/home/node/qa-control.json', constants.O_RDONLY | constants.O_NOFOLLOW);
+    const stat = fstatSync(descriptor);
+    if (!stat.isFile() || stat.size > 64 * 1024) return {};
+    const buffer = Buffer.alloc(stat.size);
+    readSync(descriptor, buffer, 0, stat.size, 0);
+    const value = JSON.parse(buffer.toString('utf8'));
+    return value && typeof value === 'object' && !Array.isArray(value) ? value : {};
+  } catch { return {}; } finally { if (descriptor !== undefined) closeSync(descriptor); }
+};
+const control = {
+  paused: () => readControl().paused === true,
+  cancelled: (journey, cell) => {
+    const cancel = readControl().cancel;
+    return Array.isArray(cancel) && cancel.some(entry =>
+      entry?.journey === journey && entry?.viewport === cell.viewport && entry?.color_scheme === cell.color_scheme);
+  },
+};
+// Cell progress for the host's live matrix, rewritten whole after each event.
+const events = [];
+let writing = Promise.resolve();
+const progress = ({ journey, cell, step, outcome }) => {
+  if (events.length >= 10000) return;
+  events.push({ seq: events.length + 1, journey, viewport: cell.viewport, color_scheme: cell.color_scheme, step, outcome });
+  const body = JSON.stringify({ events });
+  writing = writing.then(async () => {
+    await writeFile('/home/node/qa-progress.pending', body, { mode: 0o600 });
+    await rename('/home/node/qa-progress.pending', '/home/node/qa-progress.json');
+  }).catch(() => {});
+};
 const checkpoint = async value => {
   last = sanitizer.value(value);
   await writeFile('/home/node/qa-result.pending', JSON.stringify(last), { mode: 0o600 });
@@ -66,7 +100,7 @@ try {
   const result = await execute({ setup: run.setup, request: run.replay, author: run.author, plan, journeys, contract, fixtures, guidance, viewports: run.viewports, writer, seedTransfer,
     appControl: process.env.RIO_QA_APP_CONTROL, browserEndpoint: process.env.RIO_QA_BROWSER, browserFiles: process.env.RIO_QA_BROWSER_FILES,
     version: run.snapshot_version || 'head', budget: run.budget, model: run.model, harness: run.harness, auth: run.auth, authFile: process.env.RIO_QA_SUBSCRIPTION_FILE,
-    forward, credentialEnv, maxFileBytes: maxSize, checkpoint, prompt, signal: abort.signal });
+    forward, credentialEnv, maxFileBytes: maxSize, checkpoint, prompt, control, progress, signal: abort.signal });
   process.stdout.write(JSON.stringify({ outcome: result.outcome, journeys: result.journey_outcomes.length }) + '\n');
 } catch {
   await checkpoint({ ...(last || { journey_outcomes: [] }), outcome: 'partial', controller_error: abort.signal.aborted ? 'interrupted' : 'controller_failed' }).catch(() => {});

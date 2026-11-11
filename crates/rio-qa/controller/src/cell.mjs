@@ -3,6 +3,9 @@ import { JourneySession } from './session.mjs';
 import { HarnessCrash } from './execution.mjs';
 import { probeCandidates, observationCandidates } from './findings.mjs';
 
+/** Why an aborted journey stopped: its budget, the user's cancel, or an interruption. */
+const abortReason = signal => ['budget', 'user'].includes(signal.reason) ? signal.reason : 'interrupted';
+
 /** Owns one chain's browser context. The pod backend restores seed/app state
  * before construction; this class never resets between dependent journeys. */
 export class CellController {
@@ -21,20 +24,20 @@ export class CellController {
     this.activeRun = this.executeJourney({ ...options, signal }).finally(() => { this.running = false; });
     return this.activeRun;
   }
-  async executeJourney({ journey, signal }) {
+  async executeJourney({ journey, signal, onStep }) {
     const guidance = this.guidance[journey.name] || [];
     const sharedGuidance = Object.values(this.guidance).every(value => JSON.stringify(value) === JSON.stringify(guidance));
     const session = new JourneySession({ browser: this.browser, writer: this.writer, collector: this.collector, journey, cell: this.cell,
-      criteria: this.criteria, guidance, capturedMessages: this.capturedMessages, fixtures: this.fixtures, prompt: this.prompt, sharedGuidance });
+      criteria: this.criteria, guidance, capturedMessages: this.capturedMessages, fixtures: this.fixtures, prompt: this.prompt, sharedGuidance, onStep });
     this.sessions.push(session);
     const bridge = await session.bridge({ handlers: this.handlers, allowedOrigins: this.allowedOrigins }); this.bridges.push(bridge);
     let result;
     try {
-      if (signal?.aborted) return await session.finish({ reason: signal.reason === 'budget' ? 'budget' : 'interrupted' });
+      if (signal?.aborted) return await session.finish({ reason: abortReason(signal) });
       result = await this.harness.run({ prompt: session.prompt(this.allowedOrigins), bridge, signal, wallMs: this.cellWallMs,
         onEvent: event => { this.transcript.push(event); } });
     } catch (error) {
-      await session.finish({ reason: signal?.aborted ? signal.reason === 'budget' ? 'budget' : 'interrupted' : 'harness_error' });
+      await session.finish({ reason: signal?.aborted ? abortReason(signal) : 'harness_error' });
       throw error instanceof HarnessCrash ? error : new HarnessCrash('QA harness startup failed');
     }
     const outcome = await session.finish({ reason: result.status === 'cancelled' ? result.reason : undefined });

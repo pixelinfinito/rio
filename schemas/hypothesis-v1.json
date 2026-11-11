@@ -83,6 +83,30 @@
       "type": "string",
       "maxLength": 16000
     },
+    "fix": {
+      "type": "object",
+      "description": "Only for a local fix: head lines of the primary file and their full new text.",
+      "properties": {
+        "line_start": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "line_end": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "replacement": {
+          "type": "string",
+          "maxLength": 16000
+        }
+      },
+      "required": [
+        "line_start",
+        "line_end",
+        "replacement"
+      ],
+      "additionalProperties": false
+    },
     "state": {
       "enum": [
         "new",

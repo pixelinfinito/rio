@@ -1,5 +1,6 @@
 import type { Verified } from "./consolidate";
 import type {
+  CouncilRound,
   CouncilReview,
   ExecutionResult,
   Graph,
@@ -507,12 +508,24 @@ export async function runCouncil(
       outputs?: Record<string, { exit_code: number; contains_found?: boolean }>;
       contains?: string;
     })[] = [];
+    // Families and per-round answers are presentation detail: the decision
+    // never reads them.
+    const families = new Map(input.members.map((m) => [m.role, m.family]));
+    const roundsOf = new Map<Role, CouncilRound[]>();
+    const answeredIn = (role: Role, round: CouncilRound) =>
+      roundsOf.set(role, [...(roundsOf.get(role) ?? []), round]);
     const membersOf = () =>
       ROLES.filter((role) => memberState.has(role)).map((role) => {
         const { abstained, cause } = memberState.get(role)!;
-        return abstained && cause
-          ? { role, abstained, cause }
-          : { role, abstained };
+        const family = families.get(role);
+        const rounds = roundsOf.get(role);
+        return {
+          role,
+          abstained,
+          ...(abstained && cause ? { cause } : {}),
+          ...(family ? { family } : {}),
+          ...(rounds?.length ? { rounds } : {}),
+        };
       });
     const common = {
       // Learned weights are looked up and estimated under this category.
@@ -589,15 +602,19 @@ export async function runCouncil(
       }),
     );
     for (const { member, assessment } of first) {
-      memberState.set(member.role, {
-        abstained: !assessment,
-        cause: assessment
-          ? undefined
-          : outcome.audit.find(
-              (a) =>
-                a.finding === h.id && a.member === member.role && a.round === 1,
-            )?.cause,
-      });
+      const cause = assessment
+        ? undefined
+        : outcome.audit.find(
+            (a) =>
+              a.finding === h.id && a.member === member.role && a.round === 1,
+          )?.cause;
+      memberState.set(member.role, { abstained: !assessment, cause });
+      answeredIn(
+        member.role,
+        assessment
+          ? { round: 1, real: assessment.real }
+          : { round: 1, cause: cause ?? "invalid" },
+      );
       if (assessment) answered.push({ member, assessment });
     }
     if (answered.length < settings.min_members) {
@@ -788,6 +805,28 @@ export async function runCouncil(
           );
           const answer = await call(member, 2, request, roundTwo);
           const settled = settle(assessment, answer, known, own);
+          answeredIn(
+            member.role,
+            answer
+              ? {
+                  round: 2,
+                  real: settled.final.real,
+                  ...(settled.final !== assessment &&
+                  settled.final.real !== assessment.real
+                    ? { changed: true }
+                    : {}),
+                }
+              : {
+                  round: 2,
+                  cause:
+                    outcome.audit.findLast(
+                      (a) =>
+                        a.finding === h.id &&
+                        a.member === member.role &&
+                        a.round === 2,
+                    )?.cause ?? "invalid",
+                },
+          );
           if (settled.ignored) {
             const entry = outcome.audit.findLast(
               (a) =>

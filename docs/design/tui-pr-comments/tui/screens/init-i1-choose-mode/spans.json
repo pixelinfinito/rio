@@ -1,0 +1,1533 @@
+{
+ "screen": "init-i1-choose-mode",
+ "cols": 120,
+ "rows": 40,
+ "lines": [
+  [
+   {
+    "text": " ▃▅▇▇▇▅▃▃▁▁▁▃ ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "rio",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": true
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "rio init · ~/.config/rio",
+    "fg": "dim",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "                                                          ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "● setup",
+    "fg": "signal",
+    "bg": "panel",
+    "bold": true
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "rio 0.2.0",
+    "fg": "faint",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "      ██████                                                                                                            ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "    ██████████                ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "Set up rio",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "                                                                                ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ████      ██████      ██    ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "choose where reviews run · change later with rio init or rio deploy",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                       ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ██          ████████████    ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "nothing is written to the repository",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                  ██████                                                                                                ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "────────────────────────────────────────────────────────────────────────│───────────────────────────────────────────────",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "HOW SHOULD RIO RUN REVIEWS?",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "                                           ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "THIS MACHINE",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "                                  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "▌",
+    "fg": "signal",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "(•)",
+    "fg": "signal",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "Deploy to my Cloudflare account",
+    "fg": "fg",
+    "bg": "raise",
+    "bold": true
+   },
+   {
+    "text": "                      ",
+    "fg": "fg",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "recommended",
+    "fg": "pass",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "✓",
+    "fg": "pass",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "cf 1.4 installed",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                            ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "▌",
+    "fg": "signal",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "     ",
+    "fg": "fg",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "Worker · Workflows · D1 · R2 · Queues · AI Gateway, all in your",
+    "fg": "dim",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "   ",
+    "fg": "fg",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "✓",
+    "fg": "pass",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "cf logged in · profile default",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "              ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "▌",
+    "fg": "signal",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "     ",
+    "fg": "fg",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "account. Agents, blind verifier, isolated runners.",
+    "fg": "faint",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "                ",
+    "fg": "fg",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "✓",
+    "fg": "pass",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "docker daemon running",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                       ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "✓",
+    "fg": "pass",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "OS keychain unlocked",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "( )",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "Connect an existing endpoint",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "·",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "CLOUDFLARE_API_TOKEN not set",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "A teammate already deployed rio: paste its URL and an API token.",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "·",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "OPENROUTER_API_KEY not set",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "rio init --endpoint URL --token-stdin",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                             ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "→ key will be asked, echo off",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "( )",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "Local only",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "EXISTING CONFIG",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "                               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "Deterministic checks and the graph on this machine.",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "~/.config/rio/config.toml",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                     ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "Agents, triage and verify are deferred (no_endpoint).",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "             ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "no deployment yet",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                             ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "PRIVACY",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "                                       ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "WHAT DEPLOY NEEDS",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "                                                     ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "✓",
+    "fg": "pass",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "no account or resource IDs in the repo",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "·",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "Workers Paid plan with D1, R2, Queues, Workflows",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                    ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "✓",
+    "fg": "pass",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "secrets: keychain, never in args",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "            ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "·",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "Containers enabled (Cloudflare Sandbox runner)",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "✓",
+    "fg": "pass",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "gateway logs and cache disabled",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "             ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "·",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "a model key: OpenRouter, OpenAI or Anthropic",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "·",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "Docker running locally to copy the runner image",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                     ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "Your provider bills model usage; Cloudflare bills your account.",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "       ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "signal",
+    "bold": false
+   },
+   {
+    "text": "⏎ continue",
+    "fg": "bg",
+    "bg": "signal",
+    "bold": true
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "signal",
+    "bold": false
+   },
+   {
+    "text": "   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "p",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "dry-run plan (no login, no changes)",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                 ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "↑↓",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "mode",
+    "fg": "faint",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "⏎",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "continue",
+    "fg": "faint",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "p",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "dry run",
+    "fg": "faint",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "?",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "help",
+    "fg": "faint",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "q",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "quit",
+    "fg": "faint",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "                                                                         ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   }
+  ]
+ ]
+}

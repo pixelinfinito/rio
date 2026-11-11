@@ -12,6 +12,7 @@ members = [
     "crates/rio-client",
     "crates/rio-runner",
     "crates/rio-qa",
+    "crates/rio-tui",
 ]
 
 [workspace.package]
@@ -67,6 +68,10 @@ reqwest = { version = "0.12", default-features = false, features = ["rustls-tls"
 cvss = "3"
 aho-corasick = "1"
 textwrap = "0.16"
+unicode-width = "0.2"
+ratatui = { version = "0.30", default-features = false, features = ["crossterm"] }
+ratatui-image = { version = "11.1", default-features = false, features = ["crossterm"] }
+image = { version = "0.25", default-features = false, features = ["png"] }
 
 [workspace.lints.rust]
 warnings = "deny"

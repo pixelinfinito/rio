@@ -1,0 +1,28 @@
+---
+source: crates/rio-tui/tests/init.rs
+expression: "common::lines(&buf)"
+---
+ ▃▅▇▇▇▅▃▃▁▁▁▃ rio  rio init · rio → Pixel Infinito            ✓ deployed  2m31s 
+                                                                                
+  rio is deployed                                                               
+  Pixel Infinito · 16 steps · 1 reused · 1 retry · 2m31s                        
+  everything runs in your own Cloudflare account                                
+────────────────────────────────────────────────────────────────────────────────
+                                                                                
+  ENDPOINT                                                                      
+   https://rio.pixel-labs.workers.dev                   c copy                  
+                                                                                
+  SAVED                                                                         
+  ✓ config    ~/.config/rio/config.toml             choices only · no secrets   
+  ✓ keychain  rio / 3f9c…a21e / rio                 api · runner · provider · … 
+  ✓ profile   ~/.config/rio/profiles/default.yaml   rio-default · OpenRouter    
+                                                                                
+  RESOURCES                                                                     
+  ✓ Worker     rio             ✓ D1         rio ↺                               
+  ✓ R2         rio-artifacts   ✓ Queue      rio-jobs                            
+  ✓ AI Gateway rio             ✓ Workflows  review · migrate                    
+  ✓ Sandbox    standard-3      ✓ Schema     v1 applied                          
+                                                                                
+  NEXT                                                                          
+   ⏎ run your first review    rio review --preset standard                      
+ ⏎ first review  t teammate  c copy URL  l deploy log  q quit

@@ -6,6 +6,7 @@ created by Rio; repository archives are never extracted on the host.
 import argparse
 from contextlib import contextmanager
 import fcntl
+import io
 import json
 import os
 from pathlib import Path
@@ -24,6 +25,8 @@ from urllib.parse import urlsplit
 from pod import Pod, PodError, docker, safe_path
 
 RESULT_LIMIT = 12 * 1024 * 1024
+CONTROL_LIMIT = 64 * 1024
+PROGRESS_LIMIT = 4 * 1024 * 1024
 
 
 def write_json(path, value):
@@ -327,6 +330,67 @@ def _import_seeds(pod, configuration, cache):
             raise PodError('seed_cache_import_failed')
 
 
+class LiveSync:
+    """The host's live view of a run: its control file (pause, cancel a cell)
+    is copied into the controller when it changes, and the controller's cell
+    progress is copied out. Both are advisory; a failed copy is retried on the
+    next tick and never fails the run."""
+
+    def __init__(self, root, container, interval=1.0):
+        self.root, self.container, self.interval = root, container, interval
+        self.sent, self.due = None, 0.0
+
+    def __call__(self):
+        now = time.monotonic()
+        if now < self.due:
+            return
+        self.due = now + self.interval
+        try:
+            self.send_control()
+        except Exception:
+            pass
+        try:
+            progress = controller_archive(self.container, '/home/node/qa-progress.json', read_progress, timeout=5)
+            if progress is not None:
+                write_json(self.root / 'progress.json', progress)
+        except Exception:
+            pass
+
+    def send_control(self):
+        path = self.root / 'control.json'
+        if not path.is_file() or path.is_symlink() or path.stat().st_size > CONTROL_LIMIT:
+            return
+        data = path.read_bytes()
+        if data == self.sent:
+            return
+        value = json.loads(data)
+        if not isinstance(value, dict):
+            return
+        content = json.dumps({'paused': value.get('paused') is True, 'cancel': [
+            {key: entry.get(key) for key in ('journey', 'viewport', 'color_scheme')}
+            for entry in value.get('cancel', []) if isinstance(entry, dict)
+            and all(isinstance(entry.get(key), str) for key in ('journey', 'viewport', 'color_scheme'))
+        ]}).encode()
+        payload = io.BytesIO()
+        with tarfile.open(fileobj=payload, mode='w') as archive:
+            item = tarfile.TarInfo('qa-control.json')
+            item.size, item.mode, item.uid, item.gid, item.mtime = len(content), 0o400, 1000, 1000, int(time.time())
+            archive.addfile(item, io.BytesIO(content))
+        docker('cp', '-a', '-', self.container + ':/home/node', data=payload.getvalue(), timeout=10)
+        self.sent = data
+
+
+def read_progress(archive):
+    entries = iter(archive)
+    member = next(entries, None)
+    if member is None or not member.isreg() or member.size > PROGRESS_LIMIT or next(entries, None) is not None:
+        return None
+    value = json.load(archive.extractfile(member))
+    if not isinstance(value, dict) or not isinstance(value.get('events'), list):
+        return None
+    return {'events': [event for event in value['events'] if isinstance(event, dict)]}
+
+
 def collect(root, pod, state=None):
     value = read_result(pod.containers['controller'])
     if value is None:
@@ -381,7 +445,10 @@ def run(root, configuration):
         if not hosted:
             import_seeds(pod, configuration)
         pod.start()
-        state = pod.wait(run['budget']['wall_ms'] / 1000, cancelled)
+        live = LiveSync(root, pod.containers['controller'])
+        state = pod.wait(run['budget']['wall_ms'] / 1000, cancelled, live)
+        live.due = 0
+        live()
         if lease and lease.failed.is_set():
             state = {**state, 'outcome': 'partial', 'reason': 'seed_lease_failed'}
         if state['outcome'] == 'partial':

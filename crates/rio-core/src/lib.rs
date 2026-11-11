@@ -17,3 +17,4 @@ mod render;
 pub use render::*;
 mod sarif;
 pub use sarif::*;
+pub mod glyphs;

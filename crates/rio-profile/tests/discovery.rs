@@ -121,3 +121,32 @@ fn profiles_work_without_a_repository_and_builtin_assets_are_embedded() {
             .is_some()
     );
 }
+
+#[test]
+fn a_profile_is_referenced_by_its_name_unless_another_shadows_it() {
+    let root = tempfile::tempdir().unwrap();
+    let config = tempfile::tempdir().unwrap();
+    let loader = ProfileLoader::new(
+        Some(root.path().into()),
+        config.path().into(),
+        root.path().into(),
+    );
+    write(config.path(), "profiles/node.yaml", "node");
+    let personal = loader.discover(Some("node")).unwrap();
+    assert!(matches!(personal, ProfileSource::Personal(_)));
+    assert_eq!(loader.reference(&personal), "node");
+    assert_eq!(
+        loader.reference(&ProfileSource::BuiltIn("rio/qa".into())),
+        "rio/qa"
+    );
+    // A repository profile of the same name shadows the personal one, which
+    // then needs its path; the repository's is found by the name.
+    write(root.path(), ".rio/profiles/node.yaml", "repo-node");
+    assert_eq!(loader.reference(&personal), personal.label());
+    let repo = loader.discover(Some("node")).unwrap();
+    assert_eq!(loader.reference(&repo), "node");
+    // A file elsewhere is always its path.
+    write(root.path(), "custom.yaml", "explicit");
+    let file = loader.discover(Some("custom.yaml")).unwrap();
+    assert_eq!(loader.reference(&file), file.label());
+}

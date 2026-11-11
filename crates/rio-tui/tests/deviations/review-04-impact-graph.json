@@ -1,0 +1,7 @@
+[
+  {
+    "row": 20,
+    "text": "   │                   └─tests▶│ ◎ parser.spec    │                                │ ▌ ● 8c1e4a9b null deref      FAIL  ",
+    "reason": "8-character finding id"
+  }
+]

@@ -1,0 +1,28 @@
+---
+source: crates/rio-tui/tests/guide.rs
+expression: "common::lines(&buf)"
+---
+ ▃▅▇▇▇▅▃▃▁▁▁▃  rio  help                                               ? closes 
+                                  │                                             
+ EVERYWHERE                       │ VIEW MAP                                    
+ ?        this help               │                                             
+ :        command palette         │ review ─⏎─▶ Live ─auto─▶ Findings           
+ tab      next pane               │ Findings ─x─▶ Summary ─q─▶ exit             
+ 1–6      tabs in rio qa          │          ─g─▶ Impact graph                  
+ esc      back one view           │          ─d─▶ Lineage & feedback            
+ q        quit · offers to save   │          ─F─▶ History ─S─▶ Proposals        
+ ^C       stop, keep partial      │          ─⏎─▶ Finding ─c─▶ Council          
+ ^C ^C    kill tools · exit 130   │               Finding ─P─▶ Publish ─y─▶ PR  
+                                  │                                             
+ THIS VIEW  Findings              │ qa     ─▶ Journeys ─⏎─▶ Matrix ─⏎─▶ Cell    
+ ↑↓       move                    │        Journeys ─i─▶ init                   
+ ⏎        open                    │        Matrix ─s─▶ sync                     
+ d        dismiss                 │        Cell ─4─▶ UX                         
+ g        graph                   │                                             
+ f        filter                  │ init   ─▶ Mode ─⏎─▶ Configure ─⏎─▶ Deploy   
+ x        export                  │        Deploy ─▶ Done                       
+                                  │                                             
+ MOVE                             │─────────────────────────────────────────────
+ ↑↓ j k   items                   │ GLYPHS  readable without color              
+ every key here also appears in the bottom bar of the view that uses it         
+  ? close  / search keys  : palette

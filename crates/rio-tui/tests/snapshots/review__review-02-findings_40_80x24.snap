@@ -1,0 +1,28 @@
+---
+source: crates/rio-tui/tests/review.rs
+expression: "common::lines(&draw(&app, 80, 24, Theme::default()))"
+---
+ ▃▅▇▇▇▅▃▃▁▁▁▃ rio  feature/parser-guards → origin/ma…  ✕ exit 1 · 0 fail  2m14s 
+                                     │                                          
+ Findings 40 · 21/40  sort: policy ▾ │ 00000015 Possible null dereference in p… 
+───────────────────────── ↑ 16 more ─│ [new] [error] [defect] [static_proven]   
+  ● 00000011 Possible null de… error │                                          
+         src/module17.ts:1    proven │ rule      correctness/null-deref         
+─────────────────────────────────────│ location  src/module21.ts:1 parseHeader  
+  ● 00000012 Possible null de… error │ trigger   request without content-type   
+         src/module18.ts:1    proven │ evidence  code:head:header.ts:n41,n42    
+─────────────────────────────────────│ impact    3 callers · press g for graph  
+  ● 00000013 Possible null de… error │                                          
+         src/module19.ts:1    proven │ VERIFICATION · BLIND QUORUM 2 OF 3       
+─────────────────────────────────────│ voter 1   ✓ agrees      blind: same      
+  ● 00000014 Possible null de… error │ voter 2   ✓ agrees      blind: related   
+         src/module20.ts:1    proven │ voter 3   ✕ no repro    blind: none      
+─────────────────────────────────────│                                          
+▌ ● 00000015 Possible null de… error │                                          
+▌        src/module21.ts:1    proven │                                          
+─────────────────────────────────────│                                          
+                                     │                                          
+───────────────────────── ↓ 19 more ─│                                          
+                                     │  d dismiss…   e editor  v votes  y copy… 
+ $0.41 · 182k in / 21k out           │                                          
+ ↑↓ move  ⏎ open  d dismiss  g graph  f filter  tab pane  x export  ? help  q qu

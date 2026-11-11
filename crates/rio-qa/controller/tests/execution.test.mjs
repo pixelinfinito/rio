@@ -122,3 +122,38 @@ test('model token exhaustion cancels the rest of a cell without crash retry or d
   assert.ok(result.journey_outcomes.every(outcome => outcome.outcome === 'cancelled' && outcome.reason === 'budget'));
   assert.deepEqual(result.journey_outcomes[0].evidence, ['retained']);
 });
+test('a paused queue waits before the next cell and resumes', async () => {
+  const backend = fixture(); let paused = true; const seen = [];
+  const run = executePlan({ plan: { chains: [{ journeys: ['registration'] }], cells: cells.slice(0, 2) }, journeys, backend, runWallMs: 10000, cellWallMs: 1000,
+    control: { paused: () => paused }, progress: event => seen.push(event) });
+  await new Promise(resolve => setTimeout(resolve, 50));
+  assert.equal(backend.events.length, 0);
+  paused = false;
+  const result = await run;
+  assert.equal(result.outcome, 'complete');
+  assert.deepEqual(seen.map(event => [event.cell.color_scheme, event.outcome]), [['light', 'running'], ['light', 'passed'], ['dark', 'running'], ['dark', 'passed']]);
+});
+test('a cell the user cancels is recorded cancelled while the others run', async () => {
+  const backend = fixture(); const run = backend.runJourney; const seen = [];
+  const cancelled = new Set();
+  backend.runJourney = async args => {
+    if (args.cell.color_scheme === 'light') {
+      cancelled.add('light'); args.onStep?.(1);
+      await new Promise(resolve => args.signal.addEventListener('abort', resolve, { once: true }));
+      args.signal.throwIfAborted();
+    }
+    return run(args);
+  };
+  const result = await executePlan({ plan: { chains: [{ journeys: ['registration'] }], cells: cells.slice(0, 2) }, journeys, backend, runWallMs: 10000, cellWallMs: 5000,
+    control: { cancelled: (journey, cell) => journey === 'registration' && cancelled.has(cell.color_scheme) }, progress: event => seen.push(event) });
+  assert.equal(result.outcome, 'partial');
+  assert.deepEqual(result.journey_outcomes.map(row => [row.cell.color_scheme, row.outcome, row.reason]), [['light', 'cancelled', 'user'], ['dark', 'passed', undefined]]);
+  assert.deepEqual(seen.filter(event => event.cell.color_scheme === 'light').map(event => [event.step, event.outcome]), [[0, 'running'], [1, 'running'], [0, 'cancelled']]);
+});
+test('a cell cancelled before it starts never restores its seed', async () => {
+  const backend = fixture();
+  const result = await executePlan({ plan: { chains: [{ journeys: ['registration'] }], cells: cells.slice(0, 2) }, journeys, backend, runWallMs: 10000, cellWallMs: 1000,
+    control: { cancelled: (_, cell) => cell.color_scheme === 'dark' } });
+  assert.deepEqual(result.journey_outcomes.map(row => [row.cell.color_scheme, row.outcome, row.reason]), [['light', 'passed', undefined], ['dark', 'cancelled', 'user']]);
+  assert.equal(backend.events.filter(event => event[0] === 'restore').length, 1);
+});

@@ -1,0 +1,40 @@
+ ▃▅▇▇▇▅▃▃▁▁▁▃ rio  rio init · rio → Pixel Infinito                                    ✕ stopped at step 15 of 16  2m02s 
+                                                                        │                                               
+  Deployment stopped  nothing was rolled back                           │ ┌─ error ───────────────────────────────────┐ 
+  ██████████████████████████████████████████████████████████░░░░░░░░░░  │ │ ✕ Containers unavailable                  │ 
+                                                                        │ │ POST …/containers/applications            │ 
+  STEPS                                                                 │ │                                           │ 
+   1 ✓ authenticate     in place                                        │ │ The account has no Containers             │ 
+   2 ✓ account          in place                                        │ │ access. The Sandbox runner needs          │ 
+   3 ✓ secrets          in place                                        │ │ Workers Paid with Containers on.          │ 
+   4 ✓ runner image     in place                                        │ │                                           │ 
+   5 ✓ registry copy    in place                                        │ └───────────────────────────────────────────┘ 
+   6 ↺ D1 database      in place                                        │                                               
+   7 ✓ R2 bucket        in place                                        │ HOW TO FIX                                    
+   8 ✓ Queue            in place                                        │ o  enable Containers                          
+   9 ✓ AI Gateway       in place                                        │    opens dash.cloudflare.com                  
+  10 ✓ gateway token    in place                                        │ s  use self-hosted runner                     
+  11 ✓ Worker upload    in place                                        │    --runner self-hosted                       
+  12 ✓ workflows        in place                                        │ ·  check token scopes                         
+  13 ✓ migrations       in place                                        │    cf auth scopes                             
+  14 ✓ queue consumer   in place                                        │                                               
+▌ 15 ✕ sandbox rollout  Containers unavailable                          │ THEN                                          
+  16 – workers.dev      skipped                                         │  r retry step 15                              
+                                                                        │                                               
+  LOG                                                                   │ or later, from any shell:                     
+  │ Migration deploy-7c21a9e4f0b2 applied (v1)                          │ rio deploy  resumes here                      
+  │ Queue consumer rio-jobs → rio attached                              │                                               
+  │ Rolling out Sandbox application rio…                                │ KEPT                                          
+  │ error: Containers is not enabled for this account                   │ Worker · D1 · R2 · Queue · Gateway            
+                                                                        │ workflows · schema v1 · secrets               
+                                                                        │                                               
+                                                                        │                                               
+                                                                        │                                               
+                                                                        │                                               
+                                                                        │                                               
+                                                                        │                                               
+                                                                        │                                               
+                                                                        │                                               
+  14 resources kept · retry or rio deploy reuses them                   │                                               
+                                                                        │                                               
+ r retry  s self-hosted  o dashboard  l log  q quit · resume later                                                      

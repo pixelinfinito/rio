@@ -1747,6 +1747,38 @@
                   },
                   "unavailable": {
                     "type": "boolean"
+                  },
+                  "journey": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "step": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "cell": {
+                    "type": "object",
+                    "properties": {
+                      "viewport": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "color_scheme": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "viewport",
+                      "color_scheme"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "version": {
+                    "enum": [
+                      "base",
+                      "head"
+                    ]
                   }
                 },
                 "required": [
@@ -1963,6 +1995,30 @@
         "suggested_fix": {
           "type": "string",
           "minLength": 1
+        },
+        "fix": {
+          "type": "object",
+          "description": "Only for a local fix: head lines of the primary file and their full new text.",
+          "properties": {
+            "line_start": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "line_end": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "replacement": {
+              "type": "string",
+              "maxLength": 16000
+            }
+          },
+          "required": [
+            "line_start",
+            "line_end",
+            "replacement"
+          ],
+          "additionalProperties": false
         },
         "evidence": {
           "type": "array",
@@ -2346,6 +2402,76 @@
                       "excluded",
                       "unavailable"
                     ]
+                  },
+                  "family": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100,
+                    "description": "Model family of the member, for presentation and author-family exclusion."
+                  },
+                  "rounds": {
+                    "type": "array",
+                    "maxItems": 2,
+                    "description": "The member's answer per round it was asked; never a numeric confidence.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "round": {
+                          "enum": [
+                            1,
+                            2
+                          ]
+                        },
+                        "real": {
+                          "enum": [
+                            "yes",
+                            "no",
+                            "unknown"
+                          ]
+                        },
+                        "cause": {
+                          "enum": [
+                            "invalid",
+                            "no_evidence_refs",
+                            "timeout",
+                            "vendor_error",
+                            "budget",
+                            "excluded",
+                            "unavailable"
+                          ]
+                        },
+                        "changed": {
+                          "type": "boolean",
+                          "description": "Round 2 changed position citing evidence."
+                        }
+                      },
+                      "required": [
+                        "round"
+                      ],
+                      "oneOf": [
+                        {
+                          "required": [
+                            "real"
+                          ],
+                          "not": {
+                            "required": [
+                              "cause"
+                            ]
+                          }
+                        },
+                        {
+                          "required": [
+                            "cause"
+                          ],
+                          "not": {
+                            "required": [
+                              "real"
+                            ]
+                          }
+                        }
+                      ],
+                      "additionalProperties": false
+                    }
                   }
                 },
                 "required": [
@@ -2586,6 +2712,65 @@
               "note"
             ]
           }
+        },
+        "trace": {
+          "type": "object",
+          "description": "Security finding trace from source to sink, as the security agent cited it.",
+          "properties": {
+            "catalog_item": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "change": {
+              "enum": [
+                "introduced",
+                "removed",
+                "weakened"
+              ]
+            },
+            "steps": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 20,
+              "items": {
+                "type": "object",
+                "properties": {
+                  "role": {
+                    "enum": [
+                      "source",
+                      "step",
+                      "sink"
+                    ]
+                  },
+                  "path": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "line_start": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "missing": {
+                    "type": "boolean",
+                    "description": "The change removed this step; its location is in base."
+                  }
+                },
+                "required": [
+                  "role",
+                  "path",
+                  "line_start"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "catalog_item",
+            "change",
+            "steps"
+          ],
+          "additionalProperties": false
         },
         "qa": {
           "type": "object",

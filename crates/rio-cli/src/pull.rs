@@ -19,7 +19,7 @@ const ENDPOINT_REVIEW_LIMIT: Duration = Duration::from_secs(60 * 60 + 60);
 pub const NO_INSTALLATION: &str = "no_installation";
 
 pub async fn review(args: ReviewArgs, started: String) -> u8 {
-    let format = args.format;
+    let format = args.format();
     let usage =
         |message: &str| error_report(format, 2, "usage_error", message.to_owned(), Vec::new());
     if args.selection.staged || args.selection.base.is_some() || args.since_last {
@@ -203,6 +203,12 @@ pub async fn review(args: ReviewArgs, started: String) -> u8 {
     if args.publish && reason == Some(UnpublishedReason::PolicyNever) {
         eprintln!("The profile forbids publication (publish: never); nothing was published.");
     }
+    // In a terminal the findings hub opens on the report; its `P` previews
+    // what publishing would post and publishes only after `y`.
+    if crate::tui::interactive(args.format.is_some(), args.no_tui) {
+        let policy = endpoint_policy(&report);
+        return crate::tui::pull_request(args, started, report, policy, id, number).await;
+    }
     // Under `ask` without --publish, an interactive user is asked once.
     if !args.publish
         && reason == Some(UnpublishedReason::AskWithoutConsent)
@@ -247,7 +253,7 @@ fn confirm(prompt: &str) -> bool {
 }
 
 /// Records consent and waits for the endpoint to publish the finished review.
-async fn publish(client: &rio_client::Client, id: &str) -> anyhow::Result<Report> {
+pub(crate) async fn publish(client: &rio_client::Client, id: &str) -> anyhow::Result<Report> {
     client.publish(id).await?;
     for _ in 0..120 {
         tokio::time::sleep(Duration::from_secs(1)).await;

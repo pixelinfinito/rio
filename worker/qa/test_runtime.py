@@ -131,5 +131,44 @@ class ExportTests(unittest.TestCase):
             self.assertFalse((outside / 'child').exists())
 
 
+class LiveSyncTests(unittest.TestCase):
+    def test_control_is_copied_in_once_per_change_and_progress_out(self):
+        from runtime import LiveSync
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            sent = []
+            def fake_docker(*args, **kwargs):
+                with tarfile.open(fileobj=io.BytesIO(kwargs['data'])) as archive:
+                    member = archive.getmembers()[0]
+                    sent.append((args[-1], member.name, member.mode, member.uid, json.load(archive.extractfile(member))))
+            progress = {'events': [{'seq': 1, 'journey': 'checkout', 'viewport': 'mobile', 'color_scheme': 'dark', 'step': 2, 'outcome': 'running'}, 'junk']}
+            def fake_archive(container, path, consume, timeout=30):
+                self.assertEqual(path, '/home/node/qa-progress.json')
+                return consume(archive([('qa-progress.json', tarfile.REGTYPE, json.dumps(progress).encode())]))
+            with patch('runtime.docker', fake_docker), patch('runtime.controller_archive', fake_archive):
+                live = LiveSync(root, 'rio-qa-controller', interval=0)
+                live()
+                self.assertEqual(sent, [])
+                (root / 'control.json').write_text(json.dumps({'paused': True, 'cancel': [
+                    {'journey': 'checkout', 'viewport': 'mobile', 'color_scheme': 'dark', 'extra': 1}, {'journey': 3}]}))
+                live(); live()
+                self.assertEqual(sent, [('rio-qa-controller:/home/node', 'qa-control.json', 0o400, 1000,
+                                         {'paused': True, 'cancel': [{'journey': 'checkout', 'viewport': 'mobile', 'color_scheme': 'dark'}]})])
+                self.assertEqual(json.loads((root / 'progress.json').read_text()), {'events': progress['events'][:1]})
+
+    def test_failed_copies_never_fail_the_run(self):
+        from runtime import LiveSync
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / 'control.json').write_text('{"paused": true}')
+            def broken(*args, **kwargs):
+                raise PodError('docker operation failed')
+            with patch('runtime.docker', broken), patch('runtime.controller_archive', broken):
+                live = LiveSync(root, 'rio-qa-controller', interval=0)
+                live()
+                self.assertIsNone(live.sent)
+                self.assertFalse((root / 'progress.json').exists())
+
+
 if __name__ == '__main__':
     unittest.main()

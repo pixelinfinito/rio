@@ -1,0 +1,28 @@
+---
+source: crates/rio-tui/tests/shell.rs
+expression: "common::lines(&fits)"
+---
+ ▃▅▇▇▇▅▃▃▁▁▁▃ rio                                                               
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+ ↑↓ move  ⏎ open  d dismiss  g graph  f filter  tab pane  x export  ? help  q qu

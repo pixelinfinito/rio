@@ -1,0 +1,37 @@
+[
+  {
+    "row": 2,
+    "text": " SECURITY  OWASP Top 10:2025  │ a7f3e2c1 Guest session can read any order│ COUNCIL  round 2 of 2 · partial 4/5          ",
+    "reason": "8-character finding id"
+  },
+  {
+    "row": 20,
+    "text": "▌● a7f3e2c1 guest reads order │  56  if (!(id > 0)) return res.sendStatus│ fails on head, passes on base                ",
+    "reason": "8-character finding id"
+  },
+  {
+    "row": 21,
+    "text": " ● 8c1e4a9b null deref header │+ 57  const order = await db.orders.get(id│                                              ",
+    "reason": "8-character finding id"
+  },
+  {
+    "row": 22,
+    "text": " ● 51fd7c2e unhandled reject  │  58  return res.json(order)              │ agreement is never evidence                  ",
+    "reason": "8-character finding id"
+  },
+  {
+    "row": 23,
+    "text": " ◆ c90b3d1a sql built by con… │                                          │ 4 of 4 agree: not counted                    ",
+    "reason": "8-character finding id"
+  },
+  {
+    "row": 24,
+    "text": " ○ 3a10b2c4 fixed · resolves  │ VERIFY  blind quorum                     │                                              ",
+    "reason": "8-character finding id"
+  },
+  {
+    "row": 38,
+    "text": " 1 of 3 security findings went to council · cost shown per finding                                                      ",
+    "reason": "the design's footer says 'council runs on 5–10 % of findings'; P1 shows no percentage anywhere, so that clause is left out"
+  }
+]

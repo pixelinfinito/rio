@@ -1,0 +1,28 @@
+---
+source: crates/rio-tui/tests/review.rs
+expression: "common::lines(&buf)"
+---
+ ▃▅▇▇▇▅▃▃▁▁▁▃ rio  feature/parser-guards …  graph · 41 nodes · 63 edges  2 hops 
+ Impact graph   head  base  delta   hops 2 · all … │                            
+───────────────────────────────────────────────────│ SELECTED NODE              
+ HOP 0 changed                 HOP 1 dependents    │ ƒ parseHeader              
+                               ┌──────────────────┐│ function · head · seed · … 
+                       ┌─calls▶│ ƒ handleRequest  ││                            
+                       │       │ router.ts:54     ││ path   src/parser/header.… 
+                       │       └──────────────────┘│ delta  ~ changed a3f9 → 7… 
+                       │                           │ edges  4 in · 1 out        
+                       │       ┌──────────────────┐│                            
+                       ├─calls▶│ ƒ acceptUpload  ▲││ DEPENDENTS · HOP 1         
+ ┏━━━━━━━━━━━━━━━━━━┓  │       │ upload.ts:21     ││ ← calls  handleReque… res  
+ ┃ ƒ parseHeader  ~●┃──┤       └──────────────────┘│ ← calls  acceptUpload res  
+ ┃ header.ts:38     ┃  │                           │ ← calls  Proxy.forwa… res  
+ ┗━━━━━━━━━━━━━━━━━━┛  │       ┌──────────────────┐│ ← tests  parser.spec  res  
+   │                   ├─calls▶│ ◇ Proxy.forward  ││                            
+   │                   │       │ proxy.ts:88      ││ DEPENDS ON                 
+   │                   │       └──────────────────┘│ → calls  splitFields  res  
+   │ calls             │                           │                            
+───────────────────────────────────────────────────│ FINDINGS                   
+ ƒ fn  ◇ method  ▣ class  ◎ test  ▤ file           │ ▌ ● 8c1e4a9b null d… FAIL  
+ ━ selected  ─ resolved  ┄ probable   ~ changed  … │ g finding  o open  b base  
+                                                   │                            
+ ←→ hop  ↑↓ node  ⏎ focus  +/- hops  v head/base/delta  esc back

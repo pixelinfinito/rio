@@ -83,6 +83,7 @@ async fn collect(
     captured: Arc<Mutex<Captured>>,
     limit: usize,
     exceeded: mpsc::Sender<()>,
+    tap: Option<(String, OutputTap)>,
 ) {
     let mut buffer = [0u8; 8192];
     let mut notified = false;
@@ -90,6 +91,9 @@ async fn collect(
         match stream.read(&mut buffer).await {
             Ok(0) => return,
             Ok(count) => {
+                if let Some((program, tap)) = &tap {
+                    tap(program, &buffer[..count]);
+                }
                 let over_limit = {
                     let mut captured = captured.lock().unwrap();
                     let available = limit.saturating_sub(captured.bytes.len());
@@ -114,6 +118,19 @@ async fn collect(
 #[derive(Clone, Default)]
 pub struct ProcessSupervisor {
     active: Arc<Mutex<BTreeMap<u32, Arc<platform::ProcessTree>>>>,
+    /// Receives each chunk of tool output as it is read, with the program's
+    /// file name; the interactive UI shows it as a step log.
+    tap: Arc<Mutex<Option<OutputTap>>>,
+}
+
+/// A receiver of tool output: `(program, chunk)`.
+pub type OutputTap = Arc<dyn Fn(&str, &[u8]) + Send + Sync>;
+
+impl ProcessSupervisor {
+    /// Send every tool's output to `tap` as it arrives, in addition to capturing it.
+    pub fn tap_output(&self, tap: OutputTap) {
+        *self.tap.lock().unwrap() = Some(tap);
+    }
 }
 
 struct Registration {
@@ -196,17 +213,27 @@ impl ProcessSupervisor {
         let stdout = Arc::new(Mutex::new(Captured::default()));
         let stderr = Arc::new(Mutex::new(Captured::default()));
         let (exceeded, mut exceeded_rx) = mpsc::channel(2);
+        let tap = self.tap.lock().unwrap().clone().map(|tap| {
+            let program = request
+                .program
+                .file_name()
+                .map(|name| name.to_string_lossy().into_owned())
+                .unwrap_or_default();
+            (program, tap)
+        });
         let stdout_reader = tokio::spawn(collect(
             child.stdout.take().unwrap(),
             stdout.clone(),
             request.output_limit,
             exceeded.clone(),
+            tap.clone(),
         ));
         let stderr_reader = tokio::spawn(collect(
             child.stderr.take().unwrap(),
             stderr.clone(),
             request.output_limit,
             exceeded,
+            tap,
         ));
         let deadline = sleep(request.timeout);
         tokio::pin!(deadline);

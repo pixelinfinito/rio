@@ -1,0 +1,3057 @@
+{
+ "screen": "review-04-impact-graph",
+ "cols": 120,
+ "rows": 40,
+ "lines": [
+  [
+   {
+    "text": " ▃▅▇▇▇▅▃▃▁▁▁▃ ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "rio",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": true
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "feature/parser-guards → origin/main · graph",
+    "fg": "dim",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "                      ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "graph · 41 nodes · 63 edges",
+    "fg": "signal",
+    "bg": "panel",
+    "bold": true
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "2 hops",
+    "fg": "faint",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "Impact graph",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " head  base ",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " delta ",
+    "fg": "bg",
+    "bg": "signal",
+    "bold": true
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "hops 2 · all kinds",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "          ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "41/2000 · complete",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                    ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "───────────────────────────────────────────────────────────────────────────────────│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "SELECTED NODE",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "                      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "HOP 0",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "changed",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                 ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "HOP 1",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "dependents",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "              ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "HOP 2",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "transitive",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "ƒ",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "parseHeader",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "                      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "┌──────────────────┐",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "          ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "┌──────────────────┐",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "function · head · seed · hop 0",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "     ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                       ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "┌─calls▶",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "ƒ",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " handleRequest  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "──calls──▶",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "ƒ",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " createServer   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                    ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                       ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "       ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "router.ts:54",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "     ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "          ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "server.ts:10",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "     ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "path",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "   src/parser/header.ts:38-46  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                       ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "       ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "└──────────────────┘",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "          ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "└──────────────────┘",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "delta",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "~ changed a3f9 → 7c21",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "       ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                       ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                           ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "edges",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  4 in · 1 out                ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                       ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "       ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "┌──────────────────┐",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "          ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "┌──────────────────┐",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                    ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                       ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "├─calls▶",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "ƒ",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " acceptUpload  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "▲",
+    "fg": "warn",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "──calls──▶",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "ƒ",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " uploadRoute    ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "DEPENDENTS · HOP 1",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "                 ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "┏━━━━━━━━━━━━━━━━━━┓",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "       ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "upload.ts:21",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "     ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "          ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "routes/upload.ts:7",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "←",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "calls",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  handleRequest        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "res",
+    "fg": "pass",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "┃",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "ƒ",
+    "fg": "signal",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "parseHeader",
+    "fg": "fg",
+    "bg": "raise",
+    "bold": true
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "~",
+    "fg": "signal",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "●",
+    "fg": "fail",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "┃──┤",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "       ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "└──────────────────┘",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "          ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "└──────────────────┘",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "←",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "calls",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  acceptUpload         ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "res",
+    "fg": "pass",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "┃",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "header.ts:38",
+    "fg": "dim",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "     ",
+    "fg": "fg",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "┃",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                           ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "←",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "calls",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  Proxy.forward        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "res",
+    "fg": "pass",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "┗━━━━━━━━━━━━━━━━━━┛",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "       ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "┌──────────────────┐",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "          ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "┌──────────────────┐",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "←",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "tests",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  parser.spec          ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "res",
+    "fg": "pass",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "├─calls▶",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "◇",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " Proxy.forward  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "┄┄refs┄┄┄▶",
+    "fg": "warn",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "?",
+    "fg": "warn",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "legacy.js",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                    ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "       ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "proxy.ts:88",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "          ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "plugins · text",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "DEPENDS ON",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "                         ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "       ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "└──────────────────┘",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "          ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "└──────────────────┘",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "→",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "calls",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  splitFields          ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "res",
+    "fg": "pass",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "calls",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "             ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                           ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                    ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "       ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "┌──────────────────┐",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "FINDINGS",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "                           ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "└─tests▶",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "◎",
+    "fg": "pass",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " parser.spec    ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "▌",
+    "fg": "fail",
+    "bg": "fail-tint",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "fail-tint",
+    "bold": false
+   },
+   {
+    "text": "● 8c1e",
+    "fg": "fail",
+    "bg": "fail-tint",
+    "bold": false
+   },
+   {
+    "text": " null deref          ",
+    "fg": "fg",
+    "bg": "fail-tint",
+    "bold": false
+   },
+   {
+    "text": "FAIL",
+    "fg": "fail",
+    "bg": "fail-tint",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "fail-tint",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                           ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "parser.spec.ts",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                    ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                           ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "└──────────────────┘",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "BLAST RADIUS",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "                       ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "▼",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                                               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "▲",
+    "fg": "warn",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " acceptUpload has no test         ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "┌──────────────────┐",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "          ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "┌──────────────────┐",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "          ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "┌──────────────────┐",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "path (1 of 3 callers)",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "            ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "ƒ",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " splitFields   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "~│",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "───calls─▶",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "ƒ",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " parseBody      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "──tests──▶",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "◎",
+    "fg": "pass",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " body.spec      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "?",
+    "fg": "warn",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " 1 probable edge (text match)     ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "header.ts:12",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "     ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "          ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "body.ts:30",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "       ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "          ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "body.spec.ts",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "     ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "plugins/legacy.js",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "└──────────────────┘",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "          ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "└──────────────────┘",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "          ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "└──────────────────┘",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "✓",
+    "fg": "pass",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " parser.spec covers it            ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                                   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                    ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                             ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "+30 more · ⏎ expand",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                    ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                                   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                    ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                                   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                    ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                                   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                    ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                                   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                    ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                                   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                    ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "───────────────────────────────────────────────────────────────────────────────────│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                    ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "ƒ fn  ◇ method  ▣ class  ◎ test  ▤ file",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                           ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                    ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "━",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "selected",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "─",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "resolved",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "┄",
+    "fg": "warn",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "probable",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "~ changed  ● finding  ▲ untested",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "             ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "g",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "finding",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "o",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "open",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "b",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "base",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "          ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                                   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                    ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "←→",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "hop",
+    "fg": "faint",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "↑↓",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "node",
+    "fg": "faint",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "⏎",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "focus",
+    "fg": "faint",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "+/-",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "hops",
+    "fg": "faint",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "v",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "head/base/delta",
+    "fg": "faint",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "esc",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "back",
+    "fg": "faint",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "                                                        ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   }
+  ]
+ ]
+}

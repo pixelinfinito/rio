@@ -69,11 +69,17 @@ impl<E: Into<anyhow::Error>> From<E> for Failure {
     }
 }
 
-struct Scope {
-    client: rio_client::Client,
-    repository: String,
+/// The endpoint client and the repository the registry is read for.
+pub struct Scope {
+    pub client: rio_client::Client,
+    pub repository: String,
     root: PathBuf,
     config: MachineConfig,
+}
+
+/// The registry scope for the current repository, or why there is none.
+pub fn scope(command: &str) -> Result<Scope, String> {
+    context(command).map_err(|Failure(_, message)| redact(&message))
 }
 
 fn context(command: &str) -> Result<Scope, Failure> {
@@ -124,6 +130,83 @@ fn print_json(value: &Value) -> Result<(), Failure> {
     Ok(())
 }
 
+/// The repository's registry records (`GET /v1/findings`), as `rio findings --format json` lists them.
+pub async fn records(ctx: &Scope) -> Result<Value> {
+    absent_is_empty(
+        ctx.client
+            .findings(&[("repository", ctx.repository.as_str())])
+            .await,
+        "findings",
+    )
+}
+
+/// The repository's suppression proposals (`GET /v1/suppressions`); each open
+/// one carries `change`, the profile `apply` would write, validated in a
+/// temporary file next to it that is never renamed.
+pub async fn proposals(ctx: &Scope) -> Result<Value> {
+    let mut answer = absent_is_empty(
+        ctx.client
+            .suppressions(&[("repository", ctx.repository.as_str())])
+            .await,
+        "suppressions",
+    )?;
+    let path = ctx.root.join(DEFAULT_PROFILE);
+    for p in answer["suppressions"].as_array_mut().into_iter().flatten() {
+        if p["status"] != "proposed" {
+            continue;
+        }
+        let entry = entry_text(&p["entry"]);
+        p["change"] = match candidate(ctx, &path, &entry) {
+            Ok((_, next, previous, error)) => {
+                let lines: Vec<Value> = similar::TextDiff::from_lines(&previous, &next)
+                    .iter_all_changes()
+                    .filter(|c| c.tag() != similar::ChangeTag::Delete)
+                    .enumerate()
+                    .map(|(i, c)| {
+                        json!({"line": i + 1, "text": c.value().trim_end_matches(['\n', '\r']),
+                            "added": c.tag() == similar::ChangeTag::Insert})
+                    })
+                    .collect();
+                json!({"path": DEFAULT_PROFILE, "lines": lines, "written": true, "error": error})
+            }
+            Err(error) => json!({"path": DEFAULT_PROFILE, "lines": [], "written": false,
+                "error": redact(&format!("{error:#}"))}),
+        };
+    }
+    Ok(answer)
+}
+
+/// `rio suppressions apply <id>` after the user's consent: the entry is
+/// written and the proposal marked applied. Returns what was done.
+pub async fn apply_consented(ctx: &Scope, id: &str) -> Result<String, String> {
+    let found = open_proposal(ctx, id)
+        .await
+        .map_err(|Failure(_, m)| redact(&m))?;
+    commit(ctx, id, &found)
+        .await
+        .map_err(|Failure(_, m)| redact(&m))
+}
+
+/// `rio suppressions decline <id> --note <reason>`. Returns what was done.
+pub async fn decline(ctx: &Scope, id: &str, note: Option<String>) -> Result<String, String> {
+    let run = async {
+        let found = open_proposal(ctx, id).await?;
+        let mut body = json!({"status": "declined"});
+        if let Some(note) = note {
+            body["note"] = json!(note);
+        }
+        ctx.client.decide_suppression(id, &body).await?;
+        Ok::<_, Failure>(format!(
+            "Declined {id} ({}); it is not proposed again for 180 days",
+            redact(&entry_text(&found["entry"]))
+        ))
+    };
+    run.await.map_err(|Failure(_, m)| redact(&m))
+}
+
+/// The default profile suppression entries are written to.
+const DEFAULT_PROFILE: &str = ".rio/profiles/default.yaml";
+
 /// The endpoint answers 404 when the tenant has no record for the repository.
 fn absent_is_empty(result: Result<Value>, key: &str) -> Result<Value> {
     match result {
@@ -162,7 +245,7 @@ pub async fn findings(args: FindingsArgs) -> u8 {
                 let location = &r["location"];
                 out.push_str(&format!(
                     "  {}  {}  {}:{}  {}{}  last seen {} ({} review(s))\n",
-                    r["identity"].as_str().unwrap_or("").get(..12).unwrap_or(""),
+                    rio_core::display_id(r["identity"].as_str().unwrap_or("")),
                     r["rule_id"].as_str().unwrap_or(""),
                     location["path"].as_str().unwrap_or("?"),
                     location["line_start"],
@@ -250,16 +333,7 @@ pub async fn suppressions(command: SuppressionsCommand) -> u8 {
                 }
                 SuppressionsCommand::Apply { id, yes } => apply(&ctx, &id, yes).await,
                 SuppressionsCommand::Decline { id, note } => {
-                    let found = proposal(&ctx, &id).await?;
-                    if found["status"] != "proposed" {
-                        return Err(Failure(
-                            2,
-                            format!(
-                                "suppression proposal {id} is {}, not proposed",
-                                found["status"].as_str().unwrap_or("unknown")
-                            ),
-                        ));
-                    }
+                    let found = open_proposal(&ctx, &id).await?;
                     let mut body = json!({"status": "declined"});
                     if let Some(note) = note {
                         body["note"] = json!(note);
@@ -277,7 +351,8 @@ pub async fn suppressions(command: SuppressionsCommand) -> u8 {
     )
 }
 
-async fn apply(ctx: &Scope, id: &str, yes: bool) -> Result<(), Failure> {
+/// The proposal, which must still be open.
+async fn open_proposal(ctx: &Scope, id: &str) -> Result<Value, Failure> {
     let found = proposal(ctx, id).await?;
     if found["status"] != "proposed" {
         return Err(Failure(
@@ -288,6 +363,11 @@ async fn apply(ctx: &Scope, id: &str, yes: bool) -> Result<(), Failure> {
             ),
         ));
     }
+    Ok(found)
+}
+
+async fn apply(ctx: &Scope, id: &str, yes: bool) -> Result<(), Failure> {
+    let found = open_proposal(ctx, id).await?;
     let entry = entry_text(&found["entry"]);
     let mut out = format!(
         "Proposal {id}: suppress\n  - {entry}\nEvidence ({}):\n",
@@ -296,14 +376,14 @@ async fn apply(ctx: &Scope, id: &str, yes: bool) -> Result<(), Failure> {
     for e in found["evidence"].as_array().into_iter().flatten() {
         out.push_str(&format!(
             "  {} {} by {} at {}\n",
-            e["finding"].as_str().unwrap_or("").get(..12).unwrap_or(""),
+            rio_core::display_id(e["finding"].as_str().unwrap_or("")),
             e["reason"].as_str().unwrap_or(""),
             e["actor"].as_str().unwrap_or("unknown"),
             e["at"].as_str().unwrap_or("")
         ));
     }
     crate::write_stdout(redact(&out).as_bytes())?;
-    let path = ctx.root.join(".rio/profiles/default.yaml");
+    let path = ctx.root.join(DEFAULT_PROFILE);
     if !yes {
         eprint!(
             "Append this entry to {}? [y/N] ",
@@ -322,6 +402,14 @@ async fn apply(ctx: &Scope, id: &str, yes: bool) -> Result<(), Failure> {
             ));
         }
     }
+    println!("{}", commit(ctx, id, &found).await?);
+    Ok(())
+}
+
+/// Writes a consented proposal's entry and marks it applied.
+async fn commit(ctx: &Scope, id: &str, found: &Value) -> Result<String, Failure> {
+    let entry = entry_text(&found["entry"]);
+    let path = ctx.root.join(DEFAULT_PROFILE);
     write_entry(ctx, &path, &entry).map_err(|error| Failure(2, format!("{error:#}")))?;
     ctx.client
         .decide_suppression(id, &json!({"status": "applied"}))
@@ -335,11 +423,10 @@ async fn apply(ctx: &Scope, id: &str, yes: bool) -> Result<(), Failure> {
                 ),
             )
         })?;
-    println!(
+    Ok(format!(
         "Applied {id}: {} now suppresses {entry}; commit it with your change",
         path.strip_prefix(&ctx.root).unwrap_or(&path).display()
-    );
-    Ok(())
+    ))
 }
 
 /// Writes the appended profile to a sibling temporary file, validates it there
@@ -347,6 +434,25 @@ async fn apply(ctx: &Scope, id: &str, yes: bool) -> Result<(), Failure> {
 /// truncated: a failed write or validation leaves it byte for byte unchanged.
 /// The original's permissions are kept; a new file gets 0644 on Unix.
 fn write_entry(ctx: &Scope, path: &Path, entry: &str) -> Result<()> {
+    let (candidate, _, _, error) = candidate(ctx, path, entry)?;
+    if let Some(error) = error {
+        bail!(
+            "the profile does not validate with the entry, so {} was left unchanged: {error}",
+            path.display()
+        );
+    }
+    candidate.persist(path).map_err(|error| error.error)?;
+    Ok(())
+}
+
+/// The profile with the entry appended, written to a sibling temporary file
+/// and validated there: the file, its text, the original's text, and the
+/// validation error if any. The profile itself is not touched.
+fn candidate(
+    ctx: &Scope,
+    path: &Path,
+    entry: &str,
+) -> Result<(tempfile::NamedTempFile, String, String, Option<String>)> {
     let previous = match std::fs::read(path) {
         Ok(bytes) => Some(bytes),
         Err(error) if error.kind() == io::ErrorKind::NotFound => None,
@@ -388,14 +494,14 @@ fn write_entry(ctx: &Scope, path: &Path, entry: &str) -> Result<()> {
         ctx.config.config_dir.clone(),
         ctx.root.clone(),
     );
-    if let Err(error) = loader.load(Some(&candidate.path().to_string_lossy())) {
-        bail!(
-            "the profile does not validate with the entry, so {} was left unchanged: {error}",
-            path.display()
-        );
-    }
-    candidate.persist(path).map_err(|error| error.error)?;
-    Ok(())
+    let error = loader
+        .load(Some(&candidate.path().to_string_lossy()))
+        .err()
+        .map(|error| error.to_string());
+    let previous = previous
+        .map(|bytes| String::from_utf8_lossy(&bytes).into_owned())
+        .unwrap_or_default();
+    Ok((candidate, next, previous, error))
 }
 
 /// Appends `- <entry>` to the top-level `suppress` block list of a profile,

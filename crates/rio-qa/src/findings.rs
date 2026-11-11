@@ -408,6 +408,7 @@ pub fn construct_qa_finding(
         trigger,
         impact: None,
         suggested_fix: candidate.suggested_fix.clone(),
+        fix: None,
         evidence: candidate.evidence.clone(),
         source,
         locations: vec![occurrence],
@@ -420,6 +421,7 @@ pub fn construct_qa_finding(
         author_response: None,
         history: None,
         council: None,
+        trace: None,
         qa: Some(QaFinding {
             journey: candidate.journey.clone(),
             step: candidate.step,

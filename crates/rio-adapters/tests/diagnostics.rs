@@ -505,3 +505,76 @@ fn biome_ignored_targets_skip_only_on_a_cleaned_up_no_files_exit() {
         }
     }
 }
+
+#[test]
+fn tool_fixes_become_whole_line_replacements_of_the_reviewed_file() {
+    let mut tree = Tree::new();
+    tree.insert(
+        "src/sample/lint.py".into(),
+        rio_git::TreeEntry {
+            mode: 0o100644,
+            object_id: "x".into(),
+            content: b"import os\nprint(1)\n".to_vec(),
+        },
+    );
+    let with_sources = DiagnosticContext {
+        sources: Some(&tree),
+        ..context()
+    };
+    // Ruff's safe fix deletes the unused import's line.
+    let ruff = parse_ruff(
+        include_bytes!("fixtures/diagnostics/ruff.stdout"),
+        &with_sources,
+    )
+    .unwrap();
+    assert_eq!(
+        ruff[0].fix,
+        Some(rio_core::Fix {
+            line_start: 1,
+            line_end: 1,
+            replacement: String::new()
+        })
+    );
+    // Without the file's text there is no fix, only the finding.
+    let plain = parse_ruff(
+        include_bytes!("fixtures/diagnostics/ruff.stdout"),
+        &context(),
+    )
+    .unwrap();
+    assert!(plain[0].fix.is_none());
+    // An unsafe fix is never offered.
+    let unsafe_fix =
+        include_str!("fixtures/diagnostics/ruff.stdout").replace("\"safe\"", "\"unsafe\"");
+    assert!(
+        parse_ruff(unsafe_fix.as_bytes(), &with_sources).unwrap()[0]
+            .fix
+            .is_none()
+    );
+
+    // ESLint ranges are UTF-16 offsets into the source it echoes back.
+    let source = "const é = \"🙂\";\nlet b = 1;\n";
+    let start = source.encode_utf16().count() - "let b = 1;\n".encode_utf16().count();
+    let eslint = format!(
+        r#"[{{"filePath":"/recorded/repo/src/lint.ts","source":{source:?},"messages":[{{"ruleId":"prefer-const","severity":2,"message":"'b' is never reassigned.","line":2,"column":5,"endLine":2,"endColumn":6,"fix":{{"range":[{start},{end}],"text":"const"}}}}]}}]"#,
+        end = start + 3
+    );
+    let parsed = parse_eslint(eslint.as_bytes(), &context()).unwrap();
+    assert_eq!(
+        parsed[0].fix,
+        Some(rio_core::Fix {
+            line_start: 2,
+            line_end: 2,
+            replacement: "const b = 1;".into()
+        })
+    );
+    // A fix that joins a line with the next one cannot be a line replacement.
+    let joined = eslint.replace(
+        &format!("[{start},{}]", start + 3),
+        &format!("[{},{}]", start - 1, start),
+    );
+    assert!(
+        parse_eslint(joined.replace("\"const\"", "\"\"").as_bytes(), &context()).unwrap()[0]
+            .fix
+            .is_none()
+    );
+}

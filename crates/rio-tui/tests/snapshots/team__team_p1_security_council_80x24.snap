@@ -1,0 +1,28 @@
+---
+source: crates/rio-tui/tests/team.rs
+expression: lines
+---
+ ▃▅▇▇▇▅▃▃▁▁▁▃  rio  review · PR #142 · rio… ✕ exit 1 · 3 fail  risk high  4m02s 
+                              │                                                 
+ FINDINGS  PR #142            │ COUNCIL  round 2 of 2 · partial 4/5             
+▌● a7f3e2c1 guest reads order │ role           family    round 1   round 2      
+ ● 8c1e4a9b null deref header │ ────────────────────────────────────────────────
+ ● 51fd7c2e unhandled reject  │ skeptic        claude    ✕ not real✓ real  exp-1
+ ◆ c90b3d1a sql built by con… │ exploit-author gpt       ✓ real    ✓ real       
+ ○ 3a10b2c4 fixed · resolves  │ code-owner     gemini    ? abstain ✓ real  exp-1
+                              │ maintainer     mistral   ✓ real    ✓ real       
+ SECURITY  OWASP Top 10:2025  │ tester         qwen·self timeout   —            
+ A01 Access Control  ✓ 1 find │ positions change only by citing an artifact     
+ A02 Misconfiguration✓        │                                                 
+ A03 Supply Chain    ✓ osv    │ EXPERIMENT  exp-1 · runner job                  
+ A04 Cryptographic   –        │ requested by exploit-author                     
+      no crypto touched       │ GET /api/orders/1042 as guest session B         
+ A05 Injection       ✓ 1 risk │ head  ✕ 200  returns shopper A's order          
+ A06 Insecure Design ✓        │ base  ✓ 404  order not visible                  
+ A07 Authentication  ✓        │                                                 
+ A08 Integrity       –        │ DECISION                                        
+      no serialized input     │ reproduced   by evidence tier                   
+ A09 Logging         ✓        │ fails on head, passes on base                   
+ A10 Exceptional     ✓ 1 find │                                                 
+ 1 of 3 security findings went to council · cost shown per finding              
+ ↑↓ finding  t trace  c council  a audit  d dismiss…   P publish  F history  esc

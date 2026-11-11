@@ -1,0 +1,40 @@
+ ▃▅▇▇▇▅▃▃▁▁▁▃  rio  review · PR #142 · publish: ask                                     awaiting your answer  round 2/3 
+                              │                                            │                                            
+ PR #142 parser-guards → main │ Publish plan   8 actions                   │ PREVIEW  rio[bot] on api/orders.ts:57      
+ author @ana · not a fork     │────────────────────────────────────────────│────────────────────────────────────────────
+ you    maintainer (GitHub)   │ INLINE · anchored on diff lines  3         │ Guest session can read any order           
+ app    rio[bot] installed    │▌ + a7f3 api/orders.ts:57        new        │ error · security · reproduced · A01        
+ lineage pr · round 2 of 3    │  + 8c1e parser/header.ts:41     new        │                                            
+──────────────────────────────│  ~ 51fd parser/body.ts:17       edit       │ A guest session reaches                    
+ POLICY  publish: ask         │                                            │ db.orders.get(id) with no owner check.     
+ ask   preview, then y/N      │ SUMMARY · one per lineage                  │                                            
+ auto  posts without asking   │   ~ edit comment #2189   never a 2nd       │ Evidence  exp-1: head 200, base 404        
+ never check run only         │   + c90b db/raw.ts       not in diff       │ Council   reproduced · partial 4/5         
+────────────────────────────┌─ Publish to pixelinfinito/rio#142? ──────────────────────────┐                            
+ CHECK RUN  rio/review      │                                                              │iss a7f3 <reason>           
+ ◇ neutral                  │   3 inline comments   2 new · 1 edited in place              │ intentional ·              
+   never blocks, never appro│   1 summary comment   edited, never duplicated               │yle                         
+ risk high · 3 fail · 1 risk│   2 threads resolved  each with its reason                   │                            
+ QA 1 failed cell           │   1 check run         neutral · rio/review                   │g a7f3 pr-142 r2 -->        
+────────────────────────────│                                                              │next round edits,           
+ FORK RULE                  │   Comment bodies are data; a reply can't change policy.      │s                           
+  fork PRs stay static-only │                                                              │                            
+  unpublished until a mainta│    y  publish      n  keep local      e  edit selection      │                            
+  comments /rio review      │                                                              │                            
+                            └──────────────────────────────────────────────────────────────┘                            
+                              │                                            │                                            
+                              │                                            │                                            
+                              │                                            │                                            
+                              │                                            │                                            
+                              │                                            │                                            
+                              │                                            │                                            
+                              │                                            │                                            
+                              │                                            │                                            
+                              │                                            │                                            
+                              │                                            │                                            
+                              │                                            │                                            
+                              │                                            │                                            
+                              │                                            │                                            
+                              │                                            │                                            
+ nothing has been posted · n keeps the report local and still writes the run record                                     
+  y publish  n keep local  e edit selection  ↑↓ preview item  esc back                                                  

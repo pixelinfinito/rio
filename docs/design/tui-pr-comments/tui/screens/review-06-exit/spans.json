@@ -1,0 +1,975 @@
+{
+ "screen": "review-06-exit",
+ "cols": 120,
+ "rows": 40,
+ "lines": [
+  [
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "~/code/web-app",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "(feature/parser-guards)",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "$",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": " rio                                                                           ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "⋯ interactive session closed · terminal restored",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                                       ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": " ▃▅▇▇▇▅▃▃▁▁▁▃ ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "rio 0.2.0 — complete",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "feature/parser-guards → origin/main · standard",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "✕ policy failed: 2 findings match fail_on",
+    "fg": "fail",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "                                                                              ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "●",
+    "fg": "fail",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "8c1e",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  null deref in parseHeader    ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "src/parser/header.ts:42",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "static_proven",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                         ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "●",
+    "fg": "fail",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "3a90",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  TS2322 string → number       ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "src/a.ts:12",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "static_proven",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                         ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "7 findings · 3 new · 1 worsened · 1 security · 2 pre-existing hidden",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                 ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "1 dismissed (intentional) · round 4 of cap 3 → reconsider: split parser core / renderer",
+    "fg": "warn",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                              ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "✓",
+    "fg": "pass",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "saved",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "   ./rio-review-parser-guards.md  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "14.2 KB · copied to clipboard",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                 ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "✓",
+    "fg": "pass",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "kept",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "    .rio/cache/1234567890ab/runs/01J9ZK4Q/  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "latest",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "→",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "next",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "    ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "fix, then",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "rio review --since-last",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "(round 5, diff only)",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                       ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "~/code/web-app",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "(feature/parser-guards)",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "$",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": " echo $?                                                                       ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "1",
+    "fg": "fail",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "                                                                                                                      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "~/code/web-app",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "(feature/parser-guards)",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "$",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": " █                                                                             ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "──",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " same review without the TUI — CI, pipes, NO_COLOR ",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "─────────────────────────────────────────────────────────────────",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "   $ rio review --base origin/main --preset standard --format md > report.md                                            ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "   $ rio review --base origin/main --format json | jq '.findings | length'                                              ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "7",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                                                                                    ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "   $ rio review --staged --offline --no-color                                                                           ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "JSON writes one schema-validated document to stdout; progress and warnings go to stderr.",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                             ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "──",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " exit codes ",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "────────────────────────────────────────────────────────────────────────────────────────────────────────",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  0",
+    "fg": "pass",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "no policy failure",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  1",
+    "fg": "fail",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "finding matches fail_on",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "            ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  2",
+    "fg": "warn",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "usage / config / profile",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  3",
+    "fg": "warn",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "repository state / internal",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  4",
+    "fg": "warn",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "incomplete under fail_on",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "           ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "130",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "second ctrl-c",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "The TUI only starts when stdout is a TTY; redirected output keeps today's line-based renderer.",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                       ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                                                                                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ]
+ ]
+}

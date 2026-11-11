@@ -1,0 +1,40 @@
+ ▃▅▇▇▇▅▃▃▁▁▁▃  rio  feature/parser-guards → origin/main · rio/openrouter · standard            ✕ exit 1 · 2 fail  2m14s 
+                                                                                                                        
+ ● 8c1e null deref parseHeader             parser/header.ts:41                                                          
+ ◆ c90b sql built by concatenation        db/raw.ts:12                                                                  
+                                                                                                                        
+ ● 8c1e null deref p┌─ :  command palette ─────────────────────────────────────────────────────────┐                    
+ ◆ c90b sql built by│   : q█                                         recent first                  │                    
+                    │ ──────────────────────────────────────────────────────────────────────────── │                    
+ ● 8c1e null deref p│   QA                                                                         │                    
+ ◆ c90b sql built by│ ▌ rio qa --journey checkout           run one journey · last failed          │                    
+                    │   rio qa --full                       every journey, every cell              │                    
+ ● 8c1e null deref p│   rio qa sync --check                 journeys that need review              │                    
+ ◆ c90b sql built by│   rio qa init                         agent authors from REVIEW.md           │                    
+                    │   rio qa seed build                   rebuild the seed snapshot              │                    
+ ● 8c1e null deref p│                                                                              │                    
+ ◆ c90b sql built by│   REVIEW                                                                     │                    
+                    │   rio review --since-last             next round of this lineage             │                    
+ ● 8c1e null deref p│   rio review --pr 142 --publish       hosted review of a PR                  │                    
+ ◆ c90b sql built by│   rio review --deep                   more agents, larger budget             │                    
+                    │                                                                              │                    
+ ● 8c1e null deref p│   TEAM                                                                       │                    
+ ◆ c90b sql built by│   rio findings --status open          the finding registry                   │                    
+                    │   rio suppressions list               proposals from dismissals              │                    
+ ● 8c1e null deref p│                                                                              │                    
+ ◆ c90b sql built by│   SETUP                                                                      │                    
+                    │   rio doctor                          tools, roots, cache, app               │                    
+ ● 8c1e null deref p│   rio deploy                          upgrade the paired Worker              │                    
+ ◆ c90b sql built by│                                                                              │                    
+                    │   Every action prints its CLI line, so you can script it.                    │                    
+ ● 8c1e null deref p└──────────────────────────────────────────────────────────────────────────────┘                    
+ ◆ c90b sql built by concatenation        db/raw.ts:12                                                                  
+                                                                                                                        
+ ● 8c1e null deref parseHeader             parser/header.ts:41                                                          
+ ◆ c90b sql built by concatenation        db/raw.ts:12                                                                  
+                                                                                                                        
+ ● 8c1e null deref parseHeader             parser/header.ts:41                                                          
+ ◆ c90b sql built by concatenation        db/raw.ts:12                                                                  
+                                                                                                                        
+                                                                                                                        
+ type filter  ↑↓ move   ⏎ run  tab insert args  esc close                                                               

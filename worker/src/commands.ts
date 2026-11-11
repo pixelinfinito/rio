@@ -6,7 +6,7 @@ import {
   type ActorClass,
 } from "./github";
 import { installation, covers } from "./webhooks";
-import { recordFeedback } from "./feedback";
+import { recordFeedback, resolvePrefix } from "./feedback";
 import { lineageId } from "./lineage";
 import { RESPONSE_REASONS } from "./validation";
 import { redact } from "./redaction";
@@ -45,26 +45,6 @@ export function parseCommand(body: string): Command {
     }
   }
   return { kind: "invalid" };
-}
-
-/** The single posted finding of the PR lineage's current generation matching a prefix. */
-export async function resolvePrefix(
-  env: Env,
-  tenant: string,
-  lineage: string,
-  prefix: string,
-): Promise<{ identity: string; finding: Finding } | null> {
-  if (prefix.length < 8) return null;
-  const rows = await env.DB.prepare(
-    "SELECT f.identity,f.finding_json FROM findings f JOIN lineages l ON l.id=f.lineage_id AND l.generation=f.generation WHERE f.tenant=? AND f.lineage_id=? AND f.first_posted_in IS NOT NULL AND substr(f.identity,1,?)=? LIMIT 2",
-  )
-    .bind(tenant, lineage, prefix.length, prefix)
-    .all<{ identity: string; finding_json: string }>();
-  if (rows.results.length !== 1) return null;
-  return {
-    identity: rows.results[0].identity,
-    finding: JSON.parse(rows.results[0].finding_json).finding,
-  };
 }
 
 export async function handleCommand(
@@ -136,10 +116,10 @@ export async function handleCommand(
     const match = await resolvePrefix(
       env,
       message.tenant,
-      lineageId(message.tenant, lineage),
       command.id,
+      lineageId(message.tenant, lineage),
     );
-    if (!match) {
+    if (match.kind !== "found" || !match.finding) {
       await react("-1");
       return { applied: false, actor };
     }

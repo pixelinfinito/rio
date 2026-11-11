@@ -1,0 +1,3123 @@
+{
+ "screen": "review-02-findings",
+ "cols": 120,
+ "rows": 40,
+ "lines": [
+  [
+   {
+    "text": " ▃▅▇▇▇▅▃▃▁▁▁▃ ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "rio",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": true
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "feature/parser-guards → origin/main · rio/openrouter · standard",
+    "fg": "dim",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "             ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "✕ exit 1 · 2 fail",
+    "fg": "fail",
+    "bg": "panel",
+    "bold": true
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "2m14s",
+    "fg": "faint",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "FILTER",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "                ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "Findings",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "7",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "            ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "sort: policy ▾",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "8c1e",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "Possible null dereference in parseHeader",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "          ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "▌",
+    "fg": "signal",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "   ",
+    "fg": "fg",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "All",
+    "fg": "fg",
+    "bg": "raise",
+    "bold": true
+   },
+   {
+    "text": "               7 ",
+    "fg": "fg",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "│──────────────────────────────────────│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "[new]",
+    "fg": "fail",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": " [error] ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "[defect]",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "[static_proven]",
+    "fg": "signal",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "[FAIL]",
+    "fg": "fail",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "          ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "●",
+    "fg": "fail",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " new               ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "3",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "▌",
+    "fg": "signal",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "●",
+    "fg": "fail",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "8c1e",
+    "fg": "faint",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "null deref parseHeader ",
+    "fg": "fg",
+    "bg": "raise",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "FAIL",
+    "fg": "fail",
+    "bg": "raise",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "▲",
+    "fg": "warn",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " worsened          ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "1",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "▌",
+    "fg": "signal",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "        ",
+    "fg": "fg",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "header.ts:42",
+    "fg": "dim",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "          ",
+    "fg": "fg",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "proven",
+    "fg": "faint",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "raise",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "rule",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "      correctness/null-deref                       ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "◆",
+    "fg": "sec",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " security          ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "1",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│──────────────────────────────────────│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "location",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  src/parser/header.ts:42 parseHeader          ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "○",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "pre-existing",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "2",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "●",
+    "fg": "fail",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "3a90",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " TS2322 string → number  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "FAIL",
+    "fg": "fail",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "trigger",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "   request without content-type                 ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "         ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "src/a.ts:12",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "           ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "proven",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "evidence",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  code:head:header.ts:n41,n42                  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "CHECKS",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "                ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│──────────────────────────────────────│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "impact",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "    ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "3 callers · press g for graph",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "✓",
+    "fg": "pass",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " typecheck      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "1.8s",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "◆",
+    "fg": "sec",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "f7d2",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " token logged on retry   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "risk",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "✕",
+    "fg": "fail",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " lint       ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "2 · 0.9s",
+    "fg": "fail",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "         ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "client.ts:88",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "       ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "plausible",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "┌─",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " src/parser/header.ts ",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "────────────",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " @@ -38,7 +38,9 @@ ",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "✓",
+    "fg": "pass",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " coverage       ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "4.2s",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│──────────────────────────────────────│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "38",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "function parseHeader(raw: Raw): Header {      ",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "✓",
+    "fg": "pass",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " secrets        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "0.2s",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "▲",
+    "fg": "warn",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "b41c",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " coverage 81% → 64%      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "warn",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "39",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  const fields = splitFields(raw)",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "             ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "-",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " audit       ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "offline",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "         ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "parser/body.ts",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "    ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "reproduced",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "fail-tint",
+    "bold": false
+   },
+   {
+    "text": "40",
+    "fg": "faint",
+    "bg": "fail-tint",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "fail-tint",
+    "bold": false
+   },
+   {
+    "text": "-",
+    "fg": "fail",
+    "bg": "fail-tint",
+    "bold": false
+   },
+   {
+    "text": "   const type = fields.get('ctype') ?? DEFAULT ",
+    "fg": "fg",
+    "bg": "fail-tint",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│──────────────────────────────────────│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "pass-tint",
+    "bold": false
+   },
+   {
+    "text": "40",
+    "fg": "faint",
+    "bg": "pass-tint",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "pass-tint",
+    "bold": false
+   },
+   {
+    "text": "+",
+    "fg": "pass",
+    "bg": "pass-tint",
+    "bold": false
+   },
+   {
+    "text": "   const type = fields.get('ctype')            ",
+    "fg": "fg",
+    "bg": "pass-tint",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "AGENTS · VERIFY",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "       ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "●",
+    "fg": "fail",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "0d6a",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " no-floating-promises    ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "warn",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "▌",
+    "fg": "fail",
+    "bg": "fail-tint",
+    "bold": false
+   },
+   {
+    "text": "41",
+    "fg": "faint",
+    "bg": "fail-tint",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "fail-tint",
+    "bold": false
+   },
+   {
+    "text": "+",
+    "fg": "pass",
+    "bg": "fail-tint",
+    "bold": false
+   },
+   {
+    "text": "   const charset = type.params.charset         ",
+    "fg": "fg",
+    "bg": "fail-tint",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "✓",
+    "fg": "pass",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " correctness       ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "2",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "         ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "src/queue.ts:17",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "       ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "proven",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "▌",
+    "fg": "fail",
+    "bg": "fail-tint",
+    "bold": false
+   },
+   {
+    "text": "42",
+    "fg": "faint",
+    "bg": "fail-tint",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "fail-tint",
+    "bold": false
+   },
+   {
+    "text": "+",
+    "fg": "pass",
+    "bg": "fail-tint",
+    "bold": false
+   },
+   {
+    "text": "   return { type, cs: charset.toLowerCase() }  ",
+    "fg": "fg",
+    "bg": "fail-tint",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "✓",
+    "fg": "pass",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " security          ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "1",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│──────────────────────────────────────│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "43",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "}",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                             ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "✓",
+    "fg": "pass",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " performance       ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "0",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "●",
+    "fg": "fail",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "e219",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " no test for empty input ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "info",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "    ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "└ type may be undefined; line 41 reads .params",
+    "fg": "fail",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "✓",
+    "fg": "pass",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " tests             ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "1",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "         ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "parser/index.ts:9",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "plausible",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "└────────────────────────────────────────────────────┘",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "✓",
+    "fg": "pass",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " contracts         ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "0",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│──────────────────────────────────────│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "refuted",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "           ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "3",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│──────────────────────────────────────│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "VERIFICATION · BLIND QUORUM 2 OF 3",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": "                     ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "○",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "77ab",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "unused import",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "     ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "pre-exist.",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "voter 1",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "✓ agrees",
+    "fg": "pass",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "blind: same",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                    ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "voter 2",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "✓ agrees",
+    "fg": "pass",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "blind: related",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                 ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "voter 3",
+    "fg": "dim",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "   ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "✕ no repro",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "    ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "blind: none",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                    ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                      ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│──────────────────────────────────────│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "2 pre-existing hidden · p show",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "       ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "signal",
+    "bold": false
+   },
+   {
+    "text": "d dismiss…",
+    "fg": "bg",
+    "bg": "signal",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "signal",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "e",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "editor",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "v",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "votes",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "y",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "copy id",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "             ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": "                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "$0.41 · 182k in / 21k out",
+    "fg": "faint",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "            ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "│",
+    "fg": "rule",
+    "bg": "bg",
+    "bold": false
+   },
+   {
+    "text": "                                                        ",
+    "fg": "fg",
+    "bg": "bg",
+    "bold": false
+   }
+  ],
+  [
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "↑↓",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "move",
+    "fg": "faint",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "⏎",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "open",
+    "fg": "faint",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "d",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "dismiss",
+    "fg": "faint",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "g",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "graph",
+    "fg": "faint",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "f",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "filter",
+    "fg": "faint",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "tab",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "pane",
+    "fg": "faint",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "x",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "export",
+    "fg": "faint",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "?",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "help",
+    "fg": "faint",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "  ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "q",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": true
+   },
+   {
+    "text": " ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "quit",
+    "fg": "faint",
+    "bg": "panel",
+    "bold": false
+   },
+   {
+    "text": "                                      ",
+    "fg": "fg",
+    "bg": "panel",
+    "bold": false
+   }
+  ]
+ ]
+}

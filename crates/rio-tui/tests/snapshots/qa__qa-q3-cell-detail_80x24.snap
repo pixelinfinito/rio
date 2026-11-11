@@ -1,0 +1,28 @@
+---
+source: crates/rio-tui/tests/qa.rs
+expression: lines
+---
+ ▃▅▇▇▇▅▃▃▁▁▁▃  rio  qa · checkout × mob…  ✕ failed · step 4  regression vs main 
+  1 Journeys   2 Matrix   3 Cell   4 UX   5 Seed   6 Rules                      
+ checkout × mobile·dark       │ FINDING  q-41d0a7c2                             
+ ✕ failed at step 4           │[new] [error] [defect] [static_proven] [FAIL]    
+ base main ✓ passed → regressi│                                                 
+──────────────────────────────│ Pay is covered by the cookie bar                
+ STEPS                        │ on mobile in dark mode                          
+ ✓ 1 Open the cart       6s   │                                                 
+ ✓ 2 Proceed to checkout 9s   │ rule     mobile/fixed-overlap  probe            
+ ✓ 3 Pay with test card 14s   │ where    /checkout  button#pay                  
+▌✕ 4 Confirm the order 21s    │ source   src/style.css:212  attributed          
+   expect Pay reachable,      │ cells    1 of 4 · mobile·dark                   
+          order placed        │──────────────────────────────────────────────── 
+   saw    Pay under the       │ src/style.css                    +6 −0          
+          cookie bar, y 780   │  209  .cookie-bar {                             
+ · 5 View confirmation        │  210    position: fixed; bottom: 0;             
+   not run                    │+ 211    padding: var(--space-6);                
+                              │+ 212    line-height: 2.4;                       
+ OTHER CELLS                  │  213  }                                         
+ ✓ mobile·light   ✓ desktop·l │        ▲ bar grows to 112 px in dark            
+ ◐ desktop·dark               │          (font fallback is taller)              
+ Δ vs mobile·light            │──────────────────────────────────────────────── 
+ v screenshot · o open evidence in $BROWSER · screenshots are masked before stor
+ ←→ step  [ ] cell   o evidence  b vs base  e editor  r rerun cell  4 ux  esc ma

@@ -110,6 +110,40 @@ pub struct QaPlan {
     pub no_coverage_match: bool,
 }
 
+impl QaPlan {
+    /// Keep only `cell` of the matrix, as when one cell is run again (the QA
+    /// step's `cell` option). The cell must be one the plan would run.
+    pub fn only_cell(
+        &mut self,
+        project: &QaProject,
+        cell: &Cell,
+        cell_wall_seconds: u64,
+    ) -> Result<(), QaErrors> {
+        if !self.cells.contains(cell) {
+            return Err(QaErrors(format!(
+                "{}/{} is not a cell of this QA matrix",
+                cell.viewport, cell.color_scheme
+            )));
+        }
+        self.cells = vec![cell.clone()];
+        self.cell_count = self
+            .chains
+            .iter()
+            .filter(|chain| {
+                chain.journeys.iter().any(|name| {
+                    project
+                        .journeys
+                        .get(name)
+                        .and_then(|journey| journey.viewports.as_ref())
+                        .is_none_or(|v| v.contains(&cell.viewport))
+                })
+            })
+            .count();
+        self.estimated_wall_seconds = (self.cell_count as u64).saturating_mul(cell_wall_seconds);
+        Ok(())
+    }
+}
+
 fn matches_path(journey: &Journey, path: &str) -> bool {
     journey
         .covers

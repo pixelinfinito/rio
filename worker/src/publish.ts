@@ -2,6 +2,7 @@ import type { AuthorResponse, Env, Finding } from "./types";
 import {
   GitHubError,
   InstallationToken,
+  PREPARE_PERMISSIONS,
   PUBLISH_PERMISSIONS,
   RESOLVE_PERMISSIONS,
   appRequest,
@@ -14,6 +15,33 @@ import { hash } from "./validation";
 import { Store } from "./storage";
 import { refreshQaReportLinks } from "./qa-evidence";
 import { announcementPublished, settleAnnouncement } from "./announce";
+import {
+  findingBody,
+  findingMarker,
+  suggestionRange,
+  DISPLAY_ID_LEN,
+  type FindingState,
+} from "./comment/finding";
+import {
+  alert,
+  findingTables,
+  lists,
+  provenance,
+  reportLine,
+  scoreboard,
+  summaryBody,
+  summaryMarker,
+  verdict,
+} from "./comment/summary";
+import { plain } from "./comment/text";
+export {
+  findingBody,
+  findingMarker,
+  type FindingState,
+} from "./comment/finding";
+export { qaSummary, summaryMarker } from "./comment/summary";
+export { qaEvidenceBody } from "./comment/evidence";
+export { headline, plain } from "./comment/text";
 
 // The publisher (pr-publishing). One host interface, one GitHub
 // implementation. Every comment carries a hidden marker so a later round, or a
@@ -42,9 +70,6 @@ export interface Publication {
     error: string;
   }[];
 }
-export const findingMarker = (id: string) => `<!-- rio:finding:${id} -->`;
-export const summaryMarker = (lineage: string) =>
-  `<!-- rio:summary:${lineage} -->`;
 const FINDING_MARKER = /<!-- rio:finding:([a-f0-9]{64}) -->\s*$/;
 export const SUMMARY_MARKER = /<!-- rio:summary:([a-f0-9]{64}) -->\s*$/;
 
@@ -58,6 +83,8 @@ export interface Host {
     commit: string;
     path: string;
     line: number;
+    /** First line of a multi-line comment (a multi-line suggestion). */
+    start_line?: number;
   }): Promise<HostComment>;
   editReviewComment(id: number, body: string): Promise<HostComment>;
   postIssueComment(body: string): Promise<HostComment>;
@@ -157,6 +184,7 @@ export class GitHubHost implements Host {
     commit: string;
     path: string;
     line: number;
+    start_line?: number;
   }) {
     return this.comment(
       await this.token.request(
@@ -168,6 +196,9 @@ export class GitHubHost implements Host {
           path: input.path,
           line: input.line,
           side: "RIGHT",
+          ...(input.start_line !== undefined && input.start_line < input.line
+            ? { start_line: input.start_line, start_side: "RIGHT" }
+            : {}),
         },
       ),
     );
@@ -318,147 +349,6 @@ export class GitHubHost implements Host {
   }
 }
 
-/** Repository text placed in a comment: no markers, no mentions, bounded. */
-export function plain(text: string, max = 2000): string {
-  const safe = text
-    .replace(/<!--/g, "&lt;!--")
-    .replace(/-->/g, "--&gt;")
-    .replace(/@(?=[A-Za-z0-9])/g, "@​");
-  if (safe.length <= max) return safe;
-  // Cut at a word boundary and say so, never mid-word.
-  const cut = safe.slice(0, max - 1);
-  const space = cut.lastIndexOf(" ");
-  return `${space > max * 0.6 ? cut.slice(0, space) : cut}…`;
-}
-function where(f: { location: { path: string; line_start: number } }) {
-  return `\`${plain(f.location.path, 300)}:${f.location.line_start}\``;
-}
-const SEVERITY: Record<string, string> = {
-  error: "🔴 Error",
-  warning: "🟠 Warning",
-  info: "🔵 Info",
-};
-const CATEGORY: Record<string, string> = {
-  defect: "Defect",
-  risk: "Risk",
-  security: "Security",
-};
-const EVIDENCE: Record<string, string> = {
-  reproduced: "✅ Reproduced",
-  static_proven: "✅ Proven from the code",
-  plausible: "❔ Plausible, not proven",
-  refuted: "❌ Refuted",
-};
-const label = (table: Record<string, string>, key: string) =>
-  table[key] ?? plain(key, 50);
-/** Splits a message into its first sentence (the heading) and the rest. */
-function sentences(message: string): [string, string] {
-  const first = message.split("\n")[0];
-  const end = first.search(/[.!?](\s|$)/);
-  if (end <= 20) return [first, message.slice(first.length).trim()];
-  return [first.slice(0, end + 1), message.slice(end + 1).trim()];
-}
-/** The first sentence of a message, for headings and summary lines. */
-export function headline(message: string, max = 160): string {
-  return plain(sentences(message)[0], max);
-}
-const FOOTER_REASONS = "fixed|wrong|intentional|irrelevant|style";
-export interface FindingState {
-  status: "open" | "fixed" | "dismissed";
-  fixed_in?: string;
-  response?: AuthorResponse;
-}
-export function findingBody(
-  f: Finding,
-  state: FindingState,
-  qa?: any,
-  anchor?: number,
-): string {
-  const id = f.id.slice(0, 12);
-  const votes = f.verification?.voters
-    ? ` · ${f.verification.agreeing}/${f.verification.voters} verifiers agree`
-    : "";
-  const lines: string[] = [];
-  if (state.status === "fixed")
-    lines.push(
-      `> ✅ **Status: fixed in ${state.fixed_in ? `\`${state.fixed_in.slice(0, 12)}\`` : "a later push"}**`,
-      "",
-    );
-  else if (state.status === "dismissed")
-    lines.push(
-      `> 💤 **Status: dismissed: ${state.response?.reason ?? "dismissed"}**${state.response?.actor ? ` (by ${plain(state.response.actor, 100)})` : ""}`,
-      "",
-    );
-  lines.push(
-    `**${label(SEVERITY, f.severity)} · ${label(CATEGORY, f.category)}** · ${label(EVIDENCE, f.evidence_level)}${votes}`,
-    "",
-    `### ${headline(f.message)}`,
-    "",
-  );
-  // A closed finding keeps its explanation, folded away.
-  const detail: string[] = [];
-  const section = (...text: string[]) =>
-    detail.push(...(detail.length ? [""] : []), ...text);
-  const rest = sentences(f.message)[1];
-  if (rest) section(plain(rest, 4000));
-  if (f.trigger) section("**When it happens**", "", plain(f.trigger, 2000));
-  if (f.impact) section("**Impact**", "", plain(f.impact, 2000));
-  if (f.suggested_fix)
-    section("**💡 Suggested fix**", "", plain(f.suggested_fix, 2000));
-  if (f.council) {
-    const c = f.council;
-    const marker = `${c.skipped ? "skipped" : c.partial ? "partial" : "complete"} (${c.answered}/${c.total})`;
-    section(
-      c.skipped || !c.decision
-        ? `Council: ${marker}; the verifier result stands.`
-        : `Council: ${c.decision} (tier ${c.tier}) · ${marker}`,
-    );
-    if (c.note) section(`Council note: ${plain(c.note, 1000)}`);
-  }
-  if (f.qa) {
-    section(
-      `Journey: ${plain(f.qa.journey)} · step ${f.qa.step}`,
-      `Cells: ${f.locations.map((location) => `${location.cell?.viewport}/${location.cell?.color_scheme}`).join(", ")}`,
-    );
-    if (anchor !== undefined && anchor !== f.location.line_start)
-      detail.push(
-        `Attributed to ${where(f)}; shown at the file's first diff hunk.`,
-      );
-    detail.push(...qaEvidenceBody(qa, f.evidence, true));
-  }
-  // Other places the finding cites; the commented line itself is not repeated.
-  const seen = new Set([`${f.location.path}:${f.location.line_start}`]);
-  const others = f.locations
-    .filter((l) => {
-      const key = `${l.path}:${l.line_start}`;
-      return !seen.has(key) && seen.add(key);
-    })
-    .slice(0, 10);
-  if (others.length)
-    section(
-      `<details><summary>Also at ${others.length} other location(s)</summary>`,
-      "",
-      ...others.map((l) => `- ${where({ location: l })}`),
-      "",
-      "</details>",
-    );
-  if (state.status === "open") lines.push(...detail);
-  else
-    lines.push(
-      "<details><summary>Original finding</summary>",
-      "",
-      ...detail,
-      "",
-      "</details>",
-    );
-  lines.push(
-    "",
-    `<sub>🌊 Rio · \`${plain(f.rule_id, 150)}\` · finding \`${id}\` · reply \`/rio dismiss ${id} <${FOOTER_REASONS}>\` if this is not right</sub>`,
-    findingMarker(f.id),
-  );
-  return lines.join("\n");
-}
-
 export interface PublishInput {
   review: string;
   report: any;
@@ -491,92 +381,11 @@ export function decide(
   };
 }
 
-const lists = (report: any): Finding[] => {
-  const seen = new Set<string>();
-  return [
-    ...report.findings,
-    ...report.risks,
-    ...(report.security ?? []),
-  ].filter(
-    (f: Finding) =>
-      !seen.has(f.id) &&
-      seen.add(f.id) &&
-      (!f.qa || !["fixed", "pre-existing"].includes(f.state)),
-  );
-};
 function anchorable(f: Finding): boolean {
   if (f.qa) return f.qa.attribution === "source";
   // Class findings belong in the summary; any other finding is anchored at its
   // primary location, and the comment lists the other places it cites.
   return !f.locations.some((l) => l.id);
-}
-
-const TIER: Record<string, string> = { low: "🟢", medium: "🟡", high: "🔴" };
-/** Where the full report lives: the endpoint URL when it is public, else the CLI. */
-function reportLine(link: string, number?: number): string {
-  const cli = number ? `\`rio review --pr ${number}\`` : "the Rio CLI";
-  return /^https?:\/\//.test(link)
-    ? `Full report: [${link.replace(/^https?:\/\//, "").slice(0, 120)}](${link}) (needs a Rio API token) or ${cli}`
-    : `Full report: ${cli}`;
-}
-/** One row per finding of this round, linked to its inline comment when posted. */
-function findingRows(report: any, urls: Map<string, string>): string[] {
-  const all = lists(report);
-  if (!all.length) return [];
-  return [
-    "| | Finding | Where | Evidence |",
-    "| --- | --- | --- | --- |",
-    ...all.slice(0, 25).map((f) => {
-      const url = urls.get(f.id);
-      const title = headline(f.message, 120).replace(/\|/g, "\\|");
-      return `| ${label(SEVERITY, f.severity).split(" ")[0]} | ${url ? `[${title}](${url})` : title} | ${where(f)} | ${label(EVIDENCE, f.evidence_level)} |`;
-    }),
-    ...(all.length > 25
-      ? [`| | …and ${all.length - 25} more in the full report | | |`]
-      : []),
-  ];
-}
-/** The header block both the summary comment and the check run show. */
-function overview(report: any, failOn: any): string[] {
-  const tier = report.risk_tier;
-  const all = lists(report);
-  const matching = all.filter((f) => policyMatches(f, failOn ?? {})).length;
-  const verdict = !all.length
-    ? "> [!TIP]\n> No findings in this change."
-    : matching
-      ? `> [!WARNING]\n> ${matching} finding(s) match this repository's \`fail_on\` policy.`
-      : "> [!NOTE]\n> Findings were reported; none match this repository's `fail_on` policy.";
-  const incomplete =
-    report.status === "complete"
-      ? []
-      : [
-          "",
-          `> [!CAUTION]\n> The review is **${report.status}**: some checks could not run, so earlier findings are not marked fixed. See the full report for what was skipped.`,
-        ];
-  return [
-    verdict,
-    ...incomplete,
-    "",
-    "| | |",
-    "| --- | --- |",
-    `| Risk | ${TIER[tier?.tier] ? `${TIER[tier.tier]} ` : ""}Risk tier: **${tier?.tier ?? "unknown"}**${tier?.reasons?.length ? ` (${tier.reasons.map((r: string) => plain(r, 200)).join("; ")})` : ""} |`,
-    `| Findings | ${report.findings.length} finding(s) · ${report.risks.length} risk(s) · ${report.security?.length ?? 0} security |`,
-    ...(report.lineage?.held_back
-      ? [
-          `| Already posted | ${report.lineage.held_back} finding(s) from earlier rounds |`,
-        ]
-      : []),
-    ...(report.remembered?.length
-      ? [
-          `| Remembered | ${report.remembered.length} earlier dismissal(s) applied |`,
-        ]
-      : []),
-    ...(report.review?.head
-      ? [
-          `| Reviewed | \`${String(report.review.head).slice(0, 12)}\`${report.lineage?.round ? ` · round ${report.lineage.round}` : ""} |`,
-        ]
-      : []),
-  ];
 }
 
 export function findingAnchor(
@@ -589,103 +398,6 @@ export function findingAnchor(
   if (f.qa?.attribution === "source" && file.lines.size)
     return [...file.lines].reduce((first, line) => Math.min(first, line));
   return undefined;
-}
-
-/** Only signed, unexpired report links enter publication. Transcript content
- * never belongs in a PR comment, even if a caller supplies a transcript id. */
-export function qaEvidenceBody(
-  qa: any,
-  ids: string[] = [],
-  images = false,
-): string[] {
-  const rows = (qa?.evidence?.artifacts ?? []).filter(
-    (row: any) =>
-      ids.includes(row.id) &&
-      ["screenshot", "trace", "dom"].includes(row.kind) &&
-      !row.expired &&
-      !row.unavailable &&
-      (!row.expires_at || row.expires_at > Date.now()) &&
-      (!row.link_expires_at || row.link_expires_at > Date.now()),
-  );
-  const lines: string[] = [],
-    expiries: number[] = [];
-  for (const row of rows) {
-    let url: URL;
-    try {
-      url = new URL(row.link);
-    } catch {
-      continue;
-    }
-    if (url.protocol !== "https:" || url.username || url.password) continue;
-    const link = url.href.replace(/[<>\s]/g, (value) =>
-      encodeURIComponent(value),
-    );
-    lines.push(
-      `${images && row.kind === "screenshot" ? "!" : ""}[${row.kind}](<${link}>)`,
-    );
-    if (row.expires_at) expiries.push(row.expires_at);
-    if (row.link_expires_at) expiries.push(row.link_expires_at);
-  }
-  if (lines.length)
-    lines.push(
-      `Evidence expires ${expiries.length ? new Date(Math.min(...expiries)).toISOString() : plain(qa?.evidence?.expires_at ?? "at the configured retention deadline")}. Copies cached by GitHub's image proxy may outlive this expiry.`,
-    );
-  return lines;
-}
-
-export function qaSummary(qa: any): string[] {
-  if (!qa) return [];
-  const lines = [
-    "",
-    "### QA results",
-    "",
-    `Isolation: **${plain(qa.isolation)}** · Evidence expiry: ${plain(qa.evidence?.expires_at ?? "unavailable")}`,
-  ];
-  for (const selection of qa.selection ?? [])
-    lines.push(
-      `Selected ${plain(selection.journey)}: ${(selection.reasons ?? []).map((reason: string) => plain(reason)).join(", ")}`,
-    );
-  for (const journey of qa.journeys ?? []) {
-    lines.push("", `**${plain(journey.name)}**`);
-    for (const cell of journey.cells ?? []) {
-      lines.push(
-        `- ${plain(cell.viewport)}/${plain(cell.color_scheme)}: ${plain(cell.outcome)} · step ${cell.step_reached ?? 0}${cell.reason ? ` (${plain(cell.reason)})` : ""}`,
-      );
-      lines.push(
-        ...qaEvidenceBody(qa, cell.evidence, cell.outcome === "failed"),
-      );
-    }
-  }
-  for (const note of qa.audit?.notes ?? [])
-    if (/held back|possibly stale/i.test(note)) lines.push(plain(note));
-  const recommendations = (qa.recommendations ?? []).filter(
-    (row: any) =>
-      row.verification_status === "supported" &&
-      !row.dismissal &&
-      !row.related_finding_id,
-  );
-  if (recommendations.length) lines.push("", "### UX recommendations", "");
-  for (const row of recommendations) {
-    lines.push(
-      `- **${plain(row.observed_friction)}** · priority ${plain(row.priority)} · confidence ${plain(row.confidence)}`,
-      `Proposed improvement: ${plain(row.proposed_improvement)}`,
-      `Expected benefit (untested): ${plain(row.expected_benefit)}`,
-      `Trade-offs: ${(row.trade_offs ?? []).map((value: string) => plain(value)).join("; ")}`,
-      ...qaEvidenceBody(qa, row.evidence),
-    );
-    if (row.basis?.guidance)
-      lines.push(
-        `Guidance: ${plain(row.basis.guidance.path)}:${row.basis.guidance.start_line}-${row.basis.guidance.end_line}`,
-      );
-  }
-  const coverage = new Map<string, number>();
-  for (const row of qa.assessment ?? [])
-    coverage.set(row.status, (coverage.get(row.status) ?? 0) + 1);
-  lines.push(
-    "",
-    `UX assessment (${plain(qa.rubric_version ?? "unknown rubric")}): ${[...coverage].map(([status, count]) => `${plain(status)}: ${count}`).join(", ") || "none recorded"}. Recommendations held back: ${qa.recommendations_held_back ?? 0}.`,
-  );
-  return lines;
 }
 
 export function qaCheckOutput(
@@ -720,7 +432,10 @@ export function qaCheckOutput(
           : finding.severity === "warning"
             ? "warning"
             : "notice",
-      title: plain(`${finding.rule_id} (${finding.id.slice(0, 12)})`, 255),
+      title: plain(
+        `${finding.rule_id} (${finding.id.slice(0, DISPLAY_ID_LEN)})`,
+        255,
+      ),
       message: plain(
         `${finding.message}\nJourney: ${finding.qa.journey}; step ${finding.qa.step}; cells: ${finding.locations.map((row: any) => `${row.cell?.viewport}/${row.cell?.color_scheme}`).join(", ")}${line !== finding.location.line_start ? `\nAttributed to ${finding.location.path}:${finding.location.line_start}` : ""}`,
         60000,
@@ -742,7 +457,7 @@ export function checkOutput(
   options: { askNote?: number; link: string },
 ): { title: string; summary: string } {
   const all = lists(report);
-  const matching = all.filter((f) => policyMatches(f, failOn ?? {})).length;
+  const matching = verdict(report, failOn).toFix.length;
   const tier = report.risk_tier?.tier ?? "unknown";
   const counts = `${report.findings.length} finding(s), ${report.risks.length} risk(s)${report.security?.length ? `, ${report.security.length} security` : ""}`;
   const status =
@@ -752,15 +467,20 @@ export function checkOutput(
     : matching
       ? `Review failed its policy: ${matching} match fail_on · ${counts} · risk tier ${tier}${status}`
       : `${counts}; none match fail_on · risk tier ${tier}${status}`;
+  const tables = findingTables(report, failOn, new Map());
   const summary = [
-    ...overview(report, failOn),
+    provenance(report),
+    "",
+    ...alert(report, failOn),
+    "",
+    ...scoreboard(report, failOn),
     ...(options.askNote
       ? [
           "",
           `Comments were not posted: this repository's profile sets \`publish: ask\`. Set \`publish: auto\`, or run \`rio review --pr ${options.askNote} --publish\`.`,
         ]
       : []),
-    ...(all.length ? ["", ...findingRows(report, new Map())] : []),
+    ...(tables.length ? ["", ...tables] : []),
     "",
     reportLine(
       options.link,
@@ -770,83 +490,6 @@ export function checkOutput(
     "Rio's check run is always neutral: it never approves and never blocks a merge.",
   ].join("\n");
   return { title, summary };
-}
-
-function summaryBody(
-  report: any,
-  lineage: string,
-  unanchored: Finding[],
-  rejected: { f: Finding; error: string }[],
-  wrong: Finding[],
-  link: string,
-  failOn: any,
-  urls: Map<string, string>,
-): string {
-  const lines = [`## 🌊 Rio review`, "", ...overview(report, failOn)];
-  const rows = findingRows(report, urls);
-  if (rows.length) lines.push("", "### Findings", "", ...rows);
-  const reconsider = report.lineage?.reconsider;
-  if (reconsider) {
-    lines.push(
-      "",
-      `### Round ${report.lineage.round} exceeds the cap of ${report.lineage.cap}`,
-      "",
-      `${reconsider.unresolved} agent finding(s) remain unresolved, so new ones are listed here instead of inline. Please reconsider the approach${reconsider.split ? " or split the change" : ""}.`,
-      "",
-      ...reconsider.top.map(
-        (t: any) =>
-          `- ${plain(t.title, 200)} (\`${plain(t.path, 300)}:${t.line_start}\`)`,
-      ),
-      ...(reconsider.split
-        ? [
-            "",
-            "Suggested parts:",
-            ...reconsider.split.map((p: string) => `- ${plain(p, 300)}`),
-          ]
-        : []),
-    );
-  }
-  if (unanchored.length)
-    lines.push(
-      "",
-      "### Findings outside the diff",
-      "",
-      ...unanchored.map(
-        (f) =>
-          `- ${where(f)} \`${plain(f.rule_id, 150)}\` · ${headline(f.message, 300)} (\`${f.id.slice(0, 12)}\`)`,
-      ),
-    );
-  if (rejected.length)
-    lines.push(
-      "",
-      "### Not posted inline (retried next round)",
-      "",
-      ...rejected.map(
-        (r) =>
-          `- ${where(r.f)} \`${plain(r.f.rule_id, 150)}\` · ${plain(r.error, 200)} (\`${r.f.id.slice(0, 12)}\`)`,
-      ),
-    );
-  if (wrong.length)
-    lines.push(
-      "",
-      `${wrong.length} recurring finding(s) earlier dismissed as \`wrong\` are in the report and were not posted.`,
-    );
-  lines.push(...qaSummary(report.qa));
-  for (const finding of unanchored.filter((f) => f.qa)) {
-    lines.push(
-      "",
-      `QA finding ${finding.id.slice(0, 12)}: ${plain(finding.message)}`,
-      `Journey: ${plain(finding.qa!.journey)} · step ${finding.qa!.step} · Cells: ${finding.locations.map((location) => `${location.cell?.viewport}/${location.cell?.color_scheme}`).join(", ")}`,
-      ...qaEvidenceBody(report.qa, finding.evidence, true),
-    );
-  }
-  lines.push(
-    "",
-    "---",
-    `<sub>🌊 Rio · ${reportLine(link, report.review?.pull_request?.number)} · reply \`/rio review\` to re-run · the \`rio/review\` check is always neutral and never blocks a merge</sub>`,
-    summaryMarker(lineage),
-  );
-  return lines.join("\n");
 }
 
 /** How long one publication may hold its lineage, and how long another waits. */
@@ -1282,8 +925,18 @@ async function publishLeased(
             ? { status: "dismissed", response: f.author_response }
             : { status: "open" };
         const anchor = findingAnchor(f, files);
-        const body = findingBody(f, state, input.report.qa, anchor);
         const existing = comments.get(f.id);
+        // A suggestion replaces the lines its comment spans: an edit keeps one
+        // only when the posted comment already carried it.
+        const lines =
+          !existing || existing.body.includes("suggestion\n")
+            ? files.get(f.location.path)?.lines
+            : undefined;
+        const range = suggestionRange(f, anchor, lines);
+        const body = findingBody(f, state, input.report.qa, anchor, {
+          failOn: input.fail_on,
+          lines,
+        });
         try {
           if (existing) {
             // A reopened finding's thread is unresolved only when Rio resolved
@@ -1325,7 +978,9 @@ async function publishLeased(
             body,
             commit: row.head_sha!,
             path: f.location.path,
-            line: anchor,
+            ...(range && range.line_end > range.line_start
+              ? { line: range.line_end, start_line: range.line_start }
+              : { line: anchor }),
           });
           publication.posted++;
           await save("finding", f.id, "posted", {
@@ -1386,16 +1041,17 @@ async function publishLeased(
           await failed(r.identity, error, comment.id);
         }
       }
-      const body = summaryBody(
-        input.report,
+      const body = summaryBody({
+        report: input.report,
         lineage,
         unanchored,
         rejected,
         wrong,
         link,
-        input.fail_on,
+        failOn: input.fail_on,
         urls,
-      );
+        fixed: input.updates.filter((u) => u.status === "fixed").length,
+      });
       try {
         const existing = (await github.issueComments()).find(
           (c) => SUMMARY_MARKER.exec(c.body)?.[1] === lineage,
@@ -1541,7 +1197,8 @@ export async function reflectDismissal(
 }
 
 /** Publishes a finished review again after CLI consent (`POST /v1/reviews/{id}/publish`). */
-export async function publishFinished(env: Env, review: string): Promise<void> {
+/** A finished PR review's report and the inputs its publication needs. */
+async function finishedInput(env: Env, review: string) {
   const row = await env.DB.prepare(
     "SELECT r.report_key,r.submission_key,lr.lineage_id,lr.snapshot_id FROM reviews r LEFT JOIN lineage_reviews lr ON lr.review_id=r.id WHERE r.id=?",
   )
@@ -1552,7 +1209,7 @@ export async function publishFinished(env: Env, review: string): Promise<void> {
       lineage_id: string | null;
       snapshot_id: string | null;
     }>();
-  if (!row?.report_key || !row.lineage_id || !row.snapshot_id) return;
+  if (!row?.report_key || !row.lineage_id || !row.snapshot_id) return null;
   const store = new Store(env);
   const [report, submission] = await Promise.all([
     store.get<any>(row.report_key),
@@ -1570,6 +1227,18 @@ export async function publishFinished(env: Env, review: string): Promise<void> {
     id: r.identity,
     finding: JSON.parse(r.finding_json).finding,
   }));
+  const found = {
+    report_key: row.report_key,
+    lineage_id: row.lineage_id,
+    snapshot_id: row.snapshot_id,
+  };
+  return { row: found, store, report, submission, updates, prior };
+}
+
+export async function publishFinished(env: Env, review: string): Promise<void> {
+  const loaded = await finishedInput(env, review);
+  if (!loaded) return;
+  const { row, store, report, submission, updates, prior } = loaded;
   // An older round never republishes over a newer one's comments.
   const later = await env.DB.prepare(
     "SELECT 1 AS later FROM lineage_reviews WHERE lineage_id=? AND reviewed=1 AND seq>(SELECT seq FROM lineage_reviews WHERE review_id=?) LIMIT 1",
@@ -1617,4 +1286,143 @@ export async function publishFinished(env: Env, review: string): Promise<void> {
   report.publication = publication;
   await store.put(row.report_key, report);
   await store.event(review, "review:published", { publication });
+}
+
+export interface Preview {
+  policy: Policy;
+  /** Why nothing, or only the check run, would be posted. */
+  reason?: Unpublished;
+  comments: {
+    id: string;
+    path: string;
+    line: number;
+    start_line?: number;
+    body: string;
+  }[];
+  /** Findings that would be listed in the summary only. */
+  unanchored: string[];
+  summary: string | null;
+  check: CheckOutput | null;
+}
+
+/**
+ * What publishing a finished PR review would post, rendered by the same
+ * functions the publisher uses. Reads the pull request's diff with a
+ * read-only token and never writes to the host (terminal-ui "Publish only on
+ * consent").
+ */
+export async function previewReview(
+  env: Env,
+  input: PublishInput,
+  files?: Map<string, { removed: boolean; lines: Set<number> }>,
+): Promise<Preview | null> {
+  const row = await pullOf(env, input.review);
+  if (!row || !input.lineage) return null;
+  const policy: Policy = ["never", "ask", "auto"].includes(input.policy)
+    ? input.policy
+    : "never";
+  const nothing = (reason?: Unpublished): Preview => ({
+    policy,
+    ...(reason ? { reason } : {}),
+    comments: [],
+    unanchored: [],
+    summary: null,
+    check: null,
+  });
+  const install = await installation(env, row.installation_id);
+  if (!install || !covers(install, row.repository))
+    return nothing("no_installation");
+  // The preview shows what consent would publish: a CLI review under `ask`.
+  const decision = decide(
+    policy,
+    { ...row, trigger: "cli", consent: 1 },
+    await escalatedPull(env, row),
+  );
+  if (!decision.check) return nothing(decision.reason);
+  const link = `${(input.publicUrl ?? env.PUBLIC_URL ?? "").replace(/\/$/, "")}/v1/reviews/${input.review}/report`;
+  const check = checkOutput(input.report, input.fail_on, { link });
+  if (!decision.full) return { ...nothing(decision.reason), check };
+  if (!files) {
+    const token = await InstallationToken.mint(
+      env,
+      row.installation_id,
+      row.repository,
+      PREPARE_PERMISSIONS,
+    );
+    try {
+      files = await new GitHubHost(
+        token,
+        row.repository,
+        row.number,
+        "",
+        "",
+      ).files();
+    } finally {
+      await token.revoke();
+    }
+  }
+  const comments: Preview["comments"] = [];
+  const unanchored: Finding[] = [];
+  const wrong: Finding[] = [];
+  for (const f of lists(input.report)) {
+    if (!f.first_posted_in || f.status === "dismissed") continue;
+    if (f.history?.previous_response?.reason === "wrong") {
+      wrong.push(f);
+      continue;
+    }
+    const anchor = findingAnchor(f, files);
+    if (anchor === undefined) {
+      unanchored.push(f);
+      continue;
+    }
+    const lines = files.get(f.location.path)?.lines;
+    const range = suggestionRange(f, anchor, lines);
+    comments.push({
+      id: f.id,
+      path: f.location.path,
+      ...(range && range.line_end > range.line_start
+        ? { line: range.line_end, start_line: range.line_start }
+        : { line: anchor }),
+      body: findingBody(f, { status: "open" }, input.report.qa, anchor, {
+        failOn: input.fail_on,
+        lines,
+      }),
+    });
+  }
+  return {
+    policy,
+    comments,
+    unanchored: unanchored.map((f) => f.id),
+    summary: summaryBody({
+      report: input.report,
+      lineage: input.lineage.id,
+      unanchored,
+      rejected: [],
+      wrong,
+      link,
+      failOn: input.fail_on,
+      urls: new Map(),
+      fixed: input.updates.filter((u) => u.status === "fixed").length,
+    }),
+    check,
+  };
+}
+
+/** The preview of a finished review, for `POST /v1/reviews/{id}/publish?dry_run=1`. */
+export async function previewFinished(
+  env: Env,
+  review: string,
+): Promise<Preview | null> {
+  const loaded = await finishedInput(env, review);
+  if (!loaded) return null;
+  const { row, report, submission, updates, prior } = loaded;
+  return previewReview(env, {
+    review,
+    report,
+    policy: submission.profile?.publish,
+    fail_on: submission.profile?.fail_on,
+    lineage: { id: row.lineage_id, snapshot_id: row.snapshot_id },
+    updates,
+    prior,
+  });
 }

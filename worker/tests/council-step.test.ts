@@ -430,6 +430,50 @@ describe("experiments", () => {
       runner_seconds: 5,
     });
   });
+  it("records each member's family and per-round answer for presentation", async () => {
+    const auth = request(["npm", "test", "--", "auth"]);
+    const h = harness({
+      "tester-r1": { ...answer("tester", 1), experiment_request: auth },
+      "skeptic-r1": answer("skeptic", 1, { real: "no" }),
+      "skeptic-r2": answer("skeptic", 2, {
+        real: "yes",
+        changed_from: { real: "no" },
+        changed_to: { real: "yes" },
+        cites: { kind: "artifact", ref: "exp-1", reason_code: "new_artifact" },
+      }),
+      "maintainer-r1": new Error("The operation was aborted due to timeout"),
+    });
+    const outcome = await h.run();
+    const byRole = new Map(
+      outcome.verified[0].council!.members.map((m) => [m.role, m]),
+    );
+    expect(byRole.get("skeptic")).toEqual({
+      role: "skeptic",
+      abstained: false,
+      family: "claude",
+      rounds: [
+        { round: 1, real: "no" },
+        { round: 2, real: "yes", changed: true },
+      ],
+    });
+    expect(byRole.get("maintainer")).toEqual({
+      role: "maintainer",
+      abstained: true,
+      cause: "timeout",
+      family: "claude",
+      rounds: [{ round: 1, cause: "timeout" }],
+    });
+    expect(byRole.get("exploit-author")!.rounds).toEqual([
+      { round: 1, real: "yes" },
+      { round: 2, real: "yes" },
+    ]);
+    expect(() =>
+      validateFinding({
+        ...findingOf(outcome.verified[0]),
+        id: "f".repeat(64),
+      }),
+    ).not.toThrow();
+  });
   it("runs nothing on a fork and records every request as not run", async () => {
     const h = harness(
       {

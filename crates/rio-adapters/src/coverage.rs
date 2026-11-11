@@ -448,6 +448,7 @@ pub fn diff_coverage(
                 trigger: "execution reaches the changed lines".into(),
                 impact: None,
                 suggested_fix: Some("Add a test that executes the changed behavior".into()),
+                fix: None,
                 evidence: vec!["merged coverage".into()],
                 source: Source::Tool {
                     tool: "coverage".into(),
@@ -462,6 +463,7 @@ pub fn diff_coverage(
                 author_response: None,
                 history: None,
                 council: None,
+                trace: None,
             });
         }
     }

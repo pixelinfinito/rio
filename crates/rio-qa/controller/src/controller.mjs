@@ -119,7 +119,7 @@ export class QaBackend {
     signal.throwIfAborted();
     return active.controller;
   }
-  async runJourney({ journey, cell, environment, signal }) {
+  async runJourney({ journey, cell, environment, signal, onStep }) {
     if (this.explorationRoutes?.length && journey.name === 'exploratory') {
       const remaining = remainingExploration(journey, cell, this.completed.values(), this.guidance);
       journey = remaining.journey;
@@ -130,7 +130,7 @@ export class QaBackend {
       }
     }
     if (this.missingPersonas.includes(journey.persona)) return { journey: journey.name, cell, outcome: 'skipped', reason: 'missing_credentials', evidence: [] };
-    const result = await environment.runJourney({ journey, signal });
+    const result = await environment.runJourney({ journey, signal, onStep });
     this.completed.set(key(result), result);
     await this.checkpoint(this.snapshot());
     return result;
@@ -197,7 +197,7 @@ export async function runQa({ plan, journeys, signal = new AbortController().sig
       const reason = signal.aborted ? 'interrupted' : Date.now() - started >= options.budget.wall_ms ? 'budget' : error.reason || 'app_not_ready';
       result = { outcome: 'partial', journey_outcomes: plan.chains.flatMap(chain => plan.cells.flatMap(cell => chain.journeys.filter(name => !journeys[name].viewports || journeys[name].viewports.includes(cell.viewport)).map(journey => ({ journey, cell, outcome: ['interrupted', 'budget'].includes(reason) ? 'cancelled' : 'not_run', reason, evidence: [] })))) };
     }
-    result ||= await executePlan({ plan, journeys, backend, defaults: options.fixtures?.defaults, runWallMs: Math.max(1, options.budget.wall_ms - (Date.now() - started)), cellWallMs: options.budget.cell_wall_ms, signal });
+    result ||= await executePlan({ plan, journeys, backend, defaults: options.fixtures?.defaults, runWallMs: Math.max(1, options.budget.wall_ms - (Date.now() - started)), cellWallMs: options.budget.cell_wall_ms, signal, control: options.control, progress: options.progress });
     const probes = backend.probes.finalize();
     result = options.writer.sanitizer.value({ ...backend.snapshot(), ...result, wall_time_ms: Date.now() - started,
       cell_metrics: backend.cellMetrics,

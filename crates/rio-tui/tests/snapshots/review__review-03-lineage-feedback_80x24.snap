@@ -1,0 +1,28 @@
+---
+source: crates/rio-tui/tests/review.rs
+expression: "common::lines(&buf)"
+---
+ ▃▅▇▇▇▅▃▃▁▁▁▃ rio  feature/parser-guards · rio…  ▲ capped · round 4 of 3  gen 1 
+                                        │                                       
+  LINE╔═ rio feedback 8c1e4a9b ══════════════════════════════════════════╗───┐  
+  gith║                                                                  ║   │  
+  feat║  Dismiss finding                                                 ║2 …│  
+  gene║  8c1e4a9b · Possible null dereference in parseHeader             ║it…│  
+      ║                                                                  ║   │  
+  ROUN║  REASON                                                          ║   │  
+  R1  ║   ( ) fixed         the code was changed                         ║   │  
+      ║   ( ) wrong         the finding is incorrect                     ║   │  
+  R2  ║ ▌ (•) intentional   the behaviour is deliberate                  ║   │  
+      ║   ( ) irrelevant    not relevant to this change                  ║er…│  
+  R3  ║   ( ) style         a matter of style                            ║   │  
+      ║                                                                  ║   │  
+  R4  ║  NOTE                                                            ║   │  
+      ║   documented behavior▏                                           ║───┘  
+  cap ║                                                                  ║      
+      ║  actor  you@example.com (git config user.email)                  ║      
+  CONV║                                                                  ║      
+  held║   ⏎ record   esc cancel     never changes posture or rules       ║      
+  auth║                                                                  ║      
+  roun╚══════════════════════════════════════════════════════════════════╝      
+                                        │                                       
+ ↑↓ reason  tab note  ⏎ record  esc cancel

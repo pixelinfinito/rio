@@ -1,0 +1,40 @@
+ ▃▅▇▇▇▅▃▃▁▁▁▃  rio  review · PR #142 · rio/security · deep                          ✕ exit 1 · 3 fail  risk high  4m02s 
+                              │                                          │                                              
+ SECURITY  OWASP Top 10:2025  │ a7f3 Guest session can read any order    │ COUNCIL  round 2 of 2 · partial 4/5          
+ A01 Access Control  ✓ 1 find │ [new] [err] [security] [reproduced] FAIL │ role           family    round 1   round 2   
+ A02 Misconfiguration✓        │ catalog A01 Broken Access Control        │ ─────────────────────────────────────────────
+ A03 Supply Chain    ✓ osv    │ where   api/orders.ts:57  getOrder()     │ skeptic        claude    ✕ not real✓ real  ex
+ A04 Cryptographic   –        │                                          │ exploit-author gpt       ✓ real    ✓ real    
+      no crypto touched       │ TRACE  input → sink                      │ code-owner     gemini    ? abstain ✓ real  ex
+ A05 Injection       ✓ 1 risk │  ① req.params.id        orders.ts:52     │ maintainer     mistral   ✓ real    ✓ real    
+ A06 Insecure Design ✓        │  │  input                                │ tester         qwen·self timeout   —         
+ A07 Authentication  ✓        │  ② Number(id) > 0       orders.ts:53     │ positions change only by citing an artifact  
+ A08 Integrity       –        │  │  validation ✓                         │                                              
+      no serialized input     │  ③ no owner check                        │ EXPERIMENT  exp-1 · runner job               
+ A09 Logging         ✓        │  │  authorization ✕  session.user may    │ requested by exploit-author                  
+ A10 Exceptional     ✓ 1 find │  │  be guest; owner never compared       │ GET /api/orders/1042 as guest session B      
+                              │  ④ db.orders.get(id)    orders.ts:57     │ head  ✕ 200  returns shopper A's order       
+ 8 assessed · 2 not, with     │     sensitive read                       │ base  ✓ 404  order not visible               
+ reasons · posture thorough   │                                          │                                              
+                              │ CODE  head                               │ DECISION                                     
+ FINDINGS  PR #142            │  55  const id = Number(req.params.id)    │ reproduced   by evidence tier                
+▌● a7f3 guest reads order     │  56  if (!(id > 0)) return res.sendStatus│ fails on head, passes on base                
+ ● 8c1e null deref header     │+ 57  const order = await db.orders.get(id│                                              
+ ● 51fd unhandled reject      │  58  return res.json(order)              │ agreement is never evidence                  
+ ◆ c90b sql built by concat   │                                          │ 4 of 4 agree: not counted                    
+ ○ 3a10 fixed · resolves      │ VERIFY  blind quorum                     │                                              
+                              │ voter 1 ✓ real   voter 2 ✕ refuted voter │ COST                                         
+                              │ split 1–1–1 → sent to council            │ $0.21 · 2 rounds · 1 experiment              
+                              │ trigger verify.split · severity error    │ vendors allowlisted · audit au-77f1          
+                              │                                          │ a shows which content went where             
+                              │                                          │                                              
+                              │                                          │                                              
+                              │                                          │                                              
+                              │                                          │                                              
+                              │                                          │                                              
+                              │                                          │                                              
+                              │                                          │                                              
+                              │                                          │                                              
+                              │                                          │                                              
+ 1 of 3 security findings went to council · council runs on 5–10 % of findings · cost shown per finding                 
+ ↑↓ finding  t trace  c council  a audit  d dismiss…   P publish  F history  esc back                                   

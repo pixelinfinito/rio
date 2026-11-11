@@ -2,22 +2,21 @@
 
 exports[`QA publication > publishes only supported recommendations and preserves guidance, coverage and held-back counts 1`] = `
 "
-### QA results
+### 🧭 QA · 1 journey × 2 cells
 
-Isolation: **pod** · Evidence expiry: unavailable
-Selected checkout: smoke
+| Journey | 📱 light | 🖥️ light |
+| --- | --- | --- |
+| \`checkout\` | ❌ step 4 | ❌ step 4 |
 
-**checkout**
-- mobile/light: failed · step 4
-- desktop/light: failed · step 4
 QA journeys possibly stale: checkout. Run rio qa sync.
 
-### UX recommendations
+<details><summary>💡 <b>1 UX suggestion</b> — advice only, never blocks the merge</summary>
 
-- **User re-enters the same address for billing** · priority medium · confidence high
+**User re-enters the same address for billing** · priority medium · confidence high
 Proposed improvement: Offer to reuse the shipping address, with an edit option
 Expected benefit (untested): May reduce repeated entry; benefit has not been user-tested
 Trade-offs: Shipping and billing addresses can differ
 
-UX assessment (ui-v1@​0.1.0): assessed: 1. Recommendations held back: 2."
+UX assessment (ui-v1@​0.1.0): assessed: 1. Recommendations held back: 2.
+</details>"
 `;

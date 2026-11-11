@@ -1,0 +1,28 @@
+---
+source: crates/rio-tui/tests/init.rs
+expression: "common::lines(&buf)"
+---
+ ▃▅▇▇▇▅▃▃▁▁▁▃ rio  rio init · --endpoint                   ● connect  rio 0.2.0 
+                                                                                
+  Connect to an existing rio endpoint                                           
+  a teammate already deployed rio in their Cloudflare account                   
+                                                                                
+────────────────────────────────────────────────────────────────────────────────
+  ENDPOINT                                                                      
+   https://rio.pixel-labs.workers.dev▏                                          
+  ✓ HTTPS (plain http only for loopback development)                            
+  ✓ redirects disabled · the bearer token never leaves this origin              
+                                                                                
+  API TOKEN                                                                     
+▌ (•) read from stdin                                                           
+▌     your-secret-manager read rio-api-token | rio init … --token-stdin         
+  ( ) RIO_API_TOKEN                                                             
+      environment variable · takes precedence over the stored token             
+      token   •••••••••••••••••••••••••••••••          ✓ received on stdin      
+                                                                                
+  WRITES                                                                        
+  + ~/.config/rio/config.toml       endpoint.url · other machine settings pre…  
+  + ~/.config/rio/ (private dir)    API token · mode 0600                       
+   ⏎ connect    esc back to modes                                               
+                                                                                
+ tab field  ↑↓ token source  ⏎ connect  esc back

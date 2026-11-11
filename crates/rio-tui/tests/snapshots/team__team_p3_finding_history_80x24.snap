@@ -1,0 +1,28 @@
+---
+source: crates/rio-tui/tests/team.rs
+expression: lines
+---
+ ▃▅▇▇▇▅▃▃▁▁▁▃  rio  findings · registry… 1 regression  6 remembered  endpoint ✓ 
+                                                                                
+ Findings 41   rio findings --status all                                        
+ id       status      rule              path             last seen  seen        
+────────────────────────────────────────────────────────────────────────────────
+ a7f30c3e ● open      authz/owner-check api/orders.ts    #142 r2    ×2          
+ 8c1e0c3e ● open      ts/null-deref     parser/header.ts #142 r2    ×2          
+ 51fd0c3e ● open      unhandled-reject  parser/body.ts   #142 r2    ×2          
+▌77ab0c3e ▲ regressionts/null-deref     lib/cache.ts     #142 r2    ×3          
+ 6d2c0c3e ◆ intention.legacy-endpoint   api/legacy.ts    #142 r2    ×2          
+ 2e900c3e ◆ style     ui/spacing-scale  src/legacy/grid  #142 r2    ×2          
+ 41c70c3e ◆ style     ui/spacing-scale  src/legacy/form  #142 r2    ×2          
+ 9bd20c3e ◆ irrelevantui/spacing-scale  src/legacy/nav   #142 r2    ×2          
+ b13c0c3e ◆ wrong     sql/concat        parser/util.ts   #142 r2    ×2          
+ 3a100c3e ✓ fixed     ts/unused-await   api/cart.ts      #142 r2    ×2          
+ e81f0c3e ✓ fixed     lint/no-floating  worker/job.ts    #142 r2    ×2          
+ 0c550c3e ✓ fixed     coverage/diff     lib/money.ts     #142 r2    ×2          
+ f0000c3e ● open      lint/no-console   src/app.ts       #142 r2    ×2          
+ f0010c3e ● open      lint/no-console   src/app.ts       #142 r2    ×2          
+ f0020c3e ● open      lint/no-console   src/app.ts       #142 r2    ×2          
+ f0030c3e ● open      lint/no-console   src/app.ts       #142 r2    ×2          
+ ⋯ 25 more                                                                      
+ 41 findings across 9 PRs and 3 branches · registry lives on the endpoint · exit
+ ↑↓ move  f status  r rule  ⏎ timeline  d dismiss…   S proposals  j json  esc ba

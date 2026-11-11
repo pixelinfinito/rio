@@ -26,6 +26,7 @@ fn snapshot(tree: &rio_git::Tree) -> RuntimeSnapshot {
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 pub(crate) async fn execute(
     request: &ReviewRequest,
     diff: &rio_git::Diff,
@@ -34,6 +35,7 @@ pub(crate) async fn execute(
     report: &mut Report,
     cancellation: CancellationToken,
     deadline: Instant,
+    events: &Option<tokio::sync::mpsc::UnboundedSender<rio_core::ReviewEvent>>,
 ) -> Result<bool> {
     if request.offline {
         report.deferred.push(DeferredStep {
@@ -145,6 +147,12 @@ pub(crate) async fn execute(
     };
     let mut plan = project.plan(&base.files, &head.files, &selection)?;
     project.add_exploration(&mut plan, &selection)?;
+    restrict_to_cell(
+        &mut plan,
+        &project,
+        &step.options,
+        selection.cell_wall_seconds,
+    )?;
     cache.write("qa/plan.json", &serde_json::to_vec_pretty(&plan)?)?;
     let harness = step.options["harness"]
         .as_str()
@@ -247,7 +255,22 @@ pub(crate) async fn execute(
         "budget":{"wall_ms":remaining().as_millis() as u64,"cell_wall_ms":duration(&limits.cell_wall)?.as_millis() as u64,
             "tokens":limits.tokens,"evidence_bytes":limits.evidence_bytes}});
     runtime.assets(&project, &head.files, &plan, run, &digest, &credentials)?;
-    let result = runtime.execute(cancellation.clone()).await;
+    // Each cell's progress becomes a `qa:cell` event for the live matrix.
+    let mut progress = |cell: QaProgress| {
+        if let Some(events) = events {
+            let _ = events.send(rio_core::ReviewEvent::QaCell {
+                journey: cell.journey,
+                viewport: cell.viewport,
+                color_scheme: cell.color_scheme,
+                step: cell.step,
+                outcome: cell.outcome,
+            });
+        }
+    };
+    let control = request.qa_control.as_deref();
+    let result = runtime
+        .execute_live(cancellation.clone(), control, &mut progress)
+        .await;
     let mut result = result?;
     annotate_runtime_result(
         &mut result,
@@ -280,7 +303,8 @@ pub(crate) async fn execute(
                 "budget":{"wall_ms":remaining().as_millis() as u64,"cell_wall_ms":duration(&limits.cell_wall)?.as_millis() as u64,
                     "tokens":limits.tokens,"evidence_bytes":limits.evidence_bytes.saturating_sub(result["evidence"]["bytes"].as_u64().unwrap_or(0)).max(1)}});
             baseline.assets(&base_project, &base.files, &plan, run, &base_image, &credentials)?;
-            let mut base_result = baseline.execute(cancellation.clone()).await?;
+            // A cell cancelled or a queue paused on the head run is so on its baseline too.
+            let mut base_result = baseline.execute_live(cancellation.clone(), control, &mut |_| {}).await?;
             annotate_runtime_result(&mut base_result, &base_project, &base.files, &plan, &selection.changed)?;
             Ok::<_, anyhow::Error>(base_result)
         }.await;

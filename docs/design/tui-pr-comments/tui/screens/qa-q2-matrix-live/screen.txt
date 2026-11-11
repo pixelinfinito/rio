@@ -1,0 +1,40 @@
+ ▃▅▇▇▇▅▃▃▁▁▁▃  rio  qa · running 5 journeys × 4 cells · codex (gateway) · pod                ◐ 11/20  ✕ 1 failed  3m12s 
+  1 Journeys   2 Matrix   3 Cell   4 UX   5 Seed   6 Rules                                                              
+ ENVIRONMENT            │ Matrix 11 of 20 cells done                    ◐ 4 running   · 5 queued                        
+ ✓ image built     48 s │───────────────────────────────────────────────────────────────────────────────────────────────
+ ✓ seed restored    2.1 │                       mobile·light   mobile·dark    desktop·light  desktop·dark               
+ ✓ app ready        1.4 │                       ─────────────  ─────────────  ─────────────  ─────────────              
+   GET /api/health 200  │  ↳ login             ✓ 2/2  14s     ✓ 2/2  13s     ✓ 2/2  11s     ✓ 2/2  12s                  
+ ✓ egress deny-all      │                                                                                               
+ ✓ doubles stripe, mail │▌ checkout            ✓ 5/5  58s     ✕ step 4       ✓ 5/5  49s     ◐ step 3 ⠼                  
+ ✓ clock frozen 09:00   │                                                                                               
+                        │  add-to-cart         ✓ 3/3  31s     ✓ 3/3  30s     ✓ 3/3  27s     ✓ 3/3  28s                  
+ BUDGET  fast           │                                                                                               
+ tokens ████████░░░░ 212│  payment-recovery    ◐ step 2 ⠦     · queued       ◐ step 4 ⠧     · queued                    
+        of 500k         │                                                                                               
+ voter  ██████░░░░░░ 31k│  keyboard-shopping   – desktop only – desktop only ◐ step 5 ⠏     · queued                    
+        of 60k          │                                                                                               
+ time   3m12s / ~6m     │  profile-address     · queued       · queued       · queued       · queued                    
+                        │                                                                                               
+ PROBES  live           │───────────────────────────────────────────────────────────────────────────────────────────────
+ ui/low-contrast    2/41│ LIVE · checkout × desktop·dark   harness codex · step 3 of 5 · Pay with the test card         
+ mobile/fixed-overl.1/9 │  09:00:41  ▸ goto       http://app.test:4173/checkout                                         
+ ui/console-error   0   │  09:00:43  ▸ snapshot   dom 1,214 nodes · screenshot masked                                   
+ mobile/tap-target  0/63│  09:00:44  ▸ fill       #card-number  •••• •••• •••• 4242                                     
+ ui/layout-shift    0   │  09:00:45  ▸ fill       #card-exp  12/30                                                      
+   minority test runs   │  09:00:46  ✓ expect     Card form accepts the 4242 card                                       
+   when the run ends    │  09:00:47  ▸ stripe     double · POST /v1/payment_intents → 200                               
+                        │  09:00:48  ▸ click      button  Pay €38.00                                                    
+ INTERRUPT              │  09:00:48  ⠼ waiting    navigation …                                                          
+ ^C keep partial        │                                                                                               
+ ^C^C kill · 130        │  first failure: checkout × mobile·dark at step 4 · ⏎ open cell  other cells keep running      
+                        │                                                                                               
+                        │                                                                                               
+                        │                                                                                               
+                        │                                                                                               
+                        │                                                                                               
+                        │                                                                                               
+                        │                                                                                               
+                        │                                                                                               
+ ███████████████████████████████████████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 11/20 · ~2m50s left · $0.17 
+ ↑↓←→ cell   ⏎ open cell  l follow log  p pause queue  c cancel cell  ^C stop, keep partial  ? help                     

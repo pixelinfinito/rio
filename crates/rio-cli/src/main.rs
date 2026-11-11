@@ -8,6 +8,7 @@ mod providers;
 mod pull;
 mod qa;
 mod registry;
+mod tui;
 use anyhow::Context;
 use clap::{Args, Parser, Subcommand, ValueEnum};
 use config::MachineConfig;
@@ -59,6 +60,9 @@ enum Command {
         /// Store a new private key (PEM file) for the registered app on the endpoint.
         #[arg(long, value_name = "PEM")]
         replace_private_key: Option<PathBuf>,
+        /// Prompt on the terminal instead of opening the interactive UI (also `RIO_TUI=0`).
+        #[arg(long)]
+        no_tui: bool,
         #[command(flatten)]
         deployment: deployment::DeployArgs,
     },
@@ -98,7 +102,8 @@ enum EvalCommand {
 }
 #[derive(Args)]
 struct FeedbackArgs {
-    /// Finding id (as shown in the report).
+    /// Finding id as shown in the report: at least 8 characters of the
+    /// identity, matching exactly one finding.
     id: String,
     /// Dismiss the finding with a reason: fixed, wrong, intentional, irrelevant or style.
     #[arg(long, value_name = "REASON")]
@@ -151,12 +156,20 @@ struct ReviewArgs {
     selection: SelectionArgs,
     #[arg(long)]
     profile: Option<String>,
-    #[arg(long, value_enum, default_value = "terminal")]
-    format: Format,
+    /// Output format; without it a terminal session opens the interactive UI.
+    #[arg(long, value_enum)]
+    format: Option<Format>,
     #[arg(long)]
     offline: bool,
     #[arg(long)]
     no_color: bool,
+    /// Draw only ASCII characters (also `RIO_ASCII=1`), for terminals that
+    /// render box drawing and symbols two cells wide.
+    #[arg(long)]
+    ascii: bool,
+    /// Stream plain output instead of opening the interactive UI (also `RIO_TUI=0`).
+    #[arg(long)]
+    no_tui: bool,
     #[arg(long)]
     show_pre_existing: bool,
     /// List findings remembered as dismissed on unchanged code in their own section.
@@ -182,6 +195,12 @@ struct ReviewArgs {
     /// Start a new lineage generation at round 1 (requires --since-last).
     #[arg(long, requires = "since_last")]
     reset_lineage: bool,
+}
+impl ReviewArgs {
+    /// The output format: `--format`, else `terminal`.
+    fn format(&self) -> Format {
+        self.format.unwrap_or_default()
+    }
 }
 #[derive(Clone, Copy, ValueEnum)]
 enum Preset {
@@ -246,9 +265,15 @@ async fn main() -> ExitCode {
             github_org,
             replace_private_key,
             deployment,
+            no_tui,
         } => {
             if let Some(endpoint) = endpoint {
                 run_init(endpoint, token_stdin)
+            } else if !deployment.chosen()
+                && replace_private_key.is_none()
+                && tui::interactive(false, no_tui)
+            {
+                tui::init(github_app, github_org).await
             } else {
                 let dry_run = deployment.dry_run;
                 let replay = deployment.from.is_some();
@@ -387,59 +412,90 @@ fn current_dir() -> anyhow::Result<PathBuf> {
 fn loader(root: Option<PathBuf>, config: &MachineConfig, cwd: PathBuf) -> ProfileLoader {
     ProfileLoader::new(root, config.config_dir.clone(), cwd)
 }
-async fn run_review(args: ReviewArgs) -> u8 {
-    let started = utc_now();
-    // A pull request is prepared and reviewed by the endpoint, never locally.
-    if args.pr.is_some() || args.publish {
-        return pull::review(args, started).await;
+/// A review that could not run; the caller renders it in its format.
+struct ReviewError {
+    code: u8,
+    name: String,
+    message: String,
+    details: Vec<String>,
+}
+impl ReviewError {
+    fn new(code: u8, name: &str, message: String, details: Vec<String>) -> Self {
+        Self {
+            code,
+            name: name.into(),
+            message,
+            details,
+        }
     }
+}
+/// How a running review reports progress and is stopped.
+struct Hooks {
+    events: Option<tokio::sync::mpsc::UnboundedSender<rio_core::ReviewEvent>>,
+    /// Also poll an endpoint review's events (the interactive UI); streaming
+    /// output stays as scripts know it.
+    remote_events: bool,
+    cancellation: CancellationToken,
+    supervisor: ProcessSupervisor,
+    /// Live pause and cancel requests to a local QA run (the interactive UI).
+    qa_control: Option<std::sync::Arc<rio_qa::QaControl>>,
+}
+/// A finished (or partial) review and what rendering it needs.
+struct Executed {
+    report: Report,
+    policy: CompiledFailOn,
+    posted: Option<std::collections::BTreeSet<String>>,
+    /// The reviewed change, for the hunks the interactive UI shows.
+    changes: rio_git::ChangeSet,
+    /// The endpoint's id of the review, when the endpoint ran it.
+    remote_id: Option<String>,
+}
+/// Resolve configuration, select the change and run the review. Prints
+/// nothing to standard output, so the interactive UI can run it too.
+async fn execute_review(args: &ReviewArgs, hooks: Hooks) -> Result<Executed, ReviewError> {
     let cwd = match current_dir() {
         Ok(cwd) => cwd,
         Err(error) => {
-            return error_report(
-                args.format,
+            return Err(ReviewError::new(
                 3,
                 "internal_error",
                 error.to_string(),
                 Vec::new(),
-            );
+            ));
         }
     };
     // Resolve user-only machine configuration before touching repository inputs.
     let preliminary = match MachineConfig::load(&cwd) {
         Ok(config) => config,
         Err(error) => {
-            return error_report(
-                args.format,
+            return Err(ReviewError::new(
                 2,
                 "invalid_configuration",
                 format!("{error:#}"),
                 Vec::new(),
-            );
+            ));
         }
     };
     let repo = match GixRepo::discover(&cwd) {
         Ok(repo) => repo,
         Err(error) => {
-            return error_report(
-                args.format,
+            return Err(ReviewError::new(
                 3,
                 "not_a_repository",
                 format!("{error:#}"),
                 Vec::new(),
-            );
+            ));
         }
     };
     let config = match MachineConfig::load(repo.root()) {
         Ok(config) => config,
         Err(error) => {
-            return error_report(
-                args.format,
+            return Err(ReviewError::new(
                 2,
                 "invalid_configuration",
                 format!("{error:#}"),
                 Vec::new(),
-            );
+            ));
         }
     };
     drop(preliminary);
@@ -456,34 +512,27 @@ async fn run_review(args: ReviewArgs) -> u8 {
         })
     };
     if args.since_last && (config.endpoint_url.is_none() || args.offline) {
-        return error_report(
-            args.format,
-            2,
+        return Err(ReviewError::new(2,
             "endpoint_required",
             "--since-last requires a configured endpoint and online mode; the endpoint holds the lineage".into(),
-            Vec::new(),
-        );
+            Vec::new(),));
     }
     let lineage = if args.since_last {
         let branch = match repo.branch() {
             Ok(Some(branch)) => branch,
             Ok(None) => {
-                return error_report(
-                    args.format,
-                    2,
+                return Err(ReviewError::new(2,
                     "branch_required",
                     "--since-last reviews a branch lineage: a branch is required, but HEAD is detached".into(),
-                    Vec::new(),
-                );
+                    Vec::new(),));
             }
             Err(error) => {
-                return error_report(
-                    args.format,
+                return Err(ReviewError::new(
                     3,
                     "repository_error",
                     format!("{error:#}"),
                     Vec::new(),
-                );
+                ));
             }
         };
         match lineage::repository_key(repo.root(), repo.remote_url("origin").as_deref()) {
@@ -493,62 +542,55 @@ async fn run_review(args: ReviewArgs) -> u8 {
                 reset: args.reset_lineage,
             }),
             Err(error) => {
-                return error_report(
-                    args.format,
+                return Err(ReviewError::new(
                     3,
                     "repository_error",
                     format!("{error:#}"),
                     Vec::new(),
-                );
+                ));
             }
         }
     } else {
         None
     };
     if (args.deep || args.preset.is_some()) && (config.endpoint_url.is_none() || args.offline) {
-        return error_report(
-            args.format,
+        return Err(ReviewError::new(
             2,
             "endpoint_required",
             "--deep/--preset require a configured endpoint and online mode".into(),
             Vec::new(),
-        );
+        ));
     }
     // Local reviews execute repository commands on the host; refuse rather than
     // silently run untrusted fork code.
     if args.fork && (config.endpoint_url.is_none() || args.offline) {
-        return error_report(
-            args.format,
-            2,
+        return Err(ReviewError::new(2,
             "endpoint_required",
             "--fork requires a configured endpoint and online mode; local reviews execute repository commands".into(),
-            Vec::new(),
-        );
+            Vec::new(),));
     }
     let mut profile = match loader(Some(repo.root().into()), &config, cwd)
         .load_with_preset(args.profile.as_deref(), preset)
     {
         Ok(profile) => profile,
         Err(error) => {
-            return error_report(
-                args.format,
+            return Err(ReviewError::new(
                 2,
                 "invalid_profile",
                 error.to_string(),
                 error.to_string().lines().map(str::to_owned).collect(),
-            );
+            ));
         }
     };
     if let Some(options) = &args.qa
         && let Err(error) = qa::configure_run(&mut profile, options)
     {
-        return error_report(
-            args.format,
+        return Err(ReviewError::new(
             2,
             "invalid_qa_profile",
             error.to_string(),
             Vec::new(),
-        );
+        ));
     }
     for warning in &profile.warnings {
         if config.endpoint_url.is_some()
@@ -569,9 +611,10 @@ async fn run_review(args: ReviewArgs) -> u8 {
                 .next()
                 .unwrap_or("repository_error")
                 .to_owned();
-            return error_report(args.format, 3, &name, message, Vec::new());
+            return Err(ReviewError::new(3, &name, message, Vec::new()));
         }
     };
+    let reviewed = changes.clone();
     let remote_request = if !args.offline {
         config
             .endpoint_url
@@ -600,13 +643,12 @@ async fn run_review(args: ReviewArgs) -> u8 {
     let working = match repo.working_tree() {
         Ok(tree) => tree,
         Err(error) => {
-            return error_report(
-                args.format,
+            return Err(ReviewError::new(
                 3,
                 "repository_error",
                 format!("{error:#}"),
                 Vec::new(),
-            );
+            ));
         }
     };
     let policy = profile
@@ -614,6 +656,65 @@ async fn run_review(args: ReviewArgs) -> u8 {
         .fail_on
         .compile()
         .expect("validated fail_on");
+    let mut posted = None;
+    let mut remote_id = None;
+    let result = if let Some(request) = remote_request {
+        if let Some(control) = &hooks.qa_control {
+            control.detach();
+        }
+        endpoint::review(
+            request,
+            hooks.cancellation.clone(),
+            hooks.events.clone().filter(|_| hooks.remote_events),
+        )
+        .await
+        .map(|outcome| {
+            posted = outcome.posted;
+            remote_id = outcome.remote_id;
+            outcome.report
+        })
+    } else {
+        review(
+            ReviewRequest {
+                worktree: repo.root().into(),
+                working,
+                changes,
+                profile,
+                cache: config.cache,
+                parallelism: config.parallelism,
+                output_limit: config.output_limit,
+                offline: args.offline,
+                qa_control: hooks.qa_control.clone(),
+            },
+            hooks.supervisor,
+            hooks.cancellation,
+            hooks.events,
+        )
+        .await
+    };
+    let report = result
+        .map_err(|error| ReviewError::new(3, "internal_error", format!("{error:#}"), Vec::new()))?;
+    Ok(Executed {
+        report,
+        policy,
+        posted,
+        changes: reviewed,
+        remote_id,
+    })
+}
+async fn run_review(args: ReviewArgs) -> u8 {
+    let started = utc_now();
+    // A pull request is prepared and reviewed by the endpoint, never locally.
+    if args.pr.is_some() || args.publish {
+        return pull::review(args, started).await;
+    }
+    if tui::interactive(args.format.is_some(), args.no_tui) {
+        return tui::review(args, started).await;
+    }
+    stream_review(args, started).await
+}
+/// `rio review` with streaming output (pipes, CI, `--format`, `--no-tui`).
+async fn stream_review(args: ReviewArgs, started: String) -> u8 {
     let supervisor = ProcessSupervisor::default();
     let cancellation = CancellationToken::new();
     let signal_cancel = cancellation.clone();
@@ -629,10 +730,12 @@ async fn run_review(args: ReviewArgs) -> u8 {
         }
     });
     let (sender, mut receiver) = tokio::sync::mpsc::unbounded_channel();
-    let format = args.format;
+    let format = args.format();
+    let glyphs = rio_core::glyphs::GlyphSet::select(args.ascii);
     let progress = tokio::spawn(async move {
         while let Some(event) = receiver.recv().await {
             if let Some(text) = render_progress(&event) {
+                let text = glyphs.apply(&text);
                 if format == Format::Terminal {
                     let _ = write_stdout(format!("{text}\n").as_bytes());
                 } else {
@@ -641,53 +744,43 @@ async fn run_review(args: ReviewArgs) -> u8 {
             }
         }
     });
-    let mut posted = None;
-    let result = if let Some(request) = remote_request {
-        endpoint::review(request, cancellation.clone())
-            .await
-            .map(|outcome| {
-                posted = outcome.posted;
-                outcome.report
-            })
-    } else {
-        review(
-            ReviewRequest {
-                worktree: repo.root().into(),
-                working,
-                changes,
-                profile,
-                cache: config.cache,
-                parallelism: config.parallelism,
-                output_limit: config.output_limit,
-                offline: args.offline,
-            },
-            supervisor,
+    let outcome = execute_review(
+        &args,
+        Hooks {
+            events: Some(sender),
+            remote_events: false,
             cancellation,
-            Some(sender.clone()),
-        )
-        .await
-    };
-    drop(sender);
+            supervisor,
+            qa_control: None,
+        },
+    )
+    .await;
     let _ = progress.await;
-    let report = match result {
-        Ok(report) => report,
+    let executed = match outcome {
+        Ok(executed) => executed,
         Err(error) => {
             signals.abort();
             return error_report(
-                args.format,
-                3,
-                "internal_error",
-                format!("{error:#}"),
-                Vec::new(),
+                format,
+                error.code,
+                &error.name,
+                error.message,
+                error.details,
             );
         }
     };
-    if report.status == ReportStatus::NoChanges
-        && matches!(args.format, Format::Json | Format::Sarif)
+    if executed.report.status == ReportStatus::NoChanges
+        && matches!(format, Format::Json | Format::Sarif)
     {
         eprintln!("No changes to review");
     }
-    let code = render(report, &args, started, &policy, posted.as_ref());
+    let code = render(
+        executed.report,
+        &args,
+        started,
+        &executed.policy,
+        executed.posted.as_ref(),
+    );
     signals.abort();
     code
 }
@@ -718,18 +811,11 @@ fn render(
         show_remembered: args.show_remembered,
         policy: Some(policy),
         posted,
+        glyphs: rio_core::glyphs::GlyphSet::select(args.ascii),
     };
     // SARIF records the exit code, so it is decided before rendering.
     let exit = exit_code(&report, policy, ExitContext::default());
-    let output = match args.format {
-        Format::Json => render_json(&report),
-        Format::Sarif => render_sarif(
-            &report,
-            &sarif_inputs(started, exit, args.show_pre_existing),
-        ),
-        Format::Md => Ok(render_markdown(&report, &options).into_bytes()),
-        Format::Terminal => Ok(render_terminal(&report, &options).into_bytes()),
-    };
+    let output = document(&report, args.format(), &options, started, exit);
     match output {
         Ok(bytes) => match write_stdout(&bytes) {
             Ok(()) => exit,
@@ -738,7 +824,25 @@ fn render(
                 3
             }
         },
-        Err(error) => error_report(args.format, 3, "invalid_report", error, Vec::new()),
+        Err(error) => error_report(args.format(), 3, "invalid_report", error, Vec::new()),
+    }
+}
+/// A report in `format`: the bytes `--format` writes and the UI exports.
+fn document(
+    report: &Report,
+    format: Format,
+    options: &RenderOptions<'_>,
+    started: String,
+    exit: u8,
+) -> Result<Vec<u8>, String> {
+    match format {
+        Format::Json => render_json(report),
+        Format::Sarif => render_sarif(
+            report,
+            &sarif_inputs(started, exit, options.show_pre_existing),
+        ),
+        Format::Md => Ok(render_markdown(report, options).into_bytes()),
+        Format::Terminal => Ok(render_terminal(report, options).into_bytes()),
     }
 }
 fn run_profile(command: ProfileCommand) -> u8 {
@@ -1219,6 +1323,14 @@ async fn run_feedback(args: FeedbackArgs) -> u8 {
         eprintln!("invalid finding id {:?}", redact(&args.id));
         return 2;
     }
+    if args.id.len() < rio_core::DISPLAY_ID_LEN {
+        eprintln!(
+            "finding ids need at least {} characters, as shown in the report (got {:?})",
+            rio_core::DISPLAY_ID_LEN,
+            redact(&args.id)
+        );
+        return 2;
+    }
     let cwd = match current_dir() {
         Ok(cwd) => cwd,
         Err(error) => {
@@ -1269,6 +1381,8 @@ async fn run_feedback(args: FeedbackArgs) -> u8 {
         Err(error) => {
             let message = match rio_client::http_status(&error) {
                 Some(404) => format!("finding {} was not found by the endpoint", args.id),
+                // The endpoint names the matching identities in its error.
+                Some(409) => format!("{error:#}"),
                 Some(_) => format!("the endpoint rejected the response: {error:#}"),
                 None => format!("could not record the response: {error:#}"),
             };
@@ -1294,16 +1408,6 @@ fn git_user_email(directory: &std::path::Path) -> Option<String> {
 fn run_init(endpoint: String, token_stdin: bool) -> u8 {
     let result = (|| -> anyhow::Result<()> {
         use std::io::Read;
-        let directory = config::config_directory()?;
-        rio_git::private_directory(&directory)?;
-        let file = directory.join("config.toml");
-        let mut document: toml::Value = match std::fs::read_to_string(&file) {
-            Ok(text) => toml::from_str(&text)?,
-            Err(error) if error.kind() == std::io::ErrorKind::NotFound => {
-                toml::Value::Table(Default::default())
-            }
-            Err(error) => return Err(error.into()),
-        };
         let token = if token_stdin {
             let mut value = String::new();
             std::io::stdin().take(65536).read_to_string(&mut value)?;
@@ -1311,47 +1415,7 @@ fn run_init(endpoint: String, token_stdin: bool) -> u8 {
         } else {
             None
         };
-        let previous_endpoint = document
-            .get("endpoint")
-            .and_then(|e| e.get("url"))
-            .and_then(toml::Value::as_str)
-            .map(str::to_owned);
-        let _ = rio_client::Client::new(
-            &endpoint,
-            token
-                .clone()
-                .unwrap_or_else(|| "validation-token-for-endpoint-only".into()),
-        )?;
-        document
-            .as_table_mut()
-            .ok_or_else(|| anyhow::anyhow!("configuration must be a TOML table"))?
-            .insert(
-                "endpoint".into(),
-                toml::Value::Table(
-                    [(String::from("url"), toml::Value::String(endpoint))]
-                        .into_iter()
-                        .collect(),
-                ),
-            );
-        // Explicit endpoint connection uses the supplied client credential, rather
-        // than a keychain secret associated with a previously managed deployment.
-        document.as_table_mut().unwrap().remove("deployment");
-        if previous_endpoint.as_deref()
-            != document
-                .get("endpoint")
-                .and_then(|e| e.get("url"))
-                .and_then(toml::Value::as_str)
-        {
-            match std::fs::remove_file(directory.join("credentials")) {
-                Ok(()) => {}
-                Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
-                Err(error) => return Err(error.into()),
-            }
-        }
-        rio_engine::atomic_write(&file, toml::to_string_pretty(&document)?.as_bytes())?;
-        if let Some(token) = token {
-            rio_engine::atomic_write(&directory.join("credentials"), token.as_bytes())?;
-        }
+        let file = connect_endpoint(endpoint, token)?;
         eprintln!("Rio endpoint configured in {}", file.display());
         Ok(())
     })();
@@ -1362,4 +1426,66 @@ fn run_init(endpoint: String, token_stdin: bool) -> u8 {
             2
         }
     }
+}
+/// `rio init --endpoint <url> [--token-stdin]`: records the endpoint in the
+/// user config and stores the client token beside it. Returns the config file.
+fn connect_endpoint(endpoint: String, token: Option<String>) -> anyhow::Result<PathBuf> {
+    connect_endpoint_in(&config::config_directory()?, endpoint, token)
+}
+fn connect_endpoint_in(
+    directory: &std::path::Path,
+    endpoint: String,
+    token: Option<String>,
+) -> anyhow::Result<PathBuf> {
+    rio_git::private_directory(directory)?;
+    let file = directory.join("config.toml");
+    let mut document: toml::Value = match std::fs::read_to_string(&file) {
+        Ok(text) => toml::from_str(&text)?,
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => {
+            toml::Value::Table(Default::default())
+        }
+        Err(error) => return Err(error.into()),
+    };
+    let previous_endpoint = document
+        .get("endpoint")
+        .and_then(|e| e.get("url"))
+        .and_then(toml::Value::as_str)
+        .map(str::to_owned);
+    let _ = rio_client::Client::new(
+        &endpoint,
+        token
+            .clone()
+            .unwrap_or_else(|| "validation-token-for-endpoint-only".into()),
+    )?;
+    document
+        .as_table_mut()
+        .ok_or_else(|| anyhow::anyhow!("configuration must be a TOML table"))?
+        .insert(
+            "endpoint".into(),
+            toml::Value::Table(
+                [(String::from("url"), toml::Value::String(endpoint))]
+                    .into_iter()
+                    .collect(),
+            ),
+        );
+    // Explicit endpoint connection uses the supplied client credential, rather
+    // than a keychain secret associated with a previously managed deployment.
+    document.as_table_mut().unwrap().remove("deployment");
+    if previous_endpoint.as_deref()
+        != document
+            .get("endpoint")
+            .and_then(|e| e.get("url"))
+            .and_then(toml::Value::as_str)
+    {
+        match std::fs::remove_file(directory.join("credentials")) {
+            Ok(()) => {}
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
+            Err(error) => return Err(error.into()),
+        }
+    }
+    rio_engine::atomic_write(&file, toml::to_string_pretty(&document)?.as_bytes())?;
+    if let Some(token) = token {
+        rio_engine::atomic_write(&directory.join("credentials"), token.as_bytes())?;
+    }
+    Ok(file)
 }

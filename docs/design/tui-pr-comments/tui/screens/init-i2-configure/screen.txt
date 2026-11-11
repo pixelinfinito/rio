@@ -1,0 +1,40 @@
+ ▃▅▇▇▇▅▃▃▁▁▁▃ rio  rio init · deploy · step 2 of 3                                               ● configure  rio 0.2.0 
+                                                                  │                                                     
+  ACCOUNT                     from cf auth · --account ID         │ PLAN · rio deploy --dry-run                         
+▌ (•) Pixel Infinito                                   3f9c…a21e  │ bundle 7c21a9e4 · worker 0.2.0 · no changes yet     
+  ( ) Personal                                         88b0…19cd  │                                                     
+                                                                  │ + Worker             rio                    create  
+  NAME                                                            │ + ReviewWorkflow     rio-review             create  
+   rio▏                 prefix · rio-team for 2nd install         │ + MigrationWorkflow  rio-migrate            create  
+                                                                  │ + D1 database        rio                    create  
+  RUNNER                                                          │ + R2 bucket          rio-artifacts          create  
+   Cloudflare Sandbox   Self-hosted Docker                        │ + Queue              rio-jobs               create  
+  standard-3 · 2 vCPU · 8 GiB · network off · fresh per job       │ + AI Gateway         rio · auth, no logs    create  
+  copies ghcr.io/pixelinfinito/rio-runner:0.2.0 to your registry  │ + Gateway token      AI Gateway Run         create  
+                                                                  │ + Sandbox app        rio · standard-3       create  
+  MODEL PROVIDER                                                  │ + workers.dev route  rio.pixel-labs         create  
+   OpenRouter   OpenAI   Anthropic                                │                                                     
+  key   ••••••••••••••••••••••••••••••           ✓ echo off       │ BINDINGS                                            
+  rio/openrouter: sonnet-5.5 writes, gpt-6.1-sol verifies         │ DB · ARTIFACTS · REVIEWS · MIGRATIONS               
+                                                                  │ JOBS · SANDBOX                                      
+  CREDENTIALS                                                     │                                                     
+  (•) OS keychain       default                                   │ TOKEN SCOPES · cf auth scopes                       
+  ( ) file · 0600       headless hosts                            │ ✓ account read                                      
+                                                                  │ ✓ Workers Scripts · Durable Objects                 
+  WORKERS.DEV                                                     │ ✓ D1 · R2 · Queues · Workflows edit                 
+  pixel-labs.workers.dev  existing subdomain · reused             │ ✓ AI Gateway · Containers / registry                
+                                                                  │ ✓ account API tokens                                
+  ENDPOINT                                                        │                                                     
+  https://rio.pixel-labs.workers.dev                              │ SAVED TO                                            
+                                                                  │ ~/.config/rio/config.toml                           
+                                                                  │ choices only · no secrets · no IDs in repo          
+                                                                  │                                                     
+                                                                  │                                                     
+                                                                  │                                                     
+                                                                  │                                                     
+                                                                  │                                                     
+                                                                  │                                                     
+                                                                  │                                                     
+   ⏎ deploy    p plan JSON   s save choices for --from            │                                                     
+                                                                  │                                                     
+ tab section  ↑↓ select  ←→ option  ⏎ deploy  p plan  esc back                                                          

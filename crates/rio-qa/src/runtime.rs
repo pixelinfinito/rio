@@ -1,8 +1,15 @@
 //! Host-owned Docker orchestration. No application command executes on the host.
-use std::{collections::BTreeMap, io::Read, path::Path, time::Duration};
+use std::{
+    collections::{BTreeMap, BTreeSet},
+    io::Read,
+    path::Path,
+    sync::Mutex,
+    time::Duration,
+};
 
 use anyhow::{Context, Result, ensure};
 use rio_adapters::{ProcessSupervisor, Termination, ToolCommand};
+use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 use tokio_util::sync::CancellationToken;
 
@@ -18,6 +25,65 @@ pub fn qa_cell_id(chain: &[String], cell: &crate::Cell, version: &str) -> String
     )
     .to_hex()
     .to_string()
+}
+
+/// One journey in one cell of the matrix (viewport × color scheme).
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+pub struct QaCellRef {
+    pub journey: String,
+    pub viewport: String,
+    pub color_scheme: String,
+}
+
+/// The host's live requests to a running QA run: a paused queue finishes the
+/// running cell and starts no other until resumed; a cancelled cell stops (or
+/// never starts) and is recorded `cancelled` with reason `user`.
+#[derive(Debug, Default)]
+pub struct QaControl {
+    state: Mutex<(bool, BTreeSet<QaCellRef>)>,
+    detached: std::sync::atomic::AtomicBool,
+}
+
+impl QaControl {
+    /// The run went elsewhere (an endpoint), where these requests cannot reach.
+    pub fn detach(&self) {
+        self.detached
+            .store(true, std::sync::atomic::Ordering::Relaxed);
+    }
+
+    pub fn detached(&self) -> bool {
+        self.detached.load(std::sync::atomic::Ordering::Relaxed)
+    }
+
+    pub fn set_paused(&self, paused: bool) {
+        self.state.lock().unwrap().0 = paused;
+    }
+
+    pub fn paused(&self) -> bool {
+        self.state.lock().unwrap().0
+    }
+
+    pub fn cancel(&self, cell: QaCellRef) {
+        self.state.lock().unwrap().1.insert(cell);
+    }
+
+    /// The controller's `qa-control.json`.
+    fn document(&self) -> Vec<u8> {
+        let state = self.state.lock().unwrap();
+        serde_json::to_vec(&json!({"paused": state.0, "cancel": state.1})).unwrap()
+    }
+}
+
+/// A cell started, reached a step or ended (`running`, `passed`, `failed`,
+/// `skipped`, `cancelled` or `not_run`).
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+pub struct QaProgress {
+    pub seq: u64,
+    pub journey: String,
+    pub viewport: String,
+    pub color_scheme: String,
+    pub step: u32,
+    pub outcome: String,
 }
 
 /// JSON sent to JavaScript omits optional values, matching the source schemas.
@@ -337,6 +403,17 @@ impl DockerQaRuntime {
     }
 
     pub async fn execute(&self, cancellation: CancellationToken) -> Result<Value> {
+        self.execute_live(cancellation, None, &mut |_| {}).await
+    }
+
+    /// [`Self::execute`], taking the host's `control` requests to the running
+    /// controller and passing each cell's `progress` back as it is reported.
+    pub async fn execute_live(
+        &self,
+        cancellation: CancellationToken,
+        control: Option<&QaControl>,
+        progress: &mut (dyn FnMut(QaProgress) + Send),
+    ) -> Result<Value> {
         // A marker requests graceful shutdown without killing Docker's copy
         // process. A hard supervisor deadline and independent recovery follow.
         let hard_stop = CancellationToken::new();
@@ -346,16 +423,22 @@ impl DockerQaRuntime {
             hard_stop.clone(),
         );
         tokio::pin!(execution);
-        let result = tokio::select! {
-            value = &mut execution => value,
-            _ = cancellation.cancelled() => {
-                std::fs::write(self.path().join("cancel"), b"interrupted")?;
-                match tokio::time::timeout(Duration::from_secs(45), &mut execution).await {
-                    Ok(value) => value,
-                    Err(_) => { hard_stop.cancel(); execution.await }
+        let mut live = LiveFiles::default();
+        let mut tick = tokio::time::interval(Duration::from_millis(500));
+        let result = loop {
+            tokio::select! {
+                value = &mut execution => break value,
+                _ = cancellation.cancelled() => {
+                    std::fs::write(self.path().join("cancel"), b"interrupted")?;
+                    break match tokio::time::timeout(Duration::from_secs(45), &mut execution).await {
+                        Ok(value) => value,
+                        Err(_) => { hard_stop.cancel(); execution.await }
+                    };
                 }
+                _ = tick.tick() => live.sync(self.path(), control, progress),
             }
         };
+        live.sync(self.path(), None, progress);
         if self
             .stage(
                 "recover",
@@ -377,5 +460,89 @@ impl DockerQaRuntime {
         }
         result?;
         anyhow::bail!("QA result unavailable")
+    }
+}
+
+/// The run directory's live files: `control.json` written for the runtime to
+/// copy into the controller, and `progress.json` copied out of it.
+#[derive(Default)]
+struct LiveFiles {
+    sent: Option<Vec<u8>>,
+    seen: u64,
+}
+
+impl LiveFiles {
+    fn sync(
+        &mut self,
+        root: &Path,
+        control: Option<&QaControl>,
+        progress: &mut (dyn FnMut(QaProgress) + Send),
+    ) {
+        if let Some(document) = control.map(QaControl::document)
+            && self.sent.as_ref() != Some(&document)
+        {
+            let pending = root.join("control.pending");
+            if std::fs::write(&pending, &document).is_ok()
+                && std::fs::rename(&pending, root.join("control.json")).is_ok()
+            {
+                self.sent = Some(document);
+            }
+        }
+        #[derive(Deserialize)]
+        struct Progress {
+            events: Vec<Value>,
+        }
+        let Ok(bytes) = std::fs::read(root.join("progress.json")) else {
+            return;
+        };
+        let Ok(Progress { events }) = serde_json::from_slice(&bytes) else {
+            return;
+        };
+        for event in events {
+            if let Ok(event) = serde_json::from_value::<QaProgress>(event)
+                && event.seq > self.seen
+            {
+                self.seen = event.seq;
+                progress(event);
+            }
+        }
+    }
+}
+
+#[cfg(test)]
+mod live_tests {
+    use super::*;
+
+    #[test]
+    fn control_is_written_once_per_change_and_progress_read_once() {
+        let root = tempfile::tempdir().unwrap();
+        let control = QaControl::default();
+        let mut live = LiveFiles::default();
+        let mut seen = Vec::new();
+        live.sync(root.path(), Some(&control), &mut |p| seen.push(p));
+        let read = || -> Value {
+            serde_json::from_slice(&std::fs::read(root.path().join("control.json")).unwrap())
+                .unwrap()
+        };
+        assert_eq!(read(), json!({"paused": false, "cancel": []}));
+        control.set_paused(true);
+        control.cancel(QaCellRef {
+            journey: "checkout".into(),
+            viewport: "mobile".into(),
+            color_scheme: "dark".into(),
+        });
+        std::fs::write(
+            root.path().join("progress.json"),
+            r#"{"events":[{"seq":1,"journey":"checkout","viewport":"mobile","color_scheme":"dark","step":0,"outcome":"running"},{"seq":2}]}"#,
+        )
+        .unwrap();
+        live.sync(root.path(), Some(&control), &mut |p| seen.push(p));
+        live.sync(root.path(), Some(&control), &mut |p| seen.push(p));
+        assert_eq!(
+            read(),
+            json!({"paused": true, "cancel": [{"journey":"checkout","viewport":"mobile","color_scheme":"dark"}]})
+        );
+        assert_eq!(seen.len(), 1);
+        assert_eq!((seen[0].seq, seen[0].outcome.as_str()), (1, "running"));
     }
 }

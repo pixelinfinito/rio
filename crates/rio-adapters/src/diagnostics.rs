@@ -4,7 +4,7 @@ use crate::{DiagnosticContext, redact};
 use anyhow::{Context, Result, bail, ensure};
 use regex::Regex;
 use rio_core::{
-    Category, EvidenceLevel, Finding, Location, OccurrenceState, Severity, Source, State,
+    Category, EvidenceLevel, Finding, Fix, Location, OccurrenceState, Severity, Source, State,
     finding_id,
 };
 use serde_json::Value;
@@ -119,6 +119,7 @@ fn finding(
         trigger: String::new(),
         impact: None,
         suggested_fix: None,
+        fix: None,
         evidence: vec![format!("{} diagnostic", diagnostic.tool)],
         source: Source::Tool {
             tool: diagnostic.tool.into(),
@@ -134,6 +135,7 @@ fn finding(
         author_response: None,
         history: None,
         council: None,
+        trace: None,
     })
 }
 fn number(value: &Value, default: u32) -> Result<u32> {
@@ -211,6 +213,130 @@ pub fn parse_tsc(stdout: &[u8], context: &DiagnosticContext<'_>) -> Result<Vec<F
         .collect()
 }
 
+/// The text of a reviewed file, as characters: the snapshot's copy, else the
+/// copy a tool echoed back.
+fn source_chars(
+    path: &str,
+    context: &DiagnosticContext<'_>,
+    echoed: Option<&str>,
+) -> Option<Vec<char>> {
+    let content = match context.sources.and_then(|tree| tree.get(path)) {
+        Some(entry) => String::from_utf8(entry.content.clone()).ok()?,
+        None => echoed?.to_owned(),
+    };
+    Some(content.chars().collect())
+}
+
+/// A tool's edits, in character offsets, as a whole-line replacement: the
+/// lines the edits touch and their text after the edits. A deleted line
+/// (an edit ending at the start of the next line) becomes an empty replacement.
+fn line_fix(text: &[char], mut edits: Vec<(usize, usize, String)>) -> Option<Fix> {
+    edits.sort_by_key(|(start, _, _)| *start);
+    if edits.is_empty()
+        || edits
+            .iter()
+            .any(|(start, end, _)| start > end || *end > text.len())
+        || edits.windows(2).any(|pair| pair[0].1 > pair[1].0)
+    {
+        return None;
+    }
+    let starts: Vec<usize> = std::iter::once(0)
+        .chain(
+            text.iter()
+                .enumerate()
+                .filter(|(_, c)| **c == '\n')
+                .map(|(i, _)| i + 1),
+        )
+        .collect();
+    let line_of = |index: usize| starts.partition_point(|start| *start <= index);
+    let first = edits[0].0;
+    let last = edits.iter().map(|(_, end, _)| *end).max()?;
+    let line_start = line_of(first);
+    let line_end = line_of(if last > first { last - 1 } else { last }).max(line_start);
+    let region_start = starts[line_start - 1];
+    let region_end = starts.get(line_end).copied().unwrap_or(text.len());
+    if last > region_end {
+        return None;
+    }
+    let mut replacement = String::new();
+    let mut at = region_start;
+    for (start, end, content) in &edits {
+        replacement.extend(&text[at..*start]);
+        replacement.push_str(content);
+        at = *end;
+    }
+    replacement.extend(&text[at..region_end]);
+    if region_end > region_start && text[region_end - 1] == '\n' {
+        if replacement.ends_with('\n') {
+            replacement.pop();
+            if replacement.ends_with('\r') {
+                replacement.pop();
+            }
+        } else if !replacement.is_empty() {
+            // The edits join these lines with the next one, which a
+            // replacement of exactly these lines cannot express.
+            return None;
+        }
+    }
+    if replacement.chars().count() > 16_000 {
+        return None;
+    }
+    Some(Fix {
+        line_start: u32::try_from(line_start).ok()?,
+        line_end: u32::try_from(line_end).ok()?,
+        replacement,
+    })
+}
+
+/// ESLint's `fix` (`range` in UTF-16 offsets and `text`).
+fn eslint_fix(fix: &Value, text: Option<Vec<char>>) -> Option<Fix> {
+    let text = text?;
+    let range = fix["range"].as_array()?;
+    let (start, end) = (range.first()?.as_u64()?, range.get(1)?.as_u64()?);
+    // UTF-16 offset of each character boundary, so offsets map to characters.
+    let mut boundaries = vec![0u64];
+    for c in &text {
+        boundaries.push(boundaries.last()? + c.len_utf16() as u64);
+    }
+    let from = boundaries.binary_search(&start).ok()?;
+    let to = boundaries.binary_search(&end).ok()?;
+    line_fix(&text, vec![(from, to, fix["text"].as_str()?.to_owned())])
+}
+
+/// Ruff's `fix` when its applicability is safe (rows and 1-based character columns).
+fn ruff_fix(fix: &Value, text: Option<Vec<char>>) -> Option<Fix> {
+    let applicability = fix["applicability"].as_str()?.to_ascii_lowercase();
+    if applicability != "safe" && applicability != "automatic" {
+        return None;
+    }
+    let text = text?;
+    let starts: Vec<usize> = std::iter::once(0)
+        .chain(
+            text.iter()
+                .enumerate()
+                .filter(|(_, c)| **c == '\n')
+                .map(|(i, _)| i + 1),
+        )
+        .collect();
+    let offset = |location: &Value| -> Option<usize> {
+        let row = location["row"].as_u64()? as usize;
+        let column = location["column"].as_u64()? as usize;
+        Some(starts.get(row.checked_sub(1)?)? + column.checked_sub(1)?)
+    };
+    let edits = fix["edits"]
+        .as_array()?
+        .iter()
+        .map(|edit| {
+            Some((
+                offset(&edit["location"])?,
+                offset(&edit["end_location"])?,
+                edit["content"].as_str()?.to_owned(),
+            ))
+        })
+        .collect::<Option<Vec<_>>>()?;
+    line_fix(&text, edits)
+}
+
 pub fn parse_eslint(stdout: &[u8], context: &DiagnosticContext<'_>) -> Result<Vec<Finding>> {
     let mut syntax = BTreeMap::new();
     let files: Value = serde_json::from_slice(stdout)?;
@@ -229,7 +355,7 @@ pub fn parse_eslint(stdout: &[u8], context: &DiagnosticContext<'_>) -> Result<Ve
             if severity == 0 {
                 continue;
             }
-            findings.push(finding(
+            let mut found = finding(
                 Diagnostic {
                     tool: "eslint",
                     kind: "lint",
@@ -249,7 +375,14 @@ pub fn parse_eslint(stdout: &[u8], context: &DiagnosticContext<'_>) -> Result<Ve
                 },
                 context,
                 &mut syntax,
-            )?);
+            )?;
+            if message["fix"].is_object() {
+                found.fix = eslint_fix(
+                    &message["fix"],
+                    source_chars(&found.location.path, context, file["source"].as_str()),
+                );
+            }
+            findings.push(found);
         }
     }
     Ok(findings)
@@ -391,7 +524,7 @@ pub fn parse_ruff(stdout: &[u8], context: &DiagnosticContext<'_>) -> Result<Vec<
         .context("ruff output is not an array")?
         .iter()
         .map(|message| {
-            finding(
+            let mut found = finding(
                 Diagnostic {
                     tool: "ruff",
                     kind: "lint",
@@ -412,7 +545,14 @@ pub fn parse_ruff(stdout: &[u8], context: &DiagnosticContext<'_>) -> Result<Vec<
                 },
                 context,
                 &mut syntax,
-            )
+            )?;
+            if message["fix"].is_object() {
+                found.fix = ruff_fix(
+                    &message["fix"],
+                    source_chars(&found.location.path, context, None),
+                );
+            }
+            Ok(found)
         })
         .collect()
 }

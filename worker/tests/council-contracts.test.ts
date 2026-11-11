@@ -279,8 +279,9 @@ describe("council results in SARIF and PR comments", () => {
     const councilled: any = { ...structuredClone(finding), council: block };
     const body = findingBody(councilled, { status: "open" });
     expect(body).toContain(
-      "Council: plausible (tier judgment) · partial (4/5)",
+      "<b>Council</b> — plausible · 4 of 5 members answered · partial",
     );
+    expect(body).toContain("Decided by evidence tier (judgment)");
     expect(body).toContain("Council note: Two members cited a static path.");
     const report: any = structuredClone(complete);
     report.findings = [councilled];

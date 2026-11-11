@@ -46,6 +46,7 @@ fn request(root: &Path, profile: ResolvedProfile) -> ReviewRequest {
         parallelism: 2,
         output_limit: 1024 * 1024,
         offline: true,
+        qa_control: None,
     }
 }
 

@@ -364,10 +364,11 @@ it("councils four findings with an experiment, a protection, a note and a partia
     expect(m4.council).toMatchObject({ partial: true, answered: 3, total: 5 });
     expect(
       m4.council.members.find((m: any) => m.role === "maintainer"),
-    ).toEqual({
+    ).toMatchObject({
       role: "maintainer",
       abstained: true,
       cause: "vendor_error",
+      rounds: [{ round: 1, cause: "vendor_error" }],
     });
     // The excluded vendor never received a pack.
     for (const f of [m1, m2, m3, m4]) {

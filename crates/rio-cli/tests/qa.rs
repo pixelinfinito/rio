@@ -504,3 +504,113 @@ fn contract_acceptance_requires_a_staged_proposal_and_never_replaces_existing_co
     assert!(String::from_utf8_lossy(&result.stderr).contains("No .rio/qa.proposed.yaml"));
     assert!(!root.path().join(".rio/qa.yaml").exists());
 }
+
+/// A terminal that answers no query (no device attributes, no cursor
+/// position): the QA UI must still read keys and redraw. Image detection
+/// once left a thread reading stdin, and a full redraw asked for the cursor.
+#[cfg(unix)]
+#[test]
+fn the_qa_ui_works_in_a_terminal_that_answers_no_query() {
+    use std::{
+        io::{Read, Write},
+        os::{fd::FromRawFd, unix::fs::PermissionsExt},
+        process::Stdio,
+        time::{Duration, Instant},
+    };
+    let root = fixture();
+    let host = tempfile::tempdir().unwrap();
+    let docker = host.path().join("docker");
+    fs::write(&docker, "#!/bin/sh\nexit 1\n").unwrap();
+    fs::set_permissions(&docker, fs::Permissions::from_mode(0o700)).unwrap();
+    let paths = std::iter::once(host.path().to_path_buf())
+        .chain(std::env::split_paths(
+            &std::env::var_os("PATH").unwrap_or_default(),
+        ))
+        .collect::<Vec<_>>();
+    let (mut leader, mut follower) = (0, 0);
+    let mut size = libc::winsize {
+        ws_row: 40,
+        ws_col: 120,
+        ws_xpixel: 0,
+        ws_ypixel: 0,
+    };
+    // SAFETY: two out-pointers and a valid winsize.
+    assert_eq!(
+        unsafe {
+            libc::openpty(
+                &mut leader,
+                &mut follower,
+                std::ptr::null_mut(),
+                std::ptr::null_mut(),
+                &raw mut size,
+            )
+        },
+        0
+    );
+    // SAFETY: openpty returned these descriptors; each is owned once.
+    let (mut input, output, stdin, stdout, stderr) = unsafe {
+        (
+            std::fs::File::from_raw_fd(libc::dup(leader)),
+            std::fs::File::from_raw_fd(leader),
+            Stdio::from_raw_fd(libc::dup(follower)),
+            Stdio::from_raw_fd(libc::dup(follower)),
+            Stdio::from_raw_fd(follower),
+        )
+    };
+    let mut child = Process::new(assert_cmd::cargo::cargo_bin!("rio"))
+        .current_dir(root.path())
+        .env("PATH", std::env::join_paths(paths).unwrap())
+        .env("RIO_CONFIG_DIR", host.path().join("config"))
+        .env("TERM", "xterm-256color")
+        .env("COLORTERM", "truecolor")
+        .env_remove("NO_COLOR")
+        .env_remove("CI")
+        .env_remove("RIO_TUI")
+        .env_remove("RIO_ENDPOINT_URL")
+        .args(["qa", "--journey", "cart"])
+        .stdin(stdin)
+        .stdout(stdout)
+        .stderr(stderr)
+        .spawn()
+        .unwrap();
+    // Read the screen on a thread; the test waits on what it shows.
+    let (sender, received) = std::sync::mpsc::channel::<Vec<u8>>();
+    std::thread::spawn(move || {
+        let mut output = output;
+        let mut buffer = [0u8; 65536];
+        while let Ok(n) = output.read(&mut buffer) {
+            if n == 0 || sender.send(buffer[..n].to_vec()).is_err() {
+                break;
+            }
+        }
+    });
+    let mut seen = Vec::new();
+    let mut wait_for = |needle: &str, seconds: u64| {
+        let end = Instant::now() + Duration::from_secs(seconds);
+        while Instant::now() < end {
+            if let Ok(chunk) = received.recv_timeout(Duration::from_millis(100)) {
+                seen.extend(chunk);
+            }
+            if String::from_utf8_lossy(&seen).contains(needle) {
+                return true;
+            }
+        }
+        false
+    };
+    assert!(wait_for("select", 30), "Q1 never drew");
+    std::thread::sleep(Duration::from_millis(500));
+    input.write_all(b"\r").unwrap();
+    // The matrix's own key bar (Q1 also names the Matrix tab).
+    let opened = wait_for("follow log", 30);
+    let text = String::from_utf8_lossy(&seen).into_owned();
+    input.write_all(b"\x03").unwrap();
+    std::thread::sleep(Duration::from_millis(300));
+    input.write_all(b"\x03").unwrap();
+    let _ = child.kill();
+    let _ = child.wait();
+    assert!(
+        !text.contains("cursor position could not be read"),
+        "the UI exited on the unanswered cursor query"
+    );
+    assert!(opened, "Enter did not open the matrix");
+}

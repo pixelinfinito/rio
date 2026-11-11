@@ -43,6 +43,41 @@ async fn completed_process_captures_streams_and_redacts_raw_output() {
 }
 
 #[tokio::test]
+async fn a_tap_sees_tool_output_as_it_arrives() {
+    let root = tempfile::tempdir().unwrap();
+    let seen = std::sync::Arc::new(std::sync::Mutex::new(Vec::<(String, String)>::new()));
+    let supervisor = ProcessSupervisor::default();
+    let sink = seen.clone();
+    supervisor.tap_output(std::sync::Arc::new(move |program, chunk| {
+        sink.lock()
+            .unwrap()
+            .push((program.into(), String::from_utf8_lossy(chunk).into()));
+    }));
+    let result = supervisor
+        .run(
+            command(
+                root.path(),
+                "import sys; print('first', flush=True); print('second', file=sys.stderr)",
+            ),
+            CancellationToken::new(),
+        )
+        .await;
+    assert!(matches!(
+        result.termination,
+        Termination::Exited { code: Some(0) }
+    ));
+    let seen = seen.lock().unwrap();
+    let text: String = seen.iter().map(|(_, chunk)| chunk.as_str()).collect();
+    assert!(text.contains("first") && text.contains("second"), "{text}");
+    assert!(
+        seen.iter()
+            .all(|(program, _)| program.starts_with("python"))
+    );
+    // The capture is unchanged by the tap.
+    assert_eq!(String::from_utf8_lossy(&result.stdout).trim(), "first");
+}
+
+#[tokio::test]
 async fn timeout_terminates_a_long_lived_grandchild_before_cleanup() {
     let root = tempfile::tempdir().unwrap();
     let code = "import subprocess,sys,time,pathlib; p=subprocess.Popen([sys.executable,'-c', 'import time; time.sleep(3600)']); pathlib.Path('child.pid').write_text(str(p.pid)); time.sleep(3600)";

@@ -82,6 +82,7 @@ fn project(
     let mut planning = rio_qa::runtime_project(head, options)?;
     let mut plan = planning.plan(base, head, &selection)?;
     planning.add_exploration(&mut plan, &selection)?;
+    rio_qa::restrict_to_cell(&mut plan, &planning, options, selection.cell_wall_seconds)?;
     let mut project = rio_qa::runtime_project(&snapshot.files, options)?;
     project.journeys = planning.journeys;
     project.viewports = planning.viewports;

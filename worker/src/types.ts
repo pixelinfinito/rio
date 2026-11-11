@@ -29,6 +29,11 @@ export interface Location {
   cell?: { viewport: string; color_scheme: "light" | "dark" };
   evidence?: string[];
 }
+export interface Fix {
+  line_start: number;
+  line_end: number;
+  replacement: string;
+}
 export interface Hypothesis {
   id: string;
   rule_id: string;
@@ -39,6 +44,8 @@ export interface Hypothesis {
   trigger: string;
   impact?: string;
   suggested_fix?: string;
+  // Inclusive 1-based range on the primary location's file in head.
+  fix?: Fix;
   state: "new" | "worsened" | "pre-existing" | "fixed" | "unclassified";
   source: { agent: string; cached?: boolean };
   guidance?: { path: string; line: number };
@@ -139,12 +146,37 @@ export type Finding = Hypothesis & {
   history?: FindingHistory;
   // Present only when the council reviewed the finding.
   council?: CouncilReview;
+  trace?: SecurityTrace;
 };
+/** One member's answer in one round, or why it abstained. */
+export interface CouncilRound {
+  round: 1 | 2;
+  real?: "yes" | "no" | "unknown";
+  cause?: string;
+  changed?: boolean;
+}
+/** A security finding's cited path from source to sink. */
+export interface SecurityTrace {
+  catalog_item: string;
+  change: "introduced" | "removed" | "weakened";
+  steps: {
+    role: "source" | "step" | "sink";
+    path: string;
+    line_start: number;
+    missing?: boolean;
+  }[];
+}
 /** finding-v1 `council`: decisions and references, never a numeric confidence. */
 export interface CouncilReview {
   decision?: "reproduced" | "refuted" | "plausible";
   tier?: "experiment" | "protection" | "judgment";
-  members: { role: string; abstained: boolean; cause?: string }[];
+  members: {
+    role: string;
+    abstained: boolean;
+    cause?: string;
+    family?: string;
+    rounds?: CouncilRound[];
+  }[];
   experiments: {
     command: string[];
     version: "base" | "head" | "both";

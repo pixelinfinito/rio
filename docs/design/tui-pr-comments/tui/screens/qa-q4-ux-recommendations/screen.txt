@@ -1,0 +1,40 @@
+ ▃▅▇▇▇▅▃▃▁▁▁▃  rio  qa · ux review · rubric rio/ui-v1 0.1.0               advice · never fails the review  7/9 assessed 
+  1 Journeys   2 Matrix   3 Cell   4 UX   5 Seed   6 Rules                                                              
+ RUBRIC  rio/ui-v1 · ux/*     │ Recommendations 3   + 1 held           │ R1  ux/error-recovery                          
+ ✓ task-clarity               │────────────────────────────────────────│ A declined card leaves no way to retry         
+ ✓ system-feedback            │▌ R1  error-recovery      supported     │ without retyping the address                   
+ ✓ error-prevention           │       observed friction                │                                                
+ ✓ error-recovery             │                                        │ OBSERVED                                       
+ – user-control               │  R2  system-feedback     supported     │ payment-recovery × desktop·light · step 3      
+   no journey reached undo    │       observed friction                │ ▣ step-3.png   ▣ step-3b.png +3 s              
+ ✓ consistency                │                                        │ · error toast disappears after 3 s             
+ ✓ recognition                │  R3  task-efficiency     unverified    │ · the form clears both card and address        
+ ✓ task-efficiency            │       proposed · untested              │ · agent needed 4 extra steps to retry          
+ – inclusive-interaction      │                                        │                                                
+   keyboard journey cancelled │  R4  consistency         held          │ GUIDANCE                                       
+   (budget)                   │       dense grid is intentional        │ REVIEW.md §Recovery  line 18                   
+                              │       REVIEW.md §Intentional           │ ┃ A shopper must be able to retry a            
+ 7 of 9 criteria assessed     │                                        │ ┃ declined card without re-entering            
+                              │────────────────────────────────────────│ ┃ the address.                                 
+ GUIDANCE  REVIEW.md          │ WHAT THE LABELS MEAN                   │                                                
+ §Goals         3 used        │ observed friction the agent hit it     │ RECOMMENDATION                                 
+ §Recovery      1 used        │ proposed · untested benefit not run    │ Keep the address; show the decline inline      
+ §Accessibility 2 used        │ supported voters grounded it           │ next to the card field and move focus          
+ §Intentional   1 held        │ unverified no endpoint / split         │ there.                                         
+                              │                                        │                                                
+   guidance is data: it can ho│ Advice never fails a review.           │ BENEFIT                                        
+   a recommendation back, neve│ Exit code and fail_on unchanged.       │ proposed · untested · rio did not run          
+   change a policy or a rule  │                                        │ the changed flow                               
+                              │                                        │                                                
+                              │                                        │ VERIFICATION  hosted                           
+                              │                                        │ grounding ✓ supported  2 of 3 voters           
+                              │                                        │ voters saw the screenshots and §Recovery       
+                              │                                        │                                                
+                              │                                        │ publish PR summary only, never inline          
+                              │                                        │                                                
+                              │                                        │                                                
+                              │                                        │                                                
+                              │                                        │                                                
+                              │                                        │                                                
+ 3 recommendations · 1 held by owner guidance · 2 criteria not assessed (reasons listed) · exit code unchanged          
+ ↑↓ move   ⏎ expand  g guidance  o evidence  y copy as issue  x export md  esc matrix                                   

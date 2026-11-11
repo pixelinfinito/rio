@@ -1,0 +1,7 @@
+[
+  {
+    "row": 6,
+    "text": " ◆ c90b sql built by│   : █                                          recent first                  │                    ",
+    "reason": "the design shows q typed in the filter yet lists REVIEW, TEAM and SETUP commands that contain no q; the spec filters the palette as the user types, so the golden is the palette as opened, with an empty filter"
+  }
+]

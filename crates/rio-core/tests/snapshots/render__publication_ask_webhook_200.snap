@@ -10,13 +10,13 @@ Risk tier: low ()
 
 Findings
 2 finding(s).
-  correctness/throw [new; error; static_proven] FAIL
+  e5a5af34 correctness/throw [new; error; static_proven] FAIL
     src/cart.ts:1 (total) [new]
     The call to total now throws
     Verification: 3/3 voters; blind: [None, None, None]; split: false
     Lineage: round 1; status open; first posted in b46fb851d56ab91aa42d98fc7efafb215208a42049173b56f5290af44b375ca6
     Trigger: total()
-  correctness/throw [new; error; static_proven] FAIL
+  bcbf2a73 correctness/throw [new; error; static_proven] FAIL
     src/cart.ts:2 (tax) [new]
     The call to tax now throws
     Verification: 3/3 voters; blind: [None, None, None]; split: false

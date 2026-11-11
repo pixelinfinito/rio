@@ -156,3 +156,41 @@ fn immutable_archive_preserves_executable_modes_and_rejects_unsafe_members() {
         assert!(read_runtime_archive(archive(&members).as_slice()).is_err());
     }
 }
+
+#[test]
+fn the_cell_option_narrows_the_plan_to_one_planned_cell() {
+    let source = snapshot();
+    let project = QaProject::load(&source.files).unwrap();
+    let input = SelectionInput {
+        full: true,
+        ..Default::default()
+    };
+    let mut plan = project.plan(&source.files, &source.files, &input).unwrap();
+    assert_eq!(plan.cells.len(), 4);
+    // No option: the whole matrix.
+    restrict_to_cell(&mut plan, &project, &json!({}), 60).unwrap();
+    assert_eq!(plan.cell_count, 4);
+    let option = json!({"cell": {"viewport": "desktop", "color_scheme": "dark"}});
+    restrict_to_cell(&mut plan, &project, &option, 60).unwrap();
+    assert_eq!(
+        plan.cells,
+        vec![Cell {
+            viewport: "desktop".into(),
+            color_scheme: "dark".into()
+        }]
+    );
+    assert_eq!((plan.cell_count, plan.estimated_wall_seconds), (1, 60));
+    // A cell the matrix does not have is refused, never run as a new cell.
+    let mut plan = project.plan(&source.files, &source.files, &input).unwrap();
+    let error = restrict_to_cell(
+        &mut plan,
+        &project,
+        &json!({"cell": {"viewport": "tablet", "color_scheme": "dark"}}),
+        60,
+    )
+    .unwrap_err();
+    assert!(
+        error.to_string().contains("not a cell of this QA matrix"),
+        "{error}"
+    );
+}

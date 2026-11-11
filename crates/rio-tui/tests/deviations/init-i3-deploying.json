@@ -1,0 +1,7 @@
+[
+ {
+  "row": 14,
+  "text": "   9 ✓ AI Gateway       rio · auth on · logs off                  0.7s  │ ████████████████████████████░░░░░░░░░░░░░░░░  ",
+  "reason": "the migration gauge is drawn from its label, 9 of 14 statements: 28 of 44 cells filled; the design fills 26, which contradicts its own label"
+ }
+]

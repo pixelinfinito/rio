@@ -734,6 +734,8 @@ fn council_member(role: &str, cause: Option<&str>) -> CouncilMember {
         role: role.into(),
         abstained: cause.is_some(),
         cause: cause.map(Into::into),
+        family: None,
+        rounds: Vec::new(),
     }
 }
 
@@ -968,4 +970,80 @@ fn council_section_and_footer_render_in_every_format() {
     }
     let json: serde_json::Value = serde_json::from_slice(&render_json(&none).unwrap()).unwrap();
     assert!(json.get("council").is_none());
+}
+#[test]
+fn ascii_glyph_set_keeps_the_terminal_report_ascii() {
+    let policy = FailOn::default().compile().unwrap();
+    let mut report = fixture("complete");
+    // Tool and agent text may carry symbols and CJK; both become ASCII.
+    report.findings[0].message = "Header → body · 型 mismatch…".into();
+    let options = RenderOptions {
+        width: 80,
+        show_pre_existing: true,
+        policy: Some(&policy),
+        glyphs: glyphs::GlyphSet::Ascii,
+        ..Default::default()
+    };
+    let output = render_terminal(&report, &options);
+    assert!(output.bytes().all(|byte| byte < 0x80), "{output}");
+    assert!(output.contains("Header > body . ?? mismatch~"));
+    let unicode = render_terminal(
+        &report,
+        &RenderOptions {
+            glyphs: glyphs::GlyphSet::Unicode,
+            ..options
+        },
+    );
+    assert_eq!(
+        unicode.lines().count(),
+        output.lines().count(),
+        "the ASCII set never changes the layout"
+    );
+    insta::assert_snapshot!("complete_80_ascii", output);
+}
+#[test]
+fn people_see_eight_character_ids_and_machines_the_full_identity() {
+    let mut report = fixture("complete");
+    let identity = format!("8c1e4a9b{}", "7f".repeat(28));
+    report.findings[0].id = identity.clone();
+    let markdown = render_markdown(&report, &RenderOptions::default());
+    assert!(markdown.contains("`8c1e4a9b`"), "{markdown}");
+    assert!(!markdown.contains("8c1e4a9b7f"));
+    let terminal = render_terminal(&report, &RenderOptions::default());
+    assert!(terminal.contains("  8c1e4a9b "));
+    assert!(!terminal.contains("8c1e4a9b7f"));
+    let json: serde_json::Value = serde_json::from_slice(&render_json(&report).unwrap()).unwrap();
+    assert_eq!(json["findings"][0]["id"], identity.as_str());
+    assert_eq!(display_id(&identity), "8c1e4a9b");
+    assert_eq!(display_id("abc"), "abc");
+}
+#[test]
+fn eighty_columns_without_color_keep_locations_whole_and_draw_no_escapes() {
+    // The G3 design is a reference for this renderer, not a golden: its
+    // output stays as scripts know it.
+    let policy = FailOn::default().compile().unwrap();
+    for name in ["complete", "partial", "incomplete"] {
+        let report = fixture(name);
+        let options = RenderOptions {
+            width: 80,
+            color: false,
+            show_pre_existing: true,
+            policy: Some(&policy),
+            ..Default::default()
+        };
+        let output = render_terminal(&report, &options);
+        assert!(!output.contains('\x1b'), "{name}");
+        for line in output.lines() {
+            assert!(
+                unicode_width::UnicodeWidthStr::width(line) <= 80,
+                "{name}: {line}"
+            );
+        }
+        for finding in report.findings.iter().chain(&report.risks) {
+            for loc in &finding.locations {
+                let at = format!("{}:{}", loc.path, loc.line_start);
+                assert!(output.contains(&at), "{name}: location {at} was cut");
+            }
+        }
+    }
 }

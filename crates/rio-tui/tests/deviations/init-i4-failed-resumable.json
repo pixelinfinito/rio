@@ -1,0 +1,7 @@
+[
+ {
+  "row": 3,
+  "text": "  ███████████████████████████████████████████████████████████░░░░░░░░░  │ │ ✕ Containers unavailable                  │ ",
+  "reason": "the progress gauge is drawn from the steps, 14 of 16 finished: 59 of 68 cells filled (as I3 draws 12 of 16 as 51); the design fills 58"
+ }
+]

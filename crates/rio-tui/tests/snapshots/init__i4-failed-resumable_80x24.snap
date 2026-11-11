@@ -1,0 +1,28 @@
+---
+source: crates/rio-tui/tests/init.rs
+expression: "common::lines(&buf)"
+---
+ ▃▅▇▇▇▅▃▃▁▁▁▃ rio  rio init · rio → Pixel In… ✕ stopped at step 15 of 16  2m02s 
+                                                │                               
+  Deployment stopped  nothing was rolled back   │ ┌─ error ───────────────────┐ 
+  ██████████████████████████████████████░░░░░░  │ │ ✕ Containers unavailable  │ 
+                                                │ │ POST …/containers/applica…│ 
+  STEPS                                         │ │                           │ 
+   2 ✓ account          in place                │ │ The account has no        │ 
+   3 ✓ secrets          in place                │ │ Containers access. The    │ 
+   4 ✓ runner image     in place                │ │ Sandbox runner needs      │ 
+   5 ✓ registry copy    in place                │ │ Workers Paid with         │ 
+   6 ↺ D1 database      in place                │ │ Containers on.            │ 
+   7 ✓ R2 bucket        in place                │ │                           │ 
+   8 ✓ Queue            in place                │ └───────────────────────────┘ 
+   9 ✓ AI Gateway       in place                │                               
+  10 ✓ gateway token    in place                │ HOW TO FIX                    
+  11 ✓ Worker upload    in place                │ o  enable Containers          
+  12 ✓ workflows        in place                │    opens dash.cloudflare.com  
+  13 ✓ migrations       in place                │ s  use self-hosted runner     
+  14 ✓ queue consumer   in place                │    --runner self-hosted       
+▌ 15 ✕ sandbox rollout  Containers unavailable  │ ·  check token scopes         
+  16 – workers.dev      skipped                 │    cf auth scopes             
+  14 resources kept · retry or rio deploy reus… │                               
+                                                │                               
+ r retry  s self-hosted  o dashboard  l log  q quit · resume later

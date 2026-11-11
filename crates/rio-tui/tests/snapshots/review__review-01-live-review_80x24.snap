@@ -1,0 +1,28 @@
+---
+source: crates/rio-tui/tests/review.rs
+expression: "common::lines(&buf)"
+---
+ ▃▅▇▇▇▅▃▃▁▁▁▃ rio  feature/parser-guards → orig…  ◐ running · agents 3/5  0m48s 
+                                        │                                       
+  PIPELINE                              │ rio review --base origin/main         
+  ✓ prepare             snapshot… 0.4s  │ Reviewing feature/parser-guards       
+  ◐ checks              2 roots  14.2s  │                                       
+   ·   web/             typescript      │ ██████████████████████░░░░░░░░░░░░░░  
+      · ✓ typecheck     tsc       1.8s  │ step 5 of 7 · agents    ~1m20s left   
+      · ✕ lint          eslint ·… 0.9s  │                                       
+      · ◐ coverage      vitest … 12.0s  │───────────────────────────────────────
+   ·   api/             python          │ FINDINGS SO FAR                       
+      · ✓ typecheck     pyright   2.3s  │                                       
+      · ✓ lint          ruff      0.1s  │ 3 new          1 worsened     1 sec…  
+      · - coverage      skipped: pyte…  │                                       
+   · ✓ secrets          0 found   0.2s  │───────────────────────────────────────
+   · ◐ audit            osv.dev · 3 p…  │ STDERR · TAIL                         
+  ✓ graph               41 nodes… 0.7s  │                                       
+  ✓ triage              6 hypoth… 3.1s  │ 00:45 osv     querybatch 3 packages…  
+  ◐ agents              3 of 5          │ 00:46 agents  tests → spawned job 7…  
+   · ✓ correctness      2 hypoth… 9.8s  │ 00:47 vitest  ◐ body.spec.ts runnin…  
+   · ✓ security         1 hypoth… 7.2s  │ 00:48 agents  performance → graph s…  
+   · ◐ performance      reading graph…  │                                       
+▌  · ◐ tests            vitest job 7…   │ ctrl-c stop · keep partial report  (t…
+                                        │                                       
+ ctrl-c stop  ↑↓ move  ⏎ step log  l full log  f findings  ? help

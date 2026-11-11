@@ -1,0 +1,40 @@
+ ▃▅▇▇▇▅▃▃▁▁▁▃  rio  suppressions · pixelinfinito/rio                             2 open proposals  nothing auto-applied 
+                                         │                                                                              
+ Proposals 2 open · 1 declined           │ sp-3f2a Stop reporting ui/spacing-scale in src/legacy/**                     
+─────────────────────────────────────────│──────────────────────────────────────────────────────────────────────────────
+▌ sp-3f2a  ui/spacing-scale    open      │ EVIDENCE  3 dismissals · reason style · 90 days                              
+            src/legacy/** · 3 style      │  #136  9bd2  src/legacy/nav     @ana   style                                 
+                                         │                 "legacy screens use the old 6 px grid"                       
+  sp-9c01  lint/max-params     open      │  #138  41c7  src/legacy/form    @rui   style                                 
+            scripts/** · 4 irrelevant    │  #139  2e90  src/legacy/grid    @ana   style                                 
+                                         │                                                                              
+  sp-77de  coverage/diff       declined  │ CHANGE  .rio/profiles/default.yaml                                           
+            quiet until 2027-05-09       │   1  version: 1                                                              
+                                         │   2  name: default                                                           
+─────────────────────────────────────────│   3  extends: rio/base                                                       
+ HOW PROPOSALS APPEAR                    │ + 4  suppress:                                                               
+ 3 irrelevant or style dismissals of     │ + 5    - rule: ui/spacing-scale                                              
+ one rule, or of rules under one dir,    │ + 6      paths: ["src/legacy/**"]                                            
+ within 90 days                          │ + 7      reason: style · proposal sp-3f2a                                    
+ proposal_threshold on rio/report        │                                                                              
+                                         │──────────────────────────────────────────────────────────────────────────────
+ ◆ wrong never proposes anything         │ ✓ written to a temp file next to the profile                                 
+ ◆ nothing is suppressed until you       │ ✓ rio profile validate · ok                                                  
+   apply it here or with the CLI         │ → replaces the profile only on y; any other answer leaves it byte for byte   
+                                         │                                                                              
+ CLI                                     │                                                                              
+ rio suppressions list                   │ Apply sp-3f2a to .rio/profiles/default.yaml? [y/N] █                         
+ rio suppressions apply sp-3f2a          │                                                                              
+ rio suppressions decline sp-3f2a \      │   commit the profile with your code · the endpoint never writes repository fi
+   --note "we want these"                │                                                                              
+                                         │                                                                              
+                                         │                                                                              
+                                         │                                                                              
+                                         │                                                                              
+                                         │                                                                              
+                                         │                                                                              
+                                         │                                                                              
+                                         │                                                                              
+                                         │                                                                              
+ answering anything but y exits 1 and leaves both the file and the proposal unchanged                                   
+  y apply  N leave unchanged  x decline… (180 d)  ↑↓ proposal  esc history                                              

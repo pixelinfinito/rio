@@ -2,6 +2,7 @@ import type {
   Evidence,
   FailOn,
   Finding,
+  Fix,
   Hypothesis,
   Location,
   Profile,
@@ -39,7 +40,44 @@ export function suppressedBy(p: Profile) {
           : matches(s.rule, f.rule_id),
     );
 }
-/** The finding-v1 form of a verified hypothesis. */
+/**
+ * A security finding's trace from the agent's ordered `locations`: the
+ * source, the step the change touched (missing when it was removed) and the
+ * sink. Other categories carry none.
+ */
+function securityTrace(
+  category: string,
+  catalog_item: string | undefined,
+  change: Hypothesis["trace_change"],
+  locations: Location[],
+): { trace?: Finding["trace"] } {
+  if (category !== "security" || !catalog_item || !change || !locations.length)
+    return {};
+  const steps = locations.slice(0, 20).map((l, i, all) => ({
+    role:
+      i === 0 && all.length > 1
+        ? ("source" as const)
+        : i === all.length - 1
+          ? ("sink" as const)
+          : ("step" as const),
+    path: l.path,
+    line_start: l.line_start,
+    ...(change === "removed" && i > 0 && i < all.length - 1
+      ? { missing: true }
+      : {}),
+  }));
+  return { trace: { catalog_item, change, steps } };
+}
+/** A fix range is usable only when it is ordered and starts at line 1 or later. */
+export function validFix(fix: Fix): boolean {
+  return (
+    Number.isSafeInteger(fix.line_start) &&
+    Number.isSafeInteger(fix.line_end) &&
+    fix.line_start >= 1 &&
+    fix.line_end >= fix.line_start
+  );
+}
+/** The finding-v1 form of a verified hypothesis; an unusable fix is dropped. */
 export function findingOf(v: Verified): Finding {
   const h = v.hypothesis;
   const {
@@ -48,6 +86,7 @@ export function findingOf(v: Verified): Finding {
     trace_change,
     limitations,
     locations,
+    fix,
     ...publicHypothesis
   } = h;
   // finding-v1 has no slot for agent-only keys; their statements join the impact.
@@ -55,13 +94,21 @@ export function findingOf(v: Verified): Finding {
     h.impact,
     catalog_item &&
       `Catalog item ${catalog_item}: the change ${trace_change ?? "affects"} a step of its trace.`,
-    limitations?.length && `Limitations: ${limitations.join("; ")}.`,
+    limitations?.length &&
+      `Limitations: ${limitations.map((l) => l.trim().replace(/[.;\s]+$/, "")).join("; ")}.`,
   ]
     .filter(Boolean)
     .join(" ");
   return {
     ...publicHypothesis,
     ...(impact ? { impact } : {}),
+    ...(fix && validFix(fix) ? { fix } : {}),
+    ...securityTrace(
+      v.category ?? h.category,
+      catalog_item,
+      trace_change,
+      locations ?? [h.location],
+    ),
     category: (v.category ?? h.category) as Finding["category"],
     evidence_level: v.evidence_level,
     verification: v.verification,

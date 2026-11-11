@@ -148,6 +148,9 @@ pub struct Finding {
     pub impact: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub suggested_fix: Option<String>,
+    /// Machine-applicable replacement of a line range on the primary file.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub fix: Option<Fix>,
     pub evidence: Vec<String>,
     pub source: Source,
     pub locations: Vec<Location>,
@@ -178,6 +181,26 @@ pub struct Finding {
     /// Present only when the council reviewed the finding.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub council: Option<CouncilReview>,
+    /// Security findings only: the cited path from source to sink.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub trace: Option<SecurityTrace>,
+}
+
+/// Inclusive, 1-based line range on the primary location's file in the head
+/// version, and the full text that replaces those lines.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Fix {
+    pub line_start: u32,
+    pub line_end: u32,
+    pub replacement: String,
+}
+
+impl Fix {
+    /// A fix is usable only when its range is ordered and starts at line 1 or later.
+    pub fn is_valid(&self) -> bool {
+        self.line_start >= 1 && self.line_end >= self.line_start
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -499,6 +522,48 @@ pub struct CouncilMember {
     pub abstained: bool,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cause: Option<String>,
+    /// Model family, for presentation; absent in older council blocks.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub family: Option<String>,
+    /// The member's answer per round it was asked.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub rounds: Vec<CouncilRound>,
+}
+
+/// One member's round: its `real` answer, or the cause it abstained.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct CouncilRound {
+    pub round: u8,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub real: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub cause: Option<String>,
+    /// Round 2 changed position citing evidence.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub changed: bool,
+}
+
+/// A security finding's path from source to sink as the agent cited it.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct SecurityTrace {
+    pub catalog_item: String,
+    /// `introduced`, `removed` or `weakened`.
+    pub change: String,
+    pub steps: Vec<TraceStep>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct TraceStep {
+    /// `source`, `step` or `sink`.
+    pub role: String,
+    pub path: String,
+    pub line_start: u32,
+    /// The change removed this step; its location is in base.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub missing: bool,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

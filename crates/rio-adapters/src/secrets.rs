@@ -79,6 +79,7 @@ pub fn scan_secrets(diff: &Diff, head: &Tree) -> Result<Vec<Finding>> {
                 trigger,
                 impact: Some("A credential may be exposed by this change".into()),
                 suggested_fix: Some("Remove the credential and rotate it if it was active".into()),
+                fix: None,
                 evidence: vec![format!("Built-in credential pattern {}", found.pattern)],
                 source: Source::Tool {
                     tool: "rio-secrets".into(),
@@ -94,6 +95,7 @@ pub fn scan_secrets(diff: &Diff, head: &Tree) -> Result<Vec<Finding>> {
                 author_response: None,
                 history: None,
                 council: None,
+                trace: None,
             });
         }
     }
