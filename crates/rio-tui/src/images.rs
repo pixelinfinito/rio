@@ -311,6 +311,7 @@ struct Replies {
 impl Replies {
     /// Parse what the terminal sent back (`ESC _ G i=31;OK ESC \`,
     /// `CSI 6 ; h ; w t`, `CSI ? … c`).
+    #[cfg_attr(not(unix), allow(dead_code))]
     fn parse(bytes: &[u8]) -> Self {
         let text = String::from_utf8_lossy(bytes);
         let mut replies = Self {

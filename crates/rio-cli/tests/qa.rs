@@ -528,7 +528,7 @@ fn the_qa_ui_works_in_a_terminal_that_answers_no_query() {
         ))
         .collect::<Vec<_>>();
     let (mut leader, mut follower) = (0, 0);
-    let size = libc::winsize {
+    let mut size = libc::winsize {
         ws_row: 40,
         ws_col: 120,
         ws_xpixel: 0,
@@ -541,8 +541,8 @@ fn the_qa_ui_works_in_a_terminal_that_answers_no_query() {
                 &mut leader,
                 &mut follower,
                 std::ptr::null_mut(),
-                std::ptr::null(),
-                &size,
+                std::ptr::null_mut(),
+                &mut size,
             )
         },
         0
