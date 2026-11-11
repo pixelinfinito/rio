@@ -128,7 +128,7 @@ P0 = required for v0.2 (first usable release with backend); P1 = v0.3; P2 = late
 
 **Non-functional requirements**
 
-- Fast mode completes within the profile's wall-time budget (default 4 min) for a 300-line diff in a mid-size TypeScript repo.
+- Fast mode completes within the profile's wall-time budget (default 10 min) for a 300-line diff in a mid-size TypeScript repo.
 - Deterministic checks run locally with no backend when `--offline` is set.
 - No source code leaves the user's Cloudflare account except to the model provider they configured.
 - CLI and endpoint are version-paired; mismatches fail with an actionable message.

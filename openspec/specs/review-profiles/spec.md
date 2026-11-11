@@ -226,7 +226,7 @@ Profiles SHALL accept optional `verify: { voters, quorum, model }`. Defaults SHA
 - **THEN** validation rejects that explicit alias
 
 ### Requirement: Verifier budget configuration
-Both `budget.fast` and `budget.deep` SHALL accept a positive integer `verify_tokens` bounding a voter's complete verification of one hypothesis. Resolution SHALL retain this limit or default it to 320,000 tokens, include it in the resolved profile and review identity, and preserve the overall review budget limits. A missing `budget.fast.tokens` SHALL resolve to 2,400,000 and a missing `budget.deep` to 4,800,000 tokens.
+Both `budget.fast` and `budget.deep` SHALL accept a positive integer `verify_tokens` bounding a voter's complete verification of one hypothesis. Resolution SHALL retain this limit or default it to 320,000 tokens, include it in the resolved profile and review identity, and preserve the overall review budget limits. A missing `budget.fast.tokens` SHALL resolve to 2,400,000 and a missing `budget.deep` to 4,800,000 tokens. A missing `budget.fast.wall_time` SHALL resolve to 10 minutes.
 
 #### Scenario: Deep verification budget
 - **WHEN** a deep review resolves `budget.deep.verify_tokens: 4000`

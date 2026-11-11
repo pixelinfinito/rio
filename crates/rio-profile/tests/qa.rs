@@ -89,7 +89,7 @@ fn qa_defaults_and_deadlines_are_resolved_for_both_modes() {
         base.profile
             .review_wall(false, QA_VERIFICATION_RESERVE)
             .unwrap(),
-        Duration::from_secs(4 * 60)
+        Duration::from_secs(10 * 60)
     );
 }
 

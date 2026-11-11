@@ -37,7 +37,7 @@ pub struct BudgetLimit {
 impl Default for BudgetLimit {
     fn default() -> Self {
         Self {
-            wall_time: "4m".into(),
+            wall_time: "10m".into(),
             tokens: None,
             agents_max: None,
             verify_tokens: None,
@@ -646,7 +646,7 @@ impl ProfileLoader {
                 let mut mode_defaults = if deep {
                     json!({"wall_time":"10m","tokens":DEFAULT_DEEP_TOKENS,"agents_max":5,"verify_tokens":DEFAULT_VERIFY_TOKENS})
                 } else {
-                    json!({"wall_time":"4m"})
+                    json!({"wall_time":"10m"})
                 };
                 if document.value["budget"][name].is_object() {
                     deep_merge(&mut mode_defaults, document.value["budget"][name].clone());
