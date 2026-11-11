@@ -29,16 +29,72 @@ async function readable(
 ): Promise<Entry> {
   safePath(path);
   invariant(version === "base" || version === "head", "invalid version");
-  const tree = readerOf(snapshot)[version];
+  const reader = readerOf(snapshot);
+  const tree = reader[version];
   const parts = path.split("/");
   let entry: Entry | null = null;
   for (let i = 1; i <= parts.length; i++) {
     entry = await tree.stat(parts.slice(0, i).join("/"));
     invariant(entry?.mode !== SYMLINK, "symlink access denied");
   }
-  invariant(entry, "file not in selected snapshot");
+  if (!entry) {
+    // An added or deleted file is the usual cause; say where the path does exist.
+    const other = version === "head" ? "base" : "head";
+    throw new Error(
+      `${JSON.stringify(path)} is not a file in the ${version} snapshot${
+        (await reader[other].stat(path))
+          ? `; it exists in the ${other} snapshot`
+          : "; check the path, or find it with search"
+      }`,
+    );
+  }
   return entry;
 }
+/** Tool arguments as an object; a model may send none. */
+function argsOf(args: unknown): Record<string, any> {
+  return args !== null && typeof args === "object" && !Array.isArray(args)
+    ? (args as Record<string, any>)
+    : {};
+}
+const given = (value: unknown) => value !== undefined && value !== null;
+/** Refuses arguments a tool does not take, so that none is silently ignored. */
+function onlyArgs(tool: string, args: Record<string, any>, names: string[]) {
+  const unknown = Object.keys(args).filter((key) => !names.includes(key));
+  invariant(
+    unknown.length === 0,
+    `${tool} does not take ${unknown
+      .slice(0, 5)
+      .map((key) => JSON.stringify(key.slice(0, 40)))
+      .join(", ")}; its arguments are ${names.join(", ")}`,
+  );
+}
+function versionOf(tool: string, value: unknown, fallback?: Version): Version {
+  if (!given(value) && fallback) return fallback;
+  invariant(
+    value === "base" || value === "head",
+    `${tool} needs "version": "base" or "head"`,
+  );
+  return value;
+}
+/**
+ * The files a search scope covers. A scope is a glob over repository paths, read
+ * the way ripgrep reads one: a file or directory path also covers what is under
+ * it, and a pattern without a slash (`*.ts`) matches at any depth. It only ever
+ * selects among snapshot entries; it is never a filesystem path.
+ */
+function scopeMatcher(scope: string): (path: string) => boolean {
+  const plain = scope.replace(/^(?:\.\/)+/, "").replace(/\/+$/, "");
+  if (plain === "" || plain === ".") return () => true;
+  const glob = picomatch(
+    plain.includes("/")
+      ? [plain, `${plain}/**`]
+      : [`**/${plain}`, `**/${plain}/**`],
+    { dot: true },
+  );
+  // A path is also matched as written, since names such as `app/[id]` are globs too.
+  return (path) => path === plain || path.startsWith(`${plain}/`) || glob(path);
+}
+const REGEX_SYNTAX = /\\[.()\[\]wsdbSWDB]|\.[*+]|\[\^|\(\?[:=!]|[^|\s]\|[^|\s]/;
 export async function readFile(
   snapshot: Snapshot | SnapshotReader,
   path: string,
@@ -184,15 +240,34 @@ export class Tools {
   ) {
     this.snapshot = readerOf(snapshot);
   }
-  async dispatch(name: string, args: any): Promise<any> {
+  /**
+   * Runs one tool call. Every rejection says what to send instead: the model
+   * reads the message and has no other description of the arguments.
+   */
+  async dispatch(name: string, input: any): Promise<any> {
     invariant(
       !this.permissions || this.permissions.includes(name),
       "tool disabled by manifest",
     );
+    const args = argsOf(input);
     if (name === "board_read") return [];
     if (name === "board_write") return { deferred: true };
     if (name === "read_file") {
-      const entry = await readable(this.snapshot, args.path, args.version);
+      onlyArgs("read_file", args, [
+        "path",
+        "version",
+        "line_start",
+        "line_end",
+      ]);
+      try {
+        safePath(args.path);
+      } catch {
+        throw new Error(
+          'read_file needs "path": a file path relative to the repository root such as "src/main.ts", without a leading "/", "." or ".." segments or backslashes',
+        );
+      }
+      const version = versionOf("read_file", args.version);
+      const entry = await readable(this.snapshot, args.path, version);
       const start = args.line_start ?? 1,
         end = args.line_end ?? start + 200;
       invariant(
@@ -200,53 +275,78 @@ export class Tools {
           start > 0 &&
           Number.isInteger(end) &&
           end >= start,
-        "invalid line range",
+        "read_file line_start and line_end must be whole numbers from 1, with line_end not before line_start",
       );
       // A large file is streamed and redacted per line, keeping only the range.
       const lines =
         entry.size > LARGE
           ? (
-              await largeLines(
-                this.snapshot[args.version as Version],
-                entry,
-                (_, i) => (i >= end ? "stop" : i >= start - 1),
+              await largeLines(this.snapshot[version], entry, (_, i) =>
+                i >= end ? "stop" : i >= start - 1,
               )
             )?.map(redact)
-          : redact(
-              await readFile(this.snapshot, args.path, args.version),
-            ).split("\n");
+          : redact(await readFile(this.snapshot, args.path, version)).split(
+              "\n",
+            );
       invariant(lines, "binary file cannot be read as text");
+      invariant(
+        entry.size > LARGE || start <= lines.length,
+        `${JSON.stringify(args.path)} has ${lines.length} lines in the ${version} snapshot; line_start ${start} is past its end`,
+      );
       return (entry.size > LARGE ? lines : lines.slice(start - 1, end))
         .map((line, i) => `${start + i}: ${line}`)
         .join("\n")
         .slice(0, OUTPUT_LIMIT);
     }
     if (name === "search") {
+      onlyArgs("search", args, ["pattern", "version", "scope", "glob"]);
       invariant(
         typeof args.pattern === "string" &&
-          args.pattern.length <= 500 &&
-          ["base", "head"].includes(args.version),
-        "invalid search",
+          args.pattern.length > 0 &&
+          args.pattern.length <= 500,
+        'search needs "pattern": the text to find, 1 to 500 characters, matched as written (it is not a regular expression)',
       );
+      // Reviews mostly search the changed code, so head is the version when none is named; the result states it.
+      const version = versionOf("search", args.version, "head");
+      // Models name the scope `glob` as often as `scope`; both mean the same argument.
+      invariant(
+        !given(args.scope) || !given(args.glob) || args.scope === args.glob,
+        'search takes "scope" or "glob" (the same argument), not two different values',
+      );
+      const scoped = given(args.scope) || given(args.glob);
       // Literal search avoids untrusted regex backtracking. Scope is a glob, never a filesystem root.
-      const scope = args.scope ?? "**";
+      const scope = args.scope ?? args.glob ?? "**";
       invariant(
         typeof scope === "string" &&
+          scope.length > 0 &&
           scope.length <= 500 &&
           !scope.includes("..") &&
           !scope.startsWith("/"),
-        "invalid scope",
+        'search "scope" must be a glob or a path relative to the repository root, such as "src/**", "src/auth" or "*.ts", without ".." or a leading "/"',
       );
-      const match = picomatch(scope, { dot: true }),
+      const match = scopeMatcher(scope),
         results: any[] = [];
-      const tree = this.snapshot[args.version as Version];
+      const tree = this.snapshot[version];
+      const answer = (truncated: boolean) => ({
+        results,
+        truncated,
+        version,
+        ...(scoped ? { scope } : {}),
+        ...(!results.length && REGEX_SYNTAX.test(args.pattern)
+          ? {
+              note: "pattern is matched as literal text; regular expression syntax is not interpreted",
+            }
+          : {}),
+      });
       let size = 0,
+        files = 0,
         truncated = false;
       // Streams the tree in path order and stops at the output limit.
       for await (const batch of tree.batches(
         (e) => e.mode !== SYMLINK && match(e.path),
       )) {
         for (const [entry, bytes] of batch) {
+          files++;
           let lines: string[] | null;
           const found: { line: number; text: string }[] = [];
           if (bytes) {
@@ -277,10 +377,15 @@ export class Tools {
             }
             results.push(item);
           }
-          if (truncated) return { results, truncated: true };
+          if (truncated) return answer(true);
         }
       }
-      return { results, truncated: false };
+      // An empty result must mean "no match", never "the scope selected nothing".
+      invariant(
+        files > 0 || !scoped,
+        `search scope ${JSON.stringify(scope)} matches no file in the ${version} snapshot; scope is a glob or a path relative to the repository root, such as "src/**", "src/auth" or "*.ts"`,
+      );
+      return answer(false);
     }
     if (name === "graph_query") {
       invariant(["base", "head"].includes(args.version), "invalid version");
@@ -327,10 +432,12 @@ export class Tools {
             (x: any) => typeof x === "string" && x.length <= 16000,
           ) &&
           ["base", "head"].includes(args.version),
-        "invalid command",
+        'run needs "command": an argv array of strings such as ["npm","test"], and "version": "base" or "head"',
       );
       return this.execute(args.command, args.version);
     }
-    throw new Error("unknown tool");
+    throw new Error(
+      `unknown tool ${JSON.stringify(String(name).slice(0, 40))}; the tools are read_file, search, graph_query, run, board_read, board_write`,
+    );
   }
 }
