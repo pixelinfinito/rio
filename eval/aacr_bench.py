@@ -29,11 +29,13 @@ from datetime import datetime, timezone
 
 
 def sha256(path):
+    """Hash a file without loading the executable or dataset into memory."""
     with Path(path).open("rb") as handle:
         return hashlib.file_digest(handle, "sha256").hexdigest()
 
 
 def write_json(path, value):
+    """Atomically replace a UTF-8 JSON artifact in its evidence directory."""
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_suffix(path.suffix + ".tmp")
@@ -41,24 +43,50 @@ def write_json(path, value):
     tmp.replace(path)
 
 
-def execute(argv, cwd, evidence, name, timeout=600, env=None):
-    """Capture exact argv and streams; interrupt Rio gracefully on timeout."""
+def stop_process(proc):
+    """Interrupt a child group, escalating if it does not exit promptly."""
+    try:
+        os.killpg(proc.pid, signal.SIGINT)
+    except ProcessLookupError:
+        pass
+    try:
+        proc.wait(timeout=30)
+    except subprocess.TimeoutExpired:
+        try:
+            os.killpg(proc.pid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+        proc.wait()
+
+
+def execute(argv, cwd, evidence, name, timeout=600, env=None, stop_event=None):
+    """Capture commands and streams; propagate cancellation after child cleanup."""
     out, err = evidence / f"{name}.stdout", evidence / f"{name}.stderr"
     started = time.monotonic()
     timed_out = False
+    if stop_event is not None and stop_event.is_set():
+        raise KeyboardInterrupt
     with out.open("wb") as stdout, err.open("wb") as stderr:
         proc = subprocess.Popen(argv, cwd=cwd, env=env, stdout=stdout,
                                 stderr=stderr, start_new_session=True)
         try:
-            proc.wait(timeout=timeout)
-        except (subprocess.TimeoutExpired, KeyboardInterrupt):
+            while True:
+                if stop_event is not None and stop_event.is_set():
+                    raise KeyboardInterrupt
+                remaining = timeout - (time.monotonic() - started)
+                if remaining <= 0:
+                    raise subprocess.TimeoutExpired(argv, timeout)
+                try:
+                    proc.wait(timeout=min(0.25, remaining))
+                    break
+                except subprocess.TimeoutExpired:
+                    continue
+        except subprocess.TimeoutExpired:
             timed_out = True
-            os.killpg(proc.pid, signal.SIGINT)
-            try:
-                proc.wait(timeout=30)
-            except subprocess.TimeoutExpired:
-                os.killpg(proc.pid, signal.SIGKILL)
-                proc.wait()
+            stop_process(proc)
+        except KeyboardInterrupt:
+            stop_process(proc)
+            raise
     record = {"argv": list(map(str, argv)), "cwd": str(cwd),
               "exit_code": proc.returncode, "timed_out": timed_out,
               "duration_seconds": round(time.monotonic() - started, 3),
@@ -122,8 +150,20 @@ def comments_from_report(report):
     return comments
 
 
-def review_group(repo, instances, args):
-    env = os.environ.copy()
+GIT_LOCATION_VARIABLES = frozenset({
+    "GIT_DIR", "GIT_WORK_TREE", "GIT_INDEX_FILE", "GIT_OBJECT_DIRECTORY",
+    "GIT_ALTERNATE_OBJECT_DIRECTORIES", "GIT_COMMON_DIR", "GIT_NAMESPACE",
+})
+
+
+def git_environment():
+    """Keep Git operations bound to their cwd rather than an inherited repository."""
+    return {key: value for key, value in os.environ.items() if key not in GIT_LOCATION_VARIABLES}
+
+
+def review_group(repo, instances, args, stop_event=None):
+    """Review one repository serially, preserving terminal attempts for resume."""
+    env = git_environment()
     for key in list(env):
         if (key.startswith("RIO_") and key not in {"RIO_API_TOKEN", "RIO_ENDPOINT_URL"}) or key.startswith("JUDGE_"):
             del env[key]
@@ -134,6 +174,8 @@ def review_group(repo, instances, args):
         checkout.mkdir()
         initialized = False
         for instance in instances:
+            if stop_event is not None and stop_event.is_set():
+                raise KeyboardInterrupt
             safe = instance["instance_id"].replace("/", "__")
             evidence = args.out / "cases" / safe
             if (evidence / "status.json").exists():
@@ -145,9 +187,11 @@ def review_group(repo, instances, args):
                       "head_commit": instance["head_commit"], "status": "failed"}
             cache = Path(work) / "cache"
             env["RIO_CACHE_DIR"] = str(cache)
+            interrupted = False
             def git(name, *argv, check=True):
+                """Record a Git command against this disposable checkout."""
                 record, stdout, stderr = execute(["git", *argv], checkout,
-                                                evidence, name, env=env)
+                                                evidence, name, env=env, stop_event=stop_event)
                 if check and (record["exit_code"] or record["timed_out"]):
                     raise RuntimeError(f"git {name} failed; see {name}.stderr: {stderr[-600:]}")
                 return record, stdout.strip()
@@ -174,7 +218,7 @@ def review_group(repo, instances, args):
                 record, stdout, _ = execute(
                     [str(args.rio), "review", "--staged",
                      "--profile", str(args.out / "profile.yaml"), "--format", "json"],
-                    checkout, evidence, "review", timeout=args.timeout, env=env)
+                    checkout, evidence, "review", timeout=args.timeout, env=env, stop_event=stop_event)
                 status["exit_code"] = record["exit_code"]
                 for pattern, filename in [("**/verification/audit.json", "audit.json"),
                                           ("**/endpoint.json", "endpoint.json")]:
@@ -193,15 +237,20 @@ def review_group(repo, instances, args):
                 write_json(args.out / "results" / f"{safe}.json",
                            {"instance_id": instance["instance_id"], "reviewer": "rio",
                             "duration_seconds": duration, "review": {"comments": comments}})
+            except KeyboardInterrupt:
+                interrupted = True
+                (args.out / "results" / f"{safe}.json").unlink(missing_ok=True)
+                raise
             except Exception as error:
                 status["error"] = str(error)
             finally:
                 status["duration_seconds"] = round(time.monotonic() - started, 3)
-                write_json(evidence / "status.json", status)
+                if not interrupted:
+                    write_json(evidence / "status.json", status)
                 if cache.exists():
                     shutil.rmtree(cache)
                 with PRINT_LOCK:
-                    print(f"{instance['instance_id']}: {status['status']} "
+                    print(f"{instance['instance_id']}: {'interrupted' if interrupted else status['status']} "
                           f"({status.get('comments', 0)} comments, {status['duration_seconds']}s) "
                           f"{status.get('error', '')}", flush=True)
 
@@ -210,6 +259,7 @@ PRINT_LOCK = threading.Lock()
 
 
 def run(args):
+    """Pin run inputs, dispatch repository workers, and summarize completed attempts."""
     args.out.mkdir(parents=True, exist_ok=True)
     instances = load_dataset(args.dataset)
     if args.instance:
@@ -220,13 +270,13 @@ def run(args):
         raise SystemExit("No selected instances")
     manifest_path = args.out / "manifest.json"
     identity = {"rio_sha256": sha256(args.rio), "dataset_sha256": sha256(args.dataset),
-                "aacr_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=args.aacr).decode().strip(),
+                "aacr_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=args.aacr, env=git_environment()).decode().strip(),
                 "instances": [x["instance_id"] for x in instances]}
-    env = dict(os.environ, RIO_CONFIG_DIR=str(args.config_dir))
+    env = dict(git_environment(), RIO_CONFIG_DIR=str(args.config_dir))
     profile = subprocess.check_output([str(args.rio), "profile", "show", args.profile, "--raw"], env=env)
     resolved = subprocess.check_output([str(args.rio), "profile", "show", args.profile], env=env)
     if manifest_path.exists():
-        manifest = json.loads(manifest_path.read_text())
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
         if not args.resume or any(manifest[k] != v for k, v in identity.items()):
             raise SystemExit("Existing run: --resume requires matching binary, dataset and instances")
         if sha256(args.out / "profile.yaml") != manifest["profile_sha256"]:
@@ -251,25 +301,33 @@ def run(args):
     args.temp_root.mkdir(parents=True, exist_ok=True)
     # Other work in the Rio checkout may rebuild target/debug/rio during a long
     # run. Execute a private immutable copy, not that shared build output.
-    pinned_binary = args.temp_root / f"rio-{identity['rio_sha256']}"
-    if not pinned_binary.exists():
+    with tempfile.TemporaryDirectory(prefix="aacr-bin-", dir=args.temp_root) as binary_dir:
+        pinned_binary = Path(binary_dir) / "rio"
         shutil.copy2(args.rio, pinned_binary)
-    if sha256(pinned_binary) != identity["rio_sha256"]:
-        raise SystemExit("Pinned Rio binary hash mismatch")
-    args.rio = pinned_binary
-    manifest.setdefault("invocations", []).append({
-        "started_at": datetime.now(timezone.utc).isoformat(),
-        "adapter_sha256": sha256(__file__), "concurrency": args.concurrency,
-        "pinned_binary": str(pinned_binary), "temp_root": str(args.temp_root)})
-    write_json(manifest_path, manifest)
-    groups = defaultdict(list)
-    for instance in instances:
-        groups[instance["repo"]].append(instance)
-    with concurrent.futures.ThreadPoolExecutor(max_workers=args.concurrency) as pool:
-        futures = [pool.submit(review_group, repo, rows, args) for repo, rows in groups.items()]
-        for future in concurrent.futures.as_completed(futures):
-            future.result()
-    statuses = [json.loads(p.read_text()) for p in (args.out / "cases").glob("*/status.json")]
+        if sha256(pinned_binary) != identity["rio_sha256"]:
+            raise SystemExit("Pinned Rio binary hash mismatch")
+        worker_args = argparse.Namespace(**{**vars(args), "rio": pinned_binary})
+        manifest.setdefault("invocations", []).append({
+            "started_at": datetime.now(timezone.utc).isoformat(),
+            "adapter_sha256": sha256(__file__), "concurrency": args.concurrency,
+            "pinned_binary": str(pinned_binary), "temp_root": str(args.temp_root)})
+        write_json(manifest_path, manifest)
+        groups = defaultdict(list)
+        for instance in instances:
+            groups[instance["repo"]].append(instance)
+        stop_event = threading.Event()
+        pool = concurrent.futures.ThreadPoolExecutor(max_workers=args.concurrency)
+        try:
+            futures = [pool.submit(review_group, repo, rows, worker_args, stop_event)
+                       for repo, rows in groups.items()]
+            for future in concurrent.futures.as_completed(futures):
+                future.result()
+        except BaseException:
+            stop_event.set()
+            raise
+        finally:
+            pool.shutdown(wait=True, cancel_futures=True)
+    statuses = [json.loads(p.read_text(encoding="utf-8")) for p in (args.out / "cases").glob("*/status.json")]
     summary = {"selected": len(instances), "attempted": len(statuses),
                "statuses": dict(Counter(x["status"] for x in statuses)),
                "generated_comments": sum(x.get("comments", 0) for x in statuses),
@@ -279,14 +337,15 @@ def run(args):
 
 
 def evaluate(args):
+    """Score pinned review results with a real upstream judge and reusable cache."""
     if not os.environ.get("JUDGE_API_KEY") or os.environ.get("JUDGE_USE_MOCK", "").lower() == "true":
         raise SystemExit("Real semantic scoring requires JUDGE_API_KEY; mock scores are refused")
     if not os.environ.get("JUDGE_MODEL"):
         raise SystemExit("Set JUDGE_MODEL explicitly to pin the semantic judge")
-    manifest = json.loads((args.out / "manifest.json").read_text())
+    manifest = json.loads((args.out / "manifest.json").read_text(encoding="utf-8"))
     if sha256(args.dataset) != manifest["dataset_sha256"]:
         raise SystemExit("Dataset differs from the reviewed run")
-    commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=args.aacr).decode().strip()
+    commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=args.aacr, env=git_environment()).decode().strip()
     if commit != manifest["aacr_commit"]:
         raise SystemExit("Upstream evaluator differs from pinned commit")
     sys.path.insert(0, str(args.aacr / "evaluation"))
@@ -303,11 +362,12 @@ def evaluate(args):
     cache.mkdir(exist_ok=True)
     original_match = judge.match_llm_file_level
     async def cached_match(*params):
+        """Reuse successful judgments without caching upstream provider errors."""
         identity = [commit, os.environ.get("JUDGE_MODEL"), os.environ.get("JUDGE_BASE_URL"), params]
         key = hashlib.sha256(json.dumps(identity, ensure_ascii=False).encode()).hexdigest()
         path = cache / f"{key}.json"
         if path.exists():
-            return json.loads(path.read_text())["answer"]
+            return json.loads(path.read_text(encoding="utf-8"))["answer"]
         answer = await original_match(*params)
         if "评估过程出错" not in answer.get("reason", ""):
             write_json(path, {"identity": identity, "answer": answer})
@@ -319,8 +379,8 @@ def evaluate(args):
         audit_path = args.out / "cases" / safe / "audit.json"
         result_path = args.out / "results" / f"{safe}.json"
         if audit_path.exists() and result_path.exists():
-            usage = json.loads(audit_path.read_text()).get("usage", [])
-            result = json.loads(result_path.read_text())
+            usage = json.loads(audit_path.read_text(encoding="utf-8")).get("usage", [])
+            result = json.loads(result_path.read_text(encoding="utf-8"))
             result["review"]["summary"] = {
                 "input_tokens": sum(x.get("input_tokens") or 0 for x in usage),
                 "output_tokens": sum(x.get("output_tokens") or 0 for x in usage)}
@@ -342,6 +402,7 @@ def evaluate(args):
 
 
 def main():
+    """Parse and validate paths and execution limits for either adapter stage."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("stage", choices=["run", "evaluate"])
     parser.add_argument("--aacr", type=Path, required=True)

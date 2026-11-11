@@ -47,6 +47,8 @@ are concurrent; instances within a repository run serially in an isolated
 checkout. Start with one worker and size concurrency to your endpoint's container
 capacity. `eval/runs/aacr-bench*/` is ignored by Git; keep datasets and evidence
 out of commits. The runner deletes only its own temporary source and cache trees.
+Each invocation copies the executable into a new owner-only temporary directory,
+verifies its hash, and removes the copy after its workers exit.
 Dependency preparation and tool execution belong to the configured endpoint;
 the runner does not install benchmark project dependencies on the host.
 
@@ -74,6 +76,8 @@ are preserved; use a fresh directory for corrected attempts.
 Pass the same `--profile` and `--config-dir` when resuming. Keep inherited
 personal profiles unchanged for the duration of a run; resume checks the
 selected profile and its resolved configuration against the saved copies.
+Ctrl-C stops active process groups and cancels queued repository work. Interrupted
+cases have no terminal status or evaluator result, so `--resume` retries them.
 
 ## Score
 
