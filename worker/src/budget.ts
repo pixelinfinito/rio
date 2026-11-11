@@ -1,5 +1,10 @@
 import { invariant } from "./validation";
 import type { Profile } from "./types";
+
+/** Review token defaults; profile resolution records the same values. */
+export const DEFAULT_TOKENS = 2_400_000;
+export const DEFAULT_VERIFY_TOKENS = 320_000;
+
 export function parseWall(value: string): number {
   const match = /^(\d+(?:\.\d+)?)(ms|s|m|h|d)$/.exec(value);
   invariant(match, "invalid wall budget");

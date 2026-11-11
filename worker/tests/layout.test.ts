@@ -65,7 +65,6 @@ describe("verifier-system", () => {
       gateway,
       ledger: ledger(),
       tools: () => new Tools(snapshot, graphs, undefined),
-      agentTokens: 500000,
       verifyTokens,
       save,
       prompt: { partition: "p".repeat(32), single: on },

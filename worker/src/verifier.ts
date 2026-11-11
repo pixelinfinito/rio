@@ -11,6 +11,7 @@ import type {
   Vote,
 } from "./types";
 import { readerOf, type SnapshotReader } from "./snapshot";
+import { DEFAULT_VERIFY_TOKENS } from "./budget";
 import type { Ledger } from "./gateway";
 import {
   VOTE_SCHEMA,
@@ -39,7 +40,6 @@ export interface VerifyOptions {
   gateway: Gateway;
   ledger: Ledger;
   tools: (voter: number) => Tools;
-  agentTokens: number;
   verifyTokens?: number;
   cancelled?: () => Promise<boolean>;
   call?: Parameters<typeof converse>[0]["call"];
@@ -173,8 +173,7 @@ export async function verifyHypothesis(
           };
         try {
           const allowance = {
-            remaining:
-              o.verifyTokens ?? Math.max(1, Math.floor(o.agentTokens / 5)),
+            remaining: o.verifyTokens ?? DEFAULT_VERIFY_TOKENS,
           };
           const messages: ModelRequest["messages"] = [
             {

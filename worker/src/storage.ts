@@ -2,7 +2,7 @@ import type { Env, Usage, Profile } from "./types";
 import type { Ledger } from "./gateway";
 import { scrub } from "./redaction";
 import { invariant } from "./validation";
-import { reviewWall } from "./budget";
+import { DEFAULT_TOKENS, reviewWall } from "./budget";
 // R2 PUT is atomic. D1 pointers are published only after the object exists.
 export class Store {
   constructor(readonly env: Env) {}
@@ -56,7 +56,7 @@ export class Store {
     await this.env.DB.prepare(
       "UPDATE reviews SET token_limit=?,deadline=created_at+? WHERE id=? AND cancelled=0",
     )
-      .bind(active.tokens ?? 100000, reviewWall(profile, mode), id)
+      .bind(active.tokens ?? DEFAULT_TOKENS, reviewWall(profile, mode), id)
       .run();
   }
 }

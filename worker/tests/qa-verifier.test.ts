@@ -143,7 +143,6 @@ function options() {
     context,
     snapshot: readerOf(snapshot),
     ledger: ledger(),
-    agentTokens: 500000,
     verifyTokens: 100000,
     tools: () => new Tools(snapshot, graphs, undefined),
     save: async () => {},

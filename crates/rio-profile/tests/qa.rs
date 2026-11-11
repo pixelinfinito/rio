@@ -83,7 +83,7 @@ fn qa_defaults_and_deadlines_are_resolved_for_both_modes() {
     );
     let base = loader(root.path()).load(Some("rio/base")).unwrap();
     assert!(!base.profile.qa_enabled());
-    assert_eq!(base.profile.budget.fast.tokens, Some(100_000));
+    assert_eq!(base.profile.budget.fast.tokens, Some(2_400_000));
     assert!(base.qa_deadlines.is_none());
     assert_eq!(
         base.profile

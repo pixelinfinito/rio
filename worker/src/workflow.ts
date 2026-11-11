@@ -18,6 +18,7 @@ import type {
   Vote,
 } from "./types";
 import { Store, D1Ledger } from "./storage";
+import { DEFAULT_TOKENS } from "./budget";
 import { Progress } from "./progress";
 import { ProviderGateway, converse, settledUsage } from "./gateway";
 import { promptCacheReport, selfHostedCache } from "./usage";
@@ -1173,7 +1174,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             ? (submission.profile.budget.deep ?? submission.profile.budget.fast)
             : submission.profile.budget.fast;
         const agentTokens = Math.floor(
-          (active.tokens ?? 100000) / (active.agents_max ?? 3),
+          (active.tokens ?? DEFAULT_TOKENS) / (active.agents_max ?? 3),
         );
         // A diff-only round on an unchanged head has nothing new to review:
         // agents are not re-run and earlier findings carry forward.
@@ -1634,9 +1635,6 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             call,
             cancelled: () => store.cancelled(id),
             snapshot,
-            agentTokens: Math.floor(
-              (active.tokens ?? 100000) / (active.agents_max ?? 3),
-            ),
             verifyTokens: active.verify_tokens,
             context: {
               snapshot: { head: {} },
@@ -1781,9 +1779,6 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             },
             gateway,
             ledger,
-            agentTokens: Math.floor(
-              (active.tokens ?? 100000) / (active.agents_max ?? 3),
-            ),
             verifyTokens: active.verify_tokens,
             call,
             cancelled: () => store.cancelled(id),

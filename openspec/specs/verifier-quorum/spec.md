@@ -98,11 +98,15 @@ Verification SHALL choose the highest non-refuted evidence level supported at th
 - **THEN** the result is `plausible` with `verify.split`
 
 ### Requirement: Bounded verification cost
-The resolved `budget.<mode>.verify_tokens` SHALL bound each voter's complete two-turn verification of one hypothesis. If absent, it SHALL default to one fifth of that agent's resolved token budget, rounded down with a minimum of one token. Verification usage and cost SHALL be accounted separately. Failed, cancelled, exhausted or malformed votes SHALL supply no quorum support and SHALL remain visible in the audit record.
+The resolved `budget.<mode>.verify_tokens` SHALL bound each voter's complete two-turn verification of one hypothesis. If absent, it SHALL default to 320,000 tokens in both modes, whatever the review token budget; the review-wide token limit SHALL still bound every call. Verification usage and cost SHALL be accounted separately. Failed, cancelled, exhausted or malformed votes SHALL supply no quorum support and SHALL remain visible in the audit record.
 
 #### Scenario: Budget covers both turns
 - **WHEN** the first turn consumes part of a voter's per-hypothesis token allowance
 - **THEN** the second turn can consume only the remainder and the voter cannot exceed the allowance
+
+#### Scenario: Default allowance covers a real verification
+- **WHEN** a profile sets no token budget and a voter verifies a hypothesis of 2,430 bytes
+- **THEN** the voter completes both turns
 
 #### Scenario: Missing votes cannot silently weaken quorum
 - **WHEN** two of three voters fail with quorum two

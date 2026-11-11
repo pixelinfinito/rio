@@ -1,5 +1,6 @@
 /** Browser verification is separate from code hypothesis consolidation: QA keeps
  * its identity, cells, UX category and independent policy/cap. */
+import { DEFAULT_VERIFY_TOKENS } from "./budget";
 import { partitionElement } from "./prompt";
 import { converse, type Ledger } from "./gateway";
 import { aggregate, evidenceLevel, type EvidenceContext } from "./quorum";
@@ -501,7 +502,6 @@ interface CommonOptions {
   profile: Profile;
   gateway: Gateway;
   ledger: Ledger;
-  agentTokens: number;
   verifyTokens?: number;
   call?: Parameters<typeof converse>[0]["call"];
   cancelled?: () => Promise<boolean>;
@@ -534,7 +534,7 @@ function conversation(
     actor,
     model: o.profile.models[alias],
     allowance: {
-      remaining: o.verifyTokens ?? Math.max(1, Math.floor(o.agentTokens / 5)),
+      remaining: o.verifyTokens ?? DEFAULT_VERIFY_TOKENS,
     },
     messages,
     dispatch,

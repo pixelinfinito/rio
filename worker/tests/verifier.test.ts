@@ -370,7 +370,7 @@ describe("quorum", () => {
       gateway: { complete: async () => ({ content: "", input_tokens: 0, output_tokens: 0, cost_usd: null }) },
       ledger: new MemoryLedger(),
       tools: () => new Tools(added, { base: empty, head: empty }, undefined),
-      agentTokens: 50000,
+      verifyTokens: 10000,
       save: async () => {},
     } as any);
     const start = prompt.indexOf('<repository_data label="selected code and direct callers">\n');
@@ -416,7 +416,7 @@ describe("quorum", () => {
       gateway: { complete: async () => ({ content: "", input_tokens: 0, output_tokens: 0, cost_usd: null }) },
       ledger: new MemoryLedger(),
       tools: () => new Tools(wide, { base: graph, head: graph }, undefined),
-      agentTokens: 50000,
+      verifyTokens: 10000,
       save: async () => {},
     } as any);
     expect(new TextEncoder().encode(prompt).length).toBeLessThan(2 * CONTEXT_BYTES + 4096);
@@ -476,7 +476,7 @@ describe("quorum", () => {
       gateway,
       ledger,
       tools: () => new Tools(snapshot, graphs, undefined),
-      agentTokens: 50000,
+      verifyTokens: 10000,
       save: async (v) => {
         saved.push(structuredClone(v));
       },
@@ -518,7 +518,7 @@ describe("quorum", () => {
         },
         ledger: new MemoryLedger(),
         tools: () => new Tools(snapshot, graphs, undefined),
-        agentTokens: 50000,
+        verifyTokens: 10000,
         save: async () => {},
       });
       expect(result.verified.verification.agreeing).toBe(0);
@@ -569,7 +569,7 @@ describe("quorum", () => {
       },
       ledger: new MemoryLedger(),
       tools: () => new Tools(snapshot, graphs, undefined),
-      agentTokens: 50000,
+      verifyTokens: 10000,
       save: async () => {},
     });
     expect(result.verified.verification.agreeing).toBe(3);
@@ -622,7 +622,7 @@ describe("quorum", () => {
         },
         ledger: new MemoryLedger(),
         tools: () => new Tools(snapshot, graphs, undefined),
-        agentTokens: 50000,
+        verifyTokens: 10000,
         save: async () => {},
       });
       if (kind === "downward") {

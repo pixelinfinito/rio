@@ -4,6 +4,8 @@ import {
   introspectWorkflowInstance,
 } from "cloudflare:test";
 import { beforeAll, describe, expect, it, vi } from "vitest";
+import { parse } from "yaml";
+import resolvedBase from "../../crates/rio-profile/tests/snapshots/resolution__resolved_base.snap?raw";
 import { Store } from "../src/storage";
 import { NO_CONSUMER } from "../src/validation";
 import { allMigrations, submission } from "./fixtures";
@@ -934,4 +936,64 @@ describe("security agent", () => {
     expect(coverage.not_applicable.map((i: any) => i.item)).toContain("V3.6");
     expect(coverage.unassessed.map((i: any) => i.item)).toContain("V1.2");
   }, 60000);
+});
+
+describe("default budgets", () => {
+  // The median hypothesis of the review-quality baseline is 2,430 bytes of JSON.
+  // A voter's disclosed turn for one does not fit a fifth of an agent's share of
+  // 100,000 tokens, which is what a profile without a budget used to resolve to.
+  const MEDIAN_HYPOTHESIS_BYTES = 2430;
+  const detail =
+    "The loop reads the attempt limit before the caller's override is applied, so a caller that lowers the limit still gets the default number of attempts. ";
+  const long = {
+    rule_id: "correctness/retry/limit",
+    category: "defect",
+    severity: "error",
+    location: at("src/retry.ts", 2, "retry.retry"),
+    message: detail.repeat(5).trim(),
+    trigger: "retry(task, { limit: 1 }) with a task that always fails",
+    impact: detail.repeat(9).trim(),
+  };
+  // The snapshot is the profile loader's own output for rio/base.
+  const resolved = parse(
+    resolvedBase.slice(resolvedBase.indexOf("\n---\n", 3) + 5),
+  ).budget as Submission["profile"]["budget"];
+  it.each([
+    ["rio/base as the profile loader resolves it", resolved],
+    [
+      "a profile that reaches the Worker without a token budget",
+      { fast: { wall_time: "4m" } },
+    ],
+  ])(
+    "let every voter finish both turns on a hypothesis of real size: %s",
+    async (_, budget) => {
+      const disclosed: number[] = [];
+      const { report, calls } = await review({
+        base: {
+          "src/retry.ts": `export function retry(task: () => void, options = { limit: 3 }) {\n  for (let i = 0; i < options.limit; i++) task();\n}\n`,
+        },
+        head: {
+          "src/retry.ts": `export function retry(task: () => void, options = { limit: 3 }) {\n  for (let i = 0; i < 3; i++) task();\n}\n`,
+        },
+        changed: ["src/retry.ts"],
+        steps: agentSteps(),
+        agents: { correctness: [long] },
+        vote: (h) => {
+          disclosed.push(new TextEncoder().encode(JSON.stringify(h)).length);
+          return { evidence_level: "plausible", evidence: [] };
+        },
+        mutate: (s) => {
+          s.profile.budget = structuredClone(budget);
+        },
+      });
+      expect(calls.filter((c) => c === "blind")).toHaveLength(3);
+      expect(disclosed).toHaveLength(3);
+      expect(Math.min(...disclosed)).toBeGreaterThanOrEqual(
+        MEDIAN_HYPOTHESIS_BYTES,
+      );
+      expect(report.agent_audit.incomplete_votes).toBeUndefined();
+      expect(report.status).toBe("complete");
+    },
+    60000,
+  );
 });

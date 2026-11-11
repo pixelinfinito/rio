@@ -8,7 +8,7 @@ import {
 import { SYMLINK, StoredSnapshot, lineCounts, materialize } from "./snapshot";
 import { attachStatements } from "./lineage";
 import { Store } from "./storage";
-import { reviewWall } from "./budget";
+import { DEFAULT_TOKENS, reviewWall } from "./budget";
 import { checkProfileModels } from "./gateway";
 import { promptSettings } from "./prompt-config";
 
@@ -94,10 +94,24 @@ export async function createReview(
           "UPDATE reviews SET submission_key=?,status='queued',created_at=?,token_limit=?,deadline=? WHERE id=? AND tenant=? AND status='preparing' AND submission_key=''",
           // The review starts at the hand-off: budgets count from here, not
           // from the request that waited for preparation.
-        ).bind(key, now, active.tokens ?? 100000, now + wall, id, tenant)
+        ).bind(
+          key,
+          now,
+          active.tokens ?? DEFAULT_TOKENS,
+          now + wall,
+          id,
+          tenant,
+        )
       : env.DB.prepare(
           "INSERT INTO reviews(id,tenant,submission_key,status,created_at,token_limit,deadline) VALUES(?,?,?,'queued',?,?,?)",
-        ).bind(id, tenant, key, now, active.tokens ?? 100000, now + wall),
+        ).bind(
+          id,
+          tenant,
+          key,
+          now,
+          active.tokens ?? DEFAULT_TOKENS,
+          now + wall,
+        ),
     ...(value.lineage
       ? attachStatements(env, tenant, value.lineage, id, value.snapshot_id)
       : []),

@@ -145,7 +145,6 @@ export async function voter(r: (typeof ROUTES)[number], _options: ScenarioOption
     gateway,
     ledger: ledger(),
     tools: () => new Tools(snapshot, graphs, undefined),
-    agentTokens: 500000,
     save: async () => {},
     prompt: {
       partition: partitionOf(r, _options),
