@@ -1411,10 +1411,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             round: roundContext,
             intent: dataBlock("intent", filteredLines(intent.split("\n"))),
             focus: dataBlock("suggested_focus", scope.focus),
-            graph: dataBlock("graph excerpt", {
-              base: promptGraph(graphs.base),
-              head: promptGraph(graphs.head),
-            }),
+            graph: dataBlock("graph excerpt", promptGraph(graphs)),
             changed: dataBlock(
               "changed code excerpts",
               await changedCode(scope.changed, reviewed.snapshot),

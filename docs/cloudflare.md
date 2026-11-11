@@ -127,8 +127,10 @@ and says so in the report. The submitted graph is bounded to 2 MiB of JSON per
 version, keeping the nodes nearest the change (seeds, then ascending hop) and the
 edges among them, because large repositories reach tens of thousands of edges at
 two hops; the runner rebuilds the complete graph from the snapshot. Agents receive
-a 16 KiB excerpt of each graph in their prompt and query the rest through
-`graph_query`. Submodule entries are omitted from snapshots; the diff lists them as
+one excerpt of at most 16 KiB in their prompt: each changed symbol with the code
+that uses it (path, symbol and line range, base and head merged), code outside the
+change first. They query the rest through `graph_query`, by path and symbol.
+Submodule entries are omitted from snapshots; the diff lists them as
 `submodule_not_reviewed`. `--offline`, or no endpoint, retains the local deterministic review.
 `--fork` forces a static-only review; model execution is denied after manifest
 overrides. `--since-last` reviews the branch as a lineage held by the endpoint.
