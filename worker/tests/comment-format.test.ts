@@ -456,9 +456,10 @@ describe("lifecycle edits", () => {
       response: { reason: "intentional", actor: "ana", at: "" },
     });
     expect(skeleton(body)).toEqual(skeleton(stateDismissed));
-    expect(body.startsWith("💤 **Dismissed as `intentional`** by ana")).toBe(
-      true,
-    );
+    // `@ana`, with a zero-width space after `@` so she is not notified.
+    expect(
+      body.startsWith("💤 **Dismissed as `intentional`** by @\u200bana"),
+    ).toBe(true);
     expect(body).toContain(
       "rio won't report this again while the code is unchanged.",
     );

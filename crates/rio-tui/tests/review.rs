@@ -1466,6 +1466,31 @@ fn dismissal_without_an_endpoint_records_nothing() {
 // ---------------------------------------------------------------- graph
 
 #[test]
+fn graph_keys_move_through_the_columns_drawn() {
+    let mut app = graph_app();
+    keys(&mut app, &[KeyCode::Char('+')]);
+    // At 80 columns fewer hop columns are drawn than at 120.
+    let narrow = text(&draw(&app, 80, 24, Theme::default()));
+    assert!(
+        narrow.contains("HOP 1") && !narrow.contains("HOP 2"),
+        "{narrow}"
+    );
+    keys(
+        &mut app,
+        &[
+            KeyCode::Right,
+            KeyCode::Right,
+            KeyCode::Right,
+            KeyCode::Right,
+        ],
+    );
+    // → stops at the last hop drawn, whose box is the highlighted one.
+    let screen = text(&draw(&app, 80, 24, Theme::default()));
+    assert!(screen.contains("function · head · hop 1"), "{screen}");
+    assert!(screen.contains("┃ ƒ acceptUpload"), "{screen}");
+}
+
+#[test]
 fn graph_views_and_hops() {
     let mut app = findings_app();
     keys(&mut app, &[KeyCode::Char('g')]);
@@ -1513,16 +1538,26 @@ fn export_emits_export_and_done_marks_the_report_saved() {
     let effects = keys(&mut app, &[KeyCode::Enter]);
     assert_eq!(
         effects,
-        vec![
-            Effect::Export {
-                format: "json".into(),
-                path: "./rio-review-parser-guards.json".into()
-            },
-            Effect::Step("review:export-copy".into()),
-        ]
+        vec![Effect::Export {
+            format: "json".into(),
+            path: "./rio-review-parser-guards.json".into()
+        },]
     );
     assert!(!app.session.saved);
-    app.update(Msg::Done(Outcome::Ok("saved".into())));
+    // Another reply (a dismissal queued before the save) is not the save's.
+    assert!(
+        app.update(Msg::Done(Outcome::Ok("dismissed".into())))
+            .is_empty()
+    );
+    assert!(!app.session.saved);
+    assert_eq!(app.top().title(), "Export");
+    // Copy runs once the file is written.
+    assert_eq!(
+        app.update(Msg::Done(Outcome::Ok(
+            "saved ./rio-review-parser-guards.json".into()
+        ))),
+        vec![Effect::Step("review:export-copy".into())]
+    );
     assert!(app.session.saved);
     assert_eq!(app.top().title(), "Findings");
     // Saved: q quits without asking.
@@ -1555,9 +1590,16 @@ fn export_destination_is_a_text_field() {
                 format: "sarif".into(),
                 path: "q.sarif".into()
             },
-            Effect::Step("review:export-copy".into()),
         ]
     );
+    // A failed write copies nothing and keeps the screen with the error.
+    assert!(
+        app.update(Msg::Done(Outcome::Failed(
+            "q.sarif: permission denied".into()
+        )))
+        .is_empty()
+    );
+    assert_eq!(app.top().title(), "Export");
 }
 
 // ---------------------------------------------------------------- 80×24 and NO_COLOR

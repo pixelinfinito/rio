@@ -262,9 +262,27 @@ fn endpoint_screenshots_are_found_by_step_metadata_or_real_names() {
         {"id": "a1", "kind": "screenshot", "link": "https://evidence.example/r/checkout/mobile-light/step-0003-screenshot-90dc.png?sig=b"},
         {"id": "a2", "kind": "screenshot", "link": named}
     ]});
-    let mut older = app(report(evidence, &["a1", "a2"]), Images::halfblocks());
+    let mut older = app(
+        report(evidence.clone(), &["a1", "a2"]),
+        Images::halfblocks(),
+    );
     assert_eq!(
         older.update(Msg::Tick),
         vec![Effect::Fetch(format!("qa-image:{named}"))]
+    );
+
+    // Without images (NO_COLOR, --ascii) nothing is downloaded: the pane
+    // names the file and `o` opens the link.
+    let mut plain = app(report(evidence, &["a1", "a2"]), Images::disabled());
+    assert!(plain.update(Msg::Tick).is_empty());
+    let mut buf = ratatui::buffer::Buffer::empty(Rect::new(0, 0, 120, 40));
+    let area = buf.area;
+    plain.draw(&mut buf, area);
+    let text = common::lines(&buf);
+    assert!(text.contains("step-0004-screenshot-b0e787db.png"), "{text}");
+    assert!(!text.contains("downloading"), "{text}");
+    assert_eq!(
+        plain.update(press(KeyCode::Char('o'))),
+        vec![Effect::Open(named.into())]
     );
 }

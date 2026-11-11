@@ -14,7 +14,8 @@ of the matrix; a cell the matrix does not have is an error.
 
 In a terminal, `rio qa` opens the interactive UI. Its matrix follows a local run
 cell by cell. `p` pauses the queue: the running cell finishes and no other starts
-until `p` again. `c` cancels the focused cell, stopping it if it runs, and records
+until `p` again. The run's wall budget keeps counting while paused, so cells
+still queued when it runs out end `cancelled` with reason `budget`. `c` cancels the focused cell, stopping it if it runs, and records
 it `cancelled` with reason `user` (on the baseline too). A run on the endpoint
 runs its queue to the end, so it refuses both. In a finished run's cell detail,
 `r` runs that cell again. The matrix shows its new outcome, while export and the

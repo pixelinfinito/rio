@@ -858,12 +858,14 @@ impl ReviewHost {
             "md" => Format::Md,
             "json" => Format::Json,
             "sarif" => Format::Sarif,
-            other => return self.failed(&format!("unknown format {other}")),
+            // Every export reply names its destination, so the export screen
+            // tells its own result from other replies.
+            other => return self.failed(&format!("{path}: unknown format {other}")),
         };
         let mut state = self.shared.lock();
         let Some(executed) = &state.executed else {
             drop(state);
-            return self.failed("no report to export yet");
+            return self.failed(&format!("{path}: no report to export yet"));
         };
         let options = rio_core::RenderOptions {
             width: 80,
@@ -882,7 +884,7 @@ impl ReviewHost {
             state.started.clone(),
             exit,
         );
-        let written = bytes.map_err(|e| e.to_string()).and_then(|bytes| {
+        let written = bytes.map_err(|e| format!("{path}: {e}")).and_then(|bytes| {
             std::fs::write(path, &bytes)
                 .map(|()| bytes.len() as u64)
                 .map_err(|e| format!("{path}: {e}"))
@@ -942,7 +944,9 @@ impl ReviewHost {
             .await;
             let _ = reply.send(Msg::Done(match result {
                 Ok(_) => Outcome::Ok(format!("{} dismissed ({reason})", display_id(&id))),
-                Err(error) => Outcome::Failed(redact(&format!("{error:#}"))),
+                // Both replies start with the finding's id, so a screen
+                // tells its own dismissal's result from other replies.
+                Err(error) => Outcome::Failed(redact(&format!("{}: {error:#}", display_id(&id)))),
             }));
         });
     }
@@ -965,19 +969,37 @@ impl ReviewHost {
     }
 }
 
-/// Tool output as `log` events, one per line, redacted.
+/// The longest log line kept; longer output (a one-line JSON report) is cut.
+const LOG_LINE: usize = 4096;
+
+/// Tool output as `log` events, one per line, redacted. Runs on the tool's
+/// read loop, so each chunk costs only its own length.
 fn log_tap(reply: Sender<Msg>) -> rio_adapters::OutputTap {
     let partial: Arc<Mutex<BTreeMap<String, String>>> = Arc::default();
     Arc::new(move |program: &str, chunk: &[u8]| {
         let mut pending = partial.lock().unwrap_or_else(|p| p.into_inner());
         let buffer = pending.entry(program.to_owned()).or_default();
-        buffer.push_str(&String::from_utf8_lossy(chunk));
-        while let Some(end) = buffer.find('\n') {
-            let line: String = buffer.drain(..=end).collect();
+        let emit = |line: &str| {
             let _ = reply.send(Msg::Review(ReviewEvent::Log {
                 source: program.to_owned(),
                 line: redact(line.trim_end()),
             }));
+        };
+        // What was kept holds no newline: search only the new bytes.
+        let mut from = buffer.len();
+        buffer.push_str(&String::from_utf8_lossy(chunk));
+        while let Some(at) = buffer[from..].find('\n') {
+            let line: String = buffer.drain(..=from + at).collect();
+            emit(&line);
+            from = 0;
+        }
+        if buffer.len() > LOG_LINE {
+            let mut cut = LOG_LINE;
+            while !buffer.is_char_boundary(cut) {
+                cut -= 1;
+            }
+            emit(&format!("{}…", &buffer[..cut]));
+            buffer.clear();
         }
     })
 }
@@ -1216,5 +1238,39 @@ mod tests {
         .map(String::from)
         .into();
         assert!(context_of(&args).ends_with(" → origin/main · default · deep"));
+    }
+}
+
+#[cfg(test)]
+mod log_tap_tests {
+    use super::*;
+
+    fn lines(messages: &std::sync::mpsc::Receiver<Msg>) -> Vec<String> {
+        messages
+            .try_iter()
+            .filter_map(|m| match m {
+                Msg::Review(ReviewEvent::Log { line, .. }) => Some(line),
+                _ => None,
+            })
+            .collect()
+    }
+
+    #[test]
+    fn lines_split_across_chunks_and_a_long_line_is_cut() {
+        let (reply, messages) = std::sync::mpsc::channel();
+        let tap = log_tap(reply);
+        tap("eslint", b"first li");
+        tap("eslint", b"ne\nsecond\nthi");
+        assert_eq!(lines(&messages), ["first line", "second"]);
+        tap("eslint", b"rd\n");
+        assert_eq!(lines(&messages), ["third"]);
+        // One line with no newline (a JSON report) is cut, not kept whole.
+        for _ in 0..3 {
+            tap("eslint", &[b'x'; 2000]);
+        }
+        let cut = lines(&messages);
+        assert_eq!(cut.len(), 1);
+        assert_eq!(cut[0].chars().count(), LOG_LINE + 1);
+        assert!(cut[0].ends_with('…'));
     }
 }

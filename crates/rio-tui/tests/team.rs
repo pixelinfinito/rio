@@ -664,6 +664,18 @@ fn p1_dismiss_records_reason_and_note_with_the_full_identity() {
             note: Some("legacy q".into()),
         }]
     );
+    // Recorded only once the endpoint confirms it; a failure changes nothing.
+    assert!(!text(&app, 120, 40).contains("dismissed: int"));
+    let short = &A7F3[..8];
+    app.update(Msg::Done(Outcome::Failed(format!("{short}: HTTP 409"))));
+    assert!(!text(&app, 120, 40).contains("dismissed: int"));
+    app.update(press(KeyCode::Char('d')));
+    app.update(press(KeyCode::Down));
+    app.update(press(KeyCode::Down));
+    app.update(press(KeyCode::Enter));
+    app.update(Msg::Done(Outcome::Ok(format!(
+        "{short} dismissed (intentional)"
+    ))));
     assert!(text(&app, 120, 40).contains("dismissed: int"));
 }
 

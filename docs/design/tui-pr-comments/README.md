@@ -17,7 +17,7 @@ Exported from the pen.dev canvas on 2026-11-10. Grounded in `pixelinfinito/rio` 
 
 1. **TUI scope.** Specified as the `terminal-ui` capability; all 24 screens, built with ratatui + crossterm in `crates/rio-tui`. The TUI opens automatically when stdin and stdout are terminals (`--no-tui`, `RIO_TUI=0`, `CI` or `--format` keep the streaming output).
 2. **Suggestion blocks.** finding-v1 and hypothesis-v1 gain the optional `fix { line_start, line_end, replacement }`.
-3. **Finding id length.** 8 characters everywhere; `rio feedback`, the feedback API and `/rio dismiss` accept unique prefixes of 8 or more. Screens still drawn with 4-character ids list the id columns in their `deviations.toml`.
+3. **Finding id length.** 8 characters everywhere; `rio feedback`, the feedback API and `/rio dismiss` accept unique prefixes of 8 or more. Screens still drawn with 4-character ids list the id columns in their deviations file, `crates/rio-tui/tests/deviations/<screen>.json`.
 4. **Ambiguous-width glyphs.** An ASCII glyph set (`--ascii`, `RIO_ASCII=1`) keeps the grid on CJK ambiguous-as-wide terminals.
 5. **Dark mode** is checked on a live PR before release (`docs/release-checklist.md`).
 

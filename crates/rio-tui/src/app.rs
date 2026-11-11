@@ -242,22 +242,29 @@ impl App {
             let action = self.global(key);
             self.apply(action, &mut effects);
         } else {
-            // Help, the palette and the quit dialog are transient: a message
-            // for the screen below closes them, so a finished review or an
-            // effect's outcome is never lost while they are open.
-            if !matches!(msg, Msg::Tick) {
-                while self.stack.len() > 1 && is_overlay(self.top().title()) {
-                    self.stack.pop();
-                }
-            }
-            if let Msg::Review(event) = &msg {
-                let covered = self.stack.len() - 1;
+            // Messages are for the screen under help, the palette and the
+            // quit dialog. Those stay open while it takes progress, and close
+            // only when it changes screens (a finished review opens findings).
+            let target = self
+                .stack
+                .iter()
+                .rposition(|s| !is_overlay(s.title()))
+                .unwrap_or(0);
+            // Screens below it see the events later. Log lines are a live
+            // tail, so a covered screen does not keep them.
+            if let Msg::Review(event) = &msg
+                && !matches!(event, ReviewEvent::Log { .. })
+            {
                 self.missed
-                    .extend((0..covered).map(|depth| (depth, event.clone())));
+                    .extend((0..target).map(|depth| (depth, event.clone())));
             }
+            let overlays = self.stack.split_off(target + 1);
             let mut screen = self.stack.pop().expect("the stack is never empty");
             let action = screen.on_msg(&msg, &mut self.session);
             self.stack.push(screen);
+            if !moves(&action) {
+                self.stack.extend(overlays);
+            }
             self.apply(action, &mut effects);
         }
         self.catch_up(&mut effects);
@@ -346,6 +353,11 @@ impl App {
 
     fn apply(&mut self, action: Action, effects: &mut Vec<Effect>) {
         match action {
+            // A new run starts uninterrupted: Ctrl-C stops it, then kills.
+            Action::Effect(effect @ Effect::Start(_)) => {
+                self.session.interrupted = false;
+                effects.push(effect);
+            }
             Action::None => {}
             Action::Push(screen) => self.stack.push(screen),
             Action::Pop => {
@@ -406,7 +418,16 @@ fn too_small(c: &mut Canvas<'_>) {
     }
 }
 
-/// Screens that sit over another and close when it receives a message.
+/// The action changes which screen is shown.
+fn moves(action: &Action) -> bool {
+    match action {
+        Action::None | Action::Effect(_) => false,
+        Action::Many(actions) => actions.iter().any(moves),
+        Action::Push(_) | Action::Pop | Action::Replace(_) | Action::Replay(_) => true,
+    }
+}
+
+/// Screens that sit over another: they close when it changes screens.
 fn is_overlay(title: &str) -> bool {
     matches!(title, "Help" | "Command palette" | "Quit")
 }

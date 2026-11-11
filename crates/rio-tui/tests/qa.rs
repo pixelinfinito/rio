@@ -768,7 +768,8 @@ fn q1_runs_the_selected_journeys_and_opens_the_matrix() {
     assert!(screen.contains("↳ login"), "{screen}");
     assert!(screen.contains("· queued"), "{screen}");
     assert!(screen.contains("– desktop only"), "{screen}");
-    assert!(screen.contains("0 of 20 cells done"), "{screen}");
+    // Every cell shown counts: the chained login row too, not the n/a cells.
+    assert!(screen.contains("0 of 22 cells done"), "{screen}");
 }
 
 #[test]
@@ -1410,4 +1411,15 @@ fn long_qa_lists_keep_the_cursor_in_view() {
         app.update(rio_tui::app::press(KeyCode::Down));
     }
     visible(&app, "friction number 39", "ux recommendations");
+    // The list itself (the middle pane) shows the last item, a sign for those
+    // above, and still the legend under it.
+    let text = common::lines(&draw(&app, 120, 40));
+    assert!(text.contains("R40"), "{text}");
+    assert!(text.contains("↑ ") && text.contains(" more"), "{text}");
+    assert!(text.contains("Advice never fails a review."), "{text}");
+    for _ in 0..39 {
+        app.update(rio_tui::app::press(KeyCode::Up));
+    }
+    let text = common::lines(&draw(&app, 120, 40));
+    assert!(text.contains("R1 ") && text.contains("↓ "), "{text}");
 }

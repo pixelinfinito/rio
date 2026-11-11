@@ -420,7 +420,7 @@ export function findingBody(
           `~~${headline(f.message)}~~`,
         ]
       : [
-          `${GLYPH.dismissed} **Dismissed as \`${plain(state.response?.reason ?? "dismissed", 30)}\`**${state.response?.actor ? ` by ${plain(state.response.actor, 100)}` : ""}`,
+          `${GLYPH.dismissed} **Dismissed as \`${plain(state.response?.reason ?? "dismissed", 30)}\`**${state.response?.actor ? ` by ${plain(`@${state.response.actor.replace(/^@/, "")}`, 100)}` : ""}`,
           "",
           remembered(state.response?.reason),
           ...(state.response?.note
