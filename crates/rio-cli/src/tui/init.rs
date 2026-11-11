@@ -358,9 +358,14 @@ impl InitHost {
 
     /// A deployment that could not start, shown on I4 at the first step.
     fn fail_start(&self, error: String) {
+        self.fail_at(deployment::STEPS[0], error);
+    }
+
+    /// Back to I4 at `step`: the deploying screen waits for `init:failed`.
+    fn fail_at(&self, step: &str, error: String) {
         self.send(Outcome::Value(
             "init:failed".into(),
-            json!({"step": deployment::STEPS[0], "error": error}),
+            json!({"step": step, "error": error}),
         ));
     }
 
@@ -375,14 +380,15 @@ impl InitHost {
             .unwrap_or_else(|e| e.into_inner())
             .take();
         let Some(mut deployer) = taken else {
-            return self.send(Outcome::Failed(
+            return self.fail_start(
                 "nothing to resume here; rio deploy resumes a stopped deployment".into(),
-            ));
+            );
         };
         if self_hosted && let Err(error) = deployer.switch_to_self_hosted() {
             let message = rio_core::redact(&format!("{error:#}"));
+            let step = deployer.next_step();
             *self.deployer.lock().unwrap_or_else(|e| e.into_inner()) = Some(deployer);
-            return self.send(Outcome::Failed(message));
+            return self.fail_at(step, message);
         }
         deployer.cancel.store(false, Ordering::Relaxed);
         self.spawn(deployer);
@@ -663,6 +669,30 @@ mod tests {
                 env_token: false,
             },
             handoff: Handoff::default(),
+        }
+    }
+
+    #[test]
+    fn a_retry_with_nothing_to_resume_returns_to_the_failure_screen() {
+        let runtime = tokio::runtime::Builder::new_current_thread()
+            .build()
+            .unwrap();
+        let (reply, messages) = std::sync::mpsc::channel();
+        let mut host = InitHost::new(runtime.handle().clone(), reply.clone(), data().handoff);
+        for step in ["init:retry", "init:self-hosted"] {
+            rio_tui::terminal::Host::run(&mut host, Effect::Step(step.into()), &reply);
+            // The deploying screen leaves only on `init:failed`.
+            let Msg::Done(Outcome::Value(name, value)) = messages.recv().unwrap() else {
+                panic!("{step}: not an init:failed value");
+            };
+            assert_eq!(name, "init:failed");
+            assert_eq!(value["step"], deployment::STEPS[0]);
+            assert!(
+                value["error"]
+                    .as_str()
+                    .unwrap()
+                    .contains("nothing to resume")
+            );
         }
     }
 

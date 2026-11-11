@@ -78,8 +78,8 @@ Rules the screens rely on (all from the specs):
 
 ## Known gaps
 
-- **ratatui is not a dependency yet** and no OpenSpec capability covers an interactive TUI. `review-report` only specifies the streaming terminal renderer (G3 is that renderer). Capture the TUI as a change before building it.
-- The TUI shows 4-character finding ids (`8c1e`) for display, but `/rio dismiss` on GitHub needs at least 8 characters (`worker/src/commands.ts:57`). Decide whether the CLI's `rio feedback` accepts shorter prefixes and show the id length that works.
+- ~~ratatui is not a dependency yet, and no OpenSpec capability covers an interactive TUI.~~ Resolved by the `rio-tui-pr-comments` change: `crates/rio-tui` (ratatui) implements these screens, and the `terminal-ui` spec covers them.
+- ~~The TUI shows 4-character finding ids.~~ Resolved by the same change: ids are 8 characters everywhere, and `rio feedback`, the feedback API and `/rio dismiss` accept unique prefixes of 8 or more. Screens drawn here with 4 characters list the difference in their deviations file.
 - Content is realistic sample data (repo `pixelinfinito/rio`, PR #142, `@ana`, costs, council model families). Rule ids, journey names, OWASP items, commands, flags and reasons come from the repository at `c2b6900`.
 
 ## Screen index

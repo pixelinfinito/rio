@@ -12,5 +12,5 @@
   return hit.value.data
 ```
 
-<sub>`77ab…` · `ts/null-deref` · Not right? Reply `/rio dismiss 77ab… wrong` or `fixed` · `intentional` · `irrelevant` · `style`</sub>
-<!-- rio:finding:77ab… -->
+<sub>`77ab0c3e` · `ts/null-deref` · Not right? Reply `/rio dismiss 77ab0c3e wrong` or `fixed` · `intentional` · `irrelevant` · `style`</sub>
+<!-- rio:finding:77ab0c3e -->

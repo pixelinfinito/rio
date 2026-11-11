@@ -323,7 +323,7 @@ pub fn control(step: &str, control: Option<&rio_qa::QaControl>) -> Outcome {
         "qa:pause" => {
             control.set_paused(true);
             Outcome::Ok(
-                "paused: the running cell finishes, then the queue waits (p resumes)".into(),
+                "paused: the running cell finishes, then the queue waits (p resumes); the run's time budget keeps counting".into(),
             )
         }
         "qa:resume" => {

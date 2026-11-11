@@ -429,8 +429,38 @@ impl UxScreen {
         }
         p.line(c, 2, &header);
         p.rule(c, 3);
+        // The legend and the advice lines below the list take 9 rows; the
+        // list shows a window of items that keeps the cursor in view.
+        let limit = p.bottom.saturating_sub(9).max(5);
+        let n = d.recommendations.len();
+        let heights: Vec<u16> = (0..n).map(|i| self.item_rows(i, p.width())).collect();
+        let mut start = 0;
+        while start < self.cursor
+            && 4 + u16::from(start > 0) + heights[start..=self.cursor].iter().sum::<u16>() > limit
+        {
+            start += 1;
+        }
         let mut y = 4;
-        for (i, r) in d.recommendations.iter().enumerate() {
+        if start > 0 {
+            p.line(
+                c,
+                y,
+                &[run(format!(" ↑ {start} more"), Token::Faint, Token::Bg)],
+            );
+            y += 1;
+        }
+        for (i, r) in d.recommendations.iter().enumerate().skip(start) {
+            // Keep a row for "↓ n more" unless this is the last item.
+            let room = if i + 1 < n { 1 } else { 0 };
+            if i > start && y + heights[i] + room > limit {
+                p.line(
+                    c,
+                    y,
+                    &[run(format!(" ↓ {} more", n - i), Token::Faint, Token::Bg)],
+                );
+                y += 2;
+                break;
+            }
             let focused = i == self.cursor;
             let bg = if focused { Token::Raise } else { Token::Bg };
             let (status, sfg) = r.status.label();
@@ -525,6 +555,22 @@ impl UxScreen {
                 Token::Bg,
             )],
         );
+    }
+
+    /// The rows item `i` takes in a list pane `width` wide, its gap included.
+    fn item_rows(&self, i: usize, width: usize) -> u16 {
+        let r = &self.data.recommendations[i];
+        let second = if r.status == RecStatus::Held {
+            usize::from(r.held.is_some()) + usize::from(r.guidance.is_some())
+        } else {
+            1
+        };
+        let expanded = if self.expanded.get(i).copied().unwrap_or(false) {
+            wrap(&r.proposal, width.saturating_sub(8)).len()
+        } else {
+            0
+        };
+        (2 + second + expanded) as u16
     }
 
     fn draw_right(&self, c: &mut Canvas<'_>, p: Pane) {

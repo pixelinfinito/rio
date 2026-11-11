@@ -355,7 +355,7 @@ describe("publisher", () => {
       )!;
     expect(byId(a).body).toContain("a now throws on empty input");
     expect(byId(b).body).toContain(`✅ **Fixed in \`${s.head.slice(0, 7)}\`**`);
-    expect(byId(c).body).toContain("💤 **Dismissed as `irrelevant`** by maria");
+    expect(byId(c).body).toContain("💤 **Dismissed as `irrelevant`** by @\u200bmaria");
     expect(github.threads.get(byId(b).id)!.resolved).toBe(true);
     expect(github.threads.get(byId(c).id)!.resolved).toBe(true);
     expect(github.threads.get(byId(a).id)!.resolved).toBe(false);
@@ -828,7 +828,7 @@ describe("publisher", () => {
     expect(result).toMatchObject({ posted: 0, edited: 1, resolved: 1 });
     expect(github.comments).toHaveLength(1);
     expect(github.comments[0].body).toContain(
-      "💤 **Dismissed as `wrong`** by cole",
+      "💤 **Dismissed as `wrong`** by @\u200bcole",
     );
     expect(github.threads.get(github.comments[0].id)!.resolved).toBe(true);
   });
@@ -971,7 +971,7 @@ describe("publisher", () => {
       })),
     });
     expect(comment(dismissedLater).body).toContain(
-      "💤 **Dismissed as `wrong`** by cole",
+      "💤 **Dismissed as `wrong`** by @\u200bcole",
     );
     expect(comment(humanResolved).body).toContain("✅ **Fixed in");
     // The person's resolution stays theirs: a recurrence does not unresolve it.
@@ -1272,7 +1272,7 @@ describe("/rio commands", () => {
     });
     // The comment shows the dismissal and its thread is resolved.
     expect(github.comments.find((c) => c.id === 555)!.body).toContain(
-      "💤 **Dismissed as `style`** by cole",
+      "💤 **Dismissed as `style`** by @\u200bcole",
     );
     expect(github.threads.get(555)!.resolved).toBe(true);
     expect([...github.tokens.values()].every((t) => t.revoked)).toBe(true);

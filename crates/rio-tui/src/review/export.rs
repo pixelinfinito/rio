@@ -84,6 +84,8 @@ pub(crate) struct ExportScreen {
     options: [bool; 3],
     field: Field,
     progress: Progress,
+    /// The path of the save in progress, as sent to the host.
+    saving: String,
 }
 
 impl ExportScreen {
@@ -95,6 +97,7 @@ impl ExportScreen {
             options: [e.copy, e.include_pre_existing, e.open_editor],
             field: Field::Format,
             progress: Progress::Editing,
+            saving: String::new(),
             data,
         }
     }
@@ -126,11 +129,21 @@ impl ExportScreen {
             format: FORMATS[self.format].0.into(),
             path: path.clone(),
         }));
+        self.saving = path;
+        Action::Many(actions)
+    }
+
+    /// After the file is written: copy it and open it, as chosen.
+    fn saved(&self) -> Action {
+        let mut actions = vec![Action::Pop];
         if self.options[0] {
             actions.push(Action::Effect(Effect::Step("review:export-copy".into())));
         }
         if self.options[2] {
-            actions.push(Action::Effect(Effect::Edit { path, line: 1 }));
+            actions.push(Action::Effect(Effect::Edit {
+                path: self.saving.clone(),
+                line: 1,
+            }));
         }
         Action::Many(actions)
     }
@@ -574,12 +587,16 @@ impl Screen for ExportScreen {
         if self.progress != Progress::Saving {
             return Action::None;
         }
+        // Only the reply to this save: the host names the destination in it
+        // (`saved <path>`, `<path>: <error>`); other replies may be queued.
         match msg {
-            Msg::Done(Outcome::Ok(_)) => {
+            Msg::Done(Outcome::Ok(text)) if *text == format!("saved {}", self.saving) => {
                 session.saved = true;
-                Action::Pop
+                self.saved()
             }
-            Msg::Done(Outcome::Failed(error)) => {
+            Msg::Done(Outcome::Failed(error))
+                if error.starts_with(&format!("{}: ", self.saving)) =>
+            {
                 self.progress = Progress::Failed(error.clone());
                 Action::None
             }

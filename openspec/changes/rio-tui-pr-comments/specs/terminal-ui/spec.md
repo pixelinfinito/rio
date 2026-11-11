@@ -109,6 +109,13 @@ The palette and the quit dialog SHALL be drawn over the screen they were opened 
 - **WHEN** the user opens the palette on the findings view
 - **THEN** the findings rows show faded above and below the palette's box, the header stays the view's own, and the key bar is the palette's
 
+### Requirement: Overlays survive progress
+Help, the palette and the quit dialog SHALL stay open while the screen below takes progress and outcomes. They SHALL close when that screen changes to another screen, as a finished review opening its findings does.
+
+#### Scenario: Help during a review
+- **WHEN** the user opens help while checks report progress
+- **THEN** help stays open, and the live screen below shows the progress when help closes
+
 ### Requirement: Terminals that answer no query
 The UI SHALL keep reading keys and redrawing in a terminal that answers no query. Image detection SHALL read the terminal's replies itself with a deadline, so that no reader of standard input outlives it. Under tmux or GNU screen, which would answer for the outer terminal only through passthrough, it SHALL use half-blocks without asking. A full redraw SHALL NOT ask the terminal for its cursor position.
 
@@ -249,7 +256,7 @@ A local run SHALL report each cell's progress as it happens. A run that ends whi
 - **THEN** the matrix shows the run finished with every cell's final outcome
 
 ### Requirement: QA queue control
-`p` SHALL pause the queue: the running cell finishes and no other starts until `p` resumes it. `c` SHALL cancel the focused cell, stopping it if it runs and never starting it if queued, and record it `cancelled` with reason `user`; the baseline run cancels it too. A run on an endpoint runs its queue to the end: it SHALL refuse pause and cancel with that reason and leave the matrix as it was.
+`p` SHALL pause the queue: the running cell finishes and no other starts until `p` resumes it; the footer SHALL say that the run's time budget keeps counting. `c` SHALL cancel the focused cell, stopping it if it runs and never starting it if queued, and record it `cancelled` with reason `user`; the baseline run cancels it too. A run on an endpoint runs its queue to the end: it SHALL refuse pause and cancel with that reason and leave the matrix as it was.
 
 #### Scenario: Pause and cancel a local run
 - **WHEN** the user presses `p` while the first cell of a local run runs, then `c` on a queued cell, then `p` again

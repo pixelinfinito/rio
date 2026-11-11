@@ -427,7 +427,7 @@ describe("PR mode end to end", () => {
       c.body.endsWith(`<!-- rio:finding:${total} -->`),
     )!;
     expect(totalComment.body).toContain(
-      "💤 **Dismissed as `intentional`** by collab-cole",
+      "💤 **Dismissed as `intentional`** by @\u200bcollab-cole",
     );
     expect(github.threads.get(totalComment.id)!.resolved).toBe(true);
     github.pull(REPO, 7, { head: sha("head-3"), base: sha("base") });
