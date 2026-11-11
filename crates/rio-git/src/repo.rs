@@ -23,6 +23,38 @@ impl TreeEntry {
     }
 }
 
+/// The file a path names, following symbolic links only within the tree.
+/// Absolute, escaping, dangling, cyclic and non-UTF-8 links resolve to nothing,
+/// as do submodules and links to directories.
+pub fn resolve_file<'a>(tree: &'a Tree, path: &str) -> Option<&'a TreeEntry> {
+    let mut path = path.to_owned();
+    for _ in 0..40 {
+        let entry = tree.get(&path)?;
+        match entry.mode {
+            0o160000 => return None,
+            0o120000 => {}
+            _ => return Some(entry),
+        }
+        let target = std::str::from_utf8(&entry.content).ok()?;
+        if target.starts_with('/') {
+            return None;
+        }
+        let mut parts: Vec<_> = path.split('/').collect();
+        parts.pop();
+        for part in target.split('/') {
+            match part {
+                "" | "." => {}
+                ".." => {
+                    parts.pop()?;
+                }
+                part => parts.push(part),
+            }
+        }
+        path = parts.join("/");
+    }
+    None
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct IndexEntry {
     pub path: String,

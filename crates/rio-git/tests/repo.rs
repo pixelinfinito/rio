@@ -1,7 +1,7 @@
 mod common;
 
 use common::*;
-use rio_git::{GixRepo, Repo, Selection, changed_paths, select};
+use rio_git::{GixRepo, Repo, Selection, Tree, TreeEntry, changed_paths, resolve_file, select};
 use std::{fs, process::Command};
 
 #[test]
@@ -229,4 +229,52 @@ fn branch_and_remote_url_detect_detached_heads_and_missing_origins() {
     git(dir.path(), &["checkout", "--detach", &first]);
     let repo = GixRepo::discover(dir.path()).unwrap();
     assert_eq!(repo.branch().unwrap(), None);
+}
+
+#[test]
+fn resolve_file_follows_only_links_inside_the_tree() {
+    let entry = |mode: u32, content: &str| TreeEntry {
+        mode,
+        object_id: String::new(),
+        content: content.into(),
+    };
+    let tree: Tree = [
+        ("rust-toolchain.toml", entry(0o100644, "[toolchain]\n")),
+        (
+            "py/rust-toolchain.toml",
+            entry(0o120000, "../rust-toolchain.toml"),
+        ),
+        ("py/chained", entry(0o120000, "./rust-toolchain.toml")),
+        ("absolute", entry(0o120000, "/etc/passwd")),
+        ("escaping", entry(0o120000, "../outside")),
+        ("dangling", entry(0o120000, "missing")),
+        ("loop", entry(0o120000, "loop")),
+        ("directory", entry(0o120000, "py")),
+        ("module", entry(0o160000, "")),
+    ]
+    .into_iter()
+    .map(|(path, entry)| (path.to_owned(), entry))
+    .collect();
+    for path in [
+        "rust-toolchain.toml",
+        "py/rust-toolchain.toml",
+        "py/chained",
+    ] {
+        assert_eq!(
+            resolve_file(&tree, path).unwrap().content,
+            b"[toolchain]\n",
+            "{path}"
+        );
+    }
+    for path in [
+        "absolute",
+        "escaping",
+        "dangling",
+        "loop",
+        "directory",
+        "module",
+        "absent",
+    ] {
+        assert!(resolve_file(&tree, path).is_none(), "{path}");
+    }
 }

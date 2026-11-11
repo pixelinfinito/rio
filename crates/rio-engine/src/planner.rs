@@ -332,7 +332,9 @@ pub async fn plan_review_with_progress(
                 lock.as_ref(),
                 base_lock.as_ref(),
                 cargo.is_some(),
-                rust_toolchain(&changes.head, root)?
+                rust_toolchain(&changes.head, root)
+                    .ok()
+                    .flatten()
                     .as_deref()
                     .unwrap_or("default"),
                 trust,

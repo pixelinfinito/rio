@@ -1702,3 +1702,137 @@ async fn rust_available_linter_runs_when_another_configured_component_is_missing
     ));
     assert!(!combined.details().findings.is_empty());
 }
+
+#[test]
+fn owner_guidance_skips_links_the_endpoint_refuses() {
+    // As in ueberdosis/tiptap and redis/ioredis: CLAUDE.md is a link to AGENTS.md.
+    let mut head = rio_git::Tree::new();
+    head.insert("AGENTS.md".into(), entry("Prefer small modules.\n"));
+    head.insert(
+        "CLAUDE.md".into(),
+        rio_git::TreeEntry {
+            mode: 0o120000,
+            object_id: String::new(),
+            content: b"AGENTS.md".to_vec(),
+        },
+    );
+    head.insert(
+        "src/REVIEW.md".into(),
+        rio_git::TreeEntry {
+            mode: 0o100644,
+            object_id: String::new(),
+            content: vec![0xff, 0xfe],
+        },
+    );
+    head.insert("src/index.ts".into(), entry("export const value = 1;\n"));
+    let diff = rio_git::diff(&changes(rio_git::Tree::new(), head.clone()), &[]).unwrap();
+    let guidance = serde_json::to_value(owner_guidance(&head, &diff)).unwrap();
+    assert_eq!(guidance.as_array().unwrap().len(), 1, "{guidance}");
+    assert_eq!(guidance[0]["path"], "AGENTS.md");
+    assert_eq!(
+        guidance[0]["lines"],
+        serde_json::json!(["Prefer small modules."])
+    );
+}
+
+#[cfg(unix)]
+#[tokio::test]
+async fn rust_toolchain_links_resolve_and_unparsable_files_skip_only_rust_checks() {
+    // As in pola-rs/polars: py-polars/rust-toolchain.toml -> ../rust-toolchain.toml.
+    let temp = tempfile::tempdir().unwrap();
+    let root = temp.path();
+    SafeTreeWriter::new(root)
+        .unwrap()
+        .write_tree(&read_tree(&fixture("rs-sample")))
+        .unwrap();
+    init(root);
+    std::os::unix::fs::symlink(
+        "../rust-toolchain.toml",
+        root.join("core/rust-toolchain.toml"),
+    )
+    .unwrap();
+    let profile = profile(root, "60s", false);
+    git(root, &["add", "."]);
+    git(root, &["commit", "-m", "base"]);
+    let lib = fs::read_to_string(root.join("core/src/lib.rs")).unwrap();
+    fs::write(root.join("core/src/lib.rs"), format!("{lib}\n")).unwrap();
+    let plan = |link: bool| {
+        let profile = &profile;
+        async move {
+            if !link {
+                fs::remove_file(root.join("core/rust-toolchain.toml")).unwrap();
+                // The link's own bytes, as a regular file, are not TOML.
+                fs::write(
+                    root.join("core/rust-toolchain.toml"),
+                    "../rust-toolchain.toml",
+                )
+                .unwrap();
+            }
+            let repo = GixRepo::discover(root).unwrap();
+            let changes = select(&repo, Selection::WorkingTree).unwrap();
+            assert_eq!(
+                changes.head["core/rust-toolchain.toml"].mode,
+                if link { 0o120000 } else { 0o100644 }
+            );
+            assert_eq!(
+                rio_adapters::rust_toolchain(&changes.head, "core")
+                    .ok()
+                    .flatten()
+                    .as_deref(),
+                link.then_some("1.99.1")
+            );
+            let diff = rio_git::diff(&changes, &[]).unwrap();
+            let mut resolver = rio_adapters::ToolResolver::from_environment(root.into());
+            resolver.search_path = Vec::new();
+            let working = repo.working_tree().unwrap();
+            plan_review(
+                PlanRequest {
+                    worktree: root,
+                    working: &working,
+                    changes: &changes,
+                    diff: &diff,
+                    profile,
+                    resolver: &resolver,
+                },
+                &ProcessSupervisor::default(),
+                CancellationToken::new(),
+            )
+            .await
+            .unwrap()
+        }
+    };
+    let typecheck = |plan: &ReviewPlan| {
+        plan.checks
+            .iter()
+            .find(|check| check.kind == CheckKind::Typecheck && check.root == "core")
+            .unwrap()
+            .skip
+            .clone()
+            .unwrap()
+    };
+    let linked = plan(true).await;
+    assert!(matches!(
+        typecheck(&linked),
+        CheckOutcome::Skipped {
+            reason: SkipReason::ToolMissing,
+            ..
+        }
+    ));
+    let broken = plan(false).await;
+    let CheckOutcome::Skipped { reason, details } = typecheck(&broken) else {
+        panic!("typecheck was not skipped");
+    };
+    assert_eq!(reason, SkipReason::NoProjectConfig);
+    assert!(
+        details
+            .hint
+            .unwrap()
+            .contains("cannot parse core/rust-toolchain.toml"),
+    );
+    assert!(
+        broken
+            .checks
+            .iter()
+            .any(|check| check.kind == CheckKind::Secrets && check.skip.is_none())
+    );
+}

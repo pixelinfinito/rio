@@ -5,7 +5,7 @@ use crate::{ResolvedTool, ToolCommand};
 use anyhow::{Context, Result, bail};
 use rio_core::Finding;
 use rio_core::{CheckDetails, CheckKind, CheckOutcome, SkipReason};
-use rio_git::Tree;
+use rio_git::{Tree, resolve_file};
 use rio_profile::ModuleManifest;
 use std::path::Path;
 
@@ -124,6 +124,19 @@ pub fn diagnostic_config_skip(
     root: &str,
 ) -> Option<CheckOutcome> {
     if language == "rust" {
+        if matches!(
+            kind,
+            CheckKind::Typecheck | CheckKind::Lint | CheckKind::Coverage
+        ) && let Err(error) = crate::rust_toolchain(tree, root)
+        {
+            return Some(CheckOutcome::Skipped {
+                reason: SkipReason::NoProjectConfig,
+                details: CheckDetails {
+                    hint: Some(format!("Fix the Rust toolchain file: {error:#}")),
+                    ..Default::default()
+                },
+            });
+        }
         return (kind == CheckKind::Lint && crate::rust_lint_tools(tree, root).is_empty()).then(|| CheckOutcome::Skipped { reason: SkipReason::NoProjectConfig, details: CheckDetails { hint: Some("Rust lint needs clippy configuration or a lints table; formatting needs rustfmt.toml or .rustfmt.toml".into()), ..Default::default() } });
     }
     if kind == CheckKind::Lint
@@ -187,6 +200,8 @@ impl Adapter for PythonAdapter {
     }
 }
 
+/// The nearest ancestor config that resolves to a file in the tree; a link that
+/// leaves the tree, dangles or names a directory is not a config.
 pub fn ancestor_config(tree: &Tree, project_root: &str, names: &[&str]) -> Option<String> {
     let mut directory = if project_root == "." {
         ""
@@ -200,7 +215,7 @@ pub fn ancestor_config(tree: &Tree, project_root: &str, names: &[&str]) -> Optio
             } else {
                 format!("{directory}/{name}")
             };
-            if tree.contains_key(&path) {
+            if resolve_file(tree, &path).is_some() {
                 return Some(path);
             }
         }
@@ -239,7 +254,7 @@ pub fn eslint_config(tree: &Tree, root: &str) -> Option<String> {
         } else {
             format!("{root}/package.json")
         };
-        if let Some(entry) = tree.get(&path)
+        if let Some(entry) = resolve_file(tree, &path)
             && serde_json::from_slice::<serde_json::Value>(&entry.content)
                 .is_ok_and(|value| value.get("eslintConfig").is_some())
         {
@@ -253,7 +268,7 @@ pub fn eslint_config(tree: &Tree, root: &str) -> Option<String> {
 }
 
 fn toml_has(tree: &Tree, path: &str, tool: &str) -> bool {
-    tree.get(path)
+    resolve_file(tree, path)
         .and_then(|entry| std::str::from_utf8(&entry.content).ok())
         .and_then(|text| toml::from_str::<toml::Value>(text).ok())
         .is_some_and(|value| {
@@ -273,7 +288,7 @@ pub fn ruff_config(tree: &Tree, root: &str) -> Option<String> {
             } else {
                 format!("{root}/{name}")
             };
-            if tree.contains_key(&path)
+            if resolve_file(tree, &path).is_some()
                 && (name != "pyproject.toml" || toml_has(tree, &path, "ruff"))
             {
                 return Some(path);
@@ -315,7 +330,7 @@ pub fn python_typechecker(
         } else {
             format!("{directory}/setup.cfg")
         };
-        if tree.get(&setup).is_some_and(|entry| {
+        if resolve_file(tree, &setup).is_some_and(|entry| {
             String::from_utf8_lossy(&entry.content)
                 .lines()
                 .any(|line| line.trim() == "[mypy]")
@@ -337,7 +352,7 @@ pub fn python_typechecker(
 }
 
 fn config_json(tree: &Tree, path: &str) -> Option<serde_json::Value> {
-    json5::from_str(std::str::from_utf8(&tree.get(path)?.content).ok()?).ok()
+    json5::from_str(std::str::from_utf8(&resolve_file(tree, path)?.content).ok()?).ok()
 }
 
 fn typescript_solution_config(tree: &Tree, config: &str) -> bool {
@@ -396,7 +411,7 @@ pub fn typescript_config(tree: &Tree, root: &str) -> Option<String> {
                     format!("{path}/tsconfig.json"),
                     format!("{path}/tsconfig.build.json"),
                 ] {
-                    if tree.contains_key(&candidate) {
+                    if resolve_file(tree, &candidate).is_some() {
                         queue.push(candidate);
                         break;
                     }
