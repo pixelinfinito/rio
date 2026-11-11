@@ -438,6 +438,42 @@ describe("contracts agent", () => {
     });
     expect(named.calls).toContain("contracts");
   }, 60000);
+
+  it("runs on a Rust item its module re-exports with `pub use`, not on one in a crate-visible module", async () => {
+    const label = (arity: string) =>
+      `impl Label {\n    pub fn new(${arity}) -> Self {\n        todo!()\n    }\n}\n`;
+    const files = (lib: string, parent: string, arity: string) => ({
+      "src/lib.rs": lib,
+      "src/foundations/mod.rs": parent,
+      "src/foundations/label.rs": label(arity),
+    });
+    const run = (lib: string, parent: string) =>
+      review({
+        base: files(lib, parent, "name: PicoStr"),
+        head: files(lib, parent, "name: PicoStr, span: Span"),
+        changed: ["src/foundations/label.rs"],
+        steps: agentSteps(),
+        agents: {},
+      });
+    const reexported = await run(
+      "pub mod foundations;\n",
+      "mod label;\npub use self::label::*;\n",
+    );
+    expect(reexported.calls).toContain("contracts");
+    expect(
+      block(reexported.prompts.contracts, "contract inventory").map(
+        (e: any) => [e.path, e.name, e.change],
+      ),
+    ).toEqual([["src/foundations/label.rs", "new", "changed"]]);
+    const hidden = await run(
+      "pub(crate) mod foundations;\n",
+      "pub(crate) mod label;\n",
+    );
+    expect(hidden.calls).not.toContain("contracts");
+    expect(hidden.report.agent_audit.agents_skipped.contracts).toContain(
+      "contract inventory is empty",
+    );
+  }, 60000);
 });
 
 describe("contract verification", () => {

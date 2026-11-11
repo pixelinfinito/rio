@@ -182,7 +182,9 @@ export function exportsOf(
 
 /**
  * Whether a Rust file's `pub` items are reachable from its crate root: the root
- * itself, or every enclosing module declared `pub mod` by its parent.
+ * itself, or every enclosing module either declared `pub mod` by its parent or
+ * declared there and re-exported whole (`mod label; pub use self::label::*;`).
+ * A `pub use` that names items is not followed.
  */
 export async function rustReachable(
   path: string,
@@ -196,6 +198,8 @@ export async function rustReachable(
   modules[last] = modules[last].replace(/\.rs$/, "");
   if (modules.length === 1 && ["lib", "main"].includes(modules[0])) return true;
   if (modules[last] === "mod") modules.pop();
+  // A module is named by an identifier; any other file name is not one.
+  if (!modules.every((m) => /^[A-Za-z_]\w*$/.test(m))) return false;
   const prefix = parts.slice(0, src + 1).join("/");
   for (let depth = 0; depth < modules.length; depth++) {
     const parents =
@@ -205,15 +209,21 @@ export async function rustReachable(
             `${prefix}/${modules.slice(0, depth).join("/")}.rs`,
             `${prefix}/${modules.slice(0, depth).join("/")}/mod.rs`,
           ];
+    const name = modules[depth];
+    const open = new RegExp(`^\\s*pub\\s+mod\\s+${name}\\s*[;{]`, "m"),
+      // Whatever the module's own visibility, the glob makes its items public.
+      own = new RegExp(
+        `^\\s*(?:pub(?:\\([^)]*\\))?\\s+)?mod\\s+${name}\\s*;`,
+        "m",
+      ),
+      whole = new RegExp(
+        `^\\s*pub\\s+use\\s+(?:self::)?${name}::\\*\\s*;`,
+        "m",
+      );
     let declared = false;
     for (const parent of parents) {
       const text = await read(parent);
-      if (
-        text &&
-        new RegExp(`^\\s*pub\\s+mod\\s+${modules[depth]}\\s*[;{]`, "m").test(
-          text,
-        )
-      )
+      if (text && (open.test(text) || (own.test(text) && whole.test(text))))
         declared = true;
     }
     if (!declared) return false;

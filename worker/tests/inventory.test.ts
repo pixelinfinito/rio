@@ -375,6 +375,49 @@ describe("contract inventory: Rust", () => {
     ]);
   });
 
+  it("follows a private module its parent re-exports whole", async () => {
+    const tree = (arity: string) => ({
+      "crates/library/src/lib.rs": "pub mod foundations;\n",
+      "crates/library/src/foundations/mod.rs":
+        "mod content;\nmod label;\n\npub use self::content::Content;\npub use self::label::*;\n",
+      "crates/library/src/foundations/label.rs": `pub struct Label(PicoStr);\n\nimpl Label {\n    pub fn new(${arity}) -> Self {\n        todo!()\n    }\n}\n`,
+      // Re-exported by name: the item is public, the module's other items are not.
+      "crates/library/src/foundations/content.rs": `pub struct Content;\npub fn sequence(${arity}) {}\n`,
+      "crates/conversions/src/lib.rs": "mod types;\npub use types::*;\n",
+      "crates/conversions/src/types.rs": `pub fn to_trusted_host(${arity}) {}\n`,
+    });
+    const { entries } = await run(
+      tree("name: PicoStr"),
+      tree("name: PicoStr, span: Span"),
+    );
+    expect(entries.map((e) => [e.path, e.name, e.change])).toEqual([
+      ["crates/conversions/src/types.rs", "to_trusted_host", "changed"],
+      ["crates/library/src/foundations/label.rs", "new", "changed"],
+    ]);
+  });
+
+  it("keeps a crate-visible module private", async () => {
+    const tree = (arity: string) => ({
+      "src/lib.rs":
+        "pub(crate) mod tui;\npub(crate) mod user_context;\nmod wire;\npub(crate) use wire::*;\n",
+      "src/tui/mod.rs": "pub(crate) mod slash;\n",
+      "src/tui/slash.rs": `pub fn contains(${arity}) -> bool {\n    true\n}\n`,
+      "src/user_context/mod.rs": `pub fn invalidate(${arity}) {}\n`,
+      "src/wire.rs": `pub fn encode(${arity}) {}\n`,
+    });
+    const { entries } = await run(tree("a: u8"), tree("a: u8, b: u8"));
+    expect(entries).toEqual([]);
+  });
+
+  it("does not take a file name that is no identifier for a module", async () => {
+    const tree = (arity: string) => ({
+      "src/lib.rs": "pub mod a;\n",
+      "src/a(b.rs": `pub fn odd(${arity}) {}\n`,
+    });
+    const { entries } = await run(tree("a: u8"), tree("a: u8, b: u8"));
+    expect(entries).toEqual([]);
+  });
+
   it("lists routes, env reads and clap flags", async () => {
     const { entries } = await run(
       {
