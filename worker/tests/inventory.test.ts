@@ -56,6 +56,35 @@ const node = (id: string, path: string, symbol_path: string, line: number) => ({
   line_start: line,
   line_end: line + 2,
 });
+/** A re-export hub whose lists wrap, before and after a change drops four members. */
+const HUB = "src/memory/channel-guardian-store.ts";
+const hub = `/**
+ * Re-export hub for channel guardian store modules.
+ */
+
+export {
+  type ApprovalRequestStatus,
+  // @internal — test-only helpers; production code uses the canonical store
+  createApprovalRequest,
+  resolveApprovalRequest,
+} from "./guardian-approvals.js";
+export {
+  type BindingStatus,
+  createBinding,
+  getActiveBinding,
+  type GuardianBinding,
+  listActiveBindingsByAssistant,
+  revokeBinding,
+} from "./guardian-bindings.js";
+export {
+  getRateLimit,
+  type VerificationRateLimit,
+} from "./guardian-rate-limits.js";
+`;
+const trimmedHub = hub.replace(
+  /  createBinding,\n  getActiveBinding,\n|  listActiveBindingsByAssistant,\n  revokeBinding,\n/g,
+  "",
+);
 
 describe("contract inventory: TypeScript", () => {
   const api = `export function fetchUser(id: string): Promise<User> {\n  return get(id);\n}\nexport const VERSION = 1;\nfunction local() {}\n`;
@@ -201,6 +230,71 @@ describe("contract inventory: TypeScript", () => {
       },
     ]);
     expect(entry.consumers.head).toEqual([]);
+  });
+
+  it("lists the members removed from a wrapped re-export list", async () => {
+    const service = `import {\n  getActiveBinding,\n  revokeBinding as legacyRevokeBinding,\n} from "../memory/channel-guardian-store.js";\n`;
+    const { entries } = await run(
+      { [HUB]: hub, "src/runtime/service.ts": service },
+      { [HUB]: trimmedHub, "src/runtime/service.ts": service },
+    );
+    expect(entries.map((e) => [e.kind, e.name, e.change])).toEqual([
+      ["export", "createBinding", "removed"],
+      ["export", "getActiveBinding", "removed"],
+      ["export", "listActiveBindingsByAssistant", "removed"],
+      ["export", "revokeBinding", "removed"],
+    ]);
+    expect(find(entries, "export", "getActiveBinding")).toMatchObject({
+      path: HUB,
+      base: {
+        line: 14,
+        text: 'export { getActiveBinding } from "./guardian-bindings.js"',
+      },
+      consumers: {
+        base: [{ path: "src/runtime/service.ts", line: 2, via: "text" }],
+        head: [{ path: "src/runtime/service.ts", line: 2, via: "text" }],
+      },
+    });
+  });
+
+  it("reads a list member by its exported name, on one line or wrapped", async () => {
+    const wrapped = `export {\n  parse, // kept for plugins\n  render as draw,\n  type Options,\n} from "https://example.test/lib.js";\nexport type {\n  Shape,\n};\n`;
+    const { entries } = await run(
+      { "src/index.ts": "export const local = 1;\n" },
+      { "src/index.ts": wrapped },
+    );
+    expect(entries.map((e) => [e.name, e.change, e.head?.text])).toEqual([
+      [
+        "draw",
+        "added",
+        'export { render as draw } from "https://example.test/lib.js"',
+      ],
+      ["local", "removed", undefined],
+      [
+        "Options",
+        "added",
+        'export { type Options } from "https://example.test/lib.js"',
+      ],
+      ["parse", "added", 'export { parse } from "https://example.test/lib.js"'],
+      ["Shape", "added", "export type { Shape }"],
+    ]);
+    // Rewrapping a list changes no member of it.
+    const oneLine = `export { parse, render as draw, type Options } from "https://example.test/lib.js";\nexport type { Shape };\n`;
+    const rewrapped = await run(
+      { "src/index.ts": wrapped },
+      { "src/index.ts": oneLine },
+    );
+    expect(rewrapped.entries).toEqual([]);
+  });
+
+  it("does not read an object or a block as an export list", async () => {
+    const { entries } = await run(
+      { "src/index.ts": "const a = 1;\n" },
+      {
+        "src/index.ts": `const a = 1;\nexport {\n  a,\n  b: compute(),\n};\nexport {\n  never,\n  closed,\n`,
+      },
+    );
+    expect(entries).toEqual([]);
   });
 });
 
@@ -351,6 +445,7 @@ describe("triage public_contracts signal", () => {
       `app.get("/a", a);\napp.delete("/b", b);\n`,
       `app.get("/a", a);\n`,
     ],
+    ["members removed from a wrapped re-export list", HUB, hub, trimmedHub],
   ])("selects the contracts agent for %s", async (_, path, base, head) => {
     const p = await plan(base, head, path);
     expect(p.agents).toContain("contracts");
@@ -375,6 +470,12 @@ describe("triage public_contracts signal", () => {
       "src/env.ts",
       "const a = 1;\n",
       "const a = process.env.API_URL;\n",
+    ],
+    [
+      "a rewrapped re-export list",
+      "src/index.ts",
+      `export { parse, type Options } from "./lib.js";\n`,
+      `export {\n  parse,\n  type Options,\n} from "./lib.js";\n`,
     ],
   ])("does not fire for %s", async (_, path, base, head) => {
     const p = await plan(base, head, path);

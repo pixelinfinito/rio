@@ -82,6 +82,11 @@ function signature(lines: string[], index: number): string {
     .slice(0, 300);
 }
 
+/** Lines read for the closing brace of a wrapped export list. */
+const WRAPPED_LIST_LINES = 1000;
+/** One member of an export list: `name`, `name as alias` or `type name`. */
+const LIST_MEMBER = /^(?:type )?[\w$]+(?: as [\w$]+)?$/;
+
 /** Exported names with their declarations, per the adapter visibility rules. */
 export function exportsOf(
   path: string,
@@ -90,10 +95,15 @@ export function exportsOf(
 ): Map<string, Declaration> {
   const lines = content.split("\n"),
     found = new Map<string, Declaration>();
-  const add = (name: string, i: number) => {
-    if (!found.has(name))
-      found.set(name, { line: i + 1, text: signature(lines, i) });
+  const add = (name: string, i: number, text = signature(lines, i)) => {
+    if (!found.has(name)) found.set(name, { line: i + 1, text });
   };
+  // The name an export-list member exports: after `as`, without an inline `type`.
+  const exported = (member: string) =>
+    member
+      .replace(/^type /, "")
+      .split(" as ")
+      .at(-1)!;
   const language = languageOf(path);
   if (language === "typescript")
     lines.forEach((line, i) => {
@@ -103,16 +113,40 @@ export function exportsOf(
         );
       if (declared) return add(declared[1], i);
       if (/^export\s+default\b/.test(line)) return add("default", i);
-      const list = /^export\s*(?:type\s*)?\{([^}]*)\}/.exec(line);
-      if (list)
-        for (const part of list[1].split(",")) {
-          const name = part
-            .trim()
-            .split(/\s+as\s+/)
-            .at(-1)
-            ?.trim();
-          if (name) add(name, i);
+      // An export list, on one line or wrapped over several. Each member is
+      // its own declaration, so one added or removed leaves the others
+      // unchanged, and so does rewrapping the list.
+      const list = /^export\s*(type\s*)?\{(.*)$/.exec(line);
+      if (!list) return;
+      // Without comments; the `//` of a URL in the source is not one.
+      const inside = (j: number) =>
+        (j === i ? list[2] : lines[j]).replace(
+          /(?<!:)\/\/.*$|\/\*.*?\*\//g,
+          "",
+        );
+      // Only members and commas stand between the braces.
+      const limit = Math.min(lines.length, i + WRAPPED_LIST_LINES);
+      let end = i;
+      while (end < limit && !/[}{(;=]/.test(inside(end))) end++;
+      if (end >= limit || !/^[^{(;=]*\}/.test(inside(end))) return;
+      const close = inside(end).indexOf("}");
+      const source = inside(end)
+        .slice(close + 1)
+        .replace(/;\s*$/, "")
+        .trim()
+        .slice(0, 200);
+      for (let j = i; j <= end; j++) {
+        const members = j === end ? inside(j).slice(0, close) : inside(j);
+        for (const part of members.split(",")) {
+          const member = part.trim().replace(/\s+/g, " ");
+          if (LIST_MEMBER.test(member))
+            add(
+              exported(member),
+              j,
+              `export ${list[1] ? "type " : ""}{ ${member} }${source ? ` ${source}` : ""}`,
+            );
         }
+      }
     });
   else if (language === "python") {
     const all = new Set<string>();
