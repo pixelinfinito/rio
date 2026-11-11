@@ -660,6 +660,8 @@ export async function converse(options: {
   /** Validate a result before accepting it; invalid results use the same bounded,
    * charged repair loop as malformed protocol documents. */
   validateResult?: (value: any) => any;
+  /** The expected result, named in the repair request for a result `validateResult` refused. */
+  resultShape?: string;
   call?: (
     id: string,
     action: () => Promise<ModelResponse>,
@@ -748,7 +750,7 @@ export async function converse(options: {
       o.messages.push({
         role: "user",
         content: resultSchema
-          ? `${REPAIR} The result must match the requested result schema, including its exact field names and allowed enum values.`
+          ? `${REPAIR} The result must match the requested result schema, including its exact field names and allowed enum values.${o.resultShape ? ` ${o.resultShape}` : ""}`
           : REPAIR,
       });
     };

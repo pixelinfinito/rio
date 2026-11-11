@@ -275,6 +275,16 @@ export function securityCoverage(
       .map((i) => ({ item: i.id, title: i.title, reason: reasons.get(i.id)! })),
   };
 }
+const SECURITY_RESULT =
+  "security result must be an object with hypotheses, assessed and unassessed";
+/** Whether a security agent's result carries its hypotheses and both assessment lists. */
+const securityResult = (value: any): boolean =>
+  !!value &&
+  typeof value === "object" &&
+  !Array.isArray(value) &&
+  Array.isArray(value.hypotheses) &&
+  Array.isArray(value.assessed) &&
+  Array.isArray(value.unassessed);
 /** Dispatches of one runner job when the backend itself fails. */
 const RUNNER_ATTEMPTS = 2;
 export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
@@ -1461,6 +1471,18 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
               },
               redact: [partition],
               compaction: enabled(promptConfig, "compaction"),
+              // A security result without its lists is asked for again, within
+              // the conversation's repair limits, before the agent fails.
+              ...(agent === "security"
+                ? {
+                    validateResult: (value: any) => {
+                      invariant(securityResult(value), SECURITY_RESULT);
+                      return value;
+                    },
+                    resultShape:
+                      'The result is {"hypotheses":[...],"assessed":[...],"unassessed":[...]}: all three lists are required, and a list with no entries is [].',
+                  }
+                : {}),
             });
           } catch (error) {
             const message = error instanceof Error ? error.message : "";
@@ -1508,17 +1530,12 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           // agents' hypotheses still reach the verifier.
           const shaped =
             agent === "security"
-              ? output &&
-                typeof output === "object" &&
-                !Array.isArray(output) &&
-                Array.isArray(output.hypotheses) &&
-                Array.isArray(output.assessed) &&
-                Array.isArray(output.unassessed)
+              ? securityResult(output)
               : Array.isArray(output);
           if (!shaped) {
             report.status = "partial";
             report.footer.notes.push(
-              `${agent} agent failed: ${agent === "security" ? "security result must be an object with hypotheses, assessed and unassessed" : "expected hypothesis array"}; its findings are missing from this review.`,
+              `${agent} agent failed: ${agent === "security" ? SECURITY_RESULT : "expected hypothesis array"}; its findings are missing from this review.`,
             );
             if (agent !== "security") {
               await finished(0);

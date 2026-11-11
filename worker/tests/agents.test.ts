@@ -40,12 +40,15 @@ interface Run {
   agents: Record<string, unknown>;
   /** Raw provider content per agent, replacing the wrapped result. */
   raw?: Record<string, string>;
+  /** Generation results per agent in call order, the last one repeating. */
+  turns?: Record<string, unknown[]>;
   /** Disclosed verification answer for a hypothesis. */
   vote?: (h: any) => unknown;
   mutate?: (s: Submission) => void;
 }
 async function review(run: Run) {
   const prompts: Record<string, string> = {};
+  const latest: Record<string, string> = {};
   const calls: string[] = [];
   const transport = vi
     .spyOn(globalThis, "fetch")
@@ -61,8 +64,13 @@ async function review(run: Run) {
       let raw: string | undefined;
       if (agent) {
         prompts[agent] = first;
+        latest[agent] = last;
+        const turns = run.turns?.[agent],
+          turn = calls.filter((c) => c === agent).length;
         calls.push(agent);
-        result = run.agents[agent] ?? [];
+        result = turns
+          ? turns[Math.min(turn, turns.length - 1)]
+          : (run.agents[agent] ?? []);
         raw = run.raw?.[agent];
       } else if (last.startsWith("Verify this hypothesis.")) {
         calls.push("verify");
@@ -122,7 +130,12 @@ async function review(run: Run) {
     )
       .bind(id)
       .first<any>();
-    return { report: await store.get<any>(row.report_key), prompts, calls };
+    return {
+      report: await store.get<any>(row.report_key),
+      prompts,
+      latest,
+      calls,
+    };
   } finally {
     transport.mockRestore();
   }
@@ -750,8 +763,42 @@ describe("security agent", () => {
     ).toBe(true);
   }, 60000);
 
+  it("asks the security agent again for a result without its assessment lists and takes the corrected one", async () => {
+    const { report, calls, latest } = await review({
+      base,
+      head,
+      changed: ["src/api/users.ts"],
+      steps: steps(true),
+      agents: {},
+      turns: {
+        security: [
+          { hypotheses: [], assessed: applicable },
+          {
+            hypotheses: [],
+            assessed: applicable.filter((i) => i !== "A01:2025"),
+            unassessed: [{ item: "A01:2025", reason: "budget" }],
+          },
+        ],
+      },
+    });
+    expect(calls.filter((c) => c === "security").length).toBe(2);
+    // The second request names the three lists.
+    expect(latest.security).toContain(
+      '{"hypotheses":[...],"assessed":[...],"unassessed":[...]}',
+    );
+    expect(report.status).toBe("complete");
+    expect(
+      report.footer.notes.filter((n: string) => n.includes("agent failed")),
+    ).toEqual([]);
+    // Coverage is the corrected result's, not the refused one's.
+    expect(report.security_coverage.assessed).toHaveLength(6);
+    expect(report.security_coverage.unassessed).toEqual([
+      { item: "A01:2025", title: "Broken Access Control", reason: "budget" },
+    ]);
+  }, 60000);
+
   it("treats a security result without its assessment lists as a failed agent, never as nothing found", async () => {
-    const { report } = await review({
+    const { report, calls } = await review({
       base,
       head,
       changed: ["src/api/users.ts"],
@@ -767,6 +814,8 @@ describe("security agent", () => {
       ],
       agents: { security: { hypotheses: [] } },
     });
+    // Asked again twice, the limit of consecutive repairs, before it fails.
+    expect(calls.filter((c) => c === "security").length).toBe(3);
     expect(report.status).toBe("partial");
     expect(
       report.footer.notes.some((n: string) =>
