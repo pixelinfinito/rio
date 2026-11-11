@@ -542,7 +542,7 @@ fn the_qa_ui_works_in_a_terminal_that_answers_no_query() {
                 &mut follower,
                 std::ptr::null_mut(),
                 std::ptr::null_mut(),
-                &mut size,
+                &raw mut size,
             )
         },
         0
