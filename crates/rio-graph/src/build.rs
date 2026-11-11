@@ -143,7 +143,11 @@ pub fn default_threads() -> usize {
         .ok()
         .and_then(|value| value.parse::<usize>().ok())
         .filter(|&n| n > 0)
-        .unwrap_or_else(|| std::thread::available_parallelism().map_or(1, usize::from).min(4))
+        .unwrap_or_else(|| {
+            std::thread::available_parallelism()
+                .map_or(1, usize::from)
+                .min(4)
+        })
 }
 impl GraphBuilder {
     pub fn build(

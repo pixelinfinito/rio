@@ -531,7 +531,13 @@ mod tests {
                     let n = socket.read(&mut chunk).unwrap();
                     bytes.extend_from_slice(&chunk[..n]);
                 }
-                lines.push(String::from_utf8_lossy(&bytes).lines().next().unwrap().to_owned());
+                lines.push(
+                    String::from_utf8_lossy(&bytes)
+                        .lines()
+                        .next()
+                        .unwrap()
+                        .to_owned(),
+                );
                 // None: the connection drops without a response, like a reset.
                 if let Some((status, body)) = reply {
                     write!(socket,"HTTP/1.1 {status}\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{body}",body.len()).unwrap();
@@ -552,7 +558,10 @@ mod tests {
             format!("{error:#}"),
             "endpoint review did not complete: r1 (boom)"
         );
-        assert_eq!(server.join().unwrap(), vec!["GET /v1/reviews/r1 HTTP/1.1"; 3]);
+        assert_eq!(
+            server.join().unwrap(),
+            vec!["GET /v1/reviews/r1 HTTP/1.1"; 3]
+        );
     }
     #[tokio::test]
     async fn lineage_404_is_absent_and_feedback_errors_keep_their_status() {
