@@ -31,6 +31,9 @@ venv/
 coverage.json
 htmlcov/
 
+# Local AACR-Bench results, datasets and per-case evidence
+/eval/runs/aacr-bench*/
+
 # Secrets and local config (never commit)
 .env
 .env.*

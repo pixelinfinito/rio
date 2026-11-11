@@ -5,6 +5,10 @@ baseline eligibility, sample sizes, and the go/no-go rule. Register controls wit
 [positive-controls.md](positive-controls.md). The scripts use Python 3's standard
 library; no packages are required. Run commands from the repository root.
 
+For repository-level review benchmarking with Alibaba's dataset, see the
+[AACR-Bench adapter](aacr-bench.md). It uses the upstream Python evaluation
+environment and a configured Rio endpoint.
+
 1. Capture a public PR with the [runner procedure](runner/README.md) and
    [runner.py](runner.py). Pin commits, binary, profile, dependencies, and tools.
 2. Edit its `verdicts.json`: replace every `TODO`, supply independent evidence,
