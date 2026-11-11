@@ -1,9 +1,34 @@
 import { DurableObject } from "cloudflare:workers";
-import type { Env, Execution } from "./types";
+import type { Env, Execution, ExecutionResult } from "./types";
 import { invariant } from "./validation";
-import { ARTIFACT_LIMIT, PREPARE_WALL_MS, validateResult } from "./jobs";
-import { jobInput } from "./archive";
+import {
+  ARTIFACT_LIMIT,
+  SANDBOX_CPUS,
+  SANDBOX_MEMORY_MB,
+  validateResult,
+  wallLimit,
+} from "./jobs";
+import { jobInput, snapshotFor, transferMs } from "./archive";
 import { SandboxQa } from "./qa-sandbox";
+/** A job stopped at its deadline: a result, so the queue never redelivers it. */
+export function timedOut(
+  job: Execution,
+  phase: "transfer" | "command",
+): ExecutionResult {
+  return {
+    outcome: "exited",
+    job_id: job.job_id,
+    attempt: job.attempt,
+    version: job.version,
+    exit_code: 124,
+    stdout: "",
+    stderr: `runner wall deadline exceeded during ${phase}`,
+    timed_out: true,
+    truncated: false,
+  };
+}
+/** Time past the command wall for extraction to finish and the executor to exit. */
+const EXTRACT_GRACE_MS = 75000;
 export class Sandbox extends DurableObject<Env> {
   private qaStart?: Promise<void>;
   async alarm() {
@@ -18,13 +43,17 @@ export class Sandbox extends DurableObject<Env> {
     }
     invariant(
       job.network === false &&
-        job.limits.memory_mb <= 8192 &&
-        job.limits.cpu <= 2 &&
-        job.limits.wall_ms <=
-          (job.kind === "prepare" ? PREPARE_WALL_MS : 120000) &&
+        job.limits.memory_mb <= SANDBOX_MEMORY_MB &&
+        job.limits.cpu <= SANDBOX_CPUS &&
+        job.limits.wall_ms <= wallLimit(job.kind) &&
         job.limits.output_bytes <= 1048576 &&
         (job.limits.artifact_bytes ?? 0) <= ARTIFACT_LIMIT,
       "invalid sandbox limits",
+    );
+    // The archive has its own deadline; the command's wall starts once it is in.
+    const transfer = transferMs(
+      (await snapshotFor(this.env, job)).index.trees,
+      job.needs,
     );
     const container = this.ctx.container;
     invariant(container, "Cloudflare Container is unavailable");
@@ -33,9 +62,15 @@ export class Sandbox extends DurableObject<Env> {
       enableInternet: false,
       entrypoint: [
         "/bin/sleep",
-        String(Math.ceil(job.limits.wall_ms / 1000) + 60),
+        String(
+          Math.ceil((transfer + job.limits.wall_ms + EXTRACT_GRACE_MS) / 1000) +
+            30,
+        ),
       ],
     });
+    const abort = new AbortController();
+    let phase: "transfer" | "command" = "transfer";
+    let timer = setTimeout(() => abort.abort(), transfer);
     try {
       const process = await container.exec(
         ["/usr/bin/python3", "/opt/rio/execute.py"],
@@ -43,16 +78,35 @@ export class Sandbox extends DurableObject<Env> {
           stdin: "pipe",
           stdout: "pipe",
           stderr: "pipe",
-          signal: AbortSignal.timeout(job.limits.wall_ms + 15000),
+          signal: abort.signal,
           user: "10001",
         },
       );
       // Stream the header and tree archive; output is collected concurrently so
       // neither side can block on a full pipe.
       const input = (await jobInput(this.env, job))
-        .pipeTo(process.stdin!)
-        .catch((error: unknown) => error);
-      const [output, piped] = await Promise.all([process.output(), input]);
+        .pipeTo(process.stdin!, { signal: abort.signal })
+        .then(
+          () => {
+            clearTimeout(timer);
+            phase = "command";
+            // The executor may still be extracting the archive's tail, and
+            // its own wall starts only after that.
+            timer = setTimeout(
+              () => abort.abort(),
+              job.limits.wall_ms + EXTRACT_GRACE_MS,
+            );
+          },
+          (error: unknown) => error,
+        );
+      let output: Awaited<ReturnType<typeof process.output>>, piped: unknown;
+      try {
+        [output, piped] = await Promise.all([process.output(), input]);
+      } catch (error) {
+        if (abort.signal.aborted) return Response.json(timedOut(job, phase));
+        throw error;
+      }
+      if (abort.signal.aborted) return Response.json(timedOut(job, phase));
       // An executor that exits early closes its input; its own error explains why.
       if (output.exitCode !== 0)
         throw new Error(
@@ -63,6 +117,7 @@ export class Sandbox extends DurableObject<Env> {
       validateResult(result, job);
       return Response.json(result);
     } finally {
+      clearTimeout(timer);
       await container.destroy();
     }
   }

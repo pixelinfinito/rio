@@ -30,15 +30,28 @@ pub(crate) struct TokenIndex<'a> {
     // For each token, the ascending ids of the files containing it.
     postings: Vec<Vec<u32>>,
     memo: HashMap<String, Rc<Vec<u32>>>,
+    // False when `stop` ended indexing early; answers would miss files.
+    complete: bool,
 }
 impl<'a> TokenIndex<'a> {
-    pub(crate) fn new(contents: Vec<&'a [u8]>) -> Self {
+    /// Indexes `contents` until `stop` is true, checked between files and every
+    /// 64 Ki tokens inside a large one.
+    pub(crate) fn new(contents: Vec<&'a [u8]>, stop: &dyn Fn() -> bool) -> Self {
         let mut ids = HashMap::<&'a [u8], usize>::new();
         let mut vocabulary = Vec::new();
         let mut starts = Vec::new();
         let mut postings: Vec<Vec<u32>> = Vec::new();
-        for (file, content) in contents.iter().enumerate() {
-            for token in tokens(content) {
+        let mut complete = true;
+        'files: for (file, content) in contents.iter().enumerate() {
+            if stop() {
+                complete = false;
+                break;
+            }
+            for (n, token) in tokens(content).enumerate() {
+                if n % 65536 == 65535 && stop() {
+                    complete = false;
+                    break 'files;
+                }
                 let id = *ids.entry(token).or_insert_with(|| {
                     starts.push(vocabulary.len());
                     vocabulary.extend_from_slice(token);
@@ -57,7 +70,11 @@ impl<'a> TokenIndex<'a> {
             starts,
             postings,
             memo: HashMap::new(),
+            complete,
         }
+    }
+    pub(crate) fn complete(&self) -> bool {
+        self.complete
     }
     /// Ascending ids of the files whose content contains `term`.
     pub(crate) fn files(&mut self, term: &str) -> Result<Rc<Vec<u32>>> {
@@ -119,6 +136,20 @@ mod tests {
             .collect()
     }
     #[test]
+    fn indexing_stops_mid_file_and_reports_itself_incomplete() {
+        let large = "word ".repeat(200_000);
+        let calls = std::cell::Cell::new(0);
+        // The between-files check passes; the first in-file check stops.
+        let stop = || {
+            calls.set(calls.get() + 1);
+            calls.get() > 1
+        };
+        let index = TokenIndex::new(vec![large.as_bytes(), b"other"], &stop);
+        assert!(!index.complete());
+        assert_eq!(calls.get(), 2);
+        assert!(TokenIndex::new(vec![b"other"], &|| false).complete());
+    }
+    #[test]
     fn token_rules_match_a_full_content_search() {
         let contents: Vec<&[u8]> = vec![
             b"fn parse_args() { myargs(); }",
@@ -129,7 +160,7 @@ mod tests {
             b"no match here",
             b"",
         ];
-        let mut index = TokenIndex::new(contents.clone());
+        let mut index = TokenIndex::new(contents.clone(), &|| false);
         for term in [
             "args",
             "Args",

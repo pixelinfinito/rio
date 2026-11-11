@@ -47,7 +47,7 @@ fn plan() -> Plan {
             r("Queue", "rio-jobs"),
             r("AI Gateway", "rio · auth, no logs"),
             r("Gateway token", "AI Gateway Run"),
-            r("Sandbox app", "rio · standard-3"),
+            r("Sandbox app", "rio · standard-4"),
             r("workers.dev route", "rio.pixel-labs"),
         ],
         bindings: [
@@ -171,7 +171,7 @@ fn deploying() -> DeployingData {
         row(Done, "Workflows", "rio-review", ""),
         row(Done, "", "rio-migrate", ""),
         row(Done, "Registry", "rio-runner", "0.2.0"),
-        row(Pending, "Sandbox", "standard-3", "pending"),
+        row(Pending, "Sandbox", "standard-4", "pending"),
     ];
     d.migration = Some(Migration {
         version: "v1".into(),
@@ -229,7 +229,7 @@ fn before_failure() -> DeployingData {
         &mut d,
         "sandbox-rollout",
         StepState::Running,
-        "standard-3 · rolling",
+        "standard-4 · rolling",
         None,
     );
     d.log = vec![
@@ -275,7 +275,7 @@ fn deployed_value() -> serde_json::Value {
             {"kind": "Queue", "name": "rio-jobs"},
             {"kind": "AI Gateway", "name": "rio"},
             {"kind": "Workflows", "name": "review · migrate"},
-            {"kind": "Sandbox", "name": "standard-3"},
+            {"kind": "Sandbox", "name": "standard-4"},
             {"kind": "Schema", "name": "v1 applied"}
         ],
         "provider": "OpenRouter",
@@ -290,7 +290,7 @@ fn finished() -> DeployingData {
         &mut d,
         "sandbox-rollout",
         StepState::Done,
-        "standard-3",
+        "standard-4",
         Some(12.0),
     );
     set(

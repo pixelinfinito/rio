@@ -18,7 +18,7 @@
                                                                                                                         
   RESOURCES                                                                                                             
   ✓ Worker     rio             ✓ D1         rio ↺           ✓ R2         rio-artifacts   ✓ Queue      rio-jobs          
-  ✓ AI Gateway rio             ✓ Workflows  review · migrate✓ Sandbox    standard-3      ✓ Schema     v1 applied        
+  ✓ AI Gateway rio             ✓ Workflows  review · migrate✓ Sandbox    standard-4      ✓ Schema     v1 applied        
                                                                                                                         
   NEXT                                                                                                                  
    ⏎ run your first review    rio review --preset standard                                                              

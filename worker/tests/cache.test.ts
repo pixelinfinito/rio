@@ -10,6 +10,7 @@ import agentPrompts from "../src/agent-prompts.json";
 import { agents } from "../src/manifests";
 import {
   EVIDENCE_RETENTION_MS,
+  ContextMemo,
   context,
   contextHash,
   diffHunks,
@@ -209,6 +210,119 @@ describe("hunks and keys", () => {
         }),
       ),
     ).toBe(reference);
+  });
+
+  it("keys a change identically with a shared memo, reading each file once per use", async () => {
+    const graph: Graph = {
+      nodes: [
+        { id: "a", path: "a.ts", symbol_path: "a", line_start: 1, line_end: 3 },
+        { id: "b", path: "a.ts", symbol_path: "b", line_start: 5, line_end: 7 },
+        { id: "h", path: "h.ts", symbol_path: "h", line_start: 1, line_end: 1 },
+      ],
+      edges: [
+        { from: "a", to: "h" },
+        { from: "b", to: "h" },
+      ],
+    };
+    const before =
+        "function a() {\n  return 0;\n}\n\nfunction b() {\n  return 0;\n}\n// end\n",
+      after =
+        "function a() {\n  return 1;\n}\n\nfunction b() {\n  return 1;\n}\n// END\n";
+    const files: Record<string, string> = {
+      "a.ts": after,
+      "h.ts": "export const h = () => 1;\n",
+    };
+    const reads: string[] = [];
+    const inputs = (memo?: ContextMemo): ContextInputs => ({
+      agent: "correctness",
+      manifest_version: 1,
+      prompt: "prompt",
+      model: "openai/test",
+      options: {},
+      engine: "0.3.0",
+      graphs: { base: graph, head: graph },
+      guidance: [],
+      read: async (version, path) => {
+        reads.push(`${version}:${path}`);
+        return files[path] ?? null;
+      },
+      base_graph: true,
+      memo,
+    });
+    const hunks = diffHunks("a.ts", "a.ts", before, after);
+    // Two symbol hunks and one file-keyed hunk (no symbol encloses line 9).
+    expect(hunks).toHaveLength(3);
+    const plain = [];
+    for (const h of hunks) plain.push(await context(h, inputs()));
+    reads.length = 0;
+    const memo = new ContextMemo();
+    const memoized = [];
+    for (const h of hunks) memoized.push(await context(h, inputs(memo)));
+    expect(memoized).toEqual(plain);
+    // Each file is read once for its symbols, and once more where a hunk is
+    // keyed by the whole file; the second symbol hunk reads nothing.
+    expect(reads.sort()).toEqual([
+      "base:a.ts",
+      "base:a.ts",
+      "base:h.ts",
+      "head:a.ts",
+      "head:a.ts",
+      "head:h.ts",
+    ]);
+  });
+
+  it("keys one hop of neighbours whatever the edge order", async () => {
+    // a calls h, h calls z: z is two hops from a hunk in a.
+    const nodes = [
+      { id: "a", path: "a.ts", symbol_path: "a", line_start: 1, line_end: 3 },
+      { id: "h", path: "h.ts", symbol_path: "h", line_start: 1, line_end: 1 },
+      { id: "z", path: "z.ts", symbol_path: "z", line_start: 1, line_end: 1 },
+    ];
+    const files: Record<string, string> = {
+      "a.ts": "function a() {\n  return h();\n}\n",
+      "h.ts": "export const h = () => z();\n",
+      "z.ts": "export const z = () => 1;\n",
+    };
+    const [hunk] = diffHunks(
+      "a.ts",
+      "a.ts",
+      "function a() {\n  return 0;\n}\n",
+      files["a.ts"],
+    );
+    const key = async (
+      edges: Graph["edges"],
+      edit: Record<string, string> = {},
+    ) => {
+      const graph: Graph = { nodes, edges };
+      return context(hunk, {
+        agent: "correctness",
+        manifest_version: 1,
+        prompt: "",
+        model: "m",
+        options: {},
+        engine: "e",
+        graphs: { base: graph, head: graph },
+        guidance: [],
+        read: async (_v, path) => ({ ...files, ...edit })[path] ?? null,
+        base_graph: true,
+      });
+    };
+    const ordered = [
+      { from: "a", to: "h" },
+      { from: "h", to: "z" },
+    ];
+    const reference = await key(ordered);
+    expect(reference.covered.map((r) => r.path).sort()).toEqual([
+      "a.ts",
+      "a.ts",
+      "h.ts",
+      "h.ts",
+    ]);
+    expect(await key([...ordered].reverse())).toEqual(reference);
+    expect(
+      (await key(ordered, { "z.ts": "export const z = () => 2;\n" }))
+        .context_hash,
+    ).toBe(reference.context_hash);
   });
 
   it("requires a manifest version bump when an agent prompt changes", () => {

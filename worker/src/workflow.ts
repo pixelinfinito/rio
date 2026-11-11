@@ -95,6 +95,7 @@ import {
 import memberWeights from "./member-weights.json";
 import { pullOf } from "./pulls";
 import { createJob, createModelJob } from "./jobs";
+import { needs, transferMs } from "./archive";
 import { createQaJob } from "./qa-jobs";
 import { qaReport, qaRecords, compareQaResults, qaUsage } from "./qa-results";
 import { applyQaPolicy, suppressQaFindings } from "./qa-policy";
@@ -120,12 +121,14 @@ import { publishReview } from "./publish";
 import { announceReview, settleAnnouncement } from "./announce";
 import {
   changeHunks,
+  ContextMemo,
   context as cacheContext,
   expire,
   hunkHash,
   lookup,
   store as storeCache,
   type CacheEntry,
+  type Hunk,
   type Keyed,
 } from "./cache";
 import {
@@ -288,6 +291,8 @@ const securityResult = (value: any): boolean =>
   Array.isArray(value.unassessed);
 /** Dispatches of one runner job when the backend itself fails. */
 const RUNNER_ATTEMPTS = 2;
+/** Hunks keyed per cache lookup step. */
+const CACHE_CHUNK = 250;
 export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
   async run(event: WorkflowEvent<WorkflowParams>, step: WorkflowStep) {
     const id = event.payload.review_id,
@@ -328,17 +333,44 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
       this.env,
       event.payload.snapshot_key,
     );
-    // Steps read files on demand; triage needs only the changed files.
-    const changedFiles: Snapshot = {
-      base: await materialize(
-        snapshot.base,
-        submission.changed.flatMap((f) => [f.path, f.old_path ?? f.path]),
-      ),
-      head: await materialize(
-        snapshot.head,
-        submission.changed.map((f) => f.path),
-      ),
+    // Steps read files on demand. Triage reads the changed text files inside a
+    // step, so a replay keeps its plan and never holds the files themselves.
+    const changedText = async (): Promise<Snapshot> => {
+      const read = async (tree: TreeReader, paths: string[]) => {
+        const files: Record<string, File> = {};
+        for (const path of new Set(paths)) {
+          const content = await textOf(tree, path);
+          if (content !== null) files[path] = { mode: 0o100644, content };
+        }
+        return files;
+      };
+      return {
+        base: await read(
+          snapshot.base,
+          submission.changed.flatMap((f) => [f.path, f.old_path ?? f.path]),
+        ),
+        head: await read(
+          snapshot.head,
+          submission.changed.map((f) => f.path),
+        ),
+      };
     };
+    const planned = async (
+      name: string,
+      compute: (files: Snapshot) => Plan,
+    ): Promise<Plan> =>
+      store.get<Plan>(
+        // Triage is deterministic: an error (an invalid rule) repeats on retry.
+        await step.do(
+          name,
+          { retries: { limit: 0, delay: "1 second" } },
+          async () =>
+            store.put(
+              `reviews/${id}/plans/${name}.json`,
+              compute(await changedText()),
+            ),
+        ),
+      );
     let plan: Plan;
     const report = structuredClone(submission.report);
     const executions: Record<string, ExecutionResult> = {},
@@ -449,8 +481,8 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           : undefined;
         if (cap !== undefined && cap <= 0)
           throw new Error("no wall time left for the job");
-        await step.do(`dispatch-${job}`, async () => {
-          await createJob(
+        const wall = await step.do(`dispatch-${job}`, async () =>
+          createJob(
             this.env,
             id,
             job,
@@ -461,23 +493,59 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             attempt,
             kind === "run" ? undefined : { profile: submission.profile },
             cap,
-          );
-          return job;
-        });
+          ),
+        );
         // The unique attempt is part of the event type and result path.
         const remaining = await step.do(`remaining-${job}`, async () => {
           const ms = spare ? await spare() : await store.remainingMs(id);
           invariant(ms > 0, "review wall budget exhausted");
           return Math.max(1, Math.ceil(ms / 1000));
         });
-        const completed = await step.waitForEvent<{ key: string }>(
-          `wait-${job}`,
-          {
-            type: `job-${job}-${attempt}`,
-            timeout: `${Math.min(240, remaining)} seconds`,
-          },
+        // The job's own deadlines (archive transfer, command wall and the
+        // extraction grace) plus queue and container start, within the
+        // review's time.
+        const due = Math.ceil(
+          (transferMs(snapshot.index.trees, needs(kind, version)) +
+            wall +
+            120000) /
+            1000,
         );
-        const result = await store.get<ExecutionResult>(completed.payload.key);
+        let key: string;
+        try {
+          const completed = await step.waitForEvent<{ key: string }>(
+            `wait-${job}`,
+            {
+              type: `job-${job}-${attempt}`,
+              timeout: `${Math.min(due, remaining)} seconds`,
+            },
+          );
+          key = completed.payload.key;
+        } catch {
+          // Withdrawn so a late completion is ignored; the caller decides
+          // what a missing result costs (analysis degrades, a run times out).
+          await step.do(`withdraw-${job}`, async () => {
+            await this.env.DB.prepare(
+              "UPDATE jobs SET status='failed' WHERE id=? AND attempt=? AND status IN ('pending','leased')",
+            )
+              .bind(job, attempt)
+              .run();
+            return true;
+          });
+          const result: ExecutionResult = {
+            outcome: "exited",
+            job_id: job,
+            attempt,
+            version,
+            exit_code: 124,
+            stdout: "",
+            stderr: `no runner result within ${Math.min(due, remaining)} s`,
+            timed_out: true,
+            truncated: false,
+          };
+          executions[job] = result;
+          return result;
+        }
+        const result = await store.get<ExecutionResult>(key);
         invariant(
           result.job_id === job &&
             result.attempt === attempt &&
@@ -969,7 +1037,9 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
       );
       const module = s.uses.split("@")[0];
       if (module === "rio/triage") {
-        plan = triage({ ...submission, report, graphs }, changedFiles);
+        plan = await planned(`plan-${s.id}`, (files) =>
+          triage({ ...submission, report, graphs }, files),
+        );
         await step.do(`budget-${s.id}`, () =>
           store.selectBudget(id, submission.profile, plan.mode),
         );
@@ -1145,11 +1215,36 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
                 (result.artifact
                   ? `exit code ${result.exit_code}`
                   : "no artifact"));
-            throw new Error(
-              `${s.id}: runner analysis failed: ${redact(reason).slice(0, 200)}`,
+            // A missing analysis costs only that analysis: the checks are
+            // reported as not run and the agents keep the CLI's graph.
+            report.footer.notes.push(
+              module === "rio/checks"
+                ? `${s.id}: runner analysis failed (${redact(reason).slice(0, 160)}); deterministic checks did not run`
+                : `${s.id}: runner analysis failed (${redact(reason).slice(0, 160)}); the review uses the submitted graph`,
             );
-          }
-          if (module === "rio/checks") {
+            if (module === "rio/checks")
+              for (const kind of [
+                "typecheck",
+                "lint",
+                "secrets",
+                "coverage",
+                "dependencies",
+              ] as const)
+                if (s.with[kind] !== false)
+                  report.incomplete.push({
+                    kind,
+                    language: "common",
+                    root: ".",
+                    version: "head",
+                    scheduled_as: "changed",
+                    ...(result.timed_out
+                      ? { outcome: "cancelled", reason: "timeout" }
+                      : { outcome: "failed", reason: "tool_crashed" }),
+                    wall_time_ms: 0,
+                    findings: [],
+                  });
+            if (report.status !== "partial") report.status = "incomplete";
+          } else if (module === "rio/checks") {
             const r = result.artifact.report;
             invariant(r?.schema === "rio-report-v1", "invalid runner report");
             report.checks = r.checks;
@@ -1160,7 +1255,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             if (r.status === "incomplete" && report.status !== "partial")
               report.status = "incomplete";
           }
-          if (result.artifact.graphs) graphs = result.artifact.graphs;
+          if (result.artifact?.graphs) graphs = result.artifact.graphs;
         }
       } else if (module === "rio/agents" || module === "rio/security") {
         const security = module === "rio/security";
@@ -1284,46 +1379,87 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           let keyed: Keyed[] = [],
             misses: number[] = [];
           let scope = reviewed;
+          // The cache only saves model calls: a lookup that cannot finish
+          // (a CPU limit repeats on every retry) runs the agent uncached.
+          let found:
+            { keys: Keyed[]; hits: Record<number, CacheEntry> } | undefined;
           if (caching) {
             const read = (version: Version, path: string) =>
               textOf(reviewed.snapshot[version], path);
-            const lookupKey = await step.do(
-              `cache-lookup-${s.id}-${agent}`,
-              async () => {
-                const keys: Keyed[] = [];
-                for (const hunk of await changeHunks(reviewed.changed, read))
-                  keys.push({
-                    hunk,
-                    hunk_hash: hunkHash(hunk),
-                    ...(await cacheContext(hunk, {
-                      agent,
-                      layout: promptConfig.layout,
-                      manifest_version: agents[agent]?.version ?? 0,
-                      prompt:
-                        (agentPrompts as Record<string, string>)[agent] ?? "",
-                      model,
-                      options: config,
-                      engine: this.env.RIO_VERSION,
-                      graphs,
-                      guidance: submission.owner_guidance,
-                      read,
-                      base_graph: !diffOnly,
-                    })),
-                  });
-                const hits = await lookup(this.env, load.tenant, keys);
-                return store.put(`reviews/${id}/cache/${s.id}-${agent}.json`, {
-                  keys: keys.map((k) => ({
-                    ...k,
-                    hunk: { ...k.hunk, text: "" },
-                  })),
-                  hits,
-                });
-              },
-            );
-            const found = await store.get<{
-              keys: Keyed[];
-              hits: Record<number, CacheEntry>;
-            }>(lookupKey);
+            const bounded = {
+              retries: { limit: 1, delay: "5 seconds" as const },
+              timeout: "5 minutes" as const,
+            };
+            try {
+              // The change's hunks, then their keys and hits in chunks: each
+              // chunk is its own step, so its CPU limit bounds one chunk.
+              const hunksKey = await step.do(
+                `cache-hunks-${s.id}-${agent}`,
+                bounded,
+                async () =>
+                  store.put(
+                    `reviews/${id}/cache/${s.id}-${agent}-hunks.json`,
+                    await changeHunks(reviewed.changed, read),
+                  ),
+              );
+              const hunks = await store.get<Hunk[]>(hunksKey);
+              const all: typeof found = { keys: [], hits: {} };
+              for (let start = 0; start < hunks.length; start += CACHE_CHUNK) {
+                const chunk = start / CACHE_CHUNK;
+                const chunkKey = await step.do(
+                  `cache-lookup-${s.id}-${agent}-${chunk}`,
+                  bounded,
+                  async () => {
+                    const keys: Keyed[] = [];
+                    const memo = new ContextMemo();
+                    for (const hunk of hunks.slice(start, start + CACHE_CHUNK))
+                      keys.push({
+                        hunk,
+                        hunk_hash: hunkHash(hunk),
+                        ...(await cacheContext(hunk, {
+                          agent,
+                          layout: promptConfig.layout,
+                          manifest_version: agents[agent]?.version ?? 0,
+                          prompt:
+                            (agentPrompts as Record<string, string>)[agent] ??
+                            "",
+                          model,
+                          options: config,
+                          engine: this.env.RIO_VERSION,
+                          graphs,
+                          guidance: submission.owner_guidance,
+                          read,
+                          base_graph: !diffOnly,
+                          memo,
+                        })),
+                      });
+                    const hits = await lookup(this.env, load.tenant, keys);
+                    return store.put(
+                      `reviews/${id}/cache/${s.id}-${agent}-${chunk}.json`,
+                      {
+                        keys: keys.map((k) => ({
+                          ...k,
+                          hunk: { ...k.hunk, text: "" },
+                        })),
+                        hits,
+                      },
+                    );
+                  },
+                );
+                const part =
+                  await store.get<NonNullable<typeof found>>(chunkKey);
+                for (const [i, entry] of Object.entries(part.hits))
+                  all.hits[start + Number(i)] = entry;
+                all.keys.push(...part.keys);
+              }
+              found = all;
+            } catch (error) {
+              report.footer.notes.push(
+                `Agent result cache skipped for ${agent}: ${redact(error instanceof Error ? error.message : String(error)).slice(0, 120)}`,
+              );
+            }
+          }
+          if (found) {
             keyed = found.keys;
             cacheStats ??= { lookups: 0, hits: 0, tokens_saved_estimate: 0 };
             cacheStats.lookups += keyed.length;
@@ -1998,7 +2134,9 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           );
         }
       }
-      plan = triage(submission, changedFiles);
+      plan = await planned("plan-initial", (files) =>
+        triage(submission, files),
+      );
       await step.do("budget-initial", () =>
         store.selectBudget(id, submission.profile, plan.mode),
       );

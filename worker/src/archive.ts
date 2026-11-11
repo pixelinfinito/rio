@@ -59,6 +59,20 @@ export function needs(kind: Execution["kind"], version: Version): Version[] {
   if (kind === "model") return [];
   return kind === "run" ? [version] : ["base", "head"];
 }
+/** Longest time the job archive may take to reach the container. */
+export const TRANSFER_CAP_MS = 240000;
+/**
+ * Time allowed for streaming and extracting a job's archive, apart from its
+ * command wall: a minute plus 4 MiB/s of the needed trees' bytes, capped so a
+ * job still ends inside one queue consumer invocation (15 minutes).
+ */
+export function transferMs(
+  trees: Record<Version, { bytes: number }>,
+  versions: Version[],
+): number {
+  const bytes = versions.reduce((sum, v) => sum + (trees[v]?.bytes ?? 0), 0);
+  return Math.min(TRANSFER_CAP_MS, 60000 + Math.ceil(bytes / 4194304) * 1000);
+}
 export async function snapshotFor(
   env: Env,
   job: Execution,

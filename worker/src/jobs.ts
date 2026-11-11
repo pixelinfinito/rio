@@ -11,6 +11,24 @@ import { canonical, hash, invariant } from "./validation";
 import { needs } from "./archive";
 import { redact } from "./redaction";
 import { finishQaRun } from "./qa-jobs";
+/** Command wall of an agent's run command and a council member's call. */
+export const RUN_WALL_MS = 120000;
+/**
+ * Command wall of an analysis job (checks, graph, static). With the transfer
+ * allowance it stays inside one queue consumer invocation (15 minutes).
+ */
+export const ANALYSIS_WALL_MS = 480000;
+/** The largest command wall a runner accepts for a job kind. */
+export function wallLimit(kind: Execution["kind"]): number {
+  if (kind === "prepare") return PREPARE_WALL_MS;
+  return ["checks", "graph", "static"].includes(kind)
+    ? ANALYSIS_WALL_MS
+    : RUN_WALL_MS;
+}
+/**
+ * Dispatches a runner job; returns its command wall. Analysis jobs get at most
+ * 40% of the review's remaining time, so the agents keep the rest.
+ */
 export async function createJob(
   env: Env,
   review: string,
@@ -23,9 +41,11 @@ export async function createJob(
   context?: { profile: Profile },
   /** A caller's own wall bound, below the review's remaining time. */
   wallCapMs?: number,
-): Promise<void> {
+): Promise<number> {
   const store = new Store(env);
   invariant(!(await store.cancelled(review)), "cancelled");
+  const remaining = await store.remainingMs(review);
+  const sandbox = env.RUNNER_BACKEND === "sandbox";
   const execution: Execution = {
     protocol: 1,
     review_id: review,
@@ -37,13 +57,19 @@ export async function createJob(
     snapshot_id: snapshotId,
     needs: needs(kind, version),
     limits: {
-      wall_ms: Math.min(
-        120000,
-        await store.remainingMs(review),
-        wallCapMs ?? Infinity,
+      wall_ms: Math.max(
+        1000,
+        Math.min(
+          wallLimit(kind),
+          wallLimit(kind) === ANALYSIS_WALL_MS
+            ? Math.floor(remaining * 0.4)
+            : remaining,
+          wallCapMs ?? Infinity,
+        ),
       ),
-      memory_mb: env.RUNNER_BACKEND === "sandbox" ? 8192 : 2048,
-      cpu: 2,
+      // The Sandbox runs on standard-4 (4 vCPUs, 12 GiB).
+      memory_mb: sandbox ? SANDBOX_MEMORY_MB : 2048,
+      cpu: sandbox ? SANDBOX_CPUS : 2,
       output_bytes: 1024 * 1024,
       ...(kind === "run" ? {} : { artifact_bytes: ARTIFACT_LIMIT }),
     },
@@ -58,7 +84,10 @@ export async function createJob(
     .bind(job, review, attempt, key, Date.now(), kind)
     .run();
   await env.JOBS.send({ review_id: review, job_id: job, attempt });
+  return execution.limits.wall_ms;
 }
+export const SANDBOX_MEMORY_MB = 12288;
+export const SANDBOX_CPUS = 4;
 /**
  * A self-hosted council member's request as a runner job. Only a self-hosted
  * runner that advertises a model endpoint claims it; the request never
@@ -246,6 +275,8 @@ export async function finishJob(
       .bind(job, review, attempt)
       .first<any>();
   invariant(row, "unknown job attempt");
+  // A withdrawn job (its wait timed out) keeps no late result.
+  if (row.status === "failed") return;
   const payload = await store.get<Execution>(row.payload_key);
   validateResult(result, payload);
   // The runner may have been replaced while its result body or R2 write was

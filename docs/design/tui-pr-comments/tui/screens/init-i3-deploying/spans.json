@@ -933,7 +933,7 @@
     "bold": false
    },
    {
-    "text": "standard-3",
+    "text": "standard-4",
     "fg": "dim",
     "bg": "bg",
     "bold": false
@@ -1641,7 +1641,7 @@
     "bold": false
    },
    {
-    "text": "standard-3 · rolling",
+    "text": "standard-4 · rolling",
     "fg": "faint",
     "bg": "bg",
     "bold": false

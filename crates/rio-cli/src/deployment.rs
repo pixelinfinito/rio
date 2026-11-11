@@ -919,7 +919,8 @@ fn metadata(
     }
     let _ = queue; // Queue binding uses the account-local name; consumer setup uses its ID.
     let mut value = json!({"main_module":"worker.mjs","compatibility_date":"2026-11-01","compatibility_flags":["nodejs_compat"],"bindings":bindings});
-    value["limits"] = json!({"cpu_ms":30000});
+    // Workers' maximum: a review step's CPU allowance (bounded work, not a fix for unbounded work).
+    value["limits"] = json!({"cpu_ms":300000});
     value["tags"] = json!(["rio-managed"]);
     value["keep_bindings"] = json!(["plain_text", "json", "secret_text"]);
     if deployment.runner == Runner::Sandbox {
@@ -1886,8 +1887,8 @@ impl Deployer {
             .context("the runner image was not copied; retry from the registry copy")?;
         let name = self.deployment.name.clone();
         configure_container(self.cf()?, &self.base(), &name, &image).await?;
-        self.resource("sandbox-rollout", "Sandbox", "standard-3", "—", false);
-        Ok(Outcome::Done("standard-3 · rolling".into()))
+        self.resource("sandbox-rollout", "Sandbox", SANDBOX_INSTANCE, "—", false);
+        Ok(Outcome::Done(format!("{SANDBOX_INSTANCE} · rolling")))
     }
 
     async fn workers_dev(&mut self) -> Result<Outcome> {
@@ -2157,6 +2158,11 @@ fn migration_attempt(release: &str, id: &str) -> Option<u32> {
         rest => rest.strip_prefix("-r")?.parse().ok().filter(|n| *n > 0),
     }
 }
+/// The Sandbox's instance size; Worker jobs declare its ceiling (`SANDBOX_CPUS`).
+const SANDBOX_INSTANCE: &str = "standard-4";
+/// Containers at once: two concurrent reviews' analysis jobs, their run
+/// commands and retries, with room to spare.
+const SANDBOX_MAX_INSTANCES: u64 = 10;
 async fn configure_container(cf: &Cloudflare, base: &str, name: &str, image: &str) -> Result<()> {
     let namespaces = cf
         .list(&format!("{base}/workers/durable_objects/namespaces"))
@@ -2171,18 +2177,22 @@ async fn configure_container(cf: &Cloudflare, base: &str, name: &str, image: &st
     let app_name = format!("{name}-sandbox");
     let existing = apps.iter().find(|a| a["name"] == app_name);
     // Cloudflare requires at least 3 GiB per vCPU. Sandbox jobs declare the
-    // standard-3 ceiling (2 vCPUs / 8 GiB); Docker jobs retain their 2 GiB ceiling.
-    let config = json!({"image":image,"instance_type":"standard-3"});
+    // standard-4 ceiling (4 vCPUs / 12 GiB); Docker jobs retain their 2 GiB ceiling.
+    let config = json!({"image":image,"instance_type":SANDBOX_INSTANCE});
     if let Some(existing) = existing {
         ensure!(
             existing["durable_objects"]["namespace_id"] == namespace_id,
             "Sandbox application belongs to another Durable Object"
         );
-        if existing["configuration"]["image"] != image {
+        // A size or capacity change rolls out like an image change.
+        if existing["configuration"]["image"] != image
+            || existing["configuration"]["instance_type"] != SANDBOX_INSTANCE
+            || existing["max_instances"] != SANDBOX_MAX_INSTANCES
+        {
             cf.request(
                 Method::PATCH,
                 &format!("{path}/{}", string(existing, "id")?),
-                Some(json!({"configuration":config,"max_instances":5})),
+                Some(json!({"configuration":config,"max_instances":SANDBOX_MAX_INSTANCES})),
             )
             .await?;
             cf.request(
@@ -2193,7 +2203,7 @@ async fn configure_container(cf: &Cloudflare, base: &str, name: &str, image: &st
             .await?;
         }
     } else {
-        cf.request(Method::POST, &path, Some(json!({"name":app_name,"scheduling_policy":"default","configuration":config,"instances":0,"max_instances":5,"durable_objects":{"namespace_id":namespace_id}}))).await?;
+        cf.request(Method::POST, &path, Some(json!({"name":app_name,"scheduling_policy":"default","configuration":config,"instances":0,"max_instances":SANDBOX_MAX_INSTANCES,"durable_objects":{"namespace_id":namespace_id}}))).await?;
     }
     Ok(())
 }
@@ -2327,7 +2337,7 @@ mod tests {
         let value = metadata(&deployment, "db", "queue", &Secrets::default(), Some("v1"));
         assert_eq!(value["containers"][0]["class_name"], "Sandbox");
         assert!(value.get("migrations").is_none());
-        assert_eq!(value["limits"]["cpu_ms"], 30000);
+        assert_eq!(value["limits"]["cpu_ms"], 300000);
     }
     struct Mock {
         url: String,
