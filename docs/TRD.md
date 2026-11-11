@@ -261,6 +261,7 @@ reviews/<id>/evidence/<finding>/         reproductions, test output, traces
 reviews/<id>/owner_guidance.json         REVIEW.md, CLAUDE.md, AGENTS.md as read by prepare
 reviews/<id>/council/<finding>/          evidence pack, assessments per member and round, experiments, decision
 reviews/<id>/council/audit.json          which content was sent to which vendor
+reviews/<id>/progress/{raised,settled}/  hypotheses raised and verified so far; a stopped review reports from them
 results/<job_id>/<command>/              runner uploads (stdout, reports, coverage)
 indexes/<repo>/files/<content_hash>.json per-file symbol tables (full graph, v0.4)
 cache/<hunk_hash>/<context_hash>.json    agent result cache

@@ -18,6 +18,7 @@ import type {
   Vote,
 } from "./types";
 import { Store, D1Ledger } from "./storage";
+import { Progress } from "./progress";
 import { ProviderGateway, converse, settledUsage } from "./gateway";
 import { promptCacheReport, selfHostedCache } from "./usage";
 import { generationPrompt, redactPartitions } from "./prompt";
@@ -332,6 +333,12 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
     const executions: Record<string, ExecutionResult> = {},
       hypotheses: Hypothesis[] = [],
       verified: Verified[] = [];
+    // Hypotheses whose verification ran to its end, with their votes that did
+    // not complete, and whether the report already holds the consolidated
+    // findings; the stopped path reads both.
+    const settled = new Map<string, number>();
+    let consolidated = false;
+    const progress = new Progress(store, id);
     const ledger = new D1Ledger(this.env, id),
       gateway = new ProviderGateway(this.env);
     let graphs = submission.graphs;
@@ -1318,6 +1325,12 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
                 if (h.catalog_item) catalogOf.set(h.id, h.catalog_item);
               }
             }
+            await progress.raised(
+              `${s.id}-${agent}-cached`,
+              hypotheses.filter(
+                (h) => h.source?.agent === agent && h.source.cached,
+              ),
+            );
             misses = keyed.flatMap((_, i) => (i in found.hits ? [] : [i]));
             // Every hunk was a hit: no model call for this agent.
             if (keyed.length && !misses.length) continue;
@@ -1541,6 +1554,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             if (!hypotheses.some((x) => x.id === h.id)) hypotheses.push(h);
             if (h.catalog_item) catalogOf.set(h.id, h.catalog_item);
           }
+          await progress.raised(`${s.id}-${agent}`, screened.accepted);
           await finished(screened.accepted.length);
           // Only a run that completed within budget populates the cache.
           if (caching && misses.length)
@@ -1716,6 +1730,10 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           );
           candidates = reverify.verify;
           verified.push(...reverify.carried);
+          for (const v of reverify.carried) {
+            settled.set(v.hypothesis.id, 0);
+            await progress.settled({ verified: v, incomplete: 0 });
+          }
           diffOnlyAudit = {
             reverified: reverify.verify.map((h) => h.id),
             carried: reverify.carried.map((v) => v.hypothesis.id),
@@ -1781,6 +1799,17 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             },
           });
           verified.push(result.verified);
+          // Votes missing once the review has stopped were cut short by the stop.
+          const missing = result.votes.filter(
+            (v) => v.status !== "completed",
+          ).length;
+          if (!missing || !(await store.cancelled(id))) {
+            settled.set(h.id, missing);
+            await progress.settled({
+              verified: result.verified,
+              incomplete: missing,
+            });
+          }
           await step.do(`verified-${h.id}`, () =>
             store.event(id, "finding:verified", {
               id: h.id,
@@ -1808,6 +1837,88 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
       await step.do(`finished-${s.id}`, () =>
         store.event(id, "step:finished", { step: s.id }),
       );
+    };
+    // Consolidates verified hypotheses into a report: the findings lists, the
+    // agent audit and the security coverage. A stop never turns a hypothesis
+    // into a finding: one whose verification was cut short, or never began, is
+    // listed in the audit as raised but unverified.
+    const present = (target: typeof report, stopped = false) => {
+      const list = verified.filter((v) => settled.has(v.hypothesis.id));
+      const findings = consolidate(list, submission.profile, {
+        classThreshold: submission.profile.steps.find((s) =>
+          s.uses.startsWith("rio/report@"),
+        )?.with?.class_threshold,
+      });
+      target.findings.push(...findings.defects);
+      target.risks.push(...findings.risks);
+      if (council) {
+        target.council = {
+          ...council.metrics,
+          ...(findings.council_held.length
+            ? { held: findings.council_held }
+            : {}),
+          ...(council.refuted.length
+            ? {
+                refuted: list
+                  .filter((v) => council!.refuted.includes(v.hypothesis.id))
+                  .map((v) => findingOf(v)),
+              }
+            : {}),
+        };
+      }
+      if (findings.security.length) target.security = findings.security;
+      target.agent_audit = {
+        ...findings.audit,
+        ...(council
+          ? {
+              council: {
+                selected: council.selection,
+                not_councilled: council.metrics.not_councilled,
+              },
+            }
+          : {}),
+        require_human: plan.require_human,
+        board_deferred: true,
+        agents: plan.agent_reasons,
+        ...(Object.keys(skippedAgents).length
+          ? { agents_skipped: skippedAgents }
+          : {}),
+        ...(rejected.length ? { rejected } : {}),
+      };
+      if (coverage) {
+        // Assessed items name the reported findings that cite them.
+        for (const f of target.security ?? []) {
+          const members = findings.audit.classes[f.id] ?? [f.id];
+          for (const member of members) {
+            const item = catalogOf.get(member);
+            const entry = coverage.assessed.find((a) => a.item === item);
+            if (entry && !entry.findings.includes(f.id))
+              entry.findings.push(f.id);
+          }
+        }
+        target.security_coverage = coverage;
+      }
+      target.risk_tier = plan.risk;
+      if (stopped || list.length < verified.length) {
+        const skipped = new Set(diffOnlyAudit?.not_reverified ?? []);
+        const unverified = hypotheses.filter(
+          (h) => !settled.has(h.id) && !skipped.has(h.id),
+        );
+        if (unverified.length)
+          target.agent_audit.unverified = unverified.map((h) => ({
+            id: h.id,
+            agent: h.source?.agent,
+            rule_id: h.rule_id,
+            category: h.category,
+            severity: h.severity,
+            location: h.location,
+            message: h.message,
+          }));
+        target.footer.notes.push(
+          `The review stopped before it finished: ${settled.size} of ${settled.size + unverified.length} raised hypotheses had completed verification and are consolidated here; ${unverified.length} had not and are listed in agent_audit.unverified, not as findings.`,
+        );
+      }
+      return findings;
     };
     try {
       // Memoized, so a replay after a restart or a variable change rebuilds the
@@ -1895,61 +2006,8 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           pending.delete(s.id);
         }
       }
-      const findings = consolidate(verified, submission.profile, {
-        classThreshold: submission.profile.steps.find((s) =>
-          s.uses.startsWith("rio/report@"),
-        )?.with?.class_threshold,
-      });
-      report.findings.push(...findings.defects);
-      report.risks.push(...findings.risks);
-      if (council) {
-        report.council = {
-          ...council.metrics,
-          ...(findings.council_held.length
-            ? { held: findings.council_held }
-            : {}),
-          ...(council.refuted.length
-            ? {
-                refuted: verified
-                  .filter((v) => council!.refuted.includes(v.hypothesis.id))
-                  .map((v) => findingOf(v)),
-              }
-            : {}),
-        };
-      }
-      if (findings.security.length) report.security = findings.security;
-      report.agent_audit = {
-        ...findings.audit,
-        ...(council
-          ? {
-              council: {
-                selected: council.selection,
-                not_councilled: council.metrics.not_councilled,
-              },
-            }
-          : {}),
-        require_human: plan.require_human,
-        board_deferred: true,
-        agents: plan.agent_reasons,
-        ...(Object.keys(skippedAgents).length
-          ? { agents_skipped: skippedAgents }
-          : {}),
-        ...(rejected.length ? { rejected } : {}),
-      };
-      if (coverage) {
-        // Assessed items name the reported findings that cite them.
-        for (const f of report.security ?? []) {
-          const members = findings.audit.classes[f.id] ?? [f.id];
-          for (const member of members) {
-            const item = catalogOf.get(member);
-            const entry = coverage.assessed.find((a) => a.item === item);
-            if (entry && !entry.findings.includes(f.id))
-              entry.findings.push(f.id);
-          }
-        }
-        report.security_coverage = coverage;
-      }
-      report.risk_tier = plan.risk;
+      const findings = present(report);
+      consolidated = true;
       report.footer.notes = report.footer.notes.filter(
         (n: string) =>
           !n.includes("no_endpoint") && !n.startsWith("posture, max_defects"),
@@ -2227,6 +2285,42 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
       report.footer.notes.push(
         error instanceof Error ? error.message : "review failed",
       );
+      // Work finished before the stop is still reported, consolidated as on the
+      // complete path. A replayed run has it in storage only.
+      if (!consolidated)
+        try {
+          const stored = await progress.load();
+          for (const h of stored.raised)
+            if (!hypotheses.some((x) => x.id === h.id)) hypotheses.push(h);
+          for (const entry of stored.settled) {
+            const at = verified.findIndex(
+              (v) => v.hypothesis.id === entry.verified.hypothesis.id,
+            );
+            if (at !== -1 && settled.has(entry.verified.hypothesis.id)) continue;
+            if (at === -1) verified.push(entry.verified);
+            else verified[at] = entry.verified;
+            settled.set(entry.verified.hypothesis.id, entry.incomplete);
+          }
+        } catch {
+          // Report from memory alone.
+        }
+      if (!consolidated && hypotheses.length + verified.length)
+        try {
+          const draft = structuredClone(report);
+          const findings = present(draft, true);
+          draft.summary.suppressed += findings.audit.suppressed;
+          if (diffOnlyAudit) draft.agent_audit.diff_only = diffOnlyAudit;
+          const incomplete = [...settled.values()].reduce((n, v) => n + v, 0);
+          if (incomplete) {
+            draft.agent_audit.incomplete_votes = incomplete;
+            draft.footer.notes.push(
+              `${incomplete} verifier votes did not complete; inspect the vote audit. Missing votes do not reduce quorum.`,
+            );
+          }
+          Object.assign(report, draft);
+        } catch {
+          // Keep the partial report without the agents' results.
+        }
       // A failed review is stamped for display but does not advance lineage state.
       if (lineage)
         try {
