@@ -8,7 +8,15 @@ import { createJob, validateResult } from "../src/jobs";
 import { Store } from "../src/storage";
 import { jobInput } from "../src/archive";
 import { Tools } from "../src/tools";
-import { StoredSnapshot, fileOf, indexKey, scan } from "../src/snapshot";
+import {
+  BATCH_BYTES,
+  StoredSnapshot,
+  fileOf,
+  indexKey,
+  scan,
+  textOf,
+  textsOf,
+} from "../src/snapshot";
 import { seal, storeChunk, storePack } from "../src/upload";
 import { allMigrations, graphs, snapshot } from "./fixtures";
 import {
@@ -388,7 +396,7 @@ describe("snapshot reader", () => {
     expect(listed).toEqual(Object.keys(many.head).sort());
     expect(await reader.links("head")).toEqual({ link: btoa("dir") });
   });
-  it("scans in path order reading each pack once", async () => {
+  it("scans in path order reading each small pack once", async () => {
     const stored = await storeSnapshot(testEnv, many, "owner", { pack: 2048 });
     expect(stored.packs).toBeGreaterThan(2);
     const reader = await StoredSnapshot.open(testEnv, stored.key);
@@ -407,6 +415,104 @@ describe("snapshot reader", () => {
         .sort(),
     );
     expect(new Set(reader.reads).size).toBe(reader.reads.length);
+  });
+  // The FreeCAD reviews ran out of Worker memory while voters searched a
+  // 395 MiB tree: a batch was 32 MiB, a filter keeping two files of a pack read
+  // the pack between them, and every concurrent scan held its own batch.
+  const wide: Snapshot = { base: {}, head: {} };
+  wide.head["a/first.ts"] = { mode: 0o100644, content: "export const a = 1;\n" };
+  for (let i = 0; i < 12; i++)
+    wide.head[`m/f${String(i).padStart(2, "0")}.txt`] = {
+      mode: 0o100644,
+      content: new TextDecoder().decode(filler(i, MiB)),
+    };
+  wide.head["z/last.ts"] = { mode: 0o100644, content: "export const z = 2;\n" };
+  it("reads the kept files of a sparse scan and not the packs between them", async () => {
+    const stored = await storeSnapshot(testEnv, wide, "owner");
+    const reader = await StoredSnapshot.open(testEnv, stored.key);
+    const visited: string[] = [];
+    await scan(
+      reader.head,
+      (e) => e.path.endsWith(".ts"),
+      async (e, bytes) => {
+        visited.push(e.path);
+        expect(fileOf(e, bytes!)).toEqual(wide.head[e.path]);
+      },
+    );
+    expect(visited).toEqual(["a/first.ts", "z/last.ts"]);
+    expect(reader.fetched.bytes).toBeLessThan(1024);
+  });
+  it("yields batches of a few MiB and holds one at a time across concurrent scans", async () => {
+    const stored = await storeSnapshot(testEnv, wide, "owner");
+    const reader = await StoredSnapshot.open(testEnv, stored.key);
+    let live = 0,
+      most = 0,
+      largest = 0;
+    const walk = async () => {
+      const seen: string[] = [];
+      for await (const batch of reader.head.batches(() => true)) {
+        most = Math.max(most, ++live);
+        largest = Math.max(
+          largest,
+          batch.reduce((n, [, bytes]) => n + (bytes?.length ?? 0), 0),
+        );
+        for (const [entry] of batch) seen.push(entry.path);
+        // Other scans get their turn while this one works on its batch.
+        await new Promise((resolve) => setTimeout(resolve, 5));
+        live--;
+      }
+      return seen;
+    };
+    const walks = await Promise.all([walk(), walk(), walk(), walk()]);
+    for (const seen of walks) expect(seen).toEqual(Object.keys(wide.head).sort());
+    expect(most).toBe(1);
+    expect(largest).toBeLessThanOrEqual(BATCH_BYTES + MiB);
+  });
+  it("releases its batch when a scan stops early or fails", async () => {
+    const stored = await storeSnapshot(testEnv, wide, "owner");
+    const reader = await StoredSnapshot.open(testEnv, stored.key);
+    for await (const batch of reader.head.batches(() => true)) {
+      expect(batch.length).toBeGreaterThan(0);
+      break;
+    }
+    await expect(
+      scan(
+        reader.head,
+        () => true,
+        async () => {
+          throw new Error("consumer failed");
+        },
+      ),
+    ).rejects.toThrow("consumer failed");
+    const started = Date.now();
+    const seen: string[] = [];
+    await scan(
+      reader.head,
+      (e) => e.path.endsWith(".ts"),
+      async (e) => void seen.push(e.path),
+    );
+    expect(seen).toEqual(["a/first.ts", "z/last.ts"]);
+    expect(Date.now() - started).toBeLessThan(10000);
+  });
+  it("reads many texts in batches with the results of one read per path", async () => {
+    const stored = await storeSnapshot(testEnv, many, "owner", { pack: 2048 });
+    const reader = await StoredSnapshot.open(testEnv, stored.key);
+    const paths = [
+      ...Object.keys(many.head).filter((_, i) => i % 3 === 0),
+      "bin/blob",
+      "link",
+      "missing.txt",
+    ];
+    const texts = await textsOf(reader.head, paths);
+    // One read per pack run, not one per file.
+    expect(reader.reads.length).toBeLessThan(paths.length / 2);
+    expect([...texts.keys()].sort()).toEqual([...new Set(paths)].sort());
+    for (const path of paths)
+      expect(texts.get(path)).toBe(await textOf(reader.head, path));
+    expect(texts.get("dir/f000.txt")).toBe("file 0\n");
+    expect(texts.get("bin/blob")).toBeNull();
+    expect(texts.get("link")).toBeNull();
+    expect(texts.get("missing.txt")).toBeNull();
   });
 });
 
@@ -633,6 +739,122 @@ describe("runner archives", () => {
       true,
     );
   });
+  it("sends what both trees share once, in a few chunks, and reports what it read", async () => {
+    // A repository of many files and a change of a few, as a review has.
+    const common: Snapshot["head"] = {};
+    for (let i = 0; i < 700; i++)
+      common[`pkg/m${i % 40}/${"n".repeat(40)}${i}.ts`] = {
+        mode: 0o100644,
+        content: `export const v${i} = ${i};\n`.repeat(20),
+      };
+    common[`deep/${"ü".repeat(60)}/${"x".repeat(80)}.txt`] = {
+      mode: 0o100644,
+      content: "long non-ASCII name\n",
+    };
+    common["empty"] = { mode: 0o100644, content: "" };
+    const tree: Snapshot = {
+      base: {
+        ...common,
+        "changed.ts": { mode: 0o100644, content: "old\n" },
+        "removed.ts": { mode: 0o100644, content: "removed\n" },
+        "mode.sh": { mode: 0o100644, content: "#!/bin/sh\n" },
+        "was-link": { mode: 0o120000, content: "pkg" },
+        "now-link": { mode: 0o100644, content: "a file\n" },
+        // First and last in path order, with no counterpart.
+        "!first": { mode: 0o100644, content: "first\n" },
+        "~last": { mode: 0o100644, content: "last\n" },
+      },
+      head: {
+        ...common,
+        "changed.ts": { mode: 0o100644, content: "new\n" },
+        "added.ts": { mode: 0o100644, content: "added\n" },
+        "mode.sh": { mode: 0o100755, content: "#!/bin/sh\n" },
+        "was-link": { mode: 0o100644, content: "a file\n" },
+        "now-link": { mode: 0o120000, content: "pkg" },
+      },
+    };
+    const stored = await storeSnapshot(testEnv, tree, "owner");
+    const id = crypto.randomUUID();
+    await testEnv.DB.prepare(
+      "INSERT INTO reviews(id,tenant,submission_key,status,created_at,token_limit,deadline) VALUES(?,'owner','unused','running',?,?,?)",
+    )
+      .bind(id, Date.now(), 100000, Date.now() + 600000)
+      .run();
+    await createJob(
+      runtime,
+      id,
+      "graph",
+      "graph",
+      ["rio-internal"],
+      "head",
+      stored.id,
+      1,
+      { profile: {} as any },
+    );
+    const job = await payload(id, "graph");
+    const chunksOf = async (stream: ReadableStream<Uint8Array>) => {
+      const chunks: Uint8Array[] = [];
+      for await (const chunk of stream) chunks.push(chunk);
+      return chunks;
+    };
+    const measured = { bytes: 0, storage_ms: 0 };
+    const chunks = await chunksOf(
+      await jobInput(runtime, job, { shared: true, measured }),
+    );
+    const bytes = chunks.reduce((n, c) => n + c.length, 0);
+    expect(measured.bytes).toBe(bytes);
+    const input = await readJobInput(new Blob(chunks).stream());
+    const regular = (version: "base" | "head") =>
+      Object.entries(tree[version]).filter(([, f]) => f.mode !== 0o120000);
+    // The head tree whole; of the base only what differs.
+    expect(Object.keys(treeOf(input.files, "head")).sort()).toEqual(
+      regular("head")
+        .map(([p]) => p)
+        .sort(),
+    );
+    expect(Object.keys(treeOf(input.files, "base")).sort()).toEqual(
+      ["!first", "changed.ts", "mode.sh", "now-link", "removed.ts", "~last"].sort(),
+    );
+    expect(Object.keys(input.shared)).toEqual(["base"]);
+    expect([...input.shared.base].sort()).toEqual(Object.keys(common).sort());
+    // What the executor builds (a shared path is copied from the head tree)
+    // is the base tree, byte for byte and mode for mode.
+    const built = { ...input.files };
+    for (const path of input.shared.base)
+      built[`base/${path}`] = input.files[`head/${path}`];
+    for (const version of ["base", "head"] as const) {
+      expect(Object.keys(treeOf(built, version)).sort()).toEqual(
+        regular(version)
+          .map(([p]) => p)
+          .sort(),
+      );
+      for (const [path, file] of regular(version)) {
+        const member = built[`${version}/${path}`];
+        expect(fileOf({ mode: file.mode } as any, member.bytes)).toEqual(file);
+        expect(member.mode).toBe(file.mode === 0o100755 ? 0o755 : 0o644);
+      }
+    }
+    // A runner whose executor may be older gets both trees whole.
+    const whole = await chunksOf(await jobInput(runtime, job));
+    const plain = await readJobInput(new Blob(whole).stream());
+    expect(plain.shared).toEqual({});
+    expect(Object.keys(treeOf(plain.files, "base")).length).toBe(
+      regular("base").length,
+    );
+    const wholeBytes = whole.reduce((n, c) => n + c.length, 0);
+    expect(bytes).toBeLessThan(wholeBytes * 0.6);
+    // Three parts per file (header, content, padding) reach the container as
+    // chunks of about a MiB, not as thousands of writes.
+    expect(wholeBytes).toBeGreaterThan(1024 * 1024);
+    for (const sent of [chunks, whole]) {
+      expect(sent.length).toBeLessThanOrEqual(
+        Math.ceil(sent.reduce((n, c) => n + c.length, 0) / (768 * 1024)) + 1,
+      );
+      expect(Math.max(...sent.map((c) => c.length))).toBeLessThanOrEqual(
+        1024 * 1024,
+      );
+    }
+  });
   it("bounds analysis artifacts apart from command output", async () => {
     const { id, snapshot: snapshotId } = await review();
     await createJob(
@@ -674,6 +896,26 @@ describe("runner archives", () => {
     expect(() => validateResult(result(run, { forged: true }), run)).toThrow(
       "runner artifact limit exceeded",
     );
+    // Phase and timing are bounded numbers, or the result is refused.
+    const timed = (timing: unknown, phase?: unknown) => ({
+      ...result(run, undefined),
+      timing,
+      phase,
+    });
+    expect(() =>
+      validateResult(
+        timed({ transfer_ms: 1200, extract_ms: 900, command_ms: 5 }, "command"),
+        run,
+      ),
+    ).not.toThrow();
+    for (const bad of [
+      timed({ transfer_ms: "long" }),
+      timed({ transfer_ms: -1 }),
+      timed([1, 2]),
+      timed(Object.fromEntries(Array.from({ length: 9 }, (_, i) => [i, 1]))),
+      timed({}, "elsewhere"),
+    ])
+      expect(() => validateResult(bad, run)).toThrow("invalid runner result");
   });
   it("serves the archive only with that job's capability", async () => {
     const { id, snapshot: snapshotId } = await review();

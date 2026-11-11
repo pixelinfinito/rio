@@ -220,6 +220,20 @@ export function validateResult(
           )),
       "invalid model result",
     );
+  invariant(
+    (value.phase === undefined ||
+      value.phase === "transfer" ||
+      value.phase === "command") &&
+      (value.timing === undefined ||
+        (value.timing !== null &&
+          typeof value.timing === "object" &&
+          !Array.isArray(value.timing) &&
+          Object.keys(value.timing).length <= 8 &&
+          Object.values(value.timing).every(
+            (n) => typeof n === "number" && Number.isFinite(n) && n >= 0,
+          ))),
+    "invalid runner result",
+  );
   if (value.artifact !== undefined)
     invariant(
       payload.kind !== "run" &&
@@ -227,6 +241,45 @@ export function validateResult(
           (payload.limits.artifact_bytes ?? 0) + 4096,
       "runner artifact limit exceeded",
     );
+}
+/**
+ * The jobs of a review nobody is working on: not taken by a runner, or taken
+ * under a lease that ran out. Binds the current time.
+ */
+export const IDLE =
+  "(status='pending' OR (status='leased' AND COALESCE(lease_until,0)<?))";
+/**
+ * Withdraws the idle jobs of a review that ended, so no runner starts one and
+ * no late result is taken. A job a runner still holds ends with its result
+ * (kept for the audit), or here once its lease runs out.
+ */
+export const withdrawIdle = (env: Env, review: string, now = Date.now()) =>
+  env.DB.prepare(
+    `UPDATE jobs SET status='failed' WHERE review_id=? AND ${IDLE}`,
+  )
+    .bind(review, now)
+    .run();
+/**
+ * Stops the Sandbox containers still running jobs of a review that ended or
+ * was cancelled: containers are few, and one would otherwise run until its
+ * command's wall for a result nobody waits for. A stopped job completes with
+ * that as its result.
+ */
+export async function stopRunners(env: Env, review: string) {
+  if (env.RUNNER_BACKEND !== "sandbox") return;
+  const rows = await env.DB.prepare(
+    "SELECT id,attempt FROM jobs WHERE review_id=? AND status='leased' AND kind IN ('checks','graph','run') LIMIT 20",
+  )
+    .bind(review)
+    .all<{ id: string; attempt: number }>();
+  for (const job of rows.results)
+    try {
+      await env.SANDBOX.get(
+        env.SANDBOX.idFromName(`${review}-${job.id}-${job.attempt}`),
+      ).fetch("https://sandbox/stop", { method: "POST" });
+    } catch {
+      // Best effort: the container's own deadline still ends it.
+    }
 }
 /**
  * Records a job the runner backend could not execute at all (for example the
@@ -319,8 +372,15 @@ export async function finishJob(
   // A prepare job hands its review over (Sandbox) or reports why it could not.
   if (payload.kind === "prepare")
     return finishPrepare(env, review, result, payload.snapshot_id);
-  // Keep completed artifacts for audit after cancellation, without resuming model work.
+  // Keep completed artifacts for audit after cancellation or the review's
+  // end, without resuming model work: only an open review waits for a job.
   if (await store.cancelled(review)) return;
+  const open = await env.DB.prepare(
+    "SELECT 1 FROM reviews WHERE id=? AND status IN ('queued','running')",
+  )
+    .bind(review)
+    .first();
+  if (!open) return;
   // Re-sending after a transport failure is safe; event type includes the immutable attempt.
   const instance = await env.REVIEWS.get(review);
   await instance.sendEvent({ type: `job-${job}-${attempt}`, payload: { key } });

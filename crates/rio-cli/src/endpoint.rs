@@ -84,6 +84,14 @@ pub async fn review(
         lineage,
     } = request;
     let client = client(url, config_dir)?;
+    // Time before the endpoint has a review is not part of its deadline; say
+    // where it went.
+    let mut phase = std::time::Instant::now();
+    let mut lap = || {
+        let elapsed = phase.elapsed().as_secs_f64();
+        phase = std::time::Instant::now();
+        elapsed
+    };
     if diff(&changes, &profile_excludes(&profile))?
         .files
         .is_empty()
@@ -94,6 +102,7 @@ pub async fn review(
             remote_id: None,
         });
     }
+    let diff_seconds = lap();
     let snapshot = Snapshot::from_changes(&changes);
     let id = rio_engine::review_id(&snapshot.key, &profile)?;
     // Triage can select either budget after submission. Allow the longest configured deadline.
@@ -119,6 +128,7 @@ pub async fn review(
             remote_id: None,
         });
     };
+    let graph_seconds = lap();
     cache.reference(&format!("snapshots/{}.tar.zst", snapshot.key))?;
     snapshot.write(&cache.options.dir)?;
     cache.write("profile.resolved.yaml", profile.to_yaml()?.as_bytes())?;
@@ -127,7 +137,12 @@ pub async fn review(
         &serde_json::to_vec_pretty(&prepared.guidance)?,
     )?;
     prepared.graphs.write(&cache.path)?;
+    eprintln!(
+        "prepared locally: diff {diff_seconds:.1}s, graph and plan {graph_seconds:.1}s, run records {:.1}s",
+        lap()
+    );
     let upload = client.upload_snapshot(&changes.base, &changes.head).await?;
+    let upload_seconds = lap();
     eprintln!(
         "snapshot: uploaded {} in {} new contents ({} in {} distinct contents, {} files total)",
         rio_client::format_bytes(upload.uploaded_bytes),
@@ -148,6 +163,10 @@ pub async fn review(
     }
     let remote_id = client.submit(&submission).await?;
     eprintln!("Endpoint review: {remote_id}");
+    eprintln!(
+        "submitted: snapshot upload {upload_seconds:.1}s, submission {:.1}s",
+        lap()
+    );
     cache.write(
         "endpoint.json",
         &serde_json::to_vec(&json!({"id":remote_id,"url":url}))?,
@@ -219,7 +238,12 @@ fn cache_qa_records(cache: &RunCache, audit: &serde_json::Value) -> Result<()> {
     Ok(())
 }
 
-/// The longest configured review deadline plus a minute: triage can select
+/// Time past a review's deadline the client still waits: an endpoint whose
+/// workflow cannot finish ends the review itself two minutes past the deadline,
+/// from a job that runs each minute. A client that left sooner cancelled the
+/// review and got no report where the endpoint had a partial one.
+const DEADLINE_MARGIN: Duration = Duration::from_secs(240);
+/// The longest configured review deadline plus the margin: triage can select
 /// either budget after submission.
 pub fn review_timeout(profile: &ResolvedProfile) -> Result<Duration> {
     Ok([false, true]
@@ -234,7 +258,7 @@ pub fn review_timeout(profile: &ResolvedProfile) -> Result<Duration> {
         .into_iter()
         .max()
         .unwrap_or_default()
-        + Duration::from_secs(60))
+        + DEADLINE_MARGIN)
 }
 
 /// The graph budget, overridable with `RIO_GRAPH_BUDGET_SECS`.

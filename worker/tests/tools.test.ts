@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { OUTPUT_LIMIT, Tools } from "../src/tools";
+import { OUTPUT_LIMIT, Tools, holds } from "../src/tools";
 import type { Snapshot } from "../src/types";
 import { graphs } from "./fixtures";
 
@@ -266,6 +266,90 @@ describe("search arguments", () => {
       },
     );
     expect(JSON.stringify(secret)).not.toContain("AKIAIOSFODNN7EXAMPLE");
+  });
+});
+describe("search over bytes", () => {
+  const utf8 = (text: string) => new TextEncoder().encode(text);
+  // The reference: decode every file and test every line, as search did
+  // before it looked for the pattern's bytes first.
+  const reference = (files: Record<string, string | Uint8Array>, pattern: string) =>
+    Object.entries(files)
+      .sort(([a], [b]) => (a < b ? -1 : 1))
+      .flatMap(([path, content]) => {
+        let text: string;
+        try {
+          text =
+            typeof content === "string"
+              ? content
+              : new TextDecoder("utf-8", { fatal: true }).decode(content);
+        } catch {
+          return [];
+        }
+        return text
+          .split("\n")
+          .flatMap((line, i) =>
+            line.includes(pattern) ? [{ path, line: i + 1, text: line }] : [],
+          );
+      });
+  it("finds a pattern in bytes exactly where the text holds it", () => {
+    for (const [text, pattern] of [
+      ["abcabd", "abd"],
+      ["aaab", "aab"],
+      ["naïve café", "é"],
+      ["naive cafe", "é"],
+      ["日本語のテキスト", "本語"],
+      ["日本語のテキスト", "語本"],
+      ["x", "xx"],
+      ["tail match", "match"],
+      ["𝒳 marks", "𝒳"],
+    ])
+      expect(holds(utf8(text), utf8(pattern)), `${pattern} in ${text}`).toBe(
+        text.includes(pattern),
+      );
+  });
+  it("returns what a decode of every file returns", async () => {
+    const files: Record<string, string | Uint8Array> = {
+      "a/ascii.ts": "const total = 1;\nexport const sum = total + 1;\n",
+      "a/crlf.txt": "total\r\nsecond total line\r\n",
+      "b/accents.md": "le total général\nrésumé: total\n",
+      "b/cjk.txt": "合計 total\n合計のみ\n",
+      "c/bom.txt": "\ufefftotal after a mark\n",
+      "c/empty.txt": "",
+      "c/none.txt": "nothing here\n",
+      // Not UTF-8: skipped, though its bytes hold the pattern.
+      "d/binary.bin": new Uint8Array([0xff, 0xfe, ...utf8("total"), 0x00]),
+    };
+    const head: Snapshot["head"] = {};
+    for (const [path, content] of Object.entries(files))
+      head[path] =
+        typeof content === "string"
+          ? file(content)
+          : {
+              mode: 0o100644,
+              content: btoa(String.fromCharCode(...content)),
+              encoding: "base64",
+            };
+    const search = new Tools({ base: {}, head }, graphs, undefined);
+    for (const pattern of [
+      "total",
+      "合計",
+      "général",
+      "total\r",
+      "\ufeff",
+      "line\nsecond",
+      "absent",
+      " ",
+    ]) {
+      const found = await search.dispatch("search", { pattern });
+      expect(found.results, JSON.stringify(pattern)).toEqual(
+        reference(files, pattern),
+      );
+    }
+    // A scope that selects only files without the pattern is still a scope with files.
+    expect(
+      (await search.dispatch("search", { pattern: "total", scope: "c/none.txt" }))
+        .results,
+    ).toEqual([]);
   });
 });
 describe("read_file arguments", () => {

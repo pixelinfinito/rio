@@ -373,6 +373,19 @@ export interface ExecutionResult {
   truncated: boolean;
   version: Version;
   artifact?: any;
+  /** Where a timed-out job was: its archive on the way in, or its command. */
+  phase?: "transfer" | "command";
+  /**
+   * Where the job's time went: the archive reaching the container (and how
+   * much of that was reading storage), the executor extracting it, the command.
+   */
+  timing?: {
+    transfer_ms?: number;
+    archive_bytes?: number;
+    storage_ms?: number;
+    extract_ms?: number;
+    command_ms?: number;
+  };
 }
 /**
  * Whether a route's cache counts are trusted: `verified` where documentation and

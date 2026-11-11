@@ -17,7 +17,10 @@ import {
   expire,
   hunkHash,
   lookup,
+  PACK_ENTRIES,
   slice,
+  store as storeCache,
+  storeEntries,
   type ContextInputs,
   type Keyed,
 } from "../src/cache";
@@ -354,6 +357,10 @@ interface Run {
   agent: (prompt: string) => unknown[];
   tenant?: string;
   mutate?: (s: Submission) => void;
+  // Step mocks, set before the workflow starts.
+  modify?: Parameters<
+    Awaited<ReturnType<typeof introspectWorkflowInstance>>["modify"]
+  >[0];
 }
 let reviews = 0;
 async function review(run: Run) {
@@ -444,6 +451,7 @@ async function review(run: Run) {
       runtime.REVIEWS,
       id,
     );
+    if (run.modify) await instance.modify(run.modify);
     await runtime.REVIEWS.create({
       id,
       params: { review_id: id, snapshot_key: stored.key },
@@ -737,6 +745,212 @@ describe("agent result cache within one file", () => {
       "correctness/f1 (cached)",
       "correctness/g2 (cached)",
     ]);
+  }, 240000);
+});
+
+const keyedHunk = (tag: string, n: number): Keyed => ({
+  hunk: {
+    path: `${tag}/${n}.ts`,
+    old_path: `${tag}/${n}.ts`,
+    base: { start: 1, count: 1 },
+    head: { start: 1, count: 1 },
+    text: "",
+  },
+  hunk_hash: `${tag}-h${n}`,
+  context_hash: `${tag}-c${n}`,
+});
+/** The environment with its storage and database requests counted. */
+function counted() {
+  const requests = { put: 0, get: 0, delete: 0, database: 0 };
+  const bucket = runtime.ARTIFACTS,
+    database = runtime.DB;
+  const counting = {
+    ...runtime,
+    ARTIFACTS: {
+      put: (...a: Parameters<R2Bucket["put"]>) => (
+        requests.put++,
+        bucket.put(...a)
+      ),
+      get: (key: string) => (requests.get++, bucket.get(key)),
+      delete: (keys: string | string[]) => (
+        requests.delete++,
+        bucket.delete(keys)
+      ),
+    },
+    DB: {
+      // Every statement counts, batched or not: an upper bound.
+      prepare: (sql: string) => (requests.database++, database.prepare(sql)),
+      batch: (statements: D1PreparedStatement[]) => database.batch(statements),
+    },
+  } as unknown as Env;
+  return { env: counting, requests };
+}
+const packs = async (tenant: string) =>
+  (await runtime.ARTIFACTS.list({ prefix: `cache/${tenant}/packs/` })).objects
+    .map((o) => o.key)
+    .sort();
+
+describe("cache packs", () => {
+  it("stores a step's entries with a handful of requests and reads each pack once", async () => {
+    const tenant = "packs-bounded";
+    // A store step's worth of entries: Elasticsearch@e38d20c stored 2,630
+    // entries in one step, an object each, and ended at the request limit.
+    const count = 4 * PACK_ENTRIES;
+    const keys = Array.from({ length: count }, (_, n) => keyedHunk("big", n));
+    const all = keys.map((_, n): [number, never[]] => [n, []]);
+    const writing = counted();
+    expect(
+      await storeEntries(writing.env, tenant, "correctness", keys, all, 7),
+    ).toBe(count);
+    expect(writing.requests.put).toBe(4);
+    expect(writing.requests.delete).toBe(0);
+    expect(
+      writing.requests.put + writing.requests.database,
+    ).toBeLessThanOrEqual(16);
+    expect(await entries(tenant)).toBe(count);
+    const stored = await packs(tenant);
+    expect(stored).toHaveLength(4);
+    // A retried step rewrites the same objects.
+    await storeEntries(runtime, tenant, "correctness", keys, all, 7);
+    expect(await packs(tenant)).toEqual(stored);
+    expect(await entries(tenant)).toBe(count);
+    // A lookup step's chunk of keys reads the packs holding them, once each.
+    const reading = counted();
+    const chunk = keys.slice(200, 450);
+    const hits = await lookup(reading.env, tenant, chunk);
+    expect(Object.keys(hits)).toHaveLength(chunk.length);
+    expect(hits[0]).toMatchObject({
+      agent: "correctness",
+      hunk: { path: "big/200.ts" },
+      hypotheses: [],
+      tokens: 7,
+    });
+    expect(reading.requests.get).toBe(2);
+    expect(reading.requests.put + reading.requests.delete).toBe(0);
+  });
+
+  it("keeps a pack while an entry of it remains and replaces an entry's old object", async () => {
+    const tenant = "packs-retention";
+    const now = Date.now(),
+      old = now - EVIDENCE_RETENTION_MS - 1000;
+    const keys = [0, 1, 2].map((n) => keyedHunk("keep", n));
+    // One pack of three entries, written before the retention.
+    await storeCache(runtime, tenant, "correctness", keys, [0, 1, 2], [], 9, old);
+    const [pack] = await packs(tenant);
+    expect(await packs(tenant)).toHaveLength(1);
+    // The same change later, the first entry only (the others' contexts
+    // changed): the new pack holds it and the old pack keeps the other two.
+    await storeCache(runtime, tenant, "correctness", keys, [0], [], 3, now);
+    expect(await packs(tenant)).toHaveLength(2);
+    expect(await runtime.ARTIFACTS.get(pack)).not.toBeNull();
+    // An entry stored before packs has an object of its own; a new entry for
+    // the same hunk takes its row, and the object goes.
+    const legacy = `cache/${tenant}/keep-h7/keep-c7.json`;
+    await runtime.ARTIFACTS.put(
+      legacy,
+      JSON.stringify({ agent: "correctness", hypotheses: [], tokens: 5 }),
+    );
+    await runtime.DB.prepare(
+      "INSERT INTO agent_cache(tenant,hunk_hash,context_hash,object_key,created_at) VALUES(?,?,?,?,?)",
+    )
+      .bind(tenant, "keep-h7", "keep-c7", legacy, now)
+      .run();
+    const seven = keyedHunk("keep", 7);
+    expect((await lookup(runtime, tenant, [seven], now))[0].tokens).toBe(5);
+    await storeCache(runtime, tenant, "correctness", [seven], [0], [], 4, now);
+    expect(await runtime.ARTIFACTS.get(legacy)).toBeNull();
+    expect((await lookup(runtime, tenant, [seven], now))[0].tokens).toBe(4);
+    // The lookup of an expired entry removes its row; the pack stays for the
+    // entry still indexed, and goes with it.
+    const hits = await lookup(runtime, tenant, keys.slice(0, 2), now);
+    expect(Object.keys(hits)).toEqual(["0"]);
+    expect(await entries(tenant)).toBe(3);
+    expect(await runtime.ARTIFACTS.get(pack)).not.toBeNull();
+    expect(await expire(runtime, tenant, now)).toBe(1);
+    expect(await runtime.ARTIFACTS.get(pack)).toBeNull();
+    expect(await packs(tenant)).toHaveLength(2);
+    expect(await entries(tenant)).toBe(2);
+  });
+});
+
+describe("agent result cache store", () => {
+  const change = (tag: string, files: number) => {
+    const names = Array.from({ length: files }, (_, n) => `src/${tag}/f${n}.ts`);
+    return {
+      base: Object.fromEntries(
+        names.map((p, n) => [p, `function f${n}() {\n  return 0; // ${tag}\n}\n`]),
+      ),
+      head: Object.fromEntries(
+        names.map((p, n) => [p, `function f${n}() {\n  return 1; // ${tag}\n}\n`]),
+      ),
+    };
+  };
+
+  it("populates and replays a change of more hunks than one pack or lookup step holds", async () => {
+    const tenant = "tenant-cache-packs";
+    const files = change("wide", PACK_ENTRIES + 44);
+    const first = await review({
+      files,
+      tenant,
+      agent: () => [hyp("src/wide/f7.ts", 2, "f7")],
+    });
+    expect(first.report.footer.notes.join("\n")).not.toMatch(/result cache/);
+    expect(first.report.cache).toMatchObject({
+      lookups: PACK_ENTRIES + 44,
+      hits: 0,
+    });
+    expect(await entries(tenant)).toBe(PACK_ENTRIES + 44);
+    expect(await packs(tenant)).toHaveLength(2);
+    const second = await review({
+      files,
+      tenant,
+      agent: () => {
+        throw new Error("no model call expected");
+      },
+    });
+    expect(second.calls).not.toContain("agent");
+    expect(second.report.cache).toMatchObject({
+      lookups: PACK_ENTRIES + 44,
+      hits: PACK_ENTRIES + 44,
+    });
+    expect(reported(second.report)[0].source).toEqual({
+      agent: "correctness",
+      cached: true,
+    });
+    expect(await packs(tenant)).toHaveLength(2);
+  }, 240000);
+
+  it("keeps the review when the store cannot finish, and says the cache was not updated", async () => {
+    const tenant = "tenant-cache-store-fails";
+    const files = change("unstored", 3);
+    const run = await review({
+      files,
+      tenant,
+      agent: () => [hyp("src/unstored/f1.ts", 2, "f1")],
+      // The limit repeats on every attempt, as it did live.
+      modify: async (m) => {
+        await m.disableRetryDelays();
+        await m.mockStepError(
+          { name: "cache-store-agents-correctness-0" },
+          new Error("Too many API requests by single Worker invocation."),
+        );
+      },
+    });
+    expect(run.report.status).not.toBe("failed");
+    expect(reported(run.report)).toHaveLength(1);
+    expect(run.report.footer.notes.join("\n")).toMatch(
+      /Agent result cache not updated for correctness: .*Too many API requests/,
+    );
+    expect(await entries(tenant)).toBe(0);
+    // The next review of the change runs the agent: nothing was half-stored.
+    const again = await review({
+      files,
+      tenant,
+      agent: () => [hyp("src/unstored/f1.ts", 2, "f1")],
+    });
+    expect(again.calls).toContain("agent");
+    expect(again.report.cache).toMatchObject({ lookups: 3, hits: 0 });
+    expect(await entries(tenant)).toBe(3);
   }, 240000);
 });
 

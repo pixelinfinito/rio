@@ -18,6 +18,8 @@ import time
 
 
 HEADER_LIMIT = 16 * 1024 * 1024
+# One `same/<version>` member: the Worker ends one at 256 KiB of paths.
+SHARED_LIMIT = 4 * 1024 * 1024
 # Rio's own analysis artifact (stdout of `rio-runner inside`) has its own bound; command
 # output keeps `output_bytes`.
 ARTIFACT_LIMIT = 12 * 1024 * 1024
@@ -55,14 +57,34 @@ def write_member(tree, path, source, mode):
         os.fchmod(target.fileno(), mode)
 
 
+def copy_shared(root, version, paths):
+    """Writes the files of `version` that equal the other tree's file of the same path, which
+    the archive carries once. The source is a regular file this executor wrote."""
+    other = VERSIONS[1 - VERSIONS.index(version)]
+    assert isinstance(paths, list), 'invalid shared member'
+    for path in paths:
+        assert isinstance(path, str) and safe_path(path), 'unsafe archive member'
+        descriptor = os.open(root / other / path, os.O_RDONLY | os.O_NOFOLLOW)
+        with os.fdopen(descriptor, 'rb') as source:
+            status = os.fstat(source.fileno())
+            assert stat.S_ISREG(status.st_mode), 'shared member is not a regular file'
+            write_member(root / version, path, source, stat.S_IMODE(status.st_mode))
+
+
 def extract(stream, root, needs):
     """Stream-extract the job archive: only regular `base/<path>` or `head/<path>` members of
-    needed versions with mode 0644 or 0755. Directory entries, links and every other member
-    type abort the job; never use extractall on repository-controlled archives."""
+    needed versions with mode 0644 or 0755, and `same/<version>` members: a JSON array of the
+    paths whose file equals the other tree's, sent after that tree. Directory entries, links and
+    every other member type abort the job; never use extractall on repository-controlled
+    archives."""
     with tarfile.open(fileobj=stream, mode='r|', encoding='utf-8', errors='strict') as archive:
         for member in archive:
             assert member.isreg(), 'archive member is not a regular file'
             version, _, path = member.name.partition('/')
+            if version == 'same':
+                assert path in needs and set(needs) == set(VERSIONS) and member.size <= SHARED_LIMIT, 'unsafe archive member'
+                copy_shared(root, path, json.loads(archive.extractfile(member).read()))
+                continue
             assert version in needs and safe_path(path), 'unsafe archive member'
             assert member.mode in (0o644, 0o755), 'unsupported archive member mode'
             write_member(root / version, path, archive.extractfile(member), member.mode)
@@ -92,7 +114,11 @@ def execute(stream):
         for version in VERSIONS:
             (root / version).mkdir()
         # Symbolic links stay in the header's `links`; they are never materialized.
+        started = time.monotonic()
         extract(stream, root, needs)
+        # Reading the archive and writing the trees, then the command: a deadline or a slow job
+        # is reported with where its time went.
+        timing = {'extract_ms': round((time.monotonic() - started) * 1000)}
         command = job['command']
         assert isinstance(command, list) and 0 < len(command) <= 128 and all(isinstance(x, str) and len(x) <= 16000 for x in command)
         if job['kind'] in ('checks', 'graph', 'static', 'prepare'):
@@ -106,7 +132,7 @@ def execute(stream):
         try:
             process = subprocess.Popen(command, cwd=cwd, env=env, stdin=subprocess.PIPE if job['kind'] != 'run' else subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.PIPE, start_new_session=True)
         except OSError:
-            return dict(job_id=job['job_id'], attempt=job['attempt'], version=job['version'], exit_code=127, stdout='', stderr='command could not be started', timed_out=False, truncated=False, outcome='spawn_failed')
+            return dict(job_id=job['job_id'], attempt=job['attempt'], version=job['version'], exit_code=127, stdout='', stderr='command could not be started', timed_out=False, truncated=False, outcome='spawn_failed', timing=timing)
         if job['kind'] != 'run':
             process.stdin.write(header)
             process.stdin.close()
@@ -114,7 +140,8 @@ def execute(stream):
         selector.register(process.stdout, selectors.EVENT_READ, 'stdout')
         selector.register(process.stderr, selectors.EVENT_READ, 'stderr')
         output = {'stdout': bytearray(), 'stderr': bytearray()}
-        deadline = time.monotonic() + limits['wall_ms'] / 1000
+        started = time.monotonic()
+        deadline = started + limits['wall_ms'] / 1000
         timed_out = truncated = False
         while selector.get_map():
             if time.monotonic() >= deadline:
@@ -152,7 +179,10 @@ def execute(stream):
             # The artifact is returned once, parsed, never echoed as command output.
             artifact = streams['stdout']
             streams['stdout'] = ''
-        result = dict(outcome='exited', job_id=job['job_id'], attempt=job['attempt'], version=job['version'], exit_code=process.returncode, timed_out=timed_out, truncated=truncated, **streams)
+        timing['command_ms'] = round((time.monotonic() - started) * 1000)
+        result = dict(outcome='exited', job_id=job['job_id'], attempt=job['attempt'], version=job['version'], exit_code=process.returncode, timed_out=timed_out, truncated=truncated, timing=timing, **streams)
+        if timed_out:
+            result['phase'] = 'command'
         if analysis and process.returncode == 0 and not truncated:
             result['artifact'] = json.loads(artifact)
         return result

@@ -190,8 +190,18 @@ impl Client {
             }
             if cancellation.is_cancelled() || tokio::time::Instant::now() >= deadline {
                 self.cancel(id).await?;
+                // An interruption and the client's own deadline are different
+                // outcomes; the endpoint ends the review as partial either way.
+                let reason = if cancellation.is_cancelled() {
+                    "interrupted".to_owned()
+                } else {
+                    format!(
+                        "no report within the {} s the client waits",
+                        timeout.as_secs()
+                    )
+                };
                 anyhow::bail!(
-                    "endpoint review cancelled; partial evidence is retained at review {id}"
+                    "endpoint review cancelled: {reason}; partial evidence is retained at review {id}"
                 );
             }
             let status = match self
@@ -578,6 +588,57 @@ mod tests {
             server.join().unwrap(),
             vec!["GET /v1/reviews/r1 HTTP/1.1"; 3]
         );
+    }
+    #[tokio::test]
+    async fn a_wait_that_ends_cancels_the_review_and_says_why() {
+        use std::{
+            io::{Read, Write},
+            net::TcpListener,
+        };
+        for interrupted in [false, true] {
+            let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+            let address = listener.local_addr().unwrap();
+            let server = std::thread::spawn(move || {
+                let (mut socket, _) = listener.accept().unwrap();
+                let mut bytes = Vec::new();
+                let mut chunk = [0; 4096];
+                while !bytes.windows(4).any(|w| w == b"\r\n\r\n") {
+                    let n = socket.read(&mut chunk).unwrap();
+                    bytes.extend_from_slice(&chunk[..n]);
+                }
+                write!(socket, "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: 2\r\nConnection: close\r\n\r\n{{}}").unwrap();
+                String::from_utf8_lossy(&bytes)
+                    .lines()
+                    .next()
+                    .unwrap()
+                    .to_owned()
+            });
+            let client = Client::new(
+                &format!("http://{address}"),
+                "long-enough-api-token-32-characters".into(),
+            )
+            .unwrap();
+            let cancellation = CancellationToken::new();
+            let timeout = if interrupted {
+                cancellation.cancel();
+                Duration::from_secs(1500)
+            } else {
+                Duration::ZERO
+            };
+            let error = client.wait("r1", cancellation, timeout).await.unwrap_err();
+            assert_eq!(
+                format!("{error:#}"),
+                if interrupted {
+                    "endpoint review cancelled: interrupted; partial evidence is retained at review r1"
+                } else {
+                    "endpoint review cancelled: no report within the 0 s the client waits; partial evidence is retained at review r1"
+                }
+            );
+            assert_eq!(
+                server.join().unwrap(),
+                "POST /v1/reviews/r1/cancel HTTP/1.1"
+            );
+        }
     }
     #[tokio::test]
     async fn lineage_404_is_absent_and_feedback_errors_keep_their_status() {

@@ -1,11 +1,12 @@
 use anyhow::{Context, Result, bail};
 use serde::{Deserialize, Serialize};
 use std::{
-    collections::{BTreeMap, BTreeSet},
+    cell::Cell,
+    collections::{BTreeMap, BTreeSet, HashMap, HashSet},
     sync::Mutex,
 };
 use streaming_iterator::StreamingIterator;
-use tree_sitter::{Language, Node, Parser, Query, QueryCursor};
+use tree_sitter::{Language, Node, ParseOptions, Parser, Query, QueryCursor};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -111,6 +112,110 @@ pub fn parse_source(path: &str, source: &[u8]) -> Result<tree_sitter::Tree> {
         .context("parser did not return a tree")
 }
 
+/// `parse_source` that gives up, with `None`, once `stop` is true.
+pub(crate) fn parse_source_until(
+    path: &str,
+    source: &[u8],
+    stop: &dyn Fn() -> bool,
+) -> Result<Option<tree_sitter::Tree>> {
+    let mut parser = Parser::new();
+    parser.set_language(&syntax_language(path)?)?;
+    let mut progress = |_: &tree_sitter::ParseState| stop();
+    let tree = parser.parse_with_options(
+        &mut |offset, _| &source[offset.min(source.len())..],
+        None,
+        Some(ParseOptions::new().progress_callback(&mut progress)),
+    );
+    match tree {
+        Some(tree) => Ok(Some(tree)),
+        None if stop() => Ok(None),
+        None => bail!("parser did not return a tree"),
+    }
+}
+
+/// Whether the content is an XML document. Qt Linguist translations are XML
+/// files named `.ts`; parsed as TypeScript they are megabytes of error nodes
+/// and say nothing about the code.
+pub fn is_markup(source: &[u8]) -> bool {
+    let source = source.strip_prefix(b"\xef\xbb\xbf").unwrap_or(source);
+    let start = source
+        .iter()
+        .position(|byte| !byte.is_ascii_whitespace())
+        .unwrap_or(source.len());
+    let source = &source[start..];
+    source.starts_with(b"<?xml") || source.starts_with(b"<!DOCTYPE")
+}
+
+/// Ends a long analysis: `hit` asks `stop` once every 1024 calls and stays true
+/// after the first yes.
+pub(crate) struct Budget<'a> {
+    stop: &'a dyn Fn() -> bool,
+    calls: Cell<u32>,
+    stopped: Cell<bool>,
+}
+impl<'a> Budget<'a> {
+    pub(crate) fn new(stop: &'a dyn Fn() -> bool) -> Self {
+        Self {
+            stop,
+            calls: Cell::new(0),
+            stopped: Cell::new(false),
+        }
+    }
+    pub(crate) fn hit(&self) -> bool {
+        if self.stopped.get() {
+            return true;
+        }
+        let calls = self.calls.get().wrapping_add(1);
+        self.calls.set(calls);
+        if calls.is_multiple_of(1024) && (self.stop)() {
+            self.stopped.set(true);
+        }
+        self.stopped.get()
+    }
+    pub(crate) fn stop(&self) -> &'a dyn Fn() -> bool {
+        self.stop
+    }
+    /// Whether a walk was cut short, which leaves its result incomplete.
+    pub(crate) fn stopped(&self) -> bool {
+        self.stopped.get()
+    }
+}
+
+/// Walks the tree once and hands each wanted node its ancestors, outermost
+/// first. `Node::parent` searches down from the root through every sibling on
+/// the way, so asking it per node is quadratic on the wide trees of generated
+/// or misparsed files.
+pub(crate) fn with_ancestors<'t>(
+    root: Node<'t>,
+    wanted: &HashSet<usize>,
+    budget: &Budget,
+    mut visit: impl FnMut(Node<'t>, &[Node<'t>]),
+) {
+    let mut cursor = root.walk();
+    let mut stack: Vec<Node<'t>> = Vec::new();
+    let mut left = wanted.len();
+    while left > 0 && !budget.hit() {
+        let node = cursor.node();
+        if wanted.contains(&node.id()) {
+            visit(node, &stack);
+            left -= 1;
+        }
+        if cursor.goto_first_child() {
+            stack.push(node);
+            continue;
+        }
+        loop {
+            if cursor.goto_next_sibling() {
+                break;
+            }
+            if !cursor.goto_parent() {
+                return;
+            }
+            stack.pop();
+        }
+    }
+}
+
 fn text<'a>(node: Node<'_>, source: &'a [u8]) -> &'a str {
     std::str::from_utf8(&source[node.byte_range()]).unwrap_or_default()
 }
@@ -127,8 +232,8 @@ fn ignored_type(node: Node<'_>) -> bool {
     )
 }
 
-fn executable_tokens(node: Node<'_>, source: &[u8], lines: &mut BTreeSet<u32>) {
-    if ignored_type(node) || node.kind().contains("comment") {
+fn executable_tokens(node: Node<'_>, source: &[u8], lines: &mut BTreeSet<u32>, budget: &Budget) {
+    if budget.hit() || ignored_type(node) || node.kind().contains("comment") {
         return;
     }
     if node.child_count() == 0 {
@@ -139,32 +244,21 @@ fn executable_tokens(node: Node<'_>, source: &[u8], lines: &mut BTreeSet<u32>) {
     } else {
         let mut cursor = node.walk();
         for child in node.children(&mut cursor) {
-            executable_tokens(child, source, lines);
+            executable_tokens(child, source, lines, budget);
         }
     }
 }
 
-fn inside_type(mut node: Node<'_>) -> bool {
-    loop {
-        if ignored_type(node) {
-            return true;
-        }
-        match node.parent() {
-            Some(parent) => node = parent,
-            None => return false,
-        }
-    }
-}
-
-fn symbol_kind(node: Node<'_>) -> SymbolKind {
+/// `ancestors` are the node's, outermost first.
+fn symbol_kind(node: Node<'_>, ancestors: &[Node<'_>]) -> SymbolKind {
     match node.kind() {
         "function_declaration" | "generator_function_declaration" | "function_definition" => {
-            if node.parent().is_some_and(|parent| {
-                parent.kind() == "block"
-                    && parent
-                        .parent()
-                        .is_some_and(|parent| parent.kind() == "class_definition")
-            }) {
+            let mut outer = ancestors.iter().rev();
+            if outer.next().is_some_and(|parent| parent.kind() == "block")
+                && outer
+                    .next()
+                    .is_some_and(|parent| parent.kind() == "class_definition")
+            {
                 SymbolKind::Method
             } else {
                 SymbolKind::Function
@@ -217,7 +311,12 @@ fn collect_import(node: Node<'_>, source: &[u8], imports: &mut Vec<Import>) {
             module: unquote(text(module, source)),
             names: BTreeMap::new(),
         };
-        fn names(node: Node<'_>, source: &[u8], result: &mut BTreeMap<String, String>) {
+        fn names(
+            node: Node<'_>,
+            parent: &str,
+            source: &[u8],
+            result: &mut BTreeMap<String, String>,
+        ) {
             if node.kind() == "import_specifier" {
                 if let Some(name) = node.child_by_field_name("name") {
                     let alias = node.child_by_field_name("alias").unwrap_or(name);
@@ -235,19 +334,15 @@ fn collect_import(node: Node<'_>, source: &[u8], imports: &mut Vec<Import>) {
                 }
                 return;
             }
-            if node.kind() == "identifier"
-                && node
-                    .parent()
-                    .is_some_and(|parent| parent.kind() == "import_clause")
-            {
+            if node.kind() == "identifier" && parent == "import_clause" {
                 result.insert(text(node, source).into(), "default".into());
             }
             let mut cursor = node.walk();
             for child in node.named_children(&mut cursor) {
-                names(child, source, result);
+                names(child, node.kind(), source, result);
             }
         }
-        names(node, source, &mut import.names);
+        names(node, "", source, &mut import.names);
         imports.push(import);
     } else if node.kind() == "import_from_statement" {
         let module = node
@@ -295,11 +390,21 @@ fn collect_import(node: Node<'_>, source: &[u8], imports: &mut Vec<Import>) {
     }
 }
 
-fn identifiers(node: Node<'_>, source: &[u8], result: &mut SyntaxTable) {
-    if matches!(
-        node.kind(),
-        "comment" | "string" | "string_fragment" | "template_string"
-    ) {
+/// `ancestors` are the node's, outermost first; the walk keeps them so that no
+/// identifier asks the tree for its parent.
+fn identifiers<'t>(
+    node: Node<'t>,
+    ancestors: &mut Vec<Node<'t>>,
+    source: &[u8],
+    result: &mut SyntaxTable,
+    budget: &Budget,
+) {
+    if budget.hit()
+        || matches!(
+            node.kind(),
+            "comment" | "string" | "string_fragment" | "template_string"
+        )
+    {
         return;
     }
     if matches!(node.kind(), "import_statement" | "import_from_statement") {
@@ -310,7 +415,7 @@ fn identifiers(node: Node<'_>, source: &[u8], result: &mut SyntaxTable) {
         node.kind(),
         "identifier" | "property_identifier" | "type_identifier"
     ) {
-        let parent = node.parent();
+        let parent = ancestors.last().copied();
         let definition = parent.is_some_and(|parent| {
             (declaration_ancestor(parent)
                 || matches!(
@@ -334,19 +439,22 @@ fn identifiers(node: Node<'_>, source: &[u8], result: &mut SyntaxTable) {
                         "call_expression" | "call" | "member_expression" | "attribute"
                     )
                 }),
-                shadowed: parameter_binding(node, source),
+                shadowed: parameter_binding(node, ancestors, source),
             });
         }
     }
+    ancestors.push(node);
     let mut cursor = node.walk();
     for child in node.named_children(&mut cursor) {
-        identifiers(child, source, result);
+        identifiers(child, ancestors, source, result, budget);
     }
+    ancestors.pop();
 }
 
-pub(crate) fn parameter_binding(node: Node<'_>, source: &[u8]) -> bool {
+/// `ancestors` are the node's, outermost first.
+pub(crate) fn parameter_binding(node: Node<'_>, ancestors: &[Node<'_>], source: &[u8]) -> bool {
     if node.kind() == "property_identifier"
-        || node.parent().is_some_and(|parent| {
+        || ancestors.last().is_some_and(|parent| {
             parent.kind() == "attribute"
                 && parent
                     .child_by_field_name("attribute")
@@ -373,23 +481,44 @@ pub(crate) fn parameter_binding(node: Node<'_>, source: &[u8]) -> bool {
         node.named_children(&mut cursor)
             .any(|child| contains_name(child, name, source))
     }
-    let mut ancestor = node.parent();
-    while let Some(parent) = ancestor {
-        if let Some(parameters) = parent.child_by_field_name("parameters")
-            && contains_name(parameters, text(node, source), source)
-        {
-            return true;
-        }
-        ancestor = parent.parent();
-    }
-    false
+    ancestors.iter().rev().any(|parent| {
+        parent
+            .child_by_field_name("parameters")
+            .is_some_and(|parameters| contains_name(parameters, text(node, source), source))
+    })
 }
 
 pub fn analyze_source(path: &str, source: &[u8]) -> Result<SyntaxTable> {
-    if crate::language_for_path(path) == Some("rust") {
-        return crate::rust_syntax::analyze_rust(path, source);
+    Ok(analyze_source_until(path, source, &|| false)?.expect("an analysis without a stop ends"))
+}
+
+/// `analyze_source` that gives up, with `None`, once `stop` is true: parsing and
+/// every walk ask it, so one pathological file cannot outlive a deadline.
+pub fn analyze_source_until(
+    path: &str,
+    source: &[u8],
+    stop: &dyn Fn() -> bool,
+) -> Result<Option<SyntaxTable>> {
+    if is_markup(source) {
+        syntax_language(path)?;
+        return Ok(Some(SyntaxTable {
+            parse_errors: true,
+            ..Default::default()
+        }));
     }
-    let tree = parse_source(path, source)?;
+    let budget = Budget::new(stop);
+    let table = if crate::language_for_path(path) == Some("rust") {
+        crate::rust_syntax::analyze_rust(path, source, &budget)?
+    } else {
+        analyze_script(path, source, &budget)?
+    };
+    Ok(table)
+}
+
+fn analyze_script(path: &str, source: &[u8], budget: &Budget) -> Result<Option<SyntaxTable>> {
+    let Some(tree) = parse_source_until(path, source, budget.stop)? else {
+        return Ok(None);
+    };
     let language = syntax_language(path)?;
     let python = crate::language_for_path(path) == Some("python");
     let symbols_query = if python {
@@ -402,15 +531,19 @@ pub fn analyze_source(path: &str, source: &[u8]) -> Result<SyntaxTable> {
         parse_errors: tree.root_node().has_error(),
         ..Default::default()
     };
-    let mut cursor = QueryCursor::new();
-    let mut matches = cursor.matches(&query, tree.root_node(), source);
     let stem = path
         .rsplit('/')
         .next()
         .unwrap_or(path)
         .rsplit_once('.')
         .map_or(path, |(stem, _)| stem);
+    let mut cursor = QueryCursor::new();
+    let mut matches = cursor.matches(&query, tree.root_node(), source);
+    let mut found = Vec::new();
     while let Some(matched) = matches.next() {
+        if budget.hit() {
+            return Ok(None);
+        }
         let capture = |name| {
             matched
                 .captures
@@ -418,52 +551,62 @@ pub fn analyze_source(path: &str, source: &[u8]) -> Result<SyntaxTable> {
                 .find(|capture| query.capture_names()[capture.index as usize] == name)
                 .map(|capture| capture.node)
         };
-        let (Some(node), Some(name)) = (capture("symbol"), capture("name")) else {
+        if let (Some(node), Some(name)) = (capture("symbol"), capture("name")) {
+            found.push((node, name));
+        }
+    }
+    // What each symbol's ancestors say about it: None for one that is not a
+    // symbol after all, else its kind and the names of its enclosing declarations.
+    let mut placed = HashMap::<usize, Option<(SymbolKind, Vec<String>)>>::new();
+    with_ancestors(
+        tree.root_node(),
+        &found.iter().map(|(node, _)| node.id()).collect(),
+        budget,
+        |node, ancestors| {
+            let kind = symbol_kind(node, ancestors);
+            let mut outer = ancestors.iter().rev();
+            let unexported = node.kind() == "variable_declarator"
+                && kind == SymbolKind::Variable
+                && outer
+                    .clone()
+                    .find(|parent| {
+                        matches!(
+                            parent.kind(),
+                            "export_statement" | "program" | "statement_block"
+                        )
+                    })
+                    .is_none_or(|parent| parent.kind() != "export_statement");
+            let nested_assignment = node.kind() == "assignment"
+                && outer.next().is_some_and(|parent| {
+                    parent.kind() != "expression_statement"
+                        || outer.next().is_none_or(|parent| parent.kind() != "module")
+                });
+            let names = ancestors
+                .iter()
+                .filter(|parent| declaration_ancestor(**parent))
+                .filter_map(|parent| parent.child_by_field_name("name"))
+                .map(|name| text(name, source).to_owned())
+                .collect();
+            placed.insert(
+                node.id(),
+                (!unexported && !nested_assignment).then_some((kind, names)),
+            );
+        },
+    );
+    if budget.stopped() {
+        return Ok(None);
+    }
+    for (node, name) in found {
+        let Some(Some((kind, outer))) = placed.get(&node.id()) else {
             continue;
         };
-        if node.kind() == "variable_declarator" && symbol_kind(node) == SymbolKind::Variable {
-            let mut ancestor = node.parent();
-            let mut exported = false;
-            while let Some(parent) = ancestor {
-                if parent.kind() == "export_statement" {
-                    exported = true;
-                    break;
-                }
-                if matches!(parent.kind(), "program" | "statement_block") {
-                    break;
-                }
-                ancestor = parent.parent();
-            }
-            if !exported {
-                continue;
-            }
-        }
-        if node.kind() == "assignment"
-            && node.parent().is_some_and(|parent| {
-                parent.kind() != "expression_statement"
-                    || parent
-                        .parent()
-                        .is_none_or(|parent| parent.kind() != "module")
-            })
-        {
-            continue;
-        }
-        let mut names = vec![text(name, source).to_owned()];
-        let mut ancestor = node.parent();
-        while let Some(parent) = ancestor {
-            if declaration_ancestor(parent)
-                && let Some(name) = parent.child_by_field_name("name")
-            {
-                names.push(text(name, source).into());
-            }
-            ancestor = parent.parent();
-        }
-        names.push(stem.into());
-        names.reverse();
+        let mut names = vec![stem.to_owned()];
+        names.extend(outer.iter().cloned());
+        names.push(text(name, source).to_owned());
         result.symbols.push(Symbol {
             name: text(name, source).into(),
             symbol_path: names.join("."),
-            kind: symbol_kind(node),
+            kind: *kind,
             line_start: node.start_position().row as u32 + 1,
             line_end: node.end_position().row as u32 + 1,
             byte_start: node.start_byte(),
@@ -473,7 +616,13 @@ pub fn analyze_source(path: &str, source: &[u8]) -> Result<SyntaxTable> {
     result
         .symbols
         .sort_by_key(|symbol| (symbol.byte_start, symbol.byte_end));
-    identifiers(tree.root_node(), source, &mut result);
+    identifiers(
+        tree.root_node(),
+        &mut Vec::new(),
+        source,
+        &mut result,
+        budget,
+    );
     if !path.ends_with(".d.ts")
         && !path.ends_with(".d.mts")
         && !path.ends_with(".d.cts")
@@ -489,15 +638,21 @@ pub fn analyze_source(path: &str, source: &[u8]) -> Result<SyntaxTable> {
         )?;
         let mut cursor = QueryCursor::new();
         let mut matches = cursor.matches(&query, tree.root_node(), source);
+        let mut captured = HashSet::new();
         while let Some(matched) = matches.next() {
-            for capture in matched.captures {
-                if !inside_type(capture.node) {
-                    executable_tokens(capture.node, source, &mut result.executable_lines);
-                }
+            if budget.hit() {
+                return Ok(None);
             }
+            captured.extend(matched.captures.iter().map(|capture| capture.node.id()));
         }
+        let lines = &mut result.executable_lines;
+        with_ancestors(tree.root_node(), &captured, budget, |node, ancestors| {
+            if !ancestors.iter().any(|parent| ignored_type(*parent)) {
+                executable_tokens(node, source, lines, budget);
+            }
+        });
     }
-    Ok(result)
+    Ok((!budget.stopped()).then_some(result))
 }
 
 /// The content hash and grammar select a table; paths contribute only their
@@ -510,16 +665,30 @@ pub struct SyntaxCache {
 }
 impl SyntaxCache {
     pub fn analyze(&self, path: &str, source: &[u8]) -> Result<SyntaxTable> {
+        Ok(self
+            .analyze_until(path, source, &|| false)?
+            .expect("an analysis without a stop ends"))
+    }
+    /// `analyze` that gives up, with `None`, once `stop` is true; nothing is
+    /// cached for a file it gave up on.
+    pub fn analyze_until(
+        &self,
+        path: &str,
+        source: &[u8],
+        stop: &dyn Fn() -> bool,
+    ) -> Result<Option<SyntaxTable>> {
         let key = format!("{path}:{}", blake3::hash(source));
         if let Some(table) = self.tables.lock().unwrap().get(&key) {
-            return Ok(table.clone());
+            return Ok(Some(table.clone()));
         }
-        let table = analyze_source(path, source)?;
+        let Some(table) = analyze_source_until(path, source, stop)? else {
+            return Ok(None);
+        };
         let mut parsed = self.parsed.lock().unwrap();
         parsed.0 += 1;
         parsed.1 += source.len() as u64;
         self.tables.lock().unwrap().insert(key, table.clone());
-        Ok(table)
+        Ok(Some(table))
     }
     /// Files and bytes parsed so far.
     pub fn parsed(&self) -> (usize, u64) {

@@ -1,14 +1,16 @@
-use crate::{Identifier, Import, Symbol, SymbolKind, SyntaxTable, parse_source};
+use crate::syntax::{Budget, parse_source_until, with_ancestors};
+use crate::{Identifier, Import, Symbol, SymbolKind, SyntaxTable};
 use anyhow::Result;
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashMap};
 use streaming_iterator::StreamingIterator;
 use tree_sitter::{Node, QueryCursor};
 
 fn text<'a>(node: Node<'_>, source: &'a [u8]) -> &'a str {
     std::str::from_utf8(&source[node.byte_range()]).unwrap_or_default()
 }
-fn test_item(mut node: Node<'_>, source: &[u8]) -> bool {
-    loop {
+/// `ancestors` are the node's, outermost first.
+fn test_item(node: Node<'_>, ancestors: &[Node<'_>], source: &[u8]) -> bool {
+    for node in std::iter::once(&node).chain(ancestors.iter().rev()) {
         let mut sibling = node.prev_named_sibling();
         while let Some(attribute) = sibling {
             if attribute.kind() != "attribute_item" {
@@ -20,26 +22,23 @@ fn test_item(mut node: Node<'_>, source: &[u8]) -> bool {
             }
             sibling = attribute.prev_named_sibling();
         }
-        match node.parent() {
-            Some(parent) => node = parent,
-            None => return false,
-        }
     }
+    false
 }
-fn kind(node: Node<'_>, source: &[u8]) -> SymbolKind {
-    if test_item(node, source) {
+fn kind(node: Node<'_>, ancestors: &[Node<'_>], source: &[u8]) -> SymbolKind {
+    if test_item(node, ancestors, source) {
         return SymbolKind::Test;
     }
     match node.kind() {
         "function_item" | "function_signature_item" => {
-            let mut parent = node.parent();
-            while let Some(node) = parent {
-                if matches!(node.kind(), "impl_item" | "trait_item") {
-                    return SymbolKind::Method;
-                }
-                parent = node.parent();
+            if ancestors
+                .iter()
+                .any(|node| matches!(node.kind(), "impl_item" | "trait_item"))
+            {
+                SymbolKind::Method
+            } else {
+                SymbolKind::Function
             }
-            SymbolKind::Function
         }
         "struct_item" => SymbolKind::Class,
         "trait_item" => SymbolKind::Interface,
@@ -83,8 +82,16 @@ fn imports(prefix: &str, input: &str, result: &mut Vec<Import>) {
         });
     }
 }
-fn walk(node: Node<'_>, source: &[u8], result: &mut SyntaxTable) {
-    if node.kind().contains("comment")
+/// `ancestors` are the node's, outermost first.
+fn walk<'t>(
+    node: Node<'t>,
+    ancestors: &mut Vec<Node<'t>>,
+    source: &[u8],
+    result: &mut SyntaxTable,
+    budget: &Budget,
+) {
+    if budget.hit()
+        || node.kind().contains("comment")
         || node.kind().contains("string_literal")
         || node.kind() == "char_literal"
     {
@@ -95,17 +102,12 @@ fn walk(node: Node<'_>, source: &[u8], result: &mut SyntaxTable) {
     {
         let mut scoped = Vec::new();
         imports("", text(argument, source), &mut scoped);
-        let mut inline = Vec::new();
-        let mut ancestor = node.parent();
-        while let Some(parent) = ancestor {
-            if parent.kind() == "mod_item"
-                && let Some(name) = parent.child_by_field_name("name")
-            {
-                inline.push(text(name, source));
-            }
-            ancestor = parent.parent();
-        }
-        inline.reverse();
+        let inline: Vec<_> = ancestors
+            .iter()
+            .filter(|parent| parent.kind() == "mod_item")
+            .filter_map(|parent| parent.child_by_field_name("name"))
+            .map(|name| text(name, source))
+            .collect();
         for import in &mut scoped {
             let mut module = import.module.as_str();
             let mut scope = inline.clone();
@@ -130,7 +132,8 @@ fn walk(node: Node<'_>, source: &[u8], result: &mut SyntaxTable) {
         result.imports.extend(scoped);
     }
     if matches!(node.kind(), "identifier" | "type_identifier") {
-        let definition = node.parent().is_some_and(|parent| {
+        let parent = ancestors.last().copied();
+        let definition = parent.is_some_and(|parent| {
             parent
                 .child_by_field_name("name")
                 .is_some_and(|name| name.id() == node.id())
@@ -141,20 +144,23 @@ fn walk(node: Node<'_>, source: &[u8], result: &mut SyntaxTable) {
                 line: node.start_position().row as u32 + 1,
                 byte_start: node.start_byte(),
                 byte_end: node.end_byte(),
-                call: node.parent().is_some_and(|parent| {
+                call: parent.is_some_and(|parent| {
                     matches!(parent.kind(), "call_expression" | "macro_invocation")
                 }),
-                shadowed: crate::syntax::parameter_binding(node, source),
+                shadowed: crate::syntax::parameter_binding(node, ancestors, source),
             });
         }
     }
+    ancestors.push(node);
     let mut cursor = node.walk();
     for child in node.named_children(&mut cursor) {
-        walk(child, source, result);
+        walk(child, ancestors, source, result, budget);
     }
+    ancestors.pop();
 }
-fn runtime_tokens(node: Node<'_>, source: &[u8], result: &mut SyntaxTable) {
-    if node.kind().contains("comment")
+fn runtime_tokens(node: Node<'_>, source: &[u8], result: &mut SyntaxTable, budget: &Budget) {
+    if budget.hit()
+        || node.kind().contains("comment")
         || matches!(
             node.kind(),
             "struct_item"
@@ -177,12 +183,18 @@ fn runtime_tokens(node: Node<'_>, source: &[u8], result: &mut SyntaxTable) {
     } else {
         let mut cursor = node.walk();
         for child in node.children(&mut cursor) {
-            runtime_tokens(child, source, result);
+            runtime_tokens(child, source, result, budget);
         }
     }
 }
-pub(crate) fn analyze_rust(path: &str, source: &[u8]) -> Result<SyntaxTable> {
-    let tree = parse_source(path, source)?;
+pub(crate) fn analyze_rust(
+    path: &str,
+    source: &[u8],
+    budget: &Budget,
+) -> Result<Option<SyntaxTable>> {
+    let Some(tree) = parse_source_until(path, source, budget.stop())? else {
+        return Ok(None);
+    };
     let language = tree_sitter_rust::LANGUAGE.into();
     // Validate and use all three shipped query contracts.
     crate::syntax::cached_query(
@@ -204,7 +216,11 @@ pub(crate) fn analyze_rust(path: &str, source: &[u8]) -> Result<SyntaxTable> {
         .next()
         .unwrap_or(path)
         .trim_end_matches(".rs");
+    let mut found = Vec::new();
     while let Some(matched) = matches.next() {
+        if budget.hit() {
+            return Ok(None);
+        }
         let capture = |name| {
             matched
                 .captures
@@ -212,33 +228,50 @@ pub(crate) fn analyze_rust(path: &str, source: &[u8]) -> Result<SyntaxTable> {
                 .find(|capture| query.capture_names()[capture.index as usize] == name)
                 .map(|capture| capture.node)
         };
-        let (Some(node), Some(name)) = (capture("symbol"), capture("name")) else {
+        if let (Some(node), Some(name)) = (capture("symbol"), capture("name")) {
+            found.push((node, name));
+        }
+    }
+    // Each symbol's kind and the names of its enclosing items, outermost first.
+    let mut placed = HashMap::<usize, (SymbolKind, Vec<String>)>::new();
+    with_ancestors(
+        tree.root_node(),
+        &found.iter().map(|(node, _)| node.id()).collect(),
+        budget,
+        |node, ancestors| {
+            let names = ancestors
+                .iter()
+                .filter_map(|parent| {
+                    if parent.kind() == "impl_item" {
+                        parent.child_by_field_name("type")
+                    } else if matches!(
+                        parent.kind(),
+                        "function_item" | "mod_item" | "trait_item" | "enum_item"
+                    ) {
+                        parent.child_by_field_name("name")
+                    } else {
+                        None
+                    }
+                })
+                .map(|name| text(name, source).to_owned())
+                .collect();
+            placed.insert(node.id(), (kind(node, ancestors, source), names));
+        },
+    );
+    if budget.stopped() {
+        return Ok(None);
+    }
+    for (node, name) in found {
+        let Some((kind, outer)) = placed.get(&node.id()) else {
             continue;
         };
-        let mut names = vec![text(name, source).to_owned()];
-        let mut ancestor = node.parent();
-        while let Some(parent) = ancestor {
-            let name = if parent.kind() == "impl_item" {
-                parent.child_by_field_name("type")
-            } else if matches!(
-                parent.kind(),
-                "function_item" | "mod_item" | "trait_item" | "enum_item"
-            ) {
-                parent.child_by_field_name("name")
-            } else {
-                None
-            };
-            if let Some(name) = name {
-                names.push(text(name, source).to_owned());
-            }
-            ancestor = parent.parent();
-        }
-        names.push(stem.into());
-        names.reverse();
+        let mut names = vec![stem.to_owned()];
+        names.extend(outer.iter().cloned());
+        names.push(text(name, source).to_owned());
         result.symbols.push(Symbol {
             name: text(name, source).into(),
             symbol_path: names.join("."),
-            kind: kind(node, source),
+            kind: *kind,
             line_start: node.start_position().row as u32 + 1,
             line_end: node.end_position().row as u32 + 1,
             byte_start: node.start_byte(),
@@ -248,7 +281,13 @@ pub(crate) fn analyze_rust(path: &str, source: &[u8]) -> Result<SyntaxTable> {
     result
         .symbols
         .sort_by_key(|symbol| (symbol.byte_start, symbol.byte_end));
-    walk(tree.root_node(), source, &mut result);
+    walk(
+        tree.root_node(),
+        &mut Vec::new(),
+        source,
+        &mut result,
+        budget,
+    );
     let query = crate::syntax::cached_query(
         &language,
         include_str!("../../../modules/adapters/rust/queries/executable.scm"),
@@ -257,8 +296,8 @@ pub(crate) fn analyze_rust(path: &str, source: &[u8]) -> Result<SyntaxTable> {
     let mut matches = cursor.matches(&query, tree.root_node(), source);
     while let Some(matched) = matches.next() {
         for capture in matched.captures {
-            runtime_tokens(capture.node, source, &mut result);
+            runtime_tokens(capture.node, source, &mut result, budget);
         }
     }
-    Ok(result)
+    Ok((!budget.stopped()).then_some(result))
 }

@@ -11,6 +11,25 @@ export const SYMLINK = 0o120000;
 export const MODES = [0o100644, 0o100755, SYMLINK];
 // Contents above this size are stored alone and read as streams, never whole.
 export const LARGE = 8 * 1024 * 1024;
+// One scan batch: the contents a consumer holds at a time. The Worker isolate
+// has 128 MiB for every review it serves, so a batch is a few MiB, not the tree.
+export const BATCH_BYTES = 4 * 1024 * 1024;
+export const BATCH_ENTRIES = 1024;
+// Text of a change that one step holds, both versions together.
+export const CHANGE_BYTES = 32 * 1024 * 1024;
+// A step waits this long for another to finish with its change's text.
+const HOLD_WAIT_MS = 120000;
+// Text a `prefetched` reader holds per version.
+const WINDOW_BYTES = 8 * 1024 * 1024;
+// Two wanted contents of a pack closer than this are read together: a storage
+// request costs about as long as this many bytes take to arrive. One read
+// stops growing at `RUN`, whatever the gaps.
+const GAP = 256 * 1024;
+const RUN = 2 * BATCH_BYTES;
+// Ranged reads of one batch in flight.
+const READS = 3;
+// A scan waits this long for another scan's batch before reading its own.
+const SCAN_WAIT_MS = 60000;
 export interface Entry {
   path: string;
   hash: string;
@@ -92,10 +111,16 @@ export interface TreeReader {
   /** Every entry in path order. */
   list(): AsyncIterable<Entry>;
   /**
-   * Kept entries in path order with their bytes, in batches that read each pack
-   * once. Large contents come without bytes; read them with `stream`.
+   * Kept entries in path order with their bytes, in batches of a few MiB read
+   * with a few requests per pack. Large contents come without bytes; read them
+   * with `stream`. A batch is the caller's until it asks for the next one.
    */
   batches(keep: (entry: Entry) => boolean): AsyncIterable<Scanned[]>;
+  /**
+   * The contents of the entries, in their order, with a few reads per pack;
+   * null for a large content. The caller bounds the entries it asks for.
+   */
+  many(entries: Entry[]): Promise<(Uint8Array | null)[]>;
 }
 export type Scanned = [Entry, Uint8Array | null];
 /** Visits kept entries in path order until `visit` returns false. */
@@ -136,6 +161,175 @@ export async function textOf(
   const entry = await tree.stat(path);
   if (!entry || entry.mode === SYMLINK) return null;
   return decodeText(await tree.read(entry));
+}
+/**
+ * `textOf` for many paths, a few reads per pack instead of one per file: a
+ * change of thousands of files costs tens of storage requests. Paths that are
+ * missing, binary or links map to null. The caller bounds what it asks for.
+ */
+export async function textsOf(
+  tree: TreeReader,
+  paths: Iterable<string>,
+): Promise<Map<string, string | null>> {
+  const texts = new Map<string, string | null>();
+  for (const path of paths) texts.set(path, null);
+  const entries: Entry[] = [];
+  // In path order a manifest page is read once.
+  for (const path of [...texts.keys()].sort(compareUtf8)) {
+    const entry = await tree.stat(path);
+    if (entry && entry.mode !== SYMLINK) entries.push(entry);
+  }
+  for (let start = 0; start < entries.length;) {
+    let end = start,
+      size = 0;
+    while (
+      end < entries.length &&
+      end - start < BATCH_ENTRIES &&
+      (end === start || size + entries[end].size <= BATCH_BYTES)
+    )
+      size += entries[end++].size;
+    const group = entries.slice(start, end);
+    const bytes = await tree.many(group);
+    for (const [i, entry] of group.entries())
+      texts.set(
+        entry.path,
+        decodeText(bytes[i] ?? (await tree.read(entry))),
+      );
+    start = end;
+  }
+  return texts;
+}
+export interface ChangeTexts {
+  base: Record<string, string | null>;
+  head: Record<string, string | null>;
+  // Changed files left unread, in both versions, because the change's text
+  // exceeds the budget.
+  omitted: { files: number; bytes: number };
+}
+/**
+ * Both versions of a change's files as text, within a byte budget: the steps
+ * that hold a whole change (triage, the contract inventory) run in a 128 MiB
+ * isolate, and a change of 45 MiB of text ended one. Smaller files are read
+ * first, so the budget leaves out the fewest; a file is read in both versions
+ * or in neither, so an unread file never looks added or deleted. What is left
+ * out is counted, for the report to say so.
+ */
+export async function changeTexts(
+  snapshot: SnapshotReader,
+  changed: { path: string; old_path?: string }[],
+  budget = CHANGE_BYTES,
+): Promise<ChangeTexts> {
+  const result: ChangeTexts = {
+    base: {},
+    head: {},
+    omitted: { files: 0, bytes: 0 },
+  };
+  const sized = async (version: Version, paths: string[]) => {
+    const sizes = new Map<string, number>();
+    // In path order a manifest page is read once.
+    for (const path of [...new Set(paths)].sort(compareUtf8)) {
+      result[version][path] = null;
+      const entry = await snapshot[version].stat(path);
+      if (entry && entry.mode !== SYMLINK) sizes.set(path, entry.size);
+    }
+    return sizes;
+  };
+  const sizes = {
+    base: await sized(
+      "base",
+      changed.map((f) => f.old_path ?? f.path),
+    ),
+    head: await sized(
+      "head",
+      changed.map((f) => f.path),
+    ),
+  };
+  const files = changed
+    .map((f) => {
+      const base = sizes.base.get(f.old_path ?? f.path) ?? 0,
+        head = sizes.head.get(f.path) ?? 0;
+      return { f, size: base + head, large: Math.max(base, head) > LARGE };
+    })
+    .sort((a, b) => a.size - b.size || compareUtf8(a.f.path, b.f.path));
+  const kept = { base: new Set<string>(), head: new Set<string>() };
+  let size = 0;
+  for (const { f, size: bytes, large } of files)
+    if (!large && size + bytes <= budget) {
+      size += bytes;
+      kept.base.add(f.old_path ?? f.path);
+      kept.head.add(f.path);
+    } else {
+      result.omitted.files++;
+      result.omitted.bytes += bytes;
+    }
+  for (const version of ["base", "head"] as const)
+    for (const [path, text] of await textsOf(snapshot[version], kept[version]))
+      result[version][path] = text;
+  return result;
+}
+let holder: Promise<void> = Promise.resolve();
+/**
+ * Runs `work` as the isolate's one holder of a change's text. Concurrent
+ * reviews share an isolate and its memory, so two whole changes are never held
+ * at once; the wait is bounded, and a holder that stalls delays the next
+ * instead of ending it.
+ */
+export async function holding<T>(work: () => Promise<T>): Promise<T> {
+  const before = holder;
+  let release!: () => void;
+  holder = new Promise<void>((resolve) => (release = resolve));
+  let timer: ReturnType<typeof setTimeout> | null = null;
+  await Promise.race([
+    before,
+    new Promise<void>((resolve) => {
+      timer = setTimeout(resolve, HOLD_WAIT_MS);
+    }),
+  ]);
+  clearTimeout(timer);
+  try {
+    return await work();
+  } finally {
+    release();
+  }
+}
+/**
+ * A text reader over both trees for paths read in the given order: it fetches
+ * a window of them at a time, in batches, and holds one window per version.
+ * Any other path is read when asked for.
+ */
+export function prefetched(
+  snapshot: SnapshotReader,
+  paths: { base: Iterable<string>; head: Iterable<string> },
+  window = WINDOW_BYTES,
+): (version: Version, path: string) => Promise<string | null> {
+  const state = (list: Iterable<string>) => {
+    const order = [...new Set(list)];
+    return {
+      order,
+      index: new Map(order.map((path, i) => [path, i])),
+      held: new Map<string, string | null>(),
+    };
+  };
+  const states = { base: state(paths.base), head: state(paths.head) };
+  return async (version, path) => {
+    const s = states[version],
+      tree = snapshot[version];
+    const held = s.held.get(path);
+    if (held !== undefined) return held;
+    const start = s.index.get(path);
+    if (start === undefined) return textOf(tree, path);
+    const wanted: string[] = [];
+    let size = 0;
+    for (let i = start; i < s.order.length; i++) {
+      const entry = await tree.stat(s.order[i]);
+      const bytes = entry && entry.mode !== SYMLINK ? entry.size : 0;
+      if (i > start && size + bytes > window) break;
+      size += bytes;
+      wanted.push(s.order[i]);
+    }
+    s.held = await textsOf(tree, wanted);
+    return s.held.get(path) ?? null;
+  };
 }
 
 /** Bounded least-recently-used cache measured in bytes. */
@@ -199,12 +393,16 @@ export class StoredSnapshot implements SnapshotReader {
   readonly head: TreeReader;
   private pages = new Lru<Map<string, Entry>>(4 * 1024 * 1024);
   private contents = new Lru<Uint8Array>(16 * 1024 * 1024);
+  // The scan holding a batch; see `hold`.
+  private turn: Promise<void> = Promise.resolve();
   private constructor(
     readonly env: Env,
     readonly prefix: string,
     readonly index: ManifestIndex,
     // Counts R2 reads of packs, for tests and budgeting.
     readonly reads: string[] = [],
+    // Pack bytes those scans fetched.
+    readonly fetched = { bytes: 0 },
   ) {
     this.base = this.tree("base");
     this.head = this.tree("head");
@@ -319,13 +517,34 @@ export class StoredSnapshot implements SnapshotReader {
       i = j + 1;
     }
   }
+  /**
+   * One scan batch at a time per snapshot: a review's voters search the tree
+   * concurrently, and each holding its own batch multiplied the memory. The
+   * wait is bounded, so a stalled scan delays the others instead of ending them.
+   */
+  private async hold(): Promise<() => void> {
+    const before = this.turn;
+    let release!: () => void;
+    this.turn = new Promise<void>((resolve) => (release = resolve));
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    await Promise.race([
+      before,
+      new Promise<void>((resolve) => {
+        timer = setTimeout(resolve, SCAN_WAIT_MS);
+      }),
+    ]);
+    clearTimeout(timer);
+    return release;
+  }
   private async *batches(
     version: Version,
     keep: (entry: Entry) => boolean,
   ): AsyncGenerator<Scanned[]> {
     let batch: Entry[] = [],
       size = 0;
+    let release: (() => void) | undefined;
     const flush = async (): Promise<Scanned[]> => {
+      release = await this.hold();
       const bytes = await this.packed(batch);
       const out = batch.map((entry): Scanned => [
         entry,
@@ -335,39 +554,95 @@ export class StoredSnapshot implements SnapshotReader {
       size = 0;
       return out;
     };
-    for await (const entry of this.list(version)) {
-      if (!keep(entry)) continue;
-      batch.push(entry);
-      size += entry.size > LARGE ? 0 : entry.size;
-      if (batch.length >= 4096 || size >= 32 * 1024 * 1024) yield await flush();
+    // The consumer is done with a batch when it asks for the next one.
+    const done = () => {
+      release?.();
+      release = undefined;
+    };
+    try {
+      for await (const entry of this.list(version)) {
+        if (!keep(entry)) continue;
+        batch.push(entry);
+        size += entry.size > LARGE ? 0 : entry.size;
+        if (batch.length >= BATCH_ENTRIES || size >= BATCH_BYTES) {
+          yield await flush();
+          done();
+        }
+      }
+      if (batch.length) yield await flush();
+    } finally {
+      done();
     }
-    if (batch.length) yield await flush();
   }
-  /** Reads each pack once: one ranged read spanning the batch's entries in it. */
+  /**
+   * The batch's contents by entry. Each pack is read in runs of entries at most
+   * `GAP` apart and `RUN` long, a few at a time, so a filter that keeps the
+   * first and last file of a pack reads those two and not the pack between them. A run that
+   * is mostly gaps is copied out of its buffer: a view would retain the gaps
+   * for as long as the batch lives.
+   */
   private async packed(batch: Entry[]): Promise<Map<Entry, Uint8Array>> {
     const groups = new Map<string, Entry[]>();
     for (const entry of batch)
-      if (entry.size > 0 && entry.size <= LARGE)
-        groups.set(entry.pack, [...(groups.get(entry.pack) ?? []), entry]);
-    const result = new Map<Entry, Uint8Array>();
+      if (entry.size > 0 && entry.size <= LARGE) {
+        const group = groups.get(entry.pack);
+        if (group) group.push(entry);
+        else groups.set(entry.pack, [entry]);
+      }
+    const runs: { pack: string; start: number; end: number; entries: Entry[] }[] =
+      [];
     for (const [pack, entries] of groups) {
-      const start = Math.min(...entries.map((e) => e.offset)),
-        end = Math.max(...entries.map((e) => e.offset + e.size));
-      this.reads.push(pack);
-      const bytes = new Uint8Array(
-        await (
-          await this.object(pack, { offset: start, length: end - start })
-        ).arrayBuffer(),
-      );
-      for (const entry of entries)
-        result.set(
-          entry,
-          bytes.subarray(
-            entry.offset - start,
-            entry.offset - start + entry.size,
-          ),
-        );
+      entries.sort((a, b) => a.offset - b.offset);
+      let run: (typeof runs)[number] | undefined;
+      for (const entry of entries) {
+        const end = entry.offset + entry.size;
+        if (
+          run &&
+          entry.offset - run.end <= GAP &&
+          Math.max(run.end, end) - run.start <= RUN
+        ) {
+          run.end = Math.max(run.end, end);
+          run.entries.push(entry);
+        } else
+          runs.push((run = { pack, start: entry.offset, end, entries: [entry] }));
+      }
     }
+    const result = new Map<Entry, Uint8Array>();
+    let next = 0;
+    const read = async () => {
+      while (next < runs.length) {
+        const run = runs[next++];
+        this.reads.push(run.pack);
+        this.fetched.bytes += run.end - run.start;
+        const bytes = new Uint8Array(
+          await (
+            await this.object(run.pack, {
+              offset: run.start,
+              length: run.end - run.start,
+            })
+          ).arrayBuffer(),
+        );
+        // Identical contents share an offset and count once.
+        let kept = 0,
+          covered = run.start;
+        for (const entry of run.entries) {
+          const end = entry.offset + entry.size;
+          if (end > covered) kept += end - Math.max(covered, entry.offset);
+          covered = Math.max(covered, end);
+        }
+        const copy = kept * 4 < bytes.length * 3;
+        for (const entry of run.entries) {
+          const view = bytes.subarray(
+            entry.offset - run.start,
+            entry.offset - run.start + entry.size,
+          );
+          result.set(entry, copy ? view.slice() : view);
+        }
+      }
+    };
+    await Promise.all(
+      Array.from({ length: Math.min(READS, runs.length) }, read),
+    );
     return result;
   }
   private tree(version: Version): TreeReader {
@@ -380,6 +655,12 @@ export class StoredSnapshot implements SnapshotReader {
       stream: (entry) => this.stream(entry),
       list: () => this.list(version),
       batches: (keep) => this.batches(version, keep),
+      many: async (entries) => {
+        const bytes = await this.packed(entries);
+        return entries.map((entry) =>
+          entry.size > LARGE ? null : (bytes.get(entry) ?? new Uint8Array()),
+        );
+      },
     };
   }
   async links(version: Version): Promise<Record<string, string>> {
@@ -438,6 +719,10 @@ export class MemorySnapshot implements SnapshotReader {
               [e, e.size > LARGE ? null : MemorySnapshot.bytes(files[e.path])],
             ] as Scanned[];
       },
+      many: async (entries) =>
+        entries.map((e) =>
+          e.size > LARGE ? null : MemorySnapshot.bytes(files[e.path]),
+        ),
     };
   }
 }

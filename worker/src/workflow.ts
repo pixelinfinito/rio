@@ -3,6 +3,7 @@ import {
   WorkflowEvent,
   WorkflowStep,
 } from "cloudflare:workers";
+import { NonRetryableError } from "cloudflare:workflows";
 import type {
   Env,
   ExecutionResult,
@@ -94,7 +95,12 @@ import {
 } from "./council-audit";
 import memberWeights from "./member-weights.json";
 import { pullOf } from "./pulls";
-import { createJob, createModelJob } from "./jobs";
+import {
+  createJob,
+  createModelJob,
+  stopRunners,
+  withdrawIdle,
+} from "./jobs";
 import { needs, transferMs } from "./archive";
 import { createQaJob } from "./qa-jobs";
 import { qaReport, qaRecords, compareQaResults, qaUsage } from "./qa-results";
@@ -126,7 +132,9 @@ import {
   expire,
   hunkHash,
   lookup,
-  store as storeCache,
+  PACK_ENTRIES,
+  slice,
+  storeEntries,
   type CacheEntry,
   type Hunk,
   type Keyed,
@@ -145,7 +153,11 @@ import {
   StoredSnapshot,
   compareUtf8,
   decodeText,
+  changeTexts,
+  holding,
   materialize,
+  prefetched,
+  type ChangeTexts,
   type Entry,
   textOf,
   type SnapshotReader,
@@ -293,6 +305,15 @@ const securityResult = (value: any): boolean =>
 const RUNNER_ATTEMPTS = 2;
 /** Hunks keyed per cache lookup step. */
 const CACHE_CHUNK = 250;
+/**
+ * The reviews a workflow may end: one still open, or the one this workflow
+ * ended already (a retried step; only the workflow writes this report key).
+ */
+const OPEN = "(status IN ('queued','running','cancelled') OR report_key=?)";
+/** The note of a review its workflow ended early because it was cancelled. */
+export const CANCELLED_NOTE = "Review cancelled before it finished.";
+/** Cache entries written per store step: four packs. */
+const CACHE_STORE_CHUNK = 4 * PACK_ENTRIES;
 export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
   async run(event: WorkflowEvent<WorkflowParams>, step: WorkflowStep) {
     const id = event.payload.review_id,
@@ -310,7 +331,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
         }>();
       invariant(row, "review not found");
       await this.env.DB.prepare(
-        "UPDATE reviews SET status='running' WHERE id=? AND cancelled=0",
+        "UPDATE reviews SET status='running' WHERE id=? AND cancelled=0 AND status IN ('queued','running')",
       )
         .bind(id)
         .run();
@@ -333,46 +354,59 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
       this.env,
       event.payload.snapshot_key,
     );
+    const report = structuredClone(submission.report);
+    // A change whose text exceeds the budget is analysed without its largest
+    // files, and the report says so, once per consumer.
+    const unread = (what: string, omitted: ChangeTexts["omitted"]) => {
+      if (!omitted.files) return;
+      const note = `Change text exceeds the host budget: ${what} did not read ${omitted.files} of ${submission.changed.length} changed files (${Math.ceil(omitted.bytes / 1048576)} MiB, the largest); signals in them are missing from this review.`;
+      if (!report.footer.notes.includes(note)) report.footer.notes.push(note);
+    };
     // Steps read files on demand. Triage reads the changed text files inside a
     // step, so a replay keeps its plan and never holds the files themselves.
-    const changedText = async (): Promise<Snapshot> => {
-      const read = async (tree: TreeReader, paths: string[]) => {
+    const changedText = async () => {
+      const texts = await changeTexts(snapshot, submission.changed);
+      const files = (contents: Record<string, string | null>) => {
         const files: Record<string, File> = {};
-        for (const path of new Set(paths)) {
-          const content = await textOf(tree, path);
+        for (const [path, content] of Object.entries(contents))
           if (content !== null) files[path] = { mode: 0o100644, content };
-        }
         return files;
       };
       return {
-        base: await read(
-          snapshot.base,
-          submission.changed.flatMap((f) => [f.path, f.old_path ?? f.path]),
-        ),
-        head: await read(
-          snapshot.head,
-          submission.changed.map((f) => f.path),
-        ),
+        files: { base: files(texts.base), head: files(texts.head) },
+        omitted: texts.omitted,
       };
     };
     const planned = async (
       name: string,
       compute: (files: Snapshot) => Plan,
-    ): Promise<Plan> =>
-      store.get<Plan>(
-        // Triage is deterministic: an error (an invalid rule) repeats on retry.
-        await step.do(
-          name,
-          { retries: { limit: 0, delay: "1 second" } },
-          async () =>
-            store.put(
-              `reviews/${id}/plans/${name}.json`,
-              compute(await changedText()),
-            ),
-        ),
+    ): Promise<Plan> => {
+      // Reading may fail for a moment and is tried again. Triage itself is
+      // deterministic: its error (an invalid rule) repeats on a retry.
+      const done = await step.do(
+        name,
+        { retries: { limit: 2, delay: "5 seconds" }, timeout: "10 minutes" },
+        () =>
+          holding(async () => {
+            const { files, omitted } = await changedText();
+            let plan: Plan;
+            try {
+              plan = compute(files);
+            } catch (error) {
+              throw new NonRetryableError(
+                error instanceof Error ? error.message : String(error),
+              );
+            }
+            return {
+              key: await store.put(`reviews/${id}/plans/${name}.json`, plan),
+              omitted,
+            };
+          }),
       );
+      unread("triage", done.omitted);
+      return store.get<Plan>(done.key);
+    };
     let plan: Plan;
-    const report = structuredClone(submission.report);
     const executions: Record<string, ExecutionResult> = {},
       hypotheses: Hypothesis[] = [],
       verified: Verified[] = [];
@@ -438,6 +472,14 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
       );
       return store.get<ModelResponse>(key);
     };
+    // The snapshot tool calls of one model turn (see `converse`). The action
+    // answers tool errors itself, so a failed attempt is the platform's.
+    const record = (name: string, action: () => Promise<string>) =>
+      step.do(
+        `tools-${name}`,
+        { retries: { limit: 1, delay: "2 seconds" }, timeout: "5 minutes" },
+        action,
+      );
     // A verifier conversation's prompt settings: the partition of its model,
     // its cache key root, and the layout features it follows.
     const verifierPrompt = (hypothesis: string) => {
@@ -510,9 +552,9 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             120000) /
             1000,
         );
-        let key: string;
+        let key: string | undefined;
         try {
-          const completed = await step.waitForEvent<{ key: string }>(
+          const completed = await step.waitForEvent<{ key?: string }>(
             `wait-${job}`,
             {
               type: `job-${job}-${attempt}`,
@@ -545,6 +587,8 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           executions[job] = result;
           return result;
         }
+        // A cancellation ends the wait with no result (see the cancel route).
+        invariant(key, "cancelled");
         const result = await store.get<ExecutionResult>(key);
         invariant(
           result.job_id === job &&
@@ -562,6 +606,28 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
         executions[job] = result;
         return result;
       }
+    };
+    // Where a timed-out job was and how long each part took, as far as its
+    // runner reported: a slow archive and a slow command need different fixes.
+    const spent = (result: ExecutionResult) => {
+      const t = result.timing ?? {};
+      const parts = (
+        [
+          ["transfer", t.transfer_ms],
+          ["extraction", t.extract_ms],
+          ["command", t.command_ms],
+        ] as const
+      )
+        .filter(([, ms]) => ms !== undefined)
+        .map(([name, ms]) => `${name} ${Math.round(ms! / 1000)} s`);
+      return (
+        (result.phase
+          ? ` during ${result.phase}`
+          : result.timing
+            ? ""
+            : `: ${redact(result.stderr).slice(0, 80)}`) +
+        (parts.length ? ` (${parts.join(", ")})` : "")
+      );
     };
     /** Output tokens offered to a council member per call. */
     const COUNCIL_OUTPUT_TOKENS = 8192;
@@ -659,9 +725,9 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
         return left;
       });
       if (remaining <= 0) return { error: "timeout", at: deadline };
-      let key: string;
+      let key: string | undefined;
       try {
-        const done = await step.waitForEvent<{ key: string }>(`wait-${job}`, {
+        const done = await step.waitForEvent<{ key?: string }>(`wait-${job}`, {
           type: `job-${job}-1`,
           timeout: `${Math.max(1, Math.ceil(remaining / 1000))} seconds`,
         });
@@ -679,6 +745,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
         });
         return { error: "timeout", at: deadline, seconds: remaining / 1000 };
       }
+      invariant(key, "cancelled");
       const recorded = await step.do(
         `${name}-result`,
         async (): Promise<Recorded> => {
@@ -834,10 +901,14 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
                 string,
                 { base: string | null; head: string | null }
               > = {};
+              const read = prefetched(snapshot, {
+                base: paths.map((path) => renames[path] ?? path),
+                head: paths,
+              });
               for (const path of paths)
                 files[path] = {
-                  base: await textOf(snapshot.base, renames[path] ?? path),
-                  head: await textOf(snapshot.head, path),
+                  base: await read("base", renames[path] ?? path),
+                  head: await read("head", path),
                 };
               return files;
             },
@@ -1072,13 +1143,15 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
               );
             }
           } else {
-            const completed = await step.waitForEvent<{ key: string }>(
+            const completed = await step.waitForEvent<{ key?: string }>(
               `wait-${job}`,
               {
                 type: `job-${job}-1`,
                 timeout: `${Math.ceil(dispatched.job.limits.wall_ms / 1000) + 120} seconds`,
               },
             );
+            // A cancellation ends the wait with no result.
+            invariant(completed.payload.key, "cancelled");
             const result = await store.get<ExecutionResult>(
               completed.payload.key,
             );
@@ -1114,13 +1187,14 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
                   "job" in dispatched,
                   "QA baseline runtime unavailable",
                 );
-                const completed = await step.waitForEvent<{ key: string }>(
+                const completed = await step.waitForEvent<{ key?: string }>(
                   `wait-${baseJob}`,
                   {
                     type: `job-${baseJob}-1`,
                     timeout: `${Math.ceil(dispatched.job.limits.wall_ms / 1000) + 120} seconds`,
                   },
                 );
+                invariant(completed.payload.key, "cancelled");
                 const result = await store.get<ExecutionResult>(
                   completed.payload.key,
                 );
@@ -1207,7 +1281,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           if (result.timed_out || result.exit_code !== 0 || !result.artifact) {
             // The runner is trusted; its first stderr line names the failure.
             const reason = result.timed_out
-              ? "timed out"
+              ? `timed out${spent(result)}`
               : (result.stderr
                   .split("\n")
                   .map((line) => line.trim())
@@ -1295,7 +1369,8 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
         // are computed once per step and replayed from the step result.
         const analysis =
           selected.length && !unchanged
-            ? await step.do(`analysis-${s.id}`, async () => {
+            ? await step.do(`analysis-${s.id}`, () =>
+                holding(async () => {
                 const contents = await changedContents(
                   reviewed.changed,
                   reviewed.snapshot,
@@ -1337,9 +1412,15 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
                   trace: catalogName
                     ? traceInputs(items, reviewed.changed, contents, graphs)
                     : null,
+                  omitted: contents.omitted,
                 };
-              })
+              }))
             : null;
+        if (analysis)
+          unread(
+            security ? "the security analysis" : "the contract inventory",
+            analysis.omitted,
+          );
         // The plan says why a contracts-capable agent did not run.
         if (!security && !unchanged)
           for (const [name, manifest] of Object.entries(agents))
@@ -1383,12 +1464,24 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           // (a CPU limit repeats on every retry) runs the agent uncached.
           let found:
             { keys: Keyed[]; hits: Record<number, CacheEntry> } | undefined;
+          // A cache step is retried once: an error that repeats (a platform
+          // limit does) must not hold the review.
+          const bounded = {
+            retries: { limit: 1, delay: "5 seconds" as const },
+            timeout: "5 minutes" as const,
+          };
           if (caching) {
-            const read = (version: Version, path: string) =>
-              textOf(reviewed.snapshot[version], path);
-            const bounded = {
-              retries: { limit: 1, delay: "5 seconds" as const },
-              timeout: "5 minutes" as const,
+            // The files of the hunks in the order they are read, fetched a
+            // window at a time; the symbols around a hunk that lie in other
+            // files are read when asked for.
+            const reading = (files: { path: string; old_path?: string }[]) => {
+              const sorted = [...files].sort((a, b) =>
+                a.path.localeCompare(b.path),
+              );
+              return prefetched(reviewed.snapshot, {
+                base: sorted.map((f) => f.old_path ?? f.path),
+                head: sorted.map((f) => f.path),
+              });
             };
             try {
               // The change's hunks, then their keys and hits in chunks: each
@@ -1399,7 +1492,10 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
                 async () =>
                   store.put(
                     `reviews/${id}/cache/${s.id}-${agent}-hunks.json`,
-                    await changeHunks(reviewed.changed, read),
+                    await changeHunks(
+                      reviewed.changed,
+                      reading(reviewed.changed),
+                    ),
                   ),
               );
               const hunks = await store.get<Hunk[]>(hunksKey);
@@ -1412,7 +1508,9 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
                   async () => {
                     const keys: Keyed[] = [];
                     const memo = new ContextMemo();
-                    for (const hunk of hunks.slice(start, start + CACHE_CHUNK))
+                    const part = hunks.slice(start, start + CACHE_CHUNK);
+                    const read = reading(part);
+                    for (const hunk of part)
                       keys.push({
                         hunk,
                         hunk_hash: hunkHash(hunk),
@@ -1601,6 +1699,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
               messages: [{ role: "user", content: prompt }],
               dispatch: tools.dispatch.bind(tools),
               call,
+              record,
               cancelled: () => store.cancelled(id),
               cache: {
                 classes: promptConfig.cache,
@@ -1710,25 +1809,51 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           }
           await progress.raised(`${s.id}-${agent}`, screened.accepted);
           await finished(screened.accepted.length);
-          // Only a run that completed within budget populates the cache.
-          if (caching && misses.length)
-            await step.do(`cache-store-${s.id}-${agent}`, async () => {
-              const used = await this.env.DB.prepare(
-                "SELECT COALESCE(SUM(COALESCE(input_tokens,0)+COALESCE(output_tokens,0)),0) AS tokens FROM usage WHERE review_id=? AND actor=?",
-              )
-                .bind(id, `${s.id}-${agent}`)
-                .first<{ tokens: number }>();
-              await storeCache(
-                this.env,
-                load.tenant,
-                agent,
-                keyed,
-                misses,
-                screened.accepted,
-                used?.tokens ?? 0,
+          // Only a run that completed within budget populates the cache. The
+          // entries are written a chunk per step, each a few packs, so no step
+          // nears the platform's request limit however large the change; the
+          // cache only saves later model calls, so a store that fails leaves
+          // the review as it is and says so.
+          if (caching && misses.length) {
+            const entries = [...slice(keyed, misses, screened.accepted)];
+            try {
+              const tokens = await step.do(
+                `cache-tokens-${s.id}-${agent}`,
+                bounded,
+                async () =>
+                  (
+                    await this.env.DB.prepare(
+                      "SELECT COALESCE(SUM(COALESCE(input_tokens,0)+COALESCE(output_tokens,0)),0) AS tokens FROM usage WHERE review_id=? AND actor=?",
+                    )
+                      .bind(id, `${s.id}-${agent}`)
+                      .first<{ tokens: number }>()
+                  )?.tokens ?? 0,
               );
-              return misses.length;
-            });
+              const share = Math.floor(tokens / misses.length);
+              for (
+                let start = 0;
+                start < entries.length;
+                start += CACHE_STORE_CHUNK
+              )
+                await step.do(
+                  `cache-store-${s.id}-${agent}-${start / CACHE_STORE_CHUNK}`,
+                  bounded,
+                  () =>
+                    storeEntries(
+                      this.env,
+                      load.tenant,
+                      agent,
+                      keyed,
+                      entries.slice(start, start + CACHE_STORE_CHUNK),
+                      share,
+                    ),
+                );
+            } catch (error) {
+              report.footer.notes.push(
+                `Agent result cache not updated for ${agent}: ${redact(error instanceof Error ? error.message : String(error)).slice(0, 120)}`,
+              );
+            }
+          }
           if (agent === "security")
             coverage = securityCoverage(
               coverage!,
@@ -1917,6 +2042,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             ledger,
             verifyTokens: active.verify_tokens,
             call,
+            record,
             cancelled: () => store.cancelled(id),
             prompt: verifierPrompt(h.id),
             tools: (voter) =>
@@ -2408,11 +2534,22 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
         return true;
       });
       await step.do("finish", async () => {
-        await this.env.DB.prepare(
-          "UPDATE reviews SET status=?,report_key=? WHERE id=?",
+        // A review the endpoint already ended (overdue, or cancelled and not
+        // stopped in time) keeps that end: a late result never replaces it,
+        // and a cancelled review never reads complete.
+        const ended = await this.env.DB.prepare(
+          `UPDATE reviews SET status=CASE WHEN cancelled=1 THEN 'partial' ELSE ? END,report_key=? WHERE id=? AND ${OPEN} RETURNING status`,
         )
-          .bind(report.status === "partial" ? "partial" : "complete", key, id)
-          .run();
+          .bind(
+            report.status === "partial" ? "partial" : "complete",
+            key,
+            id,
+            key,
+          )
+          .first<{ status: string }>();
+        if (!ended) return;
+        await stopRunners(this.env, id);
+        await withdrawIdle(this.env, id);
         if (lineage && outcome)
           await this.env.DB.batch(
             persistStatements(
@@ -2425,15 +2562,20 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           );
         await store.event(
           id,
-          report.status === "partial" ? "review:partial" : "review:done",
+          ended.status === "partial" ? "review:partial" : "review:done",
           { report },
         );
       });
       return { report_key: key };
     } catch (error) {
       report.status = "partial";
+      // A non-retryable step error carries its class name in the message.
+      const reason =
+        error instanceof Error
+          ? error.message.replace(/^NonRetryableError: /, "")
+          : "review failed";
       report.footer.notes.push(
-        error instanceof Error ? error.message : "review failed",
+        reason === "cancelled" ? CANCELLED_NOTE : reason,
       );
       // Work finished before the stop is still reported, consolidated as on the
       // complete path. A replayed run has it in storage only.
@@ -2487,11 +2629,14 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
         }
       const key = await store.put(`reviews/${id}/report.json`, report);
       await step.do("failed", async () => {
-        await this.env.DB.prepare(
-          "UPDATE reviews SET status='partial',report_key=?,error=? WHERE id=?",
+        const ended = await this.env.DB.prepare(
+          `UPDATE reviews SET status='partial',report_key=?,error=? WHERE id=? AND ${OPEN} RETURNING id`,
         )
-          .bind(key, "runtime did not complete", id)
-          .run();
+          .bind(key, "runtime did not complete", id, key)
+          .first();
+        if (!ended) return;
+        await stopRunners(this.env, id);
+        await withdrawIdle(this.env, id);
         await store.event(id, "review:partial", { report });
         await settleAnnouncement(
           this.env,

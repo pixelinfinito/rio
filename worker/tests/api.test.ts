@@ -579,7 +579,33 @@ describe("Worker API and storage", () => {
       "head",
       snapshotId,
     );
+    // A runner has this job; no runner has taken the other.
+    await runtime.DB.prepare(
+      "UPDATE jobs SET status='leased',lease_until=? WHERE id='cancelled-job'",
+    )
+      .bind(Date.now() + 600000)
+      .run();
+    await createJob(
+      runtime,
+      id,
+      "unstarted-job",
+      "run",
+      ["true"],
+      "head",
+      snapshotId,
+    );
+    const before = fakeWorkflow.events.length;
     await request(`/v1/reviews/${id}/cancel`, "POST", {});
+    // The workflow's waits for both jobs are ended, with no result.
+    expect(
+      fakeWorkflow.events
+        .slice(before)
+        .map((e) => [e.type, e.payload])
+        .sort(),
+    ).toEqual([
+      ["job-cancelled-job-1", { cancelled: true }],
+      ["job-unstarted-job-1", { cancelled: true }],
+    ]);
     const events = fakeWorkflow.events.length;
     await finishJob(runtime, id, "cancelled-job", 1, {
       ...result,
@@ -587,13 +613,24 @@ describe("Worker API and storage", () => {
       exit_code: 0,
     });
     expect(fakeWorkflow.events).toHaveLength(events);
-    expect(
+    const status = async (job: string) =>
       (
-        await runtime.DB.prepare(
-          "SELECT status FROM jobs WHERE id='cancelled-job'",
-        ).first<any>()
-      ).status,
-    ).toBe("completed");
+        await runtime.DB.prepare("SELECT status FROM jobs WHERE id=?")
+          .bind(job)
+          .first<any>()
+      ).status;
+    expect(await status("cancelled-job")).toBe("completed");
+    // The job nobody started is withdrawn: it cannot be leased or completed.
+    expect(await status("unstarted-job")).toBe("failed");
+    await finishJob(runtime, id, "unstarted-job", 1, {
+      ...result,
+      job_id: "unstarted-job",
+      exit_code: 0,
+    });
+    expect(await status("unstarted-job")).toBe("failed");
+    // A second cancel sends nothing more: no job is open.
+    await request(`/v1/reviews/${id}/cancel`, "POST", {});
+    expect(fakeWorkflow.events).toHaveLength(events);
   });
   it("changes selected budget from creation time without resetting spent or reserved tokens", async () => {
     const id = await createReview(),

@@ -156,41 +156,97 @@ def comments_from_report(report):
 INFRA_PATTERNS = [
     ("cpu_limit", ("Worker exceeded CPU time limit",)),
     ("memory_limit", ("Worker exceeded memory limit", "exceeded CPU or memory limits")),
-    ("deadline", ("Rio ended this review", "exceeded its wall budget")),
+    ("subrequest_limit", ("Too many API requests by single Worker invocation",
+                          "Too many subrequests")),
+    ("deadline", ("Rio ended this review", "exceeded its wall budget",
+                  "review wall budget exhausted", "endpoint review cancelled",
+                  "Review cancelled before it finished", "exceeded the adapter's")),
     ("job_timeout", ("WorkflowTimeoutError", "runner wall deadline exceeded",
                      "no runner result within", "runner analysis failed (timed out")),
     ("executor", ("sandbox executor failed", "Network connection lost",
                   "runner analysis failed")),
+    ("workflow_internal", ("WorkflowInternalError", "internal workflows error")),
     ("transport", ("contacting Rio endpoint", "Connection reset", "connection error")),
 ]
+# Whole notes too short to match as a part of other text: the note older
+# endpoints left on a review cancelled at the client's deadline.
+INFRA_NOTES = {"cancelled": "deadline"}
 
 
-def infra_failure(report, error=""):
-    """The first infrastructure cause a case's report or error names, else None.
+def audit_failures(audit):
+    """Platform errors a review's audit records under a report that only counts them.
+
+    Votes that did not complete carry the error that stopped them. An execution
+    counts when its last attempt never ran the command (the runner failed), or
+    when one of Rio's own analysis jobs timed out; the stderr of a repository
+    command an agent asked for is that command's output, never a cause.
+    """
+    texts = [str(vote.get("error", "")) for vote in (audit or {}).get("votes", [])
+             if vote.get("status") != "completed"]
+    last = {}
+    for execution in (audit or {}).get("executions", []):
+        last[(execution.get("kind"), execution.get("version"),
+              json.dumps(execution.get("command")))] = execution
+    for execution in last.values():
+        if execution.get("outcome") != "exited" or (
+                execution.get("timed_out") and execution.get("kind") != "run"):
+            texts.append(str(execution.get("stderr", "")))
+    return texts
+
+
+def infra_failures(report, error="", audit=None):
+    """Every infrastructure cause a case's report, error or audit names, in
+    the order of INFRA_PATTERNS.
 
     A note ending in "; retried" records a runner attempt that a retry recovered,
     so it is not a cause. Such a case is still scored (as whatever comments it
     has); summaries also report scores without these cases, so platform failures
-    do not read as reviewer misses.
+    do not read as reviewer misses. A check that was skipped (no dependencies
+    offline, nothing configured) is the review's own outcome, not a cause.
     """
     notes = [n for n in (report or {}).get("footer", {}).get("notes", [])
              if not n.endswith("; retried")]
-    texts = [*notes, error or ""]
-    for cause, needles in INFRA_PATTERNS:
-        if any(needle in text for text in texts for needle in needles):
-            return cause
-    return None
+    texts = [*notes, error or "", *audit_failures(audit)]
+    # A text counts once, under its first cause: a timed-out job is not also
+    # an executor failure.
+    found = {INFRA_NOTES[n] for n in notes if n in INFRA_NOTES}
+    for text in texts:
+        found.add(next((cause for cause, needles in INFRA_PATTERNS
+                        if any(needle in text for needle in needles)), None))
+    return [cause for cause, _ in INFRA_PATTERNS if cause in found]
+
+
+def infra_failure(report, error="", audit=None):
+    """The first infrastructure cause of a case, else None."""
+    return next(iter(infra_failures(report, error, audit)), None)
+
+
+def case_infra_failures(evidence, status):
+    """A case's causes under the current rules, from its saved report, audit and
+    (when it has no usable report) error and stderr, with the cause recorded at
+    the time when the evidence no longer names one."""
+    def saved(name):
+        path = evidence / name
+        try:
+            return json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
+        except ValueError:
+            return None
+    error = ""
+    if status.get("status") == "failed":
+        stderr = evidence / "review.stderr"
+        tail = stderr.read_text(encoding="utf-8", errors="replace")[-4000:] if stderr.exists() else ""
+        error = f"{status.get('error', '')}\n{tail}"
+    report = saved("report.json")
+    if status.get("status") == "failed" and isinstance(report, dict):
+        error += f"\n{(report.get('error') or {}).get('message', '')}"
+    causes = infra_failures(report, error, saved("audit.json"))
+    recorded = status.get("infra_failure")
+    return causes if causes or not recorded else [recorded]
 
 
 def case_infra_failure(evidence, status):
-    """A case's recorded cause, or one derived from its saved report and stderr
-    when the status predates the field."""
-    if "infra_failure" in status:
-        return status["infra_failure"]
-    report_path, stderr = evidence / "report.json", evidence / "review.stderr"
-    report = json.loads(report_path.read_text(encoding="utf-8")) if report_path.exists() else None
-    tail = stderr.read_text(encoding="utf-8", errors="replace")[-4000:] if stderr.exists() else ""
-    return infra_failure(report, f"{status.get('error', '')}\n{tail}")
+    """A case's first cause; see case_infra_failures."""
+    return next(iter(case_infra_failures(evidence, status)), None)
 
 
 GIT_LOCATION_VARIABLES = frozenset({
@@ -267,16 +323,27 @@ def review_group(repo, instances, args, stop_event=None):
                                           ("**/endpoint.json", "endpoint.json")]:
                     for path in cache.glob(pattern):
                         shutil.copyfile(path, evidence / filename)
-                report = json.loads(stdout)
+                if record["timed_out"]:
+                    raise RuntimeError(f"Review exceeded the adapter's {args.timeout} s limit")
+                try:
+                    report = json.loads(stdout)
+                except ValueError:
+                    raise RuntimeError(f"Review printed no report (exit code {record['exit_code']})") from None
                 write_json(evidence / "report.json", report)
+                # An error envelope holds the CLI's or the endpoint's own error and
+                # no review identity: say what Rio said, before any identity check.
+                if report.get("status") == "error" or report.get("error"):
+                    failure = report.get("error") or {}
+                    raise RuntimeError(f"Rio reported an error ({failure.get('code', 'unknown')}): "
+                                       f"{failure.get('message', 'no message')}")
+                if record["exit_code"] not in {0, 1, 4} or report.get("status") not in {"complete", "incomplete", "partial"}:
+                    raise RuntimeError(f"Review did not produce a usable report: {report.get('status')} "
+                                       f"(exit code {record['exit_code']})")
                 if report.get("review", {}).get("base") != instance["base_commit"] or not report.get("review", {}).get("head", "").startswith("snapshot:") or report.get("review", {}).get("mode") != "staged":
                     raise RuntimeError("Report commit pins differ from dataset")
-                if record["timed_out"] or record["exit_code"] not in {0, 1, 4} or report.get("status") not in {"complete", "incomplete", "partial"}:
-                    raise RuntimeError(f"Review did not produce a usable report: {report.get('status')}")
                 comments = comments_from_report(report)
                 status.update(status=report["status"], comments=len(comments),
-                              checks=report.get("checks", []),
-                              infra_failure=infra_failure(report))
+                              checks=report.get("checks", []))
                 duration = record["duration_seconds"]
                 write_json(args.out / "results" / f"{safe}.json",
                            {"instance_id": instance["instance_id"], "reviewer": "rio",
@@ -287,9 +354,12 @@ def review_group(repo, instances, args, stop_event=None):
                 raise
             except Exception as error:
                 status["error"] = str(error)
-                # The saved report (when one was parsed) and stderr name the cause.
-                status["infra_failure"] = case_infra_failure(evidence, status)
             finally:
+                if not interrupted:
+                    # The saved report and audit name the causes; a failed case's
+                    # error and stderr do too.
+                    status["infra_failures"] = case_infra_failures(evidence, status)
+                    status["infra_failure"] = next(iter(status["infra_failures"]), None)
                 status["duration_seconds"] = round(time.monotonic() - started, 3)
                 if not interrupted:
                     write_json(evidence / "status.json", status)
@@ -376,14 +446,18 @@ def run(args):
     statuses = []
     for path in (args.out / "cases").glob("*/status.json"):
         status = json.loads(path.read_text(encoding="utf-8"))
-        status["infra_failure"] = case_infra_failure(path.parent, status)
+        status["infra_failures"] = case_infra_failures(path.parent, status)
+        status["infra_failure"] = next(iter(status["infra_failures"]), None)
         statuses.append(status)
     summary = {"selected": len(instances), "attempted": len(statuses),
                "statuses": dict(Counter(x["status"] for x in statuses)),
                "generated_comments": sum(x.get("comments", 0) for x in statuses),
                "failed": [x["instance_id"] for x in statuses if x["status"] == "failed"],
                "infra_failures": dict(Counter(x["infra_failure"] for x in statuses
-                                           if x.get("infra_failure")))}
+                                           if x.get("infra_failure"))),
+               # Every cause of every case: a case with two counts under both.
+               "infra_causes": dict(Counter(cause for x in statuses
+                                            for cause in x["infra_failures"]))}
     write_json(args.out / "run-summary.json", summary)
     print(json.dumps(summary, indent=2))
 

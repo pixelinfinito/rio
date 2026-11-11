@@ -126,6 +126,8 @@ export async function readJobInput(stream: ReadableStream<Uint8Array>) {
     new TextDecoder().decode(bytes.subarray(0, newline)),
   );
   const files: Record<string, { mode: number; bytes: Uint8Array }> = {};
+  // Paths of `same/<version>` members: files equal to the other tree's.
+  const shared: Record<string, string[]> = {};
   const text = (b: Uint8Array) =>
     new TextDecoder().decode(b).replace(/\0.*$/s, "");
   let offset = newline + 1,
@@ -142,13 +144,20 @@ export async function readJobInput(stream: ReadableStream<Uint8Array>) {
       continue;
     }
     if (type !== "0") throw new Error(`unexpected tar member type ${type}`);
-    files[pax ?? text(block.subarray(0, 100))] = {
+    const name = pax ?? text(block.subarray(0, 100));
+    if (name.startsWith("same/")) {
+      (shared[name.slice(5)] ??= []).push(
+        ...JSON.parse(new TextDecoder().decode(body)),
+      );
+      continue;
+    }
+    files[name] = {
       mode: parseInt(text(block.subarray(100, 108)), 8),
       bytes: body,
     };
     pax = undefined;
   }
-  return { header, files };
+  return { header, files, shared };
 }
 /** The tree of one version in an executor input, in the in-memory file shape. */
 export function treeOf(

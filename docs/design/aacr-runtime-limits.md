@@ -334,17 +334,8 @@ Measured with `eval/diagnostics/cache-lookup.ts` on the final code: the whole
 lookup takes 0.8 s for vllm@134705b (was 14.4 s) and 1.5 s for vllm@075f1b5 (was
 29.4 s) on this VM, and each 250-hunk step takes a fraction of that.
 
-Not implemented, with the reason:
-
-- **P2.4, one container per review pulling packs from R2.** This is a larger
-  protocol change (container lifetime across jobs, an outbound handler with
-  credential injection). The transfer allowance and honest timeouts bound the
-  current pipe instead. Revisit if canary transfers approach the 4-minute cap.
-- **P3.2 and P3.3, lazy model responses and compact graphs.** A replay must re-read
-  each prior model response to rebuild its conversation, so responses cannot be
-  dropped. Verifier fan-out is already bounded at 4 voters. Triage was the
-  measured large replay allocation; the canary checks whether memory is still
-  reached.
+Deferred in that round and taken up in section 8: P2.4 (the transfer) and
+P3.2/P3.3 (replay memory).
 
 Review follow-ups:
 
@@ -361,3 +352,37 @@ Review follow-ups:
 - The adapter ignores recovered `; retried` notes, separates timeouts from other
   runner failures, and classifies status files written before `infra_failure`
   existed from their saved report and stderr.
+
+## 8. Second round: what the first canary still broke
+
+The canary of the section 7 build (`aacr-bench-rerun-20261111T181340Z`, ten cases:
+three failed, four incomplete, three partial) showed six remaining causes. Each
+row is what was found and what bounds it now.
+
+| Cause | Found | Change | Where |
+|---|---|---|---|
+| Transfer (P2.4) | FreeCAD's two trees (790 MiB, 2 × 395 MiB) hit the 4-minute transfer cap; the graph job then died with no phase | A job that needs both trees gets head whole and, of base, only the files that differ: files equal in path, content and mode are named in `same/base` members and copied inside the container. The stream is coalesced into 1 MiB chunks. A result carries `phase` and `timing` (`transfer_ms`, `archive_bytes`, `storage_ms`, `extract_ms`, `command_ms`), and the footer note of a missing analysis says which phase ran out and how long each took | `worker/src/archive.ts`, `worker/src/sandbox.ts`, `worker/runner/execute.py`, `worker/src/workflow.ts` |
+| Worker memory (P3.2/P3.3) | Three verifier steps of FreeCAD ended at 128 MiB. A voter's `search` decoded and split every file of the tree, each voter held its own scan, and every replay ran the conversation's searches again | Scans read a few MiB at a time (`BATCH_BYTES`), one batch per snapshot at once, and match on bytes before decoding. A turn's snapshot tool calls are one recorded step, so a replay reads their results instead of scanning again. Triage and the contract inventory read a change within 32 MiB, smallest files first, one change per isolate at a time, and report what was left out | `worker/src/snapshot.ts`, `worker/src/tools.ts`, `worker/src/gateway.ts`, `worker/src/verifier.ts`, `worker/src/contracts.ts`, `worker/src/workflow.ts` |
+| Cache store | `cache-store-agents-correctness` made one R2 write per finding context plus reads, passed the per-invocation request limit and was retried with the same error until the review was cancelled | Entries are written as packs of at most 256 entries and 2 MiB (`cache/<tenant>/packs/<digest>.json`), in steps of at most 1,024 entries; a store step that fails is retried once and then leaves a footer note, because the cache is optional | `worker/src/cache.ts`, `worker/src/workflow.ts`, migration `0016` |
+| Cancellation | A cancelled review kept its workflow: the store step above retried for as long as the instance lived, and leased jobs kept their containers | Cancel stops the containers of the review's running jobs, withdraws its idle ones and wakes the workflow's waits. The workflow ends the review as `partial` with what it found (`Review cancelled before it finished.`). A workflow that has not done so 3 minutes after the cancel is terminated by the minute sweep, which writes the partial report. Every terminal write is conditional on the review being open, so a late result or a late workflow revives nothing; a late result of a withdrawn job is dropped, one of a running job is kept for the audit only | `worker/src/index.ts`, `worker/src/jobs.ts`, `worker/src/reconcile.ts`, `worker/src/workflow.ts`, migration `0017` |
+| Client deadline | The CLI left a minute after the review's deadline, before the endpoint's own two-minute grace and sweep, cancelled the review and printed an error with no report | The CLI waits 4 minutes past the longest deadline, so it receives the endpoint's partial report. If it still has to leave, the error says whether the user interrupted or the wait ran out, and for how long it waited | `crates/rio-cli/src/endpoint.rs`, `crates/rio-client/src/lib.rs` |
+| Adapter labels | An error envelope (no review identity) was reported as `Report commit pins differ from dataset` with no cause | The adapter reports Rio's own error first and checks the identity of usable reports only, exactly as before. Causes gain `subrequest_limit` and `workflow_internal`, cancellations and client deadlines count as `deadline`, and failures that only the audit records (votes that did not complete, analysis jobs that never ran) count too. A status keeps every cause (`infra_failures`) and the first (`infra_failure`); saved evidence is classified under the current rules | `eval/aacr_bench.py` |
+
+Local preparation was the other 17 minutes of the FreeCAD case, before the
+endpoint had a review: the syntax pass re-parsed files per query and the graph
+build ignored its deadline inside one file. After the change the same
+preparation takes about 44 s on this VM (was 950 s); the CLI prints the time of
+each local phase before `Endpoint review:`, so local time is not read as remote
+time.
+
+What stays as it was, on purpose:
+
+- One container per job. Sharing what both trees hold removes about half of the
+  bytes of an analysis job, which is where the time went; a container per review
+  would also remove the second and third transfers, at the cost of a container
+  that outlives its job and of commands of one job seeing the files of another.
+  The timings each result now carries say whether that is still needed.
+- `CONTEXT_KEY_VERSION` is 3: entries written by the first canary's build miss
+  once, so the second canary runs every agent and writes every entry itself.
+- Worker limits (`cpu_ms`, subrequests) are unchanged. The work is bounded
+  instead: a step reads and writes a bounded number of objects.

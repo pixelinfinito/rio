@@ -8,6 +8,8 @@ import { app } from "../src/index";
 import { Store } from "../src/storage";
 import { Progress } from "../src/progress";
 import { finishJob } from "../src/jobs";
+import { CANCEL_GRACE_MS, reconcile, sweepReviews } from "../src/reconcile";
+import { CANCELLED_NOTE } from "../src/workflow";
 import { hash, validateHypotheses, validateReport } from "../src/validation";
 import { allMigrations, hypothesis, snapshot, submission } from "./fixtures";
 import { storeSnapshot, uploadSnapshot } from "./snapshots";
@@ -386,6 +388,197 @@ it("resumes an isolated runner job using an attempt-specific event", async () =>
   expect(analysis.artifact.report.schema).toBe("rio-report-v1");
 }, 60000);
 
+// A review waiting for a runner job, and the job.
+async function waiting(deadline = 240000) {
+  const store = new Store(runtime),
+    id = crypto.randomUUID(),
+    s = submission();
+  s.profile.steps = [
+    { id: "checks", uses: "rio/checks@0.1.0", needs: [], with: {} },
+    { id: "report", uses: "rio/report@0.1.0", needs: ["checks"], with: {} },
+  ];
+  const stored = await storeSnapshot(runtime, snapshot),
+    key = await store.put(`reviews/${id}/submission.json`, {
+      ...s,
+      snapshot_id: stored.id,
+    });
+  await runtime.DB.prepare(
+    "INSERT INTO reviews(id,tenant,submission_key,status,created_at,token_limit,deadline) VALUES(?,?,?,'queued',?,?,?)",
+  )
+    .bind(id, "owner", key, Date.now(), 100000, Date.now() + deadline)
+    .run();
+  const instance = await introspectWorkflowInstance(runtime.REVIEWS, id);
+  await runtime.REVIEWS.create({
+    id,
+    params: { review_id: id, snapshot_key: stored.key },
+  });
+  const job = hash(`${id}-checks`).slice(0, 32);
+  await instance.waitForStepResult({ name: `dispatch-${job}` });
+  const row = () =>
+    runtime.DB.prepare(
+      "SELECT r.status,r.cancelled,r.error,r.report_key,j.status AS job,j.result_key FROM reviews r JOIN jobs j ON j.review_id=r.id WHERE r.id=? AND j.id=?",
+    )
+      .bind(id, job)
+      .first<any>();
+  const result = {
+    job_id: job,
+    attempt: 1,
+    version: "head" as const,
+    exit_code: 0,
+    stdout: "",
+    stderr: "",
+    timed_out: false,
+    truncated: false,
+    artifact: { report: s.report, graphs: s.graphs },
+  };
+  return { id, instance, job, row, result, store, key };
+}
+
+it("ends a cancelled review's wait for a runner job at once, and a late result revives nothing", async () => {
+  const w = await waiting();
+  await using instance = w.instance;
+  // A runner has the job when the review is cancelled.
+  await runtime.DB.prepare(
+    "UPDATE jobs SET status='leased',lease_until=? WHERE id=?",
+  )
+    .bind(Date.now() + 600000, w.job)
+    .run();
+  const cancelled = await app.request(
+    `https://rio/v1/reviews/${w.id}/cancel`,
+    { method: "POST", headers: { ...headers, "rio-protocol": "1" }, body: "{}" },
+    runtime,
+  );
+  expect(cancelled.status).toBe(200);
+  // The wait was for up to the job's deadlines; the workflow ends now, and
+  // the review is partial with its report.
+  await instance.waitForStatus("complete");
+  const ended = await w.row();
+  expect(ended).toMatchObject({ status: "partial", cancelled: 1, job: "leased" });
+  const report = await w.store.get<any>(ended.report_key);
+  expect(report.status).toBe("partial");
+  expect(report.footer.notes).toContain(CANCELLED_NOTE);
+  expect(() => validateReport(report)).not.toThrow();
+  // The runner's result arrives later: kept for the audit, the review as it was.
+  await finishJob(runtime, w.id, w.job, 1, w.result);
+  const after = await w.row();
+  expect(after).toMatchObject({
+    status: "partial",
+    cancelled: 1,
+    job: "completed",
+    report_key: ended.report_key,
+  });
+  expect(after.result_key).toBeTruthy();
+  expect((await instance.getOutput()) as any).toEqual({
+    report_key: ended.report_key,
+  });
+}, 60000);
+
+it("reports the phase and the time of an analysis job that hit its deadline", async () => {
+  const w = await waiting();
+  await using instance = w.instance;
+  await runtime.DB.prepare(
+    "UPDATE jobs SET status='leased',lease_until=? WHERE id=?",
+  )
+    .bind(Date.now() + 600000, w.job)
+    .run();
+  const { artifact: _, ...result } = w.result;
+  await finishJob(runtime, w.id, w.job, 1, {
+    ...result,
+    exit_code: 124,
+    stderr: "runner wall deadline exceeded during transfer",
+    timed_out: true,
+    phase: "transfer",
+    timing: { transfer_ms: 240000, archive_bytes: 5 << 26, storage_ms: 41000 },
+  });
+  await instance.waitForStatus("complete");
+  const ended = await w.row();
+  const report = await w.store.get<any>(ended.report_key);
+  // The review goes on without the checks, and says which part ran out.
+  expect(ended.status).toBe("complete");
+  expect(report.status).toBe("incomplete");
+  expect(report.footer.notes).toContain(
+    "checks: runner analysis failed (timed out during transfer (transfer 240 s)); deterministic checks did not run",
+  );
+  expect(report.incomplete.every((c: any) => c.reason === "timeout")).toBe(true);
+  expect(report.incomplete.length).toBeGreaterThan(0);
+}, 60000);
+
+it("stops the workflow of a cancelled review that does not end in time, and never lets it finish the review later", async () => {
+  const w = await waiting();
+  await using instance = w.instance;
+  // Cancelled, and the workflow does not notice: it is inside a long step
+  // (live, a store step that retried against a platform limit for minutes).
+  await runtime.DB.prepare(
+    "UPDATE reviews SET cancelled=1,status='cancelled',cancelled_at=? WHERE id=?",
+  )
+    .bind(Date.now() - 1000, w.id)
+    .run();
+  const review = async () =>
+    (await runtime.DB.prepare(
+      "SELECT id,status,deadline,submission_key,cancelled_at FROM reviews WHERE id=?",
+    )
+      .bind(w.id)
+      .first<any>())!;
+  // Within the grace the workflow may still end the review itself.
+  expect(await reconcile(runtime, await review())).toBeNull();
+  expect((await w.row()).status).toBe("cancelled");
+  expect(
+    await reconcile(runtime, await review(), Date.now() + CANCEL_GRACE_MS),
+  ).toBe("partial");
+  await instance.waitForStatus("terminated");
+  const ended = await w.row();
+  expect(ended).toMatchObject({
+    status: "partial",
+    cancelled: 1,
+    error: "cancelled",
+    job: "failed",
+    report_key: `reviews/${w.id}/report-reconciled.json`,
+  });
+  const report = await w.store.get<any>(ended.report_key);
+  expect(report.footer.notes.at(-1)).toBe("Rio ended this review: cancelled.");
+  // The withdrawn job's late result is dropped; nothing changes.
+  await finishJob(runtime, w.id, w.job, 1, w.result);
+  expect(await w.row()).toEqual(ended);
+  // Swept again, it is left alone.
+  await sweepReviews(runtime, Date.now() + CANCEL_GRACE_MS);
+  expect(await w.row()).toEqual(ended);
+}, 60000);
+
+it("keeps the end the endpoint gave a review when its workflow finishes afterwards", async () => {
+  const w = await waiting();
+  await using instance = w.instance;
+  // The endpoint ended the overdue review but could not stop the instance.
+  const reconciled = `reviews/${w.id}/report-reconciled.json`;
+  await runtime.DB.prepare(
+    "UPDATE reviews SET status='partial',report_key=?,error='review exceeded its wall budget' WHERE id=?",
+  )
+    .bind(reconciled, w.id)
+    .run();
+  const events = async () =>
+    (
+      await runtime.DB.prepare(
+        "SELECT event FROM events WHERE review_id=? AND event LIKE 'review:%'",
+      )
+        .bind(w.id)
+        .all<{ event: string }>()
+    ).results.map((r) => r.event);
+  const before = await events();
+  // Its job's result still arrives, and the workflow runs to its end.
+  await runtime.DB.prepare("UPDATE jobs SET status='leased' WHERE id=?")
+    .bind(w.job)
+    .run();
+  const sent = await runtime.REVIEWS.get(w.id);
+  const key = await w.store.put(`reviews/${w.id}/late-result.json`, w.result);
+  await sent.sendEvent({ type: `job-${w.job}-1`, payload: { key } });
+  await instance.waitForStatus("complete");
+  expect(await w.row()).toMatchObject({
+    status: "partial",
+    error: "review exceeded its wall budget",
+    report_key: reconciled,
+  });
+  expect(await events()).toEqual(before);
+}, 60000);
+
 it("retains reproduced evidence when every blind pass misses, with runner artifacts and risk-selected budget", async () => {
   const transport = vi
     .spyOn(globalThis, "fetch")
@@ -721,7 +914,7 @@ it.each([
         })),
       );
       expect(report.agent_audit.incomplete_votes).toBe(later ? undefined : 3);
-      expect(report.footer.notes.includes("cancelled")).toBe(later);
+      expect(report.footer.notes.includes(CANCELLED_NOTE)).toBe(later);
       expect(report.footer.notes).toContain(
         `The review stopped before it finished: ${settled} of 2 raised hypotheses had completed verification and are consolidated here; ${2 - settled} had not and are listed in agent_audit.unverified, not as findings.`,
       );
@@ -817,7 +1010,7 @@ it("reports stored progress when a run is replayed after its review stopped", as
   ]);
   expect(report.agent_audit.incomplete_votes).toBe(2);
   expect(report.footer.notes).toEqual([
-    "cancelled",
+    CANCELLED_NOTE,
     "The review stopped before it finished: 2 of 3 raised hypotheses had completed verification and are consolidated here; 1 had not and are listed in agent_audit.unverified, not as findings.",
     "2 verifier votes did not complete; inspect the vote audit. Missing votes do not reduce quorum.",
   ]);

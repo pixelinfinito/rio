@@ -44,7 +44,14 @@ import { TRANSFER_CAP_MS, jobInput } from "./archive";
 import { reconcile, sweepReviews } from "./reconcile";
 import { attachStatements, lineageId } from "./lineage";
 import { Store } from "./storage";
-import { ANALYSIS_WALL_MS, PREPARE_WALL_MS, failJob, finishJob } from "./jobs";
+import {
+  ANALYSIS_WALL_MS,
+  PREPARE_WALL_MS,
+  failJob,
+  finishJob,
+  stopRunners,
+  withdrawIdle,
+} from "./jobs";
 import { parseWall } from "./budget";
 import { checkProfileModels } from "./gateway";
 import { renderSarif, utc } from "./sarif";
@@ -523,11 +530,36 @@ app.post("/v1/reviews/:id/cancel", async (c) => {
     c.req.param("id"),
     "reviews:write",
   );
-  await c.env.DB.prepare(
-    "UPDATE reviews SET cancelled=1,status='cancelled' WHERE id=? AND status NOT IN ('complete','partial','error')",
+  // The workflow sees the flag between steps and ends the review as partial
+  // with what it had; the sweep stops one that has not within the grace.
+  const stopped = await c.env.DB.prepare(
+    "UPDATE reviews SET cancelled=1,status='cancelled',cancelled_at=COALESCE(cancelled_at,?) WHERE id=? AND status NOT IN ('complete','partial','error') RETURNING id",
   )
-    .bind(row.id)
-    .run();
+    .bind(Date.now(), row.id)
+    .first();
+  if (stopped) {
+    const open = await c.env.DB.prepare(
+      "SELECT id,attempt,status FROM jobs WHERE review_id=? AND status IN ('pending','leased')",
+    )
+      .bind(row.id)
+      .all<{ id: string; attempt: number; status: string }>();
+    // A job no runner has taken never runs. One a runner has is stopped
+    // (Sandbox) or keeps its result for the audit, and the workflow stops
+    // waiting for it now.
+    await stopRunners(c.env, row.id);
+    await withdrawIdle(c.env, row.id);
+    if (open.results.length)
+      try {
+        const instance = await c.env.REVIEWS.get(row.id);
+        for (const job of open.results)
+          await instance.sendEvent({
+            type: `job-${job.id}-${job.attempt}`,
+            payload: { cancelled: true },
+          });
+      } catch {
+        // No instance, or one that ended: there is no wait to end.
+      }
+  }
   const qa = await c.env.DB.prepare(
     "SELECT q.id FROM qa_runs q JOIN reviews r ON r.id=q.review_id WHERE q.review_id=? AND r.cancelled=1",
   )

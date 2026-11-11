@@ -217,7 +217,12 @@ impl GraphBuilder {
             if language_for_path(path).is_none() {
                 continue;
             }
-            let table = self.syntax.analyze(path, &entry.content)?;
+            // A file the deadline interrupts seeds nothing: a partial table could
+            // name the wrong enclosing symbol.
+            let Some(table) = self.syntax.analyze_until(path, &entry.content, stop)? else {
+                slice.truncated = true;
+                break;
+            };
             let mut seeds = BTreeSet::new();
             // Parsed lazily, once per file: only pure insertions/deletions need it.
             let mut other_table = None;
@@ -239,13 +244,16 @@ impl GraphBuilder {
                     if other_table.is_none() {
                         // A rename can change the language; an unsupported or missing
                         // counterpart only supports a file-level seed.
-                        other_table = Some(
-                            other_tree
-                                .get(other_path)
-                                .filter(|_| language_for_path(other_path).is_some())
-                                .map(|other| self.syntax.analyze(other_path, &other.content))
-                                .transpose()?,
-                        );
+                        let parsed = other_tree
+                            .get(other_path)
+                            .filter(|_| language_for_path(other_path).is_some())
+                            .map(|other| {
+                                self.syntax.analyze_until(other_path, &other.content, stop)
+                            })
+                            .transpose()?;
+                        // So does a counterpart the deadline interrupted.
+                        slice.truncated |= matches!(parsed, Some(None));
+                        other_table = Some(parsed.flatten());
                     }
                     let other_range = if version == Version::Base {
                         hunk.head
@@ -359,7 +367,11 @@ impl GraphBuilder {
                     break;
                 }
                 if !tables.contains_key(*path) {
-                    tables.insert((*path).clone(), self.syntax.analyze(path, &entry.content)?);
+                    let Some(table) = self.syntax.analyze_until(path, &entry.content, stop)? else {
+                        slice.truncated = true;
+                        break;
+                    };
+                    tables.insert((*path).clone(), table);
                 }
                 let table = &tables[*path];
                 let resolved_imports = imports.entry((*path).clone()).or_insert_with(|| {
@@ -486,7 +498,7 @@ impl GraphBuilder {
                         let Some((path, entry)) = files.get(i) else {
                             break;
                         };
-                        let _ = self.syntax.analyze(path, &entry.content);
+                        let _ = self.syntax.analyze_until(path, &entry.content, stop);
                     }
                 });
             }

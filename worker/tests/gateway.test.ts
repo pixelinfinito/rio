@@ -73,6 +73,93 @@ it("executes identical duplicated provider tool JSON once and rejects differing 
   expect(result).toEqual([]);
   expect(dispatch).toHaveBeenCalledTimes(1);
 });
+it("records a turn's snapshot tool calls so a replay does not run them again", async () => {
+  // A workflow replays its code after every interruption. The FreeCAD reviews
+  // ran every earlier search of every voter again on each replay, in the
+  // isolate that then ran out of memory.
+  const replies = [
+    {
+      tools: [
+        { name: "search", args: { pattern: "needle" } },
+        { name: "run", args: { command: ["true"], version: "head" } },
+        { name: "read_file", args: { path: "a.ts", version: "head" } },
+      ],
+    },
+    {
+      tools: Array.from({ length: 10 }, (_, i) => ({
+        name: "read_file",
+        args: { path: `f${i}.ts`, version: "head" },
+      })),
+    },
+    { tools: [{ name: "read_file", args: { path: "missing.ts" } }] },
+    { result: [] },
+  ];
+  const ledger: Ledger = {
+    remaining: async () => 100000,
+    reserve: async () => "id",
+    settle: async () => {},
+  };
+  // Durable step results, as a workflow keeps them across replays.
+  const steps = new Map<string, unknown>();
+  const durable = async <T>(id: string, action: () => Promise<T>) => {
+    if (!steps.has(id)) steps.set(id, await action());
+    return steps.get(id) as T;
+  };
+  const conversation = async (recorded: boolean) => {
+    const ran: string[] = [];
+    let turn = 0;
+    const messages = [{ role: "user" as const, content: "review" }];
+    const result = await converse({
+      gateway: {
+        complete: async () => ({
+          content: JSON.stringify(replies[turn++]),
+          input_tokens: 80,
+          output_tokens: 50,
+          cost_usd: null,
+        }),
+      },
+      ledger,
+      actor: "voter",
+      phase: "verify-blind",
+      model: "openrouter/openai/gpt-6.1-sol",
+      allowance: { remaining: 16000 },
+      messages,
+      dispatch: async (name, args) => {
+        ran.push(name);
+        if (args.path === "missing.ts") throw new Error("file not found");
+        return { name, args };
+      },
+      ...(recorded
+        ? {
+            call: (id, action) => durable(`model-${id}`, action),
+            record: (id, action) => durable(`tools-${id}`, action),
+          }
+        : {}),
+    });
+    return { result, ran, messages };
+  };
+  const plain = await conversation(false);
+  const first = await conversation(true);
+  expect(first.messages).toEqual(plain.messages);
+  // The same calls; a turn's snapshot calls now run before its runner job.
+  expect([...first.ran].sort()).toEqual([...plain.ran].sort());
+  expect(first.ran.slice(0, 3)).toEqual(["search", "read_file", "run"]);
+  expect(first.ran.length).toBe(2 + 1 + 8 + 1);
+  // One step a turn, named for the turn; the batch limit and tool errors are
+  // answered as before.
+  expect([...steps.keys()].filter((k) => k.startsWith("tools-"))).toEqual([
+    "tools-voter-verify-blind-0",
+    "tools-voter-verify-blind-1",
+    "tools-voter-verify-blind-2",
+  ]);
+  expect(first.messages[4].content).toContain("tool batch limited to 8 calls");
+  expect(first.messages[6].content).toContain("file not found");
+  const replay = await conversation(true);
+  expect(replay.result).toEqual([]);
+  expect(replay.messages).toEqual(plain.messages);
+  // Only the runner job is asked for again; its own steps answer it.
+  expect(replay.ran).toEqual(["run"]);
+});
 it("asks once more for the protocol after native tool syntax and gives up after the repair limit", async () => {
   const xml =
     '<invoke name="read_file">\n<parameter name="args">{"path":"a.ts","version":"head"}</parameter>\n</invoke>';

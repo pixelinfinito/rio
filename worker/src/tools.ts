@@ -105,6 +105,25 @@ export async function readFile(
   invariant(text !== null, "binary file cannot be read as text");
   return text;
 }
+/**
+ * Whether `needle` occurs in `bytes`. UTF-8 is self-synchronising, so a text
+ * holds a pattern exactly when its bytes hold the pattern's: a search decodes
+ * and splits only the files that can match, not every file of the tree.
+ */
+export function holds(bytes: Uint8Array, needle: Uint8Array): boolean {
+  const first = needle[0],
+    last = bytes.length - needle.length;
+  for (
+    let at = bytes.indexOf(first);
+    at !== -1 && at <= last;
+    at = bytes.indexOf(first, at + 1)
+  ) {
+    let i = 1;
+    while (i < needle.length && bytes[at + i] === needle[i]) i++;
+    if (i === needle.length) return true;
+  }
+  return false;
+}
 /** Lines of a large file, streamed; null when it is not text. */
 async function largeLines(
   tree: SnapshotReader[Version],
@@ -747,6 +766,7 @@ export class Tools {
       let size = 0,
         files = 0,
         truncated = false;
+      const needle = new TextEncoder().encode(args.pattern);
       // Streams the tree in path order and stops at the output limit.
       for await (const batch of tree.batches(
         (e) => e.mode !== SYMLINK && match(e.path),
@@ -756,6 +776,7 @@ export class Tools {
           let lines: string[] | null;
           const found: { line: number; text: string }[] = [];
           if (bytes) {
+            if (!holds(bytes, needle)) continue;
             lines = decodeText(bytes)?.split("\n") ?? null;
             lines?.forEach((text, i) => {
               if (text.includes(args.pattern))
