@@ -727,6 +727,13 @@ impl CellScreen {
                 note(c, 5, " ", Token::Faint, dir);
                 note(c, 6, " ", Token::Faint, "o opens it".into());
             }
+            // Without images nothing is downloaded: name the file `o` opens.
+            Shot::Remote(url) if !session.images.enabled() => {
+                let object = url.split('?').next().unwrap_or(&url);
+                let name = object.rsplit('/').next().unwrap_or(object);
+                note(c, 4, "·", Token::Faint, name.to_owned());
+                note(c, 5, " ", Token::Faint, "a signed link · o opens it".into());
+            }
             Shot::Remote(_) | Shot::Loading => {
                 note(c, 4, "◐", Token::Warn, "downloading the screenshot…".into());
             }

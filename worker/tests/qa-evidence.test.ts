@@ -530,14 +530,51 @@ it("report downloads refresh only owned evidence links and keep expired cached a
     version: "head",
   });
   expect((await app.request(owned.link, {}, runtime)).status).toBe(200);
-  // A base run's copy of the same content keeps an entry of its own.
-  await runtime.DB.prepare("UPDATE qa_runs SET version='base'").run();
-  const based = (
-    await (await api("/v1/reviews/review/report")).json<any>()
-  ).qa.evidence.artifacts.filter((row: any) => row.id === receipt.id);
-  expect(based).toHaveLength(2);
-  expect(based.find((row: any) => row.version === "base")?.link).toBeTruthy();
-  await runtime.DB.prepare("UPDATE qa_runs SET version='head'").run();
+  // A base run that stored the same content (so the same id) keeps an entry
+  // of its own beside the head's.
+  const insert = (table: string, row: Record<string, unknown>) =>
+    runtime.DB.prepare(
+      `INSERT INTO ${table}(${Object.keys(row).join(",")}) VALUES(${Object.keys(row)
+        .map(() => "?")
+        .join(",")})`,
+    )
+      .bind(...Object.values(row))
+      .run();
+  const headRun: any = await runtime.DB.prepare("SELECT * FROM qa_runs").first();
+  const headEvidence: any = await runtime.DB.prepare(
+    "SELECT * FROM qa_evidence WHERE id=?",
+  )
+    .bind(receipt.id)
+    .first();
+  await insert("qa_runs", {
+    ...headRun,
+    id: "base-run",
+    attempt: headRun.attempt + 100,
+    version: "base",
+    token_hash: null,
+  });
+  await insert("qa_evidence", {
+    ...headEvidence,
+    run_id: "base-run",
+    object_key: `${headEvidence.object_key}-base`,
+  });
+  const artifactsNow = async () =>
+    (await (await api("/v1/reviews/review/report")).json<any>()).qa.evidence.artifacts.filter(
+      (row: any) => row.id === receipt.id,
+    );
+  const both = await artifactsNow();
+  expect(both.map((row: any) => row.version).sort()).toEqual(["base", "head"]);
+  expect(both.every((row: any) => row.link)).toBe(true);
+  // Only the base run stored it: one base entry, no stale head placeholder.
+  await runtime.DB.prepare("DELETE FROM qa_evidence WHERE run_id=?")
+    .bind(headRun.id)
+    .run();
+  const baseOnly = await artifactsNow();
+  expect(baseOnly).toHaveLength(1);
+  expect(baseOnly[0]).toMatchObject({ version: "base" });
+  await runtime.DB.prepare("DELETE FROM qa_evidence WHERE run_id='base-run'").run();
+  await runtime.DB.prepare("DELETE FROM qa_runs WHERE id='base-run'").run();
+  await insert("qa_evidence", headEvidence);
   expect(
     fresh.qa.evidence.artifacts.find((row: any) => row.id === "foreign"),
   ).toEqual({ id: "foreign", unavailable: true });

@@ -336,8 +336,14 @@ impl MatrixScreen {
         }
     }
 
+    /// The cells the plan counts: every applicable cell, chained
+    /// prerequisites included.
     fn all_cells(&self) -> impl Iterator<Item = &MatrixCell> {
-        self.data.journeys.iter().flat_map(|j| j.cells.iter())
+        self.data
+            .journeys
+            .iter()
+            .flat_map(|j| j.cells.iter())
+            .filter(|c| !matches!(c.outcome, CellOutcome::NotApplicable(_)))
     }
 
     fn counts(&self) -> (u32, u32, u32, u32) {
@@ -353,11 +359,10 @@ impl MatrixScreen {
         let planned = if self.data.planned > 0 {
             self.data.planned
         } else {
-            self.all_cells()
-                .filter(|c| !matches!(c.outcome, CellOutcome::NotApplicable(_)))
-                .count() as u32
+            self.all_cells().count() as u32
         };
-        (done, running, failed, planned)
+        // A plan never shows more cells done than planned.
+        (done, running, failed, planned.max(done))
     }
 
     fn elapsed(&self) -> u32 {
@@ -813,7 +818,8 @@ impl MatrixScreen {
                 _ if planned > 0 => bar * done as usize / planned as usize,
                 _ => 0,
             }
-        };
+        }
+        .min(bar);
         footer(
             c,
             &[

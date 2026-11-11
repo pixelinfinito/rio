@@ -201,6 +201,8 @@ pub struct HistoryScreen {
     /// Below 120 columns, `⏎` swaps the table for the timeline.
     timeline: bool,
     picker: Option<Picker>,
+    /// A dismissal sent to the endpoint and not yet recorded.
+    pending: Option<Effect>,
     error: Option<String>,
 }
 
@@ -218,6 +220,7 @@ impl HistoryScreen {
             rule: None,
             timeline: false,
             picker: None,
+            pending: None,
             error: None,
         };
         screen.focus_regression();
@@ -349,19 +352,8 @@ impl Screen for HistoryScreen {
                 }
                 Picked::Record(effect) => {
                     self.picker = None;
-                    if let Effect::Feedback { id, reason, note } = &effect
-                        && let Some(records) = &mut self.data.records
-                        && let Some(r) = records.iter_mut().find(|r| &r.identity == id)
-                    {
-                        r.status = LifecycleStatus::Dismissed;
-                        r.author_response = Some(Response {
-                            reason: reason.clone(),
-                            actor: None,
-                            at: None,
-                            note: note.clone(),
-                            extra: Map::new(),
-                        });
-                    }
+                    // Shown as dismissed once the endpoint records it.
+                    self.pending = Some(effect.clone());
                     Action::Effect(effect)
                 }
             };
@@ -421,6 +413,35 @@ impl Screen for HistoryScreen {
     }
 
     fn on_msg(&mut self, msg: &Msg, _session: &mut Session) -> Action {
+        if let (Some(Effect::Feedback { id, reason, note }), Msg::Done(outcome)) =
+            (&self.pending, msg)
+        {
+            let short = rio_core::display_id(id);
+            match outcome {
+                Outcome::Ok(text) if text.starts_with(short) => {
+                    if let Some(records) = &mut self.data.records
+                        && let Some(r) = records.iter_mut().find(|r| &r.identity == id)
+                    {
+                        r.status = LifecycleStatus::Dismissed;
+                        r.author_response = Some(Response {
+                            reason: reason.clone(),
+                            actor: None,
+                            at: None,
+                            note: note.clone(),
+                            extra: Map::new(),
+                        });
+                    }
+                    self.pending = None;
+                    return Action::None;
+                }
+                Outcome::Failed(error) if error.starts_with(short) => {
+                    // The footer shows the error; the record stays as it was.
+                    self.pending = None;
+                    return Action::None;
+                }
+                _ => {}
+            }
+        }
         match msg {
             Msg::Done(Outcome::Value(name, value)) if name == "findings" => {
                 match serde_json::from_value::<Vec<RegistryRecord>>(value["findings"].clone()) {

@@ -369,7 +369,7 @@ fn replay_closes_the_top_screen_and_presses_the_key_below() {
 }
 
 #[test]
-fn a_message_for_the_screen_below_closes_help() {
+fn help_stays_open_while_the_screen_below_takes_messages() {
     let mut app = App::new(Box::new(Probe::new(FINDINGS)), Theme::default());
     app.globals = Some(rio_tui::app::Globals {
         help: |_, _| Box::new(Overlay("Help")),
@@ -379,8 +379,44 @@ fn a_message_for_the_screen_below_closes_help() {
     assert_eq!(app.top().title(), "Help");
     app.update(Msg::Tick);
     assert_eq!(app.top().title(), "Help", "the clock does not close help");
+    // Progress and outcomes reach the screen below; help stays open.
     app.update(Msg::Done(rio_tui::Outcome::Ok("saved".into())));
-    assert_eq!(app.top().title(), "Probe");
+    app.update(Msg::Review(rio_core::ReviewEvent::StepStarted {
+        step: "checks".into(),
+    }));
+    assert_eq!(app.top().title(), "Help");
+    assert_eq!(
+        app.session.notice,
+        Some(rio_tui::Outcome::Ok("saved".into()))
+    );
+}
+
+#[test]
+fn a_new_run_starts_uninterrupted() {
+    let mut app = App::new(Box::new(Probe::new(FINDINGS)), Theme::default());
+    app.update(ctrl('c'));
+    assert!(app.session.interrupted);
+    app.stack.push(Box::new(Starter));
+    app.update(press(KeyCode::Enter));
+    assert!(
+        !app.session.interrupted,
+        "Ctrl-C on the new run stops it, not kills"
+    );
+}
+
+struct Starter;
+
+impl Screen for Starter {
+    fn title(&self) -> &'static str {
+        "Starter"
+    }
+    fn keys(&self) -> &'static [Key] {
+        &[]
+    }
+    fn draw(&self, _: &mut Canvas<'_>, _: &Session) {}
+    fn on_key(&mut self, _: KeyEvent, _: &mut Session) -> Action {
+        Action::Effect(Effect::Start(vec!["review".into()]))
+    }
 }
 
 #[test]

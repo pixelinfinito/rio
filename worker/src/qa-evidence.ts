@@ -773,5 +773,12 @@ export async function refreshQaReportLinks(
       ...(await link(env, row, origin)),
     });
   }
+  // A report entry that only a base run stored is replaced by its base entry,
+  // not kept as an unavailable head artifact too.
+  const head = new Set(
+    rows.results.filter((row) => row.run_version !== "base").map((row) => row.id),
+  );
+  for (const row of rows.results)
+    if (row.run_version === "base" && !head.has(row.id)) artifacts.delete(row.id);
   report.qa.evidence.artifacts = [...artifacts.values()];
 }

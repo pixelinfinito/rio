@@ -158,6 +158,8 @@ pub struct SecurityScreen {
     cursor: usize,
     view: View,
     picker: Option<Picker>,
+    /// A dismissal sent to the endpoint and not yet recorded.
+    pending: Option<Effect>,
     /// The audit record once fetched (`Outcome::Value("audit", …)`).
     audit: Option<Result<Value, String>>,
     /// Responses recorded in this session: identity → reason.
@@ -179,6 +181,7 @@ impl SecurityScreen {
             cursor: 0,
             view: View::Council,
             picker: None,
+            pending: None,
             audit: None,
             dismissed: BTreeMap::new(),
         }
@@ -271,9 +274,8 @@ impl Screen for SecurityScreen {
                     Action::Many(Vec::new())
                 }
                 Picked::Record(effect) => {
-                    if let Effect::Feedback { id, reason, .. } = &effect {
-                        self.dismissed.insert(id.clone(), reason.clone());
-                    }
+                    // Shown as dismissed once the endpoint records it.
+                    self.pending = Some(effect.clone());
                     self.picker = None;
                     Action::Effect(effect)
                 }
@@ -317,6 +319,23 @@ impl Screen for SecurityScreen {
     }
 
     fn on_msg(&mut self, msg: &Msg, _session: &mut Session) -> Action {
+        if let (Some(Effect::Feedback { id, reason, .. }), Msg::Done(outcome)) =
+            (&self.pending, msg)
+        {
+            let short = rio_core::display_id(id);
+            match outcome {
+                Outcome::Ok(text) if text.starts_with(short) => {
+                    self.dismissed.insert(id.clone(), reason.clone());
+                    self.pending = None;
+                    return Action::None;
+                }
+                Outcome::Failed(error) if error.starts_with(short) => {
+                    self.pending = None;
+                    return Action::None;
+                }
+                _ => {}
+            }
+        }
         if let Msg::Done(Outcome::Value(name, value)) = msg
             && name == "audit"
         {

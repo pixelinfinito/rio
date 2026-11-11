@@ -434,6 +434,11 @@ async fn commit(ctx: &Scope, id: &str, found: &Value) -> Result<String, Failure>
 /// truncated: a failed write or validation leaves it byte for byte unchanged.
 /// The original's permissions are kept; a new file gets 0644 on Unix.
 fn write_entry(ctx: &Scope, path: &Path, entry: &str) -> Result<()> {
+    // A retry after the endpoint failed to mark the proposal applied finds the
+    // entry already written: it is not appended twice.
+    if already_suppressed(path, entry) {
+        return Ok(());
+    }
     let (candidate, _, _, error) = candidate(ctx, path, entry)?;
     if let Some(error) = error {
         bail!(
@@ -443,6 +448,20 @@ fn write_entry(ctx: &Scope, path: &Path, entry: &str) -> Result<()> {
     }
     candidate.persist(path).map_err(|error| error.error)?;
     Ok(())
+}
+
+/// The profile's `suppress` list already holds `entry` (`rule: "…"` or `path: "…"`).
+fn already_suppressed(path: &Path, entry: &str) -> bool {
+    let (Ok(text), Ok(want)) = (
+        std::fs::read_to_string(path),
+        serde_yaml::from_str::<serde_yaml::Value>(entry),
+    ) else {
+        return false;
+    };
+    serde_yaml::from_str::<serde_yaml::Value>(&text)
+        .ok()
+        .and_then(|profile| profile.get("suppress")?.as_sequence().cloned())
+        .is_some_and(|items| items.contains(&want))
 }
 
 /// The profile with the entry appended, written to a sibling temporary file
@@ -570,7 +589,30 @@ pub fn append_suppression(text: &str, entry: &str) -> Result<String> {
 
 #[cfg(test)]
 mod tests {
-    use super::append_suppression;
+    use super::{already_suppressed, append_suppression};
+
+    #[test]
+    fn a_written_entry_is_found_so_a_retry_does_not_append_it_again() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("default.yaml");
+        let entry = r#"rule: "lint/eslint/no-console""#;
+        assert!(!already_suppressed(&path, entry), "no profile yet");
+        std::fs::write(
+            &path,
+            append_suppression("version: 1\nname: d\n", entry).unwrap(),
+        )
+        .unwrap();
+        assert!(already_suppressed(&path, entry));
+        assert!(!already_suppressed(
+            &path,
+            r#"rule: "lint/eslint/no-debugger""#
+        ));
+        assert!(!already_suppressed(
+            &path,
+            r#"path: "lint/eslint/no-console""#
+        ));
+    }
+
     #[test]
     fn appends_to_block_lists_and_keeps_every_other_byte() {
         let entry = r#"rule: "lint/eslint/no-console""#;

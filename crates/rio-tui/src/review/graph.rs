@@ -214,6 +214,8 @@ pub(crate) struct GraphScreen {
     selected: String,
     hops: u32,
     view: View,
+    /// The divider column of the last draw; keys move through what was drawn.
+    div: std::cell::Cell<u16>,
 }
 
 impl GraphScreen {
@@ -226,6 +228,7 @@ impl GraphScreen {
             hops,
             view: View::Head,
             data,
+            div: std::cell::Cell::new(DIV),
         }
     }
 
@@ -491,6 +494,7 @@ impl Screen for GraphScreen {
         );
         let (w, h) = (c.width(), c.height());
         let div = div_of(w);
+        self.div.set(div);
         let bottom = h.saturating_sub(1);
         vrule(c, div, 1, bottom);
         let mut runs = vec![
@@ -627,8 +631,8 @@ impl Screen for GraphScreen {
     }
 
     fn on_key(&mut self, key: KeyEvent, _session: &mut Session) -> Action {
-        // The layout depends on the width; keys use the design width.
-        let div = DIV;
+        // The layout depends on the width: keys move through the one drawn.
+        let div = self.div.get();
         match key.code {
             KeyCode::Up | KeyCode::Char('k') => self.move_in_column(-1, div),
             KeyCode::Down | KeyCode::Char('j') => self.move_in_column(1, div),

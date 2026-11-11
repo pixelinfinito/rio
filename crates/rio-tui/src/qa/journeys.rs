@@ -911,6 +911,14 @@ impl JourneysScreen {
                     .collect(),
             });
         }
+        // The matrix counts the cells it shows: chained prerequisites
+        // included, cells a journey's viewports exclude left out.
+        data.planned = data
+            .journeys
+            .iter()
+            .flat_map(|j| &j.cells)
+            .filter(|c| !matches!(c.outcome, CellOutcome::NotApplicable(_)))
+            .count() as u32;
         data
     }
 }

@@ -193,9 +193,33 @@ fn repository() -> (String, String) {
     (shown, key)
 }
 
+/// The working tree's copy of a repository path (as findings cite them,
+/// relative to the repository root, wherever rio runs from). Other paths are
+/// not read.
+fn read_in(root: &std::path::Path, path: &str) -> Option<String> {
+    let relative = std::path::Path::new(path);
+    let plain = relative
+        .components()
+        .all(|c| matches!(c, std::path::Component::Normal(_)));
+    plain
+        .then(|| std::fs::read_to_string(root.join(relative)).ok())
+        .flatten()
+}
+
+/// The repository's root, else the current directory.
+fn repository_root() -> std::path::PathBuf {
+    let cwd = std::env::current_dir().unwrap_or_default();
+    rio_git::GixRepo::discover(&cwd)
+        .map(|repo| {
+            use rio_git::Repo;
+            repo.root().to_owned()
+        })
+        .unwrap_or(cwd)
+}
+
 /// Lines `line - 3 ..= line + 3` of the working tree's copy of a file.
-fn excerpt(finding: &Finding, changed: &[u32]) -> Vec<CodeLine> {
-    let Ok(text) = std::fs::read_to_string(&finding.location.path) else {
+fn excerpt(root: &std::path::Path, finding: &Finding, changed: &[u32]) -> Vec<CodeLine> {
+    let Some(text) = read_in(root, &finding.location.path) else {
         return Vec::new();
     };
     let line = finding.location.line_start.max(1);
@@ -212,7 +236,7 @@ fn excerpt(finding: &Finding, changed: &[u32]) -> Vec<CodeLine> {
 }
 
 /// The cited code and stage of each trace step.
-fn steps(finding: &Finding) -> Vec<StepText> {
+fn steps(root: &std::path::Path, finding: &Finding) -> Vec<StepText> {
     let Some(trace) = &finding.trace else {
         return Vec::new();
     };
@@ -220,8 +244,7 @@ fn steps(finding: &Finding) -> Vec<StepText> {
         .steps
         .iter()
         .map(|step| {
-            let code = std::fs::read_to_string(&step.path)
-                .ok()
+            let code = read_in(root, &step.path)
                 .filter(|_| !step.missing)
                 .and_then(|text| {
                     text.lines()
@@ -302,6 +325,7 @@ pub fn opener(
             .unwrap_or_default(),
         ..PublishData::default()
     };
+    let root = repository_root();
     let security = SecurityData {
         context: format!("review · {context}"),
         scope: match pr {
@@ -314,8 +338,8 @@ pub fn opener(
             .map(|f| {
                 let mut entry = SecurityEntry::new((*f).clone());
                 entry.fails = failing.contains(&f.id);
-                entry.code = excerpt(f, changed.get(&f.id).map_or(&[], Vec::as_slice));
-                entry.steps = steps(f);
+                entry.code = excerpt(&root, f, changed.get(&f.id).map_or(&[], Vec::as_slice));
+                entry.steps = steps(&root, f);
                 entry
             })
             .collect(),
@@ -342,4 +366,23 @@ pub fn opener(
             Action::Effect(Effect::PreviewPublish),
         ]),
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn cited_files_are_read_from_the_repository_root_only() {
+        let root = tempfile::tempdir().unwrap();
+        std::fs::create_dir_all(root.path().join("src")).unwrap();
+        std::fs::write(root.path().join("src/a.rs"), "fn a() {}\n").unwrap();
+        assert_eq!(
+            read_in(root.path(), "src/a.rs").as_deref(),
+            Some("fn a() {}\n")
+        );
+        for path in ["../a.rs", "/etc/hostname", "src/../../a.rs", "./src/a.rs"] {
+            assert_eq!(read_in(root.path(), path), None, "{path}");
+        }
+    }
 }
