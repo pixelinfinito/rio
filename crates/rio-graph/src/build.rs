@@ -132,9 +132,18 @@ impl<'a> IgnoreRules<'a> {
 #[derive(Default)]
 pub struct GraphBuilder {
     pub syntax: SyntaxCache,
-    /// Parsing threads; `None` uses the available parallelism. The slices are
-    /// identical for every value.
+    /// Parsing threads; `None` uses `RIO_GRAPH_THREADS`, else at most four of
+    /// the available cores. The slices are identical for every value.
     pub threads: Option<usize>,
+}
+/// `RIO_GRAPH_THREADS`, else the available parallelism capped at four, so a
+/// review leaves the machine's other cores to concurrent work.
+pub fn default_threads() -> usize {
+    std::env::var("RIO_GRAPH_THREADS")
+        .ok()
+        .and_then(|value| value.parse::<usize>().ok())
+        .filter(|&n| n > 0)
+        .unwrap_or_else(|| std::thread::available_parallelism().map_or(1, usize::from).min(4))
 }
 impl GraphBuilder {
     pub fn build(
@@ -150,7 +159,7 @@ impl GraphBuilder {
         changes: &ChangeSet,
         diff: &Diff,
         options: &GraphOptions,
-        stop: &dyn Fn() -> bool,
+        stop: &(dyn Fn() -> bool + Sync),
     ) -> Result<GraphSlices> {
         ensure!(options.max_nodes > 0, "graph max_nodes must be positive");
         let base = self.slice(
@@ -178,7 +187,7 @@ impl GraphBuilder {
         diff: &Diff,
         version: Version,
         options: &GraphOptions,
-        stop: &dyn Fn() -> bool,
+        stop: &(dyn Fn() -> bool + Sync),
     ) -> Result<GraphSlice> {
         let exclusions = Exclusions::new(tree, &options.exclude)?;
         let mut slice = GraphSlice::default();
@@ -304,7 +313,13 @@ impl GraphBuilder {
                 .iter()
                 .map(|(_, entry)| entry.content.as_slice())
                 .collect(),
+            stop,
         );
+        // An index cut by the deadline cannot answer which files mention a node.
+        if !index.complete() {
+            slice.truncated = true;
+            queue.clear();
+        }
         'expand: while let Some(id) = queue.pop_front() {
             if stop() {
                 slice.truncated = true;
@@ -331,6 +346,7 @@ impl GraphBuilder {
                     .iter()
                     .map(|&file| candidates[file as usize])
                     .filter(|(path, _)| !tables.contains_key(*path)),
+                stop,
             );
             for file in matching {
                 let (path, entry) = &candidates[file as usize];
@@ -446,12 +462,14 @@ impl GraphBuilder {
     /// Parses files into the syntax cache in parallel. Results depend only on path
     /// and content, so the slice is the same for any thread count; failures are left
     /// for the sequential pass to report at the same point as before.
-    fn prefetch<'t>(&self, files: impl Iterator<Item = (&'t String, &'t rio_git::TreeEntry)>) {
+    /// Stops taking files once `stop` is true, so the deadline also bounds parsing.
+    fn prefetch<'t>(
+        &self,
+        files: impl Iterator<Item = (&'t String, &'t rio_git::TreeEntry)>,
+        stop: &(dyn Fn() -> bool + Sync),
+    ) {
         let files: Vec<_> = files.collect();
-        let threads = self
-            .threads
-            .unwrap_or_else(|| std::thread::available_parallelism().map_or(1, usize::from))
-            .max(1);
+        let threads = self.threads.unwrap_or_else(default_threads).max(1);
         if threads == 1 || files.len() < 2 {
             return;
         }
@@ -459,7 +477,7 @@ impl GraphBuilder {
         std::thread::scope(|scope| {
             for _ in 0..threads.min(files.len()) {
                 scope.spawn(|| {
-                    loop {
+                    while !stop() {
                         let i = next.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
                         let Some((path, entry)) = files.get(i) else {
                             break;

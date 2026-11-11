@@ -9,9 +9,9 @@
                                                                   │ + D1 database        rio                    create  
   RUNNER                                                          │ + R2 bucket          rio-artifacts          create  
    Cloudflare Sandbox   Self-hosted Docker                        │ + Queue              rio-jobs               create  
-  standard-3 · 2 vCPU · 8 GiB · network off · fresh per job       │ + AI Gateway         rio · auth, no logs    create  
+  standard-4 · 4 vCPU · 12 GiB · network off · fresh per job      │ + AI Gateway         rio · auth, no logs    create  
   copies ghcr.io/pixelinfinito/rio-runner:0.2.0 to your registry  │ + Gateway token      AI Gateway Run         create  
-                                                                  │ + Sandbox app        rio · standard-3       create  
+                                                                  │ + Sandbox app        rio · standard-4       create  
   MODEL PROVIDER                                                  │ + workers.dev route  rio.pixel-labs         create  
    OpenRouter   OpenAI   Anthropic                                │                                                     
   key   ••••••••••••••••••••••••••••••           ✓ echo off       │ BINDINGS                                            

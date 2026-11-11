@@ -563,7 +563,7 @@ async fn next_job(
     let valid = job["network"] == false
         && job["limits"]["wall_ms"]
             .as_u64()
-            .is_some_and(|n| n <= 120000)
+            .is_some_and(|n| n <= wall_limit(job["kind"].as_str().unwrap_or_default()))
         && job["snapshot_id"].is_string()
         && job.get("snapshot").is_none()
         && job["context"].get("snapshot").is_none();
@@ -650,6 +650,13 @@ async fn serve_prepare(
 }
 /// Wall limit of a prepare job (clone, snapshot, graph and upload).
 const PREPARE_WALL_MS: u64 = 600000;
+/// The largest command wall of a job kind; `worker/src/jobs.ts` holds the same values.
+fn wall_limit(kind: &str) -> u64 {
+    match kind {
+        "checks" | "graph" | "static" => 480000,
+        _ => 120000,
+    }
+}
 /// Host-side failures are marked `runner_failed` so verification never treats their
 /// nonzero exit codes as a reproduced failure.
 fn failure(job: &Value, exit_code: i32, message: &str, timed_out: bool) -> Value {

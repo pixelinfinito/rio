@@ -26,6 +26,9 @@ RIO = '/usr/local/bin/rio'
 VERSIONS = ('base', 'head')
 # A prepare job clones, snapshots and builds the graph within ten minutes.
 PREPARE_WALL_MS = 600000
+# Analysis jobs (checks, graph, static) and run commands; jobs.ts holds the same values.
+ANALYSIS_WALL_MS = 480000
+RUN_WALL_MS = 120000
 CLONE_URL = re.compile(r'^https://[A-Za-z0-9.-]+(:[0-9]{1,5})?/[A-Za-z0-9._-]+/[A-Za-z0-9._-]+?(\.git)?$')
 SHA = re.compile(r'^[0-9a-f]{40}$')
 WORK = Path('/work')
@@ -71,7 +74,7 @@ def execute(stream):
     job = json.loads(header)
     assert job['protocol'] == 1 and job['network'] is False
     limits = job['limits']
-    wall = PREPARE_WALL_MS if job['kind'] == 'prepare' else 120000
+    wall = PREPARE_WALL_MS if job['kind'] == 'prepare' else ANALYSIS_WALL_MS if job['kind'] in ('checks', 'graph', 'static') else RUN_WALL_MS
     assert 0 < limits['wall_ms'] <= wall and 0 < limits['output_bytes'] <= 1048576
     analysis = job['kind'] != 'run'
     artifact_bytes = limits.get('artifact_bytes', 0)

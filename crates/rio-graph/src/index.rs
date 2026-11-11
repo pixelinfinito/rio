@@ -30,14 +30,22 @@ pub(crate) struct TokenIndex<'a> {
     // For each token, the ascending ids of the files containing it.
     postings: Vec<Vec<u32>>,
     memo: HashMap<String, Rc<Vec<u32>>>,
+    // False when `stop` ended indexing early; answers would miss files.
+    complete: bool,
 }
 impl<'a> TokenIndex<'a> {
-    pub(crate) fn new(contents: Vec<&'a [u8]>) -> Self {
+    /// Indexes `contents` until `stop` is true (checked between files).
+    pub(crate) fn new(contents: Vec<&'a [u8]>, stop: &dyn Fn() -> bool) -> Self {
         let mut ids = HashMap::<&'a [u8], usize>::new();
         let mut vocabulary = Vec::new();
         let mut starts = Vec::new();
         let mut postings: Vec<Vec<u32>> = Vec::new();
+        let mut complete = true;
         for (file, content) in contents.iter().enumerate() {
+            if stop() {
+                complete = false;
+                break;
+            }
             for token in tokens(content) {
                 let id = *ids.entry(token).or_insert_with(|| {
                     starts.push(vocabulary.len());
@@ -57,7 +65,11 @@ impl<'a> TokenIndex<'a> {
             starts,
             postings,
             memo: HashMap::new(),
+            complete,
         }
+    }
+    pub(crate) fn complete(&self) -> bool {
+        self.complete
     }
     /// Ascending ids of the files whose content contains `term`.
     pub(crate) fn files(&mut self, term: &str) -> Result<Rc<Vec<u32>>> {
@@ -129,7 +141,7 @@ mod tests {
             b"no match here",
             b"",
         ];
-        let mut index = TokenIndex::new(contents.clone());
+        let mut index = TokenIndex::new(contents.clone(), &|| false);
         for term in [
             "args",
             "Args",

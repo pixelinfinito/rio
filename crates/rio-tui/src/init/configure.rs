@@ -367,7 +367,7 @@ impl Configure {
             }
             let (l1, l2) = match self.form.runner {
                 Runner::Sandbox => (
-                    "standard-3 · 2 vCPU · 8 GiB · network off · fresh per job".to_owned(),
+                    "standard-4 · 4 vCPU · 12 GiB · network off · fresh per job".to_owned(),
                     format!("copies {} to your registry", self.form.runner_image),
                 ),
                 Runner::SelfHosted => (

@@ -325,6 +325,23 @@ class AACRAdapterTests(unittest.TestCase):
                     status = json.loads((out / "cases/owner__repo@head/status.json").read_text(encoding="utf-8"))
                     self.assertEqual(status["status"], "failed")
 
+    def test_infra_failures_are_classified_from_notes_and_errors(self):
+        """Platform causes seen in aacr-bench-final-20261111 map to stable labels."""
+        notes = lambda *n: {"footer": {"notes": list(n)}}
+        cases = [
+            (notes("Impact graph truncated at max_nodes", "Worker exceeded CPU time limit."), "cpu_limit"),
+            (notes("WorkflowTimeoutError: Execution timed out after 240000ms"), "job_timeout"),
+            (notes("graph: runner attempt 1 failed (runner backend: Network connection lost.); retried",
+                   "WorkflowTimeoutError: Execution timed out after 240000ms"), "executor"),
+            (notes("Rio ended this review: runtime stopped: WorkflowFatalError."), "deadline"),
+            (notes("Hypothesis board coordination is deferred; agents and verifier voters run independently."), None),
+        ]
+        for report, cause in cases:
+            self.assertEqual(aacr.infra_failure(report), cause)
+        self.assertEqual(aacr.infra_failure(None, "contacting Rio endpoint: error sending request: "
+                                                  "Connection reset by peer (os error 104)"), "transport")
+        self.assertIsNone(aacr.infra_failure(None, "Report commit pins differ from dataset"))
+
 
 if __name__ == "__main__":
     unittest.main()

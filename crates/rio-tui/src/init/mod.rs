@@ -547,7 +547,7 @@ impl DeployingData {
                 "workflows" => format!("{name}-review · {name}-migrate"),
                 "migrations" => "D1 schema".into(),
                 "queue-consumer" => format!("{name}-jobs → {name}"),
-                "sandbox-rollout" => "standard-3 · rolling".into(),
+                "sandbox-rollout" => "standard-4 · rolling".into(),
                 _ => host.clone(),
             }
         };
@@ -590,7 +590,7 @@ impl DeployingData {
         ];
         if runner == Runner::Sandbox {
             resources.push(pending("Registry", format!("{name}-runner")));
-            resources.push(pending("Sandbox", "standard-3".into()));
+            resources.push(pending("Sandbox", "standard-4".into()));
         }
         Self {
             account_name: account.name.clone(),

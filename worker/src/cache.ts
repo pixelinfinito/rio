@@ -122,6 +122,97 @@ export interface ContextInputs {
   // Diff-only rounds compare against an earlier head the base graph does not
   // describe; their base side is keyed by whole-file content.
   base_graph: boolean;
+  // Shared by every hunk of one lookup, so each file and symbol is read and
+  // hashed once per change rather than once per hunk.
+  memo?: ContextMemo;
+}
+/**
+ * The context key's own version: 2 keys the true one-hop neighbourhood with
+ * SHA-256 digests. Entries of another version are never replayed.
+ */
+export const CONTEXT_KEY_VERSION = 2;
+const encoder = new TextEncoder();
+/** Hex SHA-256 through the runtime's native digest. */
+async function digest(text: string): Promise<string> {
+  const bytes = new Uint8Array(
+    await crypto.subtle.digest("SHA-256", encoder.encode(text)),
+  );
+  let hex = "";
+  for (const byte of bytes) hex += byte.toString(16).padStart(2, "0");
+  return hex;
+}
+type Node = Graph["nodes"][number];
+/** Nodes by path, neighbours and content digests of one change's graphs. */
+export class ContextMemo {
+  private byPath = new Map<Graph, Map<string, Node[]>>();
+  private adjacent = new Map<Graph, Map<string, Set<string>>>();
+  private files = new Map<string, string>();
+  private parts = new Map<string, string>();
+  nodes(graph: Graph, path: string): Node[] {
+    let index = this.byPath.get(graph);
+    if (!index) {
+      index = new Map();
+      for (const n of graph.nodes) {
+        const list = index.get(n.path);
+        if (list) list.push(n);
+        else index.set(n.path, [n]);
+      }
+      this.byPath.set(graph, index);
+    }
+    return index.get(path) ?? [];
+  }
+  /** The nodes and their direct neighbours, in graph order. */
+  neighbourhood(graph: Graph, nodes: Node[]): Node[] {
+    let index = this.adjacent.get(graph);
+    if (!index) {
+      index = new Map();
+      const link = (a: string, b: string) => {
+        const set = index!.get(a);
+        if (set) set.add(b);
+        else index!.set(a, new Set([b]));
+      };
+      for (const e of graph.edges) {
+        link(e.from, e.to);
+        link(e.to, e.from);
+      }
+      this.adjacent.set(graph, index);
+    }
+    const ids = new Set(nodes.map((n) => n.id));
+    for (const n of nodes) for (const id of index.get(n.id) ?? []) ids.add(id);
+    return graph.nodes.filter((n) => ids.has(n.id));
+  }
+  async file(
+    version: "base" | "head",
+    path: string,
+    read: ContextInputs["read"],
+  ): Promise<string> {
+    const key = `${version}\0${path}`;
+    if (!this.files.has(key)) {
+      const text = await read(version, path);
+      this.files.set(key, text === null ? "-" : await digest(text));
+    }
+    return this.files.get(key)!;
+  }
+  /** The key part of a symbol; a file's symbols are digested together on first use. */
+  async part(
+    version: "base" | "head",
+    graph: Graph,
+    node: Node,
+    read: ContextInputs["read"],
+  ): Promise<string> {
+    const key = `${version}\0${node.id}`;
+    if (!this.parts.has(key)) {
+      const text = lines(await read(version, node.path));
+      // Positions are part of the key: a moved symbol must not replay
+      // hypotheses at its old lines.
+      for (const n of this.nodes(graph, node.path))
+        this.parts.set(
+          `${version}\0${n.id}`,
+          `${version}:${n.path}:${n.symbol_path}:${n.line_start}-${n.line_end}:${await digest(text.slice(n.line_start - 1, n.line_end).join("\n"))}`,
+        );
+    }
+    return this.parts.get(key)!;
+  }
 }
 /**
  * The context hash: agent, manifest version, prompt, model, options, the
@@ -152,37 +243,23 @@ export async function context(
 ): Promise<{ context_hash: string; covered: Region[] }> {
   const parts: string[] = [];
   const covered: Region[] = [];
+  const memo = inputs.memo ?? new ContextMemo();
   for (const version of ["base", "head"] as const) {
     const path = version === "base" ? h.old_path : h.path;
     const graph = inputs.graphs[version];
     const enclosing =
       version === "base" && !inputs.base_graph
         ? []
-        : graph.nodes.filter((n) => n.path === path && overlaps(n, h[version]));
+        : memo.nodes(graph, path).filter((n) => overlaps(n, h[version]));
     if (!enclosing.length) {
-      const text = await inputs.read(version, path);
-      parts.push(`${version}:${path}:file:${text === null ? "-" : hash(text)}`);
+      parts.push(
+        `${version}:${path}:file:${await memo.file(version, path, inputs.read)}`,
+      );
       covered.push({ path });
       continue;
     }
-    const ids = new Set(enclosing.map((n) => n.id));
-    for (const e of graph.edges) {
-      if (ids.has(e.from)) ids.add(e.to);
-      else if (ids.has(e.to)) ids.add(e.from);
-    }
-    const texts = new Map<string, string[]>();
-    for (const n of graph.nodes.filter((n) => ids.has(n.id))) {
-      if (!texts.has(n.path))
-        texts.set(n.path, lines(await inputs.read(version, n.path)));
-      const body = texts
-        .get(n.path)!
-        .slice(n.line_start - 1, n.line_end)
-        .join("\n");
-      // Positions are part of the key: a moved symbol must not replay
-      // hypotheses at its old lines.
-      parts.push(
-        `${version}:${n.path}:${n.symbol_path}:${n.line_start}-${n.line_end}:${hash(body)}`,
-      );
+    for (const n of memo.neighbourhood(graph, enclosing)) {
+      parts.push(await memo.part(version, graph, n, inputs.read));
       covered.push({
         path: n.path,
         line_start: n.line_start,
@@ -199,10 +276,14 @@ export async function context(
     )
     .map((g) => `${g.path}:${g.content_hash}`);
   return {
-    context_hash: hash(
+    context_hash: await digest(
       canonical({
+        key: CONTEXT_KEY_VERSION,
         agent: inputs.agent,
-        layout: { version: PROMPT_LAYOUT_VERSION, features: inputs.layout ?? [] },
+        layout: {
+          version: PROMPT_LAYOUT_VERSION,
+          features: inputs.layout ?? [],
+        },
         manifest_version: inputs.manifest_version,
         prompt: hash(inputs.prompt),
         model: inputs.model,
@@ -247,29 +328,54 @@ export async function lookup(
   keys: Keyed[],
   now = Date.now(),
 ): Promise<Record<number, CacheEntry>> {
-  const hits: Record<number, CacheEntry> = {};
-  for (const [index, k] of keys.entries()) {
-    const row = await env.DB.prepare(
-      "SELECT object_key,created_at FROM agent_cache WHERE tenant=? AND hunk_hash=? AND context_hash=?",
+  // Rows by hunk hash, a bounded batch per query (D1 binds at most 100).
+  const rows = new Map<string, { object_key: string; created_at: number }>();
+  const hunks = [...new Set(keys.map((k) => k.hunk_hash))];
+  for (let i = 0; i < hunks.length; i += LOOKUP_BATCH) {
+    const batch = hunks.slice(i, i + LOOKUP_BATCH);
+    const found = await env.DB.prepare(
+      `SELECT hunk_hash,context_hash,object_key,created_at FROM agent_cache WHERE tenant=? AND hunk_hash IN (${batch.map(() => "?").join(",")})`,
     )
-      .bind(tenant, k.hunk_hash, k.context_hash)
-      .first<{ object_key: string; created_at: number }>();
+      .bind(tenant, ...batch)
+      .all<{
+        hunk_hash: string;
+        context_hash: string;
+        object_key: string;
+        created_at: number;
+      }>();
+    for (const r of found.results)
+      rows.set(`${r.hunk_hash}\0${r.context_hash}`, r);
+  }
+  const hits: Record<number, CacheEntry> = {};
+  const expired: (Keyed & { object_key: string })[] = [];
+  const touched: Keyed[] = [];
+  for (const [index, k] of keys.entries()) {
+    const row = rows.get(`${k.hunk_hash}\0${k.context_hash}`);
     if (!row) continue;
     if (row.created_at < now - EVIDENCE_RETENTION_MS) {
-      await remove(env, tenant, [{ ...k, object_key: row.object_key }]);
+      expired.push({ ...k, object_key: row.object_key });
       continue;
     }
     const object = await env.ARTIFACTS.get(row.object_key);
     if (!object) continue;
     hits[index] = await object.json<CacheEntry>();
-    await env.DB.prepare(
-      "UPDATE agent_cache SET last_hit=? WHERE tenant=? AND hunk_hash=? AND context_hash=?",
-    )
-      .bind(now, tenant, k.hunk_hash, k.context_hash)
-      .run();
+    touched.push(k);
   }
+  await remove(env, tenant, expired);
+  for (let i = 0; i < touched.length; i += LOOKUP_BATCH)
+    await env.DB.batch(
+      touched
+        .slice(i, i + LOOKUP_BATCH)
+        .map((k) =>
+          env.DB.prepare(
+            "UPDATE agent_cache SET last_hit=? WHERE tenant=? AND hunk_hash=? AND context_hash=?",
+          ).bind(now, tenant, k.hunk_hash, k.context_hash),
+        ),
+    );
   return hits;
 }
+/** Hunk hashes per lookup query and statements per D1 batch. */
+const LOOKUP_BATCH = 90;
 
 async function remove(
   env: Env,
@@ -371,6 +477,7 @@ export async function store(
 ) {
   const sliced = slice(keys, missed, hypotheses);
   const share = missed.length ? Math.floor(tokens / missed.length) : 0;
+  const written: { k: Keyed; key: string }[] = [];
   for (const [i, list] of sliced) {
     const k = keys[i];
     const key = objectKey(tenant, k);
@@ -384,12 +491,19 @@ export async function store(
     await env.ARTIFACTS.put(key, JSON.stringify(entry), {
       httpMetadata: { contentType: "application/json" },
     });
-    await env.DB.prepare(
-      "INSERT INTO agent_cache(tenant,hunk_hash,context_hash,object_key,created_at,last_hit) VALUES(?,?,?,?,?,NULL) ON CONFLICT(tenant,hunk_hash,context_hash) DO UPDATE SET object_key=excluded.object_key,created_at=excluded.created_at,last_hit=NULL",
-    )
-      .bind(tenant, k.hunk_hash, k.context_hash, key, now)
-      .run();
+    written.push({ k, key });
   }
+  // Index rows after their objects, so a row never names a missing object.
+  for (let i = 0; i < written.length; i += LOOKUP_BATCH)
+    await env.DB.batch(
+      written
+        .slice(i, i + LOOKUP_BATCH)
+        .map(({ k, key }) =>
+          env.DB.prepare(
+            "INSERT INTO agent_cache(tenant,hunk_hash,context_hash,object_key,created_at,last_hit) VALUES(?,?,?,?,?,NULL) ON CONFLICT(tenant,hunk_hash,context_hash) DO UPDATE SET object_key=excluded.object_key,created_at=excluded.created_at,last_hit=NULL",
+          ).bind(tenant, k.hunk_hash, k.context_hash, key, now),
+        ),
+    );
   return sliced.size;
 }
 

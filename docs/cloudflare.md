@@ -359,10 +359,15 @@ of the trusted runner host. Use a dedicated machine/account for untrusted code.
 
 Cloudflare Sandbox uses the native Container API with network disabled, a fresh
 container per job, CPU/memory limits, a non-root executor, a bounded output stream
-and container destruction in `finally`. The default Sandbox application uses two
-vCPUs and 8 GiB (`standard-3`) to meet Cloudflare's instance-size constraints;
-Sandbox job records declare that ceiling. The Docker backend uses two CPUs and
-2 GiB. Its immutable materializer rejects path
+and container destruction in `finally`. The default Sandbox application uses four
+vCPUs and 12 GiB (`standard-4`, at most ten at once) to meet Cloudflare's
+instance-size constraints; Sandbox job records declare that ceiling. The Docker
+backend uses two CPUs and 2 GiB. Analysis jobs (checks, graph) get up to eight
+minutes of command wall, capped at 40% of the review's remaining time, plus a
+transfer allowance for their archive (a minute plus 4 MiB/s, at most four
+minutes); run commands keep two minutes. A deadline is a timed-out result, never
+redelivered, and a missing analysis leaves the review incomplete rather than
+failing it. Its immutable materializer rejects path
 escapes and does not follow symlinks. Tool run permission defaults to true for
 correctness/verifier and false for other general agents. Profile agent declarations
 can override `run`; fork review restrictions take final precedence.

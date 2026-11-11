@@ -40,10 +40,11 @@ import {
   storePack,
   uploadPart,
 } from "./upload";
-import { jobInput } from "./archive";
+import { TRANSFER_CAP_MS, jobInput } from "./archive";
+import { reconcile, sweepReviews } from "./reconcile";
 import { attachStatements, lineageId } from "./lineage";
 import { Store } from "./storage";
-import { PREPARE_WALL_MS, failJob, finishJob } from "./jobs";
+import { ANALYSIS_WALL_MS, PREPARE_WALL_MS, failJob, finishJob } from "./jobs";
 import { parseWall } from "./budget";
 import { checkProfileModels } from "./gateway";
 import { renderSarif, utc } from "./sarif";
@@ -368,7 +369,10 @@ app.post("/v1/reviews/:id/publish", async (c) => {
   return c.json({ id: row.id, status: "publishing" }, 202);
 });
 app.get("/v1/reviews/:id", async (c) => {
-  const row = await reviewAccess(c.req.raw, c.env, c.req.param("id"));
+  let row = await reviewAccess(c.req.raw, c.env, c.req.param("id"));
+  // A workflow that died or overran never reports; its status is settled here.
+  if (await reconcile(c.env, row).catch(() => null))
+    row = await reviewAccess(c.req.raw, c.env, row.id);
   return c.json({ id: row.id, status: row.status, error: row.error });
 });
 app.get("/v1/reviews/:id/report", async (c) => {
@@ -839,17 +843,21 @@ app.post("/v1/runner/claim", async (c) => {
     payload.kind !== "prepare" ||
     payload.network !== "clone" ||
     !payload.prepare
-  )
+  ) {
+    // The lease and the completion token outlast the job's transfer and wall.
+    const expires =
+      Date.now() +
+      Math.max(180000, payload.limits.wall_ms + TRANSFER_CAP_MS + 60000);
+    await c.env.DB.prepare(
+      "UPDATE jobs SET lease_until=? WHERE id=? AND attempt=?",
+    )
+      .bind(expires, row.id, row.attempt)
+      .run();
     return c.json({
       job: payload,
-      token: await jobToken(
-        c.env,
-        row.review_id,
-        row.id,
-        row.attempt,
-        Date.now() + 180000,
-      ),
+      token: await jobToken(c.env, row.review_id, row.id, row.attempt, expires),
     });
+  }
   // A prepare job gets its secrets at claim time only: an installation token
   // (contents: read on one repository) for the clone phase, which the runner
   // revokes after cloning, and the single-use prepare credential. Neither is stored.
@@ -978,6 +986,7 @@ export default {
   fetch: app.fetch,
   async scheduled(_controller: ScheduledController, env: Env) {
     await expireQaEvidence(env);
+    await sweepReviews(env);
   },
   async queue(batch: MessageBatch<QueueMessage>, env: Env) {
     for (const message of batch.messages) {
@@ -1026,9 +1035,14 @@ export default {
           continue;
         }
         const row = await env.DB.prepare(
-          "UPDATE jobs SET status='leased',lease_until=? WHERE id=? AND attempt=? AND status!='completed' RETURNING payload_key",
+          "UPDATE jobs SET status='leased',lease_until=? WHERE id=? AND attempt=? AND status IN ('pending','leased') RETURNING payload_key",
         )
-          .bind(Date.now() + 180000, job_id, attempt)
+          // Held for the longest Sandbox job: transfer, command wall and teardown.
+          .bind(
+            Date.now() + TRANSFER_CAP_MS + ANALYSIS_WALL_MS + 60000,
+            job_id,
+            attempt,
+          )
           .first<{ payload_key: string }>();
         if (!row) {
           message.ack();
@@ -1053,10 +1067,11 @@ export default {
           );
         message.ack();
       } catch (error) {
-        // The last delivery (max_retries in wrangler.jsonc) records the failure so
+        // Only infrastructure errors reach here (a deadline is a result). The
+        // last delivery (max_retries in wrangler.jsonc) records the failure so
         // the review fails with its reason instead of waiting for the step timeout.
         if (message.attempts < JOB_DELIVERIES) {
-          message.retry({ delaySeconds: 10 });
+          message.retry({ delaySeconds: 10 + Math.floor(Math.random() * 20) });
           continue;
         }
         try {

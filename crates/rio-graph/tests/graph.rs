@@ -579,3 +579,21 @@ fn bounding_keeps_the_nodes_nearest_the_change_within_the_byte_budget() {
     assert!(empty.bound(1));
     assert!(empty.head.nodes.is_empty() && empty.head.truncated);
 }
+#[test]
+fn a_deadline_during_indexing_truncates_instead_of_expanding() {
+    use std::sync::atomic::{AtomicUsize, Ordering};
+    let (base, head) = example();
+    let changes = changes(base, head);
+    let options = GraphOptions::default();
+    let delta = diff(&changes, &options.exclude).unwrap();
+    // True from the third check on: seeding passes, indexing stops.
+    let calls = AtomicUsize::new(0);
+    let stop = || calls.fetch_add(1, Ordering::Relaxed) >= 2;
+    let slices = GraphBuilder::default()
+        .build_until(&changes, &delta, &options, &stop)
+        .unwrap();
+    assert!(slices.base.truncated && slices.head.truncated);
+    // Only seeds: nothing referencing `format` was expanded.
+    assert!(slices.head.nodes.iter().all(|n| n.seed));
+    assert!(slices.head.edges.is_empty());
+}

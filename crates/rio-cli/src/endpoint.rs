@@ -8,8 +8,9 @@ use std::{collections::BTreeSet, path::Path, time::Duration};
 
 use crate::lineage::{BranchLineage, LocalLineage};
 use tokio_util::sync::CancellationToken;
-/// Wall-time budget for building the impact graph before an endpoint review.
-pub const GRAPH_BUDGET: std::time::Duration = std::time::Duration::from_secs(120);
+/// Wall-time budget for building the impact graph before an endpoint review. The
+/// runner rebuilds the graph; the submitted one is the review's fallback.
+pub const GRAPH_BUDGET: std::time::Duration = std::time::Duration::from_secs(60);
 
 pub struct EndpointRequest<'a> {
     pub url: &'a str,

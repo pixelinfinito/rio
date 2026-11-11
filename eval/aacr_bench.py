@@ -150,6 +150,32 @@ def comments_from_report(report):
     return comments
 
 
+# Footer notes and errors that mean the platform, not the reviewer, cut a case short.
+INFRA_PATTERNS = [
+    ("cpu_limit", ("Worker exceeded CPU time limit",)),
+    ("memory_limit", ("Worker exceeded memory limit", "exceeded CPU or memory limits")),
+    ("deadline", ("Rio ended this review", "exceeded its wall budget")),
+    ("executor", ("sandbox executor failed", "Network connection lost")),
+    ("job_timeout", ("WorkflowTimeoutError", "runner wall deadline exceeded",
+                     "no runner result within", "runner analysis failed")),
+    ("transport", ("contacting Rio endpoint", "Connection reset", "connection error")),
+]
+
+
+def infra_failure(report, error=""):
+    """The first infrastructure cause a case's report or error names, else None.
+
+    Such a case is still scored (as whatever comments it has); summaries also
+    report scores without these cases, so platform failures do not read as
+    reviewer misses.
+    """
+    texts = [*((report or {}).get("footer", {}).get("notes", [])), error or ""]
+    for cause, needles in INFRA_PATTERNS:
+        if any(needle in text for text in texts for needle in needles):
+            return cause
+    return None
+
+
 GIT_LOCATION_VARIABLES = frozenset({
     "GIT_DIR", "GIT_WORK_TREE", "GIT_INDEX_FILE", "GIT_OBJECT_DIRECTORY",
     "GIT_ALTERNATE_OBJECT_DIRECTORIES", "GIT_COMMON_DIR", "GIT_NAMESPACE",
@@ -232,7 +258,8 @@ def review_group(repo, instances, args, stop_event=None):
                     raise RuntimeError(f"Review did not produce a usable report: {report.get('status')}")
                 comments = comments_from_report(report)
                 status.update(status=report["status"], comments=len(comments),
-                              checks=report.get("checks", []))
+                              checks=report.get("checks", []),
+                              infra_failure=infra_failure(report))
                 duration = record["duration_seconds"]
                 write_json(args.out / "results" / f"{safe}.json",
                            {"instance_id": instance["instance_id"], "reviewer": "rio",
@@ -243,6 +270,10 @@ def review_group(repo, instances, args, stop_event=None):
                 raise
             except Exception as error:
                 status["error"] = str(error)
+                stderr = evidence / "review.stderr"
+                tail = stderr.read_text(encoding="utf-8", errors="replace")[-4000:] \
+                    if stderr.exists() else ""
+                status["infra_failure"] = infra_failure(None, f"{error}\n{tail}")
             finally:
                 status["duration_seconds"] = round(time.monotonic() - started, 3)
                 if not interrupted:
@@ -331,7 +362,9 @@ def run(args):
     summary = {"selected": len(instances), "attempted": len(statuses),
                "statuses": dict(Counter(x["status"] for x in statuses)),
                "generated_comments": sum(x.get("comments", 0) for x in statuses),
-               "failed": [x["instance_id"] for x in statuses if x["status"] == "failed"]}
+               "failed": [x["instance_id"] for x in statuses if x["status"] == "failed"],
+               "infra_failures": dict(Counter(x["infra_failure"] for x in statuses
+                                           if x.get("infra_failure")))}
     write_json(args.out / "run-summary.json", summary)
     print(json.dumps(summary, indent=2))
 
@@ -387,6 +420,18 @@ def evaluate(args):
             review_cost += sum(x.get("cost_usd") or 0 for x in usage)
             write_json(result_path, result)
     result = asyncio.run(upstream.evaluate(instances, args.out / "results", "rio", args.out / "metrics"))
+    # Secondary scores without cases the platform cut short; the primary scores
+    # above keep every selected case. Judgments are cached, so this costs nothing more.
+    infra = {}
+    for instance in instances:
+        path = args.out / "cases" / instance.instance_id.replace("/", "__") / "status.json"
+        cause = json.loads(path.read_text(encoding="utf-8")).get("infra_failure") if path.exists() else "not_attempted"
+        if cause:
+            infra[instance.instance_id] = cause
+    clean = [x for x in instances if x.instance_id not in infra]
+    result["infra_failures"] = infra
+    result["excluding_infra_failures"] = asyncio.run(upstream.evaluate(
+        clean, args.out / "results", "rio", args.out / "metrics-excluding-infra"))["summary"] if clean else None
     errors = [g for row in result["eval_res"] for g in row.get("generated_comments", [])
               if "评估过程出错" in g.get("judge_reason", "")]
     result["provenance"] = {"judge_model": os.environ.get("JUDGE_MODEL"),

@@ -264,7 +264,7 @@ where
 }
 
 /// Connection errors, timeouts, HTTP 429 and 5xx; never other statuses.
-fn retryable(error: &anyhow::Error) -> bool {
+pub(crate) fn retryable(error: &anyhow::Error) -> bool {
     match http_status(error) {
         Some(status) => status == 429 || status >= 500,
         None => error.chain().any(|cause| {

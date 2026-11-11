@@ -693,13 +693,13 @@
     "bold": false
    },
    {
-    "text": "standard-3 · 2 vCPU · 8 GiB · network off · fresh per job",
+    "text": "standard-4 · 4 vCPU · 12 GiB · network off · fresh per job",
     "fg": "dim",
     "bg": "bg",
     "bold": false
    },
    {
-    "text": "       ",
+    "text": "      ",
     "fg": "fg",
     "bg": "bg",
     "bold": false
@@ -859,7 +859,7 @@
     "bold": false
    },
    {
-    "text": "        rio · standard-3       ",
+    "text": "        rio · standard-4       ",
     "fg": "fg",
     "bg": "bg",
     "bold": false

@@ -9,6 +9,8 @@ pub use snapshot::{
     MAX_BODY_BYTES, MAX_CONTENT_BYTES, MAX_FILE_BYTES, MAX_TREE_PATHS, SnapshotUpload,
     format_bytes, format_count,
 };
+/// Pause between status polls of a running endpoint review.
+const POLL_INTERVAL: Duration = Duration::from_secs(2);
 
 /// A non-success HTTP status from the endpoint. Bodies are never echoed: they
 /// may contain raw provider or tool output.
@@ -192,18 +194,22 @@ impl Client {
                     "endpoint review cancelled; partial evidence is retained at review {id}"
                 );
             }
-            let status = self
-                .request(reqwest::Method::GET, &format!("v1/reviews/{id}"), None)
-                .await?;
+            let status = match self
+                .polled(&format!("v1/reviews/{id}"), deadline, &cancellation)
+                .await
+            {
+                Ok(status) => status,
+                Err(error) => {
+                    // The review must not outlive a client that stopped waiting for it.
+                    let _ = self.cancel(id).await;
+                    return Err(error);
+                }
+            };
             match status["status"].as_str() {
                 Some("complete" | "partial") => {
                     return Ok(serde_json::from_value(
-                        self.request(
-                            reqwest::Method::GET,
-                            &format!("v1/reviews/{id}/report"),
-                            None,
-                        )
-                        .await?,
+                        self.polled(&format!("v1/reviews/{id}/report"), deadline, &cancellation)
+                            .await?,
                     )?);
                 }
                 Some("error" | "cancelled") => {
@@ -224,7 +230,31 @@ impl Client {
                 Some("queued" | "running" | "preparing") => {}
                 _ => anyhow::bail!("unknown endpoint review status"),
             }
-            tokio::select! { _=cancellation.cancelled()=>{}, _=tokio::time::sleep(Duration::from_secs(1))=>{} }
+            tokio::select! { _=cancellation.cancelled()=>{}, _=tokio::time::sleep(POLL_INTERVAL)=>{} }
+        }
+    }
+    /// A polling GET that rides out transient failures (connection resets,
+    /// timeouts, 429, 5xx) with capped backoff until `deadline`; other errors
+    /// end the wait at once.
+    async fn polled(
+        &self,
+        path: &str,
+        deadline: tokio::time::Instant,
+        cancellation: &CancellationToken,
+    ) -> Result<Value> {
+        let mut delay = Duration::from_millis(500);
+        loop {
+            match self.request(reqwest::Method::GET, path, None).await {
+                Err(error)
+                    if snapshot::retryable(&error)
+                        && !cancellation.is_cancelled()
+                        && tokio::time::Instant::now() + delay < deadline =>
+                {
+                    tokio::select! { _=cancellation.cancelled()=>{}, _=tokio::time::sleep(delay)=>{} }
+                    delay = (delay * 2).min(Duration::from_secs(15));
+                }
+                result => return result,
+            }
         }
     }
     /// Events recorded after `cursor` (`GET /v1/reviews/{id}/events`), and the new cursor.
@@ -478,6 +508,51 @@ mod tests {
             )
             .is_ok()
         );
+    }
+    #[tokio::test]
+    async fn waiting_rides_out_a_dropped_poll_and_a_5xx() {
+        use std::{
+            io::{Read, Write},
+            net::TcpListener,
+        };
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = listener.local_addr().unwrap();
+        let server = std::thread::spawn(move || {
+            let mut lines = Vec::new();
+            for reply in [
+                None,
+                Some(("503 Service Unavailable", "{}")),
+                Some(("200 OK", r#"{"status":"error","error":"boom"}"#)),
+            ] {
+                let (mut socket, _) = listener.accept().unwrap();
+                let mut bytes = Vec::new();
+                let mut chunk = [0; 4096];
+                while !bytes.windows(4).any(|w| w == b"\r\n\r\n") {
+                    let n = socket.read(&mut chunk).unwrap();
+                    bytes.extend_from_slice(&chunk[..n]);
+                }
+                lines.push(String::from_utf8_lossy(&bytes).lines().next().unwrap().to_owned());
+                // None: the connection drops without a response, like a reset.
+                if let Some((status, body)) = reply {
+                    write!(socket,"HTTP/1.1 {status}\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{body}",body.len()).unwrap();
+                }
+            }
+            lines
+        });
+        let client = Client::new(
+            &format!("http://{address}"),
+            "long-enough-api-token-32-characters".into(),
+        )
+        .unwrap();
+        let error = client
+            .wait("r1", CancellationToken::new(), Duration::from_secs(60))
+            .await
+            .unwrap_err();
+        assert_eq!(
+            format!("{error:#}"),
+            "endpoint review did not complete: r1 (boom)"
+        );
+        assert_eq!(server.join().unwrap(), vec!["GET /v1/reviews/r1 HTTP/1.1"; 3]);
     }
     #[tokio::test]
     async fn lineage_404_is_absent_and_feedback_errors_keep_their_status() {
