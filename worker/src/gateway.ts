@@ -560,7 +560,79 @@ export function parseModelOutput(content: string): any {
       /* Report malformed below. */
     }
   }
+  const request = trailingToolsRequest(content);
+  if (request) return request;
   throw new Error("malformed model output");
+}
+/** The JSON value of the balanced object that starts at `from`, with its end. */
+function objectAt(
+  text: string,
+  from: number,
+): { value: unknown; end: number } | undefined {
+  let depth = 0,
+    quoted = false,
+    escaped = false;
+  for (let i = from; i < text.length; i++) {
+    const c = text[i];
+    if (quoted) {
+      if (escaped) escaped = false;
+      else if (c === "\\") escaped = true;
+      else if (c === '"') quoted = false;
+    } else if (c === '"') quoted = true;
+    else if (c === "{" || c === "[") depth++;
+    else if ((c === "}" || c === "]") && --depth === 0) {
+      try {
+        return { value: JSON.parse(text.slice(from, i + 1)), end: i + 1 };
+      } catch {
+        return undefined;
+      }
+    }
+  }
+  return undefined;
+}
+/**
+ * A model that slips into its native tool syntax often follows the leaked
+ * markup with the protocol's own tools request. That request is taken when it
+ * is the one protocol document in the reply and ends it. The markup before it
+ * is skipped, never read as tool calls, and a result is never taken this way:
+ * findings stated after text the host has not parsed stay discarded.
+ */
+function trailingToolsRequest(content: string): unknown {
+  const text = content.trim().replace(/\s*```$/, "");
+  if (!text.endsWith("}")) return undefined;
+  let tried = 0;
+  for (let at = text.indexOf("{"); at !== -1; at = text.indexOf("{", at + 1)) {
+    if (++tried > 256) return undefined;
+    const found = objectAt(text, at);
+    if (!found) continue;
+    const value = found.value as any;
+    const document =
+      value !== null && typeof value === "object" && !Array.isArray(value);
+    if (found.end < text.length) {
+      // Two protocol documents: never choose between answers.
+      if (
+        document &&
+        (Object.hasOwn(value, "tools") || Object.hasOwn(value, "result"))
+      )
+        return undefined;
+      continue;
+    }
+    const before = text.slice(0, at).trim();
+    return document &&
+      !Object.hasOwn(value, "result") &&
+      Array.isArray(value.tools) &&
+      value.tools.length > 0 &&
+      value.tools.every(
+        (tool: unknown) =>
+          tool !== null &&
+          typeof tool === "object" &&
+          typeof (tool as any).name === "string",
+      ) &&
+      (before === "" || before.startsWith("<"))
+      ? value
+      : undefined;
+  }
+  return undefined;
 }
 /**
  * Host-authored corrections after replies that are not the protocol: a model that
