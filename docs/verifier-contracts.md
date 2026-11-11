@@ -70,8 +70,8 @@ Review usage reservations are atomic across agents/voters. Separate phase record
 identify generation, blind verification and disclosed verification. A failed call
 retains its reservation when actual provider usage is unknown. A provider's missing
 usage or malformed result is a failure, never free verification. The initial
-per-voter budget is one fifth of active agent tokens, rounded down with a minimum
-of one. Profile `verify_tokens` overrides it within the review-wide limit.
+per-voter budget is 320,000 tokens. Profile `verify_tokens` overrides it; either
+way a voter stays within the review-wide limit.
 Risk-selected budgets update the overall ledger and a deadline measured from review
 creation. Already consumed/reserved tokens remain charged. Runner results use
 content-addressed R2 keys and conditional D1 publication; conflicting completions

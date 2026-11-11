@@ -6,15 +6,15 @@ version: 1
 name: rio/base
 budget:
   fast:
-    wall_time: 4m
-    tokens: 100000
+    wall_time: 10m
+    tokens: 2400000
     agents_max: 3
-    verify_tokens: 6666
+    verify_tokens: 320000
   deep:
     wall_time: 10m
-    tokens: 300000
+    tokens: 4800000
     agents_max: 5
-    verify_tokens: 12000
+    verify_tokens: 320000
 models: {}
 steps:
 - id: prepare

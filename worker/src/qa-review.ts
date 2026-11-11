@@ -26,7 +26,6 @@ type Options = Pick<
   | "profile"
   | "gateway"
   | "ledger"
-  | "agentTokens"
   | "verifyTokens"
   | "call"
   | "cancelled"

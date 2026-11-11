@@ -4,6 +4,8 @@ import {
   introspectWorkflowInstance,
 } from "cloudflare:test";
 import { beforeAll, describe, expect, it, vi } from "vitest";
+import { parse } from "yaml";
+import resolvedBase from "../../crates/rio-profile/tests/snapshots/resolution__resolved_base.snap?raw";
 import { Store } from "../src/storage";
 import { NO_CONSUMER } from "../src/validation";
 import { allMigrations, submission } from "./fixtures";
@@ -40,12 +42,15 @@ interface Run {
   agents: Record<string, unknown>;
   /** Raw provider content per agent, replacing the wrapped result. */
   raw?: Record<string, string>;
+  /** Generation results per agent in call order, the last one repeating. */
+  turns?: Record<string, unknown[]>;
   /** Disclosed verification answer for a hypothesis. */
   vote?: (h: any) => unknown;
   mutate?: (s: Submission) => void;
 }
 async function review(run: Run) {
   const prompts: Record<string, string> = {};
+  const latest: Record<string, string> = {};
   const calls: string[] = [];
   const transport = vi
     .spyOn(globalThis, "fetch")
@@ -61,8 +66,13 @@ async function review(run: Run) {
       let raw: string | undefined;
       if (agent) {
         prompts[agent] = first;
+        latest[agent] = last;
+        const turns = run.turns?.[agent],
+          turn = calls.filter((c) => c === agent).length;
         calls.push(agent);
-        result = run.agents[agent] ?? [];
+        result = turns
+          ? turns[Math.min(turn, turns.length - 1)]
+          : (run.agents[agent] ?? []);
         raw = run.raw?.[agent];
       } else if (last.startsWith("Verify this hypothesis.")) {
         calls.push("verify");
@@ -122,7 +132,12 @@ async function review(run: Run) {
     )
       .bind(id)
       .first<any>();
-    return { report: await store.get<any>(row.report_key), prompts, calls };
+    return {
+      report: await store.get<any>(row.report_key),
+      prompts,
+      latest,
+      calls,
+    };
   } finally {
     transport.mockRestore();
   }
@@ -424,6 +439,42 @@ describe("contracts agent", () => {
       agents: {},
     });
     expect(named.calls).toContain("contracts");
+  }, 60000);
+
+  it("runs on a Rust item its module re-exports with `pub use`, not on one in a crate-visible module", async () => {
+    const label = (arity: string) =>
+      `impl Label {\n    pub fn new(${arity}) -> Self {\n        todo!()\n    }\n}\n`;
+    const files = (lib: string, parent: string, arity: string) => ({
+      "src/lib.rs": lib,
+      "src/foundations/mod.rs": parent,
+      "src/foundations/label.rs": label(arity),
+    });
+    const run = (lib: string, parent: string) =>
+      review({
+        base: files(lib, parent, "name: PicoStr"),
+        head: files(lib, parent, "name: PicoStr, span: Span"),
+        changed: ["src/foundations/label.rs"],
+        steps: agentSteps(),
+        agents: {},
+      });
+    const reexported = await run(
+      "pub mod foundations;\n",
+      "mod label;\npub use self::label::*;\n",
+    );
+    expect(reexported.calls).toContain("contracts");
+    expect(
+      block(reexported.prompts.contracts, "contract inventory").map(
+        (e: any) => [e.path, e.name, e.change],
+      ),
+    ).toEqual([["src/foundations/label.rs", "new", "changed"]]);
+    const hidden = await run(
+      "pub(crate) mod foundations;\n",
+      "pub(crate) mod label;\n",
+    );
+    expect(hidden.calls).not.toContain("contracts");
+    expect(hidden.report.agent_audit.agents_skipped.contracts).toContain(
+      "contract inventory is empty",
+    );
   }, 60000);
 });
 
@@ -750,8 +801,42 @@ describe("security agent", () => {
     ).toBe(true);
   }, 60000);
 
+  it("asks the security agent again for a result without its assessment lists and takes the corrected one", async () => {
+    const { report, calls, latest } = await review({
+      base,
+      head,
+      changed: ["src/api/users.ts"],
+      steps: steps(true),
+      agents: {},
+      turns: {
+        security: [
+          { hypotheses: [], assessed: applicable },
+          {
+            hypotheses: [],
+            assessed: applicable.filter((i) => i !== "A01:2025"),
+            unassessed: [{ item: "A01:2025", reason: "budget" }],
+          },
+        ],
+      },
+    });
+    expect(calls.filter((c) => c === "security").length).toBe(2);
+    // The second request names the three lists.
+    expect(latest.security).toContain(
+      '{"hypotheses":[...],"assessed":[...],"unassessed":[...]}',
+    );
+    expect(report.status).toBe("complete");
+    expect(
+      report.footer.notes.filter((n: string) => n.includes("agent failed")),
+    ).toEqual([]);
+    // Coverage is the corrected result's, not the refused one's.
+    expect(report.security_coverage.assessed).toHaveLength(6);
+    expect(report.security_coverage.unassessed).toEqual([
+      { item: "A01:2025", title: "Broken Access Control", reason: "budget" },
+    ]);
+  }, 60000);
+
   it("treats a security result without its assessment lists as a failed agent, never as nothing found", async () => {
-    const { report } = await review({
+    const { report, calls } = await review({
       base,
       head,
       changed: ["src/api/users.ts"],
@@ -767,6 +852,8 @@ describe("security agent", () => {
       ],
       agents: { security: { hypotheses: [] } },
     });
+    // Asked again twice, the limit of consecutive repairs, before it fails.
+    expect(calls.filter((c) => c === "security").length).toBe(3);
     expect(report.status).toBe("partial");
     expect(
       report.footer.notes.some((n: string) =>
@@ -849,4 +936,64 @@ describe("security agent", () => {
     expect(coverage.not_applicable.map((i: any) => i.item)).toContain("V3.6");
     expect(coverage.unassessed.map((i: any) => i.item)).toContain("V1.2");
   }, 60000);
+});
+
+describe("default budgets", () => {
+  // The median hypothesis of the review-quality baseline is 2,430 bytes of JSON.
+  // A voter's disclosed turn for one does not fit a fifth of an agent's share of
+  // 100,000 tokens, which is what a profile without a budget used to resolve to.
+  const MEDIAN_HYPOTHESIS_BYTES = 2430;
+  const detail =
+    "The loop reads the attempt limit before the caller's override is applied, so a caller that lowers the limit still gets the default number of attempts. ";
+  const long = {
+    rule_id: "correctness/retry/limit",
+    category: "defect",
+    severity: "error",
+    location: at("src/retry.ts", 2, "retry.retry"),
+    message: detail.repeat(5).trim(),
+    trigger: "retry(task, { limit: 1 }) with a task that always fails",
+    impact: detail.repeat(9).trim(),
+  };
+  // The snapshot is the profile loader's own output for rio/base.
+  const resolved = parse(
+    resolvedBase.slice(resolvedBase.indexOf("\n---\n", 3) + 5),
+  ).budget as Submission["profile"]["budget"];
+  it.each([
+    ["rio/base as the profile loader resolves it", resolved],
+    [
+      "a profile that reaches the Worker without a token budget",
+      { fast: { wall_time: "4m" } },
+    ],
+  ])(
+    "let every voter finish both turns on a hypothesis of real size: %s",
+    async (_, budget) => {
+      const disclosed: number[] = [];
+      const { report, calls } = await review({
+        base: {
+          "src/retry.ts": `export function retry(task: () => void, options = { limit: 3 }) {\n  for (let i = 0; i < options.limit; i++) task();\n}\n`,
+        },
+        head: {
+          "src/retry.ts": `export function retry(task: () => void, options = { limit: 3 }) {\n  for (let i = 0; i < 3; i++) task();\n}\n`,
+        },
+        changed: ["src/retry.ts"],
+        steps: agentSteps(),
+        agents: { correctness: [long] },
+        vote: (h) => {
+          disclosed.push(new TextEncoder().encode(JSON.stringify(h)).length);
+          return { evidence_level: "plausible", evidence: [] };
+        },
+        mutate: (s) => {
+          s.profile.budget = structuredClone(budget);
+        },
+      });
+      expect(calls.filter((c) => c === "blind")).toHaveLength(3);
+      expect(disclosed).toHaveLength(3);
+      expect(Math.min(...disclosed)).toBeGreaterThanOrEqual(
+        MEDIAN_HYPOTHESIS_BYTES,
+      );
+      expect(report.agent_audit.incomplete_votes).toBeUndefined();
+      expect(report.status).toBe("complete");
+    },
+    60000,
+  );
 });

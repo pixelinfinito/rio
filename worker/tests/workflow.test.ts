@@ -6,11 +6,12 @@ import {
 import { beforeAll, it, expect, vi } from "vitest";
 import { app } from "../src/index";
 import { Store } from "../src/storage";
+import { Progress } from "../src/progress";
 import { finishJob } from "../src/jobs";
 import { hash, validateHypotheses, validateReport } from "../src/validation";
 import { allMigrations, hypothesis, snapshot, submission } from "./fixtures";
 import { storeSnapshot, uploadSnapshot } from "./snapshots";
-import type { Env } from "../src/types";
+import type { BlindMatch, Env } from "../src/types";
 const runtime = env as Env;
 const headers = {
   authorization: "Bearer test-owner-token-at-least-32-characters",
@@ -586,6 +587,241 @@ it.each(["cancelled", "invalid-triage"])(
   },
   60000,
 );
+
+it.each([
+  ["while the first of two hypotheses is verified", 1, true],
+  ["after the agents, before any verification", 0, true],
+  ["during verification, the last step", 1, false],
+])(
+  "keeps what a stopped review had raised and verified: stopped %s",
+  async (_, settled, later) => {
+    const store = new Store(runtime),
+      id = crypto.randomUUID(),
+      s = submission();
+    const second = {
+      ...hypothesis,
+      rule_id: "correctness/second",
+      message: "The retry now throws too",
+      trigger: "a(2)",
+    };
+    let disclosures = 0;
+    const transport = vi
+      .spyOn(globalThis, "fetch")
+      .mockImplementation(async (_, init) => {
+        const body = JSON.parse(init!.body as string);
+        const generated = body.messages.some((m: any) =>
+          m.content.includes("Review the change independently"),
+        );
+        const disclosed = body.messages.some((m: any) =>
+          m.content.includes("Verify this hypothesis."),
+        );
+        // The review is cancelled while the agent answers, or while the last
+        // voter on the first hypothesis does; either answer still arrives.
+        if (generated ? !settled : disclosed && ++disclosures === 3)
+          await runtime.DB.prepare("UPDATE reviews SET cancelled=1 WHERE id=?")
+            .bind(id)
+            .run();
+        const result = generated
+          ? [hypothesis, second]
+          : disclosed
+            ? {
+                evidence_level: "static_proven",
+                evidence: [
+                  {
+                    kind: "code",
+                    version: "head",
+                    path: "src/a.ts",
+                    node_ids: ["h"],
+                    demonstrates: "regression",
+                  },
+                ],
+              }
+            : [];
+        const content = JSON.stringify({ result });
+        return Response.json({
+          content: [{ type: "text", text: content }],
+          choices: [{ message: { content } }],
+          usage: {
+            input_tokens: 80,
+            output_tokens: 50,
+            prompt_tokens: 80,
+            completion_tokens: 50,
+          },
+        });
+      });
+    try {
+      s.profile.steps = [
+        {
+          id: "agents",
+          uses: "rio/agents@0.1.0",
+          needs: [],
+          // No cached result from another test: the agent is asked each time.
+          with: { cache: false },
+        },
+        { id: "verify", uses: "rio/verify@0.1.0", needs: ["agents"], with: {} },
+      ];
+      // With a step left to run the review ends on the failure path; without
+      // one it ends on the complete path, as partial.
+      if (later)
+        s.profile.steps.push({
+          id: "report",
+          uses: "rio/report@0.1.0",
+          needs: ["verify"],
+          with: {},
+        });
+      const stored = await storeSnapshot(runtime, snapshot),
+        key = await store.put(`reviews/${id}/submission.json`, {
+          ...s,
+          snapshot_id: stored.id,
+        });
+      await runtime.DB.prepare(
+        "INSERT INTO reviews(id,tenant,submission_key,status,created_at,token_limit,deadline) VALUES(?,?,?,'queued',?,?,?)",
+      )
+        .bind(id, "owner", key, Date.now(), 100000, Date.now() + 240000)
+        .run();
+      await using instance = await introspectWorkflowInstance(
+        runtime.REVIEWS,
+        id,
+      );
+      await runtime.REVIEWS.create({
+        id,
+        params: { review_id: id, snapshot_key: stored.key },
+      });
+      await instance.waitForStatus("complete");
+      const row = await runtime.DB.prepare(
+        "SELECT status,error,report_key FROM reviews WHERE id=?",
+      )
+        .bind(id)
+        .first<any>();
+      expect(row.status).toBe("partial");
+      expect(row.error).toBe(later ? "runtime did not complete" : null);
+      const report = await store.get<any>(row.report_key);
+      expect(report.status).toBe("partial");
+      expect(() => validateReport(report)).not.toThrow();
+      const [first, other] = validateHypotheses([hypothesis, second]);
+      // Only a hypothesis whose verification ran to its end is a finding.
+      expect(report.findings.map((f: any) => f.id)).toEqual(
+        settled ? [first.id] : [],
+      );
+      if (settled) {
+        expect(report.findings[0].evidence_level).toBe("static_proven");
+        expect(report.findings[0].verification.agreeing).toBe(3);
+      }
+      expect(report.risks).toEqual([]);
+      const unverified = settled ? [other] : [first, other];
+      expect(report.agent_audit.unverified).toEqual(
+        unverified.map((h) => ({
+          id: h.id,
+          agent: "correctness",
+          rule_id: h.rule_id,
+          category: "defect",
+          severity: "error",
+          location: h.location,
+          message: h.message,
+        })),
+      );
+      expect(report.agent_audit.incomplete_votes).toBe(later ? undefined : 3);
+      expect(report.footer.notes.includes("cancelled")).toBe(later);
+      expect(report.footer.notes).toContain(
+        `The review stopped before it finished: ${settled} of 2 raised hypotheses had completed verification and are consolidated here; ${2 - settled} had not and are listed in agent_audit.unverified, not as findings.`,
+      );
+      // The votes the stop cut short are kept in the audit as cancelled.
+      const votes = await runtime.DB.prepare(
+        "SELECT hypothesis_id,status FROM votes WHERE review_id=? ORDER BY hypothesis_id,voter",
+      )
+        .bind(id)
+        .all<any>();
+      expect(
+        votes.results
+          .filter((v) => v.hypothesis_id === other.id)
+          .map((v) => v.status),
+      ).toEqual(settled ? ["cancelled", "cancelled", "cancelled"] : []);
+    } finally {
+      transport.mockRestore();
+    }
+  },
+  60000,
+);
+
+it("reports stored progress when a run is replayed after its review stopped", async () => {
+  // A replay past the deadline stops at its first step with nothing in memory.
+  const store = new Store(runtime),
+    id = crypto.randomUUID(),
+    s = submission();
+  s.profile.steps = [
+    { id: "agents", uses: "rio/agents@0.1.0", needs: [], with: {} },
+    { id: "verify", uses: "rio/verify@0.1.0", needs: ["agents"], with: {} },
+  ];
+  const [first, other, unsettled] = validateHypotheses([
+    hypothesis,
+    { ...hypothesis, rule_id: "correctness/second", trigger: "a(2)" },
+    { ...hypothesis, rule_id: "correctness/third", trigger: "a(3)" },
+  ]);
+  const progress = new Progress(store, id);
+  await progress.raised("agents-correctness", [first, other]);
+  await progress.raised("agents-contracts", [unsettled]);
+  const verification = {
+    voters: 3,
+    blind_match: ["none", "none", "none"] as BlindMatch[],
+    split: false,
+  };
+  await progress.settled({
+    verified: {
+      hypothesis: first,
+      evidence_level: "static_proven",
+      verification: { ...verification, agreeing: 3 },
+      evidence: ["code:head:src/a.ts:h"],
+    },
+    incomplete: 0,
+  });
+  // Two of three votes ran out of budget: unproven, so reported as a risk.
+  await progress.settled({
+    verified: {
+      hypothesis: other,
+      evidence_level: "plausible",
+      verification: { ...verification, agreeing: 1, split: true },
+      evidence: [],
+    },
+    incomplete: 2,
+  });
+  const stored = await storeSnapshot(runtime, snapshot),
+    key = await store.put(`reviews/${id}/submission.json`, {
+      ...s,
+      snapshot_id: stored.id,
+    });
+  await runtime.DB.prepare(
+    "INSERT INTO reviews(id,tenant,submission_key,status,created_at,token_limit,deadline) VALUES(?,?,?,'queued',?,?,?)",
+  )
+    .bind(id, "owner", key, Date.now() - 900000, 100000, Date.now() - 1)
+    .run();
+  await using instance = await introspectWorkflowInstance(runtime.REVIEWS, id);
+  await runtime.REVIEWS.create({
+    id,
+    params: { review_id: id, snapshot_key: stored.key },
+  });
+  await instance.waitForStatus("complete");
+  const row = await runtime.DB.prepare(
+    "SELECT status,report_key FROM reviews WHERE id=?",
+  )
+    .bind(id)
+    .first<any>();
+  expect(row.status).toBe("partial");
+  const report = await store.get<any>(row.report_key);
+  expect(report.status).toBe("partial");
+  expect(() => validateReport(report)).not.toThrow();
+  expect(report.findings.map((f: any) => f.id)).toEqual([first.id]);
+  expect(report.risks.map((f: any) => f.id)).toEqual([other.id]);
+  expect(report.risks[0].evidence_level).toBe("plausible");
+  expect(report.agent_audit.unverified.map((h: any) => h.id)).toEqual([
+    unsettled.id,
+  ]);
+  expect(report.agent_audit.incomplete_votes).toBe(2);
+  expect(report.footer.notes).toEqual([
+    "cancelled",
+    "The review stopped before it finished: 2 of 3 raised hypotheses had completed verification and are consolidated here; 1 had not and are listed in agent_audit.unverified, not as findings.",
+    "2 verifier votes did not complete; inspect the vote audit. Missing votes do not reduce quorum.",
+  ]);
+}, 60000);
 
 it.each([false, true])(
   "dispatches QA and retains neutral recommendations (baseline=%s)",

@@ -349,7 +349,8 @@ fn verifier_defaults_budgets_aliases_and_guardrails() {
     );
     let p = loader(root.path()).load(Some("p.yaml")).unwrap();
     assert_eq!((p.profile.verify.voters, p.profile.verify.quorum), (3, 2));
-    assert_eq!(p.profile.budget.fast.verify_tokens, Some(1000));
+    // A voter's allowance is not a share of the review budget.
+    assert_eq!(p.profile.budget.fast.verify_tokens, Some(320_000));
     assert!(!p.to_yaml().unwrap().contains("model: null"));
     let hash = p.hash().unwrap();
     for (settings, valid) in [

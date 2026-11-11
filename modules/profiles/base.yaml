@@ -1,7 +1,7 @@
 version: 1
 name: rio/base
 budget:
-  fast: { wall_time: 4m }
+  fast: { wall_time: 10m }
 models: {}
 steps:
   - id: prepare

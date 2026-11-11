@@ -226,11 +226,15 @@ Profiles SHALL accept optional `verify: { voters, quorum, model }`. Defaults SHA
 - **THEN** validation rejects that explicit alias
 
 ### Requirement: Verifier budget configuration
-Both `budget.fast` and `budget.deep` SHALL accept a positive integer `verify_tokens` bounding a voter's complete verification of one hypothesis. Resolution SHALL retain or derive this limit from the active agent token budget, include it in the resolved profile and review identity, and preserve the existing overall review budget limits.
+Both `budget.fast` and `budget.deep` SHALL accept a positive integer `verify_tokens` bounding a voter's complete verification of one hypothesis. Resolution SHALL retain this limit or default it to 320,000 tokens, include it in the resolved profile and review identity, and preserve the overall review budget limits. A missing `budget.fast.tokens` SHALL resolve to 2,400,000 and a missing `budget.deep` to 4,800,000 tokens. A missing `budget.fast.wall_time` SHALL resolve to 10 minutes.
 
 #### Scenario: Deep verification budget
 - **WHEN** a deep review resolves `budget.deep.verify_tokens: 4000`
 - **THEN** each voter has at most 4000 tokens per hypothesis across both turns, within the overall review budget
+
+#### Scenario: Default token budgets
+- **WHEN** a profile sets only `budget.fast.wall_time: 4m`
+- **THEN** fast resolves to `tokens: 2400000`, `agents_max: 3`, `verify_tokens: 320000` and deep to `wall_time: 10m`, `tokens: 4800000`, `agents_max: 5`, `verify_tokens: 320000`
 
 ### Requirement: Review presets
 Quick SHALL select `critical-only` posture and fast budget; Standard SHALL select `balanced` and fast budget; Deep SHALL select `thorough` and deep budget. Explicit evidence and defect-cap overrides SHALL retain their existing precedence. Deterministic findings SHALL remain outside agent posture and caps.

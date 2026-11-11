@@ -164,13 +164,15 @@ one voter. `verify.model` resolves an explicit model alias, then falls back to
 `verifier` if present, otherwise `default`. Single-voter independence compares
 actual provider/model values, so another alias for the default cannot bypass it.
 Both budget modes accept `verify_tokens`. Each voter's entire two-turn allowance
-is `floor(agent_tokens / 5)`, minimum one, unless overridden. Agent tokens are the
-active review token budget divided by `agents_max`. Resolution records the derived
-allowances in the hashed profile. Defaults are fast 100,000 tokens / three agents
-and deep 300,000 / five, with four- and ten-minute wall budgets. Every model call
-reserves from the review-wide ledger; failed calls retain unknown-usage reservations.
+is 320,000 tokens unless overridden, whatever the review token budget. Agent tokens
+are the active review token budget divided by `agents_max`. Resolution records the
+defaults in the hashed profile. Defaults are fast 2,400,000 tokens / three agents
+and deep 4,800,000 / five, with four- and ten-minute wall budgets. These are
+ceilings on spend, not estimates of it. Every model call reserves from the
+review-wide ledger, so a voter never spends more than the review has left; failed
+calls retain unknown-usage reservations.
 
-The `rio/qa` profile explicitly raises the review token limit to 500,000 in fast
+The `rio/qa` profile explicitly sets the review token limit to 500,000 in fast
 mode and 1,000,000 in deep mode, with 60,000 and 120,000 tokens per verifier voter
 respectively. Screenshots and scoped `REVIEW.md` guidance consume these allowances.
 Both voter turns share one allowance; user profile overrides remain supported.

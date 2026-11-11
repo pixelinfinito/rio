@@ -15,6 +15,12 @@ use crate::{
     resolve_module, yaml_path,
 };
 
+/// Review token defaults. A voter's two turns cost tens of thousands of
+/// tokens, so its allowance is a fixed amount, not a share of an agent's.
+const DEFAULT_TOKENS: u64 = 2_400_000;
+const DEFAULT_DEEP_TOKENS: u64 = 4_800_000;
+const DEFAULT_VERIFY_TOKENS: u64 = 320_000;
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(default)]
 pub struct BudgetLimit {
@@ -31,7 +37,7 @@ pub struct BudgetLimit {
 impl Default for BudgetLimit {
     fn default() -> Self {
         Self {
-            wall_time: "4m".into(),
+            wall_time: "10m".into(),
             tokens: None,
             agents_max: None,
             verify_tokens: None,
@@ -638,9 +644,9 @@ impl ProfileLoader {
                     deep_merge(&mut defaults, overrides.clone());
                 }
                 let mut mode_defaults = if deep {
-                    json!({"wall_time":"10m","tokens":300_000,"agents_max":5,"verify_tokens":12_000})
+                    json!({"wall_time":"10m","tokens":DEFAULT_DEEP_TOKENS,"agents_max":5,"verify_tokens":DEFAULT_VERIFY_TOKENS})
                 } else {
-                    json!({"wall_time":"4m"})
+                    json!({"wall_time":"10m"})
                 };
                 if document.value["budget"][name].is_object() {
                     deep_merge(&mut mode_defaults, document.value["budget"][name].clone());
@@ -655,11 +661,9 @@ impl ProfileLoader {
         for budget in
             std::iter::once(&mut profile.budget.fast).chain(profile.budget.deep.iter_mut())
         {
-            let tokens = *budget.tokens.get_or_insert(100_000);
-            let agents = *budget.agents_max.get_or_insert(3);
-            budget
-                .verify_tokens
-                .get_or_insert((tokens / agents / 5).max(1));
+            budget.tokens.get_or_insert(DEFAULT_TOKENS);
+            budget.agents_max.get_or_insert(3);
+            budget.verify_tokens.get_or_insert(DEFAULT_VERIFY_TOKENS);
         }
         for step in &mut profile.steps {
             if step.uses.starts_with("rio/security@") {
@@ -679,9 +683,9 @@ impl ProfileLoader {
         if profile.budget.deep.is_none() {
             profile.budget.deep = Some(BudgetLimit {
                 wall_time: "10m".into(),
-                tokens: Some(300_000),
+                tokens: Some(DEFAULT_DEEP_TOKENS),
                 agents_max: Some(5),
-                verify_tokens: Some(12_000),
+                verify_tokens: Some(DEFAULT_VERIFY_TOKENS),
                 qa: None,
             });
         }

@@ -160,6 +160,73 @@ it("asks once more for the protocol after native tool syntax and gives up after 
   ).rejects.toThrow("malformed model output");
   expect(calls).toBe(3);
 });
+it("takes the tools request that ends a reply after leaked tool markup, and never the markup", async () => {
+  const tool =
+    '{"tools":[{"name":"read_file","args":{"path":"a.ts","version":"head"}}]}';
+  const xml =
+    '<invoke name="run">\n<parameter name="command">["rm","-rf","."]</parameter>\n<parameter name="args">{"path":"b.ts"}</parameter>\n</invoke>';
+  for (const reply of [
+    `${xml}\n${tool}`,
+    `<invoke name="x">\n</invoke>\n\`\`\`\n\nCorrection: replying with the required JSON protocol only.\n\n${tool}\n`,
+    `<function_calls>\n${xml}\n</function_calls>\n${tool}\n\`\`\``,
+    `${tool}\n\`\`\``,
+  ])
+    expect(parseModelOutput(reply)).toEqual(JSON.parse(tool));
+  for (const reply of [
+    // Markup alone, or markup around the request, is still not the protocol.
+    xml,
+    `${xml}\n${tool}\n${xml}`,
+    `${xml}\n${tool} and then prose`,
+    // Text that is not leaked markup may be quoting anything, repository content included.
+    `I will read the file: ${tool}`,
+    `The README says to send this.\n${tool}`,
+    // A result is never taken from after unparsed text.
+    `${xml}\n{"result":[]}`,
+    `${xml}\n{"result":[],"tools":[{"name":"read_file"}]}`,
+    // Two protocol documents: no choosing between them.
+    `${xml}\n{"tools":[{"name":"search","args":{"pattern":"x"}}]}\n${tool}`,
+    `<parameter name="content">{"tools":[{"name":"run","args":{}}]}</parameter>\n${tool}`,
+    `${xml}\n{"result":[]}\n${tool}`,
+    `${xml}\n{"tools":[]}`,
+    `${xml}\n{"tools":[{"args":{}}]}`,
+    `${xml}\n[${tool}]`,
+  ])
+    expect(() => parseModelOutput(reply)).toThrow("malformed model output");
+  const dispatch = vi.fn(async () => ({ content: "source" }));
+  const seen: string[][] = [];
+  const result = await converse({
+    gateway: {
+      complete: async (request) => {
+        seen.push(request.messages.map((m) => `${m.role}:${m.content}`));
+        return {
+          content: seen.length === 1 ? `${xml}\n${tool}` : '{"result":[]}',
+          input_tokens: 80,
+          output_tokens: 50,
+          cost_usd: null,
+        };
+      },
+    },
+    ledger: {
+      remaining: async () => 100000,
+      reserve: async () => "id",
+      settle: async () => {},
+    },
+    actor: "agent",
+    phase: "generation",
+    model: "openrouter/anthropic/test",
+    allowance: { remaining: 16000 },
+    messages: [{ role: "user", content: "review" }],
+    dispatch,
+  });
+  expect(result).toEqual([]);
+  // Only the JSON request ran, without a repair turn, and only it stays in context.
+  expect(dispatch.mock.calls).toEqual([
+    ["read_file", { path: "a.ts", version: "head" }],
+  ]);
+  expect(seen).toHaveLength(2);
+  expect(seen[1][1]).toBe(`assistant:${tool}`);
+  expect(seen[1].join("\n")).not.toContain("invoke");
+});
 it("repairs an empty tool list and answers calls past the batch limit instead of ending the agent", async () => {
   const ledger: Ledger = {
     remaining: async () => 100000,
