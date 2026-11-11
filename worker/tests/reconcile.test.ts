@@ -98,8 +98,9 @@ describe("runner deadlines", () => {
     expect(transferMs(trees(100 * 1048576), ["base", "head"])).toBe(110000);
     expect(transferMs(trees(100 * 1048576), ["head"])).toBe(85000);
     expect(transferMs(trees(10 * 1073741824), ["base", "head"])).toBe(240000);
-    // Transfer, the longest analysis wall and a minute stay under 15 minutes.
-    expect(240000 + ANALYSIS_WALL_MS + 60000).toBeLessThan(15 * 60000);
+    // Transfer, the longest analysis wall, the extraction grace and a minute of
+    // container start stay under the 15-minute queue invocation.
+    expect(240000 + ANALYSIS_WALL_MS + 75000 + 60000).toBeLessThan(15 * 60000);
   });
 
   it("reports a deadline as a timed-out result, never as an executor failure", () => {

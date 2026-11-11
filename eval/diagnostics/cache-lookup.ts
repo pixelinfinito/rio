@@ -3,8 +3,9 @@
 // docs/design/aacr-runtime-limits.md. Build and run from the repository root:
 //   worker/node_modules/.bin/esbuild eval/diagnostics/cache-lookup.ts --bundle \
 //     --platform=neutral --format=esm --main-fields=module,main \
-//     --external:node:fs --outfile=/tmp/cache-lookup.mjs
+//     --external:node:fs --external:node:crypto --outfile=/tmp/cache-lookup.mjs
 //   node /tmp/cache-lookup.mjs <dir with base/ and head/> <changed.txt> <graph job.json>
+import { createHash } from "node:crypto";
 import { readFileSync, existsSync } from "node:fs";
 import { changeHunks, context, ContextMemo, hunkHash } from "../../worker/src/cache";
 import { decodeText } from "../../worker/src/snapshot";
@@ -30,6 +31,12 @@ let reads = 0,
   used = 0;
 const LRU_LIMIT = 16 * 1024 * 1024;
 const lru = new Map<string, number>();
+const identity = new Map<string, string>();
+// Each measured pass starts from an empty content LRU.
+const cold = () => {
+  lru.clear();
+  used = misses = missBytes = 0;
+};
 const read = async (version: "base" | "head", path: string) => {
   reads++;
   const key = `${version}:${path}`;
@@ -40,11 +47,9 @@ const read = async (version: "base" | "head", path: string) => {
   const b = bytes.get(key)!;
   if (b === null) return null;
   // StoredSnapshot's 16 MiB content LRU, keyed by content (base/head share packs).
-  const other = bytes.get(`${version === "base" ? "head" : "base"}:${path}`);
-  const content =
-    other && other.length === b.length && Buffer.compare(other, b) === 0
-      ? `same:${path}`
-      : key;
+  if (!identity.has(key))
+    identity.set(key, createHash("sha1").update(b).digest("hex"));
+  const content = identity.get(key)!;
   if (lru.has(content)) {
     lru.delete(content);
     lru.set(content, b.length);
@@ -84,7 +89,8 @@ const hunks = await changeHunks(changed, read);
 const tHunks = performance.now() - t;
 console.log(`hunks=${hunks.length} changeHunks_ms=${tHunks.toFixed(0)}`);
 
-// Neighbourhood sizes as context() computes them (single mutating pass).
+// Neighbourhood sizes: the former single mutating pass, and the true one hop
+// that context() now keys.
 const sizes: number[] = [], oneHop: number[] = [];
 for (const h of hunks)
   for (const version of ["base", "head"] as const) {
@@ -112,7 +118,7 @@ for (const h of hunks)
     }
     oneHop.push(one.size);
   }
-for (const [name, list] of [["single-pass (current)", sizes], ["true one-hop", oneHop]] as const) {
+for (const [name, list] of [["single-pass (before key version 2)", sizes], ["true one-hop", oneHop]] as const) {
   list.sort((a, b) => a - b);
   const q = (p: number) => list[Math.floor((list.length - 1) * p)];
   console.log(
@@ -122,6 +128,7 @@ for (const [name, list] of [["single-pass (current)", sizes], ["true one-hop", o
 
 reads = 0;
 decoded = 0;
+cold();
 t = performance.now();
 let n = 0;
 for (const hunk of hunks) {
@@ -141,7 +148,8 @@ console.log(
 // The memoized path must produce byte-identical keys.
 const before: string[] = [];
 for (const hunk of hunks) before.push((await context(hunk, inputs as any)).context_hash);
-reads = decoded = misses = missBytes = 0;
+reads = decoded = 0;
+cold();
 t = performance.now();
 const memo = new ContextMemo();
 const after: string[] = [];

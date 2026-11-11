@@ -199,6 +199,12 @@ impl Client {
                 .await
             {
                 Ok(status) => status,
+                // Interrupted or out of time: the loop's first check cancels and reports.
+                Err(_)
+                    if cancellation.is_cancelled() || tokio::time::Instant::now() >= deadline =>
+                {
+                    continue;
+                }
                 Err(error) => {
                     // The review must not outlive a client that stopped waiting for it.
                     let _ = self.cancel(id).await;
@@ -244,13 +250,23 @@ impl Client {
     ) -> Result<Value> {
         let mut delay = Duration::from_millis(500);
         loop {
-            match self.request(reqwest::Method::GET, path, None).await {
+            // Each GET, body included, ends at the deadline or on cancellation.
+            let result = tokio::select! {
+                _ = cancellation.cancelled() => anyhow::bail!("endpoint review wait interrupted"),
+                result = tokio::time::timeout_at(deadline, self.request(reqwest::Method::GET, path, None)) => match result {
+                    Ok(result) => result,
+                    Err(_) => anyhow::bail!("endpoint review wait timed out"),
+                },
+            };
+            match result {
                 Err(error)
                     if snapshot::retryable(&error)
-                        && !cancellation.is_cancelled()
                         && tokio::time::Instant::now() + delay < deadline =>
                 {
-                    tokio::select! { _=cancellation.cancelled()=>{}, _=tokio::time::sleep(delay)=>{} }
+                    tokio::select! {
+                        _ = cancellation.cancelled() => anyhow::bail!("endpoint review wait interrupted"),
+                        _ = tokio::time::sleep(delay) => {}
+                    }
                     delay = (delay * 2).min(Duration::from_secs(15));
                 }
                 result => return result,

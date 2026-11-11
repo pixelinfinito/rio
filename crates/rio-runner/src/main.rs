@@ -28,9 +28,10 @@ const COMPLETION_LIMIT: usize = 16 * 1024 * 1024;
 const ARTIFACT_GRAPH_BYTES: usize = 4 * 1024 * 1024;
 /// Maximum job header line, matching the container executor.
 const HEADER_LIMIT: usize = 16 * 1024 * 1024;
-/// Time allowed for a job archive (up to about 1 GiB) to reach the container before
-/// the job's own wall clock starts.
-const ARCHIVE_TIMEOUT: Duration = Duration::from_secs(600);
+/// Time allowed for a job archive to reach the container before the job's own wall
+/// clock starts: the Worker's transfer cap (`TRANSFER_CAP_MS`), which its lease,
+/// completion token and workflow wait all allow for.
+const ARCHIVE_TIMEOUT: Duration = Duration::from_secs(240);
 #[derive(Parser)]
 struct Args {
     #[command(subcommand)]

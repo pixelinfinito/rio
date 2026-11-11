@@ -46,7 +46,11 @@ export async function reconcile(
   const report = structuredClone(submission.report);
   report.status = "partial";
   report.footer.notes.push(`Rio ended this review: ${reason}.`);
-  const key = await store.put(`reviews/${row.id}/report.json`, report);
+  // Its own key: if the workflow finishes first, its report stays untouched.
+  const key = await store.put(
+    `reviews/${row.id}/report-reconciled.json`,
+    report,
+  );
   const updated = await env.DB.prepare(
     "UPDATE reviews SET status='partial',report_key=?,error=? WHERE id=? AND status IN ('queued','running') RETURNING id",
   )

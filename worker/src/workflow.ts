@@ -501,12 +501,13 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           invariant(ms > 0, "review wall budget exhausted");
           return Math.max(1, Math.ceil(ms / 1000));
         });
-        // The job's own deadlines (archive transfer, command wall) plus a
-        // minute of queue and container start, within the review's time.
+        // The job's own deadlines (archive transfer, command wall and the
+        // extraction grace) plus queue and container start, within the
+        // review's time.
         const due = Math.ceil(
           (transferMs(snapshot.index.trees, needs(kind, version)) +
             wall +
-            60000) /
+            120000) /
             1000,
         );
         let key: string;

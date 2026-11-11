@@ -331,8 +331,12 @@ class AACRAdapterTests(unittest.TestCase):
         cases = [
             (notes("Impact graph truncated at max_nodes", "Worker exceeded CPU time limit."), "cpu_limit"),
             (notes("WorkflowTimeoutError: Execution timed out after 240000ms"), "job_timeout"),
+            # A recovered retry is not a cause; the later timeout is.
             (notes("graph: runner attempt 1 failed (runner backend: Network connection lost.); retried",
-                   "WorkflowTimeoutError: Execution timed out after 240000ms"), "executor"),
+                   "WorkflowTimeoutError: Execution timed out after 240000ms"), "job_timeout"),
+            (notes("checks: runner attempt 1 failed (runner backend: sandbox executor failed: ); retried"), None),
+            (notes("graph: runner analysis failed (timed out); the review uses the submitted graph"), "job_timeout"),
+            (notes("graph: runner analysis failed (exit code 2); the review uses the submitted graph"), "executor"),
             (notes("Rio ended this review: runtime stopped: WorkflowFatalError."), "deadline"),
             (notes("Hypothesis board coordination is deferred; agents and verifier voters run independently."), None),
         ]
@@ -341,6 +345,19 @@ class AACRAdapterTests(unittest.TestCase):
         self.assertEqual(aacr.infra_failure(None, "contacting Rio endpoint: error sending request: "
                                                   "Connection reset by peer (os error 104)"), "transport")
         self.assertIsNone(aacr.infra_failure(None, "Report commit pins differ from dataset"))
+
+    def test_older_status_files_are_classified_from_saved_evidence(self):
+        """A status written before infra_failure existed is classified from its report and stderr."""
+        with tempfile.TemporaryDirectory() as tmp:
+            evidence = Path(tmp)
+            (evidence / "report.json").write_text(json.dumps(
+                {"footer": {"notes": ["Worker exceeded CPU time limit."]}}), encoding="utf-8")
+            self.assertEqual(aacr.case_infra_failure(evidence, {"status": "partial"}), "cpu_limit")
+            self.assertIsNone(aacr.case_infra_failure(evidence, {"infra_failure": None}))
+            (evidence / "report.json").unlink()
+            (evidence / "review.stderr").write_text(
+                "contacting Rio endpoint: connection error: Connection reset by peer", encoding="utf-8")
+            self.assertEqual(aacr.case_infra_failure(evidence, {"status": "failed"}), "transport")
 
 
 if __name__ == "__main__":

@@ -34,19 +34,24 @@ pub(crate) struct TokenIndex<'a> {
     complete: bool,
 }
 impl<'a> TokenIndex<'a> {
-    /// Indexes `contents` until `stop` is true (checked between files).
+    /// Indexes `contents` until `stop` is true, checked between files and every
+    /// 64 Ki tokens inside a large one.
     pub(crate) fn new(contents: Vec<&'a [u8]>, stop: &dyn Fn() -> bool) -> Self {
         let mut ids = HashMap::<&'a [u8], usize>::new();
         let mut vocabulary = Vec::new();
         let mut starts = Vec::new();
         let mut postings: Vec<Vec<u32>> = Vec::new();
         let mut complete = true;
-        for (file, content) in contents.iter().enumerate() {
+        'files: for (file, content) in contents.iter().enumerate() {
             if stop() {
                 complete = false;
                 break;
             }
-            for token in tokens(content) {
+            for (n, token) in tokens(content).enumerate() {
+                if n % 65536 == 65535 && stop() {
+                    complete = false;
+                    break 'files;
+                }
                 let id = *ids.entry(token).or_insert_with(|| {
                     starts.push(vocabulary.len());
                     vocabulary.extend_from_slice(token);
@@ -129,6 +134,20 @@ mod tests {
                         .any(|window| window == term.as_bytes())
             })
             .collect()
+    }
+    #[test]
+    fn indexing_stops_mid_file_and_reports_itself_incomplete() {
+        let large = "word ".repeat(200_000);
+        let calls = std::cell::Cell::new(0);
+        // The between-files check passes; the first in-file check stops.
+        let stop = || {
+            calls.set(calls.get() + 1);
+            calls.get() > 1
+        };
+        let index = TokenIndex::new(vec![large.as_bytes(), b"other"], &stop);
+        assert!(!index.complete());
+        assert_eq!(calls.get(), 2);
+        assert!(TokenIndex::new(vec![b"other"], &|| false).complete());
     }
     #[test]
     fn token_rules_match_a_full_content_search() {

@@ -477,33 +477,34 @@ export async function store(
 ) {
   const sliced = slice(keys, missed, hypotheses);
   const share = missed.length ? Math.floor(tokens / missed.length) : 0;
-  const written: { k: Keyed; key: string }[] = [];
-  for (const [i, list] of sliced) {
-    const k = keys[i];
-    const key = objectKey(tenant, k);
-    const entry: CacheEntry = {
-      agent,
-      hunk: { path: k.hunk.path, head: k.hunk.head },
-      hypotheses: list.map((h) => ({ ...h, source: { agent } })),
-      tokens: share,
-      created_at: now,
-    };
-    await env.ARTIFACTS.put(key, JSON.stringify(entry), {
-      httpMetadata: { contentType: "application/json" },
-    });
-    written.push({ k, key });
-  }
-  // Index rows after their objects, so a row never names a missing object.
-  for (let i = 0; i < written.length; i += LOOKUP_BATCH)
+  // Each batch's rows follow its objects, so a row never names a missing
+  // object and a failure leaves at most one batch of objects unindexed.
+  const entries = [...sliced];
+  for (let i = 0; i < entries.length; i += LOOKUP_BATCH) {
+    const written: { k: Keyed; key: string }[] = [];
+    for (const [index, list] of entries.slice(i, i + LOOKUP_BATCH)) {
+      const k = keys[index];
+      const key = objectKey(tenant, k);
+      const entry: CacheEntry = {
+        agent,
+        hunk: { path: k.hunk.path, head: k.hunk.head },
+        hypotheses: list.map((h) => ({ ...h, source: { agent } })),
+        tokens: share,
+        created_at: now,
+      };
+      await env.ARTIFACTS.put(key, JSON.stringify(entry), {
+        httpMetadata: { contentType: "application/json" },
+      });
+      written.push({ k, key });
+    }
     await env.DB.batch(
-      written
-        .slice(i, i + LOOKUP_BATCH)
-        .map(({ k, key }) =>
-          env.DB.prepare(
-            "INSERT INTO agent_cache(tenant,hunk_hash,context_hash,object_key,created_at,last_hit) VALUES(?,?,?,?,?,NULL) ON CONFLICT(tenant,hunk_hash,context_hash) DO UPDATE SET object_key=excluded.object_key,created_at=excluded.created_at,last_hit=NULL",
-          ).bind(tenant, k.hunk_hash, k.context_hash, key, now),
-        ),
+      written.map(({ k, key }) =>
+        env.DB.prepare(
+          "INSERT INTO agent_cache(tenant,hunk_hash,context_hash,object_key,created_at,last_hit) VALUES(?,?,?,?,?,NULL) ON CONFLICT(tenant,hunk_hash,context_hash) DO UPDATE SET object_key=excluded.object_key,created_at=excluded.created_at,last_hit=NULL",
+        ).bind(tenant, k.hunk_hash, k.context_hash, key, now),
+      ),
     );
+  }
   return sliced.size;
 }
 

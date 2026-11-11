@@ -586,14 +586,16 @@ fn a_deadline_during_indexing_truncates_instead_of_expanding() {
     let changes = changes(base, head);
     let options = GraphOptions::default();
     let delta = diff(&changes, &options.exclude).unwrap();
-    // True from the third check on: seeding passes, indexing stops.
+    // True from the third check on: the base slice seeds its one changed file
+    // (first check), indexes one candidate (second) and stops before the next.
     let calls = AtomicUsize::new(0);
     let stop = || calls.fetch_add(1, Ordering::Relaxed) >= 2;
     let slices = GraphBuilder::default()
         .build_until(&changes, &delta, &options, &stop)
         .unwrap();
     assert!(slices.base.truncated && slices.head.truncated);
-    // Only seeds: nothing referencing `format` was expanded.
-    assert!(slices.head.nodes.iter().all(|n| n.seed));
-    assert!(slices.head.edges.is_empty());
+    // Seeds only: nothing referencing `format` was expanded from a partial index.
+    assert!(!slices.base.nodes.is_empty());
+    assert!(slices.base.nodes.iter().all(|n| n.seed));
+    assert!(slices.base.edges.is_empty());
 }

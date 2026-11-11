@@ -27,6 +27,8 @@ export function timedOut(
     truncated: false,
   };
 }
+/** Time past the command wall for extraction to finish and the executor to exit. */
+const EXTRACT_GRACE_MS = 75000;
 export class Sandbox extends DurableObject<Env> {
   private qaStart?: Promise<void>;
   async alarm() {
@@ -60,7 +62,10 @@ export class Sandbox extends DurableObject<Env> {
       enableInternet: false,
       entrypoint: [
         "/bin/sleep",
-        String(Math.ceil((transfer + job.limits.wall_ms) / 1000) + 60),
+        String(
+          Math.ceil((transfer + job.limits.wall_ms + EXTRACT_GRACE_MS) / 1000) +
+            30,
+        ),
       ],
     });
     const abort = new AbortController();
@@ -85,7 +90,12 @@ export class Sandbox extends DurableObject<Env> {
           () => {
             clearTimeout(timer);
             phase = "command";
-            timer = setTimeout(() => abort.abort(), job.limits.wall_ms + 15000);
+            // The executor may still be extracting the archive's tail, and
+            // its own wall starts only after that.
+            timer = setTimeout(
+              () => abort.abort(),
+              job.limits.wall_ms + EXTRACT_GRACE_MS,
+            );
           },
           (error: unknown) => error,
         );

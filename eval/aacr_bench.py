@@ -151,13 +151,16 @@ def comments_from_report(report):
 
 
 # Footer notes and errors that mean the platform, not the reviewer, cut a case short.
+# Timeouts come before executor failures, so a timed-out job that also lost a
+# connection on the way counts as a timeout.
 INFRA_PATTERNS = [
     ("cpu_limit", ("Worker exceeded CPU time limit",)),
     ("memory_limit", ("Worker exceeded memory limit", "exceeded CPU or memory limits")),
     ("deadline", ("Rio ended this review", "exceeded its wall budget")),
-    ("executor", ("sandbox executor failed", "Network connection lost")),
     ("job_timeout", ("WorkflowTimeoutError", "runner wall deadline exceeded",
-                     "no runner result within", "runner analysis failed")),
+                     "no runner result within", "runner analysis failed (timed out")),
+    ("executor", ("sandbox executor failed", "Network connection lost",
+                  "runner analysis failed")),
     ("transport", ("contacting Rio endpoint", "Connection reset", "connection error")),
 ]
 
@@ -165,15 +168,29 @@ INFRA_PATTERNS = [
 def infra_failure(report, error=""):
     """The first infrastructure cause a case's report or error names, else None.
 
-    Such a case is still scored (as whatever comments it has); summaries also
-    report scores without these cases, so platform failures do not read as
-    reviewer misses.
+    A note ending in "; retried" records a runner attempt that a retry recovered,
+    so it is not a cause. Such a case is still scored (as whatever comments it
+    has); summaries also report scores without these cases, so platform failures
+    do not read as reviewer misses.
     """
-    texts = [*((report or {}).get("footer", {}).get("notes", [])), error or ""]
+    notes = [n for n in (report or {}).get("footer", {}).get("notes", [])
+             if not n.endswith("; retried")]
+    texts = [*notes, error or ""]
     for cause, needles in INFRA_PATTERNS:
         if any(needle in text for text in texts for needle in needles):
             return cause
     return None
+
+
+def case_infra_failure(evidence, status):
+    """A case's recorded cause, or one derived from its saved report and stderr
+    when the status predates the field."""
+    if "infra_failure" in status:
+        return status["infra_failure"]
+    report_path, stderr = evidence / "report.json", evidence / "review.stderr"
+    report = json.loads(report_path.read_text(encoding="utf-8")) if report_path.exists() else None
+    tail = stderr.read_text(encoding="utf-8", errors="replace")[-4000:] if stderr.exists() else ""
+    return infra_failure(report, f"{status.get('error', '')}\n{tail}")
 
 
 GIT_LOCATION_VARIABLES = frozenset({
@@ -270,10 +287,8 @@ def review_group(repo, instances, args, stop_event=None):
                 raise
             except Exception as error:
                 status["error"] = str(error)
-                stderr = evidence / "review.stderr"
-                tail = stderr.read_text(encoding="utf-8", errors="replace")[-4000:] \
-                    if stderr.exists() else ""
-                status["infra_failure"] = infra_failure(None, f"{error}\n{tail}")
+                # The saved report (when one was parsed) and stderr name the cause.
+                status["infra_failure"] = case_infra_failure(evidence, status)
             finally:
                 status["duration_seconds"] = round(time.monotonic() - started, 3)
                 if not interrupted:
@@ -358,7 +373,11 @@ def run(args):
             raise
         finally:
             pool.shutdown(wait=True, cancel_futures=True)
-    statuses = [json.loads(p.read_text(encoding="utf-8")) for p in (args.out / "cases").glob("*/status.json")]
+    statuses = []
+    for path in (args.out / "cases").glob("*/status.json"):
+        status = json.loads(path.read_text(encoding="utf-8"))
+        status["infra_failure"] = case_infra_failure(path.parent, status)
+        statuses.append(status)
     summary = {"selected": len(instances), "attempted": len(statuses),
                "statuses": dict(Counter(x["status"] for x in statuses)),
                "generated_comments": sum(x.get("comments", 0) for x in statuses),
@@ -425,7 +444,8 @@ def evaluate(args):
     infra = {}
     for instance in instances:
         path = args.out / "cases" / instance.instance_id.replace("/", "__") / "status.json"
-        cause = json.loads(path.read_text(encoding="utf-8")).get("infra_failure") if path.exists() else "not_attempted"
+        cause = case_infra_failure(path.parent, json.loads(path.read_text(encoding="utf-8"))) \
+            if path.exists() else "not_attempted"
         if cause:
             infra[instance.instance_id] = cause
     clean = [x for x in instances if x.instance_id not in infra]

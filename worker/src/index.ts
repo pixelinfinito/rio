@@ -847,7 +847,7 @@ app.post("/v1/runner/claim", async (c) => {
     // The lease and the completion token outlast the job's transfer and wall.
     const expires =
       Date.now() +
-      Math.max(180000, payload.limits.wall_ms + TRANSFER_CAP_MS + 60000);
+      Math.max(180000, payload.limits.wall_ms + TRANSFER_CAP_MS + 120000);
     await c.env.DB.prepare(
       "UPDATE jobs SET lease_until=? WHERE id=? AND attempt=?",
     )
@@ -985,8 +985,13 @@ const JOB_DELIVERIES = 3;
 export default {
   fetch: app.fetch,
   async scheduled(_controller: ScheduledController, env: Env) {
-    await expireQaEvidence(env);
-    await sweepReviews(env);
+    // Independent tasks: a failing QA cleanup must not delay ending overdue reviews.
+    const results = await Promise.allSettled([
+      expireQaEvidence(env),
+      sweepReviews(env),
+    ]);
+    for (const result of results)
+      if (result.status === "rejected") throw result.reason;
   },
   async queue(batch: MessageBatch<QueueMessage>, env: Env) {
     for (const message of batch.messages) {
@@ -1039,7 +1044,7 @@ export default {
         )
           // Held for the longest Sandbox job: transfer, command wall and teardown.
           .bind(
-            Date.now() + TRANSFER_CAP_MS + ANALYSIS_WALL_MS + 60000,
+            Date.now() + TRANSFER_CAP_MS + ANALYSIS_WALL_MS + 120000,
             job_id,
             attempt,
           )

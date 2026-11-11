@@ -345,3 +345,19 @@ Not implemented, with the reason:
   dropped. Verifier fan-out is already bounded at 4 voters. Triage was the
   measured large replay allocation; the canary checks whether memory is still
   reached.
+
+Review follow-ups:
+
+- The Sandbox command deadline is the wall plus 75 s, so the executor can finish
+  extracting the archive's tail. The container lifetime, the leases and the
+  workflow wait include that grace.
+- `reconcile` writes its report to `report-reconciled.json`, so a workflow that
+  finishes first keeps its own report.
+- Cache entries are indexed batch by batch as they are written.
+- The cron runs QA cleanup and the review sweep independently.
+- Client polls end at the deadline or on cancellation, even mid-request.
+- The self-hosted runner's archive timeout matches the 4-minute transfer cap.
+- Token indexing also checks the deadline inside large files.
+- The adapter ignores recovered `; retried` notes, separates timeouts from other
+  runner failures, and classifies status files written before `infra_failure`
+  existed from their saved report and stderr.
