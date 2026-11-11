@@ -4,19 +4,24 @@ use crate::{
 };
 use anyhow::{Context, Result};
 use rio_core::{CheckDetails, CheckKind, CheckOutcome, FailureReason, Finding};
-use rio_git::{SafeTreeWriter, Tree};
+use rio_git::{SafeTreeWriter, Tree, resolve_file};
 use serde_json::Value;
 use std::{path::Path, time::Duration};
 use tokio_util::sync::CancellationToken;
 
+/// The pinned channel, read through in-tree links as rustup would. A file that
+/// does not parse is an error the planner reports as a skipped Rust check.
 pub fn rust_toolchain(tree: &Tree, root: &str) -> Result<Option<String>> {
     let Some(path) = crate::ancestor_config(tree, root, &["rust-toolchain.toml", "rust-toolchain"])
     else {
         return Ok(None);
     };
-    let value = std::str::from_utf8(&tree[&path].content)?;
+    let entry = resolve_file(tree, &path).context("toolchain file vanished")?;
+    let value =
+        std::str::from_utf8(&entry.content).with_context(|| format!("cannot read {path}"))?;
     if path.ends_with(".toml") {
-        let value: toml::Value = toml::from_str(value)?;
+        let value: toml::Value =
+            toml::from_str(value).with_context(|| format!("cannot parse {path}"))?;
         Ok(value
             .get("toolchain")
             .and_then(|value| value.get("channel"))
@@ -55,8 +60,11 @@ pub async fn rust_cargo(
     supervisor: &ProcessSupervisor,
     cancellation: CancellationToken,
 ) -> Result<Option<ResolvedTool>> {
+    // An unreadable toolchain file leaves cargo unresolved; rustup would reject it too.
+    let Ok(mut toolchain) = rust_toolchain(tree, root) else {
+        return Ok(None);
+    };
     let temp = tempfile::tempdir()?;
-    let mut toolchain = rust_toolchain(tree, root)?;
     let path = if let Some(rustup) = resolver.locate("rustup", root, "rust") {
         if toolchain.is_none() {
             // Only this read-only selection query needs the original directory:
@@ -234,8 +242,7 @@ pub fn rust_workspace_root(tree: &Tree, root: &str) -> String {
             .join("Cargo.toml")
             .to_string_lossy()
             .replace('\\', "/");
-        if tree
-            .get(&path)
+        if resolve_file(tree, &path)
             .and_then(|entry| std::str::from_utf8(&entry.content).ok())
             .and_then(|text| toml::from_str::<toml::Value>(text).ok())
             .is_some_and(|value| value.get("workspace").is_some())
@@ -292,7 +299,7 @@ pub fn rust_lint_tools(tree: &Tree, root: &str) -> Vec<&'static str> {
                     .join("Cargo.toml")
                     .to_string_lossy()
                     .replace('\\', "/");
-                tree.get(&path)
+                resolve_file(tree, &path)
                     .and_then(|entry| std::str::from_utf8(&entry.content).ok())
                     .and_then(|text| toml::from_str::<toml::Value>(text).ok())
                     .is_some_and(|value| {

@@ -1,13 +1,13 @@
 //! Infer mypy's scope only when the project has not configured its own targets.
 use std::collections::BTreeSet;
 
-use rio_git::Tree;
+use rio_git::{Tree, resolve_file};
 use toml::Value;
 
 use crate::ancestor_config;
 
 fn text<'a>(tree: &'a Tree, path: &str) -> Option<&'a str> {
-    std::str::from_utf8(&tree.get(path)?.content).ok()
+    std::str::from_utf8(&resolve_file(tree, path)?.content).ok()
 }
 
 fn at<'a>(value: &'a Value, keys: &[&str]) -> Option<&'a Value> {

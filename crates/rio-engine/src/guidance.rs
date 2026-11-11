@@ -14,6 +14,8 @@ pub struct OwnerGuidance {
 }
 
 /// Read the selected immutable head as data, never as engine instructions.
+/// Only regular UTF-8 files count: the endpoint reproduces guidance from the
+/// snapshot and refuses links (often CLAUDE.md -> AGENTS.md, read on its own).
 pub fn owner_guidance(head: &Tree, diff: &Diff) -> Vec<OwnerGuidance> {
     let mut paths = BTreeSet::new();
     for file in &diff.files {
@@ -21,7 +23,10 @@ pub fn owner_guidance(head: &Tree, diff: &Diff) -> Vec<OwnerGuidance> {
         while let Some(scope) = directory {
             for name in ["REVIEW.md", "CLAUDE.md", "AGENTS.md"] {
                 let path = scope.join(name).to_string_lossy().replace('\\', "/");
-                if head.contains_key(&path) {
+                if head.get(&path).is_some_and(|entry| {
+                    matches!(entry.mode, 0o100644 | 0o100755)
+                        && std::str::from_utf8(&entry.content).is_ok()
+                }) {
                     paths.insert(path);
                 }
             }

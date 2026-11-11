@@ -108,13 +108,21 @@ pub(crate) async fn run(
     {
         for name in ["rust-toolchain.toml", "rust-toolchain"] {
             let path = directory.join(name);
-            if let Ok(content) = std::fs::read(&path)
+            // Keep links as links: only targets among these files resolve.
+            let entry = match std::fs::symlink_metadata(&path) {
+                Ok(metadata) if metadata.is_symlink() => std::fs::read_link(&path)
+                    .ok()
+                    .and_then(|target| target.to_str().map(|target| (0o120000, target.into()))),
+                Ok(_) => std::fs::read(&path).ok().map(|content| (0o100644, content)),
+                Err(_) => None,
+            };
+            if let Some((mode, content)) = entry
                 && let Ok(path) = path.strip_prefix(request.tool_tree)
             {
                 tree.insert(
                     path.to_string_lossy().replace('\\', "/"),
                     rio_git::TreeEntry {
-                        mode: 0o100644,
+                        mode,
                         object_id: String::new(),
                         content,
                     },

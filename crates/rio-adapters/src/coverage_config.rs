@@ -1,6 +1,6 @@
 use crate::{CoverageSettings, ancestor_config, parse_source, vitest_supports_all};
-use anyhow::Result;
-use rio_git::Tree;
+use anyhow::{Context, Result};
+use rio_git::{Tree, resolve_file};
 use serde_json::Value;
 use tree_sitter::Node;
 
@@ -91,8 +91,7 @@ pub fn typescript_test_runner(tree: &Tree, root: &str) -> Option<&'static str> {
     let mut directory = root.to_owned();
     loop {
         if let Some(path) = ancestor_config(tree, &directory, &["package.json"])
-            && let Some(value) = tree
-                .get(&path)
+            && let Some(value) = resolve_file(tree, &path)
                 .and_then(|entry| serde_json::from_slice::<Value>(&entry.content).ok())
         {
             for runner in ["vitest", "jest"] {
@@ -167,7 +166,7 @@ pub fn typescript_coverage_settings(
         ]
     };
     if let Some(config) = ancestor_config(tree, root, &names) {
-        let entry = &tree[&config];
+        let entry = resolve_file(tree, &config).context("coverage configuration vanished")?;
         if config.ends_with(".json") {
             let value: Value = serde_json::from_slice(&entry.content)?;
             settings.include = value
@@ -257,7 +256,8 @@ pub fn typescript_coverage_settings(
     } else if runner == "jest"
         && let Some(path) = ancestor_config(tree, root, &["package.json"])
     {
-        let value: Value = serde_json::from_slice(&tree[&path].content)?;
+        let entry = resolve_file(tree, &path).context("package.json vanished")?;
+        let value: Value = serde_json::from_slice(&entry.content)?;
         settings.include = value["jest"]
             .get("collectCoverageFrom")
             .and_then(|value| serde_json::from_value(value.clone()).ok());
@@ -311,7 +311,8 @@ pub fn python_coverage_settings(tree: &Tree, root: &str) -> Result<CoverageSetti
         root,
         &[".coveragerc", "pyproject.toml", "setup.cfg", "tox.ini"],
     ) {
-        let text = std::str::from_utf8(&tree[&config].content)?;
+        let entry = resolve_file(tree, &config).context("coverage configuration vanished")?;
+        let text = std::str::from_utf8(&entry.content)?;
         if config.ends_with(".toml") {
             // An unparsable pyproject.toml (for example a test fixture) leaves the
             // coverage configuration unknown rather than failing the analysis.
@@ -433,8 +434,8 @@ pub fn vitest_execution(tree: &Tree, root: &str) -> (String, Vec<String>) {
     let mut directory = root.to_owned();
     let mut projects = None;
     while let Some(config) = ancestor_config(tree, &directory, VITEST_CONFIGS) {
-        let entry = &tree[&config];
-        if let Ok(syntax) = parse_source(&config, &entry.content)
+        if let Some(entry) = resolve_file(tree, &config)
+            && let Ok(syntax) = parse_source(&config, &entry.content)
             && let Some(object) = exported_object(syntax.root_node(), &entry.content)
             && property(object, "test", &entry.content)
                 .is_some_and(|test| property(test, "projects", &entry.content).is_some())
